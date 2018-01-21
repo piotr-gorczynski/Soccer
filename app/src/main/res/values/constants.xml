@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <fraction name="flFieldMargin">15%</fraction>
+    <fraction name="flDots">1%</fraction>
+    <fraction name="flText">5%</fraction>
+    <integer name="intFieldHalfWidth">3</integer>
+    <integer name="intFieldHalfHeight">4</integer>
+</resources>
