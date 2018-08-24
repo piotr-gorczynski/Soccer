@@ -14,20 +14,38 @@ import java.util.ArrayList;
 public class Field {
 
     private int intFieldWidth,intFieldHeight;//,intBallX, intBallY;
-    private float flFieldMargin,flDots,flText;
-    private Paint pField,pFieldBorder,pDots,pPlayer0,pPlayer1,pHintText,pHintBallon;  // paint style and color
+    private float flFieldMargin,flDots,flText,flLinesWidth;
+    private Paint pField,pFieldBorder,pDots,pPlayer0,pPlayer1,pHintText,pHintBalloon;  // paint style and color
     private Rect rField,rText;
-    private Context context;
+    private int GameType;
+    private String sPlayer0,sPlayer1,sPlayer1YourMoveorThinking;
+
     ArrayList<MoveTo> possibleMoves;//= new ArrayList<MoveTo>();
     ArrayList<MoveTo> Moves;//= new ArrayList<MoveTo>();
 
-    public Field(Context current, ArrayList<MoveTo> argMoves, ArrayList<MoveTo> argpossibleMoves) {
-        this.context = current;
+    public Field(Context current, ArrayList<MoveTo> argMoves, ArrayList<MoveTo> argpossibleMoves, int argGameType) {
+
+        GameType=argGameType;
+        switch(GameType) {
+            case(1):
+                sPlayer0="Player 1";
+                sPlayer1="Player 2";
+                sPlayer1YourMoveorThinking="Your move!...";
+                break;
+            case(2):
+                sPlayer0="Player";
+                sPlayer1="Android";
+                sPlayer1YourMoveorThinking="Thinking...";
+                break;
+        }
+
+
+
         pField = new Paint();
         pFieldBorder= new Paint();
         pDots= new Paint();
 
-        pField.setColor(ContextCompat.getColor(context, R.color.colorGreen));
+        pField.setColor(ContextCompat.getColor(current, R.color.colorGreen));
 
         pFieldBorder.setStyle(Paint.Style.STROKE);
         pFieldBorder.setColor(Color.WHITE);
@@ -38,8 +56,9 @@ public class Field {
         rField = new Rect();
         rText = new Rect();
 
-        Resources res = context.getResources();
+        Resources res = current.getResources();
         flFieldMargin = res.getFraction(R.fraction.flFieldMargin,1,1);
+        flLinesWidth = res.getFraction(R.fraction.flLinesWidth,1,1);
         flDots= res.getFraction(R.fraction.flDots,1,1);
         flText = res.getFraction(R.fraction.flText,1,1);
         intFieldWidth = res.getInteger(R.integer.intFieldHalfWidth)*2;
@@ -47,12 +66,13 @@ public class Field {
 
         pPlayer0=new Paint();
         pPlayer0.setStyle(Paint.Style.FILL);
-        pPlayer0.setColor(ContextCompat.getColor(context, R.color.colorPlayer0));
+        pPlayer0.setColor(ContextCompat.getColor(current, R.color.colorPlayer0));
         pPlayer0.setTextAlign(Paint.Align.CENTER);
+
 
         pPlayer1=new Paint();
         pPlayer1.setStyle(Paint.Style.FILL);
-        pPlayer1.setColor(ContextCompat.getColor(context, R.color.colorPlayer1));
+        pPlayer1.setColor(ContextCompat.getColor(current, R.color.colorPlayer1));
         pPlayer1.setTextAlign(Paint.Align.CENTER);
 
         pHintText=new Paint();
@@ -60,9 +80,9 @@ public class Field {
         pHintText.setColor(Color.WHITE);
         pHintText.setTextAlign(Paint.Align.CENTER);
 
-        pHintBallon=new Paint();
-        pHintBallon.setStyle(Paint.Style.FILL);
-        pHintBallon.setColor(Color.YELLOW);
+        pHintBalloon=new Paint();
+        pHintBalloon.setStyle(Paint.Style.FILL);
+        pHintBalloon.setColor(Color.YELLOW);
 
 
 
@@ -148,18 +168,23 @@ public class Field {
     }
 
     public void draw(Canvas canvas) {
-
+        Log.d("pgorczyn", "123456: Field.draw");
         int oldx, oldy;
 
-        //Field
-        canvas.drawRect(rField, pField);
-        canvas.drawRect(rField, pFieldBorder);
+
 
         if(rField.height()>rField.width() ) {
             //portrait
-            pPlayer0.setTextSize(rField.width() *flText);
-            pPlayer1.setTextSize(rField.width() *flText);
-            pHintText.setTextSize(rField.width() *flText);
+            pPlayer0.setTextSize(rField.height() *flText);
+            pPlayer0.setStrokeWidth(rField.height() * flLinesWidth);
+            pPlayer1.setTextSize(rField.height() *flText);
+            pPlayer1.setStrokeWidth(rField.height() * flLinesWidth);
+            pFieldBorder.setStrokeWidth(rField.height() * flLinesWidth);
+            pHintText.setTextSize(rField.height() *flText);
+
+            //Field
+            canvas.drawRect(rField, pField);
+            canvas.drawRect(rField, pFieldBorder);
 
             //Top gate
             canvas.drawRect(w2x((intFieldWidth / 2) - 1),
@@ -172,7 +197,9 @@ public class Field {
                     w2x((intFieldWidth / 2) + 1),
                     h2y(0),
                     pFieldBorder);
-            canvas.drawText("Player 2",w2x(intFieldWidth/2),h2y(-1)+(h2y(0)-h2y(-1))/2+pPlayer1.getTextSize()/2,pPlayer1);
+
+            canvas.drawText(sPlayer1,w2x(intFieldWidth/2),h2y(-1)+(h2y(0)-h2y(-1))/2+pPlayer1.getTextSize()/2,pPlayer1);
+
             //canvas.drawCircle(w2x(intFieldWidth/2), h2y(-1)+(h2y(0)-h2y(-1))/2, rField.height() * flDots, pDots);
 
             //Bottom gate
@@ -186,19 +213,20 @@ public class Field {
                     w2x((intFieldWidth / 2) + 1),
                     h2y(intFieldHeight + 1),
                     pFieldBorder);
-            canvas.drawText("Player 1",w2x(intFieldWidth/2),h2y(intFieldHeight)+(h2y(intFieldHeight+1)-h2y(intFieldHeight))/2+pPlayer0.getTextSize()/2,pPlayer0);
+
+            canvas.drawText(sPlayer0,w2x(intFieldWidth/2),h2y(intFieldHeight)+(h2y(intFieldHeight+1)-h2y(intFieldHeight))/2+pPlayer0.getTextSize()/2,pPlayer0);
             //canvas.drawCircle(w2x(intFieldWidth/2), h2y(intFieldHeight)+(h2y(intFieldHeight+1)-h2y(intFieldHeight))/2, rField.height() * flDots, pDots);
 
             //Dots on the field
             for (int x = 0; x <= intFieldWidth; x++) {
                 for (int y = 0; y <= intFieldHeight; y++) {
-                    canvas.drawCircle(w2x(x), h2y(y), rField.width() * flDots, pDots);
+                    canvas.drawCircle(w2x(x), h2y(y), rField.height() * flDots, pDots);
                 }
             }
             //Dots on top gate & bootom gate
             for (int x = ((intFieldWidth / 2) - 1); x <= ((intFieldWidth / 2) + 1); x++) {
-                canvas.drawCircle(w2x(x), h2y(-1), rField.width() * flDots, pDots);
-                canvas.drawCircle(w2x(x), h2y(intFieldHeight + 1), rField.width() * flDots, pDots);
+                canvas.drawCircle(w2x(x), h2y(-1), rField.height() * flDots, pDots);
+                canvas.drawCircle(w2x(x), h2y(intFieldHeight + 1), rField.height() * flDots, pDots);
             }
 
             //Moves
@@ -218,10 +246,10 @@ public class Field {
             if(Moves.get(Moves.size()-1).P==0)
                 for(MoveTo pm : possibleMoves)
 
-                    canvas.drawCircle( w2x(pm.X), h2y(pm.Y),rField.width() * flDots,pPlayer0 );
+                    canvas.drawCircle( w2x(pm.X), h2y(pm.Y),rField.height() * flDots,pPlayer0 );
             else
                 for(MoveTo pm : possibleMoves)
-                    canvas.drawCircle( w2x(pm.X), h2y(pm.Y),rField.width() * flDots,pPlayer1 );
+                    canvas.drawCircle( w2x(pm.X), h2y(pm.Y),rField.height() * flDots,pPlayer1 );
 
             //Ball
             //canvas.drawCircle(xPos(0),yPos(0),50,pDots );
@@ -231,18 +259,29 @@ public class Field {
 
 
 
-            canvas.drawCircle( w2x(Moves.get(Moves.size()-1).X), h2y(Moves.get(Moves.size()-1).Y),rField.width() * flDots*2,pDots );
+            canvas.drawCircle( w2x(Moves.get(Moves.size()-1).X), h2y(Moves.get(Moves.size()-1).Y),rField.height() * flDots*2,pDots );
 
-            pPlayer1.getTextBounds("Your move!", 0, 10, rText);
-            if(Moves.get(Moves.size()-1).P==0)
-                canvas.drawText("Your move!",w2x(intFieldWidth/2), h2y(intFieldHeight+1)+(canvas.getHeight()-h2y(intFieldHeight+1))/2+rText.height()/2,pHintText);
-            else
-                canvas.drawText("Your move!",w2x(intFieldWidth/2), h2y(-1)/2+rText.height()/2,pHintText);
+            if(Moves.get(Moves.size()-1).P==0) {
+                pHintText.getTextBounds("Your move!", 0, 10, rText);
+                canvas.drawText("Your move!", w2x(intFieldWidth / 2), h2y(intFieldHeight + 1) + (canvas.getHeight() - h2y(intFieldHeight + 1)) / 2 + rText.height() / 2, pHintText);
+            }
+            else{
+                pHintText.getTextBounds(sPlayer1YourMoveorThinking, 0, sPlayer1YourMoveorThinking.length(), rText);
+                canvas.drawText(sPlayer1YourMoveorThinking,w2x(intFieldWidth/2), h2y(-1)/2+rText.height()/2,pHintText);
+            }
 
         } else {
             //landscape
-            pPlayer0.setTextSize(rField.height() *flText);
-            pPlayer1.setTextSize(rField.height() *flText);
+            pPlayer0.setTextSize(rField.width() *flText);
+            pPlayer0.setStrokeWidth(rField.width() * flLinesWidth);
+            pPlayer1.setTextSize(rField.width() *flText);
+            pPlayer1.setStrokeWidth(rField.width() * flLinesWidth);
+            pFieldBorder.setStrokeWidth(rField.width() * flLinesWidth);
+            pHintText.setTextSize(rField.width() *flText);
+
+            //Field
+            canvas.drawRect(rField, pField);
+            canvas.drawRect(rField, pFieldBorder);
 
             //Top gate
 
@@ -257,7 +296,8 @@ public class Field {
                     h2y((intFieldWidth / 2) - 1),
                     pFieldBorder);
 
-            pPlayer0.getTextBounds("Player 1", 0, 3, rText);
+
+            pPlayer0.getTextBounds(sPlayer0, 0, sPlayer0.length(), rText);
 
             /*canvas.drawCircle(w2x(-1)+(w2x(0)-w2x(-1))/2, h2y(intFieldWidth/2),5, pDots);
 
@@ -270,7 +310,7 @@ public class Field {
             // rotate the canvas on center of the text to draw
             canvas.rotate(-90, w2x(-1)+(w2x(0)-w2x(-1))/2,h2y(intFieldWidth/2));
             // draw the rotated text
-            canvas.drawText("Player 1", w2x(-1)+(w2x(0)-w2x(-1))/2, h2y(intFieldWidth/2)+ rText.height()/2, pPlayer0);
+            canvas.drawText(sPlayer0, w2x(-1)+(w2x(0)-w2x(-1))/2, h2y(intFieldWidth/2)+ rText.height()/2, pPlayer0);
             //undo the translation and rotation
             canvas.rotate(+90, w2x(-1)+(w2x(0)-w2x(-1))/2,h2y(intFieldWidth/2));
 
@@ -287,7 +327,7 @@ public class Field {
                     h2y((intFieldWidth / 2) - 1),
                     pFieldBorder);
 
-            pPlayer1.getTextBounds("Player 2", 0, 7, rText);
+            pPlayer1.getTextBounds(sPlayer1, 0, sPlayer1.length(), rText);
 
             /*canvas.drawCircle(w2x(intFieldHeight)+(w2x(intFieldHeight+1)-w2x(intFieldHeight))/2, h2y(intFieldWidth/2),5, pDots);
 
@@ -299,7 +339,7 @@ public class Field {
             // rotate the canvas on center of the text to draw
             canvas.rotate(+90, w2x(intFieldHeight)+(w2x(intFieldHeight+1)-w2x(intFieldHeight))/2,h2y(intFieldWidth/2));
             // draw the rotated text
-            canvas.drawText("Player 2", w2x(intFieldHeight)+(w2x(intFieldHeight+1)-w2x(intFieldHeight))/2, h2y(intFieldWidth/2)+ rText.height()/2, pPlayer1);
+            canvas.drawText(sPlayer1, w2x(intFieldHeight)+(w2x(intFieldHeight+1)-w2x(intFieldHeight))/2, h2y(intFieldWidth/2)+ rText.height()/2, pPlayer1);
             //undo the translation and rotation
             canvas.rotate(-90, w2x(intFieldHeight)+(w2x(intFieldHeight+1)-w2x(intFieldHeight))/2,h2y(intFieldWidth/2));
 
@@ -307,13 +347,13 @@ public class Field {
             //Dots on the field
             for (int x = 0; x <= intFieldHeight; x++) {
                 for (int y = 0; y <= intFieldWidth; y++) {
-                    canvas.drawCircle(w2x(x), h2y(y), rField.height() * flDots, pDots);
+                    canvas.drawCircle(w2x(x), h2y(y), rField.width() * flDots, pDots);
                 }
             }
             //Dots on top gate & bootom gate
             for (int y = ((intFieldWidth / 2) - 1); y <= ((intFieldWidth / 2) + 1); y++) {
-                canvas.drawCircle(w2x(-1), h2y(y), rField.height() * flDots, pDots);
-                canvas.drawCircle(w2x(intFieldHeight + 1), h2y(y), rField.height() * flDots, pDots);
+                canvas.drawCircle(w2x(-1), h2y(y), rField.width() * flDots, pDots);
+                canvas.drawCircle(w2x(intFieldHeight + 1), h2y(y), rField.width() * flDots, pDots);
             }
 
             //Moves
@@ -332,10 +372,10 @@ public class Field {
             //PossibleMoves
             if(Moves.get(Moves.size()-1).P==0)
                 for(MoveTo pm : possibleMoves)
-                    canvas.drawCircle( w2x(intFieldHeight-pm.Y), h2y(intFieldWidth-pm.X),rField.height() * flDots,pPlayer0 );
+                    canvas.drawCircle( w2x(intFieldHeight-pm.Y), h2y(intFieldWidth-pm.X),rField.width() * flDots,pPlayer0 );
             else
                 for(MoveTo pm : possibleMoves)
-                    canvas.drawCircle( w2x(intFieldHeight-pm.Y), h2y(intFieldWidth-pm.X),rField.height() * flDots,pPlayer1 );
+                    canvas.drawCircle( w2x(intFieldHeight-pm.Y), h2y(intFieldWidth-pm.X),rField.width() * flDots,pPlayer1 );
 
 
 
@@ -346,7 +386,7 @@ public class Field {
             //canvas.drawText(Float.toString(y2h(ballY)), 100, 150, pText);
 
 
-            canvas.drawCircle( w2x(intFieldHeight-Moves.get(Moves.size()-1).Y), h2y(intFieldWidth-Moves.get(Moves.size()-1).X),rField.height() * flDots*2,pDots );        }
+            canvas.drawCircle( w2x(intFieldHeight-Moves.get(Moves.size()-1).Y), h2y(intFieldWidth-Moves.get(Moves.size()-1).X),rField.width() * flDots*2,pDots );        }
 
     }
 

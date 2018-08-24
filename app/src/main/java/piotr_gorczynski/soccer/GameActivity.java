@@ -1,32 +1,27 @@
 package piotr_gorczynski.soccer;
 
-import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.pm.ActivityInfo;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
 public class GameActivity extends AppCompatActivity {
 
-    private GameView gameView;
+
     private ArrayList<MoveTo> Moves=new ArrayList<MoveTo>();
     AlertDialog dialogWinner;
     int Winner=-1;
+    int GameType=-1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        GameView gameView;
         super.onCreate(savedInstanceState);
         //this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        if (savedInstanceState != null) {
+        if (savedInstanceState != null && savedInstanceState.getParcelableArrayList("Moves")!=null) {
             //intBallX = savedInstanceState.getInt("intBallX");
             //intBallY = savedInstanceState.getInt("intBallY");
             Moves = savedInstanceState.getParcelableArrayList("Moves");
@@ -34,6 +29,13 @@ public class GameActivity extends AppCompatActivity {
         else {
             Moves.add( new MoveTo(getResources().getInteger(R.integer.intFieldHalfWidth),getResources().getInteger(R.integer.intFieldHalfHeight),0));
         }
+
+        GameType=getIntent().getIntExtra("GameType",0);
+        if (GameType>0) {
+            Log.d("pgorczyn", "123456: GameActivity.onCreate Game Type entered: " + GameType);
+        }
+        //else
+        //    throw(new Exception("No Game Type defined")) ;
 
         //Set initial Ball position in the Middle of the Field
         //intBallX=getResources().getInteger(R.integer.intFieldHalfWidth);
@@ -43,9 +45,8 @@ public class GameActivity extends AppCompatActivity {
         //Log.d("pgorczyn", "123456: GameActivity.onCreate entered");
         //Log.d("pgorczyn", "123456: intBallX=" + intBallX);
         //gameView = new GameView(this,intBallX,intBallY,Moves);
-        gameView = new GameView(this, Moves);
+        gameView = new GameView(this, Moves,GameType);
         setContentView(gameView);
-        gameView.setBackgroundColor(ContextCompat.getColor(this, R.color.colorGreenDark));
 
         if(savedInstanceState != null && savedInstanceState.getBoolean("alertShown")){
             Winner=savedInstanceState.getInt("Winner");
@@ -110,14 +111,28 @@ public class GameActivity extends AppCompatActivity {
 
     public void showWinner(int Winner) {
 
+        String sPlayer0="",sPlayer1="";
         this.Winner=Winner;
+
         // setup the alert builder
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(false);
+
+        switch(GameType) {
+            case(1):
+                sPlayer0="Player 1";
+                sPlayer1="Player 2";
+                break;
+            case(2):
+                sPlayer0="Player";
+                sPlayer1="Android";
+                break;
+        }
+
         if(Winner==0)
-            builder.setMessage("The winner is Player 1");
+            builder.setMessage("The winner is "+sPlayer0);
         else
-            builder.setMessage("The winner is Player 2");
+            builder.setMessage("The winner is "+sPlayer1);
 
         // add a button
         builder.setPositiveButton("Close", new DialogInterface.OnClickListener() {
