@@ -2,7 +2,8 @@
 <resources>
     <fraction name="flFieldMargin">15%</fraction>
     <fraction name="flDots">1%</fraction>
-    <fraction name="flText">5%</fraction>
+    <fraction name="flText">3%</fraction>
+    <fraction name="flLinesWidth">0.5%</fraction>
     <integer name="intFieldHalfWidth">3</integer>
     <integer name="intFieldHalfHeight">4</integer>
 </resources>
