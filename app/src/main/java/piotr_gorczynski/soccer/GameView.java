@@ -328,16 +328,17 @@ public class GameView extends View {
             if(androidNextMove(androidMoves,minMoveTo)==true)
                 if(androidMoves.size()>realMoves.size()) {//just to be 100% sure
                     Log.d("pgorczyn", "1234567: Making move");
+                    SystemClock.sleep(1000);
                     boolean nextMovePossible = MakeMove(androidMoves.get(realMoves.size()).X, androidMoves.get(realMoves.size()).Y, realMoves);
 
                     invalidate();
                     if ( nextMovePossible == true) {
                         if (realMoves.get(realMoves.size() - 1).P == 1) {
                             Log.d("pgorczyn", "1234567: Before sleep");
-                            SystemClock.sleep(1000);
+                            //SystemClock.sleep(1000);
                             Log.d("pgorczyn", "1234567: After sleep");
                             Log.d("pgorczyn", "1234567: Sending message for androidMove");
-                            mHandler.sendEmptyMessage(1);
+                            mHandler.sendEmptyMessageDelayed(1,1000);
                         }
                     }
                 }
