@@ -27,7 +27,52 @@ public class GameActivity extends AppCompatActivity {
             Moves = savedInstanceState.getParcelableArrayList("Moves");
         }
         else {
+            // Default position in the middle of the field
             Moves.add( new MoveTo(getResources().getInteger(R.integer.intFieldHalfWidth),getResources().getInteger(R.integer.intFieldHalfHeight),0));
+
+            //Ticket #1 situation for Android move (very long loop)
+            /*
+            Moves.add( new MoveTo(3,4,0));
+            Moves.add( new MoveTo(3,3,1));
+            Moves.add( new MoveTo(2,4,0));
+            Moves.add( new MoveTo(1,3,1));
+            Moves.add( new MoveTo(0,4,1));
+            Moves.add( new MoveTo(1,5,0));
+            Moves.add( new MoveTo(2,4,0));
+            Moves.add( new MoveTo(2,3,1));
+            Moves.add( new MoveTo(3,4,1));
+            Moves.add( new MoveTo(2,4,1));
+            Moves.add( new MoveTo(2,5,0));
+            Moves.add( new MoveTo(3,4,0));
+            Moves.add( new MoveTo(4,3,1));
+            Moves.add( new MoveTo(3,3,1));
+            Moves.add( new MoveTo(2,3,1));
+            Moves.add( new MoveTo(1,3,1));
+            Moves.add( new MoveTo(0,3,1));
+            Moves.add( new MoveTo(1,4,0));
+            Moves.add( new MoveTo(1,3,0));
+            Moves.add( new MoveTo(0,2,0));
+            Moves.add( new MoveTo(1,1,1));
+            Moves.add( new MoveTo(0,1,1));
+            Moves.add( new MoveTo(1,0,1));
+            Moves.add( new MoveTo(1,1,1));
+            Moves.add( new MoveTo(1,2,0));
+            Moves.add( new MoveTo(2,1,1));
+            Moves.add( new MoveTo(1,1,1));
+            Moves.add( new MoveTo(2,0,1));
+            Moves.add( new MoveTo(2,1,1));
+            Moves.add( new MoveTo(2,2,0));
+            Moves.add( new MoveTo(3,1,1));
+            Moves.add( new MoveTo(2,1,1));
+            Moves.add( new MoveTo(3,2,0));
+            Moves.add( new MoveTo(3,1,0));
+            Moves.add( new MoveTo(3,0,1));
+            Moves.add( new MoveTo(2,0,1));
+            Moves.add( new MoveTo(3,1,1));
+            Moves.add( new MoveTo(4,2,0));
+            //user must make move to Moves.add( new MoveTo(4,1,1));
+            */
+
         }
 
         GameType=getIntent().getIntExtra("GameType",0);

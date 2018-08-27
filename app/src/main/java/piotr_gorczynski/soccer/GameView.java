@@ -25,8 +25,9 @@ public class GameView extends View {
     private TreeMoveTo androidTreeMoveTo;
     private ArrayList<MoveTo> realMoves;//= new ArrayList<MoveTo>();
     ArrayList<MoveTo> possibleMovesForDrawing= new ArrayList<MoveTo>();
+    ArrayList<MoveTo> androidMoves= new ArrayList<MoveTo>();;
     private int GameType;
-
+    private int gameLevel=5;
 
 
     public class MyHandler extends Handler
@@ -47,6 +48,15 @@ public class GameView extends View {
         }
     }
 
+    public class NextMoveFound {
+        public boolean found;
+        public int level;
+
+        public NextMoveFound(boolean found, int level){
+            this.found=found;
+            this.level=level;
+        }
+    }
 
     // Constructor
     public GameView(Context context, ArrayList<MoveTo> argMoves, int argGameType) {
@@ -161,12 +171,12 @@ public class GameView extends View {
         for(int i=1;i<Moves.size();i++) {
             xE=Moves.get(i).X;
             yE=Moves.get(i).Y;
-            if((x1==xS)&&(y1==yS)&&(x2==xE)&&(y2==yE))
+            if( ( (x1==xS)&&(y1==yS)&&(x2==xE)&&(y2==yE) ) || ((x1==xE)&&(y1==yE)&&(x2==xS)&&(y2==yS) ) )
                 return false;
             xS=xE;
             yS=yE;
         }
-        xS=Moves.get(0).X;
+/*        xS=Moves.get(0).X;
         yS=Moves.get(0).Y;
         for(int i=1;i<Moves.size();i++) {
             xE=Moves.get(i).X;
@@ -176,13 +186,14 @@ public class GameView extends View {
             xS=xE;
             yS=yE;
         }
+        */
         return true;
     }
 
     private boolean isBouncing(int x, int y,ArrayList<MoveTo> Moves) {
         if(
-            ((x==0) && (y>0) && (y<intFieldHeight))
-            ||((x==intFieldWidth) && (y>0) && (y<intFieldHeight))
+            ((x==0) && (y>=0) && (y<=intFieldHeight))
+            ||((x==intFieldWidth) && (y>=0) && (y<=intFieldHeight))
             ||((y==0)&&(x<intFieldWidth/2)&&(x>0))
             ||((y==0)&&(x>intFieldWidth/2)&&(x<intFieldWidth))
             ||((y==intFieldHeight)&&(x<intFieldWidth/2)&&(x>0))
@@ -244,19 +255,21 @@ public class GameView extends View {
     }
 
     public int checkWinner(int x, int y,ArrayList<MoveTo> Moves){
-        ArrayList<MoveTo> nextMoves= (ArrayList<MoveTo>) Moves.clone();
-        boolean bouncing=isBouncing(x,y,Moves);
 
+        boolean bouncing=isBouncing(x,y,Moves);
+        ArrayList<MoveTo> nextMoves= (ArrayList<MoveTo>) Moves.clone();
         if(bouncing)
             nextMoves.add(new MoveTo(x,y,Moves.get(Moves.size()-1).P));
         else
-        if(nextMoves.get(Moves.size()-1).P==0)
-            nextMoves.add(new MoveTo(x,y,1));
-        else
-            nextMoves.add(new MoveTo(x,y,0));
+            if(nextMoves.get(Moves.size()-1).P==0)
+                nextMoves.add(new MoveTo(x,y,1));
+            else
+                nextMoves.add(new MoveTo(x,y,0));
 
         ArrayList<MoveTo> possibleMoves= new ArrayList<MoveTo>();
+
         createPossibleMoves(possibleMoves, nextMoves);
+        //createPossibleMoves(possibleMoves, Moves);
 
         if(possibleMoves.size()==0) {
             if(y==-1)
@@ -266,13 +279,13 @@ public class GameView extends View {
                     return 1;
                 else {
                     if(bouncing){
-                        if(Moves.get(Moves.size()-1).P==0)
+                        if(nextMoves.get(nextMoves.size()-1).P==0)
                             return 1;
                         else
                             return 0;
                     }
                     else
-                        return (Moves.get(Moves.size()-1).P);
+                        return (nextMoves.get(nextMoves.size()-1).P);
                 }
             }
         }
@@ -280,69 +293,103 @@ public class GameView extends View {
     }
 
 
-    public boolean androidNextMove(ArrayList<MoveTo> Moves,MoveTo minMoveTo) {
-        Log.d("pgorczyn", "1234567: Start possible moves evaluation");
+    public boolean androidNextMove(ArrayList<MoveTo> Moves,MoveTo minMoveTo, int level, NextMoveFound nextMoveFound) {
+        String stringMove=Moves.get(Moves.size()-1).toString();
+        Log.d("pgorczyn", "1234567Move: <"+stringMove+" level='"+Integer.toString(level)+"'>");
+        long startTime = System.currentTimeMillis();
+
+        boolean localNextMoveFound=false;
         ArrayList<MoveTo> possibleMoves= new ArrayList<MoveTo>();
         createPossibleMoves(possibleMoves,Moves);
-        if(possibleMoves.size()==0) return false;
-        ArrayList<MoveTo> bestMoves= (ArrayList<MoveTo>) Moves.clone();
-        ArrayList<MoveTo> tempMoves= (ArrayList<MoveTo>) Moves.clone();
-        int movesSize = Moves.size();
-        boolean nextMoveFound=false;
-        for(MoveTo i: possibleMoves) {
-            if (isBouncing(i.X, i.Y, Moves)) {
-                tempMoves.add(new MoveTo(i.X,i.Y,1));
-                if(androidNextMove(tempMoves, minMoveTo)==true) {
-                    while (bestMoves.size()>movesSize) bestMoves.remove(bestMoves.size()-1);
-                    for(int j=bestMoves.size();j<tempMoves.size();j++)
-                        bestMoves.add(new MoveTo(tempMoves.get(j).X,tempMoves.get(j).Y,tempMoves.get(j).P));
-                    nextMoveFound=true;
-                }
-                while (tempMoves.size()>movesSize) tempMoves.remove(tempMoves.size()-1);
-            } else {
-                if ((MINMAX(i.X, i.Y, 1) < MINMAX(minMoveTo.X, minMoveTo.Y, 1)) || (checkWinner(minMoveTo.X, minMoveTo.Y,Moves)==0)) {
-                    minMoveTo.X = i.X;
-                    minMoveTo.Y = i.Y;
-                    while (bestMoves.size()>movesSize) bestMoves.remove(bestMoves.size()-1);
-                    bestMoves.add(new MoveTo(minMoveTo.X,minMoveTo.Y,1));
-                    nextMoveFound = true;
+        if(possibleMoves.size()>0) {
+            ArrayList<MoveTo> bestMoves = (ArrayList<MoveTo>) Moves.clone();
+            ArrayList<MoveTo> tempMoves = (ArrayList<MoveTo>) Moves.clone();
+            int movesSize = Moves.size();
+
+            for (MoveTo i : possibleMoves) {
+                if((nextMoveFound.found==true) && (nextMoveFound.level>gameLevel))
+                    break;
+                if (isBouncing(i.X, i.Y, Moves)) {
+                    tempMoves.add(new MoveTo(i.X, i.Y, 1));
+                    if ( androidNextMove(tempMoves, minMoveTo,level+1,nextMoveFound)== true) {
+                        while (bestMoves.size() > movesSize) bestMoves.remove(bestMoves.size() - 1);
+                        for (int j = bestMoves.size(); j < tempMoves.size(); j++)
+                            bestMoves.add(new MoveTo(tempMoves.get(j).X, tempMoves.get(j).Y, tempMoves.get(j).P));
+                        localNextMoveFound=true;
+                    }
+                    while (tempMoves.size() > movesSize) tempMoves.remove(tempMoves.size() - 1);
+                } else {
+                    if (((MINMAX(i.X, i.Y, 1) < MINMAX(minMoveTo.X, minMoveTo.Y, 1)) && (checkWinner(i.X, i.Y, Moves) != 0)) || (checkWinner(minMoveTo.X, minMoveTo.Y, Moves) == 0)) {
+                        minMoveTo.X = i.X;
+                        minMoveTo.Y = i.Y;
+                        while (bestMoves.size() > movesSize) bestMoves.remove(bestMoves.size() - 1);
+                        bestMoves.add(new MoveTo(minMoveTo.X, minMoveTo.Y, 1));
+                        Log.d("pgorczyn", "1234567Move: <minimumfound>"+minMoveTo.toString()+"</minimumfound>");
+                        nextMoveFound.found = true;
+                        nextMoveFound.level = level;
+                        localNextMoveFound=true;
+                    }
                 }
             }
+            if (localNextMoveFound == true)
+                for (int j = Moves.size(); j < bestMoves.size(); j++)
+                    Moves.add(new MoveTo(bestMoves.get(j).X, bestMoves.get(j).Y, bestMoves.get(j).P));
         }
-        if(nextMoveFound==true)
-            for(int j=Moves.size();j<bestMoves.size();j++)
-                Moves.add(new MoveTo(bestMoves.get(j).X,bestMoves.get(j).Y,bestMoves.get(j).P));
-        Log.d("pgorczyn", "1234567: After moves evaluation");
-        return nextMoveFound;
+        long difference = System.currentTimeMillis() - startTime;
+        Log.d("pgorczyn", "1234567Move: <secondselapsed>"+Long.toString(difference/1000)+"</secondselapsed>");
+        Log.d("pgorczyn", "1234567Move: </"+stringMove+">");
+        return localNextMoveFound;
     }
 
 
     public void androidMove() {
-        ArrayList<MoveTo> possibleMoves= new ArrayList<MoveTo>();
-        createPossibleMoves(possibleMoves,realMoves);
-        if((GameType==2) && (realMoves.get(realMoves.size()-1).P==1) && (possibleMoves.size()>0)) {
-            Log.d("pgorczyn", "1234567: In androidMove");
-            ArrayList<MoveTo> androidMoves= (ArrayList<MoveTo>) realMoves.clone();
-            //assigning first form the list as MIN
-            MoveTo minMoveTo =  new MoveTo(possibleMoves.get(0).X,possibleMoves.get(0).Y,1);
-            if(androidNextMove(androidMoves,minMoveTo)==true)
-                if(androidMoves.size()>realMoves.size()) {//just to be 100% sure
-                    Log.d("pgorczyn", "1234567: Making move");
-                    SystemClock.sleep(1000);
-                    boolean nextMovePossible = MakeMove(androidMoves.get(realMoves.size()).X, androidMoves.get(realMoves.size()).Y, realMoves);
 
-                    invalidate();
-                    if ( nextMovePossible == true) {
-                        if (realMoves.get(realMoves.size() - 1).P == 1) {
-                            Log.d("pgorczyn", "1234567: Before sleep");
-                            //SystemClock.sleep(1000);
-                            Log.d("pgorczyn", "1234567: After sleep");
-                            Log.d("pgorczyn", "1234567: Sending message for androidMove");
-                            mHandler.sendEmptyMessageDelayed(1,1000);
-                        }
+        if (GameType != 2)
+            return; //throw error to be added
+        if (realMoves.get(realMoves.size() - 1).P != 1)
+            return; //throw error to be added
+        ArrayList<MoveTo> possibleMoves = new ArrayList<MoveTo>();
+        createPossibleMoves(possibleMoves, realMoves);
+        if (possibleMoves.size() == 0)
+            return; //throw error to be added
+        //called 1-st time
+        if (androidMoves.size() <= realMoves.size()) {
+            Log.d("pgorczyn", "1234567: In androidMove 1-st time");
+            logMoves();
+            androidMoves = (ArrayList<MoveTo>) realMoves.clone();
+            //assigning first form the list as MIN
+            MoveTo minMoveTo = new MoveTo(possibleMoves.get(0).X, possibleMoves.get(0).Y, 1);
+            NextMoveFound nextMoveFound = new NextMoveFound(false,0);
+            androidNextMove(androidMoves, minMoveTo,0,nextMoveFound);
+            if ( nextMoveFound.found == true) {
+                Log.d("pgorczyn", "1234567: Sending message for androidMove 1-st time");
+                mHandler.sendEmptyMessage(1);
+            }
+            //else
+            //////////////////////////////
+            ////
+            ///Handler to be adde if not found!!!!!!!!!!!!!!!
+            ///
+            /////////////////////////////
+        } else {
+            //called n-th time
+            Log.d("pgorczyn", "1234567: In androidMove n-th time");
+            SystemClock.sleep(1000);
+            boolean nextMovePossible = MakeMove(androidMoves.get(realMoves.size()).X, androidMoves.get(realMoves.size()).Y, realMoves);
+            invalidate();
+            if (nextMovePossible == true)
+                if (realMoves.get(realMoves.size() - 1).P == 1)
+                    if (nextMovePossible == true) {
+                        Log.d("pgorczyn", "1234567: Sending message for androidMove n-th time");
+                        mHandler.sendEmptyMessage(1);
                     }
-                }
+
         }
+    }
+
+    public void logMoves(){
+        for(MoveTo i: realMoves)
+            Log.d("pgorczyn", "1234567: "+ i.toString()+";");
     }
 
     //MINMAX Evaluation function
@@ -359,6 +406,10 @@ public class GameView extends View {
     // Touch-input handler
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        //if android's move then ignore onTouchEvent
+        if((GameType ==2) && (realMoves.get(realMoves.size()-1).P==1))
+            return true;
+
         int x,y;
         boolean bouncing;
         ArrayList<MoveTo> possibleMoves= new ArrayList<MoveTo>();
