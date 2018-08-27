@@ -14,6 +14,11 @@ public class MoveTo implements Parcelable {
         P=p;
     }
 
+    @Override
+    public String toString() {
+        return "("+ Integer.toString(X)+","+ Integer.toString(Y)+","+Integer.toString(P)+")";
+    }
+
     // Parcelling part
     public MoveTo(Parcel in){
         int[] data = new int[3];
