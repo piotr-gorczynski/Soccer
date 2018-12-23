@@ -1,6 +1,8 @@
 package piotr_gorczynski.soccer;
 
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,24 +17,69 @@ public class GameActivity extends AppCompatActivity {
     AlertDialog dialogWinner;
     int Winner=-1;
     int GameType=-1;
+    GameView gameView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        GameView gameView;
+
         super.onCreate(savedInstanceState);
+        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
         //this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         if (savedInstanceState != null && savedInstanceState.getParcelableArrayList("Moves")!=null) {
-            //intBallX = savedInstanceState.getInt("intBallX");
-            //intBallY = savedInstanceState.getInt("intBallY");
+
             Moves = savedInstanceState.getParcelableArrayList("Moves");
         }
         else {
             // Default position in the middle of the field
             Moves.add( new MoveTo(getResources().getInteger(R.integer.intFieldHalfWidth),getResources().getInteger(R.integer.intFieldHalfHeight),0));
 
-            //Ticket #1 situation for Android move (very long loop)
-            /*
+            //Ticket #6 studying MINMAX situation if Android should trunc the defeat branch
+            //Moves.add( new MoveTo(3,2,1));
+
+            //Ticket #5 studying MINMAX situation if Android should move into opposite direction
+            /*Moves.add( new MoveTo(3,2,0));
+            Moves.add( new MoveTo(4,3,0));
+            Moves.add( new MoveTo(3,3,0));
+            Moves.add( new MoveTo(4,4,0));
             Moves.add( new MoveTo(3,4,0));
+            Moves.add( new MoveTo(4,5,0));
+            Moves.add( new MoveTo(3,5,0));
+            Moves.add( new MoveTo(3,6,0));
+            Moves.add( new MoveTo(2,6,0));
+            Moves.add( new MoveTo(1,7,0));
+            Moves.add( new MoveTo(0,6,0));
+            Moves.add( new MoveTo(0,5,1));*/
+
+            //Ticket #4 studying MINMAX situation if Android win in this move (in the left corner)
+            /*Moves.add( new MoveTo(2,7,0));
+            Moves.add( new MoveTo(1,8,0));
+            Moves.add( new MoveTo(0,7,0));
+            Moves.add( new MoveTo(1,6,1));*/
+
+
+            //Ticket #3 studying MINMAX situation if Android win in this move (on the corner of the Player's gate)
+            //Moves.add( new MoveTo(2,8,1));
+
+            //Ticket #2 studying MINMAX situation
+            /*Moves.add( new MoveTo(2,0,0));
+            Moves.add( new MoveTo(3,0,0));
+            Moves.add( new MoveTo(3,1,0));
+            Moves.add( new MoveTo(2,0,0));
+            Moves.add( new MoveTo(2,1,0));
+            Moves.add( new MoveTo(2,2,0));
+            Moves.add( new MoveTo(3,1,0));
+            Moves.add( new MoveTo(2,1,0));
+            Moves.add( new MoveTo(3,0,0));
+            Moves.add( new MoveTo(3,1,0));
+            Moves.add( new MoveTo(4,1,0));
+            Moves.add( new MoveTo(3,2,0));
+            Moves.add( new MoveTo(3,1,0));
+            Moves.add( new MoveTo(4,1,0));
+            Moves.add( new MoveTo(5,0,0));*/
+
+
+            //Ticket #1 situation for Android move (very long loop)
+            /*Moves.add( new MoveTo(3,4,0));
             Moves.add( new MoveTo(3,3,1));
             Moves.add( new MoveTo(2,4,0));
             Moves.add( new MoveTo(1,3,1));
@@ -70,8 +117,8 @@ public class GameActivity extends AppCompatActivity {
             Moves.add( new MoveTo(2,0,1));
             Moves.add( new MoveTo(3,1,1));
             Moves.add( new MoveTo(4,2,0));
-            //user must make move to Moves.add( new MoveTo(4,1,1));
-            */
+            Moves.add( new MoveTo(4,1,1));*/
+
 
         }
 
@@ -79,23 +126,27 @@ public class GameActivity extends AppCompatActivity {
         if (GameType>0) {
             Log.d("pgorczyn", "123456: GameActivity.onCreate Game Type entered: " + GameType);
         }
+
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(this /* Activity context */);
+
+        Integer androidLevel=1;
+        if (sharedPreferences.contains("android_level")) {
+            androidLevel = Integer.parseInt(sharedPreferences.getString("android_level", "1"));
+            Log.d("pgorczynMove", "Preference android_level=" + androidLevel.toString());
+        }
+
+
+
         //else
         //    throw(new Exception("No Game Type defined")) ;
 
-        //Set initial Ball position in the Middle of the Field
-        //intBallX=getResources().getInteger(R.integer.intFieldHalfWidth);
-        //intBallY=getResources().getInteger(R.integer.intFieldHalfHeight);
-
-
         //Log.d("pgorczyn", "123456: GameActivity.onCreate entered");
-        //Log.d("pgorczyn", "123456: intBallX=" + intBallX);
-        //gameView = new GameView(this,intBallX,intBallY,Moves);
-        gameView = new GameView(this, Moves,GameType);
+        gameView = new GameView(this, Moves,GameType,androidLevel);
         setContentView(gameView);
 
         if(savedInstanceState != null && savedInstanceState.getBoolean("alertShown")){
             Winner=savedInstanceState.getInt("Winner");
-//            showWinner(Winner);
         }
     }
 
@@ -103,8 +154,6 @@ public class GameActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();  // Always call the superclass method first
-
-
         if(Winner!=-1){
             showWinner(Winner);
         }
@@ -114,14 +163,9 @@ public class GameActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState)
     {
-//---save whatever you need to persist—
+        //---save whatever you need to persist—
         Log.d("pgorczyn", "123456: GameActivity.onSaveInstanceState entered");
-        //intBallX=gameView.getBallX();
-        //intBallY=gameView.getBallY();
         //Moves=gameView.GetMoves();
-        //Log.d("pgorczyn", "123456: intBallX=" + intBallX);
-        //outState.putInt("intBallX", intBallX);
-        //outState.putInt("intBallY", intBallY);
         outState.putParcelableArrayList("Moves",Moves);
 
 
@@ -137,22 +181,6 @@ public class GameActivity extends AppCompatActivity {
 
         super.onSaveInstanceState(outState);
     }
-
-/*    @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState)
-    {
-        super.onRestoreInstanceState(savedInstanceState);
-//---retrieve the information persisted earlier---
-        //Log.d("pgorczyn", "123456: GameActivity.onRestoreInstanceState entered");
-        //intBallX = savedInstanceState.getInt("intBallX");
-        //intBallY = savedInstanceState.getInt("intBallY");
-        //Log.d("pgorczyn", "123456: intBallX=" + intBallX);
-        Moves = savedInstanceState.getParcelableArrayList("Moves");
-        if(savedInstanceState.getBoolean("alertShown")){
-            Winner=savedInstanceState.getInt("Winner");
-            showWinner(Winner);
-        }
-    }*/
 
     public void showWinner(int Winner) {
 

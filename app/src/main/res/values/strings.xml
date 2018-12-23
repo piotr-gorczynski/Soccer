@@ -2,4 +2,23 @@
     <string name="app_name">Soccer</string>
     <string name="menu_YouvsAndroid">You vs. Android</string>
     <string name="menu_Player1vsPlayer2">Player 1 vs. Player 2</string>
-</resources>
+    <string name="menu_Settings">Settings</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+
+    <string name="pref_header_level">Level</string>
+
+    <string name="pref_title_level">Android level</string>
+    <string-array name="pref_level_titles">
+        <item>Easy</item>
+        <item>Medium</item>
+        <item>Hard</item>
+    </string-array>
+    <string-array name="pref_level_values">
+        <item>1</item>
+        <item>10</item>
+        <item>30</item>
+    </string-array>
+
+ </resources>

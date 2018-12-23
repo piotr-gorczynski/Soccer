@@ -7,6 +7,23 @@
     android:background="@color/colorGreenDark"
     tools:context="piotr_gorczynski.soccer.MenuActivity">
 
+
+    <Button
+        android:id="@+id/PlayerVsAndroid"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="85dp"
+        android:layout_marginTop="0dp"
+        android:background="@color/colorGreen"
+        android:onClick="OpenGamePlayerVsAndroid"
+        android:text="@string/menu_YouvsAndroid"
+        android:textAllCaps="false"
+        android:textColor="@color/colorWhite"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <Button
         android:id="@+id/PlayerVsPlayer"
         android:layout_width="150dp"
@@ -22,18 +39,17 @@
         app:layout_constraintTop_toBottomOf="@+id/PlayerVsAndroid" />
 
     <Button
-        android:id="@+id/PlayerVsAndroid"
+        android:id="@+id/Settings"
         android:layout_width="150dp"
         android:layout_height="50dp"
-        android:layout_marginBottom="30dp"
+        android:layout_marginTop="10dp"
         android:background="@color/colorGreen"
-        android:onClick="OpenGamePlayerVsAndroid"
-        android:text="@string/menu_YouvsAndroid"
+        android:onClick="OpenSettings"
+        android:text="@string/menu_Settings"
         android:textAllCaps="false"
         android:textColor="@color/colorWhite"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/PlayerVsPlayer" />
 
 </android.support.constraint.ConstraintLayout>
