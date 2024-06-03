@@ -1,11 +1,10 @@
 package piotr_gorczynski.soccer;
 
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -13,7 +12,7 @@ import java.util.ArrayList;
 public class GameActivity extends AppCompatActivity {
 
 
-    private ArrayList<MoveTo> Moves=new ArrayList<MoveTo>();
+    private ArrayList<MoveTo> Moves= new ArrayList<>();
     AlertDialog dialogWinner;
     int Winner=-1;
     int GameType=-1;
@@ -26,7 +25,8 @@ public class GameActivity extends AppCompatActivity {
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
         //this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         if (savedInstanceState != null && savedInstanceState.getParcelableArrayList("Moves")!=null) {
-
+            //intBallX = savedInstanceState.getInt("intBallX");
+            //intBallY = savedInstanceState.getInt("intBallY");
             Moves = savedInstanceState.getParcelableArrayList("Moves");
         }
         else {
@@ -130,10 +130,10 @@ public class GameActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences =
                 PreferenceManager.getDefaultSharedPreferences(this /* Activity context */);
 
-        Integer androidLevel=1;
+        int androidLevel=1;
         if (sharedPreferences.contains("android_level")) {
             androidLevel = Integer.parseInt(sharedPreferences.getString("android_level", "1"));
-            Log.d("pgorczynMove", "Preference android_level=" + androidLevel.toString());
+            Log.d("pgorczynMove", "Preference android_level=" + androidLevel);
         }
 
 
@@ -147,6 +147,7 @@ public class GameActivity extends AppCompatActivity {
 
         if(savedInstanceState != null && savedInstanceState.getBoolean("alertShown")){
             Winner=savedInstanceState.getInt("Winner");
+//            showWinner(Winner);
         }
     }
 
@@ -163,7 +164,7 @@ public class GameActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState)
     {
-        //---save whatever you need to persist—
+//---save whatever you need to persist—
         Log.d("pgorczyn", "123456: GameActivity.onSaveInstanceState entered");
         //Moves=gameView.GetMoves();
         outState.putParcelableArrayList("Moves",Moves);
@@ -181,6 +182,19 @@ public class GameActivity extends AppCompatActivity {
 
         super.onSaveInstanceState(outState);
     }
+
+/*    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState)
+    {
+        super.onRestoreInstanceState(savedInstanceState);
+//---retrieve the information persisted earlier---
+        //Log.d("pgorczyn", "123456: GameActivity.onRestoreInstanceState entered");
+        Moves = savedInstanceState.getParcelableArrayList("Moves");
+        if(savedInstanceState.getBoolean("alertShown")){
+            Winner=savedInstanceState.getInt("Winner");
+            showWinner(Winner);
+        }
+    }*/
 
     public void showWinner(int Winner) {
 
@@ -208,13 +222,10 @@ public class GameActivity extends AppCompatActivity {
             builder.setMessage("The winner is "+sPlayer1);
 
         // add a button
-        builder.setPositiveButton("Close", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+        builder.setPositiveButton("Close", (dialog, which) -> {
 
-                // do something like...
-                finish();
-            }
+            // do something like...
+            finish();
         });
 
         // create and show the alert dialog
