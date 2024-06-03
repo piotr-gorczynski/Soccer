@@ -17,21 +17,20 @@ import java.util.ArrayList;
  */
 public class GameView extends View {
 
-    private MyHandler mHandler;
-    private Field field;
-    private GameActivity gameActivity;
-    private int intFieldWidth, intFieldHeight;
-    private ArrayList<MoveTo> realMoves;//= new ArrayList<MoveTo>();
-    ArrayList<MoveTo> possibleMovesForDrawing = new ArrayList<MoveTo>();
-    ArrayList<MoveTo> androidMoves = new ArrayList<MoveTo>();
-    ;
-    private int GameType;
-    private int gameBouncingLevel = 50;
-    private int gameTreeDepthLevel = 1;
-    private int androidLevel=1;
+    private final MyHandler mHandler;
+    private final Field field;
+    private final GameActivity gameActivity;
+    private final int intFieldWidth;
+    private final int intFieldHeight;
+    //private ArrayList<MoveTo> possibleMoves= new ArrayList<MoveTo>();
+    private final ArrayList<MoveTo> realMoves;//= new ArrayList<MoveTo>();
+    ArrayList<MoveTo> possibleMovesForDrawing = new ArrayList<>();
+    ArrayList<MoveTo> androidMoves = new ArrayList<>();
+    private final int GameType;
+    private final int androidLevel;
 
-    public class MyHandler extends Handler {
-        private GameView gameView;
+    public static class MyHandler extends Handler {
+        private final GameView gameView;
 
         public MyHandler(GameView gameView) {
             this.gameView = gameView;
@@ -45,7 +44,7 @@ public class GameView extends View {
         }
     }
 
-    public class NextMoveFound {
+    public static class NextMoveFound {
         public boolean found;
         public boolean defeat;
         public int bouncingLevel;
@@ -77,6 +76,16 @@ public class GameView extends View {
         //Moves.addAll(argMoves);
         realMoves = argMoves;
 
+
+
+        /*
+        possibleMoves.add(new MoveTo(2,2,0));
+        possibleMoves.add(new MoveTo(3,2,0));
+        possibleMoves.add(new MoveTo(4,2,0));
+        possibleMoves.add(new MoveTo(4,3,0));
+*/
+
+
         field = new Field(context, realMoves, possibleMovesForDrawing, GameType);  // ARGB
 
 
@@ -90,6 +99,15 @@ public class GameView extends View {
         if ((GameType == 2) && (realMoves.get(realMoves.size() - 1).P == 1))
             //Send message for Android to move
             mHandler.sendEmptyMessage(1);
+    }
+
+    @Override
+    public boolean performClick() {
+        // Call the super method
+        super.performClick();
+        // Handle the click action
+        // You can put your custom click logic here
+        return true;
     }
 
     // Called back to draw the view. Also called after invalidate().
@@ -175,6 +193,9 @@ public class GameView extends View {
         int xS,yS,xE,yE;
         xS=Moves.get(0).X;
         yS=Moves.get(0).Y;
+ /*       if((x1==3)&&(y1==3)&&(x2==3)&&(y2==4))
+            xS=Moves.get(0).X;*/
+
         for(int i=1;i<Moves.size();i++) {
             xE=Moves.get(i).X;
             yE=Moves.get(i).Y;
@@ -183,21 +204,28 @@ public class GameView extends View {
             xS=xE;
             yS=yE;
         }
+/*        xS=Moves.get(0).X;
+        yS=Moves.get(0).Y;
+        for(int i=1;i<Moves.size();i++) {
+            xE=Moves.get(i).X;
+            yE=Moves.get(i).Y;
+            if((x1==xE)&&(y1==yE)&&(x2==xS)&&(y2==yS))
+                return false;
+            xS=xE;
+            yS=yE;
+        }
+        */
         return true;
     }
 
     private boolean isBouncing(int x, int y,ArrayList<MoveTo> Moves) {
-        if(
-            ((x==0) && (y>=0) && (y<=intFieldHeight))
-            ||((x==intFieldWidth) && (y>=0) && (y<=intFieldHeight))
-            ||((y==0)&&(x<intFieldWidth/2)&&(x>0))
-            ||((y==0)&&(x>intFieldWidth/2)&&(x<intFieldWidth))
-            ||((y==intFieldHeight)&&(x<intFieldWidth/2)&&(x>0))
-            ||((y==intFieldHeight)&&(x>intFieldWidth/2)&&(x<intFieldWidth))
-            ||wasBallThere(x,y,Moves))
-            return true;
-        else
-            return false;
+        return ((x == 0) && (y >= 0) && (y <= intFieldHeight))
+                || ((x == intFieldWidth) && (y >= 0) && (y <= intFieldHeight))
+                || ((y == 0) && (x < intFieldWidth / 2) && (x > 0))
+                || ((y == 0) && (x > intFieldWidth / 2) && (x < intFieldWidth))
+                || ((y == intFieldHeight) && (x < intFieldWidth / 2) && (x > 0))
+                || ((y == intFieldHeight) && (x > intFieldWidth / 2) && (x < intFieldWidth))
+                || wasBallThere(x, y, Moves);
     }
 
     private boolean wasBallThere(int x, int y, ArrayList<MoveTo> Moves){
@@ -215,7 +243,7 @@ public class GameView extends View {
     }
 
     public boolean MakeMove(int x, int y,ArrayList<MoveTo> Moves){
-        ArrayList<MoveTo> possibleMoves= new ArrayList<MoveTo>();
+        ArrayList<MoveTo> possibleMoves= new ArrayList<>();
         boolean bouncing=isBouncing(x,y,Moves);
 
         if(bouncing)
@@ -225,7 +253,7 @@ public class GameView extends View {
 
         createPossibleMoves(possibleMoves, Moves);
 
-        if(possibleMoves.size()==0) {
+        if(possibleMoves.isEmpty()) {
             if(y==-1)
                 gameActivity.showWinner(0);
             else {
@@ -247,18 +275,18 @@ public class GameView extends View {
     public int checkWinner(int x, int y,ArrayList<MoveTo> Moves){
 
         boolean bouncing=isBouncing(x,y,Moves);
-        ArrayList<MoveTo> nextMoves= (ArrayList<MoveTo>) Moves.clone();
+        ArrayList<MoveTo> nextMoves = (ArrayList<MoveTo>) Moves.clone();
         if(bouncing)
             nextMoves.add(new MoveTo(x,y,Moves.get(Moves.size()-1).P));
         else
             nextMoves.add(new MoveTo(x,y,pOpponent(Moves.get(Moves.size()-1).P)));
 
-        ArrayList<MoveTo> possibleMoves= new ArrayList<MoveTo>();
+        ArrayList<MoveTo> possibleMoves= new ArrayList<>();
 
         createPossibleMoves(possibleMoves, nextMoves);
         //createPossibleMoves(possibleMoves, Moves);
 
-        if(possibleMoves.size()==0) {
+        if(possibleMoves.isEmpty()) {
             if(y==-1)
                 return 0;
             else {
@@ -285,17 +313,17 @@ public class GameView extends View {
 
     public boolean androidNextMove_v2(ArrayList<MoveTo> Moves,MoveTo masterMinMoveTo, int bouncingLevel, NextMoveFound masterNextMoveFound, int treeDepthLevel, long startThinkingTime) {
         String stringMove=Moves.get(Moves.size()-1).toString();
-        Log.d("pgorczynMove", "<"+stringMove+" bouncinglevel='"+Integer.toString(bouncingLevel)+"' treedepthlevel='"+Integer.toString(treeDepthLevel)+"'>");
+        Log.d("pgorczynMove", "<"+stringMove+" bouncinglevel='"+ bouncingLevel +"' treedepthlevel='"+ treeDepthLevel +"'>");
         logMoves(Moves);
         long difference;
         long startTime = System.currentTimeMillis();
-        NextMoveFound nextMoveFound = new NextMoveFound(masterNextMoveFound.found,0, false,false);
-        NextMoveFound tempNextMoveFound = new NextMoveFound(false,0,false,false);
+        NextMoveFound nextMoveFound = new NextMoveFound(masterNextMoveFound.found, 0, false, false);
+        NextMoveFound tempNextMoveFound = new NextMoveFound(false, 0, false, false);
         boolean localNextMoveFound=false;
         boolean tempFound;
-        ArrayList<MoveTo> possibleMoves= new ArrayList<MoveTo>();
+        ArrayList<MoveTo> possibleMoves= new ArrayList<>();
         createPossibleMoves(possibleMoves,Moves);
-        if(possibleMoves.size()>0) {
+        if(!possibleMoves.isEmpty()) {
             MoveTo minMoveTo = new MoveTo(masterMinMoveTo.X, masterMinMoveTo.Y, -1);
             MoveTo tempMinMoveTo = new MoveTo(0, 0, -1);
             ArrayList<MoveTo> bestMoves = (ArrayList<MoveTo>) Moves.clone();
@@ -309,7 +337,8 @@ public class GameView extends View {
                     break;
 
                 //if too many bouncing levels
-                if((nextMoveFound.found) && (nextMoveFound.bouncingLevel>gameBouncingLevel)) {
+                int gameBouncingLevel = 50;
+                if((nextMoveFound.found) && (nextMoveFound.bouncingLevel> gameBouncingLevel)) {
                     Log.d("pgorczynMove", "<gameBouncingLevelReached>" + gameBouncingLevel + "</gameBouncingLevelReached>");
                     break;
                 }
@@ -327,7 +356,7 @@ public class GameView extends View {
                     while (bestMoves.size() > movesSize)
                         bestMoves.remove(bestMoves.size() - 1);
                     bestMoves.add(new MoveTo(minMoveTo.X, minMoveTo.Y, Moves.get(Moves.size() - 1).P));
-                    Log.d("pgorczynMove", "<minimumfound1>" + minMoveTo.toString() + "</minimumfound1>");
+                    Log.d("pgorczynMove", "<minimumfound1>" + minMoveTo + "</minimumfound1>");
                     nextMoveFound.found = true;
                     nextMoveFound.bouncingLevel = bouncingLevel;
                     nextMoveFound.victory=true;
@@ -335,7 +364,8 @@ public class GameView extends View {
                     break;
                 }
 
-                if (!(isBouncing(i.X, i.Y, Moves) || treeDepthLevel<gameTreeDepthLevel))
+                int gameTreeDepthLevel = 1;
+                if (!(isBouncing(i.X, i.Y, Moves) || treeDepthLevel< gameTreeDepthLevel))
                 {
                     if (((MINMAX(i.X, i.Y, Moves.get(Moves.size()-1).P) < MINMAX(minMoveTo.X, minMoveTo.Y, Moves.get(Moves.size()-1).P)) ) || (!nextMoveFound.found )) {
                         minMoveTo.X = i.X;
@@ -343,7 +373,7 @@ public class GameView extends View {
                         while (bestMoves.size() > movesSize)
                             bestMoves.remove(bestMoves.size() - 1);
                         bestMoves.add(new MoveTo(minMoveTo.X, minMoveTo.Y, Moves.get(Moves.size() - 1).P));
-                        Log.d("pgorczynMove", "<minimumfound player='"+Integer.toString(Moves.get(Moves.size()-1).P) +"' MINMAX='" +Integer.toString(MINMAX(minMoveTo.X, minMoveTo.Y, Moves.get(Moves.size()-1).P)) +"'>" + minMoveTo.toString() + "</minimumfound>");
+                        Log.d("pgorczynMove", "<minimumfound player='"+ Moves.get(Moves.size() - 1).P +"' MINMAX='" + MINMAX(minMoveTo.X, minMoveTo.Y, Moves.get(Moves.size() - 1).P) +"'>" + minMoveTo + "</minimumfound>");
                         nextMoveFound.found = true;
                         nextMoveFound.bouncingLevel = bouncingLevel;
                         localNextMoveFound = true;
@@ -388,7 +418,7 @@ public class GameView extends View {
                                 bestMoves.remove(bestMoves.size() - 1);
                             for (int j = bestMoves.size(); j < tempMoves.size(); j++)
                                 bestMoves.add(new MoveTo(tempMoves.get(j).X, tempMoves.get(j).Y, tempMoves.get(j).P));
-                            Log.d("pgorczynMove", "<minimumfound player='"+Integer.toString(Moves.get(Moves.size()-1).P)+"' MINMAX='"+Integer.toString(MINMAX(minMoveTo.X, minMoveTo.Y, Moves.get(Moves.size()-1).P))+"'>" + minMoveTo.toString() + "</minimumfound>");
+                            Log.d("pgorczynMove", "<minimumfound player='"+ Moves.get(Moves.size() - 1).P +"' MINMAX='"+ MINMAX(minMoveTo.X, minMoveTo.Y, Moves.get(Moves.size() - 1).P) +"'>" + minMoveTo + "</minimumfound>");
                             localNextMoveFound=true;
                             nextMoveFound.found = true;
                             nextMoveFound.bouncingLevel = tempNextMoveFound.bouncingLevel;
@@ -420,28 +450,28 @@ public class GameView extends View {
             }
         }
         difference = System.currentTimeMillis() - startTime;
-        Log.d("pgorczynMove", "<secondselapsed>"+Long.toString(difference/1000)+"</secondselapsed>");
+        Log.d("pgorczynMove", "<secondselapsed>"+ difference / 1000 +"</secondselapsed>");
         Log.d("pgorczynMove", "</"+stringMove+">");
         return localNextMoveFound;
     }
 
-      public void androidMove() {
+
+    public void androidMove() {
 
         if (GameType != 2)
             return; //throw error to be added
         if (realMoves.get(realMoves.size() - 1).P != 1)
             return; //throw error to be added
-        ArrayList<MoveTo> possibleMoves = new ArrayList<MoveTo>();
+        ArrayList<MoveTo> possibleMoves = new ArrayList<>();
         createPossibleMoves(possibleMoves, realMoves);
-        if (possibleMoves.size() == 0)
-            return; //throw error to be added
+        if (possibleMoves.isEmpty()) return; //throw error to be added
         //called 1-st time
         if (androidMoves.size() <= realMoves.size()) {
             Log.d("pgorczynMove", "In androidMove 1-st time");
             androidMoves = (ArrayList<MoveTo>) realMoves.clone();
             //assigning first form the list as MIN
             MoveTo minMoveTo = new MoveTo(possibleMoves.get(0).X, possibleMoves.get(0).Y, 1);
-            NextMoveFound nextMoveFound = new NextMoveFound(false,0, false,false);
+            NextMoveFound nextMoveFound = new NextMoveFound(false, 0, false, false);
             Log.d("pgorczynMove", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
             androidNextMove_v2(androidMoves, minMoveTo,0,nextMoveFound, 0, System.currentTimeMillis());
             if ( nextMoveFound.found ) {
@@ -468,11 +498,11 @@ public class GameView extends View {
     }
 
     public void logMoves(ArrayList<MoveTo> Moves){
-        String str="<moves>";
+        StringBuilder str= new StringBuilder("<moves>");
         for(MoveTo i: Moves)
-            str=str+i.toString()+";";
-        str=str+"</moves>";
-        Log.d("pgorczynMove", str);
+            str.append(i.toString()).append(";");
+        str.append("</moves>");
+        Log.d("pgorczynMove", str.toString());
     }
 
     //MINMAX Evaluation function
@@ -494,8 +524,7 @@ public class GameView extends View {
             return true;
 
         int x,y;
-        boolean bouncing;
-        ArrayList<MoveTo> possibleMoves= new ArrayList<MoveTo>();
+        ArrayList<MoveTo> possibleMoves= new ArrayList<>();
         //if ((event.getAction()==MotionEvent.ACTION_DOWN) || (event.getAction()==MotionEvent.ACTION_MOVE) || (event.getAction()==MotionEvent.ACTION_UP) ) {
         if (event.getAction()==MotionEvent.ACTION_UP)  {
             if(getHeight()>getWidth()){
@@ -509,15 +538,16 @@ public class GameView extends View {
             if(isMoveValid(x,y,possibleMoves)) {
                 MakeMove(x,y,realMoves);
                 Log.d("pgorczyn", "123456: Before invalidate");
-                Log.d("pgorczyn", "MINMAX:" + Integer.toString(MINMAX(x, y, realMoves.get(realMoves.size() - 1).P)));
+                Log.d("pgorczyn", "MINMAX:" + MINMAX(x, y, realMoves.get(realMoves.size() - 1).P));
 
                 invalidate();
                 Log.d("pgorczyn", "123456: After invalidate");
                 //if plays with Android and it is Android move and there are possible MOves
-                if((GameType ==2) && (realMoves.get(realMoves.size()-1).P==1) && (possibleMoves.size()>0))
+                if((GameType ==2) && (realMoves.get(realMoves.size()-1).P==1) && (!possibleMoves.isEmpty()))
                     //Send message for Android to move
                     mHandler.sendEmptyMessage(1);
             }
+            performClick();
         }
         return true;  // Event handled
     }
