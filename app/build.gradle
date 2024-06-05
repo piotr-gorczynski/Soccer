@@ -23,7 +23,7 @@ android {
     testOptions {
         unitTests.returnDefaultValues = true
     }
-    namespace 'piotr_gorczynski.soccer'
+    namespace 'piotr_gorczynski.soccer2'
 }
 
 dependencies {
