@@ -1,4 +1,4 @@
-package piotr_gorczynski.soccer;
+package piotr_gorczynski.soccer2;
 
 import java.util.ArrayList;
 
