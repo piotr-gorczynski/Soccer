@@ -5,11 +5,11 @@ android {
     compileSdkVersion 34 // Set the compile SDK version
 
     defaultConfig {
-        applicationId "piotr_gorczynski.soccer"
+        applicationId "piotr_gorczynski.soccer2"
         minSdkVersion 15
         targetSdkVersion 34
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName '2.0'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
