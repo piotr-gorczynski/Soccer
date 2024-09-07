@@ -1,0 +1,39 @@
+Index: app/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>apply plugin: 'com.android.application'\r\n\r\nandroid {\r\n\r\n    compileSdkVersion 34 // Set the compile SDK version\r\n\r\n    defaultConfig {\r\n        applicationId \"piotr_gorczynski.soccer2\"\r\n        minSdkVersion 15\r\n        targetSdkVersion 34\r\n        versionCode 2\r\n        versionName '2.0'\r\n        testInstrumentationRunner \"android.support.test.runner.AndroidJUnitRunner\"\r\n        vectorDrawables.useSupportLibrary = true\r\n    }\r\n    buildTypes {\r\n        release {\r\n            minifyEnabled false\r\n            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'\r\n        }\r\n    }\r\n\r\n    testOptions {\r\n        unitTests.returnDefaultValues = true\r\n    }\r\n    namespace 'piotr_gorczynski.soccer2'\r\n}\r\n\r\ndependencies {\r\n    implementation fileTree(dir: 'libs', include: ['*.jar'])\r\n    implementation 'com.android.support:appcompat-v7:28.0.0'\r\n    implementation 'com.android.support.constraint:constraint-layout:2.0.4'\r\n    implementation 'com.android.support:support-v4:28.0.0'\r\n    implementation 'com.android.support:support-vector-drawable:28.0.0'\r\n    testImplementation 'junit:junit:4.12'\r\n    androidTestImplementation 'com.android.support.test:runner:1.0.2'\r\n    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/build.gradle b/app/build.gradle
+--- a/app/build.gradle	(revision 4a114ec82da65fb581999bcf172ceb9c3fa25b1d)
++++ b/app/build.gradle	(date 1725484625780)
+@@ -8,8 +8,8 @@
+         applicationId "piotr_gorczynski.soccer2"
+         minSdkVersion 15
+         targetSdkVersion 34
+-        versionCode 2
+-        versionName '2.0'
++        versionCode 3
++        versionName '3.0'
+         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+         vectorDrawables.useSupportLibrary = true
+     }
+Index: .idea/modules.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ProjectModuleManager\">\r\n    <modules>\r\n      <module fileurl=\"file://$PROJECT_DIR$/Soccer.iml\" filepath=\"$PROJECT_DIR$/Soccer.iml\" />\r\n      <module fileurl=\"file://$PROJECT_DIR$/.idea/modules/app/Soccer.app.iml\" filepath=\"$PROJECT_DIR$/.idea/modules/app/Soccer.app.iml\" />\r\n      <module fileurl=\"file://$PROJECT_DIR$/.idea/modules/app/Soccer.app.androidTest.iml\" filepath=\"$PROJECT_DIR$/.idea/modules/app/Soccer.app.androidTest.iml\" />\r\n      <module fileurl=\"file://$PROJECT_DIR$/.idea/modules/app/Soccer.app.main.iml\" filepath=\"$PROJECT_DIR$/.idea/modules/app/Soccer.app.main.iml\" />\r\n      <module fileurl=\"file://$PROJECT_DIR$/.idea/modules/app/Soccer.app.unitTest.iml\" filepath=\"$PROJECT_DIR$/.idea/modules/app/Soccer.app.unitTest.iml\" />\r\n    </modules>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/modules.xml b/.idea/modules.xml
+--- a/.idea/modules.xml	(revision 4a114ec82da65fb581999bcf172ceb9c3fa25b1d)
++++ b/.idea/modules.xml	(date 1725481690547)
+@@ -4,7 +4,6 @@
+     <modules>
+       <module fileurl="file://$PROJECT_DIR$/Soccer.iml" filepath="$PROJECT_DIR$/Soccer.iml" />
+       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Soccer.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Soccer.app.iml" />
+-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Soccer.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Soccer.app.androidTest.iml" />
+       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Soccer.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Soccer.app.main.iml" />
+       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Soccer.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Soccer.app.unitTest.iml" />
+     </modules>
