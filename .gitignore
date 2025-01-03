@@ -1,9 +1,27 @@
+# Android/Gradle related files
+.gradle/
+build/
+captures/
 *.iml
-.gradle
 /local.properties
-/.idea/workspace.xml
-/.idea/libraries
 .DS_Store
-/build
-/captures
-.externalNativeBuild
+
+# Android Studio related files
+.idea/
+*.ipr
+*.iws
+
+# Release artifacts
+*.apk
+*.aab
+
+# Keystore files
+*.keystore
+*.jks
+
+# Test results
+**/output.json
+**/test-results/
+
+# Misc
+Thumbs.db
