@@ -21,3 +21,6 @@ availableSecrets:
   secretManager:
     - versionName: "projects/spry-firefly-446313-u6/secrets/sa-key/versions/latest"
       env: "SA_KEY_JSON"
+
+options:
+  logging: CLOUD_LOGGING_ONLY
