@@ -15,3 +15,6 @@ steps:
             gcloud projects describe spry-firefly-446313-u6
             exit 1
           }
+
+options:
+  logging: CLOUD_LOGGING_ONLY
