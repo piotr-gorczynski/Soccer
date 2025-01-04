@@ -1,11 +1,10 @@
 steps:
-  # Authenticate with gcloud (using default authentication provided by Cloud Build)
+  # Authenticate with gcloud (default authentication)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'gcloud'
     args:
       - 'auth'
       - 'activate-service-account'
-      - '--key-file=/workspace/sa-key.json'
 
   # Create the "Soccer" folder
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
