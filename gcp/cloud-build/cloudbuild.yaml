@@ -17,5 +17,5 @@ steps:
           }
 
 options:
-  logging: LEGACY
+  logging: CLOUD_LOGGING_ONLY
 
