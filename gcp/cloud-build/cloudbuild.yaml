@@ -9,7 +9,7 @@ steps:
         echo "Attempting to create the Soccer folder under organization 799174817843..."
         gcloud resource-manager folders create \
           --display-name="Soccer" \
-          --parent=799174817843 || {
+          --organization=799174817843 || {
             echo "Error: Failed to create folder"
             echo "Checking organization information for debugging:"
             gcloud organizations describe 799174817843
