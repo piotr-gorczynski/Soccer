@@ -1,21 +1,20 @@
 steps:
-  # Create the "Soccer" folder with error logging
+  # Create the "Soccer" folder under the organization
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e  # Exit immediately if a command fails
-        echo "Attempting to create the Soccer folder..."
+        echo "Attempting to create the Soccer folder under organization 799174817843..."
         gcloud resource-manager folders create \
           --display-name="Soccer" \
-          --parent="projects/spry-firefly-446313-u6" || {
+          --parent="organizations/799174817843" || {
             echo "Error: Failed to create folder"
-            echo "Checking project information for debugging:"
-            gcloud projects describe spry-firefly-446313-u6
+            echo "Checking organization information for debugging:"
+            gcloud organizations describe 799174817843
             exit 1
           }
 
 options:
   logging: CLOUD_LOGGING_ONLY
-
