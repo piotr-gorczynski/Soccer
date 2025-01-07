@@ -1,20 +1,34 @@
 steps:
+  # Step 1: Retrieve the Folder ID for "Soccer" and write it to a file in /workspace
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         echo "Retrieving the Folder ID for 'Soccer'..."
-        FOLDER_ID=$(gcloud resource-manager folders list --filter="displayName=Soccer" --format="value(ID)")
-        if [ -z "$FOLDER_ID" ]; then
-          echo "Error: 'Soccer' folder not found. Exiting."
+        gcloud resource-manager folders list \
+          --filter="displayName=Soccer" \
+          --format="value(ID)" > /workspace/folder_id.txt
+        if [ ! -s /workspace/folder_id.txt ]; then
+          echo "Error: Folder 'Soccer' not found. Exiting."
           exit 1
         else
-          echo "Folder ID for 'Soccer': $FOLDER_ID"
-          echo "Deleting the 'Soccer' folder..."
-          gcloud resource-manager folders delete "$FOLDER_ID" --quiet
-          echo "Successfully deleted the 'Soccer' folder."
+          echo "Folder ID for 'Soccer' written to /workspace/folder_id.txt."
         fi
+
+  # Step 2: Read the Folder ID from /workspace and delete the folder
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "Reading Folder ID from /workspace/folder_id.txt..."
+        FOLDER_ID=$(cat /workspace/folder_id.txt)
+        echo "Deleting the 'Soccer' folder (ID: $FOLDER_ID)..."
+        gcloud resource-manager folders delete "$FOLDER_ID" --quiet
+        echo "Successfully deleted the 'Soccer' folder."
 
 options:
   logging: CLOUD_LOGGING_ONLY
+
+substitutions: {}
