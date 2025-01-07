@@ -1,0 +1,28 @@
+steps:
+  # Step 1: Retrieve the Folder ID of the "Soccer" folder
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "Retrieving the Folder ID for 'Soccer'..."
+        FOLDER_ID=$(gcloud resource-manager folders list --filter="displayName=Soccer" --format="value(ID)")
+        if [ -z "$FOLDER_ID" ]; then
+          echo "Error: 'Soccer' folder not found. Exiting."
+          exit 1
+        else
+          echo "Folder ID for 'Soccer': $FOLDER_ID"
+        fi
+
+  # Step 2: Delete the "Soccer" folder itself
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        echo "Deleting the 'Soccer' folder (ID: $FOLDER_ID)..."
+        gcloud resource-manager folders delete "$FOLDER_ID" --quiet
+        echo "Successfully deleted the 'Soccer' folder."
+
+options:
+  logging: CLOUD_LOGGING_ONLY
