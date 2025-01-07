@@ -15,3 +15,6 @@ steps:
           gcloud resource-manager folders delete "$FOLDER_ID" --quiet
           echo "Successfully deleted the 'Soccer' folder."
         fi
+
+options:
+  logging: CLOUD_LOGGING_ONLY
