@@ -1,5 +1,5 @@
 steps:
-  # Step 1: Retrieve the Folder ID for "Soccer" and write it to a file in /workspace
+  # Step 1: Retrieve the Folder ID for "Soccer" within the specified organization
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'bash'
     args:
@@ -7,6 +7,7 @@ steps:
       - |
         echo "Retrieving the Folder ID for 'Soccer'..."
         gcloud resource-manager folders list \
+          --organization="799174817843" \
           --filter="displayName=Soccer" \
           --format="value(ID)" > /workspace/folder_id.txt
         if [ ! -s /workspace/folder_id.txt ]; then
@@ -29,4 +30,3 @@ steps:
 options:
   logging: CLOUD_LOGGING_ONLY
 
-substitutions: {}
