@@ -16,16 +16,14 @@ steps:
           echo "Folder ID for 'Soccer' written to /workspace/folder_id.txt."
         fi
 
-  # Step 2: Read the Folder ID from /workspace and delete the folder
+  # Step 2: Delete the "Soccer" folder using the Folder ID from the file
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        echo "Reading Folder ID from /workspace/folder_id.txt..."
-        FOLDER_ID=$(cat /workspace/folder_id.txt)
-        echo "Deleting the 'Soccer' folder (ID: $FOLDER_ID)..."
-        gcloud resource-manager folders delete "$FOLDER_ID" --quiet
+        echo "Deleting the 'Soccer' folder..."
+        gcloud resource-manager folders delete $(cat /workspace/folder_id.txt) --quiet
         echo "Successfully deleted the 'Soccer' folder."
 
 options:
