@@ -1,18 +1,22 @@
+substitutions:
+  _ORG_ID: '799174817843'
+  _FOLDER_NAME: 'Soccer'
+
 steps:
-  # Create the "Soccer" folder under the organization
+  # Create a folder under the specified organization
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e  # Exit immediately if a command fails
-        echo "Attempting to create the Soccer folder under organization 799174817843..."
+        echo "Attempting to create the ${_FOLDER_NAME} folder under organization ${_ORG_ID}..."
         gcloud resource-manager folders create \
-          --display-name="Soccer" \
-          --organization=799174817843 || {
+          --display-name="${_FOLDER_NAME}" \
+          --organization=${_ORG_ID} || {
             echo "Error: Failed to create folder"
             echo "Checking organization information for debugging:"
-            gcloud organizations describe 799174817843
+            gcloud organizations describe ${_ORG_ID}
             exit 1
           }
 
