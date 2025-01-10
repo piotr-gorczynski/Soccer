@@ -1,24 +1,62 @@
 substitutions:
-  _ORG_ID: '799174817843'
-  _FOLDER_NAME: 'Soccer'
+  _ORG_ID: '799174817843'    # Organization ID
+  _FOLDER_NAME: 'Soccer'     # Parent folder name
+  _ENVIRONMENT: 'dev'        # Environment delivered from the trigger
 
 steps:
-  # Create a folder under the specified organization
+  # Step 1: Retrieve the folder ID for the specified folder name and save it to a file
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e  # Exit immediately if a command fails
-        echo "Attempting to create the ${_FOLDER_NAME} folder under organization ${_ORG_ID}..."
-        gcloud resource-manager folders create \
-          --display-name="${_FOLDER_NAME}" \
-          --organization=${_ORG_ID} || {
-            echo "Error: Failed to create folder"
-            echo "Checking organization information for debugging:"
-            gcloud organizations describe ${_ORG_ID}
+        echo "Retrieving folder ID for ${_FOLDER_NAME}..."
+        gcloud resource-manager folders list \
+          --filter="displayName=${_FOLDER_NAME}" \
+          --format="value(name)" > /workspace/folder_id.txt
+        echo "Folder ID stored in /workspace/folder_id.txt."
+
+  # Step 2: Construct the project name using the _ENVIRONMENT variable and save it to a file
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e  # Exit immediately if a command fails
+        echo "Constructing project name using _ENVIRONMENT: ${_ENVIRONMENT}..."
+        echo "soccer-${_ENVIRONMENT}" > /workspace/project_name.txt
+        echo "Project name stored in /workspace/project_name.txt."
+
+  # Step 3: Read folder ID and project name from files and create the project
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e  # Exit immediately if a command fails
+        if [ ! -f /workspace/folder_id.txt ]; then
+          echo "Error: Folder ID file not found."
+          exit 1
+        fi
+
+        if [ ! -f /workspace/project_name.txt ]; then
+          echo "Error: Project name file not found."
+          exit 1
+        fi
+
+        echo "Reading folder ID and project name from files..."
+        echo "Folder ID: $(cat /workspace/folder_id.txt)"
+        echo "Project Name: $(cat /workspace/project_name.txt)"
+        echo "Attempting to create the project..."
+
+        gcloud projects create "$(cat /workspace/project_name.txt)" \
+          --folder="$(cat /workspace/folder_id.txt)" || {
+            echo "Error: Failed to create project"
             exit 1
           }
+
+        echo "Project successfully created."
 
 options:
   logging: CLOUD_LOGGING_ONLY
