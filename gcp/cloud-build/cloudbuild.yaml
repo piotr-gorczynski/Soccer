@@ -15,7 +15,7 @@ steps:
         gcloud resource-manager folders list \
           --filter="displayName=${_FOLDER_NAME}" \
           --organization=${_ORG_ID} \
-          --format="value(name)" > /workspace/folder_id.txt
+          --format="value(ID)" > /workspace/folder_id.txt
         echo "Folder ID stored in /workspace/folder_id.txt."
 
   # Step 2: Construct the project name using the _ENVIRONMENT variable and save it to a file
