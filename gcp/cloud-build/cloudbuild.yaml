@@ -47,4 +47,17 @@ steps:
         fi
 
         echo "Reading folder ID and project name from files..."
-        echo "Folder ID: $(cat /workspace/folde
+        echo "Folder ID: $(cat /workspace/folder_id.txt)"
+        echo "Project Name: $(cat /workspace/project_name.txt)"
+        echo "Attempting to create the project..."
+
+        gcloud projects create "$(cat /workspace/project_name.txt)" \
+          --folder="$(cat /workspace/folder_id.txt)" || {
+            echo "Error: Failed to create project"
+            exit 1
+          }
+
+        echo "Project successfully created."
+
+options:
+  logging: CLOUD_LOGGING_ONLY
