@@ -11,9 +11,10 @@ steps:
       - '-c'
       - |
         set -e  # Exit immediately if a command fails
-        echo "Retrieving folder ID for ${_FOLDER_NAME}..."
+        echo "Retrieving folder ID for ${_FOLDER_NAME} under organization ${_ORG_ID}..."
         gcloud resource-manager folders list \
           --filter="displayName=${_FOLDER_NAME}" \
+          --organization=${_ORG_ID} \
           --format="value(name)" > /workspace/folder_id.txt
         echo "Folder ID stored in /workspace/folder_id.txt."
 
@@ -46,17 +47,4 @@ steps:
         fi
 
         echo "Reading folder ID and project name from files..."
-        echo "Folder ID: $(cat /workspace/folder_id.txt)"
-        echo "Project Name: $(cat /workspace/project_name.txt)"
-        echo "Attempting to create the project..."
-
-        gcloud projects create "$(cat /workspace/project_name.txt)" \
-          --folder="$(cat /workspace/folder_id.txt)" || {
-            echo "Error: Failed to create project"
-            exit 1
-          }
-
-        echo "Project successfully created."
-
-options:
-  logging: CLOUD_LOGGING_ONLY
+        echo "Folder ID: $(cat /workspace/folde
