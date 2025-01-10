@@ -13,10 +13,16 @@ steps:
         set -e  # Exit immediately if a command fails
         echo "Retrieving folder ID for ${_FOLDER_NAME} under organization ${_ORG_ID}..."
         gcloud resource-manager folders list \
+          --organization="${_ORG_ID}" \
           --filter="displayName=${_FOLDER_NAME}" \
-          --organization=${_ORG_ID} \
           --format="value(ID)" > /workspace/folder_id.txt
-        echo "Folder ID stored in /workspace/folder_id.txt."
+
+        if [ ! -s /workspace/folder_id.txt ]; then
+          echo "Error: No folder ID found for ${_FOLDER_NAME} under organization ${_ORG_ID}."
+          exit 1
+        fi
+
+        echo "Folder ID retrieved and stored: $(cat /workspace/folder_id.txt)"
 
   # Step 2: Construct the project name using the _ENVIRONMENT variable and save it to a file
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
@@ -27,7 +33,7 @@ steps:
         set -e  # Exit immediately if a command fails
         echo "Constructing project name using _ENVIRONMENT: ${_ENVIRONMENT}..."
         echo "soccer-${_ENVIRONMENT}" > /workspace/project_name.txt
-        echo "Project name stored in /workspace/project_name.txt."
+        echo "Project name stored: $(cat /workspace/project_name.txt)"
 
   # Step 3: Read folder ID and project name from files and create the project
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
@@ -46,7 +52,7 @@ steps:
           exit 1
         fi
 
-        echo "Reading folder ID and project name from files..."
+        echo "Reading folder ID and project name..."
         echo "Folder ID: $(cat /workspace/folder_id.txt)"
         echo "Project Name: $(cat /workspace/project_name.txt)"
         echo "Attempting to create the project..."
