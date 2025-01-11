@@ -30,6 +30,9 @@ steps:
       - '-c'
       - |
         set -e
+        echo "Installing jq for JSON processing..."
+        apt-get update && apt-get install -y jq
+
         echo "Searching for projects starting with '${_FOLDER_NAME}-${_ENVIRONMENT}-' under folder ID $(cat /workspace/folder_id.txt)..."
         gcloud projects list \
           --filter="parent.id=$(cat /workspace/folder_id.txt) AND name~^${_FOLDER_NAME}-${_ENVIRONMENT}-" \
