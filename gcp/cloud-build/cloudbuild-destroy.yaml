@@ -32,7 +32,7 @@ steps:
         set -e
         echo "Searching for projects starting with '${_FOLDER_NAME}-${_ENVIRONMENT}-' under folder ID $(cat /workspace/folder_id.txt)..."
         gcloud projects list \
-          --filter="parent.id=$(cat /workspace/folder_id.txt) AND name~^${_FOLDER_NAME}-${_ENVIRONMENT}- AND lifecycleState=ACTIVE" \
+          --filter="parent.id=$(cat /workspace/folder_id.txt) AND name~^${_FOLDER_NAME}-${_ENVIRONMENT}-" \
           --format="value(projectId)" > /workspace/project_to_delete.txt
         if [ -s /workspace/project_to_delete.txt ]; then
           echo "Deleting project: $(cat /workspace/project_to_delete.txt)"
@@ -44,12 +44,14 @@ steps:
 
         echo "Checking for remaining ACTIVE projects under folder ID $(cat /workspace/folder_id.txt)..."
         gcloud projects list \
-          --filter="parent.id=$(cat /workspace/folder_id.txt) AND lifecycleState=ACTIVE" \
-          --format="value(projectId)" > /workspace/remaining_projects.txt
-        if [ -s /workspace/remaining_projects.txt ]; then
+          --filter="parent.id=$(cat /workspace/folder_id.txt)" \
+          --format="json(projectId, lifecycleState)" > /workspace/remaining_projects.json
+        jq -r '.[] | select(.lifecycleState=="ACTIVE") | .projectId' /workspace/remaining_projects.json > /workspace/remaining_active_projects.txt
+
+        if [ -s /workspace/remaining_active_projects.txt ]; then
           echo "Remaining ACTIVE projects found. Skipping folder deletion."
           echo "Contents of remaining projects:"
-          cat /workspace/remaining_projects.txt
+          cat /workspace/remaining_active_projects.txt
         else
           echo "No remaining ACTIVE projects found. Deleting folder ID $(cat /workspace/folder_id.txt)..."
           gcloud resource-manager folders delete $(cat /workspace/folder_id.txt) --quiet
