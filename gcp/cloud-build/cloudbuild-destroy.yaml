@@ -23,7 +23,7 @@ steps:
           echo "Folder ID retrieved: $(cat /workspace/folder_id.txt)"
         fi
 
-  # Step 2: Delete the project with the name starting with "${_FOLDER_NAME}-${_ENVIRONMENT}-"
+  # Step 2: Delete the project with the name starting with "${_FOLDER_NAME}-${_ENVIRONMENT}-" and conditionally delete the folder
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -34,42 +34,25 @@ steps:
         gcloud projects list \
           --filter="parent.id=$(cat /workspace/folder_id.txt) AND name~^${_FOLDER_NAME}-${_ENVIRONMENT}-" \
           --format="value(projectId)" > /workspace/project_to_delete.txt
-        if [ ! -s /workspace/project_to_delete.txt ]; then
-          echo "No matching projects found. Skipping project deletion."
-        else
+        if [ -s /workspace/project_to_delete.txt ]; then
           echo "Deleting project: $(cat /workspace/project_to_delete.txt)"
           gcloud projects delete $(cat /workspace/project_to_delete.txt) --quiet
           echo "Project $(cat /workspace/project_to_delete.txt) successfully deleted."
+        else
+          echo "No matching projects found. Skipping project deletion."
         fi
 
-  # Step 3: Check for remaining projects under the folder and skip further steps if found
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e
         echo "Checking for remaining projects under folder ID $(cat /workspace/folder_id.txt)..."
         gcloud projects list \
           --filter="parent.id=$(cat /workspace/folder_id.txt)" \
           --format="value(projectId)" > /workspace/remaining_projects.txt
         if [ -s /workspace/remaining_projects.txt ]; then
-          echo "Remaining projects found. Build will not proceed further."
-          exit 1
+          echo "Remaining projects found. Skipping folder deletion."
         else
-          echo "No remaining projects found under folder ID $(cat /workspace/folder_id.txt)."
+          echo "No remaining projects found. Deleting folder ID $(cat /workspace/folder_id.txt)..."
+          gcloud resource-manager folders delete $(cat /workspace/folder_id.txt) --quiet
+          echo "Folder $(cat /workspace/folder_id.txt) successfully deleted."
         fi
-
-  # Step 4: Delete the folder if no remaining projects
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e
-        echo "Deleting folder ID $(cat /workspace/folder_id.txt)..."
-        gcloud resource-manager folders delete $(cat /workspace/folder_id.txt) --quiet
-        echo "Folder $(cat /workspace/folder_id.txt) successfully deleted."
 
 options:
   logging: CLOUD_LOGGING_ONLY
