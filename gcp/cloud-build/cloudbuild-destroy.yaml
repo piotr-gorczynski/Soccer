@@ -1,32 +1,75 @@
+substitutions:
+  _ORG_ID: '799174817843'    # Organization ID
+  _FOLDER_NAME: 'soccer'     # Parent folder name
+  _ENVIRONMENT: 'dev'        # Environment delivered from the trigger
+
 steps:
-  # Step 1: Retrieve the Folder ID for "Soccer" within the specified organization
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  # Step 1: Retrieve the Folder ID for the specified folder within the organization
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        echo "Retrieving the Folder ID for 'Soccer'..."
+        set -e
+        echo "Retrieving the Folder ID for '${_FOLDER_NAME}' under organization ${_ORG_ID}..."
         gcloud resource-manager folders list \
-          --organization="799174817843" \
-          --filter="displayName=Soccer" \
-          --format="value(ID)" > /workspace/folder_id.txt
+          --organization="${_ORG_ID}" \
+          --filter="displayName=${_FOLDER_NAME}" \
+          --format="value(name.basename())" > /workspace/folder_id.txt
         if [ ! -s /workspace/folder_id.txt ]; then
-          echo "Error: Folder 'Soccer' not found. Exiting."
+          echo "Error: Folder '${_FOLDER_NAME}' not found. Exiting."
           exit 1
         else
-          echo "Folder ID for 'Soccer' written to /workspace/folder_id.txt."
+          echo "Folder ID retrieved: $(cat /workspace/folder_id.txt)"
         fi
 
-  # Step 2: Delete the "Soccer" folder using the Folder ID from the file
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  # Step 2: Delete the project with the name starting with "${_FOLDER_NAME}-${_ENVIRONMENT}-"
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        echo "Deleting the 'Soccer' folder..."
+        set -e
+        echo "Searching for projects starting with '${_FOLDER_NAME}-${_ENVIRONMENT}-' under folder ID $(cat /workspace/folder_id.txt)..."
+        gcloud projects list \
+          --filter="parent.id=$(cat /workspace/folder_id.txt) AND name~^${_FOLDER_NAME}-${_ENVIRONMENT}-" \
+          --format="value(projectId)" > /workspace/project_to_delete.txt
+        if [ ! -s /workspace/project_to_delete.txt ]; then
+          echo "No matching projects found. Skipping project deletion."
+        else
+          echo "Deleting project: $(cat /workspace/project_to_delete.txt)"
+          gcloud projects delete $(cat /workspace/project_to_delete.txt) --quiet
+          echo "Project $(cat /workspace/project_to_delete.txt) successfully deleted."
+        fi
+
+  # Step 3: Check for remaining projects under the folder
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "Checking for remaining projects under folder ID $(cat /workspace/folder_id.txt)..."
+        gcloud projects list \
+          --filter="parent.id=$(cat /workspace/folder_id.txt)" \
+          --format="value(projectId)" > /workspace/remaining_projects.txt
+        if [ -s /workspace/remaining_projects.txt ]; then
+          echo "Remaining projects found. Skipping folder deletion."
+          exit 0
+        else
+          echo "No remaining projects found under folder ID $(cat /workspace/folder_id.txt)."
+        fi
+
+  # Step 4: Delete the folder if no remaining projects
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "Deleting folder ID $(cat /workspace/folder_id.txt)..."
         gcloud resource-manager folders delete $(cat /workspace/folder_id.txt) --quiet
-        echo "Successfully deleted the 'Soccer' folder."
+        echo "Folder $(cat /workspace/folder_id.txt) successfully deleted."
 
 options:
   logging: CLOUD_LOGGING_ONLY
-
