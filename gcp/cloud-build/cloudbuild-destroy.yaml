@@ -42,7 +42,7 @@ steps:
           echo "Project $(cat /workspace/project_to_delete.txt) successfully deleted."
         fi
 
-  # Step 3: Check for remaining projects under the folder
+  # Step 3: Check for remaining projects under the folder and skip further steps if found
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -54,8 +54,8 @@ steps:
           --filter="parent.id=$(cat /workspace/folder_id.txt)" \
           --format="value(projectId)" > /workspace/remaining_projects.txt
         if [ -s /workspace/remaining_projects.txt ]; then
-          echo "Remaining projects found. Skipping folder deletion."
-          exit 0
+          echo "Remaining projects found. Build will not proceed further."
+          exit 1
         else
           echo "No remaining projects found under folder ID $(cat /workspace/folder_id.txt)."
         fi
