@@ -70,33 +70,33 @@ steps:
 
         echo "Project successfully created."
 
-# Step 4: Deploy the service-check Cloud Function
-- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-  entrypoint: 'bash'
-  args:
-    - '-c'
-    - |
-      set -e  # Exit immediately if a command fails
-      if [ ! -f /workspace/project_name.txt ]; then
-        echo "Error: Project name file not found."
-        exit 1
-      fi
+  # Step 4: Deploy the service-check Cloud Function
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e  # Exit immediately if a command fails
+        if [ ! -f /workspace/project_name.txt ]; then
+          echo "Error: Project name file not found."
+          exit 1
+        fi
 
-      echo "Deploying Cloud Function to project: $(cat /workspace/project_name.txt)..."
+        echo "Deploying Cloud Function to project: $(cat /workspace/project_name.txt)..."
 
-      # Set the active project
-      gcloud config set project "$(cat /workspace/project_name.txt)"
+        # Set the active project
+        gcloud config set project "$(cat /workspace/project_name.txt)"
 
-      # Deploy the Cloud Function
-      gcloud functions deploy service-check \
-          --entry-point=app \
-          --runtime=python39 \
-          --trigger-http \
-          --allow-unauthenticated \
-          --region=us-central1 \
-          --source=gcp/cloud-functions/service-check
+        # Deploy the Cloud Function
+        gcloud functions deploy service-check \
+            --entry-point=app \
+            --runtime=python39 \
+            --trigger-http \
+            --allow-unauthenticated \
+            --region=us-central1 \
+            --source=gcp/cloud-functions/service-check
 
-      echo "Cloud Function 'service-check' deployed successfully."
+        echo "Cloud Function 'service-check' deployed successfully."
 
 options:
   logging: CLOUD_LOGGING_ONLY
