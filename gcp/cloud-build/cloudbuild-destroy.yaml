@@ -45,14 +45,16 @@ steps:
           echo "No matching projects found. Skipping project deletion."
         fi
 
-        echo "Checking for remaining ACTIVE projects under folder ID $(cat /workspace/folder_id.txt)..."
+        echo "Waiting for project deletion to complete..."
+        sleep 30
+        echo "Checking for remaining ACTIVE or DELETE_REQUESTED projects under folder ID $(cat /workspace/folder_id.txt)..."
         gcloud projects list \
           --filter="parent.id=$(cat /workspace/folder_id.txt)" \
           --format="json(projectId, lifecycleState)" > /workspace/remaining_projects.json
-        jq -r '.[] | select(.lifecycleState=="ACTIVE") | .projectId' /workspace/remaining_projects.json > /workspace/remaining_active_projects.txt
+        jq -r '.[] | select(.lifecycleState=="ACTIVE" and .lifecycleState!="DELETE_REQUESTED") | .projectId' /workspace/remaining_projects.json > /workspace/remaining_active_projects.txt
 
         if [ -s /workspace/remaining_active_projects.txt ]; then
-          echo "Remaining ACTIVE projects found. Skipping folder deletion."
+          echo "Remaining ACTIVE or DELETE_REQUESTED projects found. Skipping folder deletion."
           echo "Contents of remaining projects:"
           cat /workspace/remaining_active_projects.txt
         else
