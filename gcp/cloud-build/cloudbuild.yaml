@@ -70,7 +70,29 @@ steps:
 
         echo "Project successfully created."
 
-  # Step 4: Deploy the service-check Cloud Function
+  # Step 4: Enable Cloud Functions API
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e  # Exit immediately if a command fails
+        if [ ! -f /workspace/project_name.txt ]; then
+          echo "Error: Project name file not found."
+          exit 1
+        fi
+
+        echo "Enabling Cloud Functions API for project: $(cat /workspace/project_name.txt)..."
+
+        # Set the active project
+        gcloud config set project "$(cat /workspace/project_name.txt)"
+
+        # Enable the Cloud Functions API
+        gcloud services enable cloudfunctions.googleapis.com
+
+        echo "Cloud Functions API enabled successfully."
+
+  # Step 5: Deploy the service-check Cloud Function
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
