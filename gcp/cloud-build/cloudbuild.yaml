@@ -24,23 +24,32 @@ steps:
             --organization="${_ORG_ID}" \
             --format="value(name.basename())" > /workspace/folder_id.txt
 
-          echo "Folder created. ID stored in /workspace/folder_id.txt: $(cat /workspace/folder_id.txt)"
+          echo "Folder created. ID stored in /workspace/folder_id.txt"
         else
-          echo "Folder exists. ID stored in /workspace/folder_id.txt: $(cat /workspace/folder_id.txt)"
+          echo "Folder exists. ID stored in /workspace/folder_id.txt"
         fi
 
-  # Step 2: Construct a unique project name using _FOLDER_NAME and _ENVIRONMENT, save it to a file
+  # Step 2: Check if project exists, retrieve its name or create a new one
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e  # Exit immediately if a command fails
-        echo "Constructing a unique project name..."
-        echo "${_FOLDER_NAME}-${_ENVIRONMENT}-$(date +%s)" > /workspace/project_name.txt
-        echo "Project name stored: $(cat /workspace/project_name.txt)"
+        echo "Checking if project starting with ${_FOLDER_NAME}-${_ENVIRONMENT} exists..."
+        gcloud projects list \
+          --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
+          --format="value(projectId)" | head -n 1 > /workspace/project_name.txt
 
-  # Step 3: Read folder ID and project name from files and create the project
+        if [ -s /workspace/project_name.txt ]; then
+          echo "Project exists: $(cat /workspace/project_name.txt)"
+        else
+          echo "Project does not exist. Creating a new project..."
+          echo "${_FOLDER_NAME}-${_ENVIRONMENT}-$(date +%s)" > /workspace/project_name.txt
+          echo "New project name: $(cat /workspace/project_name.txt)"
+        fi
+
+  # Step 3: Read folder ID and project name directly from files and create the project if new
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -57,68 +66,14 @@ steps:
           exit 1
         fi
 
-        echo "Reading folder ID and project name..."
-        echo "Folder ID: $(cat /workspace/folder_id.txt)"
-        echo "Project Name: $(cat /workspace/project_name.txt)"
-        echo "Attempting to create the project..."
-
-        gcloud projects create "$(cat /workspace/project_name.txt)" \
-          --folder="$(cat /workspace/folder_id.txt)" || {
+        gcloud projects describe "$(cat /workspace/project_name.txt)" > /dev/null 2>&1 || {
+          echo "Creating project: $(cat /workspace/project_name.txt) under folder: $(cat /workspace/folder_id.txt)..."
+          gcloud projects create "$(cat /workspace/project_name.txt)" --folder="$(cat /workspace/folder_id.txt)" || {
             echo "Error: Failed to create project"
             exit 1
           }
-
-        echo "Project successfully created."
-
-  # Step 4: Enable Cloud Functions API
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e  # Exit immediately if a command fails
-        if [ ! -f /workspace/project_name.txt ]; then
-          echo "Error: Project name file not found."
-          exit 1
-        fi
-
-        echo "Enabling Cloud Functions API for project: $(cat /workspace/project_name.txt)..."
-
-        # Set the active project
-        gcloud config set project "$(cat /workspace/project_name.txt)"
-
-        # Enable the Cloud Functions API
-        gcloud services enable cloudfunctions.googleapis.com
-
-        echo "Cloud Functions API enabled successfully."
-
-  # Step 5: Deploy the service-check Cloud Function
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e  # Exit immediately if a command fails
-        if [ ! -f /workspace/project_name.txt ]; then
-          echo "Error: Project name file not found."
-          exit 1
-        fi
-
-        echo "Deploying Cloud Function to project: $(cat /workspace/project_name.txt)..."
-
-        # Set the active project
-        gcloud config set project "$(cat /workspace/project_name.txt)"
-
-        # Deploy the Cloud Function
-        gcloud functions deploy service-check \
-            --entry-point=app \
-            --runtime=python39 \
-            --trigger-http \
-            --allow-unauthenticated \
-            --region=us-central1 \
-            --source=gcp/cloud-functions/service-check
-
-        echo "Cloud Function 'service-check' deployed successfully."
+          echo "Project successfully created."
+        }
 
 options:
   logging: CLOUD_LOGGING_ONLY
