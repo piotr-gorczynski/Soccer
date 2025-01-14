@@ -95,9 +95,6 @@ steps:
 
         echo "Cloud Billing API enabled successfully."
 
-        echo "Waiting for API propagation..."
-        sleep 60  # Wait for 60 seconds to ensure API enablement propagates
-
   # Step 5: Link the project to the billing account
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
@@ -131,10 +128,7 @@ steps:
 
         echo "Enabling Cloud Functions API for project: $(cat /workspace/project_name.txt)..."
 
-        # Set the active project
         gcloud config set project "$(cat /workspace/project_name.txt)"
-
-        # Enable the Cloud Functions API
         gcloud services enable cloudfunctions.googleapis.com
 
         echo "Cloud Functions API enabled successfully."
@@ -153,10 +147,8 @@ steps:
 
         echo "Deploying Cloud Function to project: $(cat /workspace/project_name.txt)..."
 
-        # Set the active project
         gcloud config set project "$(cat /workspace/project_name.txt)"
 
-        # Deploy the Cloud Function
         gcloud functions deploy service-check \
             --entry-point=app \
             --runtime=python39 \
