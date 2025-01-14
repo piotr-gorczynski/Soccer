@@ -95,6 +95,9 @@ steps:
 
         echo "Cloud Billing API enabled successfully."
 
+        echo "Waiting for API propagation..."
+        sleep 60  # Wait for 60 seconds to ensure API enablement propagates
+
   # Step 5: Link the project to the billing account
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
