@@ -76,7 +76,26 @@ steps:
           echo "Project successfully created."
         }
 
-  # Step 4: Link the project to the billing account
+  # Step 4: Enable Cloud Billing API
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e  # Exit immediately if a command fails
+        if [ ! -f /workspace/project_name.txt ]; then
+          echo "Error: Project name file not found."
+          exit 1
+        fi
+
+        echo "Enabling Cloud Billing API for project: $(cat /workspace/project_name.txt)..."
+
+        gcloud config set project "$(cat /workspace/project_name.txt)"
+        gcloud services enable cloudbilling.googleapis.com
+
+        echo "Cloud Billing API enabled successfully."
+
+  # Step 5: Link the project to the billing account
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -95,7 +114,7 @@ steps:
 
         echo "Billing account linked successfully."
 
-  # Step 5: Enable Cloud Functions API
+  # Step 6: Enable Cloud Functions API
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -117,7 +136,7 @@ steps:
 
         echo "Cloud Functions API enabled successfully."
 
-  # Step 6: Deploy the service-check Cloud Function
+  # Step 7: Deploy the service-check Cloud Function
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
