@@ -2,6 +2,7 @@ substitutions:
   _ORG_ID: '799174817843'    # Organization ID
   _FOLDER_NAME: 'soccer'     # Parent folder name
   _ENVIRONMENT: 'dev'        # Environment delivered from the trigger
+  _BILLING_ACCOUNT_ID: '01A2A3-60053D-6838FA' # Billing account ID
 
 steps:
   # Step 1: Check if the folder exists, retrieve its ID, or create the folder if not found
@@ -75,7 +76,26 @@ steps:
           echo "Project successfully created."
         }
 
-  # Step 4: Enable Cloud Functions API
+  # Step 4: Link the project to the billing account
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e  # Exit immediately if a command fails
+        if [ ! -f /workspace/project_name.txt ]; then
+          echo "Error: Project name file not found."
+          exit 1
+        fi
+
+        echo "Linking project $(cat /workspace/project_name.txt) to billing account..."
+
+        gcloud beta billing projects link "$(cat /workspace/project_name.txt)" \
+            --billing-account="${_BILLING_ACCOUNT_ID}"
+
+        echo "Billing account linked successfully."
+
+  # Step 5: Enable Cloud Functions API
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -97,7 +117,7 @@ steps:
 
         echo "Cloud Functions API enabled successfully."
 
-  # Step 5: Deploy the service-check Cloud Function
+  # Step 6: Deploy the service-check Cloud Function
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
