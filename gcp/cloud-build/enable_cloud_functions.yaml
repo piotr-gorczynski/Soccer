@@ -51,5 +51,20 @@ steps:
         }
         echo "Cloud Run API enabled successfully."
 
+  # Step 4: Enable Cloud Build API
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e  # Exit immediately if a command fails
+        echo "Enabling Cloud Build API for project: $(cat /workspace/project_name.txt)..."
+        gcloud config set project "$(cat /workspace/project_name.txt)"
+        gcloud services enable cloudbuild.googleapis.com || {
+          echo "Error: Failed to enable Cloud Build API. Ensure you have proper permissions."
+          exit 1
+        }
+        echo "Cloud Build API enabled successfully."
+
 options:
   logging: CLOUD_LOGGING_ONLY
