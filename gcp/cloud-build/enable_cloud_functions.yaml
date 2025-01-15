@@ -36,5 +36,20 @@ steps:
         }
         echo "Cloud Functions API enabled successfully."
 
+  # Step 3: Enable Cloud Run API
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e  # Exit immediately if a command fails
+        echo "Enabling Cloud Run API for project: $(cat /workspace/project_name.txt)..."
+        gcloud config set project "$(cat /workspace/project_name.txt)"
+        gcloud services enable run.googleapis.com || {
+          echo "Error: Failed to enable Cloud Run API. Ensure you have proper permissions."
+          exit 1
+        }
+        echo "Cloud Run API enabled successfully."
+
 options:
   logging: CLOUD_LOGGING_ONLY
