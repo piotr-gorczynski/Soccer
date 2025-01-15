@@ -4,6 +4,26 @@ substitutions:
   _ENVIRONMENT: 'dev'        # Environment delivered from the trigger
 
 steps:
+  # Step 0: Check if folder ID exists or retrieve it
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e  # Exit immediately if a command fails
+        echo "Checking if folder ${_FOLDER_NAME} exists under organization ${_ORG_ID}..."
+        gcloud resource-manager folders list \
+          --organization="${_ORG_ID}" \
+          --filter="displayName=${_FOLDER_NAME}" \
+          --format="value(name.basename())" > /workspace/folder_id.txt
+
+        if [ ! -s /workspace/folder_id.txt ]; then
+          echo "Error: Folder ${_FOLDER_NAME} does not exist or could not retrieve folder ID."
+          exit 1
+        else
+          echo "Folder ID successfully retrieved: $(cat /workspace/folder_id.txt)"
+        fi
+
   # Step 1: Check if project exists, retrieve its name, or create a new one
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
@@ -38,11 +58,6 @@ steps:
 
         echo "Checking or creating the project: $(cat /workspace/project_name.txt)"
         gcloud projects describe "$(cat /workspace/project_name.txt)" > /dev/null 2>&1 || {
-          if [ ! -f /workspace/folder_id.txt ]; then
-            echo "Error: Folder ID file not found."
-            exit 1
-          fi
-
           echo "Creating project: $(cat /workspace/project_name.txt) under folder: $(cat /workspace/folder_id.txt)..."
           gcloud projects create "$(cat /workspace/project_name.txt)" --folder="$(cat /workspace/folder_id.txt)" || {
             echo "Error: Failed to create project"
