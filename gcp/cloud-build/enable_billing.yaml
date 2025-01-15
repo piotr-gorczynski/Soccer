@@ -31,7 +31,10 @@ steps:
         set -e  # Exit immediately if a command fails
         echo "Enabling Cloud Billing API for project: $(cat /workspace/project_name.txt)..."
         gcloud config set project "$(cat /workspace/project_name.txt)"
-        gcloud services enable cloudbilling.googleapis.com
+        gcloud services enable cloudbilling.googleapis.com || {
+          echo "Error: Failed to enable Cloud Billing API. Ensure you have proper permissions."
+          exit 1
+        }
         echo "Cloud Billing API enabled successfully."
 
   # Step 3: Link the project to the billing account
@@ -43,7 +46,10 @@ steps:
         set -e  # Exit immediately if a command fails
         echo "Linking project $(cat /workspace/project_name.txt) to billing account ${_BILLING_ACCOUNT_ID}..."
         gcloud beta billing projects link "$(cat /workspace/project_name.txt)" \
-            --billing-account="${_BILLING_ACCOUNT_ID}"
+            --billing-account="${_BILLING_ACCOUNT_ID}" || {
+          echo "Error: Failed to link the project to the billing account. Ensure you have proper permissions."
+          exit 1
+        }
         echo "Billing account linked successfully."
 
 options:
