@@ -1,0 +1,55 @@
+substitutions:
+  _ORG_ID: '799174817843'    # Organization ID
+  _FOLDER_NAME: 'soccer'     # Parent folder name
+  _ENVIRONMENT: 'dev'        # Environment delivered from the trigger
+
+steps:
+  # Step 1: Check if project exists, retrieve its name, or create a new one
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e  # Exit immediately if a command fails
+        echo "Checking if project starting with ${_FOLDER_NAME}-${_ENVIRONMENT} exists..."
+        gcloud projects list \
+          --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
+          --format="value(projectId)" | head -n 1 > /workspace/project_name.txt
+
+        if [ -s /workspace/project_name.txt ]; then
+          echo "Project exists: $(cat /workspace/project_name.txt)"
+        else
+          echo "Project does not exist. Creating a new project..."
+          echo "${_FOLDER_NAME}-${_ENVIRONMENT}-$(date +%s)" > /workspace/project_name.txt
+          echo "New project name: $(cat /workspace/project_name.txt)"
+        fi
+
+  # Step 2: Create the project if it is new
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e  # Exit immediately if a command fails
+        if [ ! -f /workspace/project_name.txt ]; then
+          echo "Error: Project name file not found."
+          exit 1
+        fi
+
+        echo "Checking or creating the project: $(cat /workspace/project_name.txt)"
+        gcloud projects describe "$(cat /workspace/project_name.txt)" > /dev/null 2>&1 || {
+          if [ ! -f /workspace/folder_id.txt ]; then
+            echo "Error: Folder ID file not found."
+            exit 1
+          fi
+
+          echo "Creating project: $(cat /workspace/project_name.txt) under folder: $(cat /workspace/folder_id.txt)..."
+          gcloud projects create "$(cat /workspace/project_name.txt)" --folder="$(cat /workspace/folder_id.txt)" || {
+            echo "Error: Failed to create project"
+            exit 1
+          }
+          echo "Project successfully created."
+        }
+
+options:
+  logging: CLOUD_LOGGING_ONLY
