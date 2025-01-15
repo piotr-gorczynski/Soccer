@@ -1,0 +1,31 @@
+substitutions:
+  _ORG_ID: '799174817843'    # Organization ID
+  _FOLDER_NAME: 'soccer'     # Parent folder name
+
+steps:
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e  # Exit immediately if a command fails
+        echo "Checking if folder ${_FOLDER_NAME} exists under organization ${_ORG_ID}..."
+        gcloud resource-manager folders list \
+          --organization="${_ORG_ID}" \
+          --filter="displayName=${_FOLDER_NAME}" \
+          --format="value(name.basename())" > /workspace/folder_id.txt
+
+        if [ ! -s /workspace/folder_id.txt ]; then
+          echo "Folder ${_FOLDER_NAME} not found. Creating folder..."
+          gcloud resource-manager folders create \
+            --display-name="${_FOLDER_NAME}" \
+            --organization="${_ORG_ID}" \
+            --format="value(name.basename())" > /workspace/folder_id.txt
+
+          echo "Folder created. ID stored in /workspace/folder_id.txt"
+        else
+          echo "Folder exists. ID stored in /workspace/folder_id.txt"
+        fi
+
+options:
+  logging: CLOUD_LOGGING_ONLY
