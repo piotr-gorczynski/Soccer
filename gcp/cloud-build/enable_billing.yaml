@@ -1,0 +1,50 @@
+substitutions:
+  _BILLING_ACCOUNT_ID: '01A2A3-60053D-6838FA' # Billing account ID
+  _ENVIRONMENT: 'dev'                         # Environment delivered from the trigger
+  _FOLDER_NAME: 'soccer'                      # Parent folder name
+
+steps:
+  # Step 1: Retrieve the project ID
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e  # Exit immediately if a command fails
+        echo "Checking if project starting with ${_FOLDER_NAME}-${_ENVIRONMENT} exists..."
+        gcloud projects list \
+          --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
+          --format="value(projectId)" | head -n 1 > /workspace/project_name.txt
+
+        if [ ! -s /workspace/project_name.txt ] || [ -z "$(cat /workspace/project_name.txt)" ]; then
+          echo "Error: Project ID not found. Ensure the project exists."
+          exit 1
+        fi
+        echo "Using project: $(cat /workspace/project_name.txt)"
+
+  # Step 2: Enable Cloud Billing API
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e  # Exit immediately if a command fails
+        echo "Enabling Cloud Billing API for project: $(cat /workspace/project_name.txt)..."
+        gcloud config set project "$(cat /workspace/project_name.txt)"
+        gcloud services enable cloudbilling.googleapis.com
+        echo "Cloud Billing API enabled successfully."
+
+  # Step 3: Link the project to the billing account
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e  # Exit immediately if a command fails
+        echo "Linking project $(cat /workspace/project_name.txt) to billing account ${_BILLING_ACCOUNT_ID}..."
+        gcloud beta billing projects link "$(cat /workspace/project_name.txt)" \
+            --billing-account="${_BILLING_ACCOUNT_ID}"
+        echo "Billing account linked successfully."
+
+options:
+  logging: CLOUD_LOGGING_ONLY
