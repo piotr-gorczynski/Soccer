@@ -41,8 +41,7 @@ steps:
             --allow-unauthenticated \
             --region=${_REGION} \
             --source=${_SOURCE_PATH} \
-            --timeout=540s \
-            --clear-cache || {
+            --timeout=540s || {
           echo "Error: Failed to deploy the Cloud Function."
           exit 1
         }
