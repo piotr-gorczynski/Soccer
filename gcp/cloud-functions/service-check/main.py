@@ -1,8 +1,6 @@
-from flask import Flask, request, jsonify
+from flask import request, jsonify
 from google.cloud import secretmanager
 import logging
-
-app = Flask(__name__)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -18,8 +16,7 @@ def get_secret():
         logging.error("Error accessing secret: %s", e)
         raise
 
-@app.route('/service-check', methods=['GET'])
-def service_check():
+def service_check(request):
     """Service check endpoint."""
     try:
         secret_key = get_secret()
@@ -37,6 +34,3 @@ def service_check():
 
     logging.info("Service check successful.")
     return jsonify({"status": "Active"}), 200
-
-if __name__ == '__main__':
-    app.run(debug=True)
