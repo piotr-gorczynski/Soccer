@@ -35,7 +35,7 @@ steps:
         echo "Deploying Cloud Function '${_FUNCTION_NAME}' to project: $(cat /workspace/project_name.txt)..."
         gcloud config set project "$(cat /workspace/project_name.txt)"
         gcloud functions deploy ${_FUNCTION_NAME} \
-            --entry-point=app \
+            --entry-point=service_check \
             --runtime=${_RUNTIME} \
             --trigger-http \
             --allow-unauthenticated \
