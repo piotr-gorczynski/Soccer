@@ -42,7 +42,8 @@ steps:
             --region=${_REGION} \
             --source=${_SOURCE_PATH} \
             --timeout=540s \
-            --service-account=cloud-build-sa@org-service-account-001.iam.gserviceaccount.com || {
+            --build-service-account=cloud-build-sa@org-service-account-001.iam.gserviceaccount.com \
+            --run-service-account=cloud-build-sa@org-service-account-001.iam.gserviceaccount.com || {
           echo "Error: Failed to deploy the Cloud Function."
           exit 1
         }
