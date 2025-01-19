@@ -38,12 +38,9 @@ steps:
             --entry-point=service_check \
             --runtime=${_RUNTIME} \
             --trigger-http \
-            --allow-unauthenticated \
             --region=${_REGION} \
             --source=${_SOURCE_PATH} \
-            --timeout=540s \
-            --build-service-account=cloud-build-sa@org-service-account-001.iam.gserviceaccount.com \
-            --run-service-account=cloud-build-sa@org-service-account-001.iam.gserviceaccount.com || {
+            --timeout=540s || {
           echo "Error: Failed to deploy the Cloud Function."
           exit 1
         }
