@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch, MagicMock
-from flask import Flask
+from flask import Flask, Request
 from main import service_check
 
 class TestServiceCheck(unittest.TestCase):
@@ -17,8 +17,8 @@ class TestServiceCheck(unittest.TestCase):
 
         # Simulate a request with the correct header
         headers = {"X-Secret-Key": self.secret_key}
-        with self.app.application.test_request_context(headers=headers):
-            response = service_check(request)
+        with self.app.application.test_request_context(headers=headers) as context:
+            response = service_check(context.request)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json, {"status": "Active"})
@@ -29,8 +29,8 @@ class TestServiceCheck(unittest.TestCase):
         mock_get_secret.return_value = self.secret_key
 
         # Simulate a request without the header
-        with self.app.application.test_request_context():
-            response = service_check(request)
+        with self.app.application.test_request_context() as context:
+            response = service_check(context.request)
 
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json, {"error": "Missing secret key"})
@@ -42,8 +42,8 @@ class TestServiceCheck(unittest.TestCase):
 
         # Simulate a request with an incorrect header
         headers = {"X-Secret-Key": "wrong-secret-key"}
-        with self.app.application.test_request_context(headers=headers):
-            response = service_check(request)
+        with self.app.application.test_request_context(headers=headers) as context:
+            response = service_check(context.request)
 
         self.assertEqual(response.status_code, 403)
         self.assertEqual(response.json, {"error": "Unauthorized"})
@@ -55,8 +55,8 @@ class TestServiceCheck(unittest.TestCase):
 
         # Simulate a request with the header
         headers = {"X-Secret-Key": self.secret_key}
-        with self.app.application.test_request_context(headers=headers):
-            response = service_check(request)
+        with self.app.application.test_request_context(headers=headers) as context:
+            response = service_check(context.request)
 
         self.assertEqual(response.status_code, 500)
         self.assertEqual(response.json, {"error": "Internal server error"})
