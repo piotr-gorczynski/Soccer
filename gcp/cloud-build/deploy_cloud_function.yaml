@@ -25,7 +25,19 @@ steps:
         fi
         echo "Using project: $(cat /workspace/project_name.txt)"
 
-  # Step 2: Deploy the Cloud Function
+  # Step 2: Run Unit Tests
+  - name: 'python:3.9-slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e  # Exit immediately if a command fails
+        echo "Installing dependencies for testing..."
+        pip install -r ${_SOURCE_PATH}/requirements.txt
+        echo "Running unit tests..."
+        python -m unittest discover -s gcp/cloud-functions/tests
+
+  # Step 3: Deploy the Cloud Function
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
