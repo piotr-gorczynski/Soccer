@@ -1,5 +1,6 @@
 substitutions:
   _ROLE: 'roles/cloudbuild.builds.builder'   # Required role
+  _SECRET_ACCESSOR_ROLE: 'roles/secretmanager.secretAccessor' # Secret Manager role
   _FOLDER_NAME: 'soccer'                    # Parent folder name
   _ENVIRONMENT: 'dev'                       # Environment delivered from the trigger
 
@@ -39,21 +40,37 @@ steps:
         fi
         echo "Project number retrieved: $(cat /workspace/project_number.txt)"
 
-  # Step 3: Add IAM policy binding
+  # Step 3: Add IAM policy binding for Cloud Build
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e  # Exit immediately if a command fails
-        echo "Adding IAM policy binding for service account..."
+        echo "Adding IAM policy binding for Cloud Build service account..."
         gcloud projects add-iam-policy-binding "$(cat /workspace/project_name.txt)" \
           --member="serviceAccount:$(cat /workspace/project_number.txt)-compute@developer.gserviceaccount.com" \
           --role="${_ROLE}" || {
-          echo "Error: Failed to add IAM policy binding. Ensure you have proper permissions."
+          echo "Error: Failed to add IAM policy binding for Cloud Build. Ensure you have proper permissions."
           exit 1
         }
-        echo "IAM policy binding added successfully."
+        echo "Cloud Build IAM policy binding added successfully."
+
+  # Step 4: Add IAM policy binding for Secret Manager
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e  # Exit immediately if a command fails
+        echo "Adding IAM policy binding for Secret Manager..."
+        gcloud secrets add-iam-policy-binding soccer_secret_key \
+          --member="serviceAccount:$(cat /workspace/project_number.txt)-compute@developer.gserviceaccount.com" \
+          --role="${_SECRET_ACCESSOR_ROLE}" || {
+          echo "Error: Failed to add IAM policy binding for Secret Manager. Ensure you have proper permissions."
+          exit 1
+        }
+        echo "Secret Manager IAM policy binding added successfully."
 
 options:
   logging: CLOUD_LOGGING_ONLY
