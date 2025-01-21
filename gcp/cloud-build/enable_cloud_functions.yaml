@@ -66,5 +66,20 @@ steps:
         }
         echo "Cloud Build API enabled successfully."
 
+  # Step 5: Enable Secret Manager API
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e  # Exit immediately if a command fails
+        echo "Enabling Secret Manager API for project: $(cat /workspace/project_name.txt)..."
+        gcloud config set project "$(cat /workspace/project_name.txt)"
+        gcloud services enable secretmanager.googleapis.com || {
+          echo "Error: Failed to enable Secret Manager API. Ensure you have proper permissions."
+          exit 1
+        }
+        echo "Secret Manager API enabled successfully."
+
 options:
   logging: CLOUD_LOGGING_ONLY
