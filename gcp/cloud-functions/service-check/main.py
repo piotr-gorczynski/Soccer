@@ -1,36 +1,38 @@
-from flask import request, jsonify
+from flask import Flask, jsonify, request
 from google.cloud import secretmanager
-import logging
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
+app = Flask(__name__)
 
+# Function to get the secret key from Google Cloud Secret Manager
 def get_secret():
-    """Retrieve the secret key from Google Cloud Secret Manager."""
-    try:
-        client = secretmanager.SecretManagerServiceClient()
-        secret_path = "projects/690882718361/secrets/soccer_secret_key/versions/latest"
-        response = client.access_secret_version(request={"name": secret_path})
-        return response.payload.data.decode("UTF-8")
-    except Exception as e:
-        logging.error("Error accessing secret: %s", e)
-        raise
+    client = secretmanager.SecretManagerServiceClient()
+    name = "projects/690882718361/secrets/soccer_secret_key/versions/latest"
+    response = client.access_secret_version(name=name)
+    secret = response.payload.data.decode("UTF-8")
+    return secret
 
+# Service check endpoint
 def service_check(request):
-    """Service check endpoint."""
     try:
         secret_key = get_secret()
-    except Exception:
+
+        # Check if the header contains the required key
+        if 'X-Secret-Key' not in request.headers:
+            return jsonify({"error": "Missing secret key"}), 400
+
+        # Verify the provided key
+        if request.headers['X-Secret-Key'] != secret_key:
+            return jsonify({"error": "Unauthorized"}), 403
+
+        return jsonify({"status": "Active"}), 200
+    except Exception as e:
+        app.logger.error(f"An error occurred: {e}")
         return jsonify({"error": "Internal server error"}), 500
 
-    key = request.headers.get('X-Secret-Key')
-    if not key:
-        logging.warning("Missing 'X-Secret-Key' header.")
-        return jsonify({"error": "Missing secret key"}), 400
+# Flask route for testing locally
+@app.route("/service-check", methods=["GET"])
+def service_check_endpoint():
+    return service_check(request)
 
-    if key != secret_key:
-        logging.warning("Unauthorized access attempt.")
-        return jsonify({"error": "Unauthorized"}), 403
-
-    logging.info("Service check successful.")
-    return jsonify({"status": "Active"}), 200
+if __name__ == "__main__":
+    app.run(debug=True)
