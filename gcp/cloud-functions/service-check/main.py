@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, Response
 from google.cloud import secretmanager
 
 app = Flask(__name__)
@@ -18,16 +18,16 @@ def service_check(request):
 
         # Check if the header contains the required key
         if 'X-Secret-Key' not in request.headers:
-            return jsonify({"error": "Missing secret key"}), 400
+            return Response(jsonify({"error": "Missing secret key"}).data, status=400, mimetype="application/json")
 
         # Verify the provided key
         if request.headers['X-Secret-Key'] != secret_key:
-            return jsonify({"error": "Unauthorized"}), 403
+            return Response(jsonify({"error": "Unauthorized"}).data, status=403, mimetype="application/json")
 
-        return jsonify({"status": "Active"}), 200
+        return Response(jsonify({"status": "Active"}).data, status=200, mimetype="application/json")
     except Exception as e:
         app.logger.error(f"An error occurred: {e}")
-        return jsonify({"error": "Internal server error"}), 500
+        return Response(jsonify({"error": "Internal server error"}).data, status=500, mimetype="application/json")
 
 # Flask route for testing locally
 @app.route("/service-check", methods=["GET"])
