@@ -1,15 +1,16 @@
 from flask import Flask, jsonify, request, Response
 from google.cloud import secretmanager
+from google.cloud import logging as cloud_logging  # Import Google Cloud Logging
 import logging
 
 app = Flask(__name__)
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
+# Initialize Cloud Logging Client and configure logging
+cloud_logging_client = cloud_logging.Client()
+cloud_logging_client.setup_logging(log_level=logging.INFO)  # Integrate with Python logging
 
-
-# Test logging
-logging.info("Logging is initialized successfully.")
+# Log initialization message
+logging.info("Cloud Function 'service-check' initialized with Google Cloud Logging.")
 
 # Function to get the secret key from Google Cloud Secret Manager
 def get_secret():
@@ -19,7 +20,7 @@ def get_secret():
         name = "projects/690882718361/secrets/soccer_secret_key/versions/latest"
         response = client.access_secret_version(name=name)
         secret = response.payload.data.decode("UTF-8")
-        logging.info(f"Retrieved secret key: {secret}")  # Log the retrieved secret key
+        logging.info("Retrieved secret key successfully.")  # Avoid logging sensitive data
         return secret
     except Exception as e:
         logging.error(f"Failed to retrieve secret: {e}")
@@ -33,7 +34,7 @@ def service_check(request):
 
         # Check if the header contains the required key
         if 'X-Secret-Key' not in request.headers:
-            logging.info("X-Secret-Key header is missing")
+            logging.warning("X-Secret-Key header is missing")
             return Response(jsonify({"error": "Missing secret key"}).data, status=400, mimetype="application/json")
 
         # Log the provided secret key from headers
@@ -42,7 +43,7 @@ def service_check(request):
 
         # Verify the provided key
         if provided_key != secret_key:
-            logging.info("Provided X-Secret-Key does not match the secret key")
+            logging.warning("Provided X-Secret-Key does not match the secret key")
             return Response(jsonify({"error": "Unauthorized"}).data, status=403, mimetype="application/json")
 
         logging.info("Service-check completed successfully.")
