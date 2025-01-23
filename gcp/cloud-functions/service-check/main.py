@@ -1,13 +1,15 @@
 from flask import Flask, jsonify, request, Response
 from google.cloud import secretmanager
 import logging
+import sys
 
 app = Flask(__name__)
 
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s"
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    stream=sys.stdout,  # Direct logs to stdout
 )
 logger = logging.getLogger(__name__)
 
