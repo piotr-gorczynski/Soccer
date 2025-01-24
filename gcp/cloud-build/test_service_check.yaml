@@ -1,0 +1,66 @@
+substitutions:
+  _ENVIRONMENT: 'dev'                         # Environment delivered from the trigger
+  _FOLDER_NAME: 'soccer'                      # Parent folder name
+
+steps:
+  # Step 1: Retrieve the project ID
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e  # Exit immediately if a command fails
+        echo "Checking if project starting with ${_FOLDER_NAME}-${_ENVIRONMENT} exists..."
+        gcloud projects list \
+          --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
+          --format="value(projectId)" | head -n 1 > /workspace/project_name.txt
+
+        if [ ! -s /workspace/project_name.txt ] || [ -z "$(cat /workspace/project_name.txt)" ]; then
+          echo "Error: Project ID not found. Ensure the project exists."
+          exit 1
+        fi
+        echo "Using project: $(cat /workspace/project_name.txt)"
+
+  # Step 2: Retrieve the secret key and strip newlines
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e  # Exit immediately if a command fails
+        echo "Retrieving secret key from Secret Manager..."
+        gcloud secrets versions access latest \
+          --secret="soccer_secret_key" \
+          --project="690882718361" | tr -d '\n' > /workspace/secret_key.txt
+
+        if [ ! -s /workspace/secret_key.txt ] || [ -z "$(cat /workspace/secret_key.txt)" ]; then
+          echo "Error: Failed to retrieve secret key. Ensure the secret exists and permissions are configured correctly."
+          exit 1
+        fi
+        echo "Secret key retrieved and stripped of newlines successfully."
+
+  # Step 3: Test the service-check endpoint
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e  # Exit immediately if a command fails
+        echo "Testing the service-check endpoint for project: $(cat /workspace/project_name.txt)..."
+        TOKEN=$(gcloud auth print-identity-token)
+        SECRET_KEY=$(cat /workspace/secret_key.txt)
+        RESPONSE=$(curl -X GET "https://us-central1-$(cat /workspace/project_name.txt).cloudfunctions.net/service-check" \
+          -H "Authorization: Bearer $TOKEN" \
+          -H "X-Secret-Key: $SECRET_KEY" \
+          -H "Cache-Control: no-cache, no-store, must-revalidate" \
+          -H "Pragma: no-cache")
+
+        if [ -z "$RESPONSE" ]; then
+          echo "Error: No response from service-check endpoint."
+          exit 1
+        fi
+
+        echo "Service-check response: $RESPONSE"
+
+options:
+  logging: CLOUD_LOGGING_ONLY
