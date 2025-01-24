@@ -20,7 +20,7 @@ def get_secret():
         name = "projects/690882718361/secrets/soccer_secret_key/versions/latest"
         response = client.access_secret_version(name=name)
         secret = response.payload.data.decode("UTF-8")
-        logging.info("Retrieved secret key successfully.")  # Avoid logging sensitive data
+        logging.info(f"Retrieved secret key successfully: {secret}")  
         return secret
     except Exception as e:
         logging.error(f"Failed to retrieve secret: {e}")
