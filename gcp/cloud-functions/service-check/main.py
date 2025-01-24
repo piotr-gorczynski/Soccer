@@ -19,8 +19,8 @@ def get_secret():
         client = secretmanager.SecretManagerServiceClient()
         name = "projects/690882718361/secrets/soccer_secret_key/versions/latest"
         response = client.access_secret_version(name=name)
-        secret = response.payload.data.decode("UTF-8")
-        logging.info(f"Retrieved secret key successfully: {secret}")  
+        secret = response.payload.data.decode("UTF-8").strip()
+        logging.info(f"Retrieved secret key successfully: |{secret}|")  
         return secret
     except Exception as e:
         logging.error(f"Failed to retrieve secret: {e}")
@@ -39,7 +39,7 @@ def service_check(request):
 
         # Log the provided secret key from headers
         provided_key = request.headers['X-Secret-Key']
-        logging.info(f"X-Secret-Key from headers: {provided_key}")
+        logging.info(f"X-Secret-Key from headers: |{provided_key}|")
 
         # Verify the provided key
         if provided_key != secret_key:
