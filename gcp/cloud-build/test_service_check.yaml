@@ -9,7 +9,9 @@ steps:
     args:
       - '-c'
       - |
+        set -e
         apt-get update && apt-get install -y jq
+        gcloud components update --quiet
 
   # Step 2: Retrieve the project ID
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
