@@ -3,14 +3,13 @@ substitutions:
   _FOLDER_NAME: 'soccer'                      # Parent folder name
 
 steps:
-  # Step 1: Update the Cloud SDK and install `jq`
+  # Step 1: Update the Cloud SDK
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e
-        apt-get update && apt-get install -y jq
         gcloud components update --quiet
 
   # Step 2: Retrieve the project ID
@@ -49,7 +48,7 @@ steps:
         fi
         echo "Secret key retrieved and stripped of newlines successfully."
 
-  # Step 4: Generate access token and test the service-check endpoint
+  # Step 4: Generate identity token and test the service-check endpoint
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -62,20 +61,19 @@ steps:
         echo "Current active accounts:"
         gcloud auth list
 
-        # Generate a short-lived access token for the Cloud Function
-        gcloud iam service-accounts generate-access-token \
-          cloud-build-sa@org-service-account-001.iam.gserviceaccount.com \
+        # Generate an OIDC identity token
+        gcloud auth print-identity-token \
           --impersonate-service-account=cloud-build-sa@org-service-account-001.iam.gserviceaccount.com \
-          --format="json" | jq -r '.accessToken' > /workspace/access_token.txt
+          --audiences="https://us-central1-$(cat /workspace/project_name.txt).cloudfunctions.net/service-check" > /workspace/identity_token.txt
 
-        if [ ! -s /workspace/access_token.txt ] || [ -z "$(cat /workspace/access_token.txt)" ]; then
-          echo "Error: Failed to generate access token."
+        if [ ! -s /workspace/identity_token.txt ] || [ -z "$(cat /workspace/identity_token.txt)" ]; then
+          echo "Error: Failed to generate identity token."
           exit 1
         fi
 
-        # Use the secret key and access token directly in the curl command
+        # Use the secret key and identity token directly in the curl command
         curl -X GET "https://us-central1-$(cat /workspace/project_name.txt).cloudfunctions.net/service-check" \
-          -H "Authorization: Bearer $(cat /workspace/access_token.txt)" \
+          -H "Authorization: Bearer $(cat /workspace/identity_token.txt)" \
           -H "X-Secret-Key: $(cat /workspace/secret_key.txt)" \
           -H "Cache-Control: no-cache, no-store, must-revalidate" \
           -H "Pragma: no-cache"
