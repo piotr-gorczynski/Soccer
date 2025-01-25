@@ -48,8 +48,13 @@ steps:
         set -e
         echo "Testing the service-check endpoint for project: $(cat /workspace/project_name.txt)..."
         
-        # Save the identity token to a file
-        gcloud auth print-identity-token > /workspace/identity_token.txt
+        # Debug: Check active credentials
+        echo "Current active accounts:"
+        gcloud auth list
+
+        # Generate the identity token using impersonation
+        gcloud auth print-identity-token \
+          --impersonate-service-account="cloud-build-sa@org-service-account-001.iam.gserviceaccount.com" > /workspace/identity_token.txt
 
         if [ ! -s /workspace/identity_token.txt ] || [ -z "$(cat /workspace/identity_token.txt)" ]; then
           echo "Error: Failed to retrieve identity token."
