@@ -3,7 +3,15 @@ substitutions:
   _FOLDER_NAME: 'soccer'                      # Parent folder name
 
 steps:
-  # Step 1: Retrieve the project ID
+  # Step 1: Update the Cloud SDK and install `jq`
+  - name: 'ubuntu'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        apt-get update && apt-get install -y jq
+
+  # Step 2: Retrieve the project ID
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -21,7 +29,7 @@ steps:
         fi
         echo "Using project: $(cat /workspace/project_name.txt)"
 
-  # Step 2: Retrieve the secret key and strip newlines
+  # Step 3: Retrieve the secret key and strip newlines
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -39,7 +47,7 @@ steps:
         fi
         echo "Secret key retrieved and stripped of newlines successfully."
 
-  # Step 3: Generate short-lived access token and test the service-check endpoint
+  # Step 4: Generate access token and test the service-check endpoint
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -52,7 +60,7 @@ steps:
         echo "Current active accounts:"
         gcloud auth list
 
-        # Generate a short-lived identity token for the Cloud Function
+        # Generate a short-lived access token for the Cloud Function
         gcloud iam service-accounts generate-access-token \
           cloud-build-sa@org-service-account-001.iam.gserviceaccount.com \
           --impersonate-service-account=cloud-build-sa@org-service-account-001.iam.gserviceaccount.com \
@@ -63,7 +71,7 @@ steps:
           exit 1
         fi
 
-        # Use the secret key and identity token directly in the curl command
+        # Use the secret key and access token directly in the curl command
         curl -X GET "https://us-central1-$(cat /workspace/project_name.txt).cloudfunctions.net/service-check" \
           -H "Authorization: Bearer $(cat /workspace/access_token.txt)" \
           -H "X-Secret-Key: $(cat /workspace/secret_key.txt)" \
