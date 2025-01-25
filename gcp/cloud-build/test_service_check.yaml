@@ -3,16 +3,7 @@ substitutions:
   _FOLDER_NAME: 'soccer'                      # Parent folder name
 
 steps:
-  # Step 1: Update the Cloud SDK
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e
-        gcloud components update --quiet
-
-  # Step 2: Retrieve the project ID
+  # Step 1: Retrieve the project ID
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -30,7 +21,7 @@ steps:
         fi
         echo "Using project: $(cat /workspace/project_name.txt)"
 
-  # Step 3: Retrieve the secret key and strip newlines
+  # Step 2: Retrieve the secret key and strip newlines
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -48,7 +39,7 @@ steps:
         fi
         echo "Secret key retrieved and stripped of newlines successfully."
 
-  # Step 4: Generate identity token and test the service-check endpoint
+  # Step 3: Generate identity token and test the service-check endpoint
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
