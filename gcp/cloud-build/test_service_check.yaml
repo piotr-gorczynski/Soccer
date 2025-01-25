@@ -39,7 +39,7 @@ steps:
         fi
         echo "Secret key retrieved and stripped of newlines successfully."
 
-  # Step 3: Test the service-check endpoint
+  # Step 3: Generate short-lived access token and test the service-check endpoint
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -52,17 +52,20 @@ steps:
         echo "Current active accounts:"
         gcloud auth list
 
-        # Generate the identity token using impersonation
-        gcloud auth print-identity-token > /workspace/identity_token.txt
+        # Generate a short-lived identity token for the Cloud Function
+        gcloud iam service-accounts generate-access-token \
+          cloud-build-sa@org-service-account-001.iam.gserviceaccount.com \
+          --impersonate-service-account=cloud-build-sa@org-service-account-001.iam.gserviceaccount.com \
+          --format="json" | jq -r '.accessToken' > /workspace/access_token.txt
 
-        if [ ! -s /workspace/identity_token.txt ] || [ -z "$(cat /workspace/identity_token.txt)" ]; then
-          echo "Error: Failed to retrieve identity token."
+        if [ ! -s /workspace/access_token.txt ] || [ -z "$(cat /workspace/access_token.txt)" ]; then
+          echo "Error: Failed to generate access token."
           exit 1
         fi
 
         # Use the secret key and identity token directly in the curl command
         curl -X GET "https://us-central1-$(cat /workspace/project_name.txt).cloudfunctions.net/service-check" \
-          -H "Authorization: Bearer $(cat /workspace/identity_token.txt)" \
+          -H "Authorization: Bearer $(cat /workspace/access_token.txt)" \
           -H "X-Secret-Key: $(cat /workspace/secret_key.txt)" \
           -H "Cache-Control: no-cache, no-store, must-revalidate" \
           -H "Pragma: no-cache"
