@@ -61,11 +61,12 @@ steps:
         echo "Generated identity token: $(cat /workspace/identity_token.txt)"
 
         # Use the secret key and identity token directly in the curl command
-        curl -X GET "https://us-central1-$(cat /workspace/project_name.txt).cloudfunctions.net/service-check" \
+        curl --http1.1 -X GET "https://us-central1-$(cat /workspace/project_name.txt).cloudfunctions.net/service-check" \
           -H "Authorization: Bearer $(cat /workspace/identity_token.txt)" \
           -H "X-Secret-Key: $(cat /workspace/secret_key.txt)" \
           -H "Cache-Control: no-cache, no-store, must-revalidate" \
           -H "Pragma: no-cache" \
+          -H "Connection: close" \
           -v
 
 options:
