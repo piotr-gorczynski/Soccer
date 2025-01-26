@@ -77,4 +77,5 @@ steps:
 
 timeout: '3600s' # Timeout for the entire build
 options:
+  logging: CLOUD_LOGGING_ONLY
   substitutionOption: ALLOW_LOOSE
