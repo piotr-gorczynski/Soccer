@@ -8,8 +8,7 @@ steps:
       - |
         set -e
         gcloud beta builds triggers run 83bf9b23-f39e-4c32-82f2-15da23226de5 \
-          --project=org-service-account-001 \
-          --substitutions=_ORG_ID=799174817843,_FOLDER_NAME=soccer
+          --project=org-service-account-001
 
   # Trigger: 020-check-or-create-project
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
