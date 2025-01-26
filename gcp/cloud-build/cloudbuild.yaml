@@ -1,163 +1,80 @@
-substitutions:
-  _ORG_ID: '799174817843'    # Organization ID
-  _FOLDER_NAME: 'soccer'     # Parent folder name
-  _ENVIRONMENT: 'dev'        # Environment delivered from the trigger
-  _BILLING_ACCOUNT_ID: '01A2A3-60053D-6838FA' # Billing account ID
-
 steps:
-  # Step 1: Check if the folder exists, retrieve its ID, or create the folder if not found
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    entrypoint: 'bash'
+  # Trigger: 010-check-or-create-folder
+  - name: 'gcr.io/cloud-builders/gcloud'
     args:
-      - '-c'
-      - |
-        set -e  # Exit immediately if a command fails
-        echo "Checking if folder ${_FOLDER_NAME} exists under organization ${_ORG_ID}..."
-        gcloud resource-manager folders list \
-          --organization="${_ORG_ID}" \
-          --filter="displayName=${_FOLDER_NAME}" \
-          --format="value(name.basename())" > /workspace/folder_id.txt
+      - 'beta'
+      - 'builds'
+      - 'triggers'
+      - 'run'
+      - '83bf9b23-f39e-4c32-82f2-15da23226de5'
+      - '--project=org-service-account-001'
 
-        if [ ! -s /workspace/folder_id.txt ]; then
-          echo "Folder ${_FOLDER_NAME} not found. Creating folder..."
-          gcloud resource-manager folders create \
-            --display-name="${_FOLDER_NAME}" \
-            --organization="${_ORG_ID}" \
-            --format="value(name.basename())" > /workspace/folder_id.txt
-
-          echo "Folder created. ID stored in /workspace/folder_id.txt"
-        else
-          echo "Folder exists. ID stored in /workspace/folder_id.txt"
-        fi
-
-  # Step 2: Check if project exists, retrieve its name or create a new one
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    entrypoint: 'bash'
+  # Trigger: 020-check-or-create-project
+  - name: 'gcr.io/cloud-builders/gcloud'
     args:
-      - '-c'
-      - |
-        set -e  # Exit immediately if a command fails
-        echo "Checking if project starting with ${_FOLDER_NAME}-${_ENVIRONMENT} exists..."
-        gcloud projects list \
-          --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
-          --format="value(projectId)" | head -n 1 > /workspace/project_name.txt
+      - 'beta'
+      - 'builds'
+      - 'triggers'
+      - 'run'
+      - '15257bc8-581a-47f9-b3a5-08f35742553e'
+      - '--project=org-service-account-001'
+      - '--substitutions=_ENVIRONMENT=$(ENVIRONMENT)'
 
-        if [ -s /workspace/project_name.txt ]; then
-          echo "Project exists: $(cat /workspace/project_name.txt)"
-        else
-          echo "Project does not exist. Creating a new project..."
-          echo "${_FOLDER_NAME}-${_ENVIRONMENT}-$(date +%s)" > /workspace/project_name.txt
-          echo "New project name: $(cat /workspace/project_name.txt)"
-        fi
-
-  # Step 3: Read folder ID and project name directly from files and create the project if new
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    entrypoint: 'bash'
+  # Trigger: 030-enable-billing
+  - name: 'gcr.io/cloud-builders/gcloud'
     args:
-      - '-c'
-      - |
-        set -e  # Exit immediately if a command fails
-        if [ ! -f /workspace/folder_id.txt ]; then
-          echo "Error: Folder ID file not found."
-          exit 1
-        fi
+      - 'beta'
+      - 'builds'
+      - 'triggers'
+      - 'run'
+      - '782d9876-eb96-4581-bfee-85b1c825fd75'
+      - '--project=org-service-account-001'
+      - '--substitutions=_ENVIRONMENT=$(ENVIRONMENT)'
 
-        if [ ! -f /workspace/project_name.txt ]; then
-          echo "Error: Project name file not found."
-          exit 1
-        fi
-
-        gcloud projects describe "$(cat /workspace/project_name.txt)" > /dev/null 2>&1 || {
-          echo "Creating project: $(cat /workspace/project_name.txt) under folder: $(cat /workspace/folder_id.txt)..."
-          gcloud projects create "$(cat /workspace/project_name.txt)" --folder="$(cat /workspace/folder_id.txt)" || {
-            echo "Error: Failed to create project"
-            exit 1
-          }
-          echo "Project successfully created."
-        }
-
-  # Step 4: Enable Cloud Billing API
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    entrypoint: 'bash'
+  # Trigger: 040-enable-cloud-functions
+  - name: 'gcr.io/cloud-builders/gcloud'
     args:
-      - '-c'
-      - |
-        set -e  # Exit immediately if a command fails
-        if [ ! -f /workspace/project_name.txt ]; then
-          echo "Error: Project name file not found."
-          exit 1
-        fi
+      - 'beta'
+      - 'builds'
+      - 'triggers'
+      - 'run'
+      - '93cd455e-fcf8-4b50-9781-32bf6037ba89'
+      - '--project=org-service-account-001'
+      - '--substitutions=_ENVIRONMENT=$(ENVIRONMENT)'
 
-        echo "Enabling Cloud Billing API for project: $(cat /workspace/project_name.txt)..."
-
-        gcloud config set project "$(cat /workspace/project_name.txt)"
-        gcloud services enable cloudbilling.googleapis.com
-
-        echo "Cloud Billing API enabled successfully."
-
-  # Step 5: Link the project to the billing account
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    entrypoint: 'bash'
+  # Trigger: 050-add-cloudbuild-iam-policy
+  - name: 'gcr.io/cloud-builders/gcloud'
     args:
-      - '-c'
-      - |
-        set -e  # Exit immediately if a command fails
-        if [ ! -f /workspace/project_name.txt ]; then
-          echo "Error: Project name file not found."
-          exit 1
-        fi
+      - 'beta'
+      - 'builds'
+      - 'triggers'
+      - 'run'
+      - 'a8da0b8c-01d5-4c27-958b-7eab3b7ed00f'
+      - '--project=org-service-account-001'
+      - '--substitutions=_ENVIRONMENT=$(ENVIRONMENT)'
 
-        echo "Linking project $(cat /workspace/project_name.txt) to billing account..."
-
-        gcloud beta billing projects link "$(cat /workspace/project_name.txt)" \
-            --billing-account="${_BILLING_ACCOUNT_ID}"
-
-        echo "Billing account linked successfully."
-
-  # Step 6: Enable Cloud Functions API
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    entrypoint: 'bash'
+  # Trigger: 060-deploy-cloud-function
+  - name: 'gcr.io/cloud-builders/gcloud'
     args:
-      - '-c'
-      - |
-        set -e  # Exit immediately if a command fails
-        if [ ! -f /workspace/project_name.txt ]; then
-          echo "Error: Project name file not found."
-          exit 1
-        fi
+      - 'beta'
+      - 'builds'
+      - 'triggers'
+      - 'run'
+      - 'f6de475f-0bd6-48b0-ae13-687a5f84a03f'
+      - '--project=org-service-account-001'
+      - '--substitutions=_ENVIRONMENT=$(ENVIRONMENT)'
 
-        echo "Enabling Cloud Functions API for project: $(cat /workspace/project_name.txt)..."
-
-        gcloud config set project "$(cat /workspace/project_name.txt)"
-        gcloud services enable cloudfunctions.googleapis.com
-
-        echo "Cloud Functions API enabled successfully."
-
-  # Step 7: Deploy the service-check Cloud Function
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    entrypoint: 'bash'
+  # Trigger: 070-test-service-check
+  - name: 'gcr.io/cloud-builders/gcloud'
     args:
-      - '-c'
-      - |
-        set -e  # Exit immediately if a command fails
-        if [ ! -f /workspace/project_name.txt ]; then
-          echo "Error: Project name file not found."
-          exit 1
-        fi
+      - 'beta'
+      - 'builds'
+      - 'triggers'
+      - 'run'
+      - 'af1d2829-bf23-4125-aa52-373e47001e4a'
+      - '--project=org-service-account-001'
+      - '--substitutions=_ENVIRONMENT=$(ENVIRONMENT)'
 
-        echo "Deploying Cloud Function to project: $(cat /workspace/project_name.txt)..."
-
-        gcloud config set project "$(cat /workspace/project_name.txt)"
-
-        gcloud functions deploy service-check \
-            --entry-point=app \
-            --runtime=python39 \
-            --trigger-http \
-            --allow-unauthenticated \
-            --region=us-central1 \
-            --source=gcp/cloud-functions/service-check
-
-        echo "Cloud Function 'service-check' deployed successfully."
-
+timeout: '3600s' # Timeout for the entire build
 options:
-  logging: CLOUD_LOGGING_ONLY
+  substitutionOption: ALLOW_LOOSE
