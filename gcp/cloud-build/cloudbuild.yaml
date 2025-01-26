@@ -1,6 +1,7 @@
 steps:
   # Trigger: 010-check-or-create-folder
   - name: 'gcr.io/cloud-builders/gcloud'
+    id: '010-check-or-create-folder'
     args:
       - 'beta'
       - 'builds'
@@ -11,6 +12,8 @@ steps:
 
   # Trigger: 020-check-or-create-project
   - name: 'gcr.io/cloud-builders/gcloud'
+    id: '020-check-or-create-project'
+    waitFor: ['010-check-or-create-folder']
     args:
       - 'beta'
       - 'builds'
@@ -22,6 +25,8 @@ steps:
 
   # Trigger: 030-enable-billing
   - name: 'gcr.io/cloud-builders/gcloud'
+    id: '030-enable-billing'
+    waitFor: ['020-check-or-create-project']
     args:
       - 'beta'
       - 'builds'
@@ -33,6 +38,8 @@ steps:
 
   # Trigger: 040-enable-cloud-functions
   - name: 'gcr.io/cloud-builders/gcloud'
+    id: '040-enable-cloud-functions'
+    waitFor: ['030-enable-billing']
     args:
       - 'beta'
       - 'builds'
@@ -44,6 +51,8 @@ steps:
 
   # Trigger: 050-add-cloudbuild-iam-policy
   - name: 'gcr.io/cloud-builders/gcloud'
+    id: '050-add-cloudbuild-iam-policy'
+    waitFor: ['040-enable-cloud-functions']
     args:
       - 'beta'
       - 'builds'
@@ -55,6 +64,8 @@ steps:
 
   # Trigger: 060-deploy-cloud-function
   - name: 'gcr.io/cloud-builders/gcloud'
+    id: '060-deploy-cloud-function'
+    waitFor: ['050-add-cloudbuild-iam-policy']
     args:
       - 'beta'
       - 'builds'
@@ -66,6 +77,8 @@ steps:
 
   # Trigger: 070-test-service-check
   - name: 'gcr.io/cloud-builders/gcloud'
+    id: '070-test-service-check'
+    waitFor: ['060-deploy-cloud-function']
     args:
       - 'beta'
       - 'builds'
