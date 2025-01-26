@@ -7,11 +7,24 @@ steps:
       - '-c'
       - |
         set -e
-        gcloud beta builds triggers run 83bf9b23-f39e-4c32-82f2-15da23226de5 \
-          --project=org-service-account-001 || {
-          echo "Error: Trigger failed for check-or-create-folder."
-          exit 1
-        }
+        echo "Starting trigger: check-or-create-folder..."
+        BUILD_ID=$(gcloud beta builds triggers run 83bf9b23-f39e-4c32-82f2-15da23226de5 \
+          --project=org-service-account-001 --format="value(metadata.build.id)")
+        echo "Trigger started. Build ID: $BUILD_ID"
+        while true; do
+          STATUS=$(gcloud builds describe $BUILD_ID --format="value(status)" --project=org-service-account-001)
+          echo "Current status: $STATUS"
+          if [[ "$STATUS" == "SUCCESS" ]]; then
+            echo "Trigger completed successfully."
+            break
+          elif [[ "$STATUS" == "FAILURE" || "$STATUS" == "CANCELLED" ]]; then
+            echo "Error: Trigger failed with status $STATUS."
+            exit 1
+          else
+            echo "Waiting for completion..."
+            sleep 10
+          fi
+        done
 
   # Trigger: 020-check-or-create-project
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
@@ -22,12 +35,25 @@ steps:
       - '-c'
       - |
         set -e
-        gcloud beta builds triggers run 15257bc8-581a-47f9-b3a5-08f35742553e \
+        echo "Starting trigger: check-or-create-project..."
+        BUILD_ID=$(gcloud beta builds triggers run 15257bc8-581a-47f9-b3a5-08f35742553e \
           --project=org-service-account-001 \
-          --substitutions=_ENVIRONMENT=${_ENVIRONMENT} || {
-          echo "Error: Trigger failed for check-or-create-project."
-          exit 1
-        }
+          --substitutions=_ENVIRONMENT=${_ENVIRONMENT} --format="value(metadata.build.id)")
+        echo "Trigger started. Build ID: $BUILD_ID"
+        while true; do
+          STATUS=$(gcloud builds describe $BUILD_ID --format="value(status)" --project=org-service-account-001)
+          echo "Current status: $STATUS"
+          if [[ "$STATUS" == "SUCCESS" ]]; then
+            echo "Trigger completed successfully."
+            break
+          elif [[ "$STATUS" == "FAILURE" || "$STATUS" == "CANCELLED" ]]; then
+            echo "Error: Trigger failed with status $STATUS."
+            exit 1
+          else
+            echo "Waiting for completion..."
+            sleep 10
+          fi
+        done
 
   # Trigger: 030-enable-billing
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
@@ -38,12 +64,25 @@ steps:
       - '-c'
       - |
         set -e
-        gcloud beta builds triggers run 782d9876-eb96-4581-bfee-85b1c825fd75 \
+        echo "Starting trigger: enable-billing..."
+        BUILD_ID=$(gcloud beta builds triggers run 782d9876-eb96-4581-bfee-85b1c825fd75 \
           --project=org-service-account-001 \
-          --substitutions=_ENVIRONMENT=${_ENVIRONMENT} || {
-          echo "Error: Trigger failed for enable-billing."
-          exit 1
-        }
+          --substitutions=_ENVIRONMENT=${_ENVIRONMENT} --format="value(metadata.build.id)")
+        echo "Trigger started. Build ID: $BUILD_ID"
+        while true; do
+          STATUS=$(gcloud builds describe $BUILD_ID --format="value(status)" --project=org-service-account-001)
+          echo "Current status: $STATUS"
+          if [[ "$STATUS" == "SUCCESS" ]]; then
+            echo "Trigger completed successfully."
+            break
+          elif [[ "$STATUS" == "FAILURE" || "$STATUS" == "CANCELLED" ]]; then
+            echo "Error: Trigger failed with status $STATUS."
+            exit 1
+          else
+            echo "Waiting for completion..."
+            sleep 10
+          fi
+        done
 
   # Trigger: 040-enable-cloud-functions
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
@@ -54,12 +93,25 @@ steps:
       - '-c'
       - |
         set -e
-        gcloud beta builds triggers run 93cd455e-fcf8-4b50-9781-32bf6037ba89 \
+        echo "Starting trigger: enable-cloud-functions..."
+        BUILD_ID=$(gcloud beta builds triggers run 93cd455e-fcf8-4b50-9781-32bf6037ba89 \
           --project=org-service-account-001 \
-          --substitutions=_ENVIRONMENT=${_ENVIRONMENT} || {
-          echo "Error: Trigger failed for enable-cloud-functions."
-          exit 1
-        }
+          --substitutions=_ENVIRONMENT=${_ENVIRONMENT} --format="value(metadata.build.id)")
+        echo "Trigger started. Build ID: $BUILD_ID"
+        while true; do
+          STATUS=$(gcloud builds describe $BUILD_ID --format="value(status)" --project=org-service-account-001)
+          echo "Current status: $STATUS"
+          if [[ "$STATUS" == "SUCCESS" ]]; then
+            echo "Trigger completed successfully."
+            break
+          elif [[ "$STATUS" == "FAILURE" || "$STATUS" == "CANCELLED" ]]; then
+            echo "Error: Trigger failed with status $STATUS."
+            exit 1
+          else
+            echo "Waiting for completion..."
+            sleep 10
+          fi
+        done
 
   # Trigger: 050-add-cloudbuild-iam-policy
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
@@ -70,12 +122,25 @@ steps:
       - '-c'
       - |
         set -e
-        gcloud beta builds triggers run a8da0b8c-01d5-4c27-958b-7eab3b7ed00f \
+        echo "Starting trigger: add-cloudbuild-iam-policy..."
+        BUILD_ID=$(gcloud beta builds triggers run a8da0b8c-01d5-4c27-958b-7eab3b7ed00f \
           --project=org-service-account-001 \
-          --substitutions=_ENVIRONMENT=${_ENVIRONMENT} || {
-          echo "Error: Trigger failed for add-cloudbuild-iam-policy."
-          exit 1
-        }
+          --substitutions=_ENVIRONMENT=${_ENVIRONMENT} --format="value(metadata.build.id)")
+        echo "Trigger started. Build ID: $BUILD_ID"
+        while true; do
+          STATUS=$(gcloud builds describe $BUILD_ID --format="value(status)" --project=org-service-account-001)
+          echo "Current status: $STATUS"
+          if [[ "$STATUS" == "SUCCESS" ]]; then
+            echo "Trigger completed successfully."
+            break
+          elif [[ "$STATUS" == "FAILURE" || "$STATUS" == "CANCELLED" ]]; then
+            echo "Error: Trigger failed with status $STATUS."
+            exit 1
+          else
+            echo "Waiting for completion..."
+            sleep 10
+          fi
+        done
 
   # Trigger: 060-deploy-cloud-function
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
@@ -86,12 +151,25 @@ steps:
       - '-c'
       - |
         set -e
-        gcloud beta builds triggers run f6de475f-0bd6-48b0-ae13-687a5f84a03f \
+        echo "Starting trigger: deploy-cloud-function..."
+        BUILD_ID=$(gcloud beta builds triggers run f6de475f-0bd6-48b0-ae13-687a5f84a03f \
           --project=org-service-account-001 \
-          --substitutions=_ENVIRONMENT=${_ENVIRONMENT} || {
-          echo "Error: Trigger failed for deploy-cloud-function."
-          exit 1
-        }
+          --substitutions=_ENVIRONMENT=${_ENVIRONMENT} --format="value(metadata.build.id)")
+        echo "Trigger started. Build ID: $BUILD_ID"
+        while true; do
+          STATUS=$(gcloud builds describe $BUILD_ID --format="value(status)" --project=org-service-account-001)
+          echo "Current status: $STATUS"
+          if [[ "$STATUS" == "SUCCESS" ]]; then
+            echo "Trigger completed successfully."
+            break
+          elif [[ "$STATUS" == "FAILURE" || "$STATUS" == "CANCELLED" ]]; then
+            echo "Error: Trigger failed with status $STATUS."
+            exit 1
+          else
+            echo "Waiting for completion..."
+            sleep 10
+          fi
+        done
 
   # Trigger: 070-test-service-check
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
@@ -102,12 +180,25 @@ steps:
       - '-c'
       - |
         set -e
-        gcloud beta builds triggers run af1d2829-bf23-4125-aa52-373e47001e4a \
+        echo "Starting trigger: test-service-check..."
+        BUILD_ID=$(gcloud beta builds triggers run af1d2829-bf23-4125-aa52-373e47001e4a \
           --project=org-service-account-001 \
-          --substitutions=_ENVIRONMENT=${_ENVIRONMENT} || {
-          echo "Error: Trigger failed for test-service-check."
-          exit 1
-        }
+          --substitutions=_ENVIRONMENT=${_ENVIRONMENT} --format="value(metadata.build.id)")
+        echo "Trigger started. Build ID: $BUILD_ID"
+        while true; do
+          STATUS=$(gcloud builds describe $BUILD_ID --format="value(status)" --project=org-service-account-001)
+          echo "Current status: $STATUS"
+          if [[ "$STATUS" == "SUCCESS" ]]; then
+            echo "Trigger completed successfully."
+            break
+          elif [[ "$STATUS" == "FAILURE" || "$STATUS" == "CANCELLED" ]]; then
+            echo "Error: Trigger failed with status $STATUS."
+            exit 1
+          else
+            echo "Waiting for completion..."
+            sleep 10
+          fi
+        done
 
 timeout: '3600s' # Timeout for the entire build
 options:
