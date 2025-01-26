@@ -27,5 +27,26 @@ steps:
           echo "Folder exists. ID stored in /workspace/folder_id.txt"
         fi
 
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e  # Exit immediately if a command fails
+        echo "Waiting for folder and project resources to be fully registered..."
+        FOLDER_ID=$(cat /workspace/folder_id.txt)
+        for i in {1..10}; do
+          echo "Checking project registration attempt $i/10..."
+          if gcloud resource-manager folders describe "$FOLDER_ID" > /dev/null 2>&1; then
+            echo "Folder and project are fully registered in GCP."
+            break
+          fi
+          if [ "$i" -eq 10 ]; then
+            echo "Error: Folder and project are not fully registered after 10 attempts."
+            exit 1
+          fi
+          sleep 30  # Wait 30 seconds before the next attempt
+        done
+
 options:
   logging: CLOUD_LOGGING_ONLY
