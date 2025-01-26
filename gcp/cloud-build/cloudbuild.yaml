@@ -3,12 +3,13 @@ steps:
   - name: 'gcr.io/cloud-builders/gcloud'
     id: '010-check-or-create-folder'
     args:
-      - 'beta'
-      - 'builds'
-      - 'triggers'
-      - 'run'
-      - '83bf9b23-f39e-4c32-82f2-15da23226de5'
-      - '--project=org-service-account-001'
+      - 'bash'
+      - '-c'
+      - |
+        set -e
+        gcloud beta builds triggers run 83bf9b23-f39e-4c32-82f2-15da23226de5 \
+          --project=org-service-account-001 \
+          --substitutions=_ORG_ID=799174817843,_FOLDER_NAME=soccer
 
   # Trigger: 020-check-or-create-project
   - name: 'gcr.io/cloud-builders/gcloud'
@@ -19,7 +20,9 @@ steps:
       - '-c'
       - |
         set -e
-        gcloud beta builds triggers run 15257bc8-581a-47f9-b3a5-08f35742553e --project=org-service-account-001 --substitutions=_ENVIRONMENT=${_ENVIRONMENT}
+        gcloud beta builds triggers run 15257bc8-581a-47f9-b3a5-08f35742553e \
+          --project=org-service-account-001 \
+          --substitutions=_ENVIRONMENT=${_ENVIRONMENT}
 
   # Trigger: 030-enable-billing
   - name: 'gcr.io/cloud-builders/gcloud'
@@ -30,7 +33,9 @@ steps:
       - '-c'
       - |
         set -e
-        gcloud beta builds triggers run 782d9876-eb96-4581-bfee-85b1c825fd75 --project=org-service-account-001 --substitutions=_ENVIRONMENT=${_ENVIRONMENT}
+        gcloud beta builds triggers run 782d9876-eb96-4581-bfee-85b1c825fd75 \
+          --project=org-service-account-001 \
+          --substitutions=_ENVIRONMENT=${_ENVIRONMENT}
 
   # Trigger: 040-enable-cloud-functions
   - name: 'gcr.io/cloud-builders/gcloud'
@@ -41,7 +46,9 @@ steps:
       - '-c'
       - |
         set -e
-        gcloud beta builds triggers run 93cd455e-fcf8-4b50-9781-32bf6037ba89 --project=org-service-account-001 --substitutions=_ENVIRONMENT=${_ENVIRONMENT}
+        gcloud beta builds triggers run 93cd455e-fcf8-4b50-9781-32bf6037ba89 \
+          --project=org-service-account-001 \
+          --substitutions=_ENVIRONMENT=${_ENVIRONMENT}
 
   # Trigger: 050-add-cloudbuild-iam-policy
   - name: 'gcr.io/cloud-builders/gcloud'
@@ -52,7 +59,9 @@ steps:
       - '-c'
       - |
         set -e
-        gcloud beta builds triggers run a8da0b8c-01d5-4c27-958b-7eab3b7ed00f --project=org-service-account-001 --substitutions=_ENVIRONMENT=${_ENVIRONMENT}
+        gcloud beta builds triggers run a8da0b8c-01d5-4c27-958b-7eab3b7ed00f \
+          --project=org-service-account-001 \
+          --substitutions=_ENVIRONMENT=${_ENVIRONMENT}
 
   # Trigger: 060-deploy-cloud-function
   - name: 'gcr.io/cloud-builders/gcloud'
@@ -63,7 +72,9 @@ steps:
       - '-c'
       - |
         set -e
-        gcloud beta builds triggers run f6de475f-0bd6-48b0-ae13-687a5f84a03f --project=org-service-account-001 --substitutions=_ENVIRONMENT=${_ENVIRONMENT}
+        gcloud beta builds triggers run f6de475f-0bd6-48b0-ae13-687a5f84a03f \
+          --project=org-service-account-001 \
+          --substitutions=_ENVIRONMENT=${_ENVIRONMENT}
 
   # Trigger: 070-test-service-check
   - name: 'gcr.io/cloud-builders/gcloud'
@@ -74,7 +85,9 @@ steps:
       - '-c'
       - |
         set -e
-        gcloud beta builds triggers run af1d2829-bf23-4125-aa52-373e47001e4a --project=org-service-account-001 --substitutions=_ENVIRONMENT=${_ENVIRONMENT}
+        gcloud beta builds triggers run af1d2829-bf23-4125-aa52-373e47001e4a \
+          --project=org-service-account-001 \
+          --substitutions=_ENVIRONMENT=${_ENVIRONMENT}
 
 timeout: '3600s' # Timeout for the entire build
 options:
