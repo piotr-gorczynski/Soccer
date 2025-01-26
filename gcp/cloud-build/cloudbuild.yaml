@@ -1,9 +1,9 @@
 steps:
   # Trigger: 010-check-or-create-folder
-  - name: 'gcr.io/cloud-builders/gcloud'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: '010-check-or-create-folder'
+    entrypoint: 'bash'
     args:
-      - 'bash'
       - '-c'
       - |
         set -e
@@ -12,11 +12,11 @@ steps:
           --substitutions=_ORG_ID=799174817843,_FOLDER_NAME=soccer
 
   # Trigger: 020-check-or-create-project
-  - name: 'gcr.io/cloud-builders/gcloud'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: '020-check-or-create-project'
     waitFor: ['010-check-or-create-folder']
+    entrypoint: 'bash'
     args:
-      - 'bash'
       - '-c'
       - |
         set -e
@@ -25,11 +25,11 @@ steps:
           --substitutions=_ENVIRONMENT=${_ENVIRONMENT}
 
   # Trigger: 030-enable-billing
-  - name: 'gcr.io/cloud-builders/gcloud'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: '030-enable-billing'
     waitFor: ['020-check-or-create-project']
+    entrypoint: 'bash'
     args:
-      - 'bash'
       - '-c'
       - |
         set -e
@@ -38,11 +38,11 @@ steps:
           --substitutions=_ENVIRONMENT=${_ENVIRONMENT}
 
   # Trigger: 040-enable-cloud-functions
-  - name: 'gcr.io/cloud-builders/gcloud'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: '040-enable-cloud-functions'
     waitFor: ['030-enable-billing']
+    entrypoint: 'bash'
     args:
-      - 'bash'
       - '-c'
       - |
         set -e
@@ -51,11 +51,11 @@ steps:
           --substitutions=_ENVIRONMENT=${_ENVIRONMENT}
 
   # Trigger: 050-add-cloudbuild-iam-policy
-  - name: 'gcr.io/cloud-builders/gcloud'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: '050-add-cloudbuild-iam-policy'
     waitFor: ['040-enable-cloud-functions']
+    entrypoint: 'bash'
     args:
-      - 'bash'
       - '-c'
       - |
         set -e
@@ -64,11 +64,11 @@ steps:
           --substitutions=_ENVIRONMENT=${_ENVIRONMENT}
 
   # Trigger: 060-deploy-cloud-function
-  - name: 'gcr.io/cloud-builders/gcloud'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: '060-deploy-cloud-function'
     waitFor: ['050-add-cloudbuild-iam-policy']
+    entrypoint: 'bash'
     args:
-      - 'bash'
       - '-c'
       - |
         set -e
@@ -77,11 +77,11 @@ steps:
           --substitutions=_ENVIRONMENT=${_ENVIRONMENT}
 
   # Trigger: 070-test-service-check
-  - name: 'gcr.io/cloud-builders/gcloud'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: '070-test-service-check'
     waitFor: ['060-deploy-cloud-function']
+    entrypoint: 'bash'
     args:
-      - 'bash'
       - '-c'
       - |
         set -e
