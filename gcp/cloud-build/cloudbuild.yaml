@@ -22,9 +22,9 @@ steps:
       - '-c'
       - |
         set -e
-        while IFS= read -r line; do
-          echo "$line" | cut -d' ' -f1 > /workspace/trigger_name.txt
-          echo "$line" | cut -d' ' -f2 > /workspace/trigger_id.txt
+        while IFS=$'\t' read -r trigger_name trigger_id; do
+          echo "$trigger_name" > /workspace/trigger_name.txt
+          echo "$trigger_id" > /workspace/trigger_id.txt
 
           if [ ! -s /workspace/trigger_name.txt ] || [ ! -s /workspace/trigger_id.txt ]; then
             echo "Error: Failed to parse trigger details."
