@@ -74,11 +74,14 @@ steps:
       - |
         set -e  # Exit immediately if a command fails
         echo "Waiting for project resources to be fully registered..."
-        cat /workspace/project_name.txt > /workspace/project_id_ready.txt
         for i in {1..10}; do
           echo "Checking project registration attempt $i/10..."
-          if gcloud projects describe "$(cat /workspace/project_id_ready.txt)" > /dev/null 2>&1; then
-            echo "Project is fully registered in GCP."
+          gcloud projects list \
+            --filter="projectId=$(cat /workspace/project_name.txt)" \
+            --format="value(projectId)" | head -n 1 > /workspace/project_id_ready.txt
+
+          if [ -s /workspace/project_id_ready.txt ]; then
+            echo "Project is fully registered in GCP: $(cat /workspace/project_id_ready.txt)"
             break
           fi
           if [ "$i" -eq 10 ]; then
