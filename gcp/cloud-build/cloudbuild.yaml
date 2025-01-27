@@ -34,6 +34,7 @@ steps:
           echo "Starting trigger: $(cat /workspace/trigger_name.txt) with ID: $(cat /workspace/trigger_id.txt)..."
           gcloud beta builds triggers run $(cat /workspace/trigger_id.txt) \
             --project=org-service-account-001 \
+            --substitutions=_ENVIRONMENT=${_ENVIRONMENT} \
             --format="value(metadata.build.id)" > /workspace/build_id.txt
 
           if [ ! -s /workspace/build_id.txt ]; then
