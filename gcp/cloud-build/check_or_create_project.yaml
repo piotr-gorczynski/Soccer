@@ -66,5 +66,27 @@ steps:
           echo "Project successfully created."
         }
 
+  # Step 3: Ensure the project is fully registered in GCP
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e  # Exit immediately if a command fails
+        echo "Waiting for project resources to be fully registered..."
+        cat /workspace/project_name.txt > /workspace/project_id_ready.txt
+        for i in {1..10}; do
+          echo "Checking project registration attempt $i/10..."
+          if gcloud projects describe "$(cat /workspace/project_id_ready.txt)" > /dev/null 2>&1; then
+            echo "Project is fully registered in GCP."
+            break
+          fi
+          if [ "$i" -eq 10 ]; then
+            echo "Error: Project is not fully registered after 10 attempts."
+            exit 1
+          fi
+          sleep 30  # Wait 30 seconds before the next attempt
+        done
+
 options:
   logging: CLOUD_LOGGING_ONLY
