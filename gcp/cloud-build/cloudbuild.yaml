@@ -1,204 +1,69 @@
 steps:
-  # Trigger: 010-check-or-create-folder
+  # Step 1: Generate the list of triggers starting with 3 digits and sort them
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    id: '010-check-or-create-folder'
+    id: 'list-and-sort-triggers'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e
-        echo "Starting trigger: check-or-create-folder..."
-        BUILD_ID=$(gcloud beta builds triggers run 83bf9b23-f39e-4c32-82f2-15da23226de5 \
-          --project=org-service-account-001 --format="value(metadata.build.id)")
-        echo "Trigger started. Build ID: $BUILD_ID"
-        while true; do
-          STATUS=$(gcloud builds describe $BUILD_ID --format="value(status)" --project=org-service-account-001)
-          echo "Current status: $STATUS"
-          if [[ "$STATUS" == "SUCCESS" ]]; then
-            echo "Trigger completed successfully."
-            break
-          elif [[ "$STATUS" == "FAILURE" || "$STATUS" == "CANCELLED" ]]; then
-            echo "Error: Trigger failed with status $STATUS."
-            exit 1
-          else
-            echo "Waiting for completion..."
-            sleep 10
-          fi
-        done
+        echo "Listing triggers that follow the naming convention..."
+        gcloud beta builds triggers list --project=org-service-account-001 \
+          --format="value(name, id)" | grep -E '^[0-9]{3}-' | sort > /workspace/sorted_triggers.txt
 
-  # Trigger: 020-check-or-create-project
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    id: '020-check-or-create-project'
-    waitFor: ['010-check-or-create-folder']
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e
-        echo "Starting trigger: check-or-create-project..."
-        BUILD_ID=$(gcloud beta builds triggers run 15257bc8-581a-47f9-b3a5-08f35742553e \
-          --project=org-service-account-001 \
-          --substitutions=_ENVIRONMENT=${_ENVIRONMENT} --format="value(metadata.build.id)")
-        echo "Trigger started. Build ID: $BUILD_ID"
-        while true; do
-          STATUS=$(gcloud builds describe $BUILD_ID --format="value(status)" --project=org-service-account-001)
-          echo "Current status: $STATUS"
-          if [[ "$STATUS" == "SUCCESS" ]]; then
-            echo "Trigger completed successfully."
-            break
-          elif [[ "$STATUS" == "FAILURE" || "$STATUS" == "CANCELLED" ]]; then
-            echo "Error: Trigger failed with status $STATUS."
-            exit 1
-          else
-            echo "Waiting for completion..."
-            sleep 10
-          fi
-        done
+        echo "Sorted triggers:"
+        cat /workspace/sorted_triggers.txt
 
-  # Trigger: 030-enable-billing
+  # Step 2: Loop through each sorted trigger and run them
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    id: '030-enable-billing'
-    waitFor: ['020-check-or-create-project']
+    id: 'run-sorted-triggers'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e
-        echo "Starting trigger: enable-billing..."
-        BUILD_ID=$(gcloud beta builds triggers run 782d9876-eb96-4581-bfee-85b1c825fd75 \
-          --project=org-service-account-001 \
-          --substitutions=_ENVIRONMENT=${_ENVIRONMENT} --format="value(metadata.build.id)")
-        echo "Trigger started. Build ID: $BUILD_ID"
-        while true; do
-          STATUS=$(gcloud builds describe $BUILD_ID --format="value(status)" --project=org-service-account-001)
-          echo "Current status: $STATUS"
-          if [[ "$STATUS" == "SUCCESS" ]]; then
-            echo "Trigger completed successfully."
-            break
-          elif [[ "$STATUS" == "FAILURE" || "$STATUS" == "CANCELLED" ]]; then
-            echo "Error: Trigger failed with status $STATUS."
-            exit 1
-          else
-            echo "Waiting for completion..."
-            sleep 10
-          fi
-        done
+        while IFS= read -r line; do
+          echo "$line" | cut -d' ' -f1 > /workspace/trigger_name.txt
+          echo "$line" | cut -d' ' -f2 > /workspace/trigger_id.txt
 
-  # Trigger: 040-enable-cloud-functions
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    id: '040-enable-cloud-functions'
-    waitFor: ['030-enable-billing']
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e
-        echo "Starting trigger: enable-cloud-functions..."
-        BUILD_ID=$(gcloud beta builds triggers run 93cd455e-fcf8-4b50-9781-32bf6037ba89 \
-          --project=org-service-account-001 \
-          --substitutions=_ENVIRONMENT=${_ENVIRONMENT} --format="value(metadata.build.id)")
-        echo "Trigger started. Build ID: $BUILD_ID"
-        while true; do
-          STATUS=$(gcloud builds describe $BUILD_ID --format="value(status)" --project=org-service-account-001)
-          echo "Current status: $STATUS"
-          if [[ "$STATUS" == "SUCCESS" ]]; then
-            echo "Trigger completed successfully."
-            break
-          elif [[ "$STATUS" == "FAILURE" || "$STATUS" == "CANCELLED" ]]; then
-            echo "Error: Trigger failed with status $STATUS."
+          if [ ! -s /workspace/trigger_name.txt ] || [ ! -s /workspace/trigger_id.txt ]; then
+            echo "Error: Failed to parse trigger details."
             exit 1
-          else
-            echo "Waiting for completion..."
-            sleep 10
           fi
-        done
 
-  # Trigger: 050-add-cloudbuild-iam-policy
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    id: '050-add-cloudbuild-iam-policy'
-    waitFor: ['040-enable-cloud-functions']
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e
-        echo "Starting trigger: add-cloudbuild-iam-policy..."
-        BUILD_ID=$(gcloud beta builds triggers run a8da0b8c-01d5-4c27-958b-7eab3b7ed00f \
-          --project=org-service-account-001 \
-          --substitutions=_ENVIRONMENT=${_ENVIRONMENT} --format="value(metadata.build.id)")
-        echo "Trigger started. Build ID: $BUILD_ID"
-        while true; do
-          STATUS=$(gcloud builds describe $BUILD_ID --format="value(status)" --project=org-service-account-001)
-          echo "Current status: $STATUS"
-          if [[ "$STATUS" == "SUCCESS" ]]; then
-            echo "Trigger completed successfully."
-            break
-          elif [[ "$STATUS" == "FAILURE" || "$STATUS" == "CANCELLED" ]]; then
-            echo "Error: Trigger failed with status $STATUS."
-            exit 1
-          else
-            echo "Waiting for completion..."
-            sleep 10
-          fi
-        done
+          echo "Starting trigger: $(cat /workspace/trigger_name.txt) with ID: $(cat /workspace/trigger_id.txt)..."
+          gcloud beta builds triggers run $(cat /workspace/trigger_id.txt) \
+            --project=org-service-account-001 \
+            --format="value(metadata.build.id)" > /workspace/build_id.txt
 
-  # Trigger: 060-deploy-cloud-function
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    id: '060-deploy-cloud-function'
-    waitFor: ['050-add-cloudbuild-iam-policy']
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e
-        echo "Starting trigger: deploy-cloud-function..."
-        BUILD_ID=$(gcloud beta builds triggers run f6de475f-0bd6-48b0-ae13-687a5f84a03f \
-          --project=org-service-account-001 \
-          --substitutions=_ENVIRONMENT=${_ENVIRONMENT} --format="value(metadata.build.id)")
-        echo "Trigger started. Build ID: $BUILD_ID"
-        while true; do
-          STATUS=$(gcloud builds describe $BUILD_ID --format="value(status)" --project=org-service-account-001)
-          echo "Current status: $STATUS"
-          if [[ "$STATUS" == "SUCCESS" ]]; then
-            echo "Trigger completed successfully."
-            break
-          elif [[ "$STATUS" == "FAILURE" || "$STATUS" == "CANCELLED" ]]; then
-            echo "Error: Trigger failed with status $STATUS."
+          if [ ! -s /workspace/build_id.txt ]; then
+            echo "Error: Failed to retrieve Build ID for $(cat /workspace/trigger_name.txt)."
             exit 1
-          else
-            echo "Waiting for completion..."
-            sleep 10
           fi
-        done
 
-  # Trigger: 070-test-service-check
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    id: '070-test-service-check'
-    waitFor: ['060-deploy-cloud-function']
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e
-        echo "Starting trigger: test-service-check..."
-        BUILD_ID=$(gcloud beta builds triggers run af1d2829-bf23-4125-aa52-373e47001e4a \
-          --project=org-service-account-001 \
-          --substitutions=_ENVIRONMENT=${_ENVIRONMENT} --format="value(metadata.build.id)")
-        echo "Trigger started. Build ID: $BUILD_ID"
-        while true; do
-          STATUS=$(gcloud builds describe $BUILD_ID --format="value(status)" --project=org-service-account-001)
-          echo "Current status: $STATUS"
-          if [[ "$STATUS" == "SUCCESS" ]]; then
-            echo "Trigger completed successfully."
-            break
-          elif [[ "$STATUS" == "FAILURE" || "$STATUS" == "CANCELLED" ]]; then
-            echo "Error: Trigger failed with status $STATUS."
-            exit 1
-          else
-            echo "Waiting for completion..."
-            sleep 10
-          fi
-        done
+          echo "Trigger started. Build ID: $(cat /workspace/build_id.txt)"
+          while true; do
+            gcloud builds describe $(cat /workspace/build_id.txt) \
+              --format="value(status)" --project=org-service-account-001 > /workspace/build_status.txt
+
+            if [ ! -s /workspace/build_status.txt ]; then
+              echo "Error: Failed to retrieve Build Status for $(cat /workspace/trigger_name.txt)."
+              exit 1
+            fi
+
+            echo "Current status of $(cat /workspace/trigger_name.txt): $(cat /workspace/build_status.txt)"
+            if [[ "$(cat /workspace/build_status.txt)" == "SUCCESS" ]]; then
+              echo "$(cat /workspace/trigger_name.txt) completed successfully."
+              break
+            elif [[ "$(cat /workspace/build_status.txt)" == "FAILURE" || "$(cat /workspace/build_status.txt)" == "CANCELLED" ]]; then
+              echo "Error: $(cat /workspace/trigger_name.txt) failed with status $(cat /workspace/build_status.txt)."
+              exit 1
+            else
+              echo "Waiting for completion of $(cat /workspace/trigger_name.txt)..."
+              sleep 10
+            fi
+          done
+        done < /workspace/sorted_triggers.txt
 
 timeout: '3600s' # Timeout for the entire build
 options:
