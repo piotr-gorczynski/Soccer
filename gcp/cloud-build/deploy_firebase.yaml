@@ -21,7 +21,7 @@ steps:
         fi
         echo "Using project: $(cat /workspace/project_name.txt)"
 
-  # Step 4: Enable Firebase in the project
+  # Step 2: Enable Firebase in the project
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -31,7 +31,7 @@ steps:
         echo "Enabling Firebase in project $(cat /workspace/project_name.txt)..."
         gcloud services enable firebase.googleapis.com --project="$(cat /workspace/project_name.txt)"
 
-  # Step 5: Install Firebase CLI and Initialize Firebase
+  # Step 3: Install Firebase CLI and Initialize Firebase
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -40,17 +40,22 @@ steps:
         set -e
         echo "Installing Firebase CLI..."
         curl -sL https://firebase.tools | bash
-        echo "Initializing Firebase in project $(cat /workspace/project_name.txt)..."
-        firebase use --add "$(cat /workspace/project_name.txt)"
-        firebase init --project="$(cat /workspace/project_name.txt)"
 
-  # Step 6: Deploy Firebase Configuration
+        echo "Creating Firebase project directory..."
+        mkdir -p /workspace/firebase_project
+        cd /workspace/firebase_project
+
+        echo "Initializing Firebase in project $(cat /workspace/project_name.txt)..."
+        firebase init --project="$(cat /workspace/project_name.txt)" --non-interactive --force --only firestore,functions,storage,auth
+
+  # Step 4: Deploy Firebase Configuration
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e
+        cd /workspace/firebase_project
         echo "Deploying Firebase configuration to $(cat /workspace/project_name.txt)..."
         firebase deploy --project="$(cat /workspace/project_name.txt)"
 
