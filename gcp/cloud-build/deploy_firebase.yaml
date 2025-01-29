@@ -1,0 +1,56 @@
+substitutions:
+  _ENVIRONMENT: 'dev'                         # Environment delivered from the trigger
+  _FOLDER_NAME: 'soccer'                      # Parent folder name
+
+steps:
+  # Step 1: Retrieve the project ID
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e  # Exit immediately if a command fails
+        echo "Checking if project starting with ${_FOLDER_NAME}-${_ENVIRONMENT} exists..."
+        gcloud projects list \
+          --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
+          --format="value(projectId)" | head -n 1 > /workspace/project_name.txt
+
+        if [ ! -s /workspace/project_name.txt ] || [ -z "$(cat /workspace/project_name.txt)" ]; then
+          echo "Error: Project ID not found. Ensure the project exists."
+          exit 1
+        fi
+        echo "Using project: $(cat /workspace/project_name.txt)"
+
+  # Step 4: Enable Firebase in the project
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "Enabling Firebase in project $(cat /workspace/project_name.txt)..."
+        gcloud services enable firebase.googleapis.com --project="$(cat /workspace/project_name.txt)"
+
+  # Step 5: Initialize Firebase for the project
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "Initializing Firebase in project $(cat /workspace/project_name.txt)..."
+        firebase use --add "$(cat /workspace/project_name.txt)"
+        firebase init --project="$(cat /workspace/project_name.txt)"
+
+  # Step 6: Deploy Firebase Configuration
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "Deploying Firebase configuration to $(cat /workspace/project_name.txt)..."
+        firebase deploy --project="$(cat /workspace/project_name.txt)"
+
+options:
+  logging: CLOUD_LOGGING_ONLY
