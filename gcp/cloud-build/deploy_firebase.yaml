@@ -31,13 +31,15 @@ steps:
         echo "Enabling Firebase in project $(cat /workspace/project_name.txt)..."
         gcloud services enable firebase.googleapis.com --project="$(cat /workspace/project_name.txt)"
 
-  # Step 5: Initialize Firebase for the project
+  # Step 5: Install Firebase CLI and Initialize Firebase
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e
+        echo "Installing Firebase CLI..."
+        curl -sL https://firebase.tools | bash
         echo "Initializing Firebase in project $(cat /workspace/project_name.txt)..."
         firebase use --add "$(cat /workspace/project_name.txt)"
         firebase init --project="$(cat /workspace/project_name.txt)"
