@@ -31,7 +31,7 @@ steps:
         echo "Enabling Firebase in project $(cat /workspace/project_name.txt)..."
         gcloud services enable firebase.googleapis.com --project="$(cat /workspace/project_name.txt)"
 
-  # Step 3: Install Firebase CLI and Copy Configuration Files
+  # Step 3: Install Firebase CLI and Initialize Firebase (SAME STEP)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -40,6 +40,7 @@ steps:
         set -e
         echo "Installing Firebase CLI..."
         curl -sL https://firebase.tools | bash
+        export PATH="$HOME/.local/bin:$PATH"
 
         echo "Creating Firebase project directory..."
         mkdir -p /workspace/firebase_project
@@ -52,27 +53,20 @@ steps:
         # Ensure project ID is updated in .firebaserc
         sed -i "s/SOCCER_PROJECT_ID/$(cat /workspace/project_name.txt)/g" .firebaserc
 
-  # Step 4: Initialize Firebase in Non-Interactive Mode
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e
-        cd /workspace/firebase_project
         echo "Initializing Firebase in project $(cat /workspace/project_name.txt)..."
-        firebase init --project="$(cat /workspace/project_name.txt)" --non-interactive
+        $HOME/.local/bin/firebase init --project="$(cat /workspace/project_name.txt)" --non-interactive
 
-  # Step 5: Deploy Firebase Configuration
+  # Step 4: Deploy Firebase Configuration
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e
+        export PATH="$HOME/.local/bin:$PATH"
         cd /workspace/firebase_project
         echo "Deploying Firebase configuration to $(cat /workspace/project_name.txt)..."
-        firebase deploy --project="$(cat /workspace/project_name.txt)"
+        $HOME/.local/bin/firebase deploy --project="$(cat /workspace/project_name.txt)"
 
 options:
   logging: CLOUD_LOGGING_ONLY
