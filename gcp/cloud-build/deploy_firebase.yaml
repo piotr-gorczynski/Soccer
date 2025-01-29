@@ -46,7 +46,7 @@ steps:
         cd /workspace/firebase_project
 
         echo "Initializing Firebase in project $(cat /workspace/project_name.txt)..."
-        firebase init --project="$(cat /workspace/project_name.txt)" --non-interactive --force --only firestore,functions,storage,auth
+        firebase init firestore functions storage auth --project="$(cat /workspace/project_name.txt)" --non-interactive
 
   # Step 4: Deploy Firebase Configuration
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
