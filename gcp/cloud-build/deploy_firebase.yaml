@@ -31,7 +31,7 @@ steps:
         echo "Enabling Firebase in project $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
         gcloud services enable firebase.googleapis.com --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
 
-  # Step 3: Install Firebase CLI and Initialize Firebase
+  # Step 3: Install Firebase CLI and Prepare Firebase Project Files
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -52,21 +52,38 @@ steps:
         mkdir -p /workspace/firebase_project
         cd /workspace/firebase_project
 
-        echo "Copying firebase.json and .firebaserc from source..."
+        echo "Copying Firebase configuration files..."
         cp /workspace/gcp/cloud-build/firebase.json .
         cp /workspace/gcp/cloud-build/.firebaserc .
+        cp /workspace/gcp/cloud-build/firestore.rules .
+        cp /workspace/gcp/cloud-build/database.rules.json .
+        cp /workspace/gcp/cloud-build/storage.rules .
 
         # Ensure project ID is updated in .firebaserc
         sed -i "s/SOCCER_PROJECT_ID/$(cat /workspace/SOCCER_PROJECT_ID.txt)/g" .firebaserc
 
-        echo "Initializing Firebase in project $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
-        echo '{"rules": {".read": "auth != null", ".write": "auth != null"}}' > database.rules.json
-        echo 'rules_version = "2"; service cloud.firestore { match /databases/{database}/documents { match /{document=**} { allow read, write: if false; } } }' > firestore.rules
-        echo 'rules_version = "2"; service firebase.storage { match /b/{bucket}/o { match /{allPaths=**} { allow read, write: if false; } } }' > storage.rules
+  # Step 4: Install Firebase CLI and Initialize Firebase (Non-Interactive)
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "Installing Firebase CLI again to persist across steps..."
+        curl -sL https://firebase.tools | bash
+        export PATH="$PATH:/usr/local/bin"
 
+        echo "Verifying Firebase CLI before initialization..."
+        if ! command -v firebase &> /dev/null; then
+          echo "Error: Firebase CLI is not available."
+          exit 1
+        fi
+
+        cd /workspace/firebase_project
+        echo "Initializing Firebase in project $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
         firebase init firestore functions storage auth --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)" --non-interactive --force
 
-  # Step 4: Install Firebase CLI and Deploy Firebase Configuration
+  # Step 5: Install Firebase CLI and Deploy Firebase Configuration
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
