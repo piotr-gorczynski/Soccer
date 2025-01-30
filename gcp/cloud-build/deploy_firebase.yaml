@@ -40,7 +40,12 @@ steps:
         set -e
         echo "Installing Firebase CLI..."
         curl -sL https://firebase.tools | bash
-        mv firebase /usr/local/bin/firebase  # Move Firebase CLI to a globally available location
+
+        echo "Verifying Firebase CLI installation..."
+        if ! command -v firebase &> /dev/null; then
+          echo "Error: Firebase CLI installation failed."
+          exit 1
+        fi
 
         echo "Creating Firebase project directory..."
         mkdir -p /workspace/firebase_project
@@ -63,6 +68,12 @@ steps:
       - '-c'
       - |
         set -e
+        echo "Verifying Firebase CLI before deployment..."
+        if ! command -v firebase &> /dev/null; then
+          echo "Error: Firebase CLI is not available."
+          exit 1
+        fi
+
         cd /workspace/firebase_project
         echo "Deploying Firebase configuration to $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
         firebase deploy --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
