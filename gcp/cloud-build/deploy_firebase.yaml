@@ -3,7 +3,7 @@ substitutions:
   _FOLDER_NAME: 'soccer'                      # Parent folder name
 
 steps:
-  # Step 1: Retrieve the project ID
+  # Step 1: Retrieve the project ID and store it as SOCCER_PROJECT_ID
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -13,13 +13,13 @@ steps:
         echo "Checking if project starting with ${_FOLDER_NAME}-${_ENVIRONMENT} exists..."
         gcloud projects list \
           --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
-          --format="value(projectId)" | head -n 1 > /workspace/project_name.txt
+          --format="value(projectId)" | head -n 1 > /workspace/SOCCER_PROJECT_ID.txt
 
-        if [ ! -s /workspace/project_name.txt ] || [ -z "$(cat /workspace/project_name.txt)" ]; then
+        if [ ! -s /workspace/SOCCER_PROJECT_ID.txt ] || [ -z "$(cat /workspace/SOCCER_PROJECT_ID.txt)" ]; then
           echo "Error: Project ID not found. Ensure the project exists."
           exit 1
         fi
-        echo "Using project: $(cat /workspace/project_name.txt)"
+        echo "Using project: $(cat /workspace/SOCCER_PROJECT_ID.txt)"
 
   # Step 2: Enable Firebase in the project
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
@@ -28,10 +28,10 @@ steps:
       - '-c'
       - |
         set -e
-        echo "Enabling Firebase in project $(cat /workspace/project_name.txt)..."
-        gcloud services enable firebase.googleapis.com --project="$(cat /workspace/project_name.txt)"
+        echo "Enabling Firebase in project $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
+        gcloud services enable firebase.googleapis.com --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
 
-  # Step 3: Install Firebase CLI and Initialize Firebase (SAME STEP)
+  # Step 3: Install Firebase CLI and Initialize Firebase
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -40,7 +40,7 @@ steps:
         set -e
         echo "Installing Firebase CLI..."
         curl -sL https://firebase.tools | bash
-        export PATH="$HOME/.local/bin:$PATH"
+        mv firebase /usr/local/bin/firebase  # Move Firebase CLI to a globally available location
 
         echo "Creating Firebase project directory..."
         mkdir -p /workspace/firebase_project
@@ -51,10 +51,10 @@ steps:
         cp /workspace/gcp/cloud-build/.firebaserc .
 
         # Ensure project ID is updated in .firebaserc
-        sed -i "s/SOCCER_PROJECT_ID/$(cat /workspace/project_name.txt)/g" .firebaserc
+        sed -i "s/SOCCER_PROJECT_ID/$(cat /workspace/SOCCER_PROJECT_ID.txt)/g" .firebaserc
 
-        echo "Initializing Firebase in project $(cat /workspace/project_name.txt)..."
-        $HOME/.local/bin/firebase init --project="$(cat /workspace/project_name.txt)" --non-interactive
+        echo "Initializing Firebase in project $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
+        firebase init --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)" --non-interactive
 
   # Step 4: Deploy Firebase Configuration
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
@@ -63,10 +63,9 @@ steps:
       - '-c'
       - |
         set -e
-        export PATH="$HOME/.local/bin:$PATH"
         cd /workspace/firebase_project
-        echo "Deploying Firebase configuration to $(cat /workspace/project_name.txt)..."
-        $HOME/.local/bin/firebase deploy --project="$(cat /workspace/project_name.txt)"
+        echo "Deploying Firebase configuration to $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
+        firebase deploy --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
 
 options:
   logging: CLOUD_LOGGING_ONLY
