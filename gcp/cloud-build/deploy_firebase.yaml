@@ -31,7 +31,7 @@ steps:
         echo "Enabling Firebase in project $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
         gcloud services enable firebase.googleapis.com --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
 
-  # Step 3: Install Firebase CLI and Prepare Firebase Project Files
+  # Step 3: Install Firebase CLI (Only Once) and Verify Installation
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -39,14 +39,24 @@ steps:
       - |
         set -e
         echo "Installing Firebase CLI..."
-        curl -sL https://firebase.tools | bash
-        export PATH="$PATH:/usr/local/bin"
+        curl -sL https://firebase.tools | bash -s -- --install-dir /usr/local/bin
+        export PATH="/usr/local/bin:$PATH"
 
         echo "Verifying Firebase CLI installation..."
         if ! command -v firebase &> /dev/null; then
           echo "Error: Firebase CLI installation failed."
           exit 1
         fi
+        echo "Firebase CLI installed successfully!"
+
+  # Step 4: Prepare Firebase Project Files
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        export PATH="/usr/local/bin:$PATH"
 
         echo "Creating Firebase project directory..."
         rm -rf /workspace/firebase_project  # Ensure a clean setup
@@ -63,16 +73,14 @@ steps:
         # Ensure project ID is updated in .firebaserc
         sed -i "s/SOCCER_PROJECT_ID/$(cat /workspace/SOCCER_PROJECT_ID.txt)/g" .firebaserc
 
-  # Step 4: Install Firebase CLI and Initialize Firebase (Non-Interactive)
+  # Step 5: Initialize Firebase (Force Non-Interactive)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e
-        echo "Installing Firebase CLI again to persist across steps..."
-        curl -sL https://firebase.tools | bash
-        export PATH="$PATH:/usr/local/bin"
+        export PATH="/usr/local/bin:$PATH"
 
         echo "Verifying Firebase CLI before initialization..."
         if ! command -v firebase &> /dev/null; then
@@ -83,19 +91,17 @@ steps:
         cd /workspace/firebase_project
         echo "Initializing Firebase in project $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
 
-        # Force selection of required Firebase services without prompting the user
-        firebase init firestore functions storage auth --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)" --non-interactive --force --debug
+        # Force selection of required Firebase services without user input
+        echo "y" | firebase init firestore functions storage auth --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)" --non-interactive --force
 
-  # Step 5: Install Firebase CLI and Deploy Firebase Configuration
+  # Step 6: Deploy Firebase Configuration
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e
-        echo "Installing Firebase CLI again to persist across steps..."
-        curl -sL https://firebase.tools | bash
-        export PATH="$PATH:/usr/local/bin"
+        export PATH="/usr/local/bin:$PATH"
 
         echo "Verifying Firebase CLI before deployment..."
         if ! command -v firebase &> /dev/null; then
