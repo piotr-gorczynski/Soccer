@@ -40,10 +40,9 @@ steps:
         set -e
         echo "Installing Firebase CLI..."
         curl -sL https://firebase.tools | bash -s -- --install-dir /usr/local/bin
-        export PATH="/usr/local/bin:$PATH"
 
         echo "Verifying Firebase CLI installation..."
-        if ! command -v firebase &> /dev/null; then
+        if ! /usr/local/bin/firebase --version; then
           echo "Error: Firebase CLI installation failed."
           exit 1
         fi
@@ -56,7 +55,6 @@ steps:
       - '-c'
       - |
         set -e
-        export PATH="/usr/local/bin:$PATH"
 
         echo "Creating Firebase project directory..."
         rm -rf /workspace/firebase_project  # Ensure a clean setup
@@ -80,10 +78,9 @@ steps:
       - '-c'
       - |
         set -e
-        export PATH="/usr/local/bin:$PATH"
 
         echo "Verifying Firebase CLI before initialization..."
-        if ! command -v firebase &> /dev/null; then
+        if ! /usr/local/bin/firebase --version; then
           echo "Error: Firebase CLI is not available."
           exit 1
         fi
@@ -92,7 +89,7 @@ steps:
         echo "Initializing Firebase in project $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
 
         # Force selection of required Firebase services without user input
-        echo "y" | firebase init firestore functions storage auth --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)" --non-interactive --force
+        yes | /usr/local/bin/firebase init firestore functions storage auth --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)" --non-interactive --force
 
   # Step 6: Deploy Firebase Configuration
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
@@ -101,17 +98,16 @@ steps:
       - '-c'
       - |
         set -e
-        export PATH="/usr/local/bin:$PATH"
 
         echo "Verifying Firebase CLI before deployment..."
-        if ! command -v firebase &> /dev/null; then
+        if ! /usr/local/bin/firebase --version; then
           echo "Error: Firebase CLI is not available."
           exit 1
         fi
 
         cd /workspace/firebase_project
         echo "Deploying Firebase configuration to $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
-        firebase deploy --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
+        /usr/local/bin/firebase deploy --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
 
 options:
   logging: CLOUD_LOGGING_ONLY
