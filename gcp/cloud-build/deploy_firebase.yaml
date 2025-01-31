@@ -73,7 +73,7 @@ steps:
         # Ensure project ID is updated in .firebaserc
         sed -i "s/SOCCER_PROJECT_ID/$(cat /workspace/SOCCER_PROJECT_ID.txt)/g" .firebaserc
 
-  # Step 5: Initialize Firebase (Using Persistent CLI)
+  # Step 5: Initialize Firebase (Using Debug Logs)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -88,9 +88,9 @@ steps:
 
         cd /workspace/firebase_project
         echo "Initializing Firebase in project $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
-        
-        # Remove --force (not supported) and ensure non-interactive execution
-        yes | /workspace/bin/firebase init firestore functions storage auth --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)" --non-interactive
+
+        # Run Firebase init with debug logs
+        /workspace/bin/firebase init firestore functions storage auth --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)" --non-interactive --debug
 
   # Step 6: Deploy Firebase Configuration (Using Persistent CLI)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
