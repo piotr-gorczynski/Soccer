@@ -10,6 +10,7 @@ steps:
       - '-c'
       - |
         set -e
+        echo "This is a Firebase deployment pipeline."
         echo "Checking if project starting with ${_FOLDER_NAME}-${_ENVIRONMENT} exists..."
         gcloud projects list \
           --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
