@@ -31,7 +31,7 @@ steps:
         echo "Enabling Firebase in project $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
         gcloud services enable firebase.googleapis.com --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
 
-  # Step 3: Install Firebase CLI in /workspace and Verify
+  # Step 3: Install Firebase CLI in /workspace/bin and Verify
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -39,8 +39,10 @@ steps:
       - |
         set -e
         echo "Installing Firebase CLI..."
-        mkdir -p /workspace/bin  # Ensure directory exists
-        curl -sL https://firebase.tools | bash -s -- --install-dir /workspace/bin
+        curl -sL https://firebase.tools | bash -s -- --install-dir /usr/local/bin
+        echo "Moving Firebase CLI to /workspace/bin..."
+        mkdir -p /workspace/bin
+        cp /usr/local/bin/firebase /workspace/bin/firebase
         chmod +x /workspace/bin/firebase
         echo "Verifying Firebase CLI installation..."
         if ! /workspace/bin/firebase --version; then
