@@ -85,4 +85,27 @@ steps:
         fi
 
         cd /workspace/firebase_project
-        echo "Initializing Firebase in project $(cat /workspace/SOCCER_PROJECT_ID
+        echo "Initializing Firebase in project $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
+
+        # Force selection of required Firebase services without user input
+        yes | /workspace/firebase init firestore functions storage auth --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)" --non-interactive --force
+
+  # Step 6: Deploy Firebase Configuration
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "Verifying Firebase CLI before deployment..."
+        if ! /workspace/firebase --version; then
+          echo "Error: Firebase CLI is not available."
+          exit 1
+        fi
+
+        cd /workspace/firebase_project
+        echo "Deploying Firebase configuration to $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
+        /workspace/firebase deploy --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
+
+options:
+  logging: CLOUD_LOGGING_ONLY
