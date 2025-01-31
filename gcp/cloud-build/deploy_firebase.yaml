@@ -10,7 +10,6 @@ steps:
       - '-c'
       - |
         set -e
-        echo "This is a Firebase deployment pipeline."
         echo "Checking if project starting with ${_FOLDER_NAME}-${_ENVIRONMENT} exists..."
         gcloud projects list \
           --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
@@ -32,7 +31,7 @@ steps:
         echo "Enabling Firebase in project $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
         gcloud services enable firebase.googleapis.com --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
 
-  # Step 3: Install Firebase CLI and Persist It in /workspace
+  # Step 3: Install Firebase CLI in /workspace and Verify
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -40,10 +39,11 @@ steps:
       - |
         set -e
         echo "Installing Firebase CLI..."
-        curl -sL https://firebase.tools | bash -s -- --install-dir /workspace
-        chmod +x /workspace/firebase
+        mkdir -p /workspace/bin  # Ensure directory exists
+        curl -sL https://firebase.tools | bash -s -- --install-dir /workspace/bin
+        chmod +x /workspace/bin/firebase
         echo "Verifying Firebase CLI installation..."
-        if ! /workspace/firebase --version; then
+        if ! /workspace/bin/firebase --version; then
           echo "Error: Firebase CLI installation failed."
           exit 1
         fi
@@ -79,14 +79,14 @@ steps:
       - |
         set -e
         echo "Verifying Firebase CLI before initialization..."
-        if ! /workspace/firebase --version; then
+        if ! /workspace/bin/firebase --version; then
           echo "Error: Firebase CLI is not available."
           exit 1
         fi
 
         cd /workspace/firebase_project
         echo "Initializing Firebase in project $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
-        yes | /workspace/firebase init firestore functions storage auth --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)" --non-interactive --force
+        yes | /workspace/bin/firebase init firestore functions storage auth --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)" --non-interactive --force
 
   # Step 6: Deploy Firebase Configuration (Using Persistent CLI)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
@@ -96,14 +96,14 @@ steps:
       - |
         set -e
         echo "Verifying Firebase CLI before deployment..."
-        if ! /workspace/firebase --version; then
+        if ! /workspace/bin/firebase --version; then
           echo "Error: Firebase CLI is not available."
           exit 1
         fi
 
         cd /workspace/firebase_project
         echo "Deploying Firebase configuration to $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
-        /workspace/firebase deploy --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
+        /workspace/bin/firebase deploy --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
 
 options:
   logging: CLOUD_LOGGING_ONLY
