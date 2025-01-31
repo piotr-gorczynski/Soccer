@@ -3,7 +3,7 @@ substitutions:
   _FOLDER_NAME: 'soccer'                      # Parent folder name
 
 steps:
-  # Step 1: Retrieve the project ID and store it as SOCCER_PROJECT_ID
+  # Step 1: Retrieve the project ID
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -31,7 +31,7 @@ steps:
         echo "Enabling Firebase in project $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
         gcloud services enable firebase.googleapis.com --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
 
-  # Step 3: Install Firebase CLI (Only Once) and Verify Installation
+  # Step 3: Install Firebase CLI and Persist It in /workspace
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -39,8 +39,7 @@ steps:
       - |
         set -e
         echo "Installing Firebase CLI..."
-        curl -sL https://firebase.tools | bash -s -- --install-dir /usr/local/bin
-        mv /usr/local/bin/firebase /workspace/firebase
+        curl -sL https://firebase.tools | bash -s -- --install-dir /workspace
         chmod +x /workspace/firebase
         echo "Verifying Firebase CLI installation..."
         if ! /workspace/firebase --version; then
@@ -57,7 +56,7 @@ steps:
       - |
         set -e
         echo "Creating Firebase project directory..."
-        rm -rf /workspace/firebase_project  # Ensure a clean setup
+        rm -rf /workspace/firebase_project
         mkdir -p /workspace/firebase_project
         cd /workspace/firebase_project
 
@@ -71,7 +70,7 @@ steps:
         # Ensure project ID is updated in .firebaserc
         sed -i "s/SOCCER_PROJECT_ID/$(cat /workspace/SOCCER_PROJECT_ID.txt)/g" .firebaserc
 
-  # Step 5: Initialize Firebase (Force Non-Interactive)
+  # Step 5: Initialize Firebase (Using Persistent CLI)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -86,11 +85,9 @@ steps:
 
         cd /workspace/firebase_project
         echo "Initializing Firebase in project $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
-
-        # Force selection of required Firebase services without user input
         yes | /workspace/firebase init firestore functions storage auth --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)" --non-interactive --force
 
-  # Step 6: Deploy Firebase Configuration
+  # Step 6: Deploy Firebase Configuration (Using Persistent CLI)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
