@@ -73,7 +73,7 @@ steps:
         # Ensure project ID is updated in .firebaserc
         sed -i "s/SOCCER_PROJECT_ID/$(cat /workspace/SOCCER_PROJECT_ID.txt)/g" .firebaserc
 
-  # Step 5: Initialize Firebase (Using Debug Logs)
+  # Step 5: Initialize Firebase (With Full Debug Logging)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -89,10 +89,23 @@ steps:
         cd /workspace/firebase_project
         echo "Initializing Firebase in project $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
 
-        # Run Firebase init with debug logs
-        /workspace/bin/firebase init firestore functions storage auth --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)" --non-interactive --debug
+        # Capture both stdout and stderr for detailed logs
+        /workspace/bin/firebase init firestore functions storage auth --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)" --non-interactive --debug 2>&1 | tee /workspace/firebase_debug.log
 
-  # Step 6: Deploy Firebase Configuration (Using Persistent CLI)
+  # Step 6: Print Debug Log if Initialization Fails
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        if [ -f /workspace/firebase_debug.log ]; then
+          echo "Printing Firebase Debug Log..."
+          cat /workspace/firebase_debug.log
+        else
+          echo "No Firebase Debug Log found!"
+        fi
+
+  # Step 7: Deploy Firebase Configuration (Using Persistent CLI)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
