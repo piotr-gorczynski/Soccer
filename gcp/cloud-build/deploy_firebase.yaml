@@ -31,7 +31,20 @@ steps:
         echo "Enabling Firebase in project $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
         gcloud services enable firebase.googleapis.com --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
 
-  # Step 3: Install Firebase CLI in /workspace/bin and Verify
+  # Step 3: Register the project with Firebase via API (without variable assignment)
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "Registering project $(cat /workspace/SOCCER_PROJECT_ID.txt) with Firebase..."
+        gcloud auth print-access-token | xargs -I {} curl -X POST -H "Authorization: Bearer {}" \
+             -H "Content-Type: application/json" \
+             -d '{}' \
+             "https://firebase.googleapis.com/v1beta1/projects/$(cat /workspace/SOCCER_PROJECT_ID.txt):addFirebase"
+
+  # Step 4: Install Firebase CLI in /workspace/bin and Verify
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -51,7 +64,7 @@ steps:
         fi
         echo "Firebase CLI installed successfully!"
 
-  # Step 4: Prepare Firebase Project Files
+  # Step 5: Prepare Firebase Project Files
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -73,39 +86,7 @@ steps:
         # Ensure project ID is updated in .firebaserc
         sed -i "s/SOCCER_PROJECT_ID/$(cat /workspace/SOCCER_PROJECT_ID.txt)/g" .firebaserc
 
-  # Step 5: Initialize Firebase (With Full Debug Logging)
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e
-        echo "Verifying Firebase CLI before initialization..."
-        if ! /workspace/bin/firebase --version; then
-          echo "Error: Firebase CLI is not available."
-          exit 1
-        fi
-
-        cd /workspace/firebase_project
-        echo "Initializing Firebase in project $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
-
-        # Capture both stdout and stderr for detailed logs
-        /workspace/bin/firebase init firestore functions storage auth --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)" --non-interactive --debug 2>&1 | tee /workspace/firebase_debug.log
-
-  # Step 6: Print Debug Log if Initialization Fails
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        if [ -f /workspace/firebase_debug.log ]; then
-          echo "Printing Firebase Debug Log..."
-          cat /workspace/firebase_debug.log
-        else
-          echo "No Firebase Debug Log found!"
-        fi
-
-  # Step 7: Deploy Firebase Configuration (Using Persistent CLI)
+  # Step 6: Deploy Firebase Configuration (Using Persistent CLI)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
