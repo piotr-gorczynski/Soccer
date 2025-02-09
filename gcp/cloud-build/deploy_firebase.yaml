@@ -61,8 +61,7 @@ steps:
           exit 1
         fi
 
-
-  # Step 4: Install Firebase CLI and Verify
+  # Step 4: Install Firebase CLI in a Persistent Directory
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -70,9 +69,10 @@ steps:
       - |
         set -e
         echo "⬇️ Installing Firebase CLI..."
-        curl -sL https://firebase.tools | bash
+        curl -sL https://firebase.tools | bash -s -- --install-dir /workspace/firebase --binary-only
+
         echo "🔍 Verifying Firebase CLI installation..."
-        if ! which firebase || ! firebase --version; then
+        if ! /workspace/firebase/firebase --version; then
           echo "❌ Error: Firebase CLI installation failed."
           exit 1
         fi
@@ -105,7 +105,7 @@ steps:
         fi
         echo "✅ Project ID substitution successful in .firebaserc"
 
-  # Step 6: Deploy Firebase Configuration
+  # Step 6: Deploy Firebase Configuration Using Shared CLI
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -113,13 +113,15 @@ steps:
       - |
         set -e
         echo "🚀 Deploying Firebase configuration to $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
-        if ! firebase --version; then
+
+        # Use the Firebase CLI installed in /workspace/firebase
+        if ! /workspace/firebase/firebase --version; then
           echo "❌ Error: Firebase CLI is not available."
           exit 1
         fi
 
         cd /workspace/firebase_project
-        firebase deploy --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
+        /workspace/firebase/firebase deploy --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
 
 options:
   logging: CLOUD_LOGGING_ONLY
