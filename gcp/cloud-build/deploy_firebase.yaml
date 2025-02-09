@@ -130,7 +130,11 @@ steps:
 
           cd /workspace/firebase_project
 
-          echo 'y' | /workspace/firebase/firebase init database --project="$project_id" --force
+          # Automate the firebase init database process using input redirection
+          /workspace/firebase/firebase init database --project="$project_id" <<EOF
+          y
+          us-central1
+          EOF
 
           /workspace/firebase/firebase deploy --only database --project="$project_id"
 
