@@ -122,40 +122,34 @@ steps:
         echo "🔍 Checking for existing Realtime Database instance..."
 
         project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
-        access_token=$(gcloud auth print-access-token)
 
         # Enable Realtime Database API
         echo "⚙️ Enabling Realtime Database API..."
         gcloud services enable firebasedatabase.googleapis.com --project="$project_id"
 
         # Check if Realtime Database exists
-        response=$(curl -s -H "Authorization: Bearer ${access_token}" \
-          "https://firebasedatabase.googleapis.com/v1beta/projects/${project_id}/instances")
+        db_url="https://${project_id}.firebaseio.com/.json"
+        response=$(curl -s -o /dev/null -w "%{http_code}" "$db_url")
 
-        if echo "$response" | grep -q '"instances":'; then
+        if [ "$response" -eq 200 ]; then
           echo "✅ Realtime Database already exists. Skipping initialization."
         else
-          echo "⚠️ Realtime Database not found. Creating a new instance..."
+          echo "⚠️ Realtime Database not found. Triggering implicit creation..."
 
-          # Create the Realtime Database instance
-          create_response=$(curl -s -X POST -H "Authorization: Bearer ${access_token}" \
-            -H "Content-Type: application/json" \
-            -d '{
-                  "type": "DEFAULT_DATABASE",
-                  "region": "us-central1"
-                }' \
-            "https://firebasedatabase.googleapis.com/v1beta/projects/${project_id}/defaultDatabase")
+          # Trigger database creation by writing dummy data
+          curl -X PUT -d '{"init": "true"}' "$db_url"
 
-          if echo "$create_response" | grep -q '"name":'; then
-            echo "✅ Realtime Database instance created successfully!"
+          # Verify database was created
+          verify_response=$(curl -s -o /dev/null -w "%{http_code}" "$db_url")
+          if [ "$verify_response" -eq 200 ]; then
+            echo "✅ Realtime Database initialized successfully!"
           else
-            echo "❌ Failed to create Realtime Database instance."
-            echo "$create_response"
+            echo "❌ Failed to initialize Realtime Database."
             exit 1
           fi
         fi
 
-        # Deploy database rules after the instance is created
+        # Deploy database rules
         cd /workspace/firebase_project
         /workspace/firebase/firebase deploy --only database --project="$project_id"
         echo "✅ Realtime Database rules deployed successfully!"
