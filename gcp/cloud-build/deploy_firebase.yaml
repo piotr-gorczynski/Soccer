@@ -16,10 +16,10 @@ steps:
           --format="value(projectId)" | head -n 1 > /workspace/SOCCER_PROJECT_ID.txt
 
         if [ ! -s /workspace/SOCCER_PROJECT_ID.txt ] || [ -z "$(cat /workspace/SOCCER_PROJECT_ID.txt)" ]; then
-          echo "Error: Project ID not found. Ensure the project exists."
+          echo "❌ Error: Project ID not found. Ensure the project exists."
           exit 1
         fi
-        echo "Using project: $(cat /workspace/SOCCER_PROJECT_ID.txt)"
+        echo "✅ Using project: $(cat /workspace/SOCCER_PROJECT_ID.txt)"
 
   # Step 2: Enable Firebase in the project
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
@@ -28,41 +28,44 @@ steps:
       - '-c'
       - |
         set -e
-        echo "Enabling Firebase in project $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
+        echo "🔓 Enabling Firebase in project $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
         gcloud services enable firebase.googleapis.com --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
 
-  # Step 3: Register the project with Firebase via API (without variable assignment)
+  # Step 3: Register the project with Firebase via API (with error handling)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e
-        echo "Registering project $(cat /workspace/SOCCER_PROJECT_ID.txt) with Firebase..."
-        gcloud auth print-access-token | xargs -I {} curl -X POST -H "Authorization: Bearer {}" \
+        echo "📡 Registering project $(cat /workspace/SOCCER_PROJECT_ID.txt) with Firebase..."
+        RESPONSE=$(gcloud auth print-access-token | xargs -I {} curl -s -o response.json -w "%{http_code}" -X POST -H "Authorization: Bearer {}" \
              -H "Content-Type: application/json" \
              -d '{}' \
-             "https://firebase.googleapis.com/v1beta1/projects/$(cat /workspace/SOCCER_PROJECT_ID.txt):addFirebase"
+             "https://firebase.googleapis.com/v1beta1/projects/$(cat /workspace/SOCCER_PROJECT_ID.txt):addFirebase")
 
-  # Step 4: Install Firebase CLI in /workspace/bin and Verify
+        if [ "$RESPONSE" -ne 200 ]; then
+          echo "❌ Error registering Firebase project. Response code: $RESPONSE"
+          cat response.json
+          exit 1
+        fi
+        echo "✅ Firebase project registered successfully!"
+
+  # Step 4: Install Firebase CLI and Verify
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e
-        echo "Installing Firebase CLI..."
-        curl -sL https://firebase.tools | bash -s -- --install-dir /usr/local/bin
-        echo "Moving Firebase CLI to /workspace/bin..."
-        mkdir -p /workspace/bin
-        cp /usr/local/bin/firebase /workspace/bin/firebase
-        chmod +x /workspace/bin/firebase
-        echo "Verifying Firebase CLI installation..."
-        if ! /workspace/bin/firebase --version; then
-          echo "Error: Firebase CLI installation failed."
+        echo "⬇️ Installing Firebase CLI..."
+        curl -sL https://firebase.tools | bash
+        echo "🔍 Verifying Firebase CLI installation..."
+        if ! which firebase || ! firebase --version; then
+          echo "❌ Error: Firebase CLI installation failed."
           exit 1
         fi
-        echo "Firebase CLI installed successfully!"
+        echo "✅ Firebase CLI installed successfully!"
 
   # Step 5: Prepare Firebase Project Files
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
@@ -71,12 +74,12 @@ steps:
       - '-c'
       - |
         set -e
-        echo "Creating Firebase project directory..."
+        echo "📂 Creating Firebase project directory..."
         rm -rf /workspace/firebase_project
         mkdir -p /workspace/firebase_project
         cd /workspace/firebase_project
 
-        echo "Copying Firebase configuration files..."
+        echo "📥 Copying Firebase configuration files..."
         cp /workspace/gcp/cloud-build/firebase.json .
         cp /workspace/gcp/cloud-build/.firebaserc .
         cp /workspace/gcp/cloud-build/firestore.rules .
@@ -85,23 +88,27 @@ steps:
 
         # Ensure project ID is updated in .firebaserc
         sed -i "s/SOCCER_PROJECT_ID/$(cat /workspace/SOCCER_PROJECT_ID.txt)/g" .firebaserc
+        if ! grep -q "$(cat /workspace/SOCCER_PROJECT_ID.txt)" .firebaserc; then
+          echo "❌ Error: Project ID substitution failed in .firebaserc"
+          exit 1
+        fi
+        echo "✅ Project ID substitution successful in .firebaserc"
 
-  # Step 6: Deploy Firebase Configuration (Using Persistent CLI)
+  # Step 6: Deploy Firebase Configuration
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e
-        echo "Verifying Firebase CLI before deployment..."
-        if ! /workspace/bin/firebase --version; then
-          echo "Error: Firebase CLI is not available."
+        echo "🚀 Deploying Firebase configuration to $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
+        if ! firebase --version; then
+          echo "❌ Error: Firebase CLI is not available."
           exit 1
         fi
 
         cd /workspace/firebase_project
-        echo "Deploying Firebase configuration to $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
-        /workspace/bin/firebase deploy --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
+        firebase deploy --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
 
 options:
   logging: CLOUD_LOGGING_ONLY
