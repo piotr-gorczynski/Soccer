@@ -31,7 +31,7 @@ steps:
         echo "🔓 Enabling Firebase in project $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
         gcloud services enable firebase.googleapis.com --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
 
-  # Step 3: Register the project with Firebase via API (Fixed JSON payload issue)
+  # Step 3: Register the project with Firebase via API (Handle 409 gracefully)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -43,19 +43,24 @@ steps:
         # Get the access token
         access_token=$(gcloud auth print-access-token)
 
-        # Make the API call directly
+        # Make the API call
         response_code=$(curl -s -o response.json -w "%{http_code}" -X POST \
-             -H "Authorization: Bearer ${access_token}" \
-             -H "Content-Type: application/json" \
-             -d '{}' \
-             "https://firebase.googleapis.com/v1beta1/projects/$(cat /workspace/SOCCER_PROJECT_ID.txt):addFirebase")
+            -H "Authorization: Bearer ${access_token}" \
+            -H "Content-Type: application/json" \
+            -d '{}' \
+            "https://firebase.googleapis.com/v1beta1/projects/$(cat /workspace/SOCCER_PROJECT_ID.txt):addFirebase")
 
-        if [ "$response_code" -ne 200 ]; then
+        # Handle API responses
+        if [ "$response_code" -eq 200 ]; then
+          echo "✅ Firebase project registered successfully!"
+        elif [ "$response_code" -eq 409 ]; then
+          echo "⚠️ Firebase project already registered. Continuing with deployment..."
+        else
           echo "❌ Error registering Firebase project. Response code: $response_code"
           cat response.json
           exit 1
         fi
-        echo "✅ Firebase project registered successfully!"
+
 
   # Step 4: Install Firebase CLI and Verify
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
