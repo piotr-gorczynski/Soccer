@@ -121,7 +121,7 @@ steps:
         set -e
         echo "🔍 Checking for existing Realtime Database instance..."
 
-        # Project ID and Access Token
+        # Project ID and access token
         project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         access_token=$(gcloud auth print-access-token)
 
@@ -129,9 +129,9 @@ steps:
         echo "⚙️ Enabling Realtime Database API..."
         gcloud services enable firebasedatabase.googleapis.com --project="$project_id"
 
-        # Check if Realtime Database exists
+        # Check if the Realtime Database exists
         response=$(curl -s -H "Authorization: Bearer ${access_token}" \
-          "https://firebasedatabase.googleapis.com/v1/projects/${project_id}/locations/-/instances")
+          "https://firebasedatabase.googleapis.com/v1beta/projects/${project_id}/instances")
 
         if echo "$response" | grep -q '"instances":'; then
           echo "✅ Realtime Database already exists. Skipping initialization."
@@ -142,12 +142,10 @@ steps:
           create_response=$(curl -s -X POST -H "Authorization: Bearer ${access_token}" \
             -H "Content-Type: application/json" \
             -d '{
-                  "database": {
-                    "type": "DEFAULT_DATABASE",
-                    "locationId": "us-central1"
-                  }
+                  "instanceId": "'"${project_id}"'",
+                  "type": "DEFAULT_DATABASE"
                 }' \
-            "https://firebasedatabase.googleapis.com/v1/projects/${project_id}/locations/us-central1/instances")
+            "https://firebasedatabase.googleapis.com/v1beta/projects/${project_id}/instances")
 
           if echo "$create_response" | grep -q '"name":'; then
             echo "✅ Realtime Database instance created successfully!"
