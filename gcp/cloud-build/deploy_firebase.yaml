@@ -69,7 +69,14 @@ steps:
       - |
         set -e
         echo "⬇️ Installing Firebase CLI..."
-        curl -sL https://firebase.tools | bash -s -- --install-dir /workspace/firebase --binary-only
+        
+        # Install Firebase CLI
+        curl -sL https://firebase.tools | bash
+
+        # Move the binary to a persistent location
+        mkdir -p /workspace/firebase
+        cp /usr/local/bin/firebase /workspace/firebase/
+        chmod +x /workspace/firebase/firebase
 
         echo "🔍 Verifying Firebase CLI installation..."
         if ! /workspace/firebase/firebase --version; then
@@ -77,6 +84,7 @@ steps:
           exit 1
         fi
         echo "✅ Firebase CLI installed successfully!"
+
 
   # Step 5: Prepare Firebase Project Files
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
