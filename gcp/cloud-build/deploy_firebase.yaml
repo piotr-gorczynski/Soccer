@@ -112,7 +112,7 @@ steps:
         fi
         echo "✅ Project ID substitution successful in .firebaserc"
 
-    # Step 6: Initialize Realtime Database if not exists
+  # Step 6: Initialize Realtime Database if not exists
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -136,11 +136,12 @@ steps:
         else
           echo "⚠️ Realtime Database not found. Initializing with Firebase CLI..."
 
-          # Use Firebase CLI to initialize Realtime Database
-          /workspace/firebase/firebase --project="$project_id" database:settings:set --database "https://${project_id}.firebaseio.com" rules /workspace/firebase_project/database.rules.json
+          # Deploy database rules to trigger database creation
+          /workspace/firebase/firebase deploy --only database --project="$project_id"
 
           echo "✅ Realtime Database initialized successfully!"
         fi
+
 
   # Step 7: Deploy Firebase Configuration Using Shared CLI
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
