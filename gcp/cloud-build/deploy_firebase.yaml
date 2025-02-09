@@ -136,6 +136,15 @@ steps:
         else
           echo "⚠️ Realtime Database not found. Initializing with Firebase CLI..."
 
+          # Move into the directory where firebase.json exists
+          cd /workspace/firebase_project
+
+          # Validate that firebase.json exists
+          if [ ! -f firebase.json ]; then
+            echo "❌ Error: firebase.json not found in /workspace/firebase_project"
+            exit 1
+          fi
+
           # Deploy database rules to trigger database creation
           /workspace/firebase/firebase deploy --only database --project="$project_id"
 
