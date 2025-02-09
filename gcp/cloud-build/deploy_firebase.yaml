@@ -122,35 +122,43 @@ steps:
         echo "🔍 Checking for existing Realtime Database instance..."
 
         project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
+        access_token=$(gcloud auth print-access-token)
 
         # Enable Realtime Database API
         echo "⚙️ Enabling Realtime Database API..."
         gcloud services enable firebasedatabase.googleapis.com --project="$project_id"
 
-        # Check if the Realtime Database exists
-        db_url="https://${project_id}.firebaseio.com/.json"
-        response=$(curl -s -o /dev/null -w "%{http_code}" "$db_url")
+        # Check if Realtime Database exists
+        response=$(curl -s -H "Authorization: Bearer ${access_token}" \
+          "https://firebasedatabase.googleapis.com/v1beta/projects/${project_id}/instances")
 
-        if [ "$response" -eq 200 ]; then
+        if echo "$response" | grep -q '"instances":'; then
           echo "✅ Realtime Database already exists. Skipping initialization."
         else
-          echo "⚠️ Realtime Database not found. Initializing with Firebase CLI..."
+          echo "⚠️ Realtime Database not found. Creating a new instance..."
 
-          # Move into the directory where firebase.json exists
-          cd /workspace/firebase_project
+          # Create the Realtime Database instance
+          create_response=$(curl -s -X POST -H "Authorization: Bearer ${access_token}" \
+            -H "Content-Type: application/json" \
+            -d '{
+                  "type": "DEFAULT_DATABASE",
+                  "region": "us-central1"
+                }' \
+            "https://firebasedatabase.googleapis.com/v1beta/projects/${project_id}/defaultDatabase")
 
-          # Validate that firebase.json exists
-          if [ ! -f firebase.json ]; then
-            echo "❌ Error: firebase.json not found in /workspace/firebase_project"
+          if echo "$create_response" | grep -q '"name":'; then
+            echo "✅ Realtime Database instance created successfully!"
+          else
+            echo "❌ Failed to create Realtime Database instance."
+            echo "$create_response"
             exit 1
           fi
-
-          # Deploy database rules to trigger database creation
-          /workspace/firebase/firebase deploy --only database --project="$project_id"
-
-          echo "✅ Realtime Database initialized successfully!"
         fi
 
+        # Deploy database rules after the instance is created
+        cd /workspace/firebase_project
+        /workspace/firebase/firebase deploy --only database --project="$project_id"
+        echo "✅ Realtime Database rules deployed successfully!"
 
   # Step 7: Deploy Firebase Configuration Using Shared CLI
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
