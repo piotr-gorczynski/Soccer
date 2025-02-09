@@ -122,12 +122,34 @@ steps:
         echo "🔍 Checking for existing Realtime Database instance..."
 
         project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
+        access_token=$(gcloud auth print-access-token)
 
-        # Enable Realtime Database API
+        # Step 1: Enable Firebase API if not already enabled
+        echo "⚙️ Enabling Firebase API..."
+        gcloud services enable firebase.googleapis.com --project="$project_id"
+
+        # Step 2: Link project to Firebase if not already linked
+        echo "🔗 Linking project to Firebase (if needed)..."
+        firebase_link_response=$(curl -s -X POST -H "Authorization: Bearer ${access_token}" \
+          -H "Content-Type: application/json" \
+          -d '{}' \
+          "https://firebase.googleapis.com/v1beta1/projects/${project_id}:addFirebase")
+
+        if echo "$firebase_link_response" | grep -q '"name":'; then
+          echo "✅ Firebase project linked successfully!"
+        elif echo "$firebase_link_response" | grep -q 'ALREADY_EXISTS'; then
+          echo "ℹ️ Project already linked with Firebase. Continuing..."
+        else
+          echo "❌ Failed to link project with Firebase."
+          echo "$firebase_link_response"
+          exit 1
+        fi
+
+        # Step 3: Enable Realtime Database API
         echo "⚙️ Enabling Realtime Database API..."
         gcloud services enable firebasedatabase.googleapis.com --project="$project_id"
 
-        # Check if Realtime Database exists
+        # Step 4: Check if Realtime Database exists
         db_url="https://${project_id}.firebaseio.com/.json"
         response=$(curl -s -o /dev/null -w "%{http_code}" "$db_url")
 
@@ -136,20 +158,19 @@ steps:
         else
           echo "⚠️ Realtime Database not found. Triggering implicit creation..."
 
-          # Trigger database creation by writing dummy data
-          curl -X PUT -d '{"init": "true"}' "$db_url"
+          # Step 5: Trigger database creation via dummy write
+          write_response=$(curl -s -X PUT -d '{"init": "true"}' "$db_url")
 
-          # Verify database was created
-          verify_response=$(curl -s -o /dev/null -w "%{http_code}" "$db_url")
-          if [ "$verify_response" -eq 200 ]; then
+          if echo "$write_response" | grep -q '"init": "true"'; then
             echo "✅ Realtime Database initialized successfully!"
           else
             echo "❌ Failed to initialize Realtime Database."
+            echo "$write_response"
             exit 1
           fi
         fi
 
-        # Deploy database rules
+        # Step 6: Deploy database rules
         cd /workspace/firebase_project
         /workspace/firebase/firebase deploy --only database --project="$project_id"
         echo "✅ Realtime Database rules deployed successfully!"
