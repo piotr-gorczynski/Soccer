@@ -85,7 +85,6 @@ steps:
         fi
         echo "✅ Firebase CLI installed successfully!"
 
-
   # Step 5: Prepare Firebase Project Files
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
@@ -113,7 +112,31 @@ steps:
         fi
         echo "✅ Project ID substitution successful in .firebaserc"
 
-  # Step 6: Deploy Firebase Configuration Using Shared CLI
+  # Step 6: Initialize Realtime Database if not exists
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "🔍 Checking for existing Realtime Database instance..."
+
+        # Check for existing Realtime Database instance
+        project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
+        access_token=$(gcloud auth print-access-token)
+
+        response=$(curl -s -H "Authorization: Bearer ${access_token}" \
+          "https://firebasedatabase.googleapis.com/v1beta/projects/${project_id}/instances")
+
+        if echo "$response" | grep -q "NOT_FOUND"; then
+          echo "⚠️ Realtime Database not found. Initializing..."
+          /workspace/firebase/firebase --project="$project_id" database:instances:create "$project_id"
+          echo "✅ Realtime Database instance created."
+        else
+          echo "✅ Realtime Database already exists. Skipping initialization."
+        fi
+
+  # Step 7: Deploy Firebase Configuration Using Shared CLI
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
