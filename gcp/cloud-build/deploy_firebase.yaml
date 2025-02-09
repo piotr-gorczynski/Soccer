@@ -121,7 +121,7 @@ steps:
         set -e
         echo "🔍 Checking for existing Realtime Database instance..."
 
-        # Project ID and access token
+        # Project ID and Access Token
         project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         access_token=$(gcloud auth print-access-token)
 
@@ -129,22 +129,27 @@ steps:
         echo "⚙️ Enabling Realtime Database API..."
         gcloud services enable firebasedatabase.googleapis.com --project="$project_id"
 
-        # Check if the Realtime Database exists
+        # Check if Realtime Database exists
         response=$(curl -s -H "Authorization: Bearer ${access_token}" \
-          "https://firebasedatabase.googleapis.com/v1beta/projects/${project_id}/instances")
+          "https://firebasedatabase.googleapis.com/v1/projects/${project_id}/locations/-/instances")
 
-        if echo "$response" | grep -q "instances"; then
+        if echo "$response" | grep -q '"instances":'; then
           echo "✅ Realtime Database already exists. Skipping initialization."
         else
           echo "⚠️ Realtime Database not found. Creating a new instance..."
 
-          # Create the default Realtime Database instance
+          # Correct API to create a Realtime Database instance
           create_response=$(curl -s -X POST -H "Authorization: Bearer ${access_token}" \
             -H "Content-Type: application/json" \
-            -d '{"type": "DEFAULT_DATABASE", "region": "us-central1"}' \
-            "https://firebasedatabase.googleapis.com/v1beta/projects/${project_id}/instances")
+            -d '{
+                  "database": {
+                    "type": "DEFAULT_DATABASE",
+                    "locationId": "us-central1"
+                  }
+                }' \
+            "https://firebasedatabase.googleapis.com/v1/projects/${project_id}/locations/us-central1/instances")
 
-          if echo "$create_response" | grep -q "name"; then
+          if echo "$create_response" | grep -q '"name":'; then
             echo "✅ Realtime Database instance created successfully!"
           else
             echo "❌ Failed to create Realtime Database instance."
