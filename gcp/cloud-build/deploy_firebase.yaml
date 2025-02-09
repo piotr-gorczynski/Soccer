@@ -31,7 +31,7 @@ steps:
         echo "🔓 Enabling Firebase in project $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
         gcloud services enable firebase.googleapis.com --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
 
-  # Step 3: Register the project with Firebase via API (Fixed variable issue)
+  # Step 3: Register the project with Firebase via API (Fixed JSON payload issue)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -39,7 +39,13 @@ steps:
       - |
         set -e
         echo "📡 Registering project $(cat /workspace/SOCCER_PROJECT_ID.txt) with Firebase..."
-        response_code=$(gcloud auth print-access-token | xargs -I {} curl -s -o response.json -w "%{http_code}" -X POST -H "Authorization: Bearer {}" \
+
+        # Get the access token
+        access_token=$(gcloud auth print-access-token)
+
+        # Make the API call directly
+        response_code=$(curl -s -o response.json -w "%{http_code}" -X POST \
+             -H "Authorization: Bearer ${access_token}" \
              -H "Content-Type: application/json" \
              -d '{}' \
              "https://firebase.googleapis.com/v1beta1/projects/$(cat /workspace/SOCCER_PROJECT_ID.txt):addFirebase")
