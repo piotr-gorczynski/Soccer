@@ -137,11 +137,11 @@ steps:
             "https://firebase.googleapis.com/v1beta1/projects/${project_id}/defaultDatabase"
 
           echo "🚀 Deploying database rules..."
+          cd /workspace/firebase_project
           /workspace/firebase/firebase deploy --only database --project="$project_id"
 
           echo "✅ Realtime Database initialized and rules deployed successfully!"
         fi
-
 
   # Step 7: Deploy Firebase Configuration Using Shared CLI
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
