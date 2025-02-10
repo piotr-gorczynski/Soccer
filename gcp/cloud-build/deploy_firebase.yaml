@@ -128,9 +128,9 @@ steps:
         else
           echo "⚠️ Realtime Database not found. Initializing using Firebase CLI..."
 
-          # Initialize the Realtime Database using Firebase CLI
+          # Automate the confirmation with 'yes'
           cd /workspace/firebase_project
-          /workspace/firebase/firebase init database --project="$project_id" --token "$(gcloud auth print-access-token)" --non-interactive
+          yes | /workspace/firebase/firebase init database --project="$project_id" --non-interactive
 
           echo "🚀 Deploying database rules..."
           /workspace/firebase/firebase deploy --only database --project="$project_id"
