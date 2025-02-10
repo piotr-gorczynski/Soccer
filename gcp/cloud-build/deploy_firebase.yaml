@@ -106,7 +106,7 @@ steps:
         fi
         echo "✅ Project ID substitution successful in .firebaserc"
 
-  # Step 6: Deploy Realtime Database Rules Using firebase.json
+  # Step 6: Automate Realtime Database Creation & Rule Deployment
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -116,16 +116,48 @@ steps:
         echo "🔍 Checking for existing Realtime Database instance..."
 
         project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
+        region="us-central1"
 
         echo "⚙️ Enabling Firebase APIs..."
         gcloud services enable firebase.googleapis.com firebasedatabase.googleapis.com --project="$project_id"
 
-        # Directly deploy database rules without initializing
+        # Check if Realtime Database exists
+        db_url="https://${project_id}-default-rtdb.firebaseio.com/.json"
+        response=$(curl -s -o /dev/null -w "%{http_code}" "$db_url")
+
+        if [ "$response" -eq 200 ]; then
+          echo "✅ Realtime Database already exists. Skipping creation."
+        else
+          echo "⚠️ Realtime Database not found. Creating via Firebase Admin API..."
+
+          # Use Firestore Admin API to create Realtime Database instance
+          access_token=$(gcloud auth print-access-token)
+
+          create_response=$(curl -s -o create_response.json -w "%{http_code}" -X POST \
+            -H "Authorization: Bearer ${access_token}" \
+            -H "Content-Type: application/json" \
+            -d '{
+                  "database": {
+                    "type": "DEFAULT_REALTIME_DATABASE",
+                    "locationId": "'"${region}"'"
+                  }
+                }' \
+            "https://firebasedatabase.googleapis.com/v1/projects/${project_id}/databases")
+
+          if [ "$create_response" -eq 200 ] || [ "$create_response" -eq 201 ]; then
+            echo "✅ Realtime Database created successfully!"
+          else
+            echo "❌ Failed to create Realtime Database. Response code: $create_response"
+            cat create_response.json
+            exit 1
+          fi
+        fi
+
         echo "🚀 Deploying database rules using firebase.json..."
         cd /workspace/firebase_project
         /workspace/firebase/firebase deploy --only database --project="$project_id"
 
-        echo "✅ Database rules deployed successfully!"
+        echo "✅ Realtime Database initialized and rules deployed successfully!"
 
   # Step 7: Deploy Firebase Configuration Using Shared CLI
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
