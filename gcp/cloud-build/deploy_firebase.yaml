@@ -68,14 +68,14 @@ steps:
         echo "📥 Copying Firebase configuration files..."
         cp /workspace/gcp/cloud-build/firebase.json .
 
-  # Step 5: Deploy Firebase Authentication Configuration
+  # Step 5: Deploy Firebase Configuration (Basic)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e
-        echo "🚀 Deploying Firebase Authentication configuration to $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
+        echo "🚀 Deploying Firebase configuration to $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
 
         if ! /workspace/firebase/firebase --version; then
           echo "❌ Error: Firebase CLI is not available."
@@ -83,8 +83,8 @@ steps:
         fi
 
         cd /workspace/firebase_project
-        /workspace/firebase/firebase deploy --only auth --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
-        echo "✅ Firebase Authentication deployed successfully!"
+        /workspace/firebase/firebase deploy --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
+        echo "✅ Firebase configuration deployed successfully!"
 
 options:
   logging: CLOUD_LOGGING_ONLY
