@@ -31,34 +31,7 @@ steps:
         echo "🔓 Enabling Firebase in project $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
         gcloud services enable firebase.googleapis.com --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
 
-  # Step 3: Register the project with Firebase via API (Handle 409 gracefully)
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e
-        echo "📡 Registering project $(cat /workspace/SOCCER_PROJECT_ID.txt) with Firebase..."
-
-        access_token=$(gcloud auth print-access-token)
-
-        response_code=$(curl -s -o response.json -w "%{http_code}" -X POST \
-            -H "Authorization: Bearer ${access_token}" \
-            -H "Content-Type: application/json" \
-            -d '{}' \
-            "https://firebase.googleapis.com/v1beta1/projects/$(cat /workspace/SOCCER_PROJECT_ID.txt):addFirebase")
-
-        if [ "$response_code" -eq 200 ]; then
-          echo "✅ Firebase project registered successfully!"
-        elif [ "$response_code" -eq 409 ]; then
-          echo "⚠️ Firebase project already registered. Continuing with deployment..."
-        else
-          echo "❌ Error registering Firebase project. Response code: $response_code"
-          cat response.json
-          exit 1
-        fi
-
-  # Step 4: Install Firebase CLI in a Persistent Directory
+  # Step 3: Install Firebase CLI
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -80,7 +53,7 @@ steps:
         fi
         echo "✅ Firebase CLI installed successfully!"
 
-  # Step 5: Prepare Firebase Project Files
+  # Step 4: Prepare Firebase Project Files
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -94,79 +67,15 @@ steps:
 
         echo "📥 Copying Firebase configuration files..."
         cp /workspace/gcp/cloud-build/firebase.json .
-        cp /workspace/gcp/cloud-build/.firebaserc .
-        cp /workspace/gcp/cloud-build/firestore.rules .
-        cp /workspace/gcp/cloud-build/database.rules.json .
-        cp /workspace/gcp/cloud-build/storage.rules .
 
-        sed -i "s/SOCCER_PROJECT_ID/$(cat /workspace/SOCCER_PROJECT_ID.txt)/g" .firebaserc
-        if ! grep -q "$(cat /workspace/SOCCER_PROJECT_ID.txt)" .firebaserc; then
-          echo "❌ Error: Project ID substitution failed in .firebaserc"
-          exit 1
-        fi
-        echo "✅ Project ID substitution successful in .firebaserc"
-
-  # Step 6: Automate Realtime Database Creation & Rule Deployment
+  # Step 5: Deploy Firebase Authentication Configuration
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e
-        echo "🔍 Checking for existing Realtime Database instance..."
-
-        project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
-        region="us-central1"
-
-        echo "⚙️ Enabling Firebase APIs..."
-        gcloud services enable firebase.googleapis.com firebasedatabase.googleapis.com --project="$project_id"
-
-        # Check if Realtime Database exists
-        db_url="https://${project_id}-default-rtdb.firebaseio.com/.json"
-        response=$(curl -s -o /dev/null -w "%{http_code}" "$db_url")
-
-        if [ "$response" -eq 200 ]; then
-          echo "✅ Realtime Database already exists. Skipping creation."
-        else
-          echo "⚠️ Realtime Database not found. Creating via Firebase Admin API..."
-
-          # Use Firestore Admin API to create Realtime Database instance
-          access_token=$(gcloud auth print-access-token)
-
-          create_response=$(curl -s -o create_response.json -w "%{http_code}" -X POST \
-            -H "Authorization: Bearer ${access_token}" \
-            -H "Content-Type: application/json" \
-            -d '{
-                  "database": {
-                    "type": "DEFAULT_REALTIME_DATABASE",
-                    "locationId": "'"${region}"'"
-                  }
-                }' \
-            "https://firebasedatabase.googleapis.com/v1/projects/${project_id}/databases")
-
-          if [ "$create_response" -eq 200 ] || [ "$create_response" -eq 201 ]; then
-            echo "✅ Realtime Database created successfully!"
-          else
-            echo "❌ Failed to create Realtime Database. Response code: $create_response"
-            cat create_response.json
-            exit 1
-          fi
-        fi
-
-        echo "🚀 Deploying database rules using firebase.json..."
-        cd /workspace/firebase_project
-        /workspace/firebase/firebase deploy --only database --project="$project_id"
-
-        echo "✅ Realtime Database initialized and rules deployed successfully!"
-
-  # Step 7: Deploy Firebase Configuration Using Shared CLI
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e
-        echo "🚀 Deploying Firebase configuration to $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
+        echo "🚀 Deploying Firebase Authentication configuration to $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
 
         if ! /workspace/firebase/firebase --version; then
           echo "❌ Error: Firebase CLI is not available."
@@ -174,8 +83,8 @@ steps:
         fi
 
         cd /workspace/firebase_project
-        /workspace/firebase/firebase deploy --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
-        echo "✅ Firebase configuration deployed successfully!"
+        /workspace/firebase/firebase deploy --only auth --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
+        echo "✅ Firebase Authentication deployed successfully!"
 
 options:
   logging: CLOUD_LOGGING_ONLY
