@@ -1,6 +1,6 @@
 substitutions:
-  _ENVIRONMENT: 'dev'                         # Environment delivered from the trigger
-  _FOLDER_NAME: 'soccer'                      # Parent folder name
+  _ENVIRONMENT: 'dev'
+  _FOLDER_NAME: 'soccer'
 
 steps:
   # Step 1: Retrieve the project ID
@@ -53,7 +53,7 @@ steps:
         fi
         echo "✅ Firebase CLI installed successfully!"
 
-  # Step 4: Prepare Firebase Project Files
+  # Step 4: Prepare Firebase Project Files (Optional)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -67,24 +67,6 @@ steps:
 
         echo "📥 Copying Firebase configuration files..."
         cp /workspace/gcp/cloud-build/firebase.json .
-
-  # Step 5: Deploy Firebase Configuration (Basic)
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e
-        echo "🚀 Deploying Firebase configuration to $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
-
-        if ! /workspace/firebase/firebase --version; then
-          echo "❌ Error: Firebase CLI is not available."
-          exit 1
-        fi
-
-        cd /workspace/firebase_project
-        /workspace/firebase/firebase deploy --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
-        echo "✅ Firebase configuration deployed successfully!"
 
 options:
   logging: CLOUD_LOGGING_ONLY
