@@ -120,19 +120,40 @@ steps:
         echo "⚙️ Enabling Firebase APIs..."
         gcloud services enable firebase.googleapis.com firebasedatabase.googleapis.com --project="$project_id"
 
-        db_url="https://${project_id}.firebaseio.com/.json"
+        # Check if the database exists
+        db_url="https://${project_id}-default-rtdb.firebaseio.com/.json"
         response=$(curl -s -o /dev/null -w "%{http_code}" "$db_url")
 
         if [ "$response" -eq 200 ]; then
           echo "✅ Realtime Database already exists. Skipping initialization."
         else
-          echo "⚠️ Realtime Database not found. Initializing using Firebase CLI..."
+          echo "⚠️ Realtime Database not found. Creating via Firebase API..."
 
-          # Automate the confirmation with 'yes'
-          cd /workspace/firebase_project
-          yes | /workspace/firebase/firebase init database --project="$project_id" --non-interactive
+          # Authenticate and get access token
+          access_token=$(gcloud auth print-access-token)
+
+          # Create the Realtime Database instance via Firebase API
+          create_response=$(curl -s -o create_response.json -w "%{http_code}" -X POST \
+            -H "Authorization: Bearer ${access_token}" \
+            -H "Content-Type: application/json" \
+            -d '{
+                  "database": {
+                    "type": "DEFAULT_REALTIME_DATABASE",
+                    "locationId": "us-central1"
+                  }
+                }' \
+            "https://firebasedatabase.googleapis.com/v1beta/projects/${project_id}/databases")
+
+          if [ "$create_response" -eq 200 ] || [ "$create_response" -eq 201 ]; then
+            echo "✅ Realtime Database created successfully!"
+          else
+            echo "❌ Failed to create Realtime Database. Response code: $create_response"
+            cat create_response.json
+            exit 1
+          fi
 
           echo "🚀 Deploying database rules..."
+          cd /workspace/firebase_project
           /workspace/firebase/firebase deploy --only database --project="$project_id"
 
           echo "✅ Realtime Database initialized and rules deployed successfully!"
