@@ -126,19 +126,13 @@ steps:
         if [ "$response" -eq 200 ]; then
           echo "✅ Realtime Database already exists. Skipping initialization."
         else
-          echo "⚠️ Realtime Database not found. Triggering creation via Firebase API..."
+          echo "⚠️ Realtime Database not found. Initializing using Firebase CLI..."
 
-          access_token=$(gcloud auth print-access-token)
-
-          # Correct API call to create the Realtime Database instance
-          curl -X POST \
-            -H "Authorization: Bearer ${access_token}" \
-            -H "Content-Type: application/json" \
-            -d '{}' \
-            "https://firebasedatabase.googleapis.com/v1beta/projects/${project_id}/instances"
+          # Initialize the Realtime Database using Firebase CLI
+          cd /workspace/firebase_project
+          /workspace/firebase/firebase init database --project="$project_id" --token "$(gcloud auth print-access-token)" --non-interactive
 
           echo "🚀 Deploying database rules..."
-          cd /workspace/firebase_project
           /workspace/firebase/firebase deploy --only database --project="$project_id"
 
           echo "✅ Realtime Database initialized and rules deployed successfully!"
