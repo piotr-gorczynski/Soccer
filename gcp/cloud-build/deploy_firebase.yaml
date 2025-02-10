@@ -130,11 +130,12 @@ steps:
 
           access_token=$(gcloud auth print-access-token)
 
+          # Correct API call to create the Realtime Database instance
           curl -X POST \
             -H "Authorization: Bearer ${access_token}" \
             -H "Content-Type: application/json" \
-            -d '{"database": {"type": "DEFAULT_REALTIME_DATABASE"}}' \
-            "https://firebase.googleapis.com/v1beta1/projects/${project_id}/defaultDatabase"
+            -d '{}' \
+            "https://firebasedatabase.googleapis.com/v1beta/projects/${project_id}/instances"
 
           echo "🚀 Deploying database rules..."
           cd /workspace/firebase_project
