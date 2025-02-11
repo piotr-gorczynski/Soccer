@@ -1,6 +1,6 @@
 {
-  "auth": {
-    "emailSignInConfig": {
+  "signIn": {
+    "email": {
       "enabled": true
     }
   }
