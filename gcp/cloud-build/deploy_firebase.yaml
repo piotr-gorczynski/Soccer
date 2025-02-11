@@ -53,7 +53,7 @@ steps:
         fi
         echo "✅ Firebase CLI installed successfully!"
 
-  # ✅ Step 4: Add Firebase to the GCP Project (Correct Command)
+  # Step 4: Add Firebase to the GCP Project
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -63,7 +63,6 @@ steps:
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         echo "🚀 Adding Firebase to project $firebase_project_id..."
 
-        # ✅ Correct command using Firebase CLI
         /workspace/firebase/firebase projects:addfirebase "$firebase_project_id" || {
           echo "⚠️ Firebase may already be enabled. Continuing..."
         }
@@ -93,14 +92,35 @@ steps:
         echo "🔑 Enabling Firebase Authentication API..."
         gcloud services enable identitytoolkit.googleapis.com --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
 
-  # Step 7: Configure Email/Password Authentication directly from firebase.json
+  # ✅ Step 7: Initialize Firebase Authentication Configuration
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e
-        echo "⚙️ Configuring Email/Password sign-in provider from firebase.json..."
+        echo "⚙️ Initializing Firebase Authentication configuration..."
+
+        firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
+
+        curl -X POST \
+          -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+          -H "Content-Type: application/json" \
+          -d '{}' \
+          "https://identitytoolkit.googleapis.com/admin/v2/projects/${firebase_project_id}/config" || {
+            echo "⚠️ Configuration may already exist. Continuing..."
+        }
+
+        echo "✅ Firebase Authentication configuration initialized!"
+
+  # Step 8: Configure Email/Password Authentication directly from firebase.json
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "📧 Configuring Email/Password sign-in provider from firebase.json..."
 
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
 
