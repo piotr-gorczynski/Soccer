@@ -31,7 +31,21 @@ steps:
         echo "🔓 Enabling Firebase in project $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
         gcloud services enable firebase.googleapis.com --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
 
-  # Step 3: Install Firebase CLI
+  # Step 3: Add Firebase to the GCP Project
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        PROJECT_ID=$(cat /workspace/SOCCER_PROJECT_ID.txt)
+        echo "🚀 Adding Firebase to project $PROJECT_ID..."
+
+        gcloud firebase projects add-firebase "$PROJECT_ID"
+
+        echo "✅ Firebase successfully added to the project!"
+
+  # Step 4: Install Firebase CLI
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -53,7 +67,7 @@ steps:
         fi
         echo "✅ Firebase CLI installed successfully!"
 
-  # Step 4: Prepare Firebase Project Files
+  # Step 5: Prepare Firebase Project Files
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -64,10 +78,9 @@ steps:
         rm -rf /workspace/firebase_project
         mkdir -p /workspace/firebase_project
 
-        # ✅ Corrected the path here:
         cp /workspace/gcp/cloud-build/firebase.json /workspace/firebase_project/firebase.json
 
-  # Step 5: Enable Firebase Authentication API
+  # Step 6: Enable Firebase Authentication API
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -77,7 +90,7 @@ steps:
         echo "🔑 Enabling Firebase Authentication API..."
         gcloud services enable identitytoolkit.googleapis.com --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
 
-  # Step 6: Configure Email/Password Authentication directly from firebase.json
+  # Step 7: Configure Email/Password Authentication directly from firebase.json
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
