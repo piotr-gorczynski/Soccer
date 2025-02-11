@@ -50,7 +50,7 @@ steps:
         /workspace/firebase/firebase --version
         echo "✅ Firebase CLI installed successfully!"
 
-  # ✅ Step 4: Add Firebase to the GCP Project (Graceful Error Handling)
+  # ✅ Step 4: Add Firebase to the GCP Project (Handle 409 Gracefully)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -64,8 +64,8 @@ steps:
           echo "⚠️ Error occurred while adding Firebase. Checking details in firebase-debug.log..."
           cat /workspace/firebase-debug.log
 
-          # Check if Firebase is already enabled
-          if grep -q "Firebase already added" /workspace/firebase-debug.log; then
+          # ✅ Check if the error is due to Firebase already existing
+          if grep -q "HTTP Error: 409" /workspace/firebase-debug.log; then
             echo "✅ Firebase is already added to the project. Continuing..."
           else
             echo "❌ Critical error encountered while adding Firebase."
