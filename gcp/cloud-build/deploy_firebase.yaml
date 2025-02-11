@@ -63,7 +63,9 @@ steps:
         echo "📂 Creating Firebase project directory..."
         rm -rf /workspace/firebase_project
         mkdir -p /workspace/firebase_project
-        cp /workspace/firebase.json /workspace/firebase_project/firebase.json
+
+        # ✅ Corrected the path here:
+        cp /workspace/gcp/cloud-build/firebase.json /workspace/firebase_project/firebase.json
 
   # Step 5: Enable Firebase Authentication API
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
