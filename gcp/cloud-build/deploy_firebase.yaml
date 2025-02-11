@@ -53,7 +53,7 @@ steps:
         fi
         echo "✅ Firebase CLI installed successfully!"
 
-  # Step 4: Prepare Firebase Project Files (Optional)
+  # Step 4: Prepare Firebase Project Files
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -67,6 +67,36 @@ steps:
 
         echo "📥 Copying Firebase configuration files..."
         cp /workspace/gcp/cloud-build/firebase.json .
+
+  # Step 5: Enable Firebase Authentication API
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "🔑 Enabling Firebase Authentication API..."
+        gcloud services enable identitytoolkit.googleapis.com --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
+
+  # Step 6: Configure Email/Password Authentication from firebase.json
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "⚙️ Configuring Email/Password sign-in provider from firebase.json..."
+
+        PROJECT_ID=$(cat /workspace/SOCCER_PROJECT_ID.txt)
+        CONFIG_JSON=$(cat /workspace/gcp/cloud-build/firebase.json)
+
+        curl -X PATCH \
+          -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+          -H "Content-Type: application/json" \
+          -d "${CONFIG_JSON}" \
+          "https://identitytoolkit.googleapis.com/admin/v2/projects/${PROJECT_ID}/config"
+
+        echo "✅ Email/Password Authentication configured using firebase.json!"
 
 options:
   logging: CLOUD_LOGGING_ONLY
