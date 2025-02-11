@@ -31,23 +31,7 @@ steps:
         echo "🔓 Enabling Firebase in project $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
         gcloud services enable firebase.googleapis.com --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
 
-  # Step 3: Add Firebase to the GCP Project (Using Firebase CLI)
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e
-        firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
-        echo "🚀 Adding Firebase to project $firebase_project_id..."
-
-        # Initialize Firebase for the correct project
-        /workspace/firebase/firebase use "$firebase_project_id" --add
-        /workspace/firebase/firebase projects:addfirebase "$firebase_project_id"
-
-        echo "✅ Firebase successfully added to the project!"
-
-  # Step 4: Install Firebase CLI
+  # ✅ Step 3: Install Firebase CLI (Moved Before Adding Firebase)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -68,6 +52,22 @@ steps:
           exit 1
         fi
         echo "✅ Firebase CLI installed successfully!"
+
+  # Step 4: Add Firebase to the GCP Project
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
+        echo "🚀 Adding Firebase to project $firebase_project_id..."
+
+        # Initialize Firebase for the correct project
+        /workspace/firebase/firebase use "$firebase_project_id" --add
+        /workspace/firebase/firebase projects:addfirebase "$firebase_project_id"
+
+        echo "✅ Firebase successfully added to the project!"
 
   # Step 5: Prepare Firebase Project Files
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
