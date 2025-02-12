@@ -50,7 +50,7 @@ steps:
         /workspace/firebase/firebase --version
         echo "✅ Firebase CLI installed successfully!"
 
-  # ✅ Step 4: Add Firebase to the GCP Project (Handle 409 Gracefully)
+  # Step 4: Add Firebase to the GCP Project (Handle 409 Gracefully)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -75,20 +75,7 @@ steps:
           echo "✅ Firebase successfully added to the project!"
         fi
 
-  # Step 5: Prepare Firebase Project Files
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e
-        echo "📂 Creating Firebase project directory..."
-        rm -rf /workspace/firebase_project
-        mkdir -p /workspace/firebase_project
-
-        cp /workspace/gcp/cloud-build/firebase.json /workspace/firebase_project/firebase.json
-
-  # Step 6: Enable Firebase Authentication API
+  # Step 5: Enable Firebase Authentication API & Identity Platform API
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -98,7 +85,10 @@ steps:
         echo "🔑 Enabling Firebase Authentication API..."
         gcloud services enable identitytoolkit.googleapis.com --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
 
-  # Step 7: Initialize Firebase Authentication Configuration
+        echo "🔑 Enabling Identity Platform API..."
+        gcloud services enable identityplatform.googleapis.com --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
+
+  # ✅ Step 6: Initialize Firebase Authentication Configuration
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -108,20 +98,23 @@ steps:
         echo "⚙️ Initializing Firebase Authentication configuration..."
 
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
-        response=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
+        response=$(curl -s -o /tmp/init_response.json -w "%{http_code}" -X POST \
           -H "Authorization: Bearer $(gcloud auth print-access-token)" \
           -H "Content-Type: application/json" \
           -d '{}' \
           "https://identitytoolkit.googleapis.com/admin/v2/projects/${firebase_project_id}/config")
 
-        if [ "$response" -ne 200 ] && [ "$response" -ne 409 ]; then
+        if [ "$response" -eq 200 ]; then
+          echo "✅ Firebase Authentication configuration initialized!"
+        elif [ "$response" -eq 409 ]; then
+          echo "⚠️ Firebase Authentication configuration already exists. Continuing..."
+        else
           echo "❌ Failed to initialize Firebase Authentication configuration (HTTP $response)."
+          cat /tmp/init_response.json
           exit 1
         fi
 
-        echo "✅ Firebase Authentication configuration initialized!"
-
-  # Step 8: Configure Email/Password Authentication directly from firebase.json
+  # Step 7: Configure Email/Password Authentication directly from firebase.json
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
