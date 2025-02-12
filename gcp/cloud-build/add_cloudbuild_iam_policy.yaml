@@ -157,7 +157,7 @@ steps:
         }
         echo "Service Usage Admin IAM policy binding added successfully."
 
-  # ✅ Step 10: Add IAM policy binding for Service Management Admin
+  # ✅ Step 10: Grant Service Management Admin (Fixes API Enabling)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -173,5 +173,21 @@ steps:
         }
         echo "Service Management Admin IAM policy binding added successfully."
 
+  # ✅ Step 11: Grant Service Usage Admin (Allows enabling/disabling APIs)
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "Adding IAM policy binding for Service Usage Admin..."
+        gcloud projects add-iam-policy-binding "$(cat /workspace/project_name.txt)" \
+          --member="serviceAccount:cloud-build-sa@org-service-account-001.iam.gserviceaccount.com" \
+          --role="roles/serviceusage.serviceUsageAdmin" || {
+          echo "Error: Failed to add IAM policy binding for Service Usage Admin."
+          exit 1
+        }
+        echo "Service Usage Admin IAM policy binding added successfully."
+        
 options:
   logging: CLOUD_LOGGING_ONLY
