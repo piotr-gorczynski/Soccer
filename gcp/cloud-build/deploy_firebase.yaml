@@ -82,6 +82,7 @@ steps:
         if ! /workspace/firebase/firebase apps:create android --package-name=piotr_gorczynski.soccer2 --project="$firebase_project_id" 2> "$firebase_log_file"; then
           echo "⚠️ Error occurred while creating Android app. Checking details in $firebase_log_file..."
           if [ -f "$firebase_log_file" ]; then
+            echo "🔍 Firebase Debug Log:"
             cat "$firebase_log_file"
             if grep -q "already exists" "$firebase_log_file"; then
               echo "✅ Firebase Android app already exists. Skipping creation..."
@@ -96,6 +97,7 @@ steps:
         else
           echo "✅ Firebase Android App created successfully!"
         fi
+
 
 options:
   logging: CLOUD_LOGGING_ONLY
