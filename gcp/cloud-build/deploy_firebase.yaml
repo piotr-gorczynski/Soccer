@@ -29,7 +29,7 @@ steps:
       - |
         set -e
         echo "🔓 Enabling Firebase in project $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
-        gcloud services enable firebase.googleapis.com --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
+        gcloud services enable firebase.googleapis.com identitytoolkit.googleapis.com --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
 
   # Step 3: Install Firebase CLI
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
@@ -51,7 +51,23 @@ steps:
         /workspace/firebase/firebase --version
         echo "✅ Firebase CLI installed successfully!"
 
-  # Step 4: Create Firebase Android App
+  # Step 4: Verify Firebase Project Setup
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
+        echo "🛠️ Verifying Firebase setup for project: $firebase_project_id..."
+        if ! gcloud firebase projects describe "$firebase_project_id" &> /workspace/logs/firebase_project_info.log; then
+          echo "❌ Firebase project verification failed. Check logs:"
+          cat /workspace/logs/firebase_project_info.log
+          exit 1
+        fi
+        echo "✅ Firebase project verification successful!"
+
+  # Step 5: Create Firebase Android App with Full Debugging
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -62,18 +78,16 @@ steps:
         echo "📱 Creating Firebase Android App for project $firebase_project_id..."
         mkdir -p /workspace/logs
         firebase_log_file="/workspace/logs/firebase-debug.log"
-        if ! /workspace/firebase/firebase apps:create android --package-name=piotr_gorczynski.soccer2 --project="$firebase_project_id" --display-name="Soccer 3" 2> "$firebase_log_file"; then
-          echo "⚠️ Error occurred while creating Android app. Checking details in $firebase_log_file..."
-          if [ -f "$firebase_log_file" ]; then
-            cat "$firebase_log_file"
-            if grep -q "already exists" "$firebase_log_file"; then
-              echo "✅ Firebase Android app already exists. Skipping creation..."
-            else
-              echo "❌ Critical error encountered while creating Android app."
-              exit 1
-            fi
+
+        # Run the Firebase command and capture detailed logs
+        if ! /workspace/firebase/firebase apps:create android --package-name=piotr_gorczynski.soccer2 --project="$firebase_project_id" --display-name="Soccer 3" 2>&1 | tee "$firebase_log_file"; then
+          echo "⚠️ Error occurred while creating Android app. Checking details..."
+          cat "$firebase_log_file"
+          
+          if grep -q "already exists" "$firebase_log_file"; then
+            echo "✅ Firebase Android app already exists. Skipping creation..."
           else
-            echo "❌ Firebase log file not found. Unable to determine error."
+            echo "❌ Firebase app creation failed."
             exit 1
           fi
         else
