@@ -44,6 +44,10 @@ steps:
         cp /usr/local/bin/firebase /workspace/firebase/
         chmod +x /workspace/firebase/firebase
         echo "🔍 Verifying Firebase CLI installation..."
+        if ! command -v /workspace/firebase/firebase &> /dev/null; then
+          echo "❌ Firebase CLI installation failed. Exiting."
+          exit 1
+        fi
         /workspace/firebase/firebase --version
         echo "✅ Firebase CLI installed successfully!"
 
@@ -56,13 +60,20 @@ steps:
         set -e
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         echo "📱 Creating Firebase Android App for project $firebase_project_id..."
-        if ! /workspace/firebase/firebase apps:create android --package-name=piotr_gorczynski.soccer2 --project="$firebase_project_id" --display-name="Soccer 3" 2> /workspace/firebase-debug.log; then
-          echo "⚠️ Error occurred while creating Android app. Checking details in firebase-debug.log..."
-          cat /workspace/firebase-debug.log
-          if grep -q "already exists" /workspace/firebase-debug.log; then
-            echo "✅ Firebase Android app already exists. Skipping creation..."
+        mkdir -p /workspace/logs
+        firebase_log_file="/workspace/logs/firebase-debug.log"
+        if ! /workspace/firebase/firebase apps:create android --package-name=piotr_gorczynski.soccer2 --project="$firebase_project_id" --display-name="Soccer 3" 2> "$firebase_log_file"; then
+          echo "⚠️ Error occurred while creating Android app. Checking details in $firebase_log_file..."
+          if [ -f "$firebase_log_file" ]; then
+            cat "$firebase_log_file"
+            if grep -q "already exists" "$firebase_log_file"; then
+              echo "✅ Firebase Android app already exists. Skipping creation..."
+            else
+              echo "❌ Critical error encountered while creating Android app."
+              exit 1
+            fi
           else
-            echo "❌ Critical error encountered while creating Android app."
+            echo "❌ Firebase log file not found. Unable to determine error."
             exit 1
           fi
         else
