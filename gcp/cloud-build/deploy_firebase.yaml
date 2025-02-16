@@ -40,15 +40,11 @@ steps:
         set -e
         echo "⬇️ Installing Firebase CLI..."
         curl -sL https://firebase.tools | bash
-        mkdir -p /workspace/firebase
-        cp /usr/local/bin/firebase /workspace/firebase/
-        chmod +x /workspace/firebase/firebase
         echo "🔍 Verifying Firebase CLI installation..."
-        if ! command -v /workspace/firebase/firebase &> /dev/null; then
+        if ! command -v firebase &> /dev/null; then
           echo "❌ Firebase CLI installation failed. Exiting."
           exit 1
         fi
-        /workspace/firebase/firebase --version
         echo "✅ Firebase CLI installed successfully!"
 
   # Step 4: Verify Firebase Project Setup
@@ -79,7 +75,7 @@ steps:
         echo "📱 Creating Firebase Android App for project $firebase_project_id..."
         mkdir -p /workspace/logs
         firebase_log_file="/workspace/logs/firebase-debug.log"
-        if ! firebase apps:create android --package-name=piotr_gorczynski.soccer2 --project="$firebase_project_id" 2> "$firebase_log_file"; then
+        if ! /usr/local/bin/firebase apps:create android --package-name=piotr_gorczynski.soccer2 --project="$firebase_project_id" 2> "$firebase_log_file"; then
           echo "⚠️ Error occurred while creating Android app. Checking details in $firebase_log_file..."
           if [ -f "$firebase_log_file" ]; then
             echo "🔍 Firebase Debug Log:"
@@ -97,6 +93,7 @@ steps:
         else
           echo "✅ Firebase Android App created successfully!"
         fi
+
 
 
 
