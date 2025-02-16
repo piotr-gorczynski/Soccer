@@ -79,7 +79,7 @@ steps:
         echo "📱 Creating Firebase Android App for project $firebase_project_id..."
         mkdir -p /workspace/logs
         firebase_log_file="/workspace/logs/firebase-debug.log"
-        if ! /workspace/firebase/firebase apps:create android --package-name=piotr_gorczynski.soccer2 --project="$firebase_project_id" --display-name="Soccer 3" 2> "$firebase_log_file"; then
+        if ! /workspace/firebase/firebase apps:create android --package-name=piotr_gorczynski.soccer2 --project="$firebase_project_id" 2> "$firebase_log_file"; then
           echo "⚠️ Error occurred while creating Android app. Checking details in $firebase_log_file..."
           if [ -f "$firebase_log_file" ]; then
             cat "$firebase_log_file"
