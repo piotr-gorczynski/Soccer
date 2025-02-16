@@ -39,18 +39,15 @@ steps:
       - |
         set -e
         echo "⬇️ Installing Firebase CLI..."
-        
         curl -sL https://firebase.tools | bash
-
         mkdir -p /workspace/firebase
         cp /usr/local/bin/firebase /workspace/firebase/
         chmod +x /workspace/firebase/firebase
-
         echo "🔍 Verifying Firebase CLI installation..."
         /workspace/firebase/firebase --version
         echo "✅ Firebase CLI installed successfully!"
 
-  # Step 4: Add Firebase to the GCP Project (Handle 409 Gracefully)
+  # Step 4: Create Firebase Android App
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -58,85 +55,19 @@ steps:
       - |
         set -e
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
-        echo "🚀 Adding Firebase to project $firebase_project_id..."
-
-        if ! /workspace/firebase/firebase projects:addfirebase "$firebase_project_id" 2> /workspace/firebase-debug.log; then
-          echo "⚠️ Error occurred while adding Firebase. Checking details in firebase-debug.log..."
+        echo "📱 Creating Firebase Android App for project $firebase_project_id..."
+        if ! /workspace/firebase/firebase apps:create android --package-name=piotr_gorczynski.soccer2 --project="$firebase_project_id" --display-name="Soccer 3" 2> /workspace/firebase-debug.log; then
+          echo "⚠️ Error occurred while creating Android app. Checking details in firebase-debug.log..."
           cat /workspace/firebase-debug.log
-
-          # ✅ Check if the error is due to Firebase already existing
-          if grep -q "HTTP Error: 409" /workspace/firebase-debug.log; then
-            echo "✅ Firebase is already added to the project. Continuing..."
+          if grep -q "already exists" /workspace/firebase-debug.log; then
+            echo "✅ Firebase Android app already exists. Skipping creation..."
           else
-            echo "❌ Critical error encountered while adding Firebase."
+            echo "❌ Critical error encountered while creating Android app."
             exit 1
           fi
         else
-          echo "✅ Firebase successfully added to the project!"
+          echo "✅ Firebase Android App created successfully!"
         fi
-
-  # Step 5: Enable Firebase Authentication API & Identity Platform API
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e
-        echo "🔑 Enabling Firebase Authentication API..."
-        gcloud services enable identitytoolkit.googleapis.com --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
-
-        echo "🔑 Enabling Identity Platform API..."
-        gcloud services enable identityplatform.googleapis.com --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
-
-  # ✅ Step 6: Initialize Firebase Authentication Configuration
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e
-        echo "⚙️ Initializing Firebase Authentication configuration..."
-
-        firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
-        response=$(curl -s -o /tmp/init_response.json -w "%{http_code}" -X POST \
-          -H "Authorization: Bearer $(gcloud auth print-access-token)" \
-          -H "Content-Type: application/json" \
-          -d '{}' \
-          "https://identitytoolkit.googleapis.com/admin/v2/projects/${firebase_project_id}/config")
-
-        if [ "$response" -eq 200 ]; then
-          echo "✅ Firebase Authentication configuration initialized!"
-        elif [ "$response" -eq 409 ]; then
-          echo "⚠️ Firebase Authentication configuration already exists. Continuing..."
-        else
-          echo "❌ Failed to initialize Firebase Authentication configuration (HTTP $response)."
-          cat /tmp/init_response.json
-          exit 1
-        fi
-
-  # Step 7: Configure Email/Password Authentication directly from firebase.json
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e
-        echo "📧 Configuring Email/Password sign-in provider from firebase.json..."
-
-        firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
-        response=$(curl -s -w "%{http_code}" -o /tmp/response.json -X PATCH \
-          -H "Authorization: Bearer $(gcloud auth print-access-token)" \
-          -H "Content-Type: application/json" \
-          --data-binary @/workspace/firebase_project/firebase.json \
-          "https://identitytoolkit.googleapis.com/admin/v2/projects/${firebase_project_id}/config")
-
-        if [ "$response" -ne 200 ]; then
-          echo "❌ Failed to configure Email/Password Authentication (HTTP $response)."
-          cat /tmp/response.json
-          exit 1
-        fi
-
-        echo "✅ Email/Password Authentication configured using firebase.json!"
 
 options:
   logging: CLOUD_LOGGING_ONLY
