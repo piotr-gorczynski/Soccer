@@ -90,10 +90,12 @@ steps:
         package_name="piotr_gorczynski.soccer2"
         mkdir -p /workspace/logs
         firebase_log_file="/workspace/logs/firebase-debug.log"
-        
+
         echo "📱 Checking if Firebase Android App exists for project $firebase_project_id..."
-        if /workspace/firebase/firebase apps:list --project="$firebase_project_id" | grep -q "$package_name"; then
-          echo "✅ Firebase Android App already exists. Skipping creation..."
+        existing_apps=$(/workspace/firebase/firebase apps:list --project="$firebase_project_id" | grep "ANDROID")
+
+        if echo "$existing_apps" | grep -q "$package_name"; then
+          echo "✅ Firebase Android App already exists for package: $package_name. Skipping creation."
           exit 0
         fi
         
