@@ -28,7 +28,7 @@ steps:
       - '-c'
       - |
         set -e
-        echo "🔓 Enabling Firebase in project $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
+        echo "🔓 Enabling Firebase APIs for project $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
         gcloud services enable firebase.googleapis.com --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
 
   # Step 3: Install Firebase CLI
@@ -51,7 +51,7 @@ steps:
         /workspace/firebase/firebase --version
         echo "✅ Firebase CLI installed successfully!"
 
-  # Step 4: Verify Firebase Project Setup
+  # Step 4: Enable Firebase for the Project (if missing)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -59,14 +59,14 @@ steps:
       - |
         set -e
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
-        echo "🛠️ Verifying Firebase setup for project: $firebase_project_id..."
-        mkdir -p /workspace/logs
-        if ! gcloud projects describe "$firebase_project_id" &> /workspace/logs/firebase_project_info.log; then
-          echo "❌ Firebase project verification failed. Check logs:"
-          cat /workspace/logs/firebase_project_info.log || echo "No log file available."
-          exit 1
+        echo "🛠️ Checking if Firebase is enabled for project: $firebase_project_id..."
+        
+        if ! /workspace/firebase/firebase projects:list | grep -q "$firebase_project_id"; then
+          echo "🚀 Enabling Firebase for project $firebase_project_id..."
+          /workspace/firebase/firebase projects:addfirebase "$firebase_project_id"
+        else
+          echo "✅ Firebase is already enabled for this project."
         fi
-        echo "✅ Firebase project verification successful!"
 
   # Step 5: Check if Firebase Android App Exists and Create It
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
