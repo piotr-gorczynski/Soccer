@@ -69,14 +69,21 @@ steps:
       - '-c'
       - |
         set -e
+        set -x  # Debugging: Print each command before execution
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         echo "🛠️ Checking if Firebase is enabled for project: $firebase_project_id..."
-        
-        if ! /workspace/firebase/firebase projects:list | grep -q "$firebase_project_id"; then
+
+        # List Firebase projects and store the result
+        firebase_projects=$(/workspace/firebase/firebase projects:list --format="value(projectId)")
+
+        echo "🔍 Firebase projects found: $firebase_projects"
+
+        if echo "$firebase_projects" | grep -q "$firebase_project_id"; then
+          echo "✅ Firebase is already enabled for this project."
+        else
           echo "🚀 Enabling Firebase for project $firebase_project_id..."
           /workspace/firebase/firebase projects:addfirebase "$firebase_project_id"
-        else
-          echo "✅ Firebase is already enabled for this project."
+          echo "✅ Firebase has been successfully enabled for $firebase_project_id."
         fi
 
   # Step 6: Check if Firebase Android App Exists and Create It
