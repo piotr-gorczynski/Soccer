@@ -68,7 +68,7 @@ steps:
         fi
         echo "✅ Firebase project verification successful!"
 
-  # Step 5: Create Firebase Android App
+  # Step 5: Check if Firebase Android App Exists and Create It
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -76,23 +76,21 @@ steps:
       - |
         set -e
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
-        echo "📱 Creating Firebase Android App for project $firebase_project_id..."
+        package_name="piotr_gorczynski.soccer2"
         mkdir -p /workspace/logs
         firebase_log_file="/workspace/logs/firebase-debug.log"
-        if ! printf "Soccer 3" | /workspace/firebase/firebase apps:create android --package-name=piotr_gorczynski.soccer2 --project="$firebase_project_id" 2> "$firebase_log_file"; then
-          echo "⚠️ Error occurred while creating Android app. Checking details in $firebase_log_file..."
-          if [ -f "$firebase_log_file" ]; then
-            cat "$firebase_log_file"
-            if grep -q "already exists" "$firebase_log_file"; then
-              echo "✅ Firebase Android app already exists. Skipping creation..."
-            else
-              echo "❌ Critical error encountered while creating Android app."
-              exit 1
-            fi
-          else
-            echo "❌ Firebase log file not found. Unable to determine error."
-            exit 1
-          fi
+        
+        echo "📱 Checking if Firebase Android App exists for project $firebase_project_id..."
+        if /workspace/firebase/firebase apps:list --project="$firebase_project_id" | grep -q "$package_name"; then
+          echo "✅ Firebase Android App already exists. Skipping creation..."
+          exit 0
+        fi
+        
+        echo "📱 Creating Firebase Android App for project $firebase_project_id..."
+        if ! /workspace/firebase/firebase apps:create android --package-name="$package_name" --project="$firebase_project_id" > "$firebase_log_file" 2>&1; then
+          echo "⚠️ Error occurred while creating Android app. Logging details..."
+          cat "$firebase_log_file"
+          exit 1
         else
           echo "✅ Firebase Android App created successfully!"
         fi
