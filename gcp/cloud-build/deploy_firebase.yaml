@@ -103,14 +103,15 @@ steps:
 
         echo "📱 Checking if Firebase Android App exists for project $firebase_project_id..."
         
-        # List all Firebase apps
-        existing_apps=$(/workspace/firebase/firebase apps:list --project="$firebase_project_id")
+        # List all Firebase apps and extract only Android App IDs
+        existing_apps=$(/workspace/firebase/firebase apps:list --project="$firebase_project_id" | awk '/ANDROID/ {print $2}')
+        
         echo "🔍 Existing Firebase Apps:"
         echo "$existing_apps"
 
-        # Check if the package name already exists in the list
-        if echo "$existing_apps" | grep -q "$package_name"; then
-          echo "✅ Firebase Android App already exists for package: $package_name. Skipping creation."
+        # If any Android app exists, assume it is already created
+        if [ -n "$existing_apps" ]; then
+          echo "✅ Firebase Android App already exists for project: $firebase_project_id. Skipping creation."
           exit 0
         fi
         
