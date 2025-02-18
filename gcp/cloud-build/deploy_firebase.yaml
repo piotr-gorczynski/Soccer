@@ -51,7 +51,7 @@ steps:
         /workspace/firebase/firebase --version
         echo "✅ Firebase CLI installed successfully!"
 
-  # Step 4: List Existing Firebase Apps Before Enabling Firebase
+  # Step 4: List Existing Firebase Projects
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -60,8 +60,8 @@ steps:
         set -e
         set -x  # Enable debugging mode to print each command
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
-        echo "📱 Listing existing Firebase apps for project $firebase_project_id..."
-        /workspace/firebase/firebase apps:list --project="$firebase_project_id"
+        echo "📱 Listing existing Firebase projects..."
+        /workspace/firebase/firebase projects:list
 
   # Step 5: Enable Firebase for the Project (if missing)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
