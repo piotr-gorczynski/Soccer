@@ -110,9 +110,9 @@ steps:
         echo "🔍 Raw Firebase Apps Output:"
         echo "$app_list_output"
 
-        # Extract only Android App IDs
-        existing_apps=$(echo "$app_list_output" | awk '/ANDROID/ {print $2}')
-        
+        # Extract only Android App IDs correctly
+        existing_apps=$(echo "$app_list_output" | grep "ANDROID" | awk -F'│' '{print $3}' | tr -d ' ')
+
         # Print extracted Android app IDs
         echo "🔍 Extracted Firebase Android App IDs:"
         echo "$existing_apps"
