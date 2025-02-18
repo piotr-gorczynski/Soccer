@@ -95,7 +95,6 @@ steps:
       - '-c'
       - |
         set -e
-        set -x  # Enable debugging mode to print each command
 
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         package_name="piotr_gorczynski.soccer2"
