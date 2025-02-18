@@ -69,7 +69,6 @@ steps:
       - '-c'
       - |
         set -e
-        set -x  # Debugging: Print each command before execution
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         echo "🛠️ Checking if Firebase is enabled for project: $firebase_project_id..."
 
@@ -95,14 +94,21 @@ steps:
       - '-c'
       - |
         set -e
+        set -x  # Enable debugging mode to print each command
+
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         package_name="piotr_gorczynski.soccer2"
         mkdir -p /workspace/logs
         firebase_log_file="/workspace/logs/firebase-debug.log"
 
         echo "📱 Checking if Firebase Android App exists for project $firebase_project_id..."
-        existing_apps=$(/workspace/firebase/firebase apps:list --project="$firebase_project_id" | grep "ANDROID")
+        
+        # List all Firebase apps
+        existing_apps=$(/workspace/firebase/firebase apps:list --project="$firebase_project_id")
+        echo "🔍 Existing Firebase Apps:"
+        echo "$existing_apps"
 
+        # Check if the package name already exists in the list
         if echo "$existing_apps" | grep -q "$package_name"; then
           echo "✅ Firebase Android App already exists for package: $package_name. Skipping creation."
           exit 0
