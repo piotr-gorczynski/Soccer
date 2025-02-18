@@ -103,10 +103,18 @@ steps:
 
         echo "📱 Checking if Firebase Android App exists for project $firebase_project_id..."
         
-        # List all Firebase apps and extract only Android App IDs
-        existing_apps=$(/workspace/firebase/firebase apps:list --project="$firebase_project_id" | awk '/ANDROID/ {print $2}')
+        # List all Firebase apps and capture output
+        app_list_output=$(/workspace/firebase/firebase apps:list --project="$firebase_project_id")
+
+        # Print raw Firebase apps output for debugging
+        echo "🔍 Raw Firebase Apps Output:"
+        echo "$app_list_output"
+
+        # Extract only Android App IDs
+        existing_apps=$(echo "$app_list_output" | awk '/ANDROID/ {print $2}')
         
-        echo "🔍 Existing Firebase Apps:"
+        # Print extracted Android app IDs
+        echo "🔍 Extracted Firebase Android App IDs:"
         echo "$existing_apps"
 
         # If any Android app exists, assume it is already created
@@ -114,7 +122,7 @@ steps:
           echo "✅ Firebase Android App already exists for project: $firebase_project_id. Skipping creation."
           exit 0
         fi
-        
+
         echo "📱 Creating Firebase Android App for project $firebase_project_id..."
         if ! /workspace/firebase/firebase apps:create android --package-name="$package_name" --project="$firebase_project_id" > "$firebase_log_file" 2>&1; then
           echo "⚠️ Error occurred while creating Android app. Logging details..."
