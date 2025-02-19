@@ -31,7 +31,7 @@ steps:
         echo "🔓 Enabling Firebase APIs for project $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
         gcloud services enable firebase.googleapis.com --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
 
-  # Step 3: Install Firebase CLI (Moved earlier!)
+  # Step 3: Install Firebase CLI
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -50,36 +50,7 @@ steps:
         fi
         echo "✅ Firebase CLI installed successfully!"
 
-  # Step 4: Wait for Firebase API activation
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e
-        firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
-        echo "⏳ Waiting for Firebase to be fully enabled on project: $firebase_project_id..."
-
-        retries=10
-        while [[ $retries -gt 0 ]]; do
-          firebase_projects=$(/workspace/firebase/firebase projects:list | tail -n +2 | awk '{print $2}')
-          
-          if echo "$firebase_projects" | grep -q "$firebase_project_id"; then
-            echo "✅ Firebase is now enabled for project: $firebase_project_id."
-            break
-          fi
-
-          echo "⏳ Firebase is not yet enabled. Retrying in 10 seconds..."
-          sleep 10
-          ((retries--))
-        done
-
-        if [[ $retries -eq 0 ]]; then
-          echo "❌ Firebase did not become available in time. Exiting."
-          exit 1
-        fi
-
-  # Step 5: List Existing Firebase Projects
+  # Step 4: List Existing Firebase Projects
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -89,6 +60,35 @@ steps:
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         echo "📱 Listing existing Firebase projects..."
         /workspace/firebase/firebase projects:list
+
+  # Step 5: Wait for Firebase API activation (Moved Below Step 4)
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
+        echo "⏳ Waiting for Firebase to be fully enabled on project: $firebase_project_id..."
+
+        retries=15  # Increase retry attempts
+        while [[ $retries -gt 0 ]]; do
+          firebase_status=$(gcloud firebase projects describe "$firebase_project_id" --format="value(projectNumber)" || echo "not_ready")
+
+          if [[ "$firebase_status" != "not_ready" && -n "$firebase_status" ]]; then
+            echo "✅ Firebase is now enabled for project: $firebase_project_id."
+            break
+          fi
+
+          echo "⏳ Firebase is not yet enabled. Retrying in 15 seconds..."
+          sleep 15
+          ((retries--))
+        done
+
+        if [[ $retries -eq 0 ]]; then
+          echo "❌ Firebase did not become available in time. Exiting."
+          exit 1
+        fi
 
   # Step 6: Enable Firebase for the Project (if missing)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
