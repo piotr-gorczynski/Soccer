@@ -31,7 +31,26 @@ steps:
         echo "🔓 Enabling Firebase APIs for project $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
         gcloud services enable firebase.googleapis.com --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
 
-  # Step 3: Wait for Firebase API activation
+  # Step 3: Install Firebase CLI (Moved earlier!)
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "⬇️ Installing Firebase CLI..."
+        curl -sL https://firebase.tools | bash
+        mkdir -p /workspace/firebase
+        cp /usr/local/bin/firebase /workspace/firebase/
+        chmod +x /workspace/firebase/firebase
+        echo "🔍 Verifying Firebase CLI installation..."
+        if ! /workspace/firebase/firebase --version; then
+          echo "❌ Firebase CLI installation failed. Exiting."
+          exit 1
+        fi
+        echo "✅ Firebase CLI installed successfully!"
+
+  # Step 4: Wait for Firebase API activation
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -59,26 +78,6 @@ steps:
           echo "❌ Firebase did not become available in time. Exiting."
           exit 1
         fi
-
-  # Step 4: Install Firebase CLI
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e
-        echo "⬇️ Installing Firebase CLI..."
-        curl -sL https://firebase.tools | bash
-        mkdir -p /workspace/firebase
-        cp /usr/local/bin/firebase /workspace/firebase/
-        chmod +x /workspace/firebase/firebase
-        echo "🔍 Verifying Firebase CLI installation..."
-        if ! command -v /workspace/firebase/firebase &> /dev/null; then
-          echo "❌ Firebase CLI installation failed. Exiting."
-          exit 1
-        fi
-        /workspace/firebase/firebase --version
-        echo "✅ Firebase CLI installed successfully!"
 
   # Step 5: List Existing Firebase Projects
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
