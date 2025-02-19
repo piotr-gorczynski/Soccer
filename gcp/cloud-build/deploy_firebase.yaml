@@ -58,7 +58,6 @@ steps:
       - '-c'
       - |
         set -e
-        set -x  # Enable debugging mode to print each command
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         echo "📱 Listing existing Firebase projects..."
         /workspace/firebase/firebase projects:list
@@ -70,6 +69,7 @@ steps:
       - '-c'
       - |
         set -e
+        set -x  # Enable debugging mode to print each command        
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         echo "🛠️ Checking if Firebase is enabled for project: $firebase_project_id..."
 
