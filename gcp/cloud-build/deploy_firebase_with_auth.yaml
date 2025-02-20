@@ -1,0 +1,77 @@
+substitutions:
+  _ENVIRONMENT: 'dev'
+  _FOLDER_NAME: 'soccer'
+
+steps:
+  # Step 1: Retrieve the project ID
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "Checking if project starting with ${_FOLDER_NAME}-${_ENVIRONMENT} exists..."
+        gcloud projects list \
+          --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
+          --format="value(projectId)" | head -n 1 > /workspace/SOCCER_PROJECT_ID.txt
+
+        if [ ! -s /workspace/SOCCER_PROJECT_ID.txt ] || [ -z "$(cat /workspace/SOCCER_PROJECT_ID.txt)" ]; then
+          echo "❌ Error: Project ID not found. Ensure the project exists."
+          exit 1
+        fi
+        echo "✅ Using project: $(cat /workspace/SOCCER_PROJECT_ID.txt)"
+
+  # Step 2: Enable Firebase APIs in the project
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "🔓 Enabling Firebase APIs for project $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
+        gcloud services enable firebase.googleapis.com --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
+
+  # Step 3: Install Firebase CLI
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "⬇️ Installing Firebase CLI..."
+        curl -sL https://firebase.tools | bash
+        mkdir -p /workspace/firebase
+        cp /usr/local/bin/firebase /workspace/firebase/
+        chmod +x /workspace/firebase/firebase
+        echo "🔍 Verifying Firebase CLI installation..."
+        if ! /workspace/firebase/firebase --version; then
+          echo "❌ Firebase CLI installation failed. Exiting."
+          exit 1
+        fi
+        echo "✅ Firebase CLI installed successfully!"
+
+  # Step 4: Enable Firebase Authentication using Firebase CLI
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
+        echo "🔑 Enabling Email/Password authentication for Firebase project: $firebase_project_id..."
+
+        # Copy firebase.json to workspace
+        cp /gcp/cloud-build/firebase.json /workspace/firebase.json
+
+        if [ ! -f "/workspace/firebase.json" ]; then
+          echo "❌ Error: firebase.json not found at expected location."
+          exit 1
+        fi
+
+        # Apply authentication settings using Firebase CLI
+        /workspace/firebase/firebase auth:update --project="$firebase_project_id" --file="/workspace/firebase.json"
+
+        echo "✅ Email/Password authentication enabled for Firebase project."
+
+options:
+  logging: CLOUD_LOGGING_ONLY
