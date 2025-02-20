@@ -61,7 +61,7 @@ steps:
         echo "🔑 Enabling Email/Password authentication for Firebase project: $firebase_project_id..."
 
         # Correct Firebase CLI command
-        /workspace/firebase/firebase auth:update email --project="$firebase_project_id" --enabled=true
+        /workspace/firebase/firebase auth:update email --project="$firebase_project_id" --enabled
 
         echo "✅ Email/Password authentication enabled successfully!"
 
