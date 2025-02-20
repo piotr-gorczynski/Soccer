@@ -60,16 +60,14 @@ steps:
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         echo "🔑 Enabling Email/Password authentication for Firebase project: $firebase_project_id..."
 
-        # Copy firebase.json to workspace
-        cp /gcp/cloud-build/firebase.json /workspace/firebase.json
-
-        if [ ! -f "/workspace/firebase.json" ]; then
+        # Ensure firebase.json exists in the workspace
+        if [ ! -f "./gcp/cloud-build/firebase.json" ]; then
           echo "❌ Error: firebase.json not found at expected location."
           exit 1
         fi
 
         # Apply authentication settings using Firebase CLI
-        /workspace/firebase/firebase auth:update --project="$firebase_project_id" --file="/workspace/firebase.json"
+        /workspace/firebase/firebase auth:update --project="$firebase_project_id" --file="./gcp/cloud-build/firebase.json"
 
         echo "✅ Email/Password authentication enabled for Firebase project."
 
