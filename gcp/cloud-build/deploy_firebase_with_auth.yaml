@@ -31,26 +31,7 @@ steps:
         echo "🔓 Enabling Firebase APIs for project $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
         gcloud services enable firebase.googleapis.com --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
 
-  # Step 3: Install Firebase CLI
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e
-        echo "⬇️ Installing Firebase CLI..."
-        curl -sL https://firebase.tools | bash
-        mkdir -p /workspace/firebase
-        cp /usr/local/bin/firebase /workspace/firebase/
-        chmod +x /workspace/firebase/firebase
-        echo "🔍 Verifying Firebase CLI installation..."
-        if ! /workspace/firebase/firebase --version; then
-          echo "❌ Firebase CLI installation failed. Exiting."
-          exit 1
-        fi
-        echo "✅ Firebase CLI installed successfully!"
-
-  # Step 4: Enable Email/Password Authentication
+  # Step 3: Enable Identity Toolkit API
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -58,10 +39,45 @@ steps:
       - |
         set -e
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
+        echo "🔓 Enabling Identity Toolkit API for project: $firebase_project_id..."
+        gcloud services enable identitytoolkit.googleapis.com --project="$firebase_project_id"
+        echo "✅ Identity Toolkit API enabled successfully!"
+
+  # Step 4: Authenticate with Google Cloud and obtain an access token
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "🔑 Fetching Google Cloud authentication token..."
+        ACCESS_TOKEN=$(gcloud auth print-access-token)
+        echo "$ACCESS_TOKEN" > /workspace/ACCESS_TOKEN.txt
+        echo "✅ Access token retrieved successfully."
+
+  # Step 5: Enable Email/Password Authentication using Identity Toolkit API
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
+        ACCESS_TOKEN=$(cat /workspace/ACCESS_TOKEN.txt)
+        
         echo "🔑 Enabling Email/Password authentication for Firebase project: $firebase_project_id..."
 
-        # Correct Firebase CLI command
-        /workspace/firebase/firebase auth:update email --project="$firebase_project_id" --enabled
+        curl -X PATCH \
+          -H "Authorization: Bearer $ACCESS_TOKEN" \
+          -H "Content-Type: application/json" \
+          -d '{
+            "signIn": {
+              "email": {
+                "enabled": true
+              }
+            }
+          }' \
+          "https://identitytoolkit.googleapis.com/v2/projects/$firebase_project_id/config"
 
         echo "✅ Email/Password authentication enabled successfully!"
 
