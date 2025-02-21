@@ -51,8 +51,8 @@ steps:
       - |
         set -e
         echo "🔑 Fetching Google Cloud authentication token..."
-        ACCESS_TOKEN=$(gcloud auth print-access-token)
-        echo "$ACCESS_TOKEN" > /workspace/ACCESS_TOKEN.txt
+        access_token=$(gcloud auth print-access-token)
+        echo "$access_token" > /workspace/access_token.txt
         echo "✅ Access token retrieved successfully."
 
   # Step 5: Enable Email/Password Authentication using Identity Toolkit API
@@ -63,12 +63,12 @@ steps:
       - |
         set -e
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
-        ACCESS_TOKEN=$(cat /workspace/ACCESS_TOKEN.txt)
+        access_token=$(cat /workspace/access_token.txt)
         
         echo "🔑 Enabling Email/Password authentication for Firebase project: $firebase_project_id..."
 
         curl -X PATCH \
-          -H "Authorization: Bearer $ACCESS_TOKEN" \
+          -H "Authorization: Bearer $access_token" \
           -H "Content-Type: application/json" \
           -d '{
             "signIn": {
