@@ -1,6 +1,6 @@
 substitutions:
-  _ENVIRONMENT: 'dev'                         # Environment delivered from the trigger
-  _FOLDER_NAME: 'soccer'                      # Parent folder name
+  _ENVIRONMENT: 'dev'
+  _FOLDER_NAME: 'soccer'
 
 steps:
   # Step 1: Retrieve the Firebase Project ID
@@ -21,7 +21,7 @@ steps:
         fi
         echo "✅ Using project: $(cat /workspace/soccer_project_id.txt)"
 
-  # Step 2: Authenticate and Create Firebase User (with -x for debugging)
+  # Step 2: Authenticate and Create Firebase User (using OAuth 2 Access Token)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -31,8 +31,8 @@ steps:
         set -x  # Enables command echoing for debugging
 
         firebase_project_id=$(cat /workspace/soccer_project_id.txt)
-        echo "🔑 Generating identity token for Firebase Admin SDK..."
-        gcloud auth print-identity-token --impersonate-service-account=firebase-adminsdk-fbsvc@$firebase_project_id.iam.gserviceaccount.com > token.txt
+        echo "🔑 Generating OAuth 2 access token for Firebase Admin SDK..."
+        gcloud auth print-access-token --impersonate-service-account=firebase-adminsdk-fbsvc@$firebase_project_id.iam.gserviceaccount.com > token.txt
         access_token=$(cat token.txt)
 
         echo "📩 Creating Firebase Test User..."
