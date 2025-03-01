@@ -21,7 +21,25 @@ steps:
         fi
         echo "✅ Using project: $(cat /workspace/soccer_project_id.txt)"
 
-  # Step 2: Retrieve the Firebase Web API Key programmatically
+  # Step 2: Enable API Keys API (if not already enabled)
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        firebase_project_id=$(cat /workspace/soccer_project_id.txt)
+
+        echo "🔄 Checking if API Keys API is enabled..."
+        if ! gcloud services list --enabled --project="$firebase_project_id" | grep -q "apikeys.googleapis.com"; then
+          echo "⚡ Enabling API Keys API..."
+          gcloud services enable apikeys.googleapis.com --project="$firebase_project_id"
+          echo "✅ API Keys API enabled!"
+        else
+          echo "✅ API Keys API is already enabled."
+        fi
+
+  # Step 3: Retrieve the Firebase Web API Key programmatically
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -46,7 +64,7 @@ steps:
         echo "$firebase_api_key" > /workspace/firebase_api_key.txt
         echo "✅ Firebase API Key retrieved successfully!"
 
-  # Step 3: Authenticate
+  # Step 4: Authenticate
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -61,7 +79,7 @@ steps:
         gcloud auth print-access-token --impersonate-service-account=firebase-adminsdk-fbsvc@$firebase_project_id.iam.gserviceaccount.com > token.txt
         access_token=$(cat token.txt)
 
-  # Step 4: Create Firebase Test User
+  # Step 5: Create Firebase Test User
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
