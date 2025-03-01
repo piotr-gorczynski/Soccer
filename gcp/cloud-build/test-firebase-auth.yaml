@@ -99,7 +99,7 @@ steps:
           -H "Authorization: Bearer $access_token" \
           -d '{
                 "email": "piotr.gorczynski@hotmail.com",
-                "password": "bEhBa4V5HzECd!u",
+                "password": "TestPassowrd123!@",
                 "returnSecureToken": true
               }')
 
