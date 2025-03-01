@@ -13,7 +13,7 @@ steps:
         echo "🔍 Checking if project starting with ${_FOLDER_NAME}-${_ENVIRONMENT} exists..."
         gcloud projects list \
           --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
-          --format="value(projectId)" --project="${_ENVIRONMENT}" | head -n 1 > /workspace/soccer_project_id.txt
+          --format="value(projectId)" | head -n 1 > /workspace/soccer_project_id.txt
 
         if [ ! -s /workspace/soccer_project_id.txt ] || [ -z "$(cat /workspace/soccer_project_id.txt)" ]; then
           echo "❌ Error: Project ID not found. Ensure the project exists."
@@ -21,7 +21,7 @@ steps:
         fi
         echo "✅ Using project: $(cat /workspace/soccer_project_id.txt)"
 
-  # Step 2: Enable API Keys API (if not already enabled)
+  # Step 2: Retrieve the Firebase Project Number (Using Impersonation)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -30,16 +30,18 @@ steps:
         set -e
         firebase_project_id=$(cat /workspace/soccer_project_id.txt)
 
-        echo "🔄 Checking if API Keys API is enabled in $firebase_project_id..."
-        if ! gcloud services list --enabled --project="$firebase_project_id" | grep -q "apikeys.googleapis.com"; then
-          echo "⚡ Enabling API Keys API in $firebase_project_id..."
-          gcloud services enable apikeys.googleapis.com --project="$firebase_project_id"
-          echo "✅ API Keys API enabled in $firebase_project_id!"
-        else
-          echo "✅ API Keys API is already enabled in $firebase_project_id."
+        echo "🔢 Retrieving project number for $firebase_project_id..."
+        firebase_project_number=$(gcloud projects describe "$firebase_project_id" --format="value(projectNumber)")
+
+        if [ -z "$firebase_project_number" ]; then
+          echo "❌ Error: Could not retrieve project number for $firebase_project_id."
+          exit 1
         fi
 
-  # Step 3: Retrieve the Firebase Web API Key programmatically
+        echo "$firebase_project_number" > /workspace/firebase_project_number.txt
+        echo "✅ Project number retrieved: $firebase_project_number"
+
+  # Step 3: Retrieve the Firebase Web API Key (Using Impersonation)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -50,11 +52,12 @@ steps:
 
         firebase_project_id=$(cat /workspace/soccer_project_id.txt)
 
-        echo "🌐 Retrieving Firebase Web API Key from project $firebase_project_id..."
+        echo "🌐 Retrieving Firebase Web API Key from project $firebase_project_id using impersonation..."
         firebase_api_key=$(gcloud services api-keys list \
           --format="value(name)" \
           --filter="displayName~firebase" \
-          --project="$firebase_project_id" | head -n 1)
+          --project="$firebase_project_id" \
+          --impersonate-service-account=firebase-adminsdk-fbsvc@$firebase_project_id.iam.gserviceaccount.com | head -n 1)
 
         if [ -z "$firebase_api_key" ]; then
           echo "❌ Error: Firebase API Key not found for project $firebase_project_id."
@@ -64,7 +67,7 @@ steps:
         echo "$firebase_api_key" > /workspace/firebase_api_key.txt
         echo "✅ Firebase API Key retrieved successfully!"
 
-  # Step 4: Authenticate
+  # Step 4: Authenticate as Firebase Admin SDK
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -76,7 +79,7 @@ steps:
         firebase_project_id=$(cat /workspace/soccer_project_id.txt)
 
         echo "🔑 Generating OAuth 2 access token for Firebase Admin SDK..."
-        gcloud auth print-access-token --impersonate-service-account=firebase-adminsdk-fbsvc@$firebase_project_id.iam.gserviceaccount.com --project="$firebase_project_id" > token.txt
+        gcloud auth print-access-token --impersonate-service-account=firebase-adminsdk-fbsvc@$firebase_project_id.iam.gserviceaccount.com > token.txt
         access_token=$(cat token.txt)
 
   # Step 5: Create Firebase Test User
