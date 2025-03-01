@@ -1,6 +1,6 @@
 substitutions:
-  _environment: 'dev'
-  _folder_name: 'soccer'
+  _ENVIRONMENT: 'dev'                         # Environment delivered from the trigger
+  _FOLDER_NAME: 'soccer'                      # Parent folder name
 
 steps:
   # Step 1: Retrieve the Firebase Project ID
@@ -10,9 +10,9 @@ steps:
       - '-c'
       - |
         set -e
-        echo "🔍 Checking if project starting with ${_folder_name}-${_environment} exists..."
+        echo "🔍 Checking if project starting with ${_FOLDER_NAME}-${_ENVIRONMENT} exists..."
         gcloud projects list \
-          --filter="name~^${_folder_name}-${_environment}" \
+          --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
           --format="value(projectId)" | head -n 1 > /workspace/soccer_project_id.txt
 
         if [ ! -s /workspace/soccer_project_id.txt ] || [ -z "$(cat /workspace/soccer_project_id.txt)" ]; then
