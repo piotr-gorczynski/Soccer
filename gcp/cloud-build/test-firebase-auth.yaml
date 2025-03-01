@@ -1,6 +1,7 @@
 substitutions:
   _ENVIRONMENT: 'dev'
   _FOLDER_NAME: 'soccer'
+  _FIREBASE_API_KEY: 'YOUR_ACTUAL_FIREBASE_API_KEY_HERE'  # Set this manually
 
 steps:
   # Step 1: Retrieve the Firebase Project ID
@@ -21,7 +22,7 @@ steps:
         fi
         echo "✅ Using project: $(cat /workspace/soccer_project_id.txt)"
 
-  # Step 2: Authenticate and Retrieve Firebase API Key
+  # Step 2: Authenticate
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -36,16 +37,6 @@ steps:
         gcloud auth print-access-token --impersonate-service-account=firebase-adminsdk-fbsvc@$firebase_project_id.iam.gserviceaccount.com > token.txt
         access_token=$(cat token.txt)
 
-        echo "🌐 Retrieving Firebase Web API Key..."
-        firebase_api_key=$(gcloud firebase web-config describe --format="value(apiKey)" --project="$firebase_project_id")
-
-        if [ -z "$firebase_api_key" ]; then
-          echo "❌ Error: Firebase API Key not found for project $firebase_project_id."
-          exit 1
-        fi
-
-        echo "✅ Firebase API Key retrieved successfully!"
-
   # Step 3: Create Firebase Test User
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
@@ -55,11 +46,8 @@ steps:
         set -e
         set -x  # Enables command echoing for debugging
 
-        firebase_project_id=$(cat /workspace/soccer_project_id.txt)
-        firebase_api_key=$(gcloud firebase web-config describe --format="value(apiKey)" --project="$firebase_project_id")
-
         echo "📩 Creating Firebase Test User..."
-        response=$(curl -s -o response.json -w "%{http_code}" -X POST "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=$firebase_api_key" \
+        response=$(curl -s -o response.json -w "%{http_code}" -X POST "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${_FIREBASE_API_KEY}" \
           -H "Content-Type: application/json" \
           -H "Authorization: Bearer $access_token" \
           -d '{
