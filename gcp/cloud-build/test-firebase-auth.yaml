@@ -1,0 +1,57 @@
+substitutions:
+  _environment: 'dev'
+  _folder_name: 'soccer'
+
+steps:
+  # Step 1: Retrieve the Firebase Project ID
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "🔍 Checking if project starting with ${_folder_name}-${_environment} exists..."
+        gcloud projects list \
+          --filter="name~^${_folder_name}-${_environment}" \
+          --format="value(projectId)" | head -n 1 > /workspace/soccer_project_id.txt
+
+        if [ ! -s /workspace/soccer_project_id.txt ] || [ -z "$(cat /workspace/soccer_project_id.txt)" ]; then
+          echo "❌ Error: Project ID not found. Ensure the project exists."
+          exit 1
+        fi
+        echo "✅ Using project: $(cat /workspace/soccer_project_id.txt)"
+
+  # Step 2: Authenticate and Create Firebase User (with -x for debugging)
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        set -x  # Enables command echoing for debugging
+
+        firebase_project_id=$(cat /workspace/soccer_project_id.txt)
+        echo "🔑 Generating identity token for Firebase Admin SDK..."
+        gcloud auth print-identity-token --impersonate-service-account=firebase-adminsdk-fbsvc@$firebase_project_id.iam.gserviceaccount.com > token.txt
+        access_token=$(cat token.txt)
+
+        echo "📩 Creating Firebase Test User..."
+        response=$(curl -s -o response.json -w "%{http_code}" -X POST "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=$firebase_project_id" \
+          -H "Content-Type: application/json" \
+          -H "Authorization: Bearer $access_token" \
+          -d '{
+                "email": "piotr.gorczynski@hotmail.com",
+                "password": "bEhBa4V5HzECd!u",
+                "returnSecureToken": true
+              }')
+
+        if [[ "$response" -ne 200 ]]; then
+          echo "❌ Failed to create Firebase user. Response:"
+          cat response.json
+          exit 1
+        fi
+
+        echo "✅ Firebase test user created successfully!"
+
+options:
+  logging: CLOUD_LOGGING_ONLY
