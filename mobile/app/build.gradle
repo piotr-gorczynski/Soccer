@@ -7,10 +7,10 @@ android {
 
     defaultConfig {
         applicationId "piotr_gorczynski.soccer2"
-        minSdkVersion 15
+        minSdk 23
         targetSdk 34
-        versionCode 4
-        versionName '4.0'
+        versionCode 5
+        versionName '5.0'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -21,22 +21,61 @@ android {
         }
     }
 
+    //GPT fixes...
+    packagingOptions {
+        exclude 'META-INF/*.version'
+    }
+
     testOptions {
         unitTests.returnDefaultValues = true
     }
+
     namespace 'piotr_gorczynski.soccer2'
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:28.0.0'
+    //GPT fixes
+    //implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation 'com.android.support.constraint:constraint-layout:2.0.4'
     implementation 'com.android.support:support-v4:28.0.0'
     implementation 'com.android.support:support-vector-drawable:28.0.0'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    //GPT fixes
+    //testImplementation 'junit:junit:4.12'
+    //androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    //androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation platform('com.google.firebase:firebase-bom:33.12.0')
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.firebase:firebase-auth'
+    //GPT fixes
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.core:core:1.12.0'
+    implementation 'com.google.android.material:material:1.11.0'
+}
+
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
+// Register custom copy task
+tasks.register("copyGoogleServicesJson") {
+    doLast {
+        def source = file("../../secrets/google-services.json")
+        def destination = file("google-services.json")
+        if (source.exists()) {
+            Files.copy(source.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING)
+            println("✅ google-services.json copied to app/")
+        } else {
+            throw new GradleException("❌ google-services.json not found in secrets/")
+        }
+    }
+}
+
+// Hook into the Firebase task *after* all plugins are applied
+afterEvaluate {
+    if (tasks.findByName("processDebugGoogleServices")) {
+        tasks.named("processDebugGoogleServices").configure {
+            dependsOn("copyGoogleServicesJson")
+        }
+    } else {
+        println("⚠️ Firebase task 'processDebugGoogleServices' not found at configuration time.")
+    }
 }
