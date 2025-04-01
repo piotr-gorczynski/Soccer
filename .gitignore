@@ -25,3 +25,6 @@ captures/
 
 # Misc
 Thumbs.db
+
+# Firebase config copied to Android app
+/mobile/app/google-services.json
