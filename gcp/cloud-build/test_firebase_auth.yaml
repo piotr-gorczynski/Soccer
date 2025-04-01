@@ -53,19 +53,30 @@ steps:
         firebase_project_id=$(cat /workspace/soccer_project_id.txt)
 
         echo "🌐 Retrieving Firebase Web API Key from project $firebase_project_id using impersonation..."
-        firebase_api_key=$(gcloud services api-keys list \
+        api_key_name=$(gcloud services api-keys list \
           --format="value(name)" \
-          --filter="displayName~firebase" \
           --project="$firebase_project_id" \
-          --impersonate-service-account=firebase-adminsdk-fbsvc@$firebase_project_id.iam.gserviceaccount.com | head -n 1)
+          --impersonate-service-account=firebase-adminsdk-fbsvc@$firebase_project_id.iam.gserviceaccount.com \
+          | head -n 1)
+
+        if [ -z "$api_key_name" ]; then
+          echo "❌ Error: No API keys found in project $firebase_project_id."
+          exit 1
+        fi
+
+        echo "🔑 Found API Key resource name: $api_key_name"
+
+        firebase_api_key=$(gcloud services api-keys get-key-string "$api_key_name" \
+          --impersonate-service-account=firebase-adminsdk-fbsvc@$firebase_project_id.iam.gserviceaccount.com \
+          --format="value(keyString)")
 
         if [ -z "$firebase_api_key" ]; then
-          echo "❌ Error: Firebase API Key not found for project $firebase_project_id."
+          echo "❌ Error: Could not resolve API key string."
           exit 1
         fi
 
         echo "$firebase_api_key" > /workspace/firebase_api_key.txt
-        echo "✅ Firebase API Key retrieved successfully!"
+        echo "✅ Firebase API Key string retrieved successfully!"
 
   # Step 4: Authenticate as Firebase Admin SDK
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
