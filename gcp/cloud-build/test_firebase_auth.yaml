@@ -1,126 +1,90 @@
 substitutions:
   _ENVIRONMENT: 'dev'
   _FOLDER_NAME: 'soccer'
+  _PRIVATE_REPO: 'git@github.com:piotr-gorczynski/Soccer-private.git'
+  _BRANCH_NAME: 'main'
+  _TARGET_PATH: 'firebase/google-services.json'
+
+availableSecrets:
+  secretManager:
+    - versionName: projects/org-service-account-001/secrets/github_ssh_key_soccer_private/versions/latest
+      env: 'ssh_private_key'  # lowercase for secrets
 
 steps:
-  # Step 1: Retrieve the Firebase Project ID
+  # Step 1: Get Firebase project ID
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'get-project-id'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e
-        echo "🔍 Checking if project starting with ${_FOLDER_NAME}-${_ENVIRONMENT} exists..."
+        set -x
         gcloud projects list \
           --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
-          --format="value(projectId)" | head -n 1 > /workspace/soccer_project_id.txt
+          --format="value(projectId)" | head -n 1 > /workspace/project_id.txt
 
-        if [ ! -s /workspace/soccer_project_id.txt ] || [ -z "$(cat /workspace/soccer_project_id.txt)" ]; then
-          echo "❌ Error: Project ID not found. Ensure the project exists."
-          exit 1
-        fi
-        echo "✅ Using project: $(cat /workspace/soccer_project_id.txt)"
-
-  # Step 2: Retrieve the Firebase Project Number (Using Impersonation)
+  # Step 2: Download google-services.json
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'download-config'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e
-        firebase_project_id=$(cat /workspace/soccer_project_id.txt)
+        set -x
+        project_id=$(cat /workspace/project_id.txt)
+        package_name="piotr_gorczynski.soccer2"
 
-        echo "🔢 Retrieving project number for $firebase_project_id..."
-        firebase_project_number=$(gcloud projects describe "$firebase_project_id" --format="value(projectNumber)")
+        app_id=$(gcloud firebase android apps list \
+          --project="$project_id" \
+          --format="value(appId)" \
+          --filter="packageName=$package_name")
 
-        if [ -z "$firebase_project_number" ]; then
-          echo "❌ Error: Could not retrieve project number for $firebase_project_id."
+        if [ -z "$app_id" ]; then
+          echo "❌ No app found with package name: $package_name"
           exit 1
         fi
 
-        echo "$firebase_project_number" > /workspace/firebase_project_number.txt
-        echo "✅ Project number retrieved: $firebase_project_number"
+        gcloud firebase android apps sdkconfig download \
+          --app-id="$app_id" \
+          --project="$project_id" \
+          --out="/workspace/google-services.json"
 
-  # Step 3: Retrieve the Firebase Web API Key (Using Impersonation)
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+  # Step 3: Set up SSH and clone the private repo
+  - name: 'gcr.io/cloud-builders/git'
+    id: 'clone-repo'
+    secretEnv: ['ssh_private_key']
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e
-        set -x  # Enables command echoing for debugging
+        set -x
+        mkdir -p /root/.ssh
+        echo "$ssh_private_key" > /root/.ssh/id_ed25519
+        chmod 400 /root/.ssh/id_ed25519
+        ssh-keyscan github.com >> /root/.ssh/known_hosts
 
-        firebase_project_id=$(cat /workspace/soccer_project_id.txt)
+        git config --global user.email "ci-bot@soccer.dev"
+        git config --global user.name "CI Bot"
 
-        echo "🌐 Retrieving Firebase Web API Key from project $firebase_project_id using impersonation..."
-        api_key_name=$(gcloud services api-keys list \
-          --format="value(name)" \
-          --project="$firebase_project_id" \
-          --impersonate-service-account=firebase-adminsdk-fbsvc@$firebase_project_id.iam.gserviceaccount.com \
-          | head -n 1)
+        git clone ${_PRIVATE_REPO} /workspace/private-repo
+        cp /workspace/google-services.json /workspace/private-repo/${_TARGET_PATH}
 
-        if [ -z "$api_key_name" ]; then
-          echo "❌ Error: No API keys found in project $firebase_project_id."
-          exit 1
-        fi
-
-        echo "🔑 Found API Key resource name: $api_key_name"
-
-        firebase_api_key=$(gcloud services api-keys get-key-string "$api_key_name" \
-          --impersonate-service-account=firebase-adminsdk-fbsvc@$firebase_project_id.iam.gserviceaccount.com \
-          --format="value(keyString)")
-
-        if [ -z "$firebase_api_key" ]; then
-          echo "❌ Error: Could not resolve API key string."
-          exit 1
-        fi
-
-        echo "$firebase_api_key" > /workspace/firebase_api_key.txt
-        echo "✅ Firebase API Key string retrieved successfully!"
-
-  # Step 4: Authenticate as Firebase Admin SDK
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+  # Step 4: Commit and push
+  - name: 'gcr.io/cloud-builders/git'
+    id: 'commit-and-push'
+    dir: '/workspace/private-repo'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e
-        set -x  # Enables command echoing for debugging
-
-        firebase_project_id=$(cat /workspace/soccer_project_id.txt)
-
-        echo "🔑 Generating OAuth 2 access token for Firebase Admin SDK..."
-        gcloud auth print-access-token --impersonate-service-account=firebase-adminsdk-fbsvc@$firebase_project_id.iam.gserviceaccount.com > token.txt
-        access_token=$(cat token.txt)
-
-  # Step 5: Create Firebase Test User
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e
-        set -x  # Enables command echoing for debugging
-
-        firebase_api_key=$(cat /workspace/firebase_api_key.txt)
-
-        echo "📩 Creating Firebase Test User..."
-        response=$(curl -s -o response.json -w "%{http_code}" -X POST "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${firebase_api_key}" \
-          -H "Content-Type: application/json" \
-          -H "Authorization: Bearer $access_token" \
-          -d '{
-                "email": "test@test.test",
-                "password": "TestPassowrd123!@",
-                "returnSecureToken": true
-              }')
-
-        if [[ "$response" -ne 200 ]]; then
-          echo "❌ Failed to create Firebase user. Response:"
-          cat response.json
-          exit 1
-        fi
-
-        echo "✅ Firebase test user created successfully!"
+        set -x
+        git add ${_TARGET_PATH}
+        git commit -m "🔄 Update google-services.json from Firebase [CI]"
+        git push origin ${_BRANCH_NAME}
 
 options:
   logging: CLOUD_LOGGING_ONLY
