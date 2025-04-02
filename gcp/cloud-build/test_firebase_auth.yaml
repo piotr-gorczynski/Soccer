@@ -8,7 +8,7 @@ substitutions:
 availableSecrets:
   secretManager:
     - versionName: projects/org-service-account-001/secrets/github_ssh_key_soccer_private/versions/latest
-      env: 'ssh_private_key'  # lowercase for secrets
+      env: 'ssh_private_key'  # lowercase for variables
 
 steps:
   # Step 1: Get Firebase project ID
