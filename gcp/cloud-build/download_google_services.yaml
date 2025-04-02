@@ -1,0 +1,90 @@
+substitutions:
+  _ENVIRONMENT: 'dev'
+  _FOLDER_NAME: 'soccer'
+  _PRIVATE_REPO: 'git@github.com:piotr-gorczynski/Soccer-private.git'
+  _BRANCH_NAME: 'main'
+  _TARGET_PATH: 'firebase/google-services.json'
+
+availableSecrets:
+  secretManager:
+    - versionName: projects/org-service-account-001/secrets/github_ssh_key_soccer_private/versions/latest
+      env: 'SSH_PRIVATE_KEY'
+
+steps:
+  # Step 1: Get Firebase project ID
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'get-project-id'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        set -x  # Enables command echoing for debugging
+        gcloud projects list \
+          --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
+          --format="value(projectId)" | head -n 1 > /workspace/project_id.txt
+
+  # Step 2: Download google-services.json for the Android app
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'download-config'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        set -x  # Enables command echoing for debugging
+        project_id=$(cat /workspace/project_id.txt)
+        package_name="piotr_gorczynski.soccer2"
+
+        app_id=$(gcloud firebase android apps list \
+          --project="$project_id" \
+          --format="value(appId)" \
+          --filter="packageName=$package_name")
+
+        if [ -z "$app_id" ]; then
+          echo "❌ No app found with package name: $package_name"
+          exit 1
+        fi
+
+        gcloud firebase android apps sdkconfig download \
+          --app-id="$app_id" \
+          --project="$project_id" \
+          --out="/workspace/google-services.json"
+
+  # Step 3: Set up SSH and clone the private repo
+  - name: 'gcr.io/cloud-builders/git'
+    id: 'clone-repo'
+    secretEnv: ['SSH_PRIVATE_KEY']
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        set -x  # Enables command echoing for debugging
+        mkdir -p /root/.ssh
+        echo "$SSH_PRIVATE_KEY" > /root/.ssh/id_ed25519
+        chmod 400 /root/.ssh/id_ed25519
+        ssh-keyscan github.com >> /root/.ssh/known_hosts
+
+        git config --global user.email "ci-bot@soccer.dev"
+        git config --global user.name "CI Bot"
+
+        git clone ${_PRIVATE_REPO} /workspace/private-repo
+        cp /workspace/google-services.json /workspace/private-repo/${_TARGET_PATH}
+
+  # Step 4: Commit and push changes
+  - name: 'gcr.io/cloud-builders/git'
+    id: 'commit-and-push'
+    dir: '/workspace/private-repo'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        set -x  # Enables command echoing for debugging
+        git add ${_TARGET_PATH}
+        git commit -m "🔄 Update google-services.json from Firebase [CI]"
+        git push origin ${_BRANCH_NAME}
+
+options:
+  logging: CLOUD_LOGGING_ONLY
