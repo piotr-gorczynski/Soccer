@@ -8,21 +8,29 @@ substitutions:
 availableSecrets:
   secretManager:
     - versionName: projects/org-service-account-001/secrets/github_ssh_key_soccer_private/versions/latest
-      env: 'ssh_private_key'  # lowercase for variables
+      env: 'ssh_private_key'
 
 steps:
-  # Step 1: Get Firebase project ID
+  # Step 1: Get Firebase project ID (reused logic)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    id: 'get-project-id'
+    id: 'get-firebase-project-id'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e
         set -x
+        echo "Looking for project starting with ${_FOLDER_NAME}-${_ENVIRONMENT}..."
         gcloud projects list \
           --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
-          --format="value(projectId)" | head -n 1 > /workspace/project_id.txt
+          --format="value(projectId)" | head -n 1 > /workspace/SOCCER_PROJECT_ID.txt
+
+        if [ ! -s /workspace/SOCCER_PROJECT_ID.txt ] || [ -z "$(cat /workspace/SOCCER_PROJECT_ID.txt)" ]; then
+          echo "❌ Error: Project ID not found. Ensure the project exists."
+          exit 1
+        fi
+
+        echo "✅ Firebase project ID: $(cat /workspace/SOCCER_PROJECT_ID.txt)"
 
   # Step 2: Download google-services.json
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
@@ -33,25 +41,27 @@ steps:
       - |
         set -e
         set -x
-        project_id=$(cat /workspace/project_id.txt)
+        project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         package_name="piotr_gorczynski.soccer2"
 
+        echo "Checking for Firebase Android App..."
         app_id=$(gcloud firebase android apps list \
           --project="$project_id" \
           --format="value(appId)" \
           --filter="packageName=$package_name")
 
         if [ -z "$app_id" ]; then
-          echo "❌ No app found with package name: $package_name"
+          echo "❌ Firebase Android app not found for package: $package_name"
           exit 1
         fi
 
+        echo "📥 Downloading google-services.json for app ID: $app_id"
         gcloud firebase android apps sdkconfig download \
           --app-id="$app_id" \
           --project="$project_id" \
           --out="/workspace/google-services.json"
 
-  # Step 3: Set up SSH and clone the private repo
+  # Step 3: Set up SSH and clone private repo
   - name: 'gcr.io/cloud-builders/git'
     id: 'clone-repo'
     secretEnv: ['ssh_private_key']
@@ -72,7 +82,7 @@ steps:
         git clone ${_PRIVATE_REPO} /workspace/private-repo
         cp /workspace/google-services.json /workspace/private-repo/${_TARGET_PATH}
 
-  # Step 4: Commit and push
+  # Step 4: Commit and push changes
   - name: 'gcr.io/cloud-builders/git'
     id: 'commit-and-push'
     dir: '/workspace/private-repo'
