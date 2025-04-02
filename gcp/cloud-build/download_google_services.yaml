@@ -8,7 +8,7 @@ substitutions:
 availableSecrets:
   secretManager:
     - versionName: projects/org-service-account-001/secrets/github_ssh_key_soccer_private/versions/latest
-      env: 'SSH_PRIVATE_KEY'
+      env: 'ssh_private_key'  # lowercase for variables
 
 steps:
   # Step 1: Get Firebase project ID
@@ -19,12 +19,12 @@ steps:
       - '-c'
       - |
         set -e
-        set -x  # Enables command echoing for debugging
+        set -x
         gcloud projects list \
           --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
           --format="value(projectId)" | head -n 1 > /workspace/project_id.txt
 
-  # Step 2: Download google-services.json for the Android app
+  # Step 2: Download google-services.json
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: 'download-config'
     entrypoint: 'bash'
@@ -32,7 +32,7 @@ steps:
       - '-c'
       - |
         set -e
-        set -x  # Enables command echoing for debugging
+        set -x
         project_id=$(cat /workspace/project_id.txt)
         package_name="piotr_gorczynski.soccer2"
 
@@ -54,15 +54,15 @@ steps:
   # Step 3: Set up SSH and clone the private repo
   - name: 'gcr.io/cloud-builders/git'
     id: 'clone-repo'
-    secretEnv: ['SSH_PRIVATE_KEY']
+    secretEnv: ['ssh_private_key']
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e
-        set -x  # Enables command echoing for debugging
+        set -x
         mkdir -p /root/.ssh
-        echo "$SSH_PRIVATE_KEY" > /root/.ssh/id_ed25519
+        echo "$ssh_private_key" > /root/.ssh/id_ed25519
         chmod 400 /root/.ssh/id_ed25519
         ssh-keyscan github.com >> /root/.ssh/known_hosts
 
@@ -72,7 +72,7 @@ steps:
         git clone ${_PRIVATE_REPO} /workspace/private-repo
         cp /workspace/google-services.json /workspace/private-repo/${_TARGET_PATH}
 
-  # Step 4: Commit and push changes
+  # Step 4: Commit and push
   - name: 'gcr.io/cloud-builders/git'
     id: 'commit-and-push'
     dir: '/workspace/private-repo'
@@ -81,7 +81,7 @@ steps:
       - '-c'
       - |
         set -e
-        set -x  # Enables command echoing for debugging
+        set -x
         git add ${_TARGET_PATH}
         git commit -m "🔄 Update google-services.json from Firebase [CI]"
         git push origin ${_BRANCH_NAME}
