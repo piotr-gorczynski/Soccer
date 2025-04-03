@@ -3,7 +3,7 @@ substitutions:
   _FOLDER_NAME: 'soccer'
   _PRIVATE_REPO: 'git@github.com:piotr-gorczynski/Soccer-private.git'
   _BRANCH_NAME: 'main'
-  _TARGET_PATH: 'firebase/google-services.json'
+  _TARGET_PATH: 'google-services.json'  # 👈 Root folder
 
 availableSecrets:
   secretManager:
