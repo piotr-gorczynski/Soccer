@@ -59,7 +59,12 @@ steps:
         package_name="piotr_gorczynski.soccer2"
 
         echo "Checking for Firebase Android App in $project_id..."
-        app_id=$(/workspace/firebase/firebase apps:list --project="$project_id" | grep ANDROID | grep "$package_name" | awk -F'│' '{print $2}' | xargs)
+        firebase_output=$(/workspace/firebase/firebase apps:list --project="$project_id")
+
+        echo "Raw Firebase apps output:"
+        echo "$firebase_output"
+
+        app_id=$(echo "$firebase_output" | grep "$package_name" | awk -F'│' '{print $1}' | xargs)
 
         if [ -z "$app_id" ]; then
           echo "❌ Firebase Android app not found for package: $package_name"
