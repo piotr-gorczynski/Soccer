@@ -20,17 +20,9 @@ steps:
       - |
         set -e
         set -x
-        echo "Looking for project starting with ${_FOLDER_NAME}-${_ENVIRONMENT}..."
         gcloud projects list \
           --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
           --format="value(projectId)" | head -n 1 > /workspace/SOCCER_PROJECT_ID.txt
-
-        if [ ! -s /workspace/SOCCER_PROJECT_ID.txt ] || [ -z "$(cat /workspace/SOCCER_PROJECT_ID.txt)" ]; then
-          echo "❌ Error: Project ID not found."
-          exit 1
-        fi
-
-        echo "✅ Firebase project ID: $(cat /workspace/SOCCER_PROJECT_ID.txt)"
 
   # Step 2: Install Firebase CLI
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
@@ -56,16 +48,13 @@ steps:
         set -e
         set -x
         project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
-
-        echo "Fetching Firebase Android app ID for project: $project_id"
         firebase_output=$(/workspace/firebase/firebase apps:list --project="$project_id")
         echo "$firebase_output" > /workspace/apps_list.txt
 
         echo "🔍 Firebase apps output:"
         cat /workspace/apps_list.txt
 
-        # Extract valid App ID from line containing "ANDROID" and not part of the table header
-        app_id=$(grep ANDROID /workspace/apps_list.txt | grep -v "App ID" | awk -F '│' '{print $2}' | xargs)
+        app_id=$(grep ANDROID /workspace/apps_list.txt | grep -v "App ID" | awk -F '│' '{print $3}' | xargs)
 
         if [ -z "$app_id" ]; then
           echo "❌ Firebase Android app ID not found."
