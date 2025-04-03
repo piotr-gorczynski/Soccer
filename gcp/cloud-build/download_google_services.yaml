@@ -46,7 +46,7 @@ steps:
         cp /usr/local/bin/firebase /workspace/firebase/
         chmod +x /workspace/firebase/firebase
 
-  # Step 3: Check if Android app exists and download config
+  # Step 3: Extract Android app ID and download config
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: 'download-config'
     entrypoint: 'bash'
@@ -56,18 +56,16 @@ steps:
         set -e
         set -x
         project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
-        package_name="piotr_gorczynski.soccer2"
 
-        echo "Checking for Firebase Android App in $project_id..."
+        echo "Fetching Firebase Android app ID for project: $project_id"
         firebase_output=$(/workspace/firebase/firebase apps:list --project="$project_id")
-
-        echo "Raw Firebase apps output:"
+        echo "🔍 Firebase apps output:"
         echo "$firebase_output"
 
-        app_id=$(echo "$firebase_output" | grep "$package_name" | awk -F'│' '{print $1}' | xargs)
+        app_id=$(echo "$firebase_output" | grep ANDROID | awk -F'│' '{print $2}' | xargs)
 
         if [ -z "$app_id" ]; then
-          echo "❌ Firebase Android app not found for package: $package_name"
+          echo "❌ Firebase Android app ID not found."
           exit 1
         fi
 
