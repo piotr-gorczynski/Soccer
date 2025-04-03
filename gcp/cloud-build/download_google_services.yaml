@@ -59,10 +59,13 @@ steps:
 
         echo "Fetching Firebase Android app ID for project: $project_id"
         firebase_output=$(/workspace/firebase/firebase apps:list --project="$project_id")
-        echo "🔍 Firebase apps output:"
-        echo "$firebase_output"
+        echo "$firebase_output" > /workspace/apps_list.txt
 
-        app_id=$(echo "$firebase_output" | grep ANDROID | awk -F'│' '{print $2}' | xargs)
+        echo "🔍 Firebase apps output:"
+        cat /workspace/apps_list.txt
+
+        # Extract valid App ID from line containing "ANDROID" and not part of the table header
+        app_id=$(grep ANDROID /workspace/apps_list.txt | grep -v "App ID" | awk -F '│' '{print $2}' | xargs)
 
         if [ -z "$app_id" ]; then
           echo "❌ Firebase Android app ID not found."
