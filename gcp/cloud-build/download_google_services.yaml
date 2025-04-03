@@ -3,7 +3,7 @@ substitutions:
   _FOLDER_NAME: 'soccer'
   _PRIVATE_REPO: 'git@github.com:piotr-gorczynski/Soccer-private.git'
   _BRANCH_NAME: 'main'
-  _TARGET_PATH: 'google-services.json'  # 👈 Root folder
+  _TARGET_PATH: 'google-services.json'  # Save in root folder of private repo
 
 availableSecrets:
   secretManager:
@@ -66,7 +66,7 @@ steps:
           --project="$project_id" \
           > /workspace/google-services.json
 
-  # Step 4: Clone private repo and add config file
+  # Step 4: Clone private repo
   - name: 'gcr.io/cloud-builders/git'
     id: 'clone-repo'
     secretEnv: ['ssh_private_key']
@@ -91,12 +91,19 @@ steps:
   - name: 'gcr.io/cloud-builders/git'
     id: 'commit-and-push'
     dir: '/workspace/private-repo'
+    secretEnv: ['ssh_private_key']
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e
         set -x
+        # Re-establish SSH for this container
+        mkdir -p /root/.ssh
+        echo "$ssh_private_key" > /root/.ssh/id_ed25519
+        chmod 400 /root/.ssh/id_ed25519
+        ssh-keyscan github.com >> /root/.ssh/known_hosts
+
         git add ${_TARGET_PATH}
         git commit -m "🔄 Update google-services.json from Firebase [CI]"
         git push origin ${_BRANCH_NAME}
