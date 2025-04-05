@@ -11,7 +11,7 @@ steps:
       - |
         set -e
         set -x  # Enables command echoing for debugging
-        echo "Checking if project starting with ${_FOLDER_NAME}-${_ENVIRONMENT} exists..."
+        echo "🔍 Checking if project starting with ${_FOLDER_NAME}-${_ENVIRONMENT} exists..."
         gcloud projects list \
           --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
           --format="value(projectId)" | head -n 1 > /workspace/SOCCER_PROJECT_ID.txt
@@ -22,15 +22,15 @@ steps:
         fi
         echo "✅ Using project: $(cat /workspace/SOCCER_PROJECT_ID.txt)"
 
-  # Step 2: Enable Firebase APIs in the project
+  # Step 2: Enable Firebase APIs in the project (Firebase Management API)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e
-        set -x  # Enables command echoing for debugging
-        echo "🔓 Enabling Firebase APIs for project $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
+        set -x
+        echo "🔓 Enabling Firebase API for project $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
         if gcloud services enable firebase.googleapis.com --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"; then
           echo "✅ Firebase API enabled."
         else
@@ -38,14 +38,14 @@ steps:
           exit 1
         fi
 
-  # Step 3: Enable Identity Toolkit API
+  # Step 3: Enable Identity Toolkit API (for Firebase Auth backend)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e
-        set -x  # Enables command echoing for debugging
+        set -x
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         echo "🔓 Enabling Identity Toolkit API for project: $firebase_project_id..."
         if gcloud services enable identitytoolkit.googleapis.com --project="$firebase_project_id"; then
@@ -62,7 +62,7 @@ steps:
       - '-c'
       - |
         set -e
-        set -x  # Enables command echoing for debugging
+        set -x
         echo "🔑 Fetching Google Cloud authentication token..."
         access_token=$(gcloud auth print-access-token)
         if [ -z "$access_token" ]; then
@@ -72,14 +72,14 @@ steps:
         echo "$access_token" > /workspace/access_token.txt
         echo "✅ Access token retrieved successfully."
 
-  # Step 4.5: Register Firebase services using Management API
+  # Step 4.5: Register Firebase services using Firebase Management API
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e
-        set -x  # Enables command echoing for debugging
+        set -x
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         access_token=$(cat /workspace/access_token.txt)
 
@@ -99,33 +99,17 @@ steps:
           exit 1
         fi
 
-  # Step 5: Initialize Firebase Auth config using Firebase CLI
+  # Step 5: (Revised) Skip Firebase CLI Auth config deployment
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e
-        set -x  # Enables command echoing for debugging
-        echo "⬇️ Installing Firebase CLI..."
-        curl -sL https://firebase.tools | bash
-        mkdir -p /workspace/firebase
-        cp /usr/local/bin/firebase /workspace/firebase/
-        chmod +x /workspace/firebase/firebase
-        echo "✅ Firebase CLI installed."
-
+        set -x
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
-
-        echo '{"auth": {"rules": "auth.rules"}}' > /workspace/firebase.json
-        echo 'allow read, write: if false;' > /workspace/auth.rules
-
-        echo "📤 Deploying minimal auth config to initialize Firebase Auth..."
-        if /workspace/firebase/firebase deploy --only auth --project="$firebase_project_id" --token="$(cat /workspace/access_token.txt)"; then
-          echo "✅ Firebase Auth config deployed."
-        else
-          echo "❌ Firebase Auth config deployment failed."
-          exit 1
-        fi
+        echo "📤 Skipping Firebase CLI deploy for Auth (no 'auth' deploy target exists in Firebase CLI)."
+        echo "✅ Firebase Auth will be initialized via API instead."
 
   # Step 6: Enable Email/Password Authentication using Identity Toolkit API
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
@@ -134,12 +118,11 @@ steps:
       - '-c'
       - |
         set -e
-        set -x  # Enables command echoing for debugging
+        set -x
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         access_token=$(cat /workspace/access_token.txt)
 
         echo "🔑 Enabling Email/Password authentication for Firebase project: $firebase_project_id..."
-
         response=$(curl -s -w "\n%{http_code}" -X PATCH \
           -H "Authorization: Bearer $access_token" \
           -H "Content-Type: application/json" \
