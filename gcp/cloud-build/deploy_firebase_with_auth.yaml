@@ -88,34 +88,7 @@ steps:
           exit 1
         fi
 
-  # ✅ Step 6: Explicitly initialize Firebase Auth config
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e
-        set -x
-        firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
-        access_token=$(cat /workspace/access_token.txt)
-
-        echo "🧱 Initializing Firebase Auth config backend..."
-        response=$(curl -s -w "\n%{http_code}" -X POST \
-          -H "Authorization: Bearer $access_token" \
-          -H "Content-Type: application/json" \
-          -d '{}' \
-          "https://identitytoolkit.googleapis.com/admin/v2/projects/$firebase_project_id/config")
-
-        http_code=$(echo "$response" | tail -n1)
-        if [ "$http_code" -eq 200 ] || [ "$http_code" -eq 409 ]; then
-          echo "✅ Firebase Auth config initialized."
-        else
-          echo "❌ Failed to initialize Firebase Auth config (status $http_code)."
-          echo "$response"
-          exit 1
-        fi
-
-  # Step 7: Enable Email/Password Authentication using Identity Toolkit API
+  # ✅ Step 6: Enable Email/Password Authentication using Identity Toolkit v1 API
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -137,7 +110,7 @@ steps:
               }
             }
           }' \
-          "https://identitytoolkit.googleapis.com/v2/projects/$firebase_project_id/config")
+          "https://identitytoolkit.googleapis.com/v1/projects/$firebase_project_id/config")
 
         http_code=$(echo "$response" | tail -n1)
         if [ "$http_code" -eq 200 ]; then
