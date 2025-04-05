@@ -21,7 +21,7 @@ steps:
         fi
         echo "✅ Using project: $(cat /workspace/soccer_project_id.txt)"
 
-  # Step 2: Retrieve the Firebase Project Number (Using Impersonation)
+  # Step 2: Retrieve the Firebase Project Number (using impersonation)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -41,7 +41,7 @@ steps:
         echo "$firebase_project_number" > /workspace/firebase_project_number.txt
         echo "✅ Project number retrieved: $firebase_project_number"
 
-  # Step 3: Retrieve the Firebase Web API Key (Using Impersonation)
+  # Step 3: Retrieve the Firebase Web API Key (using impersonation)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -49,7 +49,6 @@ steps:
       - |
         set -e
         set -x  # Enables command echoing for debugging
-
         firebase_project_id=$(cat /workspace/soccer_project_id.txt)
 
         echo "🌐 Retrieving Firebase Web API Key from project $firebase_project_id using impersonation..."
@@ -65,7 +64,6 @@ steps:
         fi
 
         echo "🔑 Found API Key resource name: $api_key_name"
-
         firebase_api_key=$(gcloud services api-keys get-key-string "$api_key_name" \
           --impersonate-service-account=firebase-adminsdk-fbsvc@$firebase_project_id.iam.gserviceaccount.com \
           --format="value(keyString)")
@@ -78,39 +76,39 @@ steps:
         echo "$firebase_api_key" > /workspace/firebase_api_key.txt
         echo "✅ Firebase API Key string retrieved successfully!"
 
-  # Step 4: Authenticate as Firebase Admin SDK
+  # Step 4: Authenticate as Firebase Admin SDK (impersonate service account)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e
-        set -x  # Enables command echoing for debugging
-
+        set -x
         firebase_project_id=$(cat /workspace/soccer_project_id.txt)
 
-        echo "🔑 Generating OAuth 2 access token for Firebase Admin SDK..."
-        gcloud auth print-access-token --impersonate-service-account=firebase-adminsdk-fbsvc@$firebase_project_id.iam.gserviceaccount.com > token.txt
-        access_token=$(cat token.txt)
+        echo "🔑 Generating OAuth 2.0 access token for Firebase Admin SDK service account..."
+        gcloud auth print-access-token --impersonate-service-account=firebase-adminsdk-fbsvc@$firebase_project_id.iam.gserviceaccount.com > /workspace/token.txt
+        echo "✅ Obtained Firebase Admin SDK access token."
 
-  # Step 5: Create Firebase Test User
+  # Step 5: Create Firebase test user (using Email/Password)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e
-        set -x  # Enables command echoing for debugging
-
+        set -x
         firebase_api_key=$(cat /workspace/firebase_api_key.txt)
+        # Use the access token from Step 4 for authorization in the API request
+        access_token=$(cat /workspace/token.txt)
 
-        echo "📩 Creating Firebase Test User..."
+        echo "📩 Creating Firebase test user..."
         response=$(curl -s -o response.json -w "%{http_code}" -X POST "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${firebase_api_key}" \
           -H "Content-Type: application/json" \
           -H "Authorization: Bearer $access_token" \
           -d '{
                 "email": "test@test.test",
-                "password": "TestPassowrd123!@",
+                "password": "TestPassword123!@",
                 "returnSecureToken": true
               }')
 
@@ -121,6 +119,6 @@ steps:
         fi
 
         echo "✅ Firebase test user created successfully!"
-
+        
 options:
   logging: CLOUD_LOGGING_ONLY
