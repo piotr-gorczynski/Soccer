@@ -96,6 +96,18 @@ steps:
         /workspace/firebase/firebase deploy --only auth --project="$firebase_project_id" --token="$(cat /workspace/access_token.txt)" || true
         echo "✅ Firebase Auth config initialized."
 
+  # Step 5.5: Create a Firebase Web App to trigger backend Identity config creation
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
+        echo "🧩 Creating Firebase Web App (if not exists)..."
+        /workspace/firebase/firebase apps:create web "web-client" --project="$firebase_project_id" --non-interactive || true
+        echo "✅ Firebase Web App created or already exists."
+
   # Step 6: Enable Email/Password Authentication using Identity Toolkit API
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
