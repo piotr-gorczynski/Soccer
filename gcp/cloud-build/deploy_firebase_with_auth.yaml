@@ -73,6 +73,26 @@ steps:
           "https://firebase.googleapis.com/v1beta1/projects/$firebase_project_id:addFirebase"
         echo "✅ Firebase project registration attempted."
 
+  # Step 4.6: Initialize Identity config via Firebase CLI
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "⬇️ Installing Firebase CLI..."
+        curl -sL https://firebase.tools | bash
+        mkdir -p /workspace/firebase
+        cp /usr/local/bin/firebase /workspace/firebase/
+        chmod +x /workspace/firebase/firebase
+
+        firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
+        echo '{"hosting": {}}' > /workspace/firebase.json
+
+        echo "📤 Deploying minimal auth config to initialize Firebase Auth..."
+        /workspace/firebase/firebase deploy --only auth --project="$firebase_project_id" || true
+        echo "✅ Firebase Auth config initialized."
+
   # Step 5: Enable Email/Password Authentication using Identity Toolkit API
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
