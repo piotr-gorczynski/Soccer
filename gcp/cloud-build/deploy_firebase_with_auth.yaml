@@ -10,6 +10,7 @@ steps:
       - '-c'
       - |
         set -e
+        set -x  # Enables command echoing for debugging
         echo "Checking if project starting with ${_FOLDER_NAME}-${_ENVIRONMENT} exists..."
         gcloud projects list \
           --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
@@ -28,8 +29,14 @@ steps:
       - '-c'
       - |
         set -e
+        set -x  # Enables command echoing for debugging
         echo "🔓 Enabling Firebase APIs for project $(cat /workspace/SOCCER_PROJECT_ID.txt)..."
-        gcloud services enable firebase.googleapis.com --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
+        if gcloud services enable firebase.googleapis.com --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"; then
+          echo "✅ Firebase API enabled."
+        else
+          echo "❌ Failed to enable Firebase API."
+          exit 1
+        fi
 
   # Step 3: Enable Identity Toolkit API
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
@@ -38,10 +45,15 @@ steps:
       - '-c'
       - |
         set -e
+        set -x  # Enables command echoing for debugging
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         echo "🔓 Enabling Identity Toolkit API for project: $firebase_project_id..."
-        gcloud services enable identitytoolkit.googleapis.com --project="$firebase_project_id"
-        echo "✅ Identity Toolkit API enabled successfully!"
+        if gcloud services enable identitytoolkit.googleapis.com --project="$firebase_project_id"; then
+          echo "✅ Identity Toolkit API enabled successfully!"
+        else
+          echo "❌ Failed to enable Identity Toolkit API."
+          exit 1
+        fi
 
   # Step 4: Authenticate with Google Cloud and obtain an access token
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
@@ -50,8 +62,13 @@ steps:
       - '-c'
       - |
         set -e
+        set -x  # Enables command echoing for debugging
         echo "🔑 Fetching Google Cloud authentication token..."
         access_token=$(gcloud auth print-access-token)
+        if [ -z "$access_token" ]; then
+          echo "❌ Failed to retrieve access token."
+          exit 1
+        fi
         echo "$access_token" > /workspace/access_token.txt
         echo "✅ Access token retrieved successfully."
 
@@ -62,16 +79,25 @@ steps:
       - '-c'
       - |
         set -e
+        set -x  # Enables command echoing for debugging
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         access_token=$(cat /workspace/access_token.txt)
 
         echo "🚀 Registering Firebase services for project: $firebase_project_id..."
-        curl -X POST \
+        response=$(curl -s -w "\n%{http_code}" -X POST \
           -H "Authorization: Bearer $access_token" \
           -H "Content-Type: application/json" \
           -d '{}' \
-          "https://firebase.googleapis.com/v1beta1/projects/$firebase_project_id:addFirebase"
-        echo "✅ Firebase project registration attempted."
+          "https://firebase.googleapis.com/v1beta1/projects/$firebase_project_id:addFirebase")
+
+        http_code=$(echo "$response" | tail -n1)
+        if [ "$http_code" -eq 200 ] || [ "$http_code" -eq 409 ]; then
+          echo "✅ Firebase project registration successful or already exists."
+        else
+          echo "❌ Firebase project registration failed with status $http_code."
+          echo "$response"
+          exit 1
+        fi
 
   # Step 5: Initialize Firebase Auth config using Firebase CLI
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
@@ -80,6 +106,7 @@ steps:
       - '-c'
       - |
         set -e
+        set -x  # Enables command echoing for debugging
         echo "⬇️ Installing Firebase CLI..."
         curl -sL https://firebase.tools | bash
         mkdir -p /workspace/firebase
@@ -93,20 +120,12 @@ steps:
         echo 'allow read, write: if false;' > /workspace/auth.rules
 
         echo "📤 Deploying minimal auth config to initialize Firebase Auth..."
-        /workspace/firebase/firebase deploy --only auth --project="$firebase_project_id" --token="$(cat /workspace/access_token.txt)" || true
-        echo "✅ Firebase Auth config initialized."
-
-  # Step 5.5: Create a Firebase Web App to trigger backend Identity config creation
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e
-        firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
-        echo "🧩 Creating Firebase Web App (if not exists)..."
-        /workspace/firebase/firebase apps:create web "web-client" --project="$firebase_project_id" --non-interactive || true
-        echo "✅ Firebase Web App created or already exists."
+        if /workspace/firebase/firebase deploy --only auth --project="$firebase_project_id" --token="$(cat /workspace/access_token.txt)"; then
+          echo "✅ Firebase Auth config deployed."
+        else
+          echo "❌ Firebase Auth config deployment failed."
+          exit 1
+        fi
 
   # Step 6: Enable Email/Password Authentication using Identity Toolkit API
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
@@ -115,12 +134,13 @@ steps:
       - '-c'
       - |
         set -e
+        set -x  # Enables command echoing for debugging
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         access_token=$(cat /workspace/access_token.txt)
 
         echo "🔑 Enabling Email/Password authentication for Firebase project: $firebase_project_id..."
 
-        curl -X PATCH \
+        response=$(curl -s -w "\n%{http_code}" -X PATCH \
           -H "Authorization: Bearer $access_token" \
           -H "Content-Type: application/json" \
           -d '{
@@ -130,9 +150,16 @@ steps:
               }
             }
           }' \
-          "https://identitytoolkit.googleapis.com/v2/projects/$firebase_project_id/config"
+          "https://identitytoolkit.googleapis.com/v2/projects/$firebase_project_id/config")
 
-        echo "✅ Email/Password authentication enabled successfully!"
+        http_code=$(echo "$response" | tail -n1)
+        if [ "$http_code" -eq 200 ]; then
+          echo "✅ Email/Password authentication enabled successfully."
+        else
+          echo "❌ Failed to enable Email/Password authentication."
+          echo "$response"
+          exit 1
+        fi
 
 options:
   logging: CLOUD_LOGGING_ONLY
