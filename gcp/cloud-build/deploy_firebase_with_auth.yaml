@@ -55,25 +55,25 @@ steps:
         echo "$access_token" > /workspace/access_token.txt
         echo "✅ Access token retrieved successfully."
 
-  # Step 4.5: Ensure Identity Platform config exists
+  # Step 4.5: Initialize Identity Platform config using Firebase CLI
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e
+        echo "⬇️ Installing Firebase CLI..."
+        curl -sL https://firebase.tools | bash
+        mkdir -p /workspace/firebase
+        cp /usr/local/bin/firebase /workspace/firebase/
+        chmod +x /workspace/firebase/firebase
+        echo "✅ Firebase CLI installed."
+
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
-        access_token=$(cat /workspace/access_token.txt)
 
-        echo "🛠️ Ensuring Identity Platform config exists for project: $firebase_project_id..."
-
-        curl -X PATCH \
-          -H "Authorization: Bearer $access_token" \
-          -H "Content-Type: application/json" \
-          -d '{}' \
-          "https://identitytoolkit.googleapis.com/v2/projects/$firebase_project_id/config"
-
-        echo "✅ Identity config initialized (if needed)."
+        echo "📱 Listing Firebase apps to trigger Identity Platform config setup..."
+        /workspace/firebase/firebase apps:sdkconfig --project="$firebase_project_id" || true
+        echo "✅ Identity Platform config initialization attempt completed."
 
   # Step 5: Enable Email/Password Authentication using Identity Toolkit API
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
