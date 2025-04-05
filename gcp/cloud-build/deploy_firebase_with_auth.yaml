@@ -22,7 +22,7 @@ steps:
         fi
         echo "✅ Using project: $(cat /workspace/SOCCER_PROJECT_ID.txt)"
 
-  # Step 2: Enable Firebase APIs in the project
+  # ✅ Step 2: Enable Firebase API with success check
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -32,10 +32,15 @@ steps:
         set -x
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         echo "🔓 Enabling Firebase API for project $firebase_project_id..."
-        gcloud services enable firebase.googleapis.com --project="$firebase_project_id"
-        echo "✅ Firebase API enabled."
+        if gcloud services enable firebase.googleapis.com --project="$firebase_project_id"; then
+          echo "✅ Firebase API enabled successfully."
+        else
+          echo "❌ Failed to enable Firebase API for $firebase_project_id."
+          echo "⛔ Exiting pipeline."
+          exit 1
+        fi
 
-  # Step 3: Enable Identity Toolkit API (Firebase Auth)
+  # ✅ Step 3: Enable Identity Toolkit API with success check
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -45,8 +50,13 @@ steps:
         set -x
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         echo "🔓 Enabling Identity Toolkit API for project: $firebase_project_id..."
-        gcloud services enable identitytoolkit.googleapis.com --project="$firebase_project_id"
-        echo "✅ Identity Toolkit API enabled."
+        if gcloud services enable identitytoolkit.googleapis.com --project="$firebase_project_id"; then
+          echo "✅ Identity Toolkit API enabled successfully."
+        else
+          echo "❌ Failed to enable Identity Toolkit API for $firebase_project_id."
+          echo "⛔ Exiting pipeline."
+          exit 1
+        fi
 
   # Step 4: Authenticate with Google Cloud and obtain an access token
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
