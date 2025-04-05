@@ -1,0 +1,48 @@
+
+substitutions:
+  _ENVIRONMENT: 'dev'
+  _FOLDER_NAME: 'soccer'
+
+steps:
+  # Step 1: Retrieve the Firebase Project ID
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "📦 Looking for Firebase project starting with ${_FOLDER_NAME}-${_ENVIRONMENT}..."
+        gcloud projects list \
+          --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
+          --format="value(projectId)" \
+          | head -n 1 > /workspace/FIREBASE_PROJECT_ID.txt
+
+        if [ ! -s /workspace/FIREBASE_PROJECT_ID.txt ]; then
+          echo "❌ Error: Firebase project ID not found."
+          exit 1
+        fi
+
+        echo "✅ Found Firebase project: $(cat /workspace/FIREBASE_PROJECT_ID.txt)"
+
+  # Step 2: Enable Firebase APIs
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        firebase_project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
+
+        echo "🔓 Enabling Firebase API..."
+        gcloud services enable firebase.googleapis.com --project="$firebase_project_id"
+
+        echo "🔓 Enabling Identity Toolkit API..."
+        gcloud services enable identitytoolkit.googleapis.com --project="$firebase_project_id"
+
+        echo "🔓 Enabling API Keys API..."
+        gcloud services enable apikeys.googleapis.com --project="$firebase_project_id"
+
+        echo "✅ All necessary Firebase-related APIs have been enabled."
+
+options:
+  logging: CLOUD_LOGGING_ONLY
