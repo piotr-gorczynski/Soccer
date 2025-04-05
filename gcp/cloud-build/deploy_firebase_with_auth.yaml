@@ -22,7 +22,7 @@ steps:
         fi
         echo "✅ Using project: $(cat /workspace/SOCCER_PROJECT_ID.txt)"
 
-  # ✅ Step 2: Enable Firebase API with success check
+  # Step 2: Enable Firebase API (with check)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -33,14 +33,13 @@ steps:
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         echo "🔓 Enabling Firebase API for project $firebase_project_id..."
         if gcloud services enable firebase.googleapis.com --project="$firebase_project_id"; then
-          echo "✅ Firebase API enabled successfully."
+          echo "✅ Firebase API enabled."
         else
-          echo "❌ Failed to enable Firebase API for $firebase_project_id."
-          echo "⛔ Exiting pipeline."
+          echo "❌ Failed to enable Firebase API."
           exit 1
         fi
 
-  # ✅ Step 3: Enable Identity Toolkit API with success check
+  # Step 3: Enable Identity Toolkit API (with check)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -49,16 +48,15 @@ steps:
         set -e
         set -x
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
-        echo "🔓 Enabling Identity Toolkit API for project: $firebase_project_id..."
+        echo "🔓 Enabling Identity Toolkit API for project $firebase_project_id..."
         if gcloud services enable identitytoolkit.googleapis.com --project="$firebase_project_id"; then
-          echo "✅ Identity Toolkit API enabled successfully."
+          echo "✅ Identity Toolkit API enabled."
         else
-          echo "❌ Failed to enable Identity Toolkit API for $firebase_project_id."
-          echo "⛔ Exiting pipeline."
+          echo "❌ Failed to enable Identity Toolkit API."
           exit 1
         fi
 
-  # Step 4: Authenticate with Google Cloud and obtain an access token
+  # Step 4: Register project with Firebase
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -66,23 +64,11 @@ steps:
       - |
         set -e
         set -x
-        echo "🔑 Fetching Google Cloud authentication token..."
+        firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         access_token=$(gcloud auth print-access-token)
         echo "$access_token" > /workspace/access_token.txt
-        echo "✅ Access token retrieved successfully."
 
-  # Step 5: Register Firebase services using Firebase Management API
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e
-        set -x
-        firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
-        access_token=$(cat /workspace/access_token.txt)
-
-        echo "🚀 Registering Firebase services for project: $firebase_project_id..."
+        echo "🚀 Registering Firebase services for $firebase_project_id..."
         response=$(curl -s -w "\n%{http_code}" -X POST \
           -H "Authorization: Bearer $access_token" \
           -H "Content-Type: application/json" \
@@ -90,15 +76,15 @@ steps:
           "https://firebase.googleapis.com/v1beta1/projects/$firebase_project_id:addFirebase")
 
         http_code=$(echo "$response" | tail -n1)
-        if [ "$http_code" -eq 200 ] || [ "$http_code" -eq 409 ]; then
-          echo "✅ Firebase project registration successful or already exists."
+        if [[ "$http_code" == "200" || "$http_code" == "409" ]]; then
+          echo "✅ Firebase project registered (or already exists)."
         else
-          echo "❌ Firebase project registration failed with status $http_code."
+          echo "❌ Failed to register Firebase project (status $http_code)."
           echo "$response"
           exit 1
         fi
 
-  # ✅ Step 6: Enable Email/Password Authentication using Identity Toolkit v1 API
+  # Step 5: Try enabling Email/Password Auth — fallback if backend not ready
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -109,24 +95,63 @@ steps:
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         access_token=$(cat /workspace/access_token.txt)
 
-        echo "🔑 Enabling Email/Password authentication for Firebase project: $firebase_project_id..."
+        echo "🔑 Attempting to enable Email/Password auth..."
         response=$(curl -s -w "\n%{http_code}" -X PATCH \
           -H "Authorization: Bearer $access_token" \
           -H "Content-Type: application/json" \
-          -d '{
-            "signIn": {
-              "email": {
-                "enabled": true
-              }
-            }
-          }' \
-          "https://identitytoolkit.googleapis.com/v1/projects/$firebase_project_id/config")
+          -d '{"signIn": {"email": {"enabled": true}}}' \
+          "https://identitytoolkit.googleapis.com/v2/projects/$firebase_project_id/config")
 
         http_code=$(echo "$response" | tail -n1)
-        if [ "$http_code" -eq 200 ]; then
-          echo "✅ Email/Password authentication enabled successfully."
+        body=$(echo "$response" | head -n-1)
+
+        if [ "$http_code" = "200" ]; then
+          echo "✅ Email/Password authentication enabled."
+        elif echo "$body" | grep -q "CONFIGURATION_NOT_FOUND"; then
+          echo "⚠️ Auth config not initialized. Creating dummy user to trigger backend setup..."
+
+          api_key=$(gcloud services api-keys list \
+            --project="$firebase_project_id" \
+            --format="value(name)" | head -n1)
+
+          key_string=$(gcloud services api-keys get-key-string "$api_key" \
+            --project="$firebase_project_id" \
+            --format="value(keyString)")
+
+          dummy_response=$(curl -s -w "\n%{http_code}" -X POST \
+            -H "Content-Type: application/json" \
+            -d '{
+              "email": "dummy-init-user@init.test",
+              "password": "InitPass123!",
+              "returnSecureToken": true
+            }' \
+            "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=$key_string")
+
+          dummy_code=$(echo "$dummy_response" | tail -n1)
+          if [ "$dummy_code" != "200" ]; then
+            echo "❌ Failed to create dummy user to initialize Firebase Auth."
+            echo "$dummy_response"
+            exit 1
+          fi
+
+          echo "✅ Dummy user created. Retrying Email/Password enable..."
+
+          retry_response=$(curl -s -w "\n%{http_code}" -X PATCH \
+            -H "Authorization: Bearer $access_token" \
+            -H "Content-Type: application/json" \
+            -d '{"signIn": {"email": {"enabled": true}}}' \
+            "https://identitytoolkit.googleapis.com/v2/projects/$firebase_project_id/config")
+
+          retry_code=$(echo "$retry_response" | tail -n1)
+          if [ "$retry_code" = "200" ]; then
+            echo "✅ Email/Password authentication enabled after fallback!"
+          else
+            echo "❌ Retry failed."
+            echo "$retry_response"
+            exit 1
+          fi
         else
-          echo "❌ Failed to enable Email/Password authentication."
+          echo "❌ Unexpected error while enabling Email/Password auth."
           echo "$response"
           exit 1
         fi
