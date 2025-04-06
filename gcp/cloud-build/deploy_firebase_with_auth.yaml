@@ -52,18 +52,21 @@ steps:
           gcloud config set project "$firebase_project_id"
 
           echo "🔍 Verifying that apikeys.googleapis.com is enabled..."
-          if ! gcloud services list --enabled --project="$firebase_project_id" | grep -q apikeys.googleapis.com; then
+          if ! gcloud services list --enabled | grep -q apikeys.googleapis.com; then
             echo "❌ apikeys.googleapis.com is not enabled. Please run enable_firebase_apis.yaml first."
             exit 1
           fi
 
-          api_key=$(gcloud services api-keys list --project="$firebase_project_id" --format="value(name)" | head -n 1)
+          # ✅ PATCH: ensure correct project scope before API key lookup
+          gcloud config set project "$firebase_project_id"
+
+          api_key=$(gcloud services api-keys list --format="value(name)" | head -n 1)
           if [ -z "$api_key" ]; then
             echo "❌ No API key found to trigger backend."
             exit 1
           fi
 
-          key_string=$(gcloud services api-keys get-key-string "$api_key" --project="$firebase_project_id" --format="value(keyString)")
+          key_string=$(gcloud services api-keys get-key-string "$api_key" --format="value(keyString)")
           if [ -z "$key_string" ]; then
             echo "❌ Could not get key string."
             exit 1
