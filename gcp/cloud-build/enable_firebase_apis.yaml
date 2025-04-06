@@ -9,7 +9,7 @@ steps:
     args:
       - '-c'
       - |
-        set -e
+        set -x  # Enables command echoing for debugging
         echo "📦 Looking for Firebase project starting with ${_FOLDER_NAME}-${_ENVIRONMENT}..."
         gcloud projects list \
           --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
@@ -23,28 +23,28 @@ steps:
 
         echo "✅ Found Firebase project: $(cat /workspace/FIREBASE_PROJECT_ID.txt)"
 
-  # Step 2: Enable Firebase-related APIs with result checks
+  # Step 2: Enable Firebase-related APIs with full logging and checks
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        set -e
+        set -x  # Enables command echoing for debugging
         firebase_project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
 
         enable_api() {
           local api_name=$1
           echo "🔓 Enabling API: $api_name for project $firebase_project_id..."
           result=$(gcloud services enable "$api_name" --project="$firebase_project_id" 2>&1)
+          echo "$result"
           status=$?
 
           if [ $status -eq 0 ]; then
             echo "✅ $api_name enabled successfully."
-          elif echo "$result" | grep -q "already enabled"; then
+          elif echo "$result" | grep -qi "already enabled"; then
             echo "ℹ️ $api_name was already enabled."
           else
-            echo "❌ Failed to enable $api_name. Output:"
-            echo "$result"
+            echo "❌ Failed to enable $api_name. Exiting."
             exit 1
           fi
         }
