@@ -51,6 +51,12 @@ steps:
           echo "⚠️ Auth config not initialized. Creating dummy user to trigger backend setup..."
           gcloud config set project "$firebase_project_id"
 
+          echo "🔍 Verifying that apikeys.googleapis.com is enabled..."
+          if ! gcloud services list --enabled --project="$firebase_project_id" | grep -q apikeys.googleapis.com; then
+            echo "❌ apikeys.googleapis.com is not enabled. Please run enable_firebase_apis.yaml first."
+            exit 1
+          fi
+
           api_key=$(gcloud services api-keys list --project="$firebase_project_id" --format="value(name)" | head -n 1)
           if [ -z "$api_key" ]; then
             echo "❌ No API key found to trigger backend."
@@ -63,18 +69,32 @@ steps:
             exit 1
           fi
 
-          curl -s -o /dev/null -X POST \
+          echo "📩 Creating dummy Firebase user..."
+          create_response=$(curl -s -w '\n%{http_code}' -X POST \
             -H "Content-Type: application/json" \
             "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=$key_string" \
-            -d '{"email": "dummy@dummy.dummy", "password": "DummyPass123!", "returnSecureToken": true}'
+            -d '{"email": "dummy@dummy.dummy", "password": "DummyPass123!", "returnSecureToken": true}')
+
+          create_code=$(echo "$create_response" | tail -n1)
+          if [[ "$create_code" != "200" ]]; then
+            echo "❌ Failed to create dummy user. Response: $create_response"
+            exit 1
+          fi
 
           echo "🔁 Retrying enabling Email/Password auth..."
-          curl -s -o /dev/null -X PATCH \
+          retry_response=$(curl -s -w '\n%{http_code}' -X PATCH \
             -H "Authorization: Bearer $access_token" \
             -H "Content-Type: application/json" \
             -d '{"signIn": {"email": {"enabled": true}}}' \
-            "https://identitytoolkit.googleapis.com/v2/projects/$firebase_project_id/config"
-          echo "✅ Email/Password authentication enabled after retry."
+            "https://identitytoolkit.googleapis.com/v2/projects/$firebase_project_id/config")
+
+          retry_code=$(echo "$retry_response" | tail -n1)
+          if [[ "$retry_code" == "200" ]]; then
+            echo "✅ Email/Password authentication enabled after retry."
+          else
+            echo "❌ Retry failed. Response: $retry_response"
+            exit 1
+          fi
         else
           echo "❌ Failed to enable Email/Password authentication. Response:"
           echo "$body"
