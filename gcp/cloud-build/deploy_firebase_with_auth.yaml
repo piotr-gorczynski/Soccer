@@ -87,7 +87,7 @@ steps:
         elif echo "$body" | grep -q CONFIGURATION_NOT_FOUND; then
           echo "⚠️ Auth config not initialized. Creating dummy user to trigger backend setup..."
 
-          # ✅ Force correct project in gcloud before calling key APIs
+          # Set correct project context before gcloud calls
           gcloud config set project "$firebase_project_id"
 
           api_key=$(gcloud services api-keys list --format="value(name)" | head -n 1)
@@ -128,3 +128,5 @@ steps:
           exit 1
         fi
 
+options:
+  logging: CLOUD_LOGGING_ONLY
