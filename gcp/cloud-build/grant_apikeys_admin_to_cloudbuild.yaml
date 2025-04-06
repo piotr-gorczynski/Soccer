@@ -1,0 +1,35 @@
+substitutions:
+  _ENVIRONMENT: 'dev'
+  _FOLDER_NAME: 'soccer'
+  _CLOUD_BUILD_SA: 'cloud-build-sa@org-service-account-001.iam.gserviceaccount.com'
+  _API_KEYS_ADMIN_ROLE: 'roles/serviceusage.apiKeysAdmin'
+
+steps:
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "📦 Finding Firebase project matching: ${_FOLDER_NAME}-${_ENVIRONMENT}..."
+        gcloud projects list \
+          --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
+          --format="value(projectId)" \
+          | head -n 1 > /workspace/FIREBASE_PROJECT_ID.txt
+
+        firebase_project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
+
+        if [ -z "$firebase_project_id" ]; then
+          echo "❌ No Firebase project found."
+          exit 1
+        fi
+
+        echo "🔐 Granting ${_API_KEYS_ADMIN_ROLE} to ${_CLOUD_BUILD_SA} on project ${firebase_project_id}..."
+        gcloud projects add-iam-policy-binding "$firebase_project_id" \
+          --member="serviceAccount:${_CLOUD_BUILD_SA}" \
+          --role="${_API_KEYS_ADMIN_ROLE}"
+
+        echo "✅ Role granted successfully to Cloud Build service account."
+
+options:
+  logging: CLOUD_LOGGING_ONLY
