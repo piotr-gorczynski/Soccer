@@ -1,0 +1,46 @@
+substitutions:
+  _ENVIRONMENT: 'dev'
+  _FOLDER_NAME: 'soccer'
+
+steps:
+  # Step 1: Retrieve the project ID
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "Checking if project starting with ${_FOLDER_NAME}-${_ENVIRONMENT} exists..."
+        gcloud projects list \
+          --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
+          --format="value(projectId)" | head -n 1 > /workspace/project_name.txt
+
+        if [ ! -s /workspace/project_name.txt ] || [ -z "$(cat /workspace/project_name.txt)" ]; then
+          echo "Error: Project ID not found. Ensure the project exists."
+          exit 1
+        fi
+        echo "Using project: $(cat /workspace/project_name.txt)"
+
+  # Step 2: Grant API key roles to Firebase Admin SDK SA
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        set -e
+        firebase_project_id=$(cat /workspace/project_name.txt)
+        firebase_admin_sa="firebase-adminsdk-fbsvc@$firebase_project_id.iam.gserviceaccount.com"
+
+        echo "✅ Granting API key roles to Firebase Admin SDK service account..."
+        gcloud projects add-iam-policy-binding "$firebase_project_id" \
+          --member="serviceAccount:$firebase_admin_sa" \
+          --role="roles/serviceusage.apiKeysAdmin"
+
+        gcloud projects add-iam-policy-binding "$firebase_project_id" \
+          --member="serviceAccount:$firebase_admin_sa" \
+          --role="roles/serviceusage.apiKeysViewer"
+
+        echo "🚀 Firebase Admin SDK service account now has API key admin and viewer roles."
+
+options:
+  logging: CLOUD_LOGGING_ONLY
