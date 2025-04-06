@@ -5,6 +5,7 @@ steps:
     args:
       - -c
       - |
+        set -x
         echo "🔍 Checking if project starting with soccer-dev exists..."
         gcloud projects list --filter="name~^soccer-dev" --format="value(projectId)" | head -n 1 > /workspace/SOCCER_PROJECT_ID.txt
         if [ ! -s /workspace/SOCCER_PROJECT_ID.txt ]; then
@@ -14,34 +15,13 @@ steps:
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         echo "✅ Using project: $firebase_project_id"
 
-  # Step 1: Enable Firebase API
+  # Step 1: Register Firebase services
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
     entrypoint: bash
     args:
       - -c
       - |
-        firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
-        echo "🔓 Enabling Firebase API for project $firebase_project_id..."
-        gcloud services enable firebase.googleapis.com --project="$firebase_project_id" \
-        && echo "✅ Firebase API enabled."
-
-  # Step 2: Enable Identity Toolkit API
-  - name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
-    entrypoint: bash
-    args:
-      - -c
-      - |
-        firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
-        echo "🔓 Enabling Identity Toolkit API for project $firebase_project_id..."
-        gcloud services enable identitytoolkit.googleapis.com --project="$firebase_project_id" \
-        && echo "✅ Identity Toolkit API enabled."
-
-  # Step 3: Register Firebase services
-  - name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
-    entrypoint: bash
-    args:
-      - -c
-      - |
+        set -x
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         access_token=$(gcloud auth print-access-token)
         echo "$access_token" > /workspace/access_token.txt
@@ -63,12 +43,13 @@ steps:
           exit 1
         fi
 
-  # Step 4: Enable Email/Password sign-in method (with fallback)
+  # Step 2: Enable Email/Password sign-in method (with fallback)
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
     entrypoint: bash
     args:
       - -c
       - |
+        set -x
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         access_token=$(cat /workspace/access_token.txt)
 
@@ -87,7 +68,6 @@ steps:
         elif echo "$body" | grep -q CONFIGURATION_NOT_FOUND; then
           echo "⚠️ Auth config not initialized. Creating dummy user to trigger backend setup..."
 
-          # Set correct project context before gcloud calls
           gcloud config set project "$firebase_project_id"
 
           api_key=$(gcloud services api-keys list --format="value(name)" | head -n 1)
