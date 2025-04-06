@@ -34,6 +34,7 @@ steps:
         set -x
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         access_token=$(cat /workspace/access_token.txt)
+        firebase_admin_sa="firebase-adminsdk-fbsvc@$firebase_project_id.iam.gserviceaccount.com"
 
         echo "🔑 Attempting to enable Email/Password auth..."
         response=$(curl -s -w '\n%{http_code}' -X PATCH \
@@ -57,16 +58,19 @@ steps:
             exit 1
           fi
 
-          # ✅ PATCH: ensure correct project scope before API key lookup
-          gcloud config set project "$firebase_project_id"
+          api_key=$(gcloud services api-keys list \
+            --format="value(name)" \
+            --impersonate-service-account="$firebase_admin_sa" | head -n 1)
 
-          api_key=$(gcloud services api-keys list --format="value(name)" | head -n 1)
           if [ -z "$api_key" ]; then
             echo "❌ No API key found to trigger backend."
             exit 1
           fi
 
-          key_string=$(gcloud services api-keys get-key-string "$api_key" --format="value(keyString)")
+          key_string=$(gcloud services api-keys get-key-string "$api_key" \
+            --format="value(keyString)" \
+            --impersonate-service-account="$firebase_admin_sa")
+
           if [ -z "$key_string" ]; then
             echo "❌ Could not get key string."
             exit 1
