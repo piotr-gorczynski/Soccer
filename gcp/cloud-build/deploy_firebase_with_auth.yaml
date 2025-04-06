@@ -58,13 +58,23 @@ steps:
             exit 1
           fi
 
+          echo "🔍 Checking for existing API key in project..."
           api_key=$(gcloud services api-keys list \
             --format="value(name)" \
             --impersonate-service-account="$firebase_admin_sa" | head -n 1)
 
           if [ -z "$api_key" ]; then
-            echo "❌ No API key found to trigger backend."
-            exit 1
+            echo "⚠️ No API key found. Creating a new one..."
+            api_key=$(gcloud services api-keys create \
+              --display-name="Firebase Web API Key" \
+              --impersonate-service-account="$firebase_admin_sa" \
+              --format="value(name)")
+
+            if [ -z "$api_key" ]; then
+              echo "❌ Failed to create API key."
+              exit 1
+            fi
+            echo "✅ API key created: $api_key"
           fi
 
           key_string=$(gcloud services api-keys get-key-string "$api_key" \
