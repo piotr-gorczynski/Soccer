@@ -1,0 +1,44 @@
+substitutions:
+  _ENVIRONMENT: 'dev'
+  _FOLDER_NAME: 'soccer'
+
+steps:
+  # Step 1: Retrieve the project ID
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e  # Exit immediately if a command fails
+        echo "Checking if project starting with ${_FOLDER_NAME}-${_ENVIRONMENT} exists..."
+        gcloud projects list \
+          --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
+          --format="value(projectId)" | head -n 1 > /workspace/project_name.txt
+
+        if [ ! -s /workspace/project_name.txt ] || [ -z "$(cat /workspace/project_name.txt)" ]; then
+          echo "Error: Project ID not found. Ensure the project exists."
+          exit 1
+        fi
+        echo "Using project: $(cat /workspace/project_name.txt)"
+
+  # Step 2: Grant Token Creator role
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        set -e
+        firebase_project_id=$(cat /workspace/project_name.txt)
+        firebase_admin_sa="firebase-adminsdk-fbsvc@$firebase_project_id.iam.gserviceaccount.com"
+        cloud_build_sa="cloud-build-sa@org-service-account-001.iam.gserviceaccount.com"
+
+        echo "✅ Granting Service Account Token Creator role to Cloud Build SA on Firebase Admin SDK account..."
+        gcloud iam service-accounts add-iam-policy-binding "$firebase_admin_sa" \
+          --member="serviceAccount:$cloud_build_sa" \
+          --role="roles/iam.serviceAccountTokenCreator" \
+          --project="$firebase_project_id"
+
+        echo "🚀 Binding complete."
+
+options:
+  logging: CLOUD_LOGGING_ONLY
