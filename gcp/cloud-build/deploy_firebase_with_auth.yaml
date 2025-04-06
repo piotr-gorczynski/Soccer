@@ -1,37 +1,45 @@
-steps:
-  # STEP 0: Get the Firebase project ID from gcloud
-  - name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
-    entrypoint: bash
-    args:
-      - -c
-      - |
-        set -e
-        set -x
-        echo "📦 Looking for Firebase project starting with soccer-dev..."
-        firebase_project_id=$(gcloud projects list --filter="name~^soccer-dev" --format="value(projectId)" | head -n 1)
-        echo "$firebase_project_id" > /workspace/SOCCER_PROJECT_ID.txt
-        echo "✅ Found Firebase project: $firebase_project_id"
+substitutions:
+  _ENVIRONMENT: 'dev'
+  _FOLDER_NAME: 'soccer'
 
-  # STEP 1: Get an access token
-  - name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+steps:
+  # Step 0: Retrieve the Firebase project ID
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: bash
     args:
-      - -c
+      - '-c'
       - |
         set -e
-        set -x
+        echo "📦 Looking for Firebase project starting with ${_FOLDER_NAME}-${_ENVIRONMENT}..."
+        gcloud projects list \
+          --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
+          --format="value(projectId)" | head -n 1 > /workspace/SOCCER_PROJECT_ID.txt
+
+        if [ ! -s /workspace/SOCCER_PROJECT_ID.txt ]; then
+          echo "❌ Firebase project not found."
+          exit 1
+        fi
+
+        echo "✅ Found Firebase project: $(cat /workspace/SOCCER_PROJECT_ID.txt)"
+
+  # Step 1: Generate access token
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -e
         access_token=$(gcloud auth print-access-token)
         echo "$access_token" > /workspace/access_token.txt
         echo "🪙 Access token generated"
 
-  # STEP 2: Enable Email/Password authentication (with fallback logic)
-  - name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+  # Step 2: Attempt to enable Email/Password Auth
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: bash
     args:
-      - -c
+      - '-c'
       - |
         set -e
-        set -x
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         access_token=$(cat /workspace/access_token.txt)
         firebase_admin_sa="firebase-adminsdk-fbsvc@$firebase_project_id.iam.gserviceaccount.com"
@@ -47,42 +55,32 @@ steps:
         body=$(echo "$response" | head -n-1)
 
         if [[ "$http_code" == "200" ]]; then
-          echo "✅ Email/Password authentication enabled."
-        elif echo "$body" | grep -q "CONFIGURATION_NOT_FOUND"; then
+          echo "✅ Email/Password auth enabled."
+          exit 0
+        fi
+
+        if echo "$body" | grep -q CONFIGURATION_NOT_FOUND; then
           echo "⚠️ Auth config not initialized. Creating dummy user to trigger backend setup..."
           gcloud config set project "$firebase_project_id"
 
-          echo "🔍 Verifying that apikeys.googleapis.com is enabled..."
-          if ! gcloud services list --enabled | grep -q apikeys.googleapis.com; then
-            echo "❌ apikeys.googleapis.com is not enabled. Please run enable_firebase_apis.yaml first."
+          echo "🔍 Retrieving existing API key..."
+          api_key_name=$(gcloud services api-keys list \
+            --format="value(name)" \
+            --impersonate-service-account="$firebase_admin_sa" \
+            | head -n 1)
+
+          if [ -z "$api_key_name" ]; then
+            echo "❌ No API key found in project $firebase_project_id."
             exit 1
           fi
 
-          echo "🔍 Checking for existing API key in project..."
-          api_key=$(gcloud services api-keys list \
-            --format="value(name)" \
-            --impersonate-service-account="$firebase_admin_sa" | head -n 1)
-
-          if [ -z "$api_key" ]; then
-            echo "⚠️ No API key found. Creating a new one..."
-            api_key=$(gcloud services api-keys create \
-              --display-name="Firebase Web API Key" \
-              --impersonate-service-account="$firebase_admin_sa" \
-              --format="value(name)")
-
-            if [ -z "$api_key" ]; then
-              echo "❌ Failed to create API key."
-              exit 1
-            fi
-            echo "✅ API key created: $api_key"
-          fi
-
-          key_string=$(gcloud services api-keys get-key-string "$api_key" \
-            --format="value(keyString)" \
-            --impersonate-service-account="$firebase_admin_sa")
+          echo "🔑 Found API Key resource name: $api_key_name"
+          key_string=$(gcloud services api-keys get-key-string "$api_key_name" \
+            --impersonate-service-account="$firebase_admin_sa" \
+            --format="value(keyString)")
 
           if [ -z "$key_string" ]; then
-            echo "❌ Could not get key string."
+            echo "❌ Could not retrieve API key string."
             exit 1
           fi
 
@@ -94,7 +92,8 @@ steps:
 
           create_code=$(echo "$create_response" | tail -n1)
           if [[ "$create_code" != "200" ]]; then
-            echo "❌ Failed to create dummy user. Response: $create_response"
+            echo "❌ Failed to create dummy user. Response:"
+            echo "$create_response"
             exit 1
           fi
 
@@ -109,7 +108,8 @@ steps:
           if [[ "$retry_code" == "200" ]]; then
             echo "✅ Email/Password authentication enabled after retry."
           else
-            echo "❌ Retry failed. Response: $retry_response"
+            echo "❌ Retry failed. Response:"
+            echo "$retry_response"
             exit 1
           fi
         else
