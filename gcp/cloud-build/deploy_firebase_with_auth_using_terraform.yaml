@@ -24,7 +24,7 @@ steps:
         echo "✅ Found project ID: $(cat /workspace/project_id.txt)"
 
   # Step 2: Initialize Identity Platform
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     id: 'initialize-identity-platform'
     entrypoint: 'bash'
     args:
