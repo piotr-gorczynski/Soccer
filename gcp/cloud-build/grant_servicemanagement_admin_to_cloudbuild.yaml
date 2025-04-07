@@ -1,0 +1,51 @@
+substitutions:
+  _ENVIRONMENT: 'dev'
+  _FOLDER_NAME: 'soccer'
+  _CLOUD_BUILD_SA: 'cloud-build-sa@org-service-account-001.iam.gserviceaccount.com'
+  _ROLE: 'roles/servicemanagement.admin'
+
+steps:
+  # Step 1: Get Firebase Project ID
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'get-project-id'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "🔍 Searching for Firebase project matching: ${_FOLDER_NAME}-${_ENVIRONMENT}..."
+        gcloud projects list \
+          --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
+          --format="value(projectId)" | head -n 1 > /workspace/project_id.txt
+
+        firebase_project_id=$(cat /workspace/project_id.txt)
+
+        if [ -z "$firebase_project_id" ]; then
+          echo "❌ No Firebase project found."
+          exit 1
+        fi
+
+        echo "✅ Found project: $firebase_project_id"
+
+  # Step 2: Grant servicemanagement.admin role
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'grant-role'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        firebase_project_id=$(cat /workspace/project_id.txt)
+
+        echo "🔐 Granting ${_ROLE} to ${_CLOUD_BUILD_SA} in project ${firebase_project_id}..."
+        gcloud projects add-iam-policy-binding "$firebase_project_id" \
+          --member="serviceAccount:${_CLOUD_BUILD_SA}" \
+          --role="${_ROLE}" || {
+          echo "❌ Failed to grant ${_ROLE} to ${_CLOUD_BUILD_SA}"
+          exit 1
+        }
+
+        echo "✅ Role granted successfully."
+
+options:
+  logging: CLOUD_LOGGING_ONLY
