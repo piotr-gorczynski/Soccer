@@ -23,7 +23,7 @@ steps:
 
         echo "✅ Found project ID: $(cat /workspace/project_id.txt)"
 
-  # Step 2: Write Terraform config for Identity Platform Auth
+  # Step 2: Write Terraform config using google-beta provider
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: 'write-tf-config'
     entrypoint: 'bash'
@@ -35,19 +35,20 @@ steps:
         cat <<EOF > /workspace/tf-auth/main.tf
         terraform {
           required_providers {
-            google = {
-              source  = "hashicorp/google"
+            google-beta = {
+              source  = "hashicorp/google-beta"
               version = ">= 4.0.0"
             }
           }
         }
 
-        provider "google" {
+        provider "google-beta" {
           project = "$(cat /workspace/project_id.txt)"
         }
 
         resource "google_identity_platform_project_default_config" "default" {
-          project = "$(cat /workspace/project_id.txt)"
+          provider = google-beta
+          project  = "$(cat /workspace/project_id.txt)"
           sign_in {
             email {
               enabled = true
