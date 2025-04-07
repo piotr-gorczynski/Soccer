@@ -31,6 +31,7 @@ steps:
       - '-c'
       - |
         set -e
+        set -x
         firebase_project_id=$(cat /workspace/project_id.txt)
         echo "🚀 Attempting to initialize Identity Platform for project: $firebase_project_id..."
 
