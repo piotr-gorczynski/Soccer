@@ -23,7 +23,25 @@ steps:
 
         echo "✅ Found project ID: $(cat /workspace/project_id.txt)"
 
-  # Step 2: Write Terraform config using google-beta provider
+  # Step 2: Initialize Identity Platform
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'initialize-identity-platform'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        firebase_project_id=$(cat /workspace/project_id.txt)
+        echo "🚀 Attempting to initialize Identity Platform for project: $firebase_project_id..."
+
+        if gcloud beta identity platforms initialize --project="$firebase_project_id"; then
+          echo "✅ Identity Platform initialized successfully."
+        else
+          echo "❌ Failed to initialize Identity Platform for project: $firebase_project_id"
+          exit 1
+        fi
+
+  # Step 3: Write Terraform config using google-beta provider
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: 'write-tf-config'
     entrypoint: 'bash'
@@ -37,7 +55,7 @@ steps:
           required_providers {
             google-beta = {
               source  = "hashicorp/google-beta"
-              version = ">= 4.0.0"
+              version = ">= 4.80.0"
             }
           }
         }
@@ -63,14 +81,14 @@ steps:
         }
         EOF
 
-  # Step 3: Install Terraform
+  # Step 4: Terraform Init
   - name: 'hashicorp/terraform:light'
     id: 'terraform-init'
     dir: '/workspace/tf-auth'
     entrypoint: 'sh'
     args: ['-c', 'terraform init']
 
-  # Step 4: Apply Terraform Config
+  # Step 5: Terraform Apply
   - name: 'hashicorp/terraform:light'
     id: 'terraform-apply'
     dir: '/workspace/tf-auth'
