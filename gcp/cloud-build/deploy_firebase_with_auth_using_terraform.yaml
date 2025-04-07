@@ -1,0 +1,80 @@
+substitutions:
+  _ENVIRONMENT: 'dev'
+  _FOLDER_NAME: 'soccer'
+
+steps:
+  # Step 1: Get Firebase Project ID
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'get-project-id'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "🔍 Looking for project starting with ${_FOLDER_NAME}-${_ENVIRONMENT}..."
+        gcloud projects list \
+          --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
+          --format="value(projectId)" | head -n 1 > /workspace/project_id.txt
+
+        if [ ! -s /workspace/project_id.txt ]; then
+          echo "❌ Firebase project not found."
+          exit 1
+        fi
+
+        echo "✅ Found project ID: $(cat /workspace/project_id.txt)"
+
+  # Step 2: Write Terraform config for Identity Platform Auth
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'write-tf-config'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        mkdir -p /workspace/tf-auth
+        cat <<EOF > /workspace/tf-auth/main.tf
+        terraform {
+          required_providers {
+            google = {
+              source  = "hashicorp/google"
+              version = ">= 4.0.0"
+            }
+          }
+        }
+
+        provider "google" {
+          project = "$(cat /workspace/project_id.txt)"
+        }
+
+        resource "google_identity_platform_project_default_config" "default" {
+          project = "$(cat /workspace/project_id.txt)"
+          sign_in {
+            email {
+              enabled = true
+            }
+            anonymous {
+              enabled = false
+            }
+            phone_number {
+              enabled = false
+            }
+          }
+        }
+        EOF
+
+  # Step 3: Install Terraform
+  - name: 'hashicorp/terraform:light'
+    id: 'terraform-init'
+    dir: '/workspace/tf-auth'
+    entrypoint: 'sh'
+    args: ['-c', 'terraform init']
+
+  # Step 4: Apply Terraform Config
+  - name: 'hashicorp/terraform:light'
+    id: 'terraform-apply'
+    dir: '/workspace/tf-auth'
+    entrypoint: 'sh'
+    args: ['-c', 'terraform apply -auto-approve']
+
+options:
+  logging: CLOUD_LOGGING_ONLY
