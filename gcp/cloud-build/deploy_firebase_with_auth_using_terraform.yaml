@@ -23,9 +23,9 @@ steps:
 
         echo "✅ Found project ID: $(cat /workspace/project_id.txt)"
 
-  # Step 2: Check & Enable Identity Platform API (only if not already enabled)
+  # Step 2: Just log IAM roles for Cloud Build SA (no API enabling anymore)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    id: 'enable-identityplatform-api'
+    id: 'log-sa-roles'
     entrypoint: 'bash'
     args:
       - '-c'
@@ -40,20 +40,7 @@ steps:
           --filter="bindings.members:$cloud_build_sa" \
           --format="table(bindings.role)"
 
-      #   echo "🔍 Checking if Identity Platform API is already enabled..."
-      #  enabled_api=$(gcloud services list --enabled --project="$firebase_project_id" \
-      #    --filter="config.name=identityplatform.googleapis.com" \
-      #    --format="value(config.name)")
-
-      #  if [[ "$enabled_api" == "identityplatform.googleapis.com" ]]; then
-      #      echo "✅ identityplatform.googleapis.com is already enabled. Skipping..."
-      #  else
-      #      echo "🔓 Attempting to enable identityplatform.googleapis.com..."
-      #      gcloud services enable identityplatform.googleapis.com --project="$firebase_project_id"
-      #      echo "✅ API enabled successfully."
-      #  fi
-
-  # Step 3: Write Terraform config using google-beta provider
+  # Step 3: Write Terraform config using correct resource
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: 'write-tf-config'
     entrypoint: 'bash'
@@ -62,6 +49,8 @@ steps:
       - |
         set -e
         mkdir -p /workspace/tf-auth
+
+        # main.tf
         cat <<EOF > /workspace/tf-auth/main.tf
         terraform {
           required_providers {
@@ -73,12 +62,13 @@ steps:
         }
 
         provider "google-beta" {
-          project = "$(cat /workspace/project_id.txt)"
+          project = var.project_id
+          region  = "us-central1"
         }
 
-        resource "google_identity_platform_project_default_config" "default" {
-          provider = google-beta
-          project  = "$(cat /workspace/project_id.txt)"
+        resource "google_identity_platform_config" "default" {
+          project = var.project_id
+
           sign_in {
             email {
               enabled = true
@@ -93,6 +83,13 @@ steps:
         }
         EOF
 
+        # variables.tf
+        cat <<EOF > /workspace/tf-auth/variables.tf
+        variable "project_id" {
+          type = string
+        }
+        EOF
+
   # Step 4: Terraform Init
   - name: 'hashicorp/terraform:light'
     id: 'terraform-init'
@@ -100,12 +97,15 @@ steps:
     entrypoint: 'sh'
     args: ['-c', 'terraform init']
 
-  # Step 5: Terraform Apply
+  # Step 5: Terraform Apply with project_id var
   - name: 'hashicorp/terraform:light'
     id: 'terraform-apply'
     dir: '/workspace/tf-auth'
     entrypoint: 'sh'
-    args: ['-c', 'terraform apply -auto-approve']
+    args:
+      - '-c'
+      - |
+        terraform apply -auto-approve -var="project_id=$(cat /workspace/project_id.txt)"
 
 options:
   logging: CLOUD_LOGGING_ONLY
