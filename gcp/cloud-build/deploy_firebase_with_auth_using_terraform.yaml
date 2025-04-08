@@ -23,7 +23,24 @@ steps:
 
         echo "✅ Found project ID: $(cat /workspace/project_id.txt)"
 
-  # Step 2: Enable Identity Platform API (with role listing and single attempt)
+  # ✅ Step 1.5: Grant roles/serviceusage.serviceUsageAdmin to Cloud Build SA
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'grant-serviceusage-admin'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        project_id=$(cat /workspace/project_id.txt)
+        cloud_build_sa="cloud-build-sa@org-service-account-001.iam.gserviceaccount.com"
+
+        echo "🔧 Granting roles/serviceusage.serviceUsageAdmin to $cloud_build_sa on project $project_id..."
+        gcloud projects add-iam-policy-binding "$project_id" \
+          --member="serviceAccount:$cloud_build_sa" \
+          --role="roles/serviceusage.serviceUsageAdmin" \
+          --quiet
+
+  # Step 2: Enable Identity Platform API
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: 'enable-identityplatform-api'
     entrypoint: 'bash'
