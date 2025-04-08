@@ -23,24 +23,7 @@ steps:
 
         echo "✅ Found project ID: $(cat /workspace/project_id.txt)"
 
-  # ✅ Step 1.5: Grant roles/serviceusage.serviceUsageAdmin to Cloud Build SA (optional once-off)
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    id: 'grant-serviceusage-admin'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e
-        project_id=$(cat /workspace/project_id.txt)
-        cloud_build_sa="cloud-build-sa@org-service-account-001.iam.gserviceaccount.com"
-
-        echo "🔧 Granting roles/serviceusage.serviceUsageAdmin to $cloud_build_sa on project $project_id..."
-        gcloud projects add-iam-policy-binding "$project_id" \
-          --member="serviceAccount:$cloud_build_sa" \
-          --role="roles/serviceusage.serviceUsageAdmin" \
-          --quiet
-
-  # ✅ Step 2: Skip enabling API if it's already enabled
+  # Step 2: Check & Enable Identity Platform API (only if not already enabled)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: 'enable-identityplatform-api'
     entrypoint: 'bash'
@@ -58,9 +41,11 @@ steps:
           --format="table(bindings.role)"
 
         echo "🔍 Checking if Identity Platform API is already enabled..."
-        if gcloud services list --enabled --project="$firebase_project_id" \
-          --filter="config.name:identityplatform.googleapis.com" \
-          --format="value(config.name)" | grep -q "identityplatform.googleapis.com"; then
+        enabled_api=$(gcloud services list --enabled --project="$firebase_project_id" \
+          --filter="config.name=identityplatform.googleapis.com" \
+          --format="value(config.name)")
+
+        if [[ "$enabled_api" == "identityplatform.googleapis.com" ]]; then
             echo "✅ identityplatform.googleapis.com is already enabled. Skipping..."
         else
             echo "🔓 Attempting to enable identityplatform.googleapis.com..."
