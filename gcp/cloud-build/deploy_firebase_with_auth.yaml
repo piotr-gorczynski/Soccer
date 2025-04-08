@@ -55,7 +55,9 @@ steps:
         body=$(echo "$response" | head -n-1)
 
         if [[ "$http_code" == "200" ]]; then
-          echo "✅ Identity Platform initialized (or already active)."
+          echo "✅ Identity Platform initialized."
+        elif echo "$body" | grep -q "Identity Platform has already been enabled for this project."; then
+          echo "✅ Identity Platform is already enabled. Skipping."
         else
           echo "❌ Failed to initialize Identity Platform. Response code: $http_code"
           echo "Response body:"
