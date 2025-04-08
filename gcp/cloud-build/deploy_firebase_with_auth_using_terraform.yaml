@@ -23,7 +23,7 @@ steps:
 
         echo "✅ Found project ID: $(cat /workspace/project_id.txt)"
 
-  # ✅ Step 1.5: Grant roles/serviceusage.serviceUsageAdmin to Cloud Build SA
+  # ✅ Step 1.5: Grant roles/serviceusage.serviceUsageAdmin to Cloud Build SA (optional once-off)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: 'grant-serviceusage-admin'
     entrypoint: 'bash'
@@ -40,7 +40,7 @@ steps:
           --role="roles/serviceusage.serviceUsageAdmin" \
           --quiet
 
-  # Step 2: Enable Identity Platform API
+  # ✅ Step 2: Skip enabling API if it's already enabled
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: 'enable-identityplatform-api'
     entrypoint: 'bash'
@@ -48,8 +48,6 @@ steps:
       - '-c'
       - |
         set -e
-        set -x
-
         firebase_project_id=$(cat /workspace/project_id.txt)
         cloud_build_sa="cloud-build-sa@org-service-account-001.iam.gserviceaccount.com"
 
@@ -59,12 +57,15 @@ steps:
           --filter="bindings.members:$cloud_build_sa" \
           --format="table(bindings.role)"
 
-        echo "🔓 Attempting to enable identityplatform.googleapis.com..."
-        if gcloud services enable identityplatform.googleapis.com --project="$firebase_project_id"; then
-          echo "✅ API enabled successfully."
+        echo "🔍 Checking if Identity Platform API is already enabled..."
+        if gcloud services list --enabled --project="$firebase_project_id" \
+          --filter="config.name:identityplatform.googleapis.com" \
+          --format="value(config.name)" | grep -q "identityplatform.googleapis.com"; then
+            echo "✅ identityplatform.googleapis.com is already enabled. Skipping..."
         else
-          echo "❌ Failed to enable identityplatform.googleapis.com"
-          exit 1
+            echo "🔓 Attempting to enable identityplatform.googleapis.com..."
+            gcloud services enable identityplatform.googleapis.com --project="$firebase_project_id"
+            echo "✅ API enabled successfully."
         fi
 
   # Step 3: Write Terraform config using google-beta provider
