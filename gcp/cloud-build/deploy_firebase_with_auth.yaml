@@ -13,7 +13,8 @@ steps:
         echo "📦 Looking for Firebase project starting with ${_FOLDER_NAME}-${_ENVIRONMENT}..."
         gcloud projects list \
           --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
-          --format="value(projectId)" | head -n 1 > /workspace/SOCCER_PROJECT_ID.txt
+          --format="value(projectId)" \
+          | head -n 1 > /workspace/SOCCER_PROJECT_ID.txt
 
         if [ ! -s /workspace/SOCCER_PROJECT_ID.txt ]; then
           echo "❌ Firebase project not found."
@@ -22,7 +23,7 @@ steps:
 
         echo "✅ Found Firebase project: $(cat /workspace/SOCCER_PROJECT_ID.txt)"
 
-  # Step 1: Generate access token
+  # Step 1: Generate an access token
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: bash
     args:
@@ -31,58 +32,72 @@ steps:
         set -e
         access_token=$(gcloud auth print-access-token)
         echo "$access_token" > /workspace/access_token.txt
-        echo "🪙 Access token generated"
-        
-  # Step 2: Attempt to enable Email/Password Auth (with fallback using correct config PATCH)
+        echo "🔑 Access token generated and stored."
+
+  # Step 2: Initialize Identity Platform (create the Auth config)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: bash
     args:
       - '-c'
       - |
         set -e
-        set -x  # Debug mode
-
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         access_token=$(cat /workspace/access_token.txt)
-        firebase_admin_sa="firebase-adminsdk-fbsvc@$firebase_project_id.iam.gserviceaccount.com"
 
-        echo "🔑 Attempting to enable Email/Password auth (primary method)..."
-        response=$(curl -s -w '\n%{http_code}' -X PATCH \
+        echo "🚀 Initializing Identity Platform for project: $firebase_project_id..."
+        response=$(curl -s -w '\n%{http_code}' -X POST \
           -H "Authorization: Bearer $access_token" \
           -H "Content-Type: application/json" \
-          -d '{"signIn": {"email": {"enabled": true}}}' \
-          "https://identitytoolkit.googleapis.com/v2/projects/$firebase_project_id/config")
+          -H "X-Goog-User-Project: $firebase_project_id" \
+          "https://identitytoolkit.googleapis.com/v2/projects/$firebase_project_id/identityPlatform:initializeAuth")
 
         http_code=$(echo "$response" | tail -n1)
         body=$(echo "$response" | head -n-1)
 
         if [[ "$http_code" == "200" ]]; then
-          echo "✅ Email/Password auth enabled."
-          exit 0
+          echo "✅ Identity Platform initialized (or already active)."
+        else
+          echo "❌ Failed to initialize Identity Platform. Response code: $http_code"
+          echo "Response body:"
+          echo "$body"
+          exit 1
         fi
 
-        if echo "$body" | grep -q CONFIGURATION_NOT_FOUND; then
-          echo "⚠️ Primary attempt failed with CONFIGURATION_NOT_FOUND. Retrying with explicit project ID in fallback..."
+  # Step 3: Enable Email/Password Auth
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -e
+        firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
+        access_token=$(cat /workspace/access_token.txt)
 
-          fallback_response=$(curl -s -w '\n%{http_code}' -X PATCH \
-            -H "Authorization: Bearer $access_token" \
-            -H "Content-Type: application/json" \
-            -d '{"signIn": {"email": {"enabled": true}}}' \
-            "https://identitytoolkit.googleapis.com/v2/projects/$firebase_project_id/config?updateMask=signIn")
+        echo "🔑 Attempting to enable Email/Password authentication..."
+        patch_response=$(curl -s -w '\n%{http_code}' -X PATCH \
+          -H "Authorization: Bearer $access_token" \
+          -H "X-Goog-User-Project: $firebase_project_id" \
+          -H "Content-Type: application/json" \
+          "https://identitytoolkit.googleapis.com/admin/v2/projects/$firebase_project_id/config?updateMask=signIn.email" \
+          -d '{
+            "signIn": {
+              "email": {
+                "enabled": true,
+                "passwordRequired": true
+              }
+            }
+          }')
 
-          fallback_code=$(echo "$fallback_response" | tail -n1)
+        patch_code=$(echo "$patch_response" | tail -n1)
+        patch_body=$(echo "$patch_response" | head -n-1)
 
-          if [[ "$fallback_code" == "200" ]]; then
-            echo "✅ Email/Password authentication enabled via fallback endpoint."
-            exit 0
-          else
-            echo "❌ Fallback failed. Response:"
-            echo "$fallback_response"
-            exit 1
-          fi
+        if [[ "$patch_code" == "200" ]]; then
+          echo "✅ Email/Password sign-in successfully enabled."
+          echo "$patch_body"
         else
-          echo "❌ Failed to enable Email/Password authentication. Response:"
-          echo "$body"
+          echo "❌ Failed to enable Email/Password authentication. HTTP $patch_code"
+          echo "Response body:"
+          echo "$patch_body"
           exit 1
         fi
 
