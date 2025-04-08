@@ -40,18 +40,18 @@ steps:
           --filter="bindings.members:$cloud_build_sa" \
           --format="table(bindings.role)"
 
-        echo "🔍 Checking if Identity Platform API is already enabled..."
-        enabled_api=$(gcloud services list --enabled --project="$firebase_project_id" \
-          --filter="config.name=identityplatform.googleapis.com" \
-          --format="value(config.name)")
+      #   echo "🔍 Checking if Identity Platform API is already enabled..."
+      #  enabled_api=$(gcloud services list --enabled --project="$firebase_project_id" \
+      #    --filter="config.name=identityplatform.googleapis.com" \
+      #    --format="value(config.name)")
 
-        if [[ "$enabled_api" == "identityplatform.googleapis.com" ]]; then
-            echo "✅ identityplatform.googleapis.com is already enabled. Skipping..."
-        else
-            echo "🔓 Attempting to enable identityplatform.googleapis.com..."
-            gcloud services enable identityplatform.googleapis.com --project="$firebase_project_id"
-            echo "✅ API enabled successfully."
-        fi
+      #  if [[ "$enabled_api" == "identityplatform.googleapis.com" ]]; then
+      #      echo "✅ identityplatform.googleapis.com is already enabled. Skipping..."
+      #  else
+      #      echo "🔓 Attempting to enable identityplatform.googleapis.com..."
+      #      gcloud services enable identityplatform.googleapis.com --project="$firebase_project_id"
+      #      echo "✅ API enabled successfully."
+      #  fi
 
   # Step 3: Write Terraform config using google-beta provider
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
