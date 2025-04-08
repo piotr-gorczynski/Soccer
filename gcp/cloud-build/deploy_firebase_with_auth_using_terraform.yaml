@@ -23,7 +23,7 @@ steps:
 
         echo "✅ Found project ID: $(cat /workspace/project_id.txt)"
 
-  # Step 2: Enable Identity Platform API (with debug and retries)
+  # Step 2: Enable Identity Platform API (with role listing and single attempt)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: 'enable-identityplatform-api'
     entrypoint: 'bash'
@@ -34,28 +34,21 @@ steps:
         set -x
 
         firebase_project_id=$(cat /workspace/project_id.txt)
-        echo "🔓 Enabling Identity Platform API for project: $firebase_project_id..."
+        cloud_build_sa="cloud-build-sa@org-service-account-001.iam.gserviceaccount.com"
 
-        for i in {1..5}; do
-          if gcloud services enable identityplatform.googleapis.com --project="$firebase_project_id"; then
-            echo "✅ identityplatform.googleapis.com enabled."
-            break
-          fi
+        echo "🔍 Listing roles for Cloud Build SA on project: $firebase_project_id"
+        gcloud projects get-iam-policy "$firebase_project_id" \
+          --flatten="bindings[].members" \
+          --filter="bindings.members:$cloud_build_sa" \
+          --format="table(bindings.role)"
 
-          echo "⚠️ Attempt $i failed. Waiting for IAM permissions to propagate..."
-          sleep 20
-        done
-
-        # Final check to confirm API is enabled
-        if ! gcloud services list --enabled --project="$firebase_project_id" \
-             --filter="config.name:identityplatform.googleapis.com" \
-             --format="value(config.name)" | grep -q identityplatform.googleapis.com; then
-          echo "❌ identityplatform.googleapis.com still not enabled. Failing pipeline."
+        echo "🔓 Attempting to enable identityplatform.googleapis.com..."
+        if gcloud services enable identityplatform.googleapis.com --project="$firebase_project_id"; then
+          echo "✅ API enabled successfully."
+        else
+          echo "❌ Failed to enable identityplatform.googleapis.com"
           exit 1
         fi
-
-        echo "✅ API confirmed enabled after retry."
-
 
   # Step 3: Write Terraform config using google-beta provider
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
