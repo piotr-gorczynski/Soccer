@@ -7,13 +7,11 @@
     android:background="@color/colorGreenDark"
     tools:context="piotr_gorczynski.soccer2.MenuActivity">
 
-
     <Button
         android:id="@+id/PlayerVsAndroid"
         android:layout_width="150dp"
         android:layout_height="50dp"
         android:layout_marginBottom="85dp"
-        android:layout_marginTop="0dp"
         android:background="@color/colorGreen"
         android:onClick="OpenGamePlayerVsAndroid"
         android:text="@string/menu_YouvsAndroid"
@@ -39,6 +37,7 @@
         app:layout_constraintTop_toBottomOf="@+id/PlayerVsAndroid" />
 
     <Button
+        android:id="@+id/Settings"
         android:layout_width="150dp"
         android:layout_height="50dp"
         android:layout_marginTop="10dp"
@@ -50,5 +49,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/PlayerVsPlayer" />
+
+    <!-- New Account button -->
+    <Button
+        android:id="@+id/Account"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/colorGreen"
+        android:onClick="OpenAccount"
+        android:text="Account"
+        android:textAllCaps="false"
+        android:textColor="@color/colorWhite"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/Settings" />
 
 </android.support.constraint.ConstraintLayout>

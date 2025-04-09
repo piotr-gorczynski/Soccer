@@ -38,6 +38,12 @@ public class MenuActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void OpenAccount(View view) {
+        // Implement the logic to open Account registration or login here
+        Intent intent = new Intent(this, AccountActivity.class);
+        startActivity(intent);
+    }
+
     @Override
     public void onSaveInstanceState(Bundle outState)
     {
