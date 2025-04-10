@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,14 +10,14 @@
 
     <Button
         android:id="@+id/PlayerVsAndroid"
-        android:layout_width="150dp"
+        android:layout_width="200dp"
         android:layout_height="50dp"
         android:layout_marginBottom="85dp"
         android:background="@color/colorGreen"
         android:onClick="OpenGamePlayerVsAndroid"
         android:text="@string/menu_YouvsAndroid"
         android:textAllCaps="false"
-        android:textColor="@color/colorWhite"
+        android:textColor="#000000"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,28 +25,28 @@
 
     <Button
         android:id="@+id/PlayerVsPlayer"
-        android:layout_width="150dp"
+        android:layout_width="200dp"
         android:layout_height="50dp"
         android:layout_marginTop="10dp"
         android:background="@color/colorGreen"
         android:onClick="OpenGamePlayerVsPlayer"
         android:text="@string/menu_Player1vsPlayer2"
         android:textAllCaps="false"
-        android:textColor="@color/colorWhite"
+        android:textColor="#000000"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/PlayerVsAndroid" />
 
     <Button
         android:id="@+id/Settings"
-        android:layout_width="150dp"
+        android:layout_width="200dp"
         android:layout_height="50dp"
         android:layout_marginTop="10dp"
         android:background="@color/colorGreen"
         android:onClick="OpenSettings"
         android:text="@string/menu_Settings"
         android:textAllCaps="false"
-        android:textColor="@color/colorWhite"
+        android:textColor="#000000"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/PlayerVsPlayer" />
@@ -53,16 +54,16 @@
     <!-- New Account button -->
     <Button
         android:id="@+id/Account"
-        android:layout_width="150dp"
+        android:layout_width="200dp"
         android:layout_height="50dp"
         android:layout_marginTop="10dp"
         android:background="@color/colorGreen"
         android:onClick="OpenAccount"
-        android:text="Account"
+        android:text="@string/account"
         android:textAllCaps="false"
-        android:textColor="@color/colorWhite"
+        android:textColor="#000000"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/Settings" />
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
