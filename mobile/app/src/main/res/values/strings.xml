@@ -27,5 +27,10 @@
     <!-- Example settings for Notifications -->
 
     <string name="pref_ringtone_silent">Silent</string>
+    <string name="register">Register</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="account">Account</string>
 
 </resources>

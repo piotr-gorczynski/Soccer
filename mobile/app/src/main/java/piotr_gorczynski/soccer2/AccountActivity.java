@@ -1,7 +1,6 @@
 package piotr_gorczynski.soccer2;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -10,8 +9,9 @@ import androidx.appcompat.app.AppCompatActivity;
 public class AccountActivity extends AppCompatActivity {
 
     private EditText editEmail, editPassword;
-    private Button btnRegister;
     private FirebaseAuthManager authManager;
+
+    private EditText editConfirmPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,7 +22,9 @@ public class AccountActivity extends AppCompatActivity {
 
         editEmail = findViewById(R.id.editEmail);
         editPassword = findViewById(R.id.editPassword);
-        btnRegister = findViewById(R.id.btnRegister);
+        Button btnRegister = findViewById(R.id.btnRegister);
+        editConfirmPassword = findViewById(R.id.editConfirmPassword);
+
 
         btnRegister.setOnClickListener(v -> registerUser());
     }
@@ -31,8 +33,15 @@ public class AccountActivity extends AppCompatActivity {
         String email = editEmail.getText().toString().trim();
         String password = editPassword.getText().toString().trim();
 
-        if(email.isEmpty() || password.isEmpty()){
-            Toast.makeText(this, "Email and password must not be empty", Toast.LENGTH_SHORT).show();
+        String confirmPassword = editConfirmPassword.getText().toString().trim();
+
+        if (email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+            Toast.makeText(this, "All fields are required", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (!password.equals(confirmPassword)) {
+            Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
             return;
         }
 
