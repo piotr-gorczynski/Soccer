@@ -19,6 +19,25 @@ public class FirebaseAuthManager {
         this.firebaseAuth = FirebaseAuth.getInstance();
     }
 
+    public void loginUser(String email, String password) {
+        firebaseAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        if (firebaseAuth.getCurrentUser().isEmailVerified()) {
+                            Log.d("FirebaseAuth", "Login successful: " + firebaseAuth.getCurrentUser().getEmail());
+                            Toast.makeText(context, "Login successful!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            firebaseAuth.signOut();  // Sign out the user since email is not verified
+                            Toast.makeText(context, "Please verify your email address before logging in.", Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        Log.e("FirebaseAuth", "Login failed: " + task.getException().getMessage());
+                        Toast.makeText(context, "Login failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+
     public void registerUser(String email, String password) {
         firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {

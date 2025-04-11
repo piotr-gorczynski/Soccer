@@ -39,8 +39,7 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     public void OpenAccount(View view) {
-        // Implement the logic to open Account registration or login here
-        Intent intent = new Intent(this, AccountActivity.class);
+        Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
     }
 
