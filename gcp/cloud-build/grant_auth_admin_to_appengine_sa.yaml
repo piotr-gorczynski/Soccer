@@ -1,0 +1,42 @@
+substitutions:
+  _ENVIRONMENT: 'dev'
+  _FOLDER_NAME: 'soccer'
+
+steps:
+  # Step 1: Retrieve the project ID
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "Checking if project starting with ${_FOLDER_NAME}-${_ENVIRONMENT} exists..."
+        gcloud projects list \
+          --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
+          --format="value(projectId)" | head -n 1 > /workspace/project_name.txt
+
+        if [ ! -s /workspace/project_name.txt ] || [ -z "$(cat /workspace/project_name.txt)" ]; then
+          echo "Error: Project ID not found. Ensure the project exists."
+          exit 1
+        fi
+        echo "Using project: $(cat /workspace/project_name.txt)"
+
+  # Step 2: Grant Firebase Auth Admin role to the App Engine default service account
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        project_id=$(cat /workspace/project_name.txt)
+        appengine_sa="${project_id}@appspot.gserviceaccount.com"
+
+        echo "Granting Firebase Auth Admin role to the App Engine default service account..."
+        gcloud projects add-iam-policy-binding "$project_id" \
+          --member="serviceAccount:$appengine_sa" \
+          --role="roles/firebaseauth.admin"
+
+        echo "✅ The service account $appengine_sa now has firebaseauth.admin role."
+
+options:
+  logging: CLOUD_LOGGING_ONLY
