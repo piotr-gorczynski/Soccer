@@ -34,7 +34,7 @@ steps:
       - |
         set -e
         project_id=$(cat /workspace/project_name.txt)
-        scheduler_job_name="firebase-schedule-deleteUnverifiedUsers"
+        scheduler_job_name="firebase-schedule-deleteUnverifiedUsers-us-central1"
         location="us-central1"  # Adjust if your job is in a different region
 
         echo "Listing Cloud Scheduler jobs in $project_id ($location)..."
