@@ -3,7 +3,7 @@ const admin = require("firebase-admin");
 admin.initializeApp();
 
 exports.deleteUnverifiedUsers = functions.pubsub
-  .schedule("every 24 hours")
+  .schedule("every 60 minutes")
   .onRun(async (context) => {
     const auth = admin.auth();
     let nextPageToken = undefined;
