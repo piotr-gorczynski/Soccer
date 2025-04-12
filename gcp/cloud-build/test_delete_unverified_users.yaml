@@ -34,16 +34,21 @@ steps:
       - |
         set -e
         project_id=$(cat /workspace/project_name.txt)
-        # The default job name for a scheduled function "deleteUnverifiedUsers" is "firebase-schedule-deleteUnverifiedUsers".
-        # If your function name or job name is different, change it here.
         scheduler_job_name="firebase-schedule-deleteUnverifiedUsers"
+        location="us-central1"  # Adjust if your job is in a different region
 
-        echo "Listing Cloud Scheduler jobs in $project_id..."
-        gcloud scheduler jobs list --project="$project_id"
+        echo "Listing Cloud Scheduler jobs in $project_id ($location)..."
+        gcloud scheduler jobs list \
+          --project="$project_id" \
+          --location="$location"
 
         echo "Invoking scheduled job: $scheduler_job_name"
-        gcloud scheduler jobs run "$scheduler_job_name" --project="$project_id"
+        gcloud scheduler jobs run "$scheduler_job_name" \
+          --project="$project_id" \
+          --location="$location"
+
         echo "Scheduled function invoked."
+
 
   # Step 3: Check logs for errors
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
