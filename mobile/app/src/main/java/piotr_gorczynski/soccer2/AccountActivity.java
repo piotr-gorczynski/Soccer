@@ -13,6 +13,8 @@ public class AccountActivity extends AppCompatActivity {
 
     private EditText editConfirmPassword;
 
+    private EditText editNickname;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,6 +26,7 @@ public class AccountActivity extends AppCompatActivity {
         editPassword = findViewById(R.id.editPassword);
         Button btnRegister = findViewById(R.id.btnRegister);
         editConfirmPassword = findViewById(R.id.editConfirmPassword);
+        editNickname = findViewById(R.id.editNickname);
 
 
         btnRegister.setOnClickListener(v -> registerUser());
@@ -45,7 +48,14 @@ public class AccountActivity extends AppCompatActivity {
             return;
         }
 
-        authManager.registerUser(email, password);
+        String nickname = editNickname.getText().toString().trim();
+        if (nickname.isEmpty()) {
+            Toast.makeText(this, "Nickname is required", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        authManager.registerUser(email, password, nickname);
+
         Toast.makeText(this, "Registration attempt in progress...", Toast.LENGTH_SHORT).show();
     }
 }
