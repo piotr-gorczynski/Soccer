@@ -35,6 +35,7 @@ steps:
       - '-c'
       - |
         set -e
+        apt-get update && apt-get install -y jq
         project_id=$(cat /workspace/project_id.txt)
         access_token=$(cat /workspace/access_token.txt)
 
@@ -53,7 +54,7 @@ steps:
         echo "✅ Found UID: $uid"
 
   # Step 4: Write nickname into Firestore
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
       - '-c'
