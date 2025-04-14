@@ -1,0 +1,30 @@
+substitutions:
+  _ENVIRONMENT: 'dev'
+  _FOLDER_NAME: 'soccer'
+
+steps:
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "📦 Retrieving Firebase project ID..."
+        gcloud projects list \
+          --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
+          --format="value(projectId)" | head -n 1 > /workspace/FIREBASE_PROJECT_ID.txt
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        firebase_project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
+        echo "🔓 Enabling Firestore API for project $firebase_project_id..."
+        gcloud services enable firestore.googleapis.com --project="$firebase_project_id"
+
+        echo "✅ Firestore API enabled successfully!"
+
+options:
+  logging: CLOUD_LOGGING_ONLY
