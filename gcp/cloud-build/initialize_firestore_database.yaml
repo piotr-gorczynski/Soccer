@@ -1,7 +1,7 @@
 substitutions:
   _ENVIRONMENT: 'dev'
   _FOLDER_NAME: 'soccer'
-  _REGION: 'us-central'  # No-cost tier region
+  _LOCATION: 'us-central'  # No-cost tier location
 
 steps:
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
@@ -23,13 +23,13 @@ steps:
         set -e
         firebase_project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
 
-        echo "🧱 Creating Firestore database in no-cost location (${_REGION})..."
+        echo "🧱 Creating Firestore database in ${_LOCATION} (Native mode)..."
         gcloud firestore databases create \
           --project="$firebase_project_id" \
-          --region="${_REGION}" \
+          --location="${_LOCATION}" \
           --type=firestore-native
 
-        echo "✅ Firestore database created successfully in ${_REGION}."
+        echo "✅ Firestore database created successfully in ${_LOCATION}."
 
 options:
   logging: CLOUD_LOGGING_ONLY
