@@ -17,11 +17,10 @@ steps:
           --format="value(projectId)" \
           | head -n 1 > /workspace/FIREBASE_PROJECT_ID.txt
 
-        if [ ! -s /workspace/FIREBASE_PROJECT_ID.txt ] || [ -z "$(cat /workspace/FIREBASE_PROJECT_ID.txt)" ]; then
-          echo "❌ Error: Project ID not found. Ensure the project exists."
+        if [ ! -s /workspace/FIREBASE_PROJECT_ID.txt ]; then
+          echo "❌ Project ID not found!"
           exit 1
         fi
-        echo "==> Using project: $(cat /workspace/FIREBASE_PROJECT_ID.txt)"
 
   # Step 2: Install Firebase CLI
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
@@ -36,9 +35,9 @@ steps:
         mkdir -p /workspace/firebase
         cp /usr/local/bin/firebase /workspace/firebase/
         chmod +x /workspace/firebase/firebase
-        echo "✅ Firebase CLI installed!"
+        echo "✅ Firebase CLI installed."
 
-  # Step 3: Clone GitHub dev branch & copy firebase.json + package.json
+  # Step 3: Clone GitHub repo & extract config + function code
   - name: 'gcr.io/cloud-builders/git'
     id: 'pull-files'
     entrypoint: bash
@@ -46,30 +45,18 @@ steps:
       - '-c'
       - |
         set -ex
-        echo "Cloning from the development branch..."
-        git clone -b development --single-branch https://github.com/piotr-gorczynski/Soccer.git /tmp/soccer
+        echo "📦 Cloning from the development branch..."
+        git clone -b development --single-branch https://github.com/piotr-gorczynski/Soccer.git /workspace/soccer
 
-        echo "==> Listing /tmp/soccer/firebase/functions:"
-        ls -al /tmp/soccer/firebase/functions
+        echo "📁 Copying Firestore config & function to workspace..."
+        cp /workspace/soccer/firebase/firebase.json /workspace/firebase/firebase.json
+        cp /workspace/soccer/firebase/firestore.rules /workspace/firebase/firestore.rules
 
-        echo "==> Create target folder in workspace if missing:"
         mkdir -p /workspace/firebase/functions/delete-unverified-users
+        cp /workspace/soccer/firebase/functions/delete-unverified-users/package.json /workspace/firebase/functions/delete-unverified-users/
+        cp /workspace/soccer/firebase/functions/delete-unverified-users/index.js /workspace/firebase/functions/delete-unverified-users/
 
-        echo "==> Copying firebase.json into /workspace/firebase/functions..."
-        cp /tmp/soccer/firebase/functions/firebase.json /workspace/firebase/functions/
-
-        echo "==> Listing /tmp/soccer/firebase/functions/delete-unverified-users:"
-        ls -al /tmp/soccer/firebase/functions/delete-unverified-users
-
-        echo "==> Copying package.json (and index.js if needed) to /workspace/firebase/functions/delete-unverified-users..."
-        cp /tmp/soccer/firebase/functions/delete-unverified-users/package.json /workspace/firebase/functions/delete-unverified-users/
-        cp /tmp/soccer/firebase/functions/delete-unverified-users/index.js /workspace/firebase/functions/delete-unverified-users/
-
-        echo "==> Done copying files"
-        echo "==> Final structure in /workspace/firebase/functions:"
-        find /workspace/firebase/functions -type f
-
-  # Step 4: Install Node dependencies in delete-unverified-users folder
+  # Step 4: Install Node dependencies
   - name: 'node:18-slim'
     id: 'install-deps'
     entrypoint: bash
@@ -77,13 +64,11 @@ steps:
       - '-c'
       - |
         set -ex
-        echo "Installing dependencies in firebase/functions/delete-unverified-users..."
         cd /workspace/firebase/functions/delete-unverified-users
         npm install
-        echo "==> npm install completed. Listing node_modules..."
-        ls -al node_modules | head -n 20
+        echo "📦 Dependencies installed."
 
-  # Step 5: Deploy scheduled function (deleteUnverifiedUsers)
+  # Step 5: Deploy function using firebase.json in /workspace/firebase
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: 'deploy-function'
     entrypoint: bash
@@ -91,14 +76,14 @@ steps:
       - '-c'
       - |
         set -e
+        cd /workspace/firebase
         project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
         echo "🚀 Deploying scheduled function 'deleteUnverifiedUsers' to project: $project_id..."
-        cd /workspace/firebase/functions/delete-unverified-users
-        /workspace/firebase/firebase deploy \
+        ./firebase deploy \
           --only functions:deleteUnverifiedUsers \
           --project="$project_id" \
           --force
-        echo "✅ Scheduled function 'deleteUnverifiedUsers' deployed successfully."
+        echo "✅ Function deployed successfully."
 
 options:
   logging: CLOUD_LOGGING_ONLY
