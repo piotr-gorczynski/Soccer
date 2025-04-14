@@ -1,0 +1,8 @@
+{
+  "functions": {
+    "source": "functions/delete-unverified-users"
+  },
+  "firestore": {
+    "rules": "firestore.rules"
+  }
+}
