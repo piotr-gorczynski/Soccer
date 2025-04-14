@@ -1,7 +1,7 @@
 substitutions:
   _ENVIRONMENT: 'dev'
   _FOLDER_NAME: 'soccer'
-  _LOCATION: 'us-central'  # No-cost tier location
+  _LOCATION: 'us-central1'  # Valid Firestore location
 
 steps:
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
