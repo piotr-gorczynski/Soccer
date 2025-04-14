@@ -1,0 +1,35 @@
+substitutions:
+  _ENVIRONMENT: 'dev'
+  _FOLDER_NAME: 'soccer'
+  _REGION: 'us-central'  # No-cost tier region
+
+steps:
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "📦 Fetching Firebase project ID..."
+        gcloud projects list \
+          --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
+          --format="value(projectId)" | head -n 1 > /workspace/FIREBASE_PROJECT_ID.txt
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        firebase_project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
+
+        echo "🧱 Creating Firestore database in no-cost location (${_REGION})..."
+        gcloud firestore databases create \
+          --project="$firebase_project_id" \
+          --region="${_REGION}" \
+          --type=firestore-native
+
+        echo "✅ Firestore database created successfully in ${_REGION}."
+
+options:
+  logging: CLOUD_LOGGING_ONLY
