@@ -29,7 +29,7 @@ steps:
           > /workspace/access_token.txt
 
   # Step 3: Lookup UID for the given test user email
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'bash'
     args:
       - '-c'
@@ -53,7 +53,7 @@ steps:
         echo "✅ Found UID: $uid"
 
   # Step 4: Write nickname into Firestore
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'bash'
     args:
       - '-c'
