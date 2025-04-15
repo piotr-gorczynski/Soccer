@@ -7,6 +7,7 @@ exports.deleteUnverifiedUsers = functions.pubsub
   .schedule("every 60 minutes")
   .onRun(async (context) => {
     const auth = admin.auth();
+    const db = admin.firestore();
     let nextPageToken = undefined;
 
     const now = Date.now();
@@ -21,9 +22,18 @@ exports.deleteUnverifiedUsers = functions.pubsub
           user.metadata.creationTime &&
           now - new Date(user.metadata.creationTime).getTime() > oneDayMillis
         ) {
-          await auth.deleteUser(user.uid);
-          console.log(`🧹 Deleted unverified user: ${user.email}`);
-          deletedCount++;
+          try {
+            await auth.deleteUser(user.uid);
+            console.log(`🧹 Deleted unverified user from Auth: ${user.email}`);
+
+            // Also delete from Firestore
+            await db.collection("users").doc(user.uid).delete();
+            console.log(`🧹 Deleted user document from Firestore: users/${user.uid}`);
+
+            deletedCount++;
+          } catch (err) {
+            console.error(`❌ Failed to delete user ${user.uid}: ${err.message}`);
+          }
         }
       }
       nextPageToken = listUsersResult.pageToken;
