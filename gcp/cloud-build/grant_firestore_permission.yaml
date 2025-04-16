@@ -1,0 +1,45 @@
+substitutions:
+  _ENVIRONMENT: 'dev'
+  _FOLDER_NAME: 'soccer'
+
+steps:
+  # Step 1: Get Firebase project ID
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: get-project-id
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "🔍 Getting project ID for ${_FOLDER_NAME}-${_ENVIRONMENT}..."
+        gcloud projects list \
+          --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
+          --format="value(projectId)" \
+          | head -n 1 > /workspace/PROJECT_ID.txt
+
+        if [ ! -s /workspace/PROJECT_ID.txt ]; then
+          echo "❌ Project ID not found!"
+          exit 1
+        fi
+
+  # Step 2: Grant Firestore access to default App Engine service account
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: grant-datastore-access
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -e
+        project_id=$(cat /workspace/PROJECT_ID.txt)
+        service_account="${project_id}@appspot.gserviceaccount.com"
+
+        echo "🔐 Granting 'roles/datastore.user' to ${service_account} in project ${project_id}..."
+        gcloud projects add-iam-policy-binding "$project_id" \
+          --member="serviceAccount:${service_account}" \
+          --role="roles/datastore.user" \
+          --quiet
+
+        echo "✅ IAM role granted successfully."
+
+options:
+  logging: CLOUD_LOGGING_ONLY
