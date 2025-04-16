@@ -25,6 +25,11 @@ public class FirebaseAuthManager {
         this.firebaseAuth = FirebaseAuth.getInstance();
     }
 
+    public interface LoginCallback {
+        void onLoginSuccess();
+        void onLoginFailure(String message);
+    }
+
     private void storeUserData(String uid, String email, String nickname) {
         context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
                 .edit()
@@ -34,7 +39,7 @@ public class FirebaseAuthManager {
                 .apply();
     }
 
-    public void loginUser(String email, String password) {
+    public void loginUser(String email, String password, LoginCallback callback) {
         firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -42,18 +47,17 @@ public class FirebaseAuthManager {
                             String uid = firebaseAuth.getCurrentUser().getUid();
                             String nickname = firebaseAuth.getCurrentUser().getDisplayName(); // Or query Firestore
                             storeUserData(uid, email, nickname);
-                            Log.d("FirebaseAuth", "Login successful: " + email);
-                            Toast.makeText(context, "Login successful!", Toast.LENGTH_SHORT).show();
+                            callback.onLoginSuccess();
                         } else {
                             firebaseAuth.signOut();
-                            Toast.makeText(context, "Please verify your email address before logging in.", Toast.LENGTH_LONG).show();
+                            callback.onLoginFailure("Please verify your email address before logging in.");
                         }
                     } else {
-                        Log.e("FirebaseAuth", "Login failed: " + task.getException().getMessage());
-                        Toast.makeText(context, "Login failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        callback.onLoginFailure(task.getException().getMessage());
                     }
                 });
     }
+
 
 
 
