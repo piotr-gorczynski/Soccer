@@ -32,7 +32,18 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(this, "Please enter both email and password", Toast.LENGTH_SHORT).show();
                 return;
             }
-            authManager.loginUser(email, password);
+            authManager.loginUser(email, password, new FirebaseAuthManager.LoginCallback() {
+                @Override
+                public void onLoginSuccess() {
+                    Toast.makeText(LoginActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();
+                    finish(); // Closes LoginActivity and returns to MenuActivity
+                }
+
+                @Override
+                public void onLoginFailure(String message) {
+                    Toast.makeText(LoginActivity.this, "Login failed: " + message, Toast.LENGTH_LONG).show();
+                }
+            });
         });
 
         linkRegister.setOnClickListener(v -> {
