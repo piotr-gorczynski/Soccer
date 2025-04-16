@@ -25,7 +25,7 @@ public class MenuActivity extends AppCompatActivity {
         if (nickname != null && !nickname.isEmpty()) {
             nicknameLabel.setText(getString(R.string.hello_comma) + nickname + getString(R.string.exclemation));
         } else {
-            nicknameLabel.setText(R.string.welcome_to_soccer);
+            nicknameLabel.setText(getString(R.string.welcome_to_soccer));
         }
     }
 
