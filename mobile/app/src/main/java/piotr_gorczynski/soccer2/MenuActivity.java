@@ -5,6 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.content.SharedPreferences;
+import android.widget.TextView;
+
 
 public class MenuActivity extends AppCompatActivity {
 
@@ -14,7 +17,18 @@ public class MenuActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
+
+        SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
+        String nickname = prefs.getString("nickname", null);
+
+        TextView nicknameLabel = findViewById(R.id.nicknameLabel);
+        if (nickname != null && !nickname.isEmpty()) {
+            nicknameLabel.setText(getString(R.string.hello_comma) + nickname + getString(R.string.exclemation));
+        } else {
+            nicknameLabel.setText(R.string.welcome_to_soccer);
+        }
     }
+
 
     public void OpenGamePlayerVsPlayer(View view) {
         // Do something in response to button

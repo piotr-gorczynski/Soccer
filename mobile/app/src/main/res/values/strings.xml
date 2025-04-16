@@ -32,5 +32,9 @@
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="account">Account</string>
+    <string name="hello">Hello!</string>
+    <string name="hello_comma">"Hello, "</string>
+    <string name="exclemation">!</string>
+    <string name="welcome_to_soccer">Welcome to Soccer!</string>
 
 </resources>
