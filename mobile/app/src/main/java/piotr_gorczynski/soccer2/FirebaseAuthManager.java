@@ -25,15 +25,27 @@ public class FirebaseAuthManager {
         this.firebaseAuth = FirebaseAuth.getInstance();
     }
 
+    private void storeUserData(String uid, String email, String nickname) {
+        context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+                .edit()
+                .putString("uid", uid)
+                .putString("email", email)
+                .putString("nickname", nickname)
+                .apply();
+    }
+
     public void loginUser(String email, String password) {
         firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         if (firebaseAuth.getCurrentUser().isEmailVerified()) {
-                            Log.d("FirebaseAuth", "Login successful: " + firebaseAuth.getCurrentUser().getEmail());
+                            String uid = firebaseAuth.getCurrentUser().getUid();
+                            String nickname = firebaseAuth.getCurrentUser().getDisplayName(); // Or query Firestore
+                            storeUserData(uid, email, nickname);
+                            Log.d("FirebaseAuth", "Login successful: " + email);
                             Toast.makeText(context, "Login successful!", Toast.LENGTH_SHORT).show();
                         } else {
-                            firebaseAuth.signOut();  // Sign out the user since email is not verified
+                            firebaseAuth.signOut();
                             Toast.makeText(context, "Please verify your email address before logging in.", Toast.LENGTH_LONG).show();
                         }
                     } else {
@@ -42,6 +54,7 @@ public class FirebaseAuthManager {
                     }
                 });
     }
+
 
 
     public void registerUser(String email, String password, String nickname) {
