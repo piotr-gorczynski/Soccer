@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.View;
 import android.content.SharedPreferences;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
+
 
 
 public class MenuActivity extends AppCompatActivity {
@@ -61,7 +63,7 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState)
+    public void onSaveInstanceState(@NonNull Bundle outState) {
     {
 //---save whatever you need to persist—
         Log.d("pgorczyn", "123456: MenuActivity.onSaveInstanceState entered");
