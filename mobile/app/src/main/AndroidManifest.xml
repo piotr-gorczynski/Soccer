@@ -19,7 +19,7 @@
         <activity android:name=".GameActivity" />
         <activity android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" />
-        <activity android:name=".AccountActivity" />
+        <activity android:name=".RegisterAccountActivity" />
         <activity android:name=".LoginActivity" /> <!-- ✅ Add this -->
 
     </application>

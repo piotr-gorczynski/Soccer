@@ -6,7 +6,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class AccountActivity extends AppCompatActivity {
+public class RegisterAccountActivity extends AppCompatActivity {
 
     private EditText editEmail, editPassword;
     private FirebaseAuthManager authManager;
@@ -18,7 +18,7 @@ public class AccountActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_account);
+        setContentView(R.layout.activity_register_account);
 
         authManager = new FirebaseAuthManager(this);
 
