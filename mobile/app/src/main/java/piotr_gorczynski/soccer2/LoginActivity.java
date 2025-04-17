@@ -47,7 +47,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         linkRegister.setOnClickListener(v -> {
-            Intent intent = new Intent(this, AccountActivity.class);
+            Intent intent = new Intent(this, RegisterAccountActivity.class);
             startActivity(intent);
         });
     }
