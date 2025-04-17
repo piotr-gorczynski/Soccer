@@ -11,6 +11,12 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import java.util.ArrayList;
+import android.util.AttributeSet;
+import android.os.Looper;
+import androidx.annotation.NonNull;
+
+
+//Added for compatibility
 
 /**
  * Created by pgorczynski on 2016-05-13.
@@ -33,11 +39,12 @@ public class GameView extends View {
         private final GameView gameView;
 
         public MyHandler(GameView gameView) {
+            super(Looper.getMainLooper());
             this.gameView = gameView;
         }
 
         @Override
-        public void handleMessage(Message msg) {
+        public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
             Log.d("pgorczyn", "123456: In handle message");
             gameView.androidMove();
@@ -57,6 +64,22 @@ public class GameView extends View {
             this.victory=victory;
         }
     }
+
+    public GameView(Context context) {
+        super(context);
+        throw new UnsupportedOperationException("GameView must be created programmatically with all required parameters.");
+    }
+
+    public GameView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        throw new UnsupportedOperationException("GameView must be created programmatically with all required parameters.");
+    }
+
+    public GameView(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        throw new UnsupportedOperationException("GameView must be created programmatically with all required parameters.");
+    }
+
 
     // Constructor
     public GameView(Context context, ArrayList<MoveTo> argMoves, int argGameType,int androidLevel) {
@@ -78,12 +101,12 @@ public class GameView extends View {
 
 
 
-        /*
+        /* This can be used for debugging
         possibleMoves.add(new MoveTo(2,2,0));
         possibleMoves.add(new MoveTo(3,2,0));
         possibleMoves.add(new MoveTo(4,2,0));
         possibleMoves.add(new MoveTo(4,3,0));
-*/
+        */
 
 
         field = new Field(context, realMoves, possibleMovesForDrawing, GameType);  // ARGB
@@ -112,7 +135,8 @@ public class GameView extends View {
 
     // Called back to draw the view. Also called after invalidate().
     @Override
-    protected void onDraw(Canvas canvas) {
+    protected void onDraw(@NonNull Canvas canvas) {
+
         super.onDraw(canvas);
         Log.d("pgorczyn", "123456: onDraw");
         createPossibleMoves(possibleMovesForDrawing, realMoves);
@@ -134,17 +158,12 @@ public class GameView extends View {
 
         for (int y = yPos + 1; y >= yPos - 1; y--)
             for (int i = 0; i <= 2; i++) {
-                switch (i) {
-                    case 0:
-                        x = xPos; //redundant, but I left it on purpose
-                        break;
-                    case 1:
-                        x = xPos - 1;
-                        break;
-                    case 2:
-                        x = xPos + 1;
-
-                }
+                x = switch (i) {
+                    case 0 -> xPos; //redundant, but I left it on purpose
+                    case 1 -> xPos - 1;
+                    case 2 -> xPos + 1;
+                    default -> x;
+                };
 
                 if (
                     //left border
@@ -193,8 +212,6 @@ public class GameView extends View {
         int xS,yS,xE,yE;
         xS=Moves.get(0).X;
         yS=Moves.get(0).Y;
- /*       if((x1==3)&&(y1==3)&&(x2==3)&&(y2==4))
-            xS=Moves.get(0).X;*/
 
         for(int i=1;i<Moves.size();i++) {
             xE=Moves.get(i).X;
@@ -204,17 +221,6 @@ public class GameView extends View {
             xS=xE;
             yS=yE;
         }
-/*        xS=Moves.get(0).X;
-        yS=Moves.get(0).Y;
-        for(int i=1;i<Moves.size();i++) {
-            xE=Moves.get(i).X;
-            yE=Moves.get(i).Y;
-            if((x1==xE)&&(y1==yE)&&(x2==xS)&&(y2==yS))
-                return false;
-            xS=xE;
-            yS=yE;
-        }
-        */
         return true;
     }
 
@@ -275,7 +281,7 @@ public class GameView extends View {
     public int checkWinner(int x, int y,ArrayList<MoveTo> Moves){
 
         boolean bouncing=isBouncing(x,y,Moves);
-        ArrayList<MoveTo> nextMoves = (ArrayList<MoveTo>) Moves.clone();
+        ArrayList<MoveTo> nextMoves = new ArrayList<>(Moves);
         if(bouncing)
             nextMoves.add(new MoveTo(x,y,Moves.get(Moves.size()-1).P));
         else
@@ -326,8 +332,8 @@ public class GameView extends View {
         if(!possibleMoves.isEmpty()) {
             MoveTo minMoveTo = new MoveTo(masterMinMoveTo.X, masterMinMoveTo.Y, -1);
             MoveTo tempMinMoveTo = new MoveTo(0, 0, -1);
-            ArrayList<MoveTo> bestMoves = (ArrayList<MoveTo>) Moves.clone();
-            ArrayList<MoveTo> tempMoves = (ArrayList<MoveTo>) Moves.clone();
+            ArrayList<MoveTo> bestMoves = new ArrayList<>(Moves);
+            ArrayList<MoveTo> tempMoves = new ArrayList<>(Moves);
             int movesSize = Moves.size();
 
             for (MoveTo i : possibleMoves) {
@@ -428,7 +434,7 @@ public class GameView extends View {
                     if(tempNextMoveFound.defeat && Moves.get(Moves.size() - 1).P==0) {
                         Log.d("pgorczynMove", "<defeat>" + stringMove + "</defeat>");
                         nextMoveFound.defeat=true;
-                        masterNextMoveFound.defeat=nextMoveFound.defeat;
+                        masterNextMoveFound.defeat= true;
                         break;
                     }
                     while (tempMoves.size() > movesSize)
@@ -468,7 +474,7 @@ public class GameView extends View {
         //called 1-st time
         if (androidMoves.size() <= realMoves.size()) {
             Log.d("pgorczynMove", "In androidMove 1-st time");
-            androidMoves = (ArrayList<MoveTo>) realMoves.clone();
+            androidMoves = new ArrayList<>(realMoves);
             //assigning first form the list as MIN
             MoveTo minMoveTo = new MoveTo(possibleMoves.get(0).X, possibleMoves.get(0).Y, 1);
             NextMoveFound nextMoveFound = new NextMoveFound(false, 0, false, false);
