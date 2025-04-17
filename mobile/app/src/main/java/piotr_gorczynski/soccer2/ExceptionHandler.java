@@ -41,7 +41,7 @@ public class ExceptionHandler implements
         errorReport.append(LINE_SEPARATOR);
         errorReport.append("\n************ FIRMWARE ************\n");
         errorReport.append("SDK: ");
-        errorReport.append(Build.VERSION.SDK);
+        errorReport.append(Build.VERSION.SDK_INT);
         errorReport.append(LINE_SEPARATOR);
         errorReport.append("Release: ");
         errorReport.append(Build.VERSION.RELEASE);

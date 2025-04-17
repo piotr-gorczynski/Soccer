@@ -1,8 +1,9 @@
 package piotr_gorczynski.soccer2;
 
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
@@ -18,16 +19,28 @@ public class GameActivity extends AppCompatActivity {
     int GameType=-1;
     GameView gameView;
 
+    @SuppressWarnings("deprecation")
+    private boolean isLegacyMovesNotNull(Bundle savedInstanceState) {
+        return savedInstanceState.getParcelableArrayList("Moves") != null;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
         //this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        if (savedInstanceState != null && savedInstanceState.getParcelableArrayList("Moves")!=null) {
-            //intBallX = savedInstanceState.getInt("intBallX");
-            //intBallY = savedInstanceState.getInt("intBallY");
-            Moves = savedInstanceState.getParcelableArrayList("Moves");
+        if (savedInstanceState != null && (
+                (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && savedInstanceState.getParcelableArrayList("Moves", MoveTo.class) != null) ||
+                        isLegacyMovesNotNull(savedInstanceState)
+        )) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                Moves = savedInstanceState.getParcelableArrayList("Moves", MoveTo.class);
+            } else {
+                @SuppressWarnings("deprecation")
+                ArrayList<MoveTo> legacyMoves = savedInstanceState.getParcelableArrayList("Moves");
+                Moves = legacyMoves;
+            }
         }
         else {
             // Default position in the middle of the field
@@ -128,13 +141,14 @@ public class GameActivity extends AppCompatActivity {
         }
 
         SharedPreferences sharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(this /* Activity context */);
+                getSharedPreferences(getPackageName() + "_preferences", Context.MODE_PRIVATE);
 
-        int androidLevel=1;
+        int androidLevel = 1;
         if (sharedPreferences.contains("android_level")) {
             androidLevel = Integer.parseInt(sharedPreferences.getString("android_level", "1"));
             Log.d("pgorczynMove", "Preference android_level=" + androidLevel);
         }
+
 
 
 
@@ -205,16 +219,17 @@ public class GameActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(false);
 
-        switch(GameType) {
-            case(1):
-                sPlayer0="Player 1";
-                sPlayer1="Player 2";
-                break;
-            case(2):
-                sPlayer0="Player";
-                sPlayer1="Android";
-                break;
-        }
+        sPlayer1 = switch (GameType) {
+            case (1) -> {
+                sPlayer0 = "Player 1";
+                yield "Player 2";
+            }
+            case (2) -> {
+                sPlayer0 = "Player";
+                yield "Android";
+            }
+            default -> sPlayer1;
+        };
 
         if(Winner==0)
             builder.setMessage("The winner is "+sPlayer0);
