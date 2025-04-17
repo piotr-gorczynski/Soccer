@@ -64,7 +64,6 @@ public class MenuActivity extends AppCompatActivity {
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-    {
 //---save whatever you need to persist—
         Log.d("pgorczyn", "123456: MenuActivity.onSaveInstanceState entered");
         //intBallX=gameView.getBallX();
