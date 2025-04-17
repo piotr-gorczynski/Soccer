@@ -9,7 +9,7 @@ exports.deleteUnverifiedUsers = functions.pubsub
     let nextPageToken = undefined;
 
     const now = Date.now();
-    const oneDayMillis = 24 * 60 * 60 * 1000;
+    const oneHourMillis = 60 * 60 * 1000;
     let deletedCount = 0;
 
     do {
@@ -18,7 +18,7 @@ exports.deleteUnverifiedUsers = functions.pubsub
         if (
           !user.emailVerified &&
           user.metadata.creationTime &&
-          now - new Date(user.metadata.creationTime).getTime() > oneDayMillis
+          now - new Date(user.metadata.creationTime).getTime() > oneHourMillis
         ) {
           await auth.deleteUser(user.uid);
           console.log(`Deleted unverified user: ${user.email}`);
