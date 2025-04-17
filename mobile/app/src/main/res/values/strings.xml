@@ -36,5 +36,7 @@
     <string name="hello_comma">"Hello, "</string>
     <string name="exclemation">!</string>
     <string name="welcome_to_soccer">Welcome to Soccer!</string>
+    <string name="hello_nickname">Hello, %1$s!</string>
+
 
 </resources>
