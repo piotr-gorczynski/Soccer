@@ -26,15 +26,12 @@
 
     <!-- Example settings for Notifications -->
 
-    <string name="pref_ringtone_silent">Silent</string>
     <string name="register">Register</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="account">Account</string>
     <string name="hello">Hello!</string>
-    <string name="hello_comma">"Hello, "</string>
-    <string name="exclemation">!</string>
     <string name="welcome_to_soccer">Welcome to Soccer!</string>
     <string name="hello_nickname">Hello, %1$s!</string>
     <string name="log_in">Log in</string>

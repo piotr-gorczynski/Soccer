@@ -1,5 +1,6 @@
 package piotr_gorczynski.soccer2;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -19,6 +20,7 @@ public class GameActivity extends AppCompatActivity {
     int GameType=-1;
     GameView gameView;
 
+    @SuppressLint("RedundantSuppression")
     @SuppressWarnings("deprecation")
     private boolean isLegacyMovesNotNull(Bundle savedInstanceState) {
         return savedInstanceState.getParcelableArrayList("Moves") != null;
@@ -28,7 +30,7 @@ public class GameActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
+        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
         //this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         if (savedInstanceState != null && (
                 (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && savedInstanceState.getParcelableArrayList("Moves", MoveTo.class) != null) ||
@@ -37,6 +39,7 @@ public class GameActivity extends AppCompatActivity {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 Moves = savedInstanceState.getParcelableArrayList("Moves", MoveTo.class);
             } else {
+                @SuppressLint("RedundantSuppression")
                 @SuppressWarnings("deprecation")
                 ArrayList<MoveTo> legacyMoves = savedInstanceState.getParcelableArrayList("Moves");
                 Moves = legacyMoves;
@@ -149,12 +152,6 @@ public class GameActivity extends AppCompatActivity {
             Log.d("pgorczynMove", "Preference android_level=" + androidLevel);
         }
 
-
-
-
-        //else
-        //    throw(new Exception("No Game Type defined")) ;
-
         //Log.d("pgorczyn", "123456: GameActivity.onCreate entered");
         gameView = new GameView(this, Moves,GameType,androidLevel);
         setContentView(gameView);
@@ -196,19 +193,6 @@ public class GameActivity extends AppCompatActivity {
 
         super.onSaveInstanceState(outState);
     }
-
-/*    @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState)
-    {
-        super.onRestoreInstanceState(savedInstanceState);
-//---retrieve the information persisted earlier---
-        //Log.d("pgorczyn", "123456: GameActivity.onRestoreInstanceState entered");
-        Moves = savedInstanceState.getParcelableArrayList("Moves");
-        if(savedInstanceState.getBoolean("alertShown")){
-            Winner=savedInstanceState.getInt("Winner");
-            showWinner(Winner);
-        }
-    }*/
 
     public void showWinner(int Winner) {
 

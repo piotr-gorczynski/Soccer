@@ -14,6 +14,7 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class FirebaseAuthManager {
 
@@ -43,7 +44,7 @@ public class FirebaseAuthManager {
         firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        if (firebaseAuth.getCurrentUser().isEmailVerified()) {
+                        if (Objects.requireNonNull(firebaseAuth.getCurrentUser()).isEmailVerified()) {
                             String uid = firebaseAuth.getCurrentUser().getUid();
                             String nickname = firebaseAuth.getCurrentUser().getDisplayName(); // Or query Firestore
                             storeUserData(uid, email, nickname);
@@ -53,7 +54,7 @@ public class FirebaseAuthManager {
                             callback.onLoginFailure("Please verify your email address before logging in.");
                         }
                     } else {
-                        callback.onLoginFailure(task.getException().getMessage());
+                        callback.onLoginFailure(Objects.requireNonNull(task.getException()).getMessage());
                     }
                 });
     }
@@ -65,7 +66,7 @@ public class FirebaseAuthManager {
         firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Log.d("FirebaseAuth", "User registered: " + firebaseAuth.getCurrentUser().getEmail());
+                        Log.d("FirebaseAuth", "User registered: " + Objects.requireNonNull(firebaseAuth.getCurrentUser()).getEmail());
                         Toast.makeText(context, "Registered as: " + firebaseAuth.getCurrentUser().getEmail(), Toast.LENGTH_SHORT).show();
 
                         // Set display name
@@ -77,7 +78,7 @@ public class FirebaseAuthManager {
                             if (profileTask.isSuccessful()) {
                                 Log.d("FirebaseAuth", "Nickname set to: " + nickname);
                             } else {
-                                Log.e("FirebaseAuth", "Failed to set nickname: " + profileTask.getException().getMessage());
+                                Log.e("FirebaseAuth", "Failed to set nickname: " + Objects.requireNonNull(profileTask.getException()).getMessage());
                             }
                         });
 
@@ -90,12 +91,12 @@ public class FirebaseAuthManager {
                         userData.put("email", email); // optional
 
                         db.collection("users").document(uid).set(userData)
-                                .addOnSuccessListener(aVoid -> {
-                                    Log.d("FirebaseAuth", "Nickname saved to Firestore");
-                                })
-                                .addOnFailureListener(e -> {
-                                    Log.e("FirebaseAuth", "Failed to save nickname: " + e.getMessage());
-                                });
+                                .addOnSuccessListener(aVoid ->
+                                    Log.d("FirebaseAuth", "Nickname saved to Firestore")
+                                )
+                                .addOnFailureListener(e ->
+                                    Log.e("FirebaseAuth", "Failed to save nickname: " + e.getMessage())
+                                );
 
 
                         // Send verification email
