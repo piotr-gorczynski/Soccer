@@ -10,7 +10,7 @@
         android:id="@+id/editLoginEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Email"
+        android:hint="@string/email"
         android:inputType="textEmailAddress" />
 
     <EditText
@@ -18,21 +18,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:hint="Password"
+        android:hint="@string/password"
         android:inputType="textPassword" />
 
     <Button
         android:id="@+id/btnLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Log in"
+        android:text="@string/log_in"
         android:layout_marginTop="20dp" />
 
     <TextView
         android:id="@+id/linkRegister"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Register new account"
+        android:text="@string/register_new_account"
         android:textColor="#0000EE"
         android:layout_marginTop="20dp" />
 </LinearLayout>

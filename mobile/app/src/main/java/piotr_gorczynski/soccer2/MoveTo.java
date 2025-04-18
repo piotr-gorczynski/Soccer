@@ -16,7 +16,7 @@ public class MoveTo implements Parcelable {
 
     @Override
     public String toString() {
-        return "n"+ Integer.toString(X)+ Integer.toString(Y)+Integer.toString(P);
+        return "n"+ X + Y + P;
     }
 
     // Parcelling part

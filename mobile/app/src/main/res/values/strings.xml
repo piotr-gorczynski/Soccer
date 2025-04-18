@@ -37,6 +37,9 @@
     <string name="exclemation">!</string>
     <string name="welcome_to_soccer">Welcome to Soccer!</string>
     <string name="hello_nickname">Hello, %1$s!</string>
+    <string name="log_in">Log in</string>
+    <string name="register_new_account">Register new account</string>
+    <string name="nickname">Nickname</string>
 
 
 </resources>

@@ -13,11 +13,22 @@ import java.util.ArrayList;
 
 public class Field {
 
-    private int intFieldWidth,intFieldHeight;//,intBallX, intBallY;
-    private float flFieldMargin,flDots,flText,flLinesWidth;
-    private Paint pField,pFieldBorder,pDots,pPlayer0,pPlayer1,pHintText,pHintBalloon;  // paint style and color
-    private Rect rField,rText;
-    private int GameType;
+    private final int intFieldWidth;
+    private final int intFieldHeight;//,intBallX, intBallY;
+    private final float flFieldMargin;
+    private final float flDots;
+    private final float flText;
+    private final float flLinesWidth;
+    private final Paint pField;
+    private final Paint pFieldBorder;
+    private final Paint pDots;
+    private final Paint pPlayer0;
+    private final Paint pPlayer1;
+    private final Paint pHintText;
+    private final Paint pHintBalloon;  // paint style and color
+    private final Rect rField;
+    private final Rect rText;
+    private final int GameType;
     private String sPlayer0,sPlayer1,sPlayer1YourMoveorThinking;
 
     ArrayList<MoveTo> possibleMoves;//= new ArrayList<MoveTo>();
