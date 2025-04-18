@@ -3,10 +3,12 @@ package piotr_gorczynski.soccer2;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 public class MoveTo implements Parcelable {
     public int X;
     public int Y;
-    public int P;
+    final public int P;
 
     public MoveTo(int x, int y, int p) {
         X=x;
@@ -14,6 +16,7 @@ public class MoveTo implements Parcelable {
         P=p;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "n"+ X + Y + P;
@@ -43,7 +46,7 @@ public class MoveTo implements Parcelable {
                 this.P});
     }
 
-    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+    public static final Parcelable.Creator<MoveTo> CREATOR = new Parcelable.Creator<>() {
         public MoveTo createFromParcel(Parcel in) {
             return new MoveTo(in);
         }

@@ -30,7 +30,7 @@ public class GameView extends View {
     private final int intFieldHeight;
     //private ArrayList<MoveTo> possibleMoves= new ArrayList<MoveTo>();
     private final ArrayList<MoveTo> realMoves;//= new ArrayList<MoveTo>();
-    ArrayList<MoveTo> possibleMovesForDrawing = new ArrayList<>();
+    final ArrayList<MoveTo> possibleMovesForDrawing = new ArrayList<>();
     ArrayList<MoveTo> androidMoves = new ArrayList<>();
     private final int GameType;
     private final int androidLevel;

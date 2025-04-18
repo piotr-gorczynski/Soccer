@@ -11,7 +11,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/email"
-        android:inputType="textEmailAddress" />
+        android:inputType="textEmailAddress"
+        android:autofillHints="Enter email" />
 
     <EditText
         android:id="@+id/editLoginPassword"
@@ -19,7 +20,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:hint="@string/password"
-        android:inputType="textPassword" />
+        android:inputType="textPassword"
+        android:autofillHints="Enter password"/>
+
 
     <Button
         android:id="@+id/btnLogin"
