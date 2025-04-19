@@ -11,52 +11,51 @@
     <EditText
         android:id="@+id/editEmail"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:autofillHints=""
         android:hint="@string/email"
         android:importantForAutofill="no"
         android:inputType="textEmailAddress"
-        android:minHeight="48dp"
         tools:ignore="VisualLintTextFieldSize" />
 
     <EditText
         android:id="@+id/editPassword"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_marginTop="10dp"
         android:autofillHints="Enter password"
         android:hint="@string/password"
         android:inputType="textPassword"
-        android:minHeight="48dp"
         tools:ignore="VisualLintTextFieldSize" />
 
     <EditText
         android:id="@+id/editConfirmPassword"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_marginTop="10dp"
         android:autofillHints=""
         android:hint="@string/confirm_password"
         android:inputType="textPassword"
-        android:minHeight="48dp"
         tools:ignore="VisualLintTextFieldSize" />
 
     <EditText
         android:id="@+id/editNickname"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_marginTop="10dp"
         android:autofillHints="Enter nickname"
         android:hint="@string/nickname"
-        android:inputType="textPersonName"
-        android:minHeight="48dp" />
+        android:inputType="textPersonName" />
 
 
     <Button
         android:id="@+id/btnRegister"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
+        android:background="@color/colorGreen"
+        android:textColor="@color/colorWhite"
+        android:layout_height="50dp"
+        android:textAllCaps="false"
         android:text="@string/register" />
 
 </LinearLayout>
