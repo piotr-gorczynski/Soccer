@@ -37,6 +37,7 @@
     <string name="log_in">Log in</string>
     <string name="register_new_account">Register new account</string>
     <string name="nickname">Nickname</string>
+    <string name="settings">Settings</string>
 
 
 </resources>
