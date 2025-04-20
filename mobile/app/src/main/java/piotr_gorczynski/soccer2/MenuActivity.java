@@ -67,6 +67,10 @@ public class MenuActivity extends AppCompatActivity {
          super.onSaveInstanceState(outState);
     }
 
+    public void OpenInviteFriend(View view) {
+        Intent intent = new Intent(this, InviteFriendActivity.class);
+        startActivity(intent);
+    }
 
 
 }

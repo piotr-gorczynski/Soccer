@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:padding="24dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:text="@string/enter_nickname_to_invite"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"/>
+
+    <EditText
+        android:id="@+id/nicknameInput"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="@string/friend_s_nickname"
+        android:autofillHints="Enter friend's nickname"
+        android:inputType="textPersonName"
+        android:layout_marginTop="10dp"/>
+
+    <Button
+        android:id="@+id/sendInviteButton"
+        android:layout_width="wrap_content"
+        android:background="@color/colorGreen"
+        android:textColor="@color/colorWhite"
+        android:textStyle="bold"
+        android:layout_height="50dp"
+        android:textAllCaps="false"
+        android:text="@string/send_invitation"
+        android:layout_marginTop="20dp"/>
+
+    <TextView
+        android:id="@+id/inviteResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textColor="@color/colorGreenDark"
+        android:layout_marginTop="20dp"/>
+
+</LinearLayout>
