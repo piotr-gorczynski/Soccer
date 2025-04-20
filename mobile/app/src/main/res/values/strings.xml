@@ -48,6 +48,9 @@
     <string name="error_searching_user">Error searching user.</string>
     <string name="invitation_sent">Invitation sent!</string>
     <string name="failed_to_send_invite">Failed to send invite.</string>
+    <string name="pending_game_invitations">Pending Game Invitations</string>
+    <string name="pending_invites">Pending Invites</string>
+    <string name="failed_to_load_user_info">Failed to load user info.</string>
 
 
 </resources>

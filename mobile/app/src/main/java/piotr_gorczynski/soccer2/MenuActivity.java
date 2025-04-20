@@ -72,5 +72,10 @@ public class MenuActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void OpenInvites(View view) {
+        Intent intent = new Intent(this, InvitationsActivity.class);
+        startActivity(intent);
+    }
+
 
 }

@@ -6,6 +6,8 @@ import android.widget.*;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.*;
 
@@ -73,18 +75,35 @@ public class InviteFriendActivity extends AppCompatActivity {
     }
 
     private void sendInvite(String fromUid, String toUid) {
-        Map<String, Object> invite = new HashMap<>();
-        invite.put("from", fromUid);
-        invite.put("to", toUid);
-        invite.put("status", "pending");
-        invite.put("createdAt", FieldValue.serverTimestamp());
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection("invitations")
-                .add(invite)
-                .addOnSuccessListener(docRef -> resultText.setText(R.string.invitation_sent))
-                .addOnFailureListener(e -> {
-                    resultText.setText(R.string.failed_to_send_invite);
-                    Log.e("Invite", "Sending failed", e);
-                });
+        // Get both users' nicknames from the users collection
+        Task<DocumentSnapshot> fromTask = db.collection("users").document(fromUid).get();
+        Task<DocumentSnapshot> toTask = db.collection("users").document(toUid).get();
+
+        Tasks.whenAllSuccess(fromTask, toTask).addOnSuccessListener(tasks -> {
+            String fromNickname = fromTask.getResult().getString("nickname");
+            String toNickname = toTask.getResult().getString("nickname");
+
+            Map<String, Object> invite = new HashMap<>();
+            invite.put("from", fromUid);
+            invite.put("fromNickname", fromNickname);
+            invite.put("to", toUid);
+            invite.put("toNickname", toNickname);
+            invite.put("status", "pending");
+            invite.put("createdAt", FieldValue.serverTimestamp());
+
+            db.collection("invitations")
+                    .add(invite)
+                    .addOnSuccessListener(docRef -> resultText.setText(R.string.invitation_sent))
+                    .addOnFailureListener(e -> {
+                        resultText.setText(R.string.failed_to_send_invite);
+                        Log.e("Invite", "Sending failed", e);
+                    });
+
+        }).addOnFailureListener(e -> {
+            resultText.setText(R.string.failed_to_load_user_info);
+            Log.e("Invite", "Nickname fetch error", e);
+        });
     }
 }
