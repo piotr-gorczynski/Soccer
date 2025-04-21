@@ -6,7 +6,7 @@
     },
     {
       "source": "functions/accept-invite",
-      "codebase": "acceptInvite"
+      "codebase": "accept-invite"
     }
   ],
   "firestore": {
