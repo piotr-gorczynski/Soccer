@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.*;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -38,10 +39,34 @@ public class InvitationsActivity extends AppCompatActivity {
 
         invitesList.setOnItemClickListener((parent, view, position, id) -> {
             String inviteId = inviteIds.get(position);
-            Toast.makeText(this, "You clicked invite: " + inviteId, Toast.LENGTH_SHORT).show();
-            // You can navigate to a match or call a function to accept it here
+
+            new AlertDialog.Builder(this)
+                    .setTitle("Accept Invitation")
+                    .setMessage("Do you want to accept this game invite?")
+                    .setPositiveButton("Accept", (dialog, which) -> {
+                        acceptInvite(inviteId);
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
         });
+
     }
+
+    private void acceptInvite(String invitationId) {
+        // 👇 This is just a placeholder for now
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("invitations").document(invitationId)
+                .update("status", "accepted")
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(this, "Invite accepted!", Toast.LENGTH_SHORT).show();
+                    // TODO: Launch GameActivity with matchId (after Cloud Function is done)
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Failed to accept invite.", Toast.LENGTH_SHORT).show();
+                    Log.e("Invite", "Accept failed", e);
+                });
+    }
+
 
     private void listenForInvites() {
         String currentUserId = Objects.requireNonNull(auth.getCurrentUser()).getUid();
