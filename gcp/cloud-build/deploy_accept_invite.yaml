@@ -82,7 +82,7 @@ steps:
         ./firebase deploy \
           --only functions:acceptInvite \
           --project="$project_id" \
-          --force --cwd=functions/accept-invite 
+          --force
 
         echo "✅ Function 'acceptInvite' deployed successfully."
 
