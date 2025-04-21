@@ -80,7 +80,7 @@ steps:
         project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
         echo "🚀 Deploying scheduled function 'deleteUnverifiedUsers' to project: $project_id..."
         ./firebase deploy \
-          --only functions:deleteUnverifiedUsers \
+          --only functions:delete-unverified-users \
           --project="$project_id" \
           --force
         echo "✅ Function deployed successfully."

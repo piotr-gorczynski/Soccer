@@ -2,7 +2,7 @@
   "functions": [
     {
       "source": "functions/delete-unverified-users",
-      "codebase": "deleteUnverifiedUsers"
+      "codebase": "delete-unverified-users"
     },
     {
       "source": "functions/accept-invite",
