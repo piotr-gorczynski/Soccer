@@ -80,7 +80,7 @@ steps:
         project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
 
         ./firebase deploy \
-          --only functions:acceptInvite \
+          --only functions:accept-invite \
           --project="$project_id" \
           --force
 
