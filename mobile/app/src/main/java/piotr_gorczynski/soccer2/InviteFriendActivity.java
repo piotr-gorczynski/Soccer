@@ -66,7 +66,24 @@ public class InviteFriendActivity extends AppCompatActivity {
                         return;
                     }
 
-                    sendInvite(currentUserId, targetUid);
+                    // ✅ Check if an invite already exists
+                    db.collection("invitations")
+                            .whereEqualTo("from", currentUserId)
+                            .whereEqualTo("to", targetUid)
+                            .whereEqualTo("status", "pending")
+                            .get()
+                            .addOnSuccessListener(existingInvites -> {
+                                if (!existingInvites.isEmpty()) {
+                                    resultText.setText(R.string.invite_already_sent);
+                                } else {
+                                    sendInvite(currentUserId, targetUid);
+                                }
+                            })
+                            .addOnFailureListener(e -> {
+                                resultText.setText(R.string.failed_to_check_existing_invites);
+                                Log.e("Invite", "Invite check failed", e);
+                            });
+
                 })
                 .addOnFailureListener(e -> {
                     resultText.setText(R.string.error_searching_user);
