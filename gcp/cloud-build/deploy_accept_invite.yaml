@@ -79,11 +79,10 @@ steps:
         cd /workspace/firebase
         project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
 
-        echo "🚀 Deploying 'acceptInvite' to project: $project_id..."
         ./firebase deploy \
           --only functions:acceptInvite \
           --project="$project_id" \
-          --force
+          --force --cwd=functions/accept-invite 
 
         echo "✅ Function 'acceptInvite' deployed successfully."
 
