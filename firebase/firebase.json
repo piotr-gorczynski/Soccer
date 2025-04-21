@@ -1,7 +1,14 @@
 {
-  "functions": {
-    "source": "functions/delete-unverified-users"
-  },
+  "functions": [
+    {
+      "source": "functions/delete-unverified-users",
+      "codebase": "deleteUnverifiedUsers"
+    },
+    {
+      "source": "functions/accept-invite",
+      "codebase": "acceptInvite"
+    }
+  ],
   "firestore": {
     "rules": "firestore.rules"
   }
