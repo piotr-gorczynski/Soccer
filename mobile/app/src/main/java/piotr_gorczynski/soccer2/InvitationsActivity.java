@@ -43,9 +43,7 @@ public class InvitationsActivity extends AppCompatActivity {
             new AlertDialog.Builder(this)
                     .setTitle("Accept Invitation")
                     .setMessage("Do you want to accept this game invite?")
-                    .setPositiveButton("Accept", (dialog, which) -> {
-                        acceptInvite(inviteId);
-                    })
+                    .setPositiveButton("Accept", (dialog, which) -> acceptInvite(inviteId))
                     .setNegativeButton("Cancel", null)
                     .show();
         });
