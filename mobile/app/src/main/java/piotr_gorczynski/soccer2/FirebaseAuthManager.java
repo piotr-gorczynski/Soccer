@@ -44,14 +44,24 @@ public class FirebaseAuthManager {
         firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        if (Objects.requireNonNull(firebaseAuth.getCurrentUser()).isEmailVerified()) {
+                        if (firebaseAuth.getCurrentUser() != null) {
+                            boolean isVerified = firebaseAuth.getCurrentUser().isEmailVerified();
                             String uid = firebaseAuth.getCurrentUser().getUid();
-                            String nickname = firebaseAuth.getCurrentUser().getDisplayName(); // Or query Firestore
-                            storeUserData(uid, email, nickname);
-                            callback.onLoginSuccess();
+                            Log.d("DEBUG", "User UID: " + uid);
+                            Log.d("DEBUG", "Email Verified: " + isVerified);
+
+                            if (isVerified) {
+                                String nickname = firebaseAuth.getCurrentUser().getDisplayName();
+                                storeUserData(uid, email, nickname);
+                                callback.onLoginSuccess();
+                            } else {
+                                Log.e("DEBUG", "Email is NOT verified, signing out...");
+                                firebaseAuth.signOut();
+                                callback.onLoginFailure("Please verify your email address before logging in.");
+                            }
                         } else {
-                            firebaseAuth.signOut();
-                            callback.onLoginFailure("Please verify your email address before logging in.");
+                            Log.e("DEBUG", "firebaseAuth.getCurrentUser() is NULL after signIn!");
+                            callback.onLoginFailure("Authentication failed.");
                         }
                     } else {
                         callback.onLoginFailure(Objects.requireNonNull(task.getException()).getMessage());
