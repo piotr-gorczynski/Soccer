@@ -1,5 +1,6 @@
 package piotr_gorczynski.soccer2;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.*;
@@ -9,8 +10,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.*;
+import com.google.firebase.functions.FirebaseFunctions;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Objects;
 
 public class InvitationsActivity extends AppCompatActivity {
@@ -51,19 +55,37 @@ public class InvitationsActivity extends AppCompatActivity {
     }
 
     private void acceptInvite(String invitationId) {
-        // 👇 This is just a placeholder for now
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("invitations").document(invitationId)
-                .update("status", "accepted")
-                .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(this, "Invite accepted!", Toast.LENGTH_SHORT).show();
-                    // TODO: Launch GameActivity with matchId (after Cloud Function is done)
+        FirebaseFunctions functions = FirebaseFunctions.getInstance("us-central1");
+
+        functions
+                .getHttpsCallable("acceptInvite")
+                .call(Collections.singletonMap("invitationId", invitationId))
+                .addOnSuccessListener(result -> {
+                    @SuppressWarnings("unchecked")
+                    Map<String, Object> data = (Map<String, Object>) result.getData();
+
+                    if (data != null && data.containsKey("matchId")) {
+                        String matchId = (String) data.get("matchId");
+
+                        Toast.makeText(this, "Invite accepted! Starting game...", Toast.LENGTH_SHORT).show();
+
+                        Intent intent = new Intent(this, GameActivity.class);
+                        intent.putExtra("matchId", matchId);
+                        startActivity(intent);
+                        finish();
+                    } else {
+                        Toast.makeText(this, "No matchId received from server.", Toast.LENGTH_LONG).show();
+                        Log.e("InvitationsActivity", "No matchId in function response");
+                    }
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Failed to accept invite.", Toast.LENGTH_SHORT).show();
-                    Log.e("Invite", "Accept failed", e);
+                    Toast.makeText(this, "Failed to accept invite: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Log.e("InvitationsActivity", "Accept invite failed", e);
                 });
     }
+
+
+
 
 
     private void listenForInvites() {
