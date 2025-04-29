@@ -4,33 +4,46 @@ admin.initializeApp();
 const db = admin.firestore();
 
 exports.acceptInvite = functions.https.onCall(async (data, context) => {
+  console.log("----- acceptInvite called -----");
+
   const uid = context.auth?.uid;
   const invitationId = data.invitationId;
 
-  if (!uid) {
+  if (!context.auth) {
+    console.error("❌ No auth context provided!");
     throw new functions.https.HttpsError("unauthenticated", "User must be logged in");
   }
 
+  console.log("✅ Authenticated user UID:", uid);
+
   if (!invitationId) {
+    console.error("❌ Invitation ID missing!");
     throw new functions.https.HttpsError("invalid-argument", "Invitation ID is required");
   }
+
+  console.log("🔍 Looking for invitation with ID:", invitationId);
 
   const inviteRef = db.collection("invitations").doc(invitationId);
   const inviteSnap = await inviteRef.get();
 
   if (!inviteSnap.exists) {
+    console.error("❌ Invitation not found:", invitationId);
     throw new functions.https.HttpsError("not-found", "Invitation not found");
   }
 
   const invite = inviteSnap.data();
 
   if (invite.to !== uid) {
+    console.error(`❌ Invitation was sent to ${invite.to}, but ${uid} is trying to accept it.`);
     throw new functions.https.HttpsError("permission-denied", "Not your invitation");
   }
 
   if (invite.status !== "pending") {
+    console.error("❌ Invitation already handled. Current status:", invite.status);
     throw new functions.https.HttpsError("failed-precondition", "Invitation already handled");
   }
+
+  console.log("✅ Creating match for players:", invite.from, "vs", invite.to);
 
   const matchRef = db.collection("matches").doc();
   const matchData = {
@@ -47,6 +60,8 @@ exports.acceptInvite = functions.https.onCall(async (data, context) => {
     tx.update(inviteRef, { status: "accepted" });
     tx.set(matchRef, matchData);
   });
+
+  console.log("✅ Match created successfully with ID:", matchRef.id);
 
   return { matchId: matchRef.id };
 });
