@@ -9,6 +9,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.*;
 import com.google.firebase.functions.FirebaseFunctions;
 
@@ -55,33 +56,51 @@ public class InvitationsActivity extends AppCompatActivity {
     }
 
     private void acceptInvite(String invitationId) {
-        FirebaseFunctions functions = FirebaseFunctions.getInstance("us-central1");
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Toast.makeText(this, "You must be logged in to accept invites.", Toast.LENGTH_LONG).show();
+            Log.e("DEBUG", "No Firebase user");
+            return;
+        }
 
-        functions
-                .getHttpsCallable("acceptInvite")
-                .call(Collections.singletonMap("invitationId", invitationId))
-                .addOnSuccessListener(result -> {
-                    @SuppressWarnings("unchecked")
-                    Map<String, Object> data = (Map<String, Object>) result.getData();
+        Log.d("DEBUG", "Refreshing ID token...");
+        user.getIdToken(true).addOnSuccessListener(result -> {
+            Log.d("DEBUG", "Token refresh OK");
 
-                    if (data != null && data.containsKey("matchId")) {
-                        String matchId = (String) data.get("matchId");
+            FirebaseFunctions functions = FirebaseFunctions.getInstance("us-central1");
 
-                        Toast.makeText(this, "Invite accepted! Starting game...", Toast.LENGTH_SHORT).show();
+            Log.d("DEBUG", "Calling Firebase function acceptInvite...");
 
-                        Intent intent = new Intent(this, GameActivity.class);
-                        intent.putExtra("matchId", matchId);
-                        startActivity(intent);
-                        finish();
-                    } else {
-                        Toast.makeText(this, "No matchId received from server.", Toast.LENGTH_LONG).show();
-                        Log.e("InvitationsActivity", "No matchId in function response");
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Failed to accept invite: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                    Log.e("InvitationsActivity", "Accept invite failed", e);
-                });
+            functions
+                    .getHttpsCallable("acceptInvite")
+                    .call(Collections.singletonMap("invitationId", invitationId))
+                    .addOnSuccessListener(result1 -> {
+                        @SuppressWarnings("unchecked")
+                        Map<String, Object> data = (Map<String, Object>) result1.getData();
+
+                        if (data != null && data.containsKey("matchId")) {
+                            String matchId = (String) data.get("matchId");
+                            Log.d("DEBUG", "matchId received: " + matchId);
+                            Toast.makeText(this, "Invite accepted! Starting game...", Toast.LENGTH_SHORT).show();
+
+                            Intent intent = new Intent(this, GameActivity.class);
+                            intent.putExtra("matchId", matchId);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Log.e("DEBUG", "matchId missing in response");
+                            Toast.makeText(this, "No matchId received from server.", Toast.LENGTH_LONG).show();
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("DEBUG", "Function call failed", e);
+                        Toast.makeText(this, "Failed to accept invite: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    });
+
+        }).addOnFailureListener(e -> {
+            Log.e("DEBUG", "Token refresh failed", e);
+            Toast.makeText(this, "Authentication error. Try logging in again.", Toast.LENGTH_LONG).show();
+        });
     }
 
 
