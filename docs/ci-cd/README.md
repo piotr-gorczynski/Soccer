@@ -23,3 +23,15 @@ The attached guide includes:
 - How to enable email/password after initialization
 
 📖 [Read the full solution (PDF)](programmatic-solution-to-firebase-auth-configuration-not-found.pdf)
+
+---
+## Firebase callable functions → `UNAUTHENTICATED`
+
+**Problem**: `FirebaseFunctionsException: UNAUTHENTICATED` each time the Android app calls an `https.onCall` Cloud Function, even though the user is signed in and Firestore works.
+
+**Root cause**: Organisation enforces **Domain-Restricted Sharing** (`iam.allowedPolicyMemberDomains`). That policy blocks any IAM binding that uses the public principal **`allUsers`**. Callable functions need the binding `roles/cloudfunctions.invoker  ➜ allUsers`; without it the gateway rejects the call before our code runs.
+
+ **Solution**: 
+ 1. **Override** the constraint in this project only:  ```yaml  constraint: constraints/iam.allowedPolicyMemberDomains  listPolicy:    allValues: ALLOW  ```  ```bash  gcloud beta resource-manager org-policies set-policy /tmp/allow-any-member.yaml --project "$PROJECT_ID"  ```
+ 2. **Grant** the Invoker role:  ```bash  firebase deploy --only functions:acceptInvite --allow-unauthenticated  # or (manual)  gcloud functions add-iam-policy-binding acceptInvite \     --region us-central1 \     --member allUsers \     --role roles/cloudfunctions.invoker  ```
+ 3. Re-install / clear-storage on the app and retest – the function now runs and returns `matchId`.
