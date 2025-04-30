@@ -114,7 +114,8 @@ public class InvitationsActivity extends AppCompatActivity {
                                         Toast.LENGTH_SHORT).show();
 
                                 startActivity(new Intent(this, GameActivity.class)
-                                        .putExtra("matchId", matchId));
+                                        .putExtra("matchId", matchId)
+                                        .putExtra("GameType", 1));
                                 finish();
                             })
 
