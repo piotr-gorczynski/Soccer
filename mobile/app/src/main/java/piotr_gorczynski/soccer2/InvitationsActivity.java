@@ -2,8 +2,11 @@ package piotr_gorczynski.soccer2;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.*;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,6 +15,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.*;
 import com.google.firebase.functions.FirebaseFunctions;
+import com.google.firebase.functions.FirebaseFunctionsException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,52 +59,85 @@ public class InvitationsActivity extends AppCompatActivity {
 
     }
 
-    private void acceptInvite(String invitationId) {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null) {
-            Toast.makeText(this, "You must be logged in to accept invites.", Toast.LENGTH_LONG).show();
-            Log.e("DEBUG", "No Firebase user");
+    // At the top of the class — keeps logcat tidy
+    private static final String TAG = "INVITE";
+
+    /**
+     * Attempts to accept a pending invitation by calling the
+     * Cloud Function `acceptInvite`.
+     *
+     * @param invitationId Firestore document ID of the invitation
+     */
+    private void acceptInvite(@NonNull String invitationId) {
+
+        if (TextUtils.isEmpty(invitationId)) {
+            Log.w(TAG, "acceptInvite called with empty invitationId");
+            Toast.makeText(this, "Invitation not found.", Toast.LENGTH_LONG).show();
             return;
         }
 
-        Log.d("DEBUG", "Refreshing ID token...");
-        user.getIdToken(true).addOnSuccessListener(result -> {
-            Log.d("DEBUG", "Token refresh OK");
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Log.e(TAG, "User not signed-in");
+            Toast.makeText(this, "You must be logged in to accept invites.",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
 
-            FirebaseFunctions functions = FirebaseFunctions.getInstance("us-central1");
+        Log.d(TAG, "Refreshing ID token…");
+        user.getIdToken(/* forceRefresh = */ true)
+                .addOnSuccessListener(tokenResult -> {
+                    Log.d(TAG, "Token refresh OK");
 
-            Log.d("DEBUG", "Calling Firebase function acceptInvite...");
+                    FirebaseFunctions functions = FirebaseFunctions.getInstance("us-central1");
+                    Map<String, Object> data = Collections.singletonMap("invitationId", invitationId);
 
-            functions
-                    .getHttpsCallable("acceptInvite")
-                    .call(Collections.singletonMap("invitationId", invitationId))
-                    .addOnSuccessListener(result1 -> {
-                        @SuppressWarnings("unchecked")
-                        Map<String, Object> data = (Map<String, Object>) result1.getData();
+                    Log.d(TAG, "Calling Cloud Function acceptInvite");
+                    functions.getHttpsCallable("acceptInvite")
+                            .call(data)
 
-                        if (data != null && data.containsKey("matchId")) {
-                            String matchId = (String) data.get("matchId");
-                            Log.d("DEBUG", "matchId received: " + matchId);
-                            Toast.makeText(this, "Invite accepted! Starting game...", Toast.LENGTH_SHORT).show();
+                            // ───────── success ─────────
+                            .addOnSuccessListener(result -> {
+                                @SuppressWarnings("unchecked")
+                                Map<String, Object> payload = (Map<String, Object>) result.getData();
+                                String matchId = payload != null ? (String) payload.get("matchId") : null;
 
-                            Intent intent = new Intent(this, GameActivity.class);
-                            intent.putExtra("matchId", matchId);
-                            startActivity(intent);
-                            finish();
-                        } else {
-                            Log.e("DEBUG", "matchId missing in response");
-                            Toast.makeText(this, "No matchId received from server.", Toast.LENGTH_LONG).show();
-                        }
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.e("DEBUG", "Function call failed", e);
-                        Toast.makeText(this, "Failed to accept invite: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                    });
+                                if (TextUtils.isEmpty(matchId)) {
+                                    Log.e(TAG, "matchId missing in response: " + payload);
+                                    Toast.makeText(this, "Invalid response from server.",
+                                            Toast.LENGTH_LONG).show();
+                                    return;
+                                }
 
-        }).addOnFailureListener(e -> {
-            Log.e("DEBUG", "Token refresh failed", e);
-            Toast.makeText(this, "Authentication error. Try logging in again.", Toast.LENGTH_LONG).show();
-        });
+                                Log.d(TAG, "matchId received: " + matchId);
+                                Toast.makeText(this, "Invite accepted! Starting game…",
+                                        Toast.LENGTH_SHORT).show();
+
+                                startActivity(new Intent(this, GameActivity.class)
+                                        .putExtra("matchId", matchId));
+                                finish();
+                            })
+
+                            // ───────── failure ─────────
+                            .addOnFailureListener(e -> {
+                                if (e instanceof FirebaseFunctionsException) {
+                                    FirebaseFunctionsException ffe = (FirebaseFunctionsException) e;
+                                    // ← this line gives you the real reason (App Check, IAM, etc.)
+                                    Log.w(TAG, "code=" + ffe.getCode()
+                                            + "  message=" + ffe.getMessage()
+                                            + "  details=" + ffe.getDetails());
+                                }
+                                Log.e(TAG, "Cloud Function call failed", e);
+                                Toast.makeText(this, "Failed to accept invite: " + e.getMessage(),
+                                        Toast.LENGTH_LONG).show();
+                            });
+
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Token refresh failed", e);
+                    Toast.makeText(this, "Authentication error. Try logging in again.",
+                            Toast.LENGTH_LONG).show();
+                });
     }
 
 
