@@ -8,6 +8,11 @@ import android.os.Bundle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
@@ -19,6 +24,7 @@ public class GameActivity extends AppCompatActivity {
     int Winner=-1;
     int GameType=-1;
     GameView gameView;
+    int androidLevel = 1;
 
     @SuppressLint("RedundantSuppression")
     @SuppressWarnings("deprecation")
@@ -139,6 +145,80 @@ public class GameActivity extends AppCompatActivity {
         }
 
         GameType=getIntent().getIntExtra("GameType",0);
+
+        if (GameType == 3) {
+            String matchId = getIntent().getStringExtra("matchId");
+            String localNickname = getIntent().getStringExtra("localNickname");
+
+            if (matchId == null || localNickname == null) {
+                Log.e("pgorczyn", "Missing matchId or localNickname");
+                Toast.makeText(this, "Game launch failed.", Toast.LENGTH_LONG).show();
+                finish();
+                return;
+            }
+
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if (user == null) {
+                Log.e("pgorczyn", "User not signed in");
+                Toast.makeText(this, "Please log in to continue.", Toast.LENGTH_LONG).show();
+                finish();
+                return;
+            }
+
+            String localUid = user.getUid();
+
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db.collection("matches").document(matchId).get()
+                    .addOnSuccessListener(doc -> {
+                        if (!doc.exists()) {
+                            Log.e("pgorczyn", "Match not found: " + matchId);
+                            Toast.makeText(this, "Match not found.", Toast.LENGTH_LONG).show();
+                            finish();
+                            return;
+                        }
+
+                        String uid0 = doc.getString("player0");
+                        String uid1 = doc.getString("player1");
+
+                        if (uid0 == null || uid1 == null) {
+                            Log.e("pgorczyn", "player0 or player1 field is missing");
+                            Toast.makeText(this, "Invalid match record.", Toast.LENGTH_LONG).show();
+                            finish();
+                            return;
+                        }
+
+                        String remoteUid = localUid.equals(uid0) ? uid1 : uid0;
+                        final String[] nickname0 = { localUid.equals(uid0) ? localNickname : null };
+                        final String[] nickname1 = { localUid.equals(uid1) ? localNickname : null };
+
+
+                        db.collection("users").document(remoteUid).get()
+                                .addOnSuccessListener(remoteDoc -> {
+                                    String remoteNickname = remoteDoc.getString("nickname");
+                                    if (localUid.equals(uid0)) {
+                                        nickname1[0] = remoteNickname;
+                                    } else {
+                                        nickname0[0] = remoteNickname;
+                                    }
+
+                                    gameView = new GameView(this, Moves, GameType, nickname0[0], nickname1[0]);
+                                    setContentView(gameView);
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.e("pgorczyn", "Failed to load remote nickname", e);
+                                    Toast.makeText(this, "Failed to load opponent info.", Toast.LENGTH_LONG).show();
+                                    finish();
+                                });
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("pgorczyn", "Failed to load match", e);
+                        Toast.makeText(this, "Network error.", Toast.LENGTH_LONG).show();
+                        finish();
+                    });
+
+            return;
+        }
+
         if (GameType>0) {
             Log.d("pgorczyn", "123456: GameActivity.onCreate Game Type entered: " + GameType);
         }
@@ -146,15 +226,17 @@ public class GameActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences =
                 getSharedPreferences(getPackageName() + "_preferences", Context.MODE_PRIVATE);
 
-        int androidLevel = 1;
+
         if (sharedPreferences.contains("android_level")) {
             androidLevel = Integer.parseInt(sharedPreferences.getString("android_level", "1"));
             Log.d("pgorczynMove", "Preference android_level=" + androidLevel);
         }
 
         //Log.d("pgorczyn", "123456: GameActivity.onCreate entered");
-        gameView = new GameView(this, Moves,GameType,androidLevel);
-        setContentView(gameView);
+        if (GameType != 3) {
+            gameView = new GameView(this, Moves, GameType, androidLevel);
+            setContentView(gameView);
+        }
 
         if(savedInstanceState != null && savedInstanceState.getBoolean("alertShown")){
             Winner=savedInstanceState.getInt("Winner");

@@ -82,6 +82,33 @@ public class GameView extends View {
 
 
     // Constructor
+
+    public GameView(Context context, ArrayList<MoveTo> argMoves, int argGameType, String player0Name, String player1Name) {
+        super(context);
+
+        mHandler = new MyHandler(this);
+        GameType = argGameType;
+        androidLevel = 0;  // unused for GameType 3
+        gameActivity = (GameActivity) context;
+        setBackgroundColor(ContextCompat.getColor(context, R.color.colorGreenDark));
+
+        Resources res = context.getResources();
+        intFieldWidth = res.getInteger(R.integer.intFieldHalfWidth) * 2;
+        intFieldHeight = res.getInteger(R.integer.intFieldHalfHeight) * 2;
+
+        realMoves = argMoves;
+
+        // construct Field with custom nicknames
+        field = new Field(context, realMoves, possibleMovesForDrawing, GameType, player0Name, player1Name);
+
+        this.setFocusable(true);
+        this.requestFocus();
+        this.setFocusableInTouchMode(true);
+
+        // No Android move logic here, because GameType 3 is human vs. human
+    }
+
+
     public GameView(Context context, ArrayList<MoveTo> argMoves, int argGameType,int androidLevel) {
         super(context);
 
@@ -109,8 +136,7 @@ public class GameView extends View {
         */
 
 
-        field = new Field(context, realMoves, possibleMovesForDrawing, GameType);  // ARGB
-
+        field = new Field(context, realMoves, possibleMovesForDrawing, GameType, "Player 1", "Player 2");
 
         // To enable keypad
         this.setFocusable(true);
