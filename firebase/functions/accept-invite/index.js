@@ -52,6 +52,7 @@ exports.acceptInvite = functions.https.onCall(async (data, context) => {
     status: "in_progress",
     turn: 0,
     winner: null,
+    invitationId: invitationId, // 🔧 added line    
     createdAt: admin.firestore.FieldValue.serverTimestamp(),
     updatedAt: admin.firestore.FieldValue.serverTimestamp()
   };
