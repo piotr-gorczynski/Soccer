@@ -121,8 +121,7 @@ public class InvitationsActivity extends AppCompatActivity {
 
                             // ───────── failure ─────────
                             .addOnFailureListener(e -> {
-                                if (e instanceof FirebaseFunctionsException) {
-                                    FirebaseFunctionsException ffe = (FirebaseFunctionsException) e;
+                                if (e instanceof FirebaseFunctionsException ffe) {
                                     // ← this line gives you the real reason (App Check, IAM, etc.)
                                     Log.w(TAG, "code=" + ffe.getCode()
                                             + "  message=" + ffe.getMessage()
