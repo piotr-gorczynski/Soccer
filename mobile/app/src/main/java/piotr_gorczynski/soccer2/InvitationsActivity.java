@@ -22,6 +22,8 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
+import android.content.SharedPreferences;
+
 public class InvitationsActivity extends AppCompatActivity {
 
     ListView invitesList;
@@ -113,9 +115,15 @@ public class InvitationsActivity extends AppCompatActivity {
                                 Toast.makeText(this, "Invite accepted! Starting game…",
                                         Toast.LENGTH_SHORT).show();
 
+                                SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
+                                String nickname = prefs.getString("nickname", "Player");
+
+                                // Start game with matchId, GameType 3, and local player nickname
                                 startActivity(new Intent(this, GameActivity.class)
                                         .putExtra("matchId", matchId)
-                                        .putExtra("GameType", 1));
+                                        .putExtra("GameType", 3)
+                                        .putExtra("localNickname", nickname));
+
                                 finish();
                             })
 

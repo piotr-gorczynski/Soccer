@@ -32,20 +32,31 @@ public class Field {
     final ArrayList<MoveTo> possibleMoves;//= new ArrayList<MoveTo>();
     final ArrayList<MoveTo> Moves;//= new ArrayList<MoveTo>();
 
-    public Field(Context current, ArrayList<MoveTo> argMoves, ArrayList<MoveTo> argpossibleMoves, int argGameType) {
+    public Field(Context current, ArrayList<MoveTo> argMoves, ArrayList<MoveTo> argPossibleMoves, int argGameType, String player0Name, String player1Name) {
 
-        switch(argGameType) {
-            case(1):
-                sPlayer0="Player 1";
-                sPlayer1="Player 2";
-                sPlayer1YourMoveorThinking="Your move!...";
+        switch (argGameType) {
+            case 1:
+                sPlayer0 = "Player 1";
+                sPlayer1 = "Player 2";
+                sPlayer1YourMoveorThinking = "Your move!...";
                 break;
-            case(2):
-                sPlayer0="Player";
-                sPlayer1="Android";
-                sPlayer1YourMoveorThinking="Thinking...";
+            case 2:
+                sPlayer0 = "Player";
+                sPlayer1 = "Android";
+                sPlayer1YourMoveorThinking = "Thinking...";
+                break;
+            case 3:
+                sPlayer0 = player0Name != null ? player0Name : "Player 0";
+                sPlayer1 = player1Name != null ? player1Name : "Player 1";
+                sPlayer1YourMoveorThinking = "Their move...";
+                break;
+            default:
+                sPlayer0 = "Player 0";
+                sPlayer1 = "Player 1";
+                sPlayer1YourMoveorThinking = "Move...";
                 break;
         }
+
 
 
 
@@ -97,7 +108,7 @@ public class Field {
 
 
         Moves=argMoves;
-        possibleMoves=argpossibleMoves;
+        possibleMoves=argPossibleMoves;
 
     }
 
