@@ -2,23 +2,19 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Matches: readable only by the two players involved
-    match /matches/{matchId} {
-      allow read: if request.auth != null &&
-                  (request.auth.uid == resource.data.player0 ||
-                   request.auth.uid == resource.data.player1);
-      allow write: if false; // block all client-side writes for matches
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth.uid == userId;
     }
 
-    // Invitations: both sender and receiver can read/write
-    match /invitations/{invitationId} {
+    match /invitations/{inviteId} {
       allow read, write: if request.auth != null;
     }
 
-    // Users: anyone logged in can read user nicknames
-    match /users/{userId} {
+    match /matches/{matchId} {
+      // 🔥 FIX: allow authenticated users (Player B) to listen for match creation
       allow read: if request.auth != null;
-      allow write: if request.auth != null && request.auth.uid == userId;
+      allow write: if false;
     }
   }
 }
