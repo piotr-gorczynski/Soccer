@@ -49,7 +49,7 @@ exports.acceptInvite = functions.https.onCall(async (data, context) => {
   const matchData = {
     player0: invite.from,
     player1: invite.to,
-    status: "in_progress",
+    status: "active",
     turn: 0,
     winner: null,
     invitationId: invitationId, // 🔧 added line    
