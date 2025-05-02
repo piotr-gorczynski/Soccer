@@ -27,30 +27,42 @@ public class WaitingActivity extends AppCompatActivity {
         }
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
-        String nickname = prefs.getString("nickname", "Player");
 
         // 🔍 Listen for match that was created after invite is accepted
         db.collection("matches")
                 .whereEqualTo("invitationId", inviteId)
                 .addSnapshotListener((snapshots, error) -> {
+                    Log.d(TAG, "Match snapshot listener triggered");
+
                     if (error != null) {
                         Log.e(TAG, "Match listener error", error);
                         return;
                     }
 
-                    if (snapshots != null && !snapshots.isEmpty()) {
+                    if (snapshots == null) {
+                        Log.w(TAG, "Match snapshots null");
+                        return;
+                    }
+
+                    Log.d(TAG, "Snapshot size: " + snapshots.size());
+
+                    if (!snapshots.isEmpty()) {
                         DocumentSnapshot matchDoc = snapshots.getDocuments().get(0);
                         String matchId = matchDoc.getId();
-
-                        Log.d(TAG, "Match found: " + matchId);
+                        Log.d(TAG, "✅ Match found with ID: " + matchId);
 
                         Intent intent = new Intent(this, GameActivity.class);
                         intent.putExtra("matchId", matchId);
                         intent.putExtra("GameType", 3);
+
+                        SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
+                        String nickname = prefs.getString("nickname", "Player");
                         intent.putExtra("localNickname", nickname);
+
                         startActivity(intent);
                         finish();
+                    } else {
+                        Log.d(TAG, "No matches found with invitationId=" + inviteId);
                     }
                 });
     }
