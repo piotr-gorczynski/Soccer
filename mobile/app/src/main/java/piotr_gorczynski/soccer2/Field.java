@@ -27,7 +27,9 @@ public class Field {
     private final Paint pHintText;
     private final Rect rField;
     private final Rect rText;
-    private String sPlayer0,sPlayer1,sPlayer1YourMoveorThinking;
+    private final String sPlayer0;
+    private final String sPlayer1;
+    private final String sPlayer1YourMoveorThinking;
 
     final ArrayList<MoveTo> possibleMoves;//= new ArrayList<MoveTo>();
     final ArrayList<MoveTo> Moves;//= new ArrayList<MoveTo>();

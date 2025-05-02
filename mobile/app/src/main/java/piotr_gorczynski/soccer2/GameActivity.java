@@ -8,6 +8,7 @@ import android.os.Bundle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -166,8 +167,21 @@ public class GameActivity extends AppCompatActivity {
             }
 
             String localUid = user.getUid();
-
             FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            // 🔹 Show waiting screen immediately
+            setContentView(R.layout.view_waiting_for_opponent);
+
+            // Enable full-screen immersive mode
+            getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_IMMERSIVE
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            );
+
             db.collection("matches").document(matchId).get()
                     .addOnSuccessListener(doc -> {
                         if (!doc.exists()) {
@@ -191,7 +205,6 @@ public class GameActivity extends AppCompatActivity {
                         final String[] nickname0 = { localUid.equals(uid0) ? localNickname : null };
                         final String[] nickname1 = { localUid.equals(uid1) ? localNickname : null };
 
-
                         db.collection("users").document(remoteUid).get()
                                 .addOnSuccessListener(remoteDoc -> {
                                     String remoteNickname = remoteDoc.getString("nickname");
@@ -201,8 +214,26 @@ public class GameActivity extends AppCompatActivity {
                                         nickname0[0] = remoteNickname;
                                     }
 
-                                    gameView = new GameView(this, Moves, GameType, nickname0[0], nickname1[0]);
-                                    setContentView(gameView);
+                                    // 🔹 Listen for match activation
+                                    db.collection("matches").document(matchId)
+                                            .addSnapshotListener((snapshot, error) -> {
+                                                if (error != null || snapshot == null || !snapshot.exists()) {
+                                                    Log.e("pgorczyn", "Match snapshot error", error);
+                                                    return;
+                                                }
+
+                                                String status = snapshot.getString("status");
+                                                if ("active".equals(status)) {
+                                                    Log.d("pgorczyn", "Match is active. Starting game...");
+
+                                                    if (gameView == null) {
+                                                        gameView = new GameView(this, Moves, GameType, nickname0[0], nickname1[0]);
+                                                        setContentView(gameView);
+                                                    }
+                                                }
+                                                // else: still waiting – UI already shows waiting screen
+                                            });
+
                                 })
                                 .addOnFailureListener(e -> {
                                     Log.e("pgorczyn", "Failed to load remote nickname", e);
