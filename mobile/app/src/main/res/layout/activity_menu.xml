@@ -1,40 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorWhite"
-    tools:context="piotr_gorczynski.soccer2.MenuActivity">
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="20dp">
 
     <TextView
         android:id="@+id/nicknameLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
         android:text="@string/hello"
         android:textColor="@color/colorGreenDark"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/PlayerVsAndroid"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:textStyle="bold" />
 
 
     <Button
         android:id="@+id/PlayerVsAndroid"
         android:layout_width="200dp"
         android:layout_height="50dp"
-        android:layout_marginBottom="85dp"
+        android:layout_marginTop="10dp"
         android:background="@color/colorGreen"
         android:onClick="OpenGamePlayerVsAndroid"
         android:text="@string/menu_YouvsAndroid"
         android:textAllCaps="false"
         android:textColor="@color/colorWhite"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/PlayerVsPlayer"
@@ -46,10 +38,7 @@
         android:text="@string/menu_Player1vsPlayer2"
         android:textAllCaps="false"
         android:textColor="@color/colorWhite"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/PlayerVsAndroid" />
+        android:textStyle="bold"/>
 
     <Button
         android:id="@+id/InviteFriend"
@@ -61,10 +50,7 @@
         android:text="@string/invite_a_friend"
         android:textAllCaps="false"
         android:textColor="@color/colorWhite"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/PlayerVsPlayer" />
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/ShowInvites"
@@ -76,10 +62,7 @@
         android:text="@string/pending_invites"
         android:textAllCaps="false"
         android:textColor="@color/colorWhite"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/InviteFriend" />
+        android:textStyle="bold" />
 
 
     <Button
@@ -92,10 +75,7 @@
         android:text="@string/menu_Settings"
         android:textAllCaps="false"
         android:textColor="@color/colorWhite"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ShowInvites" />
+        android:textStyle="bold" />
 
     <!-- New Account button -->
     <Button
@@ -108,9 +88,6 @@
         android:text="@string/account"
         android:textAllCaps="false"
         android:textColor="@color/colorWhite"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/Settings" />
+        android:textStyle="bold" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
