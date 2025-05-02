@@ -23,7 +23,10 @@
         <activity android:name=".LoginActivity" /> <!-- ✅ Add this -->
         <activity android:name=".InviteFriendActivity" />
         <activity android:name=".InvitationsActivity" />
-
+        <activity android:name=".WaitingActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        </activity>
 
     </application>
 

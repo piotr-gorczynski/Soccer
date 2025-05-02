@@ -1,5 +1,7 @@
 package piotr_gorczynski.soccer2;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.*;
@@ -112,7 +114,45 @@ public class InviteFriendActivity extends AppCompatActivity {
 
             db.collection("invitations")
                     .add(invite)
-                    .addOnSuccessListener(docRef -> resultText.setText(R.string.invitation_sent))
+                    .addOnSuccessListener(docRef -> {
+                        resultText.setText(R.string.invitation_sent);
+
+                        String inviteId = docRef.getId();
+
+                        // Show waiting screen
+                        Intent intent = new Intent(this, WaitingActivity.class);
+                        intent.putExtra("inviteId", inviteId);
+                        startActivity(intent);
+                        finish();
+
+                        // Start listening for match created from this invitation
+                        db.collection("matches")
+                                .whereEqualTo("invitationId", inviteId)
+                                .addSnapshotListener((snapshots, error) -> {
+                                    if (error != null) {
+                                        Log.e("Invite", "Error listening for match", error);
+                                        return;
+                                    }
+
+                                    if (snapshots != null && !snapshots.isEmpty()) {
+                                        DocumentSnapshot matchDoc = snapshots.getDocuments().get(0);
+                                        String matchId = matchDoc.getId();
+
+                                        Log.d("Invite", "Match found: " + matchId);
+
+                                        SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
+                                        String nickname = prefs.getString("nickname", "Player");
+
+                                        // Start the game as GameType 3 (remote vs remote)
+                                        startActivity(new Intent(this, GameActivity.class)
+                                                .putExtra("matchId", matchId)
+                                                .putExtra("GameType", 3)
+                                                .putExtra("localNickname", nickname));
+
+                                        finish();
+                                    }
+                                });
+                    })
                     .addOnFailureListener(e -> {
                         resultText.setText(R.string.failed_to_send_invite);
                         Log.e("Invite", "Sending failed", e);
