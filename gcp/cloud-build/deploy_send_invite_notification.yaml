@@ -69,7 +69,7 @@ steps:
         npm install
         echo "📦 Dependencies installed."
 
-  # Step 5: Deploy the function from its own directory
+  # Step 5: Deploy the function from Firebase root using codebase name
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: 'deploy-send-invite-notification'
     entrypoint: bash
@@ -77,15 +77,12 @@ steps:
       - '-c'
       - |
         set -e
-        cd /workspace/firebase/functions/send-invite-notification
+        cd /workspace/firebase
         project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
 
-        echo "🔍 Listing available functions..."
-        /workspace/firebase/firebase functions:list --project="$project_id"
-
-        echo "🚀 Deploying function 'sendInviteNotification'..."
-        /workspace/firebase/firebase deploy \
-          --only functions:sendInviteNotification \
+        echo "🚀 Deploying function 'sendInviteNotification' from codebase 'send-invite-notification'..."
+        ./firebase deploy \
+          --only functions:send-invite-notification \
           --project="$project_id" \
           --force
 
