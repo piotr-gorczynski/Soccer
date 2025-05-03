@@ -1,0 +1,91 @@
+substitutions:
+  _ENVIRONMENT: 'dev'
+  _FOLDER_NAME: 'soccer'
+
+steps:
+  # Step 1: Get Firebase project ID
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'get-project-id'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "🔎 Finding project for ${_FOLDER_NAME}-${_ENVIRONMENT}..."
+        gcloud projects list \
+          --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
+          --format="value(projectId)" \
+          | head -n 1 > /workspace/FIREBASE_PROJECT_ID.txt
+
+        if [ ! -s /workspace/FIREBASE_PROJECT_ID.txt ]; then
+          echo "❌ Project ID not found!"
+          exit 1
+        fi
+
+  # Step 2: Install Firebase CLI
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'install-firebase-cli'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "⬇️ Installing Firebase CLI..."
+        curl -sL https://firebase.tools | bash
+        mkdir -p /workspace/firebase
+        cp /usr/local/bin/firebase /workspace/firebase/
+        chmod +x /workspace/firebase/firebase
+        echo "✅ Firebase CLI installed."
+
+  # Step 3: Clone source code
+  - name: 'gcr.io/cloud-builders/git'
+    id: 'pull-files'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -ex
+        echo "📦 Cloning from the development branch..."
+        git clone -b development --single-branch https://github.com/piotr-gorczynski/Soccer.git /workspace/soccer
+
+        echo "📁 Copying Firestore config & send-invite-notification function..."
+        cp /workspace/soccer/firebase/firebase.json /workspace/firebase/firebase.json
+        cp /workspace/soccer/firebase/firestore.rules /workspace/firebase/firestore.rules
+
+        mkdir -p /workspace/firebase/functions/send-invite-notification
+        cp /workspace/soccer/firebase/functions/send-invite-notification/sendInviteNotification.js /workspace/firebase/functions/send-invite-notification/
+        echo "exports.sendInviteNotification = require('./sendInviteNotification').sendInviteNotification;" > /workspace/firebase/functions/send-invite-notification/index.js
+        cp /workspace/soccer/firebase/functions/send-invite-notification/package.json /workspace/firebase/functions/send-invite-notification/
+
+  # Step 4: Install dependencies
+  - name: 'node:18-slim'
+    id: 'install-deps-send-invite-notification'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -ex
+        cd /workspace/firebase/functions/send-invite-notification
+        npm install
+        echo "📦 Dependencies installed."
+
+  # Step 5: Deploy function
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'deploy-send-invite-notification'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -e
+        cd /workspace/firebase
+        project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
+
+        ./firebase deploy \
+          --only functions:sendInviteNotification \
+          --project="$project_id" \
+          --force
+
+        echo "✅ Function 'sendInviteNotification' deployed successfully."
+
+options:
+  logging: CLOUD_LOGGING_ONLY
