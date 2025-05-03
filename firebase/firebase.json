@@ -7,6 +7,10 @@
     {
       "source": "functions/accept-invite",
       "codebase": "accept-invite"
+    },
+    {
+      "source": "functions/send-invite-notification",
+      "codebase": "send-invite-notification"
     }
   ],
   "firestore": {
