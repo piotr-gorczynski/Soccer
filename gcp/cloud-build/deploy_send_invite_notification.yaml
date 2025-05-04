@@ -22,16 +22,16 @@ steps:
           exit 1
         fi
 
-  # Step 1.5: Grant messagingAdmin role to Cloud Build SA
+  # Step 1.5: Grant messagingAdmin role to App Engine default service account
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    id: 'grant-fcm-permission'
+    id: 'grant-fcm-permission-app-engine'
     entrypoint: bash
     args:
       - '-c'
       - |
         set -e
         project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
-        sa_email="cloud-build-sa@org-service-account-001.iam.gserviceaccount.com"
+        sa_email="${project_id}@appspot.gserviceaccount.com"
 
         echo "🔐 Granting roles/firebase.messagingAdmin to $sa_email on $project_id..."
         gcloud projects add-iam-policy-binding "$project_id" \
