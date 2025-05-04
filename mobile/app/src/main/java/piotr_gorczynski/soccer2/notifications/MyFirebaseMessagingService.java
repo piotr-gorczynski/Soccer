@@ -1,6 +1,7 @@
 package piotr_gorczynski.soccer2.notifications;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.Log;
@@ -44,23 +45,21 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         Log.d("FCM", "📨 Message received: " + remoteMessage.getData());
 
-        String title = "Game Invite";
-        String body = "You received an invite from " + remoteMessage.getData().get("fromNickname");
+        Context context = getApplicationContext();
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "invite_channel")
-                .setSmallIcon(R.drawable.ic_notifications) // ✅ Make sure this icon exists
-                .setContentTitle(title)
-                .setContentText(body)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "invite_channel")
+                .setSmallIcon(R.drawable.ic_notifications)
+                .setContentTitle("Game Invite")
+                .setContentText("You received an invite from " + remoteMessage.getData().get("fromNickname"))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true);
 
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+
+// Safe permission check
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
-                ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-                        == PackageManager.PERMISSION_GRANTED) {
-
+                ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
             notificationManager.notify(1001, builder.build());
-
         } else {
             Log.w("FCM", "❌ Cannot show notification — POST_NOTIFICATIONS not granted");
         }

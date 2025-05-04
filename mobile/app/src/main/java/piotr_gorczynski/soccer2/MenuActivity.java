@@ -1,5 +1,7 @@
 package piotr_gorczynski.soccer2;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
@@ -70,6 +72,16 @@ public class MenuActivity extends AppCompatActivity {
                 });
         // ✅ Call permission request
         requestNotificationPermissionIfNeeded();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    "invite_channel",
+                    "Game Invites",
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel);
+        }
     }
 
     @Override
