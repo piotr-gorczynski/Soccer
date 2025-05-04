@@ -67,6 +67,8 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
     //Added dependencies for invoking acceptInvite
     implementation 'com.google.firebase:firebase-functions:21.2.1'
+    // FCM
+    implementation 'com.google.firebase:firebase-messaging:24.1.1' // Latest as of May 2025
 }
 
 import java.nio.file.Files

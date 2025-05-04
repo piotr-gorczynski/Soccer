@@ -8,7 +8,9 @@ import android.view.View;
 import android.content.SharedPreferences;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
-
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 
 public class MenuActivity extends AppCompatActivity {
@@ -32,7 +34,34 @@ public class MenuActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
+
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.w("FCM", "❌ Failed to get FCM token", task.getException());
+                        return;
+                    }
+
+                    String token = task.getResult();
+                    Log.d("FCM", "🔑 Token from MenuActivity: " + token);
+
+                    String uid = FirebaseAuth.getInstance().getCurrentUser() != null
+                            ? FirebaseAuth.getInstance().getCurrentUser().getUid()
+                            : null;
+
+                    if (uid != null) {
+                        FirebaseFirestore.getInstance()
+                                .collection("users")
+                                .document(uid)
+                                .update("fcmToken", token)
+                                .addOnSuccessListener(aVoid -> Log.d("FCM", "✅ Token saved"))
+                                .addOnFailureListener(e -> Log.e("FCM", "❌ Failed to save token", e));
+                    } else {
+                        Log.w("FCM", "⚠️ No logged-in user; token not saved");
+                    }
+                });
     }
+
 
 
     public void OpenGamePlayerVsPlayer(View view) {

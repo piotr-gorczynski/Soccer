@@ -26,7 +26,7 @@ public class WaitingActivity extends AppCompatActivity {
             return;
         }
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();@
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         // 🔍 Listen for match that was created after invite is accepted
         db.collection("matches")
