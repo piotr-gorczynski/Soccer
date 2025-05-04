@@ -22,6 +22,23 @@ steps:
           exit 1
         fi
 
+  # Step 1.5: Grant messagingAdmin role to Cloud Build SA
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'grant-fcm-permission'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -e
+        project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
+        sa_email="cloud-build-sa@org-service-account-001.iam.gserviceaccount.com"
+
+        echo "🔐 Granting roles/firebase.messagingAdmin to $sa_email on $project_id..."
+        gcloud projects add-iam-policy-binding "$project_id" \
+          --member="serviceAccount:$sa_email" \
+          --role="roles/firebase.messagingAdmin" \
+          --quiet
+
   # Step 2: Install Firebase CLI
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: 'install-firebase-cli'
