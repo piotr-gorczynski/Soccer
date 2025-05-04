@@ -11,9 +11,17 @@ import androidx.annotation.NonNull;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 
 
 public class MenuActivity extends AppCompatActivity {
+
+    private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 101;
 
     @Override
     protected void onResume() {
@@ -60,8 +68,34 @@ public class MenuActivity extends AppCompatActivity {
                         Log.w("FCM", "⚠️ No logged-in user; token not saved");
                     }
                 });
+        // ✅ Call permission request
+        requestNotificationPermissionIfNeeded();
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.d("FCM", "✅ Notification permission granted");
+            } else {
+                Log.w("FCM", "❌ Notification permission denied");
+            }
+        }
+    }
+
+    private void requestNotificationPermissionIfNeeded() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(
+                        this,
+                        new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                        NOTIFICATION_PERMISSION_REQUEST_CODE
+                );
+            }
+        }
+    }
 
 
     public void OpenGamePlayerVsPlayer(View view) {
