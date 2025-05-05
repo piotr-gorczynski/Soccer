@@ -1,6 +1,8 @@
 package piotr_gorczynski.soccer2.notifications;
 
 import android.Manifest;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -22,8 +24,6 @@ import android.app.PendingIntent;
 import android.content.Intent;
 
 import piotr_gorczynski.soccer2.InvitationsActivity;
-
-import androidx.core.app.TaskStackBuilder;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
@@ -54,40 +54,61 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         Context context = getApplicationContext();
 
-        // Intent to open InvitationsActivity
-        Intent inviteIntent = new Intent(this, InvitationsActivity.class);
+        // 1. Extract everything from the data payload
+        String title        = remoteMessage.getData().get("title");
+        String body         = remoteMessage.getData().get("body");
+        String fromNickname = remoteMessage.getData().get("fromNickname");
+        // Safely generate a notification ID
+        String inviteIdRaw   = remoteMessage.getData().get("inviteId");
+        String inviteId      = (inviteIdRaw != null
+                ? inviteIdRaw
+                : String.valueOf(System.currentTimeMillis()));
+        int notificationId   = inviteId.hashCode();
 
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this)
-                .addNextIntentWithParentStack(inviteIntent);
-        Intent[] intents = stackBuilder.getIntents();
-        for (Intent i : intents) {
-            Log.d("FCM", "Stack Intent: " + i.toUri(Intent.URI_INTENT_SCHEME));
-        }
-        PendingIntent pendingIntent = stackBuilder.getPendingIntent(
+        // 2. Build an Intent to open InvitationsActivity
+        Intent inviteIntent = new Intent(context, InvitationsActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        inviteIntent.putExtra("fromNickname", fromNickname);
+        inviteIntent.putExtra("inviteId", inviteId);
+
+        // 3. Create a direct PendingIntent (no TaskStackBuilder here)
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                context,
                 0,
+                inviteIntent,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
-
-
-        // Build notification
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "invite_channel")
-                .setSmallIcon(R.drawable.ic_notifications)
-                .setContentTitle("Game Invite")
-                .setContentText("You received an invite from " + remoteMessage.getData().get("fromNickname"))
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setContentIntent(pendingIntent)  // ✅ add this line
-                .setAutoCancel(true);
-
-        // Show it
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
-                ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
-            notificationManager.notify(1001, builder.build());
-        } else {
-            Log.w("FCM", "❌ Notification permission not granted");
+        // 4. Ensure the notification channel exists (Oreo+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    "invite_channel",
+                    "Game Invites",
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+            NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            nm.createNotificationChannel(channel);
         }
 
+        // 5. Build and show the notification
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "invite_channel")
+                .setSmallIcon(R.drawable.ic_notifications)
+                .setContentTitle(title)
+                .setContentText(body)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent);
+
+        // 6. Show it—but only if POST_NOTIFICATIONS permission is granted on Android 13+
+        // Permission‐guarded notify() (Android 13+)
+        NotificationManagerCompat nm = NotificationManagerCompat.from(context);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU
+                || ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+                == PackageManager.PERMISSION_GRANTED) {
+            nm.notify(notificationId, builder.build());
+        } else {
+            Log.w("FCM", "Missing POST_NOTIFICATIONS permission");
+        }
 
     }
 }
