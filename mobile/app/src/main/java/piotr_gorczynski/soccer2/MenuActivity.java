@@ -26,6 +26,12 @@ public class MenuActivity extends AppCompatActivity {
     private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 101;
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Log.d("INVITE", "InvitationsActivity onNewIntent: " + intent.toUri(Intent.URI_INTENT_SCHEME));
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);

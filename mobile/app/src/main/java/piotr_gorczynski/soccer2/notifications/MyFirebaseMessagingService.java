@@ -57,11 +57,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // Intent to open InvitationsActivity
         Intent inviteIntent = new Intent(this, InvitationsActivity.class);
 
-        PendingIntent pendingIntent = TaskStackBuilder.create(this)
-                .addNextIntentWithParentStack(inviteIntent)               // Menu → Invitations
-                .getPendingIntent(0,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                                | PendingIntent.FLAG_IMMUTABLE);                    // same flags you used before
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this)
+                .addNextIntentWithParentStack(inviteIntent);
+        Intent[] intents = stackBuilder.getIntents();
+        for (Intent i : intents) {
+            Log.d("FCM", "Stack Intent: " + i.toUri(Intent.URI_INTENT_SCHEME));
+        }
+        PendingIntent pendingIntent = stackBuilder.getPendingIntent(
+                0,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
 
 
         // Build notification

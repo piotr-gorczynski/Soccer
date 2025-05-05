@@ -35,6 +35,12 @@ public class InvitationsActivity extends AppCompatActivity {
     FirebaseAuth auth;
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        Log.d("INVITE", "InvitationsActivity onNewIntent: " + intent.toUri(Intent.URI_INTENT_SCHEME));
+    }
+
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_invitations);
