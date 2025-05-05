@@ -24,7 +24,16 @@
         <activity android:name=".RegisterAccountActivity" />
         <activity android:name=".LoginActivity" /> <!-- ✅ Add this -->
         <activity android:name=".InviteFriendActivity" />
-        <activity android:name=".InvitationsActivity" />
+        <activity
+            android:name=".InvitationsActivity"
+            android:exported="true"
+            android:parentActivityName=".MenuActivity">
+
+            <!-- Support the “Up” button and older APIs -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MenuActivity" />
+        </activity>
         <activity android:name=".WaitingActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">

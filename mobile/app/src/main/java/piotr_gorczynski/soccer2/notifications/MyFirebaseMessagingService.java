@@ -23,6 +23,8 @@ import android.content.Intent;
 
 import piotr_gorczynski.soccer2.InvitationsActivity;
 
+import androidx.core.app.TaskStackBuilder;
+
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     @Override
@@ -53,15 +55,14 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Context context = getApplicationContext();
 
         // Intent to open InvitationsActivity
-        Intent intent = new Intent(this, InvitationsActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        Intent inviteIntent = new Intent(this, InvitationsActivity.class);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(
-                this,
-                0,
-                intent,
-                PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
-        );
+        PendingIntent pendingIntent = TaskStackBuilder.create(this)
+                .addNextIntentWithParentStack(inviteIntent)               // Menu → Invitations
+                .getPendingIntent(0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                                | PendingIntent.FLAG_IMMUTABLE);                    // same flags you used before
+
 
         // Build notification
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "invite_channel")
