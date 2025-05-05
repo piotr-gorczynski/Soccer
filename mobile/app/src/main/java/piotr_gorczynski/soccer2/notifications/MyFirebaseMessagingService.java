@@ -18,6 +18,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import piotr_gorczynski.soccer2.R;
 
+import android.app.PendingIntent;
+import android.content.Intent;
+
+import piotr_gorczynski.soccer2.InvitationsActivity;
+
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     @Override
@@ -47,22 +52,35 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         Context context = getApplicationContext();
 
+        // Intent to open InvitationsActivity
+        Intent intent = new Intent(context, InvitationsActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                context,
+                0,
+                intent,
+                PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
+        );
+
+        // Build notification
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "invite_channel")
                 .setSmallIcon(R.drawable.ic_notifications)
                 .setContentTitle("Game Invite")
                 .setContentText("You received an invite from " + remoteMessage.getData().get("fromNickname"))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setContentIntent(pendingIntent)  // ✅ add this line
                 .setAutoCancel(true);
 
+        // Show it
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-
-// Safe permission check
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
                 ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
             notificationManager.notify(1001, builder.build());
         } else {
-            Log.w("FCM", "❌ Cannot show notification — POST_NOTIFICATIONS not granted");
+            Log.w("FCM", "❌ Notification permission not granted");
         }
+
 
     }
 }
