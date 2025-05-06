@@ -60,6 +60,20 @@ exports.acceptInvite = functions.https.onCall(async (data, context) => {
   await db.runTransaction(async tx => {
     tx.update(inviteRef, { status: "accepted" });
     tx.set(matchRef, matchData);
+
+    // 🔸 Add initial move (middle of field, p = 0)
+    const fieldHalfWidth  = /* use same integer as your Android resources */;
+    const fieldHalfHeight = /* likewise */;
+    const initialMove = {
+      x: fieldHalfWidth,
+      y: fieldHalfHeight,
+      p: 0,
+      createdAt: admin.firestore.FieldValue.serverTimestamp()
+    };
+    tx.set(
+      matchRef.collection("moves").doc(), 
+      initialMove
+    );    
   });
 
   console.log("✅ Match created successfully with ID:", matchRef.id);
