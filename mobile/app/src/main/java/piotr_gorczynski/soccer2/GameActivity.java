@@ -26,6 +26,12 @@ public class GameActivity extends AppCompatActivity {
     GameView gameView;
     int androidLevel = 1;
 
+    //Real-time Move Sync
+    private String matchId;
+    private CollectionReference movesRef;
+    private int localPlayerIndex;  // 0 or 1
+    private FirebaseFirestore db;
+
     @SuppressLint("RedundantSuppression")
     @SuppressWarnings("deprecation")
     private boolean isLegacyMovesNotNull(Bundle savedInstanceState) {
