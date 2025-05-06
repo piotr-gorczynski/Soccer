@@ -34,6 +34,22 @@ public class GameView extends View {
     ArrayList<MoveTo> androidMoves = new ArrayList<>();
     private final int GameType;
     private final int androidLevel;
+    private MoveCallback moveCallback;
+
+    @SuppressWarnings("unused")
+
+    public interface MoveCallback {
+        void onLocalMove(int x, int y);
+    }
+
+    public void setMoveCallback(MoveCallback cb) {
+        this.moveCallback = cb;
+    }
+
+    public void replaceMoves(ArrayList<MoveTo> newMoves) {
+        this.realMoves.clear();
+        this.realMoves.addAll(newMoves);
+    }
 
     public static class MyHandler extends Handler {
         private final GameView gameView;
@@ -551,14 +567,14 @@ public class GameView extends View {
     // Touch-input handler
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        //if android's move then ignore onTouchEvent
+        // 1) if android's move then ignore onTouchEvent
         if((GameType ==2) && (realMoves.get(realMoves.size()-1).P==1))
             return true;
 
-        int x,y;
-        ArrayList<MoveTo> possibleMoves= new ArrayList<>();
-        //if ((event.getAction()==MotionEvent.ACTION_DOWN) || (event.getAction()==MotionEvent.ACTION_MOVE) || (event.getAction()==MotionEvent.ACTION_UP) ) {
+        // 2) Only handle ACTION_UP (finger lifted)
         if (event.getAction()==MotionEvent.ACTION_UP)  {
+            // 2a) Map screen coords → field coords
+            int x,y;
             if(getHeight()>getWidth()){
                 x=field.x2w(event.getX());
                 y=field.y2h(event.getY());
@@ -566,20 +582,33 @@ public class GameView extends View {
                 y=intFieldHeight-field.x2w(event.getX());
                 x=intFieldWidth-field.y2h(event.getY());
             }
-            createPossibleMoves(possibleMoves,realMoves);
-            if(isMoveValid(x,y,possibleMoves)) {
-                MakeMove(x,y,realMoves);
-                Log.d("pgorczyn", "123456: Before invalidate");
-                Log.d("pgorczyn", "MINMAX:" + MINMAX(x, y, realMoves.get(realMoves.size() - 1).P));
 
-                invalidate();
-                Log.d("pgorczyn", "123456: After invalidate");
-                //if plays with Android and it is Android move and there are possible MOves
-                if((GameType ==2) && (realMoves.get(realMoves.size()-1).P==1) && (!possibleMoves.isEmpty()))
-                    //Send message for Android to move
-                    mHandler.sendEmptyMessage(1);
+            // 2b) Compute legal moves
+            ArrayList<MoveTo> possibleMoves= new ArrayList<>();
+            createPossibleMoves(possibleMoves,realMoves);
+
+            // 2c) If this tap is a valid move…
+            if(isMoveValid(x,y,possibleMoves)) {
+                if (GameType == 3) {
+                    // ── PvP: delegate the move to the Activity, which will write it to Firestore
+                    if (moveCallback != null) {
+                        moveCallback.onLocalMove(x, y);
+                    }
+                } else {
+                    // ── GameType 1 & 2: use your existing local/AI move logic
+                    MakeMove(x, y, realMoves);
+                    Log.d("pgorczyn", "Before invalidate, last P=" + realMoves.get(realMoves.size() - 1).P);
+                    invalidate();
+                    Log.d("pgorczyn", "After invalidate");
+
+                    // ── If now it's Android’s turn and there _are_ moves available, queue AI
+                    if ((GameType == 2) && (realMoves.get(realMoves.size() - 1).P == 1) && (!possibleMoves.isEmpty()))
+                        //Send message for Android to move
+                        mHandler.sendEmptyMessage(1);
+                }
+                // 2d) Accessibility / click feedback
+                performClick();
             }
-            performClick();
         }
         return true;  // Event handled
     }
