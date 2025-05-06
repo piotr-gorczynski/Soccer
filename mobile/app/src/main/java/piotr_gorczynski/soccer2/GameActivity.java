@@ -1,5 +1,7 @@
 package piotr_gorczynski.soccer2;
 
+import static android.widget.Toast.LENGTH_SHORT;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -12,9 +14,17 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class GameActivity extends AppCompatActivity {
 
@@ -153,7 +163,7 @@ public class GameActivity extends AppCompatActivity {
         GameType=getIntent().getIntExtra("GameType",0);
 
         if (GameType == 3) {
-            String matchId = getIntent().getStringExtra("matchId");
+            this.matchId = getIntent().getStringExtra("matchId");
             String localNickname = getIntent().getStringExtra("localNickname");
 
             if (matchId == null || localNickname == null) {
@@ -172,7 +182,7 @@ public class GameActivity extends AppCompatActivity {
             }
 
             String localUid = user.getUid();
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db = FirebaseFirestore.getInstance();   // assign to the field
 
             // 🔹 Show waiting screen immediately
             setContentView(R.layout.view_waiting_for_opponent);
@@ -196,44 +206,56 @@ public class GameActivity extends AppCompatActivity {
                             return;
                         }
 
-                        String remoteUid = localUid.equals(uid0) ? uid1 : uid0;
-                        final String[] nickname0 = { localUid.equals(uid0) ? localNickname : null };
-                        final String[] nickname1 = { localUid.equals(uid1) ? localNickname : null };
+                        // Determine who we are (0 or 1) and set up nicknames
+                        localPlayerIndex = localUid.equals(uid0) ? 0 : 1;  // assign to the field
+                        final String[] nickname0 = { localPlayerIndex == 0 ? localNickname : null };
+                        final String[] nickname1 = { localPlayerIndex == 1 ? localNickname : null };
 
+                        // Look up the remote player’s nickname
+                        String remoteUid = localPlayerIndex == 0 ? uid1 : uid0;
                         db.collection("users").document(remoteUid).get()
                                 .addOnSuccessListener(remoteDoc -> {
                                     String remoteNickname = remoteDoc.getString("nickname");
-                                    if (localUid.equals(uid0)) {
+                                    if (localPlayerIndex == 0) {
                                         nickname1[0] = remoteNickname;
                                     } else {
                                         nickname0[0] = remoteNickname;
                                     }
-
-                                    // 🔹 Listen for match activation
-                                    db.collection("matches").document(matchId)
-                                            .addSnapshotListener((snapshot, error) -> {
-                                                if (error != null || snapshot == null || !snapshot.exists()) {
-                                                    Log.e("pgorczyn", "Match snapshot error", error);
-                                                    return;
-                                                }
-
-                                                String status = snapshot.getString("status");
-                                                if ("active".equals(status)) {
-                                                    Log.d("pgorczyn", "Match is active. Starting game...");
-
-                                                    if (gameView == null) {
-                                                        gameView = new GameView(this, Moves, GameType, nickname0[0], nickname1[0]);
-                                                        setContentView(gameView);
-                                                    }
-                                                }
-                                                // else: still waiting – UI already shows waiting screen
-                                            });
-
                                 })
                                 .addOnFailureListener(e -> {
-                                    Log.e("pgorczyn", "Failed to load remote nickname", e);
-                                    Toast.makeText(this, "Failed to load opponent info.", Toast.LENGTH_LONG).show();
+                                    Log.e("pgorczyn", "Failed to load opponent info.", e);
+                                    Toast.makeText(this, "Failed to load opponent.", Toast.LENGTH_LONG).show();
                                     finish();
+                                });
+
+                        // ── Wire up real‐time “moves” listener ──
+                        movesRef =
+                                db.collection("matches")
+                                        .document(this.matchId)
+                                        .collection("moves");
+
+                        movesRef
+                                .orderBy("createdAt")
+                                .addSnapshotListener(this::onMovesUpdate);
+
+                        // ── Listen for the match to flip to “active” ──
+                        db.collection("matches").document(matchId)
+                                .addSnapshotListener((snap, err) -> {
+                                    if (err != null || snap == null || !snap.exists()) return;
+                                    if ("active".equals(snap.getString("status")) && gameView == null) {
+                                        // Initialize GameView with an empty list (we’ll fill from Firestore),
+                                        // our player index, and both nicknames
+                                        gameView = new GameView(
+                                                this,
+                                                new ArrayList<>(),       // will be populated by onMovesUpdate()
+                                                GameType,
+                                                nickname0[0],
+                                                nickname1[0]
+                                        );
+                                        // Give GameView a callback so touch → Firestore write
+                                        gameView.setMoveCallback(this::sendMoveToFirestore);
+                                        setContentView(gameView);
+                                    }
                                 });
                     })
                     .addOnFailureListener(e -> {
@@ -270,6 +292,39 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
+    private void onMovesUpdate(
+            QuerySnapshot snapshot, FirebaseFirestoreException e
+    ) {
+        if (e != null) {
+            Log.e("GameActivity", "Listen for moves failed", e);
+            return;
+        }
+        // Clear & rebuild the local Moves list
+        ArrayList<MoveTo> newMoves = new ArrayList<>();
+        for (DocumentSnapshot doc : snapshot.getDocuments()) {
+            int x = Objects.requireNonNull(doc.getLong("x")).intValue();
+            int y = Objects.requireNonNull(doc.getLong("y")).intValue();
+            int p = Objects.requireNonNull(doc.getLong("p")).intValue();
+            newMoves.add(new MoveTo(x, y, p));
+        }
+        // Swap into your GameView and redraw
+        runOnUiThread(() -> {
+            gameView.replaceMoves(newMoves);
+            gameView.invalidate();
+        });
+    }
+
+    private void sendMoveToFirestore(int x, int y) {
+        Map<String,Object> m = new HashMap<>();
+        m.put("x", x);
+        m.put("y", y);
+        m.put("p", localPlayerIndex);
+        m.put("createdAt", FieldValue.serverTimestamp());
+        movesRef.add(m)
+                .addOnFailureListener(err ->
+                        Toast.makeText(this, "Failed to send move: "+err, LENGTH_SHORT).show()
+                );
+    }
 
     @Override
     public void onResume() {
