@@ -42,6 +42,10 @@ public class GameActivity extends AppCompatActivity {
     private int localPlayerIndex;  // 0 or 1
     private FirebaseFirestore db;
 
+    private boolean gameViewLaunched = false;
+
+    private String player0Name, player1Name;
+
     @SuppressLint("RedundantSuppression")
     @SuppressWarnings("deprecation")
     private boolean isLegacyMovesNotNull(Bundle savedInstanceState) {
@@ -208,54 +212,35 @@ public class GameActivity extends AppCompatActivity {
 
                         // Determine who we are (0 or 1) and set up nicknames
                         localPlayerIndex = localUid.equals(uid0) ? 0 : 1;  // assign to the field
-                        final String[] nickname0 = { localPlayerIndex == 0 ? localNickname : null };
-                        final String[] nickname1 = { localPlayerIndex == 1 ? localNickname : null };
 
                         // Look up the remote player’s nickname
                         String remoteUid = localPlayerIndex == 0 ? uid1 : uid0;
                         db.collection("users").document(remoteUid).get()
                                 .addOnSuccessListener(remoteDoc -> {
                                     String remoteNickname = remoteDoc.getString("nickname");
+                                    // after you fetch remoteNickname…
                                     if (localPlayerIndex == 0) {
-                                        nickname1[0] = remoteNickname;
+                                        player0Name = localNickname;
+                                        player1Name = remoteNickname;
                                     } else {
-                                        nickname0[0] = remoteNickname;
+                                        player1Name = localNickname;
+                                        player0Name = remoteNickname;
                                     }
+
+                                    // ── Wire up real‐time “moves” listener ──
+                                    movesRef =
+                                            db.collection("matches")
+                                                    .document(this.matchId)
+                                                    .collection("moves");
+
+                                    movesRef
+                                            .orderBy("createdAt")
+                                            .addSnapshotListener(this::onMovesUpdate);
                                 })
                                 .addOnFailureListener(e -> {
                                     Log.e("pgorczyn", "Failed to load opponent info.", e);
                                     Toast.makeText(this, "Failed to load opponent.", Toast.LENGTH_LONG).show();
                                     finish();
-                                });
-
-                        // ── Wire up real‐time “moves” listener ──
-                        movesRef =
-                                db.collection("matches")
-                                        .document(this.matchId)
-                                        .collection("moves");
-
-                        movesRef
-                                .orderBy("createdAt")
-                                .addSnapshotListener(this::onMovesUpdate);
-
-                        // ── Listen for the match to flip to “active” ──
-                        db.collection("matches").document(matchId)
-                                .addSnapshotListener((snap, err) -> {
-                                    if (err != null || snap == null || !snap.exists()) return;
-                                    if ("active".equals(snap.getString("status")) && gameView == null) {
-                                        // Initialize GameView with an empty list (we’ll fill from Firestore),
-                                        // our player index, and both nicknames
-                                        gameView = new GameView(
-                                                this,
-                                                new ArrayList<>(),       // will be populated by onMovesUpdate()
-                                                GameType,
-                                                nickname0[0],
-                                                nickname1[0]
-                                        );
-                                        // Give GameView a callback so touch → Firestore write
-                                        gameView.setMoveCallback(this::sendMoveToFirestore);
-                                        setContentView(gameView);
-                                    }
                                 });
                     })
                     .addOnFailureListener(e -> {
@@ -299,7 +284,8 @@ public class GameActivity extends AppCompatActivity {
             Log.e("GameActivity", "Listen for moves failed", e);
             return;
         }
-        // Clear & rebuild the local Moves list
+
+        // 1) Build a fresh list of MoveTo from the snapshot
         ArrayList<MoveTo> newMoves = new ArrayList<>();
         for (DocumentSnapshot doc : snapshot.getDocuments()) {
             int x = Objects.requireNonNull(doc.getLong("x")).intValue();
@@ -307,11 +293,37 @@ public class GameActivity extends AppCompatActivity {
             int p = Objects.requireNonNull(doc.getLong("p")).intValue();
             newMoves.add(new MoveTo(x, y, p));
         }
-        // Swap into your GameView and redraw
-        runOnUiThread(() -> {
-            gameView.replaceMoves(newMoves);
-            gameView.invalidate();
-        });
+
+        // 2) If we haven’t yet shown the GameView, and now we actually have at least one move…
+        if (!gameViewLaunched
+                && !newMoves.isEmpty()
+                && player0Name != null
+                && player1Name != null
+        ) {
+
+            // Initialize GameView with the moves we already have
+            gameViewLaunched = true;  // ← mark it launched so updates work
+
+            gameView = new GameView(
+                    this,
+                    newMoves,
+                    GameType,
+                    player0Name,
+                    player1Name
+            );
+            gameView.setMoveCallback(this::sendMoveToFirestore);
+
+            // Swap in the GameView on the UI thread
+            runOnUiThread(() -> setContentView(gameView));
+        }
+
+        // 3) Once the view is up, just keep patching in new moves and redrawing
+        if (gameViewLaunched) {
+            runOnUiThread(() -> {
+                gameView.replaceMoves(newMoves);
+                gameView.invalidate();
+            });
+        }
     }
 
     private void sendMoveToFirestore(int x, int y) {
