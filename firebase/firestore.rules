@@ -2,27 +2,23 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // 1. Allow signed-in clients to look up users
+    // — allow signed-in users to look up other users
     match /users/{userId} {
-      allow read: if request.auth.uid != null;
+      allow read:  if request.auth.uid != null;
       allow write: if false;
     }
 
-    // 2. Invitations: allow both sender and receiver to read, and only the sender to create
+    // — invitations: sender can create, either party can read
     match /invitations/{invId} {
-      // Sender may create a new pending invite
       allow create: if request.auth.uid == request.resource.data.from
-                 && request.resource.data.to is string
-                 && request.resource.data.status == "pending";
-      // Either participant may read (to check for existing pending invites)
+                 && request.resource.data.status == "pending"
+                 && request.resource.data.to is string;
       allow read:   if request.auth.uid == resource.data.from
                  || request.auth.uid == resource.data.to;
-      // Only your backend Cloud Function should ever update status
-      allow update: if false;
-      allow delete: if false;
+      allow update, delete: if false;
     }
 
-    // 3. Matches: only participants may see or create matches
+    // — matches: only participants can create/read/update
     match /matches/{matchId} {
       allow create: if request.auth.uid == request.resource.data.player0
                  && request.resource.data.player1 is string;
@@ -30,15 +26,18 @@ service cloud.firestore {
           if request.auth.uid == resource.data.player0
           || request.auth.uid == resource.data.player1;
 
+      // — moves subcollection: check the parent doc via get()
       match /moves/{moveId} {
-        allow create: if request.auth.uid == resource.parent.data.player0
-                    || request.auth.uid == resource.parent.data.player1;
-        allow read:   if request.auth.uid == resource.parent.data.player0
-                    || request.auth.uid == resource.parent.data.player1;
+        allow read, create: if
+          // fetch the parent match document:
+          (get(/databases/$(database)/documents/matches/$(matchId))
+             .data.player0 == request.auth.uid)
+          || (get(/databases/$(database)/documents/matches/$(matchId))
+             .data.player1 == request.auth.uid);
       }
     }
 
-    // 4. Everything else is off-limits
+    // — everything else locked down
     match /{document=**} {
       allow read, write: if false;
     }
