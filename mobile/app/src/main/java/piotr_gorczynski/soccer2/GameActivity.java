@@ -167,7 +167,8 @@ public class GameActivity extends AppCompatActivity {
         GameType=getIntent().getIntExtra("GameType",0);
 
         if (GameType == 3) {
-            this.matchId = getIntent().getStringExtra("matchId");
+            matchId = getIntent().getStringExtra("matchId");
+            Log.d("pgorczyn", "DEBUG matchId=" + matchId);
             String localNickname = getIntent().getStringExtra("localNickname");
 
             if (matchId == null || localNickname == null) {
@@ -233,6 +234,7 @@ public class GameActivity extends AppCompatActivity {
                                                     .document(this.matchId)
                                                     .collection("moves");
 
+                                    Log.d("pgorczyn", "Attaching Firestore listener to: matches/" + matchId + "/moves");
                                     movesRef
                                             .orderBy("createdAt")
                                             .addSnapshotListener(this::onMovesUpdate);
@@ -282,6 +284,7 @@ public class GameActivity extends AppCompatActivity {
             Log.e("GameActivity", "Listen for moves failed", e);
             return;
         }
+        Log.d("pgorczyn", "onMovesUpdate triggered. Size: " + snapshot.size());
 
         ArrayList<MoveTo> newMoves = new ArrayList<>();
         for (DocumentSnapshot doc : snapshot.getDocuments()) {
