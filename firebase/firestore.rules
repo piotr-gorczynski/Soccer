@@ -2,19 +2,32 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    match /users/{userId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth.uid == userId;
+    // Invitations: only the invitee can read or accept it
+    match /invitations/{invId} {
+      allow read:  if request.auth.uid == resource.data.to;
+      allow write: if false;  // only your Callable can update status
     }
 
-    match /invitations/{inviteId} {
-      allow read, write: if request.auth != null;
-    }
-
+    // Matches: only the two players can read or write
     match /matches/{matchId} {
-      // 🔥 FIX: allow authenticated users (Player B) to listen for match creation
-      allow read: if request.auth != null;
-      allow write: if false;
+      allow create: if request.auth.uid == request.resource.data.player0
+                 && request.resource.data.player1 is string;  
+      allow read, update, delete:
+          if request.auth.uid == resource.data.player0
+          || request.auth.uid == resource.data.player1;
+
+      // Moves: participants may read past moves and add new ones
+      match /moves/{moveId} {
+        allow create: if request.auth.uid == resource.parent.data.player0
+                    || request.auth.uid == resource.parent.data.player1;
+        allow read:   if request.auth.uid == resource.parent.data.player0
+                    || request.auth.uid == resource.parent.data.player1;
+      }
+    }
+
+    // (Optional) block everything else
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }
