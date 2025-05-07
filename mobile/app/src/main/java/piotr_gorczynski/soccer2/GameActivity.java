@@ -277,15 +277,12 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
-    private void onMovesUpdate(
-            QuerySnapshot snapshot, FirebaseFirestoreException e
-    ) {
+    private void onMovesUpdate(QuerySnapshot snapshot, FirebaseFirestoreException e) {
         if (e != null) {
             Log.e("GameActivity", "Listen for moves failed", e);
             return;
         }
 
-        // 1) Build a fresh list of MoveTo from the snapshot
         ArrayList<MoveTo> newMoves = new ArrayList<>();
         for (DocumentSnapshot doc : snapshot.getDocuments()) {
             int x = Objects.requireNonNull(doc.getLong("x")).intValue();
@@ -294,30 +291,18 @@ public class GameActivity extends AppCompatActivity {
             newMoves.add(new MoveTo(x, y, p));
         }
 
-        // 2) If we haven’t yet shown the GameView, and now we actually have at least one move…
-        if (!gameViewLaunched
-                && !newMoves.isEmpty()
-                && player0Name != null
-                && player1Name != null
-        ) {
+        if (newMoves.isEmpty()) {
+            Log.w("GameActivity", "No moves found in Firestore yet — skipping view creation");
+            return;
+        }
 
-            // Initialize GameView with the moves we already have
-            gameViewLaunched = true;  // ← mark it launched so updates work
-
-            gameView = new GameView(
-                    this,
-                    newMoves,
-                    GameType,
-                    player0Name,
-                    player1Name
-            );
+        if (!gameViewLaunched && player0Name != null && player1Name != null) {
+            gameViewLaunched = true;
+            gameView = new GameView(this, newMoves, GameType, player0Name, player1Name);
             gameView.setMoveCallback(this::sendMoveToFirestore);
-
-            // Swap in the GameView on the UI thread
             runOnUiThread(() -> setContentView(gameView));
         }
 
-        // 3) Once the view is up, just keep patching in new moves and redrawing
         if (gameViewLaunched) {
             runOnUiThread(() -> {
                 gameView.replaceMoves(newMoves);
