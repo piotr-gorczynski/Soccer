@@ -2,21 +2,27 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // 1. Allow signed-in clients to look up users by nickname (or any other field).
+    // 1. Allow signed-in clients to look up users
     match /users/{userId} {
       allow read: if request.auth.uid != null;
-      // (Optionally lock down writes if you manage profiles elsewhere)
       allow write: if false;
     }
 
-    // 2. Invitations: only the invitee can read it
+    // 2. Invitations: allow both sender and receiver to read, and only the sender to create
     match /invitations/{invId} {
-      allow create: if false; // only your Callable creates
-      allow read:   if request.auth.uid == resource.data.to;
-      allow update: if false; // only your backend updates status
+      // Sender may create a new pending invite
+      allow create: if request.auth.uid == request.resource.data.from
+                 && request.resource.data.to is string
+                 && request.resource.data.status == "pending";
+      // Either participant may read (to check for existing pending invites)
+      allow read:   if request.auth.uid == resource.data.from
+                 || request.auth.uid == resource.data.to;
+      // Only your backend Cloud Function should ever update status
+      allow update: if false;
+      allow delete: if false;
     }
 
-    // 3. Matches: only participants may create/read/update
+    // 3. Matches: only participants may see or create matches
     match /matches/{matchId} {
       allow create: if request.auth.uid == request.resource.data.player0
                  && request.resource.data.player1 is string;
