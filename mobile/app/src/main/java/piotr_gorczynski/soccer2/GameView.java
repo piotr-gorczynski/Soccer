@@ -180,12 +180,18 @@ public class GameView extends View {
     // Called back to draw the view. Also called after invalidate().
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
-
         super.onDraw(canvas);
-        Log.d("pgorczyn", "123456: onDraw");
+        Log.d("GameView", "onDraw started");
+
+        if (realMoves.isEmpty()) {
+            Log.w("GameView", "onDraw skipped: realMoves is empty");
+            return;
+        }
+
         createPossibleMoves(possibleMovesForDrawing, realMoves);
         field.draw(canvas);
     }
+
 
     // Called back when the view is first created or its size changes.
     @Override
