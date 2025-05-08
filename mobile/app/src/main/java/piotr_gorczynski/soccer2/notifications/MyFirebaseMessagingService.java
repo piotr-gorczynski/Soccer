@@ -30,7 +30,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onNewToken(@NonNull String token) {
         super.onNewToken(token);
-        Log.d("FCM", "🔐 New FCM token: " + token);
+        Log.d("Soccer", "🔐 New FCM token: " + token);
 
         String uid = FirebaseAuth.getInstance().getCurrentUser() != null
                 ? FirebaseAuth.getInstance().getCurrentUser().getUid()
@@ -41,16 +41,16 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     .collection("users")
                     .document(uid)
                     .update("fcmToken", token)
-                    .addOnSuccessListener(aVoid -> Log.d("FCM", "✅ Token saved"))
-                    .addOnFailureListener(e -> Log.e("FCM", "❌ Failed to save token", e));
+                    .addOnSuccessListener(aVoid -> Log.d("Soccer", "✅ Token saved"))
+                    .addOnFailureListener(e -> Log.e("Soccer", "❌ Failed to save token", e));
         } else {
-            Log.w("FCM", "⚠️ No user logged in; token not saved");
+            Log.w("Soccer", "⚠️ No user logged in; token not saved");
         }
     }
 
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
-        Log.d("FCM", "📨 Message received: " + remoteMessage.getData());
+        Log.d("Soccer", "📨 Message received: " + remoteMessage.getData());
 
         Context context = getApplicationContext();
 
