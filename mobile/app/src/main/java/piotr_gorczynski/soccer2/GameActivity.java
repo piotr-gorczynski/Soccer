@@ -168,11 +168,11 @@ public class GameActivity extends AppCompatActivity {
 
         if (GameType == 3) {
             matchId = getIntent().getStringExtra("matchId");
-            Log.d("Soccer2", "DEBUG matchId=" + matchId);
+            Log.d("TAG_Soccer", "DEBUG matchId=" + matchId);
             String localNickname = getIntent().getStringExtra("localNickname");
 
             if (matchId == null || localNickname == null) {
-                Log.e("Soccer2", "Missing matchId or localNickname");
+                Log.e("TAG_Soccer", "Missing matchId or localNickname");
                 Toast.makeText(this, "Game launch failed.", Toast.LENGTH_LONG).show();
                 finish();
                 return;
@@ -180,7 +180,7 @@ public class GameActivity extends AppCompatActivity {
 
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if (user == null) {
-                Log.e("Soccer2", "User not signed in");
+                Log.e("TAG_Soccer", "User not signed in");
                 Toast.makeText(this, "Please log in to continue.", Toast.LENGTH_LONG).show();
                 finish();
                 return;
@@ -195,7 +195,7 @@ public class GameActivity extends AppCompatActivity {
             db.collection("matches").document(matchId).get()
                     .addOnSuccessListener(doc -> {
                         if (!doc.exists()) {
-                            Log.e("Soccer2", "Match not found: " + matchId);
+                            Log.e("TAG_Soccer", "Match not found: " + matchId);
                             Toast.makeText(this, "Match not found.", Toast.LENGTH_LONG).show();
                             finish();
                             return;
@@ -205,7 +205,7 @@ public class GameActivity extends AppCompatActivity {
                         String uid1 = doc.getString("player1");
 
                         if (uid0 == null || uid1 == null) {
-                            Log.e("Soccer2", "player0 or player1 field is missing");
+                            Log.e("TAG_Soccer", "player0 or player1 field is missing");
                             Toast.makeText(this, "Invalid match record.", Toast.LENGTH_LONG).show();
                             finish();
                             return;
@@ -234,19 +234,19 @@ public class GameActivity extends AppCompatActivity {
                                                     .document(this.matchId)
                                                     .collection("moves");
 
-                                    Log.d("Soccer2", "Attaching Firestore listener to: matches/" + matchId + "/moves");
+                                    Log.d("TAG_Soccer", "Attaching Firestore listener to: matches/" + matchId + "/moves");
                                     movesRef
                                             .orderBy("createdAt")
                                             .addSnapshotListener(this::onMovesUpdate);
                                 })
                                 .addOnFailureListener(e -> {
-                                    Log.e("Soccer2", "Failed to load opponent info.", e);
+                                    Log.e("TAG_Soccer", "Failed to load opponent info.", e);
                                     Toast.makeText(this, "Failed to load opponent.", Toast.LENGTH_LONG).show();
                                     finish();
                                 });
                     })
                     .addOnFailureListener(e -> {
-                        Log.e("Soccer2", "Failed to load match", e);
+                        Log.e("TAG_Soccer", "Failed to load match", e);
                         Toast.makeText(this, "Network error.", Toast.LENGTH_LONG).show();
                         finish();
                     });
@@ -255,7 +255,7 @@ public class GameActivity extends AppCompatActivity {
         }
 
         if (GameType>0) {
-            Log.d("Soccer2", "123456: GameActivity.onCreate Game Type entered: " + GameType);
+            Log.d("TAG_Soccer", "123456: GameActivity.onCreate Game Type entered: " + GameType);
         }
 
         SharedPreferences sharedPreferences =
@@ -264,10 +264,10 @@ public class GameActivity extends AppCompatActivity {
 
         if (sharedPreferences.contains("android_level")) {
             androidLevel = Integer.parseInt(sharedPreferences.getString("android_level", "1"));
-            Log.e("Soccer2", "Preference android_level=" + androidLevel);
+            Log.e("TAG_Soccer", "Preference android_level=" + androidLevel);
         }
 
-        //Log.d("Soccer2", "123456: GameActivity.onCreate entered");
+        //Log.d("TAG_Soccer", "123456: GameActivity.onCreate entered");
         if (GameType != 3) {
             gameView = new GameView(this, Moves, GameType, androidLevel);
             setContentView(gameView);
@@ -281,11 +281,11 @@ public class GameActivity extends AppCompatActivity {
 
     private void onMovesUpdate(QuerySnapshot snapshot, FirebaseFirestoreException e) {
         if (e != null) {
-            Log.e("Soccer2", "Listen for moves failed", e);
+            Log.e("TAG_Soccer", "Listen for moves failed", e);
             return;
         }
-        Log.d("Soccer2", "onMovesUpdate triggered. Size: " + snapshot.size());
-        Log.d("Soccer2", "gameViewLaunched=" + gameViewLaunched +
+        Log.d("TAG_Soccer", "onMovesUpdate triggered. Size: " + snapshot.size());
+        Log.d("TAG_Soccer", "gameViewLaunched=" + gameViewLaunched +
                 " player0Name=" + player0Name +
                 " player1Name=" + player1Name);
 
@@ -304,14 +304,14 @@ public class GameActivity extends AppCompatActivity {
 
         if (!gameViewLaunched && player0Name != null && player1Name != null) {
             gameViewLaunched = true;
-            Log.d("Soccer2", "Creating GameView with newMoves.size=" + newMoves.size());
+            Log.d("TAG_Soccer", "Creating GameView with newMoves.size=" + newMoves.size());
             gameView = new GameView(this, newMoves, GameType, player0Name, player1Name);
             gameView.setMoveCallback(this::sendMoveToFirestore);
             runOnUiThread(() -> setContentView(gameView));
         } else {
             runOnUiThread(() -> {
                 if (gameView != null) {
-                    Log.d("Soccer2", "Replacing moves: newMoves.size=" + newMoves.size());
+                    Log.d("TAG_Soccer", "Replacing moves: newMoves.size=" + newMoves.size());
                     gameView.replaceMoves(newMoves);
                     gameView.invalidate();
                 }
@@ -344,7 +344,7 @@ public class GameActivity extends AppCompatActivity {
     public void onSaveInstanceState(Bundle outState)
     {
 //---save whatever you need to persist—
-        Log.d("Soccer2", "123456: GameActivity.onSaveInstanceState entered");
+        Log.d("TAG_Soccer", "123456: GameActivity.onSaveInstanceState entered");
         //Moves=gameView.GetMoves();
         outState.putParcelableArrayList("Moves",Moves);
 
