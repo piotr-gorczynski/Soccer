@@ -37,7 +37,7 @@ public class InvitationsActivity extends AppCompatActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Log.d("Soccer2", "InvitationsActivity onNewIntent: " + intent.toUri(Intent.URI_INTENT_SCHEME));
+        Log.d("TAG_Soccer", "InvitationsActivity onNewIntent: " + intent.toUri(Intent.URI_INTENT_SCHEME));
     }
 
     @Override
@@ -166,7 +166,7 @@ public class InvitationsActivity extends AppCompatActivity {
                 .whereEqualTo("status", "pending")
                 .addSnapshotListener((querySnapshot, e) -> {
                     if (e != null) {
-                        Log.e("Soccer2", "Listen failed", e);
+                        Log.e("TAG_Soccer", "Listen failed", e);
                         return;
                     }
 

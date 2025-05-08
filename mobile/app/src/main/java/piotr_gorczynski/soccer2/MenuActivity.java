@@ -28,7 +28,7 @@ public class MenuActivity extends AppCompatActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Log.d("Soccer2", "InvitationsActivity onNewIntent: " + intent.toUri(Intent.URI_INTENT_SCHEME));
+        Log.d("TAG_Soccer", "InvitationsActivity onNewIntent: " + intent.toUri(Intent.URI_INTENT_SCHEME));
     }
 
     @Override
@@ -59,7 +59,7 @@ public class MenuActivity extends AppCompatActivity {
                     }
 
                     String token = task.getResult();
-                    Log.d("Soccer2", "🔑 Token from MenuActivity: " + token);
+                    Log.d("TAG_Soccer", "🔑 Token from MenuActivity: " + token);
 
                     String uid = FirebaseAuth.getInstance().getCurrentUser() != null
                             ? FirebaseAuth.getInstance().getCurrentUser().getUid()
@@ -69,9 +69,9 @@ public class MenuActivity extends AppCompatActivity {
                         FirebaseFirestore.getInstance()
                                 .collection("users")
                                 .document(uid)
-                                .update("Soccer2", token)
-                                .addOnSuccessListener(aVoid -> Log.d("Soccer2", "✅ Token saved"))
-                                .addOnFailureListener(e -> Log.e("Soccer2", "❌ Failed to save token", e));
+                                .update("TAG_Soccer", token)
+                                .addOnSuccessListener(aVoid -> Log.d("TAG_Soccer", "✅ Token saved"))
+                                .addOnFailureListener(e -> Log.e("TAG_Soccer", "❌ Failed to save token", e));
                     } else {
                         Log.w("FCM", "⚠️ No logged-in user; token not saved");
                     }
@@ -95,7 +95,7 @@ public class MenuActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Log.d("Soccer2", "✅ Notification permission granted");
+                Log.d("TAG_Soccer", "✅ Notification permission granted");
             } else {
                 Log.w("Soccer", "❌ Notification permission denied");
             }
@@ -144,7 +144,7 @@ public class MenuActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
 //---save whatever you need to persist—
-        Log.d("Soccer2", "123456: MenuActivity.onSaveInstanceState entered");
+        Log.d("TAG_Soccer", "123456: MenuActivity.onSaveInstanceState entered");
          super.onSaveInstanceState(outState);
     }
 
