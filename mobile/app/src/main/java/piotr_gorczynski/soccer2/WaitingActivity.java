@@ -12,7 +12,7 @@ import com.google.firebase.firestore.*;
 
 public class WaitingActivity extends AppCompatActivity {
 
-    private static final String TAG = "WaitingActivity";
+    private static final String TAG = "TAG_Soccer";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
