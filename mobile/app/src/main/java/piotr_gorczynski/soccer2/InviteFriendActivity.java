@@ -82,13 +82,13 @@ public class InviteFriendActivity extends AppCompatActivity {
                             })
                             .addOnFailureListener(e -> {
                                 resultText.setText(R.string.failed_to_check_existing_invites);
-                                Log.e("Invite", "Invite check failed", e);
+                                Log.e("Soccer2", "Invite check failed", e);
                             });
 
                 })
                 .addOnFailureListener(e -> {
                     resultText.setText(R.string.error_searching_user);
-                    Log.e("Invite", "User lookup failed", e);
+                    Log.e("Soccer2", "User lookup failed", e);
                 });
     }
 
@@ -126,12 +126,12 @@ public class InviteFriendActivity extends AppCompatActivity {
                     })
                     .addOnFailureListener(e -> {
                         resultText.setText(R.string.failed_to_send_invite);
-                        Log.e("Invite", "Sending failed", e);
+                        Log.e("Soccer2", "Sending failed", e);
                     });
 
         }).addOnFailureListener(e -> {
             resultText.setText(R.string.failed_to_load_user_info);
-            Log.e("Invite", "Nickname fetch error", e);
+            Log.e("Soccer2", "Nickname fetch error", e);
         });
     }
 }
