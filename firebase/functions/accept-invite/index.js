@@ -76,6 +76,29 @@ exports.acceptInvite = functions.https.onCall(async (data, context) => {
     );    
   });
 
+  // 📨 Fetch inviter's FCM token and send a push
+  const fromUserDoc = await db.collection("users").doc(invite.from).get();
+  const fcmToken = fromUserDoc.get("fcmToken");
+
+  if (fcmToken) {
+    const message = {
+      token: fcmToken,
+      data: {
+        type: "start",
+        matchId: matchRef.id,
+        fromNickname: invite.toNickname || "Your opponent",  // optional
+      },
+      notification: {
+        title: "Game Started!",
+        body: `${invite.toNickname || "Your opponent"} has accepted your invitation.`,
+      }
+    };
+
+    await admin.messaging().send(message);
+    console.log("✅ Push sent to inviter (player0)");
+  } else {
+    console.warn("⚠️ No FCM token found for inviter:", invite.from);
+  }
   console.log("✅ Match created successfully with ID:", matchRef.id);
 
   return { matchId: matchRef.id };
