@@ -34,7 +34,7 @@ public class MenuActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
+        SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
         String nickname = prefs.getString("nickname", null);
 
         TextView nicknameLabel = findViewById(R.id.nicknameLabel);

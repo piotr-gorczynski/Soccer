@@ -32,7 +32,7 @@ public class FirebaseAuthManager {
     }
 
     private void storeUserData(String uid, String email, String nickname) {
-        context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+        context.getSharedPreferences(context.getPackageName() + "_preferences", Context.MODE_PRIVATE)
                 .edit()
                 .putString("uid", uid)
                 .putString("email", email)
@@ -51,9 +51,18 @@ public class FirebaseAuthManager {
                             Log.d("TAG_Soccer", "Email Verified: " + isVerified);
 
                             if (isVerified) {
-                                String nickname = firebaseAuth.getCurrentUser().getDisplayName();
-                                storeUserData(uid, email, nickname);
-                                callback.onLoginSuccess();
+                                FirebaseFirestore.getInstance().collection("users").document(uid)
+                                        .get()
+                                        .addOnSuccessListener(doc -> {
+                                            String nickname = doc.getString("nickname");
+                                            storeUserData(uid, email, nickname != null ? nickname : "Unknown");
+                                            callback.onLoginSuccess();
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            Log.e("TAG_Soccer", "⚠️ Failed to load nickname from Firestore", e);
+                                            storeUserData(uid, email, "Unknown");
+                                            callback.onLoginSuccess();
+                                        });
                             } else {
                                 Log.e("TAG_Soccer", "Email is NOT verified, signing out...");
                                 firebaseAuth.signOut();
