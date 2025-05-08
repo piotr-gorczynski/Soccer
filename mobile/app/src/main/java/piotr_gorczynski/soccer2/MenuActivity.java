@@ -54,7 +54,7 @@ public class MenuActivity extends AppCompatActivity {
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(task -> {
                     if (!task.isSuccessful()) {
-                        Log.w("FCM", "❌ Failed to get FCM token", task.getException());
+                        Log.w("TAG_Soccer", "❌ Failed to get FCM token", task.getException());
                         return;
                     }
 
@@ -73,7 +73,7 @@ public class MenuActivity extends AppCompatActivity {
                                 .addOnSuccessListener(aVoid -> Log.d("TAG_Soccer", "✅ Token saved"))
                                 .addOnFailureListener(e -> Log.e("TAG_Soccer", "❌ Failed to save token", e));
                     } else {
-                        Log.w("FCM", "⚠️ No logged-in user; token not saved");
+                        Log.w("TAG_Soccer", "⚠️ No logged-in user; token not saved");
                     }
                 });
         // ✅ Call permission request
@@ -97,7 +97,7 @@ public class MenuActivity extends AppCompatActivity {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Log.d("TAG_Soccer", "✅ Notification permission granted");
             } else {
-                Log.w("Soccer", "❌ Notification permission denied");
+                Log.w("TAG_Soccer", "❌ Notification permission denied");
             }
         }
     }

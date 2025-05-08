@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.util.Log;
@@ -44,13 +45,36 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     .addOnSuccessListener(aVoid -> Log.d("TAG_Soccer", "✅ Token saved"))
                     .addOnFailureListener(e -> Log.e("TAG_Soccer", "❌ Failed to save token", e));
         } else {
-            Log.w("Soccer", "⚠️ No user logged in; token not saved");
+            Log.w("TAG_Soccer", "⚠️ No user logged in; token not saved");
         }
     }
 
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         Log.d("TAG_Soccer", "📨 Message received: " + remoteMessage.getData());
+        String type = remoteMessage.getData().get("type");
+        if ("start".equals(type)) {
+            Log.d("TAG_Soccer", "🎮 Received 'start' message to launch GameActivity");
+
+            String matchId = remoteMessage.getData().get("matchId");
+            if (matchId == null) {
+                Log.w("TAG_Soccer", "⚠️ 'start' message missing matchId");
+                return;
+            }
+
+            // Get nickname from local storage
+            SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
+            String localNickname = prefs.getString("nickname", "Unknown");
+
+            Intent gameIntent = new Intent(this, piotr_gorczynski.soccer2.GameActivity.class);
+            gameIntent.putExtra("GameType", 3);
+            gameIntent.putExtra("matchId", matchId);
+            gameIntent.putExtra("localNickname", localNickname);
+            gameIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+            startActivity(gameIntent);
+            return; // exit early so we don’t build a notification for this
+        }
 
         Context context = getApplicationContext();
 
@@ -107,7 +131,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 == PackageManager.PERMISSION_GRANTED) {
             nm.notify(notificationId, builder.build());
         } else {
-            Log.w("FCM", "Missing POST_NOTIFICATIONS permission");
+            Log.w("TAG_Soccer", "Missing POST_NOTIFICATIONS permission");
         }
 
     }

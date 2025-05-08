@@ -68,7 +68,7 @@ public class InvitationsActivity extends AppCompatActivity {
     }
 
     // At the top of the class — keeps logcat tidy
-    private static final String TAG = "INVITE";
+    private static final String TAG = "TAG_Soccer";
 
     /**
      * Attempts to accept a pending invitation by calling the

@@ -298,7 +298,7 @@ public class GameActivity extends AppCompatActivity {
         }
 
         if (newMoves.isEmpty()) {
-            Log.w("GameActivity", "No moves found in Firestore yet — skipping view creation");
+            Log.w("TAG_Soccer", "No moves found in Firestore yet — skipping view creation");
             return;
         }
 

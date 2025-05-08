@@ -186,7 +186,7 @@ public class GameView extends View {
         Log.d("TAG_Soccer", "GameView.onDraw started");
 
         if (realMoves.isEmpty()) {
-            Log.w("Soccer", "GameView.onDraw skipped: realMoves is empty");
+            Log.w("TAG_Soccer", "GameView.onDraw skipped: realMoves is empty");
             return;
         }
 
