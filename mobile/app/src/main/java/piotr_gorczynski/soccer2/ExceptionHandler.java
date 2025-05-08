@@ -49,7 +49,7 @@ public class ExceptionHandler implements
                 LINE_SEPARATOR;
 
 
-        Log.d("pgorczynMove", errorReport);
+        Log.d("Soccer", errorReport);
         android.os.Process.killProcess(android.os.Process.myPid());
         System.exit(10);
     }

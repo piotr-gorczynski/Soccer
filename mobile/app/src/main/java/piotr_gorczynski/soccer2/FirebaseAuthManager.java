@@ -47,8 +47,8 @@ public class FirebaseAuthManager {
                         if (firebaseAuth.getCurrentUser() != null) {
                             boolean isVerified = firebaseAuth.getCurrentUser().isEmailVerified();
                             String uid = firebaseAuth.getCurrentUser().getUid();
-                            Log.d("DEBUG", "User UID: " + uid);
-                            Log.d("DEBUG", "Email Verified: " + isVerified);
+                            Log.d("Soccer", "User UID: " + uid);
+                            Log.d("Soccer", "Email Verified: " + isVerified);
 
                             if (isVerified) {
                                 String nickname = firebaseAuth.getCurrentUser().getDisplayName();
@@ -76,7 +76,7 @@ public class FirebaseAuthManager {
         firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Log.d("FirebaseAuth", "User registered: " + Objects.requireNonNull(firebaseAuth.getCurrentUser()).getEmail());
+                        Log.d("Soccer", "User registered: " + Objects.requireNonNull(firebaseAuth.getCurrentUser()).getEmail());
                         Toast.makeText(context, "Registered as: " + firebaseAuth.getCurrentUser().getEmail(), Toast.LENGTH_SHORT).show();
 
                         // Set display name
@@ -86,9 +86,9 @@ public class FirebaseAuthManager {
                                         .build()
                         ).addOnCompleteListener(profileTask -> {
                             if (profileTask.isSuccessful()) {
-                                Log.d("FirebaseAuth", "Nickname set to: " + nickname);
+                                Log.d("Soccer", "Nickname set to: " + nickname);
                             } else {
-                                Log.e("FirebaseAuth", "Failed to set nickname: " + Objects.requireNonNull(profileTask.getException()).getMessage());
+                                Log.e("Soccer", "Failed to set nickname: " + Objects.requireNonNull(profileTask.getException()).getMessage());
                             }
                         });
 
@@ -102,10 +102,10 @@ public class FirebaseAuthManager {
 
                         db.collection("users").document(uid).set(userData)
                                 .addOnSuccessListener(aVoid ->
-                                    Log.d("FirebaseAuth", "Nickname saved to Firestore")
+                                    Log.d("Soccer", "Nickname saved to Firestore")
                                 )
                                 .addOnFailureListener(e ->
-                                    Log.e("FirebaseAuth", "Failed to save nickname: " + e.getMessage())
+                                    Log.e("Soccer", "Failed to save nickname: " + e.getMessage())
                                 );
 
 

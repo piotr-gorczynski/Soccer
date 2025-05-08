@@ -37,7 +37,7 @@ public class InvitationsActivity extends AppCompatActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Log.d("INVITE", "InvitationsActivity onNewIntent: " + intent.toUri(Intent.URI_INTENT_SCHEME));
+        Log.d("Soccer", "InvitationsActivity onNewIntent: " + intent.toUri(Intent.URI_INTENT_SCHEME));
     }
 
     @Override
