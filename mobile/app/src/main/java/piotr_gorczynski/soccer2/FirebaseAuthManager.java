@@ -47,20 +47,20 @@ public class FirebaseAuthManager {
                         if (firebaseAuth.getCurrentUser() != null) {
                             boolean isVerified = firebaseAuth.getCurrentUser().isEmailVerified();
                             String uid = firebaseAuth.getCurrentUser().getUid();
-                            Log.d("Soccer", "User UID: " + uid);
-                            Log.d("Soccer", "Email Verified: " + isVerified);
+                            Log.d("Soccer2", "User UID: " + uid);
+                            Log.d("Soccer2", "Email Verified: " + isVerified);
 
                             if (isVerified) {
                                 String nickname = firebaseAuth.getCurrentUser().getDisplayName();
                                 storeUserData(uid, email, nickname);
                                 callback.onLoginSuccess();
                             } else {
-                                Log.e("DEBUG", "Email is NOT verified, signing out...");
+                                Log.e("Soccer2", "Email is NOT verified, signing out...");
                                 firebaseAuth.signOut();
                                 callback.onLoginFailure("Please verify your email address before logging in.");
                             }
                         } else {
-                            Log.e("DEBUG", "firebaseAuth.getCurrentUser() is NULL after signIn!");
+                            Log.e("Soccer2", "firebaseAuth.getCurrentUser() is NULL after signIn!");
                             callback.onLoginFailure("Authentication failed.");
                         }
                     } else {
@@ -76,7 +76,7 @@ public class FirebaseAuthManager {
         firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Log.d("Soccer", "User registered: " + Objects.requireNonNull(firebaseAuth.getCurrentUser()).getEmail());
+                        Log.d("Soccer2", "User registered: " + Objects.requireNonNull(firebaseAuth.getCurrentUser()).getEmail());
                         Toast.makeText(context, "Registered as: " + firebaseAuth.getCurrentUser().getEmail(), Toast.LENGTH_SHORT).show();
 
                         // Set display name
@@ -86,9 +86,9 @@ public class FirebaseAuthManager {
                                         .build()
                         ).addOnCompleteListener(profileTask -> {
                             if (profileTask.isSuccessful()) {
-                                Log.d("Soccer", "Nickname set to: " + nickname);
+                                Log.d("Soccer2", "Nickname set to: " + nickname);
                             } else {
-                                Log.e("Soccer", "Failed to set nickname: " + Objects.requireNonNull(profileTask.getException()).getMessage());
+                                Log.e("Soccer2", "Failed to set nickname: " + Objects.requireNonNull(profileTask.getException()).getMessage());
                             }
                         });
 
@@ -102,10 +102,10 @@ public class FirebaseAuthManager {
 
                         db.collection("users").document(uid).set(userData)
                                 .addOnSuccessListener(aVoid ->
-                                    Log.d("Soccer", "Nickname saved to Firestore")
+                                    Log.d("Soccer2", "Nickname saved to Firestore")
                                 )
                                 .addOnFailureListener(e ->
-                                    Log.e("Soccer", "Failed to save nickname: " + e.getMessage())
+                                    Log.e("Soccer2", "Failed to save nickname: " + e.getMessage())
                                 );
 
 
@@ -135,7 +135,7 @@ public class FirebaseAuthManager {
 
                     } else {
                         String errorMsg = task.getException() != null ? task.getException().getMessage() : "Unknown error occurred";
-                        Log.e("FirebaseAuth", "Registration failed: " + errorMsg);
+                        Log.e("Soccer2", "Registration failed: " + errorMsg);
                         new AlertDialog.Builder(context)
                                 .setTitle("Registration Failed")
                                 .setMessage(errorMsg)

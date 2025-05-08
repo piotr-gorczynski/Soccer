@@ -172,7 +172,7 @@ public class Field {
     }
 
     public void draw(Canvas canvas) {
-        Log.d("Soccer", "123456: Field.draw");
+        Log.d("Soccer2", "123456: Field.draw");
         int oldx, oldy;
 
 
