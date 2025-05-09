@@ -305,7 +305,7 @@ public class GameActivity extends AppCompatActivity {
         if (!gameViewLaunched && player0Name != null && player1Name != null) {
             gameViewLaunched = true;
             Log.d("TAG_Soccer", "Creating GameView with newMoves.size=" + newMoves.size());
-            gameView = new GameView(this, newMoves, GameType, player0Name, player1Name);
+            gameView = new GameView(this, newMoves, GameType, player0Name, player1Name, localPlayerIndex);
             gameView.setMoveCallback(this::sendMoveToFirestore);
             runOnUiThread(() -> setContentView(gameView));
         } else {
@@ -319,11 +319,11 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
-    private void sendMoveToFirestore(int x, int y) {
+    private void sendMoveToFirestore(int x, int y, int p) {
         Map<String,Object> m = new HashMap<>();
         m.put("x", x);
         m.put("y", y);
-        m.put("p", localPlayerIndex);
+        m.put("p", p);
         m.put("createdAt", FieldValue.serverTimestamp());
         movesRef.add(m)
                 .addOnFailureListener(err ->
