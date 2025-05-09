@@ -36,12 +36,12 @@ public class GameView extends View {
     private final int androidLevel;
     private MoveCallback moveCallback;
 
-
+    private int localPlayerIndex=0;
 
     @SuppressWarnings("unused")
 
     public interface MoveCallback {
-        void onLocalMove(int x, int y);
+        void onLocalMove(int x, int y, int p);
     }
 
     public void setMoveCallback(MoveCallback cb) {
@@ -102,10 +102,11 @@ public class GameView extends View {
 
     // Constructor
 
-    public GameView(Context context, ArrayList<MoveTo> argMoves, int argGameType, String player0Name, String player1Name) {
+    public GameView(Context context, ArrayList<MoveTo> argMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex) {
         super(context);
         Log.d("TAG_Soccer", "GameView Constructor called, received argMoves.size=" + argMoves.size());
 
+        this.localPlayerIndex = localPlayerIndex;
         mHandler = new MyHandler(this);
         GameType = argGameType;
         androidLevel = 0;  // unused for GameType 3
@@ -119,7 +120,7 @@ public class GameView extends View {
         realMoves = argMoves;
 
         // construct Field with custom nicknames
-        field = new Field(context, realMoves, possibleMovesForDrawing, GameType, player0Name, player1Name);
+        field = new Field(context, realMoves, possibleMovesForDrawing, GameType, player0Name, player1Name, localPlayerIndex);
 
         this.setFocusable(true);
         this.requestFocus();
@@ -156,7 +157,7 @@ public class GameView extends View {
         */
 
 
-        field = new Field(context, realMoves, possibleMovesForDrawing, GameType, "Player 1", "Player 2");
+        field = new Field(context, realMoves, possibleMovesForDrawing, GameType, "Player 1", "Player 2",0);
 
         // To enable keypad
         this.setFocusable(true);
@@ -573,7 +574,6 @@ public class GameView extends View {
             return Math.max(Math.abs(intFieldHeight+1-y),Math.abs(intFieldWidth/2-x));
     }
 
-
     // Touch-input handler
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -584,13 +584,12 @@ public class GameView extends View {
         // 2) Only handle ACTION_UP (finger lifted)
         if (event.getAction()==MotionEvent.ACTION_UP)  {
             // 2a) Map screen coords → field coords
-            int x,y;
-            if(getHeight()>getWidth()){
-                x=field.x2w(event.getX());
-                y=field.y2h(event.getY());
-            } else {
-                y=intFieldHeight-field.x2w(event.getX());
-                x=intFieldWidth-field.y2h(event.getY());
+            int x = field.x2w(event.getX());
+            int y = field.y2h(event.getY());
+
+            if (field.isFlipped()) {
+                x = field.getFieldWidth() - x;
+                y = field.getFieldHeight() - y;
             }
 
             // 2b) Compute legal moves
@@ -600,11 +599,23 @@ public class GameView extends View {
             // 2c) If this tap is a valid move…
             if(isMoveValid(x,y,possibleMoves)) {
                 if (GameType == 3) {
-                    // ── PvP: delegate the move to the Activity, which will write it to Firestore
-                    if (moveCallback != null) {
-                        moveCallback.onLocalMove(x, y);
+                    int lastP = realMoves.get(realMoves.size() - 1).P;
+
+                    if (localPlayerIndex != lastP) {
+                        Log.d("TAG_Soccer", "🔒 Not your turn — ignoring touch");
+                        return true;
                     }
-                } else {
+
+                    // Apply move locally (updates UI, checks victory)
+                    boolean nextMovePossible = MakeMove(x, y, realMoves);
+                    invalidate();
+
+                    // Send to Firestore if still active
+                    if (nextMovePossible && moveCallback != null) {
+                        moveCallback.onLocalMove(x, y, realMoves.get(realMoves.size() - 1).P);
+                    }
+                }
+                else {
                     // ── GameType 1 & 2: use your existing local/AI move logic
                     MakeMove(x, y, realMoves);
                     Log.d("TAG_Soccer", "GameView.onTouchEvent Before invalidate, last P=" + realMoves.get(realMoves.size() - 1).P);
