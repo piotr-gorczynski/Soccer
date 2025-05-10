@@ -4,9 +4,12 @@ import static android.widget.Toast.LENGTH_SHORT;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
@@ -45,6 +48,8 @@ public class GameActivity extends AppCompatActivity {
     private boolean gameViewLaunched = false;
 
     private String player0Name, player1Name;
+
+    private String player0Uid, player1Uid;
 
     @SuppressLint("RedundantSuppression")
     @SuppressWarnings("deprecation")
@@ -227,6 +232,8 @@ public class GameActivity extends AppCompatActivity {
                                         player1Name = localNickname;
                                         player0Name = remoteNickname;
                                     }
+                                    player0Uid = doc.getString("player0");
+                                    player1Uid = doc.getString("player1");
 
                                     // ── Wire up real‐time “moves” listener ──
                                     movesRef =
@@ -271,6 +278,24 @@ public class GameActivity extends AppCompatActivity {
         if (GameType != 3) {
             gameView = new GameView(this, Moves, GameType, androidLevel);
             setContentView(gameView);
+
+            getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+                @Override
+                public void handleOnBackPressed() {
+                    new AlertDialog.Builder(GameActivity.this)
+                            .setTitle("Leave game?")
+                            .setMessage("Are you sure you want to exit?")
+                            .setPositiveButton("Yes", (dialog, which) -> {
+                                Intent intent = new Intent(GameActivity.this, MenuActivity.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                                finish();
+                            })
+                            .setNegativeButton("Cancel", null)
+                            .show();
+                }
+            });
+
         }
 
         if(savedInstanceState != null && savedInstanceState.getBoolean("alertShown")){
@@ -307,13 +332,53 @@ public class GameActivity extends AppCompatActivity {
             Log.d("TAG_Soccer", "Creating GameView with newMoves.size=" + newMoves.size());
             gameView = new GameView(this, newMoves, GameType, player0Name, player1Name, localPlayerIndex);
             gameView.setMoveCallback(this::sendMoveToFirestore);
-            runOnUiThread(() -> setContentView(gameView));
+            runOnUiThread(() -> {
+                setContentView(gameView);
+
+                getOnBackPressedDispatcher().addCallback(GameActivity.this, new OnBackPressedCallback(true) {
+                    @Override
+                    public void handleOnBackPressed() {
+                        new AlertDialog.Builder(GameActivity.this)
+                                .setTitle("Leave game?")
+                                .setMessage("Are you sure you want to exit? This will count as a forfeit.")
+                                .setPositiveButton("Yes", (dialog, which) -> {
+                                    if (matchId != null) {
+                                        String loserUid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+                                        String winnerUid = loserUid.equals(player0Uid) ? player1Uid : player0Uid;
+
+                                        Map<String, Object> update = new HashMap<>();
+                                        update.put("winner", winnerUid);
+                                        update.put("status", "completed");
+                                        update.put("reason", "abandon");
+
+                                        FirebaseFirestore.getInstance().collection("matches").document(matchId)
+                                                .update(update)
+                                                .addOnSuccessListener(unused -> Log.d("TAG_Soccer", "🏳️ Match marked as forfeited"))
+                                                .addOnFailureListener(err -> Log.e("TAG_Soccer", "❌ Failed to update match", err));
+                                    }
+
+                                    Intent intent = new Intent(GameActivity.this, MenuActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
+                                    finish();
+                                })
+                                .setNegativeButton("Cancel", null)
+                                .show();
+                    }
+                });
+            });
+
         } else {
             runOnUiThread(() -> {
                 if (gameView != null) {
                     Log.d("TAG_Soccer", "Replacing moves: newMoves.size=" + newMoves.size());
                     gameView.replaceMoves(newMoves);
                     gameView.invalidate();
+
+                    int winner = gameView.checkWinnerFromMoves(newMoves);
+                    if (winner != -1 && this.Winner == -1) {
+                        showWinner(winner);
+                    }
                 }
             });
         }
@@ -367,21 +432,38 @@ public class GameActivity extends AppCompatActivity {
         String sPlayer0="",sPlayer1="";
         this.Winner=Winner;
 
+        // 🔄 Mark match completed in Firestore (if multiplayer)
+        if (GameType == 3 && matchId != null) {
+            String winnerUid = (Winner == 0) ? player0Uid : player1Uid;
+            FirebaseFirestore.getInstance().collection("matches").document(matchId)
+                    .update(Map.of(
+                            "winner", winnerUid,
+                            "status", "completed",
+                            "reason", "goal"
+                    ))
+                    .addOnSuccessListener(unused -> Log.d("TAG_Soccer", "✅ Match updated with winner"))
+                    .addOnFailureListener(e -> Log.e("TAG_Soccer", "❌ Failed to update match"));
+        }
+
+
         // setup the alert builder
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(false);
 
-        sPlayer1 = switch (GameType) {
-            case (1) -> {
+        switch (GameType) {
+            case 1 -> {
                 sPlayer0 = "Player 1";
-                yield "Player 2";
+                sPlayer1 = "Player 2";
             }
-            case (2) -> {
+            case 2 -> {
                 sPlayer0 = "Player";
-                yield "Android";
+                sPlayer1 = "Android";
             }
-            default -> sPlayer1;
-        };
+            case 3 -> {
+                sPlayer0 = player0Name != null ? player0Name : "Player 0";
+                sPlayer1 = player1Name != null ? player1Name : "Player 1";
+            }
+        }
 
         if(Winner==0)
             builder.setMessage("The winner is "+sPlayer0);
@@ -390,8 +472,9 @@ public class GameActivity extends AppCompatActivity {
 
         // add a button
         builder.setPositiveButton("Close", (dialog, which) -> {
-
-            // do something like...
+            Intent intent = new Intent(this, MenuActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
             finish();
         });
 
@@ -399,7 +482,5 @@ public class GameActivity extends AppCompatActivity {
         dialogWinner = builder.create();
         dialogWinner.show();
     }
-
-
 
 }
