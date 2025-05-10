@@ -301,6 +301,11 @@ public class GameView extends View {
         return false;
     }
 
+    public int checkWinnerFromMoves(ArrayList<MoveTo> moves) {
+        MoveTo last = moves.get(moves.size() - 1);
+        return checkWinner(last.X, last.Y, new ArrayList<>(moves));
+    }
+
     public boolean MakeMove(int x, int y,ArrayList<MoveTo> Moves){
         ArrayList<MoveTo> possibleMoves= new ArrayList<>();
         boolean bouncing=isBouncing(x,y,Moves);
@@ -607,11 +612,11 @@ public class GameView extends View {
                     }
 
                     // Apply move locally (updates UI, checks victory)
-                    boolean nextMovePossible = MakeMove(x, y, realMoves);
+                    MakeMove(x, y, realMoves);
                     invalidate();
 
                     // Send to Firestore if still active
-                    if (nextMovePossible && moveCallback != null) {
+                    if (moveCallback != null) {
                         moveCallback.onLocalMove(x, y, realMoves.get(realMoves.size() - 1).P);
                     }
                 }

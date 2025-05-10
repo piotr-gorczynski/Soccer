@@ -298,25 +298,23 @@ public class Field {
         canvas.drawCircle(w2x(flipX(last.X)), h2y(flipY(last.Y)), dotSize * 2, pDots);
 
         // Turn indicator
-        if (Moves.get(Moves.size() - 1).P == 0) {
-            float bottomHintY = isFlipped
-                    ? canvas.getHeight() - (canvas.getHeight() - h2y(flipY(0))) / 4
-                    : h2y(flipY(intFieldHeight + 1)) + (canvas.getHeight() - h2y(flipY(intFieldHeight + 1))) / 4;
+        int currentTurn = Moves.get(Moves.size() - 1).P;
+        boolean isLocalTurn = currentTurn == (isFlipped ? 1 : 0);  // flipped view = player 1
+
+        if (isLocalTurn) {
+            float bottomHintY = h2y(intFieldHeight+1)+(canvas.getHeight()-h2y(intFieldHeight+1))/2;
 
             canvas.drawText("Your move!",
                     w2x(flipX(intFieldWidth / 2)),
-                    bottomHintY + (float) rText.height() / 2,
+                    bottomHintY - (float) rText.height()/2,
                     pHintText);
-
         } else {
             pHintText.getTextBounds(sPlayer1YourMoveorThinking, 0, sPlayer1YourMoveorThinking.length(), rText);
-            float topHintY = isFlipped
-                    ? h2y(flipY(intFieldHeight + 1)) / 4
-                    : h2y(flipY(-1)) / 4;
+            float topHintY = h2y(-1) / 2;
 
             canvas.drawText(sPlayer1YourMoveorThinking,
                     w2x(flipX(intFieldWidth / 2)),
-                    topHintY + (float) rText.height() / 2,
+                    topHintY - (float) rText.height() / 2,
                     pHintText);
         }
     }
