@@ -53,6 +53,6 @@
     <string name="failed_to_load_user_info">Failed to load user info.</string>
     <string name="invite_already_sent">An invitation to this user is already pending.</string>
     <string name="failed_to_check_existing_invites">Failed to check for existing invites.</string>
-    <string name="waiting_for_opponent_to_accept">Waiting for opponent to accept…</string>
+    <string name="waiting_for_opponent_named">Waiting for %1$s to accept…</string>
 
 </resources>

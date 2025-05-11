@@ -444,28 +444,12 @@ public class GameActivity extends AppCompatActivity {
     }
 
     public void showWinner(int Winner) {
+        final String sPlayer0, sPlayer1;
+        this.Winner = Winner;
 
-        this.Winner=Winner;
-
-        // 🔄 Mark match completed in Firestore (if multiplayer)
-        if (GameType == 3 && matchId != null) {
-            String winnerUid = (Winner == 0) ? player0Uid : player1Uid;
-            FirebaseFirestore.getInstance().collection("matches").document(matchId)
-                    .update(Map.of(
-                            "winner", winnerUid,
-                            "status", "completed",
-                            "reason", "goal"
-                    ))
-                    .addOnSuccessListener(unused -> Log.d("TAG_Soccer", "✅ Match updated with winner"))
-                    .addOnFailureListener(e -> Log.e("TAG_Soccer", "❌ Failed to update match"));
-        }
-
-
-        // setup the alert builder
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(false);
 
-        final String sPlayer0, sPlayer1;
         switch (GameType) {
             case 1 -> {
                 sPlayer0 = "Player 1";
@@ -493,37 +477,45 @@ public class GameActivity extends AppCompatActivity {
                         if ("abandon".equals(reason)) {
                             builder.setMessage("Opponent forfeited the game.");
                         } else {
-                            if (Winner == 0)
-                                builder.setMessage("The winner is " + sPlayer0);
-                            else
-                                builder.setMessage("The winner is " + sPlayer1);
+                            builder.setMessage("The winner is " + (Winner == 0 ? sPlayer0 : sPlayer1));
                         }
+
+                        builder.setPositiveButton("Close", (dialog, which) -> {
+                            Intent intent = new Intent(this, MenuActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                            finish();
+                        });
 
                         dialogWinner = builder.create();
                         dialogWinner.show();
                     })
                     .addOnFailureListener(err -> {
-                        Log.e("TAG_Soccer", "Failed to fetch match reason", err);
-                        // fallback if reason field is missing
-                        if (Winner == 0)
-                            builder.setMessage("The winner is " + sPlayer0);
-                        else
-                            builder.setMessage("The winner is " + sPlayer1);
+                        Log.e("TAG_Soccer", "Failed to load match reason", err);
+
+                        builder.setMessage("The winner is " + (Winner == 0 ? sPlayer0 : sPlayer1));
+                        builder.setPositiveButton("Close", (dialog, which) -> {
+                            Intent intent = new Intent(this, MenuActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                            finish();
+                        });
                         dialogWinner = builder.create();
                         dialogWinner.show();
                     });
 
-            return; // exit early since dialog is handled in async callbacks
+            return; // Avoid showing duplicate dialog below
         }
 
-// Fallback for GameType 1 or 2 (no Firestore)
-        if (Winner == 0)
-            builder.setMessage("The winner is " + sPlayer0);
-        else
-            builder.setMessage("The winner is " + sPlayer1);
-
+        // GameType 1 or 2 fallback
+        builder.setMessage("The winner is " + (Winner == 0 ? sPlayer0 : sPlayer1));
+        builder.setPositiveButton("Close", (dialog, which) -> {
+            Intent intent = new Intent(this, MenuActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            finish();
+        });
         dialogWinner = builder.create();
         dialogWinner.show();
     }
-
 }
