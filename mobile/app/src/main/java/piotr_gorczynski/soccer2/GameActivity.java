@@ -351,10 +351,26 @@ public class GameActivity extends AppCompatActivity {
                                         update.put("status", "completed");
                                         update.put("reason", "abandon");
 
-                                        FirebaseFirestore.getInstance().collection("matches").document(matchId)
+                                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                                        // 🔄 Update match document
+                                        db.collection("matches").document(matchId)
                                                 .update(update)
                                                 .addOnSuccessListener(unused -> Log.d("TAG_Soccer", "🏳️ Match marked as forfeited"))
                                                 .addOnFailureListener(err -> Log.e("TAG_Soccer", "❌ Failed to update match", err));
+
+                                        // 📤 Add a dummy move to trigger opponent's listener
+                                        Map<String, Object> forfeitMove = new HashMap<>();
+                                        forfeitMove.put("x", -1);
+                                        forfeitMove.put("y", -1);
+                                        forfeitMove.put("p", localPlayerIndex);  // who forfeited
+                                        forfeitMove.put("createdAt", FieldValue.serverTimestamp());
+
+                                        db.collection("matches").document(matchId)
+                                                .collection("moves")
+                                                .add(forfeitMove)
+                                                .addOnSuccessListener(unused -> Log.d("TAG_Soccer", "📨 Forfeit move added"))
+                                                .addOnFailureListener(e -> Log.e("TAG_Soccer", "❌ Failed to send forfeit move", e));
                                     }
 
                                     Intent intent = new Intent(GameActivity.this, MenuActivity.class);
@@ -429,7 +445,6 @@ public class GameActivity extends AppCompatActivity {
 
     public void showWinner(int Winner) {
 
-        String sPlayer0="",sPlayer1="";
         this.Winner=Winner;
 
         // 🔄 Mark match completed in Firestore (if multiplayer)
@@ -450,6 +465,7 @@ public class GameActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(false);
 
+        final String sPlayer0, sPlayer1;
         switch (GameType) {
             case 1 -> {
                 sPlayer0 = "Player 1";
@@ -463,22 +479,49 @@ public class GameActivity extends AppCompatActivity {
                 sPlayer0 = player0Name != null ? player0Name : "Player 0";
                 sPlayer1 = player1Name != null ? player1Name : "Player 1";
             }
+            default -> {
+                sPlayer0 = "Player 0";
+                sPlayer1 = "Player 1";
+            }
         }
 
-        if(Winner==0)
-            builder.setMessage("The winner is "+sPlayer0);
+        if (GameType == 3 && matchId != null) {
+            FirebaseFirestore.getInstance().collection("matches").document(matchId).get()
+                    .addOnSuccessListener(doc -> {
+                        String reason = doc.getString("reason");
+
+                        if ("abandon".equals(reason)) {
+                            builder.setMessage("Opponent forfeited the game.");
+                        } else {
+                            if (Winner == 0)
+                                builder.setMessage("The winner is " + sPlayer0);
+                            else
+                                builder.setMessage("The winner is " + sPlayer1);
+                        }
+
+                        dialogWinner = builder.create();
+                        dialogWinner.show();
+                    })
+                    .addOnFailureListener(err -> {
+                        Log.e("TAG_Soccer", "Failed to fetch match reason", err);
+                        // fallback if reason field is missing
+                        if (Winner == 0)
+                            builder.setMessage("The winner is " + sPlayer0);
+                        else
+                            builder.setMessage("The winner is " + sPlayer1);
+                        dialogWinner = builder.create();
+                        dialogWinner.show();
+                    });
+
+            return; // exit early since dialog is handled in async callbacks
+        }
+
+// Fallback for GameType 1 or 2 (no Firestore)
+        if (Winner == 0)
+            builder.setMessage("The winner is " + sPlayer0);
         else
-            builder.setMessage("The winner is "+sPlayer1);
+            builder.setMessage("The winner is " + sPlayer1);
 
-        // add a button
-        builder.setPositiveButton("Close", (dialog, which) -> {
-            Intent intent = new Intent(this, MenuActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
-            finish();
-        });
-
-        // create and show the alert dialog
         dialogWinner = builder.create();
         dialogWinner.show();
     }
