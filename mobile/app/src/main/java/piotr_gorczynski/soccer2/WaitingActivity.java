@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,7 +27,19 @@ public class WaitingActivity extends AppCompatActivity {
             return;
         }
 
+        TextView waitingMessage = findViewById(R.id.waitingMessage);
+
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("invitations").document(inviteId).get()
+                .addOnSuccessListener(inviteDoc -> {
+                    String toNickname = inviteDoc.getString("toNickname");
+                    if (toNickname != null) {
+
+                        String msg = getString(R.string.waiting_for_opponent_named, toNickname);
+                        waitingMessage.setText(msg);
+                    }
+                });
 
         // 🔍 Listen for match that was created after invite is accepted
         db.collection("matches")
@@ -59,7 +72,7 @@ public class WaitingActivity extends AppCompatActivity {
                         String nickname = prefs.getString("nickname", "Player");
                         intent.putExtra("localNickname", nickname);
 
-                        startActivity(intent);
+                         startActivity(intent);
                         finish();
                     } else {
                         Log.d(TAG, "No matches found with invitationId=" + inviteId);

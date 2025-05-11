@@ -277,6 +277,10 @@ public class Field {
         for (int i = 1; i < Moves.size(); i++) {
             int newX = Moves.get(i).X;
             int newY = Moves.get(i).Y;
+
+            // ⛔ Skip artificial moves, eg. in case of forefeit
+            if (newX == -1 && newY == -1) continue;
+
             Paint p = Moves.get(i - 1).P == 0 ? pPlayer0 : pPlayer1;
             canvas.drawLine(
                     w2x(flipX(oldx)), h2y(flipY(oldy)),
@@ -295,7 +299,13 @@ public class Field {
 
         // Ball
         MoveTo last = Moves.get(Moves.size() - 1);
-        canvas.drawCircle(w2x(flipX(last.X)), h2y(flipY(last.Y)), dotSize * 2, pDots);
+
+        // ⛔ Skip artificial moves, eg. in case of forefeit
+        if (last.X == -1 && last.Y == -1) {
+            last=Moves.get(Moves.size() - 2);
+            canvas.drawCircle(w2x(flipX(last.X)), h2y(flipY(last.Y)), dotSize * 2, pDots);
+        } else
+            canvas.drawCircle(w2x(flipX(last.X)), h2y(flipY(last.Y)), dotSize * 2, pDots);
 
         // Turn indicator
         int currentTurn = Moves.get(Moves.size() - 1).P;

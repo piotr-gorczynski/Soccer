@@ -18,11 +18,12 @@
             android:indeterminate="true" />
 
         <TextView
+            android:id="@+id/waitingMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/waiting_for_opponent_to_accept"
             android:textSize="18sp"
             android:textColor="@android:color/white"
             android:paddingTop="16dp" />
+
     </LinearLayout>
 </FrameLayout>
