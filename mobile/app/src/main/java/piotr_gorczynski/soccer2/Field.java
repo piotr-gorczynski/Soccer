@@ -29,40 +29,34 @@ public class Field {
     private final Rect rText;
     private final String sPlayer0;
     private final String sPlayer1;
-    private final String sPlayer1YourMoveorThinking;
-
+    private final int gameType;
     final ArrayList<MoveTo> possibleMoves;//= new ArrayList<MoveTo>();
     final ArrayList<MoveTo> Moves;//= new ArrayList<MoveTo>();
     private boolean isFlipped=false;
 
     public Field(Context current, ArrayList<MoveTo> argMoves, ArrayList<MoveTo> argPossibleMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex) {
 
+        this.gameType = argGameType;  // ✅ Save GameType for later use
+
         switch (argGameType) {
-            case 1:
+            case 1 -> {
                 sPlayer0 = "Player 1";
                 sPlayer1 = "Player 2";
-                sPlayer1YourMoveorThinking = "Your move!...";
-                break;
-            case 2:
+            }
+            case 2 -> {
                 sPlayer0 = "Player";
                 sPlayer1 = "Android";
-                sPlayer1YourMoveorThinking = "Thinking...";
-                break;
-            case 3:
+            }
+            case 3 -> {
                 sPlayer0 = player0Name != null ? player0Name : "Player 0";
                 sPlayer1 = player1Name != null ? player1Name : "Player 1";
                 isFlipped = localPlayerIndex == 1;
-                sPlayer1YourMoveorThinking = "Opponent move...";
-                break;
-            default:
+            }
+            default -> {
                 sPlayer0 = "Player 0";
                 sPlayer1 = "Player 1";
-                sPlayer1YourMoveorThinking = "Move...";
-                break;
+            }
         }
-
-
-
 
         pField = new Paint();
         pFieldBorder= new Paint();
@@ -319,10 +313,23 @@ public class Field {
                     bottomHintY - (float) rText.height()/2,
                     pHintText);
         } else {
-            pHintText.getTextBounds(sPlayer1YourMoveorThinking, 0, sPlayer1YourMoveorThinking.length(), rText);
+            String text;
+            if (gameType == 1) {
+                text = "Opponent move...";  // could be improved, but likely shared screen
+            } else if (gameType == 2) {
+                text = "Thinking...";
+            } else if (gameType == 3) {
+                // Multiplayer: determine which name is the opponent
+                String opponentName = isFlipped ? sPlayer0 : sPlayer1;
+                text = opponentName + " move...";
+            } else {
+                text = "Move...";
+            }
+
+            pHintText.getTextBounds(text, 0, text.length(), rText);
             float topHintY = h2y(-1) / 2;
 
-            canvas.drawText(sPlayer1YourMoveorThinking,
+            canvas.drawText(text,
                     w2x(flipX(intFieldWidth / 2)),
                     topHintY - (float) rText.height() / 2,
                     pHintText);
