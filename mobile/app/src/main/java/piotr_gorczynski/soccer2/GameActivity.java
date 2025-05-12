@@ -363,7 +363,7 @@ public class GameActivity extends AppCompatActivity {
                                         Map<String, Object> forfeitMove = new HashMap<>();
                                         forfeitMove.put("x", -1);
                                         forfeitMove.put("y", -1);
-                                        forfeitMove.put("p", localPlayerIndex);  // who forfeited
+                                        forfeitMove.put("p", localPlayerIndex);
                                         forfeitMove.put("createdAt", FieldValue.serverTimestamp());
 
                                         db.collection("matches").document(matchId)
@@ -475,7 +475,10 @@ public class GameActivity extends AppCompatActivity {
                         String reason = doc.getString("reason");
 
                         if ("abandon".equals(reason)) {
-                            builder.setMessage("Opponent forfeited the game.");
+                            String winnerUid = doc.getString("winner");
+                            String forfeitingUid = Objects.requireNonNull(winnerUid).equals(player0Uid) ? player1Uid : player0Uid;
+                            String forfeitingPlayer = forfeitingUid.equals(player0Uid) ? sPlayer0 : sPlayer1;
+                            builder.setMessage(forfeitingPlayer + " forfeited the game.");
                         } else {
                             builder.setMessage("The winner is " + (Winner == 0 ? sPlayer0 : sPlayer1));
                         }
