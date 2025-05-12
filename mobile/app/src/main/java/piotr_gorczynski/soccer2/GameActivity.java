@@ -29,6 +29,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import com.google.firebase.Timestamp;
+
 public class GameActivity extends AppCompatActivity {
 
 
@@ -252,7 +254,7 @@ public class GameActivity extends AppCompatActivity {
                                     Log.d("TAG_Soccer", "Attaching Firestore listener to: matches/" + matchId + "/moves");
                                     movesRef
                                             .orderBy("createdAt")
-                                            .addSnapshotListener((snapshot, e) -> onMovesUpdate(snapshot, e, rt0, rt1));
+                                            .addSnapshotListener((snapshot, e) -> onMovesUpdate(snapshot, e, rt0, rt1,doc));
                                 })
                                 .addOnFailureListener(e -> {
                                     Log.e("TAG_Soccer", "Failed to load opponent info.", e);
@@ -312,7 +314,7 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
-    private void onMovesUpdate(QuerySnapshot snapshot, FirebaseFirestoreException e, long rt0, long rt1) {
+    private void onMovesUpdate(QuerySnapshot snapshot, FirebaseFirestoreException e, long rt0, long rt1, DocumentSnapshot doc) {
         if (e != null) {
             Log.e("TAG_Soccer", "Listen for moves failed", e);
             return;
@@ -325,10 +327,10 @@ public class GameActivity extends AppCompatActivity {
 
 
         ArrayList<MoveTo> newMoves = new ArrayList<>();
-        for (DocumentSnapshot doc : snapshot.getDocuments()) {
-            int x = Objects.requireNonNull(doc.getLong("x")).intValue();
-            int y = Objects.requireNonNull(doc.getLong("y")).intValue();
-            int p = Objects.requireNonNull(doc.getLong("p")).intValue();
+        for (DocumentSnapshot moveDoc : snapshot.getDocuments()) {
+            int x = Objects.requireNonNull(moveDoc.getLong("x")).intValue();
+            int y = Objects.requireNonNull(moveDoc.getLong("y")).intValue();
+            int p = Objects.requireNonNull(moveDoc.getLong("p")).intValue();
             newMoves.add(new MoveTo(x, y, p));
         }
 
@@ -346,11 +348,16 @@ public class GameActivity extends AppCompatActivity {
 
 
                 setContentView(gameView);
+                // ⏱ Extract shared server time for turn start (avoids clock drift)
+                Timestamp ts = doc.getTimestamp("turnStartTime");
+                long turnStartMillis = ts != null ? ts.toDate().getTime() : System.currentTimeMillis();
+
+                turnStartLocalTime = turnStartMillis;
+                gameView.turnStartLocalTime = turnStartMillis;
+
 
                 gameView.setClocks(rt0, rt1);
 
-                turnStartLocalTime = System.currentTimeMillis();
-                gameView.turnStartLocalTime = turnStartLocalTime;
 
                 if (localPlayerIndex == newMoves.get(newMoves.size() - 1).P) {
                     db.collection("matches").document(matchId)
