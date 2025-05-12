@@ -39,7 +39,8 @@ public class GameView extends View {
     private MoveCallback moveCallback;
 
     private int localPlayerIndex=0;
-
+    private String sPlayer0;
+    private String sPlayer1;
     private long remainingTime0 = 0;
     private long remainingTime1 = 0;
     public long turnStartLocalTime = -1;  // set by GameActivity
@@ -141,6 +142,9 @@ public class GameView extends View {
         this.requestFocus();
         this.setFocusableInTouchMode(true);
 
+        this.sPlayer0 = player0Name;
+        this.sPlayer1 = player1Name;
+
         // No Android move logic here, because GameType 3 is human vs. human
     }
 
@@ -218,17 +222,23 @@ public class GameView extends View {
             int turn = realMoves.get(realMoves.size() - 1).P;
 
             long elapsed = now - turnStartLocalTime;
-            long myTime = localPlayerIndex == 0 ? remainingTime0 : remainingTime1;
-            long theirTime = localPlayerIndex == 0 ? remainingTime1 : remainingTime0;
+            long t0 = remainingTime0;
+            long t1 = remainingTime1;
 
-            if (localPlayerIndex == turn) {
-                myTime -= elapsed;
+            if (turn == 0) {
+                t0 -= elapsed;
             } else {
-                theirTime -= elapsed;
+                t1 -= elapsed;
             }
 
-            canvas.drawText("You: " + formatTime(myTime), getWidth() / 4f, 80, timerPaint);
-            canvas.drawText("Them: " + formatTime(theirTime), getWidth() * 3f / 4f, 80, timerPaint);
+            long myTime   = localPlayerIndex == 0 ? t0 : t1;
+            long theirTime = localPlayerIndex == 0 ? t1 : t0;
+
+            String myName = localPlayerIndex == 0 ? sPlayer0 : sPlayer1;
+            String opponentName = localPlayerIndex == 0 ? sPlayer1 : sPlayer0;
+
+            canvas.drawText(myName + ": " + formatTime(myTime), getWidth() / 4f, 80, timerPaint);
+            canvas.drawText(opponentName + ": " + formatTime(theirTime), getWidth() * 3f / 4f, 80, timerPaint);
 
             // 🔁 refresh every second
             clockHandler.removeCallbacks(updateClockRunnable);
