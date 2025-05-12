@@ -54,7 +54,11 @@ exports.acceptInvite = functions.https.onCall(async (data, context) => {
     winner: null,
     invitationId: invitationId, // 🔧 added line    
     createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    // ⏱ Added for chess-style clocks
+    remainingTime0: initialTimeSeconds,
+    remainingTime1: initialTimeSeconds,
+    turnStartTime: null  // ⏱ initially null, set by client later        
   };
 
   await db.runTransaction(async tx => {
