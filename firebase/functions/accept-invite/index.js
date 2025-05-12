@@ -46,6 +46,7 @@ exports.acceptInvite = functions.https.onCall(async (data, context) => {
   console.log("✅ Creating match for players:", invite.from, "vs", invite.to);
 
   const matchRef = db.collection("matches").doc();
+  const initialTimeSeconds = 300;  // ⏱ add this line to set initial time
   const matchData = {
     player0: invite.from,
     player1: invite.to,
