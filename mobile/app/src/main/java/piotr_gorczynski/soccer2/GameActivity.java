@@ -322,7 +322,7 @@ public class GameActivity extends AppCompatActivity {
                 " player0Name=" + player0Name +
                 " player1Name=" + player1Name);
 
-        gameView.setClocks(rt0, rt1);
+
 
         ArrayList<MoveTo> newMoves = new ArrayList<>();
         for (DocumentSnapshot doc : snapshot.getDocuments()) {
@@ -346,6 +346,8 @@ public class GameActivity extends AppCompatActivity {
 
 
                 setContentView(gameView);
+
+                gameView.setClocks(rt0, rt1);
 
                 turnStartLocalTime = System.currentTimeMillis();
                 gameView.turnStartLocalTime = turnStartLocalTime;
