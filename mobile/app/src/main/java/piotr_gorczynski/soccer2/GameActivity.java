@@ -238,13 +238,6 @@ public class GameActivity extends AppCompatActivity {
                                     player0Uid = doc.getString("player0");
                                     player1Uid = doc.getString("player1");
 
-                                    // 🔹 Extract timers here
-                                    Long raw0 = doc.getLong("remainingTime0");
-                                    Long raw1 = doc.getLong("remainingTime1");
-                                    long rt0 = raw0 != null ? raw0 * 1000 : 300_000;
-                                    long rt1 = raw1 != null ? raw1 * 1000 : 300_000;
-
-
                                     // ── Wire up real‐time “moves” listener ──
                                     movesRef =
                                             db.collection("matches")
@@ -254,7 +247,7 @@ public class GameActivity extends AppCompatActivity {
                                     Log.d("TAG_Soccer", "Attaching Firestore listener to: matches/" + matchId + "/moves");
                                     movesRef
                                             .orderBy("createdAt")
-                                            .addSnapshotListener((snapshot, e) -> onMovesUpdate(snapshot, e, rt0, rt1,doc));
+                                            .addSnapshotListener((snapshot, e) -> onMovesUpdate(snapshot, e, doc));
                                 })
                                 .addOnFailureListener(e -> {
                                     Log.e("TAG_Soccer", "Failed to load opponent info.", e);
@@ -314,7 +307,7 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
-    private void onMovesUpdate(QuerySnapshot snapshot, FirebaseFirestoreException e, long rt0, long rt1, DocumentSnapshot doc) {
+    private void onMovesUpdate(QuerySnapshot snapshot, FirebaseFirestoreException e, DocumentSnapshot doc) {
         if (e != null) {
             Log.e("TAG_Soccer", "Listen for moves failed", e);
             return;
@@ -354,7 +347,13 @@ public class GameActivity extends AppCompatActivity {
 
                 turnStartLocalTime = turnStartMillis;
                 gameView.turnStartLocalTime = turnStartMillis;
+                Log.d("TAG_Clock", "Turn start (shared server time): " + turnStartMillis);
 
+                Long raw0 = doc.getLong("remainingTime0");
+                Long raw1 = doc.getLong("remainingTime1");
+
+                long rt0 = raw0 != null ? raw0 * 1000 : 300_000;
+                long rt1 = raw1 != null ? raw1 * 1000 : 300_000;
 
                 gameView.setClocks(rt0, rt1);
 
@@ -451,6 +450,9 @@ public class GameActivity extends AppCompatActivity {
                         .addOnFailureListener(err -> Log.e("TAG_Soccer", "❌ Failed to update clock", err)))
                 .addOnFailureListener(err ->
                         Toast.makeText(this, "Failed to send move: " + err, LENGTH_SHORT).show());
+
+        Log.d("TAG_Clock", "Saving move, player=" + p + ", elapsed=" + elapsed + " ms, timeField=" + timeField);
+
     }
 
     @Override

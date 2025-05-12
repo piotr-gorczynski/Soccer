@@ -225,14 +225,26 @@ public class GameView extends View {
             long t0 = remainingTime0;
             long t1 = remainingTime1;
 
+            // ⏱ Subtract elapsed time from whoever's turn it is
             if (turn == 0) {
                 t0 -= elapsed;
             } else {
                 t1 -= elapsed;
             }
 
-            long myTime   = localPlayerIndex == 0 ? t0 : t1;
+            // ⬅️ Now map t0/t1 to myTime/theirTime from perspective of local player
+            long myTime = localPlayerIndex == 0 ? t0 : t1;
             long theirTime = localPlayerIndex == 0 ? t1 : t0;
+
+            Log.d("TAG_Clock",
+                    "onDraw | localPlayerIndex=" + localPlayerIndex +
+                            " turn=" + turn +
+                            " elapsed=" + elapsed +
+                            " raw remainingTime0=" + remainingTime0 +
+                            " raw remainingTime1=" + remainingTime1);
+            Log.d("TAG_Clock",
+                    "Displayed | myTime=" + myTime + " (" + formatTime(myTime) + ")" +
+                            " | theirTime=" + theirTime + " (" + formatTime(theirTime) + ")");
 
             String myName = localPlayerIndex == 0 ? sPlayer0 : sPlayer1;
             String opponentName = localPlayerIndex == 0 ? sPlayer1 : sPlayer0;
