@@ -14,7 +14,9 @@ import java.util.ArrayList;
 import android.util.AttributeSet;
 import android.os.Looper;
 import androidx.annotation.NonNull;
-
+import android.graphics.Paint;
+import android.graphics.Color;
+import java.util.Locale;
 
 //Added for compatibility
 
@@ -37,6 +39,15 @@ public class GameView extends View {
     private MoveCallback moveCallback;
 
     private int localPlayerIndex=0;
+
+    private long remainingTime0 = 0;
+    private long remainingTime1 = 0;
+    public long turnStartLocalTime = -1;  // set by GameActivity
+
+    private final Handler clockHandler = new Handler(Looper.getMainLooper());
+    private final Runnable updateClockRunnable = this::invalidate;
+
+    private final Paint timerPaint = new Paint();
 
     @SuppressWarnings("unused")
 
@@ -122,6 +133,10 @@ public class GameView extends View {
         // construct Field with custom nicknames
         field = new Field(context, realMoves, possibleMovesForDrawing, GameType, player0Name, player1Name, localPlayerIndex);
 
+        timerPaint.setColor(Color.WHITE);
+        timerPaint.setTextAlign(Paint.Align.CENTER);
+        timerPaint.setTextSize(50); // or scale with screen size
+
         this.setFocusable(true);
         this.requestFocus();
         this.setFocusableInTouchMode(true);
@@ -129,6 +144,10 @@ public class GameView extends View {
         // No Android move logic here, because GameType 3 is human vs. human
     }
 
+    public void setClocks(long t0, long t1) {
+        this.remainingTime0 = t0;
+        this.remainingTime1 = t1;
+    }
 
     public GameView(Context context, ArrayList<MoveTo> argMoves, int argGameType,int androidLevel) {
         super(context);
@@ -193,8 +212,38 @@ public class GameView extends View {
 
         createPossibleMoves(possibleMovesForDrawing, realMoves);
         field.draw(canvas);
+
+        if (GameType == 3 && turnStartLocalTime > 0) {
+            long now = System.currentTimeMillis();
+            int turn = realMoves.get(realMoves.size() - 1).P;
+
+            long elapsed = now - turnStartLocalTime;
+            long myTime = localPlayerIndex == 0 ? remainingTime0 : remainingTime1;
+            long theirTime = localPlayerIndex == 0 ? remainingTime1 : remainingTime0;
+
+            if (localPlayerIndex == turn) {
+                myTime -= elapsed;
+            } else {
+                theirTime -= elapsed;
+            }
+
+            canvas.drawText("You: " + formatTime(myTime), getWidth() / 4f, 80, timerPaint);
+            canvas.drawText("Them: " + formatTime(theirTime), getWidth() * 3f / 4f, 80, timerPaint);
+
+            // 🔁 refresh every second
+            clockHandler.removeCallbacks(updateClockRunnable);
+            clockHandler.postDelayed(updateClockRunnable, 1000);
+        }
+
     }
 
+    private String formatTime(long ms) {
+        if (ms < 0) ms = 0;
+        long totalSec = ms / 1000;
+        long min = totalSec / 60;
+        long sec = totalSec % 60;
+        return String.format(Locale.US, "%02d:%02d", min, sec);
+    }
 
     // Called back when the view is first created or its size changes.
     @Override

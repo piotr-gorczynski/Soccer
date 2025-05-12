@@ -50,6 +50,7 @@ public class GameActivity extends AppCompatActivity {
     private String player0Name, player1Name;
 
     private String player0Uid, player1Uid;
+    private long turnStartLocalTime = -1;
 
     @SuppressLint("RedundantSuppression")
     @SuppressWarnings("deprecation")
@@ -235,6 +236,13 @@ public class GameActivity extends AppCompatActivity {
                                     player0Uid = doc.getString("player0");
                                     player1Uid = doc.getString("player1");
 
+                                    // 🔹 Extract timers here
+                                    Long raw0 = doc.getLong("remainingTime0");
+                                    Long raw1 = doc.getLong("remainingTime1");
+                                    long rt0 = raw0 != null ? raw0 * 1000 : 300_000;
+                                    long rt1 = raw1 != null ? raw1 * 1000 : 300_000;
+
+
                                     // ── Wire up real‐time “moves” listener ──
                                     movesRef =
                                             db.collection("matches")
@@ -244,7 +252,7 @@ public class GameActivity extends AppCompatActivity {
                                     Log.d("TAG_Soccer", "Attaching Firestore listener to: matches/" + matchId + "/moves");
                                     movesRef
                                             .orderBy("createdAt")
-                                            .addSnapshotListener(this::onMovesUpdate);
+                                            .addSnapshotListener((snapshot, e) -> onMovesUpdate(snapshot, e, rt0, rt1));
                                 })
                                 .addOnFailureListener(e -> {
                                     Log.e("TAG_Soccer", "Failed to load opponent info.", e);
@@ -304,7 +312,7 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
-    private void onMovesUpdate(QuerySnapshot snapshot, FirebaseFirestoreException e) {
+    private void onMovesUpdate(QuerySnapshot snapshot, FirebaseFirestoreException e, long rt0, long rt1) {
         if (e != null) {
             Log.e("TAG_Soccer", "Listen for moves failed", e);
             return;
@@ -313,6 +321,8 @@ public class GameActivity extends AppCompatActivity {
         Log.d("TAG_Soccer", "gameViewLaunched=" + gameViewLaunched +
                 " player0Name=" + player0Name +
                 " player1Name=" + player1Name);
+
+        gameView.setClocks(rt0, rt1);
 
         ArrayList<MoveTo> newMoves = new ArrayList<>();
         for (DocumentSnapshot doc : snapshot.getDocuments()) {
@@ -333,7 +343,19 @@ public class GameActivity extends AppCompatActivity {
             gameView = new GameView(this, newMoves, GameType, player0Name, player1Name, localPlayerIndex);
             gameView.setMoveCallback(this::sendMoveToFirestore);
             runOnUiThread(() -> {
+
+
                 setContentView(gameView);
+
+                turnStartLocalTime = System.currentTimeMillis();
+                gameView.turnStartLocalTime = turnStartLocalTime;
+
+                if (localPlayerIndex == newMoves.get(newMoves.size() - 1).P) {
+                    db.collection("matches").document(matchId)
+                            .update("turnStartTime", FieldValue.serverTimestamp())
+                            .addOnSuccessListener(unused -> Log.d("TAG_Soccer", "⏱ turnStartTime set by local player"))
+                            .addOnFailureListener(err -> Log.e("TAG_Soccer", "❌ Failed to set turnStartTime", err));
+                }
 
                 getOnBackPressedDispatcher().addCallback(GameActivity.this, new OnBackPressedCallback(true) {
                     @Override
@@ -401,15 +423,25 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void sendMoveToFirestore(int x, int y, int p) {
-        Map<String,Object> m = new HashMap<>();
+        long now = System.currentTimeMillis();
+        long elapsed = now - turnStartLocalTime;  // ms
+
+        String timeField = "remainingTime" + p;
+
+        Map<String, Object> m = new HashMap<>();
         m.put("x", x);
         m.put("y", y);
         m.put("p", p);
         m.put("createdAt", FieldValue.serverTimestamp());
+
         movesRef.add(m)
+                .addOnSuccessListener(unused -> db.collection("matches").document(matchId)
+                        .update(timeField, FieldValue.increment(-elapsed / 1000.0),
+                                "turnStartTime", FieldValue.serverTimestamp())
+                        .addOnSuccessListener(v -> Log.d("TAG_Soccer", "⏱ Clock updated"))
+                        .addOnFailureListener(err -> Log.e("TAG_Soccer", "❌ Failed to update clock", err)))
                 .addOnFailureListener(err ->
-                        Toast.makeText(this, "Failed to send move: "+err, LENGTH_SHORT).show()
-                );
+                        Toast.makeText(this, "Failed to send move: " + err, LENGTH_SHORT).show());
     }
 
     @Override
