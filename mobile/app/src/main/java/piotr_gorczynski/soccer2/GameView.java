@@ -50,7 +50,16 @@ public class GameView extends View {
 
     private final Paint timerPaint = new Paint();
 
-    @SuppressWarnings("unused")
+    private int currentTurn = 0;
+
+    public void setTurn(int turn) {
+        this.currentTurn = turn;
+    }
+
+    public int getTurn() {
+        return currentTurn;
+    }
+
 
     public interface MoveCallback {
         void onLocalMove(int x, int y, int p);
@@ -225,16 +234,22 @@ public class GameView extends View {
             long t0 = remainingTime0;
             long t1 = remainingTime1;
 
-            // ⏱ Subtract elapsed time from whoever's turn it is
-            if (turn == 0) {
-                t0 -= elapsed;
+            long myTime, theirTime;
+
+            if (localPlayerIndex == 0) {
+                myTime = t0;
+                theirTime = t1;
             } else {
-                t1 -= elapsed;
+                myTime = t1;
+                theirTime = t0;
             }
 
-            // ⬅️ Now map t0/t1 to myTime/theirTime from perspective of local player
-            long myTime = localPlayerIndex == 0 ? t0 : t1;
-            long theirTime = localPlayerIndex == 0 ? t1 : t0;
+            // Subtract elapsed from whoever's turn it is (but after mapping)
+            if (turn == localPlayerIndex) {
+                myTime -= elapsed;
+            } else {
+                theirTime -= elapsed;
+            }
 
             Log.d("TAG_Clock",
                     "onDraw | localPlayerIndex=" + localPlayerIndex +
@@ -653,6 +668,8 @@ public class GameView extends View {
     // Touch-input handler
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        Log.d("TAG_Clock", "Touch received. localPlayerIndex=" + localPlayerIndex + ", lastP=" + realMoves.get(realMoves.size() - 1).P);
+
         // 1) if android's move then ignore onTouchEvent
         if((GameType ==2) && (realMoves.get(realMoves.size()-1).P==1))
             return true;
@@ -675,10 +692,11 @@ public class GameView extends View {
             // 2c) If this tap is a valid move…
             if(isMoveValid(x,y,possibleMoves)) {
                 if (GameType == 3) {
-                    int lastP = realMoves.get(realMoves.size() - 1).P;
+                    // Read turn from GameView state (to match match.turn)
+                    int currentTurn = getTurn();  // ← You need to store this value on each match update
 
-                    if (localPlayerIndex != lastP) {
-                        Log.d("TAG_Soccer", "🔒 Not your turn — ignoring touch");
+                    if (localPlayerIndex != currentTurn) {
+                        Log.d("TAG_Soccer", "🔒 Ignored touch — not your turn (match.turn=" + currentTurn + ")");
                         return true;
                     }
 
@@ -688,6 +706,7 @@ public class GameView extends View {
 
                     // Send to Firestore if still active
                     if (moveCallback != null) {
+                        Log.d("TAG_Soccer", "✅ moveCallback triggered, sending move for player=" + realMoves.get(realMoves.size() - 1).P);
                         moveCallback.onLocalMove(x, y, realMoves.get(realMoves.size() - 1).P);
                     }
                 }

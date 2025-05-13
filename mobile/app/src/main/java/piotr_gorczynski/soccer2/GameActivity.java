@@ -247,7 +247,7 @@ public class GameActivity extends AppCompatActivity {
                                     Log.d("TAG_Soccer", "Attaching Firestore listener to: matches/" + matchId + "/moves");
                                     movesRef
                                             .orderBy("createdAt")
-                                            .addSnapshotListener((snapshot, e) -> onMovesUpdate(snapshot, e, doc));
+                                            .addSnapshotListener(this::onMovesUpdate);
                                 })
                                 .addOnFailureListener(e -> {
                                     Log.e("TAG_Soccer", "Failed to load opponent info.", e);
@@ -307,7 +307,7 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
-    private void onMovesUpdate(QuerySnapshot snapshot, FirebaseFirestoreException e, DocumentSnapshot doc) {
+    private void onMovesUpdate(QuerySnapshot snapshot, FirebaseFirestoreException e) {
         if (e != null) {
             Log.e("TAG_Soccer", "Listen for moves failed", e);
             return;
@@ -341,22 +341,26 @@ public class GameActivity extends AppCompatActivity {
 
 
                 setContentView(gameView);
-                // ⏱ Extract shared server time for turn start (avoids clock drift)
-                Timestamp ts = doc.getTimestamp("turnStartTime");
-                long turnStartMillis = ts != null ? ts.toDate().getTime() : System.currentTimeMillis();
 
-                turnStartLocalTime = turnStartMillis;
-                gameView.turnStartLocalTime = turnStartMillis;
-                Log.d("TAG_Clock", "Turn start (shared server time): " + turnStartMillis);
+                // 🔁 Fetch clocks & set them
+                db.collection("matches").document(matchId).get()
+                        .addOnSuccessListener(updatedDoc -> {
+                            Long raw0 = updatedDoc.getLong("remainingTime0");
+                            Long raw1 = updatedDoc.getLong("remainingTime1");
+                            long rt0 = raw0 != null ? raw0 * 1000 : 300_000;
+                            long rt1 = raw1 != null ? raw1 * 1000 : 300_000;
+                            gameView.setClocks(rt0, rt1);
 
-                Long raw0 = doc.getLong("remainingTime0");
-                Long raw1 = doc.getLong("remainingTime1");
+                            Timestamp ts = updatedDoc.getTimestamp("turnStartTime");
+                            long turnStartMillis = ts != null ? ts.toDate().getTime() : System.currentTimeMillis();
+                            turnStartLocalTime = turnStartMillis;
+                            gameView.turnStartLocalTime = turnStartMillis;
 
-                long rt0 = raw0 != null ? raw0 * 1000 : 300_000;
-                long rt1 = raw1 != null ? raw1 * 1000 : 300_000;
+                            Log.d("TAG_Clock", "✅ [INIT] Clocks synced | rt0=" + rt0 + " | rt1=" + rt1 + " | start=" + turnStartMillis);
 
-                gameView.setClocks(rt0, rt1);
-
+                            gameView.invalidate();
+                        })
+                        .addOnFailureListener(err -> Log.e("TAG_Soccer", "❌ Failed to fetch clocks at init", err));
 
                 if (localPlayerIndex == newMoves.get(newMoves.size() - 1).P) {
                     db.collection("matches").document(matchId)
@@ -415,18 +419,57 @@ public class GameActivity extends AppCompatActivity {
             });
 
         } else {
-            runOnUiThread(() -> {
-                if (gameView != null) {
-                    Log.d("TAG_Soccer", "Replacing moves: newMoves.size=" + newMoves.size());
-                    gameView.replaceMoves(newMoves);
-                    gameView.invalidate();
+            db.collection("matches").document(matchId).get()
+                    .addOnSuccessListener(updatedDoc -> runOnUiThread(() -> {
+                        if (gameView != null) {
+                            Log.d("TAG_Soccer", "Replacing moves: newMoves.size=" + newMoves.size());
+                            gameView.replaceMoves(newMoves);
 
-                    int winner = gameView.checkWinnerFromMoves(newMoves);
-                    if (winner != -1 && this.Winner == -1) {
-                        showWinner(winner);
-                    }
-                }
-            });
+                            // ⏱ Refresh clocks with *latest* match data
+                            Long raw0 = updatedDoc.getLong("remainingTime0");
+                            Long raw1 = updatedDoc.getLong("remainingTime1");
+                            long rt0 = raw0 != null ? raw0 * 1000 : 300_000;
+                            long rt1 = raw1 != null ? raw1 * 1000 : 300_000;
+                            gameView.setClocks(rt0, rt1);
+
+                            Timestamp ts = updatedDoc.getTimestamp("turnStartTime");
+                            long turnStartMillis = ts != null ? ts.toDate().getTime() : System.currentTimeMillis();
+                            gameView.turnStartLocalTime = turnStartMillis;
+                            turnStartLocalTime = turnStartMillis;
+                            if (ts != null) {
+                                Log.d("TAG_Clock", "Firestore turnStartTime from server: " + ts.toDate().getTime());
+                            }
+
+
+                            Long turn = updatedDoc.getLong("turn");
+                            if (turn != null) {
+                                gameView.setTurn(turn.intValue());
+                            }
+                            int lastMoveP = newMoves.get(newMoves.size() - 1).P;
+
+                            if (turn == null) {
+                                Log.w("TAG_Clock", "⚠️ Match turn missing — skipping countdown logic");
+                                gameView.turnStartLocalTime = -1;
+                            } else if (turn == localPlayerIndex && lastMoveP == 1 - localPlayerIndex) {
+                                gameView.turnStartLocalTime = System.currentTimeMillis();  // ✅ My turn and previous move is confirmed
+                                Log.d("TAG_Clock", "⏱ Starting active countdown for local player");
+                            } else {
+                                gameView.turnStartLocalTime = -1;  // 🔒 Either not my turn or move update not ready
+                                Log.d("TAG_Clock", "⏳ Passive display only — waiting for opponent turn");
+                            }
+
+
+                            gameView.invalidate();
+
+                            int winner = gameView.checkWinnerFromMoves(newMoves);
+                            if (winner != -1 && this.Winner == -1) {
+                                showWinner(winner);
+                            }
+                        }
+                    }))
+                    .addOnFailureListener(err ->
+                            Log.e("TAG_Soccer", "❌ Failed to fetch updated match doc", err));
+
         }
     }
 
@@ -444,8 +487,11 @@ public class GameActivity extends AppCompatActivity {
 
         movesRef.add(m)
                 .addOnSuccessListener(unused -> db.collection("matches").document(matchId)
-                        .update(timeField, FieldValue.increment(-elapsed / 1000.0),
-                                "turnStartTime", FieldValue.serverTimestamp())
+                        .update(
+                                timeField, FieldValue.increment(-elapsed / 1000.0),
+                                "turnStartTime", FieldValue.serverTimestamp(),
+                                "turn", 1 - p  // 🔁 switch turn to opponent
+                        )
                         .addOnSuccessListener(v -> Log.d("TAG_Soccer", "⏱ Clock updated"))
                         .addOnFailureListener(err -> Log.e("TAG_Soccer", "❌ Failed to update clock", err)))
                 .addOnFailureListener(err ->
