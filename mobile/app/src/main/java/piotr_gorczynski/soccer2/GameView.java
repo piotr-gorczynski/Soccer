@@ -52,6 +52,7 @@ public class GameView extends View {
 
     private int currentTurn = 0;
 
+
     public void setTurn(int turn) {
         this.currentTurn = turn;
     }
@@ -60,6 +61,10 @@ public class GameView extends View {
         return currentTurn;
     }
 
+    public int getLastMovePlayer() {
+        if (realMoves.isEmpty()) return -1;
+        return realMoves.get(realMoves.size() - 1).P;
+    }
 
     public interface MoveCallback {
         void onLocalMove(int x, int y, int p);

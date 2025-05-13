@@ -307,6 +307,28 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
+    private void maybeStartTurnCountdown(int turn) {
+        int lastMoveP = gameView.getLastMovePlayer();
+
+        if (turn == localPlayerIndex && lastMoveP == 1 - localPlayerIndex) {
+            gameView.turnStartLocalTime = System.currentTimeMillis();
+            Log.d("TAG_Clock", "⏱ [SYNCED] Starting active countdown for local player");
+        } else {
+            gameView.turnStartLocalTime = -1;
+            Log.d("TAG_Clock", "⏳ Not in sync yet (turn=" + turn + ", lastMoveP=" + lastMoveP + ") — will retry in 200ms");
+
+            new android.os.Handler().postDelayed(() -> db.collection("matches").document(matchId).get()
+                    .addOnSuccessListener(updatedDoc -> {
+                        Long updatedTurn = updatedDoc.getLong("turn");
+                        if (updatedTurn != null) {
+                            gameView.setTurn(updatedTurn.intValue());
+                            maybeStartTurnCountdown(updatedTurn.intValue());
+                        }
+                    }), 200);
+        }
+    }
+
+
     private void onMovesUpdate(QuerySnapshot snapshot, FirebaseFirestoreException e) {
         if (e != null) {
             Log.e("TAG_Soccer", "Listen for moves failed", e);
@@ -357,6 +379,13 @@ public class GameActivity extends AppCompatActivity {
                             gameView.turnStartLocalTime = turnStartMillis;
 
                             Log.d("TAG_Clock", "✅ [INIT] Clocks synced | rt0=" + rt0 + " | rt1=" + rt1 + " | start=" + turnStartMillis);
+
+                            Long turn = updatedDoc.getLong("turn");
+                            if (turn != null) {
+                                gameView.setTurn(turn.intValue());
+                                maybeStartTurnCountdown(turn.intValue());  // ✅ add this line
+                            }
+
 
                             gameView.invalidate();
                         })
@@ -444,22 +473,10 @@ public class GameActivity extends AppCompatActivity {
                             Long turn = updatedDoc.getLong("turn");
                             if (turn != null) {
                                 gameView.setTurn(turn.intValue());
-                            }
-                            int lastMoveP = newMoves.get(newMoves.size() - 1).P;
-
-                            if (turn == null) {
-                                Log.w("TAG_Clock", "⚠️ Match turn missing — skipping countdown logic");
-                                gameView.turnStartLocalTime = -1;
-                            } else if (turn == localPlayerIndex && lastMoveP == 1 - localPlayerIndex) {
-                                gameView.turnStartLocalTime = System.currentTimeMillis();  // ✅ My turn and previous move is confirmed
-                                Log.d("TAG_Clock", "⏱ Starting active countdown for local player");
-                            } else {
-                                gameView.turnStartLocalTime = -1;  // 🔒 Either not my turn or move update not ready
-                                Log.d("TAG_Clock", "⏳ Passive display only — waiting for opponent turn");
+                                maybeStartTurnCountdown(turn.intValue());  // ✅ add this line
                             }
 
-
-                            gameView.invalidate();
+                             gameView.invalidate();
 
                             int winner = gameView.checkWinnerFromMoves(newMoves);
                             if (winner != -1 && this.Winner == -1) {
