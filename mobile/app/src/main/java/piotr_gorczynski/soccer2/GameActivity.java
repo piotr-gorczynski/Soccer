@@ -12,6 +12,9 @@ import android.os.Bundle;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -317,14 +320,15 @@ public class GameActivity extends AppCompatActivity {
             gameView.turnStartLocalTime = -1;
             Log.d("TAG_Clock", "⏳ Not in sync yet (turn=" + turn + ", lastMoveP=" + lastMoveP + ") — will retry in 200ms");
 
-            new android.os.Handler().postDelayed(() -> db.collection("matches").document(matchId).get()
-                    .addOnSuccessListener(updatedDoc -> {
-                        Long updatedTurn = updatedDoc.getLong("turn");
-                        if (updatedTurn != null) {
-                            gameView.setTurn(updatedTurn.intValue());
-                            maybeStartTurnCountdown(updatedTurn.intValue());
-                        }
-                    }), 200);
+            new Handler(Looper.getMainLooper()).postDelayed(() ->
+                    db.collection("matches").document(matchId).get()
+                            .addOnSuccessListener(updatedDoc -> {
+                                Long updatedTurn = updatedDoc.getLong("turn");
+                                if (updatedTurn != null) {
+                                    gameView.setTurn(updatedTurn.intValue());
+                                    maybeStartTurnCountdown(updatedTurn.intValue());
+                                }
+                            }), 200);
         }
     }
 
@@ -383,7 +387,11 @@ public class GameActivity extends AppCompatActivity {
                             Long turn = updatedDoc.getLong("turn");
                             if (turn != null) {
                                 gameView.setTurn(turn.intValue());
-                                maybeStartTurnCountdown(turn.intValue());  // ✅ add this line
+
+                                // 🚫 Only skip countdown auto-start on match initialization by Player 1
+                                if (!(gameViewLaunched && localPlayerIndex == 1)) {
+                                    maybeStartTurnCountdown(turn.intValue());
+                                }
                             }
 
 
@@ -473,7 +481,11 @@ public class GameActivity extends AppCompatActivity {
                             Long turn = updatedDoc.getLong("turn");
                             if (turn != null) {
                                 gameView.setTurn(turn.intValue());
-                                maybeStartTurnCountdown(turn.intValue());  // ✅ add this line
+
+                                // 🚫 Only skip countdown auto-start on match initialization by Player 1
+                                if (!(gameViewLaunched && localPlayerIndex == 1)) {
+                                    maybeStartTurnCountdown(turn.intValue());
+                                }
                             }
 
                              gameView.invalidate();

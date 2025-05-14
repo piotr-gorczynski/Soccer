@@ -39,16 +39,12 @@ public class GameView extends View {
     private MoveCallback moveCallback;
 
     private int localPlayerIndex=0;
-    private String sPlayer0;
-    private String sPlayer1;
     private long remainingTime0 = 0;
     private long remainingTime1 = 0;
     public long turnStartLocalTime = -1;  // set by GameActivity
 
     private final Handler clockHandler = new Handler(Looper.getMainLooper());
     private final Runnable updateClockRunnable = this::invalidate;
-
-    private final Paint timerPaint = new Paint();
 
     private int currentTurn = 0;
 
@@ -66,6 +62,7 @@ public class GameView extends View {
         return realMoves.get(realMoves.size() - 1).P;
     }
 
+    @SuppressWarnings("unused")
     public interface MoveCallback {
         void onLocalMove(int x, int y, int p);
     }
@@ -148,6 +145,7 @@ public class GameView extends View {
         // construct Field with custom nicknames
         field = new Field(context, realMoves, possibleMovesForDrawing, GameType, player0Name, player1Name, localPlayerIndex);
 
+        Paint timerPaint = new Paint();
         timerPaint.setColor(Color.WHITE);
         timerPaint.setTextAlign(Paint.Align.CENTER);
         timerPaint.setTextSize(50); // or scale with screen size
@@ -155,9 +153,6 @@ public class GameView extends View {
         this.setFocusable(true);
         this.requestFocus();
         this.setFocusableInTouchMode(true);
-
-        this.sPlayer0 = player0Name;
-        this.sPlayer1 = player1Name;
 
         // No Android move logic here, because GameType 3 is human vs. human
     }
@@ -229,7 +224,7 @@ public class GameView extends View {
         }
 
         createPossibleMoves(possibleMovesForDrawing, realMoves);
-        field.draw(canvas);
+
 
         if (GameType == 3 && turnStartLocalTime > 0) {
             long now = System.currentTimeMillis();
@@ -266,17 +261,15 @@ public class GameView extends View {
                     "Displayed | myTime=" + myTime + " (" + formatTime(myTime) + ")" +
                             " | theirTime=" + theirTime + " (" + formatTime(theirTime) + ")");
 
-            String myName = localPlayerIndex == 0 ? sPlayer0 : sPlayer1;
-            String opponentName = localPlayerIndex == 0 ? sPlayer1 : sPlayer0;
-
-            canvas.drawText(myName + ": " + formatTime(myTime), getWidth() / 4f, 80, timerPaint);
-            canvas.drawText(opponentName + ": " + formatTime(theirTime), getWidth() * 3f / 4f, 80, timerPaint);
+            field.draw(canvas, myTime, theirTime, localPlayerIndex == turn);
 
             // 🔁 refresh every second
             clockHandler.removeCallbacks(updateClockRunnable);
             clockHandler.postDelayed(updateClockRunnable, 1000);
+        } else {
+            // fallback for other game types, if needed
+            field.draw(canvas, 0, 0, false);
         }
-
     }
 
     private String formatTime(long ms) {

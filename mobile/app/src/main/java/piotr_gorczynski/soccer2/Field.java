@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class Field {
 
@@ -33,10 +34,12 @@ public class Field {
     final ArrayList<MoveTo> possibleMoves;//= new ArrayList<MoveTo>();
     final ArrayList<MoveTo> Moves;//= new ArrayList<MoveTo>();
     private boolean isFlipped=false;
+    private final int localPlayerIndex;
 
     public Field(Context current, ArrayList<MoveTo> argMoves, ArrayList<MoveTo> argPossibleMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex) {
 
         this.gameType = argGameType;  // ✅ Save GameType for later use
+        this.localPlayerIndex = localPlayerIndex;
 
         switch (argGameType) {
             case 1 -> {
@@ -187,8 +190,9 @@ public class Field {
         return isFlipped ? intFieldHeight - y : y;
     }
 
-    public void draw(Canvas canvas) {
-        Log.d("TAG_Soccer", "123456: Field.draw");
+    public void draw(Canvas canvas, long myTime, long theirTime, boolean isLocalTurn) {
+
+        Log.d("TAG_Soccer", "Field.draw");
 
         int oldx, oldy;
 
@@ -301,39 +305,69 @@ public class Field {
         } else
             canvas.drawCircle(w2x(flipX(last.X)), h2y(flipY(last.Y)), dotSize * 2, pDots);
 
-        // Turn indicator
-        int currentTurn = Moves.get(Moves.size() - 1).P;
-        boolean isLocalTurn = currentTurn == (isFlipped ? 1 : 0);  // flipped view = player 1
-
-        if (isLocalTurn) {
-            float bottomHintY = h2y(intFieldHeight+1)+(canvas.getHeight()-h2y(intFieldHeight+1))/2;
-
-            canvas.drawText("Your move!",
-                    w2x(flipX(intFieldWidth / 2)),
-                    bottomHintY - (float) rText.height()/2,
-                    pHintText);
-        } else {
-            String text;
-            if (gameType == 1) {
-                text = "Opponent move...";  // could be improved, but likely shared screen
-            } else if (gameType == 2) {
-                text = "Thinking...";
-            } else if (gameType == 3) {
-                // Multiplayer: determine which name is the opponent
-                String opponentName = isFlipped ? sPlayer0 : sPlayer1;
-                text = opponentName + " move...";
-            } else {
-                text = "Move...";
-            }
-
-            pHintText.getTextBounds(text, 0, text.length(), rText);
+        if (gameType == 3) {
             float topHintY = h2y(-1) / 2;
+            float bottomHintY = h2y(intFieldHeight + 1) + (canvas.getHeight() - h2y(intFieldHeight + 1)) / 2;
+            String opponentName = localPlayerIndex == 0 ? sPlayer1 : sPlayer0;
 
-            canvas.drawText(text,
-                    w2x(flipX(intFieldWidth / 2)),
-                    topHintY - (float) rText.height() / 2,
-                    pHintText);
+            if (isLocalTurn) {
+                canvas.drawText("Your remaining time ⏳ " + formatTime(myTime),
+                        w2x(flipX(intFieldWidth / 2)),
+                        bottomHintY - (float) rText.height() / 2,
+                        pHintText);
+
+                canvas.drawText(opponentName + " remaining time ⏳ " + formatTime(theirTime),
+                        w2x(flipX(intFieldWidth / 2)),
+                        topHintY - (float) rText.height() / 2,
+                        pHintText);
+            } else {
+                canvas.drawText("Your remaining time ⏳ " + formatTime(myTime),
+                        w2x(flipX(intFieldWidth / 2)),
+                        bottomHintY - (float) rText.height() / 2,
+                        pHintText);
+
+                canvas.drawText(opponentName + " move... ⏳ " + formatTime(theirTime),
+                        w2x(flipX(intFieldWidth / 2)),
+                        topHintY - (float) rText.height() / 2,
+                        pHintText);
+            }
+        } else {
+            // Preserve existing logic for GameType 1 and 2
+            if (isLocalTurn) {
+                float bottomHintY = h2y(intFieldHeight + 1) + (canvas.getHeight() - h2y(intFieldHeight + 1)) / 2;
+
+                canvas.drawText("Your move!",
+                        w2x(flipX(intFieldWidth / 2)),
+                        bottomHintY - (float) rText.height() / 2,
+                        pHintText);
+            } else {
+                String text;
+                if (gameType == 1) {
+                    text = "Opponent move...";
+                } else if (gameType == 2) {
+                    text = "Thinking...";
+                } else {
+                    text = "Move...";
+                }
+
+                pHintText.getTextBounds(text, 0, text.length(), rText);
+                float topHintY = h2y(-1) / 2;
+
+                canvas.drawText(text,
+                        w2x(flipX(intFieldWidth / 2)),
+                        topHintY - (float) rText.height() / 2,
+                        pHintText);
+            }
         }
+    }
+
+    private String formatTime(long ms) {
+        if (ms < 0) ms = 0;
+        long totalSec = ms / 1000;
+        long min = totalSec / 60;
+        long sec = totalSec % 60;
+        return String.format(Locale.US, "%02d:%02d", min, sec);
+
     }
 
 }
