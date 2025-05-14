@@ -57,6 +57,7 @@ exports.acceptInvite = functions.https.onCall(async (data, context) => {
     createdAt: admin.firestore.FieldValue.serverTimestamp(),
     updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     // ⏱ Added for chess-style clocks
+    countdownPhase: 1,  // ✅ Player 0 starts
     remainingTime0: initialTimeSeconds,
     remainingTime1: initialTimeSeconds,
     turnStartTime: null  // ⏱ initially null, set by client later        
