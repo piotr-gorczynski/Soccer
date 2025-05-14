@@ -144,7 +144,7 @@ public class MenuActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
 //---save whatever you need to persist—
-        Log.d("TAG_Soccer", "123456: MenuActivity.onSaveInstanceState entered");
+        Log.d("TAG_Soccer", "MenuActivity.onSaveInstanceState entered");
          super.onSaveInstanceState(outState);
     }
 

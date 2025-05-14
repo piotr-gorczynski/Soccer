@@ -268,7 +268,7 @@ public class GameActivity extends AppCompatActivity {
         }
 
         if (GameType>0) {
-            Log.d("TAG_Soccer", "123456: GameActivity.onCreate Game Type entered: " + GameType);
+            Log.d("TAG_Soccer", "GameActivity.onCreate Game Type entered: " + GameType);
         }
 
         SharedPreferences sharedPreferences =
@@ -280,7 +280,6 @@ public class GameActivity extends AppCompatActivity {
             Log.e("TAG_Soccer", "Preference android_level=" + androidLevel);
         }
 
-        //Log.d("TAG_Soccer", "123456: GameActivity.onCreate entered");
         if (GameType != 3) {
             gameView = new GameView(this, Moves, GameType, androidLevel);
             setContentView(gameView);
@@ -311,27 +310,40 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void maybeStartTurnCountdown(int turn) {
-        int lastMoveP = gameView.getLastMovePlayer();
+        db.collection("matches").document(matchId).get()
+                .addOnSuccessListener(doc -> {
+                    Long phase = doc.getLong("countdownPhase");
+                    Long serverTurn = doc.getLong("turn");
+                    int lastMoveP = gameView.getLastMovePlayer();
 
-        if (turn == localPlayerIndex && lastMoveP == 1 - localPlayerIndex) {
-            gameView.turnStartLocalTime = System.currentTimeMillis();
-            Log.d("TAG_Clock", "⏱ [SYNCED] Starting active countdown for local player");
-        } else {
-            gameView.turnStartLocalTime = -1;
-            Log.d("TAG_Clock", "⏳ Not in sync yet (turn=" + turn + ", lastMoveP=" + lastMoveP + ") — will retry in 200ms");
+                    if (serverTurn == null || phase == null) {
+                        Log.d("TAG_Clock", "⚠️ turn or countdownPhase not available yet — retrying");
+                        retryLater();
+                        return;
+                    }
 
-            new Handler(Looper.getMainLooper()).postDelayed(() ->
-                    db.collection("matches").document(matchId).get()
-                            .addOnSuccessListener(updatedDoc -> {
-                                Long updatedTurn = updatedDoc.getLong("turn");
-                                if (updatedTurn != null) {
-                                    gameView.setTurn(updatedTurn.intValue());
-                                    maybeStartTurnCountdown(updatedTurn.intValue());
-                                }
-                            }), 200);
-        }
+                    boolean isMyTurn = serverTurn == localPlayerIndex;
+                    boolean isPhaseActive = phase == (localPlayerIndex + 1);
+
+                    if (isMyTurn && isPhaseActive) {
+                        gameView.turnStartLocalTime = System.currentTimeMillis();
+                        Log.d("TAG_Clock", "✅ [PHASE OK] Countdown started for local player (turn=" + serverTurn + ", phase=" + phase + ")");
+                    } else {
+                        gameView.turnStartLocalTime = -1;
+                        Log.d("TAG_Clock", "⏳ Waiting for phase match (turn=" + serverTurn + ", phase=" + phase + ", lastMoveP=" + lastMoveP + ")");
+                        retryLater();
+                    }
+                })
+                .addOnFailureListener(err -> {
+                    Log.e("TAG_Clock", "❌ Failed to fetch match document", err);
+                    retryLater();
+                });
     }
 
+    private void retryLater() {
+        new Handler(Looper.getMainLooper()).postDelayed(() ->
+                maybeStartTurnCountdown(gameView.getTurn()), 300);
+    }
 
     private void onMovesUpdate(QuerySnapshot snapshot, FirebaseFirestoreException e) {
         if (e != null) {
@@ -519,7 +531,8 @@ public class GameActivity extends AppCompatActivity {
                         .update(
                                 timeField, FieldValue.increment(-elapsed / 1000.0),
                                 "turnStartTime", FieldValue.serverTimestamp(),
-                                "turn", 1 - p  // 🔁 switch turn to opponent
+                                "turn", 1 - p,  // 🔁 switch turn to opponent
+                                "countdownPhase", 1 - p + 1  // 1 for player 0, 2 for player 1
                         )
                         .addOnSuccessListener(v -> Log.d("TAG_Soccer", "⏱ Clock updated"))
                         .addOnFailureListener(err -> Log.e("TAG_Soccer", "❌ Failed to update clock", err)))
@@ -543,7 +556,7 @@ public class GameActivity extends AppCompatActivity {
     public void onSaveInstanceState(Bundle outState)
     {
 //---save whatever you need to persist—
-        Log.d("TAG_Soccer", "123456: GameActivity.onSaveInstanceState entered");
+        Log.d("TAG_Soccer", "GameActivity.onSaveInstanceState entered");
         //Moves=gameView.GetMoves();
         outState.putParcelableArrayList("Moves",Moves);
 
