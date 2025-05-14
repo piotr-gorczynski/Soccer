@@ -56,7 +56,10 @@ public class GameActivity extends AppCompatActivity {
 
     private String player0Uid, player1Uid;
     private long turnStartLocalTime = -1;
-
+    private boolean isCountdownAuthorized = false;
+    public boolean isCountdownAuthorized() {
+        return isCountdownAuthorized;
+    }
     @SuppressLint("RedundantSuppression")
     @SuppressWarnings("deprecation")
     private boolean isLegacyMovesNotNull(Bundle savedInstanceState) {
@@ -309,40 +312,33 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
-    private void maybeStartTurnCountdown(int turn) {
+    private void maybeStartTurnCountdown() {
         db.collection("matches").document(matchId).get()
                 .addOnSuccessListener(doc -> {
                     Long phase = doc.getLong("countdownPhase");
                     Long serverTurn = doc.getLong("turn");
-                    int lastMoveP = gameView.getLastMovePlayer();
 
-                    if (serverTurn == null || phase == null) {
-                        Log.d("TAG_Clock", "⚠️ turn or countdownPhase not available yet — retrying");
-                        retryLater();
+                    if (phase == null || serverTurn == null) {
+                        Log.w("TAG_Clock", "⛔ countdownPhase or turn is null");
                         return;
                     }
 
-                    boolean isMyTurn = serverTurn == localPlayerIndex;
-                    boolean isPhaseActive = phase == (localPlayerIndex + 1);
+                    boolean isMyTurn = serverTurn.intValue() == localPlayerIndex;
+                    boolean isPhaseActive = phase.intValue() == localPlayerIndex + 1;
 
                     if (isMyTurn && isPhaseActive) {
                         gameView.turnStartLocalTime = System.currentTimeMillis();
+                        isCountdownAuthorized = true;
                         Log.d("TAG_Clock", "✅ [PHASE OK] Countdown started for local player (turn=" + serverTurn + ", phase=" + phase + ")");
                     } else {
                         gameView.turnStartLocalTime = -1;
-                        Log.d("TAG_Clock", "⏳ Waiting for phase match (turn=" + serverTurn + ", phase=" + phase + ", lastMoveP=" + lastMoveP + ")");
-                        retryLater();
-                    }
-                })
-                .addOnFailureListener(err -> {
-                    Log.e("TAG_Clock", "❌ Failed to fetch match document", err);
-                    retryLater();
-                });
-    }
+                        isCountdownAuthorized = false;
+                        Log.d("TAG_Clock", "⏳ Waiting for phase match (turn=" + serverTurn + ", phase=" + phase + ")");
 
-    private void retryLater() {
-        new Handler(Looper.getMainLooper()).postDelayed(() ->
-                maybeStartTurnCountdown(gameView.getTurn()), 300);
+                        // 🔁 Retry after short delay
+                        new Handler(Looper.getMainLooper()).postDelayed(this::maybeStartTurnCountdown, 300);
+                    }
+                });
     }
 
     private void onMovesUpdate(QuerySnapshot snapshot, FirebaseFirestoreException e) {
@@ -402,7 +398,7 @@ public class GameActivity extends AppCompatActivity {
 
                                 // 🚫 Only skip countdown auto-start on match initialization by Player 1
                                 if (!(gameViewLaunched && localPlayerIndex == 1)) {
-                                    maybeStartTurnCountdown(turn.intValue());
+                                    maybeStartTurnCountdown();
                                 }
                             }
 
@@ -412,10 +408,15 @@ public class GameActivity extends AppCompatActivity {
                         .addOnFailureListener(err -> Log.e("TAG_Soccer", "❌ Failed to fetch clocks at init", err));
 
                 if (localPlayerIndex == newMoves.get(newMoves.size() - 1).P) {
-                    db.collection("matches").document(matchId)
-                            .update("turnStartTime", FieldValue.serverTimestamp())
-                            .addOnSuccessListener(unused -> Log.d("TAG_Soccer", "⏱ turnStartTime set by local player"))
-                            .addOnFailureListener(err -> Log.e("TAG_Soccer", "❌ Failed to set turnStartTime", err));
+                    Log.d("TAG_Clock", "🕒 Delaying countdownPhase signal by 5s...");
+
+                    new Handler(Looper.getMainLooper()).postDelayed(() -> db.collection("matches").document(matchId)
+                            .update(
+                                    "turnStartTime", FieldValue.serverTimestamp(),
+                                    "countdownPhase", localPlayerIndex + 1  // 1 for player0, 2 for player1
+                            )
+                            .addOnSuccessListener(unused -> Log.d("TAG_Clock", "✅ turnStartTime + countdownPhase set by player " + localPlayerIndex))
+                            .addOnFailureListener(err -> Log.e("TAG_Clock", "❌ Failed to set countdownPhase", err)), 5000); // 5 second delay
                 }
 
                 getOnBackPressedDispatcher().addCallback(GameActivity.this, new OnBackPressedCallback(true) {
@@ -496,7 +497,7 @@ public class GameActivity extends AppCompatActivity {
 
                                 // 🚫 Only skip countdown auto-start on match initialization by Player 1
                                 if (!(gameViewLaunched && localPlayerIndex == 1)) {
-                                    maybeStartTurnCountdown(turn.intValue());
+                                    maybeStartTurnCountdown();
                                 }
                             }
 

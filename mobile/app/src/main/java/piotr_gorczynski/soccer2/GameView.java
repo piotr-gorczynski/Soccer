@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
+
 import androidx.core.content.ContextCompat;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -55,11 +56,6 @@ public class GameView extends View {
 
     public int getTurn() {
         return currentTurn;
-    }
-
-    public int getLastMovePlayer() {
-        if (realMoves.isEmpty()) return -1;
-        return realMoves.get(realMoves.size() - 1).P;
     }
 
     @SuppressWarnings("unused")
@@ -225,26 +221,28 @@ public class GameView extends View {
 
         createPossibleMoves(possibleMovesForDrawing, realMoves);
 
-
         if (GameType == 3 && turnStartLocalTime > 0) {
             long now = System.currentTimeMillis();
             int turn = realMoves.get(realMoves.size() - 1).P;
 
             long elapsed = now - turnStartLocalTime;
-            long t0 = remainingTime0;
-            long t1 = remainingTime1;
+
+            // ⛔ Prevent visual countdown unless authorized
+            if (getContext() instanceof GameActivity &&
+                    !((GameActivity) getContext()).isCountdownAuthorized()) {
+                elapsed = 0;
+            }
 
             long myTime, theirTime;
 
             if (localPlayerIndex == 0) {
-                myTime = t0;
-                theirTime = t1;
+                myTime = remainingTime0;
+                theirTime = remainingTime1;
             } else {
-                myTime = t1;
-                theirTime = t0;
+                myTime = remainingTime1;
+                theirTime = remainingTime0;
             }
 
-            // Subtract elapsed from whoever's turn it is (but after mapping)
             if (turn == localPlayerIndex) {
                 myTime -= elapsed;
             } else {
@@ -263,14 +261,16 @@ public class GameView extends View {
 
             field.draw(canvas, myTime, theirTime, localPlayerIndex == turn);
 
-            // 🔁 refresh every second
-            clockHandler.removeCallbacks(updateClockRunnable);
-            clockHandler.postDelayed(updateClockRunnable, 1000);
         } else {
-            // fallback for other game types, if needed
+            // GameType 1 or 2: no countdowns
             field.draw(canvas, 0, 0, false);
         }
+
+        // 🔁 Refresh every second (only for GameType 3 — optional guard if needed)
+        clockHandler.removeCallbacks(updateClockRunnable);
+        clockHandler.postDelayed(updateClockRunnable, 1000);
     }
+
 
     private String formatTime(long ms) {
         if (ms < 0) ms = 0;
