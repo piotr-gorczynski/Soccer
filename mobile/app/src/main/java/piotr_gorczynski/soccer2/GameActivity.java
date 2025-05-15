@@ -332,17 +332,23 @@ public class GameActivity extends AppCompatActivity {
                                     .addOnSuccessListener(updatedDoc -> {
                                         Long updatedTurn = updatedDoc.getLong("turn");
                                         Long phase = updatedDoc.getLong("countdownPhase");
-                                        Long ts = updatedDoc.getTimestamp("turnStartTime") != null
-                                                ? Objects.requireNonNull(updatedDoc.getTimestamp("turnStartTime")).toDate().getTime()
-                                                : null;
+                                        Timestamp ts = updatedDoc.getTimestamp("turnStartTime");
 
                                         Log.d("TAG_Clock", "📥 Firestore updated | turn=" + updatedTurn
-                                                + ", countdownPhase=" + phase + ", turnStartTime=" + ts);
+                                                + ", countdownPhase=" + phase
+                                                + ", turnStartTime=" + (ts != null ? ts.toDate().getTime() : null));
 
                                         if (updatedTurn != null) {
                                             gameView.setTurn(updatedTurn.intValue());
-                                            maybeStartTurnCountdown();
                                         }
+
+                                        if (ts != null && isCountdownAuthorized()) {
+                                            gameView.turnStartLocalTime = ts.toDate().getTime();
+                                            Log.d("TAG_Clock", "✅ [UNBLOCKED] Countdown officially started at " + gameView.turnStartLocalTime);
+                                            return;
+                                        }
+
+                                        maybeStartTurnCountdown();
                                     })
                                     .addOnFailureListener(err -> Log.e("TAG_Clock", "❌ Firestore retry failed", err))
                     , 200);
@@ -426,6 +432,7 @@ public class GameActivity extends AppCompatActivity {
                             .addOnSuccessListener(unused -> {
                                 Log.d("TAG_Clock", "✅ turnStartTime + countdownPhase set by player " + localPlayerIndex);
                                 isCountdownAuthorized  = true; // ✅ Now we’re allowed to start drawing time
+                                maybeStartTurnCountdown(); // <-- ⏱ Now we manually re-check after 5s delay
                             })
                             .addOnFailureListener(err -> Log.e("TAG_Clock", "❌ Failed to set countdownPhase", err)), 5000); // 5 second delay
                 }
