@@ -2,19 +2,6 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ✅ Add this block:
-    match /matches/{matchId} {
-      allow read, write: if request.auth != null && (
-        resource.data.player0 == request.auth.uid ||
-        resource.data.player1 == request.auth.uid
-      );
-
-      match /moves/{moveId} {
-        allow read, write: if request.auth != null;
-      }
-    }
-
-    // ... your other rules like users, invitations, etc.
 
     // 1. Users: anyone signed-in can read any profile,
     //    but only the owner can create or modify their own doc.
@@ -41,22 +28,17 @@ service cloud.firestore {
 
     // 3. Matches: only participants may create/read/update
     match /matches/{matchId} {
-      allow read: if request.auth != null
-        && (request.auth.uid == resource.data.player0 || request.auth.uid == resource.data.player1);
-      allow update: if request.auth != null
-        && (request.auth.uid == resource.data.player0 || request.auth.uid == resource.data.player1);
       allow create: if request.auth.uid == request.resource.data.player0
                  && request.resource.data.player1 is string;
-      allow read, update, delete:
-          if request.auth.uid == resource.data.player0
-          || request.auth.uid == resource.data.player1;
+
+    allow read, update, delete: if
+      (get(/databases/$(database)/documents/matches/$(matchId)).data.player0 == request.auth.uid)
+      || (get(/databases/$(database)/documents/matches/$(matchId)).data.player1 == request.auth.uid);
 
       match /moves/{moveId} {
         allow read, create: if
-          (get(/databases/$(database)/documents/matches/$(matchId))
-             .data.player0 == request.auth.uid)
-          || (get(/databases/$(database)/documents/matches/$(matchId))
-             .data.player1 == request.auth.uid);
+          (get(/databases/$(database)/documents/matches/$(matchId)).data.player0 == request.auth.uid)
+          || (get(/databases/$(database)/documents/matches/$(matchId)).data.player1 == request.auth.uid);
       }
     }
 
