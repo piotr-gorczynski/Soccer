@@ -313,32 +313,40 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void maybeStartTurnCountdown() {
-        db.collection("matches").document(matchId).get()
-                .addOnSuccessListener(doc -> {
-                    Long phase = doc.getLong("countdownPhase");
-                    Long serverTurn = doc.getLong("turn");
+        int lastMoveP = gameView.getLastMovePlayer();
+        int currentTurn = gameView.getTurn();
 
-                    if (phase == null || serverTurn == null) {
-                        Log.w("TAG_Clock", "⛔ countdownPhase or turn is null");
-                        return;
-                    }
+        Log.d("TAG_Clock", "👁 maybeStartTurnCountdown called | localPlayerIndex=" + localPlayerIndex
+                + ", currentTurn=" + currentTurn + ", lastMoveP=" + lastMoveP
+                + ", countdownAuthorized=" + isCountdownAuthorized());
 
-                    boolean isMyTurn = serverTurn.intValue() == localPlayerIndex;
-                    boolean isPhaseActive = phase.intValue() == localPlayerIndex + 1;
+        if (currentTurn == localPlayerIndex && lastMoveP == 1 - localPlayerIndex) {
+            gameView.turnStartLocalTime = System.currentTimeMillis();
+            Log.d("TAG_Clock", "⏱ [SYNCED] Countdown started for local player at " + gameView.turnStartLocalTime);
+        } else {
+            gameView.turnStartLocalTime = -1;
+            Log.d("TAG_Clock", "⏳ Countdown not started yet | Will retry in 200ms");
 
-                    if (isMyTurn && isPhaseActive) {
-                        gameView.turnStartLocalTime = System.currentTimeMillis();
-                        isCountdownAuthorized = true;
-                        Log.d("TAG_Clock", "✅ [PHASE OK] Countdown started for local player (turn=" + serverTurn + ", phase=" + phase + ")");
-                    } else {
-                        gameView.turnStartLocalTime = -1;
-                        isCountdownAuthorized = false;
-                        Log.d("TAG_Clock", "⏳ Waiting for phase match (turn=" + serverTurn + ", phase=" + phase + ")");
+            new Handler(Looper.getMainLooper()).postDelayed(() ->
+                            db.collection("matches").document(matchId).get()
+                                    .addOnSuccessListener(updatedDoc -> {
+                                        Long updatedTurn = updatedDoc.getLong("turn");
+                                        Long phase = updatedDoc.getLong("countdownPhase");
+                                        Long ts = updatedDoc.getTimestamp("turnStartTime") != null
+                                                ? Objects.requireNonNull(updatedDoc.getTimestamp("turnStartTime")).toDate().getTime()
+                                                : null;
 
-                        // 🔁 Retry after short delay
-                        new Handler(Looper.getMainLooper()).postDelayed(this::maybeStartTurnCountdown, 300);
-                    }
-                });
+                                        Log.d("TAG_Clock", "📥 Firestore updated | turn=" + updatedTurn
+                                                + ", countdownPhase=" + phase + ", turnStartTime=" + ts);
+
+                                        if (updatedTurn != null) {
+                                            gameView.setTurn(updatedTurn.intValue());
+                                            maybeStartTurnCountdown();
+                                        }
+                                    })
+                                    .addOnFailureListener(err -> Log.e("TAG_Clock", "❌ Firestore retry failed", err))
+                    , 200);
+        }
     }
 
     private void onMovesUpdate(QuerySnapshot snapshot, FirebaseFirestoreException e) {
@@ -415,7 +423,10 @@ public class GameActivity extends AppCompatActivity {
                                     "turnStartTime", FieldValue.serverTimestamp(),
                                     "countdownPhase", localPlayerIndex + 1  // 1 for player0, 2 for player1
                             )
-                            .addOnSuccessListener(unused -> Log.d("TAG_Clock", "✅ turnStartTime + countdownPhase set by player " + localPlayerIndex))
+                            .addOnSuccessListener(unused -> {
+                                Log.d("TAG_Clock", "✅ turnStartTime + countdownPhase set by player " + localPlayerIndex);
+                                isCountdownAuthorized  = true; // ✅ Now we’re allowed to start drawing time
+                            })
                             .addOnFailureListener(err -> Log.e("TAG_Clock", "❌ Failed to set countdownPhase", err)), 5000); // 5 second delay
                 }
 

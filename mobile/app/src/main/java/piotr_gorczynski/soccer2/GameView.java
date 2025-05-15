@@ -62,7 +62,12 @@ public class GameView extends View {
     public interface MoveCallback {
         void onLocalMove(int x, int y, int p);
     }
-
+    public int getLastMovePlayer() {
+        if (realMoves != null && !realMoves.isEmpty()) {
+            return realMoves.get(realMoves.size() - 1).P;
+        }
+        return -1; // Fallback if no moves
+    }
     public void setMoveCallback(MoveCallback cb) {
         this.moveCallback = cb;
     }
