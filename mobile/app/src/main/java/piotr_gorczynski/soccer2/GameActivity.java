@@ -345,6 +345,9 @@ public class GameActivity extends AppCompatActivity {
                                         if (ts != null && isCountdownAuthorized()) {
                                             gameView.turnStartLocalTime = ts.toDate().getTime();
                                             Log.d("TAG_Clock", "✅ [UNBLOCKED] Countdown officially started at " + gameView.turnStartLocalTime);
+                                            if (gameView != null) {
+                                                gameView.invalidate();  // 🔁 force UI refresh
+                                            }
                                             return;
                                         }
 
