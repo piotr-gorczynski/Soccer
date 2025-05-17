@@ -46,7 +46,13 @@ public class WaitingActivity extends AppCompatActivity {
         matchListener = db.collection("matches")
                 .whereEqualTo("invitationId", inviteId)
                 .addSnapshotListener((snapshots, error) -> {
-                    Log.d(TAG, "Match snapshot listener triggered");
+                    // Guard: only act once!
+                    if (hasStartedGame){
+                        Log.d(TAG, "Match snapshot listener triggered more than once, exiting!");
+                        return;
+                    }
+                        Log.d(TAG, "Match snapshot listener triggered and try to launch Game...");
+                    hasStartedGame = true; // Set immediately to block re-entry
 
                     if (error != null) {
                         Log.e(TAG, "Match listener error", error);
@@ -60,10 +66,9 @@ public class WaitingActivity extends AppCompatActivity {
 
                     Log.d(TAG, "Snapshot size: " + snapshots.size());
 
-                    // Guard: only act once!
-                    if (hasStartedGame) return;
+
                     if (!snapshots.isEmpty()) {
-                        hasStartedGame = true; // Set immediately to block re-entry
+
 
                         // Remove listener ASAP
                         if (matchListener != null) {
