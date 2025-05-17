@@ -44,11 +44,87 @@ public class GameView extends View {
     private long remainingTime1 = 0;
     public long turnStartLocalTime = -1;  // set by GameActivity
 
-    private final Handler clockHandler = new Handler(Looper.getMainLooper());
-    private final Runnable updateClockRunnable = this::invalidate;
-
     private int currentTurn = 0;
+    private boolean inputEnabled = false;
 
+    private final Handler clockHandler = new Handler(Looper.getMainLooper());
+    private Runnable updateClockRunnable;
+    private boolean clockRunning = false;
+    private int countdownPlayerIndex = -1; // -1 = no active countdown
+
+    private long countdownStartTime = 0L; // wall-clock millis when started
+    private long countdownBaseTime = 0L;  // base remaining time (ms) when started
+
+    public void startTurnCountdown(int playerIndex) {
+        stopTurnCountdown(); // stop any running timer
+
+        countdownPlayerIndex = playerIndex;
+        clockRunning = true;
+
+        // Determine the base time for this player (ms)
+        countdownBaseTime = (playerIndex == 0) ? remainingTime0 : remainingTime1;
+        countdownStartTime = System.currentTimeMillis();
+
+        // Start UI update runnable
+        updateClockRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (!clockRunning) return;
+
+                long elapsed = System.currentTimeMillis() - countdownStartTime;
+                long newRemaining = countdownBaseTime - elapsed;
+                if (newRemaining < 0) newRemaining = 0;
+
+                // Update in-memory variable for drawing
+                if (countdownPlayerIndex == 0) {
+                    remainingTime0 = newRemaining;
+                } else {
+                    remainingTime1 = newRemaining;
+                }
+
+                invalidate(); // Redraw UI
+
+                // Schedule next update if not out of time
+                if (newRemaining > 0) {
+                    clockHandler.postDelayed(this, 100); // smooth ~10fps
+                } else {
+                    clockRunning = false;
+                }
+            }
+        };
+        clockHandler.post(updateClockRunnable);
+    }
+
+    public void stopTurnCountdown() {
+        clockRunning = false;
+        countdownPlayerIndex = -1;
+        if (updateClockRunnable != null) {
+            clockHandler.removeCallbacks(updateClockRunnable);
+        }
+        // Clocks are visually paused at last value
+    }
+    public long getElapsedTimeForCurrentTurn() {
+        if (!clockRunning || countdownPlayerIndex == -1) return 0;
+        long elapsed = System.currentTimeMillis() - countdownStartTime;
+        return Math.min(elapsed, countdownBaseTime); // don't exceed base
+    }
+
+    public long getRemainingTimeForPlayer(int playerIndex) {
+        return (playerIndex == 0) ? remainingTime0 : remainingTime1;
+    }
+    public void setInputEnabled(boolean enabled) {
+        this.inputEnabled = enabled;
+        invalidate();
+    }
+
+    public void startClockForPlayer(int playerIndex) {
+        stopAllClocks(); // Always stop before starting a new clock
+        startTurnCountdown(playerIndex);
+    }
+
+    public void stopAllClocks() {
+        stopTurnCountdown();
+    }
 
     public void setTurn(int turn) {
         this.currentTurn = turn;
@@ -161,6 +237,7 @@ public class GameView extends View {
     public void setClocks(long t0, long t1) {
         this.remainingTime0 = t0;
         this.remainingTime1 = t1;
+        invalidate();
     }
 
     public GameView(Context context, ArrayList<MoveTo> argMoves, int argGameType,int androidLevel) {
@@ -673,9 +750,14 @@ public class GameView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         Log.d("TAG_Clock", "Touch received. localPlayerIndex=" + localPlayerIndex + ", lastP=" + realMoves.get(realMoves.size() - 1).P);
 
+        if ((GameType ==3) && (!inputEnabled))
+            return false;
+
         // 1) if android's move then ignore onTouchEvent
         if((GameType ==2) && (realMoves.get(realMoves.size()-1).P==1))
             return true;
+
+
 
         // 2) Only handle ACTION_UP (finger lifted)
         if (event.getAction()==MotionEvent.ACTION_UP)  {

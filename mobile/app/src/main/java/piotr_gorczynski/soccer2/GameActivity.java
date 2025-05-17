@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -55,8 +56,9 @@ public class GameActivity extends AppCompatActivity {
     private String player0Name, player1Name;
 
     private String player0Uid, player1Uid;
-    private long turnStartLocalTime = -1;
+
     private boolean isCountdownAuthorized = false;
+    private DocumentReference matchRef;
     public boolean isCountdownAuthorized() {
         return isCountdownAuthorized;
     }
@@ -206,8 +208,10 @@ public class GameActivity extends AppCompatActivity {
             // 🔹 Show waiting screen immediately
             setContentView(R.layout.view_waiting_for_opponent);
 
-            db.collection("matches").document(matchId).get()
-                    .addOnSuccessListener(doc -> {
+            matchRef = db.collection("matches").document(matchId);
+
+            matchRef.get().
+                    addOnSuccessListener(doc -> {
                         if (!doc.exists()) {
                             Log.e("TAG_Soccer", "Match not found: " + matchId);
                             Toast.makeText(this, "Match not found.", Toast.LENGTH_LONG).show();
@@ -254,6 +258,48 @@ public class GameActivity extends AppCompatActivity {
                                     movesRef
                                             .orderBy("createdAt")
                                             .addSnapshotListener(this::onMovesUpdate);
+
+                                    // --- Attach Firestore listener for the match document (clock/turn logic) ---
+
+                                    matchRef.addSnapshotListener((matchDoc, e) -> {
+                                        if (e != null) {
+                                            Log.w("TAG_Soccer", "Match listen failed.", e);
+                                            return;
+                                        }
+                                        if (matchDoc != null && matchDoc.exists()) {
+                                            Long remaining0 = matchDoc.getLong("remainingTime0");
+                                            Long remaining1 = matchDoc.getLong("remainingTime1");
+                                            Timestamp turnStartTimestamp = matchDoc.getTimestamp("turnStartTime");
+                                            Long turnStartTime = (turnStartTimestamp != null) ? turnStartTimestamp.toDate().getTime() : null;
+                                            Long turnObj = matchDoc.getLong("turn");
+                                            int turn = (turnObj != null) ? turnObj.intValue() : 0;
+
+                                            boolean myTurn = (localPlayerIndex == turn);
+
+                                            if (myTurn && turnStartTime == null) {
+                                                matchRef.update("turnStartTime", FieldValue.serverTimestamp())
+                                                        .addOnSuccessListener(aVoid -> Log.d("TAG_Clock", "Successfully set turnStartTime for my turn. UID: " + localUid))
+                                                        .addOnFailureListener(err -> Log.e("TAG_Clock", "Failed to set turnStartTime!", err));
+                                                Log.d("TAG_Clock", "Setting turnStartTime for my turn. UID: " + localUid);
+                                            }
+
+                                            // Decide what to do in UI
+                                            if (gameView != null) {
+                                                if (remaining0 != null && remaining1 != null)
+                                                    gameView.setClocks(remaining0, remaining1);
+
+                                                if (turnStartTimestamp != null) {
+                                                    // Turn timer should run for 'turn'
+                                                    gameView.startClockForPlayer(turn);
+                                                    gameView.setInputEnabled(myTurn);
+                                                } else {
+                                                    // Waiting for the current player to start their turn
+                                                    gameView.stopAllClocks();
+                                                    gameView.setInputEnabled(false);
+                                                }
+                                            }
+                                        }
+                                    });
                                 })
                                 .addOnFailureListener(e -> {
                                     Log.e("TAG_Soccer", "Failed to load opponent info.", e);
@@ -344,6 +390,7 @@ public class GameActivity extends AppCompatActivity {
 
                                         if (ts != null && isCountdownAuthorized()) {
                                             gameView.turnStartLocalTime = ts.toDate().getTime();
+                                            isCountdownAuthorized = true; // ✅ ensure it's true again
                                             Log.d("TAG_Clock", "✅ [UNBLOCKED] Countdown officially started at " + gameView.turnStartLocalTime);
                                             if (gameView != null) {
                                                 gameView.invalidate();  // 🔁 force UI refresh
@@ -404,7 +451,6 @@ public class GameActivity extends AppCompatActivity {
 
                             Timestamp ts = updatedDoc.getTimestamp("turnStartTime");
                             long turnStartMillis = ts != null ? ts.toDate().getTime() : System.currentTimeMillis();
-                            turnStartLocalTime = turnStartMillis;
                             gameView.turnStartLocalTime = turnStartMillis;
 
                             Log.d("TAG_Clock", "✅ [INIT] Clocks synced | rt0=" + rt0 + " | rt1=" + rt1 + " | start=" + turnStartMillis);
@@ -504,9 +550,7 @@ public class GameActivity extends AppCompatActivity {
                             gameView.setClocks(rt0, rt1);
 
                             Timestamp ts = updatedDoc.getTimestamp("turnStartTime");
-                            long turnStartMillis = ts != null ? ts.toDate().getTime() : System.currentTimeMillis();
-                            gameView.turnStartLocalTime = turnStartMillis;
-                            turnStartLocalTime = turnStartMillis;
+                            gameView.turnStartLocalTime = ts != null ? ts.toDate().getTime() : System.currentTimeMillis();
                             if (ts != null) {
                                 Log.d("TAG_Clock", "Firestore turnStartTime from server: " + ts.toDate().getTime());
                             }
@@ -537,32 +581,42 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void sendMoveToFirestore(int x, int y, int p) {
-        long now = System.currentTimeMillis();
-        long elapsed = now - turnStartLocalTime;  // ms
+        // Use GameView's elapsed time for full accuracy (cross-device sync)
+        long elapsed = gameView.getElapsedTimeForCurrentTurn(); // ms
+
+        // Remaining time BEFORE the move (as tracked by GameView)
+        long currentRemaining = gameView.getRemainingTimeForPlayer(p); // ms
+
+        // New remaining time, clamp at zero
+        long newRemaining = Math.max(currentRemaining - elapsed, 0);
 
         String timeField = "remainingTime" + p;
 
-        Map<String, Object> m = new HashMap<>();
-        m.put("x", x);
-        m.put("y", y);
-        m.put("p", p);
-        m.put("createdAt", FieldValue.serverTimestamp());
+        Map<String, Object> moveData = new HashMap<>();
+        moveData.put("x", x);
+        moveData.put("y", y);
+        moveData.put("p", p);
+        moveData.put("createdAt", FieldValue.serverTimestamp());
 
-        movesRef.add(m)
+// Write move first
+        movesRef.add(moveData)
                 .addOnSuccessListener(unused -> db.collection("matches").document(matchId)
                         .update(
-                                timeField, FieldValue.increment(-elapsed / 1000.0),
-                                "turnStartTime", FieldValue.serverTimestamp(),
-                                "turn", 1 - p,  // 🔁 switch turn to opponent
-                                "countdownPhase", 1 - p + 1  // 1 for player 0, 2 for player 1
+                                timeField, newRemaining,         // update the right player's clock (ms)
+                                "turnStartTime", null,           // reset for next player to start the timer
+                                "turn", 1 - p                    // switch turn to opponent
                         )
-                        .addOnSuccessListener(v -> Log.d("TAG_Soccer", "⏱ Clock updated"))
+                        .addOnSuccessListener(v -> {
+                            Log.d("TAG_Soccer", "⏱ Clock and turn updated after move");
+                            gameView.stopTurnCountdown(); // stop your local clock
+                        })
                         .addOnFailureListener(err -> Log.e("TAG_Soccer", "❌ Failed to update clock", err)))
                 .addOnFailureListener(err ->
-                        Toast.makeText(this, "Failed to send move: " + err, LENGTH_SHORT).show());
+                        Toast.makeText(this, "Failed to send move: " + err, LENGTH_SHORT).show()
+                );
 
-        Log.d("TAG_Clock", "Saving move, player=" + p + ", elapsed=" + elapsed + " ms, timeField=" + timeField);
-
+        Log.d("TAG_Clock", "Saving move, player=" + p +
+                ", elapsed=" + elapsed + " ms, newRemaining=" + newRemaining + " ms, timeField=" + timeField);
     }
 
     @Override
