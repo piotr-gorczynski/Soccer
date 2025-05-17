@@ -14,6 +14,7 @@ import com.google.firebase.firestore.*;
 public class WaitingActivity extends AppCompatActivity {
 
     private static final String TAG = "TAG_Soccer";
+    private ListenerRegistration matchListener;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,7 +43,7 @@ public class WaitingActivity extends AppCompatActivity {
                 });
 
         // 🔍 Listen for match that was created after invite is accepted
-        db.collection("matches")
+        matchListener = db.collection("matches")
                 .whereEqualTo("invitationId", inviteId)
                 .addSnapshotListener((snapshots, error) -> {
                     Log.d(TAG, "Match snapshot listener triggered");
@@ -63,6 +64,12 @@ public class WaitingActivity extends AppCompatActivity {
                         DocumentSnapshot matchDoc = snapshots.getDocuments().get(0);
                         String matchId = matchDoc.getId();
                         Log.d(TAG, "✅ Match found with ID: " + matchId);
+
+                        // 👇 REMOVE LISTENER before creating GameActivity
+                        if (matchListener != null) {
+                            matchListener.remove();
+                            matchListener = null;
+                        }
 
                         Intent intent = new Intent(this, GameActivity.class);
                         intent.putExtra("matchId", matchId);

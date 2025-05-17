@@ -280,7 +280,6 @@ public class GameActivity extends AppCompatActivity {
                                                 matchRef.update("turnStartTime", FieldValue.serverTimestamp())
                                                         .addOnSuccessListener(aVoid -> Log.d("TAG_Clock", "Successfully set turnStartTime for my turn. UID: " + localUid))
                                                         .addOnFailureListener(err -> Log.e("TAG_Clock", "Failed to set turnStartTime!", err));
-                                                Log.d("TAG_Clock", "Setting turnStartTime for my turn. UID: " + localUid);
                                             }
 
                                             // Decide what to do in UI
