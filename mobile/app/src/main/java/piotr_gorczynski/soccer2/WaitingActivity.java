@@ -15,6 +15,7 @@ public class WaitingActivity extends AppCompatActivity {
 
     private static final String TAG = "TAG_Soccer";
     private ListenerRegistration matchListener;
+    private boolean hasStartedGame = false;  // <- Guard flag
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -36,7 +37,6 @@ public class WaitingActivity extends AppCompatActivity {
                 .addOnSuccessListener(inviteDoc -> {
                     String toNickname = inviteDoc.getString("toNickname");
                     if (toNickname != null) {
-
                         String msg = getString(R.string.waiting_for_opponent_named, toNickname);
                         waitingMessage.setText(msg);
                     }
@@ -60,16 +60,20 @@ public class WaitingActivity extends AppCompatActivity {
 
                     Log.d(TAG, "Snapshot size: " + snapshots.size());
 
+                    // Guard: only act once!
+                    if (hasStartedGame) return;
                     if (!snapshots.isEmpty()) {
-                        DocumentSnapshot matchDoc = snapshots.getDocuments().get(0);
-                        String matchId = matchDoc.getId();
-                        Log.d(TAG, "✅ Match found with ID: " + matchId);
+                        hasStartedGame = true; // Set immediately to block re-entry
 
-                        // 👇 REMOVE LISTENER before creating GameActivity
+                        // Remove listener ASAP
                         if (matchListener != null) {
                             matchListener.remove();
                             matchListener = null;
                         }
+
+                        DocumentSnapshot matchDoc = snapshots.getDocuments().get(0);
+                        String matchId = matchDoc.getId();
+                        Log.d(TAG, "✅ Match found with ID: " + matchId);
 
                         Intent intent = new Intent(this, GameActivity.class);
                         intent.putExtra("matchId", matchId);
@@ -79,11 +83,20 @@ public class WaitingActivity extends AppCompatActivity {
                         String nickname = prefs.getString("nickname", "Player");
                         intent.putExtra("localNickname", nickname);
 
-                         startActivity(intent);
+                        startActivity(intent);
                         finish();
                     } else {
                         Log.d(TAG, "No matches found with invitationId=" + inviteId);
                     }
                 });
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (matchListener != null) {
+            matchListener.remove();
+            matchListener = null;
+        }
+        super.onDestroy();
     }
 }
