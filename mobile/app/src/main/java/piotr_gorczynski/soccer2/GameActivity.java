@@ -470,19 +470,19 @@ public class GameActivity extends AppCompatActivity {
                         .addOnFailureListener(err -> Log.e("TAG_Soccer", "❌ Failed to fetch clocks at init", err));
 
                 if (localPlayerIndex == newMoves.get(newMoves.size() - 1).P) {
-                    Log.d("TAG_Clock", "🕒 Delaying countdownPhase signal by 5s...");
+                    Log.d("TAG_Clock", "Setting countdownPhase signal immediately...");
 
-                    new Handler(Looper.getMainLooper()).postDelayed(() -> db.collection("matches").document(matchId)
+                    db.collection("matches").document(matchId)
                             .update(
                                     "turnStartTime", FieldValue.serverTimestamp(),
                                     "countdownPhase", localPlayerIndex + 1  // 1 for player0, 2 for player1
                             )
                             .addOnSuccessListener(unused -> {
                                 Log.d("TAG_Clock", "✅ turnStartTime + countdownPhase set by player " + localPlayerIndex);
-                                isCountdownAuthorized  = true; // ✅ Now we’re allowed to start drawing time
-                                maybeStartTurnCountdown(); // <-- ⏱ Now we manually re-check after 5s delay
+                                isCountdownAuthorized = true; // ✅ Now we’re allowed to start drawing time
+                                maybeStartTurnCountdown(); // <-- ⏱ Immediately re-check
                             })
-                            .addOnFailureListener(err -> Log.e("TAG_Clock", "❌ Failed to set countdownPhase", err)), 5000); // 5 second delay
+                            .addOnFailureListener(err -> Log.e("TAG_Clock", "❌ Failed to set countdownPhase", err));
                 }
 
                 getOnBackPressedDispatcher().addCallback(GameActivity.this, new OnBackPressedCallback(true) {

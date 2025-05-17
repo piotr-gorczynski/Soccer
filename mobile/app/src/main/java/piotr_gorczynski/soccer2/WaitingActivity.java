@@ -64,7 +64,7 @@ public class WaitingActivity extends AppCompatActivity {
                         return;
                     }
 
-                    Log.d(TAG, "Snapshot size: " + snapshots.size());
+                    Log.d(TAG, "WaitingActivity.onCreate Snapshot size: " + snapshots.size());
 
 
                     if (!snapshots.isEmpty()) {
