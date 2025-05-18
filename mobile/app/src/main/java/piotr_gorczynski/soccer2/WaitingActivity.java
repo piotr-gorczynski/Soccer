@@ -11,9 +11,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.firestore.*;
 
-public class WaitingActivity extends AppCompatActivity {
+import java.util.Objects;
 
-    private static final String TAG = "TAG_Soccer";
+public class WaitingActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -22,7 +22,8 @@ public class WaitingActivity extends AppCompatActivity {
 
         String inviteId = getIntent().getStringExtra("inviteId");
         if (inviteId == null || inviteId.isEmpty()) {
-            Log.e(TAG, "Missing inviteId");
+            Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
+            }.getClass().getEnclosingMethod()).getName() + ": Missing inviteId");
             finish();
             return;
         }
@@ -45,24 +46,24 @@ public class WaitingActivity extends AppCompatActivity {
         db.collection("matches")
                 .whereEqualTo("invitationId", inviteId)
                 .addSnapshotListener((snapshots, error) -> {
-                    Log.d(TAG, "Match snapshot listener triggered");
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Match snapshot listener triggered");
 
                     if (error != null) {
-                        Log.e(TAG, "Match listener error", error);
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Match listener error", error);
                         return;
                     }
 
                     if (snapshots == null) {
-                        Log.w(TAG, "Match snapshots null");
+                        Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Match snapshots null");
                         return;
                     }
 
-                    Log.d(TAG, "Snapshot size: " + snapshots.size());
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Snapshot size: " + snapshots.size());
 
                     if (!snapshots.isEmpty()) {
                         DocumentSnapshot matchDoc = snapshots.getDocuments().get(0);
                         String matchId = matchDoc.getId();
-                        Log.d(TAG, "✅ Match found with ID: " + matchId);
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ✅ Match found with ID: " + matchId);
 
                         Intent intent = new Intent(this, GameActivity.class);
                         intent.putExtra("matchId", matchId);
@@ -75,7 +76,7 @@ public class WaitingActivity extends AppCompatActivity {
                          startActivity(intent);
                         finish();
                     } else {
-                        Log.d(TAG, "No matches found with invitationId=" + inviteId);
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": No matches found with invitationId=" + inviteId);
                     }
                 });
     }

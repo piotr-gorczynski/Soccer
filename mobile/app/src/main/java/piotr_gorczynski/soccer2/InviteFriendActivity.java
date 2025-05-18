@@ -82,13 +82,13 @@ public class InviteFriendActivity extends AppCompatActivity {
                             })
                             .addOnFailureListener(e -> {
                                 resultText.setText(R.string.failed_to_check_existing_invites);
-                                Log.e("TAG_Soccer", "Invite check failed", e);
+                                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Invite check failed", e);
                             });
 
                 })
                 .addOnFailureListener(e -> {
                     resultText.setText(R.string.error_searching_user);
-                    Log.e("TAG_Soccer", "User lookup failed", e);
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": User lookup failed", e);
                 });
     }
 
@@ -126,12 +126,12 @@ public class InviteFriendActivity extends AppCompatActivity {
                     })
                     .addOnFailureListener(e -> {
                         resultText.setText(R.string.failed_to_send_invite);
-                        Log.e("TAG_Soccer", "Sending failed", e);
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Sending failed", e);
                     });
 
         }).addOnFailureListener(e -> {
             resultText.setText(R.string.failed_to_load_user_info);
-            Log.e("TAG_Soccer", "Nickname fetch error", e);
+            Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Nickname fetch error", e);
         });
     }
 }
