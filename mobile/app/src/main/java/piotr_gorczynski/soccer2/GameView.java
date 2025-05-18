@@ -304,6 +304,7 @@ public class GameView extends View {
     }
 
     public int checkWinnerFromMoves(ArrayList<MoveTo> moves) {
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started");
         MoveTo last = moves.get(moves.size() - 1);
         return checkWinner(last.X, last.Y, new ArrayList<>(moves));
     }
@@ -339,7 +340,7 @@ public class GameView extends View {
     }
 
     public int checkWinner(int x, int y,ArrayList<MoveTo> Moves){
-
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started");
         boolean bouncing=isBouncing(x,y,Moves);
         ArrayList<MoveTo> nextMoves = new ArrayList<>(Moves);
         if(bouncing)

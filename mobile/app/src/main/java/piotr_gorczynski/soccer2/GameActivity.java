@@ -444,6 +444,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     public void showWinner(int Winner) {
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started. Winner = " + Winner);
         final String sPlayer0, sPlayer1;
         this.Winner = Winner;
 
