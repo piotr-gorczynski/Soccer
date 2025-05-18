@@ -51,6 +51,8 @@ public class GameActivity extends AppCompatActivity {
 
     private String player0Uid, player1Uid;
 
+    private boolean alertShown = false;
+
     @SuppressLint("RedundantSuppression")
     @SuppressWarnings("deprecation")
     private boolean isLegacyMovesNotNull(Bundle savedInstanceState) {
@@ -413,13 +415,12 @@ public class GameActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();  // Always call the superclass method first
-        if(Winner!=-1){
+    protected void onResume() {
+        super.onResume();
+        if (!alertShown && Winner != -1) {
             showWinner(Winner);
         }
     }
-
 
     @Override
     public void onSaveInstanceState(Bundle outState)
@@ -444,6 +445,8 @@ public class GameActivity extends AppCompatActivity {
     }
 
     public void showWinner(int Winner) {
+        if (alertShown) return;
+        alertShown = true;
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started. Winner = " + Winner);
         final String sPlayer0, sPlayer1;
         this.Winner = Winner;
@@ -472,28 +475,30 @@ public class GameActivity extends AppCompatActivity {
 
         if (GameType == 3 && matchId != null) {
             FirebaseFirestore.getInstance().collection("matches").document(matchId).get()
-                    .addOnSuccessListener(doc -> {
-                        String reason = doc.getString("reason");
+                    .addOnSuccessListener(
+                            GameActivity.this,      // ← executor tied to this Activity’s main looper
+                            doc -> {
+                                String reason = doc.getString("reason");
 
-                        if ("abandon".equals(reason)) {
-                            String winnerUid = doc.getString("winner");
-                            String forfeitingUid = Objects.requireNonNull(winnerUid).equals(player0Uid) ? player1Uid : player0Uid;
-                            String forfeitingPlayer = forfeitingUid.equals(player0Uid) ? sPlayer0 : sPlayer1;
-                            builder.setMessage(forfeitingPlayer + " forfeited the game.");
-                        } else {
-                            builder.setMessage("The winner is " + (Winner == 0 ? sPlayer0 : sPlayer1));
-                        }
+                                if ("abandon".equals(reason)) {
+                                    String winnerUid = doc.getString("winner");
+                                    String forfeitingUid = Objects.requireNonNull(winnerUid).equals(player0Uid) ? player1Uid : player0Uid;
+                                    String forfeitingPlayer = forfeitingUid.equals(player0Uid) ? sPlayer0 : sPlayer1;
+                                    builder.setMessage(forfeitingPlayer + " forfeited the game.");
+                                } else {
+                                    builder.setMessage("The winner is " + (Winner == 0 ? sPlayer0 : sPlayer1));
+                                }
 
-                        builder.setPositiveButton("Close", (dialog, which) -> {
-                            Intent intent = new Intent(this, MenuActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
-                            finish();
-                        });
+                                builder.setPositiveButton("Close", (dialog, which) -> {
+                                    Intent intent = new Intent(this, MenuActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
+                                    finish();
+                                });
 
-                        dialogWinner = builder.create();
-                        dialogWinner.show();
-                    })
+                                dialogWinner = builder.create();
+                                dialogWinner.show();
+                            })
                     .addOnFailureListener(err -> {
                         Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to load match reason", err);
 
@@ -504,8 +509,13 @@ public class GameActivity extends AppCompatActivity {
                             startActivity(intent);
                             finish();
                         });
-                        dialogWinner = builder.create();
-                        dialogWinner.show();
+                        // make sure we’re still alive, on the UI thread
+                        runOnUiThread(() -> {
+                            if (!isFinishing() && !isDestroyed()) {
+                                dialogWinner = builder.create();
+                                dialogWinner.show();
+                            }
+                        });
                     });
 
             return; // Avoid showing duplicate dialog below
