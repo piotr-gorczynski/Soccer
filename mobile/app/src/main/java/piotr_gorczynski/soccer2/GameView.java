@@ -106,8 +106,8 @@ public class GameView extends View {
 
     public GameView(Context context, ArrayList<MoveTo> argMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex) {
         super(context);
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started, received argMoves.size=" + argMoves.size());
-
+        // simpler log—no reflection, no nulls
+        Log.d("TAG_Soccer",getClass().getSimpleName() + ".<init>: Started, received argMoves.size=" + argMoves.size());
         this.localPlayerIndex = localPlayerIndex;
         mHandler = new MyHandler(this);
         GameType = argGameType;
