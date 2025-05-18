@@ -19,6 +19,7 @@ import android.os.Build;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import java.util.Objects;
 
 
 public class MenuActivity extends AppCompatActivity {
@@ -28,7 +29,7 @@ public class MenuActivity extends AppCompatActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Log.d("TAG_Soccer", "InvitationsActivity onNewIntent: " + intent.toUri(Intent.URI_INTENT_SCHEME));
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": InvitationsActivity onNewIntent: " + intent.toUri(Intent.URI_INTENT_SCHEME));
     }
 
     @Override
@@ -54,12 +55,12 @@ public class MenuActivity extends AppCompatActivity {
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(task -> {
                     if (!task.isSuccessful()) {
-                        Log.w("TAG_Soccer", "❌ Failed to get FCM token", task.getException());
+                        Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ❌ Failed to get FCM token", task.getException());
                         return;
                     }
 
                     String token = task.getResult();
-                    Log.d("TAG_Soccer", "🔑 Token from MenuActivity: " + token);
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": 🔑 Token from MenuActivity: " + token);
 
                     String uid = FirebaseAuth.getInstance().getCurrentUser() != null
                             ? FirebaseAuth.getInstance().getCurrentUser().getUid()
@@ -69,11 +70,11 @@ public class MenuActivity extends AppCompatActivity {
                         FirebaseFirestore.getInstance()
                                 .collection("users")
                                 .document(uid)
-                                .update("TAG_Soccer", token)
-                                .addOnSuccessListener(aVoid -> Log.d("TAG_Soccer", "✅ Token saved"))
-                                .addOnFailureListener(e -> Log.e("TAG_Soccer", "❌ Failed to save token", e));
+                                .update("fcmToken", token)
+                                .addOnSuccessListener(aVoid -> Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ✅ Token saved"))
+                                .addOnFailureListener(e -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ❌ Failed to save token", e));
                     } else {
-                        Log.w("TAG_Soccer", "⚠️ No logged-in user; token not saved");
+                        Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ⚠️ No logged-in user; token not saved");
                     }
                 });
         // ✅ Call permission request
@@ -95,9 +96,9 @@ public class MenuActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Log.d("TAG_Soccer", "✅ Notification permission granted");
+                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ✅ Notification permission granted");
             } else {
-                Log.w("TAG_Soccer", "❌ Notification permission denied");
+                Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ❌ Notification permission denied");
             }
         }
     }
@@ -144,7 +145,7 @@ public class MenuActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
 //---save whatever you need to persist—
-        Log.d("TAG_Soccer", "123456: MenuActivity.onSaveInstanceState entered");
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": MenuActivity.onSaveInstanceState entered");
          super.onSaveInstanceState(outState);
     }
 

@@ -37,7 +37,7 @@ public class InvitationsActivity extends AppCompatActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Log.d("TAG_Soccer", "InvitationsActivity onNewIntent: " + intent.toUri(Intent.URI_INTENT_SCHEME));
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": InvitationsActivity onNewIntent: " + intent.toUri(Intent.URI_INTENT_SCHEME));
     }
 
     @Override
@@ -68,7 +68,6 @@ public class InvitationsActivity extends AppCompatActivity {
     }
 
     // At the top of the class — keeps logcat tidy
-    private static final String TAG = "TAG_Soccer";
 
     /**
      * Attempts to accept a pending invitation by calling the
@@ -79,28 +78,28 @@ public class InvitationsActivity extends AppCompatActivity {
     private void acceptInvite(@NonNull String invitationId) {
 
         if (TextUtils.isEmpty(invitationId)) {
-            Log.w(TAG, "acceptInvite called with empty invitationId");
+            Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": acceptInvite called with empty invitationId");
             Toast.makeText(this, "Invitation not found.", Toast.LENGTH_LONG).show();
             return;
         }
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
-            Log.e(TAG, "User not signed-in");
+            Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": User not signed-in");
             Toast.makeText(this, "You must be logged in to accept invites.",
                     Toast.LENGTH_LONG).show();
             return;
         }
 
-        Log.d(TAG, "Refreshing ID token…");
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Refreshing ID token…");
         user.getIdToken(/* forceRefresh = */ true)
                 .addOnSuccessListener(tokenResult -> {
-                    Log.d(TAG, "Token refresh OK");
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Token refresh OK");
 
                     FirebaseFunctions functions = FirebaseFunctions.getInstance("us-central1");
                     Map<String, Object> data = Collections.singletonMap("invitationId", invitationId);
 
-                    Log.d(TAG, "Calling Cloud Function acceptInvite");
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Calling Cloud Function acceptInvite");
                     functions.getHttpsCallable("acceptInvite")
                             .call(data)
 
@@ -111,13 +110,13 @@ public class InvitationsActivity extends AppCompatActivity {
                                 String matchId = payload != null ? (String) payload.get("matchId") : null;
 
                                 if (TextUtils.isEmpty(matchId)) {
-                                    Log.e(TAG, "matchId missing in response: " + payload);
+                                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": matchId missing in response: " + payload);
                                     Toast.makeText(this, "Invalid response from server.",
                                             Toast.LENGTH_LONG).show();
                                     return;
                                 }
 
-                                Log.d(TAG, "matchId received: " + matchId);
+                                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": matchId received: " + matchId);
                                 Toast.makeText(this, "Invite accepted! Starting game…",
                                         Toast.LENGTH_SHORT).show();
 
@@ -137,18 +136,18 @@ public class InvitationsActivity extends AppCompatActivity {
                             .addOnFailureListener(e -> {
                                 if (e instanceof FirebaseFunctionsException ffe) {
                                     // ← this line gives you the real reason (App Check, IAM, etc.)
-                                    Log.w(TAG, "code=" + ffe.getCode()
+                                    Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": code=" + ffe.getCode()
                                             + "  message=" + ffe.getMessage()
                                             + "  details=" + ffe.getDetails());
                                 }
-                                Log.e(TAG, "Cloud Function call failed", e);
+                                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Cloud Function call failed", e);
                                 Toast.makeText(this, "Failed to accept invite: " + e.getMessage(),
                                         Toast.LENGTH_LONG).show();
                             });
 
                 })
                 .addOnFailureListener(e -> {
-                    Log.e(TAG, "Token refresh failed", e);
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Token refresh failed", e);
                     Toast.makeText(this, "Authentication error. Try logging in again.",
                             Toast.LENGTH_LONG).show();
                 });
@@ -166,7 +165,7 @@ public class InvitationsActivity extends AppCompatActivity {
                 .whereEqualTo("status", "pending")
                 .addSnapshotListener((querySnapshot, e) -> {
                     if (e != null) {
-                        Log.e("TAG_Soccer", "Listen failed", e);
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Listen failed", e);
                         return;
                     }
 

@@ -24,6 +24,8 @@ import piotr_gorczynski.soccer2.R;
 import android.app.PendingIntent;
 import android.content.Intent;
 
+import java.util.Objects;
+
 import piotr_gorczynski.soccer2.InvitationsActivity;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
@@ -31,7 +33,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onNewToken(@NonNull String token) {
         super.onNewToken(token);
-        Log.d("TAG_Soccer", "🔐 New FCM token: " + token);
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": 🔐 New FCM token: " + token);
 
         String uid = FirebaseAuth.getInstance().getCurrentUser() != null
                 ? FirebaseAuth.getInstance().getCurrentUser().getUid()
@@ -42,23 +44,23 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     .collection("users")
                     .document(uid)
                     .update("fcmToken", token)
-                    .addOnSuccessListener(aVoid -> Log.d("TAG_Soccer", "✅ Token saved"))
-                    .addOnFailureListener(e -> Log.e("TAG_Soccer", "❌ Failed to save token", e));
+                    .addOnSuccessListener(aVoid -> Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ✅ Token saved"))
+                    .addOnFailureListener(e -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ❌ Failed to save token", e));
         } else {
-            Log.w("TAG_Soccer", "⚠️ No user logged in; token not saved");
+            Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ⚠️ No user logged in; token not saved");
         }
     }
 
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
-        Log.d("TAG_Soccer", "📨 Message received: " + remoteMessage.getData());
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": 📨 Message received: " + remoteMessage.getData());
         String type = remoteMessage.getData().get("type");
         if ("start".equals(type)) {
-            Log.d("TAG_Soccer", "🎮 Received 'start' message to launch GameActivity");
+            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": 🎮 Received 'start' message to launch GameActivity");
 
             String matchId = remoteMessage.getData().get("matchId");
             if (matchId == null) {
-                Log.w("TAG_Soccer", "⚠️ 'start' message missing matchId");
+                Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ⚠️ 'start' message missing matchId");
                 return;
             }
 
@@ -131,7 +133,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 == PackageManager.PERMISSION_GRANTED) {
             nm.notify(notificationId, builder.build());
         } else {
-            Log.w("TAG_Soccer", "Missing POST_NOTIFICATIONS permission");
+            Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Missing POST_NOTIFICATIONS permission");
         }
 
     }

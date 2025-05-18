@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Objects;
 
 public class ExceptionHandler implements
         Thread.UncaughtExceptionHandler {
@@ -49,7 +50,7 @@ public class ExceptionHandler implements
                 LINE_SEPARATOR;
 
 
-        Log.d("TAG_Soccer", errorReport);
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": " + errorReport);
         android.os.Process.killProcess(android.os.Process.myPid());
         System.exit(10);
     }

@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Field {
 
@@ -188,7 +189,7 @@ public class Field {
     }
 
     public void draw(Canvas canvas) {
-        Log.d("TAG_Soccer", "123456: Field.draw");
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started");
 
         int oldx, oldy;
 

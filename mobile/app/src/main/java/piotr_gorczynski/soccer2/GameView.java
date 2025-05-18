@@ -11,6 +11,8 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import java.util.ArrayList;
+import java.util.Objects;
+
 import android.util.AttributeSet;
 import android.os.Looper;
 import androidx.annotation.NonNull;
@@ -49,7 +51,7 @@ public class GameView extends View {
     }
 
     public void replaceMoves(ArrayList<MoveTo> newMoves) {
-        Log.d("TAG_Soccer", "GameView.replaceMoves called. newMoves.size=" + newMoves.size());
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started. newMoves.size=" + newMoves.size());
         this.realMoves.clear();
         this.realMoves.addAll(newMoves);
     }
@@ -65,7 +67,7 @@ public class GameView extends View {
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
-            Log.d("TAG_Soccer", "In handle message");
+            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started");
             gameView.androidMove();
         }
     }
@@ -104,7 +106,7 @@ public class GameView extends View {
 
     public GameView(Context context, ArrayList<MoveTo> argMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex) {
         super(context);
-        Log.d("TAG_Soccer", "GameView Constructor called, received argMoves.size=" + argMoves.size());
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started, received argMoves.size=" + argMoves.size());
 
         this.localPlayerIndex = localPlayerIndex;
         mHandler = new MyHandler(this);
@@ -184,10 +186,10 @@ public class GameView extends View {
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
-        Log.d("TAG_Soccer", "GameView.onDraw started");
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started");
 
         if (realMoves.isEmpty()) {
-            Log.w("TAG_Soccer", "GameView.onDraw skipped: realMoves is empty");
+            Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Skipped: realMoves is empty");
             return;
         }
 
@@ -377,7 +379,7 @@ public class GameView extends View {
 
     public boolean androidNextMove_v2(ArrayList<MoveTo> Moves,MoveTo masterMinMoveTo, int bouncingLevel, NextMoveFound masterNextMoveFound, int treeDepthLevel, long startThinkingTime) {
         String stringMove=Moves.get(Moves.size()-1).toString();
-        Log.d("TAG_Soccer", "<"+stringMove+" bouncinglevel='"+ bouncingLevel +"' treedepthlevel='"+ treeDepthLevel +"'>");
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": <"+stringMove+" bouncinglevel='"+ bouncingLevel +"' treedepthlevel='"+ treeDepthLevel +"'>");
         logMoves(Moves);
         long difference;
         long startTime = System.currentTimeMillis();
@@ -403,13 +405,13 @@ public class GameView extends View {
                 //if too many bouncing levels
                 int gameBouncingLevel = 50;
                 if((nextMoveFound.found) && (nextMoveFound.bouncingLevel> gameBouncingLevel)) {
-                    Log.d("TAG_Soccer", "<gameBouncingLevelReached>" + gameBouncingLevel + "</gameBouncingLevelReached>");
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": <gameBouncingLevelReached>" + gameBouncingLevel + "</gameBouncingLevelReached>");
                     break;
                 }
 
                 difference = (System.currentTimeMillis() - startThinkingTime)/1000;
                 if((nextMoveFound.found) && (difference>androidLevel)) {
-                    Log.d("TAG_Soccer", "<timeLimitReached>" + difference + "</timeLimitReached>");
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": <timeLimitReached>" + difference + "</timeLimitReached>");
                     break;
                 }
 
@@ -420,7 +422,7 @@ public class GameView extends View {
                     while (bestMoves.size() > movesSize)
                         bestMoves.remove(bestMoves.size() - 1);
                     bestMoves.add(new MoveTo(minMoveTo.X, minMoveTo.Y, Moves.get(Moves.size() - 1).P));
-                    Log.d("TAG_Soccer", "<minimumfound1>" + minMoveTo + "</minimumfound1>");
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": <minimumfound1>" + minMoveTo + "</minimumfound1>");
                     nextMoveFound.found = true;
                     nextMoveFound.bouncingLevel = bouncingLevel;
                     nextMoveFound.victory=true;
@@ -437,7 +439,7 @@ public class GameView extends View {
                         while (bestMoves.size() > movesSize)
                             bestMoves.remove(bestMoves.size() - 1);
                         bestMoves.add(new MoveTo(minMoveTo.X, minMoveTo.Y, Moves.get(Moves.size() - 1).P));
-                        Log.d("TAG_Soccer", "<minimumfound player='"+ Moves.get(Moves.size() - 1).P +"' MINMAX='" + MINMAX(minMoveTo.X, minMoveTo.Y, Moves.get(Moves.size() - 1).P) +"'>" + minMoveTo + "</minimumfound>");
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": <minimumfound player='"+ Moves.get(Moves.size() - 1).P +"' MINMAX='" + MINMAX(minMoveTo.X, minMoveTo.Y, Moves.get(Moves.size() - 1).P) +"'>" + minMoveTo + "</minimumfound>");
                         nextMoveFound.found = true;
                         nextMoveFound.bouncingLevel = bouncingLevel;
                         localNextMoveFound = true;
@@ -447,7 +449,7 @@ public class GameView extends View {
                             break;
                         }
                         if(checkWinner(i.X, i.Y, Moves) == 0) {
-                            Log.d("TAG_Soccer", "<defeat>" + stringMove + "</defeat>");
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": <defeat>" + stringMove + "</defeat>");
                             nextMoveFound.defeat=true;
                             break;
                         }
@@ -482,7 +484,7 @@ public class GameView extends View {
                                 bestMoves.remove(bestMoves.size() - 1);
                             for (int j = bestMoves.size(); j < tempMoves.size(); j++)
                                 bestMoves.add(new MoveTo(tempMoves.get(j).X, tempMoves.get(j).Y, tempMoves.get(j).P));
-                            Log.d("TAG_Soccer", "<minimumfound player='"+ Moves.get(Moves.size() - 1).P +"' MINMAX='"+ MINMAX(minMoveTo.X, minMoveTo.Y, Moves.get(Moves.size() - 1).P) +"'>" + minMoveTo + "</minimumfound>");
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": <minimumfound player='"+ Moves.get(Moves.size() - 1).P +"' MINMAX='"+ MINMAX(minMoveTo.X, minMoveTo.Y, Moves.get(Moves.size() - 1).P) +"'>" + minMoveTo + "</minimumfound>");
                             localNextMoveFound=true;
                             nextMoveFound.found = true;
                             nextMoveFound.bouncingLevel = tempNextMoveFound.bouncingLevel;
@@ -490,7 +492,7 @@ public class GameView extends View {
                         }
                     }
                     if(tempNextMoveFound.defeat && Moves.get(Moves.size() - 1).P==0) {
-                        Log.d("TAG_Soccer", "<defeat>" + stringMove + "</defeat>");
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": <defeat>" + stringMove + "</defeat>");
                         nextMoveFound.defeat=true;
                         masterNextMoveFound.defeat= true;
                         break;
@@ -514,8 +516,8 @@ public class GameView extends View {
             }
         }
         difference = System.currentTimeMillis() - startTime;
-        Log.d("TAG_Soccer", "<secondselapsed>"+ difference / 1000 +"</secondselapsed>");
-        Log.d("TAG_Soccer", "</"+stringMove+">");
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": <secondselapsed>"+ difference / 1000 +"</secondselapsed>");
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": </"+stringMove+">");
         return localNextMoveFound;
     }
 
@@ -531,15 +533,15 @@ public class GameView extends View {
         if (possibleMoves.isEmpty()) return; //throw error to be added
         //called 1-st time
         if (androidMoves.size() <= realMoves.size()) {
-            Log.d("TAG_Soccer", "GameView.androidMove In androidMove 1-st time");
+            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": In androidMove 1-st time");
             androidMoves = new ArrayList<>(realMoves);
             //assigning first form the list as MIN
             MoveTo minMoveTo = new MoveTo(possibleMoves.get(0).X, possibleMoves.get(0).Y, 1);
             NextMoveFound nextMoveFound = new NextMoveFound(false, 0, false, false);
-            Log.d("TAG_Soccer", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": <?xml version=\"1.0\" encoding=\"UTF-8\"?>");
             androidNextMove_v2(androidMoves, minMoveTo,0,nextMoveFound, 0, System.currentTimeMillis());
             if ( nextMoveFound.found ) {
-                Log.d("TAG_Soccer", "GameView.androidMove Sending message for androidMove 1-st time");
+                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Sending message for androidMove 1-st time");
                 mHandler.sendEmptyMessage(1);
             }
             else {
@@ -547,13 +549,13 @@ public class GameView extends View {
             }
         } else {
             //called n-th time
-            Log.d("TAG_Soccer", "GameView.androidMove In androidMove n-th time");
+            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": In androidMove n-th time");
             SystemClock.sleep(1000);
             boolean nextMovePossible = MakeMove(androidMoves.get(realMoves.size()).X, androidMoves.get(realMoves.size()).Y, realMoves);
             invalidate();
             if (nextMovePossible)
                 if (realMoves.get(realMoves.size() - 1).P == 1) {
-                    Log.d("TAG_Soccer", "GameView.androidMove Sending message for androidMove n-th time");
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Sending message for androidMove n-th time");
                     mHandler.sendEmptyMessage(1);
                 }
                 else
@@ -566,7 +568,7 @@ public class GameView extends View {
         for(MoveTo i: Moves)
             str.append(i.toString()).append(";");
         str.append("</moves>");
-        Log.d("TAG_Soccer", str.toString());
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": " + str);
     }
 
     //MINMAX Evaluation function
@@ -607,7 +609,7 @@ public class GameView extends View {
                     int lastP = realMoves.get(realMoves.size() - 1).P;
 
                     if (localPlayerIndex != lastP) {
-                        Log.d("TAG_Soccer", "🔒 Not your turn — ignoring touch");
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": 🔒 Not your turn — ignoring touch");
                         return true;
                     }
 
@@ -623,9 +625,9 @@ public class GameView extends View {
                 else {
                     // ── GameType 1 & 2: use your existing local/AI move logic
                     MakeMove(x, y, realMoves);
-                    Log.d("TAG_Soccer", "GameView.onTouchEvent Before invalidate, last P=" + realMoves.get(realMoves.size() - 1).P);
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Before invalidate, last P=" + realMoves.get(realMoves.size() - 1).P);
                     invalidate();
-                    Log.d("TAG_Soccer", "GameView.onTouchEvent After invalidate");
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": After invalidate");
 
                     // ── If now it's Android’s turn and there _are_ moves available, queue AI
                     if ((GameType == 2) && (realMoves.get(realMoves.size() - 1).P == 1) && (!possibleMoves.isEmpty()))
