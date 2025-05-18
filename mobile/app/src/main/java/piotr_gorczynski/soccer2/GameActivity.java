@@ -493,11 +493,16 @@ public class GameActivity extends AppCompatActivity {
                                     Intent intent = new Intent(this, MenuActivity.class);
                                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                                     startActivity(intent);
-                                    finish();
-                                });
 
-                                dialogWinner = builder.create();
-                                dialogWinner.show();
+                                });
+                                // make sure we’re still alive
+                                if (!isFinishing() && !isDestroyed()) {
+                                    dialogWinner = builder.create();
+                                    dialogWinner.show();
+                                } else {
+                                    Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Tried to show dialog when activity is finishing or destroyed");
+                                }
+
                             })
                     .addOnFailureListener(err -> {
                         Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to load match reason", err);
@@ -514,6 +519,8 @@ public class GameActivity extends AppCompatActivity {
                             if (!isFinishing() && !isDestroyed()) {
                                 dialogWinner = builder.create();
                                 dialogWinner.show();
+                            } else {
+                                Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Tried to show dialog when activity is finishing or destroyed");
                             }
                         });
                     });
