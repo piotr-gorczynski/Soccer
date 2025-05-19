@@ -40,7 +40,7 @@ public class GameView extends View {
 
     private int localPlayerIndex=0;
 
-    @SuppressWarnings("unused")
+    private long remTime0, remTime1;
 
     public interface MoveCallback {
         void onLocalMove(int x, int y, int p);
@@ -104,7 +104,7 @@ public class GameView extends View {
 
     // Constructor
 
-    public GameView(Context context, ArrayList<MoveTo> argMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex) {
+    public GameView(Context context, ArrayList<MoveTo> argMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex, long time0, long time1) {
         super(context);
         // simpler log—no reflection, no nulls
         Log.d("TAG_Soccer",getClass().getSimpleName() + ".<init>: Started, received argMoves.size=" + argMoves.size());
@@ -121,6 +121,9 @@ public class GameView extends View {
 
         realMoves = argMoves;
 
+        this.remTime0 = time0;
+        this.remTime1 = time1;
+
         // construct Field with custom nicknames
         field = new Field(context, realMoves, possibleMovesForDrawing, GameType, player0Name, player1Name, localPlayerIndex);
 
@@ -128,9 +131,18 @@ public class GameView extends View {
         this.requestFocus();
         this.setFocusableInTouchMode(true);
 
+        // pass the clock values into the Field
+        field.setRemainingTimes(remTime0, remTime1);
         // No Android move logic here, because GameType 3 is human vs. human
     }
 
+    // allow later updates
+    public void updateTimes(long time0, long time1) {
+        this.remTime0 = time0;
+        this.remTime1 = time1;
+        field.setRemainingTimes(time0, time1);
+        invalidate();
+    }
 
     public GameView(Context context, ArrayList<MoveTo> argMoves, int argGameType,int androidLevel) {
         super(context);
@@ -194,6 +206,7 @@ public class GameView extends View {
         }
 
         createPossibleMoves(possibleMovesForDrawing, realMoves);
+        field.setRemainingTimes(remTime0, remTime1);
         field.draw(canvas);
     }
 
