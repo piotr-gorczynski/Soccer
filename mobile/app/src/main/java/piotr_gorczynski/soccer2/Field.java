@@ -344,6 +344,8 @@ public class Field {
                     w2x(flipX(intFieldWidth / 2)),
                     topHintY - (float) rText.height() / 2,
                     pHintText);
+
+            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": text: " + text);
         }
     }
 
