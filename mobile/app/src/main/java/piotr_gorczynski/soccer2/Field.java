@@ -329,8 +329,12 @@ public class Field {
             } else if (gameType == 3) {
                 // Multiplayer: determine which name is the opponent
                 String opponentName = isFlipped ? sPlayer0 : sPlayer1;
-                if (remainingTime0 == remainingTime1)
+                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": remainingTime0: "+ remainingTime0 + " remainingTime1: " + remainingTime1);
+
+                if (remainingTime0 == remainingTime1) {
+
                     text = opponentName + " move...";
+                }
                 else
                     text = "Waiting for " + opponentName + " to start...";
             } else {
