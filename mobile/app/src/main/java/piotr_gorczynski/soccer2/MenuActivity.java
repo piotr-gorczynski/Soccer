@@ -40,6 +40,7 @@ public class MenuActivity extends AppCompatActivity {
 
         TextView nicknameLabel = findViewById(R.id.nicknameLabel);
         if (nickname != null && !nickname.isEmpty()) {
+            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Nickname: "+nickname);
             nicknameLabel.setText(getString(R.string.hello_nickname, nickname));
         } else {
             nicknameLabel.setText(getString(R.string.welcome_to_soccer));
@@ -67,6 +68,7 @@ public class MenuActivity extends AppCompatActivity {
                             : null;
 
                     if (uid != null) {
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": uid: "+uid);
                         FirebaseFirestore.getInstance()
                                 .collection("users")
                                 .document(uid)
