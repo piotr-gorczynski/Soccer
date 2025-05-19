@@ -8,7 +8,6 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import androidx.core.content.ContextCompat;
 import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -34,6 +33,8 @@ public class Field {
     final ArrayList<MoveTo> possibleMoves;//= new ArrayList<MoveTo>();
     final ArrayList<MoveTo> Moves;//= new ArrayList<MoveTo>();
     private boolean isFlipped=false;
+
+    private long remainingTime0, remainingTime1;
 
     public Field(Context current, ArrayList<MoveTo> argMoves, ArrayList<MoveTo> argPossibleMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex) {
 
@@ -109,6 +110,12 @@ public class Field {
         Moves=argMoves;
         possibleMoves=argPossibleMoves;
 
+    }
+
+    // called from GameView
+    public void setRemainingTimes(long t0, long t1) {
+        this.remainingTime0 = t0;
+        this.remainingTime1 = t1;
     }
 
     public int getFieldWidth() {
@@ -322,7 +329,10 @@ public class Field {
             } else if (gameType == 3) {
                 // Multiplayer: determine which name is the opponent
                 String opponentName = isFlipped ? sPlayer0 : sPlayer1;
-                text = opponentName + " move...";
+                if (remainingTime0 == remainingTime1)
+                    text = opponentName + " move...";
+                else
+                    text = "Waiting for " + opponentName + " to start...";
             } else {
                 text = "Move...";
             }

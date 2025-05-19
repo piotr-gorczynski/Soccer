@@ -18,10 +18,12 @@ import android.widget.Toast;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
@@ -52,6 +54,8 @@ public class GameActivity extends AppCompatActivity {
     private String player0Uid, player1Uid;
 
     private boolean alertShown = false;
+
+    private ListenerRegistration movesListener, clockListener;
 
     @SuppressLint("RedundantSuppression")
     @SuppressWarnings("deprecation")
@@ -172,10 +176,11 @@ public class GameActivity extends AppCompatActivity {
         }
 
         GameType=getIntent().getIntExtra("GameType",0);
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Game Type entered: " + GameType);
 
         if (GameType == 3) {
             matchId = getIntent().getStringExtra("matchId");
-            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": DEBUG matchId=" + matchId);
+            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": matchId=" + matchId);
             String localNickname = getIntent().getStringExtra("localNickname");
 
             if (matchId == null || localNickname == null) {
@@ -199,77 +204,92 @@ public class GameActivity extends AppCompatActivity {
             // 🔹 Show waiting screen immediately
             setContentView(R.layout.view_waiting_for_opponent);
 
-            db.collection("matches").document(matchId).get()
-                    .addOnSuccessListener(doc -> {
-                        if (!doc.exists()) {
-                            Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Match not found: " + matchId);
-                            Toast.makeText(this, "Match not found.", Toast.LENGTH_LONG).show();
-                            finish();
-                            return;
-                        }
+            // grab the reference once
+            DocumentReference matchRef = db.collection("matches").document(matchId);
 
-                        String uid0 = doc.getString("player0");
-                        String uid1 = doc.getString("player1");
-
-                        if (uid0 == null || uid1 == null) {
-                            Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": player0 or player1 field is missing");
-                            Toast.makeText(this, "Invalid match record.", Toast.LENGTH_LONG).show();
-                            finish();
-                            return;
-                        }
-
-                        // Determine who we are (0 or 1) and set up nicknames
-                        localPlayerIndex = localUid.equals(uid0) ? 0 : 1;  // assign to the field
-
-                        // Look up the remote player’s nickname
-                        String remoteUid = localPlayerIndex == 0 ? uid1 : uid0;
-                        db.collection("users").document(remoteUid).get()
-                                .addOnSuccessListener(remoteDoc -> {
-                                    String remoteNickname = remoteDoc.getString("nickname");
-                                    // after you fetch remoteNickname…
-                                    if (localPlayerIndex == 0) {
-                                        player0Name = localNickname;
-                                        player1Name = remoteNickname;
-                                    } else {
-                                        player1Name = localNickname;
-                                        player0Name = remoteNickname;
-                                    }
-                                    player0Uid = doc.getString("player0");
-                                    player1Uid = doc.getString("player1");
-
-                                    // ── Wire up real‐time “moves” listener ──
-                                    movesRef =
-                                            db.collection("matches")
-                                                    .document(this.matchId)
-                                                    .collection("moves");
-
-                                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Attaching Firestore listener to: matches/" + matchId + "/moves");
-                                    movesRef
-                                            .orderBy("createdAt")
-                                            .addSnapshotListener(this::onMovesUpdate);
-                                })
-                                .addOnFailureListener(e -> {
-                                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to load opponent info.", e);
-                                    Toast.makeText(this, "Failed to load opponent.", Toast.LENGTH_LONG).show();
-                                    finish();
-                                });
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to load match", e);
-                        Toast.makeText(this, "Network error.", Toast.LENGTH_LONG).show();
+            matchRef.get()
+                .addOnSuccessListener(doc -> {
+                    if (!doc.exists()) {
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Match not found: " + matchId);
+                        Toast.makeText(this, "Match not found.", Toast.LENGTH_LONG).show();
                         finish();
-                    });
+                        return;
+                    }
+
+                    player0Uid = doc.getString("player0");
+                    player1Uid = doc.getString("player1");
+
+
+                    if (player0Uid == null || player1Uid == null) {
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": player0 or player1 field is missing");
+                        Toast.makeText(this, "Invalid match record.", Toast.LENGTH_LONG).show();
+                        finish();
+                        return;
+                    }
+
+                    // Determine who we are (0 or 1) and set up nicknames
+                    localPlayerIndex = localUid.equals(player0Uid) ? 0 : 1;  // assign to the field
+
+                    // Look up the remote player’s nickname
+                    String remoteUid = localPlayerIndex == 0 ? player1Uid : player0Uid;
+                    db.collection("users").document(remoteUid).get()
+                            .addOnSuccessListener(remoteDoc -> {
+                                String remoteNickname = remoteDoc.getString("nickname");
+                                // after you fetch remoteNickname…
+                                if (localPlayerIndex == 0) {
+                                    player0Name = localNickname;
+                                    player1Name = remoteNickname;
+                                } else {
+                                    player1Name = localNickname;
+                                    player0Name = remoteNickname;
+                                }
+
+                                // grab initial clock values
+                                // safely extract the two clocks:
+                                Long rawT0 = doc.getLong("remainingTime0");
+                                Long rawT1 = doc.getLong("remainingTime1");
+
+                                if (rawT0 == null || rawT1 == null) {
+                                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock fields missing on read!");
+                                    throw new IllegalStateException("Missing remainingTime0/1 fields");
+                                }
+                                long initTime0 = rawT0;
+                                long initTime1 = rawT1;
+
+                                // CREATE your GameView exactly once
+                                initGameView(initTime0, initTime1);
+
+                                // ── Wire up real‐time “moves” listener ──
+                                movesRef = matchRef.collection("moves");
+
+                                // MOVE listener → only calls replaceMoves(...)
+                                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Attaching Firestore listener to: matches/" + matchId + "/moves");
+                                movesListener = movesRef
+                                    .orderBy("createdAt")
+                                    .addSnapshotListener(this::onMovesUpdate);
+
+                                // CLOCK listener → only calls updateTimes(...)
+                                clockListener = matchRef.addSnapshotListener(this::onClockUpdate);
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to load opponent info.", e);
+                                Toast.makeText(this, "Failed to load opponent.", Toast.LENGTH_LONG).show();
+                                finish();
+                            });
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to load match", e);
+                    Toast.makeText(this, "Network error.", Toast.LENGTH_LONG).show();
+                    finish();
+                });
 
             return;
         }
 
-        if (GameType>0) {
-            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Game Type entered: " + GameType);
-        }
+
 
         SharedPreferences sharedPreferences =
                 getSharedPreferences(getPackageName() + "_preferences", Context.MODE_PRIVATE);
-
 
         if (sharedPreferences.contains("android_level")) {
             androidLevel = Integer.parseInt(sharedPreferences.getString("android_level", "1"));
@@ -306,6 +326,86 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
+    private void onClockUpdate(DocumentSnapshot snap, FirebaseFirestoreException e) {
+        if (e != null || snap == null || !snap.exists()) return;
+        Long rawT0 = snap.getLong("remainingTime0");
+        Long rawT1 = snap.getLong("remainingTime1");
+        if (rawT0 == null || rawT1 == null) {
+            Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock fields missing on update!");
+            throw new IllegalStateException("Missing remainingTime0/1 fields");
+        }
+        long t0 = rawT0;
+        long t1 = rawT1;
+        runOnUiThread(() -> gameView.updateTimes(t0, t1));
+    }
+
+    private void initGameView(long time0, long time1) {
+        gameView = new GameView(
+                this,
+                Moves,
+                GameType,
+                player0Name,
+                player1Name,
+                localPlayerIndex,
+                time0,
+                time1
+        );
+        gameView.setMoveCallback(this::sendMoveToFirestore);
+        setContentView(gameView);
+        gameViewLaunched = true;
+
+        // optional: back‐press handler, etc. as you had it
+
+        getOnBackPressedDispatcher().addCallback(GameActivity.this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                new AlertDialog.Builder(GameActivity.this)
+                        .setTitle("Leave game?")
+                        .setMessage("Are you sure you want to exit? This will count as a forfeit.")
+                        .setPositiveButton("Yes", (dialog, which) -> {
+                            if (matchId != null) {
+                                String loserUid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+                                String winnerUid = loserUid.equals(player0Uid) ? player1Uid : player0Uid;
+
+                                Map<String, Object> update = new HashMap<>();
+                                update.put("winner", winnerUid);
+                                update.put("status", "completed");
+                                update.put("reason", "abandon");
+
+                                FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                                // 🔄 Update match document
+                                db.collection("matches").document(matchId)
+                                        .update(update)
+                                        .addOnSuccessListener(unused -> Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": 🏳️ Match marked as forfeited"))
+                                        .addOnFailureListener(err -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ❌ Failed to update match", err));
+
+                                // 📤 Add a dummy move to trigger opponent's listener
+                                Map<String, Object> forfeitMove = new HashMap<>();
+                                forfeitMove.put("x", -1);
+                                forfeitMove.put("y", -1);
+                                forfeitMove.put("p", localPlayerIndex);
+                                forfeitMove.put("createdAt", FieldValue.serverTimestamp());
+
+                                db.collection("matches").document(matchId)
+                                        .collection("moves")
+                                        .add(forfeitMove)
+                                        .addOnSuccessListener(unused -> Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": 📨 Forfeit move added"))
+                                        .addOnFailureListener(e -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ❌ Failed to send forfeit move", e));
+                            }
+
+                            Intent intent = new Intent(GameActivity.this, MenuActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                            finish();
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .show();
+            }
+        });
+
+    }
+
     private void onMovesUpdate(QuerySnapshot snapshot, FirebaseFirestoreException e) {
         if (e != null) {
             Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Listen for moves failed", e);
@@ -329,77 +429,18 @@ public class GameActivity extends AppCompatActivity {
             return;
         }
 
-        if (!gameViewLaunched && player0Name != null && player1Name != null) {
-            gameViewLaunched = true;
-            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Creating GameView with newMoves.size=" + newMoves.size());
-            gameView = new GameView(this, newMoves, GameType, player0Name, player1Name, localPlayerIndex);
-            gameView.setMoveCallback(this::sendMoveToFirestore);
-            runOnUiThread(() -> {
-                setContentView(gameView);
+        runOnUiThread(() -> {
+            if (gameView != null) {
+                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Replacing moves: newMoves.size=" + newMoves.size());
+                gameView.replaceMoves(newMoves);
+                gameView.invalidate();
 
-                getOnBackPressedDispatcher().addCallback(GameActivity.this, new OnBackPressedCallback(true) {
-                    @Override
-                    public void handleOnBackPressed() {
-                        new AlertDialog.Builder(GameActivity.this)
-                                .setTitle("Leave game?")
-                                .setMessage("Are you sure you want to exit? This will count as a forfeit.")
-                                .setPositiveButton("Yes", (dialog, which) -> {
-                                    if (matchId != null) {
-                                        String loserUid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
-                                        String winnerUid = loserUid.equals(player0Uid) ? player1Uid : player0Uid;
-
-                                        Map<String, Object> update = new HashMap<>();
-                                        update.put("winner", winnerUid);
-                                        update.put("status", "completed");
-                                        update.put("reason", "abandon");
-
-                                        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-                                        // 🔄 Update match document
-                                        db.collection("matches").document(matchId)
-                                                .update(update)
-                                                .addOnSuccessListener(unused -> Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": 🏳️ Match marked as forfeited"))
-                                                .addOnFailureListener(err -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ❌ Failed to update match", err));
-
-                                        // 📤 Add a dummy move to trigger opponent's listener
-                                        Map<String, Object> forfeitMove = new HashMap<>();
-                                        forfeitMove.put("x", -1);
-                                        forfeitMove.put("y", -1);
-                                        forfeitMove.put("p", localPlayerIndex);
-                                        forfeitMove.put("createdAt", FieldValue.serverTimestamp());
-
-                                        db.collection("matches").document(matchId)
-                                                .collection("moves")
-                                                .add(forfeitMove)
-                                                .addOnSuccessListener(unused -> Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": 📨 Forfeit move added"))
-                                                .addOnFailureListener(e -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ❌ Failed to send forfeit move", e));
-                                    }
-
-                                    Intent intent = new Intent(GameActivity.this, MenuActivity.class);
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    startActivity(intent);
-                                    finish();
-                                })
-                                .setNegativeButton("Cancel", null)
-                                .show();
-                    }
-                });
-            });
-
-        } else {
-            runOnUiThread(() -> {
-                if (gameView != null) {
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Replacing moves: newMoves.size=" + newMoves.size());
-                    gameView.replaceMoves(newMoves);
-                    gameView.invalidate();
-
-                    int winner = gameView.checkWinnerFromMoves(newMoves);
-                    if (winner != -1 && this.Winner == -1) {
-                        showWinner(winner);
-                    }
+                int winner = gameView.checkWinnerFromMoves(newMoves);
+                if (winner != -1 && this.Winner == -1) {
+                    showWinner(winner);
                 }
-            });
-        }
+            }
+        });
     }
 
     private void sendMoveToFirestore(int x, int y, int p) {
@@ -539,4 +580,12 @@ public class GameActivity extends AppCompatActivity {
         dialogWinner = builder.create();
         dialogWinner.show();
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (movesListener != null) movesListener.remove();
+        if (clockListener != null) clockListener.remove();
+    }
+
 }
