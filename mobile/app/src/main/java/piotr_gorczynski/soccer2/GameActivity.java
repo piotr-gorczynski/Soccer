@@ -229,9 +229,9 @@ public class GameActivity extends AppCompatActivity {
 
                     // Determine who we are (0 or 1) and set up nicknames
                     localPlayerIndex = localUid.equals(player0Uid) ? 0 : 1;  // assign to the field
-
                     // Look up the remote player’s nickname
                     String remoteUid = localPlayerIndex == 0 ? player1Uid : player0Uid;
+
                     db.collection("users").document(remoteUid).get()
                             .addOnSuccessListener(remoteDoc -> {
                                 String remoteNickname = remoteDoc.getString("nickname");
