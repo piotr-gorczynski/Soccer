@@ -333,15 +333,30 @@ public class GameActivity extends AppCompatActivity {
 
     private void onClockUpdate(DocumentSnapshot snap, FirebaseFirestoreException e) {
         if (e != null || snap == null || !snap.exists()) return;
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started");
         Long rawT0 = snap.getLong("remainingTime0");
         Long rawT1 = snap.getLong("remainingTime1");
         Long ts = snap.getLong("turnStartTime");
+        Long turn = snap.getLong("turn"); // <--- add this!
         if (rawT0 == null || rawT1 == null) {
             Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock fields missing on update!");
             throw new IllegalStateException("Missing remainingTime0/1 fields");
         }
         long t0 = rawT0;
         long t1 = rawT1;
+
+        // <<<<<<<<<<<<<<<<< INSERT THIS BLOCK >>>>>>>>>>>>>>>>>
+        if (ts == null && turn != null && turn.intValue() == localPlayerIndex) {
+            // Only the player whose turn it is, and only if clock hasn't started yet
+            snap.getReference().update("turnStartTime", FieldValue.serverTimestamp())
+                    .addOnSuccessListener(aVoid -> {
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock started by player " + localPlayerIndex);
+                        //startClock(localPlayerIndex, 300_000); // 5 minutes
+                    })
+                    .addOnFailureListener(ex -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to start clock", ex));
+        }
+        // <<<<<<<<<<<<<<<<< END INSERT >>>>>>>>>>>>>>>>>
+
         runOnUiThread(() -> gameView.updateTimes(t0, t1, ts));
     }
 
