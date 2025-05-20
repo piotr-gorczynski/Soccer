@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -256,8 +257,12 @@ public class GameActivity extends AppCompatActivity {
                                 long initTime0 = rawT0;
                                 long initTime1 = rawT1;
 
+                                // Read turnStartTime as a Timestamp or null
+                                Timestamp turnStartTimeTs = doc.getTimestamp("turnStartTime");
+                                Long turnStartTime = (turnStartTimeTs != null) ? turnStartTimeTs.toDate().getTime() : null;
+
                                 // CREATE your GameView exactly once
-                                initGameView(initTime0, initTime1);
+                                initGameView(initTime0, initTime1, turnStartTime);
 
                                 // ── Wire up real‐time “moves” listener ──
                                 movesRef = matchRef.collection("moves");
@@ -330,16 +335,17 @@ public class GameActivity extends AppCompatActivity {
         if (e != null || snap == null || !snap.exists()) return;
         Long rawT0 = snap.getLong("remainingTime0");
         Long rawT1 = snap.getLong("remainingTime1");
+        Long ts = snap.getLong("turnStartTime");
         if (rawT0 == null || rawT1 == null) {
             Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock fields missing on update!");
             throw new IllegalStateException("Missing remainingTime0/1 fields");
         }
         long t0 = rawT0;
         long t1 = rawT1;
-        runOnUiThread(() -> gameView.updateTimes(t0, t1));
+        runOnUiThread(() -> gameView.updateTimes(t0, t1, ts));
     }
 
-    private void initGameView(long time0, long time1) {
+    private void initGameView(long time0, long time1, Long turnStartTime) {
         gameView = new GameView(
                 this,
                 Moves,
@@ -348,7 +354,8 @@ public class GameActivity extends AppCompatActivity {
                 player1Name,
                 localPlayerIndex,
                 time0,
-                time1
+                time1,
+                turnStartTime
         );
         gameView.setMoveCallback(this::sendMoveToFirestore);
         setContentView(gameView);

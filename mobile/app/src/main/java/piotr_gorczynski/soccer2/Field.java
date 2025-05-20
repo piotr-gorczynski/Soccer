@@ -36,6 +36,8 @@ public class Field {
 
     private long remainingTime0, remainingTime1;
 
+    private Long turnStartTime;
+
     public Field(Context current, ArrayList<MoveTo> argMoves, ArrayList<MoveTo> argPossibleMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex) {
 
         this.gameType = argGameType;  // ✅ Save GameType for later use
@@ -109,13 +111,13 @@ public class Field {
 
         Moves=argMoves;
         possibleMoves=argPossibleMoves;
-
     }
 
     // called from GameView
-    public void setRemainingTimes(long t0, long t1) {
+    public void setRemainingTimes(long t0, long t1, Long ts) {
         this.remainingTime0 = t0;
         this.remainingTime1 = t1;
+        this.turnStartTime = ts;
     }
 
     public int getFieldWidth() {
@@ -331,11 +333,9 @@ public class Field {
                 String opponentName = isFlipped ? sPlayer0 : sPlayer1;
                 Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": remainingTime0: "+ remainingTime0 + " remainingTime1: " + remainingTime1);
 
-                if (remainingTime0 == remainingTime1) {
-
+                if (turnStartTime!=null) {
                     text = opponentName + " move...";
-                }
-                else
+                } else
                     text = "Waiting for " + opponentName + " to start...";
             } else {
                 text = "Move...";
