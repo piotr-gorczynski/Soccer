@@ -14,6 +14,7 @@ import com.google.firebase.firestore.*;
 import java.util.Objects;
 
 public class WaitingActivity extends AppCompatActivity {
+    private boolean gameActivityLaunched = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,20 +61,28 @@ public class WaitingActivity extends AppCompatActivity {
                     Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Snapshot size: " + snapshots.size());
 
                     if (!snapshots.isEmpty()) {
-                        DocumentSnapshot matchDoc = snapshots.getDocuments().get(0);
-                        String matchId = matchDoc.getId();
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ✅ Match found with ID: " + matchId);
+                        if (!gameActivityLaunched) {
+                            // Launch GameActivity only once!
+                            gameActivityLaunched = true;
+                            DocumentSnapshot matchDoc = snapshots.getDocuments().get(0);
+                            String matchId = matchDoc.getId();
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
+                            }.getClass().getEnclosingMethod()).getName() + ": ✅ Match found with ID: " + matchId +". Starting GameActivity...");
 
-                        Intent intent = new Intent(this, GameActivity.class);
-                        intent.putExtra("matchId", matchId);
-                        intent.putExtra("GameType", 3);
+                            Intent intent = new Intent(this, GameActivity.class);
+                            intent.putExtra("matchId", matchId);
+                            intent.putExtra("GameType", 3);
 
-                        SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
-                        String nickname = prefs.getString("nickname", "Player");
-                        intent.putExtra("localNickname", nickname);
+                            SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
+                            String nickname = prefs.getString("nickname", "Player");
+                            intent.putExtra("localNickname", nickname);
 
-                         startActivity(intent);
-                        finish();
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
+                            }.getClass().getEnclosingMethod()).getName() + ": gameActivityLaunched==true, therefore skipping...");
+                        }
                     } else {
                         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": No matches found with invitationId=" + inviteId);
                     }
