@@ -42,6 +42,8 @@ public class GameView extends View {
 
     private long remTime0, remTime1;
 
+    private Long turnStartsTime=null;
+
     public interface MoveCallback {
         void onLocalMove(int x, int y, int p);
     }
@@ -104,7 +106,7 @@ public class GameView extends View {
 
     // Constructor
 
-    public GameView(Context context, ArrayList<MoveTo> argMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex, long time0, long time1) {
+    public GameView(Context context, ArrayList<MoveTo> argMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex, long time0, long time1, Long turnStartTime) {
         super(context);
         // simpler log—no reflection, no nulls
         Log.d("TAG_Soccer",getClass().getSimpleName() + ".<init>: Started, received argMoves.size=" + argMoves.size());
@@ -132,15 +134,16 @@ public class GameView extends View {
         this.setFocusableInTouchMode(true);
 
         // pass the clock values into the Field
-        field.setRemainingTimes(remTime0, remTime1);
+        field.setRemainingTimes(remTime0, remTime1, turnStartTime);
         // No Android move logic here, because GameType 3 is human vs. human
     }
 
     // allow later updates
-    public void updateTimes(long time0, long time1) {
+    public void updateTimes(long time0, long time1, Long ts) {
         this.remTime0 = time0;
         this.remTime1 = time1;
-        field.setRemainingTimes(time0, time1);
+        this.turnStartsTime = ts;
+        field.setRemainingTimes(time0, time1, ts);
         invalidate();
     }
 
@@ -206,7 +209,7 @@ public class GameView extends View {
         }
 
         createPossibleMoves(possibleMovesForDrawing, realMoves);
-        field.setRemainingTimes(remTime0, remTime1);
+        field.setRemainingTimes(remTime0, remTime1,turnStartsTime);
         field.draw(canvas);
     }
 
