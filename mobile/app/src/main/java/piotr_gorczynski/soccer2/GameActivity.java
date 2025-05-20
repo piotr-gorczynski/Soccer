@@ -45,6 +45,9 @@ public class GameActivity extends AppCompatActivity {
     //Real-time Move Sync
     private String matchId;
     private CollectionReference movesRef;
+
+    private DocumentReference matchRef;
+
     private int localPlayerIndex;  // 0 or 1
     private FirebaseFirestore db;
 
@@ -57,6 +60,8 @@ public class GameActivity extends AppCompatActivity {
     private boolean alertShown = false;
 
     private ListenerRegistration movesListener, clockListener;
+
+    private boolean clockStartAttempted = false;
 
     @SuppressLint("RedundantSuppression")
     @SuppressWarnings("deprecation")
@@ -206,7 +211,7 @@ public class GameActivity extends AppCompatActivity {
             setContentView(R.layout.view_waiting_for_opponent);
 
             // grab the reference once
-            DocumentReference matchRef = db.collection("matches").document(matchId);
+            matchRef = db.collection("matches").document(matchId);
 
             matchRef.get()
                 .addOnSuccessListener(doc -> {
@@ -346,13 +351,17 @@ public class GameActivity extends AppCompatActivity {
         long t1 = rawT1;
 
         // Fix condition to use ts (which is now a Timestamp)
-        if (ts == null && turn != null && turn.intValue() == localPlayerIndex) {
+        if (!clockStartAttempted && ts == null && turn != null && turn.intValue() == localPlayerIndex) {
+            clockStartAttempted = true; // Prevent repeat attempts!
             snap.getReference().update("turnStartTime", FieldValue.serverTimestamp())
                     .addOnSuccessListener(aVoid -> {
                         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock started by player " + localPlayerIndex);
                         //startClock(localPlayerIndex, 300_000); // 5 minutes
                     })
-                    .addOnFailureListener(ex -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to start clock", ex));
+                    .addOnFailureListener(ex -> {
+                        clockStartAttempted = false; // Allow retry if failed
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to start clock", ex);
+                    });
         }
 
         Long tsMillis = (ts != null) ? ts.toDate().getTime() : null;
@@ -432,7 +441,7 @@ public class GameActivity extends AppCompatActivity {
             Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Listen for moves failed", e);
             return;
         }
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Sterted. Snapshot Size: " + snapshot.size());
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started. Snapshot Size: " + snapshot.size());
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": gameViewLaunched=" + gameViewLaunched +
                 " player0Name=" + player0Name +
                 " player1Name=" + player1Name);
@@ -465,15 +474,46 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void sendMoveToFirestore(int x, int y, int p) {
-        Map<String,Object> m = new HashMap<>();
-        m.put("x", x);
-        m.put("y", y);
-        m.put("p", p);
-        m.put("createdAt", FieldValue.serverTimestamp());
-        movesRef.add(m)
-                .addOnFailureListener(err ->
-                        Toast.makeText(this, "Failed to send move: "+err, LENGTH_SHORT).show()
-                );
+        Map<String,Object> moveData = new HashMap<>();
+        moveData.put("x", x);
+        moveData.put("y", y);
+        moveData.put("p", p);
+        moveData.put("createdAt", FieldValue.serverTimestamp());
+
+        if(p!=this.localPlayerIndex){
+            // Prepare updates for the match document
+            Map<String,Object> matchUpdates = new HashMap<>();
+            //matchUpdates.put("remainingTime" + localPlayerIndex, myNewRemainingMillis / 1000); // in seconds
+            matchUpdates.put("turn", p);
+            matchUpdates.put("turnStartTime", null); // next player will set it
+            matchUpdates.put("updatedAt", FieldValue.serverTimestamp());
+
+            // Send the move
+            movesRef.add(moveData)
+                    .addOnSuccessListener(docRef -> matchRef.update(matchUpdates)
+                            .addOnSuccessListener(aVoid -> {
+                                // Reset local turn/clock flags here if needed
+                                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Sent move an updated match");
+                                clockStartAttempted = false; // So next time this device's turn comes, it'll try to start the clock
+                                // Optionally reset local timing state
+                            })
+                            .addOnFailureListener(err -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to update match")))
+                    .addOnFailureListener(err -> {
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to send move");
+                        Toast.makeText(this, "Failed to send move: "+err, LENGTH_SHORT).show();
+                    });
+        } else {
+            // Send the move
+            movesRef.add(moveData)
+                    .addOnSuccessListener(docRef -> Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Sent move"))
+                    .addOnFailureListener(err -> {
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to send move");
+                        Toast.makeText(this, "Failed to send move: "+err, LENGTH_SHORT).show();
+                    });
+        }
+
+
+
     }
 
     @Override
