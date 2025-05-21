@@ -511,9 +511,6 @@ public class GameActivity extends AppCompatActivity {
                         Toast.makeText(this, "Failed to send move: "+err, LENGTH_SHORT).show();
                     });
         }
-
-
-
     }
 
     @Override

@@ -9,6 +9,7 @@ import android.graphics.Rect;
 import androidx.core.content.ContextCompat;
 import android.util.Log;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Objects;
 
 public class Field {
@@ -315,42 +316,70 @@ public class Field {
         int currentTurn = Moves.get(Moves.size() - 1).P;
         boolean isLocalTurn = currentTurn == (isFlipped ? 1 : 0);  // flipped view = player 1
 
-        if (isLocalTurn) {
-            float bottomHintY = h2y(intFieldHeight+1)+(canvas.getHeight()-h2y(intFieldHeight+1))/2;
+        String textTop;
+        String textBottom;
+        String opponentName = isFlipped ? sPlayer0 : sPlayer1;
+        String oponentTime = formatTime(isFlipped ? remainingTime0 : remainingTime1);
+        String localName = isFlipped ? sPlayer1 : sPlayer0;
+        String localTime = formatTime(isFlipped ? remainingTime1 : remainingTime0);
 
+        float bottomHintY = h2y(intFieldHeight+1)+(canvas.getHeight()-h2y(intFieldHeight+1))/2;
+
+        if (isLocalTurn) {
+            if (gameType != 3) {
+                textBottom = "Your move!";
+            } else {
+                textBottom = localName + " move ... ⏳ "+localTime;
+            }
+            pHintText.getTextBounds(textBottom, 0, textBottom.length(), rText);
             canvas.drawText("Your move!",
                     w2x(flipX(intFieldWidth / 2)),
-                    bottomHintY - (float) rText.height()/2,
+                    bottomHintY - (float) rText.height() / 2,
                     pHintText);
+            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": textBottom: " + textBottom);
         } else {
-            String text;
             if (gameType == 1) {
-                text = "Opponent move...";  // could be improved, but likely shared screen
+                textTop = "Opponent move...";  // could be improved, but likely shared screen
             } else if (gameType == 2) {
-                text = "Thinking...";
-            } else if (gameType == 3) {
+                textTop = "Thinking...";
+            } else  {
                 // Multiplayer: determine which name is the opponent
-                String opponentName = isFlipped ? sPlayer0 : sPlayer1;
+
                 Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": remainingTime0: "+ remainingTime0 + " remainingTime1: " + remainingTime1);
 
                 if (turnStartTime!=null) {
-                    text = opponentName + " move...";
+                    textTop = opponentName + " move... ⏳ "+oponentTime;
                 } else
-                    text = "Waiting for " + opponentName + " to start...";
-            } else {
-                text = "Move...";
+                    textTop = "Waiting for " + opponentName + " to start... ⏳ "+oponentTime;
+
+                textBottom = localName + " ⏳ "+localTime;
+
+                pHintText.getTextBounds(textBottom, 0, textBottom.length(), rText);
+                canvas.drawText(textBottom,
+                        w2x(flipX(intFieldWidth / 2)),
+                        bottomHintY - (float) rText.height()/2,
+                        pHintText);
+
+                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": textBottom: " + textBottom);
+
             }
 
-            pHintText.getTextBounds(text, 0, text.length(), rText);
+            pHintText.getTextBounds(textTop, 0, textTop.length(), rText);
             float topHintY = h2y(-1) / 2;
 
-            canvas.drawText(text,
+            canvas.drawText(textTop,
                     w2x(flipX(intFieldWidth / 2)),
                     topHintY - (float) rText.height() / 2,
                     pHintText);
 
-            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": text: " + text);
+            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": textTop: " + textTop);
         }
     }
-
+    private String formatTime(long ms) {
+        if (ms < 0) ms = 0;
+        long totalSec = ms / 1000;
+        long min = totalSec / 60;
+        long sec = totalSec % 60;
+        return String.format(Locale.US,"%02d:%02d", min, sec);
+    }
 }
