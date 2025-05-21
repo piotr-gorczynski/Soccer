@@ -347,15 +347,15 @@ public class GameActivity extends AppCompatActivity {
     private void startClock(int playerIndex, long remainingMillis) {
         // cancel any existing
         if (turnTimer != null) turnTimer.cancel();
-
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started");
         turnTimer = new CountDownTimer(remainingMillis, 1000) {
             @Override public void onTick(long msUntilFinished) {
                 long t0 = remainingTime0;
                 long t1 = remainingTime1;
-                if (playerIndex == 0)  t0 = msUntilFinished;
-                else                   t1 = msUntilFinished;
+                if (playerIndex == 0)  t0 = msUntilFinished / 1000;
+                else                   t1 = msUntilFinished / 1000;
+                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": t0=" + t0 + ", t1=" + t1);
                 gameView.updateTimes(t0, t1, turnStartTime);
-                gameView.invalidate();
             }
             @Override public void onFinish() {
                 // handle timeout…
