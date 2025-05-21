@@ -319,9 +319,9 @@ public class Field {
         String textTop;
         String textBottom;
         String opponentName = isFlipped ? sPlayer0 : sPlayer1;
-        String oponentTime = formatTime(isFlipped ? remainingTime0 : remainingTime1);
+        String oponentTime = formatClockSeconds(isFlipped ? remainingTime0 : remainingTime1);
         String localName = isFlipped ? sPlayer1 : sPlayer0;
-        String localTime = formatTime(isFlipped ? remainingTime1 : remainingTime0);
+        String localTime = formatClockSeconds(isFlipped ? remainingTime1 : remainingTime0);
 
         float bottomHintY = h2y(intFieldHeight+1)+(canvas.getHeight()-h2y(intFieldHeight+1))/2;
 
@@ -330,13 +330,28 @@ public class Field {
                 textBottom = "Your move!";
             } else {
                 textBottom = localName + " move ... ⏳ "+localTime;
+
+                textTop = opponentName + " ⏳ "+oponentTime;
+
+                pHintText.getTextBounds(textTop, 0, textTop.length(), rText);
+                float topHintY = h2y(-1) / 2;
+
+                canvas.drawText(textTop,
+                        w2x(flipX(intFieldWidth / 2)),
+                        topHintY - (float) rText.height() / 2,
+                        pHintText);
+
+
+
+
             }
             pHintText.getTextBounds(textBottom, 0, textBottom.length(), rText);
-            canvas.drawText("Your move!",
+            canvas.drawText(textBottom,
                     w2x(flipX(intFieldWidth / 2)),
                     bottomHintY - (float) rText.height() / 2,
                     pHintText);
             Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": textBottom: " + textBottom);
+
         } else {
             if (gameType == 1) {
                 textTop = "Opponent move...";  // could be improved, but likely shared screen
@@ -375,11 +390,10 @@ public class Field {
             Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": textTop: " + textTop);
         }
     }
-    private String formatTime(long ms) {
-        if (ms < 0) ms = 0;
-        long totalSec = ms / 1000;
-        long min = totalSec / 60;
-        long sec = totalSec % 60;
-        return String.format(Locale.US,"%02d:%02d", min, sec);
+    private String formatClockSeconds(long seconds) {
+        if (seconds < 0) seconds = 0;
+        long min = seconds / 60;
+        long sec = seconds % 60;
+        return String.format(Locale.US, "%02d:%02d", min, sec);
     }
 }
