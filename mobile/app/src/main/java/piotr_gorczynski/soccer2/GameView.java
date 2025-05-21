@@ -140,9 +140,9 @@ public class GameView extends View {
 
     // allow later updates
     public void updateTimes(long time0, long time1, Long ts) {
-        this.remTime0 = time0;
-        this.remTime1 = time1;
-        this.turnStartsTime = ts;
+        remTime0 = time0;
+        remTime1 = time1;
+        turnStartsTime = ts;
         field.setRemainingTimes(time0, time1, ts);
         invalidate();
     }

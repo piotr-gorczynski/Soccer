@@ -12,6 +12,8 @@ import android.os.Bundle;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.os.CountDownTimer;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -62,6 +64,12 @@ public class GameActivity extends AppCompatActivity {
     private ListenerRegistration movesListener, clockListener;
 
     private boolean clockStartAttempted = false;
+
+    private CountDownTimer turnTimer;
+
+    private long remainingTime0, remainingTime1;
+    private Long turnStartTime;
+    private long turnStartTimeMs;
 
     @SuppressLint("RedundantSuppression")
     @SuppressWarnings("deprecation")
@@ -259,15 +267,15 @@ public class GameActivity extends AppCompatActivity {
                                     Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock fields missing on read!");
                                     throw new IllegalStateException("Missing remainingTime0/1 fields");
                                 }
-                                long initTime0 = rawT0;
-                                long initTime1 = rawT1;
+                                remainingTime0 = rawT0;
+                                remainingTime1 = rawT1;
 
                                 // Read turnStartTime as a Timestamp or null
                                 Timestamp turnStartTimeTs = doc.getTimestamp("turnStartTime");
-                                Long turnStartTime = (turnStartTimeTs != null) ? turnStartTimeTs.toDate().getTime() : null;
+                                turnStartTime = (turnStartTimeTs != null) ? turnStartTimeTs.toDate().getTime() : null;
 
                                 // CREATE your GameView exactly once
-                                initGameView(initTime0, initTime1, turnStartTime);
+                                initGameView();
 
                                 // ── Wire up real‐time “moves” listener ──
                                 movesRef = matchRef.collection("moves");
@@ -336,6 +344,25 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
+    private void startClock(int playerIndex, long remainingMillis) {
+        // cancel any existing
+        if (turnTimer != null) turnTimer.cancel();
+
+        turnTimer = new CountDownTimer(remainingMillis, 1000) {
+            @Override public void onTick(long msUntilFinished) {
+                long t0 = remainingTime0;
+                long t1 = remainingTime1;
+                if (playerIndex == 0)  t0 = msUntilFinished;
+                else                   t1 = msUntilFinished;
+                gameView.updateTimes(t0, t1, turnStartTime);
+                gameView.invalidate();
+            }
+            @Override public void onFinish() {
+                // handle timeout…
+            }
+        }.start();
+    }
+
     private void onClockUpdate(DocumentSnapshot snap, FirebaseFirestoreException e) {
         if (e != null || snap == null || !snap.exists()) return;
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started");
@@ -347,8 +374,8 @@ public class GameActivity extends AppCompatActivity {
             Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock fields missing on update!");
             throw new IllegalStateException("Missing remainingTime0/1 fields");
         }
-        long t0 = rawT0;
-        long t1 = rawT1;
+        remainingTime0 = rawT0;
+        remainingTime1 = rawT1;
 
         // Fix condition to use ts (which is now a Timestamp)
         if (!clockStartAttempted && ts == null && turn != null && turn.intValue() == localPlayerIndex) {
@@ -356,7 +383,9 @@ public class GameActivity extends AppCompatActivity {
             snap.getReference().update("turnStartTime", FieldValue.serverTimestamp())
                     .addOnSuccessListener(aVoid -> {
                         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock started by player " + localPlayerIndex);
-                        //startClock(localPlayerIndex, 300_000); // 5 minutes
+                        turnStartTimeMs = System.currentTimeMillis();
+                        long remSecs = localPlayerIndex==0 ? remainingTime0 : remainingTime1;
+                        startClock(localPlayerIndex, remSecs*1000); //
                     })
                     .addOnFailureListener(ex -> {
                         clockStartAttempted = false; // Allow retry if failed
@@ -365,10 +394,10 @@ public class GameActivity extends AppCompatActivity {
         }
 
         Long tsMillis = (ts != null) ? ts.toDate().getTime() : null;
-        runOnUiThread(() -> gameView.updateTimes(t0, t1, tsMillis));
+        runOnUiThread(() -> gameView.updateTimes(remainingTime0, remainingTime1, tsMillis));
     }
 
-    private void initGameView(long time0, long time1, Long turnStartTime) {
+    private void initGameView() {
         gameView = new GameView(
                 this,
                 Moves,
@@ -376,8 +405,8 @@ public class GameActivity extends AppCompatActivity {
                 player0Name,
                 player1Name,
                 localPlayerIndex,
-                time0,
-                time1,
+                remainingTime0,
+                remainingTime1,
                 turnStartTime
         );
         gameView.setMoveCallback(this::sendMoveToFirestore);
@@ -474,6 +503,8 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void sendMoveToFirestore(int x, int y, int p) {
+
+
         Map<String,Object> moveData = new HashMap<>();
         moveData.put("x", x);
         moveData.put("y", y);
@@ -481,9 +512,17 @@ public class GameActivity extends AppCompatActivity {
         moveData.put("createdAt", FieldValue.serverTimestamp());
 
         if(p!=this.localPlayerIndex){
+
+            long prevRemainingSecs = localPlayerIndex == 0 ? remainingTime0 : remainingTime1;
+            long prevRemainingMs = prevRemainingSecs * 1000L;
+            long nowMs = System.currentTimeMillis();
+            long elapsed = nowMs - turnStartTimeMs;
+            long myNewRemainingMs = Math.max(prevRemainingMs - elapsed, 0L);
+
             // Prepare updates for the match document
             Map<String,Object> matchUpdates = new HashMap<>();
-            //matchUpdates.put("remainingTime" + localPlayerIndex, myNewRemainingMillis / 1000); // in seconds
+            matchUpdates.put("remainingTime" + localPlayerIndex,
+                    myNewRemainingMs / 1000L);        // write back in seconds
             matchUpdates.put("turn", p);
             matchUpdates.put("turnStartTime", null); // next player will set it
             matchUpdates.put("updatedAt", FieldValue.serverTimestamp());

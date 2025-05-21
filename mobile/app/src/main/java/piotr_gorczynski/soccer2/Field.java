@@ -116,9 +116,9 @@ public class Field {
 
     // called from GameView
     public void setRemainingTimes(long t0, long t1, Long ts) {
-        this.remainingTime0 = t0;
-        this.remainingTime1 = t1;
-        this.turnStartTime = ts;
+        remainingTime0 = t0;
+        remainingTime1 = t1;
+        turnStartTime = ts;
     }
 
     public int getFieldWidth() {
