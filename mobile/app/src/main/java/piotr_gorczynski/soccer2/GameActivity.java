@@ -71,6 +71,8 @@ public class GameActivity extends AppCompatActivity {
     private Long turnStartTime;
     private long turnStartTimeMs;
 
+    Timestamp turnStartTimeTs;
+
     @SuppressLint("RedundantSuppression")
     @SuppressWarnings("deprecation")
     private boolean isLegacyMovesNotNull(Bundle savedInstanceState) {
@@ -288,7 +290,7 @@ public class GameActivity extends AppCompatActivity {
                                 remainingTime1 = rawT1;
 
                                 // Read turnStartTime as a Timestamp or null
-                                Timestamp turnStartTimeTs = doc.getTimestamp("turnStartTime");
+                                turnStartTimeTs = doc.getTimestamp("turnStartTime");
                                 turnStartTime = (turnStartTimeTs != null) ? turnStartTimeTs.toDate().getTime() : null;
 
                                 // CREATE your GameView exactly once
@@ -387,7 +389,7 @@ public class GameActivity extends AppCompatActivity {
         Long rawT0 = snap.getLong("remainingTime0");
         Long rawT1 = snap.getLong("remainingTime1");
         // Read turnStartTime as a Timestamp or null
-        Timestamp turnStartTimeTs = snap.getTimestamp("turnStartTime");
+        turnStartTimeTs = snap.getTimestamp("turnStartTime");
         turnStartTime = (turnStartTimeTs != null) ? turnStartTimeTs.toDate().getTime() : null;
 
         Long turn = snap.getLong("turn");
@@ -414,10 +416,7 @@ public class GameActivity extends AppCompatActivity {
                                     long remSecs = localPlayerIndex==0 ? remainingTime0 : remainingTime1;
                                     startClock(localPlayerIndex, remSecs*1000);
                                 })
-                                .addOnFailureListener(err -> {
-                                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to re-fetch turnStartTime",err);
-
-                                });
+                                .addOnFailureListener(err -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to re-fetch turnStartTime",err));
                     })
                     .addOnFailureListener(ex -> {
                         clockStartAttempted = false; // Allow retry if failed
