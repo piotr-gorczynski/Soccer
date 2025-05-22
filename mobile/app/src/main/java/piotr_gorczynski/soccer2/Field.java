@@ -41,6 +41,15 @@ public class Field {
 
     public Field(Context current, ArrayList<MoveTo> argMoves, ArrayList<MoveTo> argPossibleMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex) {
 
+        // simpler log—no reflection, no nulls
+        Log.d("TAG_Soccer", getClass().getSimpleName()
+                + ".<init>: Started, received argMoves.size=" + argMoves.size()
+                + ", argPossibleMoves.size=" + argPossibleMoves.size()
+                + ", argGameType=" + argGameType
+                + ", player0Name=" + player0Name
+                + ", player1Name=" + player1Name
+                + ", localPlayerIndex=" + localPlayerIndex);
+
         this.gameType = argGameType;  // ✅ Save GameType for later use
 
         switch (argGameType) {
@@ -323,7 +332,8 @@ public class Field {
         String localName = isFlipped ? sPlayer1 : sPlayer0;
         String localTime = formatClockSeconds(isFlipped ? remainingTime1 : remainingTime0);
 
-        float bottomHintY = h2y(intFieldHeight+1)+(canvas.getHeight()-h2y(intFieldHeight+1))/2;
+        float bottomHintY = h2y(intFieldHeight+1)+(canvas.getHeight()-h2y(intFieldHeight+1))*2/3;
+        float topHintY = h2y(-1) *2 / 3;
 
         if (isLocalTurn) {
             if (gameType != 3) {
@@ -334,16 +344,12 @@ public class Field {
                 textTop = opponentName + " ⏳ "+oponentTime;
 
                 pHintText.getTextBounds(textTop, 0, textTop.length(), rText);
-                float topHintY = h2y(-1) / 2;
-
                 canvas.drawText(textTop,
                         w2x(flipX(intFieldWidth / 2)),
                         topHintY - (float) rText.height() / 2,
                         pHintText);
 
-
-
-
+                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": textTop: " + textTop);
             }
             pHintText.getTextBounds(textBottom, 0, textBottom.length(), rText);
             canvas.drawText(textBottom,
@@ -380,7 +386,6 @@ public class Field {
             }
 
             pHintText.getTextBounds(textTop, 0, textTop.length(), rText);
-            float topHintY = h2y(-1) / 2;
 
             canvas.drawText(textTop,
                     w2x(flipX(intFieldWidth / 2)),

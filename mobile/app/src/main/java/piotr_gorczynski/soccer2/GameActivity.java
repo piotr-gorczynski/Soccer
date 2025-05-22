@@ -78,6 +78,23 @@ public class GameActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        // Don’t even replace the intent if it’s identical
+        String newMatchId = intent.getStringExtra("matchId");
+        String currentMatchId = getIntent().getStringExtra("matchId");
+
+        // If nothing has changed, bail out
+        if (newMatchId != null && newMatchId.equals(currentMatchId)) {
+            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": identical matchId, skipping");
+        } else {
+            Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ❌ CRITICAL ERROR: Dirrenten match_id on 2nd call!");
+            throw new IllegalStateException("❌ CRITICAL ERROR: Dirrenten match_id on 2nd call!");
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
@@ -366,9 +383,13 @@ public class GameActivity extends AppCompatActivity {
     private void onClockUpdate(DocumentSnapshot snap, FirebaseFirestoreException e) {
         if (e != null || snap == null || !snap.exists()) return;
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started");
+        DocumentReference matchRefThisSnap = snap.getReference();
         Long rawT0 = snap.getLong("remainingTime0");
         Long rawT1 = snap.getLong("remainingTime1");
-        Timestamp ts = snap.getTimestamp("turnStartTime"); // FIXED!
+        // Read turnStartTime as a Timestamp or null
+        Timestamp turnStartTimeTs = snap.getTimestamp("turnStartTime");
+        turnStartTime = (turnStartTimeTs != null) ? turnStartTimeTs.toDate().getTime() : null;
+
         Long turn = snap.getLong("turn");
         if (rawT0 == null || rawT1 == null) {
             Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock fields missing on update!");
@@ -378,23 +399,31 @@ public class GameActivity extends AppCompatActivity {
         remainingTime1 = rawT1;
 
         // Fix condition to use ts (which is now a Timestamp)
-        if (!clockStartAttempted && ts == null && turn != null && turn.intValue() == localPlayerIndex) {
+        if (!clockStartAttempted && turnStartTimeTs == null && turn != null && turn.intValue() == localPlayerIndex) {
             clockStartAttempted = true; // Prevent repeat attempts!
             snap.getReference().update("turnStartTime", FieldValue.serverTimestamp())
                     .addOnSuccessListener(aVoid -> {
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock started by player " + localPlayerIndex);
-                        turnStartTimeMs = System.currentTimeMillis();
-                        long remSecs = localPlayerIndex==0 ? remainingTime0 : remainingTime1;
-                        startClock(localPlayerIndex, remSecs*1000); //
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": turnStartTime updated by player " + localPlayerIndex);
+                        matchRefThisSnap.get()
+                                .addOnSuccessListener(updatedSnap -> {
+                                    turnStartTimeTs = updatedSnap.getTimestamp("turnStartTime");
+                                    turnStartTime = (turnStartTimeTs != null) ? turnStartTimeTs.toDate().getTime() : null;
+                                    runOnUiThread(() -> gameView.updateTimes(remainingTime0, remainingTime1, turnStartTime));
+                                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock started by player " + localPlayerIndex);
+                                    turnStartTimeMs = System.currentTimeMillis();
+                                    long remSecs = localPlayerIndex==0 ? remainingTime0 : remainingTime1;
+                                    startClock(localPlayerIndex, remSecs*1000);
+                                })
+                                .addOnFailureListener(err -> {
+                                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to re-fetch turnStartTime",err);
+
+                                });
                     })
                     .addOnFailureListener(ex -> {
                         clockStartAttempted = false; // Allow retry if failed
                         Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to start clock", ex);
                     });
         }
-
-        Long tsMillis = (ts != null) ? ts.toDate().getTime() : null;
-        runOnUiThread(() -> gameView.updateTimes(remainingTime0, remainingTime1, tsMillis));
     }
 
     private void initGameView() {
