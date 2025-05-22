@@ -72,7 +72,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             gameIntent.putExtra("GameType", 3);
             gameIntent.putExtra("matchId", matchId);
             gameIntent.putExtra("localNickname", localNickname);
-            gameIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            gameIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP
+                    | Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    | Intent.FLAG_ACTIVITY_NEW_TASK);
 
             startActivity(gameIntent);
             return; // exit early so we don’t build a notification for this
