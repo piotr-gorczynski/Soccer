@@ -540,6 +540,9 @@ public class GameActivity extends AppCompatActivity {
         moveData.put("createdAt", FieldValue.serverTimestamp());
 
         if(p!=this.localPlayerIndex){
+            //Stop the clock
+            turnTimer.cancel();
+            turnTimer = null;
 
             long prevRemainingSecs = localPlayerIndex == 0 ? remainingTime0 : remainingTime1;
             long prevRemainingMs = prevRemainingSecs * 1000L;
