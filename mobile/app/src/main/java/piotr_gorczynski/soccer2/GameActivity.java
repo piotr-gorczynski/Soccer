@@ -615,13 +615,21 @@ public class GameActivity extends AppCompatActivity {
 
     public void showWinner(int Winner) {
         if (alertShown) return;
-        alertShown = true;
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started. Winner = " + Winner);
+        alertShown = true;
         final String sPlayer0, sPlayer1;
         this.Winner = Winner;
-
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(false);
+
+        // ❱❱ stop the clock as soon as we show the winner dialog
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Stopping clock...");
+        if (turnTimer != null) {
+            turnTimer.cancel();
+        }
+        if (clockListener != null) {
+            clockListener.remove();
+        }
 
         switch (GameType) {
             case 2 -> {
@@ -644,7 +652,28 @@ public class GameActivity extends AppCompatActivity {
                 Toast.makeText(this, "Fatal error matchId == null", Toast.LENGTH_LONG).show();
                 throw new IllegalStateException("Fatal error matchId == null");
             }
-            FirebaseFirestore.getInstance().collection("matches").document(matchId).get()
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            DocumentReference matchRef = db.collection("matches").document(matchId);
+
+            db.runTransaction(transaction -> {
+                        DocumentSnapshot snap = transaction.get(matchRef);
+                        // only write if nobody’s set a winner yet
+                        if (snap.exists() && snap.getString("winner") == null) {
+                            String winnerUid = (Winner == 0 ? player0Uid : player1Uid);
+                            Map<String,Object> update = new HashMap<>();
+                            update.put("winner",  winnerUid);
+                            update.put("status",  "completed");
+                            update.put("reason",  "normal");    // any value ≠ "abandon" is treated as a clean finish
+                            transaction.update(matchRef, update);
+                        }
+                        return null;
+                    })
+                    .addOnSuccessListener(unused ->
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": 🏆 Match result recorded"))
+                    .addOnFailureListener(e ->
+                            Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ❌ Failed to record match result", e));
+
+            matchRef.get()
                     .addOnSuccessListener(
                             GameActivity.this,      // ← executor tied to this Activity’s main looper
                             doc -> {
