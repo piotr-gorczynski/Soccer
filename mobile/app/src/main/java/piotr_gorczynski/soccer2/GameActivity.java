@@ -624,10 +624,6 @@ public class GameActivity extends AppCompatActivity {
         builder.setCancelable(false);
 
         switch (GameType) {
-            case 1 -> {
-                sPlayer0 = "Player 1";
-                sPlayer1 = "Player 2";
-            }
             case 2 -> {
                 sPlayer0 = "Player";
                 sPlayer1 = "Android";
@@ -636,27 +632,33 @@ public class GameActivity extends AppCompatActivity {
                 sPlayer0 = player0Name != null ? player0Name : "Player 0";
                 sPlayer1 = player1Name != null ? player1Name : "Player 1";
             }
-            default -> {
-                sPlayer0 = "Player 0";
-                sPlayer1 = "Player 1";
+            default -> { //case 1 :-)
+                sPlayer0 = "Player 1";
+                sPlayer1 = "Player 2";
             }
         }
 
-        if (GameType == 3 && matchId != null) {
+        if (GameType == 3) {
+            if(matchId == null) {
+                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to load match reason");
+                Toast.makeText(this, "Fatal error matchId == null", Toast.LENGTH_LONG).show();
+                throw new IllegalStateException("Fatal error matchId == null");
+            }
             FirebaseFirestore.getInstance().collection("matches").document(matchId).get()
                     .addOnSuccessListener(
                             GameActivity.this,      // ← executor tied to this Activity’s main looper
                             doc -> {
                                 String reason = doc.getString("reason");
-
+                                String msg;
                                 if ("abandon".equals(reason)) {
                                     String winnerUid = doc.getString("winner");
                                     String forfeitingUid = Objects.requireNonNull(winnerUid).equals(player0Uid) ? player1Uid : player0Uid;
                                     String forfeitingPlayer = forfeitingUid.equals(player0Uid) ? sPlayer0 : sPlayer1;
-                                    builder.setMessage(forfeitingPlayer + " forfeited the game.");
+                                    msg=forfeitingPlayer + " forfeited the game.";
                                 } else {
-                                    builder.setMessage("The winner is " + (Winner == 0 ? sPlayer0 : sPlayer1));
+                                    msg="The winner is " + (Winner == 0 ? sPlayer0 : sPlayer1);
                                 }
+                                builder.setMessage(msg);
 
                                 builder.setPositiveButton("Close", (dialog, which) -> {
                                     Intent intent = new Intent(this, MenuActivity.class);
@@ -667,6 +669,7 @@ public class GameActivity extends AppCompatActivity {
                                 // make sure we’re still alive
                                 if (!isFinishing() && !isDestroyed()) {
                                     dialogWinner = builder.create();
+                                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": dialogWinner show: "+msg);
                                     dialogWinner.show();
                                 } else {
                                     Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Tried to show dialog when activity is finishing or destroyed");
@@ -675,25 +678,17 @@ public class GameActivity extends AppCompatActivity {
                             })
                     .addOnFailureListener(err -> {
                         Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to load match reason", err);
-
-                        builder.setMessage("The winner is " + (Winner == 0 ? sPlayer0 : sPlayer1));
-                        builder.setPositiveButton("Close", (dialog, which) -> {
-                            Intent intent = new Intent(this, MenuActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
-                            finish();
-                        });
+                        Toast.makeText(this, "Failed to load match.", Toast.LENGTH_LONG).show();
                         // make sure we’re still alive, on the UI thread
-                        runOnUiThread(() -> {
+                        /*runOnUiThread(() -> {
                             if (!isFinishing() && !isDestroyed()) {
                                 dialogWinner = builder.create();
                                 dialogWinner.show();
                             } else {
                                 Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Tried to show dialog when activity is finishing or destroyed");
                             }
+                            });*/
                         });
-                    });
-
             return; // Avoid showing duplicate dialog below
         }
 
