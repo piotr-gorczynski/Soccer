@@ -657,19 +657,26 @@ public class GameActivity extends AppCompatActivity {
 
             db.runTransaction(transaction -> {
                         DocumentSnapshot snap = transaction.get(matchRef);
-                        // only write if nobody’s set a winner yet
-                        if (snap.exists() && snap.getString("winner") == null) {
+                        // did we write or not?
+                        boolean didWrite = snap.exists() && snap.getString("winner") == null;
+                        if (didWrite) {
                             String winnerUid = (Winner == 0 ? player0Uid : player1Uid);
                             Map<String,Object> update = new HashMap<>();
                             update.put("winner",  winnerUid);
                             update.put("status",  "completed");
-                            update.put("reason",  "normal");    // any value ≠ "abandon" is treated as a clean finish
+                            update.put("reason",  "normal");
                             transaction.update(matchRef, update);
                         }
-                        return null;
+                        // return whether we actually wrote
+                        return didWrite;
                     })
-                    .addOnSuccessListener(unused ->
-                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": 🏆 Match result recorded"))
+                    .addOnSuccessListener(didWrite -> {
+                        if (didWrite) {
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": 🏆 Match result recorded");
+                        } else {
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": 🏆 Match result already recorded by other client");
+                        }
+                    })
                     .addOnFailureListener(e ->
                             Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ❌ Failed to record match result", e));
 
