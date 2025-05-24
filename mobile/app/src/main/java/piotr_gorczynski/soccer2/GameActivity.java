@@ -664,7 +664,7 @@ public class GameActivity extends AppCompatActivity {
                             Map<String,Object> update = new HashMap<>();
                             update.put("winner",  winnerUid);
                             update.put("status",  "completed");
-                            update.put("reason",  "normal");
+                            update.put("reason",  "goal");
                             transaction.update(matchRef, update);
                         }
                         // return whether we actually wrote
