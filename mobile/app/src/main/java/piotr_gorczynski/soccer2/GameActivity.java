@@ -63,6 +63,9 @@ public class GameActivity extends AppCompatActivity {
 
     private boolean clockStartAttempted = false;
 
+    private boolean turnStartTimeSaved = false;
+
+
     private CountDownTimer turnTimer;
 
     private long remainingTime0, remainingTime1;
@@ -399,27 +402,35 @@ public class GameActivity extends AppCompatActivity {
         remainingTime1 = rawT1;
 
         // Fix condition to use ts (which is now a Timestamp)
-        if (!clockStartAttempted && turnStartTimeTs == null && turn != null && turn.intValue() == localPlayerIndex) {
-            clockStartAttempted = true; // Prevent repeat attempts!
-            snap.getReference().update("turnStartTime", FieldValue.serverTimestamp())
-                    .addOnSuccessListener(aVoid -> {
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": turnStartTime updated by player " + localPlayerIndex);
-                        matchRefThisSnap.get()
-                                .addOnSuccessListener(updatedSnap -> {
-                                    turnStartTimeTs = updatedSnap.getTimestamp("turnStartTime");
-                                    turnStartTime = (turnStartTimeTs != null) ? turnStartTimeTs.toDate().getTime() : null;
-                                    runOnUiThread(() -> gameView.updateTimes(remainingTime0, remainingTime1, turnStartTime));
-                                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock started by player " + localPlayerIndex);
-                                    turnStartTimeMs = System.currentTimeMillis();
-                                    long remSecs = localPlayerIndex==0 ? remainingTime0 : remainingTime1;
-                                    startClock(localPlayerIndex, remSecs*1000);
-                                })
-                                .addOnFailureListener(err -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to re-fetch turnStartTime",err));
-                    })
-                    .addOnFailureListener(ex -> {
-                        clockStartAttempted = false; // Allow retry if failed
-                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to start clock", ex);
-                    });
+        if (!clockStartAttempted && turnStartTimeTs == null && turn != null) {
+            if(turn.intValue() == localPlayerIndex) {
+                clockStartAttempted = true; // Prevent repeat attempts!
+                snap.getReference().update("turnStartTime", FieldValue.serverTimestamp())
+                        .addOnSuccessListener(aVoid -> {
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": turnStartTime updated by player " + localPlayerIndex);
+                            turnStartTimeSaved = true;
+                        })
+                        .addOnFailureListener(ex -> {
+                            clockStartAttempted = false; // Allow retry if failed
+                            Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to start clock", ex);
+                        });
+            }
+            if(turnStartTimeSaved) {
+                turnStartTimeSaved = false;
+                matchRefThisSnap.get()
+                        .addOnSuccessListener(updatedSnap -> {
+                            turnStartTimeTs = updatedSnap.getTimestamp("turnStartTime");
+                            turnStartTime = (turnStartTimeTs != null) ? turnStartTimeTs.toDate().getTime() : null;
+                            runOnUiThread(() -> gameView.updateTimes(remainingTime0, remainingTime1, turnStartTime));
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
+                            }.getClass().getEnclosingMethod()).getName() + ": Clock started by player " + localPlayerIndex);
+                            turnStartTimeMs = System.currentTimeMillis();
+                            long remSecs = localPlayerIndex == 0 ? remainingTime0 : remainingTime1;
+                            startClock(localPlayerIndex, remSecs * 1000);
+                        })
+                        .addOnFailureListener(err -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
+                        }.getClass().getEnclosingMethod()).getName() + ": Failed to re-fetch turnStartTime", err));
+            }
         }
     }
 
@@ -559,6 +570,7 @@ public class GameActivity extends AppCompatActivity {
                                 // Reset local turn/clock flags here if needed
                                 Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Sent move an updated match");
                                 clockStartAttempted = false; // So next time this device's turn comes, it'll try to start the clock
+                                turnStartTimeSaved = false;
                                 // Optionally reset local timing state
                             })
                             .addOnFailureListener(err -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to update match")))
