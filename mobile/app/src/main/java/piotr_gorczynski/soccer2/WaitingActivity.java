@@ -15,6 +15,7 @@ import java.util.Objects;
 
 public class WaitingActivity extends AppCompatActivity {
     private boolean gameActivityLaunched = false;
+    private ListenerRegistration matchListener;   // ⇐ capture this
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,7 +44,7 @@ public class WaitingActivity extends AppCompatActivity {
                 });
 
         // 🔍 Listen for match that was created after invite is accepted
-        db.collection("matches")
+        matchListener = db.collection("matches")
                 .whereEqualTo("invitationId", inviteId)
                 .addSnapshotListener((snapshots, error) -> {
                     Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Match snapshot listener triggered");
@@ -87,5 +88,17 @@ public class WaitingActivity extends AppCompatActivity {
                         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": No matches found with invitationId=" + inviteId);
                     }
                 });
+    }
+
+    @Override
+    protected void onDestroy() {
+        // just in case we never hit the first match…
+        if (matchListener != null) {
+            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
+            }.getClass().getEnclosingMethod()).getName() + ": removing matchListener");
+            matchListener.remove();
+            matchListener = null;
+        }
+        super.onDestroy();
     }
 }
