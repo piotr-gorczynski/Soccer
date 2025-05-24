@@ -409,7 +409,7 @@ public class GameActivity extends AppCompatActivity {
                                     turnStartTimeTs = updatedSnap.getTimestamp("turnStartTime");
                                     turnStartTime = (turnStartTimeTs != null) ? turnStartTimeTs.toDate().getTime() : null;
                                     runOnUiThread(() -> gameView.updateTimes(remainingTime0, remainingTime1, turnStartTime));
-                                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock started by player " + localPlayerIndex);
+                                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock started for player " + localPlayerIndex);
                                     turnStartTimeMs = System.currentTimeMillis();
                                     long remSecs = localPlayerIndex==0 ? remainingTime0 : remainingTime1;
                                     startClock(localPlayerIndex, remSecs*1000);
@@ -420,6 +420,21 @@ public class GameActivity extends AppCompatActivity {
                         clockStartAttempted = false; // Allow retry if failed
                         Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to start clock", ex);
                     });
+        }
+        //Now this is condiction for starting the clock, which will show time for the oponent...
+        if (!clockStartAttempted && turnStartTimeTs != null && turn != null && turn.intValue() != localPlayerIndex) {
+            clockStartAttempted = true; // Prevent repeat attempts!
+            matchRefThisSnap.get()
+                    .addOnSuccessListener(updatedSnap -> {
+                        turnStartTimeTs = updatedSnap.getTimestamp("turnStartTime");
+                        turnStartTime = (turnStartTimeTs != null) ? turnStartTimeTs.toDate().getTime() : null;
+                        runOnUiThread(() -> gameView.updateTimes(remainingTime0, remainingTime1, turnStartTime));
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock started for  player " + turn.intValue());
+                        turnStartTimeMs = System.currentTimeMillis();
+                        long remSecs = turn.intValue()==0 ? remainingTime0 : remainingTime1;
+                        startClock(turn.intValue(), remSecs*1000);
+                    })
+                    .addOnFailureListener(err -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to re-fetch turnStartTime",err));
         }
     }
 
