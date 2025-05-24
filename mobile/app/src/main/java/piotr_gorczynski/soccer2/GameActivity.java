@@ -53,8 +53,6 @@ public class GameActivity extends AppCompatActivity {
     private int localPlayerIndex;  // 0 or 1
     private FirebaseFirestore db;
 
-    private boolean gameViewLaunched = false;
-
     private String player0Name, player1Name;
 
     private String player0Uid, player1Uid;
@@ -439,7 +437,6 @@ public class GameActivity extends AppCompatActivity {
         );
         gameView.setMoveCallback(this::sendMoveToFirestore);
         setContentView(gameView);
-        gameViewLaunched = true;
 
         // optional: back‐press handler, etc. as you had it
 
@@ -499,9 +496,6 @@ public class GameActivity extends AppCompatActivity {
             return;
         }
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started. Snapshot Size: " + snapshot.size());
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": gameViewLaunched=" + gameViewLaunched +
-                " player0Name=" + player0Name +
-                " player1Name=" + player1Name);
 
         ArrayList<MoveTo> newMoves = new ArrayList<>();
         for (DocumentSnapshot doc : snapshot.getDocuments()) {
