@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 public class MoveTo implements Parcelable {
     public int X;
     public int Y;
-    final public int P;
+    final public int P; //indicates the player, who should move in next turn!
 
     public MoveTo(int x, int y, int p) {
         X=x;

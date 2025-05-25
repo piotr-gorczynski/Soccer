@@ -400,9 +400,9 @@ public class GameActivity extends AppCompatActivity {
 
         // Fix condition to use ts (which is now a Timestamp)
         if (!clockStartAttempted && turnStartTimeTs == null && turn != null && turn.intValue() == localPlayerIndex) {
-            clockStartAttempted = true; // Prevent repeat attempts!
             snap.getReference().update("turnStartTime", FieldValue.serverTimestamp())
                     .addOnSuccessListener(aVoid -> {
+                        clockStartAttempted = true; // Prevent repeat attempts!
                         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": turnStartTime updated by player " + localPlayerIndex);
                         matchRefThisSnap.get()
                                 .addOnSuccessListener(updatedSnap -> {
@@ -414,15 +414,15 @@ public class GameActivity extends AppCompatActivity {
                                     long remSecs = localPlayerIndex==0 ? remainingTime0 : remainingTime1;
                                     startClock(localPlayerIndex, remSecs*1000);
                                 })
-                                .addOnFailureListener(err -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to re-fetch turnStartTime",err));
+                                .addOnFailureListener(err -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to re-fetch turnStartTime and start the clock",err));
                     })
                     .addOnFailureListener(ex -> {
                         clockStartAttempted = false; // Allow retry if failed
-                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to start clock", ex);
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": turnStartTime update failed", ex);
                     });
         }
-        //Now this is condiction for starting the clock, which will show time for the oponent...
-        if (!clockStartAttempted && turnStartTimeTs != null && turn != null && turn.intValue() != localPlayerIndex) {
+        //This is condition for starting the clock, which will show time for the oponent...
+        /*if (!clockStartAttempted && turnStartTimeTs != null && turn != null && turn.intValue() != localPlayerIndex) {
             clockStartAttempted = true; // Prevent repeat attempts!
             matchRefThisSnap.get()
                     .addOnSuccessListener(updatedSnap -> {
@@ -435,7 +435,7 @@ public class GameActivity extends AppCompatActivity {
                         startClock(turn.intValue(), remSecs*1000);
                     })
                     .addOnFailureListener(err -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to re-fetch turnStartTime",err));
-        }
+        }*/
     }
 
     private void initGameView() {
