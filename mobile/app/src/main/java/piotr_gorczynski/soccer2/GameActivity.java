@@ -397,12 +397,16 @@ public class GameActivity extends AppCompatActivity {
         }
         remainingTime0 = rawT0;
         remainingTime1 = rawT1;
+        // Prepare updates for the match document
+        Map<String,Object> matchUpdates = new HashMap<>();
+        matchUpdates.put("turnStartTime", FieldValue.serverTimestamp());
+        matchUpdates.put("updatedAt", FieldValue.serverTimestamp());
 
         // Fix condition to use ts (which is now a Timestamp)
         if (!clockStartAttempted && turnStartTimeTs == null && turn != null && turn.intValue() == localPlayerIndex) {
-            snap.getReference().update("turnStartTime", FieldValue.serverTimestamp())
+            clockStartAttempted = true; // Prevent repeat attempts!
+            snap.getReference().update(matchUpdates)
                     .addOnSuccessListener(aVoid -> {
-                        clockStartAttempted = true; // Prevent repeat attempts!
                         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": turnStartTime updated by player " + localPlayerIndex);
                         matchRefThisSnap.get()
                                 .addOnSuccessListener(updatedSnap -> {
