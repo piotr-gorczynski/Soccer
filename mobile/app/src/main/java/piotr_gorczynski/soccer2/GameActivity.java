@@ -556,8 +556,10 @@ public class GameActivity extends AppCompatActivity {
 
         if(p!=this.localPlayerIndex){
             //Stop the clock
-            turnTimer.cancel();
-            turnTimer = null;
+            if(turnTimer!=null) {
+                turnTimer.cancel();
+                turnTimer = null;
+            }
 
             long prevRemainingSecs = localPlayerIndex == 0 ? remainingTime0 : remainingTime1;
             long prevRemainingMs = prevRemainingSecs * 1000L;
