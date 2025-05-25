@@ -436,12 +436,23 @@ public class GameActivity extends AppCompatActivity {
                         assert turnStartTimeTs != null;
                         turnStartTime = turnStartTimeTs.toDate().getTime();
                         runOnUiThread(() -> gameView.updateTimes(remainingTime0, remainingTime1, turnStartTime));
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock started for  player " + turn.intValue());
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock started for player " + turn.intValue());
                         turnStartTimeMs = System.currentTimeMillis();
                         long remSecs = turn.intValue()==0 ? remainingTime0 : remainingTime1;
                         startClock(turn.intValue(), remSecs*1000);
                     })
                     .addOnFailureListener(err -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to re-fetch turnStartTime",err));
+        }
+        //reseting the flag if the turn was nullified
+        if (clockStartAttempted && turnStartTimeTs == null && turn != null && turn.intValue() == localPlayerIndex) {
+            clockStartAttempted=false;
+            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Flag clockStartAttempted=false");
+            //Stop the clock
+            if(turnTimer!=null) {
+                turnTimer.cancel();
+                turnTimer = null;
+                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock stopped");
+            }
         }
     }
 
@@ -560,6 +571,7 @@ public class GameActivity extends AppCompatActivity {
             if(turnTimer!=null) {
                 turnTimer.cancel();
                 turnTimer = null;
+                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock stopped");
             }
 
             long prevRemainingSecs = localPlayerIndex == 0 ? remainingTime0 : remainingTime1;
