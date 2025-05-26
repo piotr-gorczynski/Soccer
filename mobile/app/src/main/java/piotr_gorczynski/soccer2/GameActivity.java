@@ -406,7 +406,7 @@ public class GameActivity extends AppCompatActivity {
                 + " clockStartAttempted="+clockStartAttempted);
 
         //Continue only if times changed...
-        if(previousRemainingTime0==remainingTime0 && previousRemainingTime1==remainingTime1 && previousTurnSTartTime.equals(turnStartTime)) {
+        if(previousRemainingTime0==remainingTime0 && previousRemainingTime1==remainingTime1 && Objects.equals(previousTurnSTartTime, turnStartTime)) {
             Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                     + ": Times the same as previously, exiting");
             return;
@@ -623,6 +623,8 @@ public class GameActivity extends AppCompatActivity {
                             .addOnSuccessListener(aVoid -> {
                                 // Reset local turn/clock flags here if needed
                                 Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Sent move an updated match");
+                                turnStartTime=null;
+                                gameView.updateTimes(remainingTime0,remainingTime1,turnStartTime);
                                 // clockStartAttempted = false; // So next time this device's turn comes, it'll try to start the clock
                                 // Optionally reset local timing state
                             })
