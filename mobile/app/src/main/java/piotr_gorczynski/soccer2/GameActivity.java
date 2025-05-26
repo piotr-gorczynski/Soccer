@@ -397,8 +397,25 @@ public class GameActivity extends AppCompatActivity {
         }
         remainingTime0 = rawT0;
         remainingTime1 = rawT1;
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": remainingTime0="+remainingTime0 + " remainingTime1="+remainingTime1 + " turnStartTime="+ ((turnStartTime == null) ? "null" : String.valueOf(turnStartTime))+" turn="+turn);
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                + ": remainingTime0="+remainingTime0
+                + " remainingTime1="+remainingTime1
+                + " turnStartTime="+((turnStartTime == null) ? "null" : String.valueOf(turnStartTime))
+                + " turn="+turn
+                + " clockStartAttempted="+clockStartAttempted);
         gameView.updateTimes(remainingTime0, remainingTime1, turnStartTime);
+
+        //reseting the flag if the turn was nullified
+        if (clockStartAttempted && turnStartTimeTs == null ) {
+            clockStartAttempted=false;
+            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Flag clockStartAttempted=false");
+            //Stop the clock
+            if(turnTimer!=null) {
+                turnTimer.cancel();
+                turnTimer = null;
+                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock stopped");
+            }
+        }
 
         // Fix condition to use ts (which is now a Timestamp)
         if (!clockStartAttempted && turnStartTimeTs == null && turn.intValue() == localPlayerIndex) {
@@ -444,17 +461,7 @@ public class GameActivity extends AppCompatActivity {
                     })
                     .addOnFailureListener(err -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to re-fetch turnStartTime",err));
         }
-        //reseting the flag if the turn was nullified
-        if (clockStartAttempted && turnStartTimeTs == null && turn.intValue() == localPlayerIndex) {
-            clockStartAttempted=false;
-            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Flag clockStartAttempted=false");
-            //Stop the clock
-            if(turnTimer!=null) {
-                turnTimer.cancel();
-                turnTimer = null;
-                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock stopped");
-            }
-        }
+
     }
 
     private void initGameView() {
@@ -595,7 +602,7 @@ public class GameActivity extends AppCompatActivity {
                             .addOnSuccessListener(aVoid -> {
                                 // Reset local turn/clock flags here if needed
                                 Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Sent move an updated match");
-                                clockStartAttempted = false; // So next time this device's turn comes, it'll try to start the clock
+                                // clockStartAttempted = false; // So next time this device's turn comes, it'll try to start the clock
                                 // Optionally reset local timing state
                             })
                             .addOnFailureListener(err -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to update match")))
@@ -625,7 +632,7 @@ public class GameActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState)
     {
-//---save whatever you need to persist—
+        //---save whatever you need to persist—
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started");
         //Moves=gameView.GetMoves();
         outState.putParcelableArrayList("Moves",Moves);
