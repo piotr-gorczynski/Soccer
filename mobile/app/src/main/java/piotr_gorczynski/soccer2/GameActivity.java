@@ -28,6 +28,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Transaction;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,8 +66,8 @@ public class GameActivity extends AppCompatActivity {
 
     private CountDownTimer turnTimer;
 
-    private long remainingTime0, remainingTime1;
-    private Long turnStartTime;
+    private long remainingTime0, remainingTime1,previousRemainingTime0=-1, previousRemainingTime1=-1;
+    private Long turnStartTime, previousTurnSTartTime= (long) -1;
     private long turnStartTimeMs;
 
     Timestamp turnStartTimeTs;
@@ -383,7 +384,7 @@ public class GameActivity extends AppCompatActivity {
     private void onClockUpdate(DocumentSnapshot snap, FirebaseFirestoreException e) {
         if (e != null || snap == null || !snap.exists()) return;
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started");
-        DocumentReference matchRefThisSnap = snap.getReference();
+
         Long rawT0 = snap.getLong("remainingTime0");
         Long rawT1 = snap.getLong("remainingTime1");
         // Read turnStartTime as a Timestamp or null
@@ -403,7 +404,21 @@ public class GameActivity extends AppCompatActivity {
                 + " turnStartTime="+((turnStartTime == null) ? "null" : String.valueOf(turnStartTime))
                 + " turn="+turn
                 + " clockStartAttempted="+clockStartAttempted);
+
+        //Continue only if times changed...
+        if(previousRemainingTime0==remainingTime0 && previousRemainingTime1==remainingTime1 && previousTurnSTartTime.equals(turnStartTime)) {
+            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                    + ": Times the same as previously, exiting");
+            return;
+        }
+
+        previousRemainingTime0 = remainingTime0;
+        previousRemainingTime1 = remainingTime1;
+        previousTurnSTartTime = turnStartTime;
+
         gameView.updateTimes(remainingTime0, remainingTime1, turnStartTime);
+
+        DocumentReference matchRefThisSnap = snap.getReference();
 
         //reseting the flag if the turn was nullified
         if (clockStartAttempted && turnStartTimeTs == null ) {
@@ -420,30 +435,36 @@ public class GameActivity extends AppCompatActivity {
         // Fix condition to use ts (which is now a Timestamp)
         if (!clockStartAttempted && turnStartTimeTs == null && turn.intValue() == localPlayerIndex) {
 
-            // Prepare updates for the match document
-            Map<String,Object> matchUpdates = new HashMap<>();
-            matchUpdates.put("turnStartTime", FieldValue.serverTimestamp());
-            matchUpdates.put("updatedAt", FieldValue.serverTimestamp());
-            snap.getReference().update(matchUpdates)
-                    .addOnSuccessListener(aVoid -> {
-                        clockStartAttempted = true; // Prevent repeat attempts!
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": turnStartTime updated by player " + localPlayerIndex);
-                        matchRefThisSnap.get()
-                                .addOnSuccessListener(updatedSnap -> {
-                                    turnStartTimeTs = updatedSnap.getTimestamp("turnStartTime");
-                                    turnStartTime = (turnStartTimeTs != null) ? turnStartTimeTs.toDate().getTime() : null;
-                                    runOnUiThread(() -> gameView.updateTimes(remainingTime0, remainingTime1, turnStartTime));
-                                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock started for player " + localPlayerIndex);
-                                    turnStartTimeMs = System.currentTimeMillis();
-                                    long remSecs = localPlayerIndex==0 ? remainingTime0 : remainingTime1;
-                                    startClock(localPlayerIndex, remSecs*1000);
-                                })
-                                .addOnFailureListener(err -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to re-fetch turnStartTime and start the clock",err));
-                    })
-                    .addOnFailureListener(ex -> {
-                        clockStartAttempted = false; // Allow retry if failed
-                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": turnStartTime update failed", ex);
-                    });
+            db.runTransaction((Transaction.Function<Void>) txn -> {
+                DocumentSnapshot ds = txn.get(matchRefThisSnap);     // ❷ read inside txn
+                if (ds.getTimestamp("turnStartTime") == null) {
+                    // Prepare updates for the match document
+                    Map<String, Object> matchUpdates = new HashMap<>();
+                    matchUpdates.put("turnStartTime", FieldValue.serverTimestamp());
+                    matchUpdates.put("updatedAt", FieldValue.serverTimestamp());
+                    txn.update(matchRef, matchUpdates);           // ❸ write once
+                }
+                return null;
+            })
+            .addOnSuccessListener(unused -> {
+                clockStartAttempted = true; // Prevent repeat attempts!
+                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": turnStartTime updated by player " + localPlayerIndex);
+                matchRefThisSnap.get()
+                        .addOnSuccessListener(updatedSnap -> {
+                            turnStartTimeTs = updatedSnap.getTimestamp("turnStartTime");
+                            turnStartTime = (turnStartTimeTs != null) ? turnStartTimeTs.toDate().getTime() : null;
+                            runOnUiThread(() -> gameView.updateTimes(remainingTime0, remainingTime1, turnStartTime));
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock started for player " + localPlayerIndex);
+                            turnStartTimeMs = System.currentTimeMillis();
+                            long remSecs = localPlayerIndex==0 ? remainingTime0 : remainingTime1;
+                            startClock(localPlayerIndex, remSecs*1000);
+                        })
+                        .addOnFailureListener(err -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to re-fetch turnStartTime and start the clock",err));
+            })
+            .addOnFailureListener(ex -> {
+                clockStartAttempted = false; // Allow retry if failed
+                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": turnStartTime update failed", ex);
+            });
         }
         //This is condition for starting the clock, which will show time for the oponent...
         if (!clockStartAttempted && turnStartTimeTs != null && turn.intValue() != localPlayerIndex) {
