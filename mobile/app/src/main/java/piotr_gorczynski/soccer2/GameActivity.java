@@ -391,17 +391,17 @@ public class GameActivity extends AppCompatActivity {
         turnStartTime = (turnStartTimeTs != null) ? turnStartTimeTs.toDate().getTime() : null;
 
         Long turn = snap.getLong("turn");
-        if (rawT0 == null || rawT1 == null) {
+        if (rawT0 == null || rawT1 == null || turn==null) {
             Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock fields missing on update!");
-            throw new IllegalStateException("Missing remainingTime0/1 fields");
+            throw new IllegalStateException("Missing remainingTime0/1 or turn fields");
         }
         remainingTime0 = rawT0;
         remainingTime1 = rawT1;
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": remainingTime0="+remainingTime0 + " remainingTime1="+remainingTime1 + " turnStartTime="+ ((turnStartTime == null) ? "null" : String.valueOf(turnStartTime)));
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": remainingTime0="+remainingTime0 + " remainingTime1="+remainingTime1 + " turnStartTime="+ ((turnStartTime == null) ? "null" : String.valueOf(turnStartTime))+" turn="+turn);
         gameView.updateTimes(remainingTime0, remainingTime1, turnStartTime);
 
         // Fix condition to use ts (which is now a Timestamp)
-        if (!clockStartAttempted && turnStartTimeTs == null && turn != null && turn.intValue() == localPlayerIndex) {
+        if (!clockStartAttempted && turnStartTimeTs == null && turn.intValue() == localPlayerIndex) {
 
             // Prepare updates for the match document
             Map<String,Object> matchUpdates = new HashMap<>();
@@ -429,7 +429,7 @@ public class GameActivity extends AppCompatActivity {
                     });
         }
         //This is condition for starting the clock, which will show time for the oponent...
-        if (!clockStartAttempted && turnStartTimeTs != null && turn != null && turn.intValue() != localPlayerIndex) {
+        if (!clockStartAttempted && turnStartTimeTs != null && turn.intValue() != localPlayerIndex) {
             clockStartAttempted = true; // Prevent repeat attempts!
             matchRefThisSnap.get()
                     .addOnSuccessListener(updatedSnap -> {
@@ -445,7 +445,7 @@ public class GameActivity extends AppCompatActivity {
                     .addOnFailureListener(err -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to re-fetch turnStartTime",err));
         }
         //reseting the flag if the turn was nullified
-        if (clockStartAttempted && turnStartTimeTs == null && turn != null && turn.intValue() == localPlayerIndex) {
+        if (clockStartAttempted && turnStartTimeTs == null && turn.intValue() == localPlayerIndex) {
             clockStartAttempted=false;
             Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Flag clockStartAttempted=false");
             //Stop the clock
