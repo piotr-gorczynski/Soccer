@@ -379,6 +379,8 @@ public class GameActivity extends AppCompatActivity {
             @Override public void onFinish() {
                 // ⏱ local clock reached 0 – call helper
                 handleTimeout(playerIndex);
+                int winner = (playerIndex == 0) ? 1 : 0;
+                runOnUiThread(() -> showWinner(winner)); // NEW – pop dialog & freeze board
             }
         }.start();
     }
@@ -417,6 +419,15 @@ public class GameActivity extends AppCompatActivity {
     private void onClockUpdate(DocumentSnapshot snap, FirebaseFirestoreException e) {
         if (e != null || snap == null || !snap.exists()) return;
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started");
+        String serverWinner = snap.getString("winner");
+        String reason       = snap.getString("reason");
+        if (serverWinner != null && Winner == -1) {      // nobody has shown a dialog yet
+            int winnerIdx = serverWinner.equals(player0Uid) ? 0 : 1;
+            if ("timeout".equals(reason)) {              // optional filter
+                runOnUiThread(() -> showWinner(winnerIdx));
+                return;                                  // nothing else to update
+            }
+        }
 
         Long rawT0 = snap.getLong("remainingTime0");
         Long rawT1 = snap.getLong("remainingTime1");
@@ -741,6 +752,9 @@ public class GameActivity extends AppCompatActivity {
         }
 
         if (GameType == 3) {
+            final String sWinner = (Winner == 0 ? sPlayer0 : sPlayer1);
+            final String sLooser= (Winner == 0 ? sPlayer1 : sPlayer0);
+
             if(matchId == null) {
                 Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to load match reason");
                 Toast.makeText(this, "Fatal error matchId == null", Toast.LENGTH_LONG).show();
@@ -779,15 +793,14 @@ public class GameActivity extends AppCompatActivity {
                             GameActivity.this,      // ← executor tied to this Activity’s main looper
                             doc -> {
                                 String reason = doc.getString("reason");
-                                String msg;
-                                if ("abandon".equals(reason)) {
-                                    String winnerUid = doc.getString("winner");
-                                    String forfeitingUid = Objects.requireNonNull(winnerUid).equals(player0Uid) ? player1Uid : player0Uid;
-                                    String forfeitingPlayer = forfeitingUid.equals(player0Uid) ? sPlayer0 : sPlayer1;
-                                    msg=forfeitingPlayer + " forfeited the game.";
-                                } else {
-                                    msg="The winner is " + (Winner == 0 ? sPlayer0 : sPlayer1);
+                                String msg="";
+                                if ("timeout".equals(reason)) {
+                                    msg = sLooser + " ran out of time. ";
+                                } else if ("abandon".equals(reason)) {
+                                    msg=sLooser + " forfeited the game. ";
                                 }
+
+                                msg=msg+"The winner is " + sWinner+"!";
                                 builder.setMessage(msg);
 
                                 builder.setPositiveButton("Close", (dialog, which) -> {
