@@ -72,7 +72,7 @@ public class GameActivity extends AppCompatActivity {
 
     Timestamp turnStartTimeTs;
 
-    private boolean gameEnded = false;
+    private volatile boolean gameEnded = false;
 
     @SuppressLint("RedundantSuppression")
     @SuppressWarnings("deprecation")
@@ -752,6 +752,7 @@ public class GameActivity extends AppCompatActivity {
         if (movesListener != null) {  // extra hygiene
             movesListener.remove();
         }
+        gameView.setInputEnabled(false);   // freeze the board
         final String sPlayer0, sPlayer1;
         this.Winner = Winner;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
