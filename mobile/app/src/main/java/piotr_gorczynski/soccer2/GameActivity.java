@@ -377,9 +377,41 @@ public class GameActivity extends AppCompatActivity {
                 gameView.updateTimes(t0, t1, turnStartTime);
             }
             @Override public void onFinish() {
-                // handle timeout…
+                // ⏱ local clock reached 0 – call helper
+                handleTimeout(playerIndex);
             }
         }.start();
+    }
+
+    /**
+     * Writes “timeout” result if the match is still active and no winner recorded.
+     * @param timedOutPlayer 0 or 1
+     */
+    private void handleTimeout(int timedOutPlayer) {
+        if (GameType != 3) return;          // PvP-online only
+
+        final String winnerUid =
+                timedOutPlayer == 0 ? player1Uid : player0Uid;
+
+        db.runTransaction((Transaction.Function<Void>) txn -> {
+                    DocumentSnapshot snap = txn.get(matchRef);
+
+                    boolean stillActive   = "active".equals(snap.getString("status"));
+                    boolean noWinnerYet   = snap.getString("winner") == null;
+                    if (stillActive && noWinnerYet) {
+                        Map<String, Object> update = new HashMap<>();
+                        update.put("winner",   winnerUid);
+                        update.put("status",   "completed");
+                        update.put("reason",   "timeout");
+                        update.put("remainingTime" + timedOutPlayer, 0);
+                        update.put("updatedAt", FieldValue.serverTimestamp());
+                        txn.update(matchRef, update);
+                    }
+                    return null;
+                }).addOnSuccessListener(v ->
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": 🏆 Timeout result recorded"))
+                .addOnFailureListener(e ->
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ❌ Failed to record timeout", e));
     }
 
     private void onClockUpdate(DocumentSnapshot snap, FirebaseFirestoreException e) {
