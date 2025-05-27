@@ -44,6 +44,11 @@ public class GameView extends View {
 
     private Long turnStartsTime=null;
 
+    private boolean inputEnabled = true;
+    /** Disable or re-enable all touches on the board */
+    public void setInputEnabled(boolean enabled) {
+        this.inputEnabled = enabled;
+    }
     public interface MoveCallback {
         void onLocalMove(int x, int y, int p);
     }
@@ -601,6 +606,8 @@ public class GameView extends View {
     // Touch-input handler
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (!inputEnabled) return true;          // if not input enabled, exit
+
         // 1) if android's move then ignore onTouchEvent
         if((GameType ==2) && (realMoves.get(realMoves.size()-1).P==1))
             return true;
