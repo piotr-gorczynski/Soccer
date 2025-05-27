@@ -417,7 +417,7 @@ public class GameActivity extends AppCompatActivity {
                         runOnUiThread(() -> {
                             if (turnTimer != null) {
                                 Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                                        + ": Stopping clock");
+                                        + ": Stopping clock...");
                                 turnTimer.cancel();
                                 turnTimer = null;      // hygiene – prevents reuse
                                 Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
