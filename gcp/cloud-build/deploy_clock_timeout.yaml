@@ -84,7 +84,7 @@ steps:
           --project="$project_id" \
           --force
 
-        echo "✅ Function 'checkTimeout' deployed successfully."
+        echo "✅ Function 'clockTimeout' deployed successfully."
 
   # Step 6: Add IAM policy binding to allow allUsers to invoke
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
@@ -96,8 +96,8 @@ steps:
         set -e
         project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
 
-        echo "🔐 Granting invoker role to allUsers for 'checkTimeout'..."
-        gcloud functions add-iam-policy-binding checkTimeout \
+        echo "🔐 Granting invoker role to allUsers for 'clockTimeout'..."
+        gcloud functions add-iam-policy-binding clockTimeout \
           --region=us-central1 \
           --project="$project_id" \
           --member="allUsers" \
