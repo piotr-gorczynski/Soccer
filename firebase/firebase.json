@@ -9,6 +9,10 @@
       "codebase": "accept-invite"
     },
     {
+      "source": "functions/clock-timeout",
+      "codebase": "clock-timeout"
+    },    
+    {
       "source": "functions/send-invite-notification",
       "codebase": "send-invite-notification"
     }
