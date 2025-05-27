@@ -381,8 +381,6 @@ public class GameActivity extends AppCompatActivity {
             @Override public void onFinish() {
                 // ⏱ local clock reached 0 – call helper
                 handleTimeout(playerIndex);
-                int winner = (playerIndex == 0) ? 1 : 0;
-                runOnUiThread(() -> showWinner(winner)); // NEW – pop dialog & freeze board
             }
         }.start();
     }
@@ -413,14 +411,19 @@ public class GameActivity extends AppCompatActivity {
                     }
                     return null;
                 }).addOnSuccessListener(v -> {
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": 🏆 Timeout result recorded");
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                                + ": 🏆 Timeout result recorded");
                         // ⏹️  stop the local countdown immediately
                         runOnUiThread(() -> {
                             if (turnTimer != null) {
+                                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                                        + ": Stopping clock");
                                 turnTimer.cancel();
                                 turnTimer = null;      // hygiene – prevents reuse
-                                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock stopped");
-
+                                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                                        + ": Calling showWinner");
+                                int winner = (timedOutPlayer == 0) ? 1 : 0;
+                                showWinner(winner);           // dialog now sees reason="timeout"
                             }
                         });
                 })
@@ -828,7 +831,7 @@ public class GameActivity extends AppCompatActivity {
                                 if ("timeout".equals(reason)) {
                                     msg = sLooser + " ran out of time. ";
                                 } else if ("abandon".equals(reason)) {
-                                    msg=sLooser + " forfeited the game. ";
+                                    msg= sLooser + " forfeited the game. ";
                                 }
 
                                 msg=msg+"The winner is " + sWinner+"!";
