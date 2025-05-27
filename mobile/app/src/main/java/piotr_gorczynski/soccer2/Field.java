@@ -335,6 +335,11 @@ public class Field {
         float bottomHintY = h2y(intFieldHeight+1)+(canvas.getHeight()-h2y(intFieldHeight+1))*2/3;
         float topHintY = h2y(-1) *2 / 3;
 
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                + ": remainingTime0="+remainingTime0
+                + " remainingTime1="+remainingTime1
+                + " turnStartTime="+((turnStartTime == null) ? "null" : String.valueOf(turnStartTime)));
+
         if (isLocalTurn) {
             if (gameType != 3) {
                 textBottom = "Your move!";
@@ -366,7 +371,6 @@ public class Field {
             } else  {
                 // Multiplayer: determine which name is the opponent
 
-                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": remainingTime0: "+ remainingTime0 + " remainingTime1: " + remainingTime1);
 
                 if (turnStartTime!=null) {
                     textTop = opponentName + " move... ⏳ "+oponentTime;
