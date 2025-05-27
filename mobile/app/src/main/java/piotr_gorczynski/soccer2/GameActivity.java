@@ -105,6 +105,7 @@ public class GameActivity extends AppCompatActivity {
                 (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && savedInstanceState.getParcelableArrayList("Moves", MoveTo.class) != null) ||
                         isLegacyMovesNotNull(savedInstanceState)
         )) {
+            Winner       = savedInstanceState.getInt("Winner", -1);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 Moves = savedInstanceState.getParcelableArrayList("Moves", MoveTo.class);
             } else {
@@ -624,7 +625,7 @@ public class GameActivity extends AppCompatActivity {
                                 // Reset local turn/clock flags here if needed
                                 Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Sent move an updated match");
                                 turnStartTime=null;
-                                gameView.updateTimes(remainingTime0,remainingTime1,turnStartTime);
+                                gameView.updateTimes(remainingTime0,remainingTime1,null);
                                 // clockStartAttempted = false; // So next time this device's turn comes, it'll try to start the clock
                                 // Optionally reset local timing state
                             })
@@ -658,18 +659,18 @@ public class GameActivity extends AppCompatActivity {
         //---save whatever you need to persist—
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started");
         //Moves=gameView.GetMoves();
+
         outState.putParcelableArrayList("Moves",Moves);
 
-
-        if(dialogWinner != null /*&& dialogWinner.isShowing()*/)
-            // close dialog to prevent leaked window
-            dialogWinner.dismiss();
-        if(Winner!=-1){
-            outState.putBoolean("alertShown", true);
+        if (Winner != -1) {
             outState.putInt("Winner", Winner);
         }
-        else
-            outState.putBoolean("alertShown", false);
+
+        if (dialogWinner != null) {          // was visible
+            dialogWinner.dismiss();          // prevent leaked-window
+            dialogWinner = null;
+            alertShown   = false;            // <--- **allow it to be shown again**
+        }
 
         super.onSaveInstanceState(outState);
     }
