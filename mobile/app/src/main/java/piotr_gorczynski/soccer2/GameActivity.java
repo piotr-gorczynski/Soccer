@@ -424,8 +424,16 @@ public class GameActivity extends AppCompatActivity {
                             }
                         });
                 })
-                .addOnFailureListener(e ->
-                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ❌ Failed to record timeout", e));
+                .addOnFailureListener(e -> {
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                                + ": ❌ Failed to record timeout", e);
+                        runOnUiThread(() -> {
+                            if (turnTimer != null) {
+                                turnTimer.cancel();
+                                turnTimer = null;
+                            }
+                        });
+                });
     }
 
     private void onClockUpdate(DocumentSnapshot snap, FirebaseFirestoreException e) {
