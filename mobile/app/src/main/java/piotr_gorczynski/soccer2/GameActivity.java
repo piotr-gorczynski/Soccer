@@ -410,8 +410,16 @@ public class GameActivity extends AppCompatActivity {
                         txn.update(matchRef, update);
                     }
                     return null;
-                }).addOnSuccessListener(v ->
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": 🏆 Timeout result recorded"))
+                }).addOnSuccessListener(v -> {
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": 🏆 Timeout result recorded");
+                        // ⏹️  stop the local countdown immediately
+                        runOnUiThread(() -> {
+                            if (turnTimer != null) {
+                                turnTimer.cancel();
+                                turnTimer = null;      // hygiene – prevents reuse
+                            }
+                        });
+                })
                 .addOnFailureListener(e ->
                         Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ❌ Failed to record timeout", e));
     }
