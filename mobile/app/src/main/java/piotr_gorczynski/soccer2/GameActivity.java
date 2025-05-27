@@ -72,6 +72,8 @@ public class GameActivity extends AppCompatActivity {
 
     Timestamp turnStartTimeTs;
 
+    private boolean gameEnded = false;
+
     @SuppressLint("RedundantSuppression")
     @SuppressWarnings("deprecation")
     private boolean isLegacyMovesNotNull(Bundle savedInstanceState) {
@@ -417,6 +419,8 @@ public class GameActivity extends AppCompatActivity {
                             if (turnTimer != null) {
                                 turnTimer.cancel();
                                 turnTimer = null;      // hygiene – prevents reuse
+                                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock stopped");
+
                             }
                         });
                 })
@@ -426,6 +430,7 @@ public class GameActivity extends AppCompatActivity {
 
     private void onClockUpdate(DocumentSnapshot snap, FirebaseFirestoreException e) {
         if (e != null || snap == null || !snap.exists()) return;
+        if (gameEnded) return;   // board frozen
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started");
         String serverWinner = snap.getString("winner");
         String reason       = snap.getString("reason");
@@ -609,6 +614,7 @@ public class GameActivity extends AppCompatActivity {
             Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Listen for moves failed", e);
             return;
         }
+        if (gameEnded) return;   // board frozen
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started. Snapshot Size: " + snapshot.size());
 
         ArrayList<MoveTo> newMoves = new ArrayList<>();
@@ -639,7 +645,11 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void sendMoveToFirestore(int x, int y, int p) {
-
+        // very first lines of sendMoveToFirestore(...)
+        if (gameEnded) {
+            Toast.makeText(this, "Game is over.", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         Map<String,Object> moveData = new HashMap<>();
         moveData.put("x", x);
@@ -730,6 +740,10 @@ public class GameActivity extends AppCompatActivity {
         if (alertShown) return;
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started. Winner = " + Winner);
         alertShown = true;
+        gameEnded = true;
+        if (movesListener != null) {  // extra hygiene
+            movesListener.remove();
+        }
         final String sPlayer0, sPlayer1;
         this.Winner = Winner;
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
