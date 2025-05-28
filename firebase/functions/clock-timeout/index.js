@@ -30,12 +30,14 @@ exports.clockTimeout = functions.firestore
   if (timeLeft > 0) return null;                   // still time on the clock
 
   const winnerUid     = turn === 0 ? after.player1 : after.player0;
-  console.log(`Timeout detected – winner: ${winnerUid}`);
+  console.log(`Timeout detected in match ${context.params.matchId} – winner: ${winnerUid}`);
 
+  const remainingField = turn === 0 ? "remainingTime0" : "remainingTime1";
   return change.after.ref.update({
       winner:   winnerUid,
       status:   "completed",
       reason:   "timeout",
+      [remainingField]: 0, // ⏱ hard-set elapsed clock to 0
       updatedAt: admin.firestore.FieldValue.serverTimestamp()
   });
 });
