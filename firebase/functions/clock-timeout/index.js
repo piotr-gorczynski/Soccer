@@ -22,7 +22,8 @@ exports.clockTimeout = functions.firestore
                         after.remainingTime0 : after.remainingTime1;
     
   // --- fallback logic ---
-  const turnStart = after.turnStartTime ?? change.after.updateTime;
+  const turnStart = after.turnStartTime ?? after.updatedAt;
+  // If turnStartTime is not set, use updatedAt as fallback
   if (!turnStart) {
     console.log(`No turnStartTime in match ${context.params.matchId}`);
     return null;
