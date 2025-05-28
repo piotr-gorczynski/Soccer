@@ -20,8 +20,14 @@ exports.clockTimeout = functions.firestore
   const turn          = after.turn;                 // 0 / 1
   const remaining     = turn === 0 ?
                         after.remainingTime0 : after.remainingTime1;
-  const turnStart     = after.turnStartTime;
-  if (!turnStart) return null;                      // clock not started yet
+    
+  // --- fallback logic ---
+  const turnStart = after.turnStartTime ?? change.after.updateTime;
+  if (!turnStart) {
+    console.log(`No turnStartTime in match ${context.params.matchId}`);
+    return null;
+  }
+  // ----------------------
 
   const elapsedSecs   =
         (Date.now() - turnStart.toMillis()) / 1000;
