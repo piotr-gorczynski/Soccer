@@ -2,6 +2,7 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 admin.initializeApp();
 const db = admin.firestore();
+const initialTimeSeconds = 300;  // 5 minutes
 
 exports.acceptInvite = functions.https.onCall(async (data, context) => {
   console.log("----- acceptInvite called -----");
