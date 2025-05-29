@@ -670,13 +670,13 @@ public class GameActivity extends AppCompatActivity {
 
         if(p!=this.localPlayerIndex){
             //Stop the clock
-            if(turnTimer!=null) {
+/*            if(turnTimer!=null) {
+                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Stopping clock...");
                 turnTimer.cancel();
                 turnTimer = null;
-                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock stopped");
-            }
+            }*/
 
-            long prevRemainingSecs = localPlayerIndex == 0 ? remainingTime0 : remainingTime1;
+/*            long prevRemainingSecs = localPlayerIndex == 0 ? remainingTime0 : remainingTime1;
             long prevRemainingMs = prevRemainingSecs * 1000L;
             long nowMs = System.currentTimeMillis();
             long elapsed = nowMs - turnStartTimeMs;
@@ -688,11 +688,13 @@ public class GameActivity extends AppCompatActivity {
                     myNewRemainingMs / 1000L);        // write back in seconds
             matchUpdates.put("turn", p);
             matchUpdates.put("turnStartTime", null); // next player will set it
-            matchUpdates.put("updatedAt", FieldValue.serverTimestamp());
+            matchUpdates.put("updatedAt", FieldValue.serverTimestamp());*/
 
             // Send the move
             movesRef.add(moveData)
-                    .addOnSuccessListener(docRef -> matchRef.update(matchUpdates)
+                    .addOnSuccessListener(docRef -> Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Sent move (change turn)"))
+
+/*                    .addOnSuccessListener(docRef -> matchRef.update(matchUpdates)
                             .addOnSuccessListener(aVoid -> {
                                 // Reset local turn/clock flags here if needed
                                 Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Sent move an updated match");
@@ -701,7 +703,7 @@ public class GameActivity extends AppCompatActivity {
                                 // clockStartAttempted = false; // So next time this device's turn comes, it'll try to start the clock
                                 // Optionally reset local timing state
                             })
-                            .addOnFailureListener(err -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to update match")))
+                            .addOnFailureListener(err -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to update match")))*/
                     .addOnFailureListener(err -> {
                         Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to send move");
                         Toast.makeText(this, "Failed to send move: "+err, LENGTH_SHORT).show();
@@ -709,7 +711,7 @@ public class GameActivity extends AppCompatActivity {
         } else {
             // Send the move
             movesRef.add(moveData)
-                    .addOnSuccessListener(docRef -> Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Sent move"))
+                    .addOnSuccessListener(docRef -> Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Sent move (bouncing)"))
                     .addOnFailureListener(err -> {
                         Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to send move");
                         Toast.makeText(this, "Failed to send move: "+err, LENGTH_SHORT).show();
