@@ -15,6 +15,10 @@
     {
       "source": "functions/send-invite-notification",
       "codebase": "send-invite-notification"
+    },
+    {
+      "source": "functions/change-player-turn",
+      "codebase": "change-player-turn"
     }
   ],
   "firestore": {
