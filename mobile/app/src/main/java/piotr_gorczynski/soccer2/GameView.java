@@ -639,6 +639,13 @@ public class GameView extends View {
 
                     // Apply move locally (updates UI, checks victory)
                     MakeMove(x, y, realMoves);
+                    lastP = realMoves.get(realMoves.size() - 1).P;
+                    if (localPlayerIndex != lastP) {
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Catching early change player turn");
+                        // pass the clock values into the Field
+                        turnStartsTime=null;
+                        field.setRemainingTimes(remTime0, remTime1,null);
+                    }
                     invalidate();
 
                     // Send to Firestore if still active

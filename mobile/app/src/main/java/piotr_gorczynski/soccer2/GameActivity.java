@@ -68,7 +68,7 @@ public class GameActivity extends AppCompatActivity {
 
     private long remainingTime0, remainingTime1,previousRemainingTime0=-1, previousRemainingTime1=-1;
     private Long turnStartTime, previousTurnSTartTime= (long) -1;
-    private long turnStartTimeMs;
+    //private long turnStartTimeMs;
 
     Timestamp turnStartTimeTs;
 
@@ -492,12 +492,7 @@ public class GameActivity extends AppCompatActivity {
         if (clockStartAttempted && turnStartTimeTs == null ) {
             clockStartAttempted=false;
             Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Flag clockStartAttempted=false");
-            //Stop the clock
-            if(turnTimer!=null) {
-                turnTimer.cancel();
-                turnTimer = null;
-                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock stopped");
-            }
+            stopClock();
         }
 
         // Fix condition to use ts (which is now a Timestamp)
@@ -523,7 +518,7 @@ public class GameActivity extends AppCompatActivity {
                             turnStartTime = (turnStartTimeTs != null) ? turnStartTimeTs.toDate().getTime() : null;
                             runOnUiThread(() -> gameView.updateTimes(remainingTime0, remainingTime1, turnStartTime));
                             Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock started for player " + localPlayerIndex);
-                            turnStartTimeMs = System.currentTimeMillis();
+                            //turnStartTimeMs = System.currentTimeMillis();
                             long remSecs = localPlayerIndex==0 ? remainingTime0 : remainingTime1;
                             startClock(localPlayerIndex, remSecs*1000);
                         })
@@ -544,7 +539,7 @@ public class GameActivity extends AppCompatActivity {
                         turnStartTime = turnStartTimeTs.toDate().getTime();
                         runOnUiThread(() -> gameView.updateTimes(remainingTime0, remainingTime1, turnStartTime));
                         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock started for player " + turn.intValue());
-                        turnStartTimeMs = System.currentTimeMillis();
+                        //turnStartTimeMs = System.currentTimeMillis();
                         long remSecs = turn.intValue()==0 ? remainingTime0 : remainingTime1;
                         startClock(turn.intValue(), remSecs*1000);
                     })
@@ -553,6 +548,15 @@ public class GameActivity extends AppCompatActivity {
 
     }
 
+    public void stopClock(){
+        runOnUiThread(() -> {
+            if(turnTimer!=null) {
+                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Stopping clock...");
+                turnTimer.cancel();
+                turnTimer = null;
+            }
+        });
+    }
     private void initGameView() {
         gameView = new GameView(
                 this,
@@ -670,11 +674,7 @@ public class GameActivity extends AppCompatActivity {
 
         if(p!=this.localPlayerIndex){
             //Stop the clock
-/*            if(turnTimer!=null) {
-                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Stopping clock...");
-                turnTimer.cancel();
-                turnTimer = null;
-            }*/
+            stopClock();
 
 /*            long prevRemainingSecs = localPlayerIndex == 0 ? remainingTime0 : remainingTime1;
             long prevRemainingMs = prevRemainingSecs * 1000L;
@@ -692,7 +692,12 @@ public class GameActivity extends AppCompatActivity {
 
             // Send the move
             movesRef.add(moveData)
-                    .addOnSuccessListener(docRef -> Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Sent move (change turn)"))
+                    .addOnSuccessListener(docRef -> {
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Sent move (change turn)");
+                        turnStartTime=null;
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Updating GameView");
+                        gameView.updateTimes(remainingTime0,remainingTime1,null);
+                    })
 
 /*                    .addOnSuccessListener(docRef -> matchRef.update(matchUpdates)
                             .addOnSuccessListener(aVoid -> {
