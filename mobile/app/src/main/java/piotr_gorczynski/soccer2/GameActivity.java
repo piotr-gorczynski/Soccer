@@ -371,12 +371,17 @@ public class GameActivity extends AppCompatActivity {
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started");
         turnTimer = new CountDownTimer(remainingMillis, 1000) {
             @Override public void onTick(long msUntilFinished) {
-                long t0 = remainingTime0;
+/*                long t0 = remainingTime0;
                 long t1 = remainingTime1;
                 if (playerIndex == 0)  t0 = msUntilFinished / 1000;
                 else                   t1 = msUntilFinished / 1000;
                 Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": t0=" + t0 + ", t1=" + t1);
-                gameView.updateTimes(t0, t1, turnStartTime);
+                gameView.updateTimes(t0, t1, turnStartTime);*/
+                if (playerIndex == 0)  remainingTime0 = msUntilFinished / 1000;
+                else                   remainingTime1 = msUntilFinished / 1000;
+                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": remainingTime0=" + remainingTime0 + ", remainingTime1=" + remainingTime1);
+                gameView.updateTimes(remainingTime0, remainingTime1, turnStartTime);
+
             }
             @Override public void onFinish() {
                 // ⏱ local clock reached 0 – call helper
@@ -430,12 +435,7 @@ public class GameActivity extends AppCompatActivity {
                 .addOnFailureListener(e -> {
                         Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                                 + ": ❌ Failed to record timeout", e);
-                        runOnUiThread(() -> {
-                            if (turnTimer != null) {
-                                turnTimer.cancel();
-                                turnTimer = null;
-                            }
-                        });
+                        stopClock();
                 });
     }
 
