@@ -693,7 +693,7 @@ public class GameActivity extends AppCompatActivity {
             // Send the move
             movesRef.add(moveData)
                     .addOnSuccessListener(docRef -> {
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Sent move (change turn)");
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Sent move (change turn). x="+x+" y="+y+" p="+p);
                         turnStartTime=null;
                         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Updating GameView");
                         gameView.updateTimes(remainingTime0,remainingTime1,null);
@@ -716,7 +716,7 @@ public class GameActivity extends AppCompatActivity {
         } else {
             // Send the move
             movesRef.add(moveData)
-                    .addOnSuccessListener(docRef -> Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Sent move (bouncing)"))
+                    .addOnSuccessListener(docRef -> Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Sent move (bouncing). x="+x+" y="+y+" p="+p))
                     .addOnFailureListener(err -> {
                         Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to send move");
                         Toast.makeText(this, "Failed to send move: "+err, LENGTH_SHORT).show();
@@ -769,10 +769,7 @@ public class GameActivity extends AppCompatActivity {
         builder.setCancelable(false);
 
         // ❱❱ stop the clock as soon as we show the winner dialog
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Stopping clock...");
-        if (turnTimer != null) {
-            turnTimer.cancel();
-        }
+        stopClock();
         if (clockListener != null) {
             clockListener.remove();
         }

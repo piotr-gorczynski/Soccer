@@ -339,6 +339,24 @@ public class GameView extends View {
         else
             Moves.add(new MoveTo(x,y,pOpponent(Moves.get(Moves.size()-1).P)));
 
+        if (GameType == 3) {
+
+            int lastP = Moves.get(Moves.size() - 1).P;
+            if (localPlayerIndex != lastP) {
+                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Catching early change player turn");
+                // pass the clock values into the Field
+                turnStartsTime=null;
+                this.gameActivity.stopClock();
+                field.setRemainingTimes(remTime0, remTime1,null);
+            }
+            invalidate();
+
+            // Send to Firestore if still active
+            if (moveCallback != null) {
+                moveCallback.onLocalMove(x, y, Moves.get(Moves.size() - 1).P);
+            }
+        }
+
         createPossibleMoves(possibleMoves, Moves);
 
         if(possibleMoves.isEmpty()) {
@@ -639,19 +657,6 @@ public class GameView extends View {
 
                     // Apply move locally (updates UI, checks victory)
                     MakeMove(x, y, realMoves);
-                    lastP = realMoves.get(realMoves.size() - 1).P;
-                    if (localPlayerIndex != lastP) {
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Catching early change player turn");
-                        // pass the clock values into the Field
-                        turnStartsTime=null;
-                        field.setRemainingTimes(remTime0, remTime1,null);
-                    }
-                    invalidate();
-
-                    // Send to Firestore if still active
-                    if (moveCallback != null) {
-                        moveCallback.onLocalMove(x, y, realMoves.get(realMoves.size() - 1).P);
-                    }
                 }
                 else {
                     // ── GameType 1 & 2: use your existing local/AI move logic
