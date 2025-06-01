@@ -47,6 +47,18 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         </activity>
 
+        <!-- Tournament sign-up / list screen -->
+        <activity
+            android:name=".TournamentsActivity"
+            android:exported="false"
+            android:parentActivityName=".MenuActivity">
+
+            <!-- Enables the “Up” arrow on API < 16 as well -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MenuActivity"/>
+        </activity>
+
         <service
             android:name=".notifications.MyFirebaseMessagingService"
             android:exported="false">
