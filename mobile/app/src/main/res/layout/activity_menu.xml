@@ -64,6 +64,17 @@
         android:textColor="@color/colorWhite"
         android:textStyle="bold" />
 
+    <Button
+        android:id="@+id/openTournamentsBtn"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/colorGreen"
+        android:onClick="OpenTournaments"
+        android:text="@string/tournaments"
+        android:textAllCaps="false"
+        android:textColor="@color/colorWhite"
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/Settings"

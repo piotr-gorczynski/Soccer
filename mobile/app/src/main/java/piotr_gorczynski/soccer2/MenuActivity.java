@@ -161,5 +161,9 @@ public class MenuActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void OpenTournaments(View view) {
+        startActivity(new Intent(this, TournamentsActivity.class));
+    }
+
 
 }
