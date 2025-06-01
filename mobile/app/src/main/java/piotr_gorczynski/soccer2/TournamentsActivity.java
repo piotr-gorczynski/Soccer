@@ -64,7 +64,7 @@ public class TournamentsActivity extends AppCompatActivity {
                 .whereEqualTo("status", "registering")   // show only open sign-ups
                 .addSnapshotListener((snap, e) -> {
                     if (e != null) {
-                        Log.e("TAG_Soccer", "Tournament listener failed", e);
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Tournament listener failed", e);
                         return;
                     }
                     tournamentDescriptions.clear();
@@ -101,7 +101,7 @@ public class TournamentsActivity extends AppCompatActivity {
                         .makeText(this, "Joined! Wait for the bracket to start.",
                                 Toast.LENGTH_SHORT).show())
                 .addOnFailureListener(e -> {
-                    Log.e("TAG_Soccer", "Join failed", e);
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Join failed", e);
                     Toast.makeText(this, e.getMessage(),
                             Toast.LENGTH_LONG).show();
                 });
