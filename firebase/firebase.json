@@ -19,6 +19,10 @@
     {
       "source": "functions/change-player-turn",
       "codebase": "change-player-turn"
+    },
+    {
+      "source": "functions/join-tournament",
+      "codebase": "join-tournament"
     }
   ],
   "firestore": {
