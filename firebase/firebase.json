@@ -23,6 +23,10 @@
     {
       "source": "functions/join-tournament",
       "codebase": "join-tournament"
+    },
+    {
+      "source": "functions/start-tournament",
+      "codebase": "start-tournament"
     }
   ],
   "firestore": {

@@ -1,0 +1,13 @@
+{
+  "name": "start-tournament",
+  "description": "Cloud Function to initiate a tournament in the game.",
+  "version": "1.2.0",
+  "main": "index.js",
+  "engines": {
+    "node": "18"
+  },
+  "dependencies": {
+    "firebase-admin": "^11.10.1",
+    "firebase-functions": "^4.5.0"
+  }
+}
