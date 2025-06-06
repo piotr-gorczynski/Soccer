@@ -1,6 +1,7 @@
 package piotr_gorczynski.soccer2;        // <-- adjust
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,6 +69,9 @@ public class TournamentAdapter
                 doc.getLong("maxParticipants"),
                 "maxParticipants missing in " + doc.getId()
         );
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                + ": doc = " + doc.getId()
+                + ", deadline = " + doc.get("registrationDeadline"));
         Timestamp deadlineTS = Objects.requireNonNull(
                 doc.getTimestamp("registrationDeadline"),
                 "registrationDeadline missing in " + doc.getId()
