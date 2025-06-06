@@ -72,6 +72,13 @@ public class TournamentAdapter
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                 + ": doc = " + doc.getId()
                 + ", deadline = " + doc.get("registrationDeadline"));
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                + ": keys = " + Objects.requireNonNull(doc.getData()).keySet());
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                + ": raw map = " + doc.getData());
+
+
+
         Timestamp deadlineTS = Objects.requireNonNull(
                 doc.getTimestamp("registrationDeadline"),
                 "registrationDeadline missing in " + doc.getId()
