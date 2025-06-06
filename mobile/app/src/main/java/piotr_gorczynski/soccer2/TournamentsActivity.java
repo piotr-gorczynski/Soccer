@@ -19,6 +19,7 @@ import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.FirebaseFunctionsException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +48,7 @@ public class TournamentsActivity extends AppCompatActivity {
         // ── Firestore ────────────────────────────────────────────────
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         Query q = db.collection("tournaments")
-                .whereEqualTo("status", "registering");
+                .whereIn("status", Arrays.asList("registering", "running"));
 
         // ② live listener – use DocumentChange deltas
         q.addSnapshotListener((snap, e) -> {
