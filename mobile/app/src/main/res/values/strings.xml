@@ -59,5 +59,10 @@
     <string name="join">Join</string>
     <!-- "%1$d" → first argument (joined), "%2$d" → second (max) -->
     <string name="slots_format">%1$d / %2$d</string>
+    <string name="open">Open</string>
+    <string name="lobby_started">Tournament started!</string>
+    <string name="lobby_waiting">Waiting for organizer…</string>
+    <!-- "%1$d" = joined,  "%2$d" = max -->
+    <string name="lobby_slots_format">%1$d&nbsp;/&nbsp;%2$d</string>
 
 </resources>

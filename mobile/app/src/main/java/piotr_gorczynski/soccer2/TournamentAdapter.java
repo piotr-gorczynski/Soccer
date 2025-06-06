@@ -1,7 +1,7 @@
 package piotr_gorczynski.soccer2;        // <-- adjust
 
-import android.content.Context;
-import android.util.Log;
+import android.content.Intent;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +16,6 @@ import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 public class TournamentAdapter
         extends RecyclerView.Adapter<TournamentAdapter.VH> {
@@ -56,61 +55,63 @@ public class TournamentAdapter
 
     @Override
     public void onBindViewHolder(@NonNull VH h, int position) {
+
         DocumentSnapshot doc = data.get(position);
+        String tid          = doc.getId();
 
-        String tid           = doc.getId();
-        String name          = doc.getString("name");
-        long joined = Objects.requireNonNull(
-                doc.getLong("participantsCount"),
-                "participantsCount missing in " + doc.getId()
-        );
+        String name         = doc.getString("name");
+        long   joined       = Objects.requireNonNull(doc.getLong("participantsCount"));
+        long   max          = Objects.requireNonNull(doc.getLong("maxParticipants"));
+        String status       = doc.getString("status");            // "registering" | "running"
+        Timestamp regDL     = doc.getTimestamp("registrationDeadline");
+        Timestamp endDL     = doc.getTimestamp("matchesDeadline");
 
-        long max    = Objects.requireNonNull(
-                doc.getLong("maxParticipants"),
-                "maxParticipants missing in " + doc.getId()
-        );
-        /*
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                + ": doc = " + doc.getId()
-                + ", deadline = " + doc.get("registrationDeadline"));*/
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                + ": keys = " + Objects.requireNonNull(doc.getData()).keySet());
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                + ": raw map = " + doc.getData());
-
-
-
-        Timestamp deadlineTS = Objects.requireNonNull(
-                doc.getTimestamp("registrationDeadline"),
-                "registrationDeadline missing in " + doc.getId()
-        );
-
-        long millisLeft = deadlineTS.toDate().getTime() - System.currentTimeMillis();
-        boolean full    = joined >= max;
-        boolean closed  = millisLeft <= 0;
-
-        // human-readable “ends in …”
-        String endsText;
-        if (closed) {
-            endsText = "Registration closed";
-        } else {
-            long days  = TimeUnit.MILLISECONDS.toDays(millisLeft);
-            long hours = TimeUnit.MILLISECONDS.toHours(millisLeft) % 24;
-            if (days > 0)       endsText = "Registration ends in " + days  + " d " + hours + " h";
-            else if (hours > 0) endsText = "Registration ends in " + hours + " h";
-            else                endsText = "Registration ends in " +
-                        TimeUnit.MILLISECONDS.toMinutes(millisLeft) + " m";
-        }
-
-        // bind to views
+        /* ---------- common fields ---------- */
         h.name.setText(name);
-        Context ctx = h.itemView.getContext();          // any Context works here
-        String slotsText = ctx.getString(R.string.slots_format, joined, max);
-        h.slots.setText(slotsText);
-        h.endsIn.setText(endsText);
+        h.slots.setText(
+                h.itemView.getContext().getString(R.string.slots_format, joined, max)
+        );
 
-        h.joinBtn.setEnabled(!full && !closed);
-        h.joinBtn.setOnClickListener(v -> listener.onJoin(tid));
+        /* ---------- branching by status ---------- */
+        if ("registering".equals(status)) {
+
+            // ① label: “Registration ends in …”
+            long mLeft = Objects.requireNonNull(regDL).toDate().getTime() - System.currentTimeMillis();
+            String endsText = (mLeft <= 0)
+                    ? "Registration closed"
+                    : DateUtils.getRelativeTimeSpanString(regDL.toDate().getTime()).toString();
+            h.endsIn.setText(endsText);
+
+            // ② button: Join
+            boolean full   = joined >= max;
+            boolean closed = mLeft <= 0;
+            h.joinBtn.setEnabled(!full && !closed);
+            h.joinBtn.setText(R.string.join);
+            h.joinBtn.setOnClickListener(v -> listener.onJoin(tid));
+
+        } else {   // == "running"
+
+            // ① label: “Tournament running – ends in …”
+            long mLeft = endDL != null
+                    ? endDL.toDate().getTime() - System.currentTimeMillis()
+                    : -1;
+
+            String endsText = (mLeft <= 0)
+                    ? "Tournament running"
+                    : "Ends in " + DateUtils.getRelativeTimeSpanString(
+                    endDL.toDate().getTime()).toString();
+
+            h.endsIn.setText(endsText);
+
+            // ② button: Open
+            h.joinBtn.setEnabled(true);
+            h.joinBtn.setText(R.string.open);
+            h.joinBtn.setOnClickListener(v -> {
+                Intent i = new Intent(v.getContext(), TournamentLobbyActivity.class)
+                        .putExtra("tournamentId", tid);
+                v.getContext().startActivity(i);
+            });
+        }
     }
 
     @Override
