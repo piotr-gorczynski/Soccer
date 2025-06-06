@@ -46,12 +46,24 @@ exports.startTournament = functions.pubsub
   .onRun(async (context) => {
 
     const now = Timestamp.now();
-    const snap = await db.collection('tournaments')
-      .where('status', '==', 'registering')
-      .where('registrationDeadline', '<=', now)
-      .get();                                          // :contentReference[oaicite:0]{index=0}
+    const regSnap = await db.collection('tournaments')
+    .where('status', '==', 'registering')
+    .get();                          // ↩︎ doesn/t reuire indexes
+    if (regSnap.empty) {
+      console.log('No tournaments to start at this time.');
+      return null;                   // nothing to do
+    }
+    console.log(`Found ${regSnap.size} tournaments to check.`);
+    // Filter tournaments whose registration deadline is in the past
+    // (i.e. registration is closed)    
 
-    if (snap.empty) return null;
+    const snap = regSnap.docs.filter(d =>
+        d.getTimestamp('registrationDeadline').toMillis() <= now.toMillis());
+
+    if (snap.empty) {
+        console.log('No tournaments to start at this time.');
+        return null;                   // nothing to do
+    }
 
     for (const doc of snap.docs) {
       const data   = doc.data();
