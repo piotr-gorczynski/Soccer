@@ -1,4 +1,4 @@
-const functions = require('firebase-functions/v2');          // 2nd-gen
+const functions = require('firebase-functions');          // 2nd-gen
 const { Timestamp } = require('firebase-admin/firestore');
 const admin = require('firebase-admin');
 admin.initializeApp();
@@ -42,8 +42,8 @@ async function generateRoundRobin(tournamentRef) {
  */
 exports.startTournament = functions.pubsub
   .schedule('every 1 hours')
-  .timeZone('UTC')                     // pick your tz if needed
-  .onRun(async () => {
+  .timeZone('Europe/Warsaw')                     // pick your tz if needed
+  .onRun(async (context) => {
 
     const now = Timestamp.now();
     const snap = await db.collection('tournaments')
