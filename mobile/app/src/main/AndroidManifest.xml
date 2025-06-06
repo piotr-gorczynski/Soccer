@@ -59,6 +59,17 @@
                 android:value=".MenuActivity"/>
         </activity>
 
+        <activity
+            android:name=".TournamentLobbyActivity"
+            android:exported="false"
+            android:parentActivityName=".TournamentsActivity">
+
+            <!-- Enables the “Up” arrow on API < 16 as well -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".TournamentsActivity"/>
+        </activity>
+
         <service
             android:name=".notifications.MyFirebaseMessagingService"
             android:exported="false">
