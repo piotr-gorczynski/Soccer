@@ -24,10 +24,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import com.google.firebase.firestore.Query;
+
 public class TournamentsActivity extends AppCompatActivity {
 
-
-    private FirebaseFirestore db;
 
     private final List<DocumentSnapshot> docs = new ArrayList<>();
     private TournamentAdapter adapter;
@@ -38,61 +38,54 @@ public class TournamentsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tournaments);
 
-        setContentView(R.layout.activity_tournaments);   // already there
-
+        // ── RecyclerView ─────────────────────────────────────────────
         RecyclerView rv = findViewById(R.id.tournamentsList);
         rv.setLayoutManager(new LinearLayoutManager(this));
-
         adapter = new TournamentAdapter(docs, this::joinTournament);
         rv.setAdapter(adapter);
 
+        // ── Firestore ────────────────────────────────────────────────
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Query q = db.collection("tournaments")
+                .whereEqualTo("status", "registering");
 
-        db   = FirebaseFirestore.getInstance();
+        // ② live listener – use DocumentChange deltas
+        q.addSnapshotListener((snap, e) -> {
+            if (e != null || snap == null) return;
 
-        listenForTournaments();
-    }
+            for (DocumentChange dc : snap.getDocumentChanges()) {
+                switch (dc.getType()) {
 
-    /** Reads all tournaments whose status == "registering" */
-    private void listenForTournaments() {
-        db.collection("tournaments")
-                .whereEqualTo("status", "registering")
-                .addSnapshotListener((snap, e) -> {
-                    if (e != null || snap == null) return;
-
-                    for (DocumentChange dc : snap.getDocumentChanges()) {
-                        switch (dc.getType()) {
-
-                            case ADDED: {
-                                docs.add(dc.getNewIndex(), dc.getDocument());
-                                adapter.notifyItemInserted(dc.getNewIndex());
-                                break;
-                            }
-
-                            case MODIFIED: {
-                                // Was it just edited, or moved as well?
-                                int oldIdx = dc.getOldIndex();
-                                int newIdx = dc.getNewIndex();
-
-                                if (oldIdx == newIdx) {
-                                    docs.set(oldIdx, dc.getDocument());
-                                    adapter.notifyItemChanged(oldIdx);
-                                } else {               // moved in the result set
-                                    docs.remove(oldIdx);
-                                    docs.add(newIdx, dc.getDocument());
-                                    adapter.notifyItemMoved(oldIdx, newIdx);
-                                }
-                                break;
-                            }
-
-                            case REMOVED: {
-                                int oldIdx = dc.getOldIndex();
-                                docs.remove(oldIdx);
-                                adapter.notifyItemRemoved(oldIdx);
-                                break;
-                            }
-                        }
+                    case ADDED: {
+                        docs.add(dc.getNewIndex(), dc.getDocument());
+                        adapter.notifyItemInserted(dc.getNewIndex());
+                        break;
                     }
-                });
+
+                    case MODIFIED: {
+                        int oldIdx = dc.getOldIndex();
+                        int newIdx = dc.getNewIndex();
+
+                        if (oldIdx == newIdx) {                // only the data changed
+                            docs.set(oldIdx, dc.getDocument());
+                            adapter.notifyItemChanged(oldIdx);
+                        } else {                               // moved in the result set
+                            docs.remove(oldIdx);
+                            docs.add(newIdx, dc.getDocument());
+                            adapter.notifyItemMoved(oldIdx, newIdx);
+                        }
+                        break;
+                    }
+
+                    case REMOVED: {
+                        int oldIdx = dc.getOldIndex();
+                        docs.remove(oldIdx);
+                        adapter.notifyItemRemoved(oldIdx);
+                        break;
+                    }
+                }
+            }
+        });
     }
 
     /** Calls your Cloud Function `joinTournament` (see blueprint) */

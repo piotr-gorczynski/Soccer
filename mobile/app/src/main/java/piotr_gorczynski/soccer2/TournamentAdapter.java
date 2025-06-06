@@ -69,9 +69,10 @@ public class TournamentAdapter
                 doc.getLong("maxParticipants"),
                 "maxParticipants missing in " + doc.getId()
         );
+        /*
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                 + ": doc = " + doc.getId()
-                + ", deadline = " + doc.get("registrationDeadline"));
+                + ", deadline = " + doc.get("registrationDeadline"));*/
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                 + ": keys = " + Objects.requireNonNull(doc.getData()).keySet());
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
