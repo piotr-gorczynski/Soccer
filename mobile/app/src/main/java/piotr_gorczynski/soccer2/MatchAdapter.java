@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import android.view.View;
+import androidx.core.content.ContextCompat;
 
 public class MatchAdapter
         extends RecyclerView.Adapter<MatchAdapter.VH> {
@@ -79,13 +80,15 @@ public class MatchAdapter
         /* ----------- status label ----------- */
         String st = m.getString("status");          // scheduled | playing | done
         h.status.setText(st);
-        h.status.setTextColor(
-                switch (Objects.requireNonNull(st)) {
-                    case "playing"   -> 0xFFFF9800;   // orange
-                    case "done"      -> 0xFF9E9E9E;   // grey
-                    default          -> 0xFFFFFFFF;   // white for scheduled
-                });
-
+        int colour = switch (Objects.requireNonNull(st)) {
+            case "playing"   -> ContextCompat.getColor(
+                    h.itemView.getContext(), R.color.colorAccent);
+            case "done"      -> ContextCompat.getColor(
+                    h.itemView.getContext(), R.color.colorGrey);
+            default          -> ContextCompat.getColor(
+                    h.itemView.getContext(), R.color.colorGreenDark);
+        };
+        h.status.setTextColor(colour);
         h.itemView.setOnClickListener(v -> clickCB.onOpen(m.getId()));
     }
 
