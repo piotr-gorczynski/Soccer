@@ -8,9 +8,12 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import android.view.View;
@@ -31,6 +34,8 @@ public class MatchAdapter
     private final String myUid;
     private final OnMatchClick clickCB;
 
+      private final Map<String,String> nickCache = new HashMap<>();
+
     interface OnMatchClick { void onOpen(String matchId); }
 
     MatchAdapter(String myUid, OnMatchClick cb) {
@@ -42,27 +47,45 @@ public class MatchAdapter
     { return new VH(LayoutInflater.from(p.getContext())
             .inflate(R.layout.item_match, p, false)); }
 
-    @Override public void onBindViewHolder(@NonNull VH h,int pos) {
+    @Override
+    public void onBindViewHolder(@NonNull VH h, int pos) {
         DocumentSnapshot m = matches.get(pos);
         String a = m.getString("playerA");
         String b = m.getString("playerB");
         String oppUid = myUid.equals(a) ? b : a;
 
-        // ⚠️  you probably store nicknames elsewhere; fetch them if needed
-        h.opponent.setText(oppUid);
+        /* ----------- nickname lookup ----------- */
+        String nick = nickCache.get(oppUid);
+        if (nick != null) {
+            h.opponent.setText(nick);
+        } else {
+            // temporary fallback so row isn’t blank
+            h.opponent.setText(Objects.requireNonNull(oppUid).substring(0,6));
 
-        String st = m.getString("status");           // scheduled | playing | done
-        h.status.setText(st);                        // easy i18n via strings.xml
-        int colour = switch (Objects.requireNonNull(st)) {
-            case "playing"   -> 0xFFEF6C00;          // orange
-            case "done"      -> 0xFF9E9E9E;          // grey
-            default /*scheduled*/ -> 0xFF388E3C;     // green
-        };
-        h.status.setTextColor(colour);
+            FirebaseFirestore.getInstance()
+                    .collection("users").document(oppUid).get()
+                    .addOnSuccessListener(d -> {
+                        String n = d.getString("nickname");
+                        if (n != null) {
+                            nickCache.put(oppUid, n);
+                            notifyItemChanged(pos);          // refresh this one row
+                        }
+                    });
+        }
 
-        h.itemView.setOnClickListener(v ->
-                clickCB.onOpen(m.getId()));
+        /* ----------- status label ----------- */
+        String st = m.getString("status");          // scheduled | playing | done
+        h.status.setText(st);
+        h.status.setTextColor(
+                switch (Objects.requireNonNull(st)) {
+                    case "playing"   -> 0xFFFF9800;   // orange
+                    case "done"      -> 0xFF9E9E9E;   // grey
+                    default          -> 0xFFFFFFFF;   // white for scheduled
+                });
+
+        h.itemView.setOnClickListener(v -> clickCB.onOpen(m.getId()));
     }
+
 
     @Override public int getItemCount() { return matches.size(); }
 

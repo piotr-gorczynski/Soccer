@@ -10,11 +10,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.DocumentSnapshot;
+//import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 
-import java.util.ArrayList;
+//import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,7 +23,7 @@ import android.widget.TextView;
 public class TournamentLobbyActivity extends AppCompatActivity {
 
     private MatchAdapter mAdapter;
-    private PlayerAdapter pAdapter;
+    //private PlayerAdapter pAdapter;
     private ListenerRegistration tourListener, matchListener;
 
     @Override protected void onCreate(Bundle b) {
@@ -35,7 +35,7 @@ public class TournamentLobbyActivity extends AppCompatActivity {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         /* ───────── PLAYER LIST (new) ───────── */
-        RecyclerView pv = findViewById(R.id.playersList);
+        /*RecyclerView pv = findViewById(R.id.playersList);
         pv.setLayoutManager(new LinearLayoutManager(this));
         pAdapter = new PlayerAdapter();          // adapter code from snippet
         pv.setAdapter(pAdapter);
@@ -48,12 +48,13 @@ public class TournamentLobbyActivity extends AppCompatActivity {
                     List<String> ids = new ArrayList<>();
                     for (DocumentSnapshot d : snap.getDocuments()) ids.add(d.getId());
                     pAdapter.setAll(ids);              // refresh list
-                });
+                });*/
 
         /* matches RecyclerView */
         RecyclerView rv = findViewById(R.id.matchesList);
         rv.setLayoutManager(new LinearLayoutManager(this));
-        mAdapter = new MatchAdapter(myUid,
+        mAdapter = new MatchAdapter(
+                myUid,
                 matchId -> startActivity(
                         new Intent(this, GameActivity.class)
                                 .putExtra("matchId", matchId)
