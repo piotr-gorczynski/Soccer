@@ -1,5 +1,7 @@
 package piotr_gorczynski.soccer2;
 
+import static java.util.Objects.*;
+
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -16,9 +18,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.Objects;
-
-
 public class TournamentLobbyActivity extends AppCompatActivity {
 
     private MatchAdapter mAdapter;
@@ -29,7 +28,7 @@ public class TournamentLobbyActivity extends AppCompatActivity {
         setContentView(R.layout.activity_tournament_lobby);
 
         String tid   = getIntent().getStringExtra("tournamentId");
-        String myUid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+        String myUid = requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         RecyclerView rv = findViewById(R.id.matchesList);
@@ -59,7 +58,7 @@ public class TournamentLobbyActivity extends AppCompatActivity {
         };
 
         /* listen where playerA == myUid */
-        ListenerRegistration lA = db.collection("tournaments").document(Objects.requireNonNull(tid))
+        ListenerRegistration lA = db.collection("tournaments").document(requireNonNull(tid))
                 .collection("matches")
                 .whereEqualTo("playerA", myUid)
                 .addSnapshotListener(matchHandler);
