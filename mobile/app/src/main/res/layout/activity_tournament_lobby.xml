@@ -57,12 +57,14 @@
             android:text="@string/lobby_started"
         android:gravity="center" />
 
+        <!-- This is full player list
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/playersList"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:paddingTop="8dp"/>
+        -->
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/matchesList"
