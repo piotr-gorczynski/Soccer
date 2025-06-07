@@ -6,5 +6,5 @@
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorPlayer0">#FF0000</color>
     <color name="colorPlayer1">#0000FF</color>
-    <color name="secondaryText">#808080</color>   <!-- medium gray -->
+    <color name="colorGrey">#808080</color>   <!-- medium gray -->
 </resources>
