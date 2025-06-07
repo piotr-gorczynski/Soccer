@@ -11,8 +11,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
 
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Objects;
 
@@ -20,8 +22,7 @@ import java.util.Objects;
 public class TournamentLobbyActivity extends AppCompatActivity {
 
     private MatchAdapter mAdapter;
-    //private PlayerAdapter pAdapter;
-    private ListenerRegistration matchListener;
+    private ListenerRegistration matchListenerA, matchListenerB;
 
     @Override protected void onCreate(Bundle b) {
         super.onCreate(b);
@@ -40,28 +41,45 @@ public class TournamentLobbyActivity extends AppCompatActivity {
                                 .putExtra("GameType", 4)));
         rv.setAdapter(mAdapter);
 
-        matchListener = db.collection("tournaments").document(Objects.requireNonNull(tid))
-                .collection("matches")
-                .whereArrayContains("players", myUid)
-                .addSnapshotListener((snap,e)->{
-                    if (e!=null || snap==null) return;
-                    for (DocumentChange dc : snap.getDocumentChanges()) {
-                        switch (dc.getType()) {
-                            case ADDED    -> mAdapter.add(dc.getNewIndex(), dc.getDocument());
-                            case MODIFIED -> {
-                                int o=dc.getOldIndex(), n=dc.getNewIndex();
-                                if (o==n) mAdapter.set(o, dc.getDocument());
-                                else      mAdapter.move(o,n,dc.getDocument());
-                            }
-                            case REMOVED  -> mAdapter.remove(dc.getOldIndex());
-                        }
+        /* one common handler so we don’t repeat the diff logic */
+        EventListener<QuerySnapshot> matchHandler = (snap, e) -> {
+            if (e != null || snap == null) return;
+
+            for (DocumentChange dc : snap.getDocumentChanges()) {
+                switch (dc.getType()) {
+                    case ADDED    -> mAdapter.add   (dc.getNewIndex(), dc.getDocument());
+                    case MODIFIED -> {
+                        int o = dc.getOldIndex(), n = dc.getNewIndex();
+                        if (o == n)  mAdapter.set (o, dc.getDocument());
+                        else         mAdapter.move(o, n, dc.getDocument());
                     }
-                });
+                    case REMOVED  -> mAdapter.remove(dc.getOldIndex());
+                }
+            }
+        };
+
+        /* listen where playerA == myUid */
+        ListenerRegistration lA = db.collection("tournaments").document(Objects.requireNonNull(tid))
+                .collection("matches")
+                .whereEqualTo("playerA", myUid)
+                .addSnapshotListener(matchHandler);
+
+        /* listen where playerB == myUid */
+        ListenerRegistration lB = db.collection("tournaments").document(tid)
+                .collection("matches")
+                .whereEqualTo("playerB", myUid)
+                .addSnapshotListener(matchHandler);
+
+        /* keep references so you can remove them in onDestroy() */
+        matchListenerA = lA;
+        matchListenerB = lB;
+
     }
 
 
     @Override protected void onDestroy() {
-        if (matchListener != null) matchListener.remove();
+        if (matchListenerA != null) matchListenerA.remove();
+        if (matchListenerB != null) matchListenerB.remove();
         super.onDestroy();
     }
 }
