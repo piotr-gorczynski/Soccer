@@ -10,9 +10,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,6 +23,7 @@ import android.widget.TextView;
 public class TournamentLobbyActivity extends AppCompatActivity {
 
     private MatchAdapter mAdapter;
+    private PlayerAdapter pAdapter;
     private ListenerRegistration tourListener, matchListener;
 
     @Override protected void onCreate(Bundle b) {
@@ -30,6 +33,22 @@ public class TournamentLobbyActivity extends AppCompatActivity {
         String tid   = getIntent().getStringExtra("tournamentId");
         String myUid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        /* ───────── PLAYER LIST (new) ───────── */
+        RecyclerView pv = findViewById(R.id.playersList);
+        pv.setLayoutManager(new LinearLayoutManager(this));
+        pAdapter = new PlayerAdapter();          // adapter code from snippet
+        pv.setAdapter(pAdapter);
+
+        // Listen to /participants
+        db.collection("tournaments").document(Objects.requireNonNull(tid))
+                .collection("participants")
+                .addSnapshotListener((snap,e)->{
+                    if(e!=null || snap==null) return;
+                    List<String> ids = new ArrayList<>();
+                    for (DocumentSnapshot d : snap.getDocuments()) ids.add(d.getId());
+                    pAdapter.setAll(ids);              // refresh list
+                });
 
         /* matches RecyclerView */
         RecyclerView rv = findViewById(R.id.matchesList);
