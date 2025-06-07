@@ -1,78 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/lobbyRoot"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@color/colorWhite"
+    android:padding="20dp"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/colorGreenDark">
+    android:layout_height="match_parent">
 
-    <!-- Centered loading / waiting block (mirrors WaitingActivity) -->
-    <LinearLayout
-        android:id="@+id/waitingBlock"
+    <!-- banner -->
+    <TextView
+        android:id="@+id/runningBanner"
+        android:text="@string/lobby_started"
+        android:textColor="@color/colorGreenDark"
+        android:textStyle="bold"
+        android:layout_marginBottom="12dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+    <!-- matches list – fills the rest of the screen -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/matchesList"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:padding="24dp">
-
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:indeterminate="true" />
-
-        <TextView
-            android:id="@+id/waitingLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/lobby_waiting"
-        android:textSize="18sp"
-        android:textColor="@android:color/white"
-        android:paddingTop="16dp" />
-
-        <TextView
-            android:id="@+id/counter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textColor="@android:color/white"
-            android:paddingTop="4dp" />
-    </LinearLayout>
-
-    <!-- List / bracket that fades in once status == running -->
-    <LinearLayout
-        android:id="@+id/startedBlock"
-        android:visibility="gone"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="16dp">
-
-        <TextView
-            android:id="@+id/runningBanner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white"
-            android:textColor="@color/colorGreenDark"
-            android:textStyle="bold"
-            android:padding="8dp"
-            android:text="@string/lobby_started"
-        android:gravity="center" />
-
-        <!-- This is full player list
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/playersList"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:paddingTop="8dp"/>
-        -->
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/matchesList"
-            android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="true"/>
-
-    </LinearLayout>
-
-</FrameLayout>
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+</LinearLayout>
