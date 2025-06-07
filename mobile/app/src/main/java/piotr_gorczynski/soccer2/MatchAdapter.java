@@ -56,21 +56,24 @@ public class MatchAdapter
 
         /* ----------- nickname lookup ----------- */
         String nick = nickCache.get(oppUid);
-        if (nick != null) {
-            h.opponent.setText(nick);
-        } else {
-            // temporary fallback so row isn’t blank
-            h.opponent.setText(Objects.requireNonNull(oppUid).substring(0,6));
+        if (nick == null) {
+            h.opponent.setText(Objects.requireNonNull(oppUid).substring(0, 6));   // temporary stub
 
             FirebaseFirestore.getInstance()
                     .collection("users").document(oppUid).get()
                     .addOnSuccessListener(d -> {
                         String n = d.getString("nickname");
-                        if (n != null) {
-                            nickCache.put(oppUid, n);
-                            notifyItemChanged(pos);          // refresh this one row
+                        if (n == null) return;
+
+                        nickCache.put(oppUid, n);
+
+                        int posNow = h.getAdapterPosition();        // ← works on all versions
+                        if (posNow != RecyclerView.NO_POSITION) {
+                            notifyItemChanged(posNow);              // refresh the correct row
                         }
                     });
+        } else {
+            h.opponent.setText(nick);   // nickname already cached
         }
 
         /* ----------- status label ----------- */
