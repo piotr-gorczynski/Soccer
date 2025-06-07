@@ -73,7 +73,8 @@ public class TournamentLobbyActivity extends AppCompatActivity {
 
                     String status = snap.getString("status");
                     if ("running".equals(status)) {
-                        findViewById(R.id.waitingLabel).setVisibility(View.GONE);
+                        findViewById(R.id.waitingBlock).setVisibility(View.GONE);   // hide spinner block
+                        findViewById(R.id.startedBlock).setVisibility(View.VISIBLE); // show lists
                     }
                 });
 
