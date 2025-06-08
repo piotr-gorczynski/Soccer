@@ -18,7 +18,7 @@ steps:
       | head -n1 > /workspace/FIREBASE_PROJECT_ID.txt
       test -s /workspace/FIREBASE_PROJECT_ID.txt
 
-# 1. Clone your source (to pull in firebase.json & database.rules.json)
+# 1. Clone your source (to get firebase.json & database.rules.json)
 - name: 'gcr.io/cloud-builders/git'
   id: 'pull-source'
   entrypoint: bash
@@ -62,7 +62,7 @@ steps:
         --project "$project_id" \
       || echo "ℹ️ Instance already exists."
 
-# 4. Apply locked-mode rules to that instance
+# 4. Deploy *locked-mode* rules via firebase.json
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
   id: 'deploy-locked-rules'
   entrypoint: bash
@@ -71,13 +71,12 @@ steps:
     - |
       set -ex
       project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
-      instance="${project_id}-default-rtdb"
-      cd /workspace   # to pick up firebase.json & database.rules.json
-      echo "🔒 Applying locked-mode rules to $instance…"
-      /workspace/firebase/firebase database:rules:set \
-        database.rules.json \
-        "$instance" \
-        --project "$project_id"
+      cd /workspace
+      echo "🔒 Deploying locked-mode rules…"
+      /workspace/firebase/firebase deploy \
+        --only database \
+        --project "$project_id" \
+        --force
 
 options:
   logging: CLOUD_LOGGING_ONLY
