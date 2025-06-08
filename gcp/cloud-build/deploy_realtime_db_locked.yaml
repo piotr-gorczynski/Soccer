@@ -98,29 +98,42 @@ steps:
 
 # 6. Create the default RTDB via Management REST API
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-  id: 'create-default-rtdb-via-api'
+  id: 'create-default-rtdb'
   entrypoint: bash
   args:
     - '-c'
     - |
       set -ex
-      project_number=$(< /workspace/firebase_project_number.txt)
+      # read what we found earlier
       project_id=$(< /workspace/firebase_project_id.txt)
+      project_number=$(gcloud projects describe "$project_id" \
+                       --format="value(projectNumber)")
       instance_id="${project_id}-default-rtdb"
       location="us-central1"
 
-      token=$(gcloud auth print-access-token)
-      http_code=$(
-        curl -s -o /dev/null -w "%{http_code}" \
-          -X POST \
-          -H "Authorization: Bearer $token" \
-          "https://firebasedatabase.googleapis.com/v1beta/projects/${project_number}/locations/${location}/instances?databaseId=${instance_id}"
-      )
+      echo "🚀 Creating default RTDB instance $instance_id in $location…"
+      # grab an access token
+      access_token=$(gcloud auth print-access-token)
 
-      if [[ "$http_code" =~ ^(200|409)$ ]]; then
-        echo "✅ RTDB default instance created (or already exists)."
+      # invoke REST the same way your auth pipeline does:
+      response=$(curl -s -w '\n%{http_code}' -X POST \
+        -H "Authorization: Bearer $access_token" \
+        -H "Content-Type: application/json" \
+        "https://firebasedatabase.googleapis.com/v1beta/projects/${project_number}/locations/${location}/instances?databaseId=${instance_id}")
+      
+      # split body vs. status
+      http_code=$(echo "$response" | tail -n1)
+      body=$(echo "$response" | sed '$d')
+
+      if [[ "$http_code" == "200" ]]; then
+        echo "✅ Default RTDB created."
+        echo "$body"
+      elif [[ "$http_code" == "409" ]]; then
+        echo "✅ Default RTDB already exists."
       else
-        echo "❌ Failed to create default RTDB (HTTP $http_code)." >&2
+        echo "❌ Failed to create default RTDB — HTTP $http_code"
+        echo "Response body:"
+        echo "$body"
         exit 1
       fi
 
