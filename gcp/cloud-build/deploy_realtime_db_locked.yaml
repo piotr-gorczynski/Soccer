@@ -1,0 +1,56 @@
+# deploy_realtime_db_locked.yaml
+substitutions:
+  _ENVIRONMENT: 'dev'
+  _FOLDER_NAME: 'soccer'
+
+steps:
+# 0. Resolve Firebase project ID (unchanged)
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+  id: 'get-project-id'
+  entrypoint: bash
+  args:
+    - '-c'
+    - |
+      set -e
+      gcloud projects list \
+        --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
+        --format="value(projectId)" \
+        | head -n1 > /workspace/FIREBASE_PROJECT_ID.txt
+      test -s /workspace/FIREBASE_PROJECT_ID.txt
+
+# 1. Install Firebase CLI (unchanged)
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+  id: 'install-firebase-cli'
+  entrypoint: bash
+  args: ['-c', 'curl -sL https://firebase.tools | bash && cp /usr/local/bin/firebase /workspace/']
+
+# 2. Create the default RTDB instance in us-central1
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+  id: 'create-default-rtdb'
+  entrypoint: bash
+  args:
+    - '-c'
+    - |
+      set -e
+      project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
+      instance="${project_id}-default-rtdb"
+      /workspace/firebase deploy database:instances:create "$instance" \
+        --location us-central1 || echo "Instance already exists."
+
+# 3. Deploy *locked-mode* rules from the external file
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+  id: 'deploy-locked-rules'
+  entrypoint: bash
+  args:
+    - '-c'
+    - |
+      set -e
+      project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
+      cd /workspace                       # firebase.json & database.rules.json are already here
+      /workspace/firebase deploy \
+        --only database \
+        --project "$project_id" \
+        --force
+
+options:
+  logging: CLOUD_LOGGING_ONLY
