@@ -26,9 +26,9 @@ steps:
         > /workspace/firebase_project_number.txt
       test -s /workspace/firebase_project_number.txt
 
-# 1. Grant Cloud Build SA Realtime Database Admin role
+# 1. Grant Realtime Database Admin to Cloud Build & Compute SA
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-  id: 'grant-firebase-db-admin-role'
+  id: 'grant-db-admin-roles'
   entrypoint: bash
   args:
     - '-c'
@@ -36,9 +36,16 @@ steps:
       set -ex
       project=$(< /workspace/firebase_project_id.txt)
       number=$(< /workspace/firebase_project_number.txt)
+
       echo "🔐 Granting roles/firebasedatabase.admin to Cloud Build SA..."
       gcloud projects add-iam-policy-binding "$project" \
         --member="serviceAccount:${number}@cloudbuild.gserviceaccount.com" \
+        --role="roles/firebasedatabase.admin" \
+        --quiet
+
+      echo "🔐 Granting roles/firebasedatabase.admin to Compute Engine default SA..."
+      gcloud projects add-iam-policy-binding "$project" \
+        --member="serviceAccount:${number}-compute@developer.gserviceaccount.com" \
         --role="roles/firebasedatabase.admin" \
         --quiet
 
