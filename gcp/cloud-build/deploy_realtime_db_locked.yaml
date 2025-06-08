@@ -154,7 +154,7 @@ steps:
         exit 1
       fi
 
-# 7. Deploy locked-mode rules via firebase.json
+# 7. Deploy locked-mode rules via explicit database:rules:set
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
   id: 'deploy-locked-rules'
   entrypoint: bash
@@ -164,10 +164,13 @@ steps:
       set -ex
       project=$(< /workspace/firebase_project_id.txt)
       cd /workspace
-      /workspace/firebase/firebase deploy \
-        --only database \
-        --project "$project" \
-        --force
+
+      echo "🔒 Deploying rules to RealtimeDB instance '$project'…"
+      /workspace/firebase/firebase database:rules:set database.rules.json \
+        --instance "$project" \
+        --project  "$project" \
+        --quiet
+
 
 options:
   logging: CLOUD_LOGGING_ONLY
