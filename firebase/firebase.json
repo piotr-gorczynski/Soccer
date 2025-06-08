@@ -27,7 +27,11 @@
     {
       "source": "functions/start-tournament",
       "codebase": "start-tournament"
-    }
+,
+    {
+      "source": "functions/sync-status-to-firestore",
+      "codebase": "sync-status-to-firestore"
+    }    }
   ],
   "firestore": {
     "rules": "firestore.rules"
