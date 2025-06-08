@@ -12,21 +12,21 @@ steps:
     - '-c'
     - |
       set -ex
-      # find the project ID
+      # project ID
       gcloud projects list \
         --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
-        --format="value(projectId)" \
-      | head -n1 > /workspace/firebase_project_id.txt
+        --format="value(projectId)" | head -n1 \
+        > /workspace/firebase_project_id.txt
       test -s /workspace/firebase_project_id.txt
 
-      # fetch its numeric project number
+      # project number
       project_id=$(< /workspace/firebase_project_id.txt)
       gcloud projects describe "$project_id" \
         --format="value(projectNumber)" \
         > /workspace/firebase_project_number.txt
       test -s /workspace/firebase_project_number.txt
 
-# 1. Grant Realtime Database Admin to Cloud Build & Compute SA
+# 1. Grant Realtime Database Admin to Cloud Build SA & Compute SA
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
   id: 'grant-db-admin-roles'
   entrypoint: bash
@@ -37,19 +37,40 @@ steps:
       project=$(< /workspace/firebase_project_id.txt)
       number=$(< /workspace/firebase_project_number.txt)
 
-      echo "🔐 Granting roles/firebasedatabase.admin to Cloud Build SA..."
+      # Cloud Build SA
       gcloud projects add-iam-policy-binding "$project" \
         --member="serviceAccount:${number}@cloudbuild.gserviceaccount.com" \
-        --role="roles/firebasedatabase.admin" \
-        --quiet
+        --role="roles/firebasedatabase.admin" --quiet
 
-      echo "🔐 Granting roles/firebasedatabase.admin to Compute Engine default SA..."
+      # Compute Engine default SA (just in case)
       gcloud projects add-iam-policy-binding "$project" \
         --member="serviceAccount:${number}-compute@developer.gserviceaccount.com" \
-        --role="roles/firebasedatabase.admin" \
-        --quiet
+        --role="roles/firebasedatabase.admin" --quiet
 
-# 2. Clone your source (to pull in firebase.json & database.rules.json)
+# 2. Enable the Realtime Database Management API
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+  id: 'enable-rtdb-api'
+  entrypoint: bash
+  args:
+    - '-c'
+    - |
+      set -ex
+      project=$(< /workspace/firebase_project_id.txt)
+      gcloud services enable firebasedatabase.googleapis.com \
+        --project="$project" --quiet
+
+# 3. Small delay to let IAM & service enablement propagate
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+  id: 'wait-for-propagation'
+  entrypoint: bash
+  args:
+    - '-c'
+    - |
+      set -ex
+      echo "⏳ Waiting 15s for IAM & API enablement to propagate..."
+      sleep 15
+
+# 4. Clone your source (to pull in firebase.json & database.rules.json)
 - name: 'gcr.io/cloud-builders/git'
   id: 'pull-source'
   entrypoint: bash
@@ -62,7 +83,7 @@ steps:
       cp /workspace/soccer/gcp/cloud-build/firebase.json    /workspace/firebase.json
       cp /workspace/soccer/gcp/cloud-build/database.rules.json /workspace/database.rules.json
 
-# 3. Install Firebase CLI
+# 5. Install Firebase CLI
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
   id: 'install-firebase-cli'
   entrypoint: bash
@@ -70,14 +91,12 @@ steps:
     - '-c'
     - |
       set -ex
-      echo "⬇️ Installing Firebase CLI..."
       curl -sL https://firebase.tools | bash
       mkdir -p /workspace/firebase
       cp /usr/local/bin/firebase /workspace/firebase/
       chmod +x /workspace/firebase/firebase
-      echo "✅ Firebase CLI installed."
 
-# 4. Create the default RTDB via Management REST API
+# 6. Create the default RTDB via Management REST API
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
   id: 'create-default-rtdb-via-api'
   entrypoint: bash
@@ -90,9 +109,7 @@ steps:
       instance_id="${project_id}-default-rtdb"
       location="us-central1"
 
-      echo "🚀 Creating default RTDB $instance_id in $location via REST API…"
       token=$(gcloud auth print-access-token)
-
       http_code=$(
         curl -s -o /dev/null -w "%{http_code}" \
           -X POST \
@@ -100,14 +117,14 @@ steps:
           "https://firebasedatabase.googleapis.com/v1beta/projects/${project_number}/locations/${location}/instances?databaseId=${instance_id}"
       )
 
-      if [[ "$http_code" == "200" ]] || [[ "$http_code" == "409" ]]; then
+      if [[ "$http_code" =~ ^(200|409)$ ]]; then
         echo "✅ RTDB default instance created (or already exists)."
       else
         echo "❌ Failed to create default RTDB (HTTP $http_code)." >&2
         exit 1
       fi
 
-# 5. Deploy locked-mode rules via firebase.json
+# 7. Deploy locked-mode rules via firebase.json
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
   id: 'deploy-locked-rules'
   entrypoint: bash
@@ -117,7 +134,6 @@ steps:
       set -ex
       project=$(< /workspace/firebase_project_id.txt)
       cd /workspace
-      echo "🔒 Deploying locked-mode rules…"
       /workspace/firebase/firebase deploy \
         --only database \
         --project "$project" \
