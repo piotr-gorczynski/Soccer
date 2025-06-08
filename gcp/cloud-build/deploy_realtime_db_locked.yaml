@@ -36,8 +36,12 @@ steps:
       set -ex
       project=$(< /workspace/firebase_project_id.txt)
 
-      # the SA you want to impersonate
-      admin_sa="firebase-adminsdk@${project}.iam.gserviceaccount.com"
+      # 1a) discover the real Admin SDK SA
+      admin_sa=$(gcloud iam service-accounts list \
+        --project="$project" \
+        --filter="displayName:Firebase Admin SDK" \
+        --format="value(email)")
+      test -n "$admin_sa"
 
       # whichever SA is running this build
       build_sa=$(gcloud auth list --filter=status:ACTIVE \
