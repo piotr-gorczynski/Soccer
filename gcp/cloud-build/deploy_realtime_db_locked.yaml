@@ -4,7 +4,7 @@ substitutions:
   _FOLDER_NAME: 'soccer'
 
 steps:
-# 0. Resolve Firebase project ID (unchanged)
+# 0. Resolve Firebase project ID
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
   id: 'get-project-id'
   entrypoint: bash
@@ -18,11 +18,20 @@ steps:
         | head -n1 > /workspace/FIREBASE_PROJECT_ID.txt
       test -s /workspace/FIREBASE_PROJECT_ID.txt
 
-# 1. Install Firebase CLI (unchanged)
+# 1. Install Firebase CLI (fixed)
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
   id: 'install-firebase-cli'
   entrypoint: bash
-  args: ['-c', 'curl -sL https://firebase.tools | bash && cp /usr/local/bin/firebase /workspace/']
+  args:
+    - '-c'
+    - |
+      set -e
+      echo "⬇️ Installing Firebase CLI..."
+      curl -sL https://firebase.tools | bash
+      mkdir -p /workspace/firebase
+      cp /usr/local/bin/firebase /workspace/firebase/
+      chmod +x /workspace/firebase/firebase
+      echo "✅ Firebase CLI installed."
 
 # 2. Create the default RTDB instance in us-central1
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
@@ -34,8 +43,11 @@ steps:
       set -e
       project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
       instance="${project_id}-default-rtdb"
-      /workspace/firebase deploy database:instances:create "$instance" \
-        --location us-central1 || echo "Instance already exists."
+      echo "🚀 Creating default RTDB $instance in us-central1…"
+      /workspace/firebase/firebase database:instances:create "$instance" \
+        --location us-central1 \
+        --project "$project_id" \
+      || echo "ℹ️ Instance already exists."
 
 # 3. Deploy *locked-mode* rules from the external file
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
@@ -46,8 +58,9 @@ steps:
     - |
       set -e
       project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
-      cd /workspace                       # firebase.json & database.rules.json are already here
-      /workspace/firebase deploy \
+      cd /workspace   # firebase.json & database.rules.json must be here
+      echo "🔒 Deploying locked-mode rules…"
+      /workspace/firebase/firebase deploy \
         --only database \
         --project "$project_id" \
         --force
