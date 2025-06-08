@@ -11,11 +11,11 @@ steps:
   args:
     - '-c'
     - |
-      set -e
+      set -ex
       gcloud projects list \
         --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
         --format="value(projectId)" \
-        | head -n1 > /workspace/FIREBASE_PROJECT_ID.txt
+      | head -n1 > /workspace/FIREBASE_PROJECT_ID.txt
       test -s /workspace/FIREBASE_PROJECT_ID.txt
 
 # 1. Clone your source (to pull in firebase.json & database.rules.json)
@@ -25,7 +25,7 @@ steps:
   args:
     - '-c'
     - |
-      set -e
+      set -ex
       git clone -b development --single-branch \
         https://github.com/piotr-gorczynski/Soccer.git /workspace/soccer
       cp /workspace/soccer/gcp/cloud-build/firebase.json  /workspace/firebase.json
@@ -38,7 +38,7 @@ steps:
   args:
     - '-c'
     - |
-      set -e
+      set -ex
       echo "⬇️ Installing Firebase CLI..."
       curl -sL https://firebase.tools | bash
       mkdir -p /workspace/firebase
@@ -46,37 +46,37 @@ steps:
       chmod +x /workspace/firebase/firebase
       echo "✅ Firebase CLI installed."
 
-# 3. Create the *default* RTDB in us-central1
+# 3. Create the *default* RTDB instance in us-central1
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
   id: 'create-default-rtdb'
   entrypoint: bash
   args:
     - '-c'
     - |
-      set -e
+      set -ex
       project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
-      instance="$project_id"   # default instance ID = projectId
+      instance="$project_id"
       echo "🚀 Creating default RTDB $instance in us-central1…"
       /workspace/firebase/firebase database:instances:create "$instance" \
         --location us-central1 \
         --project "$project_id" \
       || echo "ℹ️ Instance already exists."
 
-# 4. Deploy *locked-mode* rules from your checked-in file
+# 4. Deploy *locked-mode* rules against that instance
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
   id: 'deploy-locked-rules'
   entrypoint: bash
   args:
     - '-c'
     - |
-      set -e
+      set -ex
       project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
-      cd /workspace               # root now has firebase.json & database.rules.json
-      echo "🔒 Deploying locked-mode rules…"
-      /workspace/firebase/firebase deploy \
-        --only database \
-        --project "$project_id" \
-        --force
+      instance="$project_id"
+      echo "🔒 Applying locked-mode rules to $instance…"
+      /workspace/firebase/firebase database:rules:set \
+        database.rules.json \
+        --instance "$instance" \
+        --project "$project_id"
 
 options:
   logging: CLOUD_LOGGING_ONLY
