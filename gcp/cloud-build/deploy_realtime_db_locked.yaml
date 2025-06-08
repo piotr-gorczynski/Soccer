@@ -124,20 +124,20 @@ steps:
       set -ex
       project=$(< /workspace/firebase_project_id.txt)
       project_number=$(< /workspace/firebase_project_number.txt)
-      instance_id="${project}-default-rtdb"
+      # 👇 use the plain project ID here
+      instance_id="${project}"
       location="us-central1"
 
-      # discover Admin SDK SA again
+      # re-discover the Firebase Admin SDK SA
       admin_sa=$(gcloud iam service-accounts list \
         --project="$project" \
         --filter="email:firebase-adminsdk" \
         --format="value(email)")
-
-      echo "🚀 Impersonating $admin_sa to create RTDB $instance_id in $location…"
+      echo "🚀 Impersonating $admin_sa to create default RTDB $instance_id in $location…"
       token=$(gcloud auth print-access-token \
         --impersonate-service-account="$admin_sa")
 
-      # now call the REST API
+      # hit the management endpoint
       resp=$(curl -s -w '\n%{http_code}' -X POST \
         -H "Authorization: Bearer $token" \
         "https://firebasedatabase.googleapis.com/v1beta/projects/${project_number}/locations/${location}/instances?databaseId=${instance_id}")
@@ -146,9 +146,9 @@ steps:
       body=$(echo "$resp" | sed '$d')
 
       if [[ "$code" == "200" ]]; then
-        echo "✅ Created RTDB:"; echo "$body"
+        echo "✅ Default RTDB created:"; echo "$body"
       elif [[ "$code" == "409" ]]; then
-        echo "✅ RTDB already exists."
+        echo "✅ Default RTDB already exists."
       else
         echo "❌ Failed (HTTP $code):"; echo "$body" >&2
         exit 1
