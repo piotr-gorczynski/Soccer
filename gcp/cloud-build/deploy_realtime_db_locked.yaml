@@ -26,7 +26,7 @@ steps:
         > /workspace/firebase_project_number.txt
       test -s /workspace/firebase_project_number.txt
 
-# 1. Grant DB-Admin + TokenCreator on the Admin-SDK SA in YOUR firebase project
+# 1. Grant DB-Admin + TokenCreator on the Admin-SDK SA in your Firebase project
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
   id: 'grant-db-admin-and-token-creator'
   entrypoint: bash
@@ -36,28 +36,28 @@ steps:
       set -ex
       project=$(< /workspace/firebase_project_id.txt)
 
-      # 1a) discover the real Admin SDK SA
+      # 1a) discover the real Admin SDK SA by email prefix
       admin_sa=$(gcloud iam service-accounts list \
         --project="$project" \
-        --filter="displayName:Firebase Admin SDK" \
+        --filter="email:firebase-adminsdk" \
         --format="value(email)")
       test -n "$admin_sa"
 
-      # whichever SA is running this build
-      build_sa=$(gcloud auth list --filter=status:ACTIVE \
-                 --format="value(account)")
+      # 1b) whichever SA is running this build
+      build_sa=$(gcloud auth list \
+        --filter="status:ACTIVE" \
+        --format="value(account)")
 
       echo "🔐 Binding roles/firebasedatabase.admin & iam.serviceAccountTokenCreator..."
 
-      # 1️⃣ allow the build SA to call the Realtime-DB admin API
+      # allow the build SA to call the RTDB admin API
       gcloud projects add-iam-policy-binding "$project" \
         --member="serviceAccount:${build_sa}" \
         --role="roles/firebasedatabase.admin" \
         --quiet
 
-      # 2️⃣ allow it to mint tokens as the Admin-SDK SA
-      gcloud iam service-accounts add-iam-policy-binding \
-        "$admin_sa" \
+      # allow it to mint tokens as the Admin-SDK SA
+      gcloud iam service-accounts add-iam-policy-binding "$admin_sa" \
         --member="serviceAccount:${build_sa}" \
         --role="roles/iam.serviceAccountTokenCreator" \
         --project="$project" \
@@ -123,29 +123,34 @@ steps:
     - |
       set -ex
       project=$(< /workspace/firebase_project_id.txt)
-      number=$(gcloud projects describe "$project" \
-                --format="value(projectNumber)")
-      inst="${project}-default-rtdb"
-      loc="us-central1"
+      project_number=$(< /workspace/firebase_project_number.txt)
+      instance_id="${project}-default-rtdb"
+      location="us-central1"
 
-      echo "🚀 Impersonating $admin_sa to create RTDB $inst…"
+      # discover Admin SDK SA again
+      admin_sa=$(gcloud iam service-accounts list \
+        --project="$project" \
+        --filter="email:firebase-adminsdk" \
+        --format="value(email)")
+
+      echo "🚀 Impersonating $admin_sa to create RTDB $instance_id in $location…"
       token=$(gcloud auth print-access-token \
-        --impersonate-service-account="firebase-adminsdk-${project}@${project}.iam.gserviceaccount.com")
+        --impersonate-service-account="$admin_sa")
 
+      # now call the REST API
       resp=$(curl -s -w '\n%{http_code}' -X POST \
         -H "Authorization: Bearer $token" \
-        "https://firebasedatabase.googleapis.com/v1beta/projects/${number}/locations/${loc}/instances?databaseId=${inst}")
+        "https://firebasedatabase.googleapis.com/v1beta/projects/${project_number}/locations/${location}/instances?databaseId=${instance_id}")
 
       code=$(echo "$resp" | tail -n1)
       body=$(echo "$resp" | sed '$d')
 
       if [[ "$code" == "200" ]]; then
-        echo "✅ Created:"; echo "$body"
+        echo "✅ Created RTDB:"; echo "$body"
       elif [[ "$code" == "409" ]]; then
-        echo "✅ Already exists."
+        echo "✅ RTDB already exists."
       else
-        echo "❌ HTTP $code" >&2
-        echo "$body" >&2
+        echo "❌ Failed (HTTP $code):"; echo "$body" >&2
         exit 1
       fi
 
