@@ -21,19 +21,17 @@ import androidx.core.content.ContextCompat;
 
 import java.util.Objects;
 
-import com.google.firebase.firestore.DocumentReference;
-
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
+
 
 
 
 public class MenuActivity extends AppCompatActivity {
 
     private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 101;
+
+    private DatabaseReference presenceRef;
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -183,38 +181,27 @@ public class MenuActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
-        DocumentReference userDocRef = FirebaseFirestore.getInstance()
-                .collection("users")
-                .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null) return; // User not logged in
 
-        connectedRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Boolean connected = snapshot.getValue(Boolean.class);
-                if (connected != null && connected) {
-                    userDocRef.update("online", true);
-                    userDocRef.update("lastOnline", com.google.firebase.firestore.FieldValue.serverTimestamp());
-                } else {
-                    userDocRef.update("online", false);
-                }
-            }
+        // Reference in Realtime Database
+        presenceRef = FirebaseDatabase.getInstance()
+                .getReference("status")
+                .child(uid);
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.w("TAG", "Listener cancelled", error.toException());
-            }
-        });
+        // Set user as online
+        presenceRef.setValue("online");
+        // Ensure that when the client disconnects, they will be marked as offline
+        presenceRef.onDisconnect().setValue("offline");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        DocumentReference userDocRef = FirebaseFirestore.getInstance()
-                .collection("users")
-                .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
 
-        userDocRef.update("online", false);
+        if (presenceRef != null) {
+            presenceRef.setValue("offline");
+        }
     }
 
 }
