@@ -37,7 +37,7 @@ steps:
       project=$(< /workspace/firebase_project_id.txt)
 
       # the SA you want to impersonate
-      admin_sa="firebase-adminsdk-fbsvc@${project}.iam.gserviceaccount.com"
+      admin_sa="firebase-adminsdk@${project}.iam.gserviceaccount.com"
 
       # whichever SA is running this build
       build_sa=$(gcloud auth list --filter=status:ACTIVE \
@@ -53,10 +53,10 @@ steps:
 
       # 2️⃣ allow it to mint tokens as the Admin-SDK SA
       gcloud iam service-accounts add-iam-policy-binding \
-        --project="$project" \
-        --iam-account="$admin_sa" \
+        "$admin_sa" \
         --member="serviceAccount:${build_sa}" \
         --role="roles/iam.serviceAccountTokenCreator" \
+        --project="$project" \
         --quiet
 
 
