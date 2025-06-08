@@ -154,7 +154,7 @@ steps:
         exit 1
       fi
 
-# 7. Deploy locked-mode rules via explicit database:rules:set
+# 7. Deploy locked-mode rules via REST API
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
   id: 'deploy-locked-rules'
   entrypoint: bash
@@ -162,14 +162,34 @@ steps:
     - '-c'
     - |
       set -ex
-      project=$(< /workspace/firebase_project_id.txt)
-      cd /workspace
 
-      echo "🔒 Deploying rules to RealtimeDB instance '$project'…"
-      /workspace/firebase/firebase database:rules:set database.rules.json \
-        --instance "$project" \
-        --project  "$project" \
-        --quiet
+      project=$(< /workspace/firebase_project_id.txt)
+
+      # your default Realtime-DB url (as returned by the create step)
+      db_url="https://${project}.firebaseio.com"
+
+      # find the Admin-SDK service account in this project
+      admin_sa=$(gcloud iam service-accounts list \
+        --project="$project" \
+        --filter="email:firebase-adminsdk" \
+        --format="value(email)")
+
+      echo "🔒 Impersonating $admin_sa to push rules to $db_url..."
+      token=$(gcloud auth print-access-token \
+        --impersonate-service-account="$admin_sa")
+
+      echo "🔒 PUTting rules from database.rules.json → $db_url/.settings/rules.json"
+      http_code=$(curl -s -w '%{http_code}' -o /dev/null -X PUT \
+        -H "Content-Type: application/json" \
+        --data-binary @database.rules.json \
+        "${db_url}/.settings/rules.json?access_token=${token}")
+
+      if [[ "$http_code" == "200" ]]; then
+        echo "✅ Rules successfully deployed (HTTP 200)."
+      else
+        echo "❌ Rules deployment failed (HTTP $http_code)." >&2
+        exit 1
+      fi
 
 
 options:
