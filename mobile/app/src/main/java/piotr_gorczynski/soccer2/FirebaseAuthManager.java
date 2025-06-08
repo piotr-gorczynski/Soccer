@@ -108,6 +108,7 @@ public class FirebaseAuthManager {
                         Map<String, Object> userData = new HashMap<>();
                         userData.put("nickname", nickname);
                         userData.put("email", email); // optional
+                        userData.put("online", true); // optional
 
                         db.collection("users").document(uid).set(userData)
                                 .addOnSuccessListener(aVoid ->

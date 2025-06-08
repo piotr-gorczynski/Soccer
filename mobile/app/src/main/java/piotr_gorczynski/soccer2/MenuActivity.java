@@ -21,6 +21,15 @@ import androidx.core.content.ContextCompat;
 
 import java.util.Objects;
 
+import com.google.firebase.firestore.DocumentReference;
+
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+
+
 
 public class MenuActivity extends AppCompatActivity {
 
@@ -170,5 +179,42 @@ public class MenuActivity extends AppCompatActivity {
         startActivity(new Intent(this, TournamentsActivity.class));
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        DatabaseReference connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
+        DocumentReference userDocRef = FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
+
+        connectedRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Boolean connected = snapshot.getValue(Boolean.class);
+                if (connected != null && connected) {
+                    userDocRef.update("online", true);
+                    userDocRef.update("lastOnline", com.google.firebase.firestore.FieldValue.serverTimestamp());
+                } else {
+                    userDocRef.update("online", false);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.w("TAG", "Listener cancelled", error.toException());
+            }
+        });
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        DocumentReference userDocRef = FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
+
+        userDocRef.update("online", false);
+    }
 
 }
