@@ -15,8 +15,8 @@ steps:
       gcloud projects list \
         --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
         --format="value(projectId)" \
-      | head -n1 > /workspace/FIREBASE_PROJECT_ID.txt
-      test -s /workspace/FIREBASE_PROJECT_ID.txt
+      | head -n1 > /workspace/firebase_project_id.txt
+      test -s /workspace/firebase_project_id.txt
 
 # 1. Clone your source (to pull in firebase.json & database.rules.json)
 - name: 'gcr.io/cloud-builders/git'
@@ -28,7 +28,7 @@ steps:
       set -ex
       git clone -b development --single-branch \
         https://github.com/piotr-gorczynski/Soccer.git /workspace/soccer
-      cp /workspace/soccer/gcp/cloud-build/firebase.json  /workspace/firebase.json
+      cp /workspace/soccer/gcp/cloud-build/firebase.json    /workspace/firebase.json
       cp /workspace/soccer/gcp/cloud-build/database.rules.json /workspace/database.rules.json
 
 # 2. Install Firebase CLI
@@ -46,7 +46,7 @@ steps:
       chmod +x /workspace/firebase/firebase
       echo "✅ Firebase CLI installed."
 
-# 3. Call the Firebase Management API to create the DEFAULT RTDB
+# 3. Call the Management API to create the default RTDB
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
   id: 'create-default-rtdb-via-api'
   entrypoint: bash
@@ -54,21 +54,21 @@ steps:
     - '-c'
     - |
       set -ex
-      PROJECT=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
-      INSTANCE_ID="${PROJECT}-default-rtdb"
-      LOCATION="us-central1"
-      echo "🚀 Creating default RTDB $INSTANCE_ID in $LOCATION via REST API…"
-      TOKEN="$(gcloud auth print-access-token)"
-      HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+      project=$(cat /workspace/firebase_project_id.txt)
+      instance_id="${project}-default-rtdb"
+      location="us-central1"
+      echo "🚀 Creating default RTDB $instance_id in $location via REST API…"
+      token=$(gcloud auth print-access-token)
+      http_code=$(curl -s -o /dev/null -w "%{http_code}" \
         -X POST \
-        -H "Authorization: Bearer $TOKEN" \
+        -H "Authorization: Bearer $token" \
         -H "Content-Type: application/json" \
-        -d "{\"instanceId\":\"$INSTANCE_ID\",\"locationId\":\"$LOCATION\",\"type\":\"DEFAULT_DATABASE\"}" \
-        "https://firebase.googleapis.com/v1beta1/projects/$PROJECT/locations/$LOCATION/instances")
-      if [ "$HTTP_CODE" -eq 200 ] || [ "$HTTP_CODE" -eq 409 ]; then
+        -d "{\"instanceId\":\"$instance_id\",\"locationId\":\"$location\",\"type\":\"DEFAULT_DATABASE\"}" \
+        "https://firebase.googleapis.com/v1beta1/projects/$project/locations/$location/instances")
+      if [ "$http_code" -eq 200 ] || [ "$http_code" -eq 409 ]; then
         echo "✅ RTDB default instance created (or already exists)."
       else
-        echo "❌ Failed to create default RTDB (HTTP $HTTP_CODE)." >&2
+        echo "❌ Failed to create default RTDB (HTTP $http_code)." >&2
         exit 1
       fi
 
@@ -80,12 +80,12 @@ steps:
     - '-c'
     - |
       set -ex
-      PROJECT=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
+      project=$(cat /workspace/firebase_project_id.txt)
       cd /workspace
       echo "🔒 Deploying locked-mode rules…"
       /workspace/firebase/firebase deploy \
         --only database \
-        --project "$PROJECT" \
+        --project "$project" \
         --force
 
 options:
