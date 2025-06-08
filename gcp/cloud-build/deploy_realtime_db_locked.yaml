@@ -16,17 +16,33 @@ steps:
       gcloud projects list \
         --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
         --format="value(projectId)" \
-        | head -n1 > /workspace/firebase_project_id.txt
+      | head -n1 > /workspace/firebase_project_id.txt
       test -s /workspace/firebase_project_id.txt
 
-      # now fetch its numeric project number
+      # fetch its numeric project number
       project_id=$(< /workspace/firebase_project_id.txt)
       gcloud projects describe "$project_id" \
         --format="value(projectNumber)" \
         > /workspace/firebase_project_number.txt
       test -s /workspace/firebase_project_number.txt
 
-# 1. Clone your source (to pull in firebase.json & database.rules.json)
+# 1. Grant Cloud Build SA Realtime Database Admin role
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+  id: 'grant-firebase-db-admin-role'
+  entrypoint: bash
+  args:
+    - '-c'
+    - |
+      set -ex
+      project=$(< /workspace/firebase_project_id.txt)
+      number=$(< /workspace/firebase_project_number.txt)
+      echo "🔐 Granting roles/firebasedatabase.admin to Cloud Build SA..."
+      gcloud projects add-iam-policy-binding "$project" \
+        --member="serviceAccount:${number}@cloudbuild.gserviceaccount.com" \
+        --role="roles/firebasedatabase.admin" \
+        --quiet
+
+# 2. Clone your source (to pull in firebase.json & database.rules.json)
 - name: 'gcr.io/cloud-builders/git'
   id: 'pull-source'
   entrypoint: bash
@@ -39,7 +55,7 @@ steps:
       cp /workspace/soccer/gcp/cloud-build/firebase.json    /workspace/firebase.json
       cp /workspace/soccer/gcp/cloud-build/database.rules.json /workspace/database.rules.json
 
-# 2. Install Firebase CLI
+# 3. Install Firebase CLI
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
   id: 'install-firebase-cli'
   entrypoint: bash
@@ -54,7 +70,7 @@ steps:
       chmod +x /workspace/firebase/firebase
       echo "✅ Firebase CLI installed."
 
-# 3. Create the default RTDB via Management REST API
+# 4. Create the default RTDB via Management REST API
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
   id: 'create-default-rtdb-via-api'
   entrypoint: bash
@@ -84,7 +100,7 @@ steps:
         exit 1
       fi
 
-# 4. Deploy locked-mode rules via firebase.json
+# 5. Deploy locked-mode rules via firebase.json
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
   id: 'deploy-locked-rules'
   entrypoint: bash
