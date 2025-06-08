@@ -55,14 +55,14 @@ steps:
     - |
       set -ex
       project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
-      instance="$project_id"
-      echo "🚀 Creating default RTDB $instance in us-central1…"
+      instance="${project_id}-default-rtdb"
+      echo "🚀 Creating default RTDB instance $instance in us-central1…"
       /workspace/firebase/firebase database:instances:create "$instance" \
         --location us-central1 \
         --project "$project_id" \
       || echo "ℹ️ Instance already exists."
 
-# 4. Deploy *locked-mode* rules against that instance
+# 4. Apply locked-mode rules to that instance
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
   id: 'deploy-locked-rules'
   entrypoint: bash
@@ -71,11 +71,12 @@ steps:
     - |
       set -ex
       project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
-      instance="$project_id"
+      instance="${project_id}-default-rtdb"
+      cd /workspace   # to pick up firebase.json & database.rules.json
       echo "🔒 Applying locked-mode rules to $instance…"
       /workspace/firebase/firebase database:rules:set \
         database.rules.json \
-        --instance "$instance" \
+        "$instance" \
         --project "$project_id"
 
 options:
