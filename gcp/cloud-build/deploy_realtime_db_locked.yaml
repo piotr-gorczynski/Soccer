@@ -18,7 +18,7 @@ steps:
       | head -n1 > /workspace/FIREBASE_PROJECT_ID.txt
       test -s /workspace/FIREBASE_PROJECT_ID.txt
 
-# 1. Clone your source (to get firebase.json & database.rules.json)
+# 1. Clone your source (to pull in firebase.json & database.rules.json)
 - name: 'gcr.io/cloud-builders/git'
   id: 'pull-source'
   entrypoint: bash
@@ -46,23 +46,33 @@ steps:
       chmod +x /workspace/firebase/firebase
       echo "✅ Firebase CLI installed."
 
-# 3. Create the *default* RTDB instance in us-central1
+# 3. Call the Firebase Management API to create the DEFAULT RTDB
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-  id: 'create-default-rtdb'
+  id: 'create-default-rtdb-via-api'
   entrypoint: bash
   args:
     - '-c'
     - |
       set -ex
-      project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
-      instance="${project_id}-default-rtdb"
-      echo "🚀 Creating default RTDB instance $instance in us-central1…"
-      /workspace/firebase/firebase database:instances:create "$instance" \
-        --location us-central1 \
-        --project "$project_id" \
-      || echo "ℹ️ Instance already exists."
+      PROJECT=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
+      INSTANCE_ID="${PROJECT}-default-rtdb"
+      LOCATION="us-central1"
+      echo "🚀 Creating default RTDB $INSTANCE_ID in $LOCATION via REST API…"
+      TOKEN="$(gcloud auth print-access-token)"
+      HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
+        -X POST \
+        -H "Authorization: Bearer $TOKEN" \
+        -H "Content-Type: application/json" \
+        -d "{\"instanceId\":\"$INSTANCE_ID\",\"locationId\":\"$LOCATION\",\"type\":\"DEFAULT_DATABASE\"}" \
+        "https://firebase.googleapis.com/v1beta1/projects/$PROJECT/locations/$LOCATION/instances")
+      if [ "$HTTP_CODE" -eq 200 ] || [ "$HTTP_CODE" -eq 409 ]; then
+        echo "✅ RTDB default instance created (or already exists)."
+      else
+        echo "❌ Failed to create default RTDB (HTTP $HTTP_CODE)." >&2
+        exit 1
+      fi
 
-# 4. Deploy *locked-mode* rules via firebase.json
+# 4. Deploy locked-mode rules via firebase.json
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
   id: 'deploy-locked-rules'
   entrypoint: bash
@@ -70,12 +80,12 @@ steps:
     - '-c'
     - |
       set -ex
-      project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
+      PROJECT=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
       cd /workspace
       echo "🔒 Deploying locked-mode rules…"
       /workspace/firebase/firebase deploy \
         --only database \
-        --project "$project_id" \
+        --project "$PROJECT" \
         --force
 
 options:
