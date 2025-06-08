@@ -26,26 +26,26 @@ steps:
         > /workspace/firebase_project_number.txt
       test -s /workspace/firebase_project_number.txt
 
-# 1. Grant Realtime Database Admin to Cloud Build SA & Compute SA
+# 1. Grant Realtime Database Admin to the active Cloud Build SA
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-  id: 'grant-db-admin-roles'
+  id: 'grant-db-admin-role'
   entrypoint: bash
   args:
     - '-c'
     - |
       set -ex
       project=$(< /workspace/firebase_project_id.txt)
-      number=$(< /workspace/firebase_project_number.txt)
 
-      # Cloud Build SA
-      gcloud projects add-iam-policy-binding "$project" \
-        --member="serviceAccount:${number}@cloudbuild.gserviceaccount.com" \
-        --role="roles/firebasedatabase.admin" --quiet
+      # figure out which SA gcloud is using right now
+      active_sa=$(gcloud auth list --filter=status:ACTIVE --format="value(account)")
+      echo "🔐 Granting roles/firebasedatabase.admin to $active_sa..."
 
-      # Compute Engine default SA (just in case)
+      # bind it
       gcloud projects add-iam-policy-binding "$project" \
-        --member="serviceAccount:${number}-compute@developer.gserviceaccount.com" \
-        --role="roles/firebasedatabase.admin" --quiet
+        --member="serviceAccount:${active_sa}" \
+        --role="roles/firebasedatabase.admin" \
+        --quiet
+
 
 # 2. Enable the Realtime Database Management API
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
