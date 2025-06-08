@@ -11,6 +11,10 @@ import android.content.SharedPreferences;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ServerValue;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
 import android.Manifest;
@@ -19,6 +23,8 @@ import android.os.Build;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import com.google.firebase.database.DatabaseReference;
@@ -180,28 +186,52 @@ public class MenuActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
         String uid = FirebaseAuth.getInstance().getUid();
-        if (uid == null) return; // User not logged in
+        if (uid == null) return;
 
-        // Reference in Realtime Database
-        presenceRef = FirebaseDatabase.getInstance()
-                .getReference("status")
-                .child(uid);
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference userStatusDbRef = db.child("status").child(uid);
 
-        // Set user as online
-        presenceRef.setValue("online");
-        // Ensure that when the client disconnects, they will be marked as offline
-        presenceRef.onDisconnect().setValue("offline");
+        // Optional but recommended: keep one dummy listener alive so the RTDB
+        // connection doesn’t close after 60 s of inactivity on Android
+        db.child("connection-stay-awake").keepSynced(true);   // see docs note :contentReference[oaicite:1]{index=1}
+
+        // 1️⃣ Structured values let you store “last seen”
+        Map<String, Object> isOnline = new HashMap<>();
+        isOnline.put("state", "online");
+        isOnline.put("last_changed", ServerValue.TIMESTAMP);
+
+        Map<String, Object> isOffline = new HashMap<>();
+        isOffline.put("state", "offline");
+        isOffline.put("last_changed", ServerValue.TIMESTAMP);
+
+        // 2️⃣ Use the special .info/connected node to avoid race conditions
+        db.child(".info/connected").addValueEventListener(new ValueEventListener() {
+            @Override public void onDataChange(DataSnapshot snap) {
+                Boolean connected = snap.getValue(Boolean.class);
+                if (Boolean.FALSE.equals(connected)) {
+                    // We’re not actually connected – update local cache if you
+                    // also mirror presence to Firestore on the client
+                    return;
+                }
+
+                // 3️⃣ **Always** set onDisconnect FIRST, then mark online
+                userStatusDbRef.onDisconnect().setValue(isOffline)
+                        .addOnSuccessListener(i -> userStatusDbRef.setValue(isOnline));
+            }
+            @Override public void onCancelled(DatabaseError e) { /* ignore */ }
+        });
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-
-        if (presenceRef != null) {
-            presenceRef.setValue("offline");
-        }
+        // Optional – onDisconnect will fire anyway; this only helps when the
+        // activity stops but the process stays alive & connected.
+        DatabaseReference userStatusDbRef = FirebaseDatabase.getInstance()
+                .getReference("status").child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
+        userStatusDbRef.setValue("offline");
     }
+
 
 }
