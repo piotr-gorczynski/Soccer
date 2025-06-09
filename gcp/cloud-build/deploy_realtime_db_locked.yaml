@@ -114,7 +114,7 @@ steps:
       cp /usr/local/bin/firebase /workspace/firebase/
       chmod +x /workspace/firebase/firebase
 
-# 6. Create the default RTDB via Management REST API
+# 6. Create the DEFAULT Realtime Database instance
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
   id: 'create-default-rtdb'
   entrypoint: bash
@@ -124,35 +124,34 @@ steps:
       set -ex
       project=$(< /workspace/firebase_project_id.txt)
       project_number=$(< /workspace/firebase_project_number.txt)
-      # 👇 use the plain project ID here
-      instance_id="${project}"
       location="us-central1"
 
-      # re-discover the Firebase Admin SDK SA
+      # Use the Admin-SDK SA so the token has full RTDB rights
       admin_sa=$(gcloud iam service-accounts list \
-        --project="$project" \
-        --filter="email:firebase-adminsdk" \
-        --format="value(email)")
-      echo "🚀 Impersonating $admin_sa to create default RTDB $instance_id in $location…"
+                   --project="$project" \
+                   --filter="email:firebase-adminsdk" \
+                   --format="value(email)")
       token=$(gcloud auth print-access-token \
-        --impersonate-service-account="$admin_sa")
+                 --impersonate-service-account="$admin_sa")
 
-      # hit the management endpoint
-      resp=$(curl -s -w '\n%{http_code}' -X POST \
+      echo "🚀 Creating DEFAULT_DATABASE for $project in $location …"
+
+      # NOTE: no ?databaseId=…  ; body sets "type":"DEFAULT_DATABASE"
+      http_code=$(curl -s -o /dev/null -w '%{http_code}' -X POST \
         -H "Authorization: Bearer $token" \
-        "https://firebasedatabase.googleapis.com/v1beta/projects/${project_number}/locations/${location}/instances?databaseId=${instance_id}")
+        -H "Content-Type: application/json" \
+        -d '{"type":"DEFAULT_DATABASE"}' \
+        "https://firebasedatabase.googleapis.com/v1beta/projects/${project_number}/locations/${location}/instances")
 
-      code=$(echo "$resp" | tail -n1)
-      body=$(echo "$resp" | sed '$d')
-
-      if [[ "$code" == "200" ]]; then
-        echo "✅ Default RTDB created:"; echo "$body"
-      elif [[ "$code" == "409" ]]; then
-        echo "✅ Default RTDB already exists."
+      if [[ "$http_code" == "200" ]]; then
+        echo "✅ Default RTDB created."
+      elif [[ "$http_code" == "409" ]]; then
+        echo "ℹ️ Default RTDB already exists."
       else
-        echo "❌ Failed (HTTP $code):"; echo "$body" >&2
+        echo "❌ Failed to create default RTDB (HTTP $http_code)." >&2
         exit 1
       fi
+      echo "ℹ️ Default RTDB URL: https://${project}.firebaseio.com"
 
 # 7. Deploy locked-mode rules via REST API
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
