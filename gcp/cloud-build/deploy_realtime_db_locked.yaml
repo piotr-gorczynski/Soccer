@@ -151,7 +151,7 @@ steps:
         echo "❌ Failed to create default RTDB (HTTP $http_code)." >&2
         exit 1
       fi
-      echo "ℹ️ Default RTDB URL: https://${project}.firebaseio.com"
+      echo "ℹ️ Default RTDB URL: https://${project}-default-rtdb.firebaseio.com"
 
 # 7. Deploy locked-mode rules via REST API
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
@@ -165,7 +165,7 @@ steps:
       project=$(< /workspace/firebase_project_id.txt)
 
       # your default Realtime-DB url (as returned by the create step)
-      db_url="https://${project}.firebaseio.com"
+      db_url="https://${project}-default-rtdb.firebaseio.com"
 
       # find the Admin-SDK service account in this project
       admin_sa=$(gcloud iam service-accounts list \
