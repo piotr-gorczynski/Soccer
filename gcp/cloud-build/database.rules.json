@@ -1,6 +1,19 @@
 {
   "rules": {
-    ".read" : "auth != null",
-    ".write": "auth != null"
+    "status": {
+      "$uid": {
+        ".read"  : "auth != null && auth.uid == $uid",
+        ".write" : "auth != null && auth.uid == $uid"
+      }
+    },
+
+    "connection-stay-awake": {
+      ".read"  : "auth != null",
+      ".write" : "auth != null"
+    },
+
+    ".read"  : false,
+    ".write" : false
   }
 }
+
