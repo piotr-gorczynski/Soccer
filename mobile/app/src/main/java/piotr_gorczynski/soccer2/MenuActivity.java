@@ -183,60 +183,83 @@ public class MenuActivity extends AppCompatActivity {
         startActivity(new Intent(this, TournamentsActivity.class));
     }
 
+
     @Override
     protected void onStart() {
         super.onStart();
 
-
         String uid = FirebaseAuth.getInstance().getUid();
-        if (uid == null) return;
+        if (uid == null) return;   // not signed in
 
-        DatabaseReference db = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference userStatusDbRef = db.child("status").child(uid);
+        /* ------------------------------------------------------------------ */
+        /* 0️⃣  Show which DB URL the SDK resolved                             */
+        /* ------------------------------------------------------------------ */
+        DatabaseReference root = FirebaseDatabase.getInstance().getReference();
+        Log.d("TAG_Soccer", "RTDB root = " + root.toString());
+        // should print: https://soccer-dev-1744877837-default-rtdb.firebaseio.com/
 
-        // Optional but recommended: keep one dummy listener alive so the RTDB
-        // connection doesn’t close after 60 s of inactivity on Android
-        db.child("connection-stay-awake").keepSynced(true);   // see docs note :contentReference[oaicite:1]{index=1}
+        /* ------------------------------------------------------------------ */
+        /* Build the presence references & values                             */
+        /* ------------------------------------------------------------------ */
+        DatabaseReference userStatusDbRef = root.child("status").child(uid);
 
-        // 1️⃣ Structured values let you store “last seen”
-        Map<String, Object> isOnline = new HashMap<>();
-        isOnline.put("state", "online");
-        isOnline.put("last_changed", ServerValue.TIMESTAMP);
-
+        Map<String, Object> isOnline  = new HashMap<>();
         Map<String, Object> isOffline = new HashMap<>();
-        isOffline.put("state", "offline");
-        isOffline.put("last_changed", ServerValue.TIMESTAMP);
+        isOnline .put("state", "online");   isOnline .put("last_changed", ServerValue.TIMESTAMP);
+        isOffline.put("state", "offline");  isOffline.put("last_changed", ServerValue.TIMESTAMP);
 
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                + ": Use the special .info-connected node to avoid race conditions");
-        // 2️⃣ Use the special .info/connected node to avoid race conditions
-        db.child(".info/connected").addValueEventListener(new ValueEventListener() {
+        // keep a tiny node in sync so the SDK stays connected
+        root.child("connection-stay-awake").keepSynced(true);
+
+        /* ------------------------------------------------------------------ */
+        /* 1️⃣  Wait for a *real* connection, then schedule onDisconnect       */
+        /* ------------------------------------------------------------------ */
+        root.child(".info/connected").addValueEventListener(new ValueEventListener() {
             @Override public void onDataChange(DataSnapshot snap) {
                 Boolean connected = snap.getValue(Boolean.class);
                 Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                        + ": connected="+connected);
-                if (Boolean.FALSE.equals(connected)) {
-                    // We’re not actually connected – update local cache if you
-                    // also mirror presence to Firestore on the client
-                    return;
-                }
+                        + ": .info/connected = " + connected);
 
-                // 3️⃣ **Always** set onDisconnect FIRST, then mark online
+                if (!Boolean.TRUE.equals(connected)) return;  // not yet online
+
+                /* ---------------------------------------------------------- */
+                /* 2️⃣  Schedule offline-write, *then* write "online"         */
+                /* ---------------------------------------------------------- */
                 userStatusDbRef.onDisconnect().setValue(isOffline)
-                        .addOnSuccessListener(i -> userStatusDbRef.setValue(isOnline));
+                        .addOnFailureListener(e ->
+                                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                                        + ": ❌ onDisconnect().setValue failed", e))
+                        .addOnSuccessListener(v -> {
+                            userStatusDbRef.setValue(isOnline)
+                                    .addOnSuccessListener(x ->
+                                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                                                    + ": ✅ presence=online written"))
+                                    .addOnFailureListener(e ->
+                                            Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                                                    + ": ❌ presence write failed", e));
+                        });
             }
-            @Override public void onCancelled(DatabaseError e) { /* ignore */ }
+
+            @Override public void onCancelled(DatabaseError e) {
+                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                        + ": ❌ .info/connected cancelled", e.toException());
+            }
         });
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        // Optional – onDisconnect will fire anyway; this only helps when the
-        // activity stops but the process stays alive & connected.
-        DatabaseReference userStatusDbRef = FirebaseDatabase.getInstance()
-                .getReference("status").child(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
-        userStatusDbRef.setValue("offline");
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null) return;
+
+        DatabaseReference userStatusDbRef =
+                FirebaseDatabase.getInstance().getReference("status").child(uid);
+
+        userStatusDbRef.setValue("offline")
+                .addOnFailureListener(e ->
+                        Log.e( "TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                                + ": ❌ manual offline write failed", e));
     }
 
 
