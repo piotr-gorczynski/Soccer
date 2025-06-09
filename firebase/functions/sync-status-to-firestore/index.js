@@ -25,7 +25,7 @@ firebaseConfig.projectId =
 // Ensure we have the databaseURL
 firebaseConfig.databaseURL =
   firebaseConfig.databaseURL ||
-  `https://${firebaseConfig.projectId}.firebaseio.com`;
+  `https://${firebaseConfig.projectId}-default-rtdb.firebaseio.com`;
 
 // Optionally fill storageBucket (not required for this function)
 firebaseConfig.storageBucket =
