@@ -186,6 +186,8 @@ public class MenuActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
+
         String uid = FirebaseAuth.getInstance().getUid();
         if (uid == null) return;
 
@@ -205,10 +207,14 @@ public class MenuActivity extends AppCompatActivity {
         isOffline.put("state", "offline");
         isOffline.put("last_changed", ServerValue.TIMESTAMP);
 
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                + ": Use the special .info-connected node to avoid race conditions");
         // 2️⃣ Use the special .info/connected node to avoid race conditions
         db.child(".info/connected").addValueEventListener(new ValueEventListener() {
             @Override public void onDataChange(DataSnapshot snap) {
                 Boolean connected = snap.getValue(Boolean.class);
+                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                        + ": connected="+connected);
                 if (Boolean.FALSE.equals(connected)) {
                     // We’re not actually connected – update local cache if you
                     // also mirror presence to Firestore on the client
