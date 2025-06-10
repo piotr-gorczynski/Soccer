@@ -261,7 +261,7 @@ public class MenuActivity extends AppCompatActivity {
         if (uid == null) return;
 
         scheduleHeartbeat();    // ⬅ start pings while we’re in background
-
+        /*
         DatabaseReference userStatusDbRef =
                 FirebaseDatabase.getInstance().getReference("status").child(uid);
 
@@ -269,6 +269,8 @@ public class MenuActivity extends AppCompatActivity {
                 .addOnFailureListener(e ->
                         Log.e( "TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                                 + ": ❌ manual offline write failed", e));
+
+         */
     }
 
     private static final String HEARTBEAT_WORK = "presence-heartbeat";
@@ -280,6 +282,8 @@ public class MenuActivity extends AppCompatActivity {
                         15, TimeUnit.MINUTES)        // WorkManager’s minimum
                         .build();
 
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                + ": Launching WorkManager");
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
                 HEARTBEAT_WORK,
                 ExistingPeriodicWorkPolicy.UPDATE,
@@ -287,6 +291,8 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     private void cancelHeartbeat() {
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                + ": Cancelling WorkManager");
         WorkManager.getInstance(this).cancelUniqueWork(HEARTBEAT_WORK);
     }
     public static class HeartbeatWorker extends Worker {
@@ -302,11 +308,18 @@ public class MenuActivity extends AppCompatActivity {
             String uid = FirebaseAuth.getInstance().getUid();
             if (uid == null) return Result.success();
 
-            FirebaseDatabase.getInstance()
+            DatabaseReference hbRef = FirebaseDatabase.getInstance()
                     .getReference("status")
                     .child(uid)
-                    .child("last_heartbeat")
-                    .setValue(ServerValue.TIMESTAMP);
+                    .child("last_heartbeat");
+
+            hbRef.setValue(ServerValue.TIMESTAMP)
+                    .addOnSuccessListener(v ->
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                                    + ": ✅ heartbeat written for uid=" + uid))
+                    .addOnFailureListener(e ->
+                            Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                                    + ": ❌ heartbeat write failed for uid=" + uid, e));
 
             return Result.success();
         }
