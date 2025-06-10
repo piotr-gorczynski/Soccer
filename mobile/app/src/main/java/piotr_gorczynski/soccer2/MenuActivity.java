@@ -30,14 +30,21 @@ import java.util.Objects;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+// WorkManager
+import androidx.work.Worker;
+import androidx.work.WorkerParameters;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+import androidx.work.ExistingPeriodicWorkPolicy;
 
+import java.util.concurrent.TimeUnit;           // for TimeUnit.MINUTES
+
+import android.content.Context;          // ← choose this one
 
 
 public class MenuActivity extends AppCompatActivity {
 
     private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 101;
-
-    private DatabaseReference presenceRef;
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -191,11 +198,13 @@ public class MenuActivity extends AppCompatActivity {
         String uid = FirebaseAuth.getInstance().getUid();
         if (uid == null) return;   // not signed in
 
+        cancelHeartbeat();      // ⬅ stop periodic pings while UI is visible
+
         /* ------------------------------------------------------------------ */
         /* 0️⃣  Show which DB URL the SDK resolved                             */
         /* ------------------------------------------------------------------ */
         DatabaseReference root = FirebaseDatabase.getInstance().getReference();
-        Log.d("TAG_Soccer", "RTDB root = " + root.toString());
+        Log.d("TAG_Soccer", "RTDB root = " + root);
         // should print: https://soccer-dev-1744877837-default-rtdb.firebaseio.com/
 
         /* ------------------------------------------------------------------ */
@@ -215,7 +224,7 @@ public class MenuActivity extends AppCompatActivity {
         /* 1️⃣  Wait for a *real* connection, then schedule onDisconnect       */
         /* ------------------------------------------------------------------ */
         root.child(".info/connected").addValueEventListener(new ValueEventListener() {
-            @Override public void onDataChange(DataSnapshot snap) {
+            @Override public void onDataChange(@NonNull DataSnapshot snap) {
                 Boolean connected = snap.getValue(Boolean.class);
                 Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                         + ": .info/connected = " + connected);
@@ -229,18 +238,16 @@ public class MenuActivity extends AppCompatActivity {
                         .addOnFailureListener(e ->
                                 Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                                         + ": ❌ onDisconnect().setValue failed", e))
-                        .addOnSuccessListener(v -> {
-                            userStatusDbRef.setValue(isOnline)
-                                    .addOnSuccessListener(x ->
-                                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                                                    + ": ✅ presence=online written"))
-                                    .addOnFailureListener(e ->
-                                            Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                                                    + ": ❌ presence write failed", e));
-                        });
+                        .addOnSuccessListener(v -> userStatusDbRef.setValue(isOnline)
+                                .addOnSuccessListener(x ->
+                                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                                                + ": ✅ presence=online written"))
+                                .addOnFailureListener(e ->
+                                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                                                + ": ❌ presence write failed", e)));
             }
 
-            @Override public void onCancelled(DatabaseError e) {
+            @Override public void onCancelled(@NonNull DatabaseError e) {
                 Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                         + ": ❌ .info/connected cancelled", e.toException());
             }
@@ -253,6 +260,8 @@ public class MenuActivity extends AppCompatActivity {
         String uid = FirebaseAuth.getInstance().getUid();
         if (uid == null) return;
 
+        scheduleHeartbeat();    // ⬅ start pings while we’re in background
+
         DatabaseReference userStatusDbRef =
                 FirebaseDatabase.getInstance().getReference("status").child(uid);
 
@@ -261,6 +270,48 @@ public class MenuActivity extends AppCompatActivity {
                         Log.e( "TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                                 + ": ❌ manual offline write failed", e));
     }
+
+    private static final String HEARTBEAT_WORK = "presence-heartbeat";
+
+    private void scheduleHeartbeat() {
+        PeriodicWorkRequest req =
+                new PeriodicWorkRequest.Builder(
+                        HeartbeatWorker.class,
+                        15, TimeUnit.MINUTES)        // WorkManager’s minimum
+                        .build();
+
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+                HEARTBEAT_WORK,
+                ExistingPeriodicWorkPolicy.UPDATE,
+                req);
+    }
+
+    private void cancelHeartbeat() {
+        WorkManager.getInstance(this).cancelUniqueWork(HEARTBEAT_WORK);
+    }
+    public static class HeartbeatWorker extends Worker {
+
+        public HeartbeatWorker(@NonNull Context context,
+                               @NonNull WorkerParameters params) {
+            super(context, params);
+        }
+
+        @NonNull
+        @Override
+        public Result doWork() {
+            String uid = FirebaseAuth.getInstance().getUid();
+            if (uid == null) return Result.success();
+
+            FirebaseDatabase.getInstance()
+                    .getReference("status")
+                    .child(uid)
+                    .child("last_heartbeat")
+                    .setValue(ServerValue.TIMESTAMP);
+
+            return Result.success();
+        }
+    }
+
 
 
 }
