@@ -234,7 +234,8 @@ public class MenuActivity extends AppCompatActivity {
                 /* ---------------------------------------------------------- */
                 /* 2️⃣  Schedule offline-write, *then* write "online"         */
                 /* ---------------------------------------------------------- */
-                userStatusDbRef.onDisconnect().setValue(isOffline)
+                userStatusDbRef.onDisconnect()
+                        .updateChildren(isOffline)
                         .addOnFailureListener(e ->
                                 Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                                         + ": ❌ onDisconnect().setValue failed", e))
@@ -257,6 +258,10 @@ public class MenuActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                + ": Method invoked");
+
         String uid = FirebaseAuth.getInstance().getUid();
         if (uid == null) return;
 
