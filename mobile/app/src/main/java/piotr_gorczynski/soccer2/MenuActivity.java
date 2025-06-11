@@ -11,10 +11,7 @@ import android.content.SharedPreferences;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ServerValue;
-import com.google.firebase.database.ValueEventListener;
+
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
 import android.Manifest;
@@ -23,21 +20,11 @@ import android.os.Build;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
-
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
-
 
 public class MenuActivity extends AppCompatActivity {
 
     private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 101;
-
-    private DatabaseReference userStatusDbRef;     // ⬅ visible to both methods
-    private Map<String,Object> isOffline;          // ⬅ dito
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -182,99 +169,5 @@ public class MenuActivity extends AppCompatActivity {
     public void OpenTournaments(View view) {
         startActivity(new Intent(this, TournamentsActivity.class));
     }
-
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        String uid = FirebaseAuth.getInstance().getUid();
-        if (uid == null) return;   // not signed in
-        FirebaseDatabase.getInstance().goOnline();    // bring socket back
-        cancelHeartbeat();      // ⬅ stop periodic pings while UI is visible
-
-        /* ------------------------------------------------------------------ */
-        /* 0️⃣  Show which DB URL the SDK resolved                             */
-        /* ------------------------------------------------------------------ */
-        DatabaseReference root = FirebaseDatabase.getInstance().getReference();
-        Log.d("TAG_Soccer", "RTDB root = " + root);
-        // should print: https://soccer-dev-1744877837-default-rtdb.firebaseio.com/
-
-        /* ------------------------------------------------------------------ */
-        /* Build the presence references & values                             */
-        /* ------------------------------------------------------------------ */
-        userStatusDbRef = root.child("status").child(uid);
-
-        Map<String, Object> isOnline  = new HashMap<>();
-        isOffline = new HashMap<>();
-        isOnline .put("state", "online");   isOnline .put("last_changed", ServerValue.TIMESTAMP);
-        isOffline.put("state", "offline");  isOffline.put("last_changed", ServerValue.TIMESTAMP);
-
-        // keep a tiny node in sync so the SDK stays connected
-        root.child("connection-stay-awake").keepSynced(true);
-
-        /* ------------------------------------------------------------------ */
-        /* 1️⃣  Wait for a *real* connection, then schedule onDisconnect       */
-        /* ------------------------------------------------------------------ */
-        root.child(".info/connected").addValueEventListener(new ValueEventListener() {
-            @Override public void onDataChange(@NonNull DataSnapshot snap) {
-                Boolean connected = snap.getValue(Boolean.class);
-                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                        + ": .info/connected = " + connected);
-
-                if (!Boolean.TRUE.equals(connected)) return;  // not yet online
-
-                /* ---------------------------------------------------------- */
-                /* 2️⃣  Schedule offline-write, *then* write "online"         */
-                /* ---------------------------------------------------------- */
-                userStatusDbRef.onDisconnect()
-                        .updateChildren(isOffline)
-                        .addOnFailureListener(e ->
-                                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                                        + ": ❌ onDisconnect().setValue failed", e))
-                        .addOnSuccessListener(v -> userStatusDbRef.setValue(isOnline)
-                                .addOnSuccessListener(x ->
-                                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                                                + ": ✅ presence=online written"))
-                                .addOnFailureListener(e ->
-                                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                                                + ": ❌ presence write failed", e)));
-            }
-
-            @Override public void onCancelled(@NonNull DatabaseError e) {
-                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                        + ": ❌ .info/connected cancelled", e.toException());
-            }
-        });
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                + ": Method invoked");
-
-        String uid = FirebaseAuth.getInstance().getUid();
-        if (uid == null) return;
-        FirebaseDatabase.getInstance().goOffline();   // close socket NOW
-        userStatusDbRef.updateChildren(isOffline);    // write state immediately
-        scheduleHeartbeat();    // ⬅ start pings while we’re in background
-
-
-        /*
-        DatabaseReference userStatusDbRef =
-                FirebaseDatabase.getInstance().getReference("status").child(uid);
-
-        userStatusDbRef.setValue("offline")
-                .addOnFailureListener(e ->
-                        Log.e( "TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                                + ": ❌ manual offline write failed", e));
-
-         */
-    }
-
-
-
 
 }

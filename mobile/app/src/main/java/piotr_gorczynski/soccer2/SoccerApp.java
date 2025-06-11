@@ -58,7 +58,8 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         FirebaseDatabase.getInstance().goOnline();
         cancelHeartbeat();
         userStatusDbRef.updateChildren(isOnline);
-        Log.d("TAG_Soccer", "⏫ App to FOREGROUND → presence=online");
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                + ": ⏫ App to FOREGROUND → presence=online");
     }
 
     /* ------------ APP GOES TO BACKGROUND ------------------------------ */
@@ -66,7 +67,8 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         FirebaseDatabase.getInstance().goOffline();
         userStatusDbRef.updateChildren(isOffline);
         scheduleHeartbeat();
-        Log.d("TAG_Soccer", "⏬ App to BACKGROUND → presence=offline");
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                + ": ⏬ App to BACKGROUND → presence=offline");
     }
 
     /* -------------- same heartbeat worker you already have ----- */
