@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,19 +24,23 @@ public class MatchAdapter
         extends RecyclerView.Adapter<MatchAdapter.VH> {
 
     public static class VH extends RecyclerView.ViewHolder {
-        TextView opponent, status;
+         final TextView opponent, presence, status;
         VH(View v) {
             super(v);
             opponent = v.findViewById(R.id.opponent);
+            presence = v.findViewById(R.id.presence);
             status   = v.findViewById(R.id.status);
         }
     }
 
+    /* ───── caches ───── */
+    private final Map<String,String>  nickCache     = new HashMap<>();
+    private final Map<String,String>  presCache     = new HashMap<>();       // uid → "online|active|offline"
+    private final Map<String,ListenerRegistration> presSubs = new HashMap<>();
+
     private final List<DocumentSnapshot> matches = new ArrayList<>();
     private final String myUid;
     private final OnMatchClick clickCB;
-
-      private final Map<String,String> nickCache = new HashMap<>();
 
     interface OnMatchClick { void onOpen(String matchId); }
 
@@ -77,6 +82,45 @@ public class MatchAdapter
             h.opponent.setText(nick);   // nickname already cached
         }
 
+        /* ---------- PRESENCE ---------- */
+        String pState = presCache.get(oppUid);
+        if (pState == null) {                     // first time we see this UID
+            h.presence.setText("…");              // quick placeholder
+
+            // real-time listener (once per UID)
+            ListenerRegistration reg = FirebaseFirestore.getInstance()
+                    .collection("users").document(Objects.requireNonNull(oppUid))
+                    .addSnapshotListener((snap, e) -> {
+                        if (e != null || snap == null || !snap.exists()) return;
+
+                        boolean online = Boolean.TRUE.equals(snap.getBoolean("online"));
+                        boolean active = Boolean.TRUE.equals(snap.getBoolean("active"));
+
+                        String state = online ? "online"
+                                : active ? "active"
+                                : "offline";
+                        presCache.put(oppUid, state);
+
+                        int p = h.getAdapterPosition();
+                        if (p != RecyclerView.NO_POSITION) notifyItemChanged(p);
+                    });
+
+            presSubs.put(oppUid, reg);
+        } else {
+            h.presence.setText(
+                    switch (pState) {
+                        case "online"  -> "Online";
+                        case "active"  -> "Active";
+                        default        -> "Offline";
+                    });
+            int colour = switch (pState) {
+                case "online"  -> ContextCompat.getColor(h.itemView.getContext(), R.color.colorGreenDark);
+                case "active"  -> ContextCompat.getColor(h.itemView.getContext(), R.color.colorAccent);
+                default        -> ContextCompat.getColor(h.itemView.getContext(), R.color.colorGrey);
+            };
+            h.presence.setTextColor(colour);
+        }
+
         /* ----------- status label ----------- */
         String st = m.getString("status");          // scheduled | playing | done
         h.status.setText(st);
@@ -101,5 +145,12 @@ public class MatchAdapter
     void move(int o,int n,DocumentSnapshot d){
         matches.remove(o); matches.add(n,d); notifyItemMoved(o,n); }
     void remove(int idx){ matches.remove(idx); notifyItemRemoved(idx); }
+
+    /* tidy-up to avoid leaks */
+    @Override public void onDetachedFromRecyclerView(@NonNull RecyclerView rv) {
+        super.onDetachedFromRecyclerView(rv);
+        for (ListenerRegistration l : presSubs.values()) l.remove();
+        presSubs.clear();
+    }
 }
 
