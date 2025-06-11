@@ -15,10 +15,14 @@ import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -55,20 +59,53 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
 
     /* ------------ APP RETURNS TO FOREGROUND --------------------------- */
     @Override public void onStart(@NonNull LifecycleOwner owner) {
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                + ": APP RETURNS TO FOREGROUND");
         FirebaseDatabase.getInstance().goOnline();
         cancelHeartbeat();
-        userStatusDbRef.updateChildren(isOnline);
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                + ": ⏫ App to FOREGROUND → presence=online");
+
+        DatabaseReference info = FirebaseDatabase.getInstance()
+                .getReference(".info/connected");
+
+        ValueEventListener[] holder = new ValueEventListener[1];   // tidy removal
+        holder[0] = new ValueEventListener() {
+            @Override public void onDataChange(@NonNull DataSnapshot snap) {
+                if (!Boolean.TRUE.equals(snap.getValue(Boolean.class))) return;
+
+                /* socket is really up → broadcast presence */
+                userStatusDbRef.onDisconnect().updateChildren(isOffline);
+                userStatusDbRef.updateChildren(isOnline)
+                        .addOnSuccessListener(v ->
+                                Log.d("TAG_Soccer", "✅ presence=online written"));
+
+                info.removeEventListener(holder[0]);   // listen just once
+            }
+            @Override public void onCancelled(@NonNull DatabaseError e) { /*ignore*/ }
+        };
+        info.addValueEventListener(holder[0]);
     }
+
 
     /* ------------ APP GOES TO BACKGROUND ------------------------------ */
     @Override public void onStop(@NonNull LifecycleOwner owner) {
-        FirebaseDatabase.getInstance().goOffline();
-        userStatusDbRef.updateChildren(isOffline);
-        scheduleHeartbeat();
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                + ": ⏬ App to BACKGROUND → presence=offline");
+                + ": APP GOES TO BACKGROUND");
+        /* 1. Build one single map */
+        Map<String,Object> offline = new HashMap<>();
+        offline.put("state",         "offline");
+        offline.put("last_changed",  ServerValue.TIMESTAMP);
+        offline.put("last_heartbeat",ServerValue.TIMESTAMP);   // 👈 NEW
+
+        /* 2. Flush it to RTDB first … */
+        userStatusDbRef.updateChildren(offline)
+                .addOnSuccessListener(v -> {
+                    /* … then shut the socket down */
+                    FirebaseDatabase.getInstance().goOffline();
+                    scheduleHeartbeat();          // keep the 15-min pulses if you like
+                })
+                .addOnFailureListener(e ->
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                                + ": ❌ offline write failed", e));
     }
 
     /* -------------- same heartbeat worker you already have ----- */
