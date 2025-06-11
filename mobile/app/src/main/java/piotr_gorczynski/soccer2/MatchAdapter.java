@@ -107,17 +107,31 @@ public class MatchAdapter
 
             presSubs.put(oppUid, reg);
         } else {
-            h.presence.setText(
-                    switch (pState) {
-                        case "online"  -> "Online";
-                        case "active"  -> "Active";
-                        default        -> "Offline";
-                    });
-            int colour = switch (pState) {
-                case "online"  -> ContextCompat.getColor(h.itemView.getContext(), R.color.colorGreenDark);
-                case "active"  -> ContextCompat.getColor(h.itemView.getContext(), R.color.colorAccent);
-                default        -> ContextCompat.getColor(h.itemView.getContext(), R.color.colorGrey);
+    /* ui-level mapping:
+         online  → "Active"  (app in foreground)
+         active  → "Online"  (background ≤ 20 min)
+         offline → "Offline"
+     */
+            String label;
+            int    colour = switch (pState) {
+                case "online" -> {
+                    label = "Active";
+                    yield ContextCompat.getColor(
+                            h.itemView.getContext(), R.color.colorGreenDark);
+                }
+                case "active" -> {
+                    label = "Online";
+                    yield ContextCompat.getColor(
+                            h.itemView.getContext(), R.color.colorGreen);
+                }
+                default -> {
+                    label = "Offline";
+                    yield ContextCompat.getColor(
+                            h.itemView.getContext(), R.color.colorGrey);
+                }
             };
+
+            h.presence.setText(label);
             h.presence.setTextColor(colour);
         }
 
