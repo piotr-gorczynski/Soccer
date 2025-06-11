@@ -30,21 +30,14 @@ import java.util.Objects;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-// WorkManager
-import androidx.work.Worker;
-import androidx.work.WorkerParameters;
-import androidx.work.PeriodicWorkRequest;
-import androidx.work.WorkManager;
-import androidx.work.ExistingPeriodicWorkPolicy;
-
-import java.util.concurrent.TimeUnit;           // for TimeUnit.MINUTES
-
-import android.content.Context;          // ← choose this one
 
 
 public class MenuActivity extends AppCompatActivity {
 
     private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 101;
+
+    private DatabaseReference userStatusDbRef;     // ⬅ visible to both methods
+    private Map<String,Object> isOffline;          // ⬅ dito
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -197,7 +190,7 @@ public class MenuActivity extends AppCompatActivity {
 
         String uid = FirebaseAuth.getInstance().getUid();
         if (uid == null) return;   // not signed in
-
+        FirebaseDatabase.getInstance().goOnline();    // bring socket back
         cancelHeartbeat();      // ⬅ stop periodic pings while UI is visible
 
         /* ------------------------------------------------------------------ */
@@ -210,10 +203,10 @@ public class MenuActivity extends AppCompatActivity {
         /* ------------------------------------------------------------------ */
         /* Build the presence references & values                             */
         /* ------------------------------------------------------------------ */
-        DatabaseReference userStatusDbRef = root.child("status").child(uid);
+        userStatusDbRef = root.child("status").child(uid);
 
         Map<String, Object> isOnline  = new HashMap<>();
-        Map<String, Object> isOffline = new HashMap<>();
+        isOffline = new HashMap<>();
         isOnline .put("state", "online");   isOnline .put("last_changed", ServerValue.TIMESTAMP);
         isOffline.put("state", "offline");  isOffline.put("last_changed", ServerValue.TIMESTAMP);
 
@@ -264,8 +257,11 @@ public class MenuActivity extends AppCompatActivity {
 
         String uid = FirebaseAuth.getInstance().getUid();
         if (uid == null) return;
-
+        FirebaseDatabase.getInstance().goOffline();   // close socket NOW
+        userStatusDbRef.updateChildren(isOffline);    // write state immediately
         scheduleHeartbeat();    // ⬅ start pings while we’re in background
+
+
         /*
         DatabaseReference userStatusDbRef =
                 FirebaseDatabase.getInstance().getReference("status").child(uid);
@@ -278,57 +274,6 @@ public class MenuActivity extends AppCompatActivity {
          */
     }
 
-    private static final String HEARTBEAT_WORK = "presence-heartbeat";
-
-    private void scheduleHeartbeat() {
-        PeriodicWorkRequest req =
-                new PeriodicWorkRequest.Builder(
-                        HeartbeatWorker.class,
-                        15, TimeUnit.MINUTES)        // WorkManager’s minimum
-                        .build();
-
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                + ": Launching WorkManager");
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-                HEARTBEAT_WORK,
-                ExistingPeriodicWorkPolicy.UPDATE,
-                req);
-    }
-
-    private void cancelHeartbeat() {
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                + ": Cancelling WorkManager");
-        WorkManager.getInstance(this).cancelUniqueWork(HEARTBEAT_WORK);
-    }
-    public static class HeartbeatWorker extends Worker {
-
-        public HeartbeatWorker(@NonNull Context context,
-                               @NonNull WorkerParameters params) {
-            super(context, params);
-        }
-
-        @NonNull
-        @Override
-        public Result doWork() {
-            String uid = FirebaseAuth.getInstance().getUid();
-            if (uid == null) return Result.success();
-
-            DatabaseReference hbRef = FirebaseDatabase.getInstance()
-                    .getReference("status")
-                    .child(uid)
-                    .child("last_heartbeat");
-
-            hbRef.setValue(ServerValue.TIMESTAMP)
-                    .addOnSuccessListener(v ->
-                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                                    + ": ✅ heartbeat written for uid=" + uid))
-                    .addOnFailureListener(e ->
-                            Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                                    + ": ❌ heartbeat write failed for uid=" + uid, e));
-
-            return Result.success();
-        }
-    }
 
 
 
