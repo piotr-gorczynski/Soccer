@@ -48,6 +48,15 @@ public class MatchAdapter
         this.myUid   = myUid;
         this.clickCB = cb;
     }
+    /* helper inside MatchAdapter ----------------------------------------- */
+    private int indexForUid(@NonNull String uid) {
+        for (int i = 0; i < matches.size(); i++) {
+            DocumentSnapshot m = matches.get(i);
+            String a = m.getString("playerA"), b = m.getString("playerB");
+            if (uid.equals(a) || uid.equals(b)) return i;
+        }
+        return RecyclerView.NO_POSITION;
+    }
 
     @NonNull @Override public VH onCreateViewHolder(@NonNull ViewGroup p, int v)
     { return new VH(LayoutInflater.from(p.getContext())
@@ -100,9 +109,10 @@ public class MatchAdapter
                                 : active ? "active"
                                 : "offline";
                         presCache.put(oppUid, state);
-
-                        int p = h.getAdapterPosition();
-                        if (p != RecyclerView.NO_POSITION) notifyItemChanged(p);
+                        int posForUid = indexForUid(oppUid);     // find the row *now*
+                        if (posForUid != RecyclerView.NO_POSITION) {
+                            notifyItemChanged(pos);        // ✅ targeted update
+                        }
                     });
 
             presSubs.put(oppUid, reg);
