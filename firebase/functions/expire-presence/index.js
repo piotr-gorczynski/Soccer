@@ -1,44 +1,36 @@
-/**
- * Cloud Function: expirePresence
- * Marks users inactive if their last_heartbeat/last_changed
- * is > 20 minutes old.
- *
- * Deploy with:
- *   firebase deploy --only functions:expirePresence          # 1st-gen
- *   or
- *   gcloud functions deploy expirePresence --gen2 ...        # 2nd-gen
- */
 const functions = require('firebase-functions');
 const admin     = require('firebase-admin');
-
 admin.initializeApp();
 
-// 20-minute sliding window
-const ACTIVE_WINDOW_MS = 20 * 60 * 1000;          // 20 × 60 × 1000
+const ACTIVE_WINDOW_MS = 20 * 60 * 1000; // 20 min
 
-exports.expirePresence = functions.pubsub
-  .schedule('every 5 minutes')                    // Cloud Scheduler cron
-  .timeZone('Europe/Warsaw')                     // keep it local
+exports.expirePresence = functions
+  .region('us-central1')               // use your region
+  .pubsub.schedule('every 5 minutes')
+  .timeZone('Europe/Warsaw')
   .onRun(async () => {
+    const db     = admin.firestore();
     const cutoff = Date.now() - ACTIVE_WINDOW_MS;
+    console.log('expirePresence started, cutoff =', cutoff);
 
-    // Select only documents that can possibly flip
-    const snapshot = await admin.firestore()
-      .collection('users')
-      .where('active', '==', true)
-      .where('last_changed', '<', cutoff)
-      .get();
+    try {
+      const staleSnap = await db.collection('users')
+        .where('active', '==', true)
+        .where('last_changed', '<', cutoff)   // If last_changed is a Timestamp,
+                                             // replace cutoff with Timestamp.fromMillis(...)
+        .get();
 
-    if (snapshot.empty) {
-      console.log('No stale sessions — nothing to do.');
-      return null;
+      console.log('stale documents found:', staleSnap.size);
+
+      if (staleSnap.empty) return null;
+
+      const batch = db.batch();
+      staleSnap.forEach(doc => batch.update(doc.ref, { active: false }));
+      await batch.commit();
+
+      console.log(`Marked ${staleSnap.size} user(s) inactive`);
+    } catch (err) {
+      console.error('expirePresence failed:', err);
     }
-
-    // Batch the updates to stay inside the 500-ops limit
-    const batch = admin.firestore().batch();
-    snapshot.forEach(doc => batch.update(doc.ref, { active: false }));
-    await batch.commit();
-
-    console.log(`Marked ${snapshot.size} user(s) inactive`);
     return null;
   });
