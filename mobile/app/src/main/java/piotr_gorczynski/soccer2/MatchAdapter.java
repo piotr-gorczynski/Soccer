@@ -19,6 +19,7 @@ import java.util.Objects;
 
 import android.view.View;
 import androidx.core.content.ContextCompat;
+import android.text.format.DateUtils;   // already on every device
 
 public class MatchAdapter
         extends RecyclerView.Adapter<MatchAdapter.VH> {
@@ -36,6 +37,8 @@ public class MatchAdapter
     /* ───── caches ───── */
     private final Map<String,String>  nickCache     = new HashMap<>();
     private final Map<String,String>  presCache     = new HashMap<>();       // uid → "online|active|offline"
+
+    private final Map<String, Long> hbCache = new HashMap<>();   // heartbeat cache
     private final Map<String,ListenerRegistration> presSubs = new HashMap<>();
 
     private final List<DocumentSnapshot> matches = new ArrayList<>();
@@ -102,40 +105,54 @@ public class MatchAdapter
                     .addSnapshotListener((snap, e) -> {
                         if (e != null || snap == null || !snap.exists()) return;
 
-                        boolean online = Boolean.TRUE.equals(snap.getBoolean("online"));
-                        boolean active = Boolean.TRUE.equals(snap.getBoolean("active"));
+                        boolean online  = Boolean.TRUE.equals(snap.getBoolean("online"));
+                        boolean active  = Boolean.TRUE.equals(snap.getBoolean("active"));
+                        Long boxed = snap.getLong("last_changed");   // may be null
+                        long lastHb = boxed != null ? boxed : 0L;    // safe: no NPE
 
                         String state = online ? "online"
                                 : active ? "active"
                                 : "offline";
-                        presCache.put(oppUid, state);
-                        int posForUid = indexForUid(oppUid);     // find the row *now*
+
+                        presCache.put(oppUid, state);      // state cache
+                        hbCache.put(oppUid, lastHb);       // heartbeat cache ← NEW
+
+                        int posForUid = indexForUid(oppUid);
                         if (posForUid != RecyclerView.NO_POSITION) {
-                            notifyItemChanged(pos);        // ✅ targeted update
+                            notifyItemChanged(posForUid);  // ✅ correct row
                         }
                     });
 
             presSubs.put(oppUid, reg);
-        } else {
-    /* ui-level mapping:
-         online  → "Active"  (app in foreground)
-         active  → "Online"  (background ≤ 20 min)
-         offline → "Offline"
-     */
+        } else {                                        // we already have cached data
             String label;
-            int    colour = switch (pState) {
+            int colour = switch (pState) {
                 case "online" -> {
-                    label = "Active";
+                    label  = "Online";
                     yield ContextCompat.getColor(
                             h.itemView.getContext(), R.color.colorGreenDark);
                 }
                 case "active" -> {
-                    label = "Online";
+                    Long lastChanged = hbCache.get(oppUid);          // ← use cache
+                    long now        = System.currentTimeMillis();
+                    CharSequence rel;
+
+                    if (lastChanged != null && lastChanged > 0) {
+                        rel = DateUtils.getRelativeTimeSpanString(
+                                lastChanged,
+                                now,
+                                DateUtils.MINUTE_IN_MILLIS,
+                                DateUtils.FORMAT_ABBREV_RELATIVE);
+                    } else {
+                        rel = "a moment ago";   // graceful fallback
+                    }
+
+                    label = "Last seen " + rel;
                     yield ContextCompat.getColor(
-                            h.itemView.getContext(), R.color.colorGreen);
+                            h.itemView.getContext(), R.color.colorGreenDark);
                 }
                 default -> {
-                    label = "Offline";
+                    label  = "Offline";
                     yield ContextCompat.getColor(
                             h.itemView.getContext(), R.color.colorGrey);
                 }
