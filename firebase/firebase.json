@@ -31,7 +31,11 @@
     {
       "source": "functions/sync-status-to-firestore",
       "codebase": "sync-status-to-firestore"
-    }    
+    },
+    {
+      "source": "functions/expire-presence",
+      "codebase": "expire-presence"
+    }
   ],
   "firestore": {
     "rules": "firestore.rules"
