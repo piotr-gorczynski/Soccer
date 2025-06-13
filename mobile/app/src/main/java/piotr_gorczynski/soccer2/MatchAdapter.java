@@ -19,7 +19,6 @@ import java.util.Objects;
 
 import android.view.View;
 import androidx.core.content.ContextCompat;
-import android.text.format.DateUtils;   // already on every device
 
 public class MatchAdapter
         extends RecyclerView.Adapter<MatchAdapter.VH> {
@@ -133,19 +132,11 @@ public class MatchAdapter
                             h.itemView.getContext(), R.color.colorGreenDark);
                 }
                 case "active" -> {
-                    Long lastChanged = hbCache.get(oppUid);          // ← use cache
-                    long now        = System.currentTimeMillis();
-                    CharSequence rel;
+                    Long lastChangedBox = hbCache.get(oppUid);
+                    long lastChanged    = lastChangedBox != null ? lastChangedBox : 0L;
 
-                    if (lastChanged != null && lastChanged > 0) {
-                        rel = DateUtils.getRelativeTimeSpanString(
-                                lastChanged,
-                                now,
-                                DateUtils.MINUTE_IN_MILLIS,
-                                DateUtils.FORMAT_ABBREV_RELATIVE);
-                    } else {
-                        rel = "a moment ago";   // graceful fallback
-                    }
+                    String rel;
+                    rel = englishRelative(lastChanged);
 
                     label = "Last seen " + rel;
                     yield ContextCompat.getColor(
@@ -192,6 +183,33 @@ public class MatchAdapter
         super.onDetachedFromRecyclerView(rv);
         for (ListenerRegistration l : presSubs.values()) l.remove();
         presSubs.clear();
+    }
+
+
+    /** English relative time: "just now", "4 mins ago", "2 h ago", "yesterday", "5 days ago". */
+    static String englishRelative(long eventTimeMillis) {
+        long diff = System.currentTimeMillis() - eventTimeMillis;
+
+        final long MIN  = 60_000L;
+        final long HOUR = 60 * MIN;
+        final long DAY  = 24 * HOUR;
+
+        if (diff < MIN)  return "just now";
+
+        if (diff < HOUR) {
+            long m = diff / MIN;
+            return m + " min" + (m == 1 ? "" : "s") + " ago";
+        }
+
+        if (diff < DAY) {
+            long h = diff / HOUR;
+            return h + " h ago";
+        }
+
+        if (diff < 2 * DAY) return "yesterday";
+
+        long d = diff / DAY;          // diff ≥ 2 days  ⇒  d ≥ 2
+        return d + " days ago";
     }
 }
 
