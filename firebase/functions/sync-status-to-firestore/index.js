@@ -56,9 +56,14 @@ exports.syncStatusToFirestore = functions.database
     const data  = change.after.val() || {};      // might be null on delete
 
     // 4.1  Determine booleans
-    const isOnline = data.state === "online";
-    const lastBeat = data.last_heartbeat || 0;
-    const activeNow = isOnline || (Date.now() - lastBeat < ACTIVE_WINDOW_MS);
+    const now       = Date.now();
+    const lastBeat  = data.last_heartbeat || data.last_changed || 0;
+    const beatAgeMs = now - lastBeat;
+
+    const isOnline = (data.state === "online")            // explicit flag
+                  || (beatAgeMs < 2 * 60_000);            // OR heartbeat < 2 min old
+
+    const activeNow = isOnline || (beatAgeMs < ACTIVE_WINDOW_MS);
 
     // 4.2  Copy fields into Firestore
     await admin.firestore().doc(`users/${uid}`).set({
