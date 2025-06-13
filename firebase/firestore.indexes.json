@@ -1,0 +1,14 @@
+
+{
+  "indexes": [
+    {
+      "collectionGroup": "users",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "active",       "order": "ASCENDING" },
+        { "fieldPath": "last_changed", "order": "ASCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
