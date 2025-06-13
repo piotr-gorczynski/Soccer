@@ -2,7 +2,7 @@ const functions = require('firebase-functions');
 const admin     = require('firebase-admin');
 admin.initializeApp();
 
-const ACTIVE_WINDOW_MS = 20 * 60 * 1000; // 20 min
+const ACTIVE_WINDOW_MS = 35 * 60 * 1000; // 35 min
 
 exports.expirePresence = functions
   .region('us-central1')               // use your region
