@@ -69,7 +69,9 @@ exports.syncStatusToFirestore = functions.database
     await admin.firestore().doc(`users/${uid}`).set({
       online       : isOnline,
       active       : activeNow,
-      last_changed : data.last_changed || admin.firestore.FieldValue.serverTimestamp()
+      last_changed : data.last_changed     // if present
+                      ?? data.last_heartbeat
+                      ?? admin.firestore.FieldValue.serverTimestamp()
     }, { merge: true });
 
     return null;
