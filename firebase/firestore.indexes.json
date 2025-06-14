@@ -1,4 +1,3 @@
-
 {
   "indexes": [
     {
@@ -6,6 +5,14 @@
       "queryScope": "COLLECTION",
       "fields": [
         { "fieldPath": "active",       "order": "ASCENDING" },
+        { "fieldPath": "last_changed", "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "users",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "online",       "order": "ASCENDING" },
         { "fieldPath": "last_changed", "order": "ASCENDING" }
       ]
     }
