@@ -7,9 +7,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,7 +42,15 @@ public class MatchAdapter
     private final Map<String,String>  presCache     = new HashMap<>();       // uid → "online|active|offline"
 
     private final Map<String, Long> hbCache = new HashMap<>();   // heartbeat cache
-    private final Map<String,ListenerRegistration> presSubs = new HashMap<>();
+    @SuppressWarnings("ClassCanBeRecord")
+    private static final class RtdbSub {
+        final DatabaseReference ref;
+        final ValueEventListener l;
+        RtdbSub(DatabaseReference ref, ValueEventListener l) {
+            this.ref = ref; this.l = l;
+        }
+    }
+    private final Map<String,RtdbSub> presSubs = new HashMap<>();
 
     private final List<DocumentSnapshot> matches = new ArrayList<>();
     private final String myUid;
@@ -93,37 +105,42 @@ public class MatchAdapter
             h.opponent.setText(nick);   // nickname already cached
         }
 
-        /* ---------- PRESENCE ---------- */
+        /* ---------- PRESENCE (now from RTDB) ---------- */
         String pState = presCache.get(oppUid);
-        if (pState == null) {                     // first time we see this UID
-            h.presence.setText("…");              // quick placeholder
+        if (pState == null) {                       // first time we see this UID
+            h.presence.setText("…");                // quick placeholder
 
-            // real-time listener (once per UID)
-            ListenerRegistration reg = FirebaseFirestore.getInstance()
-                    .collection("users").document(Objects.requireNonNull(oppUid))
-                    .addSnapshotListener((snap, e) -> {
-                        if (e != null || snap == null || !snap.exists()) return;
+            DatabaseReference ref = FirebaseDatabase.getInstance()
+                    .getReference("status").child(Objects.requireNonNull(oppUid));
 
-                        boolean online  = Boolean.TRUE.equals(snap.getBoolean("online"));
-                        boolean active  = Boolean.TRUE.equals(snap.getBoolean("active"));
-                        Long boxed = snap.getLong("last_changed");   // may be null
-                        long lastHb = boxed != null ? boxed : 0L;    // safe: no NPE
+            // one ValueEventListener per UID
+            ValueEventListener l = new ValueEventListener() {
+                @Override public void onDataChange(@NonNull DataSnapshot snap) {
+                    if (!snap.exists()) return;
 
-                        String state = online ? "online"
-                                : active ? "active"
-                                : "offline";
+                    String stateStr   = snap.child("state").getValue(String.class);
+                    Long   lastHbBox  = snap.child("last_heartbeat").getValue(Long.class);
+                    long   lastHb     = lastHbBox != null ? lastHbBox : 0L;
 
-                        presCache.put(oppUid, state);      // state cache
-                        hbCache.put(oppUid, lastHb);       // heartbeat cache ← NEW
+                    String state = "offline";
+                    if ("online".equals(stateStr)) {
+                        state = "online";
+                    } else if (System.currentTimeMillis() - lastHb < 20 * 60_000L) {
+                        state = "active";           // seen within 20 min window
+                    }
 
-                        int posForUid = indexForUid(oppUid);
-                        if (posForUid != RecyclerView.NO_POSITION) {
-                            notifyItemChanged(posForUid);  // ✅ correct row
-                        }
-                    });
+                    presCache.put(oppUid, state);
+                    hbCache.put(oppUid, lastHb);    // for “Last seen …”
 
-            presSubs.put(oppUid, reg);
-        } else {                                        // we already have cached data
+                    int row = indexForUid(oppUid);
+                    if (row != RecyclerView.NO_POSITION) notifyItemChanged(row);
+                }
+                @Override public void onCancelled(@NonNull DatabaseError e) { }
+            };
+
+            ref.addValueEventListener(l);
+            presSubs.put(oppUid, new RtdbSub(ref, l));   // ✅ now types match
+        } else {                                    // we already have cached data
             String label;
             int colour = switch (pState) {
                 case "online" -> {
@@ -132,13 +149,9 @@ public class MatchAdapter
                             h.itemView.getContext(), R.color.colorGreenDark);
                 }
                 case "active" -> {
-                    Long lastChangedBox = hbCache.get(oppUid);
-                    long lastChanged    = lastChangedBox != null ? lastChangedBox : 0L;
-
-                    String rel;
-                    rel = englishRelative(lastChanged);
-
-                    label = "Last seen " + rel;
+                    Long cached = hbCache.get(oppUid);   // may be null
+                    long lastHb = cached != null ? cached : 0L;
+                    label = "Last seen " + englishRelative(lastHb);
                     yield ContextCompat.getColor(
                             h.itemView.getContext(), R.color.colorGreenDark);
                 }
@@ -181,7 +194,8 @@ public class MatchAdapter
     /* tidy-up to avoid leaks */
     @Override public void onDetachedFromRecyclerView(@NonNull RecyclerView rv) {
         super.onDetachedFromRecyclerView(rv);
-        for (ListenerRegistration l : presSubs.values()) l.remove();
+        for (RtdbSub sub : presSubs.values())      // remove RTDB listeners
+            sub.ref.removeEventListener(sub.l);
         presSubs.clear();
     }
 

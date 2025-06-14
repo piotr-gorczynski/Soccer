@@ -22,7 +22,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -32,7 +31,22 @@ import androidx.lifecycle.LifecycleOwner;
 public class SoccerApp extends Application implements DefaultLifecycleObserver {
 
     private DatabaseReference userStatusDbRef;
-    private Map<String,Object> isOnline, isOffline;
+
+    /* Creates {state:"online", last_heartbeat:TS} */
+    private static Map<String,Object> buildOnline() {
+        return Map.of(
+                "state",          "online",
+                "last_heartbeat", ServerValue.TIMESTAMP
+        );
+    }
+    /* Creates {state:"offline", last_heartbeat:TS} */
+    private static Map<String,Object> buildOffline() {
+        return Map.of(
+                "state",          "offline",
+                "last_heartbeat", ServerValue.TIMESTAMP
+        );
+    }
+
 
     @Override
     public void onCreate() {
@@ -45,11 +59,9 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         DatabaseReference root = FirebaseDatabase.getInstance().getReference();
         userStatusDbRef = root.child("status").child(uid);
 
-        isOnline  = Map.of("state","online" , "last_changed", ServerValue.TIMESTAMP);
-        isOffline = Map.of("state","offline", "last_changed", ServerValue.TIMESTAMP);
+        userStatusDbRef.onDisconnect().updateChildren(buildOffline());
 
         root.child("connection-stay-awake").keepSynced(true);
-        userStatusDbRef.onDisconnect().updateChildren(isOffline);
 
         /* --- observe the process-wide lifecycle ------------------------ */
         ProcessLifecycleOwner.get()
@@ -67,22 +79,14 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         DatabaseReference info = FirebaseDatabase.getInstance()
                 .getReference(".info/connected");
 
-        ValueEventListener[] holder = new ValueEventListener[1];   // tidy removal
-        holder[0] = new ValueEventListener() {
+        info.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override public void onDataChange(@NonNull DataSnapshot snap) {
                 if (!Boolean.TRUE.equals(snap.getValue(Boolean.class))) return;
 
-                /* socket is really up → broadcast presence */
-                userStatusDbRef.onDisconnect().updateChildren(isOffline);
-                userStatusDbRef.updateChildren(isOnline)
-                        .addOnSuccessListener(v ->
-                                Log.d("TAG_Soccer", "✅ presence=online written"));
-
-                info.removeEventListener(holder[0]);   // listen just once
+                setUserOnline();    // ✨ ONE call does everything
             }
-            @Override public void onCancelled(@NonNull DatabaseError e) { /*ignore*/ }
-        };
-        info.addValueEventListener(holder[0]);
+            @Override public void onCancelled(@NonNull DatabaseError e) { }
+        });
     }
 
 
@@ -90,22 +94,21 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     @Override public void onStop(@NonNull LifecycleOwner owner) {
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                 + ": APP GOES TO BACKGROUND");
-        /* 1. Build one single map */
-        Map<String,Object> offline = new HashMap<>();
-        offline.put("state",         "offline");
-        offline.put("last_changed",  ServerValue.TIMESTAMP);
-        offline.put("last_heartbeat",ServerValue.TIMESTAMP);   // 👈 NEW
 
-        /* 2. Flush it to RTDB first … */
-        userStatusDbRef.updateChildren(offline)
+        Map<String,Object> offline = buildOffline();      // fresh TS each time
+
+        userStatusDbRef.setValue(offline)                 // atomic write
                 .addOnSuccessListener(v -> {
-                    /* … then shut the socket down */
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                            + ": ✅ calling goOffline()");
                     FirebaseDatabase.getInstance().goOffline();
-                    scheduleHeartbeat();          // keep the 15-min pulses if you like
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                            + ": ✅ calling scheduleHeartbeat()");
+                    scheduleHeartbeat();                      // 15-min pulses
                 })
                 .addOnFailureListener(e ->
                         Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                                + ": ❌ offline write failed", e));
+                                + ": ❌ seting value offline failed", e));
     }
 
     /* -------------- same heartbeat worker you already have ----- */
@@ -146,10 +149,8 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
 
             DatabaseReference hbRef = FirebaseDatabase.getInstance()
                     .getReference("status")
-                    .child(uid)
-                    .child("last_heartbeat");
-
-            hbRef.setValue(ServerValue.TIMESTAMP)
+                    .child(uid);
+            hbRef.setValue(buildOnline())
                     .addOnSuccessListener(v ->
                             Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                                     + ": ✅ heartbeat written for uid=" + uid))
@@ -159,6 +160,17 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
 
             return Result.success();
         }
+    }
+    private void setUserOnline() {
+
+        userStatusDbRef.setValue(buildOnline())
+                .addOnSuccessListener(v ->
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                            + ": ✅ setUserOnline worked"))
+                .addOnFailureListener(e ->
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                            + ": ❌ setUserOnline failed", e));
+        userStatusDbRef.onDisconnect().updateChildren(buildOffline());
     }
 
 }
