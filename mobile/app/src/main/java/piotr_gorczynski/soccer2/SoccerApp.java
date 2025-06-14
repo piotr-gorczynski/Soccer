@@ -78,6 +78,8 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         FirebaseDatabase.getInstance().goOnline();
         cancelHeartbeat();
 
+        setUserOnline();                     // ← run it right away
+
         DatabaseReference info = FirebaseDatabase.getInstance()
                 .getReference(".info/connected");
 
@@ -85,7 +87,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
             @Override public void onDataChange(@NonNull DataSnapshot snap) {
                 if (!Boolean.TRUE.equals(snap.getValue(Boolean.class))) return;
 
-                setUserOnline();    // ✨ ONE call does everything
+                setUserOnline();    // second write is idempotent
             }
             @Override public void onCancelled(@NonNull DatabaseError e) { }
         });
@@ -168,7 +170,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         userStatusDbRef.setValue(buildOnline())
                 .addOnSuccessListener(v ->
                     Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                            + ": ✅ setUserOnline worked"))
+                            + ": ✅ setUserOnline ok"))
                 .addOnFailureListener(e ->
                         Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                             + ": ❌ setUserOnline failed", e));
