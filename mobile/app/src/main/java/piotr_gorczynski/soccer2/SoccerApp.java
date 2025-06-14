@@ -58,6 +58,8 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
 
         DatabaseReference root = FirebaseDatabase.getInstance().getReference();
         userStatusDbRef = root.child("status").child(uid);
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                + ": Writing to " + userStatusDbRef);
 
         userStatusDbRef.onDisconnect().updateChildren(buildOffline());
 
