@@ -39,6 +39,12 @@ service cloud.firestore {
     // 3. Matches: only participants may create/read/update
     /* ── helper ───────────────────────────────────────────── */
     function isSignedIn() { return request.auth != null; }
+    function isMatchPlayer(matchId) {
+      return request.auth.uid in [
+        get(/databases/$(database)/documents/matches/$(matchId)).data.player0,
+        get(/databases/$(database)/documents/matches/$(matchId)).data.player1
+      ];
+    }
 
     /* ── /matches/{matchId} ───────────────────────────────── */
     match /matches/{matchId} {
@@ -47,30 +53,16 @@ service cloud.firestore {
       allow list: if isSignedIn();     // no access to resource.data here
 
       /* 2️⃣  allow client-side creation of a match document */
-      allow create:
-        if isSignedIn() &&
-           (request.auth.uid == request.resource.data.player0 ||
-            request.auth.uid == request.resource.data.player1) &&     // must be one of the players
-           request.resource.data.player0 is string &&
-           request.resource.data.player1 is string &&                 // quick type check
-           request.resource.data.invitationId is string &&            // required field
-           // optional: keep the document schema tight
-           request.resource.data.keys().hasOnly([
-             'player0','player1','invitationId','createdAt','status',
-             'remainingTime0','remainingTime1','turn','turnStartTime','updatedAt',
-             'reason','winner'        // include any other legit fields
-           ]);
+      allow create: if isSignedIn() && isMatchPlayer(matchId)
+                    && request.resource.data.player0 is string
+                    && request.resource.data.player1 is string;
 
-      /* 3️⃣  protect existing docs (read single, edit, delete) */
-      allow get, update, delete:
-        if isSignedIn() &&
-           request.auth.uid in [resource.data.player0, resource.data.player1];
+      /* single-doc reads / edits */
+      allow get, update, delete: if isSignedIn() && isMatchPlayer(matchId);
 
-      /* 4️⃣  moves / clocks / other sub-collections */
-      match /{sub=**} {
-        allow read, write:
-          if isSignedIn() &&
-             request.auth.uid in [resource.data.player0, resource.data.player1];
+      /* ---- moves sub-collection ---- */
+      match /moves/{moveId} {
+        allow read, write: if isSignedIn() && isMatchPlayer(matchId);
       }
     }
 
