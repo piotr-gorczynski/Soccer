@@ -61,21 +61,21 @@ public class TournamentLobbyActivity extends AppCompatActivity {
             }
         };
 
-        /* listen where playerA == myUid */
-        ListenerRegistration lA = db.collection("tournaments").document(requireNonNull(tid))
+        /* listen where player0 == myUid */
+        ListenerRegistration l0 = db.collection("tournaments").document(requireNonNull(tid))
                 .collection("matches")
-                .whereEqualTo("playerA", myUid)
+                .whereEqualTo("player0", myUid)
                 .addSnapshotListener(matchHandler);
 
-        /* listen where playerB == myUid */
-        ListenerRegistration lB = db.collection("tournaments").document(tid)
+        /* listen where player1 == myUid */
+        ListenerRegistration l1 = db.collection("tournaments").document(tid)
                 .collection("matches")
-                .whereEqualTo("playerB", myUid)
+                .whereEqualTo("player1", myUid)
                 .addSnapshotListener(matchHandler);
 
         /* keep references so you can remove them in onDestroy() */
-        matchListenerA = lA;
-        matchListenerB = lB;
+        matchListenerA = l0;
+        matchListenerB = l1;
 
     }
 

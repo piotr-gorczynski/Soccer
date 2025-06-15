@@ -92,8 +92,8 @@ async function generateRoundRobin(tournamentRef) {
     for (let j = i + 1; j < ids.length; j++) {
       const mRef = tournamentRef.collection('matches').doc();
       batch.set(mRef, {
-        playerA:   ids[i],
-        playerB:   ids[j],
+        player0:   ids[i],
+        player1:   ids[j],
         status:    'scheduled',
         createdAt: now
       });
