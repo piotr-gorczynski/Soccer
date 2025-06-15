@@ -1,7 +1,14 @@
 package piotr_gorczynski.soccer2;
 
+import static android.content.Context.MODE_PRIVATE;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,6 +20,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -22,19 +30,26 @@ import java.util.Map;
 import java.util.Objects;
 
 import android.view.View;
+import android.widget.Toast;
+
 import androidx.core.content.ContextCompat;
+
+import android.content.Context;
 
 public class MatchAdapter
         extends RecyclerView.Adapter<MatchAdapter.VH> {
+    private final Context context;
 
     public static class VH extends RecyclerView.ViewHolder {
          final TextView opponent, presence, status;
-        VH(View v) {
+         final Button inviteBtn;
+         VH(View v) {
             super(v);
             opponent = v.findViewById(R.id.opponent);
             presence = v.findViewById(R.id.presence);
             status   = v.findViewById(R.id.status);
-        }
+            inviteBtn = v.findViewById(R.id.inviteBtn);
+         }
     }
 
     /* ───── caches ───── */
@@ -58,7 +73,8 @@ public class MatchAdapter
 
     interface OnMatchClick { void onOpen(String matchId); }
 
-    MatchAdapter(String myUid, OnMatchClick cb) {
+    MatchAdapter(Context context, String myUid, OnMatchClick cb) {
+        this.context = context;
         this.myUid   = myUid;
         this.clickCB = cb;
     }
@@ -179,6 +195,53 @@ public class MatchAdapter
         };
         h.status.setTextColor(colour);
         h.itemView.setOnClickListener(v -> clickCB.onOpen(m.getId()));
+
+        // Determine button visibility
+        boolean isActiveOrDone = "playing".equals(st) || "done".equals(st);
+        boolean isOffline = "offline".equalsIgnoreCase(pState);
+
+        if (isActiveOrDone || isOffline) {
+            h.inviteBtn.setVisibility(View.GONE);
+        } else {
+            h.inviteBtn.setVisibility(View.VISIBLE);
+        }
+
+        // 💬 Invite button logic
+        h.inviteBtn.setOnClickListener(v -> {
+            if (oppUid == null || h.opponent.getText() == null) return;
+
+            Map<String, Object> invite = new HashMap<>();
+            invite.put("from", myUid);
+            invite.put("to", oppUid);
+            SharedPreferences prefs = context.getSharedPreferences(context.getPackageName() + "_preferences", MODE_PRIVATE);
+            invite.put("fromNickname", prefs.getString("nickname", null));
+            invite.put("toNickname", h.opponent.getText());
+            invite.put("createdAt", FieldValue.serverTimestamp());
+            invite.put("status", "pending");
+
+            FirebaseFirestore.getInstance().collection("invitations")
+                    .add(invite)
+                    .addOnSuccessListener(docRef -> {
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                                + ": Invite sent");
+                        Toast.makeText(context, "Invitation sent", Toast.LENGTH_SHORT).show();
+                        String inviteId = docRef.getId();
+
+                        // ✅ Start WaitingActivity (which will listen for match creation)
+                        Intent intent = new Intent(context, WaitingActivity.class);
+                        intent.putExtra("inviteId", inviteId);
+                        context.startActivity(intent);
+                        if (context instanceof Activity) {
+                            ((Activity) context).finish();
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(context, "Failed to send invite", Toast.LENGTH_SHORT).show();
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                                + ": Sending invite failed", e);
+                    });
+        });
+
     }
 
 
