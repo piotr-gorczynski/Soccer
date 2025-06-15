@@ -82,8 +82,8 @@ public class MatchAdapter
     private int indexForUid(@NonNull String uid) {
         for (int i = 0; i < matches.size(); i++) {
             DocumentSnapshot m = matches.get(i);
-            String a = m.getString("playerA"), b = m.getString("playerB");
-            if (uid.equals(a) || uid.equals(b)) return i;
+            String player0 = m.getString("player0"), player1 = m.getString("player1");
+            if (uid.equals(player0) || uid.equals(player1)) return i;
         }
         return RecyclerView.NO_POSITION;
     }
@@ -95,9 +95,9 @@ public class MatchAdapter
     @Override
     public void onBindViewHolder(@NonNull VH h, int pos) {
         DocumentSnapshot m = matches.get(pos);
-        String a = m.getString("playerA");
-        String b = m.getString("playerB");
-        String oppUid = myUid.equals(a) ? b : a;
+        String player0 = m.getString("player0");
+        String player1 = m.getString("player1");
+        String oppUid = myUid.equals(player0) ? player1 : player0;
 
         /* ----------- nickname lookup ----------- */
         String nick = nickCache.get(oppUid);
