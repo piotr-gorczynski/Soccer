@@ -1,8 +1,5 @@
 rules_version = '2';
 service cloud.firestore {
-
-
-
   match /databases/{database}/documents {
 
     match /tournaments/{tournamentId} {
@@ -40,20 +37,19 @@ service cloud.firestore {
     }
 
     // 3. Matches: only participants may create/read/update
-
-    function isMatchParticipant(matchId) {
-      let match = get(/databases/$(database)/documents/matches/$(matchId)).data;
-      return request.auth.uid == match.player0 || request.auth.uid == match.player1;
-    }
-
     match /matches/{matchId} {
       allow create: if request.auth.uid == request.resource.data.player0
-                && request.resource.data.player1 is string;
-
-      allow read, update: if isMatchParticipant(matchId);
+                 && request.resource.data.player1 is string;
+      allow read, update, delete:
+          if request.auth.uid == resource.data.player0
+          || request.auth.uid == resource.data.player1;
 
       match /moves/{moveId} {
-        allow read, create: if isMatchParticipant(matchId);
+        allow read, create: if
+          (get(/databases/$(database)/documents/matches/$(matchId))
+             .data.player0 == request.auth.uid)
+          || (get(/databases/$(database)/documents/matches/$(matchId))
+             .data.player1 == request.auth.uid);
       }
     }
 
