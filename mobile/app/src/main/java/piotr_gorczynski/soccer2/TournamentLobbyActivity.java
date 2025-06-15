@@ -33,11 +33,15 @@ public class TournamentLobbyActivity extends AppCompatActivity {
 
         RecyclerView rv = findViewById(R.id.matchesList);
         rv.setLayoutManager(new LinearLayoutManager(this));
-        mAdapter = new MatchAdapter(myUid,
+        mAdapter = new MatchAdapter(
+                this,                      // 👈 Context
+                myUid,
                 matchId -> startActivity(
                         new Intent(this, GameActivity.class)
                                 .putExtra("matchId", matchId)
-                                .putExtra("GameType", 4)));
+                                .putExtra("GameType", 4)
+                )
+        );
         rv.setAdapter(mAdapter);
 
         /* one common handler so we don’t repeat the diff logic */
