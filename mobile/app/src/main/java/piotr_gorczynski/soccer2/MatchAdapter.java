@@ -69,15 +69,21 @@ public class MatchAdapter
 
     private final List<DocumentSnapshot> matches = new ArrayList<>();
     private final String myUid;
-    private final OnMatchClick clickCB;
 
-    interface OnMatchClick { void onOpen(String matchId); }
 
-    MatchAdapter(Context context, String myUid, OnMatchClick cb) {
+    MatchAdapter(Context context, String myUid) {
         this.context = context;
         this.myUid   = myUid;
-        this.clickCB = cb;
+        setHasStableIds(true);   // ✅ tell RecyclerView this adapter uses stable IDs
     }
+
+    @Override
+    public long getItemId(int position) {
+        // For Firestore: each match doc ID is already unique.
+        // Turn it into a positive 64-bit value:
+        return matches.get(position).getId().hashCode() & 0xffffffffL;
+    }
+
     /* helper inside MatchAdapter ----------------------------------------- */
     private int indexForUid(@NonNull String uid) {
         for (int i = 0; i < matches.size(); i++) {
@@ -111,10 +117,9 @@ public class MatchAdapter
                         if (n == null) return;
 
                         nickCache.put(oppUid, n);
-
-                        int posNow = h.getAdapterPosition();        // ← works on all versions
-                        if (posNow != RecyclerView.NO_POSITION) {
-                            notifyItemChanged(posNow);              // refresh the correct row
+                        int idx = indexForUid(oppUid);          // or use the doc-id instead of UID
+                        if (idx != RecyclerView.NO_POSITION) {
+                            notifyItemChanged(idx);             // refresh the *right* row
                         }
                     });
         } else {
@@ -148,8 +153,8 @@ public class MatchAdapter
                     presCache.put(oppUid, state);
                     hbCache.put(oppUid, lastHb);    // for “Last seen …”
 
-                    int row = indexForUid(oppUid);
-                    if (row != RecyclerView.NO_POSITION) notifyItemChanged(row);
+                    int idx = indexForUid(oppUid);
+                    if (idx != RecyclerView.NO_POSITION) notifyItemChanged(idx);
                 }
                 @Override public void onCancelled(@NonNull DatabaseError e) { }
             };
@@ -194,7 +199,6 @@ public class MatchAdapter
                     h.itemView.getContext(), R.color.colorGreenDark);
         };
         h.status.setTextColor(colour);
-        h.itemView.setOnClickListener(v -> clickCB.onOpen(m.getId()));
 
         // Determine button visibility
         boolean isActiveOrDone = "playing".equals(st) || "done".equals(st);
@@ -209,6 +213,8 @@ public class MatchAdapter
         // 💬 Invite button logic
         h.inviteBtn.setOnClickListener(v -> {
             if (oppUid == null || h.opponent.getText() == null) return;
+            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                    + ": On click started");
 
             Map<String, Object> invite = new HashMap<>();
             invite.put("from", myUid);

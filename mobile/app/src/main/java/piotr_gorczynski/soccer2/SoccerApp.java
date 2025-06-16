@@ -75,7 +75,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     @Override public void onStart(@NonNull LifecycleOwner owner) {
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                 + ": APP RETURNS TO FOREGROUND");
-        FirebaseDatabase.getInstance().goOnline();
+        //FirebaseDatabase.getInstance().goOnline();
         cancelHeartbeat();
 
         setUserOnline();                     // ← run it right away
@@ -103,9 +103,9 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
 
         userStatusDbRef.setValue(offline)                 // atomic write
                 .addOnSuccessListener(v -> {
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                    /*Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                             + ": ✅ calling goOffline()");
-                    FirebaseDatabase.getInstance().goOffline();
+                    FirebaseDatabase.getInstance().goOffline();*/
                     Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                             + ": ✅ calling scheduleHeartbeat()");
                     scheduleHeartbeat();                      // 15-min pulses
