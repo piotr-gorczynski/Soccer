@@ -48,7 +48,7 @@ public class GameActivity extends AppCompatActivity {
     int androidLevel = 1;
 
     //Real-time Move Sync
-    private String matchId;
+    private String matchPath;
     private CollectionReference movesRef;
 
     private DocumentReference matchRef;
@@ -87,14 +87,16 @@ public class GameActivity extends AppCompatActivity {
         super.onNewIntent(intent);
 
         // Don’t even replace the intent if it’s identical
-        String newMatchId = intent.getStringExtra("matchId");
-        String currentMatchId = getIntent().getStringExtra("matchId");
+        String newPath = intent.getStringExtra("matchPath");
+        String currentPath = getIntent().getStringExtra("matchPath");
 
         // If nothing has changed, bail out
-        if (newMatchId != null && newMatchId.equals(currentMatchId)) {
-            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": identical matchId, skipping");
+        if (newPath != null && newPath.equals(currentPath)) {
+            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                    + ": identical matchPath, skipping");
         } else {
-            Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ❌ CRITICAL ERROR: Dirrenten match_id on 2nd call!");
+            Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                    + ": ❌ CRITICAL ERROR: Dirrenten matchPath on 2nd call!");
             throw new IllegalStateException("❌ CRITICAL ERROR: Dirrenten match_id on 2nd call!");
         }
     }
@@ -216,12 +218,12 @@ public class GameActivity extends AppCompatActivity {
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Game Type entered: " + GameType);
 
         if (GameType == 3) {
-            matchId = getIntent().getStringExtra("matchId");
-            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": matchId=" + matchId);
+            matchPath = getIntent().getStringExtra("matchPath");
+            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": matchPath=" + matchPath);
             String localNickname = getIntent().getStringExtra("localNickname");
 
-            if (matchId == null || localNickname == null) {
-                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Missing matchId or localNickname");
+            if (matchPath == null || localNickname == null) {
+                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Missing matchPath or localNickname");
                 Toast.makeText(this, "Game launch failed.", Toast.LENGTH_LONG).show();
                 finish();
                 return;
@@ -242,12 +244,12 @@ public class GameActivity extends AppCompatActivity {
             setContentView(R.layout.view_waiting_for_opponent);
 
             // grab the reference once
-            matchRef = db.collection("matches").document(matchId);
+            matchRef = db.document(matchPath);
 
             matchRef.get()
                 .addOnSuccessListener(doc -> {
                     if (!doc.exists()) {
-                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Match not found: " + matchId);
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Match not found: " + matchPath);
                         Toast.makeText(this, "Match not found.", Toast.LENGTH_LONG).show();
                         finish();
                         return;
@@ -304,7 +306,7 @@ public class GameActivity extends AppCompatActivity {
                                 movesRef = matchRef.collection("moves");
 
                                 // MOVE listener → only calls replaceMoves(...)
-                                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Attaching Firestore listener to: matches/" + matchId + "/moves");
+                                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Attaching Firestore listener to: matches/" + matchPath + "/moves");
                                 movesListener = movesRef
                                     .orderBy("createdAt")
                                     .addSnapshotListener(this::onMovesUpdate);
@@ -583,7 +585,7 @@ public class GameActivity extends AppCompatActivity {
                         .setTitle("Leave game?")
                         .setMessage("Are you sure you want to exit? This will count as a forfeit.")
                         .setPositiveButton("Yes", (dialog, which) -> {
-                            if (matchId != null) {
+                            if (matchPath != null) {
                                 String loserUid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
                                 String winnerUid = loserUid.equals(player0Uid) ? player1Uid : player0Uid;
 
@@ -592,11 +594,8 @@ public class GameActivity extends AppCompatActivity {
                                 update.put("status", "completed");
                                 update.put("reason", "abandon");
 
-                                FirebaseFirestore db = FirebaseFirestore.getInstance();
-
                                 // 🔄 Update match document
-                                db.collection("matches").document(matchId)
-                                        .update(update)
+                                matchRef.update(update)
                                         .addOnSuccessListener(unused -> Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": 🏳️ Match marked as forfeited"))
                                         .addOnFailureListener(err -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ❌ Failed to update match", err));
 
@@ -607,9 +606,7 @@ public class GameActivity extends AppCompatActivity {
                                 forfeitMove.put("p", localPlayerIndex);
                                 forfeitMove.put("createdAt", FieldValue.serverTimestamp());
 
-                                db.collection("matches").document(matchId)
-                                        .collection("moves")
-                                        .add(forfeitMove)
+                                matchRef.collection("moves").add(forfeitMove)
                                         .addOnSuccessListener(unused -> Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": 📨 Forfeit move added"))
                                         .addOnFailureListener(e -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ❌ Failed to send forfeit move", e));
                             }
@@ -795,13 +792,13 @@ public class GameActivity extends AppCompatActivity {
             final String sWinner = (Winner == 0 ? sPlayer0 : sPlayer1);
             final String sLooser= (Winner == 0 ? sPlayer1 : sPlayer0);
 
-            if(matchId == null) {
+            if(matchPath == null) {
                 Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to load match reason");
                 Toast.makeText(this, "Fatal error matchId == null", Toast.LENGTH_LONG).show();
                 throw new IllegalStateException("Fatal error matchId == null");
             }
             FirebaseFirestore db = FirebaseFirestore.getInstance();
-            DocumentReference matchRef = db.collection("matches").document(matchId);
+            DocumentReference matchRef = this.matchRef;    // already points to the right doc
 
             db.runTransaction(transaction -> {
                         DocumentSnapshot snap = transaction.get(matchRef);
