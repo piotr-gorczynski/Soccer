@@ -3,6 +3,7 @@ package piotr_gorczynski.soccer2;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.TextView;
 
@@ -41,51 +42,55 @@ public class WaitingActivity extends AppCompatActivity {
                         String msg = getString(R.string.waiting_for_opponent_named, toNickname);
                         waitingMessage.setText(msg);
                     }
+
+                    /* ⬇️ NEW: choose the right waiting strategy */
+                    String matchPath = inviteDoc.getString("matchPath");
+
+                    if (!TextUtils.isEmpty(matchPath)) {                  // ── tournament flow
+                        listenForExistingMatch(db.document(matchPath));
+                    } else {                                              // ── friendly flow
+                        listenForNewMatch(db, inviteId);
+                    }
                 });
 
-        // 🔍 Listen for match that was created after invite is accepted
+    }
+
+    /* --- helper for tournament matches ----------------------------------- */
+    private void listenForExistingMatch(DocumentReference matchRef) {
+        matchListener = matchRef.addSnapshotListener((snap, err) -> {
+            if (err != null || snap == null || !snap.exists()) return;
+
+            String status = snap.getString("status");
+            if ("active".equals(status) && !gameActivityLaunched) {
+                launchGame(snap.getReference().getPath());   // full path
+            }
+        });
+    }
+
+    /* --- common launcher -------------------------------------------------- */
+    private void launchGame(String matchPath) {
+        gameActivityLaunched = true;
+
+        SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
+        String nickname = prefs.getString("nickname", "Player");
+
+        startActivity(new Intent(this, GameActivity.class)
+                .putExtra("matchPath",   matchPath)   // 👈 unified key
+                .putExtra("GameType",    3)
+                .putExtra("localNickname", nickname));
+
+        finish();
+    }
+
+    /* --- helper for friend-for-fun matches ------------------------------- */
+    private void listenForNewMatch(FirebaseFirestore db, String inviteId) {
         matchListener = db.collection("matches")
                 .whereEqualTo("invitationId", inviteId)
-                .addSnapshotListener((snapshots, error) -> {
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Match snapshot listener triggered");
-
-                    if (error != null) {
-                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Match listener error", error);
-                        return;
-                    }
-
-                    if (snapshots == null) {
-                        Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Match snapshots null");
-                        return;
-                    }
-
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Snapshot size: " + snapshots.size());
-
-                    if (!snapshots.isEmpty()) {
-                        if (!gameActivityLaunched) {
-                            // Launch GameActivity only once!
-                            gameActivityLaunched = true;
-                            DocumentSnapshot matchDoc = snapshots.getDocuments().get(0);
-                            String matchId = matchDoc.getId();
-                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                            }.getClass().getEnclosingMethod()).getName() + ": ✅ Match found with ID: " + matchId +". Starting GameActivity...");
-
-                            Intent intent = new Intent(this, GameActivity.class);
-                            intent.putExtra("matchId", matchId);
-                            intent.putExtra("GameType", 3);
-
-                            SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
-                            String nickname = prefs.getString("nickname", "Player");
-                            intent.putExtra("localNickname", nickname);
-
-                            startActivity(intent);
-                            finish();
-                        } else {
-                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                            }.getClass().getEnclosingMethod()).getName() + ": gameActivityLaunched==true, therefore skipping...");
-                        }
-                    } else {
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": No matches found with invitationId=" + inviteId);
+                .addSnapshotListener((snaps, err) -> {
+                    if (err != null || snaps == null || snaps.isEmpty()) return;
+                    if (!gameActivityLaunched) {
+                        launchGame(snaps.getDocuments().get(0)
+                                .getReference().getPath());
                     }
                 });
     }

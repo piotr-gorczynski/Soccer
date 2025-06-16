@@ -70,10 +70,17 @@ public class MatchAdapter
     private final List<DocumentSnapshot> matches = new ArrayList<>();
     private final String myUid;
 
+    private final String tournamentId;
 
-    MatchAdapter(Context context, String myUid) {
-        this.context = context;
-        this.myUid   = myUid;
+
+    MatchAdapter(@NonNull Context context,
+                 @NonNull String  myUid,
+                 @NonNull String  tournamentId) {
+
+        this.context       = context;
+        this.myUid         = myUid;
+        this.tournamentId  = Objects.requireNonNull(tournamentId,
+                "tournamentId must not be null");
         setHasStableIds(true);   // ✅ tell RecyclerView this adapter uses stable IDs
     }
 
@@ -215,7 +222,7 @@ public class MatchAdapter
             if (oppUid == null || h.opponent.getText() == null) return;
             Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                     + ": On click started");
-
+            String matchPath = m.getReference().getPath();     //  e.g. "tournaments/ABC/matches/XYZ"
             Map<String, Object> invite = new HashMap<>();
             invite.put("from", myUid);
             invite.put("to", oppUid);
@@ -224,6 +231,8 @@ public class MatchAdapter
             invite.put("toNickname", h.opponent.getText());
             invite.put("createdAt", FieldValue.serverTimestamp());
             invite.put("status", "pending");
+            invite.put("tournamentId", tournamentId);
+            invite.put("matchPath",    matchPath);             // 👈 NEW
 
             FirebaseFirestore.getInstance().collection("invitations")
                     .add(invite)

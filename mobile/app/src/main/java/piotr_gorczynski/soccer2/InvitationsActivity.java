@@ -107,16 +107,16 @@ public class InvitationsActivity extends AppCompatActivity {
                             .addOnSuccessListener(result -> {
                                 @SuppressWarnings("unchecked")
                                 Map<String, Object> payload = (Map<String, Object>) result.getData();
-                                String matchId = payload != null ? (String) payload.get("matchId") : null;
+                                String matchPath = payload != null ? (String) payload.get("matchPath") : null;
 
-                                if (TextUtils.isEmpty(matchId)) {
-                                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": matchId missing in response: " + payload);
+                                if (TextUtils.isEmpty(matchPath)) {
+                                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": matchPath missing in response: " + payload);
                                     Toast.makeText(this, "Invalid response from server.",
                                             Toast.LENGTH_LONG).show();
                                     return;
                                 }
 
-                                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": matchId received: " + matchId);
+                                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": matchPath received: " + matchPath);
                                 Toast.makeText(this, "Invite accepted! Starting game…",
                                         Toast.LENGTH_SHORT).show();
 
@@ -125,7 +125,7 @@ public class InvitationsActivity extends AppCompatActivity {
 
                                 // Start game with matchId, GameType 3, and local player nickname
                                 startActivity(new Intent(this, GameActivity.class)
-                                        .putExtra("matchId", matchId)
+                                        .putExtra("matchPath", matchPath)
                                         .putExtra("GameType", 3)
                                         .putExtra("localNickname", nickname));
 
