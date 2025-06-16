@@ -794,8 +794,8 @@ public class GameActivity extends AppCompatActivity {
 
             if(matchPath == null) {
                 Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to load match reason");
-                Toast.makeText(this, "Fatal error matchId == null", Toast.LENGTH_LONG).show();
-                throw new IllegalStateException("Fatal error matchId == null");
+                Toast.makeText(this, "Fatal error matchPath == null", Toast.LENGTH_LONG).show();
+                throw new IllegalStateException("Fatal error matchPath == null");
             }
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             DocumentReference matchRef = this.matchRef;    // already points to the right doc
