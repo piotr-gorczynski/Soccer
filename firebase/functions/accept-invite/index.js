@@ -46,14 +46,30 @@ exports.acceptInvite = functions.https.onCall(async (data, context) => {
 
   console.log("✅ Creating match for players:", invite.from, "vs", invite.to);
 
-  const matchRef = db.collection("matches").doc();
+  const tid = invite.tournamentId || null;                              // ➊ read once
+  const matchPath = invite.matchPath     || null;
+  console.log("🔍 Tournament ID (if any):", tid);
+  let matchRef;                                          // ➋ choose path
+  if (matchPath) {                                  // tournament – doc already exists
+    matchRef = db.doc(matchPath);
+    const snap = await matchRef.get();
+    if (!snap.exists) {
+      console.error("❌ Scheduled match document is missing:", matchPath);
+      throw new functions.https.HttpsError("not-found",
+        "Scheduled match document is missing");
+    }
+  } else {                                          // friendly – create new doc
+    matchRef = db.collection("matches").doc();
+  }
+ 
   const matchData = {
     player0: invite.from,
     player1: invite.to,
     status: "active",
     turn: 0,
     winner: null,
-    invitationId: invitationId, // 🔧 added line    
+    invitationId,
+    tournamentId: tid,            // null for friendlies, redundant for nested
     createdAt: admin.firestore.FieldValue.serverTimestamp(),
     updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     // ⏱ Added for chess-style clocks
@@ -64,7 +80,19 @@ exports.acceptInvite = functions.https.onCall(async (data, context) => {
 
   await db.runTransaction(async tx => {
     tx.update(inviteRef, { status: "accepted" });
-    tx.set(matchRef, matchData);
+    if (matchPath) {                             // tournament – just patch
+      tx.update(matchRef, {
+        status:        "active",
+        invitationId,
+        updatedAt:     admin.firestore.FieldValue.serverTimestamp(),
+        remainingTime0: initialTimeSeconds,
+        remainingTime1: initialTimeSeconds,
+        turn:           0,
+        turnStartTime:  null
+      });
+    } else {                                     // friendly – create new doc
+      tx.set(matchRef, matchData);
++   }
 
     // 🔸 Add initial move (middle of field, p = 0)
     const fieldHalfWidth  = 3 /* use same integer as your Android resources */;
@@ -90,7 +118,7 @@ exports.acceptInvite = functions.https.onCall(async (data, context) => {
       token: fcmToken,
       data: {
         type: "start",
-        matchId: matchRef.id,
+        matchPath: matchRef.path,           // 🔑 send full path
         fromNickname: invite.toNickname || "Your opponent",  // optional
       },
       notification: {
@@ -106,5 +134,5 @@ exports.acceptInvite = functions.https.onCall(async (data, context) => {
   }
   console.log("✅ Match created successfully with ID:", matchRef.id);
 
-  return { matchId: matchRef.id };
+  return { matchPath: matchRef.path };      // 🔑 callable returns same path
 });

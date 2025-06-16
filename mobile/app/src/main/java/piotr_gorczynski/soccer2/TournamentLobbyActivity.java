@@ -33,7 +33,8 @@ public class TournamentLobbyActivity extends AppCompatActivity {
         rv.setLayoutManager(new LinearLayoutManager(this));
         mAdapter = new MatchAdapter(
                 this,                      // 👈 Context
-                myUid
+                myUid,
+                requireNonNull(tid)
         );
         rv.setAdapter(mAdapter);
 
