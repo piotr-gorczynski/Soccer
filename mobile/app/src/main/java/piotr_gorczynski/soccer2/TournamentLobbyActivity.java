@@ -2,9 +2,7 @@ package piotr_gorczynski.soccer2;
 
 import static java.util.Objects.*;
 
-import android.content.Intent;
 import android.os.Bundle;
-
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -35,12 +33,7 @@ public class TournamentLobbyActivity extends AppCompatActivity {
         rv.setLayoutManager(new LinearLayoutManager(this));
         mAdapter = new MatchAdapter(
                 this,                      // 👈 Context
-                myUid,
-                matchId -> startActivity(
-                        new Intent(this, GameActivity.class)
-                                .putExtra("matchId", matchId)
-                                .putExtra("GameType", 4)
-                )
+                myUid
         );
         rv.setAdapter(mAdapter);
 
