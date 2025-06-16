@@ -53,14 +53,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": 📨 Message received: " + remoteMessage.getData());
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                + ": 📨 Message received: " + remoteMessage.getData());
         String type = remoteMessage.getData().get("type");
         if ("start".equals(type)) {
-            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": 🎮 Received 'start' message to launch GameActivity");
+            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                    + ": 🎮 Received 'start' message to launch GameActivity");
 
-            String matchId = remoteMessage.getData().get("matchId");
-            if (matchId == null) {
-                Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ⚠️ 'start' message missing matchId");
+            String matchPath = remoteMessage.getData().get("matchPath");
+            if (matchPath == null) {
+                Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                        + ": ⚠️ 'start' message missing matchPath");
                 return;
             }
 
@@ -68,11 +71,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
             String localNickname = prefs.getString("nickname", "Unknown");
 
-            Intent gameIntent = new Intent(this, piotr_gorczynski.soccer2.GameActivity.class);
-            gameIntent.putExtra("GameType", 3);
-            gameIntent.putExtra("matchId", matchId);
-            gameIntent.putExtra("localNickname", localNickname);
-            gameIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP
+            Intent gameIntent = new Intent(this, piotr_gorczynski.soccer2.GameActivity.class)
+                .putExtra("GameType", 3)
+                .putExtra("matchPath", matchPath)
+                .putExtra("localNickname", localNickname)
+                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP
                     | Intent.FLAG_ACTIVITY_CLEAR_TOP
                     | Intent.FLAG_ACTIVITY_NEW_TASK);
 

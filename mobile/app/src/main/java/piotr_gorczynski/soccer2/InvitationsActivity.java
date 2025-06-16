@@ -123,7 +123,7 @@ public class InvitationsActivity extends AppCompatActivity {
                                 SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
                                 String nickname = prefs.getString("nickname", "Player");
 
-                                // Start game with matchId, GameType 3, and local player nickname
+                                // Start game with matchPath, GameType 3, and local player nickname
                                 startActivity(new Intent(this, GameActivity.class)
                                         .putExtra("matchPath", matchPath)
                                         .putExtra("GameType", 3)
