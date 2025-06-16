@@ -72,13 +72,33 @@ service cloud.firestore {
       // 📖 Read / ✏️ update / ❌ delete an existing nested match
       allow get, update, delete: if isSignedIn() && isParticipant();
 
-      // ── moves sub-collection ──────────────────────────────
+      // ── moves sub-collection *for nested matches* ─────────────
       match /moves/{moveId} {
-        allow read, write: if isSignedIn() && isParticipant();
+        function parentMatch() {
+          return get(
+            /databases/$(database)/documents/$(parentPath)/matches/$(matchId)
+          ).data;
+        }
+        function allowedPlayer() {
+          return request.auth.uid in [
+            parentMatch().player0,
+            parentMatch().player1
+          ];
+        }
+
+        allow read :  if isSignedIn() && allowedPlayer();
+        allow create: if isSignedIn()
+                  && allowedPlayer()
+                  && request.resource.data.keys()
+                        .hasOnly(['x','y','p','createdAt'])
+                  && request.resource.data.x is int
+                  && request.resource.data.y is int
+                  && request.resource.data.p in [0,1];
+        allow update, delete: if false;
       }
     }
 
-    /* ── /matches/{matchId} ───────────────────────────────── */
+    /* ── FRIENDLY matches  /matches/{matchId} ─────────────────── */
     match /matches/{matchId} {
 
       /* 1️⃣  allow queries (WaitingActivity uses a list query) */
