@@ -92,7 +92,7 @@ exports.acceptInvite = functions.https.onCall(async (data, context) => {
       });
     } else {                                     // friendly – create new doc
       tx.set(matchRef, matchData);
-+   }
+    }
 
     // 🔸 Add initial move (middle of field, p = 0)
     const fieldHalfWidth  = 3 /* use same integer as your Android resources */;
