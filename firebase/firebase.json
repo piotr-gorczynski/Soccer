@@ -20,6 +20,7 @@
       "source": "functions/change-player-turn",
       "codebase": "change-player-turn",
       "runtime": "nodejs20",
+      "platform": "gcfv2",
       "region": "us-central1"
     },
     {
