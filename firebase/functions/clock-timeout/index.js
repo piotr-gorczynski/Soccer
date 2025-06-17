@@ -7,8 +7,9 @@ const db        = admin.firestore();
  * Ensures the opponent wins if the active player’s clock already elapsed
  * but no client wrote the result.
  */
-exports.clockTimeout = functions.firestore
-    .document("matches/{matchId}")
+ exports.clockTimeout = functions.firestore
+    // also fires for /tournaments/{tid}/matches/{matchId}
+    .document("{parentPath=**}/matches/{matchId}")
     .onUpdate(async (change, context) => {
 
   const before = change.before.data();
