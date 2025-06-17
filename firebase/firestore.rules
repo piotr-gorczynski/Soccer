@@ -47,9 +47,9 @@ service cloud.firestore {
     }
 
     // -------------------------------------------------------------------
-    //  🆕  Nested matches (e.g. /tournaments/{tid}/matches/{mid})
+    //  🆕  Tournament matches  /tournaments/{tid}/matches/{mid}
     // -------------------------------------------------------------------
-    match /{parentPath=**}/matches/{matchId} {
+    match /tournaments/{tid}/matches/{matchId} {
 
       function isParticipant() {
         /*  During create() the document doesn’t exist yet, so fall back to
@@ -74,9 +74,11 @@ service cloud.firestore {
 
       // ── moves sub-collection *for nested matches* ─────────────
       match /moves/{moveId} {
+        /* The parent match doc lives at a fixed location now, so:
+           /tournaments/{tid}/matches/{matchId}                         */
         function parentMatch() {
           return get(
-            /databases/$(database)/documents/$(parentPath)/matches/$(matchId)
+            /databases/$(database)/documents/tournaments/$(tid)/matches/$(matchId)
           ).data;
         }
         function allowedPlayer() {
@@ -86,14 +88,12 @@ service cloud.firestore {
           ];
         }
 
-        allow read :  if isSignedIn() && allowedPlayer();
-        allow create: if isSignedIn()
-                  && allowedPlayer()
-                  && request.resource.data.keys()
-                        .hasOnly(['x','y','p','createdAt'])
-                  && request.resource.data.x is int
-                  && request.resource.data.y is int
-                  && request.resource.data.p in [0,1];
+        /* reads stay the same */
+        allow read  : if isSignedIn() && allowedPlayer();
+
+        /* simple “participant can add” ✅ */
+        allow create: if isSignedIn() && allowedPlayer();
+
         allow update, delete: if false;
       }
     }
