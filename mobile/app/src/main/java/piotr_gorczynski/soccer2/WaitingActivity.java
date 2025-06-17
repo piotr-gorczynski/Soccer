@@ -71,7 +71,7 @@ public class WaitingActivity extends AppCompatActivity {
     private void launchGame(String matchPath) {
         gameActivityLaunched = true;
 
-        SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
+        SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
         String nickname = prefs.getString("nickname", "Player");
 
         startActivity(new Intent(this, GameActivity.class)
