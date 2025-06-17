@@ -11,7 +11,8 @@ const db        = admin.firestore();
  * Path: matches/{matchId}/moves/{moveId}
  */
 exports.changePlayerTurn = functions.firestore
-  .document("matches/{matchId}/moves/{moveId}")
+  // also catches /tournaments/{tid}/matches/{matchId}/moves/{moveId}
+  .document("{parentPath=**}/matches/{matchId}/moves/{moveId}")
   .onCreate(async (snap, context) => {
 
   const move      = snap.data();               // contains x, y, p, createdAt …
