@@ -22,21 +22,22 @@ steps:
           exit 1
         fi
 
-  # Step 2: Install Firebase CLI
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    id: 'install-firebase-cli'
+  # Step 2 – install latest Firebase CLI in a Node container
+  - name: 'node:20-slim'            # 👈 has npm pre-installed
+    id: install-firebase-cli
     entrypoint: bash
     args:
-      - '-c'
+      - -c
       - |
         set -ex
-        echo "⬇️ Installing Firebase CLI..."
-        npm install -g firebase-tools@latest        # <-- instead of curl script
-        firebase --version                          # sanity-check        
+        echo "⬇️  Installing Firebase CLI..."
+        npm install -g firebase-tools@latest
+        firebase --version           # sanity-check
+        # copy binary so later steps (which use cloud-sdk) can call it
         mkdir -p /workspace/firebase
-        cp /usr/local/bin/firebase /workspace/firebase/
+        cp "$(command -v firebase)" /workspace/firebase/
         chmod +x /workspace/firebase/firebase
-        echo "✅ Firebase CLI installed."
+        echo "✅  Firebase CLI installed."
 
   # Step 3: Clone source code
   - name: 'gcr.io/cloud-builders/git'
