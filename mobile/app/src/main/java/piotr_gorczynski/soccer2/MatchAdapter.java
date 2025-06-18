@@ -208,10 +208,10 @@ public class MatchAdapter
         h.status.setTextColor(colour);
 
         // Determine button visibility
-        boolean isActiveOrDone = "playing".equals(st) || "done".equals(st);
+        boolean isActiveOrCompleted = "playing".equals(st) || "completed".equals(st);
         boolean isOffline = "offline".equalsIgnoreCase(pState);
 
-        if (isActiveOrDone || isOffline) {
+        if (isActiveOrCompleted || isOffline) {
             h.inviteBtn.setVisibility(View.GONE);
         } else {
             h.inviteBtn.setVisibility(View.VISIBLE);

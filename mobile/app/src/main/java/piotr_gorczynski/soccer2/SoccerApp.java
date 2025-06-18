@@ -78,20 +78,20 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         //FirebaseDatabase.getInstance().goOnline();
         cancelHeartbeat();
 
-        setUserOnline();                     // ← run it right away
+        //setUserOnline();                     // ← run it right away
 
-        DatabaseReference info = FirebaseDatabase.getInstance()
-                .getReference(".info/connected");
+        DatabaseReference connectedRef =
+                FirebaseDatabase.getInstance().getReference(".info/connected");
 
-        info.addListenerForSingleValueEvent(new ValueEventListener() {
+        connectedRef.addValueEventListener(new ValueEventListener() {
             @Override public void onDataChange(@NonNull DataSnapshot snap) {
-                if (!Boolean.TRUE.equals(snap.getValue(Boolean.class))) return;
-
-                setUserOnline();    // second write is idempotent
+                Boolean ok = snap.getValue(Boolean.class);
+                if (Boolean.TRUE.equals(ok)) {
+                    setUserOnline();                // (re)announce presence
+                }
             }
             @Override public void onCancelled(@NonNull DatabaseError e) { }
-        });
-    }
+        });    }
 
 
     /* ------------ APP GOES TO BACKGROUND ------------------------------ */
