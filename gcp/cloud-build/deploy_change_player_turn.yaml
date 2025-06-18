@@ -70,21 +70,21 @@ steps:
         npm install
         echo "📦 Dependencies installed."
 
-  # Step 5: Deploy function
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+  # Step 5: Deploy function (Cloud SDK + Node runtime inside)
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:nodejs20'
     id: 'deploy-change-player-turn'
     entrypoint: bash
     args:
-      - '-c'
+      - -c
       - |
-        set -e
+        set -ex
         cd /workspace/firebase
         project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
 
-        ./firebase deploy \
+        /workspace/firebase/firebase deploy \
           --only functions:change-player-turn \
-          --project="$project_id" \
-          --force
+          --project="${project_id}" \
+          --force --non-interactive
 
         echo "✅ Function 'changePlayerTurn' deployed successfully."
 
