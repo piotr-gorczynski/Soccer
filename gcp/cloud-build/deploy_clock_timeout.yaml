@@ -95,15 +95,17 @@ steps:
       - |
         set -e
         project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
+        echo "🔐 Granting invoker role to allUsers for 'clockTimeoutMatches clockTimeoutTournamentMatches'..."
 
-        echo "🔐 Granting invoker role to allUsers for 'clockTimeout'..."
-        gcloud functions add-iam-policy-binding clockTimeout \
-          --region=us-central1 \
-          --project="$project_id" \
-          --member="allUsers" \
-          --role="roles/cloudfunctions.invoker"
+        for fn in clockTimeoutMatches clockTimeoutTournamentMatches; do
+          gcloud functions add-iam-policy-binding "$fn" \
+            --region=us-central1 \
+            --project="$project_id" \
+            --member="allUsers" \
+            --role="roles/cloudfunctions.invoker"
+        done
 
-        echo "✅ IAM policy binding applied."
+          echo "✅ IAM policy binding applied."
 
 options:
   logging: CLOUD_LOGGING_ONLY
