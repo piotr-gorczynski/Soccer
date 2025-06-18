@@ -70,14 +70,19 @@ steps:
         npm install
         echo "📦 Dependencies installed."
 
-  # Step 5: Deploy function (Cloud SDK + Node runtime inside)
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:nodejs20'
+  # Step 5: Deploy function ─ Cloud SDK + ad-hoc Node 20
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: 'deploy-change-player-turn'
     entrypoint: bash
     args:
       - -c
       - |
         set -ex
+        # 🔧 add Node 20 runtime for the firebase CLI
+        apt-get update -qq
+        curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+        apt-get install -yqq nodejs
+
         cd /workspace/firebase
         project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
 
