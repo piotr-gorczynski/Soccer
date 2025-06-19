@@ -1,7 +1,7 @@
 package piotr_gorczynski.soccer2;        // <-- adjust
 
 import android.content.Intent;
-import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -33,8 +34,8 @@ public class TournamentAdapter
 
     // ---------- View-Holder ----------
     public static class VH extends RecyclerView.ViewHolder {
-        TextView name, slots, endsIn;
-        Button   joinBtn;
+        final TextView name, slots, endsIn;
+        final Button   joinBtn;
         VH(@NonNull View v) {
             super(v);
             name    = v.findViewById(R.id.name);
@@ -60,11 +61,15 @@ public class TournamentAdapter
         String tid          = doc.getId();
 
         String name         = doc.getString("name");
-        long   joined       = Objects.requireNonNull(doc.getLong("participantsCount"));
-        long   max          = Objects.requireNonNull(doc.getLong("maxParticipants"));
+        Object raw = doc.get("participantsCount");   // returns Long *or* Double
+        long joined = raw instanceof Number ? ((Number) raw).longValue() : 0L;
+        raw = doc.get("maxParticipants");
+        long max = raw instanceof Number ? ((Number) raw).longValue() : 0L;
         String status       = doc.getString("status");            // "registering" | "running"
         Timestamp regDL     = doc.getTimestamp("registrationDeadline");
         Timestamp endDL     = doc.getTimestamp("matchesDeadline");
+
+
 
         /* ---------- common fields ---------- */
         h.name.setText(name);
@@ -78,8 +83,8 @@ public class TournamentAdapter
             // ① label: “Registration ends in …”
             long mLeft = Objects.requireNonNull(regDL).toDate().getTime() - System.currentTimeMillis();
             String endsText = (mLeft <= 0)
-                    ? "Registration closed"
-                    : DateUtils.getRelativeTimeSpanString(regDL.toDate().getTime()).toString();
+                    ? "Registration closed. Tournament will start within 1 hour"
+                    : "Registration ends "+englishRelative(regDL.toDate().getTime());
             h.endsIn.setText(endsText);
 
             // ② button: Join
@@ -95,11 +100,21 @@ public class TournamentAdapter
             long mLeft = endDL != null
                     ? endDL.toDate().getTime() - System.currentTimeMillis()
                     : -1;
-
+            if (endDL == null) {
+                Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                        + ": " + tid + " has no matchesDeadline!");
+            } else {
+                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                        + ": Deadline  : " + endDL.toDate());
+                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                        + ": Device now: " + new Date());
+                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                        + ": mLeft (ms): " + mLeft);
+            }
             String endsText = (mLeft <= 0)
                     ? "Tournament running"
-                    : "Ends in " + DateUtils.getRelativeTimeSpanString(
-                    endDL.toDate().getTime()).toString();
+                    : "Tournament running. Ends " + englishRelative(
+                    endDL.toDate().getTime());
 
             h.endsIn.setText(endsText);
 
@@ -116,4 +131,36 @@ public class TournamentAdapter
 
     @Override
     public int getItemCount() { return data.size(); }
+
+    /** Absolute, English-only relative time. Works for past & future moments. */
+    public static String englishRelative(long targetTimeMillis) {
+
+        final long NOW  = System.currentTimeMillis();
+        long diff       = targetTimeMillis - NOW;      // + => future, – => past
+
+        final long MIN  = 60_000L;
+        final long HOUR = 60 * MIN;
+        final long DAY  = 24 * HOUR;
+
+        // ── “just now / in a moment” ───────────────────────────────
+        if (Math.abs(diff) < MIN) {
+            return diff >= 0 ? "in a moment" : "just now";
+        }
+
+        // ── FUTURE (“in …”) ────────────────────────────────────────
+        if (diff > 0) {
+            if (diff < HOUR)  { long m = diff / MIN;  return "in " + m + " min" + (m == 1 ? "" : "s"); }
+            if (diff < DAY)   { long h = diff / HOUR; return "in " + h + " h"; }
+            if (diff < 2*DAY) { return "tomorrow"; }
+            long d = diff / DAY;                       return "in " + d + " days";
+        }
+
+        // ── PAST (“… ago”) ─────────────────────────────────────────
+        diff = -diff;                                 // make positive
+        if (diff < HOUR)  { long m = diff / MIN;  return m + " min" + (m == 1 ? "" : "s") + " ago"; }
+        if (diff < DAY)   { long h = diff / HOUR; return h + " h ago"; }
+        if (diff < 2*DAY) { return "yesterday"; }
+        long d = diff / DAY;                          return d + " days ago";
+    }
+
 }

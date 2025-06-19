@@ -8,7 +8,8 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:text="@string/open_tournaments"
+        android:text="@string/tournaments"
+        android:textStyle="bold"
         android:layout_marginBottom="20dp"
         android:textColor="@color/colorGreenDark"
         android:layout_width="wrap_content"
