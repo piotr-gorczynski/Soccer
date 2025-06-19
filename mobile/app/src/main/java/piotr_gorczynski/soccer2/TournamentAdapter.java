@@ -112,7 +112,7 @@ public class TournamentAdapter
                         + ": mLeft (ms): " + mLeft);
             }
             String endsText = (mLeft <= 0)
-                    ? "Tournament running"
+                    ? "Tournament ends now..."
                     : "Tournament running. Ends " + englishRelative(
                     endDL.toDate().getTime());
 
