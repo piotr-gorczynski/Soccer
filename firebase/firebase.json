@@ -29,6 +29,10 @@
     {
       "source": "functions/start-tournament",
       "codebase": "start-tournament"
+    },
+    {
+      "source": "functions/end-tournament",
+      "codebase": "end-tournament"
     }
   ],
   "firestore": {
