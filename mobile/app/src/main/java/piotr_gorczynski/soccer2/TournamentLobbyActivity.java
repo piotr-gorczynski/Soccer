@@ -3,6 +3,7 @@ package piotr_gorczynski.soccer2;
 import static java.util.Objects.*;
 
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -16,6 +17,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.Objects;
+
 public class TournamentLobbyActivity extends AppCompatActivity {
 
     private MatchAdapter mAdapter;
@@ -23,6 +26,8 @@ public class TournamentLobbyActivity extends AppCompatActivity {
 
     @Override protected void onCreate(Bundle b) {
         super.onCreate(b);
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                + ": Method start");
         setContentView(R.layout.activity_tournament_lobby);
 
         String tid   = getIntent().getStringExtra("tournamentId");
