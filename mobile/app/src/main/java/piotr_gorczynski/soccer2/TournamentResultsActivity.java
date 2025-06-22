@@ -55,44 +55,50 @@ public class TournamentResultsActivity extends AppCompatActivity {
                     tournamentName.setText(doc.getString("name"));
                 });
 
-        // Step 1: fetch all matches
+        // Step 1: fetch all participants
         db.collection("tournaments").document(tid)
-                .collection("matches").get()
-                .addOnSuccessListener(matchSnap -> {
+                .collection("participants").get()
+                .addOnSuccessListener(partSnap -> {
+
                     Map<String, StandingEntry> scoreMap = new java.util.HashMap<>();
-
-                    for (DocumentSnapshot match : matchSnap) {
-                        String winner = match.getString("winner");
-                        if (winner == null || winner.isEmpty()) continue;
-
-                        if (!scoreMap.containsKey(winner)) {
-                            scoreMap.put(winner, new StandingEntry(winner));
-                        }
-                        Objects.requireNonNull(scoreMap.get(winner)).wins += 1;
+                    for (DocumentSnapshot part : partSnap) {
+                        scoreMap.put(part.getId(), new StandingEntry(part.getId()));
                     }
 
-                    // Step 2: fetch nicknames
-                    List<String> uids = new ArrayList<>(scoreMap.keySet());
-                    if (uids.isEmpty()) {
-                        tournamentName.setText(R.string.no_match_results_found);
-                        return;
-                    }
+                    // Step 2: fetch all matches and count wins
+                    db.collection("tournaments").document(tid)
+                            .collection("matches").get()
+                            .addOnSuccessListener(matchSnap -> {
+                                for (DocumentSnapshot match : matchSnap) {
+                                    String winner = match.getString("winner");
+                                    if (winner == null || winner.isEmpty()) continue;
 
-                    db.collection("users").whereIn(FieldPath.documentId(), uids)
-                            .get().addOnSuccessListener(userSnap -> {
-                                for (DocumentSnapshot user : userSnap) {
-                                    StandingEntry e = scoreMap.get(user.getId());
-                                    if (e != null) {
-                                        e.nickname = user.getString("nickname");
+                                    StandingEntry entry = scoreMap.get(winner);
+                                    if (entry != null) {
+                                        entry.wins += 1;
                                     }
                                 }
 
-                                standings.clear();
-                                standings.addAll(scoreMap.values());
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                    standings.sort(Comparator.comparingInt((StandingEntry e) -> e.wins).reversed());
-                                }
-                                adapter.notifyDataSetChanged();
+                                // Step 3: fetch all nicknames
+                                List<String> uids = new ArrayList<>(scoreMap.keySet());
+                                db.collection("users").whereIn(FieldPath.documentId(), uids)
+                                        .get().addOnSuccessListener(userSnap -> {
+                                            for (DocumentSnapshot user : userSnap) {
+                                                StandingEntry e = scoreMap.get(user.getId());
+                                                if (e != null) {
+                                                    e.nickname = user.getString("nickname");
+                                                }
+                                            }
+
+                                            standings.clear();
+                                            standings.addAll(scoreMap.values());
+
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                                standings.sort(Comparator.comparingInt((StandingEntry e) -> e.wins).reversed());
+                                            }
+
+                                            adapter.notifyDataSetChanged();
+                                        });
                             });
                 });
     }

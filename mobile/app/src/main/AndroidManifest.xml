@@ -71,6 +71,15 @@
                 android:value=".TournamentsActivity"/>
         </activity>
 
+        <activity
+            android:name=".TournamentResultsActivity"
+            android:exported="false"
+            android:parentActivityName=".TournamentsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".TournamentsActivity"/>
+        </activity>
+
         <service
             android:name=".notifications.MyFirebaseMessagingService"
             android:exported="false">
