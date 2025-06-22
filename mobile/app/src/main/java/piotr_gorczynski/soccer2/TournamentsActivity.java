@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -62,6 +63,23 @@ public class TournamentsActivity extends AppCompatActivity {
         runningList.setAdapter(runningAdapter);
         endedList.setAdapter(endedAdapter);
 
+        // Hide sections if empty
+        findViewById(R.id.registeringList).setVisibility(
+                registeringAdapter.getItemCount() == 0 ? View.GONE : View.VISIBLE);
+        findViewById(R.id.runningList).setVisibility(
+                runningAdapter.getItemCount() == 0 ? View.GONE : View.VISIBLE);
+        findViewById(R.id.endedList).setVisibility(
+                endedAdapter.getItemCount() == 0 ? View.GONE : View.VISIBLE);
+
+        // Also hide the headers
+        findViewById(R.id.registeringHeader).setVisibility(
+                registeringAdapter.getItemCount() == 0 ? View.GONE : View.VISIBLE);
+        findViewById(R.id.runningHeader).setVisibility(
+                runningAdapter.getItemCount() == 0 ? View.GONE : View.VISIBLE);
+        findViewById(R.id.endedHeader).setVisibility(
+                endedAdapter.getItemCount() == 0 ? View.GONE : View.VISIBLE);
+
+
         // ── Firestore ────────────────────────────────────────────────
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -83,6 +101,24 @@ public class TournamentsActivity extends AppCompatActivity {
             registeringAdapter.notifyDataSetChanged();
             runningAdapter.notifyDataSetChanged();
             endedAdapter.notifyDataSetChanged();
+
+            // Hide sections if empty
+            findViewById(R.id.registeringList).setVisibility(
+                    registeringAdapter.getItemCount() == 0 ? View.GONE : View.VISIBLE);
+            findViewById(R.id.runningList).setVisibility(
+                    runningAdapter.getItemCount() == 0 ? View.GONE : View.VISIBLE);
+            findViewById(R.id.endedList).setVisibility(
+                    endedAdapter.getItemCount() == 0 ? View.GONE : View.VISIBLE);
+
+            // Also hide the headers
+            findViewById(R.id.registeringHeader).setVisibility(
+                    registeringAdapter.getItemCount() == 0 ? View.GONE : View.VISIBLE);
+            findViewById(R.id.runningHeader).setVisibility(
+                    runningAdapter.getItemCount() == 0 ? View.GONE : View.VISIBLE);
+            findViewById(R.id.endedHeader).setVisibility(
+                    endedAdapter.getItemCount() == 0 ? View.GONE : View.VISIBLE);
+
+
         });
     }
 
