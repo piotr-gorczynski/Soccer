@@ -24,12 +24,29 @@ public class TournamentAdapter
     /** callback for the Join button */
     public interface OnJoinClick { void onJoin(String tournamentId); }
 
+    public interface OnEndedClick {
+        void onEnded(DocumentSnapshot tournamentDoc);
+    }
+
     private final List<DocumentSnapshot> data;
     private final OnJoinClick listener;
+
+    private final OnEndedClick endedListener;
+    private final boolean isEndedMode;
 
     public TournamentAdapter(List<DocumentSnapshot> data, OnJoinClick listener) {
         this.data     = data;
         this.listener = listener;
+        this.endedListener = null;
+        this.isEndedMode = false;
+    }
+
+    // New constructor for ended mode
+    public TournamentAdapter(List<DocumentSnapshot> data, OnEndedClick endedListener) {
+        this.data = data;
+        this.listener = null;
+        this.endedListener = endedListener;
+        this.isEndedMode = true;
     }
 
     // ---------- View-Holder ----------
@@ -78,7 +95,21 @@ public class TournamentAdapter
         );
 
         /* ---------- branching by status ---------- */
-        if ("registering".equals(status)) {
+        if (isEndedMode) {
+            // === Ended mode ===
+            String endedWhen = endDL != null
+                    ? "Ended " + englishRelative(endDL.toDate().getTime())
+                    : "Ended";
+            h.endsIn.setText(endedWhen);
+
+            h.joinBtn.setEnabled(true);
+            h.joinBtn.setText(R.string.view_results);
+            h.joinBtn.setOnClickListener(v -> {
+                if (endedListener != null)
+                    endedListener.onEnded(doc);
+            });
+
+        } else if ("registering".equals(status)) {
 
             // ① label: “Registration ends in …”
             long mLeft = Objects.requireNonNull(regDL).toDate().getTime() - System.currentTimeMillis();
@@ -92,7 +123,7 @@ public class TournamentAdapter
             boolean closed = mLeft <= 0;
             h.joinBtn.setEnabled(!full && !closed);
             h.joinBtn.setText(R.string.join);
-            h.joinBtn.setOnClickListener(v -> listener.onJoin(tid));
+            h.joinBtn.setOnClickListener(v -> Objects.requireNonNull(listener).onJoin(tid));
 
         } else {   // == "running"
 

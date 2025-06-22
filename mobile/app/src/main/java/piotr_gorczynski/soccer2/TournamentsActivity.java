@@ -1,5 +1,7 @@
 package piotr_gorczynski.soccer2;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -12,80 +14,75 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.FirebaseFunctionsException;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import com.google.firebase.firestore.Query;
-
 public class TournamentsActivity extends AppCompatActivity {
 
-
-    private final List<DocumentSnapshot> docs = new ArrayList<>();
-    private TournamentAdapter adapter;
-
-
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tournaments);
 
         // ── RecyclerView ─────────────────────────────────────────────
-        RecyclerView rv = findViewById(R.id.tournamentsList);
-        rv.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new TournamentAdapter(docs, this::joinTournament);
-        rv.setAdapter(adapter);
+        RecyclerView registeringList = findViewById(R.id.registeringList);
+        RecyclerView runningList = findViewById(R.id.runningList);
+        RecyclerView endedList = findViewById(R.id.endedList);
+
+        registeringList.setLayoutManager(new LinearLayoutManager(this));
+        runningList.setLayoutManager(new LinearLayoutManager(this));
+        endedList.setLayoutManager(new LinearLayoutManager(this));
+
+        List<DocumentSnapshot> registeringDocs = new ArrayList<>();
+        List<DocumentSnapshot> runningDocs = new ArrayList<>();
+        List<DocumentSnapshot> endedDocs = new ArrayList<>();
+
+        TournamentAdapter registeringAdapter = new TournamentAdapter(registeringDocs, this::joinTournament);
+        TournamentAdapter runningAdapter = new TournamentAdapter(runningDocs, this::joinTournament);
+        TournamentAdapter endedAdapter = new TournamentAdapter(
+                endedDocs,
+                (TournamentAdapter.OnEndedClick) doc -> {
+                    Intent i = new Intent(this, TournamentResultsActivity.class)
+                            .putExtra("tournamentId", doc.getId());
+                    startActivity(i);
+                }
+        );
+        endedList.setAdapter(endedAdapter);
+
+        registeringList.setAdapter(registeringAdapter);
+        runningList.setAdapter(runningAdapter);
+        endedList.setAdapter(endedAdapter);
 
         // ── Firestore ────────────────────────────────────────────────
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        Query q = db.collection("tournaments")
-                .whereIn("status", Arrays.asList("registering", "running"));
 
-        // ② live listener – use DocumentChange deltas
-        q.addSnapshotListener((snap, e) -> {
+        db.collection("tournaments").addSnapshotListener((snap, e) -> {
             if (e != null || snap == null) return;
 
-            for (DocumentChange dc : snap.getDocumentChanges()) {
-                switch (dc.getType()) {
+            // Clear and repopulate each list (simpler than tracking diffs for 3 views)
+            registeringDocs.clear();
+            runningDocs.clear();
+            endedDocs.clear();
 
-                    case ADDED: {
-                        docs.add(dc.getNewIndex(), dc.getDocument());
-                        adapter.notifyItemInserted(dc.getNewIndex());
-                        break;
-                    }
-
-                    case MODIFIED: {
-                        int oldIdx = dc.getOldIndex();
-                        int newIdx = dc.getNewIndex();
-
-                        if (oldIdx == newIdx) {                // only the data changed
-                            docs.set(oldIdx, dc.getDocument());
-                            adapter.notifyItemChanged(oldIdx);
-                        } else {                               // moved in the result set
-                            docs.remove(oldIdx);
-                            docs.add(newIdx, dc.getDocument());
-                            adapter.notifyItemMoved(oldIdx, newIdx);
-                        }
-                        break;
-                    }
-
-                    case REMOVED: {
-                        int oldIdx = dc.getOldIndex();
-                        docs.remove(oldIdx);
-                        adapter.notifyItemRemoved(oldIdx);
-                        break;
-                    }
-                }
+            for (DocumentSnapshot doc : snap.getDocuments()) {
+                String status = doc.getString("status");
+                if ("registering".equals(status)) registeringDocs.add(doc);
+                else if ("running".equals(status)) runningDocs.add(doc);
+                else if ("ended".equals(status)) endedDocs.add(doc);
             }
+
+            registeringAdapter.notifyDataSetChanged();
+            runningAdapter.notifyDataSetChanged();
+            endedAdapter.notifyDataSetChanged();
         });
     }
 
