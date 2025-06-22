@@ -43,6 +43,11 @@ public class MatchAdapter
     public static class VH extends RecyclerView.ViewHolder {
          final TextView opponent, presence, status;
          final Button inviteBtn;
+
+        // Cached for click handling
+        DocumentSnapshot snap;
+        String           oppUid;
+
          VH(View v) {
             super(v);
             opponent = v.findViewById(R.id.opponent);
@@ -76,7 +81,7 @@ public class MatchAdapter
     MatchAdapter(@NonNull Context context,
                  @NonNull String  myUid,
                  @NonNull String  tournamentId) {
-
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".<init>: Constructor stared...");
         this.context       = context;
         this.myUid         = myUid;
         this.tournamentId  = Objects.requireNonNull(tournamentId,
@@ -101,13 +106,84 @@ public class MatchAdapter
         return RecyclerView.NO_POSITION;
     }
 
-    @NonNull @Override public VH onCreateViewHolder(@NonNull ViewGroup p, int v)
-    { return new VH(LayoutInflater.from(p.getContext())
-            .inflate(R.layout.item_match, p, false)); }
+    @Override
+    public @NonNull VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_match, parent, false);
+        VH h = new VH(view);
+
+        // ✅ Set listener once
+        h.inviteBtn.setOnClickListener(v -> {
+            DocumentSnapshot mNow = h.snap;   // cached doc
+            String oppUidNow      = h.oppUid; // cached opponent UID
+            // … but if they’re still null (very first tap), look them up
+            if (mNow == null || oppUidNow == null) {
+                int pos = h.getAdapterPosition();
+                if (pos == RecyclerView.NO_POSITION) return;
+
+                mNow       = matches.get(pos);
+                String p0  = mNow.getString("player0");
+                String p1  = mNow.getString("player1");
+                oppUidNow  = myUid.equals(p0) ? p1 : p0;
+                if (oppUidNow == null) return;
+            }
+
+            Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                    Objects.requireNonNull(new Object() {
+                    }.getClass().getEnclosingMethod()).getName()
+                    + ": On click started");
+
+            String matchPath = mNow.getReference().getPath();
+            Map<String, Object> invite = new HashMap<>();
+            invite.put("from", myUid);
+            invite.put("to", oppUidNow);
+            SharedPreferences prefs = context.getSharedPreferences(context.getPackageName() + "_preferences", MODE_PRIVATE);
+            invite.put("fromNickname", prefs.getString("nickname", null));
+            invite.put("toNickname", h.opponent.getText());
+            invite.put("createdAt", FieldValue.serverTimestamp());
+            invite.put("status", "pending");
+            invite.put("tournamentId", tournamentId);
+            invite.put("matchPath", matchPath);
+
+            FirebaseFirestore.getInstance().collection("invitations")
+                    .add(invite)
+                    .addOnSuccessListener(docRef -> {
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                                Objects.requireNonNull(new Object() {
+                                }.getClass().getEnclosingMethod()).getName()
+                                + ": Invite sent");
+
+                        Toast.makeText(context, "Invitation sent", Toast.LENGTH_SHORT).show();
+
+                        Intent intent = new Intent(context, WaitingActivity.class);
+                        intent.putExtra("inviteId", docRef.getId());
+                        context.startActivity(intent);
+                        if (context instanceof Activity) {
+                            ((Activity) context).finish();
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(context, "Failed to send invite", Toast.LENGTH_SHORT).show();
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
+                                Objects.requireNonNull(new Object() {
+                                }.getClass().getEnclosingMethod()).getName()
+                                + ": Sending invite failed", e);
+                    });
+        });
+
+        return h;
+    }
+
 
     @Override
     public void onBindViewHolder(@NonNull VH h, int pos) {
         DocumentSnapshot m = matches.get(pos);
+        h.snap   = m;                                       // 🆕 keep current doc
+        h.oppUid = myUid.equals(m.getString("player0"))
+                ? m.getString("player1")
+                : m.getString("player0");
+
+
         String player0 = m.getString("player0");
         String player1 = m.getString("player1");
         String oppUid = myUid.equals(player0) ? player1 : player0;
@@ -126,7 +202,7 @@ public class MatchAdapter
                         nickCache.put(oppUid, n);
                         int idx = indexForUid(oppUid);          // or use the doc-id instead of UID
                         if (idx != RecyclerView.NO_POSITION) {
-                            notifyItemChanged(idx);             // refresh the *right* row
+                            notifyItemChanged(idx, "nickname");             // refresh the *right* row
                         }
                     });
         } else {
@@ -161,7 +237,9 @@ public class MatchAdapter
                     hbCache.put(oppUid, lastHb);    // for “Last seen …”
 
                     int idx = indexForUid(oppUid);
-                    if (idx != RecyclerView.NO_POSITION) notifyItemChanged(idx);
+                    if (idx != RecyclerView.NO_POSITION) {
+                        notifyItemChanged(idx, "presence");   // 🔄 partial update
+                    }
                 }
                 @Override public void onCancelled(@NonNull DatabaseError e) { }
             };
@@ -207,7 +285,13 @@ public class MatchAdapter
         };
         h.status.setTextColor(colour);
 
+
+
         // Determine button visibility
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                + ": inviteBtn visibility logic: st=" + st + ", pState=" + pState);
+
         boolean isActiveOrCompleted = "playing".equals(st) || "completed".equals(st);
         boolean isOffline = "offline".equalsIgnoreCase(pState);
 
@@ -216,55 +300,76 @@ public class MatchAdapter
         } else {
             h.inviteBtn.setVisibility(View.VISIBLE);
         }
-
-        // 💬 Invite button logic
-        h.inviteBtn.setOnClickListener(v -> {
-            if (oppUid == null || h.opponent.getText() == null) return;
-            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                    + ": On click started");
-            String matchPath = m.getReference().getPath();     //  e.g. "tournaments/ABC/matches/XYZ"
-            Map<String, Object> invite = new HashMap<>();
-            invite.put("from", myUid);
-            invite.put("to", oppUid);
-            SharedPreferences prefs = context.getSharedPreferences(context.getPackageName() + "_preferences", MODE_PRIVATE);
-            invite.put("fromNickname", prefs.getString("nickname", null));
-            invite.put("toNickname", h.opponent.getText());
-            invite.put("createdAt", FieldValue.serverTimestamp());
-            invite.put("status", "pending");
-            invite.put("tournamentId", tournamentId);
-            invite.put("matchPath",    matchPath);             // 👈 NEW
-
-            FirebaseFirestore.getInstance().collection("invitations")
-                    .add(invite)
-                    .addOnSuccessListener(docRef -> {
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                                + ": Invite sent");
-                        Toast.makeText(context, "Invitation sent", Toast.LENGTH_SHORT).show();
-                        String inviteId = docRef.getId();
-
-                        // ✅ Start WaitingActivity (which will listen for match creation)
-                        Intent intent = new Intent(context, WaitingActivity.class);
-                        intent.putExtra("inviteId", inviteId);
-                        context.startActivity(intent);
-                        if (context instanceof Activity) {
-                            ((Activity) context).finish();
-                        }
-                    })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(context, "Failed to send invite", Toast.LENGTH_SHORT).show();
-                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                                + ": Sending invite failed", e);
-                    });
-        });
-
     }
 
+    @Override
+    public void onBindViewHolder(@NonNull VH h,
+                                 int position,
+                                 @NonNull List<Object> payloads) {
+
+        if (!payloads.isEmpty()) {
+            Object tag = payloads.get(0);
+
+            // --- presence only ---
+            if ("presence".equals(tag)) {
+                // ---- inside the payload branch for "presence" ----
+                String pState = Objects.requireNonNullElse(
+                        presCache.get(h.oppUid),        // may be null
+                        "offline");                     // safe fallback
+
+                long lastHb = 0L;
+                Long boxed   = hbCache.get(h.oppUid);   // could be null
+                if (boxed != null) lastHb = boxed;
+
+                // build label / colour safely
+                String label;
+                int colour = switch (pState) {
+                    case "online"  -> {
+                        label = "Online";
+                        yield ContextCompat.getColor(
+                                h.itemView.getContext(), R.color.colorGreenDark);
+                    }
+                    case "active"  -> {
+                        label = "Last seen " + englishRelative(lastHb);
+                        yield ContextCompat.getColor(
+                                h.itemView.getContext(), R.color.colorGreenDark);
+                    }
+                    default        -> {
+                        label = "Offline";
+                        yield ContextCompat.getColor(
+                                h.itemView.getContext(), R.color.colorGrey);
+                    }
+                };
+                h.presence.setText(label);
+                h.presence.setTextColor(colour);
+                return;
+            }
+
+            // --- nickname only (optional) ---
+            if ("nickname".equals(tag)) {
+                String nick = nickCache.get(h.oppUid);
+                h.opponent.setText(nick != null ? nick
+                        : h.oppUid.substring(0, 6));
+                return;
+            }
+        }
+
+        // No payload (or unknown) → do the full bind
+        super.onBindViewHolder(h, position, payloads);
+    }    
+    
 
     @Override public int getItemCount() { return matches.size(); }
 
     /* public helpers for the listener */
     void add(int idx, DocumentSnapshot d) { matches.add(idx, d); notifyItemInserted(idx); }
-    void set(int idx, DocumentSnapshot d){ matches.set(idx, d);  notifyItemChanged(idx); }
+    void set(int idx, DocumentSnapshot d){
+        matches.set(idx, d);
+        notifyItemChanged(idx);
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                + ": 📌 notifyItemChanged(" + idx + ") triggered from nickname or presence update");
+    }
     void move(int o,int n,DocumentSnapshot d){
         matches.remove(o); matches.add(n,d); notifyItemMoved(o,n); }
     void remove(int idx){ matches.remove(idx); notifyItemRemoved(idx); }
