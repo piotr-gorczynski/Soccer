@@ -7,6 +7,9 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import androidx.core.content.ContextCompat;
+
+import android.text.TextPaint;
+import android.text.TextUtils;
 import android.util.Log;
 import java.util.ArrayList;
 import java.util.Locale;
@@ -224,6 +227,10 @@ public class Field {
         pFieldBorder.setStrokeWidth(strokeWidth);
         pHintText.setTextSize(textSize);
 
+
+        // Shared banner width (95 % of the visible field)
+        float bannerWidthPx = rField.width() * 0.95f;
+
         // Draw field
         canvas.drawRect(rField, pField);
         canvas.drawRect(rField, pFieldBorder);
@@ -267,13 +274,20 @@ public class Field {
             canvas.drawCircle(w2x(flipX(x)), h2y(flipY(intFieldHeight + 1)), dotSize, pDots);
         }
 
+        // after you’ve calculated textSize and set it on pPlayer0 / pPlayer1 …
+        float left  = w2x(flipX(intFieldWidth/2 - 1));
+        float right = w2x(flipX(intFieldWidth/2 + 1));
+        float gateWidthPx = Math.abs(right - left) * 0.9f;   // 10 % side padding
 
-        canvas.drawText(sPlayer1,
+        String fitP1 = fitName(sPlayer1, pPlayer1, gateWidthPx);
+        String fitP0 = fitName(sPlayer0, pPlayer0, gateWidthPx);
+
+        canvas.drawText(fitP1,
                 w2x(flipX(intFieldWidth / 2)),
                 h2y(flipY(-1)) + (h2y(flipY(0)) - h2y(flipY(-1))) / 2 + pPlayer1.getTextSize() / 2,
                 pPlayer1);
 
-        canvas.drawText(sPlayer0,
+        canvas.drawText(fitP0,
                 w2x(flipX(intFieldWidth / 2)),
                 h2y(flipY(intFieldHeight)) + (h2y(flipY(intFieldHeight + 1)) - h2y(flipY(intFieldHeight))) / 2 + pPlayer0.getTextSize() / 2,
                 pPlayer0);
@@ -348,6 +362,13 @@ public class Field {
 
                 textTop = opponentName + " ⏳ "+oponentTime;
 
+                textBottom = fitNameInBanner(localName,
+                        " move ... ⏳ " + localTime,
+                        pHintText, bannerWidthPx);
+                textTop = fitNameInBanner(opponentName,
+                        " ⏳ " + oponentTime,
+                        pHintText, bannerWidthPx);
+
                 pHintText.getTextBounds(textTop, 0, textTop.length(), rText);
                 canvas.drawText(textTop,
                         w2x(flipX(intFieldWidth / 2)),
@@ -379,6 +400,19 @@ public class Field {
 
                 textBottom = localName + " ⏳ "+localTime;
 
+                if (turnStartTime != null) {
+                    textTop = fitNameInBanner(opponentName,
+                            " move... ⏳ " + oponentTime,
+                            pHintText, bannerWidthPx);
+                } else {
+                    textTop = fitNameInBanner("Waiting for " + opponentName,
+                            " to start... ⏳ " + oponentTime,
+                            pHintText, bannerWidthPx);
+                }
+                textBottom = fitNameInBanner(localName,
+                        " ⏳ " + localTime,
+                        pHintText, bannerWidthPx);
+
                 pHintText.getTextBounds(textBottom, 0, textBottom.length(), rText);
                 canvas.drawText(textBottom,
                         w2x(flipX(intFieldWidth / 2)),
@@ -405,4 +439,58 @@ public class Field {
         long sec = seconds % 60;
         return String.format(Locale.US, "%02d:%02d", min, sec);
     }
+
+    private String fitName(String name, Paint paint, float maxWidthPx) {
+        // 1.  Make a working copy of the paint so we don’t mutate the original
+        Paint p = new Paint(paint);
+
+        // 2.  Try gradually reducing text size until it fits,
+        //     but stop once we hit a sensible minimum (e.g.  8 sp)
+        final float MIN_TEXT_SP = 8f;
+        while (p.measureText(name) > maxWidthPx && p.getTextSize() > MIN_TEXT_SP) {
+            p.setTextSize(p.getTextSize() * 0.9f);  // scale down 10 %
+        }
+        paint.setTextSize(p.getTextSize());         // keep the final size
+
+        // 3.  If it still doesn’t fit, ellipsise the tail
+        if (p.measureText(name) > maxWidthPx) {
+            TextPaint tp = new TextPaint(p);
+            CharSequence ellipsised = TextUtils.ellipsize(
+                    name, tp, maxWidthPx, TextUtils.TruncateAt.END);
+            return ellipsised.toString();
+        }
+        return name;
+    }
+
+    /**
+     * Shrinks or ellipsises only the player's name so that
+     * {@code name + tail} fits into {@code maxWidthPx}.
+     *
+     * paint  – any paint that already has the target textSize set
+     *          (we DON’T mutate it here).
+     */
+    private String fitNameInBanner(String name,
+                                   String tail,
+                                   Paint paint,
+                                   float maxWidthPx) {
+
+        // How wide is the non-variable part (« move… ⏳ 00:00 ») ?
+        float tailWidth = paint.measureText(tail);
+
+        // Leave at least 10 px padding on both sides
+        float nameBudget = Math.max(0, maxWidthPx - tailWidth - 20);
+
+        // If the name already fits – good, we’re done
+        if (paint.measureText(name) <= nameBudget) {
+            return name + tail;
+        }
+
+        // Otherwise ellipsise the name only
+        TextPaint tp = new TextPaint(paint);
+        CharSequence shortName = TextUtils.ellipsize(
+                name, tp, nameBudget, TextUtils.TruncateAt.END);
+
+        return shortName + tail;
+    }
+
 }
