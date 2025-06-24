@@ -22,6 +22,7 @@ public class TournamentAdapter
         extends RecyclerView.Adapter<TournamentAdapter.VH> {
 
     /** callback for the Join button */
+    @SuppressWarnings("unused")
     public interface OnJoinClick { void onJoin(String tournamentId); }
 
     public interface OnEndedClick {

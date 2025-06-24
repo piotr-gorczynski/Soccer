@@ -2,6 +2,8 @@ package piotr_gorczynski.soccer2;
 
 import static android.widget.Toast.LENGTH_SHORT;
 
+import static java.lang.Thread.setDefaultUncaughtExceptionHandler;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -105,7 +107,7 @@ public class GameActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
+        setDefaultUncaughtExceptionHandler(new ExceptionHandler());
         //this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         if (savedInstanceState != null && (
                 (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && savedInstanceState.getParcelableArrayList("Moves", MoveTo.class) != null) ||

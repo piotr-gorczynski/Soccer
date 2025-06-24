@@ -358,9 +358,6 @@ public class Field {
             if (gameType != 3) {
                 textBottom = "Your move!";
             } else {
-                textBottom = localName + " move ... ⏳ "+localTime;
-
-                textTop = opponentName + " ⏳ "+oponentTime;
 
                 textBottom = fitNameInBanner(localName,
                         " move ... ⏳ " + localTime,
@@ -392,13 +389,6 @@ public class Field {
             } else  {
                 // Multiplayer: determine which name is the opponent
 
-
-                if (turnStartTime!=null) {
-                    textTop = opponentName + " move... ⏳ "+oponentTime;
-                } else
-                    textTop = "Waiting for " + opponentName + " to start... ⏳ "+oponentTime;
-
-                textBottom = localName + " ⏳ "+localTime;
 
                 if (turnStartTime != null) {
                     textTop = fitNameInBanner(opponentName,
@@ -465,7 +455,6 @@ public class Field {
     /**
      * Shrinks or ellipsises only the player's name so that
      * {@code name + tail} fits into {@code maxWidthPx}.
-     *
      * paint  – any paint that already has the target textSize set
      *          (we DON’T mutate it here).
      */
