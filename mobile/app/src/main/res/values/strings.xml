@@ -55,20 +55,16 @@
     <string name="failed_to_check_existing_invites">Failed to check for existing invites.</string>
     <string name="waiting_for_opponent_named">Waiting for %1$s to accept…</string>
     <string name="tournaments">Tournaments</string>
-    <string name="open_tournaments">Open tournaments</string>
     <string name="join">Join</string>
     <!-- "%1$d" → first argument (joined), "%2$d" → second (max) -->
     <string name="slots_format">%1$d / %2$d</string>
     <string name="open">Open</string>
     <string name="lobby_started">Tournament started!</string>
-    <string name="lobby_waiting">Waiting for organizer…</string>
     <!-- "%1$d" = joined,  "%2$d" = max -->
-    <string name="lobby_slots_format">%1$d / %2$d</string>
     <string name="ended">Ended…</string>
     <string name="running">Running…</string>
     <string name="registering">Registering…</string>
     <string name="view_results">View Results</string>
-    <string name="no_match_results_found">No match results found.</string>
     <plurals name="wins_format">
         <item quantity="one">%d win</item>
         <item quantity="other">%d wins</item>

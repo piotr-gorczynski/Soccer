@@ -49,6 +49,8 @@ public class GameView extends View {
     public void setInputEnabled(boolean enabled) {
         this.inputEnabled = enabled;
     }
+
+    @SuppressWarnings("unused")
     public interface MoveCallback {
         void onLocalMove(int x, int y, int p);
     }

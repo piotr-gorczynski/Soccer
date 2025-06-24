@@ -4,14 +4,12 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.text.Editable;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 
 public class RegisterAccountActivity extends AppCompatActivity {
 
@@ -26,6 +24,8 @@ public class RegisterAccountActivity extends AppCompatActivity {
     // optional live counter
     private Toast nickToast;                         // keep one toast instance
 
+    Button btnRegister;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,7 +35,7 @@ public class RegisterAccountActivity extends AppCompatActivity {
 
         editEmail = findViewById(R.id.editEmail);
         editPassword = findViewById(R.id.editPassword);
-        Button btnRegister = findViewById(R.id.btnRegister);
+        btnRegister = findViewById(R.id.btnRegister);
         editConfirmPassword = findViewById(R.id.editConfirmPassword);
         editNickname = findViewById(R.id.editNickname);
         // 1. hard limit (cuts extra keystrokes)
@@ -103,30 +103,27 @@ public class RegisterAccountActivity extends AppCompatActivity {
         db.collection("users")
                 .whereEqualTo("nickname", nickname)
                 .get()
-                .addOnCompleteListener(this, new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(Task<QuerySnapshot> task) {
-                        btnRegister.setEnabled(true);  // re-enable either way
-                        if (!task.isSuccessful()) {
-                           Toast.makeText(RegisterAccountActivity.this,
-                                    "Network error while checking nickname",
-                                    Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-
-                        if (!task.getResult().isEmpty()) {
-                            Toast.makeText(RegisterAccountActivity.this,
-                                    "Nickname already taken — choose another",
-                                    Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-
-                        // 100 % unique → proceed with auth
-                        authManager.registerUser(email, password, nickname);
-                        Toast.makeText(RegisterAccountActivity.this,
-                                "Registration attempt in progress...",
+                .addOnCompleteListener(this, task -> {
+                    btnRegister.setEnabled(true);  // re-enable either way
+                    if (!task.isSuccessful()) {
+                       Toast.makeText(RegisterAccountActivity.this,
+                                "Network error while checking nickname",
                                 Toast.LENGTH_SHORT).show();
+                        return;
                     }
+
+                    if (!task.getResult().isEmpty()) {
+                        Toast.makeText(RegisterAccountActivity.this,
+                                "Nickname already taken — choose another",
+                                Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    // 100 % unique → proceed with auth
+                    authManager.registerUser(email, password, nickname);
+                    Toast.makeText(RegisterAccountActivity.this,
+                            "Registration attempt in progress...",
+                            Toast.LENGTH_SHORT).show();
                 });
         //------------------------------------------
         //  End of Firestore nickname check
