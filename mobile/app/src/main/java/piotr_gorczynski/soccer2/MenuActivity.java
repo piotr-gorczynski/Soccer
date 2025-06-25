@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.content.SharedPreferences;
+import android.widget.Button;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import com.google.firebase.auth.FirebaseAuth;
@@ -17,6 +18,8 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.widget.Toast;
+
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -25,6 +28,8 @@ import java.util.Objects;
 public class MenuActivity extends AppCompatActivity {
 
     private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 101;
+
+    private static final String PREF_FCM_TOKEN = "fcmToken";
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -45,45 +50,105 @@ public class MenuActivity extends AppCompatActivity {
         } else {
             nicknameLabel.setText(getString(R.string.welcome_to_soccer));
         }
+        updateUiForAuthState();
+    }
+    private void updateUiForAuthState() {
+        boolean loggedIn = FirebaseAuth.getInstance().getCurrentUser() != null;
+
+        Button inviteBtn      = findViewById(R.id.InviteFriend);
+        Button pendingBtn     = findViewById(R.id.ShowInvites);
+        Button tournamentsBtn = findViewById(R.id.openTournamentsBtn);
+        Button accountBtn     = findViewById(R.id.Account);
+
+        // 1) Enable or disable the three feature buttons
+        inviteBtn.setEnabled(loggedIn);
+        pendingBtn.setEnabled(loggedIn);
+        tournamentsBtn.setEnabled(loggedIn);
+
+        // Optional: visual cue (dim when disabled)
+        float alpha = loggedIn ? 1f : 0.4f;
+        inviteBtn.setAlpha(alpha);
+        pendingBtn.setAlpha(alpha);
+        tournamentsBtn.setAlpha(alpha);
+
+        // 2) Update the Account / Logout button text + handler (your Option A code)
+        if (loggedIn) {
+            accountBtn.setText(R.string.logout);
+            accountBtn.setOnClickListener(v -> performLogout());
+        } else {
+            accountBtn.setText(R.string.login);
+            accountBtn.setOnClickListener(this::OpenAccount);
+        }
+    }
+    private void performLogout() {
+
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null) {          // safety net – should never be null here
+            finishLogoutUi();
+            return;
+        }
+
+        ((SoccerApp) getApplication())
+                .forceUserOffline(uid)
+                .addOnCompleteListener(task -> {
+                    FirebaseAuth.getInstance().signOut();   // <-- now it’s safe
+                    finishLogoutUi();
+                });
     }
 
+    private void finishLogoutUi() {
+        SharedPreferences.Editor ed = getSharedPreferences(
+                getPackageName() + "_preferences", MODE_PRIVATE).edit();
+        ed.clear().apply();                          // clears token + other cache
+
+        Toast.makeText(this, R.string.logged_out, Toast.LENGTH_SHORT).show();
+        updateUiForAuthState();      // dim buttons, “Login” label, etc.
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
-        /*
-        FirebaseFirestore.getInstance()
-                .clearPersistence()            // <-- clean cash
-                .addOnSuccessListener(v ->
-                        Log.d("TAG_Soccer","Firestore cache cleared"));*/
+
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null) {
+            Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                    + ": ⚠️ No logged-in user; token not saved");
+            return;
+        }
 
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(task -> {
                     if (!task.isSuccessful()) {
-                        Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ❌ Failed to get FCM token", task.getException());
+                        Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                                + ": ❌ Failed to get FCM token", task.getException());
                         return;
                     }
 
-                    String token = task.getResult();
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": 🔑 Token from MenuActivity: " + token);
+                    String newToken = task.getResult();
+                    SharedPreferences prefs = getSharedPreferences(
+                            getPackageName() + "_preferences", MODE_PRIVATE);
 
-                    String uid = FirebaseAuth.getInstance().getCurrentUser() != null
-                            ? FirebaseAuth.getInstance().getCurrentUser().getUid()
-                            : null;
-
-                    if (uid != null) {
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": uid: "+uid);
-                        FirebaseFirestore.getInstance()
-                                .collection("users")
-                                .document(uid)
-                                .update("fcmToken", token)
-                                .addOnSuccessListener(aVoid -> Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ✅ Token saved"))
-                                .addOnFailureListener(e -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ❌ Failed to save token", e));
-                    } else {
-                        Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ⚠️ No logged-in user; token not saved");
+                    String savedToken = prefs.getString(PREF_FCM_TOKEN, null);
+                    if (newToken != null && newToken.equals(savedToken)) {
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                                + ": 🔑 FCM token unchanged; skip Firestore write");
+                        return;                     // ← exit early
                     }
+
+                    FirebaseFirestore.getInstance()
+                            .collection("users").document(uid)
+                            .update("fcmToken", newToken)
+                            .addOnSuccessListener(v -> {
+                                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                                        + ": ✅ FCM token saved");
+                                prefs.edit().putString(PREF_FCM_TOKEN, newToken).apply();
+                            })
+                            .addOnFailureListener(e ->
+                                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                                            + ": ❌ Failed to save FCM token", e));
                 });
+
         // ✅ Call permission request
         requestNotificationPermissionIfNeeded();
 
