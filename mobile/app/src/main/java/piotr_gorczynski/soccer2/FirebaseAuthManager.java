@@ -56,6 +56,8 @@ public class FirebaseAuthManager {
                                         .addOnSuccessListener(doc -> {
                                             String nickname = doc.getString("nickname");
                                             storeUserData(uid, email, nickname != null ? nickname : "Unknown");
+                                            ((SoccerApp) context.getApplicationContext())
+                                                    .syncFcmTokenIfNeeded();   // new helper (see below)
                                             callback.onLoginSuccess();
                                         })
                                         .addOnFailureListener(e -> {

@@ -1,7 +1,9 @@
 package piotr_gorczynski.soccer2;
 
+
 import android.app.Application;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -14,13 +16,16 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.messaging.FirebaseMessaging;
 
-
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -39,10 +44,21 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         );
     }
     /* Creates {state:"offline", last_heartbeat:TS} */
-    private static Map<String,Object> buildOffline() {
+
+
+    /* App is in background ➜ still logged-in, show last-seen */
+    private static Map<String, Object> buildAway() {
         return Map.of(
                 "state",          "offline",
-                "last_heartbeat", ServerValue.TIMESTAMP
+                "last_heartbeat", ServerValue.TIMESTAMP   // numeric
+        );
+    }
+
+    /* Explicit logout ➜ no more push, no last-seen label */
+    private static Map<String, Object> buildLoggedOut() {
+        return Map.of(
+                "state",          "offline",
+                "last_heartbeat", 0L                      // sentinel
         );
     }
 
@@ -51,27 +67,79 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     public void onCreate() {
         super.onCreate();
 
-        /* --- one-time setup identical to what you had ------------------ */
+        /* 1️⃣  keep the lifecycle observer */
+        ProcessLifecycleOwner.get()
+                .getLifecycle()
+                .addObserver(this);
+
+        /* 2️⃣  react to future auth changes */
+        FirebaseAuth.getInstance().addAuthStateListener(auth -> {
+            if (auth.getCurrentUser() != null) {          // user just signed-in
+                startPresence(auth.getCurrentUser().getUid());
+                syncFcmTokenIfNeeded();   // runs once per sign-in
+            } else {                                      // user signed-out
+                stopPresence();
+            }
+        });
+
+        /* 3️⃣  handle the case “app starts and user was already signed-in” */
+        FirebaseAuth currentAuth = FirebaseAuth.getInstance();
+        if (currentAuth.getCurrentUser() != null) {
+            startPresence(currentAuth.getCurrentUser().getUid());
+        }
+    }
+    public void syncFcmTokenIfNeeded() {
         String uid = FirebaseAuth.getInstance().getUid();
         if (uid == null) return;
 
-        DatabaseReference root = FirebaseDatabase.getInstance().getReference();
-        userStatusDbRef = root.child("status").child(uid);
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                + ": Writing to " + userStatusDbRef);
+        FirebaseMessaging.getInstance().getToken()
+                .addOnSuccessListener(newToken -> {
+                    SharedPreferences prefs = getSharedPreferences(
+                            getPackageName() + "_preferences", MODE_PRIVATE);
+                    String saved = prefs.getString("fcmToken", null);
+                    if (saved != null && saved.equals(newToken)) return;
 
-        userStatusDbRef.onDisconnect().updateChildren(buildOffline());
-
-        /* --- observe the process-wide lifecycle ------------------------ */
-        ProcessLifecycleOwner.get()
-                .getLifecycle()
-                .addObserver(this);         // <-- THIS is the switch
+                    FirebaseFirestore.getInstance()
+                            .collection("users").document(uid)
+                            .update("fcmToken", newToken)
+                            .addOnSuccessListener(v ->
+                                    prefs.edit().putString("fcmToken", newToken).apply());
+                });
     }
+
+    /* ---------------- central place to start presence tracking ---------- */
+    private void startPresence(@NonNull String uid) {
+
+        if (userStatusDbRef != null                      // already tracking?
+                && Objects.requireNonNull(userStatusDbRef.getKey()).equals(uid)) return;
+
+        userStatusDbRef = FirebaseDatabase.getInstance()
+                .getReference("status").child(uid);
+
+        userStatusDbRef.onDisconnect().updateChildren(buildAway());
+        setUserOnline();
+        cancelHeartbeat();
+    }
+
+    /* ---------------- tidy up when a user signs out --------------------- */
+    private void stopPresence() {
+
+        if (userStatusDbRef == null) return;   // nothing to do
+
+        cancelHeartbeat();                     // stop WM
+
+        // Mark “logged-out” exactly once
+        userStatusDbRef.updateChildren(buildLoggedOut());
+
+        userStatusDbRef = null;                // disable onStart/onStop
+    }
+
 
     /* ------------ APP RETURNS TO FOREGROUND --------------------------- */
     @Override public void onStart(@NonNull LifecycleOwner owner) {
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                 + ": APP RETURNS TO FOREGROUND");
+        if (userStatusDbRef == null) return;             // ← ADD
         FirebaseDatabase.getInstance().goOnline();
         cancelHeartbeat();
 
@@ -83,8 +151,9 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     @Override public void onStop(@NonNull LifecycleOwner owner) {
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                 + ": APP GOES TO BACKGROUND");
+        if (userStatusDbRef == null) return;             // ← ADD
 
-        Map<String,Object> offline = buildOffline();      // fresh TS each time
+        Map<String,Object> offline = buildAway();      // fresh TS each time
 
         userStatusDbRef.setValue(offline)                 // atomic write
                 .addOnSuccessListener(v -> {
@@ -114,14 +183,15 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                 + ": Launching WorkManager");
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
                 HEARTBEAT_WORK,
-                ExistingPeriodicWorkPolicy.UPDATE,
+                ExistingPeriodicWorkPolicy.KEEP,
                 req);
     }
 
     private void cancelHeartbeat() {
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                 + ": Cancelling WorkManager");
-        WorkManager.getInstance(this).cancelUniqueWork(HEARTBEAT_WORK);
+        WorkManager wm = WorkManager.getInstance(this);
+        wm.cancelUniqueWork(HEARTBEAT_WORK);
     }
     public static class HeartbeatWorker extends Worker {
 
@@ -170,5 +240,28 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                         Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                             + ": ❌ setUserOnline failed", e));
     }
+
+    public Task<Void> forceUserOffline(@NonNull String uid) {
+
+        cancelHeartbeat();                                   // stop worker first
+
+        DatabaseReference ref = FirebaseDatabase.getInstance()
+                .getReference("status")
+                .child(uid);
+
+        Map<String, Object> offline = new HashMap<>();
+        offline.put("state",          "offline");
+        offline.put("last_heartbeat", 0L);
+
+        return ref.updateChildren(offline)     // <-- return the Task to caller
+                .addOnSuccessListener(v ->
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                                + ": ✅ user " + uid + " marked offline"))
+                .addOnFailureListener(e ->
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                                + ": ❌ could not mark offline", e));
+    }
+
+
 
 }

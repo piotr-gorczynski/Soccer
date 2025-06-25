@@ -30,7 +30,7 @@
     <string name="confirm_password">Confirm Password</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
-    <string name="account">Account</string>
+    <string name="login">Log in</string>
     <string name="hello">Hello!</string>
     <string name="welcome_to_soccer">Welcome to Soccer!</string>
     <string name="hello_nickname">Hello, %1$s!</string>
@@ -65,6 +65,8 @@
     <string name="running">Running…</string>
     <string name="registering">Registering…</string>
     <string name="view_results">View Results</string>
+    <string name="logout">Log out</string>
+    <string name="logged_out">You’ve been logged out</string>
     <plurals name="wins_format">
         <item quantity="one">%d win</item>
         <item quantity="other">%d wins</item>

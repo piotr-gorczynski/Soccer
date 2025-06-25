@@ -96,7 +96,7 @@
         android:layout_marginTop="10dp"
         android:background="@color/colorGreen"
         android:onClick="OpenAccount"
-        android:text="@string/account"
+        android:text="@string/login"
         android:textAllCaps="false"
         android:textColor="@color/colorWhite"
         android:textStyle="bold" />
