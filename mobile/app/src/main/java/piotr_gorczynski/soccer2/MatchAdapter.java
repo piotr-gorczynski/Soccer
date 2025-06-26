@@ -1,10 +1,7 @@
 package piotr_gorczynski.soccer2;
 
-import static android.content.Context.MODE_PRIVATE;
-
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -137,9 +134,6 @@ public class MatchAdapter
             Map<String, Object> invite = new HashMap<>();
             invite.put("from", myUid);
             invite.put("to", oppUidNow);
-            SharedPreferences prefs = context.getSharedPreferences(context.getPackageName() + "_preferences", MODE_PRIVATE);
-            invite.put("fromNickname", prefs.getString("nickname", null));
-            invite.put("toNickname", h.opponent.getText());
             invite.put("createdAt", FieldValue.serverTimestamp());
             invite.put("status", "pending");
             invite.put("tournamentId", tournamentId);

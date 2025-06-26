@@ -34,6 +34,8 @@ public class InvitationsActivity extends AppCompatActivity {
     FirebaseFirestore db;
     FirebaseAuth auth;
 
+    private ListenerRegistration invitesSub;   // keep handle so we can remove it later
+
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -160,7 +162,7 @@ public class InvitationsActivity extends AppCompatActivity {
     private void listenForInvites() {
         String currentUserId = Objects.requireNonNull(auth.getCurrentUser()).getUid();
 
-        db.collection("invitations")
+        invitesSub = db.collection("invitations")
                 .whereEqualTo("to", currentUserId)
                 .whereEqualTo("status", "pending")
                 .addSnapshotListener((querySnapshot, e) -> {
@@ -172,13 +174,32 @@ public class InvitationsActivity extends AppCompatActivity {
                     inviteDescriptions.clear();
                     inviteIds.clear();
 
-                    for (DocumentSnapshot doc : Objects.requireNonNull(querySnapshot).getDocuments()) {
-                        String fromNickname = doc.getString("fromNickname");
-                        inviteDescriptions.add("Invite from: " + fromNickname);
+                    for (DocumentSnapshot doc : Objects.requireNonNull(querySnapshot)) {
+                        String fromUid = doc.getString("from");
+
+                        // optimistic placeholder
+                        inviteDescriptions.add("Invite from: ...");
                         inviteIds.add(doc.getId());
+
+                        // async nickname lookup
+                        db.collection("users").document(Objects.requireNonNull(fromUid)).get()
+                                .addOnSuccessListener(userSnap -> {
+                                    String nick = userSnap.getString("nickname");
+                                    int idx = inviteIds.indexOf(doc.getId());
+                                    if (idx != -1 && nick != null) {
+                                        inviteDescriptions.set(idx, "Invite from: " + nick);
+                                        adapter.notifyDataSetChanged();
+                                    }
+                                });
                     }
 
                     adapter.notifyDataSetChanged();
                 });
     }
+
+    @Override protected void onDestroy() {
+        super.onDestroy();
+        if (invitesSub != null) invitesSub.remove();
+    }
+
 }
