@@ -100,14 +100,9 @@ public class InviteFriendActivity extends AppCompatActivity {
         Task<DocumentSnapshot> toTask = db.collection("users").document(toUid).get();
 
         Tasks.whenAllSuccess(fromTask, toTask).addOnSuccessListener(tasks -> {
-            String fromNickname = fromTask.getResult().getString("nickname");
-            String toNickname = toTask.getResult().getString("nickname");
-
             Map<String, Object> invite = new HashMap<>();
             invite.put("from", fromUid);
-            invite.put("fromNickname", fromNickname);
             invite.put("to", toUid);
-            invite.put("toNickname", toNickname);
             invite.put("status", "pending");
             invite.put("createdAt", FieldValue.serverTimestamp());
 
