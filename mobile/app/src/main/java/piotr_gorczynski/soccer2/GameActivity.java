@@ -453,7 +453,7 @@ public class GameActivity extends AppCompatActivity {
         String reason       = snap.getString("reason");
         if (serverWinner != null && Winner == -1) {      // nobody has shown a dialog yet
             int winnerIdx = serverWinner.equals(player0Uid) ? 0 : 1;
-            if ("timeout".equals(reason)) {              // optional filter
+            if ("timeout".equals(reason) || "abandon".equals(reason)) {              // optional filter
                 runOnUiThread(() -> showWinner(winnerIdx));
                 return;                                  // nothing else to update
             }
@@ -598,11 +598,13 @@ public class GameActivity extends AppCompatActivity {
 
                                 // 🔄 Update match document
                                 matchRef.update(update)
-                                        .addOnSuccessListener(unused -> Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": 🏳️ Match marked as forfeited"))
-                                        .addOnFailureListener(err -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ❌ Failed to update match", err));
+                                        .addOnSuccessListener(unused -> Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                                                + ": 🏳️ Match marked as forfeited"))
+                                        .addOnFailureListener(err -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                                                + ": ❌ Failed to update match", err));
 
                                 // 📤 Add a dummy move to trigger opponent's listener
-                                Map<String, Object> forfeitMove = new HashMap<>();
+                                /*Map<String, Object> forfeitMove = new HashMap<>();
                                 forfeitMove.put("x", -1);
                                 forfeitMove.put("y", -1);
                                 forfeitMove.put("p", localPlayerIndex);
@@ -610,7 +612,7 @@ public class GameActivity extends AppCompatActivity {
 
                                 matchRef.collection("moves").add(forfeitMove)
                                         .addOnSuccessListener(unused -> Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": 📨 Forfeit move added"))
-                                        .addOnFailureListener(e -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ❌ Failed to send forfeit move", e));
+                                        .addOnFailureListener(e -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ❌ Failed to send forfeit move", e));*/
                             }
 
                             Intent intent = new Intent(GameActivity.this, MenuActivity.class);
