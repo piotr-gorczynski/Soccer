@@ -36,23 +36,31 @@ public class WaitingActivity extends AppCompatActivity {
 
         db.collection("invitations").document(inviteId).get()
                 .addOnSuccessListener(inviteDoc -> {
-                    String toNickname = inviteDoc.getString("toNickname");
-                    if (toNickname != null) {
 
-                        String msg = getString(R.string.waiting_for_opponent_named, toNickname);
-                        waitingMessage.setText(msg);
+                    /* 1️⃣  Put the placeholder on screen immediately */
+                    waitingMessage.setText(getString(R.string.waiting_for_opponent));
+
+                    /* 2️⃣  Fetch the receiver’s nickname from /users/{to} */
+                    String toUid = inviteDoc.getString("to");
+                    if (!TextUtils.isEmpty(toUid)) {
+                        db.collection("users").document(toUid).get()
+                                .addOnSuccessListener(userDoc -> {
+                                    String nick = userDoc.getString("nickname");
+                                    if (!TextUtils.isEmpty(nick)) {
+                                        waitingMessage.setText(
+                                                getString(R.string.waiting_for_opponent_named, nick));
+                                    }
+                                });
                     }
 
-                    /* ⬇️ NEW: choose the right waiting strategy */
+                    /* 3️⃣  Decide which match-listener to start (unchanged) */
                     String matchPath = inviteDoc.getString("matchPath");
-
-                    if (!TextUtils.isEmpty(matchPath)) {                  // ── tournament flow
-                        listenForExistingMatch(db.document(matchPath));
-                    } else {                                              // ── friendly flow
-                        listenForNewMatch(db, inviteId);
+                    if (!TextUtils.isEmpty(matchPath)) {
+                        listenForExistingMatch(db.document(matchPath));   // tournament
+                    } else {
+                        listenForNewMatch(db, inviteId);                  // friendly
                     }
                 });
-
     }
 
     /* --- helper for tournament matches ----------------------------------- */
