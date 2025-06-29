@@ -33,6 +33,10 @@
     {
       "source": "functions/end-tournament",
       "codebase": "end-tournament"
+    },
+    {
+      "source": "functions/create-invite",
+      "codebase": "create-invite"
     }
   ],
   "firestore": {

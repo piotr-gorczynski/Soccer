@@ -72,5 +72,5 @@
         <item quantity="one">%d win</item>
         <item quantity="other">%d wins</item>
     </plurals>
-
+    <string name="toast_not_your_turn">It’s not your turn yet!</string>
 </resources>
