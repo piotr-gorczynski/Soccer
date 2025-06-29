@@ -15,6 +15,8 @@ import java.util.Objects;
 
 import android.util.AttributeSet;
 import android.os.Looper;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 
 
@@ -653,7 +655,15 @@ public class GameView extends View {
                     int lastP = realMoves.get(realMoves.size() - 1).P;
 
                     if (localPlayerIndex != lastP) {
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": 🔒 Not your turn — ignoring touch");
+                        // 🔒 Not your turn — show feedback and ignore the touch
+                        Toast.makeText(
+                                getContext(),                     // a View always has a Context
+                                R.string.toast_not_your_turn,     // put the text in strings.xml
+                                Toast.LENGTH_SHORT
+                        ).show();
+
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                                + ": 🔒 Not your turn — ignoring touch");
                         return true;
                     }
 
@@ -663,9 +673,11 @@ public class GameView extends View {
                 else {
                     // ── GameType 1 & 2: use your existing local/AI move logic
                     MakeMove(x, y, realMoves);
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Before invalidate, last P=" + realMoves.get(realMoves.size() - 1).P);
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                            + ": Before invalidate, last P=" + realMoves.get(realMoves.size() - 1).P);
                     invalidate();
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": After invalidate");
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                            + ": After invalidate");
 
                     // ── If now it's Android’s turn and there _are_ moves available, queue AI
                     if ((GameType == 2) && (realMoves.get(realMoves.size() - 1).P == 1) && (!possibleMoves.isEmpty()))
