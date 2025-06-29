@@ -17,8 +17,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.functions.FirebaseFunctions;
+import com.google.firebase.functions.FirebaseFunctionsException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -131,37 +132,35 @@ public class MatchAdapter
                     + ": On click started");
 
             String matchPath = mNow.getReference().getPath();
-            Map<String, Object> invite = new HashMap<>();
-            invite.put("from", myUid);
-            invite.put("to", oppUidNow);
-            invite.put("createdAt", FieldValue.serverTimestamp());
-            invite.put("status", "pending");
-            invite.put("tournamentId", tournamentId);
-            invite.put("matchPath", matchPath);
 
-            FirebaseFirestore.getInstance().collection("invitations")
-                    .add(invite)
-                    .addOnSuccessListener(docRef -> {
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                                Objects.requireNonNull(new Object() {
-                                }.getClass().getEnclosingMethod()).getName()
-                                + ": Invite sent");
+            Map<String,Object> data = new HashMap<>();
+            data.put("toUid",        oppUidNow);
+            data.put("tournamentId", tournamentId);
+            data.put("matchPath",    matchPath);
+
+            FirebaseFunctions.getInstance("us-central1")
+                    .getHttpsCallable("createInvite")
+                    .call(data)
+                    .addOnSuccessListener(res -> {
+                        @SuppressWarnings("unchecked")
+                        String inviteId =
+                                (String) ((Map<String,Object>) Objects.requireNonNull(res.getData())).get("inviteId");
 
                         Toast.makeText(context, "Invitation sent", Toast.LENGTH_SHORT).show();
 
-                        Intent intent = new Intent(context, WaitingActivity.class);
-                        intent.putExtra("inviteId", docRef.getId());
-                        context.startActivity(intent);
-                        if (context instanceof Activity) {
-                            ((Activity) context).finish();
-                        }
+                        Intent i = new Intent(context, WaitingActivity.class)
+                                .putExtra("inviteId", inviteId);
+                        context.startActivity(i);
+                        if (context instanceof Activity) ((Activity) context).finish();
                     })
                     .addOnFailureListener(e -> {
-                        Toast.makeText(context, "Failed to send invite", Toast.LENGTH_SHORT).show();
-                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
-                                Objects.requireNonNull(new Object() {
-                                }.getClass().getEnclosingMethod()).getName()
-                                + ": Sending invite failed", e);
+                        String msg = (e instanceof FirebaseFunctionsException ffe &&
+                                ffe.getCode() == FirebaseFunctionsException.Code.FAILED_PRECONDITION)
+                                ? "You already have an active invite"
+                                : "Failed to send invite";
+                        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                                + ": createInvite failed", e);
                     });
         });
 

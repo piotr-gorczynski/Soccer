@@ -4,15 +4,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.*;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.*;
+import com.google.firebase.functions.FirebaseFunctions;
+import com.google.firebase.functions.FirebaseFunctionsException;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
@@ -66,67 +68,43 @@ public class InviteFriendActivity extends AppCompatActivity {
                         resultText.setText(R.string.you_can_t_invite_yourself);
                         return;
                     }
-
-                    // ✅ Check if an invite already exists
-                    db.collection("invitations")
-                            .whereEqualTo("from", currentUserId)
-                            .whereEqualTo("to", targetUid)
-                            .whereEqualTo("status", "pending")
-                            .get()
-                            .addOnSuccessListener(existingInvites -> {
-                                if (!existingInvites.isEmpty()) {
-                                    resultText.setText(R.string.invite_already_sent);
-                                } else {
-                                    sendInvite(currentUserId, targetUid);
-                                }
-                            })
-                            .addOnFailureListener(e -> {
-                                resultText.setText(R.string.failed_to_check_existing_invites);
-                                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Invite check failed", e);
-                            });
-
+                    sendInviteViaCF(targetUid);
                 })
                 .addOnFailureListener(e -> {
                     resultText.setText(R.string.error_searching_user);
-                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": User lookup failed", e);
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                            + ": User lookup failed", e);
                 });
     }
 
-    private void sendInvite(String fromUid, String toUid) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private void sendInviteViaCF(@NonNull String targetUid) {
+        Map<String,Object> data = Collections.singletonMap("toUid", targetUid);
 
-        // Get both users' nicknames from the users collection
-        Task<DocumentSnapshot> fromTask = db.collection("users").document(fromUid).get();
-        Task<DocumentSnapshot> toTask = db.collection("users").document(toUid).get();
-
-        Tasks.whenAllSuccess(fromTask, toTask).addOnSuccessListener(tasks -> {
-            Map<String, Object> invite = new HashMap<>();
-            invite.put("from", fromUid);
-            invite.put("to", toUid);
-            invite.put("status", "pending");
-            invite.put("createdAt", FieldValue.serverTimestamp());
-
-            db.collection("invitations")
-                    .add(invite)
-                    .addOnSuccessListener(docRef -> {
-                        resultText.setText(R.string.invitation_sent);
-
-                        String inviteId = docRef.getId();
-
-                        // ✅ Start WaitingActivity (which will listen for match creation)
-                        Intent intent = new Intent(this, WaitingActivity.class);
-                        intent.putExtra("inviteId", inviteId);
-                        startActivity(intent);
-                        finish();
-                    })
-                    .addOnFailureListener(e -> {
+        FirebaseFunctions.getInstance("us-central1")
+                .getHttpsCallable("createInvite")
+                .call(data)
+                .addOnSuccessListener(res -> {
+                    @SuppressWarnings("unchecked")
+                    String inviteId = (String) ((Map<String,Object>) Objects.requireNonNull(res.getData())).get("inviteId");
+                    if (inviteId == null) {
                         resultText.setText(R.string.failed_to_send_invite);
-                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Sending failed", e);
-                    });
-
-        }).addOnFailureListener(e -> {
-            resultText.setText(R.string.failed_to_load_user_info);
-            Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Nickname fetch error", e);
-        });
+                        return;
+                    }
+                    Intent i = new Intent(this, WaitingActivity.class)
+                            .putExtra("inviteId", inviteId);
+                    startActivity(i);
+                    finish();
+                })
+                .addOnFailureListener(e -> {
+                    if (e instanceof FirebaseFunctionsException ffe &&
+                            ffe.getCode() == FirebaseFunctionsException.Code.FAILED_PRECONDITION) {
+                        resultText.setText(R.string.invite_already_sent);
+                    } else {
+                        resultText.setText(R.string.failed_to_send_invite);
+                    }
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                            + ": createInvite failed", e);
+                });
     }
+
 }

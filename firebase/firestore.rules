@@ -26,14 +26,14 @@ service cloud.firestore {
       allow delete: if false;
     }
 
-    // 2. Invitations: sender may create, either party may read
+    // 2. Invitations: server-only writes, either party may read
     match /invitations/{invId} {
-      allow create: if request.auth.uid == request.resource.data.from
-                 && request.resource.data.status == "pending"
-                 && request.resource.data.to is string;
-      allow read:   if request.auth.uid == resource.data.from
-                 || request.auth.uid == resource.data.to;
-      allow update, delete: if false;
+      // clients may only **read** invitations where they are a party
+      allow read: if request.auth != null
+               && (request.auth.uid == resource.data.from
+                   || request.auth.uid == resource.data.to);
+      // all client-side writes are blocked; Cloud Functions use Admin SDK
+      allow create, update, delete: if false;
     }
 
     // 3. Matches: only participants may create/read/update
