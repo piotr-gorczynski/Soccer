@@ -1,4 +1,3 @@
-# firestore.indexes.json  (create if absent)
 {
   "indexes": [
     {
