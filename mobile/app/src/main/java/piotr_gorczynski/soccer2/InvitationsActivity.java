@@ -167,6 +167,7 @@ public class InvitationsActivity extends AppCompatActivity {
                 .whereEqualTo("to", currentUserId)
                 .whereEqualTo("status", "pending")
                 .whereGreaterThan("expireAt", Timestamp.now())
+                .orderBy("expireAt")                // ← added
                 .addSnapshotListener((querySnapshot, e) -> {
                     if (e != null) {
                         Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Listen failed", e);
