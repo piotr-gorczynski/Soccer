@@ -1,8 +1,9 @@
 // functions/index.js
 const functions = require('firebase-functions');
 const admin     = require('firebase-admin');
+const now = admin.firestore.Timestamp.now();          // current server time
 const TTL_MIN   = 5;                         // <- change to taste
-const expireAt  = admin.firestore.Timestamp.fromMillis(Date.now() + TTL_MIN * 60_000);
+const expireAt  = admin.firestore.Timestamp.fromMillis(now.toMillis() + TTL_MIN * 60_000);
 admin.initializeApp();
 
 exports.createInvite = functions
@@ -34,6 +35,7 @@ exports.createInvite = functions
       const conflict = await tx.get(
         invites.where('from', '==', from)
                .where('status', '==', 'pending')
+               .where('expireAt', '>', now)       // ← ignore already-expired docs               
                .limit(1)
       );
       if (!conflict.empty) {
