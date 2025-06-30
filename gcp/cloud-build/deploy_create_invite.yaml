@@ -69,7 +69,26 @@ steps:
         npm install
         echo "📦 Dependencies installed."
 
-  # Step 5: Deploy function
+  # Step 5: Deploy Firestore composite indexes
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'deploy-firestore-indexes'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -e
+        cd /workspace/firebase
+        project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
+
+        echo "⬆️  Deploying Firestore indexes..."
+        ./firebase deploy \
+          --only firestore:indexes \
+          --project="$project_id" \
+          --force
+
+        echo "✅ Firestore indexes deployed."
+
+  # Step 6: Deploy function
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: 'deploy-create-invite'
     entrypoint: bash
@@ -87,7 +106,7 @@ steps:
 
         echo "✅ Function 'createInvite' deployed successfully."
 
-  # Step 6: Add IAM policy binding to allow allUsers to invoke
+  # Step 7: Add IAM policy binding to allow allUsers to invoke
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: 'bind-invoker-role'
     entrypoint: bash
