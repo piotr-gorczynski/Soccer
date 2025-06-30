@@ -1,7 +1,8 @@
 // functions/index.js
 const functions = require('firebase-functions');
 const admin     = require('firebase-admin');
-
+const TTL_MIN   = 5;                         // <- change to taste
+const expireAt  = admin.firestore.Timestamp.fromMillis(Date.now() + TTL_MIN * 60_000);
 admin.initializeApp();
 
 exports.createInvite = functions
@@ -46,6 +47,7 @@ exports.createInvite = functions
         tournamentId,
         matchPath,
         status    : 'pending',
+        expireAt, // when the invite expires
         createdAt : admin.firestore.FieldValue.serverTimestamp(),
       });
 
