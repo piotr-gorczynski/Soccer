@@ -146,7 +146,7 @@ public class MatchAdapter
                         String inviteId =
                                 (String) ((Map<String,Object>) Objects.requireNonNull(res.getData())).get("inviteId");
 
-                        Toast.makeText(context, "Invitation sent", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, R.string.invitation_sent, Toast.LENGTH_SHORT).show();
 
                         Intent i = new Intent(context, WaitingActivity.class)
                                 .putExtra("inviteId", inviteId);
