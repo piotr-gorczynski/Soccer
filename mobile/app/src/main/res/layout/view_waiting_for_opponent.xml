@@ -25,5 +25,22 @@
             android:textColor="@android:color/white"
             android:paddingTop="16dp" />
 
-    </LinearLayout>
+                <!-- ⏱ TTL countdown (updates every second from code) -->
+                <TextView
+                    android:id="@+id/countdown"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/five_minutes"
+                    android:textSize="14sp"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/colorAccent" />
+
+                <!-- ✖ Allow the sender to cancel their own invite -->
+                <Button
+                    android:id="@+id/cancelInviteBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/cancel_invite" />
+            </LinearLayout>
 </FrameLayout>
