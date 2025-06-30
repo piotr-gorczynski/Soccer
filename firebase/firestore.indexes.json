@@ -1,0 +1,15 @@
+# firestore.indexes.json  (create if absent)
+{
+  "indexes": [
+    {
+      "collectionGroup": "invitations",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "from",     "order": "ASCENDING" },
+        { "fieldPath": "status",   "order": "ASCENDING" },
+        { "fieldPath": "expireAt", "order": "ASCENDING" }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
