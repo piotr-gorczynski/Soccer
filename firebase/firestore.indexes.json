@@ -8,6 +8,16 @@
         { "fieldPath": "status",   "order": "ASCENDING" },
         { "fieldPath": "expireAt", "order": "ASCENDING" }
       ]
+    },
+
+    {
+      "collectionGroup": "invitations",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "to",       "order": "ASCENDING" },
+        { "fieldPath": "status",   "order": "ASCENDING" },
+        { "fieldPath": "expireAt", "order": "ASCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []
