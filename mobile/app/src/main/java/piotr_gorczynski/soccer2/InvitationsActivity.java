@@ -11,6 +11,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.*;
@@ -165,6 +166,7 @@ public class InvitationsActivity extends AppCompatActivity {
         invitesSub = db.collection("invitations")
                 .whereEqualTo("to", currentUserId)
                 .whereEqualTo("status", "pending")
+                .whereGreaterThan("expireAt", Timestamp.now())
                 .addSnapshotListener((querySnapshot, e) -> {
                     if (e != null) {
                         Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Listen failed", e);

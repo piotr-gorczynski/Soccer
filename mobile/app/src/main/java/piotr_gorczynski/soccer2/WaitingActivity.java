@@ -3,20 +3,30 @@ package piotr_gorczynski.soccer2;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.*;
+import com.google.firebase.functions.FirebaseFunctions;
 
+import java.util.Collections;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 public class WaitingActivity extends AppCompatActivity {
     private boolean gameActivityLaunched = false;
     private ListenerRegistration matchListener;   // ⇐ capture this
+    private ListenerRegistration inviteListener;
+    private CountDownTimer ttlTimer;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -31,11 +41,13 @@ public class WaitingActivity extends AppCompatActivity {
         }
 
         TextView waitingMessage = findViewById(R.id.waitingMessage);
+        TextView countdownTv    = findViewById(R.id.countdown);
+        findViewById(R.id.cancelInviteBtn).setOnClickListener(v -> cancelInvite(inviteId));
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection("invitations").document(inviteId).get()
-                .addOnSuccessListener(inviteDoc -> {
+        DocumentReference inviteRef = db.collection("invitations").document(inviteId);
+        inviteRef.get().addOnSuccessListener(inviteDoc -> {
 
                     /* 1️⃣  Put the placeholder on screen immediately */
                     waitingMessage.setText(getString(R.string.waiting_for_opponent));
@@ -52,7 +64,37 @@ public class WaitingActivity extends AppCompatActivity {
                                     }
                                 });
                     }
+                    /* 3️⃣  Start a live listener on *this* invitation
+                    so we detect status = expired/cancelled ↓ */
+                    inviteListener = inviteRef.addSnapshotListener((snap, e) -> {
+                    if (e != null || snap == null || !snap.exists()) return;
+                    String status = snap.getString("status");
+                    if ("expired".equals(status) && !isFinishing()) {
+                        Toast.makeText(this,
+                                R.string.invite_expired, Toast.LENGTH_LONG).show();
+                        finish();
+                    }
+                });
 
+                /* 4️⃣  Start TTL countdown ------------------------- */
+                Timestamp expireAt = inviteDoc.getTimestamp("expireAt");
+                if (expireAt != null) {
+                    long msLeft = expireAt.toDate().getTime() - System.currentTimeMillis();
+                    if (msLeft <= 0) {          // already expired
+                        finish();
+                        return;
+                    }
+                    ttlTimer = new CountDownTimer(msLeft, 1000) {
+                        public void onTick(long millisUntilFinished) {
+                            long min = millisUntilFinished / 60000;
+                            long sec = (millisUntilFinished / 1000) % 60;
+                            countdownTv.setText(
+                                    String.format(Locale.US, "%02d:%02d", min, sec));   // US = always 0-9 digits
+                            //                            countdownTv.setText(String.format("%02d:%02d", min, sec));
+                        }
+                        public void onFinish() { finish(); }
+                    }.start();
+                }
                     /* 3️⃣  Decide which match-listener to start (unchanged) */
                     String matchPath = inviteDoc.getString("matchPath");
                     if (!TextUtils.isEmpty(matchPath)) {
@@ -112,6 +154,26 @@ public class WaitingActivity extends AppCompatActivity {
             matchListener.remove();
             matchListener = null;
         }
+        if (ttlTimer!= null) {
+            ttlTimer.cancel();
+        }
+        if (inviteListener != null) {
+            inviteListener.remove();
+        }
+
         super.onDestroy();
+    }
+
+    private void cancelInvite(@NonNull String inviteId) {
+
+        findViewById(R.id.cancelInviteBtn).setEnabled(false);   // debounce
+
+        Map<String,Object> data = Collections.singletonMap("invitationId", inviteId);
+
+        FirebaseFunctions.getInstance("us-central1")
+                .getHttpsCallable("cancelInvite")
+                .call(data)
+                // success or failure — either way, leave the screen
+                .addOnCompleteListener(t -> finish());
     }
 }
