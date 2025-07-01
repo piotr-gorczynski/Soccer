@@ -1,9 +1,7 @@
 // functions/index.js
 const functions = require('firebase-functions');
 const admin     = require('firebase-admin');
-const now = admin.firestore.Timestamp.now();          // current server time
 const TTL_MIN   = 5;                         // <- change to taste
-const expireAt  = admin.firestore.Timestamp.fromMillis(now.toMillis() + TTL_MIN * 60_000);
 admin.initializeApp();
 
 exports.createInvite = functions
@@ -27,12 +25,13 @@ exports.createInvite = functions
 
     const tournamentId = data?.tournamentId || null;
     const matchPath    = data?.matchPath    || null;
-
     const invites = admin.firestore().collection('invitations');
-
+    
     /* ── one-active-invite guarantee ───── */
     const res = await admin.firestore().runTransaction(async tx => {
-      const conflict = await tx.get(
+        const now = admin.firestore.Timestamp.now();          // current server time
+        const expireAt  = admin.firestore.Timestamp.fromMillis(now.toMillis() + TTL_MIN * 60_000);
+        const conflict = await tx.get(
         invites.where('from', '==', from)
                .where('status', '==', 'pending')
                .where('expireAt', '>', now)       // ← ignore already-expired docs               
@@ -40,7 +39,7 @@ exports.createInvite = functions
       );
       if (!conflict.empty) {
         throw new functions.https.HttpsError(
-          'failed-precondition', 'You already have an active invite.');
+          'failed-precondition', 'You already have another invite pending.');
       }
 
       const ref = invites.doc();
@@ -49,7 +48,7 @@ exports.createInvite = functions
         tournamentId,
         matchPath,
         status    : 'pending',
-        expireAt, // when the invite expires
+        expireAt,  // fresh per-call TTL
         createdAt : admin.firestore.FieldValue.serverTimestamp(),
       });
 
