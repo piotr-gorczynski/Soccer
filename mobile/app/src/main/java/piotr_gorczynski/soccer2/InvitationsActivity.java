@@ -143,9 +143,14 @@ public class InvitationsActivity extends AppCompatActivity {
                                             + "  message=" + ffe.getMessage()
                                             + "  details=" + ffe.getDetails());
                                 }
-                                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Cloud Function call failed", e);
-                                Toast.makeText(this, "Failed to accept invite: " + e.getMessage(),
-                                        Toast.LENGTH_LONG).show();
+                                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                                        + ": Cloud Function call failed", e);
+                                String uiText = "Failed to accept invite";
+                                if (e instanceof FirebaseFunctionsException ffe &&
+                                        ffe.getCode() == FirebaseFunctionsException.Code.FAILED_PRECONDITION) {
+                                    uiText = "Sorry, this invite was cancelled or has expired.";
+                                }
+                                Toast.makeText(this, uiText, Toast.LENGTH_LONG).show();
                             });
 
                 })
