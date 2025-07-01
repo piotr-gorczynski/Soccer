@@ -21,7 +21,6 @@
             android:id="@+id/waitingMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
             android:textColor="@android:color/white"
             android:paddingTop="16dp" />
 
@@ -31,9 +30,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/five_minutes"
-                    android:textSize="14sp"
                     android:layout_marginTop="8dp"
-                    android:textColor="@color/colorAccent" />
+                    android:textColor="@android:color/white" />
 
                 <!-- ✖ Allow the sender to cancel their own invite -->
                 <Button
