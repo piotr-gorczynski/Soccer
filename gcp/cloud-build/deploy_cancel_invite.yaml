@@ -1,0 +1,109 @@
+substitutions:
+  _ENVIRONMENT: 'dev'
+  _FOLDER_NAME: 'soccer'
+
+steps:
+  # Step 1: Get Firebase project ID
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'get-project-id'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "🔎 Finding project for ${_FOLDER_NAME}-${_ENVIRONMENT}..."
+        gcloud projects list \
+          --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
+          --format="value(projectId)" \
+          | head -n 1 > /workspace/FIREBASE_PROJECT_ID.txt
+
+        if [ ! -s /workspace/FIREBASE_PROJECT_ID.txt ]; then
+          echo "❌ Project ID not found!"
+          exit 1
+        fi
+
+  # Step 2: Install Firebase CLI
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'install-firebase-cli'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "⬇️ Installing Firebase CLI..."
+        curl -sL https://firebase.tools | bash
+        mkdir -p /workspace/firebase
+        cp /usr/local/bin/firebase /workspace/firebase/
+        chmod +x /workspace/firebase/firebase
+        echo "✅ Firebase CLI installed."
+
+  # Step 3: Clone source code
+  - name: 'gcr.io/cloud-builders/git'
+    id: 'pull-files'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -ex
+        echo "📦 Cloning from the development branch..."
+        git clone -b development --single-branch https://github.com/piotr-gorczynski/Soccer.git /workspace/soccer
+
+        echo "📁 Copying Firestore config & cancel-invite function..."
+        cp /workspace/soccer/firebase/firebase.json /workspace/firebase/firebase.json
+        cp /workspace/soccer/firebase/firestore.rules /workspace/firebase/firestore.rules
+
+        mkdir -p /workspace/firebase/functions/cancel-invite
+        cp /workspace/soccer/firebase/functions/cancel-invite/package.json /workspace/firebase/functions/cancel-invite/
+        cp /workspace/soccer/firebase/functions/cancel-invite/index.js /workspace/firebase/functions/cancel-invite/
+
+  # Step 4: Install dependencies
+  - name: 'node:18-slim'
+    id: 'install-deps-cancel-invite'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -ex
+        cd /workspace/firebase/functions/cancel-invite
+        npm install
+        echo "📦 Dependencies installed."
+
+  # Step 5: Deploy function
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'deploy-cancel-invite'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -e
+        cd /workspace/firebase
+        project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
+
+        ./firebase deploy \
+          --only functions:cancel-invite \
+          --project="$project_id" \
+          --force
+
+        echo "✅ Function 'cancelInvite' deployed successfully."
+
+  # Step 6: Add IAM policy binding to allow allUsers to invoke
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'bind-invoker-role'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -e
+        project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
+
+        echo "🔐 Granting invoker role to allUsers for 'cancelInvite'..."
+        gcloud functions add-iam-policy-binding cancelInvite \
+          --region=us-central1 \
+          --project="$project_id" \
+          --member="allUsers" \
+          --role="roles/cloudfunctions.invoker"
+
+        echo "✅ IAM policy binding applied."
+
+options:
+  logging: CLOUD_LOGGING_ONLY

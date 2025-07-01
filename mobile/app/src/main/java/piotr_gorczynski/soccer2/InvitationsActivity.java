@@ -170,7 +170,11 @@ public class InvitationsActivity extends AppCompatActivity {
                 .orderBy("expireAt")                // ← added
                 .addSnapshotListener((querySnapshot, e) -> {
                     if (e != null) {
-                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Listen failed", e);
+                        inviteDescriptions.clear();
+                        inviteIds.clear();
+                        adapter.notifyDataSetChanged();
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                                + ": Listen failed", e);
                         return;
                     }
 

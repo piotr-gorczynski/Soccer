@@ -35,7 +35,8 @@ public class WaitingActivity extends AppCompatActivity {
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {}.getClass().getEnclosingMethod()).getName() + ": Started");
         String inviteId = getIntent().getStringExtra("inviteId");
         if (inviteId == null || inviteId.isEmpty()) {
-            Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {}.getClass().getEnclosingMethod()).getName() + ": Missing inviteId");
+            Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {}.getClass().getEnclosingMethod()).getName()
+                    + ": Missing inviteId");
             finish();
             return;
         }
@@ -170,10 +171,23 @@ public class WaitingActivity extends AppCompatActivity {
 
         Map<String,Object> data = Collections.singletonMap("invitationId", inviteId);
 
+        findViewById(R.id.cancelInviteBtn).setEnabled(false);   // debounce
+
         FirebaseFunctions.getInstance("us-central1")
                 .getHttpsCallable("cancelInvite")
-                .call(data)
-                // success or failure — either way, leave the screen
-                .addOnCompleteListener(t -> finish());
+                .call(Collections.singletonMap("invitationId", inviteId))
+
+                /* success or failure — finish either way */
+                .addOnSuccessListener(result -> finish())
+
+                /* handle network / CF errors */
+                .addOnFailureListener(e -> {
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {}.getClass().getEnclosingMethod()).getName()
+                            + ": cancelInvite failed", e);
+                    Toast.makeText(this,
+                            "Could not cancel invite: " + e.getMessage(),
+                            Toast.LENGTH_LONG).show();
+                    finish();
+                });
     }
 }

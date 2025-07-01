@@ -37,6 +37,10 @@
     {
       "source": "functions/create-invite",
       "codebase": "create-invite"
+    },
+    {
+      "source": "functions/cancel-invite",
+      "codebase": "cancel-invite"
     }
   ],
   "firestore": {
