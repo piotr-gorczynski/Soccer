@@ -50,7 +50,7 @@
     <string name="failed_to_send_invite">Failed to send invite.</string>
     <string name="pending_game_invitations">Pending Game Invitations</string>
     <string name="pending_invites">Pending Invites</string>
-    <string name="invite_already_sent">An invitation to this user is already pending.</string>
+    <string name="invite_already_sent">You already have another invite pending.</string>
     <string name="waiting_for_opponent_named">Waiting for %1$s to accept…</string>
     <string name="waiting_for_opponent">Waiting for opponent to accept…</string>
     <string name="tournaments">Tournaments</string>
@@ -74,4 +74,7 @@
     <string name="five_minutes">05:00</string>
     <string name="cancel_invite">Cancel invite</string>
     <string name="invite_expired">Invitation expired.</string>
+    <string name="leave_waiting_confirm">Leaving the waiting screen will cancel your invitation. Are you sure?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>

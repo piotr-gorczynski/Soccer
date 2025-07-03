@@ -19,8 +19,10 @@ import com.google.firebase.functions.FirebaseFunctions;
 
 import java.util.Collections;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
+
+import androidx.activity.OnBackPressedCallback;
+import androidx.appcompat.app.AlertDialog;   // already used elsewhere
 
 public class WaitingActivity extends AppCompatActivity {
     private boolean gameActivityLaunched = false;
@@ -28,21 +30,27 @@ public class WaitingActivity extends AppCompatActivity {
     private ListenerRegistration inviteListener;
     private CountDownTimer ttlTimer;
 
+    private String inviteId;                 // keep ID for back-press cancel
+
+    private OnBackPressedCallback backCallback;   // keep a reference
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.view_waiting_for_opponent);
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {}.getClass().getEnclosingMethod()).getName() + ": Started");
-        String inviteId = getIntent().getStringExtra("inviteId");
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
+        }.getClass().getEnclosingMethod()).getName() + ": Started");
+        inviteId = getIntent().getStringExtra("inviteId");
         if (inviteId == null || inviteId.isEmpty()) {
-            Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {}.getClass().getEnclosingMethod()).getName()
+            Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
+            }.getClass().getEnclosingMethod()).getName()
                     + ": Missing inviteId");
             finish();
             return;
         }
 
         TextView waitingMessage = findViewById(R.id.waitingMessage);
-        TextView countdownTv    = findViewById(R.id.countdown);
+        TextView countdownTv = findViewById(R.id.countdown);
         findViewById(R.id.cancelInviteBtn).setOnClickListener(v -> cancelInvite(inviteId));
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -50,60 +58,91 @@ public class WaitingActivity extends AppCompatActivity {
         DocumentReference inviteRef = db.collection("invitations").document(inviteId);
         inviteRef.get().addOnSuccessListener(inviteDoc -> {
 
-                    /* 1️⃣  Put the placeholder on screen immediately */
-                    waitingMessage.setText(getString(R.string.waiting_for_opponent));
+            /* 1️⃣  Put the placeholder on screen immediately */
+            waitingMessage.setText(getString(R.string.waiting_for_opponent));
 
-                    /* 2️⃣  Fetch the receiver’s nickname from /users/{to} */
-                    String toUid = inviteDoc.getString("to");
-                    if (!TextUtils.isEmpty(toUid)) {
-                        db.collection("users").document(toUid).get()
-                                .addOnSuccessListener(userDoc -> {
-                                    String nick = userDoc.getString("nickname");
-                                    if (!TextUtils.isEmpty(nick)) {
-                                        waitingMessage.setText(
-                                                getString(R.string.waiting_for_opponent_named, nick));
-                                    }
-                                });
-                    }
+            /* 2️⃣  Fetch the receiver’s nickname from /users/{to} */
+            String toUid = inviteDoc.getString("to");
+            if (!TextUtils.isEmpty(toUid)) {
+                db.collection("users").document(toUid).get()
+                        .addOnSuccessListener(userDoc -> {
+                            String nick = userDoc.getString("nickname");
+                            if (!TextUtils.isEmpty(nick)) {
+                                waitingMessage.setText(
+                                        getString(R.string.waiting_for_opponent_named, nick));
+                            }
+                        });
+            }
                     /* 3️⃣  Start a live listener on *this* invitation
                     so we detect status = expired/cancelled ↓ */
-                    inviteListener = inviteRef.addSnapshotListener((snap, e) -> {
-                    if (e != null || snap == null || !snap.exists()) return;
-                    String status = snap.getString("status");
-                    if ("expired".equals(status) && !isFinishing()) {
-                        Toast.makeText(this,
-                                R.string.invite_expired, Toast.LENGTH_LONG).show();
-                        finish();
-                    }
-                });
-
-                /* 4️⃣  Start TTL countdown ------------------------- */
-                Timestamp expireAt = inviteDoc.getTimestamp("expireAt");
-                if (expireAt != null) {
-                    long msLeft = expireAt.toDate().getTime() - System.currentTimeMillis();
-                    if (msLeft <= 0) {          // already expired
-                        finish();
-                        return;
-                    }
-                    ttlTimer = new CountDownTimer(msLeft, 1000) {
-                        public void onTick(long millisUntilFinished) {
-                            long min = millisUntilFinished / 60000;
-                            long sec = (millisUntilFinished / 1000) % 60;
-                            countdownTv.setText(
-                                    String.format(Locale.US, "%02d:%02d", min, sec));   // US = always 0-9 digits
-                            //                            countdownTv.setText(String.format("%02d:%02d", min, sec));
-                        }
-                        public void onFinish() { finish(); }
-                    }.start();
+            inviteListener = inviteRef.addSnapshotListener((snap, e) -> {
+                if (e != null || snap == null || !snap.exists()) return;
+                String status = snap.getString("status");
+                if ("expired".equals(status) && !isFinishing()) {
+                    Toast.makeText(this,
+                            R.string.invite_expired, Toast.LENGTH_LONG).show();
+                    finish();
                 }
-                    /* 3️⃣  Decide which match-listener to start (unchanged) */
-                    String matchPath = inviteDoc.getString("matchPath");
-                    if (!TextUtils.isEmpty(matchPath)) {
-                        listenForExistingMatch(db.document(matchPath));   // tournament
-                    } else {
-                        listenForNewMatch(db, inviteId);                  // friendly
+            });
+
+            /* 4️⃣  Start TTL countdown ------------------------- */
+            Timestamp expireAt = inviteDoc.getTimestamp("expireAt");
+            if (expireAt != null) {
+                long msLeft = expireAt.toDate().getTime() - System.currentTimeMillis();
+                if (msLeft <= 0) {
+                    finish();
+                    return;
+                }
+
+                // 🟢 show the fresh TTL immediately (05:00)
+                countdownTv.setText(String.format(
+                        Locale.US, "%02d:%02d", msLeft / 60000, (msLeft / 1000) % 60));
+
+                ttlTimer = new CountDownTimer(msLeft, 1000) {
+                    public void onTick(long millisUntilFinished) {
+                        long min = millisUntilFinished / 60000;
+                        long sec = (millisUntilFinished / 1000) % 60;
+                        countdownTv.setText(
+                                String.format(Locale.US, "%02d:%02d", min, sec));   // US = always 0-9 digits
+                        //                            countdownTv.setText(String.format("%02d:%02d", min, sec));
                     }
-                });
+
+                    public void onFinish() {
+                        finish();
+                    }
+                }.start();
+            }
+            /* 3️⃣  Decide which match-listener to start (unchanged) */
+            String matchPath = inviteDoc.getString("matchPath");
+            if (!TextUtils.isEmpty(matchPath)) {
+                listenForExistingMatch(db.document(matchPath));   // tournament
+            } else {
+                listenForNewMatch(db, inviteId);                  // friendly
+            }
+        });
+        /* ── back-press guard (works for gesture + button) ─────────── */
+        backCallback = new OnBackPressedCallback(true /* enabled */) {
+            @Override
+            public void handleOnBackPressed() {
+
+                if (gameActivityLaunched) {               // already leaving for GameActivity
+                    setEnabled(false);                    // hand control back to system
+                    getOnBackPressedDispatcher().onBackPressed();
+                    return;
+                }
+
+                new AlertDialog.Builder(WaitingActivity.this)
+                        .setTitle(R.string.cancel_invite)            // “Cancel invite?”
+                        .setMessage(R.string.leave_waiting_confirm)  // “Leaving will cancel…”
+                        .setPositiveButton(R.string.yes,(d, w) -> {
+                            backCallback.setEnabled(false);
+                            cancelInvite(inviteId);
+                        })     // call your helper
+                        .setNegativeButton(R.string.no, null)
+                        .show();
+            }
+        };
+        getOnBackPressedDispatcher().addCallback(this, backCallback);
     }
 
     /* --- helper for tournament matches ----------------------------------- */
@@ -148,6 +187,9 @@ public class WaitingActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        if (backCallback != null)
+            backCallback.remove();
+
         // just in case we never hit the first match…
         if (matchListener != null) {
             Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
@@ -166,10 +208,6 @@ public class WaitingActivity extends AppCompatActivity {
     }
 
     private void cancelInvite(@NonNull String inviteId) {
-
-        findViewById(R.id.cancelInviteBtn).setEnabled(false);   // debounce
-
-        Map<String,Object> data = Collections.singletonMap("invitationId", inviteId);
 
         findViewById(R.id.cancelInviteBtn).setEnabled(false);   // debounce
 

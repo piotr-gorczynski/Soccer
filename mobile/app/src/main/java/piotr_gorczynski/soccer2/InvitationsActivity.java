@@ -171,7 +171,6 @@ public class InvitationsActivity extends AppCompatActivity {
         invitesSub = db.collection("invitations")
                 .whereEqualTo("to", currentUserId)
                 .whereEqualTo("status", "pending")
-                .whereGreaterThan("expireAt", Timestamp.now())
                 .orderBy("expireAt")                // ← added
                 .addSnapshotListener((querySnapshot, e) -> {
                     if (e != null) {
@@ -186,7 +185,15 @@ public class InvitationsActivity extends AppCompatActivity {
                     inviteDescriptions.clear();
                     inviteIds.clear();
 
+                    long nowMillis = System.currentTimeMillis();      // 🕔 current client time
                     for (DocumentSnapshot doc : Objects.requireNonNull(querySnapshot)) {
+                        /* hide already-expired docs that still satisfy the
+                        original query because the listener was opened
+                        before they lapsed */
+                        Timestamp exp = doc.getTimestamp("expireAt");
+                        if (exp != null && exp.toDate().getTime() <= nowMillis) {
+                            continue;       // skip – TTL passed
+                        }
                         String fromUid = doc.getString("from");
 
                         // optimistic placeholder
