@@ -1,16 +1,16 @@
-// functions/accept-invite/index.js  (CommonJS style)
+// functions/accept-invite/index.js        (CommonJS)
 const functions = require('firebase-functions');
 const admin     = require('firebase-admin');
 admin.initializeApp();
 
-const db                  = admin.firestore();
-const initialTimeSeconds  = 300;   // 5-minute chess clock
+const db                 = admin.firestore();
+const initialTimeSeconds = 300;   // 5-minute chess clock
 
 exports.acceptInvite = functions
   .region('us-central1')
   .https.onCall(async (data, context) => {
 
-    /* ── basic guards (outside the tx) ───────────────────────── */
+    /* ─────────────────── basic guards ─────────────────────── */
     const uid          = context.auth?.uid;
     const invitationId = data?.invitationId;
 
@@ -22,7 +22,7 @@ exports.acceptInvite = functions
 
     const inviteRef = db.collection('invitations').doc(invitationId);
 
-    /* ── ONE transaction does all the work ───────────────────── */
+    /* ── ONE Firestore transaction does all the work ───────── */
     const { matchPath } = await db.runTransaction(async tx => {
 
       const now       = admin.firestore.Timestamp.now();   // server time
@@ -33,30 +33,40 @@ exports.acceptInvite = functions
 
       const invite = inviteDoc.data();
 
-      /* ownership */
+      /* 1 Ownership */
       if (invite.to !== uid)
         throw new functions.https.HttpsError(
           'permission-denied', 'This invitation isn’t addressed to you');
 
-      /* status still pending */
+      /* 2 Still pending */
       if (invite.status !== 'pending')
         throw new functions.https.HttpsError(
-          'failed-precondition', 'Invitation is no longer available');
+          'failed-precondition', 'Invitation already handled');
 
-      /* not past TTL */
+      /* 3 TTL guard */
       if (invite.expireAt && invite.expireAt.toMillis() <= now.toMillis())
         throw new functions.https.HttpsError(
           'deadline-exceeded', 'Invitation has expired');
 
-      /* ---------- choose or create match doc ------------------ */
+      /* 4 Choose or create the match document */
       let matchRef;
-      if (invite.matchPath) {                 // tournament – doc already exists
+      if (invite.matchPath) {                     // tournament — doc exists
         matchRef = db.doc(invite.matchPath);
         const mSnap = await tx.get(matchRef);
         if (!mSnap.exists)
           throw new functions.https.HttpsError(
             'not-found', 'Scheduled match document is missing');
-      } else {                                // friendly
+        /* patch existing doc */
+        tx.update(matchRef, {
+          status        : 'active',
+          invitationId  : invitationId,
+          updatedAt     : admin.firestore.FieldValue.serverTimestamp(),
+          remainingTime0: initialTimeSeconds,
+          remainingTime1: initialTimeSeconds,
+          turn          : 0,
+          turnStartTime : null
+        });
+      } else {                                    // friendly — create new doc
         matchRef = db.collection('matches').doc();
         tx.set(matchRef, {
           player0       : invite.from,
@@ -73,7 +83,7 @@ exports.acceptInvite = functions
           turnStartTime : null
         });
 
-        /* initial move at board centre */
+        /* initial move at field centre */
         tx.set(
           matchRef.collection('moves').doc(),
           {
@@ -83,27 +93,26 @@ exports.acceptInvite = functions
         );
       }
 
-      /* mark invitation as accepted */
+      /* 5 Mark invitation as accepted */
       tx.update(inviteRef, { status: 'accepted' });
 
-      return { matchPath: matchRef.path };    // ← returned outside tx
+      return { matchPath: matchRef.path };        // ← returned outside tx
     });
 
-    /* ── send push to the inviter (best-effort) ──────────────── */
+    /* ────────── best-effort push to the inviter ───────────── */
     (async () => {
       try {
-        const inviteDoc = await db.collection('invitations').doc(invitationId).get();
-        const { from, to } = inviteDoc.data();
-        const fromUserSnap = await db.collection('users').doc(from).get();
-        const fcmToken     = fromUserSnap.get('fcmToken');
+        const inviteSnap = await inviteRef.get();             // fresh copy
+        const { from }   = inviteSnap.data();
+        const fromUser   = await db.collection('users').doc(from).get();
+        const token      = fromUser.get('fcmToken');
 
-        if (fcmToken) {
+        if (token) {
           await admin.messaging().send({
-            token: fcmToken,
-            data : {
+            token,
+            data: {
               type     : 'start',
-              matchPath: matchPath,
-              fromNickname: 'Your opponent'
+              matchPath: matchPath
             },
             notification: {
               title: 'Game started!',
@@ -116,6 +125,6 @@ exports.acceptInvite = functions
       }
     })();
 
-    /* ── success payload to the client ───────────────────────── */
+    /* ───────── success response to the client ─────────────── */
     return { matchPath };
   });
