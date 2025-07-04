@@ -25,6 +25,8 @@ import androidx.core.content.ContextCompat;
 
 import java.util.Objects;
 
+import com.google.firebase.firestore.DocumentSnapshot;
+
 public class MenuActivity extends AppCompatActivity {
 
     private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 101;
@@ -107,7 +109,41 @@ public class MenuActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+
+        /* ────────────────────────────────────────────────────────────────
+         *  ⚡ Restore WaitingActivity if the process was killed while the
+         *    user was waiting for the opponent to accept an invite.
+         * ─────────────────────────────────────────────────────────────── */
+        SharedPreferences wp = getSharedPreferences("waiting_pref", MODE_PRIVATE);
+        String pendingId = wp.getString("activeInviteId", null);
+        if (pendingId != null) {
+            FirebaseFirestore.getInstance()
+                    .collection("invitations").document(pendingId).get()
+                    .addOnSuccessListener((DocumentSnapshot doc) -> {
+                        boolean stillPending =
+                                doc.exists() &&
+                                        "pending".equals(doc.getString("status")) &&
+                                        doc.getTimestamp("expireAt") != null &&
+                                        Objects.requireNonNull(doc.getTimestamp("expireAt"))
+                                                .toDate().getTime() > System.currentTimeMillis();
+                        if (stillPending) {
+                            /* invite is valid → resume WaitingActivity */
+                            Intent i = new Intent(this, WaitingActivity.class)
+                                    .putExtra("inviteId", pendingId)
+                                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                            | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(i);
+                            finish();                // don’t show MenuActivity
+                        } else {
+                            /* stale marker → forget it */
+                            wp.edit().remove("activeInviteId").apply();
+                        }
+                    });
+        }
+
+
         setContentView(R.layout.activity_menu);
 
         String uid = FirebaseAuth.getInstance().getUid();
