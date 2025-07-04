@@ -42,6 +42,27 @@ exports.createInvite = functions
         throw new functions.https.HttpsError(
           'failed-precondition', 'You already have another invite pending.');
 
+      /* 2️⃣  target player must be “free” (no pending IN or OUT invites) ---- */
+      const [incoming, outgoing] = await Promise.all([
+        tx.get(
+          invitesCol.where('to', '==',  to)
+                    .where('status', '==', 'pending')
+                    .where('expireAt', '>', now)
+                    .limit(1)
+        ),
+        tx.get(
+          invitesCol.where('from', '==', to)
+                    .where('status', '==', 'pending')
+                    .where('expireAt', '>', now)
+                    .limit(1)
+        )
+      ]);
+      if (!incoming.empty || !outgoing.empty)
+        throw new functions.https.HttpsError(
+          'failed-precondition',
+          'That player is already busy with another invitation.'
+        );
+
       const ref = invitesCol.doc();
       tx.set(ref, {
         from, to,
