@@ -49,6 +49,13 @@ public class WaitingActivity extends AppCompatActivity {
             return;
         }
 
+        /* remember the active invite so we can restore the screen
+        if the OS kills the process while we’re in the background */
+        getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE)
+                .edit()
+                .putString("activeInviteId", inviteId)
+                .apply();
+
         TextView waitingMessage = findViewById(R.id.waitingMessage);
         TextView countdownTv = findViewById(R.id.countdown);
         findViewById(R.id.cancelInviteBtn).setOnClickListener(v -> cancelInvite(inviteId));
@@ -187,6 +194,12 @@ public class WaitingActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        /* remove the marker so we don’t restore an invite that’s finished */
+        getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE)
+                .edit()
+                .remove("activeInviteId")
+                .apply();
+
         if (backCallback != null)
             backCallback.remove();
 

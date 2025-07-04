@@ -137,20 +137,31 @@ public class InvitationsActivity extends AppCompatActivity {
 
                             // ───────── failure ─────────
                             .addOnFailureListener(e -> {
+                                String userMsg = "Could not accept invite.";
+
                                 if (e instanceof FirebaseFunctionsException ffe) {
-                                    // ← this line gives you the real reason (App Check, IAM, etc.)
                                     Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": code=" + ffe.getCode()
                                             + "  message=" + ffe.getMessage()
                                             + "  details=" + ffe.getDetails());
+
+                                    switch (ffe.getCode()) {
+                                        case PERMISSION_DENIED,
+                                             FAILED_PRECONDITION ->
+                                                userMsg = "Invite was cancelled.";
+                                        case DEADLINE_EXCEEDED -> userMsg = "Invite has expired.";
+                                        default -> userMsg = "Invite is no longer available.";
+                                    }
                                 }
-                                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                                        + ": Cloud Function call failed", e);
-                                String uiText = "Failed to accept invite";
-                                if (e instanceof FirebaseFunctionsException ffe &&
-                                        ffe.getCode() == FirebaseFunctionsException.Code.FAILED_PRECONDITION) {
-                                    uiText = "Sorry, this invite was cancelled or has expired.";
+
+                                Toast.makeText(this, userMsg, Toast.LENGTH_LONG).show();
+
+                                /* ⬇️  remove the stale item locally so the list refreshes */
+                                int idx = inviteIds.indexOf(invitationId);
+                                if (idx != -1) {
+                                    inviteIds.remove(idx);
+                                    inviteDescriptions.remove(idx);
+                                    adapter.notifyDataSetChanged();
                                 }
-                                Toast.makeText(this, uiText, Toast.LENGTH_LONG).show();
                             });
 
                 })
