@@ -145,9 +145,20 @@ public class InvitationsActivity extends AppCompatActivity {
                                             + "  details=" + ffe.getDetails());
 
                                     switch (ffe.getCode()) {
-                                        case PERMISSION_DENIED,
-                                             FAILED_PRECONDITION ->
+                                        /* sender withdrew the invite */
+                                        case PERMISSION_DENIED -> userMsg = "Invite was cancelled.";
+                                        /* various “logical” failures */
+                                        case FAILED_PRECONDITION -> {
+                                            String msg = String.valueOf(ffe.getMessage());   // never null
+                                            if (msg.contains("already busy")) {
+                                                userMsg = "That player is already busy with another invitation.";
+                                            } else if (msg.contains("cancelled")) {
                                                 userMsg = "Invite was cancelled.";
+                                            } else {
+                                                userMsg = "Invite is no longer available.";
+                                            }
+                                        }
+                                        /* time-out reached on the back-end */
                                         case DEADLINE_EXCEEDED -> userMsg = "Invite has expired.";
                                         default -> userMsg = "Invite is no longer available.";
                                     }
