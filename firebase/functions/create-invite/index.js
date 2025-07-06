@@ -40,7 +40,9 @@ exports.createInvite = functions
 
       if (!conflict.empty)
         throw new functions.https.HttpsError(
-          'failed-precondition', 'You already have another invite pending.');
+          'failed-precondition',
+          'sender_busy'          /* ← caller already has a pending invite */
+        );
 
       /* 2️⃣  target player must be “free” (no pending IN or OUT invites) ---- */
       const [incoming, outgoing] = await Promise.all([
@@ -60,7 +62,7 @@ exports.createInvite = functions
       if (!incoming.empty || !outgoing.empty)
         throw new functions.https.HttpsError(
           'failed-precondition',
-          'That player is already busy with another invitation.'
+          'target_busy'          /* ← target is waiting or being invited */
         );
 
       const ref = invitesCol.doc();
