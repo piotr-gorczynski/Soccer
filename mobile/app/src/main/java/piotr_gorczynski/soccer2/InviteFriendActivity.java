@@ -104,10 +104,12 @@ public class InviteFriendActivity extends AppCompatActivity {
                             /* Cloud Function puts a short reason in getMessage() */
                             String reason = String.valueOf(ffe.getMessage());   // never null
                             msgId = switch (reason) {
-                                case "sender_busy" ->
-                                        R.string.invite_already_sent;     // you still waiting
-                                case "target_busy" ->
-                                        R.string.target_player_busy;      // they’re busy
+                                /* inviter already has an unanswered invite */
+                                case "sender_busy" ->              // you = sender
+                                        R.string.invite_already_sent;
+                                /* target has its own outgoing invite and is waiting */
+                                case "target_busy" ->              // they = sender elsewhere
+                                        R.string.target_player_busy;
                                 default -> R.string.failed_to_send_invite;
                             };
                         } else if (code == FirebaseFunctionsException.Code.PERMISSION_DENIED) {
