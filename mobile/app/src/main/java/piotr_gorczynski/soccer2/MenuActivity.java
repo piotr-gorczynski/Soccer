@@ -13,7 +13,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import com.google.firebase.auth.FirebaseAuth;
 
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.messaging.FirebaseMessaging;
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -23,9 +25,9 @@ import android.widget.Toast;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import java.util.Collections;
 import java.util.Objects;
 
-import com.google.firebase.firestore.DocumentSnapshot;
 
 public class MenuActivity extends AppCompatActivity {
 
@@ -119,29 +121,60 @@ public class MenuActivity extends AppCompatActivity {
         SharedPreferences wp = getSharedPreferences("waiting_pref", MODE_PRIVATE);
         String pendingId = wp.getString("activeInviteId", null);
         if (pendingId != null) {
-            FirebaseFirestore.getInstance()
-                    .collection("invitations").document(pendingId).get()
-                    .addOnSuccessListener((DocumentSnapshot doc) -> {
-                        boolean stillPending =
-                                doc.exists() &&
-                                        "pending".equals(doc.getString("status")) &&
-                                        doc.getTimestamp("expireAt") != null &&
-                                        Objects.requireNonNull(doc.getTimestamp("expireAt"))
-                                                .toDate().getTime() > System.currentTimeMillis();
-                        if (stillPending) {
-                            /* invite is valid → resume WaitingActivity */
+
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            DocumentReference docRef = db.collection("invitations").document(pendingId);
+
+            docRef.get().addOnSuccessListener(doc -> {
+
+                boolean stillPending =
+                        doc.exists() &&
+                                "pending".equals(doc.getString("status")) &&
+                                doc.getTimestamp("expireAt") != null &&
+                                Objects.requireNonNull(doc.getTimestamp("expireAt"))
+                                        .toDate().getTime() > System.currentTimeMillis();
+
+                if (!stillPending) {
+                    /* stale marker → forget it and continue to menu */
+                    wp.edit().remove("activeInviteId").apply();
+                    return;
+                }
+
+                /* ---------- ask the user what to do ------------------ */
+                String nick     = Objects.requireNonNullElse(
+                        db.collection("users")
+                                .document(Objects.requireNonNull(doc.getString("to")))
+                                .get().getResult()    // get() here is safe – we’re onStartup
+                                .getString("nickname"),
+                        "opponent");
+
+                new androidx.appcompat.app.AlertDialog.Builder(this)
+                        .setTitle(R.string.invite_still_pending_title)      // e.g. “Resume waiting?”
+                        .setMessage(getString(R.string.invite_still_pending_msg, nick))
+                        .setCancelable(false)
+
+                        /* 👉 YES: resume WaitingActivity */
+                        .setPositiveButton(R.string.resume, (d, w) -> {
                             Intent i = new Intent(this, WaitingActivity.class)
                                     .putExtra("inviteId", pendingId)
                                     .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
                                             | Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(i);
-                            finish();                // don’t show MenuActivity
-                        } else {
-                            /* stale marker → forget it */
-                            wp.edit().remove("activeInviteId").apply();
-                        }
-                    });
+                            finish();   // don’t show MenuActivity underneath
+                        })
+
+                        /* ❌ NO: cancel on the back-end, then stay on menu */
+                        .setNegativeButton(R.string.cancel_invite, (d, w) -> FirebaseFunctions.getInstance("us-central1")
+                                .getHttpsCallable("cancelInvite")
+                                .call(Collections.singletonMap("invitationId", pendingId))
+                                .addOnCompleteListener(t -> wp.edit()
+                                        .remove("activeInviteId")
+                                        .apply()))
+                        .show();
+            });
+
         }
+        /* ─────────── END of “restore waiting” section ─────────── */
 
 
         setContentView(R.layout.activity_menu);
