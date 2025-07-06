@@ -147,23 +147,9 @@ public class InvitationsActivity extends AppCompatActivity {
                                     switch (ffe.getCode()) {
                                         /* sender withdrew the invite */
                                         case PERMISSION_DENIED -> userMsg = "Invite was cancelled.";
-                                        /* various “logical” failures */
-                                        case FAILED_PRECONDITION -> {
-                                            /* Back-end now returns short reason codes                      *
-                                             *   ─ "sender_busy"  → inviter already has a pending invite   *
-                                             *   ─ "target_busy"  → target player is busy / waiting        *
-                                             *   ─ "cancelled"    → inviter withdrew the invite            */
-                                            switch (String.valueOf(ffe.getMessage())) {
-                                                case "sender_busy" ->
-                                                        userMsg = "You already have another invite pending.";
-                                                case "target_busy" ->
-                                                        userMsg = "That player is already busy with another invitation.";
-                                                case "cancelled" ->
-                                                        userMsg = "Invite was cancelled.";
-                                                default ->
-                                                        userMsg = "Invite is no longer available.";
-                                            }
-                                        }
+                                        /* logical failures coming back from CF */
+                                        case FAILED_PRECONDITION ->
+                                                userMsg = "Invite is no longer available.";
                                         /* time-out reached on the back-end */
                                         case DEADLINE_EXCEEDED -> userMsg = "Invite has expired.";
                                         default -> userMsg = "Invite is no longer available.";

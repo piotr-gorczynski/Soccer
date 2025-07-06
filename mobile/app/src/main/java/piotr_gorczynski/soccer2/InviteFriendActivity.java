@@ -96,12 +96,25 @@ public class InviteFriendActivity extends AppCompatActivity {
                     finish();
                 })
                 .addOnFailureListener(e -> {
-                    if (e instanceof FirebaseFunctionsException ffe &&
-                            ffe.getCode() == FirebaseFunctionsException.Code.FAILED_PRECONDITION) {
-                        resultText.setText(R.string.invite_already_sent);
-                    } else {
-                        resultText.setText(R.string.failed_to_send_invite);
+                    /* default fallback */
+                    int msgId = R.string.failed_to_send_invite;
+                    if (e instanceof FirebaseFunctionsException ffe) {
+                        FirebaseFunctionsException.Code code = ffe.getCode();
+                        if (code == FirebaseFunctionsException.Code.FAILED_PRECONDITION) {
+                            /* Cloud Function puts a short reason in getMessage() */
+                            String reason = String.valueOf(ffe.getMessage());   // never null
+                            msgId = switch (reason) {
+                                case "sender_busy" ->
+                                        R.string.invite_already_sent;     // you still waiting
+                                case "target_busy" ->
+                                        R.string.target_player_busy;      // they’re busy
+                                default -> R.string.failed_to_send_invite;
+                            };
+                        } else if (code == FirebaseFunctionsException.Code.PERMISSION_DENIED) {
+                            msgId = R.string.invite_already_sent;    // inviter cancelled meanwhile
+                        }
                     }
+                    resultText.setText(msgId);
                     Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                             + ": createInvite failed", e);
                 });

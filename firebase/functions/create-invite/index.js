@@ -44,25 +44,16 @@ exports.createInvite = functions
           'sender_busy'          /* ← caller already has a pending invite */
         );
 
-      /* 2️⃣  target player must be “free” (no pending IN or OUT invites) ---- */
-      const [incoming, outgoing] = await Promise.all([
-        tx.get(
-          invitesCol.where('to', '==',  to)
-                    .where('status', '==', 'pending')
-                    .where('expireAt', '>', now)
-                    .limit(1)
-        ),
-        tx.get(
-          invitesCol.where('from', '==', to)
-                    .where('status', '==', 'pending')
-                    .where('expireAt', '>', now)
-                    .limit(1)
-        )
-      ]);
-      if (!incoming.empty || !outgoing.empty)
-        throw new functions.https.HttpsError(
+      /* 2️⃣  block only if *target* has its **own** outgoing invite --------- */
+      const outgoing = await tx.get(
+        invitesCol.where('from', '==', to)        // ← target is *sender*
+                  .where('status', '==', 'pending')
+                  .where('expireAt', '>',  now)
+                  .limit(1)
+      );
+      if (!outgoing.empty)        throw new functions.https.HttpsError(
           'failed-precondition',
-          'target_busy'          /* ← target is waiting or being invited */
+          'target_busy'          /* ← target already waiting for response */
         );
 
       const ref = invitesCol.doc();
