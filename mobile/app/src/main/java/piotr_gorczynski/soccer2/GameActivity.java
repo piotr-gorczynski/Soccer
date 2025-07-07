@@ -103,6 +103,7 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("ApplySharedPref")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -230,6 +231,12 @@ public class GameActivity extends AppCompatActivity {
                 finish();
                 return;
             }
+
+            /* 🟢 remember that we’re currently in a live match */
+            getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE)
+                    .edit()
+                    .putString("activeMatchPath", matchPath)
+                    .commit();   // 🔒 flush to disk before we might be killed
 
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if (user == null) {
@@ -890,9 +897,14 @@ public class GameActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
+        /* remove the marker so MenuActivity won’t reopen a finished match */
+        getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE)
+                .edit()
+                .remove("activeMatchPath")
+                .apply();
         if (movesListener != null) movesListener.remove();
         if (clockListener != null) clockListener.remove();
+        super.onDestroy();
     }
 
     @Override
