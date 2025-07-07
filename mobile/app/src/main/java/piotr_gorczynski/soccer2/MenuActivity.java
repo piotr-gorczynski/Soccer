@@ -16,12 +16,14 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.Filter;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.messaging.FirebaseMessaging;
 
@@ -48,8 +50,7 @@ public class MenuActivity extends AppCompatActivity {
         String uid = FirebaseAuth.getInstance().getUid();
         if (uid == null) {
             Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-            }.getClass().getEnclosingMethod()).getName()
-                    + ": ⚠️ No logged-in user; token not saved");
+            }.getClass().getEnclosingMethod()).getName() +": ⚠️ No logged-in user; token not saved");
             return;
         }
         SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
@@ -196,39 +197,53 @@ public class MenuActivity extends AppCompatActivity {
         String uid = FirebaseAuth.getInstance().getUid();
         if (uid != null) {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
-            db.collectionGroup("matches")                        // ← tops + tournaments/*
-                    .whereEqualTo("status", "active")
-                    .where(Filter.or(                                // OR on player0 / player1
-                            Filter.equalTo("player0", uid),
-                            Filter.equalTo("player1", uid)))
+            Task<QuerySnapshot> qP0 = db.collectionGroup("matches")
+                    //.whereEqualTo("status", "active")
+                    .whereEqualTo("player0", uid)
                     .limit(1)
-                    .get()
-                    .addOnSuccessListener(snaps -> {
-                        if (!snaps.isEmpty()) {
-                            DocumentSnapshot doc = snaps.getDocuments().get(0);
-                            String matchPath = doc.getReference().getPath();
-                            Log.d("TAG_Soccer", "🟢 Found active match at " + matchPath);
-                            startActivity(new Intent(this, GameActivity.class)
-                                    .putExtra("matchPath", matchPath)
-                                    .putExtra("GameType", 3)
-                                    .putExtra("localNickname",
-                                            prefs.getString("nickname", "Player"))
-                                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                                            | Intent.FLAG_ACTIVITY_NEW_TASK));
-                            finish();
-                            return;          // 🔚 we’re done
+                    .get();
+            Task<QuerySnapshot> qP1 = db.collectionGroup("matches")
+                    //.whereEqualTo("status", "active")
+                    .whereEqualTo("player1", uid)
+                    .limit(1)
+                    .get();
+            Tasks.whenAllSuccess(qP0, qP1)
+                    .addOnSuccessListener(results -> {
+                        DocumentSnapshot doc = null;
+                        for (Object r : results) {
+                            QuerySnapshot qs = (QuerySnapshot) r;
+                            for (DocumentSnapshot d : qs.getDocuments()) {
+                                if ("active".equals(d.getString("status"))) {
+                                    doc = d;                  // first *active* match wins
+                                    break;
+                                }
+                            }
+                            if (doc != null) break;
                         }
-                        /* nothing active → fall through to invite/normal flow */
-                        continueWithInviteRestore(prefs);
+                        if (doc != null) {
+                            startGame(doc.getReference().getPath(), prefs);
+                        } else {
+                            continueWithInviteRestore(prefs);
+                        }
                     })
                     .addOnFailureListener(err -> {
                         Log.e("TAG_Soccer", "Failed to query active matches", err);
                         continueWithInviteRestore(prefs);
                     });
             return;   // invite-path continues asynchronously
-        }
-        /* no UID (not logged-in) → skip active-match lookup */
+        }        /* no UID (not logged-in) → skip active-match lookup */
         continueWithInviteRestore(prefs);
+    }
+
+    /* helper: launch GameActivity then finish this MenuActivity */
+    private void startGame(String matchPath, SharedPreferences prefs) {
+        startActivity(new Intent(this, GameActivity.class)
+                .putExtra("matchPath", matchPath)
+                .putExtra("GameType", 3)
+                .putExtra("localNickname",
+                        prefs.getString("nickname", "Player"))
+                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+        finish();
     }
 
     /*  🔻  old waiting-invite code moved unchanged into a helper  */
