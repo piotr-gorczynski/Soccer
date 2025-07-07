@@ -22,7 +22,7 @@
 
     {
       "collectionGroup": "matches",
-      "queryScope": "COLLECTION",
+      "queryScope": "COLLECTION_GROUP",
       "fields": [
         { "fieldPath": "status",  "order": "ASCENDING" },
         { "fieldPath": "player0", "order": "ASCENDING" }
@@ -31,7 +31,7 @@
 
     {
       "collectionGroup": "matches",
-      "queryScope": "COLLECTION",
+      "queryScope": "COLLECTION_GROUP",
       "fields": [
         { "fieldPath": "status",  "order": "ASCENDING" },
         { "fieldPath": "player1", "order": "ASCENDING" }
