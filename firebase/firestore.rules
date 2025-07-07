@@ -60,17 +60,17 @@ service cloud.firestore {
         ];
       }
 
-      // 🔍 List queries (WaitingActivity, “my games” lists, etc.)
-      allow list: if isSignedIn();
-
       // 📝 Create a new match (friendlies or Cloud Function)
       allow create: if isSignedIn()
                  && isParticipant()
                  && request.resource.data.player0 is string
                  && request.resource.data.player1 is string;
 
-      // 📖 Read / ✏️ update / ❌ delete an existing nested match
-      allow get, update, delete: if isSignedIn() && isParticipant();
+      /* reads for collection-group queries */
+      allow get, list: if isSignedIn();          // anyone logged-in may read
+
+      /* writes still restricted to participants */
+      allow update, delete: if isSignedIn() && isParticipant();
 
       // ── moves sub-collection *for nested matches* ─────────────
       match /moves/{moveId} {
@@ -101,16 +101,16 @@ service cloud.firestore {
     /* ── FRIENDLY matches  /matches/{matchId} ─────────────────── */
     match /matches/{matchId} {
 
-      /* 1️⃣  allow queries (WaitingActivity uses a list query) */
-      allow list: if isSignedIn();     // no access to resource.data here
-
       /* 2️⃣  allow client-side creation of a match document */
       allow create: if isSignedIn() && isMatchPlayer(matchId)
                     && request.resource.data.player0 is string
                     && request.resource.data.player1 is string;
 
-      /* single-doc reads / edits */
-      allow get, update, delete: if isSignedIn() && isMatchPlayer(matchId);
+      /* reads for collection-group queries */
+      allow get, list: if isSignedIn();          // top-level friendlies
+
+      /* writes still restricted to participants */
+      allow update, delete: if isSignedIn() && isMatchPlayer(matchId);
 
       /* ---- moves sub-collection ---- */
       match /moves/{moveId} {
