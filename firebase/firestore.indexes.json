@@ -18,7 +18,28 @@
         { "fieldPath": "status",   "order": "ASCENDING" },
         { "fieldPath": "expireAt", "order": "ASCENDING" }
       ]
+    },
+
+    {
+      "collectionGroup": "matches",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status",  "order": "ASCENDING" },
+        { "fieldPath": "player0", "order": "ASCENDING" }
+      ]
+    },
+
+    {
+      "collectionGroup": "matches",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status",  "order": "ASCENDING" },
+        { "fieldPath": "player1", "order": "ASCENDING" }
+      ]
     }
+
+
+
   ],
   "fieldOverrides": []
 }

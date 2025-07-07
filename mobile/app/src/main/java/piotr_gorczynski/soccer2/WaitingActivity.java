@@ -55,6 +55,8 @@ public class WaitingActivity extends AppCompatActivity {
                 .edit()
                 .putString("activeInviteId", inviteId)
                 .apply();
+        Log.d("TAG_Soccer",
+                getClass().getSimpleName() + ".onCreate: ⏺ saved activeInviteId=" + inviteId);
 
         TextView waitingMessage = findViewById(R.id.waitingMessage);
         TextView countdownTv = findViewById(R.id.countdown);
@@ -194,6 +196,8 @@ public class WaitingActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        Log.d("TAG_Soccer",
+                getClass().getSimpleName() + ".onDestroy: ❎ clearing activeInviteId");
         /* remove the marker so we don’t restore an invite that’s finished */
         getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE)
                 .edit()
