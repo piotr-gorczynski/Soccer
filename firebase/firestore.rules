@@ -118,6 +118,18 @@ service cloud.firestore {
       }
     }
 
+    /* ────────────────────────────────────────────────────────────────
+     *  FALLBACK: ANY other collection named "matches" at ANY depth
+     *  (catches /foo/bar/matches/{matchId}, etc.)
+     *  Read-only for signed-in users so your collectionGroup() never fails.
+     * ─────────────────────────────────────────────────────────────── */
+    match /{path=**}/matches/{matchId} {
+      allow get, list: if isSignedIn();
+      // no writes here
+    }
+
+
+
     // 4. Everything else denied
     match /{document=**} {
       allow read, write: if false;
