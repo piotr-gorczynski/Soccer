@@ -67,26 +67,34 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     public void onCreate() {
         super.onCreate();
 
-        /* 1️⃣  keep the lifecycle observer */
-        ProcessLifecycleOwner.get()
-                .getLifecycle()
-                .addObserver(this);
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        /* 2️⃣  react to future auth changes */
-        FirebaseAuth.getInstance().addAuthStateListener(auth -> {
-            if (auth.getCurrentUser() != null) {          // user just signed-in
+        // 1️⃣  Wipe the local cache & cached rules once per cold start
+        db.clearPersistence().addOnCompleteListener(t -> {
+            if (!t.isSuccessful()) {
+                Log.w("TAG_Soccer", "clearPersistence failed", t.getException());
+            }
+
+            // 2️⃣  Now it’s safe to register listeners or use Firestore
+            ProcessLifecycleOwner.get()
+                    .getLifecycle()
+                    .addObserver(this);
+
+            FirebaseAuth auth = FirebaseAuth.getInstance();
+            auth.addAuthStateListener(a -> {
+                if (a.getCurrentUser() != null) {
+                    startPresence(a.getCurrentUser().getUid());
+                    syncFcmTokenIfNeeded();
+                } else {
+                    stopPresence();
+                }
+            });
+
+            // handle “already signed-in” on cold start
+            if (auth.getCurrentUser() != null) {
                 startPresence(auth.getCurrentUser().getUid());
-                syncFcmTokenIfNeeded();   // runs once per sign-in
-            } else {                                      // user signed-out
-                stopPresence();
             }
         });
-
-        /* 3️⃣  handle the case “app starts and user was already signed-in” */
-        FirebaseAuth currentAuth = FirebaseAuth.getInstance();
-        if (currentAuth.getCurrentUser() != null) {
-            startPresence(currentAuth.getCurrentUser().getUid());
-        }
     }
     public void syncFcmTokenIfNeeded() {
         String uid = FirebaseAuth.getInstance().getUid();

@@ -50,54 +50,40 @@ public class MenuActivity extends AppCompatActivity {
         String uid = FirebaseAuth.getInstance().getUid();
         if (uid == null) {
             Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-            }.getClass().getEnclosingMethod()).getName() +": ⚠️ No logged-in user; token not saved");
+            }.getClass().getEnclosingMethod()).getName() + ": ⚠️ No logged-in user; token not saved");
             return;
         }
         SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
 
-        FirebaseMessaging.getInstance().getToken()
-                .addOnCompleteListener(task -> {
-                    if (!task.isSuccessful()) {
-                        Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                        }.getClass().getEnclosingMethod()).getName()
-                                + ": ❌ Failed to get FCM token", task.getException());
-                        return;
-                    }
+        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+            if (!task.isSuccessful()) {
+                Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
+                }.getClass().getEnclosingMethod()).getName() + ": ❌ Failed to get FCM token", task.getException());
+                return;
+            }
 
-                    String newToken = task.getResult();
+            String newToken = task.getResult();
 
-                    String savedToken = prefs.getString(PREF_FCM_TOKEN, null);
-                    if (newToken != null && newToken.equals(savedToken)) {
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                        }.getClass().getEnclosingMethod()).getName()
-                                + ": 🔑 FCM token unchanged; skip Firestore write");
-                        return;                     // ← exit early
-                    }
+            String savedToken = prefs.getString(PREF_FCM_TOKEN, null);
+            if (newToken != null && newToken.equals(savedToken)) {
+                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
+                }.getClass().getEnclosingMethod()).getName() + ": 🔑 FCM token unchanged; skip Firestore write");
+                return;                     // ← exit early
+            }
 
-                    FirebaseFirestore.getInstance()
-                            .collection("users").document(uid)
-                            .update("fcmToken", newToken)
-                            .addOnSuccessListener(v -> {
-                                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                                }.getClass().getEnclosingMethod()).getName()
-                                        + ": ✅ FCM token saved");
-                                prefs.edit().putString(PREF_FCM_TOKEN, newToken).apply();
-                            })
-                            .addOnFailureListener(e ->
-                                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                                    }.getClass().getEnclosingMethod()).getName()
-                                            + ": ❌ Failed to save FCM token", e));
-                });
+            FirebaseFirestore.getInstance().collection("users").document(uid).update("fcmToken", newToken).addOnSuccessListener(v -> {
+                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
+                }.getClass().getEnclosingMethod()).getName() + ": ✅ FCM token saved");
+                prefs.edit().putString(PREF_FCM_TOKEN, newToken).apply();
+            }).addOnFailureListener(e -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
+            }.getClass().getEnclosingMethod()).getName() + ": ❌ Failed to save FCM token", e));
+        });
 
         // ✅ Call permission request
         requestNotificationPermissionIfNeeded();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(
-                    "invite_channel",
-                    "Game Invites",
-                    NotificationManager.IMPORTANCE_HIGH
-            );
+            NotificationChannel channel = new NotificationChannel("invite_channel", "Game Invites", NotificationManager.IMPORTANCE_HIGH);
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(channel);
         }
@@ -165,17 +151,14 @@ public class MenuActivity extends AppCompatActivity {
             return;
         }
 
-        ((SoccerApp) getApplication())
-                .forceUserOffline(uid)
-                .addOnCompleteListener(task -> {
-                    FirebaseAuth.getInstance().signOut();   // <-- now it’s safe
-                    finishLogoutUi();
-                });
+        ((SoccerApp) getApplication()).forceUserOffline(uid).addOnCompleteListener(task -> {
+            FirebaseAuth.getInstance().signOut();   // <-- now it’s safe
+            finishLogoutUi();
+        });
     }
 
     private void finishLogoutUi() {
-        SharedPreferences.Editor ed = getSharedPreferences(
-                getPackageName() + "_preferences", MODE_PRIVATE).edit();
+        SharedPreferences.Editor ed = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE).edit();
         ed.clear().apply();                          // clears token + other cache
 
         Toast.makeText(this, R.string.logged_out, Toast.LENGTH_SHORT).show();
@@ -192,44 +175,42 @@ public class MenuActivity extends AppCompatActivity {
         runHousekeeping();          // ← always executed, even on cold resume
 
         /* ───────────── 1️⃣  Look for any ACTIVE match involving this user ───────────── */
-        SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences",
-                MODE_PRIVATE);
+        SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
         String uid = FirebaseAuth.getInstance().getUid();
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
+        }.getClass().getEnclosingMethod()).getName() + ": Auth UID at match-lookup = " + FirebaseAuth.getInstance().getUid());
+
         if (uid != null) {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             Task<QuerySnapshot> qP0 = db.collectionGroup("matches")
                     //.whereEqualTo("status", "active")
-                    .whereEqualTo("player0", uid)
-                    .limit(1)
-                    .get();
+                    .whereEqualTo("player0", uid).limit(1).get();
             Task<QuerySnapshot> qP1 = db.collectionGroup("matches")
                     //.whereEqualTo("status", "active")
-                    .whereEqualTo("player1", uid)
-                    .limit(1)
-                    .get();
-            Tasks.whenAllSuccess(qP0, qP1)
-                    .addOnSuccessListener(results -> {
-                        DocumentSnapshot doc = null;
-                        for (Object r : results) {
-                            QuerySnapshot qs = (QuerySnapshot) r;
-                            for (DocumentSnapshot d : qs.getDocuments()) {
-                                if ("active".equals(d.getString("status"))) {
-                                    doc = d;                  // first *active* match wins
-                                    break;
-                                }
-                            }
-                            if (doc != null) break;
+                    .whereEqualTo("player1", uid).limit(1).get();
+            Tasks.whenAllSuccess(qP0, qP1).addOnSuccessListener(results -> {
+                DocumentSnapshot doc = null;
+                for (Object r : results) {
+                    QuerySnapshot qs = (QuerySnapshot) r;
+                    for (DocumentSnapshot d : qs.getDocuments()) {
+                        if ("active".equals(d.getString("status"))) {
+                            doc = d;                  // first *active* match wins
+                            break;
                         }
-                        if (doc != null) {
-                            startGame(doc.getReference().getPath(), prefs);
-                        } else {
-                            continueWithInviteRestore(prefs);
-                        }
-                    })
-                    .addOnFailureListener(err -> {
-                        Log.e("TAG_Soccer", "Failed to query active matches", err);
-                        continueWithInviteRestore(prefs);
-                    });
+                    }
+                    if (doc != null) break;
+                }
+                if (doc != null) {
+                    startGame(doc.getReference().getPath(), prefs);
+                } else {
+                    continueWithInviteRestore(prefs);
+                }
+            }).addOnFailureListener(err -> {
+                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
+                }.getClass().getEnclosingMethod()).getName()
+                        + ": Failed to query active matches → " + err.getMessage(), err);
+                continueWithInviteRestore(prefs);
+            });
             return;   // invite-path continues asynchronously
         }        /* no UID (not logged-in) → skip active-match lookup */
         continueWithInviteRestore(prefs);
@@ -237,12 +218,7 @@ public class MenuActivity extends AppCompatActivity {
 
     /* helper: launch GameActivity then finish this MenuActivity */
     private void startGame(String matchPath, SharedPreferences prefs) {
-        startActivity(new Intent(this, GameActivity.class)
-                .putExtra("matchPath", matchPath)
-                .putExtra("GameType", 3)
-                .putExtra("localNickname",
-                        prefs.getString("nickname", "Player"))
-                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+        startActivity(new Intent(this, GameActivity.class).putExtra("matchPath", matchPath).putExtra("GameType", 3).putExtra("localNickname", prefs.getString("nickname", "Player")).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
         finish();
     }
 
@@ -251,9 +227,8 @@ public class MenuActivity extends AppCompatActivity {
 
         /* ───────────── 2️⃣  Restore WaitingActivity (existing code) ───────── */
 
-        Log.d("TAG_Soccer",
-                getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                }.getClass().getEnclosingMethod()).getName() + ": checking for activeInviteId…");
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
+        }.getClass().getEnclosingMethod()).getName() + ": checking for activeInviteId…");
         /* ────────────────────────────────────────────────────────────────
          *  ⚡ Restore WaitingActivity if the process was killed while the
          *    user was waiting for the opponent to accept an invite.
@@ -265,28 +240,17 @@ public class MenuActivity extends AppCompatActivity {
             DocumentReference docRef = db.collection("invitations").document(pendingId);
 
             docRef.get().addOnSuccessListener(doc -> {
-                Log.d("TAG_Soccer",
-                        getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                        }.getClass().getEnclosingMethod()).getName() + ": found marker id=" + pendingId);
+                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
+                }.getClass().getEnclosingMethod()).getName() + ": found marker id=" + pendingId);
 
-                boolean stillPending =
-                        doc.exists() &&
-                                "pending".equals(doc.getString("status")) &&
-                                doc.getTimestamp("expireAt") != null &&
-                                Objects.requireNonNull(doc.getTimestamp("expireAt"))
-                                        .toDate().getTime() > System.currentTimeMillis();
+                boolean stillPending = doc.exists() && "pending".equals(doc.getString("status")) && doc.getTimestamp("expireAt") != null && Objects.requireNonNull(doc.getTimestamp("expireAt")).toDate().getTime() > System.currentTimeMillis();
 
                 if (stillPending) {
-                    Log.d("TAG_Soccer",
-                            getClass().getSimpleName() +
-                            "." + Objects.requireNonNull(new Object() {
-                            }.getClass().getEnclosingMethod()).getName() + ": ↩️  invite still pending – reopening WaitingActivity");
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
+                    }.getClass().getEnclosingMethod()).getName() + ": ↩️  invite still pending – reopening WaitingActivity");
 
                     // invite is valid → resume WaitingActivity
-                    Intent i = new Intent(this, WaitingActivity.class)
-                            .putExtra("inviteId", pendingId)
-                            .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                                    | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    Intent i = new Intent(this, WaitingActivity.class).putExtra("inviteId", pendingId).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(i);
                     finish();     // don’t show MenuActivity
                 } else {          //  invitation is NOT pending anymore
@@ -297,13 +261,7 @@ public class MenuActivity extends AppCompatActivity {
                         db.document(mp).get().addOnSuccessListener(mSnap -> {
                             if (mSnap.exists() && "active".equals(mSnap.getString("status"))) {
                                 Log.d("TAG_Soccer", "🟢 tournament match ACTIVE – launching GameActivity");
-                                startActivity(new Intent(this, GameActivity.class)
-                                        .putExtra("matchPath", mp)
-                                        .putExtra("GameType", 3)
-                                        .putExtra("localNickname",
-                                                prefs.getString("nickname", "Player"))
-                                        .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                                                | Intent.FLAG_ACTIVITY_NEW_TASK));
+                                startActivity(new Intent(this, GameActivity.class).putExtra("matchPath", mp).putExtra("GameType", 3).putExtra("localNickname", prefs.getString("nickname", "Player")).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
                                 finish();
                                 return;                 // 🔚 done
                             }
@@ -322,78 +280,42 @@ public class MenuActivity extends AppCompatActivity {
 
     /* centralised dialog builder */
     private void showResumeDialog(String inviteId, String nick, SharedPreferences prefs) {
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.invite_still_pending_title)
-                .setMessage(getString(R.string.invite_still_pending_msg, nick))
-                .setCancelable(false)
-                .setPositiveButton(R.string.resume, (d, w) -> {
-                    startActivity(new Intent(this, WaitingActivity.class)
-                            .putExtra("inviteId", inviteId)
-                            .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                                    | Intent.FLAG_ACTIVITY_NEW_TASK));
-                    finish();
-                })
-                .setNegativeButton(R.string.cancel_invite, (d, w) ->
-                        FirebaseFunctions.getInstance("us-central1")
-                                .getHttpsCallable("cancelInvite")
-                                .call(Collections.singletonMap("invitationId", inviteId))
-                                .addOnCompleteListener(t ->
-                                        prefs.edit().remove("activeInviteId").apply()))
-                .show();
+        new AlertDialog.Builder(this).setTitle(R.string.invite_still_pending_title).setMessage(getString(R.string.invite_still_pending_msg, nick)).setCancelable(false).setPositiveButton(R.string.resume, (d, w) -> {
+            startActivity(new Intent(this, WaitingActivity.class).putExtra("inviteId", inviteId).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+            finish();
+        }).setNegativeButton(R.string.cancel_invite, (d, w) -> FirebaseFunctions.getInstance("us-central1").getHttpsCallable("cancelInvite").call(Collections.singletonMap("invitationId", inviteId)).addOnCompleteListener(t -> prefs.edit().remove("activeInviteId").apply())).show();
     }
 
     /* ───────── helper called when match *not* found as active ───────── */
-    private void continueWhenNoActiveMatch(DocumentSnapshot doc,
-                                           FirebaseFirestore db,
-                                           String pendingId,
-                                           SharedPreferences prefs) {
-        db.collection("matches")
-                .whereEqualTo("invitationId", pendingId)
-                .whereEqualTo("status", "active")
-                .limit(1)
-                .get()
-                .addOnSuccessListener(activeSnaps -> {
-                    /* 1a) YES → jump straight into the game */
-                    if (!activeSnaps.isEmpty()) {
-                        String nickname = prefs.getString("nickname", "Player");
-                        String matchPath = activeSnaps.getDocuments()
-                                .get(0)
-                                .getReference()
-                                .getPath();
-                        Log.d("TAG_Soccer",
-                                getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                                }.getClass().getEnclosingMethod()).getName() + ": 🟢 match ACTIVE – launching GameActivity");
-                        startActivity(new Intent(this, GameActivity.class)
-                                .putExtra("matchPath", matchPath)
-                                .putExtra("GameType", 3)          // remote-vs-remote
-                                .putExtra("localNickname", nickname) //  👈  **added**
-                                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                                        | Intent.FLAG_ACTIVITY_NEW_TASK));
+    private void continueWhenNoActiveMatch(DocumentSnapshot doc, FirebaseFirestore db, String pendingId, SharedPreferences prefs) {
+        db.collection("matches").whereEqualTo("invitationId", pendingId).whereEqualTo("status", "active").limit(1).get().addOnSuccessListener(activeSnaps -> {
+            /* 1a) YES → jump straight into the game */
+            if (!activeSnaps.isEmpty()) {
+                String nickname = prefs.getString("nickname", "Player");
+                String matchPath = activeSnaps.getDocuments().get(0).getReference().getPath();
+                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
+                }.getClass().getEnclosingMethod()).getName() + ": 🟢 match ACTIVE – launching GameActivity");
+                startActivity(new Intent(this, GameActivity.class).putExtra("matchPath", matchPath).putExtra("GameType", 3)          // remote-vs-remote
+                        .putExtra("localNickname", nickname) //  👈  **added**
+                        .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
 
-                        /* marker no longer needed once we’re in the match */
-                        prefs.edit().remove("activeInviteId").apply();
-                        finish();
-                        return;
-                    }
-                    /* 1b) NO → marker is stale, forget it  */
-                    Log.d("TAG_Soccer",
-                            getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                            }.getClass().getEnclosingMethod()).getName() + ": invite handled but no active match – removing marker");
-                    prefs.edit().remove("activeInviteId").apply();
-                    /* ── 2️⃣ Ask the user what to do (async) ── */
-                    db.collection("users")
-                            .document(Objects.requireNonNull(doc.getString("to")))
-                            .get()
-                            .addOnSuccessListener(userSnap -> {
-                                String nick = userSnap.getString("nickname");
-                                if (nick == null || nick.isEmpty())
-                                    nick = "opponent";
-                                showResumeDialog(pendingId, nick, prefs);
-                            })
-                            .addOnFailureListener(err ->
-                                    showResumeDialog(pendingId, "opponent", prefs));
+                /* marker no longer needed once we’re in the match */
+                prefs.edit().remove("activeInviteId").apply();
+                finish();
+                return;
+            }
+            /* 1b) NO → marker is stale, forget it  */
+            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
+            }.getClass().getEnclosingMethod()).getName() + ": invite handled but no active match – removing marker");
+            prefs.edit().remove("activeInviteId").apply();
+            /* ── 2️⃣ Ask the user what to do (async) ── */
+            db.collection("users").document(Objects.requireNonNull(doc.getString("to"))).get().addOnSuccessListener(userSnap -> {
+                String nick = userSnap.getString("nickname");
+                if (nick == null || nick.isEmpty()) nick = "opponent";
+                showResumeDialog(pendingId, nick, prefs);
+            }).addOnFailureListener(err -> showResumeDialog(pendingId, "opponent", prefs));
 
-                });
+        });
     }              // ← end of “else” branch
 
     @Override
@@ -412,13 +334,8 @@ public class MenuActivity extends AppCompatActivity {
 
     private void requestNotificationPermissionIfNeeded() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-                    != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(
-                        this,
-                        new String[]{Manifest.permission.POST_NOTIFICATIONS},
-                        NOTIFICATION_PERMISSION_REQUEST_CODE
-                );
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, NOTIFICATION_PERMISSION_REQUEST_CODE);
             }
         }
     }
