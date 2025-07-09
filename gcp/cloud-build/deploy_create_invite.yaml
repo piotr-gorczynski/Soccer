@@ -51,7 +51,6 @@ steps:
         echo "📁 Copying Firestore config & create-invite function..."
         cp /workspace/soccer/firebase/firebase.json /workspace/firebase/firebase.json
         cp /workspace/soccer/firebase/firestore.rules /workspace/firebase/firestore.rules
-        cp /workspace/soccer/firebase/firestore.indexes.json /workspace/firebase/firestore.indexes.json
 
         mkdir -p /workspace/firebase/functions/create-invite
         cp /workspace/soccer/firebase/functions/create-invite/package.json /workspace/firebase/functions/create-invite/
@@ -69,26 +68,7 @@ steps:
         npm install
         echo "📦 Dependencies installed."
 
-  # Step 5: Deploy Firestore composite indexes
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    id: 'deploy-firestore-indexes'
-    entrypoint: bash
-    args:
-      - '-c'
-      - |
-        set -e
-        cd /workspace/firebase
-        project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
-
-        echo "⬆️  Deploying Firestore indexes..."
-        ./firebase deploy \
-          --only firestore:indexes \
-          --project="$project_id" \
-          --force
-
-        echo "✅ Firestore indexes deployed."
-
-  # Step 6: Deploy function
+  # Step 5: Deploy function
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: 'deploy-create-invite'
     entrypoint: bash
