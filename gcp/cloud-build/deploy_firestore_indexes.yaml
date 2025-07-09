@@ -72,5 +72,51 @@ steps:
 
         echo "✅ Firestore indexes deployed."
 
+  # Step 5: Deploy Firestore single-field indexes (player0 / player1)
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'deploy-single-field-indexes'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -e
+        cd /workspace
+        project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
+
+        echo "📝  Writing field-index flag files…"
+        cat > player0.yaml <<'YAML'
+        collection-group: matches
+        field-path: player0
+        update-mask: indexConfig
+        index-config:
+          indexes:
+            - order: ASCENDING
+              queryScope: COLLECTION_GROUP
+        YAML
+
+        cat > player1.yaml <<'YAML'
+        collection-group: matches
+        field-path: player1
+        update-mask: indexConfig
+        index-config:
+          indexes:
+            - order: ASCENDING
+              queryScope: COLLECTION_GROUP
+        YAML
+
+        echo "⬆️  Deploying single-field index on player0…"
+        gcloud firestore indexes fields update \
+          projects/${project_id}/databases/(default)/collectionGroups/matches/fields/player0 \
+          --flags-file=player0.yaml --quiet
+
+        echo "⬆️  Deploying single-field index on player1…"
+        gcloud firestore indexes fields update \
+          projects/${project_id}/databases/(default)/collectionGroups/matches/fields/player1 \
+          --flags-file=player1.yaml --quiet
+
+        echo "✅ Single-field indexes queued for build."
+
+
+
 options:
   logging: CLOUD_LOGGING_ONLY
