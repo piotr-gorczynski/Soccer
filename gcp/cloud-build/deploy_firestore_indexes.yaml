@@ -106,12 +106,12 @@ steps:
 
         echo "⬆️  Deploying single-field index on player0…"
         gcloud firestore indexes fields update \
-          projects/${project_id}/databases/(default)/collectionGroups/matches/fields/player0 \
+          "projects/${project_id}/databases/(default)/collectionGroups/matches/fields/player0" \
           --flags-file=player0.yaml --quiet
 
         echo "⬆️  Deploying single-field index on player1…"
         gcloud firestore indexes fields update \
-          projects/${project_id}/databases/(default)/collectionGroups/matches/fields/player1 \
+          "projects/${project_id}/databases/(default)/collectionGroups/matches/fields/player1" \
           --flags-file=player1.yaml --quiet
 
         echo "✅ Single-field indexes queued for build."
