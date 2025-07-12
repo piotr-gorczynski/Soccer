@@ -37,25 +37,21 @@
   ],
 
   "fieldOverrides": [
-    {
-      "collectionGroup": "matches",
-      "fieldPath": "player0",
-      "indexes": [
-        {
-          "order": "ASCENDING",
-          "queryScope": "COLLECTION_GROUP"
-        }
-      ]
-    },
-    {
-      "collectionGroup": "matches",
-      "fieldPath": "player1",
-      "indexes": [
-        {
-          "order": "ASCENDING",
-          "queryScope": "COLLECTION_GROUP"
-        }
-      ]
-    }
-  ]
+  {
+    "collectionGroup": "matches",
+    "fieldPath": "player0",
+    "indexes": [
+      { "order": "ASCENDING", "queryScope": "COLLECTION" },          
+      { "order": "ASCENDING", "queryScope": "COLLECTION_GROUP" }
+    ]
+  },
+  {
+    "collectionGroup": "matches",
+    "fieldPath": "player1",
+    "indexes": [
+      { "order": "ASCENDING", "queryScope": "COLLECTION" },          
+      { "order": "ASCENDING", "queryScope": "COLLECTION_GROUP" }
+    ]
+  }
+]
 }

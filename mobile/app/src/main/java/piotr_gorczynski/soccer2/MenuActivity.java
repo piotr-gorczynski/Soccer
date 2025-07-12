@@ -183,24 +183,26 @@ public class MenuActivity extends AppCompatActivity {
         if (uid != null) {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             Task<QuerySnapshot> qP0 = db.collectionGroup("matches")
-                    //.whereEqualTo("status", "active")
+                    .whereEqualTo("status", "active")
                     .whereEqualTo("player0", uid).limit(1).get();
             Task<QuerySnapshot> qP1 = db.collectionGroup("matches")
-                    //.whereEqualTo("status", "active")
+                    .whereEqualTo("status", "active")
                     .whereEqualTo("player1", uid).limit(1).get();
             Tasks.whenAllSuccess(qP0, qP1).addOnSuccessListener(results -> {
                 DocumentSnapshot doc = null;
                 for (Object r : results) {
                     QuerySnapshot qs = (QuerySnapshot) r;
-                    for (DocumentSnapshot d : qs.getDocuments()) {
-                        if ("active".equals(d.getString("status"))) {
-                            doc = d;                  // first *active* match wins
-                            break;
-                        }
+                    if (!qs.isEmpty()) {          // status already == "active"
+                        doc = qs.getDocuments().get(0);
+                        break;                    // first non-empty wins
                     }
-                    if (doc != null) break;
                 }
                 if (doc != null) {
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
+                    }.getClass().getEnclosingMethod()).getName()
+                            + ": Found active match: "
+                            + doc.getReference().getPath()
+                            + ". calling startGame...");
                     startGame(doc.getReference().getPath(), prefs);
                 } else {
                     continueWithInviteRestore(prefs);
