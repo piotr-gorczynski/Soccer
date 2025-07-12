@@ -41,6 +41,10 @@
     {
       "source": "functions/cancel-invite",
       "codebase": "cancel-invite"
+    },
+    {
+      "source": "functions/expire-presence",
+      "codebase": "expire-presence"
     }
   ],
   "firestore": {
