@@ -286,7 +286,7 @@ public class MatchAdapter
                 + ": inviteBtn visibility logic: st=" + st + ", pState=" + pState);
 
         boolean isActiveOrCompleted = "playing".equals(st) || "completed".equals(st);
-        boolean isOffline = "offline".equalsIgnoreCase(pState);
+        boolean isOffline = pState == null || "offline".equalsIgnoreCase(pState);
 
         if (isActiveOrCompleted || isOffline) {
             h.inviteBtn.setVisibility(View.GONE);
@@ -335,6 +335,13 @@ public class MatchAdapter
                 };
                 h.presence.setText(label);
                 h.presence.setTextColor(colour);
+
+                // 🧠 Also update invite button visibility here!
+                String status = h.snap.getString("status");
+                boolean isActiveOrCompleted = "playing".equals(status) || "completed".equals(status);
+                boolean isOffline = "offline".equalsIgnoreCase(pState);
+                h.inviteBtn.setVisibility((isActiveOrCompleted || isOffline)
+                        ? View.GONE : View.VISIBLE);
                 return;
             }
 
