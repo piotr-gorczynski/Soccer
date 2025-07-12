@@ -542,21 +542,17 @@ public class GameActivity extends AppCompatActivity {
                 Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": turnStartTime update failed", ex);
             });
         }
-        //This is condition for starting the clock, which will show time for the oponent...
-        if (!clockStartAttempted && turnStartTimeTs != null && turn.intValue() != localPlayerIndex) {
-            clockStartAttempted = true; // Prevent repeat attempts!
-            matchRefThisSnap.get()
-                    .addOnSuccessListener(updatedSnap -> {
-                        turnStartTimeTs = updatedSnap.getTimestamp("turnStartTime");
-                        assert turnStartTimeTs != null;
-                        turnStartTime = turnStartTimeTs.toDate().getTime();
-                        runOnUiThread(() -> gameView.updateTimes(remainingTime0, remainingTime1, turnStartTime));
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock started for player " + turn.intValue());
-                        //turnStartTimeMs = System.currentTimeMillis();
-                        long remSecs = turn.intValue()==0 ? remainingTime0 : remainingTime1;
-                        startClock(turn.intValue(), remSecs*1000);
-                    })
-                    .addOnFailureListener(err -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to re-fetch turnStartTime",err));
+        /*  ⏱  If a valid turnStartTime exists and we haven’t started a
+        countdown on _this_ device yet, start it now — no matter whose
+        turn it is.  */
+        if (!clockStartAttempted && turnStartTimeTs != null) {
+            clockStartAttempted = true;        // prevent double-starts
+
+            long remSecs = (turn.intValue() == 0) ? remainingTime0 : remainingTime1;
+            startClock(turn.intValue(), remSecs * 1000);
+
+            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                            + ": Clock started locally for player " + turn);
         }
 
     }
@@ -564,7 +560,8 @@ public class GameActivity extends AppCompatActivity {
     public void stopClock(){
         runOnUiThread(() -> {
             if(turnTimer!=null) {
-                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Stopping clock...");
+                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                        + ": Stopping clock...");
                 turnTimer.cancel();
                 turnTimer = null;
             }
