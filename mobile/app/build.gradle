@@ -14,6 +14,11 @@ android {
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
+
+    buildFeatures {
+        buildConfig true          // <- make sure this is present or omit the block
+    }
+
     buildTypes {
         release {
             minifyEnabled = true
@@ -51,7 +56,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
 
     //GPT fixes
-     implementation platform('com.google.firebase:firebase-bom:33.15.0')
+     implementation platform('com.google.firebase:firebase-bom:33.16.0')
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.firebase:firebase-auth'
     //GPT fixes
@@ -70,7 +75,7 @@ dependencies {
     //Added dependencies for invoking acceptInvite
     implementation 'com.google.firebase:firebase-functions:21.2.1'
     // FCM
-    implementation 'com.google.firebase:firebase-messaging:24.1.1' // Latest as of May 2025
+    implementation 'com.google.firebase:firebase-messaging:24.1.2' // Latest as of May 2025
 
     implementation "com.google.guava:guava:33.4.8-android"
 
