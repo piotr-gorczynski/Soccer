@@ -45,6 +45,10 @@
     {
       "source": "functions/expire-presence",
       "codebase": "expire-presence"
+    },
+    {
+      "source": "functions/force-start-stuck-matches",
+      "codebase": "force-start-stuck-matches"
     }
   ],
   "firestore": {
