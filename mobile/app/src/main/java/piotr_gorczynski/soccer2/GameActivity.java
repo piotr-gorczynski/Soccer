@@ -14,6 +14,7 @@ import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -78,6 +79,26 @@ public class GameActivity extends AppCompatActivity {
 
     private volatile boolean gameEnded = false;
 
+    /**
+     * Return millis still left right now, given the seconds stored in
+     * Firestore and the turnStartTime (ms since epoch) that came with it.
+     */
+    private long computeTimeLeft(long storedSeconds, @Nullable Long turnStartMs) {
+        if (turnStartMs == null) return storedSeconds * 1000L;        // no clock yet
+        long elapsed = System.currentTimeMillis() - turnStartMs;
+        return Math.max(storedSeconds * 1000L - elapsed, 0L);
+    }
+
+    /**
+     * Return the clock value (in whole seconds) that should be shown *now*
+     * for the player whose turn is currently active.
+     */
+    private long computeTimeLeftSecs(long storedSecs, @Nullable Long turnStartMs) {
+        if (turnStartMs == null) return storedSecs;          // clock not started
+        long elapsed = (System.currentTimeMillis() - turnStartMs) / 1000;  // s
+        return Math.max(storedSecs - elapsed, 0);
+    }
+
     @SuppressLint("RedundantSuppression")
     @SuppressWarnings("deprecation")
     private boolean isLegacyMovesNotNull(Bundle savedInstanceState) {
@@ -98,7 +119,7 @@ public class GameActivity extends AppCompatActivity {
                     + ": identical matchPath, skipping");
         } else {
             Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                    + ": ❌ CRITICAL ERROR: Dirrenten matchPath on 2nd call!");
+                    + ": ❌ CRITICAL ERROR: Different matchPath on 2nd call!");
             throw new IllegalStateException("❌ CRITICAL ERROR: Dirrenten match_id on 2nd call!");
         }
     }
@@ -232,12 +253,6 @@ public class GameActivity extends AppCompatActivity {
                 return;
             }
 
-            /* 🟢 remember that we’re currently in a live match */
-            getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE)
-                    .edit()
-                    .putString("activeMatchPath", matchPath)
-                    .commit();   // 🔒 flush to disk before we might be killed
-
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if (user == null) {
                 Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": User not signed in");
@@ -307,6 +322,20 @@ public class GameActivity extends AppCompatActivity {
                                 // Read turnStartTime as a Timestamp or null
                                 turnStartTimeTs = doc.getTimestamp("turnStartTime");
                                 turnStartTime = (turnStartTimeTs != null) ? turnStartTimeTs.toDate().getTime() : null;
+
+                                // ── Adjust ONLY the active player's clock ──
+                                int currentTurn =
+                                        Objects.requireNonNull(doc.getLong("turn")).intValue();
+
+                                if (turnStartTime != null) {          // clock already running
+                                    if (currentTurn == 0) {
+                                        remainingTime0 = computeTimeLeftSecs(remainingTime0,
+                                                turnStartTime);
+                                    } else {
+                                        remainingTime1 = computeTimeLeftSecs(remainingTime1,
+                                                turnStartTime);
+                                    }
+                                }
 
                                 // CREATE your GameView exactly once
                                 initGameView();
@@ -549,7 +578,8 @@ public class GameActivity extends AppCompatActivity {
             clockStartAttempted = true;        // prevent double-starts
 
             long remSecs = (turn.intValue() == 0) ? remainingTime0 : remainingTime1;
-            startClock(turn.intValue(), remSecs * 1000);
+            long timeLeft  = computeTimeLeft(remSecs, turnStartTime);
+            startClock(turn.intValue(), timeLeft);
 
             Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                             + ": Clock started locally for player " + turn);
@@ -894,11 +924,6 @@ public class GameActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        /* remove the marker so MenuActivity won’t reopen a finished match */
-        getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE)
-                .edit()
-                .remove("activeMatchPath")
-                .apply();
         if (movesListener != null) movesListener.remove();
         if (clockListener != null) clockListener.remove();
         super.onDestroy();
