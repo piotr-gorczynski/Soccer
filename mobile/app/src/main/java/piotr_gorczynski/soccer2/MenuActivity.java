@@ -238,7 +238,8 @@ public class MenuActivity extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(snap -> {
                     if (snap.isEmpty()) {
-                        Log.d("TAG_Soccer", "continueWithInviteRestore: no pending invites");
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
+                        }.getClass().getEnclosingMethod()).getName() + ": continueWithInviteRestore: no pending invites");
                         return;
                     }
 
@@ -249,7 +250,9 @@ public class MenuActivity extends AppCompatActivity {
                     if (doc.getTimestamp("expireAt") != null &&
                             Objects.requireNonNull(doc.getTimestamp("expireAt")).toDate().getTime() > nowMs) {
 
-                        Log.d("TAG_Soccer", "continueWithInviteRestore: ↩️ valid invite found → resuming WaitingActivity");
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
+                        }.getClass().getEnclosingMethod()).getName() + ": continueWithInviteRestore: ↩️ valid invite found "
+                                + inviteId + " → resuming WaitingActivity");
 
                         startActivity(new Intent(this, WaitingActivity.class)
                                 .putExtra("inviteId", inviteId)
@@ -257,7 +260,8 @@ public class MenuActivity extends AppCompatActivity {
                         finish();
 
                     } else {
-                        Log.d("TAG_Soccer", "continueWithInviteRestore: invite is already expired → skipping");
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
+                        }.getClass().getEnclosingMethod()).getName() + ": continueWithInviteRestore: invite " + inviteId + " is already expired → skipping");
                     }
                 })
                 .addOnFailureListener(e -> Log.e("TAG_Soccer", "continueWithInviteRestore: failed to query invites", e));
