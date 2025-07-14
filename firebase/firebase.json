@@ -53,6 +53,10 @@
     {
       "source": "functions/expire-invite",
       "codebase": "expire-invite"
+    },
+    {
+      "source": "functions/expire-stale-invites",
+      "codebase": "expire-stale-invites"
     }
   ],
   "firestore": {
