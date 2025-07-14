@@ -4,7 +4,6 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -20,11 +19,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import android.Manifest;
@@ -35,7 +32,6 @@ import android.widget.Toast;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import java.util.Collections;
 import java.util.Objects;
 
 
@@ -205,17 +201,17 @@ public class MenuActivity extends AppCompatActivity {
                             + ". calling startGame...");
                     startGame(doc.getReference().getPath(), prefs);
                 } else {
-                    continueWithInviteRestore(prefs);
+                    continueWithInviteRestore();
                 }
             }).addOnFailureListener(err -> {
                 Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
                 }.getClass().getEnclosingMethod()).getName()
                         + ": Failed to query active matches → " + err.getMessage(), err);
-                continueWithInviteRestore(prefs);
+                continueWithInviteRestore();
             });
             return;   // invite-path continues asynchronously
         }        /* no UID (not logged-in) → skip active-match lookup */
-        continueWithInviteRestore(prefs);
+        continueWithInviteRestore();
     }
 
     /* helper: launch GameActivity then finish this MenuActivity */
@@ -225,100 +221,47 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     /*  🔻  old waiting-invite code moved unchanged into a helper  */
-    private void continueWithInviteRestore(SharedPreferences prefs) {
+    private void continueWithInviteRestore() {
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null) return;
 
-        /* ───────────── 2️⃣  Restore WaitingActivity (existing code) ───────── */
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        long nowMs = System.currentTimeMillis();
 
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-        }.getClass().getEnclosingMethod()).getName() + ": checking for activeInviteId…");
-        /* ────────────────────────────────────────────────────────────────
-         *  ⚡ Restore WaitingActivity if the process was killed while the
-         *    user was waiting for the opponent to accept an invite.
-         * ─────────────────────────────────────────────────────────────── */
-        String pendingId = prefs.getString("activeInviteId", null);
-        if (pendingId != null) {
+        Log.d("TAG_Soccer", "continueWithInviteRestore: querying for live invites");
 
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-            DocumentReference docRef = db.collection("invitations").document(pendingId);
-
-            docRef.get().addOnSuccessListener(doc -> {
-                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                }.getClass().getEnclosingMethod()).getName() + ": found marker id=" + pendingId);
-
-                boolean stillPending = doc.exists() && "pending".equals(doc.getString("status")) && doc.getTimestamp("expireAt") != null && Objects.requireNonNull(doc.getTimestamp("expireAt")).toDate().getTime() > System.currentTimeMillis();
-
-                if (stillPending) {
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                    }.getClass().getEnclosingMethod()).getName() + ": ↩️  invite still pending – reopening WaitingActivity");
-
-                    // invite is valid → resume WaitingActivity
-                    Intent i = new Intent(this, WaitingActivity.class).putExtra("inviteId", pendingId).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(i);
-                    finish();     // don’t show MenuActivity
-                } else {          //  invitation is NOT pending anymore
-                    Log.d("TAG_Soccer", "invite no longer pending – checking for active match");
-                    /* ───── 1️⃣  Check the exact matchPath (tournaments) ───── */
-                    String mp = doc.getString("matchPath");
-                    if (mp != null && !mp.isEmpty()) {
-                        db.document(mp).get().addOnSuccessListener(mSnap -> {
-                            if (mSnap.exists() && "active".equals(mSnap.getString("status"))) {
-                                Log.d("TAG_Soccer", "🟢 tournament match ACTIVE – launching GameActivity");
-                                startActivity(new Intent(this, GameActivity.class).putExtra("matchPath", mp).putExtra("GameType", 3).putExtra("localNickname", prefs.getString("nickname", "Player")).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
-                                finish();
-                                return;                 // 🔚 done
-                            }
-                            // fall through → try the generic query below
-                            continueWhenNoActiveMatch(doc, db, pendingId, prefs);
-                        });
-                    } else {
-                        /* friendlies → look in the top-level matches collection */
-                        continueWhenNoActiveMatch(doc, db, pendingId, prefs);
+        db.collection("invitations")
+                .whereEqualTo("from", uid)
+                .whereEqualTo("status", "pending")
+                .orderBy("expireAt")  // expires soonest first
+                .limit(1)
+                .get()
+                .addOnSuccessListener(snap -> {
+                    if (snap.isEmpty()) {
+                        Log.d("TAG_Soccer", "continueWithInviteRestore: no pending invites");
+                        return;
                     }
-                }
-            });
-        }
-        /* ─────────── END of “restore waiting” section ─────────── */
+
+                    DocumentSnapshot doc = snap.getDocuments().get(0);
+                    String inviteId = doc.getId();
+
+                    // Make sure the invite hasn’t already expired
+                    if (doc.getTimestamp("expireAt") != null &&
+                            Objects.requireNonNull(doc.getTimestamp("expireAt")).toDate().getTime() > nowMs) {
+
+                        Log.d("TAG_Soccer", "continueWithInviteRestore: ↩️ valid invite found → resuming WaitingActivity");
+
+                        startActivity(new Intent(this, WaitingActivity.class)
+                                .putExtra("inviteId", inviteId)
+                                .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
+                        finish();
+
+                    } else {
+                        Log.d("TAG_Soccer", "continueWithInviteRestore: invite is already expired → skipping");
+                    }
+                })
+                .addOnFailureListener(e -> Log.e("TAG_Soccer", "continueWithInviteRestore: failed to query invites", e));
     }
-
-    /* centralised dialog builder */
-    private void showResumeDialog(String inviteId, String nick, SharedPreferences prefs) {
-        new AlertDialog.Builder(this).setTitle(R.string.invite_still_pending_title).setMessage(getString(R.string.invite_still_pending_msg, nick)).setCancelable(false).setPositiveButton(R.string.resume, (d, w) -> {
-            startActivity(new Intent(this, WaitingActivity.class).putExtra("inviteId", inviteId).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
-            finish();
-        }).setNegativeButton(R.string.cancel_invite, (d, w) -> FirebaseFunctions.getInstance("us-central1").getHttpsCallable("cancelInvite").call(Collections.singletonMap("invitationId", inviteId)).addOnCompleteListener(t -> prefs.edit().remove("activeInviteId").apply())).show();
-    }
-
-    /* ───────── helper called when match *not* found as active ───────── */
-    private void continueWhenNoActiveMatch(DocumentSnapshot doc, FirebaseFirestore db, String pendingId, SharedPreferences prefs) {
-        db.collection("matches").whereEqualTo("invitationId", pendingId).whereEqualTo("status", "active").limit(1).get().addOnSuccessListener(activeSnaps -> {
-            /* 1a) YES → jump straight into the game */
-            if (!activeSnaps.isEmpty()) {
-                String nickname = prefs.getString("nickname", "Player");
-                String matchPath = activeSnaps.getDocuments().get(0).getReference().getPath();
-                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                }.getClass().getEnclosingMethod()).getName() + ": 🟢 match ACTIVE – launching GameActivity");
-                startActivity(new Intent(this, GameActivity.class).putExtra("matchPath", matchPath).putExtra("GameType", 3)          // remote-vs-remote
-                        .putExtra("localNickname", nickname) //  👈  **added**
-                        .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
-
-                /* marker no longer needed once we’re in the match */
-                prefs.edit().remove("activeInviteId").apply();
-                finish();
-                return;
-            }
-            /* 1b) NO → marker is stale, forget it  */
-            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-            }.getClass().getEnclosingMethod()).getName() + ": invite handled but no active match – removing marker");
-            prefs.edit().remove("activeInviteId").apply();
-            /* ── 2️⃣ Ask the user what to do (async) ── */
-            db.collection("users").document(Objects.requireNonNull(doc.getString("to"))).get().addOnSuccessListener(userSnap -> {
-                String nick = userSnap.getString("nickname");
-                if (nick == null || nick.isEmpty()) nick = "opponent";
-                showResumeDialog(pendingId, nick, prefs);
-            }).addOnFailureListener(err -> showResumeDialog(pendingId, "opponent", prefs));
-
-        });
-    }              // ← end of “else” branch
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

@@ -49,15 +49,6 @@ public class WaitingActivity extends AppCompatActivity {
             return;
         }
 
-        /* remember the active invite so we can restore the screen
-        if the OS kills the process while we’re in the background */
-        getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE)
-                .edit()
-                .putString("activeInviteId", inviteId)
-                .apply();
-        Log.d("TAG_Soccer",
-                getClass().getSimpleName() + ".onCreate: ⏺ saved activeInviteId=" + inviteId);
-
         TextView waitingMessage = findViewById(R.id.waitingMessage);
         TextView countdownTv = findViewById(R.id.countdown);
         findViewById(R.id.cancelInviteBtn).setOnClickListener(v -> cancelInvite(inviteId));
