@@ -117,20 +117,19 @@ public class WaitingActivity extends AppCompatActivity {
                     }
 
                     public void onFinish() {
-                        FirebaseFirestore db = FirebaseFirestore.getInstance();
-                        DocumentReference inviteRef = db.collection("invitations").document(inviteId);
+                        Log.d("TAG_Soccer", "CountDownTimer.onFinish: Calling expireInvite Cloud Function");
 
-                        db.runTransaction(transaction -> {
-                            DocumentSnapshot snap = transaction.get(inviteRef);
-                            String currentStatus = snap.getString("status");
-                            if ("pending".equals(currentStatus)) {
-                                transaction.update(inviteRef, "status", "expired");
-                            }
-                            return null;
-                        }).addOnCompleteListener(task -> {
-                            // Close the screen whether or not the update succeeded
-                            finish();
-                        });
+                        FirebaseFunctions.getInstance("us-central1")
+                                .getHttpsCallable("expireInvite")
+                                .call(Collections.singletonMap("invitationId", inviteId))
+                                .addOnSuccessListener(r -> {
+                                    Log.d("TAG_Soccer", "expireInvite: Success");
+                                    finish();
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.e("TAG_Soccer", "expireInvite: FAILED", e);
+                                    finish();  // fallback
+                                });
                     }
                 }.start();
             }

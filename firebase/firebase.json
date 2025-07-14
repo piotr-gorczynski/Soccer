@@ -49,6 +49,10 @@
     {
       "source": "functions/force-start-stuck-matches",
       "codebase": "force-start-stuck-matches"
+    },
+    {
+      "source": "functions/expire-invite",
+      "codebase": "expire-invite"
     }
   ],
   "firestore": {
