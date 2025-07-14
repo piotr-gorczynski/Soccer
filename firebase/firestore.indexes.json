@@ -42,7 +42,15 @@
         { "fieldPath": "turnStartTime", "order": "ASCENDING" },
         { "fieldPath": "updatedAt",     "order": "ASCENDING" }  
       ]
-    }
+    },
+    {
+      "collectionGroup": "invitations",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "status", "order": "ASCENDING" },
+        { "fieldPath": "expireAt", "order": "ASCENDING" }
+      ]
+    }    
   ],
 
   "fieldOverrides": [
