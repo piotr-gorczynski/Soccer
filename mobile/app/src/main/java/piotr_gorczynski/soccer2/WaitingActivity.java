@@ -117,7 +117,20 @@ public class WaitingActivity extends AppCompatActivity {
                     }
 
                     public void onFinish() {
-                        finish();
+                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+                        DocumentReference inviteRef = db.collection("invitations").document(inviteId);
+
+                        db.runTransaction(transaction -> {
+                            DocumentSnapshot snap = transaction.get(inviteRef);
+                            String currentStatus = snap.getString("status");
+                            if ("pending".equals(currentStatus)) {
+                                transaction.update(inviteRef, "status", "expired");
+                            }
+                            return null;
+                        }).addOnCompleteListener(task -> {
+                            // Close the screen whether or not the update succeeded
+                            finish();
+                        });
                     }
                 }.start();
             }
