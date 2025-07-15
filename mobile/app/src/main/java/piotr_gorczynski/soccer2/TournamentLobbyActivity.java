@@ -20,8 +20,6 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Objects;
 
-import piotr_gorczynski.soccer2.BuildConfig;
-
 public class TournamentLobbyActivity extends AppCompatActivity {
 
     private MatchAdapter mAdapter;
