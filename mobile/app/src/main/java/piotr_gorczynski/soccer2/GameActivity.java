@@ -408,6 +408,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void startClock(int playerIndex, long remainingMillis) {
+        if (gameEnded) return;              // ⬅️ hard gate
         // cancel any existing
         if (turnTimer != null) turnTimer.cancel();
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started");
@@ -493,6 +494,11 @@ public class GameActivity extends AppCompatActivity {
                 runOnUiThread(() -> showWinner(winnerIdx));
                 return;                                  // nothing else to update
             }
+        }
+
+        if (!"active".equals(snap.getString("status"))) {
+            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ️ \uD83D\uDC80 Extra guard block was executed");
+            return;                                  // match over → ignore update
         }
 
         Long rawT0 = snap.getLong("remainingTime0");
