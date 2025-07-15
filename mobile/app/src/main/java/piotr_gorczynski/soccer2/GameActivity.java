@@ -389,9 +389,6 @@ public class GameActivity extends AppCompatActivity {
                             .setTitle("Leave game?")
                             .setMessage("Are you sure you want to exit?")
                             .setPositiveButton("Yes", (dialog, which) -> {
-                                Intent intent = new Intent(GameActivity.this, MenuActivity.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(intent);
                                 finish();
                             })
                             .setNegativeButton("Cancel", null)
@@ -655,9 +652,6 @@ public class GameActivity extends AppCompatActivity {
                                         .addOnFailureListener(e -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ❌ Failed to send forfeit move", e));*/
                             }
 
-                            Intent intent = new Intent(GameActivity.this, MenuActivity.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
                             finish();
                         })
                         .setNegativeButton("Cancel", null)
@@ -885,9 +879,7 @@ public class GameActivity extends AppCompatActivity {
                                 builder.setMessage(msg);
 
                                 builder.setPositiveButton("Close", (dialog, which) -> {
-                                    Intent intent = new Intent(this, MenuActivity.class);
-                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    startActivity(intent);
+                                    finish();
 
                                 });
                                 // make sure we’re still alive
@@ -919,9 +911,6 @@ public class GameActivity extends AppCompatActivity {
         // GameType 1 or 2 fallback
         builder.setMessage("The winner is " + (Winner == 0 ? sPlayer0 : sPlayer1));
         builder.setPositiveButton("Close", (dialog, which) -> {
-            Intent intent = new Intent(this, MenuActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
             finish();
         });
         dialogWinner = builder.create();
