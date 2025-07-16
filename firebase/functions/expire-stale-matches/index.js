@@ -14,6 +14,7 @@ exports.expireStaleMatches = functions
     const snap = await db.collectionGroup('matches')
       .where('status', '==', 'active')
       .where('turnStartTime', '<=', cutoffTs)
+      .orderBy('turnStartTime')                 // ensure Firestore uses existing index
       .limit(500)
       .get();
 
