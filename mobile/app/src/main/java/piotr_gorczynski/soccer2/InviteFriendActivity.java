@@ -93,7 +93,6 @@ public class InviteFriendActivity extends AppCompatActivity {
                     Intent i = new Intent(this, WaitingActivity.class)
                             .putExtra("inviteId", inviteId);
                     startActivity(i);
-                    finish();
                 })
                 .addOnFailureListener(e -> {
                     /* default fallback */
