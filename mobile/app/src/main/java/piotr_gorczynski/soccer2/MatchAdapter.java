@@ -151,7 +151,6 @@ public class MatchAdapter
                         Intent i = new Intent(context, WaitingActivity.class)
                                 .putExtra("inviteId", inviteId);
                         context.startActivity(i);
-                        if (context instanceof Activity) ((Activity) context).finish();
                     })
                     .addOnFailureListener(e -> {
                         String msg = (e instanceof FirebaseFunctionsException ffe &&
