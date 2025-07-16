@@ -67,6 +67,8 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     public void onCreate() {
         super.onCreate();
 
+        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
+
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         // 1️⃣  Wipe the local cache & cached rules once per cold start
