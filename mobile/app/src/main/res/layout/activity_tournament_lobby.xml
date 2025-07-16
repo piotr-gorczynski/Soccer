@@ -9,7 +9,6 @@
 
     <!-- banner -->
     <TextView
-        android:id="@+id/runningBanner"
         android:text="@string/lobby_started"
         android:textColor="@color/colorGreenDark"
         android:textStyle="bold"

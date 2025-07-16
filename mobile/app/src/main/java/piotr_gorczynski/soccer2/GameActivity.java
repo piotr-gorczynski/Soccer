@@ -2,8 +2,6 @@ package piotr_gorczynski.soccer2;
 
 import static android.widget.Toast.LENGTH_SHORT;
 
-import static java.lang.Thread.setDefaultUncaughtExceptionHandler;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -124,12 +122,32 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
+    public static class ExceptionHandler implements Thread.UncaughtExceptionHandler {
+        private final Thread.UncaughtExceptionHandler existingHandler;
+
+        public ExceptionHandler() {
+            this.existingHandler = Thread.getDefaultUncaughtExceptionHandler();
+        }
+
+        @Override
+        public void uncaughtException(Thread thread, Throwable throwable) {
+            // 🔹 Your custom logic here (e.g., logging to file)
+            Log.e("ExceptionHandler", "Uncaught exception", throwable);
+
+            // 🔹 Call the original handler (important!)
+            if (existingHandler != null) {
+                existingHandler.uncaughtException(thread, throwable);
+            }
+        }
+    }
+
+
     @SuppressLint("ApplySharedPref")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setDefaultUncaughtExceptionHandler(new ExceptionHandler());
+        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
         //this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         if (savedInstanceState != null && (
                 (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && savedInstanceState.getParcelableArrayList("Moves", MoveTo.class) != null) ||
@@ -388,9 +406,7 @@ public class GameActivity extends AppCompatActivity {
                     new AlertDialog.Builder(GameActivity.this)
                             .setTitle("Leave game?")
                             .setMessage("Are you sure you want to exit?")
-                            .setPositiveButton("Yes", (dialog, which) -> {
-                                finish();
-                            })
+                            .setPositiveButton("Yes", (dialog, which) -> finish())
                             .setNegativeButton("Cancel", null)
                             .show();
                 }
@@ -878,10 +894,7 @@ public class GameActivity extends AppCompatActivity {
                                 msg=msg+"The winner is " + sWinner+"!";
                                 builder.setMessage(msg);
 
-                                builder.setPositiveButton("Close", (dialog, which) -> {
-                                    finish();
-
-                                });
+                                builder.setPositiveButton("Close", (dialog, which) -> finish());
                                 // make sure we’re still alive
                                 if (!isFinishing() && !isDestroyed()) {
                                     dialogWinner = builder.create();
@@ -910,9 +923,7 @@ public class GameActivity extends AppCompatActivity {
 
         // GameType 1 or 2 fallback
         builder.setMessage("The winner is " + (Winner == 0 ? sPlayer0 : sPlayer1));
-        builder.setPositiveButton("Close", (dialog, which) -> {
-            finish();
-        });
+        builder.setPositiveButton("Close", (dialog, which) -> finish());
         dialogWinner = builder.create();
         dialogWinner.show();
     }
