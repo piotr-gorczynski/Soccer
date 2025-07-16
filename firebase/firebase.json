@@ -57,6 +57,10 @@
     {
       "source": "functions/expire-stale-invites",
       "codebase": "expire-stale-invites"
+    },
+    {
+      "source": "functions/expire-stale-matches",
+      "codebase": "expire-stale-matches"
     }
   ],
   "firestore": {
