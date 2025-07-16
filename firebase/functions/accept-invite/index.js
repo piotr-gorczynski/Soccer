@@ -66,6 +66,14 @@ exports.acceptInvite = functions
           turn          : 0,
           turnStartTime : null
         });
+        /* ensure first move exists */
+        tx.set(
+          matchRef.collection('moves').doc(),
+          {
+            x: 3, y: 4, p: 0,
+            createdAt: admin.firestore.FieldValue.serverTimestamp()
+          }
+        );
       } else {                                    // friendly — create new doc
         matchRef = db.collection('matches').doc();
         tx.set(matchRef, {
