@@ -131,8 +131,6 @@ public class InvitationsActivity extends AppCompatActivity {
                                         .putExtra("matchPath", matchPath)
                                         .putExtra("GameType", 3)
                                         .putExtra("localNickname", nickname));
-
-                                finish();
                             })
 
                             // ───────── failure ─────────
