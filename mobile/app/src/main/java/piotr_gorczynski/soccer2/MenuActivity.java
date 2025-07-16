@@ -158,6 +158,8 @@ public class MenuActivity extends AppCompatActivity {
         ed.clear().apply();                          // clears token + other cache
 
         Toast.makeText(this, R.string.logged_out, Toast.LENGTH_SHORT).show();
+        TextView nicknameLabel = findViewById(R.id.nicknameLabel);
+        nicknameLabel.setText(getString(R.string.welcome_to_soccer));
         updateUiForAuthState();      // dim buttons, “Login” label, etc.
     }
 
