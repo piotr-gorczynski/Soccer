@@ -1,0 +1,13 @@
+{
+  "rules": [
+    "Matches are played on a 6x8 paper soccer grid. The ball starts at the centre (3,4).",
+    "Players move the ball to any of the eight adjacent points. Lines cannot be crossed or repeated.",
+    "Hitting a border or previously visited point counts as a bounce and grants another move to the same player.",
+    "A goal is scored when the ball enters the opponent's goal at the top or bottom edge. If no legal moves remain, the player who moved last wins.",
+    "Each player has a 5 minute chess clock. Time runs only during your turn. Running out of time results in a loss.",
+    "Leaving the match early forfeits the game to the opponent.",
+    "Tournaments run in a round-robin format. Pairings are generated automatically once registration closes and all matches must finish before the deadline.",
+    "Stale matches with no activity for over five minutes are automatically decided on time."
+  ],
+  "updatedAt": "2024-05-22T00:00:00Z"
+}
