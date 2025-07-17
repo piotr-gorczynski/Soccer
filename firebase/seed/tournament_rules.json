@@ -5,9 +5,10 @@
     "Hitting a border or previously visited point counts as a bounce and grants another move to the same player.",
     "A goal is scored when the ball enters the opponent's goal at the top or bottom edge. If no legal moves remain, the player who moved last wins.",
     "Each player has a 5 minute chess clock. Time runs only during your turn. Running out of time results in a loss.",
+    "If a player's phone disconnects before their turn begins, the backend will automatically start their clock after one minute.",
     "Leaving the match early forfeits the game to the opponent.",
     "Tournaments run in a round-robin format. Pairings are generated automatically once registration closes and all matches must finish before the deadline.",
     "Stale matches with no activity for over five minutes are automatically decided on time."
   ],
-  "updatedAt": "2024-05-22T00:00:00Z"
+  "updatedAt": "2025-07-17T00:00:00Z"
 }
