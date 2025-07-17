@@ -1,11 +1,24 @@
-const fs = require('fs');
+// tools/create-tournament.js
+const fs   = require('fs');
 const path = require('path');
 const admin = require('firebase-admin');
 
-admin.initializeApp();
-const db = admin.firestore();
+// ────────────────────────────────────────────────────────────────
+// 1. Load service-account credentials from the secrets folder
+//    (../secrets relative to this script’s directory)
+const serviceAccount = require(path.join(__dirname, '..', 'secrets', 'serviceAccountKey.json'));
 
-async function main() {
+// 2. Initialise Firebase Admin with that key
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
+
+const db = admin.firestore();
+// ────────────────────────────────────────────────────────────────
+
+// (rest of your original code stays unchanged)
+
+async function main () {
   const args = process.argv.slice(2);
   let params = {};
 
@@ -31,7 +44,7 @@ async function main() {
   }
 
   const { Timestamp } = admin.firestore;
-  const regDeadline = Timestamp.fromDate(new Date(registrationDeadline));
+  const regDeadline   = Timestamp.fromDate(new Date(registrationDeadline));
   const matchDeadline = Timestamp.fromDate(new Date(matchesDeadline));
 
   try {
