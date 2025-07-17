@@ -339,7 +339,7 @@ public class Field {
         }
         float cx = w2x(flipX(last.X));
         float cy = h2y(flipY(last.Y));
-        float radius = dotSize * 2;
+        float radius = dotSize * 4;
         RectF dst = new RectF(cx - radius, cy - radius, cx + radius, cy + radius);
         canvas.drawBitmap(ballBitmap, null, dst, null);
 
