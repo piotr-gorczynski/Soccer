@@ -4,71 +4,153 @@
       "collectionGroup": "invitations",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "from",   "order": "ASCENDING"  },
-        { "fieldPath": "status", "order": "ASCENDING"  },
-        { "fieldPath": "expireAt","order":"ASCENDING"  }
+        {
+          "fieldPath": "from",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "expireAt",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "__name__",
+          "order": "ASCENDING"
+        }
       ]
     },
     {
       "collectionGroup": "invitations",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "to",     "order": "ASCENDING"  },
-        { "fieldPath": "status", "order": "ASCENDING"  },
-        { "fieldPath": "expireAt","order":"ASCENDING"  }
-      ]
-    },
-    {
-      "collectionGroup": "matches",
-      "queryScope": "COLLECTION_GROUP",
-      "fields": [
-        { "fieldPath": "status",  "order": "ASCENDING" },
-        { "fieldPath": "player0", "order": "ASCENDING" }
-      ]
-    },
-    {
-      "collectionGroup": "matches",
-      "queryScope": "COLLECTION_GROUP",
-      "fields": [
-        { "fieldPath": "status",  "order": "ASCENDING" },
-        { "fieldPath": "player1", "order": "ASCENDING" }
-      ]
-    },
-    {
-      "collectionGroup": "matches",
-      "queryScope": "COLLECTION_GROUP",
-      "fields": [
-        { "fieldPath": "status",        "order": "ASCENDING" },
-        { "fieldPath": "turnStartTime", "order": "ASCENDING" },
-        { "fieldPath": "updatedAt",     "order": "ASCENDING" }
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "expireAt",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "__name__",
+          "order": "ASCENDING"
+        }
       ]
     },
     {
       "collectionGroup": "invitations",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "status", "order": "ASCENDING" },
-        { "fieldPath": "expireAt", "order": "ASCENDING" }
+        {
+          "fieldPath": "to",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "expireAt",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "__name__",
+          "order": "ASCENDING"
+        }
       ]
-    }    
+    },
+    {
+      "collectionGroup": "matches",
+      "queryScope": "COLLECTION_GROUP",
+      "fields": [
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "player0",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "__name__",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "matches",
+      "queryScope": "COLLECTION_GROUP",
+      "fields": [
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "player1",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "__name__",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "matches",
+      "queryScope": "COLLECTION_GROUP",
+      "fields": [
+        {
+          "fieldPath": "status",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "turnStartTime",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "updatedAt",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "__name__",
+          "order": "ASCENDING"
+        }
+      ]
+    }
   ],
-
   "fieldOverrides": [
-  {
-    "collectionGroup": "matches",
-    "fieldPath": "player0",
-    "indexes": [
-      { "order": "ASCENDING", "queryScope": "COLLECTION" },          
-      { "order": "ASCENDING", "queryScope": "COLLECTION_GROUP" }
-    ]
-  },
-  {
-    "collectionGroup": "matches",
-    "fieldPath": "player1",
-    "indexes": [
-      { "order": "ASCENDING", "queryScope": "COLLECTION" },          
-      { "order": "ASCENDING", "queryScope": "COLLECTION_GROUP" }
-    ]
-  }
-]
+    {
+      "collectionGroup": "matches",
+      "fieldPath": "player0",
+      "ttl": false,
+      "indexes": [
+        {
+          "order": "ASCENDING",
+          "queryScope": "COLLECTION"
+        },
+        {
+          "order": "ASCENDING",
+          "queryScope": "COLLECTION_GROUP"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "matches",
+      "fieldPath": "player1",
+      "ttl": false,
+      "indexes": [
+        {
+          "order": "ASCENDING",
+          "queryScope": "COLLECTION"
+        },
+        {
+          "order": "ASCENDING",
+          "queryScope": "COLLECTION_GROUP"
+        }
+      ]
+    }
+  ]
 }
