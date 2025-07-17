@@ -36,11 +36,19 @@
     },
     {
       "collectionGroup": "matches",
-      "queryScope": "COLLECTION_GROUP",   
+      "queryScope": "COLLECTION_GROUP",
       "fields": [
         { "fieldPath": "status",        "order": "ASCENDING" },
         { "fieldPath": "turnStartTime", "order": "ASCENDING" },
-        { "fieldPath": "updatedAt",     "order": "ASCENDING" }  
+        { "fieldPath": "updatedAt",     "order": "ASCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "matches",
+      "queryScope": "COLLECTION_GROUP",
+      "fields": [
+        { "fieldPath": "status",        "order": "ASCENDING" },
+        { "fieldPath": "turnStartTime", "order": "ASCENDING" }
       ]
     },
     {

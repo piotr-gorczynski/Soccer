@@ -11,12 +11,13 @@ exports.expireStaleMatches = functions
     const cutoff   = Date.now() - 5 * 60 * 1000; // 5 minutes ago
     const cutoffTs = admin.firestore.Timestamp.fromMillis(cutoff);
 
-    const snap = await db.collectionGroup('matches')
-      .where('status', '==', 'active')
-      .where('turnStartTime', '<=', cutoffTs)
-      .orderBy('turnStartTime')                 // ensure Firestore uses existing index
-      .limit(500)
-      .get();
+      const snap = await db.collectionGroup('matches')
+        .where('status', '==', 'active')
+        .where('turnStartTime', '<=', cutoffTs)
+        .orderBy('turnStartTime')  // uses composite index on [status, turnStartTime]
+        .limit(500)
+        .get();
+
 
     if (snap.empty) {
       console.log('👌 No stale matches found this run');
