@@ -6,6 +6,9 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.RectF;
 import androidx.core.content.ContextCompat;
 
 import android.text.TextPaint;
@@ -31,6 +34,7 @@ public class Field {
     private final Paint pHintText;
     private final Rect rField;
     private final Rect rText;
+    private final Bitmap ballBitmap;
     private final String sPlayer0;
     private final String sPlayer1;
     private final int gameType;
@@ -118,6 +122,7 @@ public class Field {
         Paint pHintBalloon = new Paint();
         pHintBalloon.setStyle(Paint.Style.FILL);
         pHintBalloon.setColor(Color.YELLOW);
+        ballBitmap = BitmapFactory.decodeResource(current.getResources(), R.drawable.ball);
 
 
 
@@ -328,12 +333,16 @@ public class Field {
         // Ball
         MoveTo last = Moves.get(Moves.size() - 1);
 
-        // ⛔ Skip artificial moves, eg. in case of forefeit
+        // Skip artificial moves, eg. in case of forefeit
         if (last.X == -1 && last.Y == -1) {
-            last=Moves.get(Moves.size() - 2);
-            canvas.drawCircle(w2x(flipX(last.X)), h2y(flipY(last.Y)), dotSize * 2, pDots);
-        } else
-            canvas.drawCircle(w2x(flipX(last.X)), h2y(flipY(last.Y)), dotSize * 2, pDots);
+            last = Moves.get(Moves.size() - 2);
+        }
+        float cx = w2x(flipX(last.X));
+        float cy = h2y(flipY(last.Y));
+        float radius = dotSize * 2;
+        RectF dst = new RectF(cx - radius, cy - radius, cx + radius, cy + radius);
+        canvas.drawBitmap(ballBitmap, null, dst, null);
+
 
         // Turn indicator
         int currentTurn = Moves.get(Moves.size() - 1).P;
