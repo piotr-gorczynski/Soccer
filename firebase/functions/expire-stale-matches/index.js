@@ -18,6 +18,7 @@ exports.expireStaleMatches = functions
         .limit(500)
         .get();
 
+
     if (snap.empty) {
       console.log('👌 No stale matches found this run');
       return null;
