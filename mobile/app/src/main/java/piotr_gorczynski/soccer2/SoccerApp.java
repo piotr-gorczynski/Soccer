@@ -349,6 +349,19 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
             Log.d("TAG_Soccer", "Configured default project ID: " + defaultProjectId);
         }
     }
+    
+    /**
+     * Debug method to manually test backend service availability
+     * Can be called from debugging sessions
+     */
+    public void debugTestBackendService() {
+        Log.d("TAG_Soccer", "=== DEBUG: Testing Backend Service ===");
+        if (serviceChecker != null) {
+            serviceChecker.testServiceCheck();
+        } else {
+            Log.e("TAG_Soccer", "Service checker not initialized");
+        }
+    }
 
 
 

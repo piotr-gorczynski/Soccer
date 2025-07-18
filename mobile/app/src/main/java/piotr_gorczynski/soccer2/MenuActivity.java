@@ -115,6 +115,19 @@ public class MenuActivity extends AppCompatActivity {
             nicknameLabel.setText(getString(R.string.welcome_to_soccer));
         }
         updateUiForAuthState();
+        
+        // Add debug functionality - long press on settings button to manually test backend
+        Button settingsBtn = findViewById(R.id.Settings);
+        if (settingsBtn != null) {
+            settingsBtn.setOnLongClickListener(v -> {
+                Log.d("TAG_Soccer", "Manual backend test triggered via long press");
+                if (serviceChecker != null) {
+                    serviceChecker.testServiceCheck();
+                    Toast.makeText(this, "Backend test started - check logs", Toast.LENGTH_SHORT).show();
+                }
+                return true;
+            });
+        }
     }
 
     private void updateUiForAuthState() {

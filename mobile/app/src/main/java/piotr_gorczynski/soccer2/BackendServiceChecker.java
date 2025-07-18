@@ -213,4 +213,23 @@ public class BackendServiceChecker {
         prefs.edit().putString("backend_secret_key", secretKey).apply();
         Log.d(TAG, "Secret key updated");
     }
+    
+    /**
+     * Manual test method for backend service availability
+     * This can be called from debug menus or logs to verify functionality
+     */
+    public void testServiceCheck() {
+        Log.d(TAG, "=== Manual Backend Service Test Started ===");
+        checkServiceAvailability(new ServiceCheckCallback() {
+            @Override
+            public void onServiceAvailable() {
+                Log.d(TAG, "✅ TEST RESULT: Backend service is AVAILABLE");
+            }
+
+            @Override
+            public void onServiceUnavailable(String reason) {
+                Log.w(TAG, "❌ TEST RESULT: Backend service is UNAVAILABLE - " + reason);
+            }
+        });
+    }
 }
