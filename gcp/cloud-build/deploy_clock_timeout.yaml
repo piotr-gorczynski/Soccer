@@ -86,26 +86,7 @@ steps:
 
         echo "✅ Function 'clockTimeout' deployed successfully."
 
-  # Step 6: Add IAM policy binding to allow allUsers to invoke
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    id: 'bind-invoker-role'
-    entrypoint: bash
-    args:
-      - '-c'
-      - |
-        set -e
-        project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
-        echo "🔐 Granting invoker role to allUsers for 'clockTimeoutMatches clockTimeoutTournamentMatches'..."
 
-        for fn in clockTimeoutMatches clockTimeoutTournamentMatches; do
-          gcloud functions add-iam-policy-binding "$fn" \
-            --region=us-central1 \
-            --project="$project_id" \
-            --member="allUsers" \
-            --role="roles/cloudfunctions.invoker"
-        done
-
-          echo "✅ IAM policy binding applied."
 
 options:
   logging: CLOUD_LOGGING_ONLY
