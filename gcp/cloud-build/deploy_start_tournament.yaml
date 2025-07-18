@@ -86,24 +86,7 @@ steps:
 
         echo "✅ Function 'startTournament' deployed successfully."
 
-  # Step 6: Add IAM policy binding to allow allUsers to invoke
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    id: 'bind-invoker-role'
-    entrypoint: bash
-    args:
-      - '-c'
-      - |
-        set -e
-        project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
 
-        echo "🔐 Granting invoker role to allUsers for 'startTournament'..."
-        gcloud functions add-iam-policy-binding startTournament \
-          --region=us-central1 \
-          --project="$project_id" \
-          --member="allUsers" \
-          --role="roles/cloudfunctions.invoker"
-
-        echo "✅ IAM policy binding applied."
 
 options:
   logging: CLOUD_LOGGING_ONLY
