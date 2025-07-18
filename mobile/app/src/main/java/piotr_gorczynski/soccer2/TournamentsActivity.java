@@ -3,8 +3,6 @@ package piotr_gorczynski.soccer2;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -13,18 +11,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.functions.FirebaseFunctions;
-import com.google.firebase.functions.FirebaseFunctionsException;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
 public class TournamentsActivity extends AppCompatActivity {
 
@@ -123,48 +114,16 @@ public class TournamentsActivity extends AppCompatActivity {
     }
 
     /** Calls your Cloud Function `joinTournament` (see blueprint) */
-    private void joinTournament(String tournamentId) {
+    private void joinTournament(DocumentSnapshot tournamentDoc) {
+        if (tournamentDoc == null || !tournamentDoc.exists()) return;
 
-        if (TextUtils.isEmpty(tournamentId)) {
-            Toast.makeText(this, "Tournament not found.", Toast.LENGTH_LONG).show();
-            return;
-        }
+        String tid = tournamentDoc.getId();
+        String regId = tournamentDoc.getString("regulation");
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null) {
-            Toast.makeText(this, "You must be logged-in.", Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        // 🔄 force-refresh the ID-token so App Check / IAM always passes
-        user.getIdToken(true).addOnSuccessListener(tokenRes -> {
-
-            FirebaseFunctions functions = FirebaseFunctions.getInstance("us-central1");
-            Map<String,Object> data     = Collections.singletonMap("tournamentId", tournamentId);
-
-            functions
-                    .getHttpsCallable("joinTournament")
-                    .call(data)
-
-                    /* ───── success ───── */
-                    .addOnSuccessListener(r -> {Toast
-                            .makeText(this, "Joined! Wait for the bracket to start.",
-                                    Toast.LENGTH_SHORT).show();
-                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Joined");
-
-                    })
-
-                    /* ───── failure ───── */
-                    .addOnFailureListener(e -> {
-                        if (e instanceof FirebaseFunctionsException ffe) {
-                            Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                                    + ": code=" + ffe.getCode()
-                                    + "  msg=" + ffe.getMessage()
-                                    + "  details=" + ffe.getDetails());
-                        }
-                        Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-                    });
-        });
+        Intent i = new Intent(this, RegulationActivity.class)
+                .putExtra("tournamentId", tid)
+                .putExtra("regulationId", regId);
+        startActivity(i);
     }
 }
 

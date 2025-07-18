@@ -23,7 +23,7 @@ public class TournamentAdapter
 
     /** callback for the Join button */
     @SuppressWarnings("unused")
-    public interface OnJoinClick { void onJoin(String tournamentId); }
+    public interface OnJoinClick { void onJoin(DocumentSnapshot tournamentDoc); }
 
     public interface OnEndedClick {
         void onEnded(DocumentSnapshot tournamentDoc);
@@ -124,7 +124,7 @@ public class TournamentAdapter
             boolean closed = mLeft <= 0;
             h.joinBtn.setEnabled(!full && !closed);
             h.joinBtn.setText(R.string.join);
-            h.joinBtn.setOnClickListener(v -> Objects.requireNonNull(listener).onJoin(tid));
+            h.joinBtn.setOnClickListener(v -> Objects.requireNonNull(listener).onJoin(doc));
 
         } else {   // == "running"
 
