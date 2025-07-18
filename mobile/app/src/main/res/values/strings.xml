@@ -74,6 +74,9 @@
     <string name="five_minutes">05:00</string>
     <string name="cancel_invite">Cancel invite</string>
     <string name="invite_expired">Invitation expired.</string>
+    <string name="leave">Leave</string>
+    <string name="leave_tournament_confirm">Are you sure you want to leave this tournament?</string>
+    <string name="left_tournament">You left the tournament.</string>
     <string name="leave_waiting_confirm">Leaving the waiting screen will cancel your invitation. Are you sure?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
