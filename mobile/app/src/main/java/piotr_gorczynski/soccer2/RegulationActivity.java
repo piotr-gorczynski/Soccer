@@ -64,8 +64,16 @@ public class RegulationActivity extends AppCompatActivity {
                                     bodyTv.setText(bodyJson);
                                 }
                             }
+                        } else {
+                            bodyTv.setText(R.string.regulation_not_found);
                         }
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e("TAG_Soccer", "Failed to load regulation", e);
+                        Toast.makeText(this, R.string.regulation_load_error, Toast.LENGTH_LONG).show();
                     });
+        } else {
+            bodyTv.setText(R.string.regulation_not_found);
         }
 
         declineBtn.setOnClickListener(v -> finish());

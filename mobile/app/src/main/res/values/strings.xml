@@ -80,4 +80,6 @@
     <string name="target_player_busy">That player is already busy with another invitation.</string>
     <string name="accept">Accept</string>
     <string name="decline">Decline</string>
+    <string name="regulation_not_found">Regulation not found.</string>
+    <string name="regulation_load_error">Failed to load regulation.</string>
 </resources>
