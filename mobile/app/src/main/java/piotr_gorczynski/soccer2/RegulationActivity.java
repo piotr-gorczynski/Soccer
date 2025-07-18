@@ -40,15 +40,28 @@ public class RegulationActivity extends AppCompatActivity {
         tournamentId = getIntent().getStringExtra("tournamentId");
         regulationId = getIntent().getStringExtra("regulationId");
 
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                ": tournamentId=" + tournamentId + " regulationId=" + regulationId);
+
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         if (!TextUtils.isEmpty(regulationId)) {
+            Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                    Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                    ": querying regulation from Firestore");
             db.collection("regulations").document(regulationId).get()
                     .addOnSuccessListener(doc -> {
                         if (doc.exists()) {
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                                    Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                                    ": document found");
                             nameTv.setText(doc.getString("name"));
                             String bodyJson = doc.getString("body");
                             if (bodyJson != null) {
                                 try {
+                                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                                            Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                                            ": parsing body JSON");
                                     JSONObject obj = new JSONObject(bodyJson);
                                     JSONArray rules = obj.optJSONArray("rules");
                                     if (rules != null) {
@@ -61,18 +74,29 @@ public class RegulationActivity extends AppCompatActivity {
                                         bodyTv.setText(bodyJson);
                                     }
                                 } catch (Exception e) {
+                                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
+                                            Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                                            ": JSON parse error", e);
                                     bodyTv.setText(bodyJson);
                                 }
                             }
                         } else {
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                                    Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                                    ": regulation document not found");
                             bodyTv.setText(R.string.regulation_not_found);
                         }
                     })
                     .addOnFailureListener(e -> {
-                        Log.e("TAG_Soccer", "Failed to load regulation", e);
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
+                                Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                                ": Failed to load regulation", e);
                         Toast.makeText(this, R.string.regulation_load_error, Toast.LENGTH_LONG).show();
                     });
         } else {
+            Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
+                    Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                    ": empty regulationId");
             bodyTv.setText(R.string.regulation_not_found);
         }
 
@@ -82,25 +106,47 @@ public class RegulationActivity extends AppCompatActivity {
     }
 
     private void acceptAndJoin() {
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                ": starting acceptAndJoin");
+
         if (TextUtils.isEmpty(tournamentId)) {
+            Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
+                    Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                    ": empty tournamentId");
             Toast.makeText(this, "Tournament not found.", Toast.LENGTH_LONG).show();
             return;
         }
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
+            Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
+                    Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                    ": user not logged-in");
             Toast.makeText(this, "You must be logged-in.", Toast.LENGTH_LONG).show();
             return;
         }
 
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                ": refreshing ID token");
         user.getIdToken(true).addOnSuccessListener(tokenRes -> {
+            Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                    Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                    ": token refresh OK");
             FirebaseFunctions functions = FirebaseFunctions.getInstance("us-central1");
             Map<String,Object> data = Map.of(
                     "tournamentId", tournamentId,
                     "regulation", "accepted"
             );
+            Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                    Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                    ": calling joinTournament");
             functions.getHttpsCallable("joinTournament")
                     .call(data)
                     .addOnSuccessListener(r -> {
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                                Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                                ": joinTournament success");
                         Toast.makeText(this, "Joined! Wait for the bracket to start.", Toast.LENGTH_SHORT).show();
                         finish();
                     })
@@ -111,6 +157,9 @@ public class RegulationActivity extends AppCompatActivity {
                                     + "  msg=" + ffe.getMessage()
                                     + "  details=" + ffe.getDetails());
                         }
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
+                                Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                                ": joinTournament failed", e);
                         Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
                     });
         });
