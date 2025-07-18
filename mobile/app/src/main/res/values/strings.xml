@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Soccer</string>
     <string name="menu_YouvsAndroid">You vs. Android</string>
-    <string name="menu_Player1vsPlayer2">Player 1 vs. Player 2</string>
+    <string name="menu_Player1vsPlayer2">Two players on this device</string>
     <string name="menu_Settings">Settings</string>
     <string name="title_activity_settings">Settings</string>
 
