@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Date;
 import java.util.List;
@@ -25,19 +27,25 @@ public class TournamentAdapter
     @SuppressWarnings("unused")
     public interface OnJoinClick { void onJoin(DocumentSnapshot tournamentDoc); }
 
+    /** callback for the Leave button */
+    @SuppressWarnings("unused")
+    public interface OnLeaveClick { void onLeave(DocumentSnapshot tournamentDoc); }
+
     public interface OnEndedClick {
         void onEnded(DocumentSnapshot tournamentDoc);
     }
 
     private final List<DocumentSnapshot> data;
-    private final OnJoinClick listener;
+    private final OnJoinClick joinListener;
+    private final OnLeaveClick leaveListener;
 
     private final OnEndedClick endedListener;
     private final boolean isEndedMode;
 
-    public TournamentAdapter(List<DocumentSnapshot> data, OnJoinClick listener) {
+    public TournamentAdapter(List<DocumentSnapshot> data, OnJoinClick joinListener, OnLeaveClick leaveListener) {
         this.data     = data;
-        this.listener = listener;
+        this.joinListener = joinListener;
+        this.leaveListener = leaveListener;
         this.endedListener = null;
         this.isEndedMode = false;
     }
@@ -45,7 +53,8 @@ public class TournamentAdapter
     // New constructor for ended mode
     public TournamentAdapter(List<DocumentSnapshot> data, OnEndedClick endedListener) {
         this.data = data;
-        this.listener = null;
+        this.joinListener = null;
+        this.leaveListener = null;
         this.endedListener = endedListener;
         this.isEndedMode = true;
     }
@@ -53,13 +62,14 @@ public class TournamentAdapter
     // ---------- View-Holder ----------
     public static class VH extends RecyclerView.ViewHolder {
         final TextView name, slots, endsIn;
-        final Button   joinBtn;
+        final Button   joinBtn, leaveBtn;
         VH(@NonNull View v) {
             super(v);
             name    = v.findViewById(R.id.name);
             slots   = v.findViewById(R.id.slots);
             endsIn  = v.findViewById(R.id.endsIn);
             joinBtn = v.findViewById(R.id.joinBtn);
+            leaveBtn = v.findViewById(R.id.leaveBtn);
         }
     }
 
@@ -109,6 +119,7 @@ public class TournamentAdapter
                 if (endedListener != null)
                     endedListener.onEnded(doc);
             });
+            h.leaveBtn.setVisibility(View.GONE);
 
         } else if ("registering".equals(status)) {
 
@@ -119,12 +130,40 @@ public class TournamentAdapter
                     : "Registration ends "+englishRelative(regDL.toDate().getTime());
             h.endsIn.setText(endsText);
 
-            // ② button: Join
+            // ② buttons: Join & Leave
             boolean full   = joined >= max;
             boolean closed = mLeft <= 0;
-            h.joinBtn.setEnabled(!full && !closed);
             h.joinBtn.setText(R.string.join);
-            h.joinBtn.setOnClickListener(v -> Objects.requireNonNull(listener).onJoin(doc));
+            h.leaveBtn.setText(R.string.leave);
+            h.joinBtn.setEnabled(false);
+            h.leaveBtn.setEnabled(false);
+            h.leaveBtn.setVisibility(View.VISIBLE);
+
+            String uid = FirebaseAuth.getInstance().getCurrentUser() != null
+                    ? FirebaseAuth.getInstance().getCurrentUser().getUid()
+                    : null;
+            if (uid != null) {
+                FirebaseFirestore.getInstance()
+                        .collection("tournaments").document(tid)
+                        .collection("participants").document(uid)
+                        .get().addOnSuccessListener(p -> {
+                            boolean joinedAlready = p.exists();
+                            if (joinedAlready) {
+                                h.joinBtn.setEnabled(false);
+                                h.leaveBtn.setEnabled(true);
+                            } else {
+                                h.joinBtn.setEnabled(!full && !closed);
+                                h.leaveBtn.setEnabled(false);
+                            }
+                        });
+            }
+
+            h.joinBtn.setOnClickListener(v -> {
+                if (joinListener != null) joinListener.onJoin(doc);
+            });
+            h.leaveBtn.setOnClickListener(v -> {
+                if (leaveListener != null) leaveListener.onLeave(doc);
+            });
 
         } else {   // == "running"
 
@@ -152,6 +191,7 @@ public class TournamentAdapter
 
             // ② button: Open
             h.joinBtn.setEnabled(true);
+            h.leaveBtn.setVisibility(View.GONE);
             h.joinBtn.setText(R.string.open);
             h.joinBtn.setOnClickListener(v -> {
                 Intent i = new Intent(v.getContext(), TournamentLobbyActivity.class)
