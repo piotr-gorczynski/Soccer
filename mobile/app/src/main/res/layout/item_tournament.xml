@@ -22,10 +22,23 @@
         android:layout_height="wrap_content"
         android:textColor="@color/colorGrey" />
 
-    <Button
-        android:id="@+id/joinBtn"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/join" />
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/joinBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/join" />
+
+        <Button
+            android:id="@+id/leaveBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/leave" />
+    </LinearLayout>
 
 </LinearLayout>

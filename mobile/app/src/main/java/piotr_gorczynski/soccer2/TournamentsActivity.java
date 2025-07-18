@@ -8,11 +8,14 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.functions.FirebaseFunctions;
+import com.google.firebase.functions.FirebaseFunctionsException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,11 +43,13 @@ public class TournamentsActivity extends AppCompatActivity {
 
         TournamentAdapter registeringAdapter = new TournamentAdapter(
                 registeringDocs,
-                (TournamentAdapter.OnJoinClick) this::joinTournament
+                this::joinTournament,
+                this::leaveTournament
         );
         TournamentAdapter runningAdapter = new TournamentAdapter(
                 runningDocs,
-                (TournamentAdapter.OnJoinClick) this::joinTournament
+                this::joinTournament,
+                this::leaveTournament
         );
         TournamentAdapter endedAdapter = new TournamentAdapter(
                 endedDocs,
@@ -130,6 +135,34 @@ public class TournamentsActivity extends AppCompatActivity {
                 .putExtra("tournamentId", tid)
                 .putExtra("regulationId", regId);
         startActivity(i);
+    }
+
+    /** Prompt confirmation and call leaveTournament Cloud Function */
+    private void leaveTournament(DocumentSnapshot tournamentDoc) {
+        if (tournamentDoc == null || !tournamentDoc.exists()) return;
+
+        String tid = tournamentDoc.getId();
+
+        new AlertDialog.Builder(this)
+                .setMessage(R.string.leave_tournament_confirm)
+                .setPositiveButton(R.string.yes, (d, w) -> doLeave(tid))
+                .setNegativeButton(R.string.no, null)
+                .show();
+    }
+
+    private void doLeave(String tid) {
+        FirebaseFunctions.getInstance("us-central1")
+                .getHttpsCallable("leaveTournament")
+                .call(java.util.Collections.singletonMap("tournamentId", tid))
+                .addOnSuccessListener(r ->
+                        Toast.makeText(this, R.string.left_tournament, Toast.LENGTH_SHORT).show())
+                .addOnFailureListener(e -> {
+                    if (e instanceof FirebaseFunctionsException ffe) {
+                        Toast.makeText(this, ffe.getMessage(), Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
     }
 }
 
