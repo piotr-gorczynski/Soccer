@@ -11,6 +11,7 @@ const db        = admin.firestore();
 exports.joinTournament = functions.https.onCall(async (data, context) => {
   const uid = context.auth?.uid;
   const tid = data?.tournamentId;
+  const regulationStatus = data?.regulation;
 
   /* ─── 1. Basic guards ─── */
   if (!uid) {
@@ -62,10 +63,12 @@ exports.joinTournament = functions.https.onCall(async (data, context) => {
     }
 
     /* 2-c: write participant + increment counter atomically */
-    tx.set(pRef, {
+    const payload = {
       seed: Math.random(),                              // for bracket seeding
       joinedAt: admin.firestore.FieldValue.serverTimestamp()
-    });
+    };
+    if (regulationStatus) payload.regulation = regulationStatus;
+    tx.set(pRef, payload);
     tx.update(tRef, {
       participantsCount: admin.firestore.FieldValue.increment(1)
     });
