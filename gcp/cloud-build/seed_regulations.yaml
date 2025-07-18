@@ -78,6 +78,8 @@ steps:
       - |
         set -e
         cd /workspace/firebase/functions/seed-regulations
+        project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
+        export GOOGLE_CLOUD_PROJECT="$project_id"
         node index.js
         echo "✅ Regulations document created."
 
