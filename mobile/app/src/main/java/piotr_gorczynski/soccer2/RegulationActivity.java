@@ -51,6 +51,14 @@ public class RegulationActivity extends AppCompatActivity {
                     Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
                     ": querying regulation from Firestore, currentUser=" +
                     (authUser != null ? authUser.getUid() : "null"));
+
+            if (authUser == null) {
+                Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
+                        Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                        ": user not authenticated – cannot load regulation");
+                Toast.makeText(this, R.string.regulation_auth_required, Toast.LENGTH_LONG).show();
+                return;
+            }
             db.collection("regulations").document(regulationId).get()
                     .addOnSuccessListener(doc -> {
                         if (doc.exists()) {
