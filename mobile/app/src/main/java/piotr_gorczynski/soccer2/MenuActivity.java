@@ -208,6 +208,9 @@ public class MenuActivity extends AppCompatActivity {
         SoccerApp app = (SoccerApp) getApplication();
         serviceChecker = app.getServiceChecker();
         
+        // Get initial backend availability state from the app
+        isBackendAvailable = app.isBackendAvailable();
+        
         // Check backend availability on app launch
         checkBackendAvailability();
 
@@ -392,6 +395,13 @@ public class MenuActivity extends AppCompatActivity {
         }
         
         Log.d("TAG_Soccer", "Checking backend availability from MenuActivity");
+        
+        // Show a brief checking state (optional)
+        runOnUiThread(() -> {
+            // Could add a progress indicator here if desired
+            Log.d("TAG_Soccer", "Starting backend availability check...");
+        });
+        
         serviceChecker.checkServiceAvailability(new BackendServiceChecker.ServiceCheckCallback() {
             @Override
             public void onServiceAvailable() {

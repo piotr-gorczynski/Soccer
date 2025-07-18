@@ -25,8 +25,9 @@ public class BackendServiceChecker {
     
     private static final String TAG = "BackendServiceChecker";
     private static final String SERVICE_URL_TEMPLATE = "https://us-central1-%s.cloudfunctions.net/service-check";
-    private static final String DEFAULT_PROJECT_ID = "soccer-dev"; // fallback if no project found
+    private static final String DEFAULT_PROJECT_ID = "soccer-dev"; // Based on pattern from test_service_check.yaml
     private static final int TIMEOUT_SECONDS = 10;
+    private static final int MAX_RETRIES = 1; // Simple retry logic
     
     private final OkHttpClient httpClient;
     private final Context context;
@@ -50,7 +51,14 @@ public class BackendServiceChecker {
      * @param callback callback to handle the result
      */
     public void checkServiceAvailability(@NonNull ServiceCheckCallback callback) {
-        Log.d(TAG, "Starting backend service availability check");
+        checkServiceAvailabilityWithRetry(callback, 0);
+    }
+    
+    /**
+     * Internal method with retry logic
+     */
+    private void checkServiceAvailabilityWithRetry(@NonNull ServiceCheckCallback callback, int retryCount) {
+        Log.d(TAG, "Starting backend service availability check (attempt " + (retryCount + 1) + ")");
         
         String projectId = getProjectId();
         String serviceUrl = String.format(SERVICE_URL_TEMPLATE, projectId);
@@ -77,8 +85,20 @@ public class BackendServiceChecker {
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                Log.e(TAG, "Service check failed: " + e.getMessage(), e);
-                callback.onServiceUnavailable("Network error: " + e.getMessage());
+                Log.e(TAG, "Service check failed (attempt " + (retryCount + 1) + "): " + e.getMessage(), e);
+                
+                // Retry logic for network failures
+                if (retryCount < MAX_RETRIES && (e instanceof java.net.SocketTimeoutException || 
+                                                e instanceof java.net.ConnectException ||
+                                                e instanceof java.net.UnknownHostException)) {
+                    Log.d(TAG, "Retrying service check in 2 seconds...");
+                    // Simple delay before retry
+                    new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+                        checkServiceAvailabilityWithRetry(callback, retryCount + 1);
+                    }, 2000);
+                } else {
+                    callback.onServiceUnavailable("Network error: " + e.getMessage());
+                }
             }
             
             @Override
@@ -133,21 +153,30 @@ public class BackendServiceChecker {
     
     /**
      * Get the project ID for the service URL
-     * This could be enhanced to read from configuration or detect dynamically
+     * Tries multiple patterns based on the GCP project naming conventions
      */
     private String getProjectId() {
-        // For now, try to detect from shared preferences or use default
         SharedPreferences prefs = context.getSharedPreferences(
                 context.getPackageName() + "_preferences", Context.MODE_PRIVATE);
         
         String projectId = prefs.getString("backend_project_id", null);
-        if (projectId == null || projectId.isEmpty()) {
-            // Try some common patterns based on the test file
-            projectId = DEFAULT_PROJECT_ID;
-            Log.d(TAG, "Using default project ID: " + projectId);
-        } else {
+        if (projectId != null && !projectId.isEmpty()) {
             Log.d(TAG, "Using configured project ID: " + projectId);
+            return projectId;
         }
+        
+        // Try common patterns based on test_service_check.yaml
+        String[] candidateProjects = {
+            "soccer-dev",     // Most likely based on the pattern
+            "soccer-prod",    // Production variant
+            "soccer",         // Simple name
+            DEFAULT_PROJECT_ID
+        };
+        
+        // For now, just use the first candidate
+        // This could be enhanced to actually test each URL
+        projectId = candidateProjects[0];
+        Log.d(TAG, "Using default project ID pattern: " + projectId);
         
         return projectId;
     }

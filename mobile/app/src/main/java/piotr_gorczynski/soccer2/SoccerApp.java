@@ -73,6 +73,10 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         
         // Initialize backend service checker
         serviceChecker = new BackendServiceChecker(this);
+        
+        // Configure default project ID if needed
+        // This could be moved to a configuration activity later
+        configureDefaultProjectId();
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -329,6 +333,21 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         // For now, we'll let activities query the state directly
         // This could be enhanced with a proper event system if needed
         Log.d("TAG_Soccer", "Backend availability changed: " + available);
+    }
+    
+    /**
+     * Configure default project ID if not already set
+     */
+    private void configureDefaultProjectId() {
+        SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
+        String existingProjectId = prefs.getString("backend_project_id", null);
+        
+        if (existingProjectId == null || existingProjectId.isEmpty()) {
+            // Set default project ID based on expected pattern
+            String defaultProjectId = "soccer-dev";
+            serviceChecker.setProjectId(defaultProjectId);
+            Log.d("TAG_Soccer", "Configured default project ID: " + defaultProjectId);
+        }
     }
 
 
