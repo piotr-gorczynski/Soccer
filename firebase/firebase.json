@@ -61,6 +61,10 @@
     {
       "source": "functions/expire-stale-matches",
       "codebase": "expire-stale-matches"
+    },
+    {
+      "source": "functions/leave-tournament",
+      "codebase": "leave-tournament"
     }
   ],
   "firestore": {
