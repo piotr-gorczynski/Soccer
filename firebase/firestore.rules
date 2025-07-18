@@ -129,7 +129,10 @@ service cloud.firestore {
     }
 
     // Regulations: read-only for authenticated users
-    match /regulations/{docId} {
+    // Allow reads on the root collection as well as any nested
+    // sub-collection named "regulations" so that lookups work even
+    // if documents are stored deeper in the hierarchy.
+    match /{path=**}/regulations/{docId} {
       allow read: if request.auth != null;
       allow write: if false;
     }
