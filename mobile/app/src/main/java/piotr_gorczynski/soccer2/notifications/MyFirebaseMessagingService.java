@@ -14,11 +14,14 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.Source;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import piotr_gorczynski.soccer2.GameActivity;
 import piotr_gorczynski.soccer2.R;
 
 import android.app.PendingIntent;
@@ -29,6 +32,39 @@ import java.util.Objects;
 import piotr_gorczynski.soccer2.InvitationsActivity;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
+
+    private void maybeLaunchGame(@NonNull String matchPath,
+                                 @NonNull String localNickname) {
+
+        DocumentReference docRef = FirebaseFirestore.getInstance()
+                .document(matchPath);
+
+        // Force a round-trip to the backend so we never rely on a stale cache.
+        docRef.get(Source.SERVER)                // server read, not cache
+                .addOnSuccessListener(snapshot -> {
+                    boolean shouldStart =
+                            snapshot.exists()
+                                    && !"completed".equals(snapshot.getString("status"));
+
+                    if (shouldStart) {
+                        Intent gameIntent = new Intent(this, GameActivity.class)
+                                .putExtra("GameType", 3)
+                                .putExtra("matchPath", matchPath)
+                                .putExtra("localNickname", localNickname)
+                                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP
+                                        | Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                        | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(gameIntent);
+                    } else {
+                        Log.i("TAG_Soccer",
+                                "Match " + matchPath + " is already finished - skipping launch");
+                    }
+                })
+                .addOnFailureListener(e ->
+                        Log.e("TAG_Soccer",
+                                "Could not check match status – defaulting to *not* launching",
+                                e));
+    }
 
     @Override
     public void onNewToken(@NonNull String token) {
@@ -55,32 +91,22 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                 + ": 📨 Message received: " + remoteMessage.getData());
-        String type = remoteMessage.getData().get("type");
-        if ("start".equals(type)) {
-            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                    + ": 🎮 Received 'start' message to launch GameActivity");
+        if ("start".equals(remoteMessage.getData().get("type"))) {
 
             String matchPath = remoteMessage.getData().get("matchPath");
             if (matchPath == null) {
-                Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                        + ": ⚠️ 'start' message missing matchPath");
+                Log.w("TAG_Soccer", "⚠️ 'start' message missing matchPath");
                 return;
             }
 
-            // Get nickname from local storage
-            SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
+            SharedPreferences prefs =
+                    getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
             String localNickname = prefs.getString("nickname", "Unknown");
 
-            Intent gameIntent = new Intent(this, piotr_gorczynski.soccer2.GameActivity.class)
-                .putExtra("GameType", 3)
-                .putExtra("matchPath", matchPath)
-                .putExtra("localNickname", localNickname)
-                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP
-                    | Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    | Intent.FLAG_ACTIVITY_NEW_TASK);
+            // NEW: ask Firestore whether the match is still running
+            maybeLaunchGame(matchPath, localNickname);
 
-            startActivity(gameIntent);
-            return; // exit early so we don’t build a notification for this
+            return;  // don’t create a notification for “start”
         }
 
         Context context = getApplicationContext();

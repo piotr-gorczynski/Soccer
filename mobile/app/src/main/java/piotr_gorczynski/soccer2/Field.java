@@ -392,7 +392,7 @@ public class Field {
 
         } else {
             if (gameType == 1) {
-                textTop = "Opponent move...";  // could be improved, but likely shared screen
+                textTop = "Your move...";  // could be improved, but likely shared screen
             } else if (gameType == 2) {
                 textTop = "Thinking...";
             } else  {
