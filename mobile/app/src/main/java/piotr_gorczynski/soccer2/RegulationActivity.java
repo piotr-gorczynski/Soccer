@@ -46,9 +46,11 @@ public class RegulationActivity extends AppCompatActivity {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         if (!TextUtils.isEmpty(regulationId)) {
+            FirebaseUser authUser = FirebaseAuth.getInstance().getCurrentUser();
             Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
                     Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
-                    ": querying regulation from Firestore");
+                    ": querying regulation from Firestore, currentUser=" +
+                    (authUser != null ? authUser.getUid() : "null"));
             db.collection("regulations").document(regulationId).get()
                     .addOnSuccessListener(doc -> {
                         if (doc.exists()) {
