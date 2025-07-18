@@ -38,8 +38,14 @@ public class TournamentsActivity extends AppCompatActivity {
         List<DocumentSnapshot> runningDocs = new ArrayList<>();
         List<DocumentSnapshot> endedDocs = new ArrayList<>();
 
-        TournamentAdapter registeringAdapter = new TournamentAdapter(registeringDocs, this::joinTournament);
-        TournamentAdapter runningAdapter = new TournamentAdapter(runningDocs, this::joinTournament);
+        TournamentAdapter registeringAdapter = new TournamentAdapter(
+                registeringDocs,
+                (TournamentAdapter.OnJoinClick) this::joinTournament
+        );
+        TournamentAdapter runningAdapter = new TournamentAdapter(
+                runningDocs,
+                (TournamentAdapter.OnJoinClick) this::joinTournament
+        );
         TournamentAdapter endedAdapter = new TournamentAdapter(
                 endedDocs,
                 (TournamentAdapter.OnEndedClick) doc -> {
