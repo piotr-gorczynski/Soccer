@@ -25,7 +25,7 @@ This implementation adds backend service availability checking to the Soccer mob
 ## Configuration
 
 ### Project ID
-- Default: "soccer-dev" (based on GCP naming pattern from test files)
+- Default: "soccer-dev-1744877837" (matching the Cloud Build environment)
 - Can be configured via `BackendServiceChecker.setProjectId(String)`
 - Stored in SharedPreferences for persistence
 
