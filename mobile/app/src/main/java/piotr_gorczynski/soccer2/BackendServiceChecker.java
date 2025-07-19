@@ -27,7 +27,9 @@ public class BackendServiceChecker {
     
     private static final String TAG = "BackendServiceChecker";
     private static final String SERVICE_URL_TEMPLATE = "https://us-central1-%s.cloudfunctions.net/service-check";
-    private static final String DEFAULT_PROJECT_ID = "soccer-dev"; // Based on pattern from test_service_check.yaml
+    // Default project ID used when no value is configured. This should match the
+    // Cloud Build environment used for automated tests.
+    private static final String DEFAULT_PROJECT_ID = "soccer-dev-1744877837";
     private static final int TIMEOUT_SECONDS = 10;
     private static final int MAX_RETRIES = 1; // Simple retry logic
     
