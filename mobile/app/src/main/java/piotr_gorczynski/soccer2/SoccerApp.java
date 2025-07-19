@@ -344,7 +344,10 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         
         if (existingProjectId == null || existingProjectId.isEmpty()) {
             // Set default project ID based on expected pattern
-            String defaultProjectId = "soccer-dev";
+            // Use the default project ID that matches our Cloud Build
+            // environment. This ensures the service-check function URL is
+            // correct on fresh installs.
+            String defaultProjectId = "soccer-dev-1744877837";
             serviceChecker.setProjectId(defaultProjectId);
             Log.d("TAG_Soccer", "Configured default project ID: " + defaultProjectId);
         }
