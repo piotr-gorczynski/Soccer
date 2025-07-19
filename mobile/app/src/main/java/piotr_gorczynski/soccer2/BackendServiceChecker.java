@@ -7,6 +7,10 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import org.json.JSONObject;
 
@@ -84,27 +88,45 @@ public class BackendServiceChecker {
             Log.d(TAG, "No secret key available, proceeding without authentication");
         }
         
-        Request request = requestBuilder.build();
-        
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            Log.d(TAG, "Fetching ID token for authenticated request");
+            user.getIdToken(false)
+                .addOnSuccessListener(tokenResult -> {
+                    requestBuilder.addHeader("Authorization", "Bearer " + tokenResult.getToken());
+                    Log.d(TAG, "Added Authorization header");
+                    performRequest(requestBuilder.build(), callback, retryCount);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Failed to obtain ID token", e);
+                    performRequest(requestBuilder.build(), callback, retryCount);
+                });
+        } else {
+            Log.d(TAG, "No signed-in user; sending request without Authorization header");
+            performRequest(requestBuilder.build(), callback, retryCount);
+        }
+    }
+
+    private void performRequest(@NonNull Request request,
+                                @NonNull ServiceCheckCallback callback,
+                                int retryCount) {
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
                 Log.e(TAG, "Service check failed (attempt " + (retryCount + 1) + "): " + e.getMessage(), e);
-                
+
                 // Retry logic for network failures
-                if (retryCount < MAX_RETRIES && (e instanceof java.net.SocketTimeoutException || 
+                if (retryCount < MAX_RETRIES && (e instanceof java.net.SocketTimeoutException ||
                                                 e instanceof java.net.ConnectException ||
                                                 e instanceof java.net.UnknownHostException)) {
                     Log.d(TAG, "Retrying service check in 2 seconds...");
-                    // Simple delay before retry
-                    new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
-                        checkServiceAvailabilityWithRetry(callback, retryCount + 1);
-                    }, 2000);
+                    new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() ->
+                            checkServiceAvailabilityWithRetry(callback, retryCount + 1), 2000);
                 } else {
                     callback.onServiceUnavailable("Network error: " + e.getMessage());
                 }
             }
-            
+
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) {
                 try {
