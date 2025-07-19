@@ -6,6 +6,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.google.firebase.FirebaseApp;
+
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -165,20 +167,21 @@ public class BackendServiceChecker {
             return projectId;
         }
         
-        // Try common patterns based on test_service_check.yaml
-        String[] candidateProjects = {
-            "soccer-dev",     // Most likely based on the pattern
-            "soccer-prod",    // Production variant
-            "soccer",         // Simple name
-            DEFAULT_PROJECT_ID
-        };
-        
-        // For now, just use the first candidate
-        // This could be enhanced to actually test each URL
-        projectId = candidateProjects[0];
-        Log.d(TAG, "Using default project ID pattern: " + projectId);
-        
-        return projectId;
+        try {
+            FirebaseApp app = FirebaseApp.initializeApp(context);
+            if (app != null && app.getOptions() != null) {
+                String firebaseProjectId = app.getOptions().getProjectId();
+                if (firebaseProjectId != null && !firebaseProjectId.isEmpty()) {
+                    Log.d(TAG, "Using Firebase project ID: " + firebaseProjectId);
+                    return firebaseProjectId;
+                }
+            }
+        } catch (IllegalStateException e) {
+            Log.w(TAG, "FirebaseApp not initialized", e);
+        }
+
+        Log.d(TAG, "Using default project ID pattern: " + DEFAULT_PROJECT_ID);
+        return DEFAULT_PROJECT_ID;
     }
     
     /**
