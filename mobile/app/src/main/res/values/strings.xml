@@ -86,4 +86,5 @@
     <string name="regulation_not_found">Regulation not found.</string>
     <string name="regulation_load_error">Failed to load regulation.</string>
     <string name="regulation_auth_required">Please log in to view the regulation.</string>
+    <string name="server_unavailable">Server Unavailable</string>
 </resources>

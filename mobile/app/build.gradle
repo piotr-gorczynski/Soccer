@@ -81,6 +81,9 @@ dependencies {
 
     implementation "androidx.lifecycle:lifecycle-process:2.9.1"
     implementation "androidx.lifecycle:lifecycle-common-java8:2.9.1"
+    
+    // HTTP client for backend service checks
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
 }
 
 import java.nio.file.Files

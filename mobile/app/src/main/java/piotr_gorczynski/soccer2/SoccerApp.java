@@ -35,6 +35,8 @@ import androidx.lifecycle.LifecycleOwner;
 public class SoccerApp extends Application implements DefaultLifecycleObserver {
 
     private DatabaseReference userStatusDbRef;
+    private BackendServiceChecker serviceChecker;
+    private boolean isBackendAvailable = true; // assume available initially
 
     /* Creates {state:"online", last_heartbeat:TS} */
     private static Map<String,Object> buildOnline() {
@@ -68,6 +70,13 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         super.onCreate();
 
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
+        
+        // Initialize backend service checker
+        serviceChecker = new BackendServiceChecker(this);
+        
+        // Configure default project ID if needed
+        // This could be moved to a configuration activity later
+        configureDefaultProjectId();
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -149,6 +158,10 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     @Override public void onStart(@NonNull LifecycleOwner owner) {
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                 + ": APP RETURNS TO FOREGROUND");
+        
+        // Check backend availability when app returns to foreground
+        checkBackendAvailability();
+        
         if (userStatusDbRef == null) return;             // ← ADD
         FirebaseDatabase.getInstance().goOnline();
         cancelHeartbeat();
@@ -270,6 +283,84 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                 .addOnFailureListener(e ->
                         Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                                 + ": ❌ could not mark offline", e));
+    }
+
+    /**
+     * Check backend service availability
+     */
+    private void checkBackendAvailability() {
+        if (serviceChecker == null) return;
+        
+        Log.d("TAG_Soccer", "Checking backend service availability");
+        serviceChecker.checkServiceAvailability(new BackendServiceChecker.ServiceCheckCallback() {
+            @Override
+            public void onServiceAvailable() {
+                Log.d("TAG_Soccer", "Backend service is available");
+                isBackendAvailable = true;
+                // Notify any listeners that backend is available
+                notifyBackendAvailabilityChanged(true);
+            }
+
+            @Override
+            public void onServiceUnavailable(String reason) {
+                Log.w("TAG_Soccer", "Backend service is unavailable: " + reason);
+                isBackendAvailable = false;
+                // Notify any listeners that backend is unavailable
+                notifyBackendAvailabilityChanged(false);
+            }
+        });
+    }
+    
+    /**
+     * Get current backend availability status
+     */
+    public boolean isBackendAvailable() {
+        return isBackendAvailable;
+    }
+    
+    /**
+     * Get the backend service checker instance
+     */
+    public BackendServiceChecker getServiceChecker() {
+        return serviceChecker;
+    }
+    
+    /**
+     * Notify listeners about backend availability changes
+     * This can be enhanced with proper event bus or observer pattern
+     */
+    private void notifyBackendAvailabilityChanged(boolean available) {
+        // For now, we'll let activities query the state directly
+        // This could be enhanced with a proper event system if needed
+        Log.d("TAG_Soccer", "Backend availability changed: " + available);
+    }
+    
+    /**
+     * Configure default project ID if not already set
+     */
+    private void configureDefaultProjectId() {
+        SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
+        String existingProjectId = prefs.getString("backend_project_id", null);
+        
+        if (existingProjectId == null || existingProjectId.isEmpty()) {
+            // Set default project ID based on expected pattern
+            String defaultProjectId = "soccer-dev";
+            serviceChecker.setProjectId(defaultProjectId);
+            Log.d("TAG_Soccer", "Configured default project ID: " + defaultProjectId);
+        }
+    }
+    
+    /**
+     * Debug method to manually test backend service availability
+     * Can be called from debugging sessions
+     */
+    public void debugTestBackendService() {
+        Log.d("TAG_Soccer", "=== DEBUG: Testing Backend Service ===");
+        if (serviceChecker != null) {
+            serviceChecker.testServiceCheck();
+        } else {
+            Log.e("TAG_Soccer", "Service checker not initialized");
+        }
     }
 
 
