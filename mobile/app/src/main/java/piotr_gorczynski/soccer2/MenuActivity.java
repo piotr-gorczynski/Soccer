@@ -40,6 +40,9 @@ public class MenuActivity extends AppCompatActivity {
     private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 101;
 
     private static final String PREF_FCM_TOKEN = "fcmToken";
+    
+    private boolean isBackendAvailable = true; // Track backend availability
+    private BackendServiceChecker serviceChecker;
 
     /* ───────────── misc tasks that must always run on launch ───────────── */
     private void runHousekeeping() {
@@ -96,6 +99,10 @@ public class MenuActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        
+        // Check backend availability when activity resumes
+        checkBackendAvailability();
+        
         SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
         String nickname = prefs.getString("nickname", null);
 
@@ -108,6 +115,19 @@ public class MenuActivity extends AppCompatActivity {
             nicknameLabel.setText(getString(R.string.welcome_to_soccer));
         }
         updateUiForAuthState();
+        
+        // Add debug functionality - long press on settings button to manually test backend
+        Button settingsBtn = findViewById(R.id.Settings);
+        if (settingsBtn != null) {
+            settingsBtn.setOnLongClickListener(v -> {
+                Log.d("TAG_Soccer", "Manual backend test triggered via long press");
+                if (serviceChecker != null) {
+                    serviceChecker.testServiceCheck();
+                    Toast.makeText(this, "Backend test started - check logs", Toast.LENGTH_SHORT).show();
+                }
+                return true;
+            });
+        }
     }
 
     private void updateUiForAuthState() {
@@ -118,18 +138,45 @@ public class MenuActivity extends AppCompatActivity {
         Button tournamentsBtn = findViewById(R.id.openTournamentsBtn);
         Button accountBtn = findViewById(R.id.Account);
 
-        // 1) Enable or disable the three feature buttons
+        // Check if backend is available - if not, disable ALL buttons
+        if (!isBackendAvailable) {
+            // Disable all buttons when backend is unavailable
+            inviteBtn.setEnabled(false);
+            pendingBtn.setEnabled(false);
+            tournamentsBtn.setEnabled(false);
+            accountBtn.setEnabled(false);
+            
+            // Visual cue (dim all buttons)
+            float disabledAlpha = 0.3f;
+            inviteBtn.setAlpha(disabledAlpha);
+            pendingBtn.setAlpha(disabledAlpha);
+            tournamentsBtn.setAlpha(disabledAlpha);
+            accountBtn.setAlpha(disabledAlpha);
+            
+            // Show that we're checking or unavailable
+            accountBtn.setText(R.string.server_unavailable);
+            accountBtn.setOnClickListener(null);
+            
+            return; // Skip the normal auth-based logic
+        }
+
+        // Backend is available - proceed with normal auth-based logic
+        // 1) Enable or disable the three feature buttons based on login status
         inviteBtn.setEnabled(loggedIn);
         pendingBtn.setEnabled(loggedIn);
         tournamentsBtn.setEnabled(loggedIn);
 
-        // Optional: visual cue (dim when disabled)
+        // Optional: visual cue (dim when disabled due to not being logged in)
         float alpha = loggedIn ? 1f : 0.4f;
         inviteBtn.setAlpha(alpha);
         pendingBtn.setAlpha(alpha);
         tournamentsBtn.setAlpha(alpha);
+        
+        // Account button is always enabled when backend is available
+        accountBtn.setEnabled(true);
+        accountBtn.setAlpha(1f);
 
-        // 2) Update the Account / Logout button text + handler (your Option A code)
+        // 2) Update the Account / Logout button text + handler 
         if (loggedIn) {
             accountBtn.setText(R.string.logout);
             accountBtn.setOnClickListener(v -> performLogout());
@@ -169,6 +216,16 @@ public class MenuActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         /* ① Inflate the view immediately so onResume() has valid widgets */
         setContentView(R.layout.activity_menu);
+
+        // Initialize backend service checker
+        SoccerApp app = (SoccerApp) getApplication();
+        serviceChecker = app.getServiceChecker();
+        
+        // Get initial backend availability state from the app
+        isBackendAvailable = app.isBackendAvailable();
+        
+        // Check backend availability on app launch
+        checkBackendAvailability();
 
         runHousekeeping();          // ← always executed, even on cold resume
 
@@ -337,6 +394,50 @@ public class MenuActivity extends AppCompatActivity {
 
     public void OpenTournaments(View view) {
         startActivity(new Intent(this, TournamentsActivity.class));
+    }
+
+    /**
+     * Check backend service availability and update UI accordingly
+     */
+    private void checkBackendAvailability() {
+        if (serviceChecker == null) {
+            Log.w("TAG_Soccer", "Service checker not available, assuming backend is available");
+            isBackendAvailable = true;
+            updateUiForAuthState();
+            return;
+        }
+        
+        Log.d("TAG_Soccer", "Checking backend availability from MenuActivity");
+        
+        // Show a brief checking state (optional)
+        runOnUiThread(() -> {
+            // Could add a progress indicator here if desired
+            Log.d("TAG_Soccer", "Starting backend availability check...");
+        });
+        
+        serviceChecker.checkServiceAvailability(new BackendServiceChecker.ServiceCheckCallback() {
+            @Override
+            public void onServiceAvailable() {
+                Log.d("TAG_Soccer", "Backend is available - enabling UI");
+                runOnUiThread(() -> {
+                    isBackendAvailable = true;
+                    updateUiForAuthState();
+                });
+            }
+
+            @Override
+            public void onServiceUnavailable(String reason) {
+                Log.w("TAG_Soccer", "Backend is unavailable: " + reason);
+                runOnUiThread(() -> {
+                    isBackendAvailable = false;
+                    updateUiForAuthState();
+                    // Show toast notification about server unavailability
+                    Toast.makeText(MenuActivity.this, 
+                            "We are sorry, but the Soccer server is not available at the moment...", 
+                            Toast.LENGTH_LONG).show();
+                });
+            }
+        });
     }
 
 }
