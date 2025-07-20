@@ -15,6 +15,9 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
@@ -213,28 +216,38 @@ public class BackendServiceChecker {
      * This could be enhanced to read from secure storage
      */
     private String getSecretKey() {
-        // For now, return null to skip authentication
-        // This can be enhanced later for better security
         SharedPreferences prefs = context.getSharedPreferences(
                 context.getPackageName() + "_preferences", Context.MODE_PRIVATE);
 
         String raw = prefs.getString("backend_secret_key", null);
-        if (raw == null) {
-            Log.d(TAG, "No secret key stored in preferences");
-            return null;
+        if (raw != null) {
+            String trimmed = raw.trim();
+            if (!trimmed.equals(raw)) {
+                Log.d(TAG, "Secret key contained surrounding whitespace; trimmed");
+            }
+            if (!trimmed.isEmpty()) {
+                Log.d(TAG, "Retrieved secret key of length " + trimmed.length());
+                return trimmed;
+            }
+            Log.d(TAG, "Secret key was empty after trimming");
+        } else {
+            Log.d(TAG, "No secret key stored in preferences; attempting to load from assets");
+            try (InputStream is = context.getAssets().open("soccer_secret_key");
+                 BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+                String line = reader.readLine();
+                if (line != null) {
+                    String trimmed = line.trim();
+                    if (!trimmed.isEmpty()) {
+                        prefs.edit().putString("backend_secret_key", trimmed).apply();
+                        Log.d(TAG, "Loaded secret key from asset");
+                        return trimmed;
+                    }
+                }
+                Log.d(TAG, "soccer_secret_key asset was empty");
+            } catch (IOException e) {
+                Log.d(TAG, "soccer_secret_key asset not found", e);
+            }
         }
-
-        String trimmed = raw.trim();
-        if (!trimmed.equals(raw)) {
-            Log.d(TAG, "Secret key contained surrounding whitespace; trimmed");
-        }
-
-        if (!trimmed.isEmpty()) {
-            Log.d(TAG, "Retrieved secret key of length " + trimmed.length());
-            return trimmed;
-        }
-
-        Log.d(TAG, "Secret key was empty after trimming");
         return null;
     }
     
