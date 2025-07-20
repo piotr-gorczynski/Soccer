@@ -29,6 +29,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.stream.Collectors;
 
 import androidx.lifecycle.LifecycleOwner;
 
@@ -73,6 +78,9 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         
         // Initialize backend service checker
         serviceChecker = new BackendServiceChecker(this);
+
+        // Load secret key from assets if available
+        loadSecretKeyFromAssets();
         
         // Configure default project ID if needed
         // This could be moved to a configuration activity later
@@ -347,6 +355,22 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
             String defaultProjectId = "soccer-dev";
             serviceChecker.setProjectId(defaultProjectId);
             Log.d("TAG_Soccer", "Configured default project ID: " + defaultProjectId);
+        }
+    }
+
+    /**
+     * Load secret key from assets and configure the service checker
+     */
+    private void loadSecretKeyFromAssets() {
+        try (InputStream is = getAssets().open("soccer_secret_key")) {
+            String key = new BufferedReader(new InputStreamReader(is))
+                    .lines()
+                    .collect(Collectors.joining());
+            String trimmed = key.trim();
+            Log.d("TAG_Soccer", "Secret key value: " + trimmed);
+            serviceChecker.setSecretKey(trimmed);
+        } catch (IOException e) {
+            Log.w("TAG_Soccer", "Failed to load secret key from assets", e);
         }
     }
     
