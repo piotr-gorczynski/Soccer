@@ -102,9 +102,31 @@ tasks.register("copyGoogleServicesJson") {
     }
 }
 
+// Copy the backend secret key from the secrets repository into assets
+tasks.register("copySoccerSecretKey") {
+    doLast {
+        def source = file("../../secrets/soccer_secret_key")
+        def assetsDir = file("src/main/assets")
+        def destination = new File(assetsDir, "soccer_secret_key")
+
+        if (source.exists()) {
+            if (!assetsDir.exists()) {
+                assetsDir.mkdirs()
+            }
+            Files.copy(source.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING)
+            println("✅ soccer_secret_key copied to assets/")
+        } else {
+            throw new GradleException("❌ soccer_secret_key not found in secrets/")
+        }
+    }
+}
+
 // Hook into the Firebase task *after* all plugins are applied
 afterEvaluate {
     tasks.matching { it.name == "processDebugGoogleServices" }.configureEach {
         dependsOn("copyGoogleServicesJson")
+    }
+    tasks.matching { it.name == "preBuild" }.configureEach {
+        dependsOn("copySoccerSecretKey")
     }
 }
