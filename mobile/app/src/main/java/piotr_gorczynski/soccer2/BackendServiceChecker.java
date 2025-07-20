@@ -217,8 +217,25 @@ public class BackendServiceChecker {
         // This can be enhanced later for better security
         SharedPreferences prefs = context.getSharedPreferences(
                 context.getPackageName() + "_preferences", Context.MODE_PRIVATE);
-        
-        return prefs.getString("backend_secret_key", null);
+
+        String raw = prefs.getString("backend_secret_key", null);
+        if (raw == null) {
+            Log.d(TAG, "No secret key stored in preferences");
+            return null;
+        }
+
+        String trimmed = raw.trim();
+        if (!trimmed.equals(raw)) {
+            Log.d(TAG, "Secret key contained surrounding whitespace; trimmed");
+        }
+
+        if (!trimmed.isEmpty()) {
+            Log.d(TAG, "Retrieved secret key of length " + trimmed.length());
+            return trimmed;
+        }
+
+        Log.d(TAG, "Secret key was empty after trimming");
+        return null;
     }
     
     /**
@@ -237,7 +254,11 @@ public class BackendServiceChecker {
     public void setSecretKey(String secretKey) {
         SharedPreferences prefs = context.getSharedPreferences(
                 context.getPackageName() + "_preferences", Context.MODE_PRIVATE);
-        prefs.edit().putString("backend_secret_key", secretKey).apply();
+        String trimmed = secretKey != null ? secretKey.trim() : null;
+        prefs.edit().putString("backend_secret_key", trimmed).apply();
+        if (trimmed != null && !trimmed.equals(secretKey)) {
+            Log.d(TAG, "Secret key trimmed before saving");
+        }
         Log.d(TAG, "Secret key updated");
     }
     
