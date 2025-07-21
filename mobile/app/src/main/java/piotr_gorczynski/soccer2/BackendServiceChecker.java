@@ -90,7 +90,7 @@ public class BackendServiceChecker {
         String secretKey = getSecretKey();
         if (secretKey != null && !secretKey.isEmpty()) {
             requestBuilder.addHeader("X-Secret-Key", secretKey);
-            Log.d(TAG, "Added X-Secret-Key header using key: " + secretKey);
+            Log.d(TAG, "Added X-Secret-Key header");
         } else {
             Log.d(TAG, "No secret key available, proceeding without authentication");
         }
@@ -231,7 +231,6 @@ public class BackendServiceChecker {
             }
             if (!trimmed.isEmpty()) {
                 Log.d(TAG, "Retrieved secret key of length " + trimmed.length());
-                Log.d(TAG, "Secret key value: " + trimmed);
                 return trimmed;
             }
             Log.d(TAG, "Secret key was empty after trimming");
@@ -244,7 +243,7 @@ public class BackendServiceChecker {
                     String trimmed = line.trim();
                     if (!trimmed.isEmpty()) {
                         prefs.edit().putString("backend_secret_key", trimmed).apply();
-                        Log.d(TAG, "Loaded secret key from asset: " + trimmed);
+                        Log.d(TAG, "Loaded secret key from asset");
                         return trimmed;
                     }
                 }
@@ -278,7 +277,7 @@ public class BackendServiceChecker {
         if (trimmed != null && !trimmed.equals(secretKey)) {
             Log.d(TAG, "Secret key trimmed before saving");
         }
-        Log.d(TAG, "Secret key updated: " + trimmed);
+        Log.d(TAG, "Secret key updated");
     }
     
     /**
