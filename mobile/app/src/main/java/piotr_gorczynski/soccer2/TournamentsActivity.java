@@ -4,10 +4,14 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import com.google.firebase.auth.FirebaseAuth;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,6 +23,7 @@ import com.google.firebase.functions.FirebaseFunctionsException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class TournamentsActivity extends AppCompatActivity {
 
@@ -27,6 +32,10 @@ public class TournamentsActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tournaments);
+
+        Toolbar toolbar = findViewById(R.id.tournaments_toolbar);
+        setSupportActionBar(toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
         // ── RecyclerView ─────────────────────────────────────────────
         RecyclerView registeringList = findViewById(R.id.registeringList);
@@ -164,6 +173,29 @@ public class TournamentsActivity extends AppCompatActivity {
                         Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.tournaments_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_account) {
+            if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+                startActivity(new Intent(this, LoginActivity.class));
+            } else {
+                startActivity(new Intent(this, AccountActivity.class));
+            }
+            return true;
+        } else if (id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
 
