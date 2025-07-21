@@ -61,13 +61,14 @@ public class TournamentAdapter
 
     // ---------- View-Holder ----------
     public static class VH extends RecyclerView.ViewHolder {
-        final TextView name, slots, endsIn;
+        final TextView name, slots, endsIn, notRegistered;
         final Button   joinBtn, leaveBtn;
         VH(@NonNull View v) {
             super(v);
             name    = v.findViewById(R.id.name);
             slots   = v.findViewById(R.id.slots);
             endsIn  = v.findViewById(R.id.endsIn);
+            notRegistered = v.findViewById(R.id.notRegistered);
             joinBtn = v.findViewById(R.id.joinBtn);
             leaveBtn = v.findViewById(R.id.leaveBtn);
         }
@@ -188,11 +189,38 @@ public class TournamentAdapter
                     endDL.toDate().getTime());
 
             h.endsIn.setText(endsText);
+            h.notRegistered.setVisibility(View.GONE);
 
-            // ② button: Open
-            h.joinBtn.setEnabled(true);
-            h.leaveBtn.setVisibility(View.GONE);
+            // ② button: Open (enabled only if user joined)
             h.joinBtn.setText(R.string.open);
+            h.leaveBtn.setVisibility(View.GONE);
+            h.joinBtn.setEnabled(false);
+
+            String uid = FirebaseAuth.getInstance().getCurrentUser() != null
+                    ? FirebaseAuth.getInstance().getCurrentUser().getUid()
+                    : null;
+
+            if (uid != null) {
+                FirebaseFirestore.getInstance()
+                        .collection("tournaments").document(tid)
+                        .collection("participants").document(uid)
+                        .get().addOnSuccessListener(p -> {
+                            boolean joinedAlready = p.exists();
+                            if (joinedAlready) {
+                                h.joinBtn.setEnabled(true);
+                                h.notRegistered.setVisibility(View.GONE);
+                            } else {
+                                h.joinBtn.setVisibility(View.GONE);
+                                h.notRegistered.setText(R.string.not_registered);
+                                h.notRegistered.setVisibility(View.VISIBLE);
+                            }
+                        });
+            } else {
+                h.joinBtn.setVisibility(View.GONE);
+                h.notRegistered.setText(R.string.not_registered);
+                h.notRegistered.setVisibility(View.VISIBLE);
+            }
+
             h.joinBtn.setOnClickListener(v -> {
                 Intent i = new Intent(v.getContext(), TournamentLobbyActivity.class)
                         .putExtra("tournamentId", tid);
