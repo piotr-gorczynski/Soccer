@@ -20,7 +20,7 @@ def get_secret():
         name = "projects/690882718361/secrets/soccer_secret_key/versions/latest"
         response = client.access_secret_version(name=name)
         secret = response.payload.data.decode("UTF-8").strip()
-        logging.info(f"Retrieved secret key successfully: |{secret}|")  
+        logging.info("Retrieved secret key successfully")
         return secret
     except Exception as e:
         logging.error(f"Failed to retrieve secret: {e}")
@@ -37,9 +37,9 @@ def service_check(request):
             logging.warning("X-Secret-Key header is missing")
             return Response(jsonify({"error": "Missing secret key"}).data, status=400, mimetype="application/json")
 
-        # Log the provided secret key from headers
+        # Retrieve the provided secret key from headers
         provided_key = request.headers['X-Secret-Key']
-        logging.info(f"X-Secret-Key from headers: |{provided_key}|")
+        logging.info("X-Secret-Key header received")
 
         # Verify the provided key
         if provided_key != secret_key:
