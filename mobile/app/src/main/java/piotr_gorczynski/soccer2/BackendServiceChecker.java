@@ -32,7 +32,11 @@ import okhttp3.Response;
  */
 public class BackendServiceChecker {
     
-    private static final String TAG = "BackendServiceChecker";
+    // Use the same tag across the app so that all debug messages
+    // can be viewed with a single filter in Logcat. Other classes
+    // log using the literal string "TAG_Soccer", so we do the same
+    // here for consistency.
+    private static final String TAG = "TAG_Soccer";
     private static final String SERVICE_URL_TEMPLATE = "https://us-central1-%s.cloudfunctions.net/service-check";
     // Default project ID used when no value is configured. This should match the
     // Cloud Build environment used for automated tests.
