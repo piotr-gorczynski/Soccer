@@ -50,6 +50,7 @@ steps:
             --entry-point=service_check \
             --runtime=${_RUNTIME} \
             --trigger-http \
+            --gen2 \
             --region=${_REGION} \
             --source=${_SOURCE_PATH} \
             --timeout=540s || {
@@ -69,11 +70,10 @@ steps:
         project_id=$(cat /workspace/project_name.txt)
 
         echo "Granting invoker role to allUsers for '${_FUNCTION_NAME}'..."
-        gcloud functions add-iam-policy-binding ${_FUNCTION_NAME} \
+        gcloud functions add-invoker-policy-binding ${_FUNCTION_NAME} \
           --region=${_REGION} \
           --project="$project_id" \
-          --member="allUsers" \
-          --role="roles/cloudfunctions.invoker"
+          --member="allUsers"
 
         echo "IAM policy binding applied."
 
