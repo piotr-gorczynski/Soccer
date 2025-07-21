@@ -5,6 +5,9 @@ import android.app.NotificationManager;
 import android.content.Intent;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -115,19 +118,6 @@ public class MenuActivity extends AppCompatActivity {
             nicknameLabel.setText(getString(R.string.welcome_to_soccer));
         }
         updateUiForAuthState();
-        
-        // Add debug functionality - long press on settings button to manually test backend
-        Button settingsBtn = findViewById(R.id.Settings);
-        if (settingsBtn != null) {
-            settingsBtn.setOnLongClickListener(v -> {
-                Log.d("TAG_Soccer", "Manual backend test triggered via long press");
-                if (serviceChecker != null) {
-                    serviceChecker.testServiceCheck();
-                    Toast.makeText(this, "Backend test started - check logs", Toast.LENGTH_SHORT).show();
-                }
-                return true;
-            });
-        }
     }
 
     private void updateUiForAuthState() {
@@ -136,7 +126,6 @@ public class MenuActivity extends AppCompatActivity {
         Button inviteBtn = findViewById(R.id.InviteFriend);
         Button pendingBtn = findViewById(R.id.ShowInvites);
         Button tournamentsBtn = findViewById(R.id.openTournamentsBtn);
-        Button accountBtn = findViewById(R.id.Account);
 
         // Check if backend is available - if not, disable ALL buttons
         if (!isBackendAvailable) {
@@ -144,19 +133,13 @@ public class MenuActivity extends AppCompatActivity {
             inviteBtn.setEnabled(false);
             pendingBtn.setEnabled(false);
             tournamentsBtn.setEnabled(false);
-            accountBtn.setEnabled(false);
             
             // Visual cue (dim all buttons)
             float disabledAlpha = 0.3f;
             inviteBtn.setAlpha(disabledAlpha);
             pendingBtn.setAlpha(disabledAlpha);
             tournamentsBtn.setAlpha(disabledAlpha);
-            accountBtn.setAlpha(disabledAlpha);
-            
-            // Show that we're checking or unavailable
-            accountBtn.setText(R.string.server_unavailable);
-            accountBtn.setOnClickListener(null);
-            
+
             return; // Skip the normal auth-based logic
         }
 
@@ -171,44 +154,8 @@ public class MenuActivity extends AppCompatActivity {
         inviteBtn.setAlpha(alpha);
         pendingBtn.setAlpha(alpha);
         tournamentsBtn.setAlpha(alpha);
-        
-        // Account button is always enabled when backend is available
-        accountBtn.setEnabled(true);
-        accountBtn.setAlpha(1f);
-
-        // 2) Update the Account / Logout button text + handler 
-        if (loggedIn) {
-            accountBtn.setText(R.string.logout);
-            accountBtn.setOnClickListener(v -> performLogout());
-        } else {
-            accountBtn.setText(R.string.login);
-            accountBtn.setOnClickListener(this::OpenAccount);
-        }
     }
 
-    private void performLogout() {
-
-        String uid = FirebaseAuth.getInstance().getUid();
-        if (uid == null) {          // safety net – should never be null here
-            finishLogoutUi();
-            return;
-        }
-
-        ((SoccerApp) getApplication()).forceUserOffline(uid).addOnCompleteListener(task -> {
-            FirebaseAuth.getInstance().signOut();   // <-- now it’s safe
-            finishLogoutUi();
-        });
-    }
-
-    private void finishLogoutUi() {
-        SharedPreferences.Editor ed = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE).edit();
-        ed.clear().apply();                          // clears token + other cache
-
-        Toast.makeText(this, R.string.logged_out, Toast.LENGTH_SHORT).show();
-        TextView nicknameLabel = findViewById(R.id.nicknameLabel);
-        nicknameLabel.setText(getString(R.string.welcome_to_soccer));
-        updateUiForAuthState();      // dim buttons, “Login” label, etc.
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -216,6 +163,9 @@ public class MenuActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         /* ① Inflate the view immediately so onResume() has valid widgets */
         setContentView(R.layout.activity_menu);
+
+        Toolbar toolbar = findViewById(R.id.menu_toolbar);
+        setSupportActionBar(toolbar);
 
         // Initialize backend service checker
         SoccerApp app = (SoccerApp) getApplication();
@@ -363,16 +313,7 @@ public class MenuActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void OpenSettings(View view) {
-        // Do something in response to button
-        Intent intent = new Intent(this, SettingsActivity.class);
-        startActivity(intent);
-    }
 
-    public void OpenAccount(View view) {
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
-    }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -394,6 +335,29 @@ public class MenuActivity extends AppCompatActivity {
 
     public void OpenTournaments(View view) {
         startActivity(new Intent(this, TournamentsActivity.class));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.tournaments_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_account) {
+            if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+                startActivity(new Intent(this, LoginActivity.class));
+            } else {
+                startActivity(new Intent(this, AccountActivity.class));
+            }
+            return true;
+        } else if (id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /**
