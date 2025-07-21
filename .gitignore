@@ -31,3 +31,4 @@ Thumbs.db
 /mobile/app/soccer_secret_key
 /mobile/app/src/main/assets/soccer_secret_key
 node_modules/
+**/__pycache__/

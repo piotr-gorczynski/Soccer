@@ -58,5 +58,24 @@ steps:
         }
         echo "Cloud Function '${_FUNCTION_NAME}' deployed successfully."
 
+  # Step 4: Add IAM policy binding to allow allUsers to invoke
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'bind-invoker-role'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -e
+        project_id=$(cat /workspace/project_name.txt)
+
+        echo "Granting invoker role to allUsers for '${_FUNCTION_NAME}'..."
+        gcloud functions add-iam-policy-binding ${_FUNCTION_NAME} \
+          --region=${_REGION} \
+          --project="$project_id" \
+          --member="allUsers" \
+          --role="roles/cloudfunctions.invoker"
+
+        echo "IAM policy binding applied."
+
 options:
   logging: CLOUD_LOGGING_ONLY
