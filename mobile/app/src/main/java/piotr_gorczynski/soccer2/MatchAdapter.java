@@ -74,7 +74,13 @@ public class MatchAdapter
 
     private final String tournamentId;
 
-
+    /** return position of the doc that already has this ID, or -1 if none */
+    private int indexForId(@NonNull String docId) {
+        for (int i = 0; i < matches.size(); i++) {
+            if (docId.equals(matches.get(i).getId())) return i;
+        }
+        return -1;
+    }
     MatchAdapter(@NonNull Context context,
                  @NonNull String  myUid,
                  @NonNull String  tournamentId) {
@@ -360,7 +366,22 @@ public class MatchAdapter
     @Override public int getItemCount() { return matches.size(); }
 
     /* public helpers for the listener */
-    void add(int idx, DocumentSnapshot d) { matches.add(idx, d); notifyItemInserted(idx); }
+    void add(int incomingIdx, @NonNull DocumentSnapshot d) {
+        int currentPos = indexForId(d.getId());
+
+        if (currentPos != -1) {                     // ← already in the list
+            if (currentPos == incomingIdx) {        // position unchanged
+                set(currentPos, d);                 // just refresh row
+            } else {                                // position changed → move it
+                move(currentPos, incomingIdx, d);
+            }
+            return;                                 // ✅ no duplicate inserted
+        }
+
+        // truly new document
+        matches.add(incomingIdx, d);
+        notifyItemInserted(incomingIdx);
+    }
     void set(int idx, DocumentSnapshot d){
         matches.set(idx, d);
         notifyItemChanged(idx);
