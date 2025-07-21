@@ -87,5 +87,12 @@
     <string name="regulation_load_error">Failed to load regulation.</string>
     <string name="regulation_auth_required">Please log in to view the regulation.</string>
     <string name="server_unavailable">Server Unavailable</string>
+
+    <!-- Account strings -->
+    <string name="account">Account</string>
+    <string name="nickname_label">Nickname: %1$s</string>
+    <string name="email_label">Email: %1$s</string>
+
     <string name="not_registered">You are not registered for this tournament.</string>
+
 </resources>
