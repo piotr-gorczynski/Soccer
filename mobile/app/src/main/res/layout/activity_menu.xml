@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorWhite"
     android:orientation="vertical"
-    android:gravity="center"
+    android:gravity="center_horizontal"
     android:padding="20dp">
 
     <androidx.appcompat.widget.Toolbar
