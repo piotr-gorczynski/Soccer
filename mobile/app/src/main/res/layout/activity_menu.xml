@@ -13,6 +13,13 @@
         android:background="?attr/colorPrimary"
         android:title="@string/app_name"
         android:titleTextColor="@color/colorWhite" />
+    <LinearLayout
+        android:id="@+id/menu_center_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center">
 
     <TextView
         android:id="@+id/nicknameLabel"
@@ -82,6 +89,5 @@
         android:textColor="@color/colorWhite"
         android:textStyle="bold" />
 
-
-
+    </LinearLayout>
 </LinearLayout>
