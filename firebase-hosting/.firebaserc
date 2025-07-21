@@ -1,5 +1,7 @@
 {
   "projects": {
-    "default": "org-service-account-001"
-  }
+    "default": "soccer-ads-hosting"
+  },
+  "targets": {},
+  "etags": {}
 }

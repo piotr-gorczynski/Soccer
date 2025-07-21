@@ -18,6 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QuerySnapshot;
 
+
 import java.util.Objects;
 
 public class TournamentLobbyActivity extends AppCompatActivity {
