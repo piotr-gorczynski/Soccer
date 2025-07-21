@@ -4,14 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/tournaments_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:title="@string/tournaments"
-        android:titleTextColor="@color/colorWhite" />
-
     <ScrollView
         android:layout_width="match_parent"
         android:fillViewport="true"
