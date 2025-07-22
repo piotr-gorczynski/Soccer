@@ -103,5 +103,44 @@ steps:
           exit 1
         fi
 
+  # Step 4: Enable Google, Facebook and Microsoft OAuth Providers
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -e
+        firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
+        access_token=$(cat /workspace/access_token.txt)
+
+        echo "🔑 Attempting to enable Google, Facebook and Microsoft authentication..."
+        patch_response=$(curl -s -w '\n%{http_code}' -X PATCH \
+          -H "Authorization: Bearer $access_token" \
+          -H "X-Goog-User-Project: $firebase_project_id" \
+          -H "Content-Type: application/json" \
+          "https://identitytoolkit.googleapis.com/admin/v2/projects/$firebase_project_id/config?updateMask=signIn.providerConfigs" \
+          -d '{
+            "signIn": {
+              "providerConfigs": [
+                {"provider": "google.com", "enabled": true},
+                {"provider": "facebook.com", "enabled": true},
+                {"provider": "microsoft.com", "enabled": true}
+              ]
+            }
+          }')
+
+        patch_code=$(echo "$patch_response" | tail -n1)
+        patch_body=$(echo "$patch_response" | head -n-1)
+
+        if [[ "$patch_code" == "200" ]]; then
+          echo "✅ OAuth providers successfully enabled."
+          echo "$patch_body"
+        else
+          echo "❌ Failed to enable OAuth providers. HTTP $patch_code"
+          echo "Response body:"
+          echo "$patch_body"
+          exit 1
+        fi
+
 options:
   logging: CLOUD_LOGGING_ONLY
