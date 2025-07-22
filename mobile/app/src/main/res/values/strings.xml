@@ -8,6 +8,8 @@
     <!-- Strings related to Settings -->
 
     <string name="pref_title_level">Android level</string>
+    <string name="pref_title_block_invite_friend">Block \'Invite a Friend\' requests</string>
+    <string name="pref_summary_block_invite_friend">Other players cannot invite you via \'Invite a Friend\' (tournaments not affected)</string>
     <string-array name="pref_level_titles">
         <item>Easy</item>
         <item>Medium</item>
@@ -48,6 +50,8 @@
     <string name="error_searching_user">Error searching user.</string>
     <string name="invitation_sent">Invitation sent!</string>
     <string name="failed_to_send_invite">Failed to send invite.</string>
+    <string name="invite_blocked">%1$s blocked invites.</string>
+    <string name="invites_blocked_notification">Other players cannot invite you via \'Invite a Friend\' function</string>
     <string name="pending_game_invitations">Pending Game Invitations</string>
     <string name="pending_invites">Pending Invites</string>
     <string name="invite_already_sent">You already have another invite pending.</string>
