@@ -46,6 +46,7 @@ public class MenuActivity extends AppCompatActivity {
     
     private boolean isBackendAvailable = true; // Track backend availability
     private BackendServiceChecker serviceChecker;
+    private Menu optionsMenu; // Hold reference to menu for updating warning icon
 
     /* ───────────── misc tasks that must always run on launch ───────────── */
     private void runHousekeeping() {
@@ -118,6 +119,7 @@ public class MenuActivity extends AppCompatActivity {
             nicknameLabel.setText(getString(R.string.welcome_to_soccer));
         }
         updateUiForAuthState();
+        checkAndUpdateBlockedInviteWarning(); // Also check on resume
     }
 
     private void updateUiForAuthState() {
@@ -349,6 +351,8 @@ public class MenuActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.tournaments_menu, menu);
+        this.optionsMenu = menu;
+        checkAndUpdateBlockedInviteWarning(); // Check blocked invite status
         return true;
     }
 
@@ -364,6 +368,10 @@ public class MenuActivity extends AppCompatActivity {
             return true;
         } else if (id == R.id.action_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
+            return true;
+        } else if (id == R.id.action_invite_blocked_warning) {
+            // Show toast explaining the warning
+            Toast.makeText(this, R.string.invites_blocked_notification, Toast.LENGTH_LONG).show();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -411,6 +419,46 @@ public class MenuActivity extends AppCompatActivity {
                 });
             }
         });
+    }
+
+    /**
+     * Check if the current user has blocked invites and show/hide warning icon accordingly
+     */
+    private void checkAndUpdateBlockedInviteWarning() {
+        if (optionsMenu == null) return; // Menu not created yet
+        
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null) {
+            // No user logged in, hide warning
+            MenuItem warningItem = optionsMenu.findItem(R.id.action_invite_blocked_warning);
+            if (warningItem != null) {
+                warningItem.setVisible(false);
+            }
+            return;
+        }
+        
+        FirebaseFirestore.getInstance().collection("users").document(uid)
+            .get()
+            .addOnSuccessListener(doc -> {
+                boolean showWarning = false;
+                if (doc.exists()) {
+                    Boolean blockInvites = doc.getBoolean("blockInviteFriend");
+                    showWarning = blockInvites != null && blockInvites;
+                }
+                
+                MenuItem warningItem = optionsMenu.findItem(R.id.action_invite_blocked_warning);
+                if (warningItem != null) {
+                    warningItem.setVisible(showWarning);
+                }
+            })
+            .addOnFailureListener(e -> {
+                Log.e("TAG_Soccer", "Failed to check blocked invite status", e);
+                // Hide warning on error
+                MenuItem warningItem = optionsMenu.findItem(R.id.action_invite_blocked_warning);
+                if (warningItem != null) {
+                    warningItem.setVisible(false);
+                }
+            });
     }
 
 }
