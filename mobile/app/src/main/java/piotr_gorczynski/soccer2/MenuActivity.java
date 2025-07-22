@@ -18,6 +18,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.ads.AdError;
+import com.google.android.gms.ads.FullScreenContentCallback;
+import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
@@ -36,9 +39,16 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import java.util.Objects;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+
 
 
 public class MenuActivity extends AppCompatActivity {
+    private static final String AD_UNIT_ID = "ca-app-pub-3940256099942544/1033173712"; // test ID
+    private InterstitialAd mInterstitialAd;
 
     private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 101;
 
@@ -228,8 +238,26 @@ public class MenuActivity extends AppCompatActivity {
             return;   // invite-path continues asynchronously
         }        /* no UID (not logged-in) → skip active-match lookup */
         continueWithInviteRestore();
-    }
 
+        MobileAds.initialize(this, initializationStatus -> {});
+        loadInterstitialAd();
+    }
+    private void loadInterstitialAd() {
+        AdRequest adRequest = new AdRequest.Builder().build();
+
+        InterstitialAd.load(this, AD_UNIT_ID, adRequest,
+                new InterstitialAdLoadCallback() {
+                    @Override
+                    public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                        mInterstitialAd = interstitialAd;
+                    }
+
+                    @Override
+                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                        mInterstitialAd = null;
+                    }
+                });
+    }
     /* helper: launch GameActivity then finish this MenuActivity */
     private void startGame(String matchPath, SharedPreferences prefs) {
         startActivity(new Intent(this, GameActivity.class).putExtra("matchPath", matchPath).putExtra("GameType", 3).putExtra("localNickname", prefs.getString("nickname", "Player")).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
@@ -331,8 +359,32 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     public void OpenInviteFriend(View view) {
-        Intent intent = new Intent(this, InviteFriendActivity.class);
-        startActivity(intent);
+        if (mInterstitialAd != null) {
+            mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+                @Override
+                public void onAdDismissedFullScreenContent() {
+                    // Ad closed, now go to InviteFriendActivity
+                    startActivity(new Intent(MenuActivity.this, InviteFriendActivity.class));
+                    loadInterstitialAd(); // preload next one
+                }
+
+                @Override
+                public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
+                    // If the ad fails, still continue
+                    startActivity(new Intent(MenuActivity.this, InviteFriendActivity.class));
+                }
+
+                @Override
+                public void onAdShowedFullScreenContent() {
+                    mInterstitialAd = null;
+                }
+            });
+
+            mInterstitialAd.show(this);
+        } else {
+            Intent intent = new Intent(this, InviteFriendActivity.class);
+            startActivity(intent);
+        }
     }
 
     public void OpenInvites(View view) {
