@@ -9,4 +9,11 @@
             android:entryValues="@array/pref_level_values"
             android:icon="@drawable/ic_bullet" />
 
+        <CheckBoxPreference
+            android:key="block_invite_friend"
+            android:title="@string/pref_title_block_invite_friend"
+            android:summary="@string/pref_summary_block_invite_friend"
+            android:defaultValue="false"
+            android:icon="@drawable/ic_block" />
+
 </PreferenceScreen>

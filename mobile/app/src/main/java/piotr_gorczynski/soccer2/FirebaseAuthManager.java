@@ -111,6 +111,7 @@ public class FirebaseAuthManager {
                         userData.put("nickname", nickname);
                         userData.put("email", email); // optional
                         userData.put("online", true); // optional
+                        userData.put("blockInviteFriend", false); // new field for blocking invites
 
                         db.collection("users").document(uid).set(userData)
                                 .addOnSuccessListener(aVoid ->

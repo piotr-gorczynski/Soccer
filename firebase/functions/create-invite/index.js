@@ -31,6 +31,22 @@ exports.createInvite = functions
       const expireAt = admin.firestore.Timestamp.fromMillis(
                          now.toMillis() + TTL_MIN * 60_000);
 
+      /* ── Check if target user has blocked invites (non-tournament only) ── */
+      if (!tournamentId) {  // Only check for regular "Invite a Friend", not tournaments
+        const targetUserDoc = await tx.get(admin.firestore().collection('users').doc(to));
+        if (targetUserDoc.exists) {
+          const blockInviteFriend = targetUserDoc.data()?.blockInviteFriend;
+          if (blockInviteFriend === true) {
+            // Get target user's nickname for the error message
+            const targetNickname = targetUserDoc.data()?.nickname || 'Player';
+            throw new functions.https.HttpsError(
+              'failed-precondition',
+              `${targetNickname} blocked invites`
+            );
+          }
+        }
+      }
+
       const conflict = await tx.get(
         invitesCol.where('from', '==', from)
                   .where('status', '==', 'pending')
