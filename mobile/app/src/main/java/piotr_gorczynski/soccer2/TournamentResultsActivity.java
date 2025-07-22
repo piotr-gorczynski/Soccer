@@ -95,11 +95,23 @@ public class TournamentResultsActivity extends AppCompatActivity {
                                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                                                 standings.sort(Comparator.comparingInt((StandingEntry e) -> e.wins).reversed());
                                             }
-
+                                            assignMedals(standings);
                                             adapter.notifyDataSetChanged();
                                         });
                             });
                 });
+    }
+
+    private void assignMedals(List<StandingEntry> list) {
+        int category = 1; // 1 gold, 2 silver, 3 bronze
+        int prevWins = -1;
+        for (StandingEntry e : list) {
+            if (prevWins != -1 && e.wins != prevWins) {
+                category += 1;
+            }
+            e.medalCategory = category <= 3 ? category : 0;
+            prevWins = e.wins;
+        }
     }
 
     /** Internal structure for one row */
@@ -107,6 +119,7 @@ public class TournamentResultsActivity extends AppCompatActivity {
         final String uid;
         String nickname;
         int wins = 0;
+        int medalCategory = 0; // 0=none,1=gold,2=silver,3=bronze
 
         StandingEntry(String uid) {
             this.uid = uid;
@@ -145,7 +158,17 @@ public class TournamentResultsActivity extends AppCompatActivity {
         @Override
         public void onBindViewHolder(@NonNull VH holder, int position) {
             StandingEntry entry = data.get(position);
-            holder.rank.setText(String.valueOf(position + 1));
+            String medal = null;
+            switch (entry.medalCategory) {
+                case 1 -> medal = "\uD83E\uDD47"; // 🥇
+                case 2 -> medal = "\uD83E\uDD48"; // 🥈
+                case 3 -> medal = "\uD83E\uDD49"; // 🥉
+            }
+            if (medal != null) {
+                holder.rank.setText(medal);
+            } else {
+                holder.rank.setText(String.valueOf(position + 1));
+            }
             holder.player.setText(entry.nickname != null ? entry.nickname : entry.uid);
             Context context = holder.itemView.getContext();
             String formatted = context.getResources()
