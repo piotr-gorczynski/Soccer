@@ -108,6 +108,7 @@ public class TournamentLobbyActivity extends AppCompatActivity {
                 myUid,
                 requireNonNull(tid)
         );
+        mAdapter.setShowOutcome(true);
         rv.setAdapter(mAdapter);
 
         /* one common handler so we don’t repeat the diff logic */
