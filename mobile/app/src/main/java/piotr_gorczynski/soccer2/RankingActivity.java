@@ -3,6 +3,7 @@ package piotr_gorczynski.soccer2;
 import android.os.Build;
 import android.os.Bundle;
 import android.content.Context;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
