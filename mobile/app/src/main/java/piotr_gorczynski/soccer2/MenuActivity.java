@@ -361,7 +361,7 @@ public class MenuActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.action_account) {
             if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-                startActivity(new Intent(this, LoginActivity.class));
+                startActivity(new Intent(this, UniversalLoginActivity.class));
             } else {
                 startActivity(new Intent(this, AccountActivity.class));
             }

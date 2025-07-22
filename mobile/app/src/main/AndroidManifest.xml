@@ -33,6 +33,7 @@
             android:label="@string/title_activity_settings" />
         <activity android:name=".RegisterAccountActivity" />
         <activity android:name=".LoginActivity" /> <!-- ✅ Add this -->
+        <activity android:name=".UniversalLoginActivity" />
         <activity android:name=".AccountActivity" />
         <activity android:name=".InviteFriendActivity" />
         <activity
