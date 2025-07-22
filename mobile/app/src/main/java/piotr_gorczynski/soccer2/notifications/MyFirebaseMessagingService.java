@@ -92,21 +92,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                 + ": 📨 Message received: " + remoteMessage.getData());
         if ("start".equals(remoteMessage.getData().get("type"))) {
-
-            String matchPath = remoteMessage.getData().get("matchPath");
-            if (matchPath == null) {
-                Log.w("TAG_Soccer", "⚠️ 'start' message missing matchPath");
-                return;
-            }
-
-            SharedPreferences prefs =
-                    getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
-            String localNickname = prefs.getString("nickname", "Unknown");
-
-            // NEW: ask Firestore whether the match is still running
-            maybeLaunchGame(matchPath, localNickname);
-
-            return;  // don’t create a notification for “start”
+            Log.d("TAG_Soccer", "start message ignored (no auto-launch)");
+            return;  // ignore legacy start push
         }
 
         Context context = getApplicationContext();

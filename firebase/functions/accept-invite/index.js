@@ -56,6 +56,12 @@ exports.acceptInvite = functions
         if (!mSnap.exists)
           throw new functions.https.HttpsError(
             'not-found', 'Scheduled match document is missing');
+
+        const mData = mSnap.data();
+        if (mData.status === 'completed' || mData.winner)
+          throw new functions.https.HttpsError(
+            'failed-precondition', 'match_already_completed');
+
         /* patch existing doc */
         tx.update(matchRef, {
           status        : 'active',
@@ -106,32 +112,6 @@ exports.acceptInvite = functions
 
       return { matchPath: matchRef.path };        // ← returned outside tx
     });
-
-    /* ────────── best-effort push to the inviter ───────────── */
-    (async () => {
-      try {
-        const inviteSnap = await inviteRef.get();             // fresh copy
-        const { from }   = inviteSnap.data();
-        const fromUser   = await db.collection('users').doc(from).get();
-        const token      = fromUser.get('fcmToken');
-
-        if (token) {
-          await admin.messaging().send({
-            token,
-            data: {
-              type     : 'start',
-              matchPath: matchPath
-            },
-            notification: {
-              title: 'Game started!',
-              body : 'Your opponent accepted your invitation.'
-            }
-          });
-        }
-      } catch (err) {
-        console.warn('⚠️  Failed to send FCM start push', err);
-      }
-    })();
 
     /* ───────── success response to the client ─────────────── */
     return { matchPath };
