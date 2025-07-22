@@ -114,33 +114,27 @@ steps:
         access_token=$(cat /workspace/access_token.txt)
 
         echo "🔑 Attempting to enable Google, Facebook and Microsoft authentication..."
-        patch_response=$(curl -s -w '\n%{http_code}' -X PATCH \
-          -H "Authorization: Bearer $access_token" \
-          -H "X-Goog-User-Project: $firebase_project_id" \
-          -H "Content-Type: application/json" \
-          "https://identitytoolkit.googleapis.com/admin/v2/projects/$firebase_project_id/config?updateMask=signIn.providerConfigs" \
-          -d '{
-            "signIn": {
-              "providerConfigs": [
-                {"provider": "google.com", "enabled": true},
-                {"provider": "facebook.com", "enabled": true},
-                {"provider": "microsoft.com", "enabled": true}
-              ]
-            }
-          }')
+        providers=("google.com" "facebook.com" "microsoft.com")
+        for provider in "${providers[@]}"; do
+          resp=$(curl -s -w '\n%{http_code}' -X PATCH \
+            -H "Authorization: Bearer $access_token" \
+            -H "X-Goog-User-Project: $firebase_project_id" \
+            -H "Content-Type: application/json" \
+            "https://identitytoolkit.googleapis.com/v2/projects/$firebase_project_id/defaultSupportedIdpConfigs/$provider?updateMask=enabled" \
+            -d "{\"enabled\": true}")
 
-        patch_code=$(echo "$patch_response" | tail -n1)
-        patch_body=$(echo "$patch_response" | head -n-1)
+          code=$(echo "$resp" | tail -n1)
+          body=$(echo "$resp" | head -n-1)
 
-        if [[ "$patch_code" == "200" ]]; then
-          echo "✅ OAuth providers successfully enabled."
-          echo "$patch_body"
-        else
-          echo "❌ Failed to enable OAuth providers. HTTP $patch_code"
-          echo "Response body:"
-          echo "$patch_body"
-          exit 1
-        fi
+          if [[ "$code" == "200" ]]; then
+            echo "✅ $provider provider enabled."
+          else
+            echo "❌ Failed to enable $provider provider. HTTP $code"
+            echo "Response body:"
+            echo "$body"
+            exit 1
+          fi
+        done
 
 options:
   logging: CLOUD_LOGGING_ONLY
