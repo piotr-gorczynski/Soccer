@@ -44,6 +44,9 @@ public class RankingActivity extends AppCompatActivity {
         db.collectionGroup("matches").get().addOnSuccessListener(snap -> {
             Map<String, RankingEntry> scoreMap = new HashMap<>();
             for (DocumentSnapshot doc : snap.getDocuments()) {
+                // Skip "friendly" matches stored at the top level
+                String path = doc.getReference().getPath();
+                if (!path.startsWith("tournaments/")) continue;
                 String winner = doc.getString("winner");
                 if (winner == null || winner.isEmpty()) continue;
                 RankingEntry e = scoreMap.get(winner);
