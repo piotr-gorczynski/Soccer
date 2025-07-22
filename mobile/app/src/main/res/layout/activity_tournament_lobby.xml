@@ -9,11 +9,13 @@
 
     <!-- banner -->
     <TextView
+        android:id="@+id/tournamentName"
         android:text="@string/lobby_started"
         android:textColor="@color/colorGreenDark"
         android:textStyle="bold"
+        android:gravity="center"
         android:layout_marginBottom="12dp"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
     <!-- matches list – fills the rest of the screen -->
