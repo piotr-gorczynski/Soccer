@@ -126,6 +126,7 @@ public class MenuActivity extends AppCompatActivity {
         Button inviteBtn = findViewById(R.id.InviteFriend);
         Button pendingBtn = findViewById(R.id.ShowInvites);
         Button tournamentsBtn = findViewById(R.id.openTournamentsBtn);
+        Button rankingBtn = findViewById(R.id.openRankingBtn);
 
         // Check if backend is available - if not, disable ALL buttons
         if (!isBackendAvailable) {
@@ -133,12 +134,14 @@ public class MenuActivity extends AppCompatActivity {
             inviteBtn.setEnabled(false);
             pendingBtn.setEnabled(false);
             tournamentsBtn.setEnabled(false);
+            rankingBtn.setEnabled(false);
             
             // Visual cue (dim all buttons)
             float disabledAlpha = 0.3f;
             inviteBtn.setAlpha(disabledAlpha);
             pendingBtn.setAlpha(disabledAlpha);
             tournamentsBtn.setAlpha(disabledAlpha);
+            rankingBtn.setAlpha(disabledAlpha);
 
             return; // Skip the normal auth-based logic
         }
@@ -148,12 +151,14 @@ public class MenuActivity extends AppCompatActivity {
         inviteBtn.setEnabled(loggedIn);
         pendingBtn.setEnabled(loggedIn);
         tournamentsBtn.setEnabled(loggedIn);
+        rankingBtn.setEnabled(loggedIn);
 
         // Optional: visual cue (dim when disabled due to not being logged in)
         float alpha = loggedIn ? 1f : 0.4f;
         inviteBtn.setAlpha(alpha);
         pendingBtn.setAlpha(alpha);
         tournamentsBtn.setAlpha(alpha);
+        rankingBtn.setAlpha(alpha);
     }
 
 
@@ -335,6 +340,10 @@ public class MenuActivity extends AppCompatActivity {
 
     public void OpenTournaments(View view) {
         startActivity(new Intent(this, TournamentsActivity.class));
+    }
+
+    public void OpenRanking(View view) {
+        startActivity(new Intent(this, RankingActivity.class));
     }
 
     @Override
