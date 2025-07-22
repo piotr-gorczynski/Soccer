@@ -8,6 +8,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.OAuthProvider;
 
 import com.google.firebase.auth.UserProfileChangeRequest;
 
@@ -31,12 +32,38 @@ public class FirebaseAuthManager {
         void onLoginFailure(String message);
     }
 
-    private void storeUserData(String uid, String email, String nickname) {
+    public void loginWithProvider(Activity activity, String providerId, String nickname, LoginCallback callback) {
+        OAuthProvider.Builder provider = OAuthProvider.newBuilder(providerId);
+        firebaseAuth.startActivityForSignInWithProvider(activity, provider.build())
+                .addOnSuccessListener(authResult -> {
+                    String uid = authResult.getUser().getUid();
+                    String email = authResult.getUser().getEmail();
+
+                    Map<String, Object> userData = new HashMap<>();
+                    userData.put("nickname", nickname);
+                    if (email != null) {
+                        userData.put("email", email);
+                    }
+                    userData.put("method", providerId);
+
+                    FirebaseFirestore.getInstance().collection("users").document(uid)
+                            .set(userData)
+                            .addOnCompleteListener(task -> {
+                                storeUserData(uid, email != null ? email : "", nickname, providerId);
+                                ((SoccerApp) context.getApplicationContext()).syncFcmTokenIfNeeded();
+                                callback.onLoginSuccess();
+                            });
+                })
+                .addOnFailureListener(e -> callback.onLoginFailure(e.getMessage()));
+    }
+
+    private void storeUserData(String uid, String email, String nickname, String method) {
         context.getSharedPreferences(context.getPackageName() + "_preferences", Context.MODE_PRIVATE)
                 .edit()
                 .putString("uid", uid)
                 .putString("email", email)
                 .putString("nickname", nickname)
+                .putString("method", method)
                 .apply();
     }
 
@@ -55,14 +82,16 @@ public class FirebaseAuthManager {
                                         .get()
                                         .addOnSuccessListener(doc -> {
                                             String nickname = doc.getString("nickname");
-                                            storeUserData(uid, email, nickname != null ? nickname : "Unknown");
+                                            String method = doc.getString("method");
+                                            if (method == null) method = "email";
+                                            storeUserData(uid, email, nickname != null ? nickname : "Unknown", method);
                                             ((SoccerApp) context.getApplicationContext())
                                                     .syncFcmTokenIfNeeded();   // new helper (see below)
                                             callback.onLoginSuccess();
                                         })
                                         .addOnFailureListener(e -> {
                                             Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ⚠️ Failed to load nickname from Firestore", e);
-                                            storeUserData(uid, email, "Unknown");
+                                            storeUserData(uid, email, "Unknown", "email");
                                             callback.onLoginSuccess();
                                         });
                             } else {
@@ -111,6 +140,7 @@ public class FirebaseAuthManager {
                         userData.put("nickname", nickname);
                         userData.put("email", email); // optional
                         userData.put("online", true); // optional
+                        userData.put("method", "email");
 
                         db.collection("users").document(uid).set(userData)
                                 .addOnSuccessListener(aVoid ->

@@ -98,4 +98,9 @@
 
     <string name="not_registered">You are not registered for this tournament.</string>
 
+    <string name="login_email">Login with Email</string>
+    <string name="login_google">Login with Google</string>
+    <string name="login_facebook">Login with Facebook</string>
+    <string name="login_microsoft">Login with Microsoft</string>
+    <string name="login_method_label">Login method: %1$s</string>
 </resources>
