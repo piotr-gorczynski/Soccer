@@ -17,6 +17,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
+import com.google.firebase.firestore.Filter;
 import com.google.firebase.firestore.QuerySnapshot;
 
 
@@ -25,7 +26,7 @@ import java.util.Objects;
 public class TournamentLobbyActivity extends AppCompatActivity {
 
     private MatchAdapter mAdapter;
-    private ListenerRegistration matchListenerA, matchListenerB;
+    private ListenerRegistration matchListener;
     private TextView tournamentName;
 
     /* one common handler so we don’t repeat the diff logic */
@@ -128,21 +129,13 @@ public class TournamentLobbyActivity extends AppCompatActivity {
             }
         };*/
 
-        /* listen where player0 == myUid */
-        ListenerRegistration l0 = db.collection("tournaments").document(requireNonNull(tid))
+        /* listen for matches where I'm either player0 or player1 */
+        matchListener = db.collection("tournaments").document(requireNonNull(tid))
                 .collection("matches")
-                .whereEqualTo("player0", myUid)
-                .addSnapshotListener(makeHandler("player0"));
-
-        /* listen where player1 == myUid */
-        ListenerRegistration l1 = db.collection("tournaments").document(tid)
-                .collection("matches")
-                .whereEqualTo("player1", myUid)
-                .addSnapshotListener(makeHandler("player1"));
-
-        /* keep references so you can remove them in onDestroy() */
-        matchListenerA = l0;
-        matchListenerB = l1;
+                .where(Filter.or(
+                        Filter.equalTo("player0", myUid),
+                        Filter.equalTo("player1", myUid)))
+                .addSnapshotListener(makeHandler("player"));
 
         /* ───── One-shot sanity read: how many docs are in the sub-collection? ───── */
         db.collection("tournaments").document(tid)
@@ -159,8 +152,7 @@ public class TournamentLobbyActivity extends AppCompatActivity {
 
 
     @Override protected void onDestroy() {
-        if (matchListenerA != null) matchListenerA.remove();
-        if (matchListenerB != null) matchListenerB.remove();
+        if (matchListener != null) matchListener.remove();
         super.onDestroy();
     }
 }
