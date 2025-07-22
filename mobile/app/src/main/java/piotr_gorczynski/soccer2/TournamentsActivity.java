@@ -100,9 +100,15 @@ public class TournamentsActivity extends AppCompatActivity {
 
             for (DocumentSnapshot doc : snap.getDocuments()) {
                 String status = doc.getString("status");
-                if ("registering".equals(status)) registeringDocs.add(doc);
-                else if ("running".equals(status)) runningDocs.add(doc);
-                else if ("ended".equals(status)) endedDocs.add(doc);
+                if (status != null) status = status.trim().toLowerCase();
+
+                if ("registering".equals(status)) {
+                    registeringDocs.add(doc);
+                } else if ("running".equals(status)) {
+                    runningDocs.add(doc);
+                } else if ("ended".equals(status)) {
+                    endedDocs.add(doc);
+                }
             }
 
             registeringAdapter.notifyDataSetChanged();
