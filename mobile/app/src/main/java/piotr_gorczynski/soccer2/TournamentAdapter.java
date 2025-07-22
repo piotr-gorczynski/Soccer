@@ -223,7 +223,8 @@ public class TournamentAdapter
 
             h.joinBtn.setOnClickListener(v -> {
                 Intent i = new Intent(v.getContext(), TournamentLobbyActivity.class)
-                        .putExtra("tournamentId", tid);
+                        .putExtra("tournamentId", tid)
+                        .putExtra("tournamentName", name);
                 v.getContext().startActivity(i);
             });
         }
