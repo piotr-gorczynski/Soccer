@@ -24,6 +24,7 @@ public class AccountActivity extends AppCompatActivity {
 
         TextView nickView = findViewById(R.id.accountNickname);
         TextView emailView = findViewById(R.id.accountEmail);
+        TextView methodView = findViewById(R.id.accountMethod);
         Button logoutBtn = findViewById(R.id.btnLogout);
 
         String prefsName = getPackageName() + "_preferences";
@@ -31,9 +32,12 @@ public class AccountActivity extends AppCompatActivity {
                 .getString("nickname", "-");
         String email = getSharedPreferences(prefsName, MODE_PRIVATE)
                 .getString("email", "-");
+        String method = getSharedPreferences(prefsName, MODE_PRIVATE)
+                .getString("method", "-");
 
         nickView.setText(getString(R.string.nickname_label, nickname));
         emailView.setText(getString(R.string.email_label, email));
+        methodView.setText(getString(R.string.login_method_label, method));
 
         logoutBtn.setOnClickListener(v -> performLogout());
     }
