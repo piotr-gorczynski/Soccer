@@ -73,6 +73,7 @@ public class MatchAdapter
     private final String myUid;
 
     private final String tournamentId;
+    private boolean showOutcome = false;
 
     /** return position of the doc that already has this ID, or -1 if none */
     private int indexForId(@NonNull String docId) {
@@ -90,6 +91,10 @@ public class MatchAdapter
         this.tournamentId  = Objects.requireNonNull(tournamentId,
                 "tournamentId must not be null");
         setHasStableIds(true);   // ✅ tell RecyclerView this adapter uses stable IDs
+    }
+
+    void setShowOutcome(boolean value) {
+        this.showOutcome = value;
     }
 
     @Override
@@ -270,12 +275,24 @@ public class MatchAdapter
         }
 
         /* ----------- status label ----------- */
-        String st = m.getString("status");          // scheduled | playing | done
-        h.status.setText(st);
+        String st = m.getString("status");          // scheduled | playing | completed
+
+        String statusLabel = st;
+        if (showOutcome && "completed".equals(st)) {
+            String winner = m.getString("winner");
+            if (winner != null) {
+                statusLabel = winner.equals(myUid)
+                        ? context.getString(R.string.match_completed_win)
+                        : context.getString(R.string.match_completed_lose);
+            }
+        }
+
+        h.status.setText(statusLabel);
+
         int colour = switch (Objects.requireNonNull(st)) {
             case "playing"   -> ContextCompat.getColor(
                     h.itemView.getContext(), R.color.colorAccent);
-            case "done"      -> ContextCompat.getColor(
+            case "done", "completed" -> ContextCompat.getColor(
                     h.itemView.getContext(), R.color.colorGrey);
             default          -> ContextCompat.getColor(
                     h.itemView.getContext(), R.color.colorGreenDark);
