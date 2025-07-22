@@ -16,6 +16,7 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
@@ -106,6 +107,8 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                 startPresence(auth.getCurrentUser().getUid());
             }
         });
+
+        MobileAds.initialize(this, initializationStatus -> {});
     }
     public void syncFcmTokenIfNeeded() {
         String uid = FirebaseAuth.getInstance().getUid();
