@@ -4,6 +4,7 @@ import static java.util.Objects.*;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,6 +25,7 @@ public class TournamentLobbyActivity extends AppCompatActivity {
 
     private MatchAdapter mAdapter;
     private ListenerRegistration matchListenerA, matchListenerB;
+    private TextView tournamentName;
 
     /* one common handler so we don’t repeat the diff logic */
     EventListener<QuerySnapshot> makeHandler(String label) {
@@ -81,9 +83,22 @@ public class TournamentLobbyActivity extends AppCompatActivity {
                 + ": Method start");
         setContentView(R.layout.activity_tournament_lobby);
 
+        tournamentName = findViewById(R.id.tournamentName);
+
         String tid   = getIntent().getStringExtra("tournamentId");
+        String nameExtra = getIntent().getStringExtra("tournamentName");
         String myUid = requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        if (nameExtra != null) {
+            tournamentName.setText(nameExtra);
+        } else if (tid != null) {
+            db.collection("tournaments").document(tid).get()
+                    .addOnSuccessListener(doc -> {
+                        String n = doc.getString("name");
+                        if (n != null) tournamentName.setText(n);
+                    });
+        }
 
         RecyclerView rv = findViewById(R.id.matchesList);
         rv.setLayoutManager(new LinearLayoutManager(this));
