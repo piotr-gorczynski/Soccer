@@ -249,11 +249,13 @@ public class MenuActivity extends AppCompatActivity {
                 new InterstitialAdLoadCallback() {
                     @Override
                     public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                        Log.d("TAG_Soccer", "Interstitial ad loaded");
                         mInterstitialAd = interstitialAd;
                     }
 
                     @Override
                     public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                        Log.d("TAG_Soccer", "Interstitial ad failed to load: " + loadAdError.getMessage());
                         mInterstitialAd = null;
                     }
                 });
@@ -359,11 +361,13 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     public void OpenInviteFriend(View view) {
+        Log.d("TAG_Soccer", "OpenInviteFriend called. Ad ready=" + (mInterstitialAd != null));
         if (mInterstitialAd != null) {
             mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
                 @Override
                 public void onAdDismissedFullScreenContent() {
                     // Ad closed, now go to InviteFriendActivity
+                    Log.d("TAG_Soccer", "Interstitial ad dismissed");
                     startActivity(new Intent(MenuActivity.this, InviteFriendActivity.class));
                     loadInterstitialAd(); // preload next one
                 }
@@ -371,17 +375,21 @@ public class MenuActivity extends AppCompatActivity {
                 @Override
                 public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
                     // If the ad fails, still continue
+                    Log.d("TAG_Soccer", "Interstitial ad failed to show: " + adError.getMessage());
                     startActivity(new Intent(MenuActivity.this, InviteFriendActivity.class));
                 }
 
                 @Override
                 public void onAdShowedFullScreenContent() {
+                    Log.d("TAG_Soccer", "Interstitial ad showed");
                     mInterstitialAd = null;
                 }
             });
 
+            Log.d("TAG_Soccer", "Showing interstitial ad");
             mInterstitialAd.show(this);
         } else {
+            Log.d("TAG_Soccer", "No interstitial ad ready, opening InviteFriendActivity directly");
             Intent intent = new Intent(this, InviteFriendActivity.class);
             startActivity(intent);
         }
