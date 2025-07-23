@@ -120,7 +120,7 @@ steps:
             -H "Authorization: Bearer $access_token" \
             -H "X-Goog-User-Project: $firebase_project_id" \
             -H "Content-Type: application/json" \
-            "https://identitytoolkit.googleapis.com/v2/projects/$firebase_project_id/defaultSupportedIdpConfigs/$provider?updateMask=enabled" \
+            "https://identitytoolkit.googleapis.com/admin/v2/projects/$firebase_project_id/defaultSupportedIdpConfigs/$provider?updateMask=enabled" \
             -d "{\"enabled\": true}")
 
           code=$(echo "$resp" | tail -n1)
