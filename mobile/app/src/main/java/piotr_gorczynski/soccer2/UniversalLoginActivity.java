@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import android.content.SharedPreferences;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,6 +15,7 @@ public class UniversalLoginActivity extends AppCompatActivity {
 
     private EditText editNickname;
     private FirebaseAuthManager authManager;
+    private String storedNickname;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -21,6 +24,13 @@ public class UniversalLoginActivity extends AppCompatActivity {
 
         authManager = new FirebaseAuthManager(this);
         editNickname = findViewById(R.id.editUniversalNickname);
+
+        SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
+        storedNickname = prefs.getString("nickname", null);
+        if (storedNickname != null && !storedNickname.isEmpty()) {
+            // Hide nickname input when a nickname already exists
+            editNickname.setVisibility(View.GONE);
+        }
 
         Button btnEmail = findViewById(R.id.btnUniversalEmail);
         Button btnGoogle = findViewById(R.id.btnUniversalGoogle);
@@ -37,10 +47,15 @@ public class UniversalLoginActivity extends AppCompatActivity {
     }
 
     private void handleProviderLogin(String provider) {
-        String nickname = editNickname.getText().toString().trim();
-        if (nickname.isEmpty()) {
-            Toast.makeText(this, "Nickname is required", Toast.LENGTH_SHORT).show();
-            return;
+        String nickname;
+        if (storedNickname != null && !storedNickname.isEmpty()) {
+            nickname = storedNickname;
+        } else {
+            nickname = editNickname.getText().toString().trim();
+            if (nickname.isEmpty()) {
+                Toast.makeText(this, "Nickname is required", Toast.LENGTH_SHORT).show();
+                return;
+            }
         }
         authManager.loginWithProvider(this, provider, nickname, new FirebaseAuthManager.LoginCallback() {
             @Override
