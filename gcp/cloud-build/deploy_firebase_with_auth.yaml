@@ -103,7 +103,7 @@ steps:
           exit 1
         fi
 
-  # Step 4: Ensure Google IdP config exists and is enabled (auto-detect client ID)
+  # Step 4: Ensure Google IdP config exists and is enabled (auto-create Web app)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: 'enable-google-idp'
     entrypoint: bash
@@ -116,47 +116,52 @@ steps:
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         access_token=$(cat /workspace/access_token.txt)
 
-        # 1. Install Firebase CLI (same method as Step 2)
+        # ── 1. Install Firebase CLI (same method as earlier) ──────────────────────
         curl -sL https://firebase.tools | bash
         mkdir -p /workspace/firebase
         cp /usr/local/bin/firebase /workspace/firebase/
         chmod +x /workspace/firebase/firebase
 
-        # 2. Get the first Android appId via the Firebase Management REST API
+        # ── 2. Ensure a Web app exists (create "ci-web" if missing) ──────────────
+        if /workspace/firebase/firebase apps:list --project "$firebase_project_id" | grep -q "WEB"; then
+          echo "🔎 Web app already exists."
+        else
+          echo "ℹ️  No Web app found – creating one."
+          /workspace/firebase/firebase apps:create web "ci-web" --project "$firebase_project_id" --json
+          echo "✅ Web app created."
+        fi
+
+        # ── 3. Get first Android appId (grep works even with spinner lines) ──────
         android_app_id=$(/workspace/firebase/firebase apps:list \
           --project "$firebase_project_id" --json \
-          | grep -o '"appId":[[:space:]]*"[^"]*"' \
+          | grep -o '"platform":"ANDROID"[^}]*"appId":[[:space:]]*"[^"]*"' \
           | head -n1 \
           | sed 's/.*"appId":[[:space:]]*"\([^"]*\)".*/\1/')
 
-
         if [[ -z "$android_app_id" ]]; then
-          echo "❌ No Android app found in project; cannot derive web client ID."
+          echo "❌ No Android app found in project."
           exit 1
         fi
         echo "📌 Android app_id: $android_app_id"
 
-        # 3. Download google-services.json & extract the Web client_id
+        # ── 4. Download google-services.json & extract Web OAuth client_id ──────
         /workspace/firebase/firebase apps:sdkconfig android "$android_app_id" \
-          --project "$firebase_project_id" >/tmp/gs.json
-
+          --project "$firebase_project_id" > /tmp/gs.json
 
         client_id=$(python3 - <<'PY'
-        import json, sys, pathlib
+        import json, sys
         d=json.load(open("/tmp/gs.json"))
         for c in d.get("client", []):
             for o in c.get("oauth_client", []):
                 if o.get("client_type") == 3:
                     print(o["client_id"]); sys.exit(0)
+        sys.exit(1)
         PY
-        )
-        if [[ -z "$client_id" ]]; then
-          echo "❌ Web client_id not found in google-services.json."
-          exit 1
-        fi
+        ) || { echo "❌ Web client_id not found; make sure a Web app exists."; exit 1; }
+
         echo "🔑 Using OAuth client_id: $client_id"
 
-        # 4. PATCH ➜ POST logic (unchanged) …
+        # ── 5. PATCH first; if 404 then POST to create ───────────────────────────
         provider="google.com"
         patch_code=$(curl -s -o /dev/null -w '%{http_code}' -X PATCH \
           -H "Authorization: Bearer $access_token" \
