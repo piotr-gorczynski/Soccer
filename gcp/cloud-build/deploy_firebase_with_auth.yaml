@@ -103,7 +103,7 @@ steps:
           exit 1
         fi
 
-  # Step 4: Ensure Google IdP config exists and is enabled (auto-detect client ID)
+    # Step 4: Ensure Google IdP config exists and is enabled (auto-detect client ID)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: 'enable-google-idp'
     entrypoint: bash
@@ -116,13 +116,13 @@ steps:
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         access_token=$(cat /workspace/access_token.txt)
 
-        # ── 1. Install Firebase CLI exactly like Step 2 ────────────────────────────
+        # 1. Install Firebase CLI the approved way
         curl -sL https://firebase.tools | bash
         mkdir -p /workspace/firebase
         cp /usr/local/bin/firebase /workspace/firebase/
         chmod +x /workspace/firebase/firebase
 
-        # ── 2. Get first Android app ID ───────────────────────────────────────────
+        # 2. Fetch the first Android app ID
         android_app_id=$(/workspace/firebase/firebase apps:list \
           --project "$firebase_project_id" --json | python - <<'PY'
         import sys, json
@@ -135,7 +135,7 @@ steps:
           exit 1
         fi
 
-        # ── 3. Download google-services.json & extract web client_id ─────────────
+        # 3. Download google-services.json and extract the Web client_id
         /workspace/firebase/firebase apps:sdkconfig android "$android_app_id" \
           --project "$firebase_project_id" >/tmp/gs.json
 
@@ -154,7 +154,7 @@ steps:
         fi
         echo "🔑 Using OAuth client_id: $client_id"
 
-        # ── 4. PATCH first; if 404 then POST to create ───────────────────────────
+        # 4. PATCH first; if 404 then POST to create
         provider="google.com"
 
         patch_code=$(curl -s -o /dev/null -w "%{http_code}" -X PATCH \
