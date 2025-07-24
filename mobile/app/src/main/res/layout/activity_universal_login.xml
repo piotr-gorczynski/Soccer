@@ -7,6 +7,14 @@
     android:orientation="vertical"
     android:padding="20dp">
 
+    <EditText
+        android:id="@+id/editUniversalNickname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:autofillHints="Enter nickname"
+        android:hint="@string/nickname"
+        android:inputType="textPersonName" />
+
 
     <Button
         android:id="@+id/btnUniversalEmail"
