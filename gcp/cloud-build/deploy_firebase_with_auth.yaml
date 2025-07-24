@@ -103,7 +103,7 @@ steps:
           exit 1
         fi
 
-    # Step 4: Ensure Google IdP config exists and is enabled (auto-detect client ID)
+  # Step 4: Ensure Google IdP config exists and is enabled (auto-detect client ID)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: 'enable-google-idp'
     entrypoint: bash
@@ -116,23 +116,23 @@ steps:
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         access_token=$(cat /workspace/access_token.txt)
 
-        # 1. Install Firebase CLI (same method as Step 2)
+        # 1. Install Firebase CLI (same as Step 2)
         curl -sL https://firebase.tools | bash
         mkdir -p /workspace/firebase
         cp /usr/local/bin/firebase /workspace/firebase/
         chmod +x /workspace/firebase/firebase
 
-        # 2. Get first Android app ID
-        android_app_id=$(/workspace/firebase/firebase apps:list \
-          --project "$firebase_project_id" --json | python3 - <<'PY'
-        import sys, json
-        print(next(a["appId"] for a in json.load(sys.stdin)["result"] if a["platform"]=="ANDROID"), end="")
-        PY
-        )
+        # 2. Get the first Android app ID — use *gcloud* for clean output
+        android_app_id=$(gcloud firebase apps list \
+          --project="$firebase_project_id" \
+          --filter="platform=ANDROID" \
+          --format="value(appId)" | head -n1)
+
         if [[ -z "$android_app_id" ]]; then
           echo "❌ No Android app found in project; cannot derive web client ID."
           exit 1
         fi
+        echo "📌 Android app_id: $android_app_id"
 
         # 3. Download google-services.json & extract the Web client_id
         /workspace/firebase/firebase apps:sdkconfig android "$android_app_id" \
@@ -143,7 +143,7 @@ steps:
         d=json.load(open("/tmp/gs.json"))
         for c in d.get("client", []):
             for o in c.get("oauth_client", []):
-                if o.get("client_type") == 3:   # 3 ⇒ Web client
+                if o.get("client_type") == 3:
                     print(o["client_id"]); sys.exit(0)
         PY
         )
@@ -153,7 +153,7 @@ steps:
         fi
         echo "🔑 Using OAuth client_id: $client_id"
 
-        # 4. PATCH first; if 404 then POST to create
+        # 4. PATCH ➜ POST logic (unchanged) …
         provider="google.com"
         patch_code=$(curl -s -o /dev/null -w '%{http_code}' -X PATCH \
           -H "Authorization: Bearer $access_token" \
