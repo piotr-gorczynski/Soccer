@@ -7,49 +7,51 @@
     android:orientation="vertical"
     android:padding="20dp">
 
-    <EditText
-        android:id="@+id/editUniversalNickname"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:hint="@string/nickname"
-        android:inputType="textPersonName" />
 
     <Button
         android:id="@+id/btnUniversalEmail"
-        android:layout_width="match_parent"
+        android:layout_width="200dp"
         android:layout_height="50dp"
         android:layout_marginTop="16dp"
         android:background="@color/colorGreen"
+        android:drawableStart="@drawable/ic_email"
+        android:drawablePadding="8dp"
         android:text="@string/login_email"
         android:textAllCaps="false"
         android:textColor="@color/colorWhite" />
 
     <Button
         android:id="@+id/btnUniversalGoogle"
-        android:layout_width="match_parent"
+        android:layout_width="200dp"
         android:layout_height="50dp"
         android:layout_marginTop="8dp"
         android:background="@color/colorGreen"
+        android:drawableStart="@drawable/ic_google"
+        android:drawablePadding="8dp"
         android:text="@string/login_google"
         android:textAllCaps="false"
         android:textColor="@color/colorWhite" />
 
     <Button
         android:id="@+id/btnUniversalFacebook"
-        android:layout_width="match_parent"
+        android:layout_width="200dp"
         android:layout_height="50dp"
         android:layout_marginTop="8dp"
         android:background="@color/colorGreen"
+        android:drawableStart="@drawable/ic_facebook"
+        android:drawablePadding="8dp"
         android:text="@string/login_facebook"
         android:textAllCaps="false"
         android:textColor="@color/colorWhite" />
 
     <Button
         android:id="@+id/btnUniversalMicrosoft"
-        android:layout_width="match_parent"
+        android:layout_width="200dp"
         android:layout_height="50dp"
         android:layout_marginTop="8dp"
         android:background="@color/colorGreen"
+        android:drawableStart="@drawable/ic_microsoft"
+        android:drawablePadding="8dp"
         android:text="@string/login_microsoft"
         android:textAllCaps="false"
         android:textColor="@color/colorWhite" />
