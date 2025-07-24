@@ -103,58 +103,89 @@ steps:
           exit 1
         fi
 
-  # Step 4: Enable the Google IdP
+  # Step 4: Ensure Google IdP config exists and is enabled (auto-detect client ID)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'enable-google-idp'
     entrypoint: bash
     args:
       - -c
       - |
         set -e
+        set -x
+
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         access_token=$(cat /workspace/access_token.txt)
 
-        provider="google.com"
-        echo "⚙️  Enabling $provider …"
+        # ── 1. Install Firebase CLI (quiet) ────────────────────────────────────────
+        curl -sL https://firebase.tools | bash >/dev/null
+        export PATH="$PATH:$HOME/.cache/firebase/bin"
 
-        # 1️⃣ Try to PATCH the existing config
-        patch_resp=$(curl -s -w '\n%{http_code}' -X PATCH \
+        # ── 2. Get first Android app ID ────────────────────────────────────────────
+        android_app_id=$(firebase apps:list --project "$firebase_project_id" --json \
+          | python - <<'PY'
+        import sys, json
+        apps=json.load(sys.stdin)["result"]
+        print(next(a["appId"] for a in apps if a["platform"]=="ANDROID"), end="")
+        PY
+        )
+        if [[ -z "$android_app_id" ]]; then
+          echo "❌ No Android app found in project; cannot derive web client ID."
+          exit 1
+        fi
+
+        # ── 3. Download google-services.json & extract web client_id ──────────────
+        firebase apps:sdkconfig android "$android_app_id" --project "$firebase_project_id" >/tmp/gs.json
+
+        client_id=$(python - <<'PY'
+        import json, sys
+        d=json.load(open("/tmp/gs.json"))
+        for c in d.get("client", []):
+            for o in c.get("oauth_client", []):
+                if o.get("client_type") == 3:          # 3 ⇒ Web client
+                    print(o["client_id"]); sys.exit(0)
+        PY
+        )
+        if [[ -z "$client_id" ]]; then
+          echo "❌ Web client_id not found in google-services.json."
+          exit 1
+        fi
+        echo "🔑 Using OAuth client_id: $client_id"
+
+        # ── 4. PATCH first; if 404 then POST to create ────────────────────────────
+        provider="google.com"
+
+        patch_code=$(curl -s -o /dev/null -w "%{http_code}" -X PATCH \
           -H "Authorization: Bearer $access_token" \
           -H "X-Goog-User-Project: $firebase_project_id" \
           -H "Content-Type: application/json" \
-          "https://identitytoolkit.googleapis.com/admin/v2/projects/${firebase_project_id}/defaultSupportedIdpConfigs/${provider}?updateMask=enabled" \
-          -d '{"enabled": true}' || true)
-
-        patch_code=$(echo "$patch_resp" | tail -n1)
+          "https://identitytoolkit.googleapis.com/admin/v2/projects/${firebase_project_id}/defaultSupportedIdpConfigs/${provider}?updateMask=enabled,clientId" \
+          -d "{\"enabled\": true, \"clientId\": \"${client_id}\"}" || true)
 
         if [[ "$patch_code" == "200" ]]; then
-          echo "✅ $provider provider enabled."
+          echo "✅ Google IdP updated."
           exit 0
         fi
 
         if [[ "$patch_code" != "404" ]]; then
-          echo "❌ PATCH failed (HTTP $patch_code) – aborting."
-          echo "$patch_resp"
+          echo "❌ PATCH failed (HTTP $patch_code)"
           exit 1
         fi
 
-        # 2️⃣ If the config doesn’t exist, POST to create it
         echo "ℹ️  Config not found – creating it."
-        create_resp=$(curl -s -w '\n%{http_code}' -X POST \
+        create_code=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
           -H "Authorization: Bearer $access_token" \
           -H "X-Goog-User-Project: $firebase_project_id" \
           -H "Content-Type: application/json" \
           "https://identitytoolkit.googleapis.com/admin/v2/projects/${firebase_project_id}/defaultSupportedIdpConfigs?idpId=${provider}" \
-          -d '{"enabled": true}' || true)
-
-        create_code=$(echo "$create_resp" | tail -n1)
+          -d "{\"enabled\": true, \"clientId\": \"${client_id}\"}" || true)
 
         if [[ "$create_code" == "200" || "$create_code" == "409" ]]; then
-          echo "✅ $provider provider is now ready."
+          echo "✅ Google IdP ready."
         else
-          echo "❌ Failed to create $provider (HTTP $create_code)"
-          echo "$create_resp"
+          echo "❌ Failed to create Google IdP (HTTP $create_code)"
           exit 1
         fi
+
 
 
 options:
