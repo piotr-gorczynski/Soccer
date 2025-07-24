@@ -116,18 +116,17 @@ steps:
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         access_token=$(cat /workspace/access_token.txt)
 
-        # 1. Install Firebase CLI the approved way
+        # 1. Install Firebase CLI (same method as Step 2)
         curl -sL https://firebase.tools | bash
         mkdir -p /workspace/firebase
         cp /usr/local/bin/firebase /workspace/firebase/
         chmod +x /workspace/firebase/firebase
 
-        # 2. Fetch the first Android app ID
+        # 2. Get first Android app ID
         android_app_id=$(/workspace/firebase/firebase apps:list \
-          --project "$firebase_project_id" --json | python - <<'PY'
+          --project "$firebase_project_id" --json | python3 - <<'PY'
         import sys, json
-        apps=json.load(sys.stdin)["result"]
-        print(next(a["appId"] for a in apps if a["platform"]=="ANDROID"), end="")
+        print(next(a["appId"] for a in json.load(sys.stdin)["result"] if a["platform"]=="ANDROID"), end="")
         PY
         )
         if [[ -z "$android_app_id" ]]; then
@@ -135,16 +134,16 @@ steps:
           exit 1
         fi
 
-        # 3. Download google-services.json and extract the Web client_id
+        # 3. Download google-services.json & extract the Web client_id
         /workspace/firebase/firebase apps:sdkconfig android "$android_app_id" \
           --project "$firebase_project_id" >/tmp/gs.json
 
-        client_id=$(python - <<'PY'
-        import json, sys
+        client_id=$(python3 - <<'PY'
+        import json, sys, pathlib
         d=json.load(open("/tmp/gs.json"))
         for c in d.get("client", []):
             for o in c.get("oauth_client", []):
-                if o.get("client_type") == 3:          # 3 ⇒ Web client
+                if o.get("client_type") == 3:   # 3 ⇒ Web client
                     print(o["client_id"]); sys.exit(0)
         PY
         )
@@ -156,8 +155,7 @@ steps:
 
         # 4. PATCH first; if 404 then POST to create
         provider="google.com"
-
-        patch_code=$(curl -s -o /dev/null -w "%{http_code}" -X PATCH \
+        patch_code=$(curl -s -o /dev/null -w '%{http_code}' -X PATCH \
           -H "Authorization: Bearer $access_token" \
           -H "X-Goog-User-Project: $firebase_project_id" \
           -H "Content-Type: application/json" \
@@ -168,14 +166,13 @@ steps:
           echo "✅ Google IdP updated."
           exit 0
         fi
-
         if [[ "$patch_code" != "404" ]]; then
           echo "❌ PATCH failed (HTTP $patch_code)"
           exit 1
         fi
 
         echo "ℹ️  Config not found – creating it."
-        create_code=$(curl -s -o /dev/null -w "%{http_code}" -X POST \
+        create_code=$(curl -s -o /dev/null -w '%{http_code}' -X POST \
           -H "Authorization: Bearer $access_token" \
           -H "X-Goog-User-Project: $firebase_project_id" \
           -H "Content-Type: application/json" \
