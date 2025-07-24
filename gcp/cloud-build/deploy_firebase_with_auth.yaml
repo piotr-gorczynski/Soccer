@@ -123,15 +123,12 @@ steps:
         chmod +x /workspace/firebase/firebase
 
         # 2. Get the first Android appId via the Firebase Management REST API
-        android_app_id=$(curl -s \
-          -H "Authorization: Bearer $access_token" \
-          "https://firebase.googleapis.com/v1beta1/projects/${firebase_project_id}/androidApps" \
-          | python3 - <<'PY'
-        import sys, json
-        apps=json.load(sys.stdin).get("apps", [])
-        print(apps[0]["appId"] if apps else "", end="")
-        PY
-        )
+        android_app_id=$(/workspace/firebase/firebase apps:list \
+          --project "$firebase_project_id" --json \
+          | grep -o '"appId":[[:space:]]*"[^"]*"' \
+          | head -n1 \
+          | sed 's/.*"appId":[[:space:]]*"\([^"]*\)".*/\1/')
+
 
         if [[ -z "$android_app_id" ]]; then
           echo "❌ No Android app found in project; cannot derive web client ID."
