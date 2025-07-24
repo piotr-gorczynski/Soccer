@@ -23,7 +23,6 @@ public class UniversalLoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_universal_login);
 
         authManager = new FirebaseAuthManager(this);
-        editNickname = findViewById(R.id.editUniversalNickname);
 
         SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
         storedNickname = prefs.getString("nickname", null);
