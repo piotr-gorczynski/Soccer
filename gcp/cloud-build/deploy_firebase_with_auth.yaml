@@ -116,17 +116,22 @@ steps:
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         access_token=$(cat /workspace/access_token.txt)
 
-        # 1. Install Firebase CLI (same as Step 2)
+        # 1. Install Firebase CLI (same method as Step 2)
         curl -sL https://firebase.tools | bash
         mkdir -p /workspace/firebase
         cp /usr/local/bin/firebase /workspace/firebase/
         chmod +x /workspace/firebase/firebase
 
-        # 2. Get the first Android app ID — use *gcloud* for clean output
-        android_app_id=$(gcloud firebase apps list \
-          --project="$firebase_project_id" \
-          --filter="platform=ANDROID" \
-          --format="value(appId)" | head -n1)
+        # 2. Get the first Android appId via the Firebase Management REST API
+        android_app_id=$(curl -s \
+          -H "Authorization: Bearer $access_token" \
+          "https://firebase.googleapis.com/v1beta1/projects/${firebase_project_id}/androidApps" \
+          | python3 - <<'PY'
+        import sys, json
+        apps=json.load(sys.stdin).get("apps", [])
+        print(apps[0]["appId"] if apps else "", end="")
+        PY
+        )
 
         if [[ -z "$android_app_id" ]]; then
           echo "❌ No Android app found in project; cannot derive web client ID."
@@ -137,6 +142,7 @@ steps:
         # 3. Download google-services.json & extract the Web client_id
         /workspace/firebase/firebase apps:sdkconfig android "$android_app_id" \
           --project "$firebase_project_id" >/tmp/gs.json
+
 
         client_id=$(python3 - <<'PY'
         import json, sys, pathlib
