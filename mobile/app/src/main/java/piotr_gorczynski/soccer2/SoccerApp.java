@@ -2,6 +2,7 @@ package piotr_gorczynski.soccer2;
 
 
 import android.app.Application;
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -77,7 +78,6 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
 
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
 
-        requestConsent(this);
 
         // Initialize backend service checker
         serviceChecker = new BackendServiceChecker(this);
@@ -376,15 +376,15 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         }
     }
 
-    private void requestConsent(Context context) {
+    public void requestConsent(Activity activity) {
         ConsentRequestParameters params = new ConsentRequestParameters
                 .Builder()
                 .setTagForUnderAgeOfConsent(false)
                 .build();
 
-        ConsentInformation consentInformation = UserMessagingPlatform.getConsentInformation(context);
+        ConsentInformation consentInformation = UserMessagingPlatform.getConsentInformation(activity);
         consentInformation.requestConsentInfoUpdate(
-                context,
+                activity,
                 params,
                 () -> {
                     if (consentInformation.isConsentFormAvailable()) {
