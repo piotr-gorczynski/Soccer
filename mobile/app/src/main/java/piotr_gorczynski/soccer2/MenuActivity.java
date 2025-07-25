@@ -186,6 +186,7 @@ public class MenuActivity extends AppCompatActivity {
 
         // Initialize backend service checker
         SoccerApp app = (SoccerApp) getApplication();
+        app.requestConsent(this);
         serviceChecker = app.getServiceChecker();
         
         // Get initial backend availability state from the app
