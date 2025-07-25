@@ -104,16 +104,12 @@ steps:
         fi
 
   # ────────────────────────────────
-  # Step 4:  Enable Google Sign-In
+  # Step 4: Enable Google Sign-In
+  # (no custom Web client)
   # ────────────────────────────────
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: 'enable-google-auth'
     entrypoint: bash
-    # Optional: surface your own OAuth client to Identity Platform.
-    # Pass them in as Cloud Build substitution variables or pull from Secret Manager.
-    env:
-      - 'GOOGLE_CLIENT_ID=${_GOOGLE_CLIENT_ID:-}'
-      - 'GOOGLE_CLIENT_SECRET=${_GOOGLE_CLIENT_SECRET:-}'
     args:
       - '-c'
       - |
@@ -121,22 +117,13 @@ steps:
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         access_token=$(cat /workspace/access_token.txt)
 
-        echo "🔓 Enabling Google Sign-In …"
+        echo "🔓 Enabling Google Sign-In (default managed client)…"
 
-        # Build the JSON payload: if you supplied a custom OAuth client,
-        # include it; otherwise rely on the Google-managed default.
-        body='{"enabled":true'
-        if [[ -n "$GOOGLE_CLIENT_ID" && -n "$GOOGLE_CLIENT_SECRET" ]]; then
-          body=$body', "clientId":"'"$GOOGLE_CLIENT_ID"'", "clientSecret":"'"$GOOGLE_CLIENT_SECRET"'"'
-          updateMask="enabled,clientId,clientSecret"
-        else
-          updateMask="enabled"
-        fi
-        body=$body'}'
+        # Payload needs only the 'enabled' flag
+        body='{"enabled":true}'
+        target="https://identitytoolkit.googleapis.com/admin/v2/projects/${firebase_project_id}/defaultSupportedIdpConfigs/google.com?updateMask=enabled"
 
-        target="https://identitytoolkit.googleapis.com/admin/v2/projects/${firebase_project_id}/defaultSupportedIdpConfigs/google.com?updateMask=${updateMask}"
-
-        # First try PATCH (fast path if the config already exists) …
+        # --- Try PATCH first ---------------------------------------------------
         response=$(curl -s -w '\n%{http_code}' \
           -X PATCH "$target" \
           -H "Authorization: Bearer $access_token" \
@@ -148,11 +135,11 @@ steps:
         body_json=$(echo "$response" | head -n-1)
 
         if [[ "$code" == "200" ]]; then
-          echo "✅ Google provider updated."
+          echo "✅ Google provider updated or already enabled."
           exit 0
         fi
 
-        # … otherwise create the config from scratch.
+        # --- If the provider isn’t there yet, create it ------------------------
         if echo "$body_json" | grep -q "CONFIGURATION_NOT_FOUND"; then
           echo "ℹ️  Google provider missing – creating."
           create_resp=$(curl -s -w '\n%{http_code}' \
