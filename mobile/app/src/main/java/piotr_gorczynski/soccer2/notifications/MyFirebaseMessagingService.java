@@ -92,7 +92,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                 + ": 📨 Message received: " + remoteMessage.getData());
         if ("start".equals(remoteMessage.getData().get("type"))) {
-            Log.d("TAG_Soccer", "start message ignored (no auto-launch)");
+            Log.d(
+                "TAG_Soccer",
+                getClass().getSimpleName() + ".onMessageReceived: start message ignored (no auto-launch)"
+            );
             return;  // ignore legacy start push
         }
 
