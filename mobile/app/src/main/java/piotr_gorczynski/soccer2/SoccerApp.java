@@ -25,6 +25,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.android.ump.ConsentInformation;
+import com.google.android.ump.ConsentRequestParameters;
+import com.google.android.ump.UserMessagingPlatform;
+import com.google.android.ump.ConsentForm;
+import com.google.android.ump.FormError;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -71,7 +76,9 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         super.onCreate();
 
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
-        
+
+        requestConsent(this);
+
         // Initialize backend service checker
         serviceChecker = new BackendServiceChecker(this);
         
@@ -367,6 +374,44 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         } else {
             Log.e("TAG_Soccer", getClass().getSimpleName() + ".debugTestBackendService: Service checker not initialized");
         }
+    }
+
+    private void requestConsent(Context context) {
+        ConsentRequestParameters params = new ConsentRequestParameters
+                .Builder()
+                .setTagForUnderAgeOfConsent(false)
+                .build();
+
+        ConsentInformation consentInformation = UserMessagingPlatform.getConsentInformation(context);
+        consentInformation.requestConsentInfoUpdate(
+                context,
+                params,
+                () -> {
+                    if (consentInformation.isConsentFormAvailable()) {
+                        loadAndShowConsentForm();
+                    }
+                },
+                formError -> Log.w("TAG_Soccer", "UMP: Failed to update consent info: " + formError.getMessage())
+        );
+    }
+
+    private void loadAndShowConsentForm() {
+        UserMessagingPlatform.loadConsentForm(
+                this,
+                consentForm -> {
+                    if (UserMessagingPlatform.getConsentInformation(this).getConsentStatus()
+                            == ConsentInformation.ConsentStatus.REQUIRED) {
+                        consentForm.show(
+                                this,
+                                formError -> {
+                                    if (formError != null) {
+                                        Log.w("TAG_Soccer", "UMP: Consent form error: " + formError.getMessage());
+                                    }
+                                });
+                    }
+                },
+                formError -> Log.w("TAG_Soccer", "UMP: Failed to load consent form: " + formError.getMessage())
+        );
     }
 
 
