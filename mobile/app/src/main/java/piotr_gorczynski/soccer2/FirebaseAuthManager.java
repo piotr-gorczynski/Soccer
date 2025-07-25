@@ -33,9 +33,15 @@ public class FirebaseAuthManager {
     }
 
     public void loginWithProvider(Activity activity, String providerId, String nickname, LoginCallback callback) {
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                ": Starting provider login. providerId=" + providerId + ", nickname=" + nickname);
         OAuthProvider.Builder provider = OAuthProvider.newBuilder(providerId);
         firebaseAuth.startActivityForSignInWithProvider(activity, provider.build())
                 .addOnSuccessListener(authResult -> {
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                            Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                            ": signInWithProvider success");
                     String uid = authResult.getUser().getUid();
                     String email = authResult.getUser().getEmail();
 
@@ -50,11 +56,19 @@ public class FirebaseAuthManager {
                             .set(userData)
                             .addOnCompleteListener(task -> {
                                 storeUserData(uid, email != null ? email : "", nickname, providerId);
-                                ((SoccerApp) context.getApplicationContext()).syncFcmTokenIfNeeded();
-                                callback.onLoginSuccess();
-                            });
+                            ((SoccerApp) context.getApplicationContext()).syncFcmTokenIfNeeded();
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                                    Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                                    ": user data stored for uid=" + uid);
+                            callback.onLoginSuccess();
+                        });
                 })
-                .addOnFailureListener(e -> callback.onLoginFailure(e.getMessage()));
+                .addOnFailureListener(e -> {
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
+                            Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                            ": signInWithProvider FAILED", e);
+                    callback.onLoginFailure(e.getMessage());
+                });
     }
 
     private void storeUserData(String uid, String email, String nickname, String method) {
