@@ -388,21 +388,21 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                 params,
                 () -> {
                     if (consentInformation.isConsentFormAvailable()) {
-                        loadAndShowConsentForm();
+                        loadAndShowConsentForm(activity);
                     }
                 },
                 formError -> Log.w("TAG_Soccer", "UMP: Failed to update consent info: " + formError.getMessage())
         );
     }
 
-    private void loadAndShowConsentForm() {
+    private void loadAndShowConsentForm(Activity activity) {
         UserMessagingPlatform.loadConsentForm(
-                this,
+                activity,
                 consentForm -> {
-                    if (UserMessagingPlatform.getConsentInformation(this).getConsentStatus()
+                    if (UserMessagingPlatform.getConsentInformation(activity).getConsentStatus()
                             == ConsentInformation.ConsentStatus.REQUIRED) {
                         consentForm.show(
-                                this,
+                                activity,
                                 formError -> {
                                     if (formError != null) {
                                         Log.w("TAG_Soccer", "UMP: Consent form error: " + formError.getMessage());
