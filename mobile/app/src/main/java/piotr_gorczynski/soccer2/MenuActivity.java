@@ -196,6 +196,11 @@ public class MenuActivity extends AppCompatActivity {
 
         runHousekeeping();          // ← always executed, even on cold resume
 
+        Log.d("TAG_Soccer", "onCreate: Calling MobileAds");
+        MobileAds.initialize(this, initializationStatus -> {});
+        Log.d("TAG_Soccer", "onCreate: loadInterstitialAd");
+        loadInterstitialAd();
+
         /* ───────────── 1️⃣  Look for any ACTIVE match involving this user ───────────── */
         SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
         String uid = FirebaseAuth.getInstance().getUid();
@@ -239,8 +244,6 @@ public class MenuActivity extends AppCompatActivity {
         }        /* no UID (not logged-in) → skip active-match lookup */
         continueWithInviteRestore();
 
-        MobileAds.initialize(this, initializationStatus -> {});
-        loadInterstitialAd();
     }
     private void loadInterstitialAd() {
         AdRequest adRequest = new AdRequest.Builder().build();
