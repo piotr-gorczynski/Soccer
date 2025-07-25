@@ -84,7 +84,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         // 1️⃣  Wipe the local cache & cached rules once per cold start
         db.clearPersistence().addOnCompleteListener(t -> {
             if (!t.isSuccessful()) {
-                Log.w("TAG_Soccer", "clearPersistence failed", t.getException());
+                Log.w("TAG_Soccer", getClass().getSimpleName() + ".onCreate: clearPersistence failed", t.getException());
             }
 
             // 2️⃣  Now it’s safe to register listeners or use Firestore
@@ -294,11 +294,11 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     private void checkBackendAvailability() {
         if (serviceChecker == null) return;
         
-        Log.d("TAG_Soccer", "Checking backend service availability");
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".checkBackendAvailability: Checking backend service availability");
         serviceChecker.checkServiceAvailability(new BackendServiceChecker.ServiceCheckCallback() {
             @Override
             public void onServiceAvailable() {
-                Log.d("TAG_Soccer", "Backend service is available");
+                Log.d("TAG_Soccer", getClass().getSimpleName() + ".checkBackendAvailability: Backend service is available");
                 isBackendAvailable = true;
                 // Notify any listeners that backend is available
                 notifyBackendAvailabilityChanged(true);
@@ -306,7 +306,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
 
             @Override
             public void onServiceUnavailable(String reason) {
-                Log.w("TAG_Soccer", "Backend service is unavailable: " + reason);
+                Log.w("TAG_Soccer", getClass().getSimpleName() + ".checkBackendAvailability: Backend service is unavailable: " + reason);
                 isBackendAvailable = false;
                 // Notify any listeners that backend is unavailable
                 notifyBackendAvailabilityChanged(false);
@@ -335,7 +335,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     private void notifyBackendAvailabilityChanged(boolean available) {
         // For now, we'll let activities query the state directly
         // This could be enhanced with a proper event system if needed
-        Log.d("TAG_Soccer", "Backend availability changed: " + available);
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".notifyBackendAvailabilityChanged: Backend availability changed: " + available);
     }
     
     /**
@@ -352,7 +352,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
             // correct on fresh installs.
             String defaultProjectId = "soccer-dev-1744877837";
             serviceChecker.setProjectId(defaultProjectId);
-            Log.d("TAG_Soccer", "Configured default project ID: " + defaultProjectId);
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".configureDefaultProjectId: Configured default project ID: " + defaultProjectId);
         }
     }
     
@@ -361,11 +361,11 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
      * Can be called from debugging sessions
      */
     public void debugTestBackendService() {
-        Log.d("TAG_Soccer", "=== DEBUG: Testing Backend Service ===");
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".debugTestBackendService: === DEBUG: Testing Backend Service ===");
         if (serviceChecker != null) {
             serviceChecker.testServiceCheck();
         } else {
-            Log.e("TAG_Soccer", "Service checker not initialized");
+            Log.e("TAG_Soccer", getClass().getSimpleName() + ".debugTestBackendService: Service checker not initialized");
         }
     }
 
