@@ -49,8 +49,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         preference.setChecked(blockInvites != null ? blockInvites : false);
                     }
                 })
-                .addOnFailureListener(e -> 
-                    Log.e("TAG_Soccer", "Failed to load block invite preference", e)
+                .addOnFailureListener(e ->
+                    Log.e(
+                        "TAG_Soccer",
+                        getClass().getSimpleName() + ".loadBlockInvitePreference: Failed to load block invite preference",
+                        e
+                    )
                 );
         }
     }
@@ -61,10 +65,17 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             db.collection("users").document(uid)
                 .update("blockInviteFriend", blockInvites)
                 .addOnSuccessListener(aVoid ->
-                    Log.d("TAG_Soccer", "Block invite preference updated: " + blockInvites)
+                    Log.d(
+                        "TAG_Soccer",
+                        getClass().getSimpleName() + ".updateBlockInviteInFirestore: Block invite preference updated: " + blockInvites
+                    )
                 )
                 .addOnFailureListener(e ->
-                    Log.e("TAG_Soccer", "Failed to update block invite preference", e)
+                    Log.e(
+                        "TAG_Soccer",
+                        getClass().getSimpleName() + ".updateBlockInviteInFirestore: Failed to update block invite preference",
+                        e
+                    )
                 );
         }
     }

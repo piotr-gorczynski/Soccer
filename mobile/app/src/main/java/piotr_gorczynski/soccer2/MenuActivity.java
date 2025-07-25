@@ -249,13 +249,19 @@ public class MenuActivity extends AppCompatActivity {
                 new InterstitialAdLoadCallback() {
                     @Override
                     public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
-                        Log.d("TAG_Soccer", "Interstitial ad loaded");
+                        Log.d(
+                            "TAG_Soccer",
+                            getClass().getSimpleName() + ".onAdLoaded: Interstitial ad loaded"
+                        );
                         mInterstitialAd = interstitialAd;
                     }
 
                     @Override
                     public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                        Log.d("TAG_Soccer", "Interstitial ad failed to load: " + loadAdError.getMessage());
+                        Log.d(
+                            "TAG_Soccer",
+                            getClass().getSimpleName() + ".onAdFailedToLoad: Interstitial ad failed to load: " + loadAdError.getMessage()
+                        );
                         mInterstitialAd = null;
                     }
                 });
@@ -274,7 +280,10 @@ public class MenuActivity extends AppCompatActivity {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         long nowMs = System.currentTimeMillis();
 
-        Log.d("TAG_Soccer", "continueWithInviteRestore: querying for live invites");
+        Log.d(
+            "TAG_Soccer",
+            getClass().getSimpleName() + ".continueWithInviteRestore: querying for live invites"
+        );
 
         db.collection("invitations")
                 .whereEqualTo("from", uid)
@@ -310,7 +319,13 @@ public class MenuActivity extends AppCompatActivity {
                         }.getClass().getEnclosingMethod()).getName() + ": continueWithInviteRestore: invite " + inviteId + " is already expired → skipping");
                     }
                 })
-                .addOnFailureListener(e -> Log.e("TAG_Soccer", "continueWithInviteRestore: failed to query invites", e));
+                .addOnFailureListener(e ->
+                        Log.e(
+                                "TAG_Soccer",
+                                getClass().getSimpleName() + ".continueWithInviteRestore: failed to query invites",
+                                e
+                        )
+                );
     }
 
     @Override
@@ -361,13 +376,19 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     public void OpenInviteFriend(View view) {
-        Log.d("TAG_Soccer", "OpenInviteFriend called. Ad ready=" + (mInterstitialAd != null));
+        Log.d(
+            "TAG_Soccer",
+            getClass().getSimpleName() + ".OpenInviteFriend: called. Ad ready=" + (mInterstitialAd != null)
+        );
         if (mInterstitialAd != null) {
             mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
                 @Override
                 public void onAdDismissedFullScreenContent() {
                     // Ad closed, now go to InviteFriendActivity
-                    Log.d("TAG_Soccer", "Interstitial ad dismissed");
+                    Log.d(
+                        "TAG_Soccer",
+                        getClass().getSimpleName() + ".onAdDismissedFullScreenContent: Interstitial ad dismissed"
+                    );
                     startActivity(new Intent(MenuActivity.this, InviteFriendActivity.class));
                     loadInterstitialAd(); // preload next one
                 }
@@ -375,21 +396,33 @@ public class MenuActivity extends AppCompatActivity {
                 @Override
                 public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
                     // If the ad fails, still continue
-                    Log.d("TAG_Soccer", "Interstitial ad failed to show: " + adError.getMessage());
+                    Log.d(
+                        "TAG_Soccer",
+                        getClass().getSimpleName() + ".onAdFailedToShowFullScreenContent: Interstitial ad failed to show: " + adError.getMessage()
+                    );
                     startActivity(new Intent(MenuActivity.this, InviteFriendActivity.class));
                 }
 
                 @Override
                 public void onAdShowedFullScreenContent() {
-                    Log.d("TAG_Soccer", "Interstitial ad showed");
+                    Log.d(
+                        "TAG_Soccer",
+                        getClass().getSimpleName() + ".onAdShowedFullScreenContent: Interstitial ad showed"
+                    );
                     mInterstitialAd = null;
                 }
             });
 
-            Log.d("TAG_Soccer", "Showing interstitial ad");
+            Log.d(
+                "TAG_Soccer",
+                getClass().getSimpleName() + ".OpenInviteFriend: Showing interstitial ad"
+            );
             mInterstitialAd.show(this);
         } else {
-            Log.d("TAG_Soccer", "No interstitial ad ready, opening InviteFriendActivity directly");
+            Log.d(
+                "TAG_Soccer",
+                getClass().getSimpleName() + ".OpenInviteFriend: No interstitial ad ready, opening InviteFriendActivity directly"
+            );
             Intent intent = new Intent(this, InviteFriendActivity.class);
             startActivity(intent);
         }
@@ -442,24 +475,36 @@ public class MenuActivity extends AppCompatActivity {
      */
     private void checkBackendAvailability() {
         if (serviceChecker == null) {
-            Log.w("TAG_Soccer", "Service checker not available, assuming backend is available");
+            Log.w(
+                "TAG_Soccer",
+                getClass().getSimpleName() + ".checkBackendAvailability: Service checker not available, assuming backend is available"
+            );
             isBackendAvailable = true;
             updateUiForAuthState();
             return;
         }
         
-        Log.d("TAG_Soccer", "Checking backend availability from MenuActivity");
+        Log.d(
+            "TAG_Soccer",
+            getClass().getSimpleName() + ".checkBackendAvailability: Checking backend availability from MenuActivity"
+        );
         
         // Show a brief checking state (optional)
         runOnUiThread(() -> {
             // Could add a progress indicator here if desired
-            Log.d("TAG_Soccer", "Starting backend availability check...");
+            Log.d(
+                "TAG_Soccer",
+                getClass().getSimpleName() + ".checkBackendAvailability: Starting backend availability check..."
+            );
         });
         
         serviceChecker.checkServiceAvailability(new BackendServiceChecker.ServiceCheckCallback() {
             @Override
             public void onServiceAvailable() {
-                Log.d("TAG_Soccer", "Backend is available - enabling UI");
+                Log.d(
+                    "TAG_Soccer",
+                    getClass().getSimpleName() + ".checkBackendAvailability: Backend is available - enabling UI"
+                );
                 runOnUiThread(() -> {
                     isBackendAvailable = true;
                     updateUiForAuthState();
@@ -468,7 +513,10 @@ public class MenuActivity extends AppCompatActivity {
 
             @Override
             public void onServiceUnavailable(String reason) {
-                Log.w("TAG_Soccer", "Backend is unavailable: " + reason);
+                Log.w(
+                    "TAG_Soccer",
+                    getClass().getSimpleName() + ".checkBackendAvailability: Backend is unavailable: " + reason
+                );
                 runOnUiThread(() -> {
                     isBackendAvailable = false;
                     updateUiForAuthState();
@@ -512,7 +560,11 @@ public class MenuActivity extends AppCompatActivity {
                 }
             })
             .addOnFailureListener(e -> {
-                Log.e("TAG_Soccer", "Failed to check blocked invite status", e);
+                Log.e(
+                    "TAG_Soccer",
+                    getClass().getSimpleName() + ".checkAndUpdateBlockedInviteWarning: Failed to check blocked invite status",
+                    e
+                );
                 // Hide warning on error
                 MenuItem warningItem = optionsMenu.findItem(R.id.action_invite_blocked_warning);
                 if (warningItem != null) {
