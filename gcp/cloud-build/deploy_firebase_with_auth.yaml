@@ -103,98 +103,75 @@ steps:
           exit 1
         fi
 
-  # Step 4: Ensure Google IdP config exists and is enabled (auto-create Web app)
+  # ────────────────────────────────
+  # Step 4:  Enable Google Sign-In
+  # ────────────────────────────────
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    id: 'enable-google-idp'
+    id: 'enable-google-auth'
     entrypoint: bash
+    # Optional: surface your own OAuth client to Identity Platform.
+    # Pass them in as Cloud Build substitution variables or pull from Secret Manager.
+    env:
+      - 'GOOGLE_CLIENT_ID=${_GOOGLE_CLIENT_ID:-}'
+      - 'GOOGLE_CLIENT_SECRET=${_GOOGLE_CLIENT_SECRET:-}'
     args:
-      - -c
+      - '-c'
       - |
         set -e
-        set -x
-
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         access_token=$(cat /workspace/access_token.txt)
 
-        # ── 1. Install Firebase CLI (same method as earlier) ──────────────────────
-        curl -sL https://firebase.tools | bash
-        mkdir -p /workspace/firebase
-        cp /usr/local/bin/firebase /workspace/firebase/
-        chmod +x /workspace/firebase/firebase
+        echo "🔓 Enabling Google Sign-In …"
 
-        # ── 2. Ensure a Web app exists (create "ci-web" if missing) ──────────────
-        if /workspace/firebase/firebase apps:list --project "$firebase_project_id" | grep -q "WEB"; then
-          echo "🔎 Web app already exists."
+        # Build the JSON payload: if you supplied a custom OAuth client,
+        # include it; otherwise rely on the Google-managed default.
+        body='{"enabled":true'
+        if [[ -n "$GOOGLE_CLIENT_ID" && -n "$GOOGLE_CLIENT_SECRET" ]]; then
+          body=$body', "clientId":"'"$GOOGLE_CLIENT_ID"'", "clientSecret":"'"$GOOGLE_CLIENT_SECRET"'"'
+          updateMask="enabled,clientId,clientSecret"
         else
-          echo "ℹ️  No Web app found – creating one."
-          /workspace/firebase/firebase apps:create web "ci-web" --project "$firebase_project_id" --json
-          echo "✅ Web app created."
+          updateMask="enabled"
         fi
+        body=$body'}'
 
-        # ── 3. Get first Android appId (grep works even with spinner lines) ──────
-        android_app_id=$(/workspace/firebase/firebase apps:list \
-          --project "$firebase_project_id" --json \
-          | grep -o '"platform":"ANDROID"[^}]*"appId":[[:space:]]*"[^"]*"' \
-          | head -n1 \
-          | sed 's/.*"appId":[[:space:]]*"\([^"]*\)".*/\1/')
+        target="https://identitytoolkit.googleapis.com/admin/v2/projects/${firebase_project_id}/defaultSupportedIdpConfigs/google.com?updateMask=${updateMask}"
 
-        if [[ -z "$android_app_id" ]]; then
-          echo "❌ No Android app found in project."
-          exit 1
-        fi
-        echo "📌 Android app_id: $android_app_id"
-
-        # ── 4. Download google-services.json & extract Web OAuth client_id ──────
-        /workspace/firebase/firebase apps:sdkconfig android "$android_app_id" \
-          --project "$firebase_project_id" > /tmp/gs.json
-
-        client_id=$(python3 - <<'PY'
-        import json, sys
-        d=json.load(open("/tmp/gs.json"))
-        for c in d.get("client", []):
-            for o in c.get("oauth_client", []):
-                if o.get("client_type") == 3:
-                    print(o["client_id"]); sys.exit(0)
-        sys.exit(1)
-        PY
-        ) || { echo "❌ Web client_id not found; make sure a Web app exists."; exit 1; }
-
-        echo "🔑 Using OAuth client_id: $client_id"
-
-        # ── 5. PATCH first; if 404 then POST to create ───────────────────────────
-        provider="google.com"
-        patch_code=$(curl -s -o /dev/null -w '%{http_code}' -X PATCH \
+        # First try PATCH (fast path if the config already exists) …
+        response=$(curl -s -w '\n%{http_code}' \
+          -X PATCH "$target" \
           -H "Authorization: Bearer $access_token" \
           -H "X-Goog-User-Project: $firebase_project_id" \
           -H "Content-Type: application/json" \
-          "https://identitytoolkit.googleapis.com/admin/v2/projects/${firebase_project_id}/defaultSupportedIdpConfigs/${provider}?updateMask=enabled,clientId" \
-          -d "{\"enabled\": true, \"clientId\": \"${client_id}\"}" || true)
+          -d "$body")
 
-        if [[ "$patch_code" == "200" ]]; then
-          echo "✅ Google IdP updated."
+        code=$(echo "$response" | tail -n1)
+        body_json=$(echo "$response" | head -n-1)
+
+        if [[ "$code" == "200" ]]; then
+          echo "✅ Google provider updated."
           exit 0
         fi
-        if [[ "$patch_code" != "404" ]]; then
-          echo "❌ PATCH failed (HTTP $patch_code)"
-          exit 1
-        fi
 
-        echo "ℹ️  Config not found – creating it."
-        create_code=$(curl -s -o /dev/null -w '%{http_code}' -X POST \
-          -H "Authorization: Bearer $access_token" \
-          -H "X-Goog-User-Project: $firebase_project_id" \
-          -H "Content-Type: application/json" \
-          "https://identitytoolkit.googleapis.com/admin/v2/projects/${firebase_project_id}/defaultSupportedIdpConfigs?idpId=${provider}" \
-          -d "{\"enabled\": true, \"clientId\": \"${client_id}\"}" || true)
+        # … otherwise create the config from scratch.
+        if echo "$body_json" | grep -q "CONFIGURATION_NOT_FOUND"; then
+          echo "ℹ️  Google provider missing – creating."
+          create_resp=$(curl -s -w '\n%{http_code}' \
+            -X POST "https://identitytoolkit.googleapis.com/admin/v2/projects/${firebase_project_id}/defaultSupportedIdpConfigs?idpId=google.com" \
+            -H "Authorization: Bearer $access_token" \
+            -H "X-Goog-User-Project: $firebase_project_id" \
+            -H "Content-Type: application/json" \
+            -d "$body")
 
-        if [[ "$create_code" == "200" || "$create_code" == "409" ]]; then
-          echo "✅ Google IdP ready."
+          [[ "$(echo "$create_resp" | tail -n1)" == "200" ]] && {
+            echo "✅ Google Sign-In enabled."
+          } || {
+            echo "❌ Failed to create Google provider:"; echo "$create_resp"; exit 1;
+          }
         else
-          echo "❌ Failed to create Google IdP (HTTP $create_code)"
+          echo "❌ Failed to enable Google provider (HTTP $code)."
+          echo "$body_json"
           exit 1
         fi
-
-
 
 options:
   logging: CLOUD_LOGGING_ONLY
