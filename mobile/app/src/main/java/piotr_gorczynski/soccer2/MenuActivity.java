@@ -43,7 +43,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
-import com.google.android.gms.ads.mediation.admob.AdMobAdapter;
+import com.google.ads.mediation.admob.AdMobAdapter;
 import com.google.android.ump.ConsentInformation;
 import com.google.android.ump.UserMessagingPlatform;
 
