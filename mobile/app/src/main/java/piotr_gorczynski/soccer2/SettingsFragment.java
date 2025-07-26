@@ -48,7 +48,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         getClass().getSimpleName() + ".onCreatePreferences: ads_consent clicked"
                 );
                 SoccerApp app = (SoccerApp) requireActivity().getApplication();
-                app.requestConsent(requireActivity());
+                app.showAdsConsentForm(requireActivity());
                 return true;
             });
         }
