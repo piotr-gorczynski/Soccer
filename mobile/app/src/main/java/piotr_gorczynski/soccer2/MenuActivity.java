@@ -27,6 +27,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 
@@ -88,12 +89,15 @@ public class MenuActivity extends AppCompatActivity {
                 return;                     // ← exit early
             }
 
-            FirebaseFirestore.getInstance().collection("users").document(uid).update("fcmToken", newToken).addOnSuccessListener(v -> {
-                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                }.getClass().getEnclosingMethod()).getName() + ": ✅ FCM token saved");
-                prefs.edit().putString(PREF_FCM_TOKEN, newToken).apply();
-            }).addOnFailureListener(e -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-            }.getClass().getEnclosingMethod()).getName() + ": ❌ Failed to save FCM token", e));
+            FirebaseFirestore.getInstance().collection("users").document(uid)
+                    .set(Map.of("fcmToken", newToken), SetOptions.merge())
+                    .addOnSuccessListener(v -> {
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
+                        }.getClass().getEnclosingMethod()).getName() + ": ✅ FCM token saved");
+                        prefs.edit().putString(PREF_FCM_TOKEN, newToken).apply();
+                    })
+                    .addOnFailureListener(e -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
+                    }.getClass().getEnclosingMethod()).getName() + ": ❌ Failed to save FCM token", e));
         });
 
         // ✅ Call permission request
