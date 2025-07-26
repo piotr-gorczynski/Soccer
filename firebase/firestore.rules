@@ -134,6 +134,14 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // App configuration settings (e.g. ads frequency)
+    match /settings/{docId} {
+      // Only allow reads from authenticated users
+      allow read: if request.auth != null;
+      // No client-side writes permitted
+      allow write: if false;
+    }
+
     // 4. Everything else denied
     match /{document=**} {
       allow read, write: if false;
