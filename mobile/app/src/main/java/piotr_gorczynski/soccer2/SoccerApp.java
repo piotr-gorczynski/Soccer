@@ -425,6 +425,13 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                                 "TAG_Soccer",
                                 getClass().getSimpleName() + ".showAdsConsentForm: form dismissed"
                         );
+                        Log.d(
+                                "TAG_Soccer",
+                                getClass().getSimpleName() +
+                                        ".showAdsConsentForm: consent status=" +
+                                        UserMessagingPlatform.getConsentInformation(activity)
+                                                .getConsentStatus()
+                        );
                     }
                 }
         );
@@ -447,6 +454,13 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                                         Log.w("TAG_Soccer", "UMP: Consent form error: " + formError.getMessage());
                                     } else {
                                         Log.d("TAG_Soccer", getClass().getSimpleName() + ".loadAndShowConsentForm: form dismissed");
+                                        Log.d(
+                                                "TAG_Soccer",
+                                                getClass().getSimpleName() +
+                                                        ".loadAndShowConsentForm: consent status=" +
+                                                        UserMessagingPlatform.getConsentInformation(activity)
+                                                                .getConsentStatus()
+                                        );
                                     }
                                 });
                     } else {
