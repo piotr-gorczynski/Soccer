@@ -9,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.messaging.FirebaseMessaging;
+import android.util.Log;
 
 import java.util.Objects;
 
@@ -57,8 +59,22 @@ public class AccountActivity extends AppCompatActivity {
     }
 
     private void finishLogoutUi() {
-        getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE)
-                .edit().clear().apply();
+        String prefsName = getPackageName() + "_preferences";
+        getSharedPreferences(prefsName, MODE_PRIVATE)
+                .edit()
+                .remove("fcmToken") // ensure FCM token is wiped
+                .clear()
+                .apply();
+
+        FirebaseMessaging.getInstance().deleteToken()
+                .addOnCompleteListener(t -> {
+                    if (t.isSuccessful()) {
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".finishLogoutUi: \u2705 FCM token deleted");
+                    } else {
+                        Log.w("TAG_Soccer", getClass().getSimpleName() + ".finishLogoutUi: \u274C Failed to delete FCM token", t.getException());
+                    }
+                });
+
         Toast.makeText(this, R.string.logged_out, Toast.LENGTH_SHORT).show();
         finish();
     }
