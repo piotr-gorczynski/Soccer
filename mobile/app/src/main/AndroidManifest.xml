@@ -34,6 +34,7 @@
         <activity android:name=".RegisterAccountActivity" />
         <activity android:name=".LoginActivity" /> <!-- ✅ Add this -->
         <activity android:name=".UniversalLoginActivity" />
+        <activity android:name=".PickNicknameActivity" />
         <activity android:name=".AccountActivity" />
         <activity android:name=".InviteFriendActivity" />
         <activity
