@@ -75,6 +75,29 @@ public class MenuActivity extends AppCompatActivity {
         }
         SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
 
+        // 🔄 Sync nickname from Firestore if it differs from local prefs
+        String localNick = prefs.getString("nickname", null);
+        FirebaseFirestore.getInstance().collection("users").document(uid)
+                .get()
+                .addOnSuccessListener(doc -> {
+                    if (doc.exists()) {
+                        String remoteNick = doc.getString("nickname");
+                        if (remoteNick != null && !remoteNick.equals(localNick)) {
+                            prefs.edit().putString("nickname", remoteNick).apply();
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                                    Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                                    ": 🔄 Nickname updated from Firestore to " + remoteNick);
+                        }
+                    }
+                })
+                .addOnFailureListener(e -> Log.e(
+                        "TAG_Soccer",
+                        getClass().getSimpleName() + "." +
+                                Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                                ": ❌ Failed to fetch nickname from Firestore",
+                        e
+                ));
+
         FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
             if (!task.isSuccessful()) {
                 Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
