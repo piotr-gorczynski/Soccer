@@ -3,15 +3,15 @@ package piotr_gorczynski.soccer2;
 import android.os.Bundle;
 import android.util.Log;
 import androidx.preference.CheckBoxPreference;
-import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.Preference;
-import androidx.preference.PreferenceScreen;
-import androidx.preference.PreferenceCategory;
+import androidx.preference.PreferenceFragmentCompat;
+
+import com.google.android.ump.ConsentInformation;
+import com.google.android.ump.UserMessagingPlatform;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.Objects;
 
 public class SettingsFragment extends PreferenceFragmentCompat {
     
@@ -40,16 +40,18 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         }
 
         // Setup ad consent preference
-        Preference adsConsentPref = findPreference("ads_consent");
+        CheckBoxPreference adsConsentPref = findPreference("ads_consent");
         if (adsConsentPref != null) {
-            adsConsentPref.setOnPreferenceClickListener(pref -> {
+            updateAdsConsentCheckbox(adsConsentPref);
+            adsConsentPref.setOnPreferenceChangeListener((pref, newValue) -> {
                 Log.d(
                         "TAG_Soccer",
                         getClass().getSimpleName() + ".onCreatePreferences: ads_consent clicked"
                 );
                 SoccerApp app = (SoccerApp) requireActivity().getApplication();
                 app.showAdsConsentForm(requireActivity());
-                return true;
+                // keep current value until consent form result is reflected
+                return false;
             });
         }
     }
@@ -94,5 +96,20 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     )
                 );
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        CheckBoxPreference adsConsentPref = findPreference("ads_consent");
+        if (adsConsentPref != null) {
+            updateAdsConsentCheckbox(adsConsentPref);
+        }
+    }
+
+    private void updateAdsConsentCheckbox(CheckBoxPreference preference) {
+        ConsentInformation ci = UserMessagingPlatform.getConsentInformation(requireContext());
+        boolean hasConsent = ci.getConsentStatus() == ConsentInformation.ConsentStatus.OBTAINED;
+        preference.setChecked(hasConsent);
     }
 }
