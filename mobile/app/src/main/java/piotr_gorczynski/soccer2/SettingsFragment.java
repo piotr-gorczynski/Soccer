@@ -108,8 +108,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     }
 
     private void updateAdsConsentCheckbox(CheckBoxPreference preference) {
-        ConsentInformation ci = UserMessagingPlatform.getConsentInformation(requireContext());
-        boolean hasConsent = ci.getConsentStatus() == ConsentInformation.ConsentStatus.OBTAINED;
-        preference.setChecked(hasConsent);
+        ConsentInformation ci =
+                UserMessagingPlatform.getConsentInformation(requireContext());
+        boolean canRequestAds = ci.canRequestAds();
+        preference.setChecked(canRequestAds);
     }
 }
