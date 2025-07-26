@@ -5,6 +5,8 @@ import android.util.Log;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.Preference;
+import androidx.preference.PreferenceScreen;
+import androidx.preference.PreferenceCategory;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -28,11 +30,21 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         if (blockInvitePreference != null) {
             // Load current value from Firestore
             loadBlockInvitePreference(blockInvitePreference);
-            
+
             // Listen for changes
             blockInvitePreference.setOnPreferenceChangeListener((preference, newValue) -> {
                 boolean blockInvites = (Boolean) newValue;
                 updateBlockInviteInFirestore(blockInvites);
+                return true;
+            });
+        }
+
+        // Setup ad consent preference
+        Preference adsConsentPref = findPreference("ads_consent");
+        if (adsConsentPref != null) {
+            adsConsentPref.setOnPreferenceClickListener(pref -> {
+                SoccerApp app = (SoccerApp) requireActivity().getApplication();
+                app.requestConsent(requireActivity());
                 return true;
             });
         }
