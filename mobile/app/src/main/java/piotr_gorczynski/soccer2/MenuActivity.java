@@ -34,6 +34,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.widget.Toast;
+import androidx.appcompat.app.AlertDialog;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -285,6 +286,56 @@ public class MenuActivity extends AppCompatActivity {
                     }
                 });
     }
+
+    private boolean hasAdsConsent() {
+        ConsentInformation ci = UserMessagingPlatform.getConsentInformation(this);
+        return ci.getConsentStatus() == ConsentInformation.ConsentStatus.OBTAINED;
+    }
+
+    private void showConsentRequiredDialog() {
+        new AlertDialog.Builder(this)
+                .setMessage(R.string.ads_consent_required)
+                .setPositiveButton(android.R.string.ok, null)
+                .show();
+    }
+
+    private void showAdThenRun(Runnable action) {
+        Log.d(
+                "TAG_Soccer",
+                getClass().getSimpleName() + ".showAdThenRun: Ad ready=" + (mInterstitialAd != null)
+        );
+        if (mInterstitialAd != null) {
+            mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+                @Override
+                public void onAdDismissedFullScreenContent() {
+                    Log.d(
+                            "TAG_Soccer",
+                            getClass().getSimpleName() + ".onAdDismissedFullScreenContent"
+                    );
+                    action.run();
+                    loadInterstitialAd();
+                }
+
+                @Override
+                public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
+                    Log.d(
+                            "TAG_Soccer",
+                            getClass().getSimpleName() + ".onAdFailedToShowFullScreenContent: " + adError.getMessage()
+                    );
+                    action.run();
+                }
+
+                @Override
+                public void onAdShowedFullScreenContent() {
+                    mInterstitialAd = null;
+                }
+            });
+
+            mInterstitialAd.show(this);
+        } else {
+            action.run();
+        }
+    }
     /* helper: launch GameActivity then finish this MenuActivity */
     private void startGame(String matchPath, SharedPreferences prefs) {
         startActivity(new Intent(this, GameActivity.class).putExtra("matchPath", matchPath).putExtra("GameType", 3).putExtra("localNickname", prefs.getString("nickname", "Player")).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK));
@@ -395,69 +446,39 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     public void OpenInviteFriend(View view) {
-        Log.d(
-            "TAG_Soccer",
-            getClass().getSimpleName() + ".OpenInviteFriend: called. Ad ready=" + (mInterstitialAd != null)
-        );
-        if (mInterstitialAd != null) {
-            mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
-                @Override
-                public void onAdDismissedFullScreenContent() {
-                    // Ad closed, now go to InviteFriendActivity
-                    Log.d(
-                        "TAG_Soccer",
-                        getClass().getSimpleName() + ".onAdDismissedFullScreenContent: Interstitial ad dismissed"
-                    );
-                    startActivity(new Intent(MenuActivity.this, InviteFriendActivity.class));
-                    loadInterstitialAd(); // preload next one
-                }
-
-                @Override
-                public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
-                    // If the ad fails, still continue
-                    Log.d(
-                        "TAG_Soccer",
-                        getClass().getSimpleName() + ".onAdFailedToShowFullScreenContent: Interstitial ad failed to show: " + adError.getMessage()
-                    );
-                    startActivity(new Intent(MenuActivity.this, InviteFriendActivity.class));
-                }
-
-                @Override
-                public void onAdShowedFullScreenContent() {
-                    Log.d(
-                        "TAG_Soccer",
-                        getClass().getSimpleName() + ".onAdShowedFullScreenContent: Interstitial ad showed"
-                    );
-                    mInterstitialAd = null;
-                }
-            });
-
-            Log.d(
-                "TAG_Soccer",
-                getClass().getSimpleName() + ".OpenInviteFriend: Showing interstitial ad"
-            );
-            mInterstitialAd.show(this);
-        } else {
-            Log.d(
-                "TAG_Soccer",
-                getClass().getSimpleName() + ".OpenInviteFriend: No interstitial ad ready, opening InviteFriendActivity directly"
-            );
-            Intent intent = new Intent(this, InviteFriendActivity.class);
-            startActivity(intent);
+        if (!hasAdsConsent()) {
+            showConsentRequiredDialog();
+            return;
         }
+
+        showAdThenRun(() -> startActivity(new Intent(MenuActivity.this, InviteFriendActivity.class)));
     }
 
     public void OpenInvites(View view) {
-        Intent intent = new Intent(this, InvitationsActivity.class);
-        startActivity(intent);
+        if (!hasAdsConsent()) {
+            showConsentRequiredDialog();
+            return;
+        }
+
+        showAdThenRun(() -> startActivity(new Intent(this, InvitationsActivity.class)));
     }
 
     public void OpenTournaments(View view) {
-        startActivity(new Intent(this, TournamentsActivity.class));
+        if (!hasAdsConsent()) {
+            showConsentRequiredDialog();
+            return;
+        }
+
+        showAdThenRun(() -> startActivity(new Intent(this, TournamentsActivity.class)));
     }
 
     public void OpenRanking(View view) {
-        startActivity(new Intent(this, RankingActivity.class));
+        if (!hasAdsConsent()) {
+            showConsentRequiredDialog();
+            return;
+        }
+
+        showAdThenRun(() -> startActivity(new Intent(this, RankingActivity.class)));
     }
 
     @Override
