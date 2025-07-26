@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.activity.OnBackPressedCallback;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -57,6 +58,12 @@ public class PickNicknameActivity extends AppCompatActivity {
         });
 
         btnConfirm.setOnClickListener(v -> saveNickname());
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override public void handleOnBackPressed() {
+                // Disable back button to enforce nickname entry
+            }
+        });
     }
 
     private void saveNickname() {
@@ -120,10 +127,6 @@ public class PickNicknameActivity extends AppCompatActivity {
                 });
     }
 
-    @Override
-    public void onBackPressed() {
-        // Disable back button to enforce nickname entry
-    }
 
     private static final InputFilter NO_LEADING_SPACE = (source, start, end, dest, dstart, dend) -> {
         if (dstart == 0 && start < end && Character.isWhitespace(source.charAt(start))) {
