@@ -55,15 +55,18 @@ public class FirebaseAuthManager {
                                 if (email != null) data.put("email", email);
                                 data.put("method", providerId);
 
-                                String finalNickname = nickname;
+                                String nicknameToStore;
                                 if (existingNick == null || existingNick.isEmpty()) {
-                                    if (finalNickname != null && !finalNickname.isEmpty()) {
-                                        data.put("nickname", finalNickname);
-                                        existingNick = finalNickname;
+                                    if (nickname != null && !nickname.isEmpty()) {
+                                        data.put("nickname", nickname);
+                                        nicknameToStore = nickname;
+                                    } else {
+                                        nicknameToStore = null;
                                     }
                                 } else {
-                                    finalNickname = existingNick;
+                                    nicknameToStore = existingNick;
                                 }
+                                final String finalNickname = nicknameToStore;
 
                                 if (doc.exists()) {
                                     db.collection("users").document(uid).set(data, SetOptions.merge())
