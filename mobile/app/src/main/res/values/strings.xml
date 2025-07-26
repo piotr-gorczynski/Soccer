@@ -110,4 +110,5 @@
     <string name="login_microsoft">Login with Microsoft</string>
     <string name="login_method_label">Login method: %1$s</string>
     <string name="ads_consent_required">Showing ads is helping to finance infrastructure maintenance. Because you have not agreed to show ads, this option is not available. You can check your consent in settings.</string>
+    <string name="confirm">Confirm</string>
 </resources>

@@ -6,14 +6,6 @@
     android:gravity="center"
     android:orientation="vertical"
     android:padding="20dp">
-    <EditText
-        android:id="@+id/editNickname"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        android:hint="@string/nickname"
-        android:inputType="textPersonName" />
-
     <Button
         android:id="@+id/btnUniversalEmail"
         android:layout_width="200dp"
