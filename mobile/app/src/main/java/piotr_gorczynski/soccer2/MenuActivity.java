@@ -84,19 +84,29 @@ public class MenuActivity extends AppCompatActivity {
                         String remoteNick = doc.getString("nickname");
                         if (remoteNick != null && !remoteNick.equals(localNick)) {
                             prefs.edit().putString("nickname", remoteNick).apply();
-                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                                    Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
-                                    ": 🔄 Nickname updated from Firestore to " + remoteNick);
+                            Log.d(
+                                    "TAG_Soccer",
+                                    getClass().getSimpleName() + "." +
+                                            Objects.requireNonNull(new Object() {
+                                            }.getClass().getEnclosingMethod()).getName() +
+                                            ": 🔄 Nickname updated from Firestore to " + remoteNick);
+                            runOnUiThread(() -> {
+                                TextView nicknameLabel = findViewById(R.id.nicknameLabel);
+                                nicknameLabel.setText(getString(R.string.hello_nickname, remoteNick));
+                            });
                         }
                     }
                 })
-                .addOnFailureListener(e -> Log.e(
-                        "TAG_Soccer",
-                        getClass().getSimpleName() + "." +
-                                Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
-                                ": ❌ Failed to fetch nickname from Firestore",
-                        e
-                ));
+                .addOnFailureListener(
+                        e ->
+                                Log.e(
+                                        "TAG_Soccer",
+                                        getClass().getSimpleName()
+                                                + "."
+                                                + Objects.requireNonNull(new Object() {
+                                                }.getClass().getEnclosingMethod()).getName()
+                                                + ": ❌ Failed to fetch nickname from Firestore",
+                                        e));
 
         FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
             if (!task.isSuccessful()) {
