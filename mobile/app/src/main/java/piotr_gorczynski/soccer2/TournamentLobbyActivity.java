@@ -18,6 +18,7 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Filter;
+import piotr_gorczynski.soccer2.AuthProvider;
 import com.google.firebase.firestore.QuerySnapshot;
 
 
@@ -89,7 +90,7 @@ public class TournamentLobbyActivity extends AppCompatActivity {
 
         String tid   = getIntent().getStringExtra("tournamentId");
         String nameExtra = getIntent().getStringExtra("tournamentName");
-        String myUid = requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+        String myUid = requireNonNull(AuthProvider.getAuth().getCurrentUser()).getUid();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         if (nameExtra != null) {
