@@ -65,6 +65,10 @@
     {
       "source": "functions/leave-tournament",
       "codebase": "leave-tournament"
+    },
+    {
+      "source": "functions/seed-ads-frequency",
+      "codebase": "seed-ads-frequency"
     }
   ],
   "firestore": {
