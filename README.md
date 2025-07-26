@@ -21,5 +21,3 @@ The script also accepts a path to a JSON file containing the fields `name`, `max
 ```bash
 node tools/create-tournament.js params.json
 ```
-
-See [docs/custom-auth-domain.md](docs/custom-auth-domain.md) for instructions on configuring a custom Firebase Authentication domain.
