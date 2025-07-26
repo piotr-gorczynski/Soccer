@@ -57,6 +57,10 @@ public class MenuActivity extends AppCompatActivity {
     private static final String AD_UNIT_ID = "ca-app-pub-3940256099942544/1033173712"; // test ID
     private InterstitialAd mInterstitialAd;
 
+    private static final String PREF_AD_COUNTER = "adsCounter";
+    private static final String PREF_AD_FREQUENCY = "adsFrequency";
+    private static final int DEFAULT_AD_FREQUENCY = 10;
+
     private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 101;
 
     private static final String PREF_FCM_TOKEN = "fcmToken";
@@ -146,6 +150,22 @@ public class MenuActivity extends AppCompatActivity {
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(channel);
         }
+
+        FirebaseFirestore.getInstance()
+                .collection("settings")
+                .document("adsFreuency")
+                .get()
+                .addOnSuccessListener(doc -> {
+                    Long freq = doc.getLong("value");
+                    if (freq != null) {
+                        prefs.edit().putInt(PREF_AD_FREQUENCY, freq.intValue()).apply();
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".runHousekeeping: ads frequency=" + freq);
+                    }
+                })
+                .addOnFailureListener(e ->
+                        Log.e("TAG_Soccer",
+                            getClass().getSimpleName() + ".runHousekeeping: failed to load ads frequency",
+                            e));
 
     }
 
@@ -345,6 +365,16 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     private void showAdThenRun(Runnable action) {
+        SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
+        int frequency = prefs.getInt(PREF_AD_FREQUENCY, DEFAULT_AD_FREQUENCY);
+        int counter = prefs.getInt(PREF_AD_COUNTER, 0) + 1;
+        if (counter < frequency) {
+            prefs.edit().putInt(PREF_AD_COUNTER, counter).apply();
+            action.run();
+            return;
+        }
+        prefs.edit().putInt(PREF_AD_COUNTER, 0).apply();
+
         Log.d(
                 "TAG_Soccer",
                 getClass().getSimpleName() + ".showAdThenRun: Ad ready=" + (mInterstitialAd != null)
