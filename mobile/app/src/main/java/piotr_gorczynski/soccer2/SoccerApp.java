@@ -404,6 +404,40 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         );
     }
 
+    public void showAdsConsentForm(Activity activity) {
+        ConsentInformation consentInformation =
+                UserMessagingPlatform.getConsentInformation(activity);
+
+        if (consentInformation.getPrivacyOptionsRequirementStatus()
+                == ConsentInformation.PrivacyOptionsRequirementStatus.REQUIRED) {
+            Log.d(
+                    "TAG_Soccer",
+                    getClass().getSimpleName() + ".showAdsConsentForm: showing privacy options"
+            );
+            UserMessagingPlatform.showPrivacyOptionsForm(
+                    activity,
+                    formError -> {
+                        if (formError != null) {
+                            Log.w("TAG_Soccer",
+                                    "UMP: Privacy options form error: " + formError.getMessage());
+                        } else {
+                            Log.d(
+                                    "TAG_Soccer",
+                                    getClass().getSimpleName() + ".showAdsConsentForm: form dismissed"
+                            );
+                        }
+                    }
+            );
+        } else {
+            Log.d(
+                    "TAG_Soccer",
+                    getClass().getSimpleName() + ".showAdsConsentForm: privacy options not required, resetting"
+            );
+            consentInformation.reset();
+            requestConsent(activity);
+        }
+    }
+
     private void loadAndShowConsentForm(Activity activity) {
         UserMessagingPlatform.loadConsentForm(
                 activity,
