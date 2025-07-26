@@ -10,6 +10,8 @@
     <string name="pref_title_level">Android level</string>
     <string name="pref_title_block_invite_friend">Block \'Invite a Friend\' requests</string>
     <string name="pref_summary_block_invite_friend">Other players cannot invite you via \'Invite a Friend\' (tournaments not affected)</string>
+    <string name="pref_title_ads_consent">Consent for showing ads</string>
+    <string name="pref_summary_ads_consent">Review or change your consent for displaying ads</string>
     <string-array name="pref_level_titles">
         <item>Easy</item>
         <item>Medium</item>
@@ -107,4 +109,5 @@
     <string name="login_facebook">Login with Facebook</string>
     <string name="login_microsoft">Login with Microsoft</string>
     <string name="login_method_label">Login method: %1$s</string>
+    <string name="ads_consent_required">Showing ads is helping to finance infrastructure maintenance. Because you have not agreed to show ads, this option is not available. You can check your consent in settings.</string>
 </resources>
