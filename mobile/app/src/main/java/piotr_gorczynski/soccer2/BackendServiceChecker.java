@@ -11,6 +11,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import piotr_gorczynski.soccer2.AuthProvider;
 
 import org.json.JSONObject;
 
@@ -95,7 +96,7 @@ public class BackendServiceChecker {
             Log.d(TAG, "No secret key available, proceeding without authentication");
         }
         
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseUser user = AuthProvider.getAuth().getCurrentUser();
         if (user != null) {
             Log.d(TAG, "Fetching ID token for authenticated request");
             user.getIdToken(false)

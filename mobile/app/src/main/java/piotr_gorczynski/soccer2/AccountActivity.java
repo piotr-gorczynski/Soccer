@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.firebase.auth.FirebaseAuth;
+import piotr_gorczynski.soccer2.AuthProvider;
 
 import java.util.Objects;
 
@@ -43,10 +44,10 @@ public class AccountActivity extends AppCompatActivity {
     }
 
     private void performLogout() {
-        String uid = FirebaseAuth.getInstance().getUid();
+        String uid = AuthProvider.getAuth().getUid();
 
         // Sign out immediately so the UI updates even if network operations fail
-        FirebaseAuth.getInstance().signOut();
+        AuthProvider.getAuth().signOut();
 
         // Attempt to mark the user offline in the background; no need to wait
         if (uid != null) {
