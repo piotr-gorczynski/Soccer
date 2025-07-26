@@ -1,0 +1,11 @@
+{
+  "name": "seed-ads-frequency",
+  "version": "1.0.0",
+  "main": "index.js",
+  "engines": {
+    "node": "18"
+  },
+  "dependencies": {
+    "firebase-admin": "^11.10.1"
+  }
+}
