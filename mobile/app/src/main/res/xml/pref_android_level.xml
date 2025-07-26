@@ -16,10 +16,11 @@
             android:defaultValue="false"
             android:icon="@drawable/ic_block" />
 
-        <Preference
+        <CheckBoxPreference
             android:key="ads_consent"
             android:title="@string/pref_title_ads_consent"
             android:summary="@string/pref_summary_ads_consent"
+            android:defaultValue="false"
             android:icon="@android:drawable/ic_dialog_info" />
 
 </PreferenceScreen>
