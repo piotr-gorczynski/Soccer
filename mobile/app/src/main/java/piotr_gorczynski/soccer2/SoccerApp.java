@@ -425,12 +425,22 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                                 "TAG_Soccer",
                                 getClass().getSimpleName() + ".showAdsConsentForm: form dismissed"
                         );
+                        ConsentInformation ci =
+                                UserMessagingPlatform.getConsentInformation(activity);
+                        int status = ci.getConsentStatus();
                         Log.d(
                                 "TAG_Soccer",
                                 getClass().getSimpleName() +
-                                        ".showAdsConsentForm: consent status=" +
-                                        UserMessagingPlatform.getConsentInformation(activity)
-                                                .getConsentStatus()
+                                        ".showAdsConsentForm: consent status=" + status
+                        );
+                        String choice =
+                                status == ConsentInformation.ConsentStatus.OBTAINED
+                                        ? "personalized ads"
+                                        : "non-personalized ads (NPA)";
+                        Log.d(
+                                "TAG_Soccer",
+                                getClass().getSimpleName() +
+                                        ".showAdsConsentForm: user selected " + choice
                         );
                     }
                 }
