@@ -10,6 +10,7 @@ import androidx.preference.PreferenceCategory;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import piotr_gorczynski.soccer2.AuthProvider;
 
 import java.util.Objects;
 
@@ -23,7 +24,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         setPreferencesFromResource(R.xml.pref_android_level, rootKey);
         
         db = FirebaseFirestore.getInstance();
-        auth = FirebaseAuth.getInstance();
+        auth = AuthProvider.getAuth();
         
         // Setup block invite friend preference
         CheckBoxPreference blockInvitePreference = findPreference("block_invite_friend");
