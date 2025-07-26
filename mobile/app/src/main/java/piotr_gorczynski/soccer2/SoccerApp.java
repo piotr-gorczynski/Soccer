@@ -377,6 +377,11 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     }
 
     public void requestConsent(Activity activity) {
+        Log.d(
+                "TAG_Soccer",
+                getClass().getSimpleName() + ".requestConsent: starting"
+        );
+
         ConsentRequestParameters params = new ConsentRequestParameters
                 .Builder()
                 .setTagForUnderAgeOfConsent(false)
@@ -387,6 +392,10 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                 activity,
                 params,
                 () -> {
+                    Log.d(
+                            "TAG_Soccer",
+                            getClass().getSimpleName() + ".requestConsent: consent info updated. form available=" + consentInformation.isConsentFormAvailable()
+                    );
                     if (consentInformation.isConsentFormAvailable()) {
                         loadAndShowConsentForm(activity);
                     }
@@ -399,6 +408,10 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         UserMessagingPlatform.loadConsentForm(
                 activity,
                 consentForm -> {
+                    Log.d(
+                            "TAG_Soccer",
+                            getClass().getSimpleName() + ".loadAndShowConsentForm: form loaded"
+                    );
                     if (UserMessagingPlatform.getConsentInformation(activity).getConsentStatus()
                             == ConsentInformation.ConsentStatus.REQUIRED) {
                         consentForm.show(
@@ -406,8 +419,15 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                                 formError -> {
                                     if (formError != null) {
                                         Log.w("TAG_Soccer", "UMP: Consent form error: " + formError.getMessage());
+                                    } else {
+                                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".loadAndShowConsentForm: form dismissed");
                                     }
                                 });
+                    } else {
+                        Log.d(
+                                "TAG_Soccer",
+                                getClass().getSimpleName() + ".loadAndShowConsentForm: consent not required"
+                        );
                     }
                 },
                 formError -> Log.w("TAG_Soccer", "UMP: Failed to load consent form: " + formError.getMessage())
