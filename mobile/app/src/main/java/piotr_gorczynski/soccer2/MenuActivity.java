@@ -120,6 +120,9 @@ public class MenuActivity extends AppCompatActivity {
         
         // Check backend availability when activity resumes
         checkBackendAvailability();
+
+        // Ensure the FCM token is stored after login
+        ((SoccerApp) getApplication()).syncFcmTokenIfNeeded();
         
         SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
         String nickname = prefs.getString("nickname", null);
