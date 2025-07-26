@@ -22,7 +22,6 @@ import android.widget.Toast;
 
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
-import piotr_gorczynski.soccer2.AuthProvider;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -272,7 +271,7 @@ public class GameActivity extends AppCompatActivity {
                 return;
             }
 
-            FirebaseUser user = AuthProvider.getAuth().getCurrentUser();
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if (user == null) {
                 Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": User not signed in");
                 Toast.makeText(this, "Please log in to continue.", Toast.LENGTH_LONG).show();
@@ -642,7 +641,7 @@ public class GameActivity extends AppCompatActivity {
                         .setMessage("Are you sure you want to exit? This will count as a forfeit.")
                         .setPositiveButton("Yes", (dialog, which) -> {
                             if (matchPath != null) {
-                                String loserUid = Objects.requireNonNull(AuthProvider.getAuth().getCurrentUser()).getUid();
+                                String loserUid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
                                 String winnerUid = loserUid.equals(player0Uid) ? player1Uid : player0Uid;
 
                                 Map<String, Object> update = new HashMap<>();

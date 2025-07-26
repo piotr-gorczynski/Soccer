@@ -17,7 +17,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.*;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.FirebaseFunctionsException;
-import piotr_gorczynski.soccer2.AuthProvider;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,7 +53,7 @@ public class InvitationsActivity extends AppCompatActivity {
         invitesList.setAdapter(adapter);
 
         db = FirebaseFirestore.getInstance();
-        auth = AuthProvider.getAuth();
+        auth = FirebaseAuth.getInstance();
 
         listenForInvites();
 
@@ -87,7 +86,7 @@ public class InvitationsActivity extends AppCompatActivity {
             return;
         }
 
-        FirebaseUser user = AuthProvider.getAuth().getCurrentUser();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
             Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": User not signed-in");
             Toast.makeText(this, "You must be logged in to accept invites.",

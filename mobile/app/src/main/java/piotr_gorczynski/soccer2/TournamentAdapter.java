@@ -15,7 +15,6 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.auth.FirebaseAuth;
-import piotr_gorczynski.soccer2.AuthProvider;
 
 import java.util.Date;
 import java.util.List;
@@ -141,8 +140,8 @@ public class TournamentAdapter
             h.leaveBtn.setEnabled(false);
             h.leaveBtn.setVisibility(View.VISIBLE);
 
-            String uid = AuthProvider.getAuth().getCurrentUser() != null
-                    ? AuthProvider.getAuth().getCurrentUser().getUid()
+            String uid = FirebaseAuth.getInstance().getCurrentUser() != null
+                    ? FirebaseAuth.getInstance().getCurrentUser().getUid()
                     : null;
             if (uid != null) {
                 FirebaseFirestore.getInstance()
@@ -197,8 +196,8 @@ public class TournamentAdapter
             h.leaveBtn.setVisibility(View.GONE);
             h.joinBtn.setEnabled(false);
 
-            String uid = AuthProvider.getAuth().getCurrentUser() != null
-                    ? AuthProvider.getAuth().getCurrentUser().getUid()
+            String uid = FirebaseAuth.getInstance().getCurrentUser() != null
+                    ? FirebaseAuth.getInstance().getCurrentUser().getUid()
                     : null;
 
             if (uid != null) {

@@ -19,7 +19,6 @@ import com.google.firebase.firestore.Source;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.firebase.auth.FirebaseAuth;
-import piotr_gorczynski.soccer2.AuthProvider;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import piotr_gorczynski.soccer2.GameActivity;
@@ -72,8 +71,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         super.onNewToken(token);
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": 🔐 New FCM token: " + token);
 
-        String uid = AuthProvider.getAuth().getCurrentUser() != null
-                ? AuthProvider.getAuth().getCurrentUser().getUid()
+        String uid = FirebaseAuth.getInstance().getCurrentUser() != null
+                ? FirebaseAuth.getInstance().getCurrentUser().getUid()
                 : null;
 
         if (uid != null) {
