@@ -73,6 +73,10 @@ public class FirebaseAuthManager {
                                             .addOnCompleteListener(task -> {
                                                 storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId);
                                                 ((SoccerApp) context.getApplicationContext()).syncFcmTokenIfNeeded();
+                                                Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                                                        Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                                                        ": login success uid=" + uid + ", nickname=" +
+                                                        (finalNickname != null ? finalNickname : "null"));
                                                 callback.onLoginSuccess();
                                             });
                                 } else {
@@ -80,6 +84,10 @@ public class FirebaseAuthManager {
                                             .addOnCompleteListener(task -> {
                                                 storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId);
                                                 ((SoccerApp) context.getApplicationContext()).syncFcmTokenIfNeeded();
+                                                Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                                                        Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                                                        ": login success uid=" + uid + ", nickname=" +
+                                                        (finalNickname != null ? finalNickname : "null"));
                                                 callback.onLoginSuccess();
                                             });
                                 }
@@ -129,11 +137,18 @@ public class FirebaseAuthManager {
                                             storeUserData(uid, email, nickname != null ? nickname : "Unknown", method);
                                             ((SoccerApp) context.getApplicationContext())
                                                     .syncFcmTokenIfNeeded();   // new helper (see below)
+                                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                                                    Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                                                    ": login success uid=" + uid + ", nickname=" +
+                                                    (nickname != null ? nickname : "null"));
                                             callback.onLoginSuccess();
                                         })
                                         .addOnFailureListener(e -> {
                                             Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ⚠️ Failed to load nickname from Firestore", e);
                                             storeUserData(uid, email, "Unknown", "email");
+                                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                                                    Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                                                    ": login success uid=" + uid + ", nickname=null");
                                             callback.onLoginSuccess();
                                         });
                             } else {
