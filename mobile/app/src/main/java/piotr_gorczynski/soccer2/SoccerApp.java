@@ -405,37 +405,27 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     }
 
     public void showAdsConsentForm(Activity activity) {
-        ConsentInformation consentInformation =
-                UserMessagingPlatform.getConsentInformation(activity);
+        Log.d(
+                "TAG_Soccer",
+                getClass().getSimpleName() + ".showAdsConsentForm: showing privacy options"
+        );
 
-        if (consentInformation.getPrivacyOptionsRequirementStatus()
-                == ConsentInformation.PrivacyOptionsRequirementStatus.REQUIRED) {
-            Log.d(
-                    "TAG_Soccer",
-                    getClass().getSimpleName() + ".showAdsConsentForm: showing privacy options"
-            );
-            UserMessagingPlatform.showPrivacyOptionsForm(
-                    activity,
-                    formError -> {
-                        if (formError != null) {
-                            Log.w("TAG_Soccer",
-                                    "UMP: Privacy options form error: " + formError.getMessage());
-                        } else {
-                            Log.d(
-                                    "TAG_Soccer",
-                                    getClass().getSimpleName() + ".showAdsConsentForm: form dismissed"
-                            );
-                        }
+        UserMessagingPlatform.showPrivacyOptionsForm(
+                activity,
+                formError -> {
+                    if (formError != null) {
+                        Log.w(
+                                "TAG_Soccer",
+                                "UMP: Privacy options form error: " + formError.getMessage()
+                        );
+                    } else {
+                        Log.d(
+                                "TAG_Soccer",
+                                getClass().getSimpleName() + ".showAdsConsentForm: form dismissed"
+                        );
                     }
-            );
-        } else {
-            Log.d(
-                    "TAG_Soccer",
-                    getClass().getSimpleName() + ".showAdsConsentForm: privacy options not required, resetting"
-            );
-            consentInformation.reset();
-            requestConsent(activity);
-        }
+                }
+        );
     }
 
     private void loadAndShowConsentForm(Activity activity) {
