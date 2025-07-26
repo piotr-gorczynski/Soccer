@@ -43,6 +43,10 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         Preference adsConsentPref = findPreference("ads_consent");
         if (adsConsentPref != null) {
             adsConsentPref.setOnPreferenceClickListener(pref -> {
+                Log.d(
+                        "TAG_Soccer",
+                        getClass().getSimpleName() + ".onCreatePreferences: ads_consent clicked"
+                );
                 SoccerApp app = (SoccerApp) requireActivity().getApplication();
                 app.requestConsent(requireActivity());
                 return true;
