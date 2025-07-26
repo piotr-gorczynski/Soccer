@@ -26,6 +26,7 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -81,23 +82,36 @@ public class MenuActivity extends AppCompatActivity {
             }
 
             String newToken = task.getResult();
+            if (newToken == null) return;
 
             String savedToken = prefs.getString(PREF_FCM_TOKEN, null);
-            if (newToken != null && newToken.equals(savedToken)) {
-                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                }.getClass().getEnclosingMethod()).getName() + ": 🔑 FCM token unchanged; skip Firestore write");
-                return;                     // ← exit early
-            }
+            DocumentReference docRef = FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(uid);
+            docRef.get().addOnSuccessListener(doc -> {
+                String remoteToken = doc.getString("fcmToken");
 
-            FirebaseFirestore.getInstance().collection("users").document(uid)
-                    .set(Map.of("fcmToken", newToken), SetOptions.merge())
-                    .addOnSuccessListener(v -> {
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                        }.getClass().getEnclosingMethod()).getName() + ": ✅ FCM token saved");
-                        prefs.edit().putString(PREF_FCM_TOKEN, newToken).apply();
-                    })
-                    .addOnFailureListener(e -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                    }.getClass().getEnclosingMethod()).getName() + ": ❌ Failed to save FCM token", e));
+                if (remoteToken == null || !remoteToken.equals(newToken)) {
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
+                    }.getClass().getEnclosingMethod()).getName() + ": 🔑 Updating Firestore FCM token");
+                    docRef.set(Map.of("fcmToken", newToken), SetOptions.merge())
+                            .addOnSuccessListener(v -> {
+                                prefs.edit().putString(PREF_FCM_TOKEN, newToken).apply();
+                                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
+                                }.getClass().getEnclosingMethod()).getName() + ": ✅ FCM token saved");
+                            })
+                            .addOnFailureListener(e -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
+                            }.getClass().getEnclosingMethod()).getName() + ": ❌ Failed to save FCM token", e));
+                } else if (savedToken == null || !savedToken.equals(remoteToken)) {
+                    prefs.edit().putString(PREF_FCM_TOKEN, remoteToken).apply();
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
+                    }.getClass().getEnclosingMethod()).getName() + ": 🔑 Synced FCM token from Firestore");
+                } else {
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
+                    }.getClass().getEnclosingMethod()).getName() + ": 🔑 FCM token unchanged; skip Firestore write");
+                }
+            }).addOnFailureListener(e -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
+            }.getClass().getEnclosingMethod()).getName() + ": ❌ Failed to read Firestore token", e));
         });
 
         // ✅ Call permission request
