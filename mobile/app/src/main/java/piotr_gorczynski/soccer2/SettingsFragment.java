@@ -112,5 +112,15 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 UserMessagingPlatform.getConsentInformation(requireContext());
         boolean canRequestAds = ci.canRequestAds();
         preference.setChecked(canRequestAds);
+        String choice =
+                ci.getConsentStatus() == ConsentInformation.ConsentStatus.OBTAINED
+                        ? "personalized ads"
+                        : "non-personalized ads (NPA)";
+        Log.d(
+                "TAG_Soccer",
+                getClass().getSimpleName()
+                        + ".updateAdsConsentCheckbox: user choice="
+                        + choice
+        );
     }
 }
