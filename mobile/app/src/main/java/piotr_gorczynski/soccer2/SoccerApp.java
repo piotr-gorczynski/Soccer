@@ -21,6 +21,8 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
+import piotr_gorczynski.soccer2.CustomFirebaseApp;
+import piotr_gorczynski.soccer2.AuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
@@ -78,6 +80,9 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
 
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
 
+        // Initialize custom FirebaseApp with overridden authDomain
+        CustomFirebaseApp.getApp(this);
+
 
         // Initialize backend service checker
         serviceChecker = new BackendServiceChecker(this);
@@ -99,7 +104,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                     .getLifecycle()
                     .addObserver(this);
 
-            FirebaseAuth auth = FirebaseAuth.getInstance();
+            FirebaseAuth auth = AuthProvider.getAuth();
             auth.addAuthStateListener(a -> {
                 if (a.getCurrentUser() != null) {
                     startPresence(a.getCurrentUser().getUid());
@@ -118,7 +123,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         MobileAds.initialize(this, initializationStatus -> {});
     }
     public void syncFcmTokenIfNeeded() {
-        String uid = FirebaseAuth.getInstance().getUid();
+        String uid = AuthProvider.getAuth().getUid();
         if (uid == null) return;
 
         FirebaseMessaging.getInstance().getToken()
@@ -236,7 +241,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         @NonNull
         @Override
         public Result doWork() {
-            String uid = FirebaseAuth.getInstance().getUid();
+            String uid = AuthProvider.getAuth().getUid();
             if (uid == null) return Result.success();
 
             /* open connection just long enough for the write */

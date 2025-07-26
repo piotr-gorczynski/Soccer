@@ -24,6 +24,7 @@ import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
+import piotr_gorczynski.soccer2.AuthProvider;
 
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -64,7 +65,7 @@ public class MenuActivity extends AppCompatActivity {
 
     /* ───────────── misc tasks that must always run on launch ───────────── */
     private void runHousekeeping() {
-        String uid = FirebaseAuth.getInstance().getUid();
+        String uid = AuthProvider.getAuth().getUid();
         if (uid == null) {
             Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
             }.getClass().getEnclosingMethod()).getName() + ": ⚠️ No logged-in user; token not saved");
@@ -137,7 +138,7 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     private void updateUiForAuthState() {
-        boolean loggedIn = FirebaseAuth.getInstance().getCurrentUser() != null;
+        boolean loggedIn = AuthProvider.getAuth().getCurrentUser() != null;
 
         Button inviteBtn = findViewById(R.id.InviteFriend);
         Button pendingBtn = findViewById(R.id.ShowInvites);
@@ -208,9 +209,9 @@ public class MenuActivity extends AppCompatActivity {
 
         /* ───────────── 1️⃣  Look for any ACTIVE match involving this user ───────────── */
         SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
-        String uid = FirebaseAuth.getInstance().getUid();
+        String uid = AuthProvider.getAuth().getUid();
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-        }.getClass().getEnclosingMethod()).getName() + ": Auth UID at match-lookup = " + FirebaseAuth.getInstance().getUid());
+        }.getClass().getEnclosingMethod()).getName() + ": Auth UID at match-lookup = " + AuthProvider.getAuth().getUid());
 
         if (uid != null) {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -344,7 +345,7 @@ public class MenuActivity extends AppCompatActivity {
 
     /*  🔻  old waiting-invite code moved unchanged into a helper  */
     private void continueWithInviteRestore() {
-        String uid = FirebaseAuth.getInstance().getUid();
+        String uid = AuthProvider.getAuth().getUid();
         if (uid == null) return;
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -493,7 +494,7 @@ public class MenuActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_account) {
-            if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            if (AuthProvider.getAuth().getCurrentUser() == null) {
                 startActivity(new Intent(this, UniversalLoginActivity.class));
             } else {
                 startActivity(new Intent(this, AccountActivity.class));
@@ -575,7 +576,7 @@ public class MenuActivity extends AppCompatActivity {
     private void checkAndUpdateBlockedInviteWarning() {
         if (optionsMenu == null) return; // Menu not created yet
         
-        String uid = FirebaseAuth.getInstance().getUid();
+        String uid = AuthProvider.getAuth().getUid();
         if (uid == null) {
             // No user logged in, hide warning
             MenuItem warningItem = optionsMenu.findItem(R.id.action_invite_blocked_warning);
