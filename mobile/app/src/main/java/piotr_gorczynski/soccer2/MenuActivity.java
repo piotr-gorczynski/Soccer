@@ -43,6 +43,9 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+import com.google.android.gms.ads.mediation.admob.AdMobAdapter;
+import com.google.android.ump.ConsentInformation;
+import com.google.android.ump.UserMessagingPlatform;
 
 
 
@@ -247,7 +250,19 @@ public class MenuActivity extends AppCompatActivity {
 
     }
     private void loadInterstitialAd() {
-        AdRequest adRequest = new AdRequest.Builder().build();
+        ConsentInformation consentInformation =
+                UserMessagingPlatform.getConsentInformation(this);
+
+        AdRequest.Builder builder = new AdRequest.Builder();
+
+        if (consentInformation.getConsentStatus()
+                != ConsentInformation.ConsentStatus.OBTAINED) {
+            Bundle extras = new Bundle();
+            extras.putString("npa", "1");
+            builder.addNetworkExtrasBundle(AdMobAdapter.class, extras);
+        }
+
+        AdRequest adRequest = builder.build();
 
         InterstitialAd.load(this, AD_UNIT_ID, adRequest,
                 new InterstitialAdLoadCallback() {
