@@ -55,26 +55,27 @@ public class FirebaseAuthManager {
                                 if (email != null) data.put("email", email);
                                 data.put("method", providerId);
 
+                                String finalNickname = nickname;
                                 if (existingNick == null || existingNick.isEmpty()) {
-                                    if (nickname != null && !nickname.isEmpty()) {
-                                        data.put("nickname", nickname);
-                                        existingNick = nickname;
+                                    if (finalNickname != null && !finalNickname.isEmpty()) {
+                                        data.put("nickname", finalNickname);
+                                        existingNick = finalNickname;
                                     }
                                 } else {
-                                    nickname = existingNick;
+                                    finalNickname = existingNick;
                                 }
 
                                 if (doc.exists()) {
                                     db.collection("users").document(uid).set(data, SetOptions.merge())
                                             .addOnCompleteListener(task -> {
-                                                storeUserData(uid, email != null ? email : "", nickname != null ? nickname : "", providerId);
+                                                storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId);
                                                 ((SoccerApp) context.getApplicationContext()).syncFcmTokenIfNeeded();
                                                 callback.onLoginSuccess();
                                             });
                                 } else {
                                     db.collection("users").document(uid).set(data)
                                             .addOnCompleteListener(task -> {
-                                                storeUserData(uid, email != null ? email : "", nickname != null ? nickname : "", providerId);
+                                                storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId);
                                                 ((SoccerApp) context.getApplicationContext()).syncFcmTokenIfNeeded();
                                                 callback.onLoginSuccess();
                                             });
