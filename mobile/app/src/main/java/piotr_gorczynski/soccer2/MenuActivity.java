@@ -199,8 +199,28 @@ public class MenuActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
         String nickname = prefs.getString("nickname", null);
         if (FirebaseAuth.getInstance().getCurrentUser() != null && (nickname == null || nickname.isEmpty())) {
-            startActivity(new Intent(this, PickNicknameActivity.class));
-            return;
+            String uid = FirebaseAuth.getInstance().getUid();
+            if (uid != null) {
+                FirebaseFirestore.getInstance().collection("users").document(uid)
+                        .get()
+                        .addOnSuccessListener(doc -> {
+                            String remoteNick = doc.getString("nickname");
+                            if (remoteNick != null && !remoteNick.isEmpty()) {
+                                prefs.edit().putString("nickname", remoteNick).apply();
+                                TextView nicknameLabel = findViewById(R.id.nicknameLabel);
+                                nicknameLabel.setText(getString(R.string.hello_nickname, remoteNick));
+                                updateUiForAuthState();
+                                checkAndUpdateBlockedInviteWarning();
+                            } else {
+                                startActivity(new Intent(this, PickNicknameActivity.class));
+                            }
+                        })
+                        .addOnFailureListener(e -> startActivity(new Intent(this, PickNicknameActivity.class)));
+                return;
+            } else {
+                startActivity(new Intent(this, PickNicknameActivity.class));
+                return;
+            }
         }
 
         TextView nicknameLabel = findViewById(R.id.nicknameLabel);
