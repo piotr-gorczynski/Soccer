@@ -15,7 +15,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.FirebaseFunctionsException;
-import piotr_gorczynski.soccer2.AuthProvider;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -47,7 +46,7 @@ public class RegulationActivity extends AppCompatActivity {
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         if (!TextUtils.isEmpty(regulationId)) {
-            FirebaseUser authUser = AuthProvider.getAuth().getCurrentUser();
+            FirebaseUser authUser = FirebaseAuth.getInstance().getCurrentUser();
             Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
                     Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
                     ": querying regulation from Firestore, currentUser=" +
@@ -128,7 +127,7 @@ public class RegulationActivity extends AppCompatActivity {
             Toast.makeText(this, "Tournament not found.", Toast.LENGTH_LONG).show();
             return;
         }
-        FirebaseUser user = AuthProvider.getAuth().getCurrentUser();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
             Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
                     Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +

@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.*;
-import piotr_gorczynski.soccer2.AuthProvider;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.FirebaseFunctionsException;
 
@@ -38,7 +37,7 @@ public class InviteFriendActivity extends AppCompatActivity {
         resultText = findViewById(R.id.inviteResult);
 
         db = FirebaseFirestore.getInstance();
-        auth = AuthProvider.getAuth();
+        auth = FirebaseAuth.getInstance();
 
         sendInviteButton.setOnClickListener(view -> {
             String nickname = nicknameInput.getText().toString().trim();

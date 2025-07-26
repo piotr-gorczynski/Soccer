@@ -9,10 +9,6 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.OAuthProvider;
-import com.google.firebase.FirebaseApp;
-
-// Custom FirebaseApp with overridden authDomain
-import piotr_gorczynski.soccer2.CustomFirebaseApp;
 
 import com.google.firebase.auth.UserProfileChangeRequest;
 
@@ -28,8 +24,7 @@ public class FirebaseAuthManager {
 
     public FirebaseAuthManager(Context context) {
         this.context = context;
-        FirebaseApp customApp = CustomFirebaseApp.getApp(context);
-        this.firebaseAuth = FirebaseAuth.getInstance(customApp);
+        this.firebaseAuth = FirebaseAuth.getInstance();
     }
 
     public interface LoginCallback {
