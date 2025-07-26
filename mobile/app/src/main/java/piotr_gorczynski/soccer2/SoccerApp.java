@@ -25,6 +25,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.android.ump.ConsentInformation;
 import com.google.android.ump.ConsentRequestParameters;
@@ -129,8 +130,9 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                     if (saved != null && saved.equals(newToken)) return;
 
                     FirebaseFirestore.getInstance()
-                            .collection("users").document(uid)
-                            .update("fcmToken", newToken)
+                            .collection("users")
+                            .document(uid)
+                            .set(Map.of("fcmToken", newToken), SetOptions.merge())
                             .addOnSuccessListener(v ->
                                     prefs.edit().putString("fcmToken", newToken).apply());
                 });
