@@ -11,8 +11,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.OAuthProvider;
 
 import com.google.firebase.auth.UserProfileChangeRequest;
+import androidx.annotation.Nullable;
 
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -32,7 +34,7 @@ public class FirebaseAuthManager {
         void onLoginFailure(String message);
     }
 
-    public void loginWithProvider(Activity activity, String providerId, String nickname, LoginCallback callback) {
+    public void loginWithProvider(Activity activity, String providerId, @Nullable String nickname, LoginCallback callback) {
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
                 Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
                 ": Starting provider login. providerId=" + providerId + ", nickname=" + nickname);
@@ -45,23 +47,45 @@ public class FirebaseAuthManager {
                     String uid = authResult.getUser().getUid();
                     String email = authResult.getUser().getEmail();
 
-                    Map<String, Object> userData = new HashMap<>();
-                    userData.put("nickname", nickname);
-                    if (email != null) {
-                        userData.put("email", email);
-                    }
-                    userData.put("method", providerId);
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    db.collection("users").document(uid).get()
+                            .addOnSuccessListener(doc -> {
+                                String existingNick = doc.getString("nickname");
+                                Map<String, Object> data = new HashMap<>();
+                                if (email != null) data.put("email", email);
+                                data.put("method", providerId);
 
-                    FirebaseFirestore.getInstance().collection("users").document(uid)
-                            .set(userData)
-                            .addOnCompleteListener(task -> {
-                                storeUserData(uid, email != null ? email : "", nickname, providerId);
-                            ((SoccerApp) context.getApplicationContext()).syncFcmTokenIfNeeded();
-                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                                    Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
-                                    ": user data stored for uid=" + uid);
-                            callback.onLoginSuccess();
-                        });
+                                if (existingNick == null || existingNick.isEmpty()) {
+                                    if (nickname != null && !nickname.isEmpty()) {
+                                        data.put("nickname", nickname);
+                                        existingNick = nickname;
+                                    }
+                                } else {
+                                    nickname = existingNick;
+                                }
+
+                                if (doc.exists()) {
+                                    db.collection("users").document(uid).set(data, SetOptions.merge())
+                                            .addOnCompleteListener(task -> {
+                                                storeUserData(uid, email != null ? email : "", nickname != null ? nickname : "", providerId);
+                                                ((SoccerApp) context.getApplicationContext()).syncFcmTokenIfNeeded();
+                                                callback.onLoginSuccess();
+                                            });
+                                } else {
+                                    db.collection("users").document(uid).set(data)
+                                            .addOnCompleteListener(task -> {
+                                                storeUserData(uid, email != null ? email : "", nickname != null ? nickname : "", providerId);
+                                                ((SoccerApp) context.getApplicationContext()).syncFcmTokenIfNeeded();
+                                                callback.onLoginSuccess();
+                                            });
+                                }
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
+                                        Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                                        ": failed to read user data", e);
+                                callback.onLoginFailure(e.getMessage());
+                            });
                 })
                 .addOnFailureListener(e -> {
                     Log.e("TAG_Soccer", getClass().getSimpleName() + "." +

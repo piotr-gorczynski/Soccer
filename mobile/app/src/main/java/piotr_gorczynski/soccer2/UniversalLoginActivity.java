@@ -3,10 +3,8 @@ package piotr_gorczynski.soccer2;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 import android.content.SharedPreferences;
-import android.view.View;
 import android.util.Log;
 import java.util.Objects;
 
@@ -15,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class UniversalLoginActivity extends AppCompatActivity {
 
-    private EditText editNickname;
     private FirebaseAuthManager authManager;
     private String storedNickname;
 
@@ -26,14 +23,8 @@ public class UniversalLoginActivity extends AppCompatActivity {
 
         authManager = new FirebaseAuthManager(this);
 
-        editNickname = findViewById(R.id.editNickname);
-
         SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
         storedNickname = prefs.getString("nickname", null);
-        if (storedNickname != null && !storedNickname.isEmpty()) {
-            // Hide nickname input when a nickname already exists
-            editNickname.setVisibility(View.GONE);
-        }
 
         Button btnEmail = findViewById(R.id.btnUniversalEmail);
         Button btnGoogle = findViewById(R.id.btnUniversalGoogle);
@@ -54,22 +45,7 @@ public class UniversalLoginActivity extends AppCompatActivity {
                 Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
                 ": Provider selected = " + provider);
 
-        String nickname;
-        if (storedNickname != null && !storedNickname.isEmpty()) {
-            nickname = storedNickname;
-            Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                    Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
-                    ": Using stored nickname = " + nickname);
-        } else {
-            nickname = editNickname.getText().toString().trim();
-            if (nickname.isEmpty()) {
-                Toast.makeText(this, "Nickname is required", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                    Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
-                    ": Entered nickname = " + nickname);
-        }
+        String nickname = storedNickname; // may be null
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
                 Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
                 ": Calling authManager.loginWithProvider");
@@ -80,6 +56,13 @@ public class UniversalLoginActivity extends AppCompatActivity {
                 Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
                         Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
                         ": onLoginSuccess");
+                SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
+                String nick = prefs.getString("nickname", null);
+                if (nick == null || nick.isEmpty()) {
+                    Intent intent = new Intent(UniversalLoginActivity.this, PickNicknameActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                }
                 Toast.makeText(UniversalLoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
                 finish();
             }

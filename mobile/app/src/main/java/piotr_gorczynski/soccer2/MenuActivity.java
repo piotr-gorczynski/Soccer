@@ -168,6 +168,10 @@ public class MenuActivity extends AppCompatActivity {
         
         SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
         String nickname = prefs.getString("nickname", null);
+        if (FirebaseAuth.getInstance().getCurrentUser() != null && (nickname == null || nickname.isEmpty())) {
+            startActivity(new Intent(this, PickNicknameActivity.class));
+            return;
+        }
 
         TextView nicknameLabel = findViewById(R.id.nicknameLabel);
         if (nickname != null && !nickname.isEmpty()) {
