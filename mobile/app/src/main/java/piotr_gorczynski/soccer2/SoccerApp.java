@@ -3,6 +3,10 @@ package piotr_gorczynski.soccer2;
 
 import android.app.Application;
 import android.app.Activity;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.widget.Toast;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -412,6 +416,19 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                 getClass().getSimpleName() + ".showAdsConsentForm: showing privacy options"
         );
 
+        if (!isNetworkAvailable(activity)) {
+            Toast.makeText(
+                    activity,
+                    R.string.no_internet_for_privacy_options,
+                    Toast.LENGTH_LONG)
+                    .show();
+            Log.d(
+                    "TAG_Soccer",
+                    getClass().getSimpleName() + ".showAdsConsentForm: no network"
+            );
+            return;
+        }
+
         UserMessagingPlatform.showPrivacyOptionsForm(
                 activity,
                 formError -> {
@@ -495,6 +512,17 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                 },
                 formError -> Log.w("TAG_Soccer", "UMP: Failed to load consent form: " + formError.getMessage())
         );
+    }
+
+    private static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager cm =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm == null) return false;
+        Network network = cm.getActiveNetwork();
+        if (network == null) return false;
+        NetworkCapabilities capabilities = cm.getNetworkCapabilities(network);
+        return capabilities != null
+                && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
     }
 
 
