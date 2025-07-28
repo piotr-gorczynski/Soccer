@@ -28,11 +28,13 @@ import java.util.Objects;
 public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
 
     public interface OnInviteClick { void onInvite(String uid); }
+    public interface OnRemoveClick { void onRemove(String uid); }
 
     static class VH extends RecyclerView.ViewHolder {
         final TextView nickname;
         final TextView presence;
         final Button inviteBtn;
+        final Button removeBtn;
         String uid;
         DocumentSnapshot doc; // not used but kept for parity
         VH(@NonNull View v) {
@@ -40,11 +42,13 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
             nickname = v.findViewById(R.id.nickname);
             presence = v.findViewById(R.id.presence);
             inviteBtn = v.findViewById(R.id.inviteBtn);
+            removeBtn = v.findViewById(R.id.removeBtn);
         }
     }
 
     private final Context context;
     private final OnInviteClick listener;
+    private final OnRemoveClick removeListener;
     private final List<DocumentSnapshot> docs = new ArrayList<>();
     private final Map<String,String> nickCache = new HashMap<>();
     private final Map<String,String> presCache = new HashMap<>();
@@ -52,9 +56,10 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
     private static final class RtdbSub { final DatabaseReference ref; final ValueEventListener l; RtdbSub(DatabaseReference r, ValueEventListener l){this.ref=r;this.l=l;}}
     private final Map<String,RtdbSub> presSubs = new HashMap<>();
 
-    FriendAdapter(Context context, OnInviteClick listener) {
+    FriendAdapter(Context context, OnInviteClick listener, OnRemoveClick removeListener) {
         this.context = context;
         this.listener = listener;
+        this.removeListener = removeListener;
         setHasStableIds(true);
     }
 
@@ -65,6 +70,9 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
         VH h = new VH(v);
         h.inviteBtn.setOnClickListener(btn -> {
             if (h.uid != null) listener.onInvite(h.uid);
+        });
+        h.removeBtn.setOnClickListener(btn -> {
+            if (h.uid != null) removeListener.onRemove(h.uid);
         });
         return h;
     }
@@ -148,6 +156,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
         h.presence.setTextColor(colour);
         boolean isOffline = "offline".equalsIgnoreCase(state);
         h.inviteBtn.setVisibility(isOffline ? View.GONE : View.VISIBLE);
+        h.removeBtn.setVisibility(View.VISIBLE);
     }
 
     @Override
