@@ -43,7 +43,8 @@
         android:drawablePadding="8dp"
         android:text="@string/login_facebook"
         android:textAllCaps="false"
-        android:textColor="@color/colorWhite" />
+        android:textColor="@color/colorWhite"
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/btnUniversalMicrosoft"
@@ -56,6 +57,7 @@
         android:drawablePadding="8dp"
         android:text="@string/login_microsoft"
         android:textAllCaps="false"
-        android:textColor="@color/colorWhite" />
+        android:textColor="@color/colorWhite"
+        android:visibility="gone" />
 </LinearLayout>
 
