@@ -2,6 +2,8 @@ package piotr_gorczynski.soccer2;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.content.Intent;
+import android.net.Uri;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
@@ -52,6 +54,18 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 app.showAdsConsentForm(requireActivity());
                 // keep current value until consent form result is reflected
                 return false;
+            });
+        }
+
+        Preference fbPref = findPreference("facebook_community");
+        if (fbPref != null) {
+            fbPref.setOnPreferenceClickListener(pref -> {
+                Intent intent = new Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("https://www.facebook.com/profile.php?id=61578949554301")
+                );
+                startActivity(intent);
+                return true;
             });
         }
     }
