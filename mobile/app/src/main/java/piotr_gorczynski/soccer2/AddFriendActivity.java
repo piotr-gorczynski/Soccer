@@ -1,12 +1,19 @@
 package piotr_gorczynski.soccer2;
 
 import android.os.Bundle;
-import android.widget.*;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.*;
@@ -19,8 +26,14 @@ import java.util.Objects;
 public class AddFriendActivity extends AppCompatActivity {
 
     EditText nicknameInput;
-    Button addFriendButton;
+    Button searchButton;
+    Button loadMoreButton;
+    RecyclerView resultsList;
     TextView resultText;
+
+    private UserSearchAdapter adapter;
+    private DocumentSnapshot lastVisible;
+    private String currentQuery;
 
     FirebaseFirestore db;
     FirebaseAuth auth;
@@ -31,47 +44,78 @@ public class AddFriendActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_friend);
 
         nicknameInput = findViewById(R.id.nicknameInput);
-        addFriendButton = findViewById(R.id.addFriendButton);
+        searchButton = findViewById(R.id.searchButton);
+        loadMoreButton = findViewById(R.id.loadMoreButton);
+        resultsList = findViewById(R.id.searchResults);
         resultText = findViewById(R.id.addFriendResult);
+
+        resultsList.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new UserSearchAdapter(this::searchAndAdd);
+        resultsList.setAdapter(adapter);
+
+        searchButton.setEnabled(false);
+        nicknameInput.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int st, int c, int a) {}
+            @Override public void onTextChanged(CharSequence s, int st, int b, int c) {
+                searchButton.setEnabled(s.length() > 1);
+            }
+            @Override public void afterTextChanged(Editable s) {}
+        });
+
+        searchButton.setOnClickListener(v -> {
+            String query = nicknameInput.getText().toString().trim();
+            if (query.length() <= 1) return;
+            adapter.clear();
+            lastVisible = null;
+            currentQuery = query;
+            searchPage();
+        });
+
+        loadMoreButton.setOnClickListener(v -> searchPage());
 
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
-
-        addFriendButton.setOnClickListener(v -> {
-            String nickname = nicknameInput.getText().toString().trim();
-            if (nickname.isEmpty()) {
-                resultText.setText(R.string.please_enter_a_nickname);
-                return;
-            }
-            searchAndAdd(nickname);
-        });
     }
 
-    private void searchAndAdd(String nickname) {
-        db.collection("users")
-                .whereEqualTo("nickname", nickname)
-                .get()
-                .addOnSuccessListener(querySnapshot -> {
-                    if (querySnapshot.isEmpty()) {
+    private void searchPage() {
+        Query q = db.collection("users")
+                .orderBy("nickname")
+                .startAt(currentQuery)
+                .endAt(currentQuery + "\uf8ff")
+                .limit(10);
+        if (lastVisible != null) q = q.startAfter(lastVisible);
+
+        q.get()
+                .addOnSuccessListener(snap -> {
+                    java.util.List<DocumentSnapshot> docs = snap.getDocuments();
+                    adapter.addResults(docs);
+
+                    if (docs.size() == 10) {
+                        lastVisible = docs.get(docs.size() - 1);
+                        loadMoreButton.setVisibility(View.VISIBLE);
+                    } else {
+                        loadMoreButton.setVisibility(View.GONE);
+                    }
+
+                    if (adapter.getItemCount() == 0) {
                         resultText.setText(R.string.user_not_found);
-                        return;
+                    } else {
+                        resultText.setText("");
                     }
-
-                    String currentUserId = Objects.requireNonNull(auth.getCurrentUser()).getUid();
-                    DocumentSnapshot userDoc = querySnapshot.getDocuments().get(0);
-                    String targetUid = userDoc.getId();
-
-                    if (targetUid.equals(currentUserId)) {
-                        resultText.setText(R.string.you_can_t_invite_yourself);
-                        return;
-                    }
-                    sendAddFriendViaCF(currentUserId, targetUid);
                 })
                 .addOnFailureListener(e -> {
                     resultText.setText(R.string.error_searching_user);
-                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                            + ": User lookup failed", e);
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".searchPage: User lookup failed", e);
                 });
+    }
+
+    private void searchAndAdd(String uid) {
+        String currentUserId = Objects.requireNonNull(auth.getCurrentUser()).getUid();
+        if (uid.equals(currentUserId)) {
+            resultText.setText(R.string.you_can_t_invite_yourself);
+            return;
+        }
+        sendAddFriendViaCF(currentUserId, uid);
     }
 
     private void sendAddFriendViaCF(@NonNull String userId, @NonNull String friendId) {
