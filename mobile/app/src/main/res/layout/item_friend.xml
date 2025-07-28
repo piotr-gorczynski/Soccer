@@ -26,16 +26,19 @@
 
         <Button
             android:id="@+id/inviteBtn"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
             android:text="@string/send_invitation" />
 
         <Button
             android:id="@+id/removeBtn"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
             android:text="@string/remove" />
     </LinearLayout>
 </LinearLayout>
