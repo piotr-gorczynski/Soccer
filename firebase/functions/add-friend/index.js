@@ -28,7 +28,15 @@ exports.addFriend = functions
       .collection('users').doc(uid)
       .collection('friends').doc(friendId);
 
-    await ref.set({ addedAt: admin.firestore.FieldValue.serverTimestamp() }, { merge: true });
+    const existing = await ref.get();
+    if (existing.exists) {
+      throw new functions.https.HttpsError('already-exists', 'Friend already added');
+    }
+
+    await ref.set(
+      { addedAt: admin.firestore.FieldValue.serverTimestamp() },
+      { merge: true }
+    );
 
     return { friendId };
   });
