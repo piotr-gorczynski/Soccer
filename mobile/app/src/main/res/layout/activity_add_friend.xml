@@ -8,7 +8,7 @@
     android:orientation="vertical">
 
     <TextView
-        android:text="@string/enter_nickname_to_invite"
+        android:text="@string/enter_nickname_to_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
