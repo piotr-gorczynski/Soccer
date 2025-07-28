@@ -44,8 +44,8 @@ steps:
       - '-c'
       - |
         set -e
-        echo "🔁 Cloning development branch..."
-        git clone -b development --single-branch https://github.com/piotr-gorczynski/Soccer.git /workspace/soccer
+        echo "🔁 Cloning ${_ENVIRONMENT} branch..."
+        git clone -b ${_ENVIRONMENT} --single-branch https://github.com/piotr-gorczynski/Soccer.git /workspace/soccer
 
         echo "📂 Copying Firestore rules and firebase.json..."
         mkdir -p /workspace/firebase

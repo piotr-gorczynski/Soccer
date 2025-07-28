@@ -96,7 +96,7 @@ steps:
     - '-c'
     - |
       set -ex
-      git clone -b development --single-branch \
+      git clone -b ${_ENVIRONMENT} --single-branch \
         https://github.com/piotr-gorczynski/Soccer.git /workspace/soccer
       cp /workspace/soccer/gcp/cloud-build/firebase.json    /workspace/firebase.json
       cp /workspace/soccer/gcp/cloud-build/database.rules.json /workspace/database.rules.json
