@@ -39,6 +39,10 @@
       "codebase": "create-invite"
     },
     {
+      "source": "functions/add-friend",
+      "codebase": "add-friend"
+    },
+    {
       "source": "functions/cancel-invite",
       "codebase": "cancel-invite"
     },
