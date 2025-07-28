@@ -69,9 +69,11 @@ public class AddFriendActivity extends AppCompatActivity {
             if (query.length() <= 1) return;
             adapter.clear();
             lastVisible = null;
+
             originalQuery = query;
             currentQuery = query.toLowerCase();
             fallbackMode = false;
+
             searchPage();
         });
 
@@ -82,6 +84,7 @@ public class AddFriendActivity extends AppCompatActivity {
     }
 
     private void searchPage() {
+
         Query q;
         if (fallbackMode) {
             q = db.collection("users")
@@ -96,6 +99,7 @@ public class AddFriendActivity extends AppCompatActivity {
                     .endAt(currentQuery + "\uf8ff")
                     .limit(10);
         }
+
         if (lastVisible != null) q = q.startAfter(lastVisible);
 
         q.get()
