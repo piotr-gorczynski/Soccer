@@ -50,6 +50,7 @@ import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.google.ads.mediation.admob.AdMobAdapter;
 import com.google.android.ump.ConsentInformation;
 import com.google.android.ump.UserMessagingPlatform;
+import androidx.preference.PreferenceManager;
 
 
 
@@ -350,13 +351,10 @@ public class MenuActivity extends AppCompatActivity {
 
     }
     private void loadInterstitialAd() {
-        ConsentInformation consentInformation =
-                UserMessagingPlatform.getConsentInformation(this);
-
         AdRequest.Builder builder = new AdRequest.Builder();
 
-        if (consentInformation.getConsentStatus()
-                != ConsentInformation.ConsentStatus.OBTAINED) {
+        if (!PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean("personalised_ads", true)) {
             Bundle extras = new Bundle();
             extras.putString("npa", "1");
             builder.addNetworkExtrasBundle(AdMobAdapter.class, extras);
