@@ -36,6 +36,7 @@ import com.google.android.ump.ConsentRequestParameters;
 import com.google.android.ump.UserMessagingPlatform;
 import com.google.android.ump.ConsentForm;
 import com.google.android.ump.FormError;
+import androidx.preference.PreferenceManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -452,26 +453,19 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                                         + status
                         );
 
-                        String choice;
-                        switch (ci.getConsentType()) {
-                            case ConsentInformation.ConsentType.PERSONALIZED:
-                                choice = "personalized ads";
-                                break;
-                            case ConsentInformation.ConsentType.NON_PERSONALIZED:
-                                choice = "non-personalized ads (NPA)";
-                                break;
-                            case ConsentInformation.ConsentType.AD_FREE:
-                                choice = "ad-free";
-                                break;
-                            default:
-                                choice = "unknown";
-                                break;
-                        }
+                        String choice =
+                                status == ConsentInformation.ConsentStatus.OBTAINED
+                                        ? "personalized ads"
+                                        : "non-personalized ads (NPA)";
                         Log.d(
                                 "TAG_Soccer",
                                 getClass().getSimpleName() +
                                         ".showAdsConsentForm: user selected " + choice
                         );
+
+                        boolean personalised = ConsentUtils.isPersonalisedAllowed(activity);
+                        PreferenceManager.getDefaultSharedPreferences(activity)
+                                .edit().putBoolean("personalised_ads", personalised).apply();
                     }
                 }
         );
@@ -501,6 +495,9 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                                                         UserMessagingPlatform.getConsentInformation(activity)
                                                                 .getConsentStatus()
                                         );
+                                        boolean personalised = ConsentUtils.isPersonalisedAllowed(activity);
+                                        PreferenceManager.getDefaultSharedPreferences(activity)
+                                                .edit().putBoolean("personalised_ads", personalised).apply();
                                     }
                                 });
                     } else {
