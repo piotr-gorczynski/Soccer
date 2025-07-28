@@ -95,13 +95,14 @@ import java.nio.file.StandardCopyOption
 // Register custom copy task
 tasks.register("copyGoogleServicesJson") {
     doLast {
-        def source = file("../../secrets/google-services.json")
+        def env = project.findProperty("env") ?: "dev"
+        def source = file("../../secrets/google-services.${env}.json")
         def destination = file("google-services.json")
         if (source.exists()) {
             Files.copy(source.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING)
-            println("✅ google-services.json copied to app/")
+            println("✅ google-services.json for ${env} copied to app/")
         } else {
-            throw new GradleException("❌ google-services.json not found in secrets/")
+            throw new GradleException("❌ google-services.json for env '${env}' not found in secrets/")
         }
     }
 }
