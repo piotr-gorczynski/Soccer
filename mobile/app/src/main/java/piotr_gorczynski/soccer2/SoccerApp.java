@@ -430,45 +430,26 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
             return;
         }
 
+        /* in SoccerApp.showAdsConsentForm() */
         UserMessagingPlatform.showPrivacyOptionsForm(
                 activity,
                 formError -> {
                     if (formError != null) {
-                        Log.w(
-                                "TAG_Soccer",
-                                "UMP: Privacy options form error: " + formError.getMessage()
-                        );
-                    } else {
-                        Log.d(
-                                "TAG_Soccer",
-                                getClass().getSimpleName() + ".showAdsConsentForm: form dismissed"
-                        );
-                        ConsentInformation ci =
-                                UserMessagingPlatform.getConsentInformation(activity);
-                        int status = ci.getConsentStatus();
-                        Log.d(
-                                "TAG_Soccer",
-                                getClass().getSimpleName()
-                                        + ".showAdsConsentForm: consent status="
-                                        + status
-                        );
-
-                        String choice =
-                                status == ConsentInformation.ConsentStatus.OBTAINED
-                                        ? "personalized ads"
-                                        : "non-personalized ads (NPA)";
-                        Log.d(
-                                "TAG_Soccer",
-                                getClass().getSimpleName() +
-                                        ".showAdsConsentForm: user selected " + choice
-                        );
-
-                        boolean personalised = ConsentUtils.isPersonalisedAllowed(activity);
-                        PreferenceManager.getDefaultSharedPreferences(activity)
-                                .edit().putBoolean("personalised_ads", personalised).apply();
+                        Log.w("TAG_Soccer", "UMP: " + formError.getMessage());
+                        return;
                     }
-                }
-        );
+
+                    boolean personalised = ConsentUtils.isPersonalisedAllowed(activity);
+
+                    PreferenceManager.getDefaultSharedPreferences(activity)
+                            .edit()
+                            .putBoolean("personalised_ads", personalised)
+                            .apply();
+
+                    Log.d("TAG_Soccer",
+                            "showAdsConsentForm: user selected "
+                                    + (personalised ? "PERSONALISED" : "NPA"));
+                });
     }
 
     private void loadAndShowConsentForm(Activity activity) {

@@ -2,6 +2,9 @@ package piotr_gorczynski.soccer2;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
+
+import androidx.preference.PreferenceManager;
 
 public class ConsentUtils {
 
@@ -10,10 +13,13 @@ public class ConsentUtils {
      * Transparency & Consent Framework string stored by UMP.
      */
     public static boolean isPersonalisedAllowed(Context ctx) {
-        SharedPreferences sp = ctx.getSharedPreferences(
-                "com.google.android.ump.pref", Context.MODE_PRIVATE);
+        // UMP writes the IAB keys into the default shared‑prefs file
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(ctx);
+
         String purposes = sp.getString("IABTCF_PurposeConsents", "");
-        // purposes are 1-based, so purpose 4 is index 3
+        Log.d("TAG_Soccer", "purpose string = \"" + purposes + "\"");
+
+        // Purposes are 1‑based → purpose 4 (“Select personalised ads”) ⇒ index 3
         return purposes.length() >= 4 && purposes.charAt(3) == '1';
     }
 
