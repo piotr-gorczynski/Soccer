@@ -101,7 +101,7 @@ public class RegisterAccountActivity extends AppCompatActivity {
         btnRegister.setEnabled(false);               // optional: disable while checking
 
         db.collection("users")
-                .whereEqualTo("nickname", nickname)
+                .whereEqualTo("nicknameLowercase", nickname.toLowerCase())
                 .get()
                 .addOnCompleteListener(this, task -> {
                     btnRegister.setEnabled(true);  // re-enable either way
