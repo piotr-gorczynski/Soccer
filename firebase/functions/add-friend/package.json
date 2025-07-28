@@ -1,0 +1,13 @@
+{
+  "name": "add-friend",
+  "description": "Function to add a friend for the current user",
+  "version": "1.0.0",
+  "main": "index.js",
+  "engines": {
+    "node": "18"
+  },
+  "dependencies": {
+    "firebase-admin": "^11.10.1",
+    "firebase-functions": "^4.5.0"
+  }
+}

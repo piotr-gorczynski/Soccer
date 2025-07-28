@@ -556,7 +556,7 @@ public class MenuActivity extends AppCompatActivity {
             return;
         }
 
-        showAdThenRun(() -> startActivity(new Intent(MenuActivity.this, InviteFriendActivity.class)));
+        showAdThenRun(() -> startActivity(new Intent(MenuActivity.this, FriendsListActivity.class)));
     }
 
     public void OpenInvites(View view) {

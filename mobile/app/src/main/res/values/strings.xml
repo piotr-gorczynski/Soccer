@@ -46,6 +46,9 @@
     <string name="friend_s_nickname">Friend\'s nickname</string>
     <string name="send_invitation">Send Invitation</string>
     <string name="invite_a_friend">Invite a Friend</string>
+    <string name="add_a_friend">Add a Friend</string>
+    <string name="add_friend">Add Friend</string>
+    <string name="no_friends">No friends added so far…</string>
     <string name="please_enter_a_nickname">Please enter a nickname.</string>
     <string name="user_not_found">User not found.</string>
     <string name="you_can_t_invite_yourself">You can\'t invite yourself.</string>
