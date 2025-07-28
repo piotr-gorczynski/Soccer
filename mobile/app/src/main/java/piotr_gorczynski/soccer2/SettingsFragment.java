@@ -6,8 +6,7 @@ import androidx.preference.CheckBoxPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
-import com.google.android.ump.ConsentInformation;
-import com.google.android.ump.UserMessagingPlatform;
+import androidx.preference.PreferenceManager;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -108,19 +107,17 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     }
 
     private void updateAdsConsentCheckbox(CheckBoxPreference preference) {
-        ConsentInformation ci =
-                UserMessagingPlatform.getConsentInformation(requireContext());
-        boolean canRequestAds = ci.canRequestAds();
-        preference.setChecked(canRequestAds);
-        String choice =
-                ci.getConsentStatus() == ConsentInformation.ConsentStatus.OBTAINED
-                        ? "personalized ads"
-                        : "non-personalized ads (NPA)";
+        boolean personalised =
+                PreferenceManager.getDefaultSharedPreferences(requireContext())
+                        .getBoolean("personalised_ads", false);
+
+        preference.setChecked(personalised);
+
         Log.d(
                 "TAG_Soccer",
                 getClass().getSimpleName()
-                        + ".updateAdsConsentCheckbox: user choice="
-                        + choice
+                        + ".updateAdsConsentCheckbox: user chose "
+                        + (personalised ? "PERSONALISED" : "NPA")
         );
     }
 }
