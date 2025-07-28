@@ -7,7 +7,7 @@ import android.net.Uri;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
-
+import android.content.SharedPreferences;
 import androidx.preference.PreferenceManager;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -18,6 +18,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     
     private FirebaseFirestore db;
     private FirebaseAuth auth;
+    private SharedPreferences prefs;
+    private SharedPreferences.OnSharedPreferenceChangeListener consentChangeListener;
     
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -25,6 +27,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
+        prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
         
         // Setup block invite friend preference
         CheckBoxPreference blockInvitePreference = findPreference("block_invite_friend");
@@ -54,6 +57,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 // keep current value until consent form result is reflected
                 return false;
             });
+
+            consentChangeListener = (sharedPreferences, key) -> {
+                if ("personalised_ads".equals(key)) {
+                    updateAdsConsentCheckbox(adsConsentPref);
+                }
+            };
+            prefs.registerOnSharedPreferenceChangeListener(consentChangeListener);
         }
 
         Preference fbPref = findPreference("facebook_community");
@@ -117,6 +127,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         CheckBoxPreference adsConsentPref = findPreference("ads_consent");
         if (adsConsentPref != null) {
             updateAdsConsentCheckbox(adsConsentPref);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (prefs != null && consentChangeListener != null) {
+            prefs.unregisterOnSharedPreferenceChangeListener(consentChangeListener);
         }
     }
 
