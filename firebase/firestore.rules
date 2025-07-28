@@ -24,6 +24,11 @@ service cloud.firestore {
 
       // No one else may delete or overwrite another’s profile.
       allow delete: if false;
+
+      // Friends subcollection: only owner may read/write
+      match /friends/{friendId} {
+        allow read, write: if request.auth.uid == userId;
+      }
     }
 
     // 2. Invitations: server-only writes, either party may read
