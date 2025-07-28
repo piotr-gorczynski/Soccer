@@ -3,7 +3,7 @@ substitutions:
   _FOLDER_NAME: 'soccer'
   _PRIVATE_REPO: 'git@github.com:piotr-gorczynski/Soccer-private.git'
   _BRANCH_NAME: 'main'
-  _TARGET_PATH: 'google-services.json'  # Save in root folder of private repo
+  _TARGET_PATH: 'google-services.${_ENVIRONMENT}.json'  # Save env-specific config
 
 availableSecrets:
   secretManager:
