@@ -59,6 +59,7 @@ public class FirebaseAuthManager {
                                 if (existingNick == null || existingNick.isEmpty()) {
                                     if (nickname != null && !nickname.isEmpty()) {
                                         data.put("nickname", nickname);
+                                        data.put("nicknameLowercase", nickname.toLowerCase());
                                         nicknameToStore = nickname;
                                     } else {
                                         nicknameToStore = null;
@@ -195,6 +196,7 @@ public class FirebaseAuthManager {
 
                         Map<String, Object> userData = new HashMap<>();
                         userData.put("nickname", nickname);
+                        userData.put("nicknameLowercase", nickname.toLowerCase());
                         userData.put("email", email); // optional
                         userData.put("online", true); // optional
 

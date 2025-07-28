@@ -67,7 +67,7 @@ public class AddFriendActivity extends AppCompatActivity {
             if (query.length() <= 1) return;
             adapter.clear();
             lastVisible = null;
-            currentQuery = query;
+            currentQuery = query.toLowerCase();
             searchPage();
         });
 
@@ -79,7 +79,7 @@ public class AddFriendActivity extends AppCompatActivity {
 
     private void searchPage() {
         Query q = db.collection("users")
-                .orderBy("nickname")
+                .orderBy("nicknameLowercase")
                 .startAt(currentQuery)
                 .endAt(currentQuery + "\uf8ff")
                 .limit(10);
