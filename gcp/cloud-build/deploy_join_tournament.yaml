@@ -45,8 +45,8 @@ steps:
       - '-c'
       - |
         set -ex
-        echo "📦 Cloning from the development branch..."
-        git clone -b development --single-branch https://github.com/piotr-gorczynski/Soccer.git /workspace/soccer
+        echo "📦 Cloning from the ${_ENVIRONMENT} branch..."
+        git clone -b ${_ENVIRONMENT} --single-branch https://github.com/piotr-gorczynski/Soccer.git /workspace/soccer
 
         echo "📁 Copying Firestore config & join-tournament function..."
         cp /workspace/soccer/firebase/firebase.json /workspace/firebase/firebase.json
