@@ -37,6 +37,8 @@
         <activity android:name=".PickNicknameActivity" />
         <activity android:name=".AccountActivity" />
         <activity android:name=".InviteFriendActivity" />
+        <activity android:name=".AddFriendActivity" />
+        <activity android:name=".FriendsListActivity" />
         <activity
             android:name=".InvitationsActivity"
             android:exported="true"
