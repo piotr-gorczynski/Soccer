@@ -34,6 +34,8 @@ public class AddFriendActivity extends AppCompatActivity {
     private UserSearchAdapter adapter;
     private DocumentSnapshot lastVisible;
     private String currentQuery;
+    private String originalQuery;
+    private boolean fallbackMode;
 
     FirebaseFirestore db;
     FirebaseAuth auth;
@@ -67,7 +69,11 @@ public class AddFriendActivity extends AppCompatActivity {
             if (query.length() <= 1) return;
             adapter.clear();
             lastVisible = null;
+
+            originalQuery = query;
             currentQuery = query.toLowerCase();
+            fallbackMode = false;
+
             searchPage();
         });
 
@@ -78,17 +84,34 @@ public class AddFriendActivity extends AppCompatActivity {
     }
 
     private void searchPage() {
-        Query q = db.collection("users")
-                .orderBy("nicknameLowercase")
-                .startAt(currentQuery)
-                .endAt(currentQuery + "\uf8ff")
-                .limit(10);
+
+        Query q;
+        if (fallbackMode) {
+            q = db.collection("users")
+                    .orderBy("nickname")
+                    .startAt(originalQuery)
+                    .endAt(originalQuery + "\uf8ff")
+                    .limit(10);
+        } else {
+            q = db.collection("users")
+                    .orderBy("nicknameLowercase")
+                    .startAt(currentQuery)
+                    .endAt(currentQuery + "\uf8ff")
+                    .limit(10);
+        }
+
         if (lastVisible != null) q = q.startAfter(lastVisible);
 
         q.get()
                 .addOnSuccessListener(snap -> {
                     java.util.List<DocumentSnapshot> docs = snap.getDocuments();
                     adapter.addResults(docs);
+
+                    if (docs.isEmpty() && !fallbackMode && lastVisible == null) {
+                        fallbackMode = true;
+                        searchPage();
+                        return;
+                    }
 
                     if (docs.size() == 10) {
                         lastVisible = docs.get(docs.size() - 1);
