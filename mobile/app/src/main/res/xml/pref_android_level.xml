@@ -23,4 +23,10 @@
             android:defaultValue="false"
             android:icon="@android:drawable/ic_dialog_info" />
 
+        <Preference
+            android:key="facebook_community"
+            android:title="@string/pref_title_facebook"
+            android:summary="@string/pref_summary_facebook"
+            android:icon="@drawable/ic_facebook" />
+
 </PreferenceScreen>
