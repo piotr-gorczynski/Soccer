@@ -86,7 +86,7 @@ public class PickNicknameActivity extends AppCompatActivity {
         btnConfirm.setEnabled(false);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("users")
-                .whereEqualTo("nickname", nickname)
+                .whereEqualTo("nicknameLowercase", nickname.toLowerCase())
                 .get()
                 .addOnCompleteListener(this, task -> {
                     if (!task.isSuccessful()) {
@@ -106,6 +106,7 @@ public class PickNicknameActivity extends AppCompatActivity {
 
                     Map<String, Object> data = new HashMap<>();
                     data.put("nickname", nickname);
+                    data.put("nicknameLowercase", nickname.toLowerCase());
                     db.collection("users").document(uid)
                             .set(data, SetOptions.merge())
                             .addOnSuccessListener(v -> {
