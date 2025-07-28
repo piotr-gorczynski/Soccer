@@ -28,6 +28,7 @@ Thumbs.db
 
 # Firebase config copied to Android app
 /mobile/app/google-services.json
+google-services.*.json
 /mobile/app/soccer_secret_key
 /mobile/app/src/main/assets/soccer_secret_key
 node_modules/
