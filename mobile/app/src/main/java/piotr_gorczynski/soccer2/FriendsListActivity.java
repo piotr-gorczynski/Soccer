@@ -80,6 +80,42 @@ public class FriendsListActivity extends AppCompatActivity {
                     if (inviteId != null) {
                         startActivity(new Intent(this, WaitingActivity.class).putExtra("inviteId", inviteId));
                     }
+                })
+                .addOnFailureListener(e -> {
+                    /* default fallback */
+                    int msgId = R.string.failed_to_send_invite;
+                    String customMessage = null;
+
+                    if (e instanceof com.google.firebase.functions.FirebaseFunctionsException ffe) {
+                        com.google.firebase.functions.FirebaseFunctionsException.Code code = ffe.getCode();
+                        if (code == com.google.firebase.functions.FirebaseFunctionsException.Code.FAILED_PRECONDITION) {
+                            /* Cloud Function puts a short reason in getMessage() */
+                            String reason = String.valueOf(ffe.getMessage()); // never null
+
+                            if (reason.contains("blocked invites")) {
+                                customMessage = reason; // Use the full message from the server
+                            } else {
+                                msgId = switch (reason) {
+                                    /* inviter already has an unanswered invite */
+                                    case "sender_busy" -> R.string.invite_already_sent;
+                                    /* target has its own outgoing invite and is waiting */
+                                    case "target_busy" -> R.string.target_player_busy;
+                                    default -> R.string.failed_to_send_invite;
+                                };
+                            }
+                        } else if (code == com.google.firebase.functions.FirebaseFunctionsException.Code.PERMISSION_DENIED) {
+                            msgId = R.string.invite_already_sent;    // inviter cancelled meanwhile
+                        }
+                    }
+
+                    if (customMessage != null) {
+                        android.widget.Toast.makeText(this, customMessage, android.widget.Toast.LENGTH_LONG).show();
+                    } else {
+                        android.widget.Toast.makeText(this, msgId, android.widget.Toast.LENGTH_LONG).show();
+                    }
+
+                    android.util.Log.e("TAG_Soccer", getClass().getSimpleName() + "." + java.util.Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                            + ": createInvite failed", e);
                 });
     }
 
