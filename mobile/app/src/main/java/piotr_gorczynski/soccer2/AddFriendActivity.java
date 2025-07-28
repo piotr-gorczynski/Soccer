@@ -87,10 +87,12 @@ public class AddFriendActivity extends AppCompatActivity {
 
         Query q;
         if (fallbackMode) {
+            String normalized = originalQuery.substring(0, 1).toUpperCase() +
+                    originalQuery.substring(1).toLowerCase();
             q = db.collection("users")
                     .orderBy("nickname")
-                    .startAt(originalQuery)
-                    .endAt(originalQuery + "\uf8ff")
+                    .startAt(normalized)
+                    .endAt(normalized + "\uf8ff")
                     .limit(10);
         } else {
             q = db.collection("users")
