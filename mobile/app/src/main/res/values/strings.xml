@@ -89,6 +89,7 @@
     <string name="toast_not_your_turn">It’s not your turn yet!</string>
     <string name="five_minutes">05:00</string>
     <string name="cancel_invite">Cancel invite</string>
+    <string name="remove">Remove</string>
     <string name="invite_expired">Invitation expired.</string>
     <string name="leave">Leave</string>
     <string name="leave_tournament_confirm">Are you sure you want to leave this tournament?</string>

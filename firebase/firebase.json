@@ -43,6 +43,10 @@
       "codebase": "add-friend"
     },
     {
+      "source": "functions/remove-friend",
+      "codebase": "remove-friend"
+    },
+    {
       "source": "functions/cancel-invite",
       "codebase": "cancel-invite"
     },

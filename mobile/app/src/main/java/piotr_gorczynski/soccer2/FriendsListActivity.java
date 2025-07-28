@@ -41,7 +41,7 @@ public class FriendsListActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
 
         list.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new FriendAdapter(this, this::sendInviteViaCF);
+        adapter = new FriendAdapter(this, this::sendInviteViaCF, this::removeFriend);
         list.setAdapter(adapter);
 
         addBtn.setOnClickListener(v -> startActivity(new Intent(this, AddFriendActivity.class)));
@@ -81,5 +81,16 @@ public class FriendsListActivity extends AppCompatActivity {
                         startActivity(new Intent(this, WaitingActivity.class).putExtra("inviteId", inviteId));
                     }
                 });
+    }
+
+    private void removeFriend(@NonNull String uidToRemove) {
+        String uid = java.util.Objects.requireNonNull(auth.getCurrentUser()).getUid();
+        java.util.Map<String,Object> data = new java.util.HashMap<>();
+        data.put("userId", uid);
+        data.put("friendId", uidToRemove);
+        com.google.firebase.functions.FirebaseFunctions.getInstance("us-central1")
+                .getHttpsCallable("removeFriend")
+                .call(data)
+                .addOnSuccessListener(r -> loadFriends());
     }
 }
