@@ -130,12 +130,17 @@ public class AddFriendActivity extends AppCompatActivity {
                     resultText.setText(R.string.add_friend);
                 })
                 .addOnFailureListener(e -> {
-                    resultText.setText(R.string.failed_to_send_invite);
+                    String text = getString(R.string.failed_to_add_friend);
                     if (e instanceof FirebaseFunctionsException ffe) {
-                        Log.e("TAG_Soccer", "addFriend failed: " + ffe.getMessage(), ffe);
+                        String reason = ffe.getMessage();
+                        Log.e("TAG_Soccer", "addFriend failed: " + reason, ffe);
+                        if (reason != null && !reason.isEmpty()) {
+                            text = getString(R.string.failed_to_add_friend_reason, reason);
+                        }
                     } else {
                         Log.e("TAG_Soccer", "addFriend failed", e);
                     }
+                    resultText.setText(text);
                 });
     }
 }
