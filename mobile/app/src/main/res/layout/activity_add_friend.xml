@@ -8,29 +8,47 @@
     android:orientation="vertical">
 
     <TextView
-        android:text="@string/enter_nickname_to_add"
+        android:text="@string/enter_nickname_to_search"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
-    <EditText
-        android:id="@+id/nicknameInput"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/friend_s_nickname"
-        android:autofillHints="Enter friend's nickname"
-        android:inputType="textPersonName"
-        android:layout_marginTop="10dp"/>
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp">
+
+        <EditText
+            android:id="@+id/nicknameInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="@string/friend_s_nickname"
+            android:autofillHints="Enter friend's nickname"
+            android:inputType="textPersonName"/>
+
+        <Button
+            android:id="@+id/searchButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/search"
+            android:enabled="false"/>
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/searchResults"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="20dp"/>
 
     <Button
-        android:id="@+id/addFriendButton"
+        android:id="@+id/loadMoreButton"
         android:layout_width="wrap_content"
-        android:background="@color/colorGreen"
-        android:textColor="@color/colorWhite"
-        android:textStyle="bold"
-        android:layout_height="50dp"
-        android:textAllCaps="false"
-        android:text="@string/add_friend"
-        android:layout_marginTop="20dp"/>
+        android:layout_height="wrap_content"
+        android:text="@string/load_more"
+        android:visibility="gone"
+        android:layout_marginTop="8dp"/>
 
     <TextView
         android:id="@+id/addFriendResult"
