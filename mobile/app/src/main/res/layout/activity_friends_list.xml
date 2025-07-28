@@ -9,7 +9,7 @@
 
     <Button
         android:id="@+id/addFriendBtn"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="50dp"
         android:background="@color/colorGreen"
         android:textColor="@color/colorWhite"
