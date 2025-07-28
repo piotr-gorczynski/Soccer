@@ -10,7 +10,7 @@
     <string name="pref_title_level">Android level</string>
     <string name="pref_title_block_invite_friend">Block \'Invite a Friend\' requests</string>
     <string name="pref_summary_block_invite_friend">Other players cannot invite you via \'Invite a Friend\' (tournaments not affected)</string>
-    <string name="pref_title_ads_consent">Consent for showing ads</string>
+    <string name="pref_title_ads_consent">Consent for showing personalized ads</string>
     <string name="pref_summary_ads_consent">Review or change your consent for displaying ads</string>
     <string-array name="pref_level_titles">
         <item>Easy</item>
