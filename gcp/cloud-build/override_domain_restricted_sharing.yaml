@@ -1,46 +1,135 @@
+# ============================================================================
+# Cloud Build: deploy accept-invite function and make it public
+# ============================================================================
+
+# Run the build as the SA that holds org-policy privileges
+serviceAccount: projects/org-service-account-001/serviceAccounts/\
+  cloud-build-sa@org-service-account-001.iam.gserviceaccount.com
+
 substitutions:
-  _ENVIRONMENT: 'dev'       # ← or dev / prod …
+  _ENVIRONMENT: 'dev'       # change to dev / prod in different triggers
   _FOLDER_NAME: 'soccer'
 
 steps:
-  # ──────────────────────────────────────────────
-  # Step 1: locate the project that matches <folder>-<env>
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    id: 'get-project-id'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e
-        echo "🔍 Searching for Firebase project matching: ${_FOLDER_NAME}-${_ENVIRONMENT} …"
-        gcloud projects list \
-          --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
-          --format="value(projectId)" | head -n 1 > /workspace/project_id.txt
+# ──────────────────────────────────────────────────────────────────
+# 1. Locate the Firebase / GCP project to work on
+- name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+  id: get-project-id
+  entrypoint: bash
+  args:
+    - -c
+    - |
+      set -e
+      echo "🔍 Looking for project named ${_FOLDER_NAME}-${_ENVIRONMENT} ..."
+      gcloud projects list \
+        --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
+        --format="value(projectId)" | head -n 1 > /workspace/PROJECT_ID.txt
 
-        firebase_project_id=$(cat /workspace/project_id.txt)
-        if [ -z "$firebase_project_id" ]; then
-          echo "❌ No project found."
-          exit 1
-        fi
-        echo "✅ Found project: $firebase_project_id"
+      PROJECT_ID=$(cat /workspace/PROJECT_ID.txt)
+      if [[ -z "${PROJECT_ID}" ]]; then
+        echo "❌ No matching project found"; exit 1
+      fi
+      echo "✅ Using project: ${PROJECT_ID}"
 
-  # ──────────────────────────────────────────────
-  # Step 2: DELETE the Domain-Restricted Sharing policy on that project
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    id: 'delete-domain-restricted-sharing'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        set -e
-        firebase_project_id=$(cat /workspace/project_id.txt)
+# ──────────────────────────────────────────────────────────────────
+# 2. Ensure the project can add public members (allUsers) by
+#    overriding Domain-Restricted Sharing locally
+- name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+  id: set-drs-allow
+  entrypoint: bash
+  args:
+    - -c
+    - |
+      set -e
+      PROJECT_ID=$(cat /workspace/PROJECT_ID.txt)
+      cat > /workspace/allow-any.yaml <<'EOF'
+      constraint: constraints/iam.allowedPolicyMemberDomains
+      listPolicy:
+        allValues: ALLOW
+      EOF
+      echo "🔧 Setting DRS override (ALLOW) on ${PROJECT_ID} ..."
+      gcloud beta resource-manager org-policies set-policy \
+        /workspace/allow-any.yaml --project="${PROJECT_ID}"
+      echo "✅ DRS override applied."
 
-        echo "🧹 Removing Domain-Restricted Sharing constraint for ${firebase_project_id} …"
-        gcloud beta resource-manager org-policies delete \
-          constraints/iam.allowedPolicyMemberDomains \
-          --project "$firebase_project_id"
+# ──────────────────────────────────────────────────────────────────
+# 3. Install Firebase CLI (pinned tag for reproducibility)
+- name: us-docker.pkg.dev/firebase-public-images/firebase/cli:14.11.2
+  id: install-firebase-cli
+  entrypoint: bash
+  args:
+    - -c
+    - |
+      echo "✅ Firebase CLI image ready."
 
-        echo "✅ Constraint deleted. Project now inherits folder/org policy."
+# ──────────────────────────────────────────────────────────────────
+# 4. Clone source & copy the accept-invite function
+- name: gcr.io/cloud-builders/git
+  id: pull-files
+  entrypoint: bash
+  args:
+    - -c
+    - |
+      set -e
+      echo "📦 Cloning branch ${_ENVIRONMENT} ..."
+      git clone -b ${_ENVIRONMENT} --single-branch \
+        https://github.com/piotr-gorczynski/Soccer.git /workspace/soccer
+
+      echo "📁 Preparing Firebase directory ..."
+      mkdir -p /workspace/firebase
+      cp /workspace/soccer/firebase/firebase.json /workspace/firebase/
+      cp /workspace/soccer/firebase/firestore.rules /workspace/firebase/
+      mkdir -p /workspace/firebase/functions/accept-invite
+      cp /workspace/soccer/firebase/functions/accept-invite/* \
+         /workspace/firebase/functions/accept-invite/
+
+# ──────────────────────────────────────────────────────────────────
+# 5. Install NPM deps for accept-invite
+- name: node:18-slim       # Node 20-slim when you upgrade runtime
+  id: npm-install
+  entrypoint: bash
+  args:
+    - -c
+    - |
+      set -e
+      cd /workspace/firebase/functions/accept-invite
+      npm ci
+      echo "📦 Dependencies installed."
+
+# ──────────────────────────────────────────────────────────────────
+# 6. Deploy the function
+- name: us-docker.pkg.dev/firebase-public-images/firebase/cli:14.11.2
+  id: deploy-accept-invite
+  entrypoint: bash
+  args:
+    - -c
+    - |
+      set -e
+      PROJECT_ID=$(cat /workspace/PROJECT_ID.txt)
+      cd /workspace/firebase
+      firebase deploy \
+        --only functions:accept-invite \
+        --project="${PROJECT_ID}" \
+        --force
+      echo "✅ Function deployed."
+
+# ──────────────────────────────────────────────────────────────────
+# 7. Make the function publicly callable
+- name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+  id: bind-invoker-role
+  entrypoint: bash
+  args:
+    - -c
+    - |
+      set -e
+      PROJECT_ID=$(cat /workspace/PROJECT_ID.txt)
+      echo "🔐 Granting roles/cloudfunctions.invoker (allUsers) ..."
+      gcloud functions add-iam-policy-binding acceptInvite \
+        --region=us-central1 \
+        --project="${PROJECT_ID}" \
+        --member="allUsers" \
+        --role="roles/cloudfunctions.invoker"
+      echo "✅ Public invoker binding set."
 
 options:
   logging: CLOUD_LOGGING_ONLY
