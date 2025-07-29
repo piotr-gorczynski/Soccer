@@ -23,13 +23,17 @@ steps:
         set -e
         firebase_project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
 
-        echo "🧱 Creating Firestore database in ${_LOCATION} (Native mode)..."
-        gcloud firestore databases create \
-          --project="$firebase_project_id" \
-          --location="${_LOCATION}" \
-          --type=firestore-native
-
-        echo "✅ Firestore database created successfully in ${_LOCATION}."
+        echo "🔎 Checking for existing Firestore database..."
+        if gcloud firestore databases describe --project="$firebase_project_id" >/dev/null 2>&1; then
+          echo "ℹ️  Firestore database already exists. Skipping creation."
+        else
+          echo "🧱 Creating Firestore database in ${_LOCATION} (Native mode)..."
+          gcloud firestore databases create \
+            --project="$firebase_project_id" \
+            --location="${_LOCATION}" \
+            --type=firestore-native
+          echo "✅ Firestore database created successfully in ${_LOCATION}."
+        fi
 
 options:
   logging: CLOUD_LOGGING_ONLY
