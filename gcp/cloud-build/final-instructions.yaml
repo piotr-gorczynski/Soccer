@@ -1,0 +1,52 @@
+substitutions:
+  _ENVIRONMENT: 'dev'     # e.g. dev / stage / prod
+  _FOLDER_NAME: 'soccer'  # base project prefix
+
+steps:
+  # Step 1 ─ Retrieve the Firebase project ID
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'get-project-id'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "🔍 Searching for Firebase project matching: ${_FOLDER_NAME}-${_ENVIRONMENT}…"
+        gcloud projects list \
+          --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
+          --format="value(projectId)" | head -n 1 > /workspace/project_id.txt
+
+        firebase_project_id=$(cat /workspace/project_id.txt)
+
+        if [ -z "$firebase_project_id" ]; then
+          echo "❌ No Firebase project found."
+          exit 1
+        fi
+
+        echo "✅ Found project: $firebase_project_id"
+
+  # Step 2 ─ Print the manual follow-up instructions
+  - name: 'bash'
+    id: 'manual-redirect-reminder'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -e
+        firebase_project_id=$(cat /workspace/project_id.txt)
+
+        echo ""
+        echo "──────────────────────────────────────────────────────────"
+        echo "📋  MANUAL ACTION REQUIRED"
+        echo ""
+        echo "Add the following Authorized redirect URI to the"
+        echo "\"Soccer 2\" OAuth 2.0 Web Client (project: org-service-account-001)"
+        echo ""
+        echo "    https://${firebase_project_id}.firebaseapp.com/__/auth/handler"
+        echo ""
+        echo "Console path:"
+        echo "  APIs & Services → Credentials → OAuth 2.0 Client IDs → Soccer 2"
+        echo "──────────────────────────────────────────────────────────"
+        echo ""
+options:
+  logging: CLOUD_LOGGING_ONLY
