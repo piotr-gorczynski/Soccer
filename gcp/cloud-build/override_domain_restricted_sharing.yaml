@@ -1,0 +1,51 @@
+substitutions:
+  _ENVIRONMENT: 'dev'
+  _FOLDER_NAME: 'soccer'
+
+steps:
+  # Step 1: Retrieve the Firebase project ID
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'get-project-id'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "🔍 Searching for Firebase project matching: ${_FOLDER_NAME}-${_ENVIRONMENT}..."
+        gcloud projects list \
+          --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
+          --format="value(projectId)" | head -n 1 > /workspace/project_id.txt
+
+        firebase_project_id=$(cat /workspace/project_id.txt)
+
+        if [ -z "$firebase_project_id" ]; then
+          echo "❌ No Firebase project found."
+          exit 1
+        fi
+
+        echo "✅ Found project: $firebase_project_id"
+
+  # Step 2: Override iam.allowedPolicyMemberDomains constraint
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'override-domain-restricted-sharing'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        firebase_project_id=$(cat /workspace/project_id.txt)
+
+        cat <<EOT > /workspace/allow-any-member.yaml
+        constraint: constraints/iam.allowedPolicyMemberDomains
+        listPolicy:
+          allValues: ALLOW
+        EOT
+
+        echo "🔧 Overriding Domain-Restricted Sharing constraint for ${firebase_project_id}..."
+        gcloud beta resource-manager org-policies set-policy /workspace/allow-any-member.yaml \
+          --project "$firebase_project_id"
+
+        echo "✅ Constraint overridden."
+
+options:
+  logging: CLOUD_LOGGING_ONLY
