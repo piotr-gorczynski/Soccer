@@ -1,9 +1,10 @@
 substitutions:
-  _ENVIRONMENT: 'dev'
+  _ENVIRONMENT: 'dev'       # ← or dev / prod …
   _FOLDER_NAME: 'soccer'
 
 steps:
-  # Step 1: Retrieve the Firebase project ID
+  # ──────────────────────────────────────────────
+  # Step 1: locate the project that matches <folder>-<env>
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: 'get-project-id'
     entrypoint: 'bash'
@@ -11,23 +12,22 @@ steps:
       - '-c'
       - |
         set -e
-        echo "🔍 Searching for Firebase project matching: ${_FOLDER_NAME}-${_ENVIRONMENT}..."
+        echo "🔍 Searching for Firebase project matching: ${_FOLDER_NAME}-${_ENVIRONMENT} …"
         gcloud projects list \
           --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
           --format="value(projectId)" | head -n 1 > /workspace/project_id.txt
 
         firebase_project_id=$(cat /workspace/project_id.txt)
-
         if [ -z "$firebase_project_id" ]; then
-          echo "❌ No Firebase project found."
+          echo "❌ No project found."
           exit 1
         fi
-
         echo "✅ Found project: $firebase_project_id"
 
-  # Step 2: Override iam.allowedPolicyMemberDomains constraint
+  # ──────────────────────────────────────────────
+  # Step 2: DELETE the Domain-Restricted Sharing policy on that project
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    id: 'override-domain-restricted-sharing'
+    id: 'delete-domain-restricted-sharing'
     entrypoint: 'bash'
     args:
       - '-c'
@@ -35,17 +35,12 @@ steps:
         set -e
         firebase_project_id=$(cat /workspace/project_id.txt)
 
-        cat <<EOT > /workspace/allow-any-member.yaml
-        constraint: constraints/iam.allowedPolicyMemberDomains
-        listPolicy:
-          allValues: ALLOW
-        EOT
-
-        echo "🔧 Overriding Domain-Restricted Sharing constraint for ${firebase_project_id}..."
-        gcloud beta resource-manager org-policies set-policy /workspace/allow-any-member.yaml \
+        echo "🧹 Removing Domain-Restricted Sharing constraint for ${firebase_project_id} …"
+        gcloud beta resource-manager org-policies delete \
+          constraints/iam.allowedPolicyMemberDomains \
           --project "$firebase_project_id"
 
-        echo "✅ Constraint overridden."
+        echo "✅ Constraint deleted. Project now inherits folder/org policy."
 
 options:
   logging: CLOUD_LOGGING_ONLY
