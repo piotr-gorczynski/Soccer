@@ -25,6 +25,22 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    flavorDimensions "environment"
+    productFlavors {
+        dev {
+            dimension "environment"
+            buildConfigField "String", "AD_UNIT_ID", '"ca-app-pub-3940256099942544/1033173712"'
+        }
+        qa {
+            dimension "environment"
+            buildConfigField "String", "AD_UNIT_ID", '"ca-app-pub-3940256099942544/1033173712"'
+        }
+        prod {
+            dimension "environment"
+            buildConfigField "String", "AD_UNIT_ID", '"ca-app-pub-9113152787055223~3266191463"'
+        }
+    }
     packagingOptions {
         resources {
             excludes += ['META-INF/*.version']
