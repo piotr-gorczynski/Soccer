@@ -98,9 +98,21 @@ steps:
       - |
         set -e
         set -x
+        apt-get update && apt-get install -y jq
         firebase_api_key=$(cat /workspace/firebase_api_key.txt)
         # Use the access token from Step 4 for authorization in the API request
         access_token=$(cat /workspace/token.txt)
+
+        echo "🔍 Checking if Firebase test user already exists..."
+        existing_uid=$(curl -s -X POST "https://identitytoolkit.googleapis.com/v1/accounts:lookup" \
+          -H "Content-Type: application/json" \
+          -H "Authorization: Bearer $access_token" \
+          -d '{"email": ["test@test.test"]}' | jq -r '.users[0].localId')
+
+        if [ -n "$existing_uid" ] && [ "$existing_uid" != "null" ]; then
+          echo "ℹ️ Firebase test user already exists. Skipping creation."
+          exit 0
+        fi
 
         echo "📩 Creating Firebase test user..."
         response=$(curl -s -o response.json -w "%{http_code}" -X POST "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${firebase_api_key}" \
