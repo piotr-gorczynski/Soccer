@@ -54,7 +54,6 @@ import com.google.android.ump.UserMessagingPlatform;
 
 
 public class MenuActivity extends AppCompatActivity {
-    private static final String AD_UNIT_ID = "ca-app-pub-3940256099942544/1033173712"; // test ID
     private InterstitialAd mInterstitialAd;
 
     private static final String PREF_AD_COUNTER = "adsCounter";
@@ -360,7 +359,7 @@ public class MenuActivity extends AppCompatActivity {
 
         AdRequest adRequest = builder.build();
 
-        InterstitialAd.load(this, AD_UNIT_ID, adRequest,
+        InterstitialAd.load(this, BuildConfig.AD_UNIT_ID, adRequest,
                 new InterstitialAdLoadCallback() {
                     @Override
                     public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
