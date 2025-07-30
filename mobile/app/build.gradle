@@ -1,6 +1,10 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 
+// Print the environment the build was invoked with
+def buildEnv = project.findProperty("env") ?: ""
+println "\n🛠️ Gradle build invoked with env='${buildEnv}'\n"
+
 android {
 
     compileSdk = 36 // Set the compile SDK version
@@ -112,6 +116,9 @@ import java.nio.file.StandardCopyOption
 tasks.register("copyGoogleServicesJson") {
     doLast {
         def env = project.findProperty("env")
+        if (env == null || env.toString().trim().isEmpty()) {
+            throw new GradleException("❌ Missing -Penv property (dev, test or prod)")
+        }
         def source = file("../../secrets/google-services.${env}.json")
         def destination = file("google-services.json")
         if (source.exists()) {
@@ -144,7 +151,7 @@ tasks.register("copySoccerSecretKey") {
 
 // Hook into the Firebase task *after* all plugins are applied
 afterEvaluate {
-    tasks.matching { it.name == "processDebugGoogleServices" }.configureEach {
+    tasks.matching { it.name =~ /process.*GoogleServices/ }.configureEach {
         dependsOn("copyGoogleServicesJson")
     }
     tasks.matching { it.name == "preBuild" }.configureEach {
