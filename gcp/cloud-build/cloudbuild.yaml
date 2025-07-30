@@ -67,7 +67,7 @@ steps:
           done
         done < /workspace/sorted_triggers.txt
 
-timeout: '3600s' # Timeout for the entire build
+timeout: '7200s' # Timeout for the entire build doubled to allow longer pipelines
 options:
   logging: CLOUD_LOGGING_ONLY
   substitutionOption: ALLOW_LOOSE
