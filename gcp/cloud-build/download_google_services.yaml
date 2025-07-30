@@ -105,8 +105,12 @@ steps:
         ssh-keyscan github.com >> /root/.ssh/known_hosts
 
         git add ${_TARGET_PATH}
-        git commit -m "🔄 Update google-services.json from Firebase [CI]"
-        git push origin ${_BRANCH_NAME}
+        if git diff-index --quiet HEAD -- ${_TARGET_PATH}; then
+          echo "No changes to commit"
+        else
+          git commit -m "🔄 Update google-services.json from Firebase [CI]"
+          git push origin ${_BRANCH_NAME}
+        fi
 
 options:
   logging: CLOUD_LOGGING_ONLY
