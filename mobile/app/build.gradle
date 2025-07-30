@@ -28,15 +28,15 @@ android {
 
     flavorDimensions "environment"
     productFlavors {
-        dev {
+        _dev {
             dimension "environment"
             buildConfigField "String", "AD_UNIT_ID", '"ca-app-pub-3940256099942544/1033173712"'
         }
-        test {
+        _test {
             dimension "environment"
             buildConfigField "String", "AD_UNIT_ID", '"ca-app-pub-3940256099942544/1033173712"'
         }
-        prod {
+        _prod {
             dimension "environment"
             buildConfigField "String", "AD_UNIT_ID", '"ca-app-pub-9113152787055223~3266191463"'
         }
@@ -111,7 +111,7 @@ import java.nio.file.StandardCopyOption
 // Register custom copy task
 tasks.register("copyGoogleServicesJson") {
     doLast {
-        def env = project.findProperty("env") ?: "dev"
+        def env = project.findProperty("env")
         def source = file("../../secrets/google-services.${env}.json")
         def destination = file("google-services.json")
         if (source.exists()) {
