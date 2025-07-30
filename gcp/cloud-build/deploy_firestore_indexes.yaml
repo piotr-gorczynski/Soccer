@@ -65,12 +65,25 @@ steps:
         project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
 
         echo "⬆️  Deploying Firestore indexes..."
-        ./firebase deploy \
+        set +e
+        deploy_output=$(./firebase deploy \
           --only firestore:indexes \
           --project="$project_id" \
-          --force
+          --force 2>&1)
+        deploy_status=$?
+        set -e
 
-        echo "✅ Firestore indexes deployed."
+        if [ $deploy_status -ne 0 ]; then
+          if echo "$deploy_output" | grep -q "index already exists"; then
+            echo "ℹ️ Firestore indexes already exist."
+          else
+            echo "$deploy_output"
+            exit $deploy_status
+          fi
+        else
+          echo "$deploy_output"
+          echo "✅ Firestore indexes deployed."
+        fi
 
 options:
   logging: CLOUD_LOGGING_ONLY
