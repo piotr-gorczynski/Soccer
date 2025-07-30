@@ -32,7 +32,7 @@ android {
             dimension "environment"
             buildConfigField "String", "AD_UNIT_ID", '"ca-app-pub-3940256099942544/1033173712"'
         }
-        qa {
+        test {
             dimension "environment"
             buildConfigField "String", "AD_UNIT_ID", '"ca-app-pub-3940256099942544/1033173712"'
         }
