@@ -359,6 +359,11 @@ public class MenuActivity extends AppCompatActivity {
 
         AdRequest adRequest = builder.build();
 
+        Log.d(
+                "TAG_Soccer",
+                getClass().getSimpleName() + ".loadInterstitialAd: AD_UNIT_ID=" + BuildConfig.AD_UNIT_ID
+        );
+
         InterstitialAd.load(this, BuildConfig.AD_UNIT_ID, adRequest,
                 new InterstitialAdLoadCallback() {
                     @Override
