@@ -129,13 +129,18 @@ public class FirebaseAuthManager {
                             Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Email Verified: " + isVerified);
 
                             if (isVerified) {
-                                FirebaseFirestore.getInstance().collection("users").document(uid)
+                                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                db.collection("users").document(uid)
                                         .get()
                                         .addOnSuccessListener(doc -> {
                                             String nickname = doc.getString("nickname");
-                                            String method = doc.getString("method");
-                                            if (method == null) method = "email";
-                                            storeUserData(uid, email, nickname != null ? nickname : "Unknown", method);
+                                            // Always record the login method as email when using this path
+                                            Map<String, Object> data = new HashMap<>();
+                                            data.put("method", "email");
+                                            if (email != null) data.put("email", email);
+                                            db.collection("users").document(uid).set(data, SetOptions.merge());
+
+                                            storeUserData(uid, email, nickname != null ? nickname : "Unknown", "email");
                                             ((SoccerApp) context.getApplicationContext())
                                                     .syncFcmTokenIfNeeded();   // new helper (see below)
                                             Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
