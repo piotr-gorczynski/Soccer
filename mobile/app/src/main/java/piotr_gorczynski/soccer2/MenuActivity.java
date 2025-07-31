@@ -117,6 +117,7 @@ public class MenuActivity extends AppCompatActivity {
             );
             prefs.edit().clear().apply();
             FirebaseMessaging.getInstance().deleteToken();
+            FirebaseMessaging.getInstance().setAutoInitEnabled(false);
             FirebaseFirestore.getInstance().clearPersistence();
             return;
         }
@@ -215,6 +216,7 @@ public class MenuActivity extends AppCompatActivity {
             prefs.edit().clear().apply();
 
             FirebaseMessaging.getInstance().deleteToken();
+            FirebaseMessaging.getInstance().setAutoInitEnabled(false);
 
             FirebaseFirestore.getInstance().clearPersistence();
             nickname = null;
