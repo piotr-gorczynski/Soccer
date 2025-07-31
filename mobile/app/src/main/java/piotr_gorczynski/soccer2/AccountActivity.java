@@ -47,13 +47,13 @@ public class AccountActivity extends AppCompatActivity {
     private void performLogout() {
         String uid = FirebaseAuth.getInstance().getUid();
 
-        // Sign out immediately so the UI updates even if network operations fail
-        FirebaseAuth.getInstance().signOut();
-
-        // Attempt to mark the user offline in the background; no need to wait
+        // Attempt to mark the user offline before signing out so permissions work
         if (uid != null) {
             ((SoccerApp) getApplication()).forceUserOffline(uid);
         }
+
+        // Sign out immediately so the UI updates even if network operations fail
+        FirebaseAuth.getInstance().signOut();
 
         finishLogoutUi();
     }
