@@ -117,6 +117,7 @@ public class MenuActivity extends AppCompatActivity {
             );
             prefs.edit().clear().apply();
             FirebaseMessaging.getInstance().deleteToken();
+            FirebaseMessaging.getInstance().setAutoInitEnabled(false);
             FirebaseFirestore.getInstance().clearPersistence();
             return;
         }
@@ -215,6 +216,7 @@ public class MenuActivity extends AppCompatActivity {
             prefs.edit().clear().apply();
 
             FirebaseMessaging.getInstance().deleteToken();
+            FirebaseMessaging.getInstance().setAutoInitEnabled(false);
 
             FirebaseFirestore.getInstance().clearPersistence();
             nickname = null;
@@ -303,9 +305,7 @@ public class MenuActivity extends AppCompatActivity {
         
         // Get initial backend availability state from the app
         isBackendAvailable = app.isBackendAvailable();
-        
-        // Check backend availability on app launch
-        checkBackendAvailability();
+        // Backend availability check runs in onResume()
 
         runHousekeeping();          // ← always executed, even on cold resume
 
