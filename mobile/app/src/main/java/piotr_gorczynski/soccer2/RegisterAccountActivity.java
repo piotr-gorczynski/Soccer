@@ -101,8 +101,8 @@ public class RegisterAccountActivity extends AppCompatActivity {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         btnRegister.setEnabled(false);               // optional: disable while checking
 
-        db.collection("users")
-                .whereEqualTo("nicknameLowercase", nickname.toLowerCase())
+        db.collection("nicknames")
+                .document(nickname.toLowerCase())
                 .get()
                 .addOnCompleteListener(this, task -> {
                     btnRegister.setEnabled(true);  // re-enable either way
@@ -118,7 +118,7 @@ public class RegisterAccountActivity extends AppCompatActivity {
                         return;
                     }
 
-                    if (!task.getResult().isEmpty()) {
+                    if (task.getResult().exists()) {
                         Toast.makeText(RegisterAccountActivity.this,
                                 "Nickname already taken — choose another",
                                 Toast.LENGTH_SHORT).show();
