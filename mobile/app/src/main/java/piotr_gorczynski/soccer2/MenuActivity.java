@@ -71,12 +71,19 @@ public class MenuActivity extends AppCompatActivity {
     /* ───────────── misc tasks that must always run on launch ───────────── */
     private void runHousekeeping() {
         String uid = FirebaseAuth.getInstance().getUid();
+        SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
         if (uid == null) {
-            Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-            }.getClass().getEnclosingMethod()).getName() + ": ⚠️ No logged-in user; token not saved");
+            Log.w(
+                    "TAG_Soccer",
+                    getClass().getSimpleName()
+                            + "."
+                            + Objects.requireNonNull(new Object() {
+                            }.getClass().getEnclosingMethod()).getName()
+                            + ": ⚠️ No logged-in user; clearing stored credentials"
+            );
+            prefs.edit().clear().apply();
             return;
         }
-        SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
 
         // 🔄 Sync nickname from Firestore if it differs from local prefs
         String localNick = prefs.getString("nickname", null);
@@ -197,7 +204,10 @@ public class MenuActivity extends AppCompatActivity {
         
         SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
         String nickname = prefs.getString("nickname", null);
-        if (FirebaseAuth.getInstance().getCurrentUser() != null && (nickname == null || nickname.isEmpty())) {
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            prefs.edit().clear().apply();
+            nickname = null;
+        } else if (nickname == null || nickname.isEmpty()) {
             String uid = FirebaseAuth.getInstance().getUid();
             if (uid != null) {
                 FirebaseFirestore.getInstance().collection("users").document(uid)
