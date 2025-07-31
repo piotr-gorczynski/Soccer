@@ -46,6 +46,9 @@ public class BackendServiceChecker {
     
     private final OkHttpClient httpClient;
     private final Context context;
+    // Project ID configured by the application. This is kept in memory only and
+    // is no longer persisted in SharedPreferences.
+    private String projectId;
     
     public interface ServiceCheckCallback {
         void onServiceAvailable();
@@ -189,13 +192,18 @@ public class BackendServiceChecker {
      * Tries multiple patterns based on the GCP project naming conventions
      */
     private String getProjectId() {
+        if (projectId != null && !projectId.isEmpty()) {
+            return projectId;
+        }
+
         SharedPreferences prefs = context.getSharedPreferences(
                 context.getPackageName() + "_preferences", Context.MODE_PRIVATE);
-        
-        String projectId = prefs.getString("backend_project_id", null);
-        if (projectId != null && !projectId.isEmpty()) {
-            Log.d(TAG, "Using configured project ID: " + projectId);
-            return projectId;
+
+        String storedId = prefs.getString("backend_project_id", null);
+        if (storedId != null && !storedId.isEmpty()) {
+            Log.d(TAG, "Using stored project ID: " + storedId);
+            projectId = storedId;
+            return storedId;
         }
         
         try {
@@ -204,6 +212,7 @@ public class BackendServiceChecker {
                 String firebaseProjectId = app.getOptions().getProjectId();
                 if (firebaseProjectId != null && !firebaseProjectId.isEmpty()) {
                     Log.d(TAG, "Using Firebase project ID: " + firebaseProjectId);
+                    projectId = firebaseProjectId;
                     return firebaseProjectId;
                 }
             }
@@ -260,9 +269,7 @@ public class BackendServiceChecker {
      * Set the project ID for service checks
      */
     public void setProjectId(String projectId) {
-        SharedPreferences prefs = context.getSharedPreferences(
-                context.getPackageName() + "_preferences", Context.MODE_PRIVATE);
-        prefs.edit().putString("backend_project_id", projectId).apply();
+        this.projectId = projectId;
         Log.d(TAG, "Project ID updated: " + projectId);
     }
     
