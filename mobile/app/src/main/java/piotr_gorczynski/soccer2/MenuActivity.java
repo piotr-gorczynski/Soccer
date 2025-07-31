@@ -115,10 +115,6 @@ public class MenuActivity extends AppCompatActivity {
                             }.getClass().getEnclosingMethod()).getName()
                             + ": ⚠️ No logged-in user; clearing stored credentials"
             );
-            String lastUid = prefs.getString("uid", null);
-            if (lastUid != null) {
-                ((SoccerApp) getApplication()).forceUserOffline(lastUid);
-            }
             prefs.edit().clear().apply();
             FirebaseMessaging.getInstance().deleteToken();
             FirebaseFirestore.getInstance().clearPersistence();
@@ -216,10 +212,6 @@ public class MenuActivity extends AppCompatActivity {
         String nickname = prefs.getString("nickname", null);
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() == null) {
-            String lastUid = prefs.getString("uid", null);
-            if (lastUid != null) {
-                ((SoccerApp) getApplication()).forceUserOffline(lastUid);
-            }
             prefs.edit().clear().apply();
 
             FirebaseMessaging.getInstance().deleteToken();
