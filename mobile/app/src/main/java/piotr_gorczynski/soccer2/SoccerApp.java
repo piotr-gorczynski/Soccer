@@ -358,28 +358,34 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
      */
     private void configureDefaultProjectId() {
         SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
-        String existingProjectId = prefs.getString("backend_project_id", null);
-        
-        if (existingProjectId == null || existingProjectId.isEmpty()) {
-            // Attempt to read the project ID from Firebase options which are
-            // derived from google-services.json. Fallback to the default
-            // development project when Firebase options are unavailable.
-            String defaultProjectId = null;
-            try {
-                FirebaseApp app = FirebaseApp.initializeApp(this);
-                if (app != null && app.getOptions() != null) {
-                    defaultProjectId = app.getOptions().getProjectId();
-                }
-            } catch (IllegalStateException e) {
-                Log.w("TAG_Soccer", "FirebaseApp not initialized", e);
-            }
+        String storedProjectId = prefs.getString("backend_project_id", null);
 
-            if (defaultProjectId == null || defaultProjectId.isEmpty()) {
-                defaultProjectId = "soccer-dev-1744877837";
+        // Always attempt to read the project ID from google-services.json
+        String firebaseProjectId = null;
+        try {
+            FirebaseApp app = FirebaseApp.initializeApp(this);
+            if (app != null && app.getOptions() != null) {
+                firebaseProjectId = app.getOptions().getProjectId();
             }
+        } catch (IllegalStateException e) {
+            Log.w("TAG_Soccer", "FirebaseApp not initialized", e);
+        }
 
-            serviceChecker.setProjectId(defaultProjectId);
-            Log.d("TAG_Soccer", getClass().getSimpleName() + ".configureDefaultProjectId: Configured default project ID: " + defaultProjectId);
+        if (firebaseProjectId == null || firebaseProjectId.isEmpty()) {
+            firebaseProjectId = "soccer-dev-1744877837";
+        }
+
+        if (storedProjectId == null || !storedProjectId.equals(firebaseProjectId)) {
+            serviceChecker.setProjectId(firebaseProjectId);
+            Log.d(
+                    "TAG_Soccer",
+                    getClass().getSimpleName() + ".configureDefaultProjectId: Set project ID to " + firebaseProjectId
+            );
+        } else {
+            Log.d(
+                    "TAG_Soccer",
+                    getClass().getSimpleName() + ".configureDefaultProjectId: Using stored project ID: " + storedProjectId
+            );
         }
     }
     
