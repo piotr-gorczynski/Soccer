@@ -11,7 +11,7 @@
         android:background="?attr/colorPrimary"
         android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         android:title="@string/settings"
-        android:titleTextColor="@color/colorWhite" />
+        android:titleTextColor="@android:color/white" />
 
     <FrameLayout
         android:id="@+id/settings_container"
