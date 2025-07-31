@@ -124,7 +124,14 @@ public class PickNicknameActivity extends AppCompatActivity {
                                 db.collection("nicknames")
                                         .document(nickname.toLowerCase())
                                         .set(nickData)
-                                        .addOnSuccessListener(x -> finish())
+                                        .addOnSuccessListener(x -> {
+                                            if (isTaskRoot()) {
+                                                startActivity(new Intent(
+                                                        PickNicknameActivity.this,
+                                                        MenuActivity.class));
+                                            }
+                                            finish();
+                                        })
                                         .addOnFailureListener(e -> {
                                             btnConfirm.setEnabled(true);
                                             Toast.makeText(PickNicknameActivity.this,
