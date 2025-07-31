@@ -83,6 +83,9 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     public void onCreate() {
         super.onCreate();
 
+        // Disable FCM auto-init until a user signs in
+        FirebaseMessaging.getInstance().setAutoInitEnabled(false);
+
         Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
 
 
@@ -110,15 +113,17 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
             auth.addAuthStateListener(a -> {
                 if (a.getCurrentUser() != null) {
                     startPresence(a.getCurrentUser().getUid());
-                    syncFcmTokenIfNeeded();
+                    enableFcmAutoInit();
                 } else {
                     stopPresence();
+                    disableFcmAutoInit();
                 }
             });
 
             // handle “already signed-in” on cold start
             if (auth.getCurrentUser() != null) {
                 startPresence(auth.getCurrentUser().getUid());
+                enableFcmAutoInit();
             }
         });
 
@@ -142,6 +147,15 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                             .addOnSuccessListener(v ->
                                     prefs.edit().putString("fcmToken", newToken).apply());
                 });
+    }
+
+    public void disableFcmAutoInit() {
+        FirebaseMessaging.getInstance().setAutoInitEnabled(false);
+    }
+
+    public void enableFcmAutoInit() {
+        FirebaseMessaging.getInstance().setAutoInitEnabled(true);
+        syncFcmTokenIfNeeded();
     }
 
     /* ---------------- central place to start presence tracking ---------- */
@@ -176,10 +190,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     @Override public void onStart(@NonNull LifecycleOwner owner) {
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                 + ": APP RETURNS TO FOREGROUND");
-        
-        // Check backend availability when app returns to foreground
-        checkBackendAvailability();
-        
+
         if (userStatusDbRef == null) return;             // ← ADD
         FirebaseDatabase.getInstance().goOnline();
         cancelHeartbeat();
