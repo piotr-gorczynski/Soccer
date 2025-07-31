@@ -73,6 +73,7 @@ public class MenuActivity extends AppCompatActivity {
     private void fetchNicknameFromFirestore(@NonNull String uid,
                                             @NonNull SharedPreferences prefs,
                                             @NonNull Runnable onMissing) {
+
         FirebaseFirestore.getInstance()
                 .collection("users")
                 .document(uid)
@@ -91,6 +92,7 @@ public class MenuActivity extends AppCompatActivity {
                             nicknameLabel.setText(getString(R.string.hello_nickname, remoteNick));
                         }
                         ed.apply();
+
                         updateUiForAuthState();
                         checkAndUpdateBlockedInviteWarning();
                     } else {
@@ -219,7 +221,9 @@ public class MenuActivity extends AppCompatActivity {
                 ((SoccerApp) getApplication()).forceUserOffline(lastUid);
             }
             prefs.edit().clear().apply();
+
             FirebaseMessaging.getInstance().deleteToken();
+
             FirebaseFirestore.getInstance().clearPersistence();
             nickname = null;
         } else {
