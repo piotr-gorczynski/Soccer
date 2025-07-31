@@ -32,15 +32,24 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         // Setup block invite friend preference
         CheckBoxPreference blockInvitePreference = findPreference("block_invite_friend");
         if (blockInvitePreference != null) {
-            // Load current value from Firestore
-            loadBlockInvitePreference(blockInvitePreference);
+            SoccerApp app = (SoccerApp) requireActivity().getApplication();
+            boolean loggedIn = auth.getCurrentUser() != null;
+            boolean backendAvailable = app.isBackendAvailable();
 
-            // Listen for changes
-            blockInvitePreference.setOnPreferenceChangeListener((preference, newValue) -> {
-                boolean blockInvites = (Boolean) newValue;
-                updateBlockInviteInFirestore(blockInvites);
-                return true;
-            });
+            if (loggedIn && backendAvailable) {
+                // Load current value from Firestore
+                loadBlockInvitePreference(blockInvitePreference);
+
+                // Listen for changes when enabled
+                blockInvitePreference.setOnPreferenceChangeListener((pref, newValue) -> {
+                    boolean blockInvites = (Boolean) newValue;
+                    updateBlockInviteInFirestore(blockInvites);
+                    return true;
+                });
+            } else {
+                // Disable option when user not logged in or backend unavailable
+                blockInvitePreference.setEnabled(false);
+            }
         }
 
         // Setup ad consent preference
