@@ -16,6 +16,15 @@
         android:layout_height="wrap_content"
         android:text="@string/ranking" />
 
+    <TextView
+        android:id="@+id/emptyRanking"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_marginBottom="12dp"
+        android:gravity="center"
+        android:text="@string/no_ranking_yet" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rankingList"
         android:layout_width="match_parent"
