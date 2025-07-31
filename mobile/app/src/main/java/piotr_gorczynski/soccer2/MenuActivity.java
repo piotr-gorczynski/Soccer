@@ -99,7 +99,17 @@ public class MenuActivity extends AppCompatActivity {
                         onMissing.run();
                     }
                 })
-                .addOnFailureListener(e -> onMissing.run());
+                .addOnFailureListener(e -> {
+                    Log.w(
+                            "TAG_Soccer",
+                            getClass().getSimpleName() + ".fetchNicknameFromFirestore: failed", e
+                    );
+                    Toast.makeText(
+                            this,
+                            R.string.failed_to_load_nickname,
+                            Toast.LENGTH_SHORT
+                    ).show();
+                });
     }
 
     /* ───────────── misc tasks that must always run on launch ───────────── */
