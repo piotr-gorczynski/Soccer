@@ -119,6 +119,11 @@ public class PickNicknameActivity extends AppCompatActivity {
                                 Toast.makeText(PickNicknameActivity.this,
                                         "Nickname saved",
                                         Toast.LENGTH_SHORT).show();
+                                if (isTaskRoot()) {
+                                    startActivity(new Intent(
+                                            PickNicknameActivity.this,
+                                            MenuActivity.class));
+                                }
                                 finish();
                             })
                             .addOnFailureListener(e -> {
