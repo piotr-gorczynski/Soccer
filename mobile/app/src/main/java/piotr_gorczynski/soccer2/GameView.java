@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.GestureDetector;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -36,6 +37,7 @@ public class GameView extends View {
     private final ArrayList<MoveTo> realMoves;//= new ArrayList<MoveTo>();
     final ArrayList<MoveTo> possibleMovesForDrawing = new ArrayList<>();
     ArrayList<MoveTo> androidMoves = new ArrayList<>();
+    private final GestureDetector gestureDetector;
     private final int GameType;
     private final int androidLevel;
     private MoveCallback moveCallback;
@@ -97,6 +99,18 @@ public class GameView extends View {
         }
     }
 
+    /** Detects swipe gestures and forwards them to {@link #handleInputAt(float, float)} */
+    private class SwipeListener extends GestureDetector.SimpleOnGestureListener {
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            if (!inputEnabled) return true;
+            if ((GameType == 2) && (realMoves.get(realMoves.size() - 1).P == 1))
+                return true;
+            handleInputAt(e2.getX(), e2.getY());
+            return true;
+        }
+    }
+
     public GameView(Context context) {
         super(context);
         throw new UnsupportedOperationException("GameView must be created programmatically with all required parameters.");
@@ -125,6 +139,7 @@ public class GameView extends View {
         androidLevel = 0;  // unused for GameType 3
         gameActivity = (GameActivity) context;
         setBackgroundColor(ContextCompat.getColor(context, R.color.colorGreenDark));
+        gestureDetector = new GestureDetector(context, new SwipeListener());
 
         Resources res = context.getResources();
         intFieldWidth = res.getInteger(R.integer.intFieldHalfWidth) * 2;
@@ -164,7 +179,7 @@ public class GameView extends View {
         this.androidLevel=androidLevel;
         gameActivity = (GameActivity) context;
         setBackgroundColor(ContextCompat.getColor(context, R.color.colorGreenDark));
-
+        gestureDetector = new GestureDetector(context, new SwipeListener());
 
         Resources res = context.getResources();
         intFieldWidth = res.getInteger(R.integer.intFieldHalfWidth) * 2;
@@ -625,9 +640,44 @@ public class GameView extends View {
             return Math.max(Math.abs(intFieldHeight+1-y),Math.abs(intFieldWidth/2-x));
     }
 
+    /** Handle a tap or swipe ending at the given raw screen coordinates */
+    private void handleInputAt(float rawX, float rawY) {
+        int x = field.x2w(rawX);
+        int y = field.y2h(rawY);
+
+        if (field.isFlipped()) {
+            x = field.getFieldWidth() - x;
+            y = field.getFieldHeight() - y;
+        }
+
+        ArrayList<MoveTo> possibleMoves = new ArrayList<>();
+        createPossibleMoves(possibleMoves, realMoves);
+
+        if (isMoveValid(x, y, possibleMoves)) {
+            if (GameType == 3) {
+                int lastP = realMoves.get(realMoves.size() - 1).P;
+                if (localPlayerIndex != lastP) {
+                    Toast.makeText(getContext(), R.string.toast_not_your_turn, Toast.LENGTH_SHORT).show();
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".handleInputAt: 🔒 Not your turn — ignoring touch");
+                    return;
+                }
+                MakeMove(x, y, realMoves);
+            } else {
+                MakeMove(x, y, realMoves);
+                invalidate();
+                if ((GameType == 2) && (realMoves.get(realMoves.size() - 1).P == 1) && (!possibleMoves.isEmpty())) {
+                    mHandler.sendEmptyMessage(1);
+                }
+            }
+            performClick();
+        }
+    }
+
     // Touch-input handler
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        gestureDetector.onTouchEvent(event); // allow swipe detection
+
         if (!inputEnabled) return true;          // if not input enabled, exit
 
         // 1) if android's move then ignore onTouchEvent
@@ -636,57 +686,7 @@ public class GameView extends View {
 
         // 2) Only handle ACTION_UP (finger lifted)
         if (event.getAction()==MotionEvent.ACTION_UP)  {
-            // 2a) Map screen coords → field coords
-            int x = field.x2w(event.getX());
-            int y = field.y2h(event.getY());
-
-            if (field.isFlipped()) {
-                x = field.getFieldWidth() - x;
-                y = field.getFieldHeight() - y;
-            }
-
-            // 2b) Compute legal moves
-            ArrayList<MoveTo> possibleMoves= new ArrayList<>();
-            createPossibleMoves(possibleMoves,realMoves);
-
-            // 2c) If this tap is a valid move…
-            if(isMoveValid(x,y,possibleMoves)) {
-                if (GameType == 3) {
-                    int lastP = realMoves.get(realMoves.size() - 1).P;
-
-                    if (localPlayerIndex != lastP) {
-                        // 🔒 Not your turn — show feedback and ignore the touch
-                        Toast.makeText(
-                                getContext(),                     // a View always has a Context
-                                R.string.toast_not_your_turn,     // put the text in strings.xml
-                                Toast.LENGTH_SHORT
-                        ).show();
-
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                                + ": 🔒 Not your turn — ignoring touch");
-                        return true;
-                    }
-
-                    // Apply move locally (updates UI, checks victory)
-                    MakeMove(x, y, realMoves);
-                }
-                else {
-                    // ── GameType 1 & 2: use your existing local/AI move logic
-                    MakeMove(x, y, realMoves);
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                            + ": Before invalidate, last P=" + realMoves.get(realMoves.size() - 1).P);
-                    invalidate();
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                            + ": After invalidate");
-
-                    // ── If now it's Android’s turn and there _are_ moves available, queue AI
-                    if ((GameType == 2) && (realMoves.get(realMoves.size() - 1).P == 1) && (!possibleMoves.isEmpty()))
-                        //Send message for Android to move
-                        mHandler.sendEmptyMessage(1);
-                }
-                // 2d) Accessibility / click feedback
-                performClick();
-            }
+            handleInputAt(event.getX(), event.getY());
         }
         return true;  // Event handled
     }
