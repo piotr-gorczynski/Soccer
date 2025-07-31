@@ -30,6 +30,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Source;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import android.Manifest;
@@ -72,17 +73,26 @@ public class MenuActivity extends AppCompatActivity {
     private void fetchNicknameFromFirestore(@NonNull String uid,
                                             @NonNull SharedPreferences prefs,
                                             @NonNull Runnable onMissing) {
-        FirebaseFirestore.getInstance().collection("users").document(uid)
-                .get()
+
+        FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(uid)
+                .get(Source.SERVER)
                 .addOnSuccessListener(doc -> {
                     String remoteNick = doc.getString("nickname");
                     if (remoteNick != null && !remoteNick.isEmpty()) {
+                        SharedPreferences.Editor ed = prefs.edit();
                         String local = prefs.getString("nickname", null);
+                        if (!uid.equals(prefs.getString("uid", null))) {
+                            ed.putString("uid", uid);
+                        }
                         if (local == null || !local.equals(remoteNick)) {
-                            prefs.edit().putString("nickname", remoteNick).apply();
+                            ed.putString("nickname", remoteNick);
                             TextView nicknameLabel = findViewById(R.id.nicknameLabel);
                             nicknameLabel.setText(getString(R.string.hello_nickname, remoteNick));
                         }
+                        ed.apply();
+
                         updateUiForAuthState();
                         checkAndUpdateBlockedInviteWarning();
                     } else {
@@ -105,7 +115,13 @@ public class MenuActivity extends AppCompatActivity {
                             }.getClass().getEnclosingMethod()).getName()
                             + ": ⚠️ No logged-in user; clearing stored credentials"
             );
+            String lastUid = prefs.getString("uid", null);
+            if (lastUid != null) {
+                ((SoccerApp) getApplication()).forceUserOffline(lastUid);
+            }
             prefs.edit().clear().apply();
+            FirebaseMessaging.getInstance().deleteToken();
+            FirebaseFirestore.getInstance().clearPersistence();
             return;
         }
 
@@ -205,6 +221,9 @@ public class MenuActivity extends AppCompatActivity {
                 ((SoccerApp) getApplication()).forceUserOffline(lastUid);
             }
             prefs.edit().clear().apply();
+
+            FirebaseMessaging.getInstance().deleteToken();
+
             FirebaseFirestore.getInstance().clearPersistence();
             nickname = null;
         } else {
