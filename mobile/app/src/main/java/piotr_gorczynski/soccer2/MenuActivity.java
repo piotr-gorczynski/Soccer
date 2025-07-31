@@ -69,7 +69,11 @@ public class MenuActivity extends AppCompatActivity {
     private BackendServiceChecker serviceChecker;
     private Menu optionsMenu; // Hold reference to menu for updating warning icon
 
-    /** Helper to fetch nickname from Firestore and update prefs/UI */
+    /**
+     * Helper to fetch user details from Firestore and update prefs/UI. This is
+     * primarily used on cold start when Firebase already has an authenticated
+     * user but the local SharedPreferences are empty.
+     */
     private void fetchNicknameFromFirestore(@NonNull String uid,
                                             @NonNull SharedPreferences prefs,
                                             @NonNull Runnable onMissing) {
@@ -80,6 +84,8 @@ public class MenuActivity extends AppCompatActivity {
                 .get(Source.SERVER)
                 .addOnSuccessListener(doc -> {
                     String remoteNick = doc.getString("nickname");
+                    String remoteEmail = doc.getString("email");
+                    String remoteMethod = doc.getString("method");
                     if (remoteNick != null && !remoteNick.isEmpty()) {
                         SharedPreferences.Editor ed = prefs.edit();
                         String local = prefs.getString("nickname", null);
@@ -90,6 +96,14 @@ public class MenuActivity extends AppCompatActivity {
                             ed.putString("nickname", remoteNick);
                             TextView nicknameLabel = findViewById(R.id.nicknameLabel);
                             nicknameLabel.setText(getString(R.string.hello_nickname, remoteNick));
+                        }
+                        String localEmail = prefs.getString("email", null);
+                        if (remoteEmail != null && (localEmail == null || !localEmail.equals(remoteEmail))) {
+                            ed.putString("email", remoteEmail);
+                        }
+                        String localMethod = prefs.getString("method", null);
+                        if (remoteMethod != null && (localMethod == null || !localMethod.equals(remoteMethod))) {
+                            ed.putString("method", remoteMethod);
                         }
                         ed.apply();
 
