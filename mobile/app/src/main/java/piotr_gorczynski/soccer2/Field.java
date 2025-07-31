@@ -341,7 +341,7 @@ public class Field {
         float cy = h2y(flipY(last.Y));
         float radius = dotSize * 4;
         // Background circle behind the ball
-        float radiusBackground = dotSize * 5;
+        float radiusBackground = (float) (radius  * 0.8);
         canvas.drawCircle(cx, cy, radiusBackground, movePaint);
 
         RectF dst = new RectF(cx - radius, cy - radius, cx + radius, cy + radius);
