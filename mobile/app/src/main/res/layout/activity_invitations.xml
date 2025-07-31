@@ -14,6 +14,13 @@
         android:layout_height="wrap_content"
         android:textColor="@color/colorGreenDark"/>
 
+    <TextView
+        android:id="@+id/emptyInvites"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/no_pending_invites"
+        android:visibility="gone"
+        android:layout_marginBottom="16dp"/>
 
     <ListView
         android:id="@+id/invitesList"

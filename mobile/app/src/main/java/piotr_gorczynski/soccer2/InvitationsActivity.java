@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.*;
 
 import androidx.annotation.NonNull;
@@ -28,6 +29,7 @@ import android.content.SharedPreferences;
 public class InvitationsActivity extends AppCompatActivity {
 
     ListView invitesList;
+    TextView emptyText;
     ArrayAdapter<String> adapter;
     final ArrayList<String> inviteDescriptions = new ArrayList<>();
     final ArrayList<String> inviteIds = new ArrayList<>();
@@ -49,6 +51,7 @@ public class InvitationsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_invitations);
 
         invitesList = findViewById(R.id.invitesList);
+        emptyText = findViewById(R.id.emptyInvites);
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, inviteDescriptions);
         invitesList.setAdapter(adapter);
 
@@ -162,6 +165,9 @@ public class InvitationsActivity extends AppCompatActivity {
                                     inviteIds.remove(idx);
                                     inviteDescriptions.remove(idx);
                                     adapter.notifyDataSetChanged();
+                                    if (inviteIds.isEmpty()) {
+                                        emptyText.setVisibility(View.VISIBLE);
+                                    }
                                 }
                             });
 
@@ -189,6 +195,7 @@ public class InvitationsActivity extends AppCompatActivity {
                         inviteDescriptions.clear();
                         inviteIds.clear();
                         adapter.notifyDataSetChanged();
+                        emptyText.setVisibility(View.VISIBLE);
                         Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                                 + ": Listen failed", e);
                         return;
@@ -225,6 +232,11 @@ public class InvitationsActivity extends AppCompatActivity {
                     }
 
                     adapter.notifyDataSetChanged();
+                    if (inviteIds.isEmpty()) {
+                        emptyText.setVisibility(View.VISIBLE);
+                    } else {
+                        emptyText.setVisibility(View.GONE);
+                    }
                 });
     }
 
