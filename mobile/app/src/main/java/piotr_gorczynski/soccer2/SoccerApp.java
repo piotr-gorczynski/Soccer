@@ -360,11 +360,23 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         String existingProjectId = prefs.getString("backend_project_id", null);
         
         if (existingProjectId == null || existingProjectId.isEmpty()) {
-            // Set default project ID based on expected pattern
-            // Use the default project ID that matches our Cloud Build
-            // environment. This ensures the service-check function URL is
-            // correct on fresh installs.
-            String defaultProjectId = "soccer-dev-1744877837";
+            // Attempt to read the project ID from Firebase options which are
+            // derived from google-services.json. Fallback to the default
+            // development project when Firebase options are unavailable.
+            String defaultProjectId = null;
+            try {
+                FirebaseApp app = FirebaseApp.initializeApp(this);
+                if (app != null && app.getOptions() != null) {
+                    defaultProjectId = app.getOptions().getProjectId();
+                }
+            } catch (IllegalStateException e) {
+                Log.w("TAG_Soccer", "FirebaseApp not initialized", e);
+            }
+
+            if (defaultProjectId == null || defaultProjectId.isEmpty()) {
+                defaultProjectId = "soccer-dev-1744877837";
+            }
+
             serviceChecker.setProjectId(defaultProjectId);
             Log.d("TAG_Soccer", getClass().getSimpleName() + ".configureDefaultProjectId: Configured default project ID: " + defaultProjectId);
         }
