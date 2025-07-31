@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.text.Editable;
+import android.util.Log;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class RegisterAccountActivity extends AppCompatActivity {
@@ -106,7 +107,12 @@ public class RegisterAccountActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     btnRegister.setEnabled(true);  // re-enable either way
                     if (!task.isSuccessful()) {
-                       Toast.makeText(RegisterAccountActivity.this,
+                        Log.e(
+                            "TAG_Soccer",
+                            getClass().getSimpleName() + ".registerUser: Nickname check failed",
+                            task.getException()
+                        );
+                        Toast.makeText(RegisterAccountActivity.this,
                                 "Network error while checking nickname",
                                 Toast.LENGTH_SHORT).show();
                         return;
