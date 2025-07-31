@@ -190,10 +190,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     @Override public void onStart(@NonNull LifecycleOwner owner) {
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                 + ": APP RETURNS TO FOREGROUND");
-        
-        // Check backend availability when app returns to foreground
-        checkBackendAvailability();
-        
+
         if (userStatusDbRef == null) return;             // ← ADD
         FirebaseDatabase.getInstance().goOnline();
         cancelHeartbeat();

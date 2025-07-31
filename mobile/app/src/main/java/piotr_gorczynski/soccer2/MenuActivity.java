@@ -305,9 +305,7 @@ public class MenuActivity extends AppCompatActivity {
         
         // Get initial backend availability state from the app
         isBackendAvailable = app.isBackendAvailable();
-        
-        // Check backend availability on app launch
-        checkBackendAvailability();
+        // Backend availability check runs in onResume()
 
         runHousekeeping();          // ← always executed, even on cold resume
 
