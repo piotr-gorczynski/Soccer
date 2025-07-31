@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,6 +37,7 @@ public class TournamentsActivity extends AppCompatActivity {
         RecyclerView registeringList = findViewById(R.id.registeringList);
         RecyclerView runningList = findViewById(R.id.runningList);
         RecyclerView endedList = findViewById(R.id.endedList);
+        TextView emptyText = findViewById(R.id.emptyTournaments);
 
         registeringList.setLayoutManager(new LinearLayoutManager(this));
         runningList.setLayoutManager(new LinearLayoutManager(this));
@@ -85,6 +87,11 @@ public class TournamentsActivity extends AppCompatActivity {
         findViewById(R.id.endedHeader).setVisibility(
                 endedAdapter.getItemCount() == 0 ? View.GONE : View.VISIBLE);
 
+        boolean anyInitial = registeringAdapter.getItemCount() > 0
+                || runningAdapter.getItemCount() > 0
+                || endedAdapter.getItemCount() > 0;
+        emptyText.setVisibility(anyInitial ? View.GONE : View.VISIBLE);
+
 
         // ── Firestore ────────────────────────────────────────────────
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -130,6 +137,11 @@ public class TournamentsActivity extends AppCompatActivity {
                     runningAdapter.getItemCount() == 0 ? View.GONE : View.VISIBLE);
             findViewById(R.id.endedHeader).setVisibility(
                     endedAdapter.getItemCount() == 0 ? View.GONE : View.VISIBLE);
+
+            boolean any = registeringAdapter.getItemCount() > 0
+                    || runningAdapter.getItemCount() > 0
+                    || endedAdapter.getItemCount() > 0;
+            emptyText.setVisibility(any ? View.GONE : View.VISIBLE);
 
 
         });

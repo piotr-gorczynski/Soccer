@@ -73,6 +73,14 @@
             android:minHeight="64dp"
             android:layout_marginBottom="16dp"
             android:nestedScrollingEnabled="false" />
+
+        <TextView
+            android:id="@+id/emptyTournaments"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_tournaments"
+            android:visibility="gone"
+            android:layout_marginTop="16dp" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </LinearLayout>
