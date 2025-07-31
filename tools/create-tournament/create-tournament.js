@@ -1,25 +1,33 @@
-// tools/create-tournament.js
+// tools/create-tournament/create-tournament.js
 const fs   = require('fs');
 const path = require('path');
 const admin = require('firebase-admin');
 
 // ────────────────────────────────────────────────────────────────
-// 1. Load service-account credentials from the secrets folder
-//    (../secrets relative to this script’s directory)
-const serviceAccount = require(path.join(__dirname, '..', 'secrets', 'serviceAccountKey.json'));
-
-// 2. Initialise Firebase Admin with that key
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
-
-const db = admin.firestore();
+// Service account loading happens after reading the desired environment
+// from the command line. The key files are stored two directories up
+// under `secrets/serviceAccountKey.{env}.json`.
 // ────────────────────────────────────────────────────────────────
 
 // (rest of your original code stays unchanged)
 
 async function main () {
   const args = process.argv.slice(2);
+
+  const env = args.shift();
+  if (!['dev', 'test', 'prod'].includes(env)) {
+    console.error('First argument must specify the environment: dev, test or prod');
+    process.exit(1);
+  }
+
+  const serviceAccountPath = path.join(__dirname, '..', '..', 'secrets', `serviceAccountKey.${env}.json`);
+  const serviceAccount     = require(serviceAccountPath);
+
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+  });
+  const db = admin.firestore();
+
   let params = {};
 
   if (args.length === 1 && args[0].endsWith('.json')) {
@@ -33,8 +41,9 @@ async function main () {
       regulation: args[4]
     };
   } else {
-    console.error('Usage: node create-tournament.js name maxParticipants registrationDeadline matchesDeadline regulation');
-    console.error('   or: node create-tournament.js params.json');
+    console.error('Usage: node create-tournament.js <env> name maxParticipants registrationDeadline matchesDeadline regulation');
+    console.error('   or: node create-tournament.js <env> params.json');
+    console.error('Where <env> is one of: dev, test, prod');
     process.exit(1);
   }
 
