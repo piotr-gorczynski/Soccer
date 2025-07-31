@@ -30,6 +30,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Source;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import android.Manifest;
@@ -68,6 +69,37 @@ public class MenuActivity extends AppCompatActivity {
     private BackendServiceChecker serviceChecker;
     private Menu optionsMenu; // Hold reference to menu for updating warning icon
 
+    /** Helper to fetch nickname from Firestore and update prefs/UI */
+    private void fetchNicknameFromFirestore(@NonNull String uid,
+                                            @NonNull SharedPreferences prefs,
+                                            @NonNull Runnable onMissing) {
+        FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(uid)
+                .get(Source.SERVER)
+                .addOnSuccessListener(doc -> {
+                    String remoteNick = doc.getString("nickname");
+                    if (remoteNick != null && !remoteNick.isEmpty()) {
+                        SharedPreferences.Editor ed = prefs.edit();
+                        String local = prefs.getString("nickname", null);
+                        if (!uid.equals(prefs.getString("uid", null))) {
+                            ed.putString("uid", uid);
+                        }
+                        if (local == null || !local.equals(remoteNick)) {
+                            ed.putString("nickname", remoteNick);
+                            TextView nicknameLabel = findViewById(R.id.nicknameLabel);
+                            nicknameLabel.setText(getString(R.string.hello_nickname, remoteNick));
+                        }
+                        ed.apply();
+                        updateUiForAuthState();
+                        checkAndUpdateBlockedInviteWarning();
+                    } else {
+                        onMissing.run();
+                    }
+                })
+                .addOnFailureListener(e -> onMissing.run());
+    }
+
     /* ───────────── misc tasks that must always run on launch ───────────── */
     private void runHousekeeping() {
         String uid = FirebaseAuth.getInstance().getUid();
@@ -81,42 +113,18 @@ public class MenuActivity extends AppCompatActivity {
                             }.getClass().getEnclosingMethod()).getName()
                             + ": ⚠️ No logged-in user; clearing stored credentials"
             );
+            String lastUid = prefs.getString("uid", null);
+            if (lastUid != null) {
+                ((SoccerApp) getApplication()).forceUserOffline(lastUid);
+            }
             prefs.edit().clear().apply();
+            FirebaseMessaging.getInstance().deleteToken();
+            FirebaseFirestore.getInstance().clearPersistence();
             return;
         }
 
-        // 🔄 Sync nickname from Firestore if it differs from local prefs
-        String localNick = prefs.getString("nickname", null);
-        FirebaseFirestore.getInstance().collection("users").document(uid)
-                .get()
-                .addOnSuccessListener(doc -> {
-                    if (doc.exists()) {
-                        String remoteNick = doc.getString("nickname");
-                        if (remoteNick != null && !remoteNick.equals(localNick)) {
-                            prefs.edit().putString("nickname", remoteNick).apply();
-                            Log.d(
-                                    "TAG_Soccer",
-                                    getClass().getSimpleName() + "." +
-                                            Objects.requireNonNull(new Object() {
-                                            }.getClass().getEnclosingMethod()).getName() +
-                                            ": 🔄 Nickname updated from Firestore to " + remoteNick);
-                            runOnUiThread(() -> {
-                                TextView nicknameLabel = findViewById(R.id.nicknameLabel);
-                                nicknameLabel.setText(getString(R.string.hello_nickname, remoteNick));
-                            });
-                        }
-                    }
-                })
-                .addOnFailureListener(
-                        e ->
-                                Log.e(
-                                        "TAG_Soccer",
-                                        getClass().getSimpleName()
-                                                + "."
-                                                + Objects.requireNonNull(new Object() {
-                                                }.getClass().getEnclosingMethod()).getName()
-                                                + ": ❌ Failed to fetch nickname from Firestore",
-                                        e));
+        // 🔄 Sync nickname from Firestore
+        fetchNicknameFromFirestore(uid, prefs, () -> {});
 
         FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
             if (!task.isSuccessful()) {
@@ -204,31 +212,27 @@ public class MenuActivity extends AppCompatActivity {
         
         SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
         String nickname = prefs.getString("nickname", null);
-        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        if (auth.getCurrentUser() == null) {
+            String lastUid = prefs.getString("uid", null);
+            if (lastUid != null) {
+                ((SoccerApp) getApplication()).forceUserOffline(lastUid);
+            }
             prefs.edit().clear().apply();
+            FirebaseMessaging.getInstance().deleteToken();
+            FirebaseFirestore.getInstance().clearPersistence();
             nickname = null;
-        } else if (nickname == null || nickname.isEmpty()) {
-            String uid = FirebaseAuth.getInstance().getUid();
+        } else {
+            String uid = auth.getUid();
             if (uid != null) {
-                FirebaseFirestore.getInstance().collection("users").document(uid)
-                        .get()
-                        .addOnSuccessListener(doc -> {
-                            String remoteNick = doc.getString("nickname");
-                            if (remoteNick != null && !remoteNick.isEmpty()) {
-                                prefs.edit().putString("nickname", remoteNick).apply();
-                                TextView nicknameLabel = findViewById(R.id.nicknameLabel);
-                                nicknameLabel.setText(getString(R.string.hello_nickname, remoteNick));
-                                updateUiForAuthState();
-                                checkAndUpdateBlockedInviteWarning();
-                            } else {
-                                startActivity(new Intent(this, PickNicknameActivity.class));
-                            }
-                        })
-                        .addOnFailureListener(e -> startActivity(new Intent(this, PickNicknameActivity.class)));
-                return;
-            } else {
-                startActivity(new Intent(this, PickNicknameActivity.class));
-                return;
+                Runnable pickNick = () -> startActivity(new Intent(this, PickNicknameActivity.class));
+                if (nickname == null || nickname.isEmpty()) {
+                    fetchNicknameFromFirestore(uid, prefs, pickNick);
+                    return;
+                } else {
+                    // Refresh nickname in the background to keep prefs in sync
+                    fetchNicknameFromFirestore(uid, prefs, () -> {});
+                }
             }
         }
 
