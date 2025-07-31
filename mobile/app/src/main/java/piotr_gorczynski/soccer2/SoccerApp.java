@@ -358,7 +358,6 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
      */
     private void configureDefaultProjectId() {
         SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
-        String storedProjectId = prefs.getString("backend_project_id", null);
 
         // Always attempt to read the project ID from google-services.json
         String firebaseProjectId = null;
@@ -369,24 +368,23 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
             }
         } catch (IllegalStateException e) {
             Log.w("TAG_Soccer", "FirebaseApp not initialized", e);
+            prefs.edit().remove("backend_project_id").apply();
+            return;
         }
 
         if (firebaseProjectId == null || firebaseProjectId.isEmpty()) {
-            firebaseProjectId = "soccer-dev-1744877837";
+            Log.w("TAG_Soccer", "Project ID missing in google-services.json");
+            prefs.edit().remove("backend_project_id").apply();
+            return;
         }
 
-        if (storedProjectId == null || !storedProjectId.equals(firebaseProjectId)) {
-            serviceChecker.setProjectId(firebaseProjectId);
-            Log.d(
-                    "TAG_Soccer",
-                    getClass().getSimpleName() + ".configureDefaultProjectId: Set project ID to " + firebaseProjectId
-            );
-        } else {
-            Log.d(
-                    "TAG_Soccer",
-                    getClass().getSimpleName() + ".configureDefaultProjectId: Using stored project ID: " + storedProjectId
-            );
-        }
+        serviceChecker.setProjectId(firebaseProjectId);
+        // Clean up any stored value from older versions
+        prefs.edit().remove("backend_project_id").apply();
+        Log.d(
+                "TAG_Soccer",
+                getClass().getSimpleName() + ".configureDefaultProjectId: Set project ID to " + firebaseProjectId
+        );
     }
     
     /**
