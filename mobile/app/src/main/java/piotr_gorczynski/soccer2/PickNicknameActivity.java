@@ -87,8 +87,8 @@ public class PickNicknameActivity extends AppCompatActivity {
 
         btnConfirm.setEnabled(false);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("users")
-                .whereEqualTo("nicknameLowercase", nickname.toLowerCase())
+        db.collection("nicknames")
+                .document(nickname.toLowerCase())
                 .get()
                 .addOnCompleteListener(this, task -> {
                     if (!task.isSuccessful()) {
@@ -98,7 +98,7 @@ public class PickNicknameActivity extends AppCompatActivity {
                                 Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    if (!task.getResult().isEmpty()) {
+                    if (task.getResult().exists()) {
                         btnConfirm.setEnabled(true);
                         Toast.makeText(PickNicknameActivity.this,
                                 "Nickname already taken — choose another",
@@ -119,7 +119,18 @@ public class PickNicknameActivity extends AppCompatActivity {
                                 Toast.makeText(PickNicknameActivity.this,
                                         "Nickname saved",
                                         Toast.LENGTH_SHORT).show();
-                                finish();
+                                Map<String, Object> nickData = new HashMap<>();
+                                nickData.put("uid", uid);
+                                db.collection("nicknames")
+                                        .document(nickname.toLowerCase())
+                                        .set(nickData)
+                                        .addOnSuccessListener(x -> finish())
+                                        .addOnFailureListener(e -> {
+                                            btnConfirm.setEnabled(true);
+                                            Toast.makeText(PickNicknameActivity.this,
+                                                    "Failed to reserve nickname",
+                                                    Toast.LENGTH_SHORT).show();
+                                        });
                             })
                             .addOnFailureListener(e -> {
                                 btnConfirm.setEnabled(true);
