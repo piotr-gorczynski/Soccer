@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Soccer</string>
+    <string name="app_name">Soccer 2</string>
     <string name="menu_YouvsAndroid">Practice with Android</string>
     <string name="menu_Player1vsPlayer2">Two players on this device</string>
     <string name="menu_Settings">Settings</string>
