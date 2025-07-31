@@ -74,6 +74,7 @@ public class AccountActivity extends AppCompatActivity {
                         Log.w("TAG_Soccer", getClass().getSimpleName() + ".finishLogoutUi: \u274C Failed to delete FCM token", t.getException());
                     }
                 });
+        FirebaseMessaging.getInstance().setAutoInitEnabled(false);
 
         Toast.makeText(this, R.string.logged_out, Toast.LENGTH_SHORT).show();
         finish();

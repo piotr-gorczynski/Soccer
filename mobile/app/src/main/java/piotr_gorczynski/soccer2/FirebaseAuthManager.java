@@ -73,7 +73,7 @@ public class FirebaseAuthManager {
                                     db.collection("users").document(uid).set(data, SetOptions.merge())
                                             .addOnCompleteListener(task -> {
                                                 storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId);
-                                                ((SoccerApp) context.getApplicationContext()).syncFcmTokenIfNeeded();
+                                                ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
                                                 Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
                                                         Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
                                                         ": login success uid=" + uid + ", nickname=" +
@@ -84,7 +84,7 @@ public class FirebaseAuthManager {
                                     db.collection("users").document(uid).set(data)
                                             .addOnCompleteListener(task -> {
                                                 storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId);
-                                                ((SoccerApp) context.getApplicationContext()).syncFcmTokenIfNeeded();
+                                                ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
                                                 Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
                                                         Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
                                                         ": login success uid=" + uid + ", nickname=" +
@@ -137,7 +137,7 @@ public class FirebaseAuthManager {
                                             if (method == null) method = "email";
                                             storeUserData(uid, email, nickname != null ? nickname : "Unknown", method);
                                             ((SoccerApp) context.getApplicationContext())
-                                                    .syncFcmTokenIfNeeded();   // new helper (see below)
+                                                    .enableFcmAutoInit();
                                             Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
                                                     Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
                                                     ": login success uid=" + uid + ", nickname=" +
@@ -176,6 +176,8 @@ public class FirebaseAuthManager {
                     if (task.isSuccessful()) {
                         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": User registered: " + Objects.requireNonNull(firebaseAuth.getCurrentUser()).getEmail());
                         Toast.makeText(context, "Registered as: " + firebaseAuth.getCurrentUser().getEmail(), Toast.LENGTH_SHORT).show();
+
+                        ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
 
                         // Set display name
                         firebaseAuth.getCurrentUser().updateProfile(
