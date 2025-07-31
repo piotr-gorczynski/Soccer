@@ -214,11 +214,22 @@ public class FirebaseAuthManager {
 
                         db.collection("users").document(uid).set(userData)
                                 .addOnSuccessListener(aVoid ->
-                                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Nickname saved to Firestore")
+                                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Nickname saved to Firestore")
                                 )
                                 .addOnFailureListener(e ->
-                                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to save nickname: " + e.getMessage())
+                                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to save nickname: " + e.getMessage())
                                 );
+
+                        // Also reserve the nickname for availability checks
+                        Map<String, Object> nickData = new HashMap<>();
+                        nickData.put("uid", uid);
+                        db.collection("nicknames")
+                                .document(nickname.toLowerCase())
+                                .set(nickData)
+                                .addOnSuccessListener(v -> Log.d("TAG_Soccer",
+                                        getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Nickname reserved"))
+                                .addOnFailureListener(e -> Log.e("TAG_Soccer",
+                                        getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to reserve nickname: " + e.getMessage()));
 
 
                         // Send verification email
