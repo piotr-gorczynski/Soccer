@@ -71,6 +71,7 @@
     <string name="waiting_for_opponent">Waiting for opponent to accept…</string>
     <string name="tournaments">Tournaments</string>
     <string name="ranking">Ranking</string>
+    <string name="no_ranking_yet">No tournaments were completed to show ranking yet.</string>
     <string name="join">Join</string>
     <!-- "%1$d" → first argument (joined), "%2$d" → second (max) -->
     <string name="slots_format">%1$d / %2$d</string>

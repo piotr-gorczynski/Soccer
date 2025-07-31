@@ -3,7 +3,9 @@ package piotr_gorczynski.soccer2;
 import android.os.Build;
 import android.os.Bundle;
 import android.content.Context;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +26,7 @@ public class RankingActivity extends AppCompatActivity {
 
     private final List<RankingEntry> ranking = new ArrayList<>();
     private RankingAdapter adapter;
+    private TextView emptyRanking;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,12 +37,14 @@ public class RankingActivity extends AppCompatActivity {
         list.setLayoutManager(new LinearLayoutManager(this));
         adapter = new RankingAdapter(ranking);
         list.setAdapter(adapter);
+        emptyRanking = findViewById(R.id.emptyRanking);
 
         loadRanking();
     }
 
     private void loadRanking() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+        emptyRanking.setVisibility(View.GONE);
 
         db.collectionGroup("matches").get().addOnSuccessListener(snap -> {
             Map<String, RankingEntry> scoreMap = new HashMap<>();
@@ -61,6 +66,7 @@ public class RankingActivity extends AppCompatActivity {
             if (uids.isEmpty()) {
                 ranking.clear();
                 adapter.notifyDataSetChanged();
+                emptyRanking.setVisibility(View.VISIBLE);
                 return;
             }
 
@@ -81,6 +87,7 @@ public class RankingActivity extends AppCompatActivity {
                         }
                         assignMedals(ranking);
                         adapter.notifyDataSetChanged();
+                        emptyRanking.setVisibility(View.GONE);
                     });
         });
     }
