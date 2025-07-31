@@ -1,8 +1,19 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 
-// Print the environment the build was invoked with
-def buildEnv = project.findProperty("env") ?: ""
+// Determine the environment based on -Penv or the build variant being run
+def detectEnvFromTasks = {
+    for (String taskName : gradle.startParameter.taskNames) {
+        def m = taskName =~ /_(dev|test|prod)(Debug|Release)/
+        if (m.find()) {
+            return m.group(1)
+        }
+    }
+    return null
+}
+
+ext.buildEnv = project.findProperty("env") ?: detectEnvFromTasks() ?: ""
+def buildEnv = ext.buildEnv
 println "\n🛠️ Gradle build invoked with env='${buildEnv}'\n"
 
 android {
@@ -115,9 +126,9 @@ import java.nio.file.StandardCopyOption
 // Register custom copy task
 tasks.register("copyGoogleServicesJson") {
     doLast {
-        def env = project.findProperty("env")
+        def env = project.findProperty("env") ?: buildEnv
         if (env == null || env.toString().trim().isEmpty()) {
-            throw new GradleException("❌ Missing -Penv property (dev, test or prod)")
+            throw new GradleException("❌ Missing environment. Use variant or -Penv=dev|test|prod")
         }
         def source = file("../../secrets/google-services.${env}.json")
         def destination = file("google-services.json")
