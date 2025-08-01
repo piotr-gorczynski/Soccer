@@ -346,6 +346,14 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     public boolean isBackendAvailable() {
         return isBackendAvailable;
     }
+
+    /**
+     * Update backend availability status so other activities can query
+     * the latest value.
+     */
+    public void setBackendAvailable(boolean available) {
+        isBackendAvailable = available;
+    }
     
     /**
      * Get the backend service checker instance
