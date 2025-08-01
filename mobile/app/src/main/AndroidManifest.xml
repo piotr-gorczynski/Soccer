@@ -98,7 +98,8 @@
         <activity
             android:name=".RankingActivity"
             android:exported="false"
-            android:parentActivityName=".MenuActivity">
+            android:parentActivityName=".MenuActivity"
+            android:label="@string/ranking">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MenuActivity"/>

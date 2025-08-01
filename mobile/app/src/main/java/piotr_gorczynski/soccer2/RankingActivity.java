@@ -38,6 +38,7 @@ public class RankingActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.ranking_toolbar);
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(R.string.ranking);
 
         RecyclerView list = findViewById(R.id.rankingList);
         list.setLayoutManager(new LinearLayoutManager(this));
