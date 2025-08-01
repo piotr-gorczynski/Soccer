@@ -148,7 +148,7 @@ public class BackendServiceChecker {
                             JSONObject jsonResponse = new JSONObject(responseBody);
                             String status = jsonResponse.optString("status", "");
                             
-                            if ("Active".equals(status)) {
+                            if ("active".equals(status)) {
                                 Log.d(TAG, "Backend service is available");
                                 callback.onServiceAvailable();
                                 return;
