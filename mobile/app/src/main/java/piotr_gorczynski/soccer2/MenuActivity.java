@@ -628,6 +628,11 @@ public class MenuActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.tournaments_menu, menu);
         this.optionsMenu = menu;
+        // Hide offline indicator by default or based on current state
+        MenuItem offlineItem = menu.findItem(R.id.action_offline);
+        if (offlineItem != null) {
+            offlineItem.setVisible(!isBackendAvailable);
+        }
         checkAndUpdateBlockedInviteWarning(); // Check blocked invite status
         return true;
     }
@@ -648,6 +653,10 @@ public class MenuActivity extends AppCompatActivity {
         } else if (id == R.id.action_invite_blocked_warning) {
             // Show toast explaining the warning
             Toast.makeText(this, R.string.invites_blocked_notification, Toast.LENGTH_LONG).show();
+            return true;
+        } else if (id == R.id.action_offline) {
+            // Clicking the offline icon shows the same toast as when the check fails
+            Toast.makeText(this, R.string.server_unavailable_message, Toast.LENGTH_LONG).show();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -691,6 +700,12 @@ public class MenuActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     isBackendAvailable = true;
                     updateUiForAuthState();
+                    if (optionsMenu != null) {
+                        MenuItem offlineItem = optionsMenu.findItem(R.id.action_offline);
+                        if (offlineItem != null) {
+                            offlineItem.setVisible(false);
+                        }
+                    }
                 });
             }
 
@@ -703,9 +718,15 @@ public class MenuActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     isBackendAvailable = false;
                     updateUiForAuthState();
+                    if (optionsMenu != null) {
+                        MenuItem offlineItem = optionsMenu.findItem(R.id.action_offline);
+                        if (offlineItem != null) {
+                            offlineItem.setVisible(true);
+                        }
+                    }
                     // Show toast notification about server unavailability
-                    Toast.makeText(MenuActivity.this, 
-                            "We are sorry, but the Soccer server is not available at the moment...", 
+                    Toast.makeText(MenuActivity.this,
+                            R.string.server_unavailable_message,
                             Toast.LENGTH_LONG).show();
                 });
             }
