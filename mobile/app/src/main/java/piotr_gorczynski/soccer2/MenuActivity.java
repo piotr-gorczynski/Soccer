@@ -169,6 +169,15 @@ public class MenuActivity extends AppCompatActivity {
                     .collection("users")
                     .document(uid);
             docRef.get().addOnSuccessListener(doc -> {
+                String emailField = doc.getString("email");
+                if (emailField == null || emailField.isEmpty()) {
+                    Log.w("TAG_Soccer", getClass().getSimpleName() + "." +
+                            Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                            ": Missing email in Firestore - logging out user");
+                    logoutUser();
+                    return;
+                }
+
                 String remoteToken = doc.getString("fcmToken");
 
                 if (remoteToken == null || !remoteToken.equals(newToken)) {
@@ -219,6 +228,35 @@ public class MenuActivity extends AppCompatActivity {
                             getClass().getSimpleName() + ".runHousekeeping: failed to load ads frequency",
                             e));
 
+    }
+
+    private void logoutUser() {
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid != null) {
+            ((SoccerApp) getApplication()).forceUserOffline(uid);
+        }
+
+        FirebaseAuth.getInstance().signOut();
+
+        String prefsName = getPackageName() + "_preferences";
+        getSharedPreferences(prefsName, MODE_PRIVATE)
+                .edit()
+                .remove(PREF_FCM_TOKEN)
+                .clear()
+                .apply();
+
+        FirebaseMessaging.getInstance().deleteToken()
+                .addOnCompleteListener(t -> {
+                    if (t.isSuccessful()) {
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".logoutUser: \u2705 FCM token deleted");
+                    } else {
+                        Log.w("TAG_Soccer", getClass().getSimpleName() + ".logoutUser: \u274C Failed to delete FCM token", t.getException());
+                    }
+                });
+        FirebaseMessaging.getInstance().setAutoInitEnabled(false);
+
+        Toast.makeText(this, R.string.logged_out, Toast.LENGTH_SHORT).show();
+        updateUiForAuthState();
     }
 
     @Override
