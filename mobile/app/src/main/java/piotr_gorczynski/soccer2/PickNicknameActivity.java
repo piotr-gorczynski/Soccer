@@ -94,6 +94,7 @@ public class PickNicknameActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     if (!task.isSuccessful()) {
                         btnConfirm.setEnabled(true);
+                        Log.e("TAG_Soccer", "Nickname check failed", task.getException());
                         Toast.makeText(PickNicknameActivity.this,
                                 "Network error while checking nickname",
                                 Toast.LENGTH_SHORT).show();
@@ -101,6 +102,7 @@ public class PickNicknameActivity extends AppCompatActivity {
                     }
                     if (task.getResult().exists()) {
                         btnConfirm.setEnabled(true);
+                        Log.e("TAG_Soccer", "Nickname already exists: " + nickname);
                         Toast.makeText(PickNicknameActivity.this,
                                 "Nickname already taken — choose another",
                                 Toast.LENGTH_SHORT).show();
