@@ -10,6 +10,7 @@ import java.util.Objects;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class UniversalLoginActivity extends AppCompatActivity {
@@ -21,6 +22,11 @@ public class UniversalLoginActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_universal_login);
+
+        Toolbar toolbar = findViewById(R.id.universal_login_toolbar);
+        setSupportActionBar(toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(R.string.login);
 
         authManager = new FirebaseAuthManager(this);
 
@@ -84,5 +90,11 @@ public class UniversalLoginActivity extends AppCompatActivity {
                 Toast.makeText(UniversalLoginActivity.this, "Login failed: " + message, Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 }
