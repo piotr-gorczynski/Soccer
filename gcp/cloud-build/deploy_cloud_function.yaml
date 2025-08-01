@@ -25,7 +25,24 @@ steps:
         fi
         echo "Using project: $(cat /workspace/project_name.txt)"
 
-  # Step 2: Run Unit Tests
+  # Step 2: Grant Firestore access to the runtime service account
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        project_id=$(cat /workspace/project_name.txt)
+        service_account="${project_id}@appspot.gserviceaccount.com"
+
+        echo "Granting roles/datastore.user to ${service_account}..."
+        gcloud projects add-iam-policy-binding "$project_id" \
+          --member="serviceAccount:${service_account}" \
+          --role="roles/datastore.user" \
+          --quiet
+        echo "Firestore permission granted."
+
+  # Step 3: Run Unit Tests
   - name: 'python:3.9-slim'
     entrypoint: 'bash'
     args:
@@ -37,7 +54,7 @@ steps:
         echo "Running unit tests..."
         python -m unittest discover -s gcp/cloud-functions/tests
 
-  # Step 3: Deploy the Cloud Function
+  # Step 4: Deploy the Cloud Function
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -59,7 +76,7 @@ steps:
         }
         echo "Cloud Function '${_FUNCTION_NAME}' deployed successfully."
 
-  # Step 4: Add IAM policy binding to allow allUsers to invoke
+  # Step 5: Add IAM policy binding to allow allUsers to invoke
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: 'bind-invoker-role'
     entrypoint: bash

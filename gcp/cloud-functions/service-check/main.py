@@ -42,7 +42,7 @@ def get_service_status():
         return "active"
     except Exception as e:
         logging.error(f"Failed to retrieve service status: {e}")
-        return "active"
+        raise
 
 # Service check endpoint
 def service_check(request):
