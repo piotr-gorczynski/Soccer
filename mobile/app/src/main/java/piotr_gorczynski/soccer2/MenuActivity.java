@@ -256,6 +256,13 @@ public class MenuActivity extends AppCompatActivity {
         FirebaseMessaging.getInstance().setAutoInitEnabled(false);
 
         Toast.makeText(this, R.string.logged_out, Toast.LENGTH_SHORT).show();
+
+        // Update nickname label after logging out
+        TextView nicknameLabel = findViewById(R.id.nicknameLabel);
+        if (nicknameLabel != null) {
+            nicknameLabel.setText(getString(R.string.welcome_to_soccer));
+        }
+
         updateUiForAuthState();
     }
 
