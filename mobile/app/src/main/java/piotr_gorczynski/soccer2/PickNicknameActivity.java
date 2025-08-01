@@ -88,8 +88,9 @@ public class PickNicknameActivity extends AppCompatActivity {
 
         btnConfirm.setEnabled(false);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("nicknames")
-                .document(nickname.toLowerCase())
+
+        db.collection("users")
+                .whereEqualTo("nicknameLowercase", nickname.toLowerCase())
                 .get()
                 .addOnCompleteListener(this, task -> {
                     if (!task.isSuccessful()) {
@@ -100,7 +101,7 @@ public class PickNicknameActivity extends AppCompatActivity {
                                 Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    if (task.getResult().exists()) {
+                    if (!task.getResult().isEmpty()) {
                         btnConfirm.setEnabled(true);
                         Log.e("TAG_Soccer", "Nickname already exists: " + nickname);
                         Toast.makeText(PickNicknameActivity.this,
@@ -122,25 +123,12 @@ public class PickNicknameActivity extends AppCompatActivity {
                                 Toast.makeText(PickNicknameActivity.this,
                                         "Nickname saved",
                                         Toast.LENGTH_SHORT).show();
-                                Map<String, Object> nickData = new HashMap<>();
-                                nickData.put("uid", uid);
-                                db.collection("nicknames")
-                                        .document(nickname.toLowerCase())
-                                        .set(nickData)
-                                        .addOnSuccessListener(x -> {
-                                            if (isTaskRoot()) {
-                                                startActivity(new Intent(
-                                                        PickNicknameActivity.this,
-                                                        MenuActivity.class));
-                                            }
-                                            finish();
-                                        })
-                                        .addOnFailureListener(e -> {
-                                            btnConfirm.setEnabled(true);
-                                            Toast.makeText(PickNicknameActivity.this,
-                                                    "Failed to reserve nickname",
-                                                    Toast.LENGTH_SHORT).show();
-                                        });
+                                if (isTaskRoot()) {
+                                    startActivity(new Intent(
+                                            PickNicknameActivity.this,
+                                            MenuActivity.class));
+                                }
+                                finish();
                             })
                             .addOnFailureListener(e -> {
                                 btnConfirm.setEnabled(true);
