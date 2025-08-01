@@ -90,8 +90,6 @@ public class TournamentLobbyActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        tournamentBanner = findViewById(R.id.tournamentBanner);
-
         String tid   = getIntent().getStringExtra("tournamentId");
         String nameExtra = getIntent().getStringExtra("tournamentName");
         String myUid = requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
