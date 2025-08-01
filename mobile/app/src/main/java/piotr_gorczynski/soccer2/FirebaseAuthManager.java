@@ -139,7 +139,9 @@ public class FirebaseAuthManager {
                                             if (email != null) data.put("email", email);
                                             db.collection("users").document(uid).set(data, SetOptions.merge());
 
-                                            storeUserData(uid, email, nickname != null ? nickname : "Unknown", "email");
+                                            // Don't store a placeholder nickname so MenuActivity
+                                            // can prompt the user to choose one if missing
+                                            storeUserData(uid, email, nickname != null ? nickname : "", "email");
                                             ((SoccerApp) context.getApplicationContext())
                                                     .enableFcmAutoInit();
                                             Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
@@ -150,7 +152,9 @@ public class FirebaseAuthManager {
                                         })
                                         .addOnFailureListener(e -> {
                                             Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ⚠️ Failed to load nickname from Firestore", e);
-                                            storeUserData(uid, email, "Unknown", "email");
+                                            // Nickname couldn't be loaded; store empty to trigger
+                                            // PickNicknameActivity on the next resume
+                                            storeUserData(uid, email, "", "email");
                                             Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
                                                     Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
                                                     ": login success uid=" + uid + ", nickname=null");
