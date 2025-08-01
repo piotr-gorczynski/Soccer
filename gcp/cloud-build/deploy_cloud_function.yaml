@@ -7,7 +7,7 @@ substitutions:
   _SOURCE_PATH: 'gcp/cloud-functions/service-check'  # Source code path for the Cloud Function
 
 steps:
-  # Step 1: Retrieve the project ID
+  # Step 1: Retrieve the project ID and number
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -25,6 +25,15 @@ steps:
         fi
         echo "Using project: $(cat /workspace/project_name.txt)"
 
+        echo "Retrieving project number..."
+        gcloud projects describe $(cat /workspace/project_name.txt) \
+          --format='value(projectNumber)' > /workspace/project_number.txt
+        if [ ! -s /workspace/project_number.txt ] || [ -z "$(cat /workspace/project_number.txt)" ]; then
+          echo "Error: Failed to retrieve project number."
+          exit 1
+        fi
+        echo "Project number: $(cat /workspace/project_number.txt)"
+
   # Step 2: Grant Firestore access to the runtime service account
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
@@ -33,7 +42,8 @@ steps:
       - |
         set -e
         project_id=$(cat /workspace/project_name.txt)
-        service_account="${project_id}@appspot.gserviceaccount.com"
+        project_number=$(cat /workspace/project_number.txt)
+        service_account="${project_number}-compute@developer.gserviceaccount.com"
 
         echo "Granting roles/datastore.user to ${service_account}..."
         gcloud projects add-iam-policy-binding "$project_id" \
@@ -63,12 +73,14 @@ steps:
         set -e  # Exit immediately if a command fails
         echo "Deploying Cloud Function '${_FUNCTION_NAME}' to project: $(cat /workspace/project_name.txt)..."
         gcloud config set project "$(cat /workspace/project_name.txt)"
+        project_number=$(cat /workspace/project_number.txt)
         gcloud functions deploy ${_FUNCTION_NAME} \
             --entry-point=service_check \
             --runtime=${_RUNTIME} \
             --trigger-http \
             --gen2 \
             --region=${_REGION} \
+            --service-account=${project_number}-compute@developer.gserviceaccount.com \
             --source=${_SOURCE_PATH} \
             --timeout=540s || {
           echo "Error: Failed to deploy the Cloud Function."
