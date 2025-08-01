@@ -21,8 +21,10 @@ class TestServiceCheck(unittest.TestCase):
 
     @patch("main.cloud_logging.Client")
     @patch("main.get_secret")
-    def test_service_check_success(self, mock_get_secret, mock_log_client):
+    @patch("main.get_service_status")
+    def test_service_check_success(self, mock_get_status, mock_get_secret, mock_log_client):
         mock_log_client.return_value = MagicMock(setup_logging=MagicMock())
+        mock_get_status.return_value = "active"
         # Mock the secret key retrieval
         mock_get_secret.return_value = self.secret_key
 
@@ -32,12 +34,14 @@ class TestServiceCheck(unittest.TestCase):
             response = service_check(context.request)
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json, {"status": "Active"})
+        self.assertEqual(response.json, {"status": "active"})
 
     @patch("main.cloud_logging.Client")
     @patch("main.get_secret")
-    def test_service_check_missing_header(self, mock_get_secret, mock_log_client):
+    @patch("main.get_service_status")
+    def test_service_check_missing_header(self, mock_get_status, mock_get_secret, mock_log_client):
         mock_log_client.return_value = MagicMock(setup_logging=MagicMock())
+        mock_get_status.return_value = "active"
         # Mock the secret key retrieval
         mock_get_secret.return_value = self.secret_key
 
@@ -50,8 +54,10 @@ class TestServiceCheck(unittest.TestCase):
 
     @patch("main.cloud_logging.Client")
     @patch("main.get_secret")
-    def test_service_check_unauthorized(self, mock_get_secret, mock_log_client):
+    @patch("main.get_service_status")
+    def test_service_check_unauthorized(self, mock_get_status, mock_get_secret, mock_log_client):
         mock_log_client.return_value = MagicMock(setup_logging=MagicMock())
+        mock_get_status.return_value = "active"
         # Mock the secret key retrieval
         mock_get_secret.return_value = self.secret_key
 
@@ -65,8 +71,10 @@ class TestServiceCheck(unittest.TestCase):
 
     @patch("main.cloud_logging.Client")
     @patch("main.get_secret")
-    def test_service_check_internal_error(self, mock_get_secret, mock_log_client):
+    @patch("main.get_service_status")
+    def test_service_check_internal_error(self, mock_get_status, mock_get_secret, mock_log_client):
         mock_log_client.return_value = MagicMock(setup_logging=MagicMock())
+        mock_get_status.return_value = "active"
         # Mock an exception during secret key retrieval
         mock_get_secret.side_effect = Exception("Secret retrieval failed")
 
