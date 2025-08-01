@@ -110,7 +110,7 @@
     <string name="regulation_load_error">Failed to load regulation.</string>
     <string name="regulation_auth_required">Please log in to view the regulation.</string>
     <string name="server_unavailable">Server Unavailable</string>
-    <string name="server_unavailable_message">We are sorry, but the Soccer server is not available at the moment...</string>
+    <string name="server_unavailable_message">We are sorry, but the Soccer server is not available at the moment…</string>
 
     <!-- Account strings -->
     <string name="account">Account</string>
