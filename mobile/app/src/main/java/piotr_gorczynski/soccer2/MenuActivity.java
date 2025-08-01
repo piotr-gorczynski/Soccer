@@ -699,6 +699,7 @@ public class MenuActivity extends AppCompatActivity {
                 );
                 runOnUiThread(() -> {
                     isBackendAvailable = true;
+                    ((SoccerApp) getApplication()).setBackendAvailable(true);
                     updateUiForAuthState();
                     if (optionsMenu != null) {
                         MenuItem offlineItem = optionsMenu.findItem(R.id.action_offline);
@@ -717,6 +718,7 @@ public class MenuActivity extends AppCompatActivity {
                 );
                 runOnUiThread(() -> {
                     isBackendAvailable = false;
+                    ((SoccerApp) getApplication()).setBackendAvailable(false);
                     updateUiForAuthState();
                     if (optionsMenu != null) {
                         MenuItem offlineItem = optionsMenu.findItem(R.id.action_offline);
