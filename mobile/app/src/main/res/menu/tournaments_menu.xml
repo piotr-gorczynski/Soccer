@@ -8,6 +8,12 @@
         android:visible="false"
         app:showAsAction="always" />
     <item
+        android:id="@+id/action_offline"
+        android:title="@string/server_unavailable"
+        android:icon="@android:drawable/presence_offline"
+        android:visible="false"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/action_account"
         android:title="@string/account"
         android:icon="@android:drawable/ic_menu_myplaces"
