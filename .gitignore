@@ -33,3 +33,6 @@ google-services.*.json
 /mobile/app/src/main/assets/soccer_secret_key
 node_modules/
 **/__pycache__/
+
+# Signing configuration (local only)
+secrets/keystore.properties
