@@ -64,8 +64,11 @@ public class MenuActivity extends AppCompatActivity {
     private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 101;
 
     private static final String PREF_FCM_TOKEN = "fcmToken";
-    
+
     private boolean isBackendAvailable = true; // Track backend availability
+    // Track whether we've already shown the offline toast while the
+    // backend is unavailable to avoid spamming the user on every resume
+    private boolean backendUnavailableToastShown = false;
     private BackendServiceChecker serviceChecker;
     private Menu optionsMenu; // Hold reference to menu for updating warning icon
 
@@ -699,6 +702,12 @@ public class MenuActivity extends AppCompatActivity {
                 );
                 runOnUiThread(() -> {
                     isBackendAvailable = true;
+
+                    // Reset flag so next outage will display a toast again
+                    backendUnavailableToastShown = false;
+
+                    ((SoccerApp) getApplication()).setBackendAvailable(true);
+
                     updateUiForAuthState();
                     if (optionsMenu != null) {
                         MenuItem offlineItem = optionsMenu.findItem(R.id.action_offline);
@@ -717,6 +726,7 @@ public class MenuActivity extends AppCompatActivity {
                 );
                 runOnUiThread(() -> {
                     isBackendAvailable = false;
+                    ((SoccerApp) getApplication()).setBackendAvailable(false);
                     updateUiForAuthState();
                     if (optionsMenu != null) {
                         MenuItem offlineItem = optionsMenu.findItem(R.id.action_offline);
@@ -724,10 +734,13 @@ public class MenuActivity extends AppCompatActivity {
                             offlineItem.setVisible(true);
                         }
                     }
-                    // Show toast notification about server unavailability
-                    Toast.makeText(MenuActivity.this,
-                            R.string.server_unavailable_message,
-                            Toast.LENGTH_LONG).show();
+                    // Show toast notification once when the backend becomes unavailable
+                    if (!backendUnavailableToastShown) {
+                        Toast.makeText(MenuActivity.this,
+                                R.string.server_unavailable_message,
+                                Toast.LENGTH_LONG).show();
+                        backendUnavailableToastShown = true;
+                    }
                 });
             }
         });
