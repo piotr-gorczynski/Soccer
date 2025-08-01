@@ -1,6 +1,9 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 
+import java.util.Properties
+import java.io.FileInputStream
+
 // Determine the environment based on -Penv or the build variant being run
 def detectEnvFromTasks = {
     for (String taskName : gradle.startParameter.taskNames) {
@@ -15,6 +18,13 @@ def detectEnvFromTasks = {
 ext.buildEnv = project.findProperty("env") ?: detectEnvFromTasks() ?: ""
 def buildEnv = ext.buildEnv
 println "\n🛠️ Gradle build invoked with env='${buildEnv}'\n"
+
+// Load signing properties if available
+def signingProps = new Properties()
+def signingPropsFile = new File(rootProject.rootDir.parentFile, "secrets/keystore.properties")
+if (signingPropsFile.exists()) {
+    signingProps.load(new FileInputStream(signingPropsFile))
+}
 
 android {
 
@@ -34,8 +44,20 @@ android {
         buildConfig true          // <- make sure this is present or omit the block
     }
 
+    signingConfigs {
+        release {
+            if (signingPropsFile.exists()) {
+                storeFile file(new File(rootProject.rootDir.parentFile, signingProps['KEYSTORE_FILE']))
+                storePassword signingProps['KEYSTORE_PASSWORD']
+                keyAlias signingProps['KEY_ALIAS']
+                keyPassword signingProps['KEY_PASSWORD']
+            }
+        }
+    }
+
     buildTypes {
         release {
+            signingConfig signingConfigs.release
             minifyEnabled = true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
