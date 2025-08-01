@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -49,6 +50,11 @@ public class InvitationsActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_invitations);
+
+        Toolbar toolbar = findViewById(R.id.invitations_toolbar);
+        setSupportActionBar(toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(R.string.pending_game_invitations);
 
         invitesList = findViewById(R.id.invitesList);
         emptyText = findViewById(R.id.emptyInvites);
@@ -243,6 +249,12 @@ public class InvitationsActivity extends AppCompatActivity {
     @Override protected void onDestroy() {
         super.onDestroy();
         if (invitesSub != null) invitesSub.remove();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 
 }
