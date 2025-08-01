@@ -8,6 +8,7 @@ import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.*;
@@ -31,6 +32,11 @@ public class InviteFriendActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_invite_friend);
+
+        Toolbar toolbar = findViewById(R.id.invite_friend_toolbar);
+        setSupportActionBar(toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(R.string.invite_a_friend);
 
         nicknameInput = findViewById(R.id.nicknameInput);
         sendInviteButton = findViewById(R.id.sendInviteButton);
@@ -133,6 +139,12 @@ public class InviteFriendActivity extends AppCompatActivity {
                     Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                             + ": createInvite failed", e);
                 });
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 
 }
