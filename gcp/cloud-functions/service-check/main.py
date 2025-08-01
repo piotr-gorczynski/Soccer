@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request, Response
 from google.cloud import secretmanager
 from google.cloud import logging as cloud_logging  # Import Google Cloud Logging
+from google.cloud import firestore
 import logging
 
 app = Flask(__name__)
@@ -26,6 +27,23 @@ def get_secret():
         logging.error(f"Failed to retrieve secret: {e}")
         raise
 
+# Function to get service status from Firestore
+def get_service_status():
+    logging.info("Retrieving service status from Firestore...")
+    try:
+        client = firestore.Client()
+        doc = client.collection("settings").document("serviceStatus").get()
+        if doc.exists:
+            data = doc.to_dict()
+            status = data.get("status", "active")
+            logging.info(f"Service status fetched: {status}")
+            return status.lower()
+        logging.warning("serviceStatus document does not exist; defaulting to 'active'")
+        return "active"
+    except Exception as e:
+        logging.error(f"Failed to retrieve service status: {e}")
+        return "active"
+
 # Service check endpoint
 def service_check(request):
     logging.info("Service-check endpoint invoked.")
@@ -46,8 +64,9 @@ def service_check(request):
             logging.warning("Provided X-Secret-Key does not match the secret key")
             return Response(jsonify({"error": "Unauthorized"}).data, status=403, mimetype="application/json")
 
+        status = get_service_status()
         logging.info("Service-check completed successfully.")
-        return Response(jsonify({"status": "Active"}).data, status=200, mimetype="application/json")
+        return Response(jsonify({"status": status}).data, status=200, mimetype="application/json")
     except Exception as e:
         logging.error(f"An error occurred: {e}")
         return Response(jsonify({"error": "Internal server error"}).data, status=500, mimetype="application/json")
