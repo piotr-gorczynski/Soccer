@@ -21,3 +21,19 @@ The script also accepts a path to a JSON file containing the fields `name`, `max
 ```bash
 node tools/create-tournament/create-tournament.js dev params.json
 ```
+
+## Android release signing
+
+The production keystore and passwords are kept outside of version control.
+Create a `keystore.properties` file inside the `secrets/` directory with your
+release signing details:
+
+```properties
+KEYSTORE_FILE=secrets/keystore.jks
+KEYSTORE_PASSWORD=your_store_password
+KEY_ALIAS=your_key_alias
+KEY_PASSWORD=your_key_password
+```
+
+`secrets/keystore.properties` is ignored by Git so your credentials remain
+private.
