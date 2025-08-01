@@ -115,7 +115,11 @@ public class MenuActivity extends AppCompatActivity {
                         updateUiForAuthState();
                         checkAndUpdateBlockedInviteWarning();
                     } else {
-                        onMissing.run();
+                        if (uid.equals(FirebaseAuth.getInstance().getUid())) {
+                            onMissing.run();
+                        } else {
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + ".fetchNicknameFromFirestore: user changed, skipping nickname prompt");
+                        }
                     }
                 })
                 .addOnFailureListener(e -> {
@@ -297,7 +301,11 @@ public class MenuActivity extends AppCompatActivity {
         } else {
             String uid = auth.getUid();
             if (uid != null) {
-                Runnable pickNick = () -> startActivity(new Intent(this, PickNicknameActivity.class));
+                Runnable pickNick = () -> {
+                    if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                        startActivity(new Intent(this, PickNicknameActivity.class));
+                    }
+                };
                 if (nickname == null || nickname.isEmpty()) {
                     fetchNicknameFromFirestore(uid, prefs, pickNick);
                     return;
