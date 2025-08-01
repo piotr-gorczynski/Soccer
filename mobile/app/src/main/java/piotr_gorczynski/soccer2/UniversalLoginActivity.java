@@ -10,6 +10,7 @@ import java.util.Objects;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class UniversalLoginActivity extends AppCompatActivity {
 
@@ -38,6 +39,14 @@ public class UniversalLoginActivity extends AppCompatActivity {
         btnGoogle.setOnClickListener(v -> handleProviderLogin("google.com"));
         btnFacebook.setOnClickListener(v -> handleProviderLogin("facebook.com"));
         btnMicrosoft.setOnClickListener(v -> handleProviderLogin("microsoft.com"));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            finish();
+        }
     }
 
     private void handleProviderLogin(String provider) {
