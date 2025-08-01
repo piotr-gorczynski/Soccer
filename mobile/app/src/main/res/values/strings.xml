@@ -114,6 +114,7 @@
 
     <!-- Account strings -->
     <string name="account">Account</string>
+    <string name="account_information">Account information</string>
     <string name="nickname_label">Nickname: %1$s</string>
     <string name="email_label">Email: %1$s</string>
 
