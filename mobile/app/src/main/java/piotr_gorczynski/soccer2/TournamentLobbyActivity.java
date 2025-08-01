@@ -5,6 +5,7 @@ import static java.util.Objects.*;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
+import androidx.appcompat.widget.Toolbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -27,7 +28,7 @@ public class TournamentLobbyActivity extends AppCompatActivity {
 
     private MatchAdapter mAdapter;
     private ListenerRegistration matchListener;
-    private TextView tournamentName;
+    private TextView tournamentBanner;
 
     /* one common handler so we don’t repeat the diff logic */
     EventListener<QuerySnapshot> makeHandler(String label) {
@@ -85,7 +86,11 @@ public class TournamentLobbyActivity extends AppCompatActivity {
                 + ": Method start");
         setContentView(R.layout.activity_tournament_lobby);
 
-        tournamentName = findViewById(R.id.tournamentName);
+        Toolbar toolbar = findViewById(R.id.tournament_lobby_toolbar);
+        setSupportActionBar(toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+
+        tournamentBanner = findViewById(R.id.tournamentBanner);
 
         String tid   = getIntent().getStringExtra("tournamentId");
         String nameExtra = getIntent().getStringExtra("tournamentName");
@@ -93,12 +98,12 @@ public class TournamentLobbyActivity extends AppCompatActivity {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         if (nameExtra != null) {
-            tournamentName.setText(nameExtra);
+            getSupportActionBar().setTitle(nameExtra);
         } else if (tid != null) {
             db.collection("tournaments").document(tid).get()
                     .addOnSuccessListener(doc -> {
                         String n = doc.getString("name");
-                        if (n != null) tournamentName.setText(n);
+                        if (n != null) getSupportActionBar().setTitle(n);
                     });
         }
 
@@ -154,6 +159,12 @@ public class TournamentLobbyActivity extends AppCompatActivity {
     @Override protected void onDestroy() {
         if (matchListener != null) matchListener.remove();
         super.onDestroy();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 }
 
