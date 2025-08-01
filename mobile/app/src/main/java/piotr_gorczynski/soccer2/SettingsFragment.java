@@ -55,24 +55,33 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         // Setup ad consent preference
         CheckBoxPreference adsConsentPref = findPreference("ads_consent");
         if (adsConsentPref != null) {
-            updateAdsConsentCheckbox(adsConsentPref);
-            adsConsentPref.setOnPreferenceChangeListener((pref, newValue) -> {
-                Log.d(
-                        "TAG_Soccer",
-                        getClass().getSimpleName() + ".onCreatePreferences: ads_consent clicked"
-                );
-                SoccerApp app = (SoccerApp) requireActivity().getApplication();
-                app.showAdsConsentForm(requireActivity());
-                // keep current value until consent form result is reflected
-                return false;
-            });
+            SoccerApp app = (SoccerApp) requireActivity().getApplication();
+            boolean backendAvailable = app.isBackendAvailable();
 
-            consentChangeListener = (sharedPreferences, key) -> {
-                if ("personalised_ads".equals(key)) {
-                    updateAdsConsentCheckbox(adsConsentPref);
-                }
-            };
-            prefs.registerOnSharedPreferenceChangeListener(consentChangeListener);
+            // Always display the current value
+            updateAdsConsentCheckbox(adsConsentPref);
+
+            if (backendAvailable) {
+                adsConsentPref.setOnPreferenceChangeListener((pref, newValue) -> {
+                    Log.d(
+                            "TAG_Soccer",
+                            getClass().getSimpleName() + ".onCreatePreferences: ads_consent clicked"
+                    );
+                    app.showAdsConsentForm(requireActivity());
+                    // keep current value until consent form result is reflected
+                    return false;
+                });
+
+                consentChangeListener = (sharedPreferences, key) -> {
+                    if ("personalised_ads".equals(key)) {
+                        updateAdsConsentCheckbox(adsConsentPref);
+                    }
+                };
+                prefs.registerOnSharedPreferenceChangeListener(consentChangeListener);
+            } else {
+                // Disable option when backend unavailable
+                adsConsentPref.setEnabled(false);
+            }
         }
 
         Preference fbPref = findPreference("facebook_community");
