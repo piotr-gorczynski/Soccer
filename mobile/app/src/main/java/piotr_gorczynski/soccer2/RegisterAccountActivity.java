@@ -6,6 +6,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+import java.util.Objects;
 
 
 public class RegisterAccountActivity extends AppCompatActivity {
@@ -23,6 +26,11 @@ public class RegisterAccountActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_account);
+
+        Toolbar toolbar = findViewById(R.id.register_toolbar);
+        setSupportActionBar(toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Register new account");
 
         authManager = new FirebaseAuthManager(this);
 
@@ -55,4 +63,10 @@ public class RegisterAccountActivity extends AppCompatActivity {
                 Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
+
+}
