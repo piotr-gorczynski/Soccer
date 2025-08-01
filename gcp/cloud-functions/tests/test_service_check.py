@@ -86,5 +86,21 @@ class TestServiceCheck(unittest.TestCase):
         self.assertEqual(response.status_code, 500)
         self.assertEqual(response.json, {"error": "Internal server error"})
 
+    @patch("main.cloud_logging.Client")
+    @patch("main.get_secret")
+    @patch("main.get_service_status")
+    def test_service_check_status_error(self, mock_get_status, mock_get_secret, mock_log_client):
+        mock_log_client.return_value = MagicMock(setup_logging=MagicMock())
+        # Simulate failure while retrieving status
+        mock_get_status.side_effect = Exception("Firestore error")
+        mock_get_secret.return_value = self.secret_key
+
+        headers = {"X-Secret-Key": self.secret_key}
+        with self.app.application.test_request_context(headers=headers) as context:
+            response = service_check(context.request)
+
+        self.assertEqual(response.status_code, 500)
+        self.assertEqual(response.json, {"error": "Internal server error"})
+
 if __name__ == "__main__":
     unittest.main()
