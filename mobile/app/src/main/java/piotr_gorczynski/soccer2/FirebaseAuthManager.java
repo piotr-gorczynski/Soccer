@@ -10,7 +10,6 @@ import androidx.appcompat.app.AlertDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.OAuthProvider;
 
-import com.google.firebase.auth.UserProfileChangeRequest;
 import androidx.annotation.Nullable;
 
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -175,7 +174,7 @@ public class FirebaseAuthManager {
 
 
 
-    public void registerUser(String email, String password, String nickname) {
+    public void registerUser(String email, String password) {
         firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -183,27 +182,11 @@ public class FirebaseAuthManager {
                         Toast.makeText(context, "Registered as: " + firebaseAuth.getCurrentUser().getEmail(), Toast.LENGTH_SHORT).show();
 
                         ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
-
-                        // Set display name
-                        firebaseAuth.getCurrentUser().updateProfile(
-                                new UserProfileChangeRequest.Builder()
-                                        .setDisplayName(nickname)
-                                        .build()
-                        ).addOnCompleteListener(profileTask -> {
-                            if (profileTask.isSuccessful()) {
-                                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Nickname set to: " + nickname);
-                            } else {
-                                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to set nickname: " + Objects.requireNonNull(profileTask.getException()).getMessage());
-                            }
-                        });
-
-                        // Store nickname in Firestore
+                        // Store basic user data in Firestore
                         String uid = firebaseAuth.getCurrentUser().getUid();
                         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
                         Map<String, Object> userData = new HashMap<>();
-                        userData.put("nickname", nickname);
-                        userData.put("nicknameLowercase", nickname.toLowerCase());
                         userData.put("email", email); // optional
                         userData.put("online", true); // optional
 
@@ -211,25 +194,10 @@ public class FirebaseAuthManager {
 
                         userData.put("method", "email");
 
-
-                        db.collection("users").document(uid).set(userData)
-                                .addOnSuccessListener(aVoid ->
-                                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Nickname saved to Firestore")
-                                )
+                        db.collection("users").document(uid).set(userData, SetOptions.merge())
                                 .addOnFailureListener(e ->
-                                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to save nickname: " + e.getMessage())
+                                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to save user data: " + e.getMessage())
                                 );
-
-                        // Also reserve the nickname for availability checks
-                        Map<String, Object> nickData = new HashMap<>();
-                        nickData.put("uid", uid);
-                        db.collection("nicknames")
-                                .document(nickname.toLowerCase())
-                                .set(nickData)
-                                .addOnSuccessListener(v -> Log.d("TAG_Soccer",
-                                        getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Nickname reserved"))
-                                .addOnFailureListener(e -> Log.e("TAG_Soccer",
-                                        getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to reserve nickname: " + e.getMessage()));
 
 
                         // Send verification email
@@ -241,6 +209,7 @@ public class FirebaseAuthManager {
                                                 .setMessage("Please check your email to verify your account.")
                                                 .setPositiveButton("OK", (dialog, which) -> {
                                                     // Close the current activity
+                                                    firebaseAuth.signOut();
                                                     ((Activity) context).finish();
                                                 })
                                                 .show();
@@ -254,7 +223,7 @@ public class FirebaseAuthManager {
                                                 .setPositiveButton("OK", null)
                                                 .show();
                                     }
-                                });
+                        });
 
                     } else {
                         String errorMsg = task.getException() != null ? task.getException().getMessage() : "Unknown error occurred";
