@@ -192,7 +192,6 @@ public class FirebaseAuthManager {
 
                         Map<String, Object> userData = new HashMap<>();
                         userData.put("email", email); // optional
-                        userData.put("online", true); // optional
 
                         userData.put("blockInviteFriend", false); // new field for blocking invites
 
