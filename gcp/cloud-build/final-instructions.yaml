@@ -46,6 +46,12 @@ steps:
         echo ""
         echo "Console path:"
         echo "  APIs & Services → Credentials → OAuth 2.0 Client IDs → Soccer 2"
+        echo ""
+        echo "Then generate a new Firebase Admin SDK private key for:"
+        echo "  firebase-adminsdk-fbsvc@${firebase_project_id}.iam.gserviceaccount.com"
+        echo "Console path:"
+        echo "  Firebase → Project Settings → Service accounts"
+        echo "Store the downloaded key in Secrets."
         echo "──────────────────────────────────────────────────────────"
         echo ""
 options:
