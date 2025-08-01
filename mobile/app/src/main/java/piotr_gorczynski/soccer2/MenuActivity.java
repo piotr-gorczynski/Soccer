@@ -37,6 +37,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.widget.Toast;
+import android.graphics.drawable.Drawable;
 import androidx.appcompat.app.AlertDialog;
 
 import androidx.core.app.ActivityCompat;
@@ -71,6 +72,7 @@ public class MenuActivity extends AppCompatActivity {
     private boolean backendUnavailableToastShown = false;
     private BackendServiceChecker serviceChecker;
     private Menu optionsMenu; // Hold reference to menu for updating warning icon
+    private MenuItem accountMenuItem; // Reference to account menu item
 
     /**
      * Helper to fetch user details from Firestore and update prefs/UI. This is
@@ -631,6 +633,14 @@ public class MenuActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.tournaments_menu, menu);
         this.optionsMenu = menu;
+        // Store reference to account item for later updates
+        accountMenuItem = menu.findItem(R.id.action_account);
+        if (accountMenuItem != null) {
+            Drawable icon = accountMenuItem.getIcon();
+            if (!isBackendAvailable && icon != null) {
+                icon.setAlpha(130); // visually dim when offline
+            }
+        }
         // Hide offline indicator by default or based on current state
         MenuItem offlineItem = menu.findItem(R.id.action_offline);
         if (offlineItem != null) {
@@ -644,6 +654,10 @@ public class MenuActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_account) {
+            if (!isBackendAvailable) {
+                Toast.makeText(this, R.string.server_unavailable_message, Toast.LENGTH_LONG).show();
+                return true;
+            }
             if (FirebaseAuth.getInstance().getCurrentUser() == null) {
                 startActivity(new Intent(this, UniversalLoginActivity.class));
             } else {
@@ -714,6 +728,9 @@ public class MenuActivity extends AppCompatActivity {
                         if (offlineItem != null) {
                             offlineItem.setVisible(false);
                         }
+                        if (accountMenuItem != null && accountMenuItem.getIcon() != null) {
+                            accountMenuItem.getIcon().setAlpha(255);
+                        }
                     }
                 });
             }
@@ -732,6 +749,9 @@ public class MenuActivity extends AppCompatActivity {
                         MenuItem offlineItem = optionsMenu.findItem(R.id.action_offline);
                         if (offlineItem != null) {
                             offlineItem.setVisible(true);
+                        }
+                        if (accountMenuItem != null && accountMenuItem.getIcon() != null) {
+                            accountMenuItem.getIcon().setAlpha(130);
                         }
                     }
                     // Show toast notification once when the backend becomes unavailable
