@@ -133,17 +133,6 @@ service cloud.firestore {
       // no writes here
     }
 
-    // Nicknames collection used for availability checks
-    match /nicknames/{nickname} {
-      // Anyone may read to verify if a nickname is taken
-      allow read: if true;
-
-      // Only signed-in users may reserve a nickname
-      allow create: if request.auth != null;
-
-      // No updates or deletions from clients
-      allow update, delete: if false;
-    }
 
     // Regulations: read-only for authenticated users
     match /regulations/{docId} {
