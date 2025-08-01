@@ -7,6 +7,9 @@ import android.os.Bundle;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.appcompat.widget.Toolbar;
+import java.util.Objects;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -23,7 +26,6 @@ import java.util.Map;
 
 public class TournamentResultsActivity extends AppCompatActivity {
 
-    private TextView tournamentName;
     private StandingsAdapter adapter;
     private final List<StandingEntry> standings = new ArrayList<>();
 
@@ -32,7 +34,10 @@ public class TournamentResultsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tournament_results);
 
-        tournamentName = findViewById(R.id.tournamentName);
+        Toolbar toolbar = findViewById(R.id.results_toolbar);
+        setSupportActionBar(toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+
         RecyclerView standingsList = findViewById(R.id.standingsList);
         standingsList.setLayoutManager(new LinearLayoutManager(this));
 
@@ -51,7 +56,8 @@ public class TournamentResultsActivity extends AppCompatActivity {
         db.collection("tournaments").document(tid).get()
                 .addOnSuccessListener(doc -> {
                     if (!doc.exists()) return;
-                    tournamentName.setText(doc.getString("name"));
+                    Objects.requireNonNull(getSupportActionBar())
+                            .setTitle(doc.getString("name"));
                 });
 
         // Step 1: fetch all participants
@@ -112,6 +118,12 @@ public class TournamentResultsActivity extends AppCompatActivity {
             e.medalCategory = category <= 3 ? category : 0;
             prevWins = e.wins;
         }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 
     /** Internal structure for one row */
