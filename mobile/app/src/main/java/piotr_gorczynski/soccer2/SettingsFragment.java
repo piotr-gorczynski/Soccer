@@ -42,6 +42,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
                 // Listen for changes when enabled
                 blockInvitePreference.setOnPreferenceChangeListener((pref, newValue) -> {
+                    if (!app.isBackendAvailable()) {
+                        Log.e(
+                                "TAG_Soccer",
+                                getClass().getSimpleName() + ".onCreatePreferences: backend unavailable - ignoring block_invite change"
+                        );
+                        return false;
+                    }
                     boolean blockInvites = (Boolean) newValue;
                     updateBlockInviteInFirestore(blockInvites);
                     return true;
@@ -49,6 +56,10 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             } else {
                 // Disable option when user not logged in or backend unavailable
                 blockInvitePreference.setEnabled(false);
+                Log.d(
+                        "TAG_Soccer",
+                        getClass().getSimpleName() + ".onCreatePreferences: block_invite disabled - loggedIn=" + loggedIn + ", backendAvailable=" + backendAvailable
+                );
             }
         }
 
@@ -63,6 +74,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
             if (backendAvailable) {
                 adsConsentPref.setOnPreferenceChangeListener((pref, newValue) -> {
+                    if (!app.isBackendAvailable()) {
+                        Log.e(
+                                "TAG_Soccer",
+                                getClass().getSimpleName() + ".onCreatePreferences: backend unavailable - ignoring ads_consent click"
+                        );
+                        return false;
+                    }
                     Log.d(
                             "TAG_Soccer",
                             getClass().getSimpleName() + ".onCreatePreferences: ads_consent clicked"
@@ -119,6 +137,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     }
     
     private void updateBlockInviteInFirestore(boolean blockInvites) {
+        SoccerApp app = (SoccerApp) requireActivity().getApplication();
+        if (!app.isBackendAvailable()) {
+            Log.e(
+                    "TAG_Soccer",
+                    getClass().getSimpleName() + ".updateBlockInviteInFirestore: backend unavailable - cannot save preference"
+            );
+            return;
+        }
         String uid = auth.getUid();
         if (uid != null) {
             db.collection("users").document(uid)
@@ -142,9 +168,27 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     @Override
     public void onResume() {
         super.onResume();
+        SoccerApp app = (SoccerApp) requireActivity().getApplication();
+        boolean backendAvailable = app.isBackendAvailable();
+
+        CheckBoxPreference blockInvitePref = findPreference("block_invite_friend");
+        if (blockInvitePref != null) {
+            boolean loggedIn = auth.getCurrentUser() != null;
+            blockInvitePref.setEnabled(loggedIn && backendAvailable);
+            Log.d(
+                    "TAG_Soccer",
+                    getClass().getSimpleName() + ".onResume: block_invite enabled=" + blockInvitePref.isEnabled()
+            );
+        }
+
         CheckBoxPreference adsConsentPref = findPreference("ads_consent");
         if (adsConsentPref != null) {
+            adsConsentPref.setEnabled(backendAvailable);
             updateAdsConsentCheckbox(adsConsentPref);
+            Log.d(
+                    "TAG_Soccer",
+                    getClass().getSimpleName() + ".onResume: ads_consent enabled=" + adsConsentPref.isEnabled()
+            );
         }
     }
 
