@@ -77,6 +77,10 @@
     {
       "source": "functions/seed-ads-frequency",
       "codebase": "seed-ads-frequency"
+    },
+    {
+      "source": "functions/seed-service-status",
+      "codebase": "seed-service-status"
     }
   ],
   "firestore": {
