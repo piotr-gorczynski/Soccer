@@ -690,6 +690,7 @@ public class MenuActivity extends AppCompatActivity {
                 );
                 runOnUiThread(() -> {
                     isBackendAvailable = true;
+                    ((SoccerApp) getApplication()).setBackendAvailable(true);
                     updateUiForAuthState();
                 });
             }
@@ -702,6 +703,7 @@ public class MenuActivity extends AppCompatActivity {
                 );
                 runOnUiThread(() -> {
                     isBackendAvailable = false;
+                    ((SoccerApp) getApplication()).setBackendAvailable(false);
                     updateUiForAuthState();
                     // Show toast notification about server unavailability
                     Toast.makeText(MenuActivity.this, 
