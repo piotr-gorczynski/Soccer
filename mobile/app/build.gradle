@@ -75,7 +75,7 @@ android {
         }
         _prod {
             dimension "environment"
-            buildConfigField "String", "AD_UNIT_ID", '"ca-app-pub-9113152787055223~3266191463"'
+            buildConfigField "String", "AD_UNIT_ID", '"ca-app-pub-9113152787055223/9306362927"'
         }
     }
     packagingOptions {
