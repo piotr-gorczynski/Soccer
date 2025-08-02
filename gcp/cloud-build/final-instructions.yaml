@@ -54,6 +54,8 @@ steps:
         echo "Store the downloaded key in Secrets."
         echo ""
         echo "Add mobile SHA fingerprints to Firebase."
+        echo "For PROD add debug SHA1 temporarily while testing production before launch"
+        
         echo "Firebase console → Project Settings → General → Scroll to Android apps"
         echo "──────────────────────────────────────────────────────────"
         echo ""
