@@ -52,6 +52,9 @@ steps:
         echo "Console path:"
         echo "  Firebase → Project Settings → Service accounts"
         echo "Store the downloaded key in Secrets."
+        echo ""
+        echo "Add mobile SHA fingerprints to Firebase."
+        echo "Firebase console → Project Settings → General → Scroll to Android apps"
         echo "──────────────────────────────────────────────────────────"
         echo ""
 options:
