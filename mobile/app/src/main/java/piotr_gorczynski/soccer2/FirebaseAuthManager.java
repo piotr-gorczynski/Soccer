@@ -14,6 +14,7 @@ import androidx.annotation.Nullable;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.firestore.Source;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -47,7 +48,7 @@ public class FirebaseAuthManager {
                     String email = authResult.getUser().getEmail();
 
                     FirebaseFirestore db = FirebaseFirestore.getInstance();
-                    db.collection("users").document(uid).get()
+                    db.collection("users").document(uid).get(Source.SERVER)
                             .addOnSuccessListener(doc -> {
                                 String existingNick = doc.getString("nickname");
                                 Map<String, Object> data = new HashMap<>();
