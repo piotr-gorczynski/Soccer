@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import androidx.appcompat.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,6 +33,11 @@ public class FriendsListActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends_list);
+
+        Toolbar toolbar = findViewById(R.id.friends_list_toolbar);
+        setSupportActionBar(toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(R.string.invite_a_friend);
 
         Button addBtn = findViewById(R.id.addFriendBtn);
         list = findViewById(R.id.friendsList);
@@ -128,5 +134,11 @@ public class FriendsListActivity extends AppCompatActivity {
                 .getHttpsCallable("removeFriend")
                 .call(data)
                 .addOnSuccessListener(r -> loadFriends());
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 }
