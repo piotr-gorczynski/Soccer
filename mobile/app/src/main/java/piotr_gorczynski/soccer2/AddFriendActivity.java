@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -44,6 +45,11 @@ public class AddFriendActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_friend);
+
+        Toolbar toolbar = findViewById(R.id.add_friend_toolbar);
+        setSupportActionBar(toolbar);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(R.string.add_a_friend);
 
         nicknameInput = findViewById(R.id.nicknameInput);
         searchButton = findViewById(R.id.searchButton);
@@ -167,5 +173,11 @@ public class AddFriendActivity extends AppCompatActivity {
                     }
                     resultText.setText(text);
                 });
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 }
