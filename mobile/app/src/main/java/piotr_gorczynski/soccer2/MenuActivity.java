@@ -492,50 +492,72 @@ public class MenuActivity extends AppCompatActivity {
 
     private void showAdThenRun(Runnable action) {
         SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
-        int frequency = prefs.getInt(PREF_AD_FREQUENCY, DEFAULT_AD_FREQUENCY);
-        int counter = prefs.getInt(PREF_AD_COUNTER, 0) + 1;
-        if (counter < frequency) {
-            prefs.edit().putInt(PREF_AD_COUNTER, counter).apply();
-            action.run();
-            return;
-        }
-        prefs.edit().putInt(PREF_AD_COUNTER, 0).apply();
 
-        Log.d(
-                "TAG_Soccer",
-                getClass().getSimpleName() + ".showAdThenRun: Ad ready=" + (mInterstitialAd != null)
-        );
-        if (mInterstitialAd != null) {
-            mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
-                @Override
-                public void onAdDismissedFullScreenContent() {
+        FirebaseFirestore.getInstance()
+                .collection("settings")
+                .document("adsFreuency")
+                .get()
+                .addOnSuccessListener(doc -> {
+                    Long freq = doc.getLong("value");
+                    if (freq != null) {
+                        prefs.edit().putInt(PREF_AD_FREQUENCY, freq.intValue()).apply();
+                        Log.d(
+                                "TAG_Soccer",
+                                getClass().getSimpleName() + ".showAdThenRun: refreshed ads frequency=" + freq
+                        );
+                    }
+                })
+                .addOnFailureListener(e ->
+                        Log.w(
+                                "TAG_Soccer",
+                                getClass().getSimpleName() + ".showAdThenRun: failed to refresh ads frequency",
+                                e))
+                .addOnCompleteListener(task -> {
+                    int frequency = prefs.getInt(PREF_AD_FREQUENCY, DEFAULT_AD_FREQUENCY);
+                    int counter = prefs.getInt(PREF_AD_COUNTER, 0) + 1;
+                    if (counter < frequency) {
+                        prefs.edit().putInt(PREF_AD_COUNTER, counter).apply();
+                        action.run();
+                        return;
+                    }
+                    prefs.edit().putInt(PREF_AD_COUNTER, 0).apply();
+
                     Log.d(
                             "TAG_Soccer",
-                            getClass().getSimpleName() + ".onAdDismissedFullScreenContent"
+                            getClass().getSimpleName() + ".showAdThenRun: Ad ready=" + (mInterstitialAd != null)
                     );
-                    action.run();
-                    loadInterstitialAd();
-                }
+                    if (mInterstitialAd != null) {
+                        mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+                            @Override
+                            public void onAdDismissedFullScreenContent() {
+                                Log.d(
+                                        "TAG_Soccer",
+                                        getClass().getSimpleName() + ".onAdDismissedFullScreenContent"
+                                );
+                                action.run();
+                                loadInterstitialAd();
+                            }
 
-                @Override
-                public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
-                    Log.d(
-                            "TAG_Soccer",
-                            getClass().getSimpleName() + ".onAdFailedToShowFullScreenContent: " + adError.getMessage()
-                    );
-                    action.run();
-                }
+                            @Override
+                            public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
+                                Log.d(
+                                        "TAG_Soccer",
+                                        getClass().getSimpleName() + ".onAdFailedToShowFullScreenContent: " + adError.getMessage()
+                                );
+                                action.run();
+                            }
 
-                @Override
-                public void onAdShowedFullScreenContent() {
-                    mInterstitialAd = null;
-                }
-            });
+                            @Override
+                            public void onAdShowedFullScreenContent() {
+                                mInterstitialAd = null;
+                            }
+                        });
 
-            mInterstitialAd.show(this);
-        } else {
-            action.run();
-        }
+                        mInterstitialAd.show(this);
+                    } else {
+                        action.run();
+                    }
+                });
     }
     /* helper: launch GameActivity then finish this MenuActivity */
     private void startGame(String matchPath, SharedPreferences prefs) {
