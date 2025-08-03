@@ -130,8 +130,11 @@ public class FirebaseAuthManager {
 
                             if (isVerified) {
                                 FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                // Always fetch the latest data directly from the server so that
+                                // a stale or missing cache entry doesn't cause us to miss an
+                                // existing nickname and prompt the user unnecessarily.
                                 db.collection("users").document(uid)
-                                        .get()
+                                        .get(Source.SERVER)
                                         .addOnSuccessListener(doc -> {
                                             String nickname = doc.getString("nickname");
                                             // Always record the login method as email when using this path
