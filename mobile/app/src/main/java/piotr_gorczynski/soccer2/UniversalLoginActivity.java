@@ -12,6 +12,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Source;
 
 public class UniversalLoginActivity extends AppCompatActivity {
 
@@ -68,18 +70,52 @@ public class UniversalLoginActivity extends AppCompatActivity {
         authManager.loginWithProvider(this, provider, nickname, new FirebaseAuthManager.LoginCallback() {
             @Override
             public void onLoginSuccess() {
-                Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                        Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
-                        ": onLoginSuccess");
-                SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
-                String nick = prefs.getString("nickname", null);
-                if (nick == null || nick.isEmpty()) {
-                    Intent intent = new Intent(UniversalLoginActivity.this, PickNicknameActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                }
-                Toast.makeText(UniversalLoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
-                finish();
+                Log.d(
+                        "TAG_Soccer",
+                        getClass().getSimpleName() + "." +
+                                Objects.requireNonNull(new Object() {
+                                }.getClass().getEnclosingMethod()).getName() +
+                                ": onLoginSuccess"
+                );
+
+                SharedPreferences prefs = getSharedPreferences(
+                        getPackageName() + "_preferences",
+                        MODE_PRIVATE
+                );
+
+                String uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+
+                FirebaseFirestore.getInstance()
+                        .collection("users")
+                        .document(uid)
+                        .get(Source.SERVER)
+                        .addOnSuccessListener(doc -> {
+                            String nick = doc.getString("nickname");
+                            if (nick != null && !nick.isEmpty()) {
+                                prefs.edit().putString("nickname", nick).apply();
+                            } else {
+                                Intent intent = new Intent(UniversalLoginActivity.this, PickNicknameActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(intent);
+                            }
+                            Toast.makeText(UniversalLoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
+                            finish();
+                        })
+                        .addOnFailureListener(e -> {
+                            Log.w(
+                                    "TAG_Soccer",
+                                    getClass().getSimpleName() + ".onLoginSuccess: failed to verify nickname",
+                                    e
+                            );
+                            String nick = prefs.getString("nickname", null);
+                            if (nick == null || nick.isEmpty()) {
+                                Intent intent = new Intent(UniversalLoginActivity.this, PickNicknameActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(intent);
+                            }
+                            Toast.makeText(UniversalLoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
+                            finish();
+                        });
             }
 
             @Override
