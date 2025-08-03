@@ -104,6 +104,10 @@
                 android:value=".MenuActivity"/>
         </activity>
 
+        <activity
+            android:name=".TermsActivity"
+            android:exported="false" />
+
         <service
             android:name=".notifications.MyFirebaseMessagingService"
             android:exported="false">
