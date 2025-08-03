@@ -286,10 +286,14 @@ public class MenuActivity extends AppCompatActivity {
 
         // Ensure the FCM token is stored after login
         ((SoccerApp) getApplication()).syncFcmTokenIfNeeded();
-        
+
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        if (auth.getCurrentUser() != null && !hasAdsConsent()) {
+            ((SoccerApp) getApplication()).requestConsent(this);
+        }
+
         SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
         String nickname = prefs.getString("nickname", null);
-        FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() == null) {
             prefs.edit().clear().apply();
 
@@ -382,7 +386,6 @@ public class MenuActivity extends AppCompatActivity {
 
         // Initialize backend service checker
         SoccerApp app = (SoccerApp) getApplication();
-        app.requestConsent(this);
         serviceChecker = app.getServiceChecker();
         
         // Get initial backend availability state from the app
