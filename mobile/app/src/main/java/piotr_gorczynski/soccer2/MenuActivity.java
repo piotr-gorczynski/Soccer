@@ -135,6 +135,25 @@ public class MenuActivity extends AppCompatActivity {
                 });
     }
 
+    private void ensureTermsAccepted(@NonNull String uid) {
+        FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(uid)
+                .get()
+                .addOnSuccessListener(doc -> {
+                    if (FirebaseAuth.getInstance().getCurrentUser() == null) return;
+                    Boolean accepted = doc.getBoolean("termsAccepted");
+                    if (accepted == null || !accepted) {
+                        startActivity(new Intent(this, TermsActivity.class));
+                    }
+                })
+                .addOnFailureListener(e -> Log.e(
+                        "TAG_Soccer",
+                        getClass().getSimpleName() + ".ensureTermsAccepted: failed",
+                        e
+                ));
+    }
+
     /* ───────────── misc tasks that must always run on launch ───────────── */
     private void runHousekeeping() {
         String uid = FirebaseAuth.getInstance().getUid();
@@ -305,6 +324,7 @@ public class MenuActivity extends AppCompatActivity {
         } else {
             String uid = auth.getUid();
             if (uid != null) {
+                ensureTermsAccepted(uid);
                 Runnable pickNick = () -> {
                     if (FirebaseAuth.getInstance().getCurrentUser() != null) {
                         startActivity(new Intent(this, PickNicknameActivity.class));
