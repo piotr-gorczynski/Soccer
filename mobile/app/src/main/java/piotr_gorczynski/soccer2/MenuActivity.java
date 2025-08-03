@@ -145,6 +145,8 @@ public class MenuActivity extends AppCompatActivity {
                     Boolean accepted = doc.getBoolean("termsAccepted");
                     if (accepted == null || !accepted) {
                         startActivity(new Intent(this, TermsActivity.class));
+                    } else if (!hasAdsConsent()) {
+                        ((SoccerApp) getApplication()).requestConsent(this);
                     }
                 })
                 .addOnFailureListener(e -> Log.e(
@@ -307,9 +309,6 @@ public class MenuActivity extends AppCompatActivity {
         ((SoccerApp) getApplication()).syncFcmTokenIfNeeded();
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
-        if (auth.getCurrentUser() != null && !hasAdsConsent()) {
-            ((SoccerApp) getApplication()).requestConsent(this);
-        }
 
         SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
         String nickname = prefs.getString("nickname", null);
