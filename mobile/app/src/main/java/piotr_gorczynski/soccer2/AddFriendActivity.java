@@ -21,6 +21,7 @@ import com.google.firebase.firestore.*;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.FirebaseFunctionsException;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
 
@@ -112,7 +113,14 @@ public class AddFriendActivity extends AppCompatActivity {
 
         q.get()
                 .addOnSuccessListener(snap -> {
-                    java.util.List<DocumentSnapshot> docs = snap.getDocuments();
+                    java.util.List<DocumentSnapshot> docsAll = snap.getDocuments();
+                    java.util.List<DocumentSnapshot> docs = new ArrayList<>();
+                    for (DocumentSnapshot d : docsAll) {
+                        String email = d.getString("email");
+                        if (email != null && !email.trim().isEmpty()) {
+                            docs.add(d);
+                        }
+                    }
                     adapter.addResults(docs);
 
                     if (docs.isEmpty() && !fallbackMode && lastVisible == null) {
@@ -121,8 +129,8 @@ public class AddFriendActivity extends AppCompatActivity {
                         return;
                     }
 
-                    if (docs.size() == 10) {
-                        lastVisible = docs.get(docs.size() - 1);
+                    if (docsAll.size() == 10) {
+                        lastVisible = docsAll.get(docsAll.size() - 1);
                         loadMoreButton.setVisibility(View.VISIBLE);
                     } else {
                         loadMoreButton.setVisibility(View.GONE);
