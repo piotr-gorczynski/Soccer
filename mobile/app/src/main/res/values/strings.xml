@@ -40,6 +40,12 @@
     <string name="hello_nickname">Hello, %1$s!</string>
     <string name="log_in">Log in</string>
     <string name="register_new_account">Register new account</string>
+    <string name="reset_password">Reset password</string>
+    <string name="reset_password_email_hint">Enter your email address</string>
+    <string name="reset_password_title">Reset Password</string>
+    <string name="reset_password_message">Please enter your email address. If an account with this email exists, you will receive a password reset email.</string>
+    <string name="reset_password_success">If an account with this email exists, a password reset email has been sent.</string>
+    <string name="reset_password_failed">Failed to send password reset email. Please try again.</string>
     <string name="nickname">Nickname</string>
     <string name="settings">Settings</string>
     <string name="enter_nickname_to_invite">Enter nickname to invite:</string>

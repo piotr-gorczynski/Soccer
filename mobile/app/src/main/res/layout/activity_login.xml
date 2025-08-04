@@ -57,5 +57,14 @@
         android:text="@string/register_new_account"
         android:textColor="@color/colorGreenDark"
         android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/linkResetPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/reset_password"
+        android:textColor="@color/colorGreenDark"
+        android:textStyle="bold" />
 </LinearLayout>
 </LinearLayout>
