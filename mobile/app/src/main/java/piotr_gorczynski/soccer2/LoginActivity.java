@@ -2,11 +2,13 @@ package piotr_gorczynski.soccer2;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -33,6 +35,7 @@ public class LoginActivity extends AppCompatActivity {
         editPassword = findViewById(R.id.editLoginPassword);
         Button btnLogin = findViewById(R.id.btnLogin);
         TextView linkRegister = findViewById(R.id.linkRegister);
+        TextView linkResetPassword = findViewById(R.id.linkResetPassword);
 
         btnLogin.setOnClickListener(v -> {
             String email = editEmail.getText().toString().trim();
@@ -58,6 +61,60 @@ public class LoginActivity extends AppCompatActivity {
         linkRegister.setOnClickListener(v -> {
             Intent intent = new Intent(this, RegisterAccountActivity.class);
             startActivity(intent);
+        });
+
+        linkResetPassword.setOnClickListener(v -> {
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".linkResetPassword.onClick: Reset password clicked");
+            showResetPasswordDialog();
+        });
+    }
+
+    private void showResetPasswordDialog() {
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".showResetPasswordDialog: Showing reset password dialog");
+        
+        // Create an EditText for email input
+        EditText emailInput = new EditText(this);
+        emailInput.setHint(getString(R.string.reset_password_email_hint));
+        emailInput.setInputType(android.text.InputType.TYPE_TEXT_EMAIL_ADDRESS);
+        
+        // Pre-fill with current email if available
+        String currentEmail = editEmail.getText().toString().trim();
+        if (!currentEmail.isEmpty()) {
+            emailInput.setText(currentEmail);
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.reset_password_title))
+                .setMessage(getString(R.string.reset_password_message))
+                .setView(emailInput)
+                .setPositiveButton(getString(R.string.confirm), (dialog, which) -> {
+                    String email = emailInput.getText().toString().trim();
+                    if (email.isEmpty()) {
+                        Toast.makeText(this, "Please enter your email address", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".showResetPasswordDialog: Attempting password reset for email: " + email);
+                    requestPasswordReset(email);
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void requestPasswordReset(String email) {
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".requestPasswordReset: Starting password reset for: " + email);
+        
+        authManager.resetPassword(email, new FirebaseAuthManager.ResetPasswordCallback() {
+            @Override
+            public void onResetPasswordSuccess() {
+                Log.d("TAG_Soccer", getClass().getSimpleName() + ".requestPasswordReset: Password reset success for: " + email);
+                Toast.makeText(LoginActivity.this, getString(R.string.reset_password_success), Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onResetPasswordFailure(String message) {
+                Log.e("TAG_Soccer", getClass().getSimpleName() + ".requestPasswordReset: Password reset failed for: " + email + ", error: " + message);
+                Toast.makeText(LoginActivity.this, getString(R.string.reset_password_failed), Toast.LENGTH_LONG).show();
+            }
         });
     }
 
