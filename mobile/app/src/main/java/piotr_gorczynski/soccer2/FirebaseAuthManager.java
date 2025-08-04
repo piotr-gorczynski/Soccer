@@ -35,6 +35,11 @@ public class FirebaseAuthManager {
         void onLoginFailure(String message);
     }
 
+    public interface ResetPasswordCallback {
+        void onResetPasswordSuccess();
+        void onResetPasswordFailure(String message);
+    }
+
     public void loginWithProvider(Activity activity, String providerId, @Nullable String nickname, LoginCallback callback) {
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
                 Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
@@ -250,6 +255,28 @@ public class FirebaseAuthManager {
                                 .setMessage(errorMsg)
                                 .setPositiveButton("OK", null)
                                 .show();
+                    }
+                });
+    }
+
+    public void resetPassword(String email, ResetPasswordCallback callback) {
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                ": Starting password reset for email: " + email);
+        
+        firebaseAuth.sendPasswordResetEmail(email)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                                Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                                ": Password reset email sent successfully for: " + email);
+                        callback.onResetPasswordSuccess();
+                    } else {
+                        String errorMsg = task.getException() != null ? task.getException().getMessage() : "Unknown error occurred";
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
+                                Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                                ": Password reset failed for: " + email + ", error: " + errorMsg);
+                        callback.onResetPasswordFailure(errorMsg);
                     }
                 });
     }
