@@ -349,6 +349,9 @@ public class MenuActivity extends AppCompatActivity {
         }
         updateUiForAuthState();
         checkAndUpdateBlockedInviteWarning(); // Also check on resume
+
+        // Now that all authentication-related checks are done, look for any active match
+        checkForActiveMatch();
     }
 
     private void updateUiForAuthState() {
@@ -392,6 +395,51 @@ public class MenuActivity extends AppCompatActivity {
         rankingBtn.setAlpha(alpha);
     }
 
+    private void checkForActiveMatch() {
+        SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
+        String uid = FirebaseAuth.getInstance().getUid();
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
+        }.getClass().getEnclosingMethod()).getName() + ": Auth UID at match-lookup = " + uid);
+
+        if (uid != null) {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            Task<QuerySnapshot> qP0 = db.collectionGroup("matches")
+                    .whereEqualTo("status", "active")
+                    .whereEqualTo("player0", uid).limit(1).get();
+            Task<QuerySnapshot> qP1 = db.collectionGroup("matches")
+                    .whereEqualTo("status", "active")
+                    .whereEqualTo("player1", uid).limit(1).get();
+            Tasks.whenAllSuccess(qP0, qP1).addOnSuccessListener(results -> {
+                DocumentSnapshot doc = null;
+                for (Object r : results) {
+                    QuerySnapshot qs = (QuerySnapshot) r;
+                    if (!qs.isEmpty()) {
+                        doc = qs.getDocuments().get(0);
+                        break;
+                    }
+                }
+                if (doc != null) {
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
+                    }.getClass().getEnclosingMethod()).getName()
+                            + ": Found active match: "
+                            + doc.getReference().getPath()
+                            + ". calling startGame...");
+                    startGame(doc.getReference().getPath(), prefs);
+                } else {
+                    continueWithInviteRestore();
+                }
+            }).addOnFailureListener(err -> {
+                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
+                }.getClass().getEnclosingMethod()).getName()
+                        + ": Failed to query active matches → " + err.getMessage(), err);
+                continueWithInviteRestore();
+            });
+        } else {
+            /* no UID (not logged-in) → skip active-match lookup */
+            continueWithInviteRestore();
+        }
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -417,49 +465,6 @@ public class MenuActivity extends AppCompatActivity {
         MobileAds.initialize(this, initializationStatus -> {});
         Log.d("TAG_Soccer", "onCreate: loadInterstitialAd");
         loadInterstitialAd();
-
-        /* ───────────── 1️⃣  Look for any ACTIVE match involving this user ───────────── */
-        SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
-        String uid = FirebaseAuth.getInstance().getUid();
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-        }.getClass().getEnclosingMethod()).getName() + ": Auth UID at match-lookup = " + FirebaseAuth.getInstance().getUid());
-
-        if (uid != null) {
-            FirebaseFirestore db = FirebaseFirestore.getInstance();
-            Task<QuerySnapshot> qP0 = db.collectionGroup("matches")
-                    .whereEqualTo("status", "active")
-                    .whereEqualTo("player0", uid).limit(1).get();
-            Task<QuerySnapshot> qP1 = db.collectionGroup("matches")
-                    .whereEqualTo("status", "active")
-                    .whereEqualTo("player1", uid).limit(1).get();
-            Tasks.whenAllSuccess(qP0, qP1).addOnSuccessListener(results -> {
-                DocumentSnapshot doc = null;
-                for (Object r : results) {
-                    QuerySnapshot qs = (QuerySnapshot) r;
-                    if (!qs.isEmpty()) {          // status already == "active"
-                        doc = qs.getDocuments().get(0);
-                        break;                    // first non-empty wins
-                    }
-                }
-                if (doc != null) {
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                    }.getClass().getEnclosingMethod()).getName()
-                            + ": Found active match: "
-                            + doc.getReference().getPath()
-                            + ". calling startGame...");
-                    startGame(doc.getReference().getPath(), prefs);
-                } else {
-                    continueWithInviteRestore();
-                }
-            }).addOnFailureListener(err -> {
-                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                }.getClass().getEnclosingMethod()).getName()
-                        + ": Failed to query active matches → " + err.getMessage(), err);
-                continueWithInviteRestore();
-            });
-            return;   // invite-path continues asynchronously
-        }        /* no UID (not logged-in) → skip active-match lookup */
-        continueWithInviteRestore();
 
     }
     private void loadInterstitialAd() {
