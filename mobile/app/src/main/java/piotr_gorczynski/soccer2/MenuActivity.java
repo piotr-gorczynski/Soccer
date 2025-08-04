@@ -91,7 +91,7 @@ public class MenuActivity extends AppCompatActivity {
                     String remoteNick = doc.getString("nickname");
                     String remoteEmail = doc.getString("email");
                     String remoteMethod = doc.getString("method");
-                    if (remoteNick != null && !remoteNick.isEmpty()) {
+                    if (doc.exists() && remoteNick != null && !remoteNick.trim().isEmpty()) {
                         SharedPreferences.Editor ed = prefs.edit();
                         String local = prefs.getString("nickname", null);
                         if (!uid.equals(prefs.getString("uid", null))) {

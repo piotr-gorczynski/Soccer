@@ -18,6 +18,7 @@ import com.google.firebase.firestore.Source;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import android.content.SharedPreferences;
 
 public class FirebaseAuthManager {
 
@@ -143,9 +144,18 @@ public class FirebaseAuthManager {
                                             if (email != null) data.put("email", email);
                                             db.collection("users").document(uid).set(data, SetOptions.merge());
 
-                                            // Don't store a placeholder nickname so MenuActivity
-                                            // can prompt the user to choose one if missing
-                                            storeUserData(uid, email, nickname != null ? nickname : "", "email");
+                                            // Preserve any previously-saved nickname instead of overwriting it
+                                            SharedPreferences p = context.getSharedPreferences(
+                                                    context.getPackageName() + "_preferences",
+                                                    Context.MODE_PRIVATE);
+                                            String currentNick = p.getString("nickname", "");
+
+                                            storeUserData(uid,
+                                                    email,
+                                                    (nickname != null && !nickname.isEmpty())
+                                                            ? nickname
+                                                            : currentNick,
+                                                    "email");
                                             ((SoccerApp) context.getApplicationContext())
                                                     .enableFcmAutoInit();
                                             Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
