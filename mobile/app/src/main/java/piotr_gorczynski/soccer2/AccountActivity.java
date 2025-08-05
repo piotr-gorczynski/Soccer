@@ -119,29 +119,92 @@ public class AccountActivity extends AppCompatActivity {
         
         Log.d("TAG_Soccer", getClass().getSimpleName() + ".performAccountRemoval: Starting account removal for uid=" + uid);
 
-        // Step 1: Update user document in Firestore (remove email, update nickname)
-        updateUserDocumentForRemoval(uid)
+        // Step 1: Remove user from all friends lists
+        removeUserFromAllFriendsLists(uid)
                 .addOnSuccessListener(aVoid -> {
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".performAccountRemoval: Firestore update successful");
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".performAccountRemoval: Friends cleanup successful");
                     
-                    // Step 2: Remove user status from RTDB
-                    removeUserStatusFromRTDB(uid)
+                    // Step 2: Update user document in Firestore (remove email, set accountDeleted flag)
+                    updateUserDocumentForRemoval(uid)
                             .addOnSuccessListener(aVoid2 -> {
-                                Log.d("TAG_Soccer", getClass().getSimpleName() + ".performAccountRemoval: RTDB removal successful");
+                                Log.d("TAG_Soccer", getClass().getSimpleName() + ".performAccountRemoval: Firestore update successful");
                                 
-                                // Step 3: Delete Firebase Auth account (do this last)
-                                deleteFirebaseAuthAccount(currentUser);
+                                // Step 3: Remove user status from RTDB
+                                removeUserStatusFromRTDB(uid)
+                                        .addOnSuccessListener(aVoid3 -> {
+                                            Log.d("TAG_Soccer", getClass().getSimpleName() + ".performAccountRemoval: RTDB removal successful");
+                                            
+                                            // Step 4: Delete Firebase Auth account (do this last)
+                                            deleteFirebaseAuthAccount(currentUser);
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            Log.e("TAG_Soccer", getClass().getSimpleName() + ".performAccountRemoval: RTDB removal failed", e);
+                                            // Continue with auth deletion even if RTDB fails since it's less critical
+                                            deleteFirebaseAuthAccount(currentUser);
+                                        });
                             })
                             .addOnFailureListener(e -> {
-                                Log.e("TAG_Soccer", getClass().getSimpleName() + ".performAccountRemoval: RTDB removal failed", e);
-                                // Continue with auth deletion even if RTDB fails since it's less critical
-                                deleteFirebaseAuthAccount(currentUser);
+                                Log.e("TAG_Soccer", getClass().getSimpleName() + ".performAccountRemoval: Firestore update failed", e);
+                                Toast.makeText(this, R.string.remove_account_failed, Toast.LENGTH_SHORT).show();
+                                // Don't proceed with auth deletion if Firestore update failed
                             });
                 })
                 .addOnFailureListener(e -> {
-                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".performAccountRemoval: Firestore update failed", e);
-                    Toast.makeText(this, R.string.remove_account_failed, Toast.LENGTH_SHORT).show();
-                    // Don't proceed with auth deletion if Firestore update failed
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".performAccountRemoval: Friends cleanup failed", e);
+                    // Continue with the rest of the process even if friends cleanup fails
+                    // This ensures account removal isn't completely blocked by this step
+                    updateUserDocumentForRemoval(uid)
+                            .addOnSuccessListener(aVoid2 -> {
+                                Log.d("TAG_Soccer", getClass().getSimpleName() + ".performAccountRemoval: Firestore update successful");
+                                removeUserStatusFromRTDB(uid)
+                                        .addOnSuccessListener(aVoid3 -> deleteFirebaseAuthAccount(currentUser))
+                                        .addOnFailureListener(e2 -> deleteFirebaseAuthAccount(currentUser));
+                            })
+                            .addOnFailureListener(e2 -> {
+                                Log.e("TAG_Soccer", getClass().getSimpleName() + ".performAccountRemoval: Firestore update failed", e2);
+                                Toast.makeText(this, R.string.remove_account_failed, Toast.LENGTH_SHORT).show();
+                            });
+                });
+    }
+
+    private com.google.android.gms.tasks.Task<Void> removeUserFromAllFriendsLists(String uid) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        
+        // Use collection group query to find all documents in "friends" subcollections 
+        // where the document ID equals the user being deleted
+        return db.collectionGroup("friends")
+                .whereEqualTo(com.google.firebase.firestore.FieldPath.documentId(), uid)
+                .get()
+                .continueWithTask(task -> {
+                    if (!task.isSuccessful()) {
+                        throw task.getException();
+                    }
+                    
+                    com.google.firebase.firestore.QuerySnapshot querySnapshot = task.getResult();
+                    if (querySnapshot == null || querySnapshot.isEmpty()) {
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".removeUserFromAllFriendsLists: No friends to remove for uid=" + uid);
+                        return com.google.android.gms.tasks.Tasks.forResult(null);
+                    }
+                    
+                    // Create a batch to delete all the friend documents
+                    com.google.firebase.firestore.WriteBatch batch = db.batch();
+                    int deleteCount = 0;
+                    
+                    for (com.google.firebase.firestore.DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                        // Each doc represents users/{someUserId}/friends/{uid}
+                        // We want to delete this document to remove the friendship
+                        batch.delete(doc.getReference());
+                        deleteCount++;
+                        
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".removeUserFromAllFriendsLists: " +
+                                "Removing friendship from " + doc.getReference().getParent().getParent().getId() + 
+                                " to " + uid);
+                    }
+                    
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".removeUserFromAllFriendsLists: " +
+                            "Removing " + deleteCount + " friendship(s) for uid=" + uid);
+                    
+                    return batch.commit();
                 });
     }
 
@@ -152,6 +215,7 @@ public class AccountActivity extends AppCompatActivity {
         updates.put("email", FieldValue.delete()); // Remove email field completely
         updates.put("nickname", "(Account removed)"); // Update nickname
         updates.put("nicknameLowercase", "(account removed)"); // Update lowercase version if it exists
+        updates.put("accountDeleted", true); // Mark account as deleted to prevent future invitations
         
         return db.collection("users").document(uid).update(updates);
     }
