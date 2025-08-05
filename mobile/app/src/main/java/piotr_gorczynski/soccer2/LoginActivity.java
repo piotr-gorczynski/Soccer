@@ -2,6 +2,7 @@ package piotr_gorczynski.soccer2;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
@@ -75,7 +76,7 @@ public class LoginActivity extends AppCompatActivity {
         // Create an EditText for email input
         EditText emailInput = new EditText(this);
         emailInput.setHint(getString(R.string.reset_password_email_hint));
-        emailInput.setInputType(android.text.InputType.TYPE_TEXT_EMAIL_ADDRESS);
+        emailInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
         
         // Pre-fill with current email if available
         String currentEmail = editEmail.getText().toString().trim();
