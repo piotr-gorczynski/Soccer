@@ -136,4 +136,14 @@
     <string name="ads_consent_required">Showing ads is helping to finance infrastructure maintenance. Because you have not agreed to show ads, this option is not available. You can check your consent in settings.</string>
     <string name="confirm">Confirm</string>
     <string name="no_internet_for_privacy_options">Internet connection required to open privacy options.</string>
+    
+    <!-- Account removal strings -->
+    <string name="remove_account">Remove account</string>
+    <string name="remove_account_dialog_title">Remove Account</string>
+    <string name="remove_account_dialog_message">Are you sure you want to remove your account? This action cannot be reverted and even if you register again, you will not get access to the history of your matches and results.</string>
+    <string name="cancel">Cancel</string>
+    <string name="proceed">Proceed</string>
+    <string name="removing_account">Removing account...</string>
+    <string name="account_removed">Account removed successfully</string>
+    <string name="remove_account_failed">Failed to remove account. Please try again.</string>
 </resources>
