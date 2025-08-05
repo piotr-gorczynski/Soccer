@@ -13,6 +13,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
 import android.util.Log;
@@ -133,13 +134,14 @@ public class AccountActivity extends AppCompatActivity {
                             })
                             .addOnFailureListener(e -> {
                                 Log.e("TAG_Soccer", getClass().getSimpleName() + ".performAccountRemoval: RTDB removal failed", e);
-                                // Continue with auth deletion even if RTDB fails
+                                // Continue with auth deletion even if RTDB fails since it's less critical
                                 deleteFirebaseAuthAccount(currentUser);
                             });
                 })
                 .addOnFailureListener(e -> {
                     Log.e("TAG_Soccer", getClass().getSimpleName() + ".performAccountRemoval: Firestore update failed", e);
                     Toast.makeText(this, R.string.remove_account_failed, Toast.LENGTH_SHORT).show();
+                    // Don't proceed with auth deletion if Firestore update failed
                 });
     }
 
@@ -147,7 +149,7 @@ public class AccountActivity extends AppCompatActivity {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         
         Map<String, Object> updates = new HashMap<>();
-        updates.put("email", null); // Remove email field
+        updates.put("email", FieldValue.delete()); // Remove email field completely
         updates.put("nickname", "(Account removed)"); // Update nickname
         updates.put("nicknameLowercase", "(account removed)"); // Update lowercase version if it exists
         
