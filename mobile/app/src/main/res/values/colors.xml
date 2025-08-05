@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorAccent">#FF4081</color>
-    <color name="colorGreen">#4F994F</color>
+    <color name="colorGreen">#00A800</color>
     <color name="colorGreenDark">#006600</color>
     <color name="colorWhite">#FFFFFF</color>
-    <color name="colorPlayer0">#FF0000</color>
-    <color name="colorPlayer1">#0000FF</color>
+    <color name="colorPlayer0">#FF2D2D</color>
+    <color name="colorPlayer1">#2D2DFF</color>
     <color name="colorGrey">#808080</color>   <!-- medium gray -->
 </resources>
