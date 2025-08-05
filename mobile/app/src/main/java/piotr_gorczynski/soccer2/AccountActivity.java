@@ -170,40 +170,43 @@ public class AccountActivity extends AppCompatActivity {
     private com.google.android.gms.tasks.Task<Void> removeUserFromAllFriendsLists(String uid) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         
-        // Use collection group query to find all documents in "friends" subcollections 
-        // where the document ID equals the user being deleted
+        // Use a collection group query to find all documents in "friends" subcollections.
+        // We can't filter by document ID directly (collection group queries require the full
+        // document path when using FieldPath.documentId()), so instead we fetch all friend
+        // documents and filter client-side by matching IDs.
         return db.collectionGroup("friends")
-                .whereEqualTo(com.google.firebase.firestore.FieldPath.documentId(), uid)
                 .get()
                 .continueWithTask(task -> {
                     if (!task.isSuccessful()) {
                         throw task.getException();
                     }
-                    
+
                     com.google.firebase.firestore.QuerySnapshot querySnapshot = task.getResult();
                     if (querySnapshot == null || querySnapshot.isEmpty()) {
                         Log.d("TAG_Soccer", getClass().getSimpleName() + ".removeUserFromAllFriendsLists: No friends to remove for uid=" + uid);
                         return com.google.android.gms.tasks.Tasks.forResult(null);
                     }
-                    
+
                     // Create a batch to delete all the friend documents
                     com.google.firebase.firestore.WriteBatch batch = db.batch();
                     int deleteCount = 0;
-                    
+
                     for (com.google.firebase.firestore.DocumentSnapshot doc : querySnapshot.getDocuments()) {
-                        // Each doc represents users/{someUserId}/friends/{uid}
-                        // We want to delete this document to remove the friendship
-                        batch.delete(doc.getReference());
-                        deleteCount++;
-                        
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".removeUserFromAllFriendsLists: " +
-                                "Removing friendship from " + doc.getReference().getParent().getParent().getId() + 
-                                " to " + uid);
+                        // Only delete documents whose ID matches the user being removed
+                        if (uid.equals(doc.getId())) {
+                            // Each matching doc represents users/{someUserId}/friends/{uid}
+                            batch.delete(doc.getReference());
+                            deleteCount++;
+
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + ".removeUserFromAllFriendsLists: " +
+                                    "Removing friendship from " + doc.getReference().getParent().getParent().getId() +
+                                    " to " + uid);
+                        }
                     }
-                    
+
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".removeUserFromAllFriendsLists: " +
                             "Removing " + deleteCount + " friendship(s) for uid=" + uid);
-                    
+
                     return batch.commit();
                 });
     }
