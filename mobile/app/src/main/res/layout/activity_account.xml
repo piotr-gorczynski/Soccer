@@ -45,7 +45,7 @@
 
         <Button
             android:id="@+id/btnLogout"
-            android:layout_width="wrap_content"
+            android:layout_width="200dp"
             android:layout_height="50dp"
             android:layout_marginTop="20dp"
             android:background="@color/colorGreenDark"
@@ -56,10 +56,10 @@
 
         <Button
             android:id="@+id/btnRemoveAccount"
-            android:layout_width="wrap_content"
+            android:layout_width="200dp"
             android:layout_height="50dp"
-            android:layout_marginTop="10dp"
-            android:background="@android:color/holo_red_dark"
+            android:layout_marginTop="20dp"
+            android:background="@color/colorGreenDark"
             android:text="@string/remove_account"
             android:textAllCaps="false"
             android:textColor="@color/colorWhite"
