@@ -36,3 +36,5 @@ node_modules/
 
 # Signing configuration (local only)
 secrets/keystore.properties
+# Temporary development files
+secrets/
