@@ -11,8 +11,6 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -124,19 +122,8 @@ public class AccountActivity extends AppCompatActivity {
                 .addOnSuccessListener(aVoid2 -> {
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".performAccountRemoval: Firestore update successful");
 
-                    // Step 2: Remove user status from RTDB
-                    removeUserStatusFromRTDB(uid)
-                            .addOnSuccessListener(aVoid3 -> {
-                                Log.d("TAG_Soccer", getClass().getSimpleName() + ".performAccountRemoval: RTDB removal successful");
-
-                                // Step 3: Delete Firebase Auth account (do this last)
-                                deleteFirebaseAuthAccount(currentUser);
-                            })
-                            .addOnFailureListener(e -> {
-                                Log.e("TAG_Soccer", getClass().getSimpleName() + ".performAccountRemoval: RTDB removal failed", e);
-                                // Continue with auth deletion even if RTDB fails since it's less critical
-                                deleteFirebaseAuthAccount(currentUser);
-                            });
+                    // Step 2: Delete Firebase Auth account (do this last)
+                    deleteFirebaseAuthAccount(currentUser);
                 })
                 .addOnFailureListener(e -> {
                     Log.e("TAG_Soccer", getClass().getSimpleName() + ".performAccountRemoval: Firestore update failed", e);
@@ -155,11 +142,6 @@ public class AccountActivity extends AppCompatActivity {
         updates.put("accountDeleted", true); // Mark account as deleted to prevent future invitations
         
         return db.collection("users").document(uid).update(updates);
-    }
-
-    private com.google.android.gms.tasks.Task<Void> removeUserStatusFromRTDB(String uid) {
-        DatabaseReference statusRef = FirebaseDatabase.getInstance().getReference("status").child(uid);
-        return statusRef.removeValue();
     }
 
     private void deleteFirebaseAuthAccount(FirebaseUser user) {
