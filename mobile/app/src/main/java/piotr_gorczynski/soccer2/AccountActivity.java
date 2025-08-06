@@ -126,6 +126,7 @@ public class AccountActivity extends AppCompatActivity {
         updateUserDocumentForRemoval(uid)
                 .addOnSuccessListener(aVoid2 -> {
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".performAccountRemoval: Firestore update successful");
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".performAccountRemoval: Attempting auth account deletion");
 
                     // Step 2: Delete Firebase Auth account (do this last)
                     deleteFirebaseAuthAccount(currentUser, uid);
@@ -139,17 +140,20 @@ public class AccountActivity extends AppCompatActivity {
 
     private com.google.android.gms.tasks.Task<Void> updateUserDocumentForRemoval(String uid) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        
+
         Map<String, Object> updates = new HashMap<>();
         updates.put("email", FieldValue.delete()); // Remove email field completely
         updates.put("nickname", "(Account removed)"); // Update nickname
         updates.put("nicknameLowercase", "(account removed)"); // Update lowercase version if it exists
         updates.put("accountDeleted", true); // Mark account as deleted to prevent future invitations
-        
+
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".updateUserDocumentForRemoval: Updating Firestore document for uid=" + uid);
+
         return db.collection("users").document(uid).update(updates);
     }
 
     private void deleteFirebaseAuthAccount(FirebaseUser user, String uid) {
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".deleteFirebaseAuthAccount: Initiating auth account deletion");
         user.delete()
                 .addOnSuccessListener(aVoid -> {
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".deleteFirebaseAuthAccount: Auth account deleted successfully");
@@ -161,6 +165,7 @@ public class AccountActivity extends AppCompatActivity {
                     Log.e("TAG_Soccer", getClass().getSimpleName() + ".deleteFirebaseAuthAccount: Auth account deletion failed", e);
 
                     if (e instanceof FirebaseAuthRecentLoginRequiredException) {
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".deleteFirebaseAuthAccount: Recent login required, prompting reauth");
                         promptReauthentication(user, uid);
                     } else {
                         Toast.makeText(this, R.string.remove_account_failed, Toast.LENGTH_SHORT).show();
@@ -169,6 +174,8 @@ public class AccountActivity extends AppCompatActivity {
     }
 
     private void promptReauthentication(FirebaseUser user, String uid) {
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".promptReauthentication: Showing reauth dialog");
+
         EditText passwordInput = new EditText(this);
         passwordInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 
@@ -180,7 +187,10 @@ public class AccountActivity extends AppCompatActivity {
                     String password = passwordInput.getText().toString();
                     AuthCredential cred = EmailAuthProvider.getCredential(Objects.requireNonNull(user.getEmail()), password);
                     user.reauthenticate(cred)
-                            .addOnSuccessListener(v -> deleteFirebaseAuthAccount(user, uid))
+                            .addOnSuccessListener(v -> {
+                                Log.d("TAG_Soccer", getClass().getSimpleName() + ".promptReauthentication: Re-auth successful, retrying deletion");
+                                deleteFirebaseAuthAccount(user, uid);
+                            })
                             .addOnFailureListener(err -> {
                                 Toast.makeText(this, R.string.reauth_failed, Toast.LENGTH_SHORT).show();
                                 Log.e("TAG_Soccer", getClass().getSimpleName() + ".promptReauthentication: Re-auth failed", err);
