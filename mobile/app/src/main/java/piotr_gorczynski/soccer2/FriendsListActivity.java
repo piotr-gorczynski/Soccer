@@ -106,6 +106,7 @@ public class FriendsListActivity extends AppCompatActivity {
                                     case "sender_busy" -> R.string.invite_already_sent;
                                     /* target has its own outgoing invite and is waiting */
                                     case "target_busy" -> R.string.target_player_busy;
+                                    case "User account no longer available" -> R.string.account_no_longer_available;
                                     default -> R.string.failed_to_send_invite;
                                 };
                             }
