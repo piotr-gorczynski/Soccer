@@ -146,4 +146,7 @@
     <string name="removing_account">Removing account...</string>
     <string name="account_removed">Account removed successfully</string>
     <string name="remove_account_failed">Failed to remove account. Please try again.</string>
+    <string name="reauth_title">Re-authenticate</string>
+    <string name="reauth_message">Please enter your password to continue.</string>
+    <string name="reauth_failed">Re-authentication failed. Please try again.</string>
 </resources>
