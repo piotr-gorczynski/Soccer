@@ -63,6 +63,7 @@
     <string name="error_searching_user">Error searching user.</string>
     <string name="invitation_sent">Invitation sent!</string>
     <string name="failed_to_send_invite">Failed to send invite.</string>
+    <string name="account_no_longer_available">User account no longer available.</string>
     <string name="failed_to_add_friend">Failed to add friend.</string>
     <string name="failed_to_add_friend_reason">Failed to add friend: %1$s</string>
     <string name="failed_to_load_nickname">Failed to load nickname.</string>
