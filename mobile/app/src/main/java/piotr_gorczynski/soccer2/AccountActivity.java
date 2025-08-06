@@ -14,15 +14,13 @@ import androidx.appcompat.widget.Toolbar;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FieldValue;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException;
+import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.messaging.FirebaseMessaging;
 import android.util.Log;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 public class AccountActivity extends AppCompatActivity {
@@ -122,50 +120,28 @@ public class AccountActivity extends AppCompatActivity {
 
         Log.d("TAG_Soccer", getClass().getSimpleName() + ".performAccountRemoval: Starting account removal for uid=" + uid);
 
-        // Step 1: Delete Firebase Auth account first
-        deleteFirebaseAuthAccount(currentUser, uid);
+        // Call Cloud Function to remove account
+        removeAccountBackend(currentUser, uid);
     }
 
-    private com.google.android.gms.tasks.Task<Void> updateUserDocumentForRemoval(String uid) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private void removeAccountBackend(FirebaseUser user, String uid) {
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".removeAccountBackend: Calling removeAccount Cloud Function");
 
-        Map<String, Object> updates = new HashMap<>();
-        updates.put("email", FieldValue.delete()); // Remove email field completely
-        updates.put("nickname", "(Account removed)"); // Update nickname
-        updates.put("nicknameLowercase", "(account removed)"); // Update lowercase version if it exists
-        updates.put("accountDeleted", true); // Mark account as deleted to prevent future invitations
-
-        Log.d("TAG_Soccer", getClass().getSimpleName() + ".updateUserDocumentForRemoval: Updating Firestore document for uid=" + uid);
-
-        return db.collection("users").document(uid).update(updates);
-    }
-
-    private void deleteFirebaseAuthAccount(FirebaseUser user, String uid) {
-        Log.d("TAG_Soccer", getClass().getSimpleName() + ".deleteFirebaseAuthAccount: Initiating auth account deletion");
-        user.delete()
-                .addOnSuccessListener(aVoid -> {
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".deleteFirebaseAuthAccount: Auth account deleted successfully");
-
-                    // Step 2: update user document after auth deletion
-                    updateUserDocumentForRemoval(uid)
-                            .addOnSuccessListener(v -> {
-                                Log.d("TAG_Soccer", getClass().getSimpleName() + ".deleteFirebaseAuthAccount: Firestore update successful");
-                                finishAccountRemoval(uid);
-                            })
-                            .addOnFailureListener(err -> {
-                                Log.e("TAG_Soccer", getClass().getSimpleName() + ".deleteFirebaseAuthAccount: Firestore update failed", err);
-                                Toast.makeText(this, R.string.remove_account_failed, Toast.LENGTH_SHORT).show();
-                                finishAccountRemoval(uid);
-                            });
+        FirebaseFunctions.getInstance("us-central1")
+                .getHttpsCallable("removeAccount")
+                .call(new HashMap<>())
+                .addOnSuccessListener(r -> {
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".removeAccountBackend: Function success");
+                    finishAccountRemoval(uid);
                 })
                 .addOnFailureListener(e -> {
-                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".deleteFirebaseAuthAccount: Auth account deletion failed", e);
-
                     if (e instanceof FirebaseAuthRecentLoginRequiredException) {
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".deleteFirebaseAuthAccount: Recent login required, prompting reauth");
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".removeAccountBackend: Recent login required, prompting reauth");
                         promptReauthentication(user, uid);
                     } else {
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + ".removeAccountBackend: Function failed", e);
                         Toast.makeText(this, R.string.remove_account_failed, Toast.LENGTH_SHORT).show();
+                        finishAccountRemoval(uid);
                     }
                 });
     }
@@ -186,7 +162,7 @@ public class AccountActivity extends AppCompatActivity {
                     user.reauthenticate(cred)
                             .addOnSuccessListener(v -> {
                                 Log.d("TAG_Soccer", getClass().getSimpleName() + ".promptReauthentication: Re-auth successful, retrying deletion");
-                                deleteFirebaseAuthAccount(user, uid);
+                                removeAccountBackend(user, uid);
                             })
                             .addOnFailureListener(err -> {
                                 Toast.makeText(this, R.string.reauth_failed, Toast.LENGTH_SHORT).show();
