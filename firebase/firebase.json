@@ -11,7 +11,7 @@
     {
       "source": "functions/clock-timeout",
       "codebase": "clock-timeout"
-    },    
+    },
     {
       "source": "functions/send-invite-notification",
       "codebase": "send-invite-notification"
@@ -81,6 +81,10 @@
     {
       "source": "functions/seed-service-status",
       "codebase": "seed-service-status"
+    },
+    {
+      "source": "functions/remove-account",
+      "codebase": "remove-account"
     }
   ],
   "firestore": {
