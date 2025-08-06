@@ -116,10 +116,10 @@ public class AccountActivity extends AppCompatActivity {
         }
 
         String uid = currentUser.getUid();
-        
+
         // Show progress to user
         Toast.makeText(this, R.string.removing_account, Toast.LENGTH_SHORT).show();
-        
+
         Log.d("TAG_Soccer", getClass().getSimpleName() + ".performAccountRemoval: Starting account removal for uid=" + uid);
 
         // Step 1: Update user document in Firestore (remove email, set accountDeleted flag)
@@ -128,7 +128,7 @@ public class AccountActivity extends AppCompatActivity {
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".performAccountRemoval: Firestore update successful");
 
                     // Step 2: Delete Firebase Auth account (do this last)
-                    deleteFirebaseAuthAccount(currentUser);
+                    deleteFirebaseAuthAccount(currentUser, uid);
                 })
                 .addOnFailureListener(e -> {
                     Log.e("TAG_Soccer", getClass().getSimpleName() + ".performAccountRemoval: Firestore update failed", e);
@@ -149,26 +149,26 @@ public class AccountActivity extends AppCompatActivity {
         return db.collection("users").document(uid).update(updates);
     }
 
-    private void deleteFirebaseAuthAccount(FirebaseUser user) {
+    private void deleteFirebaseAuthAccount(FirebaseUser user, String uid) {
         user.delete()
                 .addOnSuccessListener(aVoid -> {
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".deleteFirebaseAuthAccount: Auth account deleted successfully");
 
                     // Account removal successful - perform logout cleanup and UI update
-                    finishAccountRemoval();
+                    finishAccountRemoval(uid);
                 })
                 .addOnFailureListener(e -> {
                     Log.e("TAG_Soccer", getClass().getSimpleName() + ".deleteFirebaseAuthAccount: Auth account deletion failed", e);
 
                     if (e instanceof FirebaseAuthRecentLoginRequiredException) {
-                        promptReauthentication(user);
+                        promptReauthentication(user, uid);
                     } else {
                         Toast.makeText(this, R.string.remove_account_failed, Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
-    private void promptReauthentication(FirebaseUser user) {
+    private void promptReauthentication(FirebaseUser user, String uid) {
         EditText passwordInput = new EditText(this);
         passwordInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 
@@ -180,7 +180,7 @@ public class AccountActivity extends AppCompatActivity {
                     String password = passwordInput.getText().toString();
                     AuthCredential cred = EmailAuthProvider.getCredential(Objects.requireNonNull(user.getEmail()), password);
                     user.reauthenticate(cred)
-                            .addOnSuccessListener(v -> deleteFirebaseAuthAccount(user))
+                            .addOnSuccessListener(v -> deleteFirebaseAuthAccount(user, uid))
                             .addOnFailureListener(err -> {
                                 Toast.makeText(this, R.string.reauth_failed, Toast.LENGTH_SHORT).show();
                                 Log.e("TAG_Soccer", getClass().getSimpleName() + ".promptReauthentication: Re-auth failed", err);
@@ -190,12 +190,9 @@ public class AccountActivity extends AppCompatActivity {
                 .show();
     }
 
-    private void finishAccountRemoval() {
-        // Force user offline in SoccerApp
-        String uid = FirebaseAuth.getInstance().getUid();
-        if (uid != null) {
-            ((SoccerApp) getApplication()).forceUserOffline(uid);
-        }
+    private void finishAccountRemoval(String uid) {
+        // Force user offline in SoccerApp using known UID since auth is already cleared
+        ((SoccerApp) getApplication()).forceUserOffline(uid);
 
         // Sign out from Firebase Auth
         FirebaseAuth.getInstance().signOut();
@@ -220,7 +217,7 @@ public class AccountActivity extends AppCompatActivity {
 
         // Show success message
         Toast.makeText(this, R.string.account_removed, Toast.LENGTH_SHORT).show();
-        
+
         Log.d("TAG_Soccer", getClass().getSimpleName() + ".finishAccountRemoval: Account removal completed");
 
         // Return to main menu (finish this activity to go back)
