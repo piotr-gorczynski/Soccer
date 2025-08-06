@@ -1,7 +1,9 @@
 package piotr_gorczynski.soccer2;
 
 import android.os.Bundle;
+import android.text.InputType;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -9,7 +11,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -148,16 +153,41 @@ public class AccountActivity extends AppCompatActivity {
         user.delete()
                 .addOnSuccessListener(aVoid -> {
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".deleteFirebaseAuthAccount: Auth account deleted successfully");
-                    
+
                     // Account removal successful - perform logout cleanup and UI update
                     finishAccountRemoval();
                 })
                 .addOnFailureListener(e -> {
                     Log.e("TAG_Soccer", getClass().getSimpleName() + ".deleteFirebaseAuthAccount: Auth account deletion failed", e);
-                    
-                    // Even if auth deletion fails, we should still logout the user since other data was removed
-                    finishAccountRemoval();
+
+                    if (e instanceof FirebaseAuthRecentLoginRequiredException) {
+                        promptReauthentication(user);
+                    } else {
+                        Toast.makeText(this, R.string.remove_account_failed, Toast.LENGTH_SHORT).show();
+                    }
                 });
+    }
+
+    private void promptReauthentication(FirebaseUser user) {
+        EditText passwordInput = new EditText(this);
+        passwordInput.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.reauth_title)
+                .setMessage(R.string.reauth_message)
+                .setView(passwordInput)
+                .setPositiveButton(R.string.confirm, (dialog, which) -> {
+                    String password = passwordInput.getText().toString();
+                    AuthCredential cred = EmailAuthProvider.getCredential(Objects.requireNonNull(user.getEmail()), password);
+                    user.reauthenticate(cred)
+                            .addOnSuccessListener(v -> deleteFirebaseAuthAccount(user))
+                            .addOnFailureListener(err -> {
+                                Toast.makeText(this, R.string.reauth_failed, Toast.LENGTH_SHORT).show();
+                                Log.e("TAG_Soccer", getClass().getSimpleName() + ".promptReauthentication: Re-auth failed", err);
+                            });
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
     }
 
     private void finishAccountRemoval() {
