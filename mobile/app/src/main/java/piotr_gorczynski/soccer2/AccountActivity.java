@@ -122,20 +122,8 @@ public class AccountActivity extends AppCompatActivity {
 
         Log.d("TAG_Soccer", getClass().getSimpleName() + ".performAccountRemoval: Starting account removal for uid=" + uid);
 
-        // Step 1: Update user document in Firestore (remove email, set accountDeleted flag)
-        updateUserDocumentForRemoval(uid)
-                .addOnSuccessListener(aVoid2 -> {
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".performAccountRemoval: Firestore update successful");
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".performAccountRemoval: Attempting auth account deletion");
-
-                    // Step 2: Delete Firebase Auth account (do this last)
-                    deleteFirebaseAuthAccount(currentUser, uid);
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".performAccountRemoval: Firestore update failed", e);
-                    Toast.makeText(this, R.string.remove_account_failed, Toast.LENGTH_SHORT).show();
-                    // Don't proceed with auth deletion if Firestore update failed
-                });
+        // Step 1: Delete Firebase Auth account first
+        deleteFirebaseAuthAccount(currentUser, uid);
     }
 
     private com.google.android.gms.tasks.Task<Void> updateUserDocumentForRemoval(String uid) {
@@ -158,8 +146,17 @@ public class AccountActivity extends AppCompatActivity {
                 .addOnSuccessListener(aVoid -> {
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".deleteFirebaseAuthAccount: Auth account deleted successfully");
 
-                    // Account removal successful - perform logout cleanup and UI update
-                    finishAccountRemoval(uid);
+                    // Step 2: update user document after auth deletion
+                    updateUserDocumentForRemoval(uid)
+                            .addOnSuccessListener(v -> {
+                                Log.d("TAG_Soccer", getClass().getSimpleName() + ".deleteFirebaseAuthAccount: Firestore update successful");
+                                finishAccountRemoval(uid);
+                            })
+                            .addOnFailureListener(err -> {
+                                Log.e("TAG_Soccer", getClass().getSimpleName() + ".deleteFirebaseAuthAccount: Firestore update failed", err);
+                                Toast.makeText(this, R.string.remove_account_failed, Toast.LENGTH_SHORT).show();
+                                finishAccountRemoval(uid);
+                            });
                 })
                 .addOnFailureListener(e -> {
                     Log.e("TAG_Soccer", getClass().getSimpleName() + ".deleteFirebaseAuthAccount: Auth account deletion failed", e);
