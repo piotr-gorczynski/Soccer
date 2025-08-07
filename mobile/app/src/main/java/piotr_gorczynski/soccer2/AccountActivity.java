@@ -52,6 +52,9 @@ public class AccountActivity extends AppCompatActivity {
         methodView.setText(getString(R.string.login_method_label, method));
 
         logoutBtn.setOnClickListener(v -> performLogout());
+
+        // Allow users to remove their account through the in-app option.
+        // Tapping the button opens a confirmation dialog and triggers the deletion flow.
         removeAccountBtn.setOnClickListener(v -> showRemoveAccountDialog());
     }
 
@@ -97,6 +100,11 @@ public class AccountActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Displays a confirmation dialog before permanently deleting the user's account.
+     * This method is invoked when the user selects the built-in "Remove Account" option
+     * described in the privacy policy.
+     */
     private void showRemoveAccountDialog() {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.remove_account_dialog_title)
