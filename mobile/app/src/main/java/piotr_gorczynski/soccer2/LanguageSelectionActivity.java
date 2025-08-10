@@ -23,13 +23,15 @@ public class LanguageSelectionActivity extends AppCompatActivity {
     }
 
     private void showLanguageSelectionDialog() {
-        String[] languages = LanguageManager.getAvailableLanguages();
+        String[] languages = LanguageManager.getAvailableLanguages(this);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.select_language);
         builder.setCancelable(false); // Force user to select a language
         builder.setSingleChoiceItems(languages, 0, (dialog, which) -> {
-            String selectedLanguage = languages[which];
+            // Use non-localized names for consistent mapping
+            String[] nonLocalizedLanguages = LanguageManager.getAvailableLanguages();
+            String selectedLanguage = nonLocalizedLanguages[which];
             String languageCode = LanguageManager.getLanguageCode(selectedLanguage);
             
             // Set the language

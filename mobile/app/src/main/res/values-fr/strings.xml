@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Basic app strings in French -->
+    <string name="app_name">Football 2</string>
+    <string name="menu_Settings">Paramètres</string>
+    <string name="title_activity_settings">Paramètres</string>
+    
+    <!-- Settings strings -->
+    <string name="pref_title_language">Langue</string>
+    <string name="pref_summary_language">Choisissez votre langue préférée</string>
+    <string name="current_language">Actuel: %1$s</string>
+    <string name="select_language">Sélectionner la langue</string>
+    
+    <!-- Language names in French -->
+    <string name="language_english">Anglais</string>
+    <string name="language_polish">Polonais</string>
+    <string name="language_german">Allemand</string>
+    <string name="language_french">Français</string>
+    <string name="language_spanish">Espagnol</string>
+    <string name="language_urdu">Ourdou</string>
+    <string name="language_bengali">Bengali</string>
+    <string name="language_nepali">Népalais</string>
+    <string name="language_hindi">Hindi</string>
+    
+    <!-- Other common strings -->
+    <string name="settings">Paramètres</string>
+    <string name="cancel">Annuler</string>
+    <string name="confirm">Confirmer</string>
+</resources>
