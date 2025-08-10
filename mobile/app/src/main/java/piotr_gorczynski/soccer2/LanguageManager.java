@@ -100,7 +100,24 @@ public class LanguageManager {
     }
     
     /**
-     * Get all available languages as display names
+     * Get all available languages as display names (localized)
+     */
+    public static String[] getAvailableLanguages(Context context) {
+        return new String[]{
+            context.getString(R.string.language_english),
+            context.getString(R.string.language_polish),
+            context.getString(R.string.language_german),
+            context.getString(R.string.language_french),
+            context.getString(R.string.language_spanish),
+            context.getString(R.string.language_urdu),
+            context.getString(R.string.language_bengali),
+            context.getString(R.string.language_nepali),
+            context.getString(R.string.language_hindi)
+        };
+    }
+    
+    /**
+     * Get all available languages as display names (non-localized for consistent mapping)
      */
     public static String[] getAvailableLanguages() {
         return new String[]{
