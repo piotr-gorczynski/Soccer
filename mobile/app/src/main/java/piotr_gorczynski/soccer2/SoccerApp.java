@@ -196,6 +196,9 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         cancelHeartbeat();
 
         setUserOnline();                     // ← run it right away
+        
+        // Check and apply language preference
+        checkLanguagePreference();
     }
 
 
@@ -537,6 +540,20 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         NetworkCapabilities capabilities = cm.getNetworkCapabilities(network);
         return capabilities != null
                 && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
+    }
+
+    /**
+     * Check language preference and apply it, or load from Firestore if user is logged in
+     */
+    private void checkLanguagePreference() {
+        String currentLanguageCode = LanguageManager.getCurrentLanguageCode(this);
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".checkLanguagePreference: current language code: " + currentLanguageCode);
+        
+        // Apply the current language setting
+        LanguageManager.applyLanguage(this, currentLanguageCode);
+        
+        // If user is logged in, load language preference from Firestore
+        LanguageManager.loadLanguageFromFirestore(this);
     }
 
 
