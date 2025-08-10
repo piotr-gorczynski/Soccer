@@ -12,6 +12,9 @@
     <string name="pref_summary_block_invite_friend">Other players cannot invite you via \'Invite a Friend\' (tournaments not affected)</string>
     <string name="pref_title_ads_consent">Personalized ads consent</string>
     <string name="pref_summary_ads_consent">Review or change your consent for displaying personlized ads</string>
+    <string name="pref_title_language">Language</string>
+    <string name="pref_summary_language">Choose your preferred language</string>
+    <string name="current_language">Current: %1$s</string>
     <string-array name="pref_level_titles">
         <item>Easy</item>
         <item>Medium</item>
@@ -150,4 +153,16 @@
     <string name="reauth_title">Re-authenticate</string>
     <string name="reauth_message">Please enter your password to continue.</string>
     <string name="reauth_failed">Re-authentication failed. Please try again.</string>
+    
+    <!-- Language strings -->
+    <string name="select_language">Select Language</string>
+    <string name="language_english">English</string>
+    <string name="language_polish">Polish</string>
+    <string name="language_german">German</string>
+    <string name="language_french">French</string>
+    <string name="language_spanish">Spanish</string>
+    <string name="language_urdu">Urdu</string>
+    <string name="language_bengali">Bengali</string>
+    <string name="language_nepali">Nepali</string>
+    <string name="language_hindi">Hindi</string>
 </resources>

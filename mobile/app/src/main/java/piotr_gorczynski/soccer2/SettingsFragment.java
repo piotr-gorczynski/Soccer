@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.content.Intent;
 import android.net.Uri;
+import android.app.AlertDialog;
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
@@ -113,6 +114,16 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 return true;
             });
         }
+
+        // Setup language preference
+        Preference languagePref = findPreference("language_preference");
+        if (languagePref != null) {
+            updateLanguagePreferenceSummary(languagePref);
+            languagePref.setOnPreferenceClickListener(pref -> {
+                showLanguageSelectionDialog();
+                return true;
+            });
+        }
     }
     
     private void loadBlockInvitePreference(CheckBoxPreference preference) {
@@ -190,6 +201,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     getClass().getSimpleName() + ".onResume: ads_consent enabled=" + adsConsentPref.isEnabled()
             );
         }
+
+        // Update language preference summary
+        Preference languagePref = findPreference("language_preference");
+        if (languagePref != null) {
+            updateLanguagePreferenceSummary(languagePref);
+        }
     }
 
     @Override
@@ -213,5 +230,48 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                         + ".updateAdsConsentCheckbox: user chose "
                         + (personalised ? "PERSONALISED" : "NPA")
         );
+    }
+
+    private void updateLanguagePreferenceSummary(Preference preference) {
+        String currentLanguage = LanguageManager.getCurrentLanguageName(requireContext());
+        String summary = getString(R.string.current_language, currentLanguage);
+        preference.setSummary(summary);
+    }
+
+    private void showLanguageSelectionDialog() {
+        String[] languages = LanguageManager.getAvailableLanguages();
+        String currentLanguage = LanguageManager.getCurrentLanguageName(requireContext());
+        
+        // Find current selection index
+        int currentIndex = 0;
+        for (int i = 0; i < languages.length; i++) {
+            if (languages[i].equals(currentLanguage)) {
+                currentIndex = i;
+                break;
+            }
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        builder.setTitle(R.string.select_language);
+        builder.setSingleChoiceItems(languages, currentIndex, (dialog, which) -> {
+            String selectedLanguage = languages[which];
+            String languageCode = LanguageManager.getLanguageCode(selectedLanguage);
+            
+            // Set the language
+            LanguageManager.setLanguage(requireContext(), languageCode);
+            
+            // Update the preference summary
+            Preference languagePref = findPreference("language_preference");
+            if (languagePref != null) {
+                updateLanguagePreferenceSummary(languagePref);
+            }
+            
+            dialog.dismiss();
+            
+            // Restart the activity to apply the language change
+            requireActivity().recreate();
+        });
+        builder.setNegativeButton(android.R.string.cancel, null);
+        builder.show();
     }
 }
