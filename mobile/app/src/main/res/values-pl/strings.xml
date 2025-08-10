@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Basic app strings in Polish -->
+    <string name="app_name">Piłka Nożna 2</string>
+    <string name="menu_Settings">Ustawienia</string>
+    <string name="title_activity_settings">Ustawienia</string>
+    
+    <!-- Settings strings -->
+    <string name="pref_title_language">Język</string>
+    <string name="pref_summary_language">Wybierz preferowany język</string>
+    <string name="current_language">Aktualny: %1$s</string>
+    <string name="select_language">Wybierz język</string>
+    
+    <!-- Language names in Polish -->
+    <string name="language_english">Angielski</string>
+    <string name="language_polish">Polski</string>
+    <string name="language_german">Niemiecki</string>
+    <string name="language_french">Francuski</string>
+    <string name="language_spanish">Hiszpański</string>
+    <string name="language_urdu">Urdu</string>
+    <string name="language_bengali">Bengalski</string>
+    <string name="language_nepali">Nepalski</string>
+    <string name="language_hindi">Hindi</string>
+    
+    <!-- Other common strings -->
+    <string name="settings">Ustawienia</string>
+    <string name="cancel">Anuluj</string>
+    <string name="confirm">Potwierdź</string>
+</resources>
