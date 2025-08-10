@@ -24,6 +24,12 @@
             android:icon="@android:drawable/ic_dialog_info" />
 
         <Preference
+            android:key="language_preference"
+            android:title="@string/pref_title_language"
+            android:summary="@string/pref_summary_language"
+            android:icon="@android:drawable/ic_menu_preferences" />
+
+        <Preference
             android:key="facebook_community"
             android:title="@string/pref_title_facebook"
             android:summary="@string/pref_summary_facebook"
