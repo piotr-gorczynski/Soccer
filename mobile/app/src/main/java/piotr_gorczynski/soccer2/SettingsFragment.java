@@ -236,6 +236,13 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         String currentLanguage = LanguageManager.getCurrentLanguageName(requireContext());
         String summary = getString(R.string.current_language, currentLanguage);
         preference.setSummary(summary);
+        Log.d(
+                "TAG_Soccer",
+                getClass().getSimpleName()
+                        + ".updateLanguagePreferenceSummary: summary=\""
+                        + summary
+                        + "\""
+        );
     }
 
     private void showLanguageSelectionDialog() {

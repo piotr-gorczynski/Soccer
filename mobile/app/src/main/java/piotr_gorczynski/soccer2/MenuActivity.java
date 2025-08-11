@@ -100,7 +100,15 @@ public class MenuActivity extends AppCompatActivity {
                         if (local == null || !local.equals(remoteNick)) {
                             ed.putString("nickname", remoteNick);
                             TextView nicknameLabel = findViewById(R.id.nicknameLabel);
-                            nicknameLabel.setText(getString(R.string.hello_nickname, remoteNick));
+                            String labelText = getString(R.string.hello_nickname, remoteNick);
+                            nicknameLabel.setText(labelText);
+                            Log.d(
+                                    "TAG_Soccer",
+                                    getClass().getSimpleName()
+                                            + ".fetchNicknameFromFirestore: nicknameLabel=\""
+                                            + labelText
+                                            + "\""
+                            );
                         }
                         String localEmail = prefs.getString("email", null);
                         if (remoteEmail != null && (localEmail == null || !localEmail.equals(remoteEmail))) {
@@ -286,6 +294,13 @@ public class MenuActivity extends AppCompatActivity {
         TextView nicknameLabel = findViewById(R.id.nicknameLabel);
         if (nicknameLabel != null) {
             nicknameLabel.setText(getString(R.string.welcome_to_soccer));
+            Log.d(
+                    "TAG_Soccer",
+                    getClass().getSimpleName()
+                            + ".logoutUser: nicknameLabel=\""
+                            + nicknameLabel.getText()
+                            + "\""
+            );
         }
 
         updateUiForAuthState();
@@ -340,13 +355,29 @@ public class MenuActivity extends AppCompatActivity {
         }
 
         TextView nicknameLabel = findViewById(R.id.nicknameLabel);
+        String labelText;
         if (nickname != null && !nickname.isEmpty()) {
-            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-            }.getClass().getEnclosingMethod()).getName() + ": Nickname: " + nickname);
-            nicknameLabel.setText(getString(R.string.hello_nickname, nickname));
+            Log.d(
+                    "TAG_Soccer",
+                    getClass().getSimpleName()
+                            + "."
+                            + Objects.requireNonNull(new Object() {
+                    }.getClass().getEnclosingMethod()).getName()
+                            + ": Nickname: "
+                            + nickname
+            );
+            labelText = getString(R.string.hello_nickname, nickname);
         } else {
-            nicknameLabel.setText(getString(R.string.welcome_to_soccer));
+            labelText = getString(R.string.welcome_to_soccer);
         }
+        nicknameLabel.setText(labelText);
+        Log.d(
+                "TAG_Soccer",
+                getClass().getSimpleName()
+                        + ".onResume: nicknameLabel=\""
+                        + labelText
+                        + "\""
+        );
         updateUiForAuthState();
         checkAndUpdateBlockedInviteWarning(); // Also check on resume
 

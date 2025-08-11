@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+import android.util.Log;
 
 public class LanguageSelectionActivity extends AppCompatActivity {
 
@@ -33,10 +34,19 @@ public class LanguageSelectionActivity extends AppCompatActivity {
             String[] nonLocalizedLanguages = LanguageManager.getAvailableLanguages();
             String selectedLanguage = nonLocalizedLanguages[which];
             String languageCode = LanguageManager.getLanguageCode(selectedLanguage);
-            
+
+            Log.d(
+                    "TAG_Soccer",
+                    getClass().getSimpleName()
+                            + ".showLanguageSelectionDialog: selectedLanguage="
+                            + selectedLanguage
+                            + ", code="
+                            + languageCode
+            );
+
             // Set the language
             LanguageManager.setLanguage(this, languageCode);
-            
+
             dialog.dismiss();
             proceedToMainActivity();
         });
