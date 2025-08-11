@@ -160,6 +160,11 @@ public class LanguageManager {
     public static void loadLanguageFromFirestore(Context context) {
         String uid = FirebaseAuth.getInstance().getUid();
         if (uid != null) {
+            // Capture the language code at the time of the request so that if the
+            // user changes the language before the Firestore response arrives we
+            // don't override their newer preference with stale data.
+            final String initialCode = getCurrentLanguageCode(context);
+
             FirebaseFirestore.getInstance()
                 .collection("users")
                 .document(uid)
@@ -168,9 +173,11 @@ public class LanguageManager {
                     if (doc.exists() && doc.contains("language")) {
                         String languageCode = doc.getString("language");
                         if (languageCode != null && LANGUAGE_NAME_RES_IDS.containsKey(languageCode)) {
-                            // Update local preferences if different
                             String currentCode = getCurrentLanguageCode(context);
-                            if (!currentCode.equals(languageCode)) {
+
+                            // Only apply the Firestore value if the language hasn't been
+                            // changed locally since the request was initiated.
+                            if (currentCode.equals(initialCode) && !currentCode.equals(languageCode)) {
                                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                                 prefs.edit().putString(PREF_LANGUAGE_CODE, languageCode).apply();
                                 applyLanguage(context, languageCode);
@@ -178,7 +185,7 @@ public class LanguageManager {
                         }
                     }
                 })
-                .addOnFailureListener(e -> 
+                .addOnFailureListener(e ->
                     Log.e(TAG, "Failed to load language preference from Firestore", e));
         }
     }
