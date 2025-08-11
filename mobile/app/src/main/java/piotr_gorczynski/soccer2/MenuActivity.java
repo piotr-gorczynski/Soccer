@@ -177,7 +177,11 @@ public class MenuActivity extends BaseActivity {
                             }.getClass().getEnclosingMethod()).getName()
                             + ": ⚠️ No logged-in user; clearing stored credentials"
             );
-            prefs.edit().clear().apply();
+            String languageCode = LanguageManager.getCurrentLanguageCode(this);
+            SharedPreferences.Editor ed = prefs.edit();
+            ed.clear();
+            ed.putString("language_code", languageCode);
+            ed.apply();
             FirebaseMessaging.getInstance().deleteToken();
             FirebaseMessaging.getInstance().setAutoInitEnabled(false);
             FirebaseFirestore.getInstance()
