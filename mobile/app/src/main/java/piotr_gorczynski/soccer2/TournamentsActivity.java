@@ -8,7 +8,6 @@ import android.widget.Toast;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import androidx.appcompat.app.AlertDialog;
@@ -24,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class TournamentsActivity extends AppCompatActivity {
+public class TournamentsActivity extends BaseActivity {
 
     @SuppressLint("NotifyDataSetChanged")
     @Override
