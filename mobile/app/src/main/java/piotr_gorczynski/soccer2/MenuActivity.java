@@ -72,6 +72,7 @@ public class MenuActivity extends BaseActivity {
     private BackendServiceChecker serviceChecker;
     private Menu optionsMenu; // Hold reference to menu for updating warning icon
     private MenuItem accountMenuItem; // Reference to account menu item
+    private String currentLanguage;
 
     /**
      * Helper to fetch user details from Firestore and update prefs/UI. This is
@@ -317,7 +318,15 @@ public class MenuActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        
+
+        String lang = LanguageManager.getCurrentLanguageCode(this);
+        if (currentLanguage == null || !currentLanguage.equals(lang)) {
+            currentLanguage = lang;
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".onResume: language changed to " + lang + ", recreating");
+            recreate();
+            return;
+        }
+
         // Check backend availability when activity resumes
         checkBackendAvailability();
 
@@ -386,6 +395,11 @@ public class MenuActivity extends BaseActivity {
 
         // Now that all authentication-related checks are done, look for any active match
         checkForActiveMatch();
+
+        Button youVsAndroid = findViewById(R.id.youVsAndroidBtn);
+        if (youVsAndroid != null) {
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".onResume: youVsAndroid=" + youVsAndroid.getText());
+        }
     }
 
     private void updateUiForAuthState() {
@@ -481,6 +495,7 @@ public class MenuActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         /* ① Inflate the view immediately so onResume() has valid widgets */
         setContentView(R.layout.activity_menu);
+        currentLanguage = LanguageManager.getCurrentLanguageCode(this);
 
         Toolbar toolbar = findViewById(R.id.menu_toolbar);
         setSupportActionBar(toolbar);
