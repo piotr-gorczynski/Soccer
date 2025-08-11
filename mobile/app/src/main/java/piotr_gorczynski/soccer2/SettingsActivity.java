@@ -1,6 +1,7 @@
 package piotr_gorczynski.soccer2;
 
 import android.os.Bundle;
+import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -16,6 +17,10 @@ public class SettingsActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.settings_toolbar);
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+
+        String title = getString(R.string.settings);
+        Objects.requireNonNull(getSupportActionBar()).setTitle(title);
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".onCreate: toolbar title set to " + title);
 
         getSupportFragmentManager()
                 .beginTransaction()
