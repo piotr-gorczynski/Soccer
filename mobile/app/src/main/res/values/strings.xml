@@ -94,6 +94,12 @@
     <string name="running">Running…</string>
     <string name="registering">Registering…</string>
     <string name="view_results">View Results</string>
+    <string name="tournament_running_ends">Tournament running. Ends %1$s</string>
+    <string name="registration_ends">Registration ends %1$s</string>
+    <string name="registration_closed">Registration closed. Tournament will start within 1 hour</string>
+    <string name="tournament_ends_now">Tournament ends now...</string>
+    <string name="tournament_ended">Ended %1$s</string>
+    <string name="tournament_ended_short">Ended</string>
     <string name="logout">Log out</string>
     <string name="logged_out">You’ve been logged out</string>
     <plurals name="wins_format">

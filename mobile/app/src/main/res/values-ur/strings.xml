@@ -105,6 +105,12 @@
     <string name="running">جاری…</string>
     <string name="registering">رجسٹر کر رہے ہیں…</string>
     <string name="view_results">نتائج دیکھیں</string>
+    <string name="tournament_running_ends">ٹورنامنٹ جاری ہے۔ %1$s ختم ہوگا</string>
+    <string name="registration_ends">رجسٹریشن %1$s ختم ہوگی</string>
+    <string name="registration_closed">رجسٹریشن بند ہے۔ ٹورنامنٹ 1 گھنٹے کے اندر شروع ہوگا</string>
+    <string name="tournament_ends_now">ٹورنامنٹ ابھی ختم ہو رہا ہے...</string>
+    <string name="tournament_ended">%1$s ختم ہوا</string>
+    <string name="tournament_ended_short">ختم ہوا</string>
     <string name="logout">لاگ آؤٹ</string>
     <string name="logged_out">آپ لاگ آؤٹ ہو گئے ہیں</string>
     
