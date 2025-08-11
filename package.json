@@ -1,5 +1,9 @@
 {
   "dependencies": {
     "firebase-admin": "^13.4.0"
+  },
+  "overrides": {
+    "form-data": "^4.0.4",
+    "protobufjs": "^7.2.5"
   }
 }
