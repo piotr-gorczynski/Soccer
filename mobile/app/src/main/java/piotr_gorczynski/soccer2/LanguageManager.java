@@ -73,17 +73,22 @@ public class LanguageManager {
         String uid = FirebaseAuth.getInstance().getUid();
         if (uid != null) {
             FirebaseFirestore.getInstance()
-                .collection("users")
-                .document(uid)
-                .update("language", languageCode)
-                .addOnSuccessListener(aVoid -> 
-                    Log.d(TAG, "Language preference updated in Firestore: " + languageCode))
-                .addOnFailureListener(e -> 
-                    Log.e(TAG, "Failed to update language preference in Firestore", e));
+                    .collection("users")
+                    .document(uid)
+                    .update("language", languageCode)
+                    .addOnSuccessListener(aVoid ->
+                            Log.d(TAG, "Language preference updated in Firestore: " + languageCode))
+                    .addOnFailureListener(e ->
+                            Log.e(TAG, "Failed to update language preference in Firestore", e));
         }
-        
-        // Apply the language change
-        applyLanguage(context, languageCode);
+
+        // Apply the language change to both the current and application contexts so
+        // that all running activities receive the updated configuration immediately.
+        Context appContext = context.getApplicationContext();
+        applyLanguage(appContext, languageCode);
+        if (appContext != context) {
+            applyLanguage(context, languageCode);
+        }
     }
     
     /**
@@ -92,11 +97,13 @@ public class LanguageManager {
     public static Context applyLanguage(Context context, String languageCode) {
         Locale locale = Locale.forLanguageTag(languageCode);
         Locale.setDefault(locale);
-        
-        Configuration config = new Configuration(context.getResources().getConfiguration());
+
+        Resources res = context.getResources();
+        Configuration config = res.getConfiguration();
         config.setLocale(locale);
-        
-        return context.createConfigurationContext(config);
+        res.updateConfiguration(config, res.getDisplayMetrics());
+
+        return context;
     }
     
     /**
