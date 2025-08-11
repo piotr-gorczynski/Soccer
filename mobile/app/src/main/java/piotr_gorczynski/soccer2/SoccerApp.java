@@ -83,6 +83,9 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     public void onCreate() {
         super.onCreate();
 
+        // Ensure the app uses the saved language before any UI is shown
+        checkLanguagePreference();
+
         // Disable FCM auto-init until a user signs in
         FirebaseMessaging.getInstance().setAutoInitEnabled(false);
 
@@ -191,14 +194,14 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                 + ": APP RETURNS TO FOREGROUND");
 
+        // Always apply the saved language when returning to the foreground
+        checkLanguagePreference();
+
         if (userStatusDbRef == null) return;             // ← ADD
         FirebaseDatabase.getInstance().goOnline();
         cancelHeartbeat();
 
         setUserOnline();                     // ← run it right away
-        
-        // Check and apply language preference
-        checkLanguagePreference();
     }
 
 
