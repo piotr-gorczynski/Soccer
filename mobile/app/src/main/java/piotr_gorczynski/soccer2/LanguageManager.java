@@ -17,18 +17,18 @@ public class LanguageManager {
     private static final String TAG = "LanguageManager";
     private static final String PREF_LANGUAGE_CODE = "language_code";
     
-    // Language code to display name mapping
-    private static final Map<String, String> LANGUAGE_NAMES = new HashMap<>();
+    // Language code to display name resource mapping
+    private static final Map<String, Integer> LANGUAGE_NAME_RES_IDS = new HashMap<>();
     static {
-        LANGUAGE_NAMES.put("en", "English");
-        LANGUAGE_NAMES.put("pl", "Polish");
-        LANGUAGE_NAMES.put("de", "German");
-        LANGUAGE_NAMES.put("fr", "French");
-        LANGUAGE_NAMES.put("es", "Spanish");
-        LANGUAGE_NAMES.put("ur", "Urdu");
-        LANGUAGE_NAMES.put("bn", "Bengali");
-        LANGUAGE_NAMES.put("ne", "Nepali");
-        LANGUAGE_NAMES.put("hi", "Hindi");
+        LANGUAGE_NAME_RES_IDS.put("en", R.string.language_english);
+        LANGUAGE_NAME_RES_IDS.put("pl", R.string.language_polish);
+        LANGUAGE_NAME_RES_IDS.put("de", R.string.language_german);
+        LANGUAGE_NAME_RES_IDS.put("fr", R.string.language_french);
+        LANGUAGE_NAME_RES_IDS.put("es", R.string.language_spanish);
+        LANGUAGE_NAME_RES_IDS.put("ur", R.string.language_urdu);
+        LANGUAGE_NAME_RES_IDS.put("bn", R.string.language_bengali);
+        LANGUAGE_NAME_RES_IDS.put("ne", R.string.language_nepali);
+        LANGUAGE_NAME_RES_IDS.put("hi", R.string.language_hindi);
     }
     
     // Language display name to code mapping
@@ -58,7 +58,8 @@ public class LanguageManager {
      */
     public static String getCurrentLanguageName(Context context) {
         String code = getCurrentLanguageCode(context);
-        return LANGUAGE_NAMES.getOrDefault(code, "English");
+        Integer resId = LANGUAGE_NAME_RES_IDS.get(code);
+        return context.getString(resId != null ? resId : R.string.language_english);
     }
     
     /**
@@ -161,7 +162,7 @@ public class LanguageManager {
                 .addOnSuccessListener(doc -> {
                     if (doc.exists() && doc.contains("language")) {
                         String languageCode = doc.getString("language");
-                        if (languageCode != null && LANGUAGE_NAMES.containsKey(languageCode)) {
+                        if (languageCode != null && LANGUAGE_NAME_RES_IDS.containsKey(languageCode)) {
                             // Update local preferences if different
                             String currentCode = getCurrentLanguageCode(context);
                             if (!currentCode.equals(languageCode)) {
