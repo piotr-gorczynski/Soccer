@@ -102,32 +102,50 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         // 1️⃣  Wipe the local cache & cached rules once per cold start
-        db.clearPersistence().addOnCompleteListener(t -> {
-            if (!t.isSuccessful()) {
-                Log.w("TAG_Soccer", getClass().getSimpleName() + ".onCreate: clearPersistence failed", t.getException());
+        db.terminate().addOnCompleteListener(termTask -> {
+            Task<Void> clearTask;
+            if (termTask.isSuccessful()) {
+                clearTask = db.clearPersistence();
+            } else {
+                Log.w(
+                        "TAG_Soccer",
+                        getClass().getSimpleName() + ".onCreate: terminate failed",
+                        termTask.getException()
+                );
+                clearTask = Tasks.forResult(null);
             }
 
-            // 2️⃣  Now it’s safe to register listeners or use Firestore
-            ProcessLifecycleOwner.get()
-                    .getLifecycle()
-                    .addObserver(this);
+            clearTask.addOnCompleteListener(t -> {
+                if (!t.isSuccessful()) {
+                    Log.w(
+                            "TAG_Soccer",
+                            getClass().getSimpleName() + ".onCreate: clearPersistence failed",
+                            t.getException()
+                    );
+                }
 
-            FirebaseAuth auth = FirebaseAuth.getInstance();
-            auth.addAuthStateListener(a -> {
-                if (a.getCurrentUser() != null) {
-                    startPresence(a.getCurrentUser().getUid());
+                // 2️⃣  Now it’s safe to register listeners or use Firestore
+                ProcessLifecycleOwner.get()
+                        .getLifecycle()
+                        .addObserver(this);
+
+                FirebaseAuth auth = FirebaseAuth.getInstance();
+                auth.addAuthStateListener(a -> {
+                    if (a.getCurrentUser() != null) {
+                        startPresence(a.getCurrentUser().getUid());
+                        enableFcmAutoInit();
+                    } else {
+                        stopPresence();
+                        disableFcmAutoInit();
+                    }
+                });
+
+                // handle “already signed-in” on cold start
+                if (auth.getCurrentUser() != null) {
+                    startPresence(auth.getCurrentUser().getUid());
                     enableFcmAutoInit();
-                } else {
-                    stopPresence();
-                    disableFcmAutoInit();
                 }
             });
-
-            // handle “already signed-in” on cold start
-            if (auth.getCurrentUser() != null) {
-                startPresence(auth.getCurrentUser().getUid());
-                enableFcmAutoInit();
-            }
         });
 
         MobileAds.initialize(this, initializationStatus -> {});

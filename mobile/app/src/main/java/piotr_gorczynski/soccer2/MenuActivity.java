@@ -180,7 +180,9 @@ public class MenuActivity extends AppCompatActivity {
             prefs.edit().clear().apply();
             FirebaseMessaging.getInstance().deleteToken();
             FirebaseMessaging.getInstance().setAutoInitEnabled(false);
-            FirebaseFirestore.getInstance().clearPersistence();
+            FirebaseFirestore.getInstance()
+                    .terminate()
+                    .addOnSuccessListener(unused -> FirebaseFirestore.getInstance().clearPersistence());
             return;
         }
 
@@ -333,7 +335,9 @@ public class MenuActivity extends AppCompatActivity {
             FirebaseMessaging.getInstance().deleteToken();
             FirebaseMessaging.getInstance().setAutoInitEnabled(false);
 
-            FirebaseFirestore.getInstance().clearPersistence();
+            FirebaseFirestore.getInstance()
+                    .terminate()
+                    .addOnSuccessListener(unused -> FirebaseFirestore.getInstance().clearPersistence());
             nickname = null;
         } else {
             String uid = auth.getUid();
