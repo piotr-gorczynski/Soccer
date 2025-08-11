@@ -11,7 +11,6 @@ import androidx.appcompat.widget.Toolbar;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,7 +23,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-public class TournamentResultsActivity extends AppCompatActivity {
+public class TournamentResultsActivity extends BaseActivity {
 
     private StandingsAdapter adapter;
     private final List<StandingEntry> standings = new ArrayList<>();

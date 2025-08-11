@@ -7,7 +7,6 @@ import android.util.Log;
 import android.widget.TextView;
 import androidx.appcompat.widget.Toolbar;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,7 +23,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.Objects;
 
-public class TournamentLobbyActivity extends AppCompatActivity {
+public class TournamentLobbyActivity extends BaseActivity {
 
     private MatchAdapter mAdapter;
     private ListenerRegistration matchListener;

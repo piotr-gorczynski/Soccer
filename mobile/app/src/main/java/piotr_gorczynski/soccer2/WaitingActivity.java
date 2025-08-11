@@ -11,7 +11,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.*;
@@ -24,7 +23,7 @@ import java.util.Objects;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;   // already used elsewhere
 
-public class WaitingActivity extends AppCompatActivity {
+public class WaitingActivity extends BaseActivity {
     private boolean gameActivityLaunched = false;
     private ListenerRegistration matchListener;   // ⇐ capture this
     private ListenerRegistration inviteListener;
