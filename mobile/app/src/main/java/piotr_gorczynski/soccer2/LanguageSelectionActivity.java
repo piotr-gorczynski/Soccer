@@ -3,10 +3,9 @@ package piotr_gorczynski.soccer2;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 
-public class LanguageSelectionActivity extends AppCompatActivity {
+public class LanguageSelectionActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

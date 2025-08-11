@@ -5,7 +5,6 @@ import android.widget.Button;
 import android.webkit.WebView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldValue;
@@ -14,7 +13,7 @@ import com.google.firebase.firestore.SetOptions;
 
 import java.util.Map;
 
-public class TermsActivity extends AppCompatActivity {
+public class TermsActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -11,7 +11,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.activity.OnBackPressedCallback;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -21,7 +20,7 @@ import com.google.firebase.firestore.SetOptions;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PickNicknameActivity extends AppCompatActivity {
+public class PickNicknameActivity extends BaseActivity {
 
     private EditText editNickname;
     private Button btnConfirm;

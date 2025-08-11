@@ -9,13 +9,12 @@ import android.util.Log;
 import java.util.Objects;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Source;
 
-public class UniversalLoginActivity extends AppCompatActivity {
+public class UniversalLoginActivity extends BaseActivity {
 
     private FirebaseAuthManager authManager;
     private String storedNickname;

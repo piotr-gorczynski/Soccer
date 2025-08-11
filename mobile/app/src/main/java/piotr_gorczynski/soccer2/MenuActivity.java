@@ -4,7 +4,6 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -55,7 +54,7 @@ import com.google.android.ump.UserMessagingPlatform;
 
 
 
-public class MenuActivity extends AppCompatActivity {
+public class MenuActivity extends BaseActivity {
     private InterstitialAd mInterstitialAd;
 
     private static final String PREF_AD_COUNTER = "adsCounter";

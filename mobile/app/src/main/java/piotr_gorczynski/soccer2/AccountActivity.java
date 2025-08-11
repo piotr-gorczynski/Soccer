@@ -8,7 +8,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.firebase.auth.AuthCredential;
@@ -23,7 +22,7 @@ import android.util.Log;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class AccountActivity extends AppCompatActivity {
+public class AccountActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
