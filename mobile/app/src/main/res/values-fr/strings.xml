@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Basic app strings in French -->
-    <string name="app_name">Football 2</string>
+    <string name="app_name">Soccer 2</string>
     <string name="menu_Settings">Paramètres</string>
     <string name="title_activity_settings">Paramètres</string>
     
