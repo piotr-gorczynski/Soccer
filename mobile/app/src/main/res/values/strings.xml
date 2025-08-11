@@ -171,4 +171,14 @@
     <string name="language_bengali">Bengali</string>
     <string name="language_nepali">Nepali</string>
     <string name="language_hindi">Hindi</string>
+
+    <!-- Field draw strings -->
+    <string name="field_your_move">Your move!</string>
+    <string name="field_move_tail">move ... ⏳ %1$s</string>
+    <string name="field_hourglass_tail">⏳ %1$s</string>
+    <string name="field_your_move_ellipsis">Your move...</string>
+    <string name="field_thinking">Thinking...</string>
+    <string name="field_move_ellipsis_tail">move... ⏳ %1$s</string>
+    <string name="field_waiting_for">Waiting for %1$s</string>
+    <string name="field_to_start_tail">to start... ⏳ %1$s</string>
 </resources>
