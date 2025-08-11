@@ -14,7 +14,6 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.CountDownTimer;
 import android.util.Log;
@@ -38,7 +37,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class GameActivity extends AppCompatActivity {
+public class GameActivity extends BaseActivity {
 
 
     private ArrayList<MoveTo> Moves= new ArrayList<>();

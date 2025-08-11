@@ -5,13 +5,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import java.util.Objects;
 
 
-public class RegisterAccountActivity extends AppCompatActivity {
+public class RegisterAccountActivity extends BaseActivity {
 
     private EditText editEmail, editPassword;
     private FirebaseAuthManager authManager;

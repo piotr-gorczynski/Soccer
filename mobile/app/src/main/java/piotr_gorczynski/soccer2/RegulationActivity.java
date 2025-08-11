@@ -8,7 +8,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -22,7 +21,7 @@ import org.json.JSONObject;
 import java.util.Map;
 import java.util.Objects;
 
-public class RegulationActivity extends AppCompatActivity {
+public class RegulationActivity extends BaseActivity {
 
     private String tournamentId;
     private String regulationId;

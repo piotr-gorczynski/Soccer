@@ -10,7 +10,6 @@ import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.google.firebase.Timestamp;
@@ -27,7 +26,7 @@ import java.util.Objects;
 
 import android.content.SharedPreferences;
 
-public class InvitationsActivity extends AppCompatActivity {
+public class InvitationsActivity extends BaseActivity {
 
     ListView invitesList;
     TextView emptyText;
