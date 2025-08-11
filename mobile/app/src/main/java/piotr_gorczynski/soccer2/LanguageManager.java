@@ -103,10 +103,6 @@ public class LanguageManager {
         Configuration config = new Configuration(res.getConfiguration());
         config.setLocale(locale);
 
-        // Update the resources of the current context so that any views using it
-        // immediately reflect the new locale.
-        res.updateConfiguration(config, res.getDisplayMetrics());
-
         // Return a context with the updated configuration. This is particularly
         // important when attaching a base context for a newly created activity.
         return context.createConfigurationContext(config);
