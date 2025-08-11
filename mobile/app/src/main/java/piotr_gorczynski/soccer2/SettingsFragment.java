@@ -247,13 +247,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 
     private void showLanguageSelectionDialog() {
         String[] languages = LanguageManager.getAvailableLanguages(requireContext());
-        String currentLanguage = LanguageManager.getCurrentLanguageName(requireContext());
-        
+        String currentLanguageCode = LanguageManager.getCurrentLanguageCode(requireContext());
+
         // Find current selection index using non-localized names for consistent mapping
         String[] nonLocalizedLanguages = LanguageManager.getAvailableLanguages();
         int currentIndex = 0;
         for (int i = 0; i < nonLocalizedLanguages.length; i++) {
-            if (nonLocalizedLanguages[i].equals(currentLanguage)) {
+            String code = LanguageManager.getLanguageCode(nonLocalizedLanguages[i]);
+            if (code.equals(currentLanguageCode)) {
                 currentIndex = i;
                 break;
             }
