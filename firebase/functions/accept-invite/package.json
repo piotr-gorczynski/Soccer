@@ -4,10 +4,14 @@
     "version": "1.0.0",
     "main": "index.js",
     "engines": {
-      "node": "18"
+        "node": "18"
     },
     "dependencies": {
-      "firebase-admin": "^11.10.1",
-      "firebase-functions": "^4.5.0"
+        "firebase-admin": "^11.10.1",
+        "firebase-functions": "^4.5.0"
+    },
+    "overrides": {
+        "form-data": "^4.0.4",
+        "protobufjs": "^7.2.5"
     }
-  }
+}
