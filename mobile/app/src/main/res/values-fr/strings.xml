@@ -177,4 +177,14 @@
     <string name="settings">Paramètres</string>
     <string name="cancel">Annuler</string>
     <string name="confirm">Confirmer</string>
+
+    <!-- Field draw strings -->
+    <string name="field_your_move">À vous de jouer !</string>
+    <string name="field_move_tail">joue ... ⏳ %1$s</string>
+    <string name="field_hourglass_tail">⏳ %1$s</string>
+    <string name="field_your_move_ellipsis">À vous de jouer...</string>
+    <string name="field_thinking">Réflexion...</string>
+    <string name="field_move_ellipsis_tail">joue... ⏳ %1$s</string>
+    <string name="field_waiting_for">En attente de %1$s</string>
+    <string name="field_to_start_tail">pour commencer... ⏳ %1$s</string>
 </resources>
