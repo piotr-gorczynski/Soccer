@@ -110,7 +110,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
 
     //GPT fixes
-     implementation platform('com.google.firebase:firebase-bom34.1.00')
+    implementation platform('com.google.firebase:firebase-bom:34.1.0')
     implementation 'com.google.firebase:firebase-auth:24.0.1'
     //GPT fixes
     implementation 'androidx.appcompat:appcompat:1.7.1'
