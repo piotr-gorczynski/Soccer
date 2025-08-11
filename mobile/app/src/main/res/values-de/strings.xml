@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Basic app strings in German -->
-    <string name="app_name">Fußball 2</string>
+    <string name="app_name">Soccer 2</string>
     <string name="menu_Settings">Einstellungen</string>
     <string name="title_activity_settings">Einstellungen</string>
     
