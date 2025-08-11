@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Basic app strings in Nepali -->
+    <string name="app_name">Soccer 2</string>
+    <string name="menu_Settings">सेटिङहरू</string>
+    <string name="title_activity_settings">सेटिङहरू</string>
+    
+    <!-- Menu strings -->
+    <string name="menu_YouvsAndroid">एन्ड्रोइडसँग अभ्यास</string>
+    <string name="menu_Player1vsPlayer2">यो उपकरणमा दुई खेलाडी</string>
+    
+    <!-- Settings strings -->
+    <string name="pref_title_language">भाषा</string>
+    <string name="pref_summary_language">आफ्नो मनपर्ने भाषा छान्नुहोस्</string>
+    <string name="current_language">हालको: %1$s</string>
+    <string name="select_language">भाषा छान्नुहोस्</string>
+    
+    <!-- Settings preferences -->
+    <string name="pref_title_level">एन्ड्रोइड स्तर</string>
+    <string name="pref_title_block_invite_friend">\'मित्रलाई निमन्त्रणा दिनुहोस्\' अनुरोधहरू ब्लक गर्नुहोस्</string>
+    <string name="pref_summary_block_invite_friend">अन्य खेलाडीहरूले तपाईंलाई \'मित्रलाई निमन्त्रणा दिनुहोस्\' मार्फत निमन्त्रणा दिन सक्दैनन् (प्रतियोगिताहरू प्रभावित छैनन्)</string>
+    <string name="pref_title_ads_consent">व्यक्तिगत विज्ञापनहरूको सहमति</string>
+    <string name="pref_summary_ads_consent">व्यक्तिगत विज्ञापनहरू देखाउनको लागि आफ्नो सहमति समीक्षा वा परिवर्तन गर्नुहोस्</string>
+    
+    <!-- Level arrays -->
+    <string-array name="pref_level_titles">
+        <item>सजिलो</item>
+        <item>मध्यम</item>
+        <item>गाह्रो</item>
+    </string-array>
+    
+    <!-- Language names in Nepali -->
+    <string name="language_english">अंग्रेजी</string>
+    <string name="language_polish">पोलिस</string>
+    <string name="language_german">जर्मन</string>
+    <string name="language_french">फ्रेन्च</string>
+    <string name="language_spanish">स्पेनिस</string>
+    <string name="language_urdu">उर्दु</string>
+    <string name="language_bengali">बंगाली</string>
+    <string name="language_nepali">नेपाली</string>
+    <string name="language_hindi">हिन्दी</string>
+    
+    <!-- Authentication strings -->
+    <string name="register">दर्ता गर्नुहोस्</string>
+    <string name="confirm_password">पासवर्ड पुष्टि गर्नुहोस्</string>
+    <string name="email">इमेल</string>
+    <string name="password">पासवर्ड</string>
+    <string name="login">लग इन</string>
+    <string name="hello">नमस्ते!</string>
+    <string name="welcome_to_soccer">Soccer मा स्वागत छ!</string>
+    <string name="hello_nickname">नमस्ते, %1$s!</string>
+    <string name="log_in">लग इन</string>
+    <string name="register_new_account">नयाँ खाता दर्ता गर्नुहोस्</string>
+    <string name="reset_password">पासवर्ड रिसेट गर्नुहोस्</string>
+    <string name="reset_password_email_hint">आफ्नो इमेल ठेगाना प्रविष्ट गर्नुहोस्</string>
+    <string name="reset_password_title">पासवर्ड रिसेट गर्नुहोस्</string>
+    <string name="reset_password_message">कृपया आफ्नो इमेल ठेगाना प्रविष्ट गर्नुहोस्। यदि यो इमेलसँग खाता अवस्थित छ भने, तपाईंले पासवर्ड रिसेट इमेल प्राप्त गर्नुहुनेछ।</string>
+    <string name="reset_password_success">यदि यो इमेलसँग खाता अवस्थित छ भने, पासवर्ड रिसेट इमेल पठाइएको छ।</string>
+    <string name="reset_password_failed">पासवर्ड रिसेट इमेल पठाउन असफल। फेरि प्रयास गर्नुहोस्।</string>
+    <string name="nickname">उपनाम</string>
+    
+    <!-- Friends strings -->
+    <string name="enter_nickname_to_invite">निमन्त्रणा दिनको लागि उपनाम प्रविष्ट गर्नुहोस्:</string>
+    <string name="enter_nickname_to_search">खोज्नको लागि उपनाम प्रविष्ट गर्नुहोस्:</string>
+    <string name="friend_s_nickname">मित्रको उपनाम</string>
+    <string name="send_invitation">निमन्त्रणा पठाउनुहोस्</string>
+    <string name="invite_a_friend">मित्रलाई निमन्त्रणा दिनुहोस्</string>
+    <string name="add_a_friend">मित्र थप्नुहोस्</string>
+    <string name="add_friend">मित्र सफलतापूर्वक थपियो</string>
+    <string name="no_friends">अहिलेसम्म कुनै मित्र थपिएको छैन…</string>
+    <string name="no_tournaments">अहिलेसम्म कुनै प्रतियोगिता सिर्जना गरिएको छैन।</string>
+    <string name="please_enter_a_nickname">कृपया उपनाम प्रविष्ट गर्नुहोस्।</string>
+    <string name="user_not_found">प्रयोगकर्ता फेला परेन।</string>
+    <string name="you_can_t_invite_yourself">तपाईं आफैलाई निमन्त्रणा दिन सक्नुहुन्न।</string>
+    <string name="error_searching_user">प्रयोगकर्ता खोज्दा त्रुटि।</string>
+    <string name="invitation_sent">निमन्त्रणा पठाइयो!</string>
+    <string name="failed_to_send_invite">निमन्त्रणा पठाउन असफल।</string>
+    <string name="account_no_longer_available">प्रयोगकर्ता खाता अब उपलब्ध छैन।</string>
+    <string name="failed_to_add_friend">मित्र थप्न असफल।</string>
+    <string name="failed_to_add_friend_reason">मित्र थप्न असफल: %1$s</string>
+    <string name="failed_to_load_nickname">उपनाम लोड गर्न असफल।</string>
+    <string name="search">खोज्नुहोस्</string>
+    <string name="load_more">थप लोड गर्नुहोस्</string>
+    <string name="add_friend_label">थप्नुहोस्</string>
+    <string name="invite_blocked">%1$s ले निमन्त्रणाहरू ब्लक गरेको छ।</string>
+    <string name="invites_blocked_notification">अन्य खेलाडीहरूले तपाईंलाई \'मित्रलाई निमन्त्रणा दिनुहोस्\' प्रकार्य मार्फत निमन्त्रणा दिन सक्दैनन्। तपाईं यसलाई सेटिङहरूमा परिवर्तन गर्न सक्नुहुन्छ।</string>
+    
+    <!-- Invitations strings -->
+    <string name="pending_game_invitations">पेन्डिङ खेल निमन्त्रणाहरू</string>
+    <string name="pending_invites">पेन्डिङ निमन्त्रणाहरू</string>
+    <string name="no_pending_invites">कुनै पेन्डिङ निमन्त्रणाहरू छैनन्।</string>
+    <string name="invite_already_sent">तपाईंसँग पहिले नै अर्को पेन्डिङ निमन्त्रणा छ।</string>
+    <string name="waiting_for_opponent_named">%1$s को स्वीकार गर्ने प्रतीक्षामा…</string>
+    <string name="waiting_for_opponent">प्रतिपक्षको स्वीकार गर्ने प्रतीक्षामा…</string>
+    
+    <!-- Tournament strings -->
+    <string name="tournaments">प्रतियोगिताहरू</string>
+    <string name="ranking">क्रमाङ्क</string>
+    <string name="no_ranking_yet">क्रमाङ्क देखाउनको लागि अहिलेसम्म कुनै प्रतियोगिता पूरा भएको छैन।</string>
+    <string name="join">सामेल हुनुहोस्</string>
+    <string name="slots_format">%1$d / %2$d</string>
+    <string name="open">खुला</string>
+    <string name="lobby_started">प्रतियोगिता सुरु भयो!</string>
+    <string name="ended">समाप्त…</string>
+    <string name="running">चलिरहेको…</string>
+    <string name="registering">दर्ता गर्दै…</string>
+    <string name="view_results">परिणामहरू हेर्नुहोस्</string>
+    <string name="logout">लग आउट</string>
+    <string name="logged_out">तपाईं लग आउट हुनुभयो</string>
+    
+    <!-- Game strings -->
+    <plurals name="wins_format">
+        <item quantity="one">%d जीत</item>
+        <item quantity="other">%d जीतहरू</item>
+    </plurals>
+    <string name="toast_not_your_turn">अझै तपाईंको पालो छैन!</string>
+    <string name="five_minutes">05:00</string>
+    <string name="cancel_invite">निमन्त्रणा रद्द गर्नुहोस्</string>
+    <string name="remove">हटाउनुहोस्</string>
+    <string name="invite_expired">निमन्त्रणाको म्याद सकियो।</string>
+    <string name="leave">छोड्नुहोस्</string>
+    <string name="leave_tournament_confirm">के तपाईं वास्तवमै यो प्रतियोगिता छोड्न चाहनुहुन्छ?</string>
+    <string name="left_tournament">तपाईंले प्रतियोगिता छोड्नुभयो।</string>
+    <string name="leave_waiting_confirm">प्रतीक्षा स्क्रिन छोड्दा तपाईंको निमन्त्रणा रद्द हुनेछ। के तपाईं निश्चित हुनुहुन्छ?</string>
+    <string name="yes">हो</string>
+    <string name="no">होइन</string>
+    <string name="target_player_busy">त्यो खेलाडी पहिले नै अर्को निमन्त्रणामा व्यस्त छ।</string>
+    <string name="accept">स्वीकार गर्नुहोस्</string>
+    <string name="decline">अस्वीकार गर्नुहोस्</string>
+    <string name="match_completed_win">पूरा भयो, तपाईंले जित्नुभयो 🏆</string>
+    <string name="match_completed_lose">पूरा भयो, तपाईंले हार्नुभयो 😞</string>
+    
+    <!-- Error strings -->
+    <string name="regulation_not_found">नियमावली फेला परेन।</string>
+    <string name="regulation_load_error">नियमावली लोड गर्न असफल।</string>
+    <string name="regulation_auth_required">नियमावली हेर्न कृपया लग इन गर्नुहोस्।</string>
+    <string name="server_unavailable">सर्भर उपलब्ध छैन</string>
+    <string name="server_unavailable_message">हामी माफी चाहन्छौं, तर Soccer सर्भर अहिले उपलब्ध छैन…</string>
+    
+    <!-- Account strings -->
+    <string name="account">खाता</string>
+    <string name="account_information">खाताको जानकारी</string>
+    <string name="nickname_label">उपनाम: %1$s</string>
+    <string name="email_label">इमेल: %1$s</string>
+    <string name="not_registered">तपाईं यो प्रतियोगिताको लागि दर्ता हुनुभएको छैन।</string>
+    
+    <!-- Login methods -->
+    <string name="login_email">इमेलले लग इन गर्नुहोस्</string>
+    <string name="login_google">Google ले लग इन गर्नुहोस्</string>
+    <string name="login_facebook">Facebook ले लग इन गर्नुहोस्</string>
+    <string name="login_microsoft">Microsoft ले लग इन गर्नुहोस्</string>
+    <string name="login_method_label">लग इन विधि: %1$s</string>
+    <string name="pref_title_facebook">Facebook समुदाय</string>
+    <string name="pref_summary_facebook">Facebook मा हाम्रो समुदायको पृष्ठ खोल्नुहोस्</string>
+    <string name="ads_consent_required">विज्ञापनहरू देखाउनुले पूर्वाधार मर्मतसम्भारको वित्तपोषणमा मद्दत गर्छ। तपाईंले विज्ञापनहरू देखाउन सहमत नगरेको हुनाले, यो विकल्प उपलब्ध छैन। तपाईं सेटिङहरूमा आफ्नो सहमति जाँच गर्न सक्नुहुन्छ।</string>
+    <string name="no_internet_for_privacy_options">गोपनीयता विकल्पहरू खोल्न इन्टरनेट जडान आवश्यक छ।</string>
+    
+    <!-- Account removal strings -->
+    <string name="remove_account">खाता हटाउनुहोस्</string>
+    <string name="remove_account_dialog_title">खाता हटाउनुहोस्</string>
+    <string name="remove_account_dialog_message">के तपाईं वास्तवमै आफ्नो खाता हटाउन चाहनुहुन्छ? यो कार्य फिर्ता गर्न सकिँदैन र तपाईंले फेरि दर्ता गरे पनि तपाईंले आफ्ना खेलहरू र परिणामहरूको इतिहासमा पहुँच पाउनुहुनेछैन।</string>
+    <string name="proceed">अगाडि बढ्नुहोस्</string>
+    <string name="removing_account">खाता हटाइँदै...</string>
+    <string name="account_removed">खाता सफलतापूर्वक हटाइयो</string>
+    <string name="remove_account_failed">खाता हटाउन असफल। फेरि प्रयास गर्नुहोस्।</string>
+    <string name="reauth_title">पुन: प्रमाणीकरण</string>
+    <string name="reauth_message">जारी राख्न कृपया आफ्नो पासवर्ड प्रविष्ट गर्नुहोस्।</string>
+    <string name="reauth_failed">पुन: प्रमाणीकरण असफल। फेरि प्रयास गर्नुहोस्।</string>
+    
+    <!-- Common strings -->
+    <string name="settings">सेटिङहरू</string>
+    <string name="cancel">रद्द गर्नुहोस्</string>
+    <string name="confirm">पुष्टि गर्नुहोस्</string>
+</resources>

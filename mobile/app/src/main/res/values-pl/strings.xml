@@ -22,7 +22,153 @@
     <string name="language_nepali">Nepalski</string>
     <string name="language_hindi">Hindi</string>
     
-    <!-- Other common strings -->
+    <!-- Menu strings -->
+    <string name="menu_YouvsAndroid">Trening z Androidem</string>
+    <string name="menu_Player1vsPlayer2">Dwóch graczy na tym urządzeniu</string>
+    
+    <!-- Settings preferences -->
+    <string name="pref_title_level">Poziom Android</string>
+    <string name="pref_title_block_invite_friend">Blokuj zaproszenia od znajomych</string>
+    <string name="pref_summary_block_invite_friend">Inni gracze nie mogą Cię zapraszać przez "Zaproś znajomego" (turnieje nie są objęte)</string>
+    <string name="pref_title_ads_consent">Zgoda na spersonalizowane reklamy</string>
+    <string name="pref_summary_ads_consent">Przejrzyj lub zmień zgodę na wyświetlanie spersonalizowanych reklam</string>
+    
+    <!-- Level arrays -->
+    <string-array name="pref_level_titles">
+        <item>Łatwy</item>
+        <item>Średni</item>
+        <item>Trudny</item>
+    </string-array>
+    
+    <!-- Authentication strings -->
+    <string name="register">Zarejestruj się</string>
+    <string name="confirm_password">Potwierdź hasło</string>
+    <string name="email">E-mail</string>
+    <string name="password">Hasło</string>
+    <string name="login">Zaloguj się</string>
+    <string name="hello">Cześć!</string>
+    <string name="welcome_to_soccer">Witamy w Soccer!</string>
+    <string name="hello_nickname">Cześć, %1$s!</string>
+    <string name="log_in">Zaloguj się</string>
+    <string name="register_new_account">Zarejestruj nowe konto</string>
+    <string name="reset_password">Resetuj hasło</string>
+    <string name="reset_password_email_hint">Wprowadź swój adres e-mail</string>
+    <string name="reset_password_title">Resetuj hasło</string>
+    <string name="reset_password_message">Wprowadź swój adres e-mail. Jeśli istnieje konto z tym e-mailem, otrzymasz e-mail z resetem hasła.</string>
+    <string name="reset_password_success">Jeśli istnieje konto z tym e-mailem, wysłano e-mail z resetem hasła.</string>
+    <string name="reset_password_failed">Nie udało się wysłać e-maila z resetem hasła. Spróbuj ponownie.</string>
+    <string name="nickname">Pseudonim</string>
+    
+    <!-- Friends strings -->
+    <string name="enter_nickname_to_invite">Wprowadź pseudonim do zaproszenia:</string>
+    <string name="enter_nickname_to_search">Wprowadź pseudonim do wyszukania:</string>
+    <string name="friend_s_nickname">Pseudonim znajomego</string>
+    <string name="send_invitation">Wyślij zaproszenie</string>
+    <string name="invite_a_friend">Zaproś znajomego</string>
+    <string name="add_a_friend">Dodaj znajomego</string>
+    <string name="add_friend">Znajomy dodany pomyślnie</string>
+    <string name="no_friends">Nie dodano jeszcze żadnych znajomych…</string>
+    <string name="no_tournaments">Nie utworzono jeszcze żadnych turniejów.</string>
+    <string name="please_enter_a_nickname">Wprowadź pseudonim.</string>
+    <string name="user_not_found">Użytkownik nie znaleziony.</string>
+    <string name="you_can_t_invite_yourself">Nie możesz zaprosić siebie.</string>
+    <string name="error_searching_user">Błąd podczas wyszukiwania użytkownika.</string>
+    <string name="invitation_sent">Zaproszenie wysłane!</string>
+    <string name="failed_to_send_invite">Nie udało się wysłać zaproszenia.</string>
+    <string name="account_no_longer_available">Konto użytkownika już niedostępne.</string>
+    <string name="failed_to_add_friend">Nie udało się dodać znajomego.</string>
+    <string name="failed_to_add_friend_reason">Nie udało się dodać znajomego: %1$s</string>
+    <string name="failed_to_load_nickname">Nie udało się wczytać pseudonimu.</string>
+    <string name="search">Szukaj</string>
+    <string name="load_more">Załaduj więcej</string>
+    <string name="add_friend_label">Dodaj</string>
+    <string name="invite_blocked">%1$s zablokował zaproszenia.</string>
+    <string name="invites_blocked_notification">Inni gracze nie mogą Cię zapraszać przez funkcję "Zaproś znajomego". Możesz to zmienić w Ustawieniach.</string>
+    
+    <!-- Invitations strings -->
+    <string name="pending_game_invitations">Oczekujące zaproszenia do gry</string>
+    <string name="pending_invites">Oczekujące zaproszenia</string>
+    <string name="no_pending_invites">Brak oczekujących zaproszeń.</string>
+    <string name="invite_already_sent">Masz już inne oczekujące zaproszenie.</string>
+    <string name="waiting_for_opponent_named">Czekam na akceptację przez %1$s…</string>
+    <string name="waiting_for_opponent">Czekam na akceptację przez przeciwnika…</string>
+    
+    <!-- Tournament strings -->
+    <string name="tournaments">Turnieje</string>
+    <string name="ranking">Ranking</string>
+    <string name="no_ranking_yet">Nie ukończono jeszcze żadnych turniejów, aby pokazać ranking.</string>
+    <string name="join">Dołącz</string>
+    <string name="slots_format">%1$d / %2$d</string>
+    <string name="open">Otwarty</string>
+    <string name="lobby_started">Turniej rozpoczęty!</string>
+    <string name="ended">Zakończony…</string>
+    <string name="running">W trakcie…</string>
+    <string name="registering">Rejestrowanie…</string>
+    <string name="view_results">Zobacz wyniki</string>
+    <string name="logout">Wyloguj się</string>
+    <string name="logged_out">Zostałeś wylogowany</string>
+    
+    <!-- Game strings -->
+    <plurals name="wins_format">
+        <item quantity="one">%d wygrana</item>
+        <item quantity="few">%d wygrane</item>
+        <item quantity="other">%d wygranych</item>
+    </plurals>
+    <string name="toast_not_your_turn">To jeszcze nie Twoja kolej!</string>
+    <string name="five_minutes">05:00</string>
+    <string name="cancel_invite">Anuluj zaproszenie</string>
+    <string name="remove">Usuń</string>
+    <string name="invite_expired">Zaproszenie wygasło.</string>
+    <string name="leave">Opuść</string>
+    <string name="leave_tournament_confirm">Czy na pewno chcesz opuścić ten turniej?</string>
+    <string name="left_tournament">Opuściłeś turniej.</string>
+    <string name="leave_waiting_confirm">Opuszczenie ekranu oczekiwania anuluje Twoje zaproszenie. Czy jesteś pewny?</string>
+    <string name="yes">Tak</string>
+    <string name="no">Nie</string>
+    <string name="target_player_busy">Ten gracz jest już zajęty innym zaproszeniem.</string>
+    <string name="accept">Akceptuj</string>
+    <string name="decline">Odrzuć</string>
+    <string name="match_completed_win">ukończony, wygrałeś 🏆</string>
+    <string name="match_completed_lose">ukończony, przegrałeś 😞</string>
+    
+    <!-- Error strings -->
+    <string name="regulation_not_found">Regulamin nie znaleziony.</string>
+    <string name="regulation_load_error">Nie udało się wczytać regulaminu.</string>
+    <string name="regulation_auth_required">Zaloguj się, aby zobaczyć regulamin.</string>
+    <string name="server_unavailable">Serwer niedostępny</string>
+    <string name="server_unavailable_message">Przepraszamy, ale serwer Soccer jest obecnie niedostępny…</string>
+    
+    <!-- Account strings -->
+    <string name="account">Konto</string>
+    <string name="account_information">Informacje o koncie</string>
+    <string name="nickname_label">Pseudonim: %1$s</string>
+    <string name="email_label">E-mail: %1$s</string>
+    <string name="not_registered">Nie jesteś zarejestrowany w tym turnieju.</string>
+    
+    <!-- Login methods -->
+    <string name="login_email">Zaloguj się przez e-mail</string>
+    <string name="login_google">Zaloguj się przez Google</string>
+    <string name="login_facebook">Zaloguj się przez Facebook</string>
+    <string name="login_microsoft">Zaloguj się przez Microsoft</string>
+    <string name="login_method_label">Metoda logowania: %1$s</string>
+    <string name="pref_title_facebook">Społeczność Facebook</string>
+    <string name="pref_summary_facebook">Otwórz naszą stronę społeczności na Facebook</string>
+    <string name="ads_consent_required">Wyświetlanie reklam pomaga w finansowaniu utrzymania infrastruktury. Ponieważ nie wyraziłeś zgody na pokazywanie reklam, ta opcja nie jest dostępna. Możesz sprawdzić swoją zgodę w ustawieniach.</string>
+    <string name="no_internet_for_privacy_options">Połączenie internetowe wymagane do otwarcia opcji prywatności.</string>
+    
+    <!-- Account removal strings -->
+    <string name="remove_account">Usuń konto</string>
+    <string name="remove_account_dialog_title">Usuń konto</string>
+    <string name="remove_account_dialog_message">Czy na pewno chcesz usunąć swoje konto? Ta akcja nie może być cofnięta i nawet jeśli zarejestrujesz się ponownie, nie uzyskasz dostępu do historii swoich meczów i wyników.</string>
+    <string name="proceed">Kontynuuj</string>
+    <string name="removing_account">Usuwanie konta...</string>
+    <string name="account_removed">Konto usunięte pomyślnie</string>
+    <string name="remove_account_failed">Nie udało się usunąć konta. Spróbuj ponownie.</string>
+    <string name="reauth_title">Ponowna autoryzacja</string>
+    <string name="reauth_message">Wprowadź swoje hasło, aby kontynuować.</string>
+    <string name="reauth_failed">Ponowna autoryzacja nie powiodła się. Spróbuj ponownie.</string>
+    
+    <!-- Common strings -->
     <string name="settings">Ustawienia</string>
     <string name="cancel">Anuluj</string>
     <string name="confirm">Potwierdź</string>
