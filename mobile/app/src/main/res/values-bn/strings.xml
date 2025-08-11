@@ -175,6 +175,16 @@
     
     <!-- Common strings -->
     <string name="settings">সেটিংস</string>
-    <string name="cancel">বাতিল করুন</string>
-    <string name="confirm">নিশ্চিত করুন</string>
+   <string name="cancel">বাতিল করুন</string>
+   <string name="confirm">নিশ্চিত করুন</string>
+
+    <!-- Field draw strings -->
+    <string name="field_your_move">আপনার চাল!</string>
+    <string name="field_move_tail">চাল ... ⏳ %1$s</string>
+    <string name="field_hourglass_tail">⏳ %1$s</string>
+    <string name="field_your_move_ellipsis">আপনার চাল...</string>
+    <string name="field_thinking">ভাবছে...</string>
+    <string name="field_move_ellipsis_tail">চাল... ⏳ %1$s</string>
+    <string name="field_waiting_for">%1$s-এর জন্য অপেক্ষা</string>
+    <string name="field_to_start_tail">শুরু করার জন্য... ⏳ %1$s</string>
 </resources>

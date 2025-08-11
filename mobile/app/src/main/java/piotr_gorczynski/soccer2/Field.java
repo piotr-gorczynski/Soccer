@@ -38,6 +38,7 @@ public class Field {
     private final String sPlayer0;
     private final String sPlayer1;
     private final int gameType;
+    private final Context context;
     final ArrayList<MoveTo> possibleMoves;//= new ArrayList<MoveTo>();
     final ArrayList<MoveTo> Moves;//= new ArrayList<MoveTo>();
     private boolean isFlipped=false;
@@ -58,6 +59,7 @@ public class Field {
                 + ", localPlayerIndex=" + localPlayerIndex);
 
         this.gameType = argGameType;  // ✅ Save GameType for later use
+        this.context = current;
 
         switch (argGameType) {
             case 1 -> {
@@ -369,14 +371,14 @@ public class Field {
 
         if (isLocalTurn) {
             if (gameType != 3) {
-                textBottom = "Your move!";
+                textBottom = context.getString(R.string.field_your_move);
             } else {
 
                 textBottom = fitNameInBanner(localName,
-                        " move ... ⏳ " + localTime,
+                        " " + context.getString(R.string.field_move_tail, localTime),
                         pHintText, bannerWidthPx);
                 textTop = fitNameInBanner(opponentName,
-                        " ⏳ " + oponentTime,
+                        " " + context.getString(R.string.field_hourglass_tail, oponentTime),
                         pHintText, bannerWidthPx);
 
                 pHintText.getTextBounds(textTop, 0, textTop.length(), rText);
@@ -396,24 +398,24 @@ public class Field {
 
         } else {
             if (gameType == 1) {
-                textTop = "Your move...";  // could be improved, but likely shared screen
+                textTop = context.getString(R.string.field_your_move_ellipsis);  // could be improved, but likely shared screen
             } else if (gameType == 2) {
-                textTop = "Thinking...";
+                textTop = context.getString(R.string.field_thinking);
             } else  {
                 // Multiplayer: determine which name is the opponent
 
 
                 if (turnStartTime != null) {
                     textTop = fitNameInBanner(opponentName,
-                            " move... ⏳ " + oponentTime,
+                            " " + context.getString(R.string.field_move_ellipsis_tail, oponentTime),
                             pHintText, bannerWidthPx);
                 } else {
-                    textTop = fitNameInBanner("Waiting for " + opponentName,
-                            " to start... ⏳ " + oponentTime,
+                    textTop = fitNameInBanner(context.getString(R.string.field_waiting_for, opponentName),
+                            " " + context.getString(R.string.field_to_start_tail, oponentTime),
                             pHintText, bannerWidthPx);
                 }
                 textBottom = fitNameInBanner(localName,
-                        " ⏳ " + localTime,
+                        " " + context.getString(R.string.field_hourglass_tail, localTime),
                         pHintText, bannerWidthPx);
 
                 pHintText.getTextBounds(textBottom, 0, textBottom.length(), rText);

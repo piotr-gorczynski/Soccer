@@ -177,4 +177,14 @@
     <string name="settings">سیٹنگز</string>
     <string name="cancel">منسوخ کریں</string>
     <string name="confirm">تصدیق کریں</string>
+
+    <!-- Field draw strings -->
+    <string name="field_your_move">آپ کی باری!</string>
+    <string name="field_move_tail">چلے ... ⏳ %1$s</string>
+    <string name="field_hourglass_tail">⏳ %1$s</string>
+    <string name="field_your_move_ellipsis">آپ کی باری...</string>
+    <string name="field_thinking">سوچ رہا ہے...</string>
+    <string name="field_move_ellipsis_tail">چلے... ⏳ %1$s</string>
+    <string name="field_waiting_for">%1$s کا انتظار</string>
+    <string name="field_to_start_tail">شروع کرنے کے لیے... ⏳ %1$s</string>
 </resources>

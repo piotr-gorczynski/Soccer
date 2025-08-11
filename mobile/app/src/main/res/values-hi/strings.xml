@@ -177,4 +177,14 @@
     <string name="settings">सेटिंग्स</string>
     <string name="cancel">रद्द करें</string>
     <string name="confirm">पुष्टि करें</string>
+
+    <!-- Field draw strings -->
+    <string name="field_your_move">आपकी चाल!</string>
+    <string name="field_move_tail">चाल ... ⏳ %1$s</string>
+    <string name="field_hourglass_tail">⏳ %1$s</string>
+    <string name="field_your_move_ellipsis">आपकी चाल...</string>
+    <string name="field_thinking">सोच रहा है...</string>
+    <string name="field_move_ellipsis_tail">चाल... ⏳ %1$s</string>
+    <string name="field_waiting_for">%1$s की प्रतीक्षा</string>
+    <string name="field_to_start_tail">शुरू करने के लिए... ⏳ %1$s</string>
 </resources>
