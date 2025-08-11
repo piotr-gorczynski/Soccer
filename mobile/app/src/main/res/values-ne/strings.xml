@@ -105,6 +105,12 @@
     <string name="running">चलिरहेको…</string>
     <string name="registering">दर्ता गर्दै…</string>
     <string name="view_results">परिणामहरू हेर्नुहोस्</string>
+    <string name="tournament_running_ends">टूर्नामेन्ट चलिरहेको छ। %1$s समाप्त हुन्छ</string>
+    <string name="registration_ends">दर्ता %1$s समाप्त हुन्छ</string>
+    <string name="registration_closed">दर्ता बन्द। टूर्नामेन्ट १ घण्टाभित्र सुरु हुनेछ</string>
+    <string name="tournament_ends_now">टूर्नामेन्ट अहिले समाप्त हुँदैछ...</string>
+    <string name="tournament_ended">%1$s समाप्त भयो</string>
+    <string name="tournament_ended_short">समाप्त भयो</string>
     <string name="logout">लग आउट</string>
     <string name="logged_out">तपाईं लग आउट हुनुभयो</string>
     

@@ -11,6 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.format.DateUtils;
+
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -110,8 +112,10 @@ public class TournamentAdapter
         if (isEndedMode) {
             // === Ended mode ===
             String endedWhen = endDL != null
-                    ? "Ended " + englishRelative(endDL.toDate().getTime())
-                    : "Ended";
+                    ? h.itemView.getContext().getString(
+                            R.string.tournament_ended,
+                            relativeTime(endDL.toDate().getTime()))
+                    : h.itemView.getContext().getString(R.string.tournament_ended_short);
             h.endsIn.setText(endedWhen);
 
             h.joinBtn.setEnabled(true);
@@ -127,8 +131,10 @@ public class TournamentAdapter
             // ① label: “Registration ends in …”
             long mLeft = Objects.requireNonNull(regDL).toDate().getTime() - System.currentTimeMillis();
             String endsText = (mLeft <= 0)
-                    ? "Registration closed. Tournament will start within 1 hour"
-                    : "Registration ends "+englishRelative(regDL.toDate().getTime());
+                    ? h.itemView.getContext().getString(R.string.registration_closed)
+                    : h.itemView.getContext().getString(
+                            R.string.registration_ends,
+                            relativeTime(regDL.toDate().getTime()));
             h.endsIn.setText(endsText);
 
             // ② buttons: Join & Leave
@@ -184,9 +190,10 @@ public class TournamentAdapter
                         + ": mLeft (ms): " + mLeft);
             }
             String endsText = (mLeft <= 0)
-                    ? "Tournament ends now..."
-                    : "Tournament running. Ends " + englishRelative(
-                    endDL.toDate().getTime());
+                    ? h.itemView.getContext().getString(R.string.tournament_ends_now)
+                    : h.itemView.getContext().getString(
+                            R.string.tournament_running_ends,
+                            relativeTime(endDL.toDate().getTime()));
 
             h.endsIn.setText(endsText);
             h.notRegistered.setVisibility(View.GONE);
@@ -233,35 +240,12 @@ public class TournamentAdapter
     @Override
     public int getItemCount() { return data.size(); }
 
-    /** Absolute, English-only relative time. Works for past & future moments. */
-    public static String englishRelative(long targetTimeMillis) {
-
-        final long NOW  = System.currentTimeMillis();
-        long diff       = targetTimeMillis - NOW;      // + => future, – => past
-
-        final long MIN  = 60_000L;
-        final long HOUR = 60 * MIN;
-        final long DAY  = 24 * HOUR;
-
-        // ── “just now / in a moment” ───────────────────────────────
-        if (Math.abs(diff) < MIN) {
-            return diff >= 0 ? "in a moment" : "just now";
-        }
-
-        // ── FUTURE (“in …”) ────────────────────────────────────────
-        if (diff > 0) {
-            if (diff < HOUR)  { long m = diff / MIN;  return "in " + m + " min" + (m == 1 ? "" : "s"); }
-            if (diff < DAY)   { long h = diff / HOUR; return "in " + h + " h"; }
-            if (diff < 2*DAY) { return "tomorrow"; }
-            long d = diff / DAY;                       return "in " + d + " days";
-        }
-
-        // ── PAST (“… ago”) ─────────────────────────────────────────
-        diff = -diff;                                 // make positive
-        if (diff < HOUR)  { long m = diff / MIN;  return m + " min" + (m == 1 ? "" : "s") + " ago"; }
-        if (diff < DAY)   { long h = diff / HOUR; return h + " h ago"; }
-        if (diff < 2*DAY) { return "yesterday"; }
-        long d = diff / DAY;                          return d + " days ago";
+    private static String relativeTime(long targetTimeMillis) {
+        return DateUtils.getRelativeTimeSpanString(
+                targetTimeMillis,
+                System.currentTimeMillis(),
+                DateUtils.MINUTE_IN_MILLIS,
+                DateUtils.FORMAT_ABBREV_RELATIVE
+        ).toString();
     }
-
 }
