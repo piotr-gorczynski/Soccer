@@ -177,4 +177,14 @@
     <string name="settings">Configuración</string>
     <string name="cancel">Cancelar</string>
     <string name="confirm">Confirmar</string>
+
+    <!-- Field draw strings -->
+    <string name="field_your_move">¡Tu turno!</string>
+    <string name="field_move_tail">mueve ... ⏳ %1$s</string>
+    <string name="field_hourglass_tail">⏳ %1$s</string>
+    <string name="field_your_move_ellipsis">Tu turno...</string>
+    <string name="field_thinking">Pensando...</string>
+    <string name="field_move_ellipsis_tail">mueve... ⏳ %1$s</string>
+    <string name="field_waiting_for">Esperando a %1$s</string>
+    <string name="field_to_start_tail">para empezar... ⏳ %1$s</string>
 </resources>
