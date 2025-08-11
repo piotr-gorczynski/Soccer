@@ -105,6 +105,12 @@
     <string name="running">En cours…</string>
     <string name="registering">Inscription…</string>
     <string name="view_results">Voir les résultats</string>
+    <string name="tournament_running_ends">Tournoi en cours. Se termine %1$s</string>
+    <string name="registration_ends">Les inscriptions se terminent %1$s</string>
+    <string name="registration_closed">Inscriptions closes. Le tournoi commencera dans une heure</string>
+    <string name="tournament_ends_now">Le tournoi se termine maintenant...</string>
+    <string name="tournament_ended">Terminé %1$s</string>
+    <string name="tournament_ended_short">Terminé</string>
     <string name="logout">Se déconnecter</string>
     <string name="logged_out">Vous avez été déconnecté</string>
     
