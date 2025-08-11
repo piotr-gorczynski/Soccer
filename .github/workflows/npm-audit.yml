@@ -1,0 +1,32 @@
+name: npm-audit
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dir:
+          - .
+          - tools/create-tournament
+          - firebase/functions/accept-invite
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node 18 (matches Firebase runtime)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+          cache-dependency-path: ${{ matrix.dir }}/package-lock.json
+
+      - name: Install deps
+        working-directory: ${{ matrix.dir }}
+        run: npm ci --ignore-scripts
+
+      - name: npm audit (fail on high+)
+        working-directory: ${{ matrix.dir }}
+        run: npm audit --audit-level=high
