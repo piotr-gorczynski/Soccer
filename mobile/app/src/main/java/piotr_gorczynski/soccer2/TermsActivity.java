@@ -23,7 +23,7 @@ public class TermsActivity extends BaseActivity {
         WebView webView = findViewById(R.id.termsWebView);
         String langCode = LanguageManager.getCurrentLanguageCode(this);
         String url = "https://piotr-gorczynski.com/terms-" + langCode + ".html";
-        Log.d("TermsActivity", "Loading terms from URL: " + url);
+        Log.d("TAG_Soccer", "Loading terms from URL: " + url);
         webView.loadUrl(url);
 
         Button acceptBtn = findViewById(R.id.acceptTerms);
