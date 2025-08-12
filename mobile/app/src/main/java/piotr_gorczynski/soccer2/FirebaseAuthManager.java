@@ -126,7 +126,7 @@ public class FirebaseAuthManager {
     }
 
     private void storeUserData(String uid, String email, String nickname, String method) {
-        context.getSharedPreferences(context.getPackageName() + "_preferences", Context.MODE_PRIVATE)
+        context.getSharedPreferences(LanguageManager.PREFS_FILE, Context.MODE_PRIVATE)
                 .edit()
                 .putString("uid", uid)
                 .putString("email", email)
@@ -164,7 +164,7 @@ public class FirebaseAuthManager {
 
                                             // Preserve any previously-saved nickname instead of overwriting it
                                             SharedPreferences p = context.getSharedPreferences(
-                                                    context.getPackageName() + "_preferences",
+                                                    LanguageManager.PREFS_FILE,
                                                     Context.MODE_PRIVATE);
                                             String currentNick = p.getString("nickname", "");
 

@@ -5,16 +5,23 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.util.Log;
+
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.os.LocaleListCompat;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
-import java.util.Locale;
+
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class LanguageManager {
-    
-    // Use the same tag throughout the app for consistent Logcat filtering
-    private static final String TAG = "TAG_Soccer";
+
+    /** Preferences file name used across the entire app. */
+    public static final String PREFS_FILE = "app_prefs";
+
+    private static final String TAG = "LanguageManager";
     private static final String PREF_LANGUAGE_CODE = "language_code";
     
     // Language code to display name resource mapping
@@ -49,8 +56,8 @@ public class LanguageManager {
      * Get the currently selected language code from preferences
      */
     public static String getCurrentLanguageCode(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(
-                context.getPackageName() + "_preferences", Context.MODE_PRIVATE);
+        SharedPreferences prefs =
+                context.getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE);
         return prefs.getString(PREF_LANGUAGE_CODE, "en"); // Default to English
     }
     
@@ -68,11 +75,10 @@ public class LanguageManager {
      */
     public static void setLanguage(Context context, String languageCode) {
         // Save to SharedPreferences
-        SharedPreferences prefs = context.getSharedPreferences(
-                context.getPackageName() + "_preferences", Context.MODE_PRIVATE);
-        // Use commit() so that subsequent reads from other SharedPreferences instances
-        // (e.g. in MenuActivity.runHousekeeping) immediately observe the updated value.
-        prefs.edit().putString(PREF_LANGUAGE_CODE, languageCode).commit();
+        context.getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE)
+                .edit()
+                .putString(PREF_LANGUAGE_CODE, languageCode)
+                .commit();
         
         // Save to Firestore if user is logged in
         String uid = FirebaseAuth.getInstance().getUid();
@@ -87,13 +93,11 @@ public class LanguageManager {
                             Log.e(TAG, "Failed to update language preference in Firestore", e));
         }
 
-        // Apply the language change to both the current and application contexts so
-        // that all running activities receive the updated configuration immediately.
-        Context appContext = context.getApplicationContext();
-        applyLanguage(appContext, languageCode);
-        if (appContext != context) {
-            applyLanguage(context, languageCode);
-        }
+        // Apply the locale immediately for already-running contexts
+        AppCompatDelegate.setApplicationLocales(
+                LocaleListCompat.forLanguageTags(languageCode));
+        applyLanguage(context, languageCode);
+        Log.d(TAG, "setLanguage: applied=" + languageCode);
     }
     
     /**
@@ -150,9 +154,8 @@ public class LanguageManager {
      * Check if language preference has been set
      */
     public static boolean isLanguageSet(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(
-                context.getPackageName() + "_preferences", Context.MODE_PRIVATE);
-        return prefs.contains(PREF_LANGUAGE_CODE);
+        return context.getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE)
+                .contains(PREF_LANGUAGE_CODE);
     }
     
     /**
@@ -179,9 +182,12 @@ public class LanguageManager {
                             // Only apply the Firestore value if the language hasn't been
                             // changed locally since the request was initiated.
                             if (currentCode.equals(initialCode) && !currentCode.equals(languageCode)) {
-                                SharedPreferences prefs = context.getSharedPreferences(
-                                        context.getPackageName() + "_preferences", Context.MODE_PRIVATE);
-                                prefs.edit().putString(PREF_LANGUAGE_CODE, languageCode).apply();
+                                context.getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE)
+                                        .edit()
+                                        .putString(PREF_LANGUAGE_CODE, languageCode)
+                                        .apply();
+                                AppCompatDelegate.setApplicationLocales(
+                                        LocaleListCompat.forLanguageTags(languageCode));
                                 applyLanguage(context, languageCode);
                             }
                         }
