@@ -68,7 +68,9 @@ public class LanguageManager {
     public static void setLanguage(Context context, String languageCode) {
         // Save to SharedPreferences
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        prefs.edit().putString(PREF_LANGUAGE_CODE, languageCode).apply();
+        // Use commit() so that subsequent reads from other SharedPreferences instances
+        // (e.g. in MenuActivity.runHousekeeping) immediately observe the updated value.
+        prefs.edit().putString(PREF_LANGUAGE_CODE, languageCode).commit();
         
         // Save to Firestore if user is logged in
         String uid = FirebaseAuth.getInstance().getUid();
