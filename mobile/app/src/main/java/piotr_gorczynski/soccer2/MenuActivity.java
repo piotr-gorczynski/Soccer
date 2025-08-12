@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.content.SharedPreferences;
+import androidx.preference.PreferenceManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -167,7 +168,7 @@ public class MenuActivity extends BaseActivity {
     /* ───────────── misc tasks that must always run on launch ───────────── */
     private void runHousekeeping() {
         String uid = FirebaseAuth.getInstance().getUid();
-        SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if (uid == null) {
             Log.w(
                     "TAG_Soccer",
@@ -181,7 +182,9 @@ public class MenuActivity extends BaseActivity {
             SharedPreferences.Editor ed = prefs.edit();
             ed.clear();
             ed.putString("language_code", languageCode);
-            ed.apply();
+            // Use commit() so subsequent reads in newly created Activities
+            // observe the updated language immediately.
+            ed.commit();
             FirebaseMessaging.getInstance().deleteToken();
             FirebaseMessaging.getInstance().setAutoInitEnabled(false);
             FirebaseFirestore.getInstance()
