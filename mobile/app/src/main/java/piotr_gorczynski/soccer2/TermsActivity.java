@@ -1,6 +1,7 @@
 package piotr_gorczynski.soccer2;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.webkit.WebView;
 import android.widget.Toast;
@@ -21,7 +22,9 @@ public class TermsActivity extends BaseActivity {
 
         WebView webView = findViewById(R.id.termsWebView);
         String langCode = LanguageManager.getCurrentLanguageCode(this);
-        webView.loadUrl("https://piotr-gorczynski.com/terms-" + langCode + ".html");
+        String url = "https://piotr-gorczynski.com/terms-" + langCode + ".html";
+        Log.d("TermsActivity", "Loading terms from URL: " + url);
+        webView.loadUrl(url);
 
         Button acceptBtn = findViewById(R.id.acceptTerms);
         Button declineBtn = findViewById(R.id.declineTerms);
