@@ -196,8 +196,8 @@ public class BackendServiceChecker {
             return projectId;
         }
 
-        SharedPreferences prefs = context.getSharedPreferences(
-                context.getPackageName() + "_preferences", Context.MODE_PRIVATE);
+        SharedPreferences prefs =
+                context.getSharedPreferences(LanguageManager.PREFS_FILE, Context.MODE_PRIVATE);
 
         String storedId = prefs.getString("backend_project_id", null);
         if (storedId != null && !storedId.isEmpty()) {
@@ -229,8 +229,8 @@ public class BackendServiceChecker {
      * This could be enhanced to read from secure storage
      */
     private String getSecretKey() {
-        SharedPreferences prefs = context.getSharedPreferences(
-                context.getPackageName() + "_preferences", Context.MODE_PRIVATE);
+        SharedPreferences prefs =
+                context.getSharedPreferences(LanguageManager.PREFS_FILE, Context.MODE_PRIVATE);
 
         String raw = prefs.getString("backend_secret_key", null);
         if (raw != null) {
@@ -277,8 +277,8 @@ public class BackendServiceChecker {
      * Set the secret key for authentication
      */
     public void setSecretKey(String secretKey) {
-        SharedPreferences prefs = context.getSharedPreferences(
-                context.getPackageName() + "_preferences", Context.MODE_PRIVATE);
+        SharedPreferences prefs =
+                context.getSharedPreferences(LanguageManager.PREFS_FILE, Context.MODE_PRIVATE);
         String trimmed = secretKey != null ? secretKey.trim() : null;
         prefs.edit().putString("backend_secret_key", trimmed).apply();
         if (trimmed != null && !trimmed.equals(secretKey)) {

@@ -38,6 +38,8 @@ import com.google.android.ump.UserMessagingPlatform;
 import com.google.android.ump.ConsentForm;
 import com.google.android.ump.FormError;
 import androidx.preference.PreferenceManager;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.os.LocaleListCompat;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -83,6 +85,8 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     public void onCreate() {
         super.onCreate();
 
+        String code = LanguageManager.getCurrentLanguageCode(this);
+        AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(code));
         // Ensure the app uses the saved language before any UI is shown
         checkLanguagePreference();
 
@@ -156,8 +160,8 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
 
         FirebaseMessaging.getInstance().getToken()
                 .addOnSuccessListener(newToken -> {
-                    SharedPreferences prefs = getSharedPreferences(
-                            getPackageName() + "_preferences", MODE_PRIVATE);
+                    SharedPreferences prefs =
+                            getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
                     String saved = prefs.getString("fcmToken", null);
                     if (saved != null && saved.equals(newToken)) return;
 
@@ -400,7 +404,8 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
      * Configure default project ID if not already set
      */
     private void configureDefaultProjectId() {
-        SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
+        SharedPreferences prefs =
+                getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
 
         // Always attempt to read the project ID from google-services.json
         String firebaseProjectId = null;
