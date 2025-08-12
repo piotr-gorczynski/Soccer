@@ -14,7 +14,8 @@ import java.util.Map;
 
 public class LanguageManager {
     
-    private static final String TAG = "LanguageManager";
+    // Use the same tag throughout the app for consistent Logcat filtering
+    private static final String TAG = "TAG_Soccer";
     private static final String PREF_LANGUAGE_CODE = "language_code";
     
     // Language code to display name resource mapping

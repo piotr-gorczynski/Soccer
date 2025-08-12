@@ -131,7 +131,7 @@ public class GameActivity extends BaseActivity {
         @Override
         public void uncaughtException(Thread thread, Throwable throwable) {
             // 🔹 Your custom logic here (e.g., logging to file)
-            Log.e("ExceptionHandler", "Uncaught exception", throwable);
+            Log.e("TAG_Soccer", "Uncaught exception", throwable);
 
             // 🔹 Call the original handler (important!)
             if (existingHandler != null) {
