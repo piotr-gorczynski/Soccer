@@ -51,6 +51,7 @@
     <string name="reset_password_failed">Failed to send password reset email. Please try again.</string>
     <string name="nickname">Nickname</string>
     <string name="settings">Settings</string>
+    <string name="settings_title">Settings</string>
     <string name="enter_nickname_to_invite">Enter nickname to invite:</string>
     <string name="enter_nickname_to_search">Enter nickname to search:</string>
     <string name="friend_s_nickname">Friend\'s nickname</string>

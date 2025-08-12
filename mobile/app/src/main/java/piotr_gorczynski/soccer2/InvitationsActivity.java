@@ -131,7 +131,8 @@ public class InvitationsActivity extends BaseActivity {
                                 Toast.makeText(this, "Invite accepted! Starting game…",
                                         Toast.LENGTH_SHORT).show();
 
-                                SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
+                                SharedPreferences prefs =
+                                        getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
                                 String nickname = prefs.getString("nickname", "Player");
 
                                 // Start game with matchPath, GameType 3, and local player nickname

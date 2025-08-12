@@ -233,8 +233,39 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     }
 
     private void updateLanguagePreferenceSummary(Preference preference) {
-        String currentLanguage = LanguageManager.getCurrentLanguageName(requireContext());
-        String summary = getString(R.string.current_language, currentLanguage);
+        String code = LanguageManager.getCurrentLanguageCode(requireContext());
+        String label;
+        switch (code) {
+            case "pl":
+                label = getString(R.string.language_polish);
+                break;
+            case "de":
+                label = getString(R.string.language_german);
+                break;
+            case "fr":
+                label = getString(R.string.language_french);
+                break;
+            case "es":
+                label = getString(R.string.language_spanish);
+                break;
+            case "ur":
+                label = getString(R.string.language_urdu);
+                break;
+            case "bn":
+                label = getString(R.string.language_bengali);
+                break;
+            case "ne":
+                label = getString(R.string.language_nepali);
+                break;
+            case "hi":
+                label = getString(R.string.language_hindi);
+                break;
+            default:
+                label = getString(R.string.language_english);
+                break;
+        }
+
+        String summary = getString(R.string.current_language, label);
         preference.setSummary(summary);
         Log.d(
                 "TAG_Soccer",

@@ -115,7 +115,7 @@ public class PickNicknameActivity extends BaseActivity {
                     db.collection("users").document(uid)
                             .set(data, SetOptions.merge())
                             .addOnSuccessListener(v -> {
-                                getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE)
+                                getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
                                         .edit()
                                         .putString("nickname", nickname)
                                         .apply();

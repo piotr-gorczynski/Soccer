@@ -38,12 +38,11 @@ public class AccountActivity extends BaseActivity {
         Button logoutBtn = findViewById(R.id.btnLogout);
         Button removeAccountBtn = findViewById(R.id.btnRemoveAccount);
 
-        String prefsName = getPackageName() + "_preferences";
-        String nickname = getSharedPreferences(prefsName, MODE_PRIVATE)
+        String nickname = getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
                 .getString("nickname", "-");
-        String email = getSharedPreferences(prefsName, MODE_PRIVATE)
+        String email = getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
                 .getString("email", "-");
-        String method = getSharedPreferences(prefsName, MODE_PRIVATE)
+        String method = getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
                 .getString("method", "-");
 
         nickView.setText(getString(R.string.nickname_label, nickname));
@@ -72,8 +71,7 @@ public class AccountActivity extends BaseActivity {
     }
 
     private void finishLogoutUi() {
-        String prefsName = getPackageName() + "_preferences";
-        getSharedPreferences(prefsName, MODE_PRIVATE)
+        getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
                 .edit()
                 .remove("fcmToken") // ensure FCM token is wiped
                 .clear()
@@ -188,8 +186,7 @@ public class AccountActivity extends BaseActivity {
         FirebaseAuth.getInstance().signOut();
 
         // Clear local preferences
-        String prefsName = getPackageName() + "_preferences";
-        getSharedPreferences(prefsName, MODE_PRIVATE)
+        getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
                 .edit()
                 .clear()
                 .apply();
