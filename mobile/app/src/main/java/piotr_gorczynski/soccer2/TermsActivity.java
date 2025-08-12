@@ -20,7 +20,8 @@ public class TermsActivity extends BaseActivity {
         setContentView(R.layout.activity_terms);
 
         WebView webView = findViewById(R.id.termsWebView);
-        webView.loadUrl("https://piotr-gorczynski.com/terms.html");
+        String langCode = LanguageManager.getCurrentLanguageCode(this);
+        webView.loadUrl("https://piotr-gorczynski.com/terms-" + langCode + ".html");
 
         Button acceptBtn = findViewById(R.id.acceptTerms);
         Button declineBtn = findViewById(R.id.declineTerms);
