@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.util.Log;
-import androidx.preference.PreferenceManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.Locale;
@@ -50,7 +49,8 @@ public class LanguageManager {
      * Get the currently selected language code from preferences
      */
     public static String getCurrentLanguageCode(Context context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences prefs = context.getSharedPreferences(
+                context.getPackageName() + "_preferences", Context.MODE_PRIVATE);
         return prefs.getString(PREF_LANGUAGE_CODE, "en"); // Default to English
     }
     
@@ -68,7 +68,8 @@ public class LanguageManager {
      */
     public static void setLanguage(Context context, String languageCode) {
         // Save to SharedPreferences
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences prefs = context.getSharedPreferences(
+                context.getPackageName() + "_preferences", Context.MODE_PRIVATE);
         // Use commit() so that subsequent reads from other SharedPreferences instances
         // (e.g. in MenuActivity.runHousekeeping) immediately observe the updated value.
         prefs.edit().putString(PREF_LANGUAGE_CODE, languageCode).commit();
@@ -149,7 +150,8 @@ public class LanguageManager {
      * Check if language preference has been set
      */
     public static boolean isLanguageSet(Context context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences prefs = context.getSharedPreferences(
+                context.getPackageName() + "_preferences", Context.MODE_PRIVATE);
         return prefs.contains(PREF_LANGUAGE_CODE);
     }
     
@@ -177,7 +179,8 @@ public class LanguageManager {
                             // Only apply the Firestore value if the language hasn't been
                             // changed locally since the request was initiated.
                             if (currentCode.equals(initialCode) && !currentCode.equals(languageCode)) {
-                                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                                SharedPreferences prefs = context.getSharedPreferences(
+                                        context.getPackageName() + "_preferences", Context.MODE_PRIVATE);
                                 prefs.edit().putString(PREF_LANGUAGE_CODE, languageCode).apply();
                                 applyLanguage(context, languageCode);
                             }
