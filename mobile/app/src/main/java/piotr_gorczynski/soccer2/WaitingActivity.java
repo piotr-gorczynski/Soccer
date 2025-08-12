@@ -172,7 +172,8 @@ public class WaitingActivity extends BaseActivity {
     private void launchGame(String matchPath) {
         gameActivityLaunched = true;
 
-        SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
+        SharedPreferences prefs =
+                getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
         String nickname = prefs.getString("nickname", "Player");
 
         startActivity(new Intent(this, GameActivity.class)
@@ -201,7 +202,7 @@ public class WaitingActivity extends BaseActivity {
         Log.d("TAG_Soccer",
                 getClass().getSimpleName() + ".onDestroy: ❎ clearing activeInviteId");
         /* remove the marker so we don’t restore an invite that’s finished */
-        getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE)
+        getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
                 .edit()
                 .remove("activeInviteId")
                 .apply();

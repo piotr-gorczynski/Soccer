@@ -178,13 +178,7 @@ public class MenuActivity extends BaseActivity {
                             }.getClass().getEnclosingMethod()).getName()
                             + ": ⚠️ No logged-in user; clearing stored credentials"
             );
-            String languageCode = LanguageManager.getCurrentLanguageCode(this);
-            SharedPreferences.Editor ed = prefs.edit();
-            ed.clear();
-            ed.putString("language_code", languageCode);
-            // Use commit() so subsequent reads in newly created Activities
-            // observe the updated language immediately.
-            ed.commit();
+            prefs.edit().clear().commit();
             FirebaseMessaging.getInstance().deleteToken();
             FirebaseMessaging.getInstance().setAutoInitEnabled(false);
             FirebaseFirestore.getInstance()
@@ -280,8 +274,7 @@ public class MenuActivity extends BaseActivity {
 
         FirebaseAuth.getInstance().signOut();
 
-        String prefsName = getPackageName() + "_preferences";
-        getSharedPreferences(prefsName, MODE_PRIVATE)
+        getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
                 .edit()
                 .remove(PREF_FCM_TOKEN)
                 .clear()
@@ -342,7 +335,8 @@ public class MenuActivity extends BaseActivity {
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
 
-        SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
+        SharedPreferences prefs =
+                getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
         String nickname = prefs.getString("nickname", null);
         if (auth.getCurrentUser() == null) {
             prefs.edit().clear().apply();
@@ -451,7 +445,8 @@ public class MenuActivity extends BaseActivity {
     }
 
     private void checkForActiveMatch() {
-        SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
+        SharedPreferences prefs =
+                getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
         String uid = FirebaseAuth.getInstance().getUid();
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
         }.getClass().getEnclosingMethod()).getName() + ": Auth UID at match-lookup = " + uid);
@@ -574,7 +569,8 @@ public class MenuActivity extends BaseActivity {
     }
 
     private void showAdThenRun(Runnable action) {
-        SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
+        SharedPreferences prefs =
+                getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
 
         FirebaseFirestore.getInstance()
                 .collection("settings")

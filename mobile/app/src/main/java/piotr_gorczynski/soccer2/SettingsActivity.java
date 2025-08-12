@@ -17,9 +17,11 @@ public class SettingsActivity extends BaseActivity {
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        String title = getString(R.string.settings);
-        Objects.requireNonNull(getSupportActionBar()).setTitle(title);
-        Log.d("TAG_Soccer", getClass().getSimpleName() + ".onCreate: toolbar title set to " + title);
+        toolbar.setTitle(R.string.settings_title);
+        Log.d(
+                "TAG_Soccer",
+                getClass().getSimpleName() + ".onCreate: toolbar title set to " + getString(R.string.settings_title)
+        );
 
         getSupportFragmentManager()
                 .beginTransaction()

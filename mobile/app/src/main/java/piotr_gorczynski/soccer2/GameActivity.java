@@ -387,7 +387,7 @@ public class GameActivity extends BaseActivity {
 
 
         SharedPreferences sharedPreferences =
-                getSharedPreferences(getPackageName() + "_preferences", Context.MODE_PRIVATE);
+                getSharedPreferences(LanguageManager.PREFS_FILE, Context.MODE_PRIVATE);
 
         if (sharedPreferences.contains("android_level")) {
             androidLevel = Integer.parseInt(sharedPreferences.getString("android_level", "1"));

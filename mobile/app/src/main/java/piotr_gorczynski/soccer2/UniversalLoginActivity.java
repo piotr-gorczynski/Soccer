@@ -31,7 +31,8 @@ public class UniversalLoginActivity extends BaseActivity {
 
         authManager = new FirebaseAuthManager(this);
 
-        SharedPreferences prefs = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
+        SharedPreferences prefs =
+                getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
         storedNickname = prefs.getString("nickname", null);
 
         Button btnEmail = findViewById(R.id.btnUniversalEmail);
@@ -77,10 +78,8 @@ public class UniversalLoginActivity extends BaseActivity {
                                 ": onLoginSuccess"
                 );
 
-                SharedPreferences prefs = getSharedPreferences(
-                        getPackageName() + "_preferences",
-                        MODE_PRIVATE
-                );
+                SharedPreferences prefs =
+                        getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
 
                 String uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
 
