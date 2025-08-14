@@ -187,4 +187,19 @@
     <string name="field_move_ellipsis_tail">ist am Zug... ⏳ %1$s</string>
     <string name="field_waiting_for">Warte auf %1$s</string>
     <string name="field_to_start_tail">um zu starten... ⏳ %1$s</string>
+    <string name="enter_email_and_password">Bitte geben Sie sowohl E -Mail als auch Passwort ein</string>
+    <string name="login_success">Login erfolgreich!</string>
+    <string name="login_failed">Fehler bei der Anmeldung: %1$s</string>
+    <string name="enter_email_address">Bitte geben Sie Ihre E -Mail -Adresse ein</string>
+    <string name="all_fields_required">Alle Felder sind erforderlich</string>
+    <string name="passwords_do_not_match">Passwörter stimmen nicht überein</string>
+    <string name="registration_in_progress">Registrierungsversuch in Arbeit ...</string>
+    <string name="nickname_max_length_reached">Maximal 20 Zeichen erreicht</string>
+    <string name="nickname_required">Spitzname ist erforderlich</string>
+    <string name="nickname_too_long">Spitzname muss 20 Zeichen oder weniger betragen</string>
+    <string name="not_logged_in">Nicht angemeldet</string>
+    <string name="network_error_checking_nickname">Netzwerkfehler beim Überprüfen des Spitznamens</string>
+    <string name="nickname_taken">Spitzname bereits genommen - wählen Sie einen anderen</string>
+    <string name="nickname_saved">Spitzname gerettet</string>
+    <string name="nickname_save_failed">Spitzname nicht speichern</string>
 </resources>

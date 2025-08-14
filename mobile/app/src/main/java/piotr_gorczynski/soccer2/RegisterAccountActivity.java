@@ -29,7 +29,7 @@ public class RegisterAccountActivity extends BaseActivity {
         Toolbar toolbar = findViewById(R.id.register_toolbar);
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Register new account");
+        getSupportActionBar().setTitle(R.string.register_new_account);
 
         authManager = new FirebaseAuthManager(this);
 
@@ -47,18 +47,18 @@ public class RegisterAccountActivity extends BaseActivity {
         String confirmPassword = editConfirmPassword.getText().toString().trim();
 
         if (email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
-            Toast.makeText(this, "All fields are required", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.all_fields_required, Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (!password.equals(confirmPassword)) {
-            Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.passwords_do_not_match, Toast.LENGTH_SHORT).show();
             return;
         }
 
         authManager.registerUser(email, password);
         Toast.makeText(RegisterAccountActivity.this,
-                "Registration attempt in progress...",
+                R.string.registration_in_progress,
                 Toast.LENGTH_SHORT).show();
     }
 
