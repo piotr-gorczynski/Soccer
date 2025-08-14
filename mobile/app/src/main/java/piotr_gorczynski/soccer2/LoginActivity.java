@@ -27,7 +27,7 @@ public class LoginActivity extends BaseActivity {
         Toolbar toolbar = findViewById(R.id.login_toolbar);
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Login");
+        getSupportActionBar().setTitle(R.string.login);
 
         authManager = new FirebaseAuthManager(this);
 
@@ -41,19 +41,19 @@ public class LoginActivity extends BaseActivity {
             String email = editEmail.getText().toString().trim();
             String password = editPassword.getText().toString().trim();
             if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Please enter both email and password", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.enter_email_and_password, Toast.LENGTH_SHORT).show();
                 return;
             }
             authManager.loginUser(email, password, new FirebaseAuthManager.LoginCallback() {
                 @Override
                 public void onLoginSuccess() {
-                    Toast.makeText(LoginActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, R.string.login_success, Toast.LENGTH_SHORT).show();
                     finish(); // Closes LoginActivity and returns to MenuActivity
                 }
 
                 @Override
                 public void onLoginFailure(String message) {
-                    Toast.makeText(LoginActivity.this, "Login failed: " + message, Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoginActivity.this, getString(R.string.login_failed, message), Toast.LENGTH_LONG).show();
                 }
             });
         });
@@ -90,13 +90,13 @@ public class LoginActivity extends BaseActivity {
                 .setPositiveButton(getString(R.string.confirm), (dialog, which) -> {
                     String email = emailInput.getText().toString().trim();
                     if (email.isEmpty()) {
-                        Toast.makeText(this, "Please enter your email address", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, R.string.enter_email_address, Toast.LENGTH_SHORT).show();
                         return;
                     }
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".showResetPasswordDialog: Attempting password reset for email: " + email);
                     requestPasswordReset(email);
                 })
-                .setNegativeButton("Cancel", null)
+                .setNegativeButton(R.string.cancel, null)
                 .show();
     }
 

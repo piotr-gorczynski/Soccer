@@ -189,4 +189,19 @@
     <string name="field_move_ellipsis_tail">rusza... ⏳ %1$s</string>
     <string name="field_waiting_for">Czekanie na %1$s</string>
     <string name="field_to_start_tail">aby rozpocząć... ⏳ %1$s</string>
+    <string name="enter_email_and_password">Wprowadź zarówno e -mail, jak i hasło</string>
+    <string name="login_success">Zaloguj się sukces!</string>
+    <string name="login_failed">Logowanie nie powiodło się: %1$s</string>
+    <string name="enter_email_address">Wprowadź swój adres e -mail</string>
+    <string name="all_fields_required">Wszystkie pola są wymagane</string>
+    <string name="passwords_do_not_match">Hasła nie pasują</string>
+    <string name="registration_in_progress">Próba rejestracji w toku ...</string>
+    <string name="nickname_max_length_reached">Osiągnięte maksymalnie 20 znaków</string>
+    <string name="nickname_required">Wymagany jest pseudonim</string>
+    <string name="nickname_too_long">Pseudonim musi mieć 20 znaków lub mniej</string>
+    <string name="not_logged_in">Nie zalogowano</string>
+    <string name="network_error_checking_nickname">Błąd sieci podczas sprawdzania pseudonim</string>
+    <string name="nickname_taken">Pseudonim już zabrany - wybierz inny</string>
+    <string name="nickname_saved">Zapisany pseudonim</string>
+    <string name="nickname_save_failed">Nie udało się zapisać pseudonim</string>
 </resources>
