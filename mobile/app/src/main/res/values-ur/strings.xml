@@ -187,4 +187,19 @@
     <string name="field_move_ellipsis_tail">چلے... ⏳ %1$s</string>
     <string name="field_waiting_for">%1$s کا انتظار</string>
     <string name="field_to_start_tail">شروع کرنے کے لیے... ⏳ %1$s</string>
+    <string name="enter_email_and_password">براہ کرم ای میل اور پاس ورڈ دونوں درج کریں</string>
+    <string name="login_success">لاگ ان کامیاب!</string>
+    <string name="login_failed">لاگ ان ناکام: %1$s</string>
+    <string name="enter_email_address">براہ کرم اپنا ای میل ایڈریس درج کریں</string>
+    <string name="all_fields_required">تمام فیلڈز کی ضرورت ہے</string>
+    <string name="passwords_do_not_match">پاس ورڈ مماثل نہیں ہیں</string>
+    <string name="registration_in_progress">رجسٹریشن کی کوشش جاری ہے ...</string>
+    <string name="nickname_max_length_reached">زیادہ سے زیادہ 20 حرف پہنچ گئے</string>
+    <string name="nickname_required">عرفی نام کی ضرورت ہے</string>
+    <string name="nickname_too_long">عرفی نام 20 حروف یا اس سے کم ہونا چاہئے</string>
+    <string name="not_logged_in">لاگ ان نہیں</string>
+    <string name="network_error_checking_nickname">عرفی نام کی جانچ پڑتال کے دوران نیٹ ورک کی خرابی</string>
+    <string name="nickname_taken">پہلے سے لیا گیا عرفی نام - ایک اور کا انتخاب کریں</string>
+    <string name="nickname_saved">عرفی نام بچ گیا</string>
+    <string name="nickname_save_failed">عرفیت کو بچانے میں ناکام</string>
 </resources>

@@ -182,4 +182,19 @@
     <string name="field_move_ellipsis_tail">move... ⏳ %1$s</string>
     <string name="field_waiting_for">Waiting for %1$s</string>
     <string name="field_to_start_tail">to start... ⏳ %1$s</string>
+    <string name="enter_email_and_password">Please enter both email and password</string>
+    <string name="login_success">Login successful!</string>
+    <string name="login_failed">Login failed: %1$s</string>
+    <string name="enter_email_address">Please enter your email address</string>
+    <string name="all_fields_required">All fields are required</string>
+    <string name="passwords_do_not_match">Passwords do not match</string>
+    <string name="registration_in_progress">Registration attempt in progress...</string>
+    <string name="nickname_max_length_reached">Maximum 20 characters reached</string>
+    <string name="nickname_required">Nickname is required</string>
+    <string name="nickname_too_long">Nickname must be 20 characters or less</string>
+    <string name="not_logged_in">Not logged in</string>
+    <string name="network_error_checking_nickname">Network error while checking nickname</string>
+    <string name="nickname_taken">Nickname already taken — choose another</string>
+    <string name="nickname_saved">Nickname saved</string>
+    <string name="nickname_save_failed">Failed to save nickname</string>
 </resources>

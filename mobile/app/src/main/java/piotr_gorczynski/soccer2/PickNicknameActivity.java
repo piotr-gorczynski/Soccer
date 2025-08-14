@@ -46,13 +46,13 @@ public class PickNicknameActivity extends BaseActivity {
             @Override public void afterTextChanged(Editable s) {
                 int len = s.length();
                 editNickname.setHint(len + " / " + NICK_MAX);
-                if (len == NICK_MAX) {
-                    if (nickToast != null) nickToast.cancel();
-                    nickToast = Toast.makeText(PickNicknameActivity.this,
-                            "Maximum 20 characters reached",
-                            Toast.LENGTH_SHORT);
-                    nickToast.show();
-                } else if (len < NICK_MAX && nickToast != null) {
+                    if (len == NICK_MAX) {
+                      if (nickToast != null) nickToast.cancel();
+                      nickToast = Toast.makeText(PickNicknameActivity.this,
+                              R.string.nickname_max_length_reached,
+                              Toast.LENGTH_SHORT);
+                      nickToast.show();
+                  } else if (len < NICK_MAX && nickToast != null) {
                     nickToast.cancel();
                     nickToast = null;
                 }
@@ -71,17 +71,17 @@ public class PickNicknameActivity extends BaseActivity {
     private void saveNickname() {
         String nickname = editNickname.getText().toString().trim();
         if (nickname.isEmpty()) {
-            Toast.makeText(this, "Nickname is required", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.nickname_required, Toast.LENGTH_SHORT).show();
             return;
         }
         if (nickname.length() > NICK_MAX) {
-            Toast.makeText(this, "Nickname must be 20 characters or less", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.nickname_too_long, Toast.LENGTH_SHORT).show();
             return;
         }
 
         String uid = FirebaseAuth.getInstance().getUid();
         if (uid == null) {
-            Toast.makeText(this, "Not logged in", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.not_logged_in, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -95,17 +95,17 @@ public class PickNicknameActivity extends BaseActivity {
                     if (!task.isSuccessful()) {
                         btnConfirm.setEnabled(true);
                         Log.e("TAG_Soccer", "Nickname check failed", task.getException());
-                        Toast.makeText(PickNicknameActivity.this,
-                                "Network error while checking nickname",
-                                Toast.LENGTH_SHORT).show();
+                          Toast.makeText(PickNicknameActivity.this,
+                                  R.string.network_error_checking_nickname,
+                                  Toast.LENGTH_SHORT).show();
                         return;
                     }
                     if (!task.getResult().isEmpty()) {
                         btnConfirm.setEnabled(true);
                         Log.e("TAG_Soccer", "Nickname already exists: " + nickname);
-                        Toast.makeText(PickNicknameActivity.this,
-                                "Nickname already taken — choose another",
-                                Toast.LENGTH_SHORT).show();
+                          Toast.makeText(PickNicknameActivity.this,
+                                  R.string.nickname_taken,
+                                  Toast.LENGTH_SHORT).show();
                         return;
                     }
 
@@ -119,9 +119,9 @@ public class PickNicknameActivity extends BaseActivity {
                                         .edit()
                                         .putString("nickname", nickname)
                                         .apply();
-                                Toast.makeText(PickNicknameActivity.this,
-                                        "Nickname saved",
-                                        Toast.LENGTH_SHORT).show();
+                                  Toast.makeText(PickNicknameActivity.this,
+                                          R.string.nickname_saved,
+                                          Toast.LENGTH_SHORT).show();
                                 if (isTaskRoot()) {
                                     startActivity(new Intent(
                                             PickNicknameActivity.this,
@@ -131,9 +131,9 @@ public class PickNicknameActivity extends BaseActivity {
                             })
                             .addOnFailureListener(e -> {
                                 btnConfirm.setEnabled(true);
-                                Toast.makeText(PickNicknameActivity.this,
-                                        "Failed to save nickname",
-                                        Toast.LENGTH_SHORT).show();
+                                  Toast.makeText(PickNicknameActivity.this,
+                                          R.string.nickname_save_failed,
+                                          Toast.LENGTH_SHORT).show();
                             });
                 });
     }

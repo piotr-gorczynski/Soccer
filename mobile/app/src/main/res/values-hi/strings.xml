@@ -187,4 +187,19 @@
     <string name="field_move_ellipsis_tail">चाल... ⏳ %1$s</string>
     <string name="field_waiting_for">%1$s की प्रतीक्षा</string>
     <string name="field_to_start_tail">शुरू करने के लिए... ⏳ %1$s</string>
+    <string name="enter_email_and_password">कृपया ईमेल और पासवर्ड दोनों दर्ज करें</string>
+    <string name="login_success">लॉग इन सफल!</string>
+    <string name="login_failed">लॉगिन विफल: %1$s</string>
+    <string name="enter_email_address">कृपया अपना ईमेल एड्रेस इंटर करें</string>
+    <string name="all_fields_required">सभी फ़ील् आवश्यक हैं</string>
+    <string name="passwords_do_not_match">सांकेतिक शब्द मेल नहीं खाते</string>
+    <string name="registration_in_progress">पंजीकरण का प्रयास प्रगति में ...</string>
+    <string name="nickname_max_length_reached">अधिकतम 20 वर्ण पहुंचे</string>
+    <string name="nickname_required">उपनाम की आवश्यकता है</string>
+    <string name="nickname_too_long">उपनाम 20 अक्षर या उससे कम होना चाहिए</string>
+    <string name="not_logged_in">अंदर प्रवेश की अनुमति नहीं है</string>
+    <string name="network_error_checking_nickname">उपनाम की जाँच करते समय नेटवर्क त्रुटि</string>
+    <string name="nickname_taken">उपनाम पहले से ही लिया गया - एक और चुनें</string>
+    <string name="nickname_saved">उपनाम बचाया</string>
+    <string name="nickname_save_failed">उपनाम बचाने में विफल रहा</string>
 </resources>
