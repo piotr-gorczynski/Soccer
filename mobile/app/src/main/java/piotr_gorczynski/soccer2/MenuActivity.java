@@ -339,7 +339,11 @@ public class MenuActivity extends BaseActivity {
                 getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
         String nickname = prefs.getString("nickname", null);
         if (auth.getCurrentUser() == null) {
-            prefs.edit().clear().apply();
+            String lang = prefs.getString(LanguageManager.PREF_LANGUAGE_CODE, "en");
+            SharedPreferences.Editor ed = prefs.edit();
+            ed.clear();
+            ed.putString(LanguageManager.PREF_LANGUAGE_CODE, lang);
+            ed.commit();
 
             FirebaseMessaging.getInstance().deleteToken();
             FirebaseMessaging.getInstance().setAutoInitEnabled(false);
