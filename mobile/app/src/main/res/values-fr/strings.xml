@@ -187,4 +187,19 @@
     <string name="field_move_ellipsis_tail">joue... ⏳ %1$s</string>
     <string name="field_waiting_for">En attente de %1$s</string>
     <string name="field_to_start_tail">pour commencer... ⏳ %1$s</string>
+    <string name="enter_email_and_password">Veuillez saisir les e-mails et le mot de passe</string>
+    <string name="login_success">Connectez-vous réussi!</string>
+    <string name="login_failed">La connexion a échoué: %1$s</string>
+    <string name="enter_email_address">Veuillez saisir votre adresse e-mail</string>
+    <string name="all_fields_required">Tous les champs sont nécessaires</string>
+    <string name="passwords_do_not_match">Les mots de passe ne correspondent pas</string>
+    <string name="registration_in_progress">Tentative d'enregistrement en cours ...</string>
+    <string name="nickname_max_length_reached">Maximum 20 caractères atteints</string>
+    <string name="nickname_required">Un surnom est requis</string>
+    <string name="nickname_too_long">Le surnom doit être de 20 caractères ou moins</string>
+    <string name="not_logged_in">Pas connecté</string>
+    <string name="network_error_checking_nickname">Erreur de réseau lors de la vérification du surnom</string>
+    <string name="nickname_taken">Surnom déjà pris - choisissez un autre</string>
+    <string name="nickname_saved">Surnom enregistré</string>
+    <string name="nickname_save_failed">Échec de l'enregistrement du surnom</string>
 </resources>

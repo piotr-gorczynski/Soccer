@@ -187,4 +187,19 @@
     <string name="field_move_ellipsis_tail">চাল... ⏳ %1$s</string>
     <string name="field_waiting_for">%1$s-এর জন্য অপেক্ষা</string>
     <string name="field_to_start_tail">শুরু করার জন্য... ⏳ %1$s</string>
+    <string name="enter_email_and_password">ইমেল এবং পাসওয়ার্ড উভয়ই লিখুন</string>
+    <string name="login_success">লগইন সফল!</string>
+    <string name="login_failed">লগইন ব্যর্থ: %1$s</string>
+    <string name="enter_email_address">আপনার ইমেল ঠিকানা লিখুন দয়া করে</string>
+    <string name="all_fields_required">সমস্ত ক্ষেত্র প্রয়োজন</string>
+    <string name="passwords_do_not_match">পাসওয়ার্ড মেলে না</string>
+    <string name="registration_in_progress">অগ্রগতিতে নিবন্ধকরণের প্রচেষ্টা ...</string>
+    <string name="nickname_max_length_reached">সর্বোচ্চ 20 টি অক্ষর পৌঁছেছে</string>
+    <string name="nickname_required">ডাকনাম প্রয়োজন</string>
+    <string name="nickname_too_long">ডাকনাম অবশ্যই 20 টি অক্ষর বা তার চেয়ে কম হতে হবে</string>
+    <string name="not_logged_in">লগ ইন নেই</string>
+    <string name="network_error_checking_nickname">ডাকনাম পরীক্ষা করার সময় নেটওয়ার্ক ত্রুটি</string>
+    <string name="nickname_taken">ডাকনাম ইতিমধ্যে নেওয়া হয়েছে - অন্যটি বেছে নিন</string>
+    <string name="nickname_saved">ডাকনাম সংরক্ষণ</string>
+    <string name="nickname_save_failed">ডাকনাম সংরক্ষণ করতে ব্যর্থ</string>
 </resources>
