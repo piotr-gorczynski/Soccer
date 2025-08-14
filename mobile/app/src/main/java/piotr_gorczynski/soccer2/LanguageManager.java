@@ -22,7 +22,7 @@ public class LanguageManager {
     public static final String PREFS_FILE = "app_prefs";
 
     private static final String TAG = "LanguageManager";
-    private static final String PREF_LANGUAGE_CODE = "language_code";
+    public static final String PREF_LANGUAGE_CODE = "language_code";
     
     // Language code to display name resource mapping
     private static final Map<String, Integer> LANGUAGE_NAME_RES_IDS = new HashMap<>();
