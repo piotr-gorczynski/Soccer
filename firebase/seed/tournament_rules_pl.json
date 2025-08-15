@@ -1,0 +1,15 @@
+{
+  "rules": [
+    "Mecze są rozgrywane na siatce 6x8. ",
+    "Gracze przenoszą piłkę do jednego z ośmiu sąsiednich punktów. ",
+    "Uderzenie w granicę lub wcześniej odwiedzony punkt liczy się jako odbicie i zapewnia kolejny ruch do tego samego gracza.",
+    "Gol jest strzelony, gdy piłka wchodzi do bramki przeciwnika w górnej lub dolnej krawędzi. ",
+    "Każdy gracz ma 5-minutowy zegar szachowy. ",
+    "Jeśli telefon gracza odłączy się przed rozpoczęciem jego tury, backend automatycznie uruchomi swój zegar po minucie.",
+    "Pozostawienie meczu wcześnie przepadnie grę przeciwnikowi.",
+    "Turnieje działają w formacie Round-Robin. ",
+    "Stale mecze bez aktywności przez ponad pięć minut są automatycznie rozstrzygane na czas.",
+    "Turniej kończy się po osiągnięciu terminu."
+  ],
+  "updatedAt": "2025-07-21T00:00:00Z"
+}
