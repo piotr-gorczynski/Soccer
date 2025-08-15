@@ -69,10 +69,10 @@ public class InvitationsActivity extends BaseActivity {
             String inviteId = inviteIds.get(position);
 
             new AlertDialog.Builder(this)
-                    .setTitle("Accept Invitation")
-                    .setMessage("Do you want to accept this game invite?")
-                    .setPositiveButton("Accept", (dialog, which) -> acceptInvite(inviteId))
-                    .setNegativeButton("Cancel", null)
+                    .setTitle(R.string.accept_invitation_title)
+                    .setMessage(R.string.accept_invitation_message)
+                    .setPositiveButton(R.string.accept, (dialog, which) -> acceptInvite(inviteId))
+                    .setNegativeButton(R.string.cancel, null)
                     .show();
         });
 
@@ -90,14 +90,14 @@ public class InvitationsActivity extends BaseActivity {
 
         if (TextUtils.isEmpty(invitationId)) {
             Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": acceptInvite called with empty invitationId");
-            Toast.makeText(this, "Invitation not found.", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.invitation_not_found), Toast.LENGTH_LONG).show();
             return;
         }
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
             Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": User not signed-in");
-            Toast.makeText(this, "You must be logged in to accept invites.",
+            Toast.makeText(this, getString(R.string.must_log_in_to_accept_invites),
                     Toast.LENGTH_LONG).show();
             return;
         }
@@ -122,13 +122,13 @@ public class InvitationsActivity extends BaseActivity {
 
                                 if (TextUtils.isEmpty(matchPath)) {
                                     Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": matchPath missing in response: " + payload);
-                                    Toast.makeText(this, "Invalid response from server.",
+                                    Toast.makeText(this, getString(R.string.invalid_response_from_server),
                                             Toast.LENGTH_LONG).show();
                                     return;
                                 }
 
                                 Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": matchPath received: " + matchPath);
-                                Toast.makeText(this, "Invite accepted! Starting game…",
+                                Toast.makeText(this, getString(R.string.invite_accepted_starting_game),
                                         Toast.LENGTH_SHORT).show();
 
                                 SharedPreferences prefs =
@@ -144,7 +144,7 @@ public class InvitationsActivity extends BaseActivity {
 
                             // ───────── failure ─────────
                             .addOnFailureListener(e -> {
-                                String userMsg = "Could not accept invite.";
+                                String userMsg = getString(R.string.could_not_accept_invite);
 
                                 if (e instanceof FirebaseFunctionsException ffe) {
                                     Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": code=" + ffe.getCode()
@@ -153,13 +153,13 @@ public class InvitationsActivity extends BaseActivity {
 
                                     switch (ffe.getCode()) {
                                         /* sender withdrew the invite */
-                                        case PERMISSION_DENIED -> userMsg = "Invite was cancelled.";
+                                        case PERMISSION_DENIED -> userMsg = getString(R.string.invite_was_cancelled);
                                         /* logical failures coming back from CF */
                                         case FAILED_PRECONDITION ->
-                                                userMsg = "Invite is no longer available.";
+                                                userMsg = getString(R.string.invite_no_longer_available);
                                         /* time-out reached on the back-end */
-                                        case DEADLINE_EXCEEDED -> userMsg = "Invite has expired.";
-                                        default -> userMsg = "Invite is no longer available.";
+                                        case DEADLINE_EXCEEDED -> userMsg = getString(R.string.invite_has_expired);
+                                        default -> userMsg = getString(R.string.invite_no_longer_available);
                                     }
                                 }
 
@@ -180,7 +180,7 @@ public class InvitationsActivity extends BaseActivity {
                 })
                 .addOnFailureListener(e -> {
                     Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Token refresh failed", e);
-                    Toast.makeText(this, "Authentication error. Try logging in again.",
+                    Toast.makeText(this, getString(R.string.authentication_error_try_again),
                             Toast.LENGTH_LONG).show();
                 });
     }

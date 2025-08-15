@@ -265,7 +265,7 @@ public class GameActivity extends BaseActivity {
 
             if (matchPath == null || localNickname == null) {
                 Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Missing matchPath or localNickname");
-                Toast.makeText(this, "Game launch failed.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getString(R.string.game_launch_failed), Toast.LENGTH_LONG).show();
                 finish();
                 return;
             }
@@ -273,7 +273,7 @@ public class GameActivity extends BaseActivity {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if (user == null) {
                 Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": User not signed in");
-                Toast.makeText(this, "Please log in to continue.", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getString(R.string.please_log_in_to_continue), Toast.LENGTH_LONG).show();
                 finish();
                 return;
             }
@@ -291,7 +291,7 @@ public class GameActivity extends BaseActivity {
                 .addOnSuccessListener(doc -> {
                     if (!doc.exists()) {
                         Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Match not found: " + matchPath);
-                        Toast.makeText(this, "Match not found.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, getString(R.string.match_not_found), Toast.LENGTH_LONG).show();
                         finish();
                         return;
                     }
@@ -302,7 +302,7 @@ public class GameActivity extends BaseActivity {
 
                     if (player0Uid == null || player1Uid == null) {
                         Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": player0 or player1 field is missing");
-                        Toast.makeText(this, "Invalid match record.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, getString(R.string.invalid_match_record), Toast.LENGTH_LONG).show();
                         finish();
                         return;
                     }
@@ -371,13 +371,13 @@ public class GameActivity extends BaseActivity {
                             })
                             .addOnFailureListener(e -> {
                                 Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to load opponent info.", e);
-                                Toast.makeText(this, "Failed to load opponent.", Toast.LENGTH_LONG).show();
+                                Toast.makeText(this, getString(R.string.failed_to_load_opponent), Toast.LENGTH_LONG).show();
                                 finish();
                             });
                 })
                 .addOnFailureListener(e -> {
                     Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to load match", e);
-                    Toast.makeText(this, "Network error.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, getString(R.string.network_error), Toast.LENGTH_LONG).show();
                     finish();
                 });
 
@@ -403,10 +403,10 @@ public class GameActivity extends BaseActivity {
                 @Override
                 public void handleOnBackPressed() {
                     new AlertDialog.Builder(GameActivity.this)
-                            .setTitle("Leave game?")
-                            .setMessage("Are you sure you want to exit?")
-                            .setPositiveButton("Yes", (dialog, which) -> finish())
-                            .setNegativeButton("Cancel", null)
+                            .setTitle(R.string.leave_game_title)
+                            .setMessage(R.string.exit_confirm_message)
+                            .setPositiveButton(R.string.yes, (dialog, which) -> finish())
+                            .setNegativeButton(R.string.cancel, null)
                             .show();
                 }
             });
@@ -636,9 +636,9 @@ public class GameActivity extends BaseActivity {
             @Override
             public void handleOnBackPressed() {
                 new AlertDialog.Builder(GameActivity.this)
-                        .setTitle("Leave game?")
-                        .setMessage("Are you sure you want to exit? This will count as a forfeit.")
-                        .setPositiveButton("Yes", (dialog, which) -> {
+                        .setTitle(R.string.leave_game_title)
+                        .setMessage(R.string.exit_forfeit_message)
+                        .setPositiveButton(R.string.yes, (dialog, which) -> {
                             if (matchPath != null) {
                                 String loserUid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
                                 String winnerUid = loserUid.equals(player0Uid) ? player1Uid : player0Uid;
@@ -669,7 +669,7 @@ public class GameActivity extends BaseActivity {
 
                             finish();
                         })
-                        .setNegativeButton("Cancel", null)
+                        .setNegativeButton(R.string.cancel, null)
                         .show();
             }
         });
@@ -714,7 +714,7 @@ public class GameActivity extends BaseActivity {
     private void sendMoveToFirestore(int x, int y, int p) {
         // very first lines of sendMoveToFirestore(...)
         if (gameEnded) {
-            Toast.makeText(this, "Game is over.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.game_is_over), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -763,7 +763,7 @@ public class GameActivity extends BaseActivity {
                             .addOnFailureListener(err -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to update match")))*/
                     .addOnFailureListener(err -> {
                         Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to send move");
-                        Toast.makeText(this, "Failed to send move: "+err, LENGTH_SHORT).show();
+                        Toast.makeText(this, getString(R.string.failed_to_send_move, err), LENGTH_SHORT).show();
                     });
         } else {
             // Send the move
@@ -771,7 +771,7 @@ public class GameActivity extends BaseActivity {
                     .addOnSuccessListener(docRef -> Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Sent move (bouncing). x="+x+" y="+y+" p="+p))
                     .addOnFailureListener(err -> {
                         Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to send move");
-                        Toast.makeText(this, "Failed to send move: "+err, LENGTH_SHORT).show();
+                        Toast.makeText(this, getString(R.string.failed_to_send_move, err), LENGTH_SHORT).show();
                     });
         }
     }
@@ -828,16 +828,16 @@ public class GameActivity extends BaseActivity {
 
         switch (GameType) {
             case 2 -> {
-                sPlayer0 = "Player";
-                sPlayer1 = "Android";
+                sPlayer0 = getString(R.string.player_label);
+                sPlayer1 = getString(R.string.android_label);
             }
             case 3 -> {
-                sPlayer0 = player0Name != null ? player0Name : "Player 0";
-                sPlayer1 = player1Name != null ? player1Name : "Player 1";
+                sPlayer0 = player0Name != null ? player0Name : getString(R.string.player_with_number, 0);
+                sPlayer1 = player1Name != null ? player1Name : getString(R.string.player_with_number, 1);
             }
             default -> { //case 1 :-)
-                sPlayer0 = "Player 1";
-                sPlayer1 = "Player 2";
+                sPlayer0 = getString(R.string.player_with_number, 1);
+                sPlayer1 = getString(R.string.player_with_number, 2);
             }
         }
 
@@ -847,7 +847,7 @@ public class GameActivity extends BaseActivity {
 
             if(matchPath == null) {
                 Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to load match reason");
-                Toast.makeText(this, "Fatal error matchPath == null", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getString(R.string.fatal_error_matchpath_null), Toast.LENGTH_LONG).show();
                 throw new IllegalStateException("Fatal error matchPath == null");
             }
             FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -885,15 +885,15 @@ public class GameActivity extends BaseActivity {
                                 String reason = doc.getString("reason");
                                 String msg="";
                                 if ("timeout".equals(reason)) {
-                                    msg = sLooser + " ran out of time. ";
+                                    msg = getString(R.string.winner_timeout, sLooser);
                                 } else if ("abandon".equals(reason)) {
-                                    msg= sLooser + " forfeited the game. ";
+                                    msg = getString(R.string.winner_abandon, sLooser);
                                 }
 
-                                msg=msg+"The winner is " + sWinner+"!";
+                                msg += getString(R.string.winner_is, sWinner);
                                 builder.setMessage(msg);
 
-                                builder.setPositiveButton("Close", (dialog, which) -> finish());
+                                builder.setPositiveButton(R.string.close, (dialog, which) -> finish());
                                 // make sure we’re still alive
                                 if (!isFinishing() && !isDestroyed()) {
                                     dialogWinner = builder.create();
@@ -906,7 +906,7 @@ public class GameActivity extends BaseActivity {
                             })
                     .addOnFailureListener(err -> {
                         Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to load match reason", err);
-                        Toast.makeText(this, "Failed to load match.", Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, getString(R.string.failed_to_load_match), Toast.LENGTH_LONG).show();
                         // make sure we’re still alive, on the UI thread
                         /*runOnUiThread(() -> {
                             if (!isFinishing() && !isDestroyed()) {
@@ -921,8 +921,8 @@ public class GameActivity extends BaseActivity {
         }
 
         // GameType 1 or 2 fallback
-        builder.setMessage("The winner is " + (Winner == 0 ? sPlayer0 : sPlayer1));
-        builder.setPositiveButton("Close", (dialog, which) -> finish());
+        builder.setMessage(getString(R.string.winner_is, (Winner == 0 ? sPlayer0 : sPlayer1)));
+        builder.setPositiveButton(R.string.close, (dialog, which) -> finish());
         dialogWinner = builder.create();
         dialogWinner.show();
     }

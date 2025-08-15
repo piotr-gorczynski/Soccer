@@ -197,4 +197,52 @@
     <string name="nickname_taken">Nickname already taken — choose another</string>
     <string name="nickname_saved">Nickname saved</string>
     <string name="nickname_save_failed">Failed to save nickname</string>
+
+    <string name="game_launch_failed">Game launch failed.</string>
+    <string name="please_log_in_to_continue">Please log in to continue.</string>
+    <string name="match_not_found">Match not found.</string>
+    <string name="invalid_match_record">Invalid match record.</string>
+    <string name="failed_to_load_opponent">Failed to load opponent.</string>
+    <string name="network_error">Network error.</string>
+    <string name="game_is_over">Game is over.</string>
+    <string name="failed_to_send_move">Failed to send move: %1$s</string>
+    <string name="fatal_error_matchpath_null">Fatal error matchPath == null</string>
+    <string name="failed_to_load_match">Failed to load match.</string>
+    <string name="invitation_not_found">Invitation not found.</string>
+    <string name="must_log_in_to_accept_invites">You must be logged in to accept invites.</string>
+    <string name="invalid_response_from_server">Invalid response from server.</string>
+    <string name="invite_accepted_starting_game">Invite accepted! Starting game…</string>
+    <string name="authentication_error_try_again">Authentication error. Try logging in again.</string>
+    <string name="registered_as">Registered as: %1$s</string>
+    <string name="tournament_not_found">Tournament not found.</string>
+    <string name="must_be_logged_in">You must be logged in.</string>
+    <string name="joined_wait_for_bracket">Joined! Wait for the bracket to start.</string>
+    <string name="accept_invitation_title">Accept Invitation</string>
+    <string name="accept_invitation_message">Do you want to accept this game invite?</string>
+    <string name="leave_game_title">Leave game?</string>
+    <string name="exit_confirm_message">Are you sure you want to exit?</string>
+    <string name="exit_forfeit_message">Are you sure you want to exit? This will count as a forfeit.</string>
+    <string name="close">Close</string>
+    <string name="ok">OK</string>
+    <string name="verification_email_sent">Verification Email Sent</string>
+    <string name="check_email_to_verify">Please check your email to verify your account.</string>
+    <string name="email_verification_failed">Email Verification Failed</string>
+    <string name="could_not_send_verification_email">Could not send verification email: %1$s</string>
+    <string name="registration_failed_title">Registration Failed</string>
+    <string name="player_label">Player</string>
+    <string name="android_label">Android</string>
+    <string name="player_with_number">Player %1$d</string>
+    <string name="winner_timeout">%1$s ran out of time. </string>
+    <string name="winner_abandon">%1$s forfeited the game. </string>
+    <string name="winner_is">The winner is %1$s!</string>
+
+    <string name="could_not_accept_invite">Could not accept invite.</string>
+    <string name="invite_was_cancelled">Invite was cancelled.</string>
+    <string name="invite_no_longer_available">Invite is no longer available.</string>
+    <string name="invite_has_expired">Invite has expired.</string>
+
+    <string name="please_verify_email_before_login">Please verify your email address before logging in.</string>
+    <string name="authentication_failed">Authentication failed.</string>
+
+    <string name="could_not_cancel_invite">Could not cancel invite: %1$s</string>
 </resources>
