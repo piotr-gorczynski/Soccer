@@ -1,0 +1,15 @@
+{
+  "rules": [
+    "Spiele werden auf einem 6x8 -Raster gespielt. ",
+    "Die Spieler bewegen den Ball zu einem der acht benachbarten Punkte. ",
+    "Das Schlagen einer Grenze oder einem zuvor besuchten Punkt zählt als Sprung und gewährt einen weiteren Wechsel zum selben Spieler.",
+    "Ein Tor wird erzielt, wenn der Ball in das Tor des Gegners an der oberen oder unteren Kante gelangt. ",
+    "Jeder Spieler hat eine 5-minütige Schachuhr. ",
+    "Wenn das Telefon eines Spielers vor Beginn seines Kurses abbricht, startet das Backend seine Uhr nach einer Minute automatisch.",
+    "Das Spiel verlässt das Spiel dem Gegner.",
+    "Turniere laufen in einem Round-Robin-Format. ",
+    "Abgestandene Spiele ohne Aktivität über fünf Minuten werden automatisch pünktlich entschieden.",
+    "Das Turnier endet, wenn die Frist erreicht ist."
+  ],
+  "updatedAt": "2025-07-21T00:00:00Z"
+}

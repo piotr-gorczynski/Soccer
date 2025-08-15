@@ -15,9 +15,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.FirebaseFunctionsException;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -65,30 +63,31 @@ public class RegulationActivity extends BaseActivity {
                                     Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
                                     ": document found");
                             nameTv.setText(doc.getString("name"));
-                            String bodyJson = doc.getString("body");
-                            if (bodyJson != null) {
-                                try {
-                                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                                            Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
-                                            ": parsing body JSON");
-                                    JSONObject obj = new JSONObject(bodyJson);
-                                    JSONArray rules = obj.optJSONArray("rules");
-                                    if (rules != null) {
-                                        StringBuilder sb = new StringBuilder();
-                                        for (int i = 0; i < rules.length(); i++) {
-                                            sb.append("• ").append(rules.getString(i)).append("\n\n");
+
+                            String langCode = LanguageManager.getCurrentLanguageCode(this);
+                            doc.getReference().collection(langCode).document("rules").get()
+                                    .addOnSuccessListener(ruleDoc -> {
+                                        if (ruleDoc.exists()) {
+                                            List<?> rules = (List<?>) ruleDoc.get("rules");
+                                            if (rules != null) {
+                                                StringBuilder sb = new StringBuilder();
+                                                for (Object r : rules) {
+                                                    sb.append("• ").append(r.toString()).append("\n\n");
+                                                }
+                                                bodyTv.setText(sb.toString().trim());
+                                            } else {
+                                                bodyTv.setText(R.string.regulation_not_found);
+                                            }
+                                        } else {
+                                            bodyTv.setText(R.string.regulation_not_found);
                                         }
-                                        bodyTv.setText(sb.toString().trim());
-                                    } else {
-                                        bodyTv.setText(bodyJson);
-                                    }
-                                } catch (Exception e) {
-                                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
-                                            Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
-                                            ": JSON parse error", e);
-                                    bodyTv.setText(bodyJson);
-                                }
-                            }
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
+                                                Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                                                ": Failed to load regulation", e);
+                                        Toast.makeText(this, R.string.regulation_load_error, Toast.LENGTH_LONG).show();
+                                    });
                         } else {
                             Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
                                     Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
