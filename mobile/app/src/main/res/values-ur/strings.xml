@@ -202,4 +202,52 @@
     <string name="nickname_taken">پہلے سے لیا گیا عرفی نام - ایک اور کا انتخاب کریں</string>
     <string name="nickname_saved">عرفی نام بچ گیا</string>
     <string name="nickname_save_failed">عرفیت کو بچانے میں ناکام</string>
+
+    <string name="game_launch_failed">گیم لانچ ناکام ہوگیا۔</string>
+    <string name="please_log_in_to_continue">براہ کرم جاری رکھنے کے لئے لاگ ان کریں۔</string>
+    <string name="match_not_found">میچ نہیں ملا۔</string>
+    <string name="invalid_match_record">غلط میچ ریکارڈ۔</string>
+    <string name="failed_to_load_opponent">حریف کو لوڈ کرنے میں ناکام۔</string>
+    <string name="network_error">نیٹ ورک کی خرابی۔</string>
+    <string name="game_is_over">کھیل ختم ہوچکا ہے۔</string>
+    <string name="failed_to_send_move">اقدام بھیجنے میں ناکام: %1$s</string>
+    <string name="fatal_error_matchpath_null">مہلک غلطی میچ پاتھ == null</string>
+    <string name="failed_to_load_match">میچ لوڈ کرنے میں ناکام۔</string>
+    <string name="invitation_not_found">دعوت نہیں ملی۔</string>
+    <string name="must_log_in_to_accept_invites">دعوت ناموں کو قبول کرنے کے ل You آپ کو لاگ ان ہونا ضروری ہے۔</string>
+    <string name="invalid_response_from_server">سرور سے غلط جواب۔</string>
+    <string name="invite_accepted_starting_game">دعوت نامہ قبول کیا! </string>
+    <string name="authentication_error_try_again">توثیق کی غلطی. </string>
+    <string name="registered_as">رجسٹرڈ AS: %1$s</string>
+    <string name="tournament_not_found">ٹورنامنٹ نہیں ملا۔</string>
+    <string name="must_be_logged_in">آپ کو لاگ ان ہونا چاہئے۔</string>
+    <string name="joined_wait_for_bracket">شامل ہوئے! </string>
+    <string name="accept_invitation_title">دعوت قبول کریں</string>
+    <string name="accept_invitation_message">کیا آپ اس کھیل کو مدعو کرنا چاہتے ہیں؟</string>
+    <string name="leave_game_title">کھیل چھوڑ دو؟</string>
+    <string name="exit_confirm_message">کیا آپ واقعی باہر نکلنا چاہتے ہیں؟</string>
+    <string name="exit_forfeit_message">کیا آپ واقعی باہر نکلنا چاہتے ہیں؟ </string>
+    <string name="close">بند کریں</string>
+    <string name="ok">ٹھیک ہے</string>
+    <string name="verification_email_sent">توثیق ای میل بھیجا گیا</string>
+    <string name="check_email_to_verify">براہ کرم اپنے اکاؤنٹ کی توثیق کرنے کے لئے اپنا ای میل چیک کریں۔</string>
+    <string name="email_verification_failed">ای میل کی توثیق ناکام ہوگئی</string>
+    <string name="could_not_send_verification_email">توثیق ای میل نہیں بھیج سکا: %1$s</string>
+    <string name="registration_failed_title">رجسٹریشن ناکام ہوگئی</string>
+    <string name="player_label">پلیئر</string>
+    <string name="android_label">android</string>
+    <string name="player_with_number">پلیئر %1$d</string>
+    <string name="winner_timeout">٪ 1 $ وقت ختم ہوا۔</string>
+    <string name="winner_abandon">%1$s نے کھیل کو ضبط کیا۔</string>
+    <string name="winner_is">فاتح %1$s ہے!</string>
+
+    <string name="could_not_accept_invite">دعوت نامہ قبول نہیں کرسکا۔</string>
+    <string name="invite_was_cancelled">دعوت نامہ منسوخ کردیا گیا تھا۔</string>
+    <string name="invite_no_longer_available">دعوت نامہ اب دستیاب نہیں ہے۔</string>
+    <string name="invite_has_expired">دعوت نامے کی میعاد ختم ہوگئی ہے۔</string>
+
+    <string name="please_verify_email_before_login">براہ کرم لاگ ان کرنے سے پہلے اپنے ای میل ایڈریس کی تصدیق کریں۔</string>
+    <string name="authentication_failed">تصدیق ناکام ہوگئی۔</string>
+
+    <string name="could_not_cancel_invite">دعوت نامہ منسوخ نہیں کرسکا: %1$s</string>
 </resources>
