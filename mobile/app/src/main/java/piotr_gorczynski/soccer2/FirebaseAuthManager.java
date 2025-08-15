@@ -198,12 +198,12 @@ public class FirebaseAuthManager {
                                 Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
                                 }.getClass().getEnclosingMethod()).getName() + ": Email is NOT verified, signing out...");
                                 firebaseAuth.signOut();
-                                callback.onLoginFailure("Please verify your email address before logging in.");
+                                callback.onLoginFailure(context.getString(R.string.please_verify_email_before_login));
                             }
                         } else {
                             Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
                             }.getClass().getEnclosingMethod()).getName() + ": firebaseAuth.getCurrentUser() is NULL after signIn!");
-                            callback.onLoginFailure("Authentication failed.");
+                            callback.onLoginFailure(context.getString(R.string.authentication_failed));
                         }
                     } else {
                         callback.onLoginFailure(Objects.requireNonNull(task.getException()).getMessage());
@@ -218,7 +218,7 @@ public class FirebaseAuthManager {
                     if (task.isSuccessful()) {
                         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
                         }.getClass().getEnclosingMethod()).getName() + ": User registered: " + Objects.requireNonNull(firebaseAuth.getCurrentUser()).getEmail());
-                        Toast.makeText(context, "Registered as: " + firebaseAuth.getCurrentUser().getEmail(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, context.getString(R.string.registered_as, firebaseAuth.getCurrentUser().getEmail()), Toast.LENGTH_SHORT).show();
 
                         ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
                         // Store basic user data in Firestore
@@ -244,9 +244,9 @@ public class FirebaseAuthManager {
                                 .addOnCompleteListener(verifyTask -> {
                                     if (verifyTask.isSuccessful()) {
                                         new AlertDialog.Builder(context)
-                                                .setTitle("Verification Email Sent")
-                                                .setMessage("Please check your email to verify your account.")
-                                                .setPositiveButton("OK", (dialog, which) -> {
+                                                .setTitle(R.string.verification_email_sent)
+                                                .setMessage(R.string.check_email_to_verify)
+                                                .setPositiveButton(R.string.ok, (dialog, which) -> {
                                                     // Close the current activity
                                                     firebaseAuth.signOut();
                                                     ((Activity) context).finish();
@@ -257,9 +257,9 @@ public class FirebaseAuthManager {
                                                 ? verifyTask.getException().getMessage()
                                                 : "Unknown error";
                                         new AlertDialog.Builder(context)
-                                                .setTitle("Email Verification Failed")
-                                                .setMessage("Could not send verification email: " + error)
-                                                .setPositiveButton("OK", null)
+                                                .setTitle(R.string.email_verification_failed)
+                                                .setMessage(getString(R.string.could_not_send_verification_email, error))
+                                                .setPositiveButton(R.string.ok, null)
                                                 .show();
                                     }
                                 });
@@ -269,9 +269,9 @@ public class FirebaseAuthManager {
                         Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
                         }.getClass().getEnclosingMethod()).getName() + ": Registration failed: " + errorMsg);
                         new AlertDialog.Builder(context)
-                                .setTitle("Registration Failed")
+                                .setTitle(R.string.registration_failed_title)
                                 .setMessage(errorMsg)
-                                .setPositiveButton("OK", null)
+                                .setPositiveButton(R.string.ok, null)
                                 .show();
                     }
                 });

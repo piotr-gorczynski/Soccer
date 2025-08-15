@@ -204,4 +204,52 @@
     <string name="nickname_taken">Pseudonim już zabrany - wybierz inny</string>
     <string name="nickname_saved">Zapisany pseudonim</string>
     <string name="nickname_save_failed">Nie udało się zapisać pseudonim</string>
+
+    <string name="game_launch_failed">Uruchomienie gry nie powiodło się.</string>
+    <string name="please_log_in_to_continue">Zaloguj się, aby kontynuować.</string>
+    <string name="match_not_found">Mecz nie został znaleziony.</string>
+    <string name="invalid_match_record">Nieprawidłowy rekord meczu.</string>
+    <string name="failed_to_load_opponent">Nie udało się załadować przeciwnika.</string>
+    <string name="network_error">Błąd sieci.</string>
+    <string name="game_is_over">Gra się skończyła.</string>
+    <string name="failed_to_send_move">Nie udało się wysłać ruchu: %1$s</string>
+    <string name="fatal_error_matchpath_null">Błąd fatalny MatchPath == NULL</string>
+    <string name="failed_to_load_match">Nie udało się załadować dopasowania.</string>
+    <string name="invitation_not_found">Nie znaleziono zaproszenia.</string>
+    <string name="must_log_in_to_accept_invites">Musisz zostać zalogowany, aby zaakceptować zaproszenia.</string>
+    <string name="invalid_response_from_server">Niepoprawna odpowiedź z serwera.</string>
+    <string name="invite_accepted_starting_game">Zaproś zaakceptowane! </string>
+    <string name="authentication_error_try_again">Błąd uwierzytelnienia. </string>
+    <string name="registered_as">Zarejestrowany jako: %1$s</string>
+    <string name="tournament_not_found">Nie znaleziono turnieju.</string>
+    <string name="must_be_logged_in">Musisz zostać zalogowany.</string>
+    <string name="joined_wait_for_bracket">Dołączył! </string>
+    <string name="accept_invitation_title">Zaakceptuj zaproszenie</string>
+    <string name="accept_invitation_message">Chcesz zaakceptować tę grę zaproszoną?</string>
+    <string name="leave_game_title">Opuścić grę?</string>
+    <string name="exit_confirm_message">Czy na pewno chcesz wyjść?</string>
+    <string name="exit_forfeit_message">Czy na pewno chcesz wyjść? </string>
+    <string name="close">Zamknąć</string>
+    <string name="ok">OK</string>
+    <string name="verification_email_sent">Wysłany e -mail weryfikacyjny</string>
+    <string name="check_email_to_verify">Sprawdź swój e -mail, aby zweryfikować swoje konto.</string>
+    <string name="email_verification_failed">Weryfikacja e -maila nie powiodła się</string>
+    <string name="could_not_send_verification_email">Nie można wysłać weryfikacji e -mail: %1$s</string>
+    <string name="registration_failed_title">Rejestracja nie powiodła się</string>
+    <string name="player_label">Odtwarzacz</string>
+    <string name="android_label">Android</string>
+    <string name="player_with_number">Gracz %1$d.</string>
+    <string name="winner_timeout">%1$s zabrakło czasu.</string>
+    <string name="winner_abandon">%1$s przepadło grę.</string>
+    <string name="winner_is">Zwycięzcą jest %1$s!</string>
+
+    <string name="could_not_accept_invite">Nie można zaakceptować zaproszenia.</string>
+    <string name="invite_was_cancelled">Zaproszenie zostało anulowane.</string>
+    <string name="invite_no_longer_available">Zaproszenie nie jest już dostępne.</string>
+    <string name="invite_has_expired">Zaproszenie wygasło.</string>
+
+    <string name="please_verify_email_before_login">Przed zalogowaniem się zweryfikuj swój adres e -mail.</string>
+    <string name="authentication_failed">Uwierzytelnianie nie powiodło się.</string>
+
+    <string name="could_not_cancel_invite">Nie można anulować Zaproś: %1$s</string>
 </resources>

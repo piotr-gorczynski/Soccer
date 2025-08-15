@@ -96,7 +96,7 @@ public class UniversalLoginActivity extends BaseActivity {
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(intent);
                             }
-                            Toast.makeText(UniversalLoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(UniversalLoginActivity.this, getString(R.string.login_success), Toast.LENGTH_SHORT).show();
                             finish();
                         })
                         .addOnFailureListener(e -> {
@@ -111,7 +111,7 @@ public class UniversalLoginActivity extends BaseActivity {
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(intent);
                             }
-                            Toast.makeText(UniversalLoginActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(UniversalLoginActivity.this, getString(R.string.login_success), Toast.LENGTH_SHORT).show();
                             finish();
                         });
             }
@@ -121,7 +121,7 @@ public class UniversalLoginActivity extends BaseActivity {
                 Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
                         Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
                         ": onLoginFailure: " + message);
-                Toast.makeText(UniversalLoginActivity.this, "Login failed: " + message, Toast.LENGTH_LONG).show();
+                Toast.makeText(UniversalLoginActivity.this, getString(R.string.login_failed, message), Toast.LENGTH_LONG).show();
             }
         });
     }

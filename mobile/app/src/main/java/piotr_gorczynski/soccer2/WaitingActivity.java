@@ -174,7 +174,7 @@ public class WaitingActivity extends BaseActivity {
 
         SharedPreferences prefs =
                 getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
-        String nickname = prefs.getString("nickname", "Player");
+        String nickname = prefs.getString("nickname", getString(R.string.player_label));
 
         startActivity(new Intent(this, GameActivity.class)
                 .putExtra("matchPath",   matchPath)   // 👈 unified key
@@ -243,7 +243,7 @@ public class WaitingActivity extends BaseActivity {
                     Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {}.getClass().getEnclosingMethod()).getName()
                             + ": cancelInvite failed", e);
                     Toast.makeText(this,
-                            "Could not cancel invite: " + e.getMessage(),
+                            getString(R.string.could_not_cancel_invite, e.getMessage()),
                             Toast.LENGTH_LONG).show();
                     finish();
                 });
