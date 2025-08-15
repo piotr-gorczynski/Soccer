@@ -1,0 +1,15 @@
+{
+  "rules": [
+    "Los partidos se juegan en una cuadrícula de 6x8. ",
+    "Los jugadores mueven la pelota a cualquiera de los ocho puntos adyacentes. ",
+    "Golpear una frontera o un punto visitado previamente cuenta como un rebote y otorga otro movimiento al mismo jugador.",
+    "Se anota un gol cuando la pelota ingresa a la meta del oponente en el borde superior o inferior. ",
+    "Cada jugador tiene un reloj de ajedrez de 5 minutos. ",
+    "Si el teléfono de un jugador se desconecta antes de que comience su turno, el backend iniciará automáticamente su reloj después de un minuto.",
+    "Dejando el partido temprano pierde el juego al oponente.",
+    "Los torneos corren en formato de round-robin. ",
+    "Las coincidencias obsoletas sin actividad durante más de cinco minutos se deciden automáticamente a tiempo.",
+    "El torneo termina cuando se alcanza la fecha límite."
+  ],
+  "updatedAt": "2025-07-21T00:00:00Z"
+}
