@@ -202,4 +202,52 @@
     <string name="nickname_taken">उपनाम पहिले नै लिइएको छ - अर्को छनौट गर्नुहोस्</string>
     <string name="nickname_saved">उपनाम बचत भयो</string>
     <string name="nickname_save_failed">उपनाम बचत गर्न असफल भयो</string>
+
+    <string name="game_launch_failed">खेल सुरुवात असफल भयो।</string>
+    <string name="please_log_in_to_continue">जारी राख्न कृपया लग इन गर्नुहोस्।</string>
+    <string name="match_not_found">मेल भेटिएन।</string>
+    <string name="invalid_match_record">अवैध खेल रेकर्ड।</string>
+    <string name="failed_to_load_opponent">विपक्षी लोड गर्न असफल भयो।</string>
+    <string name="network_error">नेटवर्क त्रुटि</string>
+    <string name="game_is_over">खेल सकियो।</string>
+    <string name="failed_to_send_move">सार्नुहोस् पठाउन असफल:%1$s</string>
+    <string name="fatal_error_matchpath_null">घातक त्रुटि म्याचपाथ == nulul</string>
+    <string name="failed_to_load_match">म्याच लोड गर्न असफल भयो।</string>
+    <string name="invitation_not_found">निम्तो भेटिएन।</string>
+    <string name="must_log_in_to_accept_invites">आमन्त्रित स्वीकार्न तपाईं लग इन गर्नुपर्नेछ।</string>
+    <string name="invalid_response_from_server">सर्भरबाट अवैध प्रतिक्रिया।</string>
+    <string name="invite_accepted_starting_game">स्वीकार स्वीकार गरियो! </string>
+    <string name="authentication_error_try_again">प्रमाणीकरण त्रुटि। </string>
+    <string name="registered_as">को रूपमा दर्ता गरियो:% $ s</string>
+    <string name="tournament_not_found">टूर्नामेन्ट फेला परेन।</string>
+    <string name="must_be_logged_in">तपाईं लग इन हुनु पर्छ।</string>
+    <string name="joined_wait_for_bracket">सामेल भए! </string>
+    <string name="accept_invitation_title">निमन्त्रणा स्वीकार्नु</string>
+    <string name="accept_invitation_message">के तपाईं यो खेल आमन्त्रित स्वीकार गर्न चाहानुहुन्छ?</string>
+    <string name="leave_game_title">खेल छोड्नुहोस्?</string>
+    <string name="exit_confirm_message">के तपाईं निश्चित रूपमा बाहिर निस्कन चाहनुहुन्छ?</string>
+    <string name="exit_forfeit_message">के तपाईं निश्चित रूपमा बाहिर निस्कन चाहनुहुन्छ? </string>
+    <string name="close">घनिष्ट</string>
+    <string name="ok">ठिक छ</string>
+    <string name="verification_email_sent">प्रमाणिकरण ईमेल पठाईयो</string>
+    <string name="check_email_to_verify">कृपया तपाईंको खाता जाँच गर्नुहोस् तपाईंको खाता प्रमाणित गर्न।</string>
+    <string name="email_verification_failed">ईमेल प्रमाणीकरण असफल भयो</string>
+    <string name="could_not_send_verification_email">प्रमाणिकरण ईमेल पठाउन सकेन:%1$s</string>
+    <string name="registration_failed_title">दर्ता असफल भयो</string>
+    <string name="player_label">खेलाडी</string>
+    <string name="android_label">एन्ड्रोइड</string>
+    <string name="player_with_number">खेलाडी%1$d</string>
+    <string name="winner_timeout">% 1 $ एस समय सकियो।</string>
+    <string name="winner_abandon">%1$s खेल fefed।</string>
+    <string name="winner_is">विजेता%1$s छ!</string>
+
+    <string name="could_not_accept_invite">आमन्त्रित स्वीकार गर्न सकेन।</string>
+    <string name="invite_was_cancelled">रद्द गरियो रद्द गरियो।</string>
+    <string name="invite_no_longer_available">आमन्त्रित अब उपलब्ध छैन।</string>
+    <string name="invite_has_expired">आमन्त्रित गरिएको छ।</string>
+
+    <string name="please_verify_email_before_login">लग ईन गर्नु अघि कृपया तपाईंको ईमेल ठेगाना प्रमाणित गर्नुहोस्।</string>
+    <string name="authentication_failed">प्रमाणीकरण असफल भयो।</string>
+
+    <string name="could_not_cancel_invite">रद्द गर्न सकेन:%1$s</string>
 </resources>

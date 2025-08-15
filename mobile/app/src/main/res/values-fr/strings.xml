@@ -202,4 +202,52 @@
     <string name="nickname_taken">Surnom déjà pris - choisissez un autre</string>
     <string name="nickname_saved">Surnom enregistré</string>
     <string name="nickname_save_failed">Échec de l'enregistrement du surnom</string>
+
+    <string name="game_launch_failed">Le lancement du jeu a échoué.</string>
+    <string name="please_log_in_to_continue">Veuillez vous connecter pour continuer.</string>
+    <string name="match_not_found">Correspondance non trouvée.</string>
+    <string name="invalid_match_record">Record de match non valide.</string>
+    <string name="failed_to_load_opponent">Impossible de charger l'adversaire.</string>
+    <string name="network_error">Erreur de réseau.</string>
+    <string name="game_is_over">Le jeu est terminé.</string>
+    <string name="failed_to_send_move">Échec de l'envoi de déménagement:%1$s</string>
+    <string name="fatal_error_matchpath_null">Error mortelle MatchPath == null</string>
+    <string name="failed_to_load_match">Échec du chargement de la correspondance.</string>
+    <string name="invitation_not_found">Invitation non trouvée.</string>
+    <string name="must_log_in_to_accept_invites">Vous devez être connecté pour accepter les invitations.</string>
+    <string name="invalid_response_from_server">Réponse non valide du serveur.</string>
+    <string name="invite_accepted_starting_game">Inviter accepté! </string>
+    <string name="authentication_error_try_again">Erreur d'authentification. </string>
+    <string name="registered_as">Enregistré comme:%1$s</string>
+    <string name="tournament_not_found">Tournoi introuvable.</string>
+    <string name="must_be_logged_in">Vous devez être connecté.</string>
+    <string name="joined_wait_for_bracket">Rejoint! </string>
+    <string name="accept_invitation_title">Accepter l'invitation</string>
+    <string name="accept_invitation_message">Voulez-vous accepter cette invitation de jeu?</string>
+    <string name="leave_game_title">Quitter le jeu?</string>
+    <string name="exit_confirm_message">Êtes-vous sûr de vouloir quitter?</string>
+    <string name="exit_forfeit_message">Êtes-vous sûr de vouloir quitter? </string>
+    <string name="close">Fermer</string>
+    <string name="ok">D'ACCORD</string>
+    <string name="verification_email_sent">Email de vérification envoyé</string>
+    <string name="check_email_to_verify">Veuillez vérifier votre e-mail pour vérifier votre compte.</string>
+    <string name="email_verification_failed">La vérification par e-mail a échoué</string>
+    <string name="could_not_send_verification_email">Impossible d'envoyer un e-mail de vérification:%1$s</string>
+    <string name="registration_failed_title">L'inscription a échoué</string>
+    <string name="player_label">Joueur</string>
+    <string name="android_label">Androïde</string>
+    <string name="player_with_number">Joueur%1$d</string>
+    <string name="winner_timeout">%1$s a manqué de temps.</string>
+    <string name="winner_abandon">%1$s a perdu le jeu.</string>
+    <string name="winner_is">Le gagnant est%1$s!</string>
+
+    <string name="could_not_accept_invite">Impossible d'accepter l'invitation.</string>
+    <string name="invite_was_cancelled">L'invitation a été annulée.</string>
+    <string name="invite_no_longer_available">L'invitation n'est plus disponible.</string>
+    <string name="invite_has_expired">Invite a expiré.</string>
+
+    <string name="please_verify_email_before_login">Veuillez vérifier votre adresse e-mail avant de vous connecter.</string>
+    <string name="authentication_failed">L'authentification a échoué.</string>
+
+    <string name="could_not_cancel_invite">Impossible d'annuler l'invitation:%1$s</string>
 </resources>
