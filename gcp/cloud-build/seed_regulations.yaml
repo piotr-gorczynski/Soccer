@@ -55,7 +55,7 @@ steps:
         cp /workspace/soccer/firebase/functions/seed-regulations/package.json /workspace/firebase/functions/seed-regulations/
         cp /workspace/soccer/firebase/functions/seed-regulations/index.js /workspace/firebase/functions/seed-regulations/
         mkdir -p /workspace/firebase/seed
-        cp /workspace/soccer/firebase/seed/tournament_rules.json /workspace/firebase/seed/
+        cp /workspace/soccer/firebase/seed/tournament_rules_*.json /workspace/firebase/seed/
 
   # Step 4: Install dependencies
   - name: 'node:18-slim'
