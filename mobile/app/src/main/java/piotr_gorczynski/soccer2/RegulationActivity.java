@@ -79,14 +79,24 @@ public class RegulationActivity extends BaseActivity {
                                                 bodyTv.setText(R.string.regulation_not_found);
                                             }
                                         } else {
-                                            bodyTv.setText(R.string.regulation_not_found);
+                                            String body = doc.getString("body");
+                                            if (!TextUtils.isEmpty(body)) {
+                                                bodyTv.setText(body);
+                                            } else {
+                                                bodyTv.setText(R.string.regulation_not_found);
+                                            }
                                         }
                                     })
                                     .addOnFailureListener(e -> {
                                         Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
                                                 Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
                                                 ": Failed to load regulation", e);
-                                        Toast.makeText(this, R.string.regulation_load_error, Toast.LENGTH_LONG).show();
+                                        String body = doc.getString("body");
+                                        if (!TextUtils.isEmpty(body)) {
+                                            bodyTv.setText(body);
+                                        } else {
+                                            Toast.makeText(this, R.string.regulation_load_error, Toast.LENGTH_LONG).show();
+                                        }
                                     });
                         } else {
                             Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
