@@ -61,7 +61,6 @@
 
     <!-- Common / settings -->
     <string name="settings">Paramètres</string>
-    <string name="settings_title">Paramètres</string>
     <string name="cancel">Annuler</string>
     <string name="confirm">Confirmer</string>
     <string name="close">Fermer</string>
