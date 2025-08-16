@@ -198,6 +198,7 @@
     <string name="nickname_required">Se requiere un apodo</string>
     <string name="nickname_too_long">El apodo debe ser 20 caracteres o menos</string>
     <string name="not_logged_in">No iniciado sesión</string>
+    <string name="register_to_use_function">Por favor regístrate para usar esta función.</string>
     <string name="network_error_checking_nickname">Error de red al verificar el apodo</string>
     <string name="nickname_taken">Apodo ya tomado - Elija otro</string>
     <string name="nickname_saved">Apodo guardado</string>
