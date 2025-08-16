@@ -201,6 +201,7 @@
     <string name="nickname_required">Un pseudonyme est requis</string>
     <string name="nickname_too_long">Le pseudonyme doit comporter 20 caractères ou moins</string>
     <string name="not_logged_in">Non connecté</string>
+    <string name="register_to_use_function">Veuillez vous inscrire pour utiliser cette fonction.</string>
     <string name="network_error_checking_nickname">Erreur réseau lors de la vérification du pseudonyme</string>
     <string name="nickname_taken">Pseudonyme déjà pris — choisissez-en un autre</string>
     <string name="nickname_saved">Pseudonyme enregistré</string>

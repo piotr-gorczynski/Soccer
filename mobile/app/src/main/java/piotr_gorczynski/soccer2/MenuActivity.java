@@ -434,13 +434,8 @@ public class MenuActivity extends BaseActivity {
         }
 
         // Backend is available - proceed with normal auth-based logic
-        // 1) Enable or disable the three feature buttons based on login status
-        inviteBtn.setEnabled(loggedIn);
-        pendingBtn.setEnabled(loggedIn);
-        tournamentsBtn.setEnabled(loggedIn);
-        rankingBtn.setEnabled(loggedIn);
-
-        // Optional: visual cue (dim when disabled due to not being logged in)
+        // Dim buttons when the user is not logged in, but keep them clickable so we can
+        // show a toast informing them to register.
         float alpha = loggedIn ? 1f : 0.4f;
         inviteBtn.setAlpha(alpha);
         pendingBtn.setAlpha(alpha);
@@ -752,6 +747,10 @@ public class MenuActivity extends BaseActivity {
     }
 
     public void OpenInviteFriend(View view) {
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            Toast.makeText(this, R.string.register_to_use_function, Toast.LENGTH_SHORT).show();
+            return;
+        }
         if (!hasAdsConsent()) {
             showConsentRequiredDialog();
             return;
@@ -761,6 +760,10 @@ public class MenuActivity extends BaseActivity {
     }
 
     public void OpenInvites(View view) {
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            Toast.makeText(this, R.string.register_to_use_function, Toast.LENGTH_SHORT).show();
+            return;
+        }
         if (!hasAdsConsent()) {
             showConsentRequiredDialog();
             return;
@@ -770,6 +773,10 @@ public class MenuActivity extends BaseActivity {
     }
 
     public void OpenTournaments(View view) {
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            Toast.makeText(this, R.string.register_to_use_function, Toast.LENGTH_SHORT).show();
+            return;
+        }
         if (!hasAdsConsent()) {
             showConsentRequiredDialog();
             return;
@@ -779,6 +786,10 @@ public class MenuActivity extends BaseActivity {
     }
 
     public void OpenRanking(View view) {
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            Toast.makeText(this, R.string.register_to_use_function, Toast.LENGTH_SHORT).show();
+            return;
+        }
         if (!hasAdsConsent()) {
             showConsentRequiredDialog();
             return;
