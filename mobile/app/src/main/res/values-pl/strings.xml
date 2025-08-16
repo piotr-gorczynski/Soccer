@@ -229,7 +229,7 @@
     <string name="leave_game_title">Opuścić grę?</string>
     <string name="exit_confirm_message">Czy na pewno chcesz wyjść?</string>
     <string name="exit_forfeit_message">Czy na pewno chcesz wyjść? </string>
-    <string name="close">Zamknąć</string>
+    <string name="close">Zamknij</string>
     <string name="ok">OK</string>
     <string name="verification_email_sent">Wysłany e-mail weryfikacyjny</string>
     <string name="check_email_to_verify">Sprawdź swój e-mail, aby zweryfikować swoje konto.</string>
@@ -251,5 +251,5 @@
     <string name="please_verify_email_before_login">Przed zalogowaniem się zweryfikuj swój adres e-mail.</string>
     <string name="authentication_failed">Uwierzytelnianie nie powiodło się.</string>
 
-    <string name="could_not_cancel_invite">Nie można anulować Zaproś: %1$s</string>
+    <string name="could_not_cancel_invite">Nie można anulować Zaproszenia: %1$s</string>
 </resources>
