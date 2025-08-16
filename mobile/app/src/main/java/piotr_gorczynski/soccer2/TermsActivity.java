@@ -12,6 +12,7 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class TermsActivity extends BaseActivity {
@@ -36,10 +37,10 @@ public class TermsActivity extends BaseActivity {
                 finish();
                 return;
             }
-            Map<String, Object> data = Map.of(
-                    "termsAccepted", true,
-                    "termsAcceptanceDate", FieldValue.serverTimestamp()
-            );
+            Map<String, Object> data = new HashMap<>();
+            data.put("termsAccepted", true);
+            data.put("termsAcceptanceDate", FieldValue.serverTimestamp());
+            data.put("language", langCode);
             FirebaseFirestore.getInstance()
                     .collection("users")
                     .document(uid)
