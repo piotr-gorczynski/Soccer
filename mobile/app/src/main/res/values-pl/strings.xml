@@ -188,10 +188,10 @@
     <string name="field_move_ellipsis_tail">rusza... ⏳ %1$s</string>
     <string name="field_waiting_for">Czekanie na %1$s</string>
     <string name="field_to_start_tail">aby rozpocząć... ⏳ %1$s</string>
-    <string name="enter_email_and_password">Wprowadź zarówno e -mail, jak i hasło</string>
+    <string name="enter_email_and_password">Wprowadź zarówno e-mail, jak i hasło</string>
     <string name="login_success">Zaloguj się sukces!</string>
     <string name="login_failed">Logowanie nie powiodło się: %1$s</string>
-    <string name="enter_email_address">Wprowadź swój adres e -mail</string>
+    <string name="enter_email_address">Wprowadź swój adres e-mail</string>
     <string name="all_fields_required">Wszystkie pola są wymagane</string>
     <string name="passwords_do_not_match">Hasła nie pasują</string>
     <string name="registration_in_progress">Próba rejestracji w toku ...</string>
@@ -230,10 +230,10 @@
     <string name="exit_forfeit_message">Czy na pewno chcesz wyjść? </string>
     <string name="close">Zamknąć</string>
     <string name="ok">OK</string>
-    <string name="verification_email_sent">Wysłany e -mail weryfikacyjny</string>
-    <string name="check_email_to_verify">Sprawdź swój e -mail, aby zweryfikować swoje konto.</string>
-    <string name="email_verification_failed">Weryfikacja e -maila nie powiodła się</string>
-    <string name="could_not_send_verification_email">Nie można wysłać weryfikacji e -mail: %1$s</string>
+    <string name="verification_email_sent">Wysłany e-mail weryfikacyjny</string>
+    <string name="check_email_to_verify">Sprawdź swój e-mail, aby zweryfikować swoje konto.</string>
+    <string name="email_verification_failed">Weryfikacja e-maila nie powiodła się</string>
+    <string name="could_not_send_verification_email">Nie można wysłać weryfikacji e-mail: %1$s</string>
     <string name="registration_failed_title">Rejestracja nie powiodła się</string>
     <string name="player_label">Odtwarzacz</string>
     <string name="android_label">Android</string>
@@ -247,7 +247,7 @@
     <string name="invite_no_longer_available">Zaproszenie nie jest już dostępne.</string>
     <string name="invite_has_expired">Zaproszenie wygasło.</string>
 
-    <string name="please_verify_email_before_login">Przed zalogowaniem się zweryfikuj swój adres e -mail.</string>
+    <string name="please_verify_email_before_login">Przed zalogowaniem się zweryfikuj swój adres e-mail.</string>
     <string name="authentication_failed">Uwierzytelnianie nie powiodło się.</string>
 
     <string name="could_not_cancel_invite">Nie można anulować Zaproś: %1$s</string>

@@ -187,10 +187,10 @@
     <string name="field_move_ellipsis_tail">ist am Zug... ⏳ %1$s</string>
     <string name="field_waiting_for">Warte auf %1$s</string>
     <string name="field_to_start_tail">um zu starten... ⏳ %1$s</string>
-    <string name="enter_email_and_password">Bitte geben Sie sowohl E -Mail als auch Passwort ein</string>
+    <string name="enter_email_and_password">Bitte geben Sie sowohl e-mail als auch Passwort ein</string>
     <string name="login_success">Login erfolgreich!</string>
     <string name="login_failed">Fehler bei der Anmeldung: %1$s</string>
-    <string name="enter_email_address">Bitte geben Sie Ihre E -Mail -Adresse ein</string>
+    <string name="enter_email_address">Bitte geben Sie Ihre e-mail -Adresse ein</string>
     <string name="all_fields_required">Alle Felder sind erforderlich</string>
     <string name="passwords_do_not_match">Passwörter stimmen nicht überein</string>
     <string name="registration_in_progress">Registrierungsversuch in Arbeit ...</string>
@@ -229,10 +229,10 @@
     <string name="exit_forfeit_message">Sind Sie sicher, dass Sie beenden möchten? </string>
     <string name="close">Schließen</string>
     <string name="ok">OK</string>
-    <string name="verification_email_sent">Überprüfungs -E -Mail gesendet</string>
-    <string name="check_email_to_verify">Bitte überprüfen Sie Ihre E -Mails, um Ihr Konto zu überprüfen.</string>
-    <string name="email_verification_failed">Die E -Mail -Überprüfung ist fehlgeschlagen</string>
-    <string name="could_not_send_verification_email">Bestätigungs -E -Mail nicht senden: %1$s</string>
+    <string name="verification_email_sent">Überprüfungs -e-mail gesendet</string>
+    <string name="check_email_to_verify">Bitte überprüfen Sie Ihre e-mails, um Ihr Konto zu überprüfen.</string>
+    <string name="email_verification_failed">Die e-mail -Überprüfung ist fehlgeschlagen</string>
+    <string name="could_not_send_verification_email">Bestätigungs -e-mail nicht senden: %1$s</string>
     <string name="registration_failed_title">Registrierung fehlgeschlagen</string>
     <string name="player_label">Spieler</string>
     <string name="android_label">Android</string>
@@ -246,7 +246,7 @@
     <string name="invite_no_longer_available">Einladung ist nicht mehr verfügbar.</string>
     <string name="invite_has_expired">Einladung ist abgelaufen.</string>
 
-    <string name="please_verify_email_before_login">Bitte überprüfen Sie Ihre E -Mail -Adresse, bevor Sie sich anmelden.</string>
+    <string name="please_verify_email_before_login">Bitte überprüfen Sie Ihre e-mail -Adresse, bevor Sie sich anmelden.</string>
     <string name="authentication_failed">Authentifizierung fehlgeschlagen.</string>
 
     <string name="could_not_cancel_invite">Konnte einladen nicht stornieren: %1$s</string>
