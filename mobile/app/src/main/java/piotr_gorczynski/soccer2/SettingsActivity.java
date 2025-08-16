@@ -22,6 +22,10 @@ public class SettingsActivity extends BaseActivity {
                 "TAG_Soccer",
                 getClass().getSimpleName() + ".onCreate: toolbar title set to " + getString(R.string.settings_title)
         );
+        Log.d(
+                "TAG_Soccer",
+                getClass().getSimpleName() + ".onCreate: toolbar caption=\"" + toolbar.getTitle() + "\""
+        );
 
         getSupportFragmentManager()
                 .beginTransaction()
