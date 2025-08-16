@@ -1,17 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Basic app strings in French -->
+    <!-- App / menus -->
     <string name="app_name">Soccer 2</string>
     <string name="menu_Settings">Paramètres</string>
     <string name="title_activity_settings">Paramètres</string>
-    
-    <!-- Settings strings -->
+    <string name="menu_YouvsAndroid">Entraînement avec Android</string>
+    <string name="menu_Player1vsPlayer2">Deux joueurs sur cet appareil</string>
+
+    <!-- Settings -->
+    <string name="pref_title_level">Niveau Android</string>
+    <string name="pref_title_block_invite_friend">Bloquer les demandes \'Inviter un ami\'</string>
+    <string name="pref_summary_block_invite_friend">Les autres joueurs ne peuvent pas vous inviter via \'Inviter un ami\' (tournois non affectés)</string>
+    <string name="pref_title_ads_consent">Consentement pour les publicités personnalisées</string>
+    <string name="pref_summary_ads_consent">Examiner ou modifier votre consentement pour l’affichage de publicités personnalisées</string>
     <string name="pref_title_language">Langue</string>
     <string name="pref_summary_language">Choisissez votre langue préférée</string>
-    <string name="current_language">Actuel: %1$s</string>
+    <string name="current_language">Actuel&nbsp;: %1$s</string>
+
+    <string-array name="pref_level_titles">
+        <item>Facile</item>
+        <item>Moyen</item>
+        <item>Difficile</item>
+    </string-array>
+    <!-- same values as EN -->
+    <string-array name="pref_level_values">
+        <item>1</item>
+        <item>10</item>
+        <item>30</item>
+    </string-array>
+
+    <!-- Language picker -->
     <string name="select_language">Sélectionner la langue</string>
-    
-    <!-- Language names in French -->
     <string name="language_english">Anglais</string>
     <string name="language_polish">Polonais</string>
     <string name="language_german">Allemand</string>
@@ -21,86 +40,75 @@
     <string name="language_bengali">Bengali</string>
     <string name="language_nepali">Népalais</string>
     <string name="language_hindi">Hindi</string>
-    
-    <!-- Menu strings -->
-    <string name="menu_YouvsAndroid">Entraînement avec Android</string>
-    <string name="menu_Player1vsPlayer2">Deux joueurs sur cet appareil</string>
-    
-    <!-- Settings preferences -->
-    <string name="pref_title_level">Niveau Android</string>
-    <string name="pref_title_block_invite_friend">Bloquer les demandes 'Inviter un ami'</string>
-    <string name="pref_summary_block_invite_friend">Les autres joueurs ne peuvent pas vous inviter via 'Inviter un ami' (tournois non affectés)</string>
-    <string name="pref_title_ads_consent">Consentement pour les publicités personnalisées</string>
-    <string name="pref_summary_ads_consent">Examiner ou modifier votre consentement pour l'affichage de publicités personnalisées</string>
-    
-    <!-- Level arrays -->
-    <string-array name="pref_level_titles">
-        <item>Facile</item>
-        <item>Moyen</item>
-        <item>Difficile</item>
-    </string-array>
-    
-    <!-- Authentication strings -->
-    <string name="register">S'inscrire</string>
+
+    <!-- Auth -->
+    <string name="register">S’inscrire</string>
     <string name="confirm_password">Confirmer le mot de passe</string>
     <string name="email">E-mail</string>
     <string name="password">Mot de passe</string>
     <string name="login">Se connecter</string>
-    <string name="hello">Bonjour !</string>
-    <string name="welcome_to_soccer">Bienvenue dans Soccer !</string>
-    <string name="hello_nickname">Bonjour, %1$s !</string>
+    <string name="hello">Bonjour&nbsp;!</string>
+    <string name="welcome_to_soccer">Bienvenue dans Soccer&nbsp;!</string>
+    <string name="hello_nickname">Bonjour, %1$s&nbsp;!</string>
     <string name="log_in">Se connecter</string>
     <string name="register_new_account">Créer un nouveau compte</string>
     <string name="reset_password">Réinitialiser le mot de passe</string>
     <string name="reset_password_email_hint">Entrez votre adresse e-mail</string>
     <string name="reset_password_title">Réinitialiser le mot de passe</string>
     <string name="reset_password_message">Veuillez entrer votre adresse e-mail. Si un compte avec cet e-mail existe, vous recevrez un e-mail de réinitialisation de mot de passe.</string>
-    <string name="reset_password_success">Si un compte avec cet e-mail existe, un e-mail de réinitialisation de mot de passe a été envoyé.</string>
-    <string name="reset_password_failed">Échec de l'envoi de l'e-mail de réinitialisation. Veuillez réessayer.</string>
+    <string name="reset_password_success">Si un compte avec cet e-mail existe, un e-mail de réinitialisation a été envoyé.</string>
+    <string name="reset_password_failed">Échec de l’envoi de l’e-mail de réinitialisation. Veuillez réessayer.</string>
     <string name="nickname">Pseudonyme</string>
-    
-    <!-- Friends strings -->
-    <string name="enter_nickname_to_invite">Entrez le pseudonyme à inviter :</string>
-    <string name="enter_nickname_to_search">Entrez le pseudonyme à rechercher :</string>
-    <string name="friend_s_nickname">Pseudonyme de l'ami</string>
-    <string name="send_invitation">Envoyer l'invitation</string>
+
+    <!-- Common / settings -->
+    <string name="settings">Paramètres</string>
+    <string name="settings_title">Paramètres</string>
+    <string name="cancel">Annuler</string>
+    <string name="confirm">Confirmer</string>
+    <string name="close">Fermer</string>
+    <string name="ok">OK</string>
+
+    <!-- Friends / invites -->
+    <string name="enter_nickname_to_invite">Entrez le pseudonyme à inviter&nbsp;:</string>
+    <string name="enter_nickname_to_search">Entrez le pseudonyme à rechercher&nbsp;:</string>
+    <string name="friend_s_nickname">Pseudonyme de l’ami</string>
+    <string name="send_invitation">Envoyer l’invitation</string>
     <string name="invite_a_friend">Inviter un ami</string>
     <string name="add_a_friend">Ajouter un ami</string>
     <string name="add_friend">Ami ajouté avec succès</string>
-    <string name="no_friends">Aucun ami ajouté jusqu'à présent…</string>
-    <string name="no_tournaments">Aucun tournoi n'a encore été créé.</string>
+    <string name="no_friends">Aucun ami ajouté pour l’instant…</string>
+    <string name="no_tournaments">Aucun tournoi n’a encore été créé.</string>
     <string name="please_enter_a_nickname">Veuillez entrer un pseudonyme.</string>
-    <string name="user_not_found">Utilisateur non trouvé.</string>
+    <string name="user_not_found">Utilisateur introuvable.</string>
     <string name="you_can_t_invite_yourself">Vous ne pouvez pas vous inviter vous-même.</string>
-    <string name="error_searching_user">Erreur lors de la recherche d'utilisateur.</string>
-    <string name="invitation_sent">Invitation envoyée !</string>
-    <string name="failed_to_send_invite">Échec de l'envoi de l'invitation.</string>
+    <string name="error_searching_user">Erreur lors de la recherche d’utilisateur.</string>
+    <string name="invitation_sent">Invitation envoyée&nbsp;!</string>
+    <string name="failed_to_send_invite">Échec de l’envoi de l’invitation.</string>
     <string name="account_no_longer_available">Compte utilisateur plus disponible.</string>
-    <string name="failed_to_add_friend">Échec de l'ajout d'ami.</string>
-    <string name="failed_to_add_friend_reason">Échec de l'ajout d'ami : %1$s</string>
+    <string name="failed_to_add_friend">Échec de l’ajout de l’ami.</string>
+    <string name="failed_to_add_friend_reason">Échec de l’ajout d’ami&nbsp;: %1$s</string>
     <string name="failed_to_load_nickname">Échec du chargement du pseudonyme.</string>
     <string name="search">Rechercher</string>
     <string name="load_more">Charger plus</string>
     <string name="add_friend_label">Ajouter</string>
     <string name="invite_blocked">%1$s a bloqué les invitations.</string>
-    <string name="invites_blocked_notification">Les autres joueurs ne peuvent pas vous inviter via la fonction 'Inviter un ami'. Vous pouvez le changer dans les Paramètres.</string>
-    
-    <!-- Invitations strings -->
+    <string name="invites_blocked_notification">Les autres joueurs ne peuvent pas vous inviter via la fonction \'Inviter un ami\'. Vous pouvez le changer dans Paramètres.</string>
+
     <string name="pending_game_invitations">Invitations de jeu en attente</string>
     <string name="pending_invites">Invitations en attente</string>
     <string name="no_pending_invites">Aucune invitation en attente.</string>
     <string name="invite_already_sent">Vous avez déjà une autre invitation en attente.</string>
-    <string name="waiting_for_opponent_named">En attente d'acceptation de %1$s…</string>
-    <string name="waiting_for_opponent">En attente d'acceptation de l'adversaire…</string>
-    
-    <!-- Tournament strings -->
+    <string name="waiting_for_opponent_named">En attente de l’acceptation de %1$s…</string>
+    <string name="waiting_for_opponent">En attente de l’acceptation de l’adversaire…</string>
+
+    <!-- Tournaments -->
     <string name="tournaments">Tournois</string>
     <string name="ranking">Classement</string>
-    <string name="no_ranking_yet">Aucun tournoi n'a été terminé pour afficher le classement.</string>
+    <string name="no_ranking_yet">Aucun tournoi terminé pour afficher le classement.</string>
     <string name="join">Rejoindre</string>
     <string name="slots_format">%1$d / %2$d</string>
     <string name="open">Ouvert</string>
-    <string name="lobby_started">Tournoi commencé !</string>
+    <string name="lobby_started">Tournoi commencé&nbsp;!</string>
     <string name="ended">Terminé…</string>
     <string name="running">En cours…</string>
     <string name="registering">Inscription…</string>
@@ -108,26 +116,28 @@
     <string name="tournament_running_ends">Tournoi en cours. Se termine %1$s</string>
     <string name="registration_ends">Les inscriptions se terminent %1$s</string>
     <string name="registration_closed">Inscriptions closes. Le tournoi commencera dans une heure</string>
-    <string name="tournament_ends_now">Le tournoi se termine maintenant...</string>
+    <string name="tournament_ends_now">Le tournoi se termine maintenant…</string>
     <string name="tournament_ended">Terminé %1$s</string>
     <string name="tournament_ended_short">Terminé</string>
     <string name="logout">Se déconnecter</string>
     <string name="logged_out">Vous avez été déconnecté</string>
-    
-    <!-- Game strings -->
+
+    <!-- Plurals -->
     <plurals name="wins_format">
         <item quantity="one">%d victoire</item>
         <item quantity="other">%d victoires</item>
     </plurals>
-    <string name="toast_not_your_turn">Ce n'est pas encore votre tour !</string>
+
+    <!-- Game / match -->
+    <string name="toast_not_your_turn">Ce n’est pas encore votre tour&nbsp;!</string>
     <string name="five_minutes">05:00</string>
-    <string name="cancel_invite">Annuler l'invitation</string>
+    <string name="cancel_invite">Annuler l’invitation</string>
     <string name="remove">Supprimer</string>
     <string name="invite_expired">Invitation expirée.</string>
     <string name="leave">Quitter</string>
-    <string name="leave_tournament_confirm">Êtes-vous sûr de vouloir quitter ce tournoi ?</string>
+    <string name="leave_tournament_confirm">Êtes-vous sûr de vouloir quitter ce tournoi&nbsp;?</string>
     <string name="left_tournament">Vous avez quitté le tournoi.</string>
-    <string name="leave_waiting_confirm">Quitter l'écran d'attente annulera votre invitation. Êtes-vous sûr ?</string>
+    <string name="leave_waiting_confirm">Quitter l’écran d’attente annulera votre invitation. Êtes-vous sûr&nbsp;?</string>
     <string name="yes">Oui</string>
     <string name="no">Non</string>
     <string name="target_player_busy">Ce joueur est déjà occupé avec une autre invitation.</string>
@@ -135,119 +145,113 @@
     <string name="decline">Refuser</string>
     <string name="match_completed_win">terminé, vous avez gagné 🏆</string>
     <string name="match_completed_lose">terminé, vous avez perdu 😞</string>
-    
-    <!-- Error strings -->
-    <string name="regulation_not_found">Règlement non trouvé.</string>
+
+    <!-- Regulations / server -->
+    <string name="regulation_not_found">Règlement introuvable.</string>
     <string name="regulation_load_error">Échec du chargement du règlement.</string>
     <string name="regulation_auth_required">Veuillez vous connecter pour voir le règlement.</string>
     <string name="server_unavailable">Serveur indisponible</string>
-    <string name="server_unavailable_message">Nous sommes désolés, mais le serveur Soccer n'est pas disponible en ce moment…</string>
-    
-    <!-- Account strings -->
+    <string name="server_unavailable_message">Désolés, le serveur Soccer n’est pas disponible pour le moment…</string>
+
+    <!-- Account -->
     <string name="account">Compte</string>
     <string name="account_information">Informations du compte</string>
-    <string name="nickname_label">Pseudonyme : %1$s</string>
-    <string name="email_label">E-mail : %1$s</string>
-    <string name="not_registered">Vous n'êtes pas inscrit à ce tournoi.</string>
-    
+    <string name="nickname_label">Pseudonyme&nbsp;: %1$s</string>
+    <string name="email_label">E-mail&nbsp;: %1$s</string>
+    <string name="not_registered">Vous n’êtes pas inscrit à ce tournoi.</string>
+
     <!-- Login methods -->
     <string name="login_email">Se connecter avec e-mail</string>
     <string name="login_google">Se connecter avec Google</string>
     <string name="login_facebook">Se connecter avec Facebook</string>
     <string name="login_microsoft">Se connecter avec Microsoft</string>
-    <string name="login_method_label">Méthode de connexion : %1$s</string>
+    <string name="login_method_label">Méthode de connexion&nbsp;: %1$s</string>
     <string name="pref_title_facebook">Communauté Facebook</string>
     <string name="pref_summary_facebook">Ouvrir notre page communauté sur Facebook</string>
-    <string name="ads_consent_required">L'affichage de publicités aide à financer la maintenance de l'infrastructure. Parce que vous n'avez pas accepté d'afficher des publicités, cette option n'est pas disponible. Vous pouvez vérifier votre consentement dans les paramètres.</string>
+    <string name="ads_consent_required">L’affichage de publicités aide à financer la maintenance de l’infrastructure. Comme vous n’avez pas accepté l’affichage des publicités, cette option n’est pas disponible. Vous pouvez vérifier votre consentement dans les paramètres.</string>
     <string name="no_internet_for_privacy_options">Connexion Internet requise pour ouvrir les options de confidentialité.</string>
-    
-    <!-- Account removal strings -->
+
+    <!-- Account removal -->
     <string name="remove_account">Supprimer le compte</string>
     <string name="remove_account_dialog_title">Supprimer le compte</string>
-    <string name="remove_account_dialog_message">Êtes-vous sûr de vouloir supprimer votre compte ? Cette action ne peut pas être annulée et même si vous vous inscrivez à nouveau, vous n'aurez pas accès à l'historique de vos matchs et résultats.</string>
+    <string name="remove_account_dialog_message">Êtes-vous sûr de vouloir supprimer votre compte&nbsp;? Cette action est irréversible et, même si vous vous réinscrivez, vous n’aurez pas accès à l’historique de vos matchs et résultats.</string>
     <string name="proceed">Continuer</string>
-    <string name="removing_account">Suppression du compte...</string>
+    <string name="removing_account">Suppression du compte…</string>
     <string name="account_removed">Compte supprimé avec succès</string>
     <string name="remove_account_failed">Échec de la suppression du compte. Veuillez réessayer.</string>
-    <string name="reauth_title">Se ré-authentifier</string>
+    <string name="reauth_title">Se réauthentifier</string>
     <string name="reauth_message">Veuillez entrer votre mot de passe pour continuer.</string>
-    <string name="reauth_failed">Échec de la ré-authentification. Veuillez réessayer.</string>
-    
-    <!-- Common strings -->
-    <string name="settings">Paramètres</string>
-    <string name="cancel">Annuler</string>
-    <string name="confirm">Confirmer</string>
+    <string name="reauth_failed">Échec de la réauthentification. Veuillez réessayer.</string>
 
-    <!-- Field draw strings -->
-    <string name="field_your_move">À vous de jouer !</string>
-    <string name="field_move_tail">joue ... ⏳ %1$s</string>
+    <!-- Field draw strings (keep placeholders identical) -->
+    <string name="field_your_move">À vous de jouer&nbsp;!</string>
+    <string name="field_move_tail">coup ... ⏳ %1$s</string>
     <string name="field_hourglass_tail">⏳ %1$s</string>
-    <string name="field_your_move_ellipsis">À vous de jouer...</string>
-    <string name="field_thinking">Réflexion...</string>
-    <string name="field_move_ellipsis_tail">joue... ⏳ %1$s</string>
+    <string name="field_your_move_ellipsis">À vous de jouer…</string>
+    <string name="field_thinking">Réflexion…</string>
+    <string name="field_move_ellipsis_tail">coup… ⏳ %1$s</string>
     <string name="field_waiting_for">En attente de %1$s</string>
-    <string name="field_to_start_tail">pour commencer... ⏳ %1$s</string>
-    <string name="enter_email_and_password">Veuillez saisir les e-mails et le mot de passe</string>
-    <string name="login_success">Connectez-vous réussi!</string>
-    <string name="login_failed">La connexion a échoué: %1$s</string>
+    <string name="field_to_start_tail">pour commencer… ⏳ %1$s</string>
+    <string name="enter_email_and_password">Veuillez saisir l’e-mail et le mot de passe</string>
+    <string name="login_success">Connexion réussie&nbsp;!</string>
+    <string name="login_failed">Échec de la connexion&nbsp;: %1$s</string>
     <string name="enter_email_address">Veuillez saisir votre adresse e-mail</string>
-    <string name="all_fields_required">Tous les champs sont nécessaires</string>
+    <string name="all_fields_required">Tous les champs sont requis</string>
     <string name="passwords_do_not_match">Les mots de passe ne correspondent pas</string>
-    <string name="registration_in_progress">Tentative d'enregistrement en cours ...</string>
-    <string name="nickname_max_length_reached">Maximum 20 caractères atteints</string>
-    <string name="nickname_required">Un surnom est requis</string>
-    <string name="nickname_too_long">Le surnom doit être de 20 caractères ou moins</string>
-    <string name="not_logged_in">Pas connecté</string>
-    <string name="network_error_checking_nickname">Erreur de réseau lors de la vérification du surnom</string>
-    <string name="nickname_taken">Surnom déjà pris - choisissez un autre</string>
-    <string name="nickname_saved">Surnom enregistré</string>
-    <string name="nickname_save_failed">Échec de l'enregistrement du surnom</string>
+    <string name="registration_in_progress">Tentative d’enregistrement en cours…</string>
+    <string name="nickname_max_length_reached">Maximum 20&nbsp;caractères atteint</string>
+    <string name="nickname_required">Un pseudonyme est requis</string>
+    <string name="nickname_too_long">Le pseudonyme doit comporter 20&nbsp;caractères ou moins</string>
+    <string name="not_logged_in">Non connecté</string>
+    <string name="network_error_checking_nickname">Erreur réseau lors de la vérification du pseudonyme</string>
+    <string name="nickname_taken">Pseudonyme déjà pris — choisissez-en un autre</string>
+    <string name="nickname_saved">Pseudonyme enregistré</string>
+    <string name="nickname_save_failed">Échec de l’enregistrement du pseudonyme</string>
 
+    <!-- Match / network errors -->
     <string name="game_launch_failed">Le lancement du jeu a échoué.</string>
     <string name="please_log_in_to_continue">Veuillez vous connecter pour continuer.</string>
-    <string name="match_not_found">Correspondance non trouvée.</string>
-    <string name="invalid_match_record">Record de match non valide.</string>
-    <string name="failed_to_load_opponent">Impossible de charger l'adversaire.</string>
-    <string name="network_error">Erreur de réseau.</string>
-    <string name="game_is_over">Le jeu est terminé.</string>
-    <string name="failed_to_send_move">Échec de l'envoi de déménagement:%1$s</string>
-    <string name="fatal_error_matchpath_null">Error mortelle MatchPath == null</string>
-    <string name="failed_to_load_match">Échec du chargement de la correspondance.</string>
-    <string name="invitation_not_found">Invitation non trouvée.</string>
+    <string name="match_not_found">Match introuvable.</string>
+    <string name="invalid_match_record">Enregistrement de match invalide.</string>
+    <string name="failed_to_load_opponent">Échec du chargement de l’adversaire.</string>
+    <string name="network_error">Erreur réseau.</string>
+    <string name="game_is_over">La partie est terminée.</string>
+    <string name="failed_to_send_move">Échec de l’envoi du coup&nbsp;: %1$s</string>
+    <string name="fatal_error_matchpath_null">Erreur fatale matchPath == null</string>
+    <string name="failed_to_load_match">Échec du chargement du match.</string>
+    <string name="invitation_not_found">Invitation introuvable.</string>
     <string name="must_log_in_to_accept_invites">Vous devez être connecté pour accepter les invitations.</string>
-    <string name="invalid_response_from_server">Réponse non valide du serveur.</string>
-    <string name="invite_accepted_starting_game">Inviter accepté! </string>
-    <string name="authentication_error_try_again">Erreur d'authentification. </string>
-    <string name="registered_as">Enregistré comme:%1$s</string>
+    <string name="invalid_response_from_server">Réponse invalide du serveur.</string>
+    <string name="invite_accepted_starting_game">Invitation acceptée&nbsp;! Lancement de la partie…</string>
+    <string name="authentication_error_try_again">Erreur d’authentification. Essayez de vous reconnecter.</string>
+    <string name="registered_as">Enregistré en tant que&nbsp;: %1$s</string>
     <string name="tournament_not_found">Tournoi introuvable.</string>
     <string name="must_be_logged_in">Vous devez être connecté.</string>
-    <string name="joined_wait_for_bracket">Rejoint! </string>
-    <string name="accept_invitation_title">Accepter l'invitation</string>
-    <string name="accept_invitation_message">Voulez-vous accepter cette invitation de jeu?</string>
-    <string name="leave_game_title">Quitter le jeu?</string>
-    <string name="exit_confirm_message">Êtes-vous sûr de vouloir quitter?</string>
-    <string name="exit_forfeit_message">Êtes-vous sûr de vouloir quitter? </string>
-    <string name="close">Fermer</string>
-    <string name="ok">D'ACCORD</string>
-    <string name="verification_email_sent">Email de vérification envoyé</string>
-    <string name="check_email_to_verify">Veuillez vérifier votre e-mail pour vérifier votre compte.</string>
-    <string name="email_verification_failed">La vérification par e-mail a échoué</string>
-    <string name="could_not_send_verification_email">Impossible d'envoyer un e-mail de vérification:%1$s</string>
-    <string name="registration_failed_title">L'inscription a échoué</string>
+    <string name="joined_wait_for_bracket">Rejoint&nbsp;! Attendez le début du tableau.</string>
+    <string name="accept_invitation_title">Accepter l’invitation</string>
+    <string name="accept_invitation_message">Voulez-vous accepter cette invitation de jeu&nbsp;?</string>
+    <string name="leave_game_title">Quitter la partie&nbsp;?</string>
+    <string name="exit_confirm_message">Êtes-vous sûr de vouloir quitter&nbsp;?</string>
+    <string name="exit_forfeit_message">Êtes-vous sûr de vouloir quitter&nbsp;? Cela comptera comme un abandon.</string>
+    <string name="verification_email_sent">E-mail de vérification envoyé</string>
+    <string name="check_email_to_verify">Veuillez vérifier votre e-mail pour valider votre compte.</string>
+    <string name="email_verification_failed">Échec de la vérification par e-mail</string>
+    <string name="could_not_send_verification_email">Impossible d’envoyer l’e-mail de vérification&nbsp;: %1$s</string>
+    <string name="registration_failed_title">Échec de l’inscription</string>
     <string name="player_label">Joueur</string>
-    <string name="android_label">Androïde</string>
-    <string name="player_with_number">Joueur%1$d</string>
+    <string name="android_label">Android</string>
+    <string name="player_with_number">Joueur %1$d</string>
     <string name="winner_timeout">%1$s a manqué de temps.</string>
-    <string name="winner_abandon">%1$s a perdu le jeu.</string>
-    <string name="winner_is">Le gagnant est%1$s!</string>
+    <string name="winner_abandon">%1$s a abandonné la partie.</string>
+    <string name="winner_is">Le gagnant est %1$s&nbsp;!</string>
 
-    <string name="could_not_accept_invite">Impossible d'accepter l'invitation.</string>
-    <string name="invite_was_cancelled">L'invitation a été annulée.</string>
-    <string name="invite_no_longer_available">L'invitation n'est plus disponible.</string>
-    <string name="invite_has_expired">Invite a expiré.</string>
+    <string name="could_not_accept_invite">Impossible d’accepter l’invitation.</string>
+    <string name="invite_was_cancelled">L’invitation a été annulée.</string>
+    <string name="invite_no_longer_available">L’invitation n’est plus disponible.</string>
+    <string name="invite_has_expired">L’invitation a expiré.</string>
 
     <string name="please_verify_email_before_login">Veuillez vérifier votre adresse e-mail avant de vous connecter.</string>
-    <string name="authentication_failed">L'authentification a échoué.</string>
+    <string name="authentication_failed">L’authentification a échoué.</string>
 
-    <string name="could_not_cancel_invite">Impossible d'annuler l'invitation:%1$s</string>
+    <string name="could_not_cancel_invite">Impossible d’annuler l’invitation&nbsp;: %1$s</string>
 </resources>
