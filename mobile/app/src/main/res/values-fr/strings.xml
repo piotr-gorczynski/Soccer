@@ -9,8 +9,8 @@
 
     <!-- Settings -->
     <string name="pref_title_level">Niveau Android</string>
-    <string name="pref_title_block_invite_friend">Bloquer les demandes 'Inviter un ami'</string>
-    <string name="pref_summary_block_invite_friend">Les autres joueurs ne peuvent pas vous inviter via 'Inviter un ami' (tournois non affectés)</string>
+    <string name="pref_title_block_invite_friend">Bloquer les invitations « Inviter un ami »</string>
+    <string name="pref_summary_block_invite_friend">Empêche les autres joueurs de vous inviter via « Inviter un ami » (les tournois ne sont pas concernés).</string>
     <string name="pref_title_ads_consent">Consentement pour les publicités personnalisées</string>
     <string name="pref_summary_ads_consent">Examiner ou modifier votre consentement pour l’affichage de publicités personnalisées</string>
     <string name="pref_title_language">Langue</string>
@@ -91,7 +91,7 @@
     <string name="load_more">Charger plus</string>
     <string name="add_friend_label">Ajouter</string>
     <string name="invite_blocked">%1$s a bloqué les invitations.</string>
-    <string name="invites_blocked_notification">Les autres joueurs ne peuvent pas vous inviter via la fonction 'Inviter un ami'. Vous pouvez le changer dans Paramètres.</string>
+    <string name="invites_blocked_notification">Les autres joueurs ne peuvent pas vous inviter via « Inviter un ami ». Vous pouvez modifier ce réglage dans Paramètres.</string>
 
     <string name="pending_game_invitations">Invitations de jeu en attente</string>
     <string name="pending_invites">Invitations en attente</string>
