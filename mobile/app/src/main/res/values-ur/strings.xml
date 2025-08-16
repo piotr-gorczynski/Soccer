@@ -198,6 +198,7 @@
     <string name="nickname_required">عرفی نام کی ضرورت ہے</string>
     <string name="nickname_too_long">عرفی نام 20 حروف یا اس سے کم ہونا چاہئے</string>
     <string name="not_logged_in">لاگ ان نہیں</string>
+    <string name="register_to_use_function">براہ کرم اس فنکشن کو استعمال کرنے کے لیے خود کو رجسٹر کریں۔</string>
     <string name="network_error_checking_nickname">عرفی نام کی جانچ پڑتال کے دوران نیٹ ورک کی خرابی</string>
     <string name="nickname_taken">پہلے سے لیا گیا عرفی نام - ایک اور کا انتخاب کریں</string>
     <string name="nickname_saved">عرفی نام بچ گیا</string>

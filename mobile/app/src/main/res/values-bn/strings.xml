@@ -198,6 +198,7 @@
     <string name="nickname_required">ডাকনাম প্রয়োজন</string>
     <string name="nickname_too_long">ডাকনাম অবশ্যই 20 টি অক্ষর বা তার চেয়ে কম হতে হবে</string>
     <string name="not_logged_in">লগ ইন নেই</string>
+    <string name="register_to_use_function">এই ফাংশনটি ব্যবহার করতে দয়া করে নিজেকে নিবন্ধন করুন।</string>
     <string name="network_error_checking_nickname">ডাকনাম পরীক্ষা করার সময় নেটওয়ার্ক ত্রুটি</string>
     <string name="nickname_taken">ডাকনাম ইতিমধ্যে নেওয়া হয়েছে - অন্যটি বেছে নিন</string>
     <string name="nickname_saved">ডাকনাম সংরক্ষণ</string>
