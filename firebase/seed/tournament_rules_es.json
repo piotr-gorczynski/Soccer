@@ -1,15 +1,15 @@
 {
   "rules": [
-    "Los partidos se juegan en una cuadrícula de 6x8. ",
-    "Los jugadores mueven la pelota a cualquiera de los ocho puntos adyacentes. ",
-    "Golpear una frontera o un punto visitado previamente cuenta como un rebote y otorga otro movimiento al mismo jugador.",
-    "Se anota un gol cuando la pelota ingresa a la meta del oponente en el borde superior o inferior. ",
-    "Cada jugador tiene un reloj de ajedrez de 5 minutos. ",
-    "Si el teléfono de un jugador se desconecta antes de que comience su turno, el backend iniciará automáticamente su reloj después de un minuto.",
-    "Dejando el partido temprano pierde el juego al oponente.",
-    "Los torneos corren en formato de round-robin. ",
-    "Las coincidencias obsoletas sin actividad durante más de cinco minutos se deciden automáticamente a tiempo.",
-    "El torneo termina cuando se alcanza la fecha límite."
+    "Los partidos se juegan en una cuadrícula de 6×8. La pelota empieza en el centro (3,4).",
+    "Los jugadores mueven la pelota a cualquiera de los ocho puntos adyacentes. No se permite cruzar ni repetir líneas.",
+    "Golpear un borde o un punto ya visitado cuenta como rebote y concede otro turno al mismo jugador.",
+    "Se marca gol cuando la pelota entra en la portería del oponente en el borde superior o inferior. Si no quedan jugadas legales, gana el jugador que realizó el último movimiento.",
+    "Cada jugador dispone de un reloj de ajedrez de 5 minutos. El tiempo solo corre durante su propio turno. Agotar el tiempo implica derrota.",
+    "Si el teléfono de un jugador se desconecta antes de que empiece su turno, el backend iniciará automáticamente su reloj al cabo de un minuto.",
+    "Abandonar el partido antes de que termine supone perder por incomparecencia a favor del oponente.",
+    "Los torneos se disputan en formato todos contra todos (round‑robin). Las parejas se generan automáticamente al cerrarse la inscripción.",
+    "Los partidos sin actividad durante más de cinco minutos se deciden automáticamente por tiempo.",
+    "El torneo finaliza al alcanzarse la fecha límite."
   ],
   "updatedAt": "2025-07-21T00:00:00Z"
 }

@@ -1,14 +1,14 @@
 {
   "rules": [
-    "Spiele werden auf einem 6x8 -Raster gespielt. ",
-    "Die Spieler bewegen den Ball zu einem der acht benachbarten Punkte. ",
-    "Das Schlagen einer Grenze oder einem zuvor besuchten Punkt zählt als Sprung und gewährt einen weiteren Wechsel zum selben Spieler.",
-    "Ein Tor wird erzielt, wenn der Ball in das Tor des Gegners an der oberen oder unteren Kante gelangt. ",
-    "Jeder Spieler hat eine 5-minütige Schachuhr. ",
-    "Wenn das Telefon eines Spielers vor Beginn seines Kurses abbricht, startet das Backend seine Uhr nach einer Minute automatisch.",
-    "Das Spiel verlässt das Spiel dem Gegner.",
-    "Turniere laufen in einem Round-Robin-Format. ",
-    "Abgestandene Spiele ohne Aktivität über fünf Minuten werden automatisch pünktlich entschieden.",
+    "Spiele werden auf einem 6×8‑Raster gespielt. Der Ball startet in der Mitte (3,4).",
+    "Die Spieler bewegen den Ball zu einem der acht benachbarten Punkte. Linien dürfen weder gekreuzt noch wiederholt werden.",
+    "Ein Treffer an einer Begrenzung oder an einem bereits besuchten Punkt gilt als Abpraller und gewährt demselben Spieler einen weiteren Zug.",
+    "Ein Tor fällt, wenn der Ball an der oberen oder unteren Kante ins gegnerische Tor gelangt. Gibt es keine legalen Züge mehr, gewinnt der Spieler, der zuletzt gezogen hat.",
+    "Jeder Spieler hat eine 5‑Minuten‑Schachuhr. Die Zeit läuft nur während der eigenen Zugphase. Zeitüberschreitung bedeutet eine Niederlage.",
+    "Wenn sich das Telefon eines Spielers vor Beginn seines Zuges trennt, startet das Backend seine Uhr nach einer Minute automatisch.",
+    "Wer das Match vorzeitig verlässt, verliert kampflos; der Sieg geht an den Gegner.",
+    "Turniere werden im Round‑Robin‑Format ausgetragen. Die Paarungen werden automatisch erzeugt, sobald die Registrierung geschlossen ist.",
+    "Partien ohne Aktivität von mehr als fünf Minuten werden automatisch wegen Zeit entschieden.",
     "Das Turnier endet, wenn die Frist erreicht ist."
   ],
   "updatedAt": "2025-07-21T00:00:00Z"
