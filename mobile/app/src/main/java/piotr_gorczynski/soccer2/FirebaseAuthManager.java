@@ -258,7 +258,7 @@ public class FirebaseAuthManager {
                                                 : "Unknown error";
                                         new AlertDialog.Builder(context)
                                                 .setTitle(R.string.email_verification_failed)
-                                                .setMessage(getString(R.string.could_not_send_verification_email, error))
+                                                .setMessage(context.getString(R.string.could_not_send_verification_email, error))
                                                 .setPositiveButton(R.string.ok, null)
                                                 .show();
                                     }
