@@ -134,10 +134,16 @@ service cloud.firestore {
     }
 
 
-    // Regulations: read-only for authenticated users
+    // Regulations: read-only for authenticated users, including language subcollections
     match /regulations/{docId} {
       allow read: if request.auth != null;
       allow write: if false;
+
+      // Language-specific rule documents (e.g. /regulations/{id}/en/rules)
+      match /{lang}/{subDoc=**} {
+        allow read: if request.auth != null;
+        allow write: if false;
+      }
     }
 
     // App configuration settings (e.g. ads frequency)
