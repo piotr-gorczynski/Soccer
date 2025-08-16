@@ -232,6 +232,9 @@ public class FirebaseAuthManager {
 
                         userData.put("method", "email");
 
+                        String langCode = LanguageManager.getCurrentLanguageCode(context);
+                        userData.put("language", langCode);
+
                         db.collection("users").document(uid).set(userData, SetOptions.merge())
                                 .addOnFailureListener(e ->
                                         Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
