@@ -9,6 +9,14 @@ const db = admin.firestore();
 async function main() {
   const seedDir = path.join(__dirname, '..', '..', 'seed');
   const files = fs.readdirSync(seedDir).filter(f => /^tournament_rules_.*\.json$/.test(f));
+  const enRulesPath = path.join(seedDir, 'tournament_rules_en.json');
+  let body = '';
+  if (fs.existsSync(enRulesPath)) {
+    const enContent = JSON.parse(fs.readFileSync(enRulesPath, 'utf8'));
+    if (Array.isArray(enContent.rules)) {
+      body = enContent.rules.map(r => `• ${r}`).join('\n\n');
+    }
+  }
 
   if (files.length === 0) {
     console.error('No tournament rules files found.');
@@ -17,6 +25,7 @@ async function main() {
 
   const docRef = await db.collection('regulations').add({
     name: 'General Tournament Game Rules',
+    body,
     createdAt: admin.firestore.FieldValue.serverTimestamp(),
     status: 'active'
   });
