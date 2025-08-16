@@ -66,6 +66,8 @@ public class FirebaseAuthManager {
                                 Map<String, Object> data = new HashMap<>();
                                 if (email != null) data.put("email", email);
                                 data.put("method", providerId);
+                                String langCode = LanguageManager.getCurrentLanguageCode(context);
+                                data.put("language", langCode);
 
                                 String nicknameToStore;
                                 if (existingNick == null || existingNick.isEmpty()) {
@@ -160,6 +162,8 @@ public class FirebaseAuthManager {
                                             Map<String, Object> data = new HashMap<>();
                                             data.put("method", "email");
                                             if (email != null) data.put("email", email);
+                                            String langCode = LanguageManager.getCurrentLanguageCode(context);
+                                            data.put("language", langCode);
                                             db.collection("users").document(uid).set(data, SetOptions.merge());
 
                                             // Preserve any previously-saved nickname instead of overwriting it
