@@ -6,6 +6,7 @@ import android.widget.Button;
 import android.widget.Toast;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.view.View;
 import java.util.Objects;
 
 import androidx.annotation.Nullable;
@@ -38,6 +39,7 @@ public class UniversalLoginActivity extends BaseActivity {
         Button btnEmail = findViewById(R.id.btnUniversalEmail);
         Button btnGoogle = findViewById(R.id.btnUniversalGoogle);
         Button btnFacebook = findViewById(R.id.btnUniversalFacebook);
+        btnFacebook.setVisibility(View.VISIBLE);
         Button btnMicrosoft = findViewById(R.id.btnUniversalMicrosoft);
 
         btnEmail.setOnClickListener(v -> {
