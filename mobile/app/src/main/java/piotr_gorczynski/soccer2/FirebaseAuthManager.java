@@ -9,6 +9,8 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.OAuthProvider;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.FacebookAuthProvider;
 
 import androidx.annotation.Nullable;
 
@@ -123,6 +125,85 @@ public class FirebaseAuthManager {
                             Objects.requireNonNull(new Object() {
                             }.getClass().getEnclosingMethod()).getName() +
                             ": signInWithProvider FAILED", e);
+                    callback.onLoginFailure(e.getMessage());
+                });
+    }
+
+    public void loginWithFacebookToken(String token, @Nullable String nickname, LoginCallback callback) {
+        AuthCredential credential = FacebookAuthProvider.getCredential(token);
+        firebaseAuth.signInWithCredential(credential)
+                .addOnSuccessListener(authResult -> {
+                    String providerId = "facebook.com";
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                            Objects.requireNonNull(new Object() {
+                            }.getClass().getEnclosingMethod()).getName() +
+                            ": signInWithCredential success");
+                    String uid = authResult.getUser().getUid();
+                    String email = authResult.getUser().getEmail();
+
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    db.collection("users").document(uid).get(Source.SERVER)
+                            .addOnSuccessListener(doc -> {
+                                String existingNick = doc.getString("nickname");
+                                Map<String, Object> data = new HashMap<>();
+                                if (email != null) data.put("email", email);
+                                data.put("method", providerId);
+                                String langCode = LanguageManager.getCurrentLanguageCode(context);
+                                data.put("language", langCode);
+
+                                String nicknameToStore;
+                                if (existingNick == null || existingNick.isEmpty()) {
+                                    if (nickname != null && !nickname.isEmpty()) {
+                                        data.put("nickname", nickname);
+                                        data.put("nicknameLowercase", nickname.toLowerCase());
+                                        nicknameToStore = nickname;
+                                    } else {
+                                        nicknameToStore = null;
+                                    }
+                                } else {
+                                    nicknameToStore = existingNick;
+                                }
+                                final String finalNickname = nicknameToStore;
+
+                                if (doc.exists()) {
+                                    db.collection("users").document(uid).set(data, SetOptions.merge())
+                                            .addOnCompleteListener(task -> {
+                                                storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId);
+                                                ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
+                                                Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                                                        Objects.requireNonNull(new Object() {
+                                                        }.getClass().getEnclosingMethod()).getName() +
+                                                        ": login success uid=" + uid + ", nickname=" +
+                                                        (finalNickname != null ? finalNickname : "null"));
+                                                callback.onLoginSuccess();
+                                            });
+                                } else {
+                                    db.collection("users").document(uid).set(data, SetOptions.merge())
+                                            .addOnCompleteListener(task -> {
+                                                storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId);
+                                                ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
+                                                Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                                                        Objects.requireNonNull(new Object() {
+                                                        }.getClass().getEnclosingMethod()).getName() +
+                                                        ": login success uid=" + uid + ", nickname=" +
+                                                        (finalNickname != null ? finalNickname : "null"));
+                                                callback.onLoginSuccess();
+                                            });
+                                }
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
+                                        Objects.requireNonNull(new Object() {
+                                        }.getClass().getEnclosingMethod()).getName() +
+                                        ": failed to read user data", e);
+                                callback.onLoginFailure(e.getMessage());
+                            });
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
+                            Objects.requireNonNull(new Object() {
+                            }.getClass().getEnclosingMethod()).getName() +
+                            ": signInWithCredential FAILED", e);
                     callback.onLoginFailure(e.getMessage());
                 });
     }
