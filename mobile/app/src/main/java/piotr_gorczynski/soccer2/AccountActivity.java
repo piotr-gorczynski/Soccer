@@ -4,8 +4,10 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.view.View;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
@@ -18,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.messaging.FirebaseMessaging;
 import android.util.Log;
+import com.bumptech.glide.Glide;
 
 import java.util.HashMap;
 import java.util.Objects;
@@ -34,6 +37,8 @@ public class AccountActivity extends BaseActivity {
 
         TextView nickView = findViewById(R.id.accountNickname);
         TextView emailView = findViewById(R.id.accountEmail);
+        TextView facebookInfoView = findViewById(R.id.accountFacebookInfo);
+        ImageView profilePhotoView = findViewById(R.id.accountProfilePhoto);
         TextView methodView = findViewById(R.id.accountMethod);
         Button logoutBtn = findViewById(R.id.btnLogout);
         Button removeAccountBtn = findViewById(R.id.btnRemoveAccount);
@@ -44,9 +49,50 @@ public class AccountActivity extends BaseActivity {
                 .getString("email", "-");
         String method = getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
                 .getString("method", "-");
+        
+        // Get Facebook-specific data
+        String facebookId = getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
+                .getString("facebookId", null);
+        String facebookName = getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
+                .getString("facebookName", null);
+        String facebookPhotoUrl = getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
+                .getString("facebookPhotoUrl", null);
 
         nickView.setText(getString(R.string.nickname_label, nickname));
-        emailView.setText(getString(R.string.email_label, email));
+        
+        // Show Facebook info or email based on login method
+        if ("facebook.com".equals(method) && facebookId != null) {
+            // Hide email view and show Facebook info
+            emailView.setVisibility(View.GONE);
+            facebookInfoView.setVisibility(View.VISIBLE);
+            
+            // Build Facebook info text
+            StringBuilder facebookInfo = new StringBuilder();
+            facebookInfo.append(getString(R.string.facebook_id_label, facebookId));
+            if (facebookName != null && !facebookName.isEmpty()) {
+                facebookInfo.append("\n").append(getString(R.string.facebook_name_label, facebookName));
+            }
+            facebookInfoView.setText(facebookInfo.toString());
+            
+            // Load Facebook profile photo if available
+            if (facebookPhotoUrl != null && !facebookPhotoUrl.isEmpty()) {
+                profilePhotoView.setVisibility(View.VISIBLE);
+                Glide.with(this)
+                        .load(facebookPhotoUrl)
+                        .circleCrop()
+                        .placeholder(android.R.drawable.ic_menu_gallery)
+                        .error(android.R.drawable.ic_menu_gallery)
+                        .into(profilePhotoView);
+            } else {
+                profilePhotoView.setVisibility(View.GONE);
+            }
+        } else {
+            // Show email for non-Facebook users
+            emailView.setVisibility(View.VISIBLE);
+            emailView.setText(getString(R.string.email_label, email));
+            facebookInfoView.setVisibility(View.GONE);
+            profilePhotoView.setVisibility(View.GONE);
+        }
         methodView.setText(getString(R.string.login_method_label, method));
 
         logoutBtn.setOnClickListener(v -> performLogout());
