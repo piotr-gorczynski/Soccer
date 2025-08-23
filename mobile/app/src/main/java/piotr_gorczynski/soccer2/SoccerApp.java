@@ -91,43 +91,22 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
             int tokenRes = getResources().getIdentifier("facebook_client_token", "string", getPackageName());
             int appIdRes = getResources().getIdentifier("facebook_app_id", "string", getPackageName());
 
-            if (tokenRes != 0) {
-                String clientToken = getString(tokenRes);
-                if (!clientToken.isEmpty()) {
-                    FacebookSdk.setClientToken(clientToken);
-                } else {
-                    Log.w(
-                            "TAG_Soccer",
-                            getClass().getSimpleName() + ".onCreate: Facebook client token empty; proceeding without it"
-                    );
-                }
-            } else {
-                Log.w(
-                        "TAG_Soccer",
-                        getClass().getSimpleName() + ".onCreate: Facebook client token missing; proceeding without it"
-                );
-            }
+            boolean hasToken = tokenRes != 0 && !getString(tokenRes).isEmpty();
+            boolean hasAppId = appIdRes != 0 && !getString(appIdRes).isEmpty();
 
-            if (appIdRes != 0) {
-                String appId = getString(appIdRes);
-                if (!appId.isEmpty()) {
-                    FacebookSdk.setApplicationId(appId);
-                    FacebookSdk.sdkInitialize(getApplicationContext());
-                    AppEventsLogger.activateApp(this);
-                    Log.d(
-                            "TAG_Soccer",
-                            getClass().getSimpleName() + ".onCreate: Facebook SDK initialized"
-                    );
-                } else {
-                    Log.w(
-                            "TAG_Soccer",
-                            getClass().getSimpleName() + ".onCreate: Facebook app id empty; skipping initialization"
-                    );
-                }
+            if (hasToken && hasAppId) {
+                FacebookSdk.setClientToken(getString(tokenRes));
+                FacebookSdk.setApplicationId(getString(appIdRes));
+                FacebookSdk.sdkInitialize(getApplicationContext());
+                AppEventsLogger.activateApp(this);
+                Log.d(
+                        "TAG_Soccer",
+                        getClass().getSimpleName() + ".onCreate: Facebook SDK initialized"
+                );
             } else {
                 Log.w(
                         "TAG_Soccer",
-                        getClass().getSimpleName() + ".onCreate: Facebook app id missing; skipping initialization"
+                        getClass().getSimpleName() + ".onCreate: Facebook SDK not configured; skipping initialization"
                 );
             }
         } catch (Throwable t) {
