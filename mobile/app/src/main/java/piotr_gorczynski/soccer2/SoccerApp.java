@@ -91,9 +91,11 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
             int tokenRes = getResources().getIdentifier("facebook_client_token", "string", getPackageName());
             int appIdRes = getResources().getIdentifier("facebook_app_id", "string", getPackageName());
 
-            boolean hasToken = tokenRes != 0 && !getString(tokenRes).isEmpty();
+            boolean hasToken = tokenRes != 0 && !getString(tokenRes).isEmpty() && !getString(tokenRes).equals("CLIENT_TOKEN_TO_BE_CONFIGURED");
             boolean hasAppId = appIdRes != 0 && !getString(appIdRes).isEmpty();
 
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".onCreate: Facebook config check - hasToken=" + hasToken + ", hasAppId=" + hasAppId);
+            
             if (hasToken && hasAppId) {
                 FacebookSdk.setClientToken(getString(tokenRes));
                 FacebookSdk.setApplicationId(getString(appIdRes));
@@ -104,9 +106,23 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                         getClass().getSimpleName() + ".onCreate: Facebook SDK initialized"
                 );
             } else {
+                if (!hasAppId) {
+                    Log.w(
+                            "TAG_Soccer",
+                            getClass().getSimpleName() + ".onCreate: Facebook App ID missing or empty"
+                    );
+                }
+                if (!hasToken) {
+                    Log.w(
+                            "TAG_Soccer",
+                            getClass().getSimpleName() + ".onCreate: Facebook Client Token missing, empty, or placeholder. " +
+                            "Please configure 'facebook_client_token' in strings.xml with your actual client token from Facebook App Dashboard."
+                    );
+                }
                 Log.w(
                         "TAG_Soccer",
-                        getClass().getSimpleName() + ".onCreate: Facebook SDK not configured; skipping initialization"
+                        getClass().getSimpleName() + ".onCreate: Facebook SDK not configured; skipping initialization. " +
+                        "To fix: Add your Facebook Client Token to strings.xml as 'facebook_client_token'."
                 );
             }
         } catch (Throwable t) {
