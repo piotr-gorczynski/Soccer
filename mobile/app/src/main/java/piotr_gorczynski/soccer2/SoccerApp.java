@@ -125,7 +125,6 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                         "To fix: Add your Facebook Client Token to strings.xml as 'facebook_client_token'."
                 );
             }
-            }
         } catch (Throwable t) {
             Log.w(
                     "TAG_Soccer",
