@@ -118,7 +118,7 @@ public class FirebaseAuthManager {
                                 if (doc.exists()) {
                                     db.collection("users").document(uid).set(data, SetOptions.merge())
                                             .addOnCompleteListener(task -> {
-                                                storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId);
+                                                storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId, finalFacebookId, finalFacebookName, finalFacebookPhotoUrl);
                                                 ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
                                                 Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
                                                         Objects.requireNonNull(new Object() {
@@ -131,7 +131,7 @@ public class FirebaseAuthManager {
                                     // Create-or-update without wiping existing fields like `nickname`
                                     db.collection("users").document(uid).set(data, SetOptions.merge())
                                             .addOnCompleteListener(task -> {
-                                                storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId);
+                                                storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId, finalFacebookId, finalFacebookName, finalFacebookPhotoUrl);
                                                 ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
                                                 Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
                                                         Objects.requireNonNull(new Object() {
