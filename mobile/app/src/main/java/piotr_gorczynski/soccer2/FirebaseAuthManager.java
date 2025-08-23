@@ -21,8 +21,17 @@ import com.google.firebase.firestore.Source;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 import android.content.SharedPreferences;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
+
+import org.json.JSONObject;
 
 public class FirebaseAuthManager {
 
@@ -159,6 +168,63 @@ public class FirebaseAuthManager {
                 });
     }
 
+    /**
+     * Fetch the real Facebook profile photo URL using the access token
+     * @param facebookId The Facebook user ID
+     * @param accessToken The Facebook access token
+     * @return CompletableFuture<String> The real photo URL or null if failed
+     */
+    private CompletableFuture<String> fetchRealFacebookPhotoUrl(String facebookId, String accessToken) {
+        return CompletableFuture.supplyAsync(() -> {
+            if (facebookId == null || accessToken == null) {
+                Log.w("TAG_Soccer", getClass().getSimpleName() + ".fetchRealFacebookPhotoUrl: Missing facebookId or accessToken");
+                return null;
+            }
+
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .connectTimeout(10, TimeUnit.SECONDS)
+                    .readTimeout(10, TimeUnit.SECONDS)
+                    .build();
+
+            String url = "https://graph.facebook.com/v20.0/" + facebookId + "/picture"
+                    + "?type=large&redirect=0&access_token=" + accessToken;
+
+            Request request = new Request.Builder()
+                    .url(url)
+                    .get()
+                    .build();
+
+            try (Response response = client.newCall(request).execute()) {
+                if (response.isSuccessful() && response.body() != null) {
+                    String responseBody = response.body().string();
+                    JSONObject jsonResponse = new JSONObject(responseBody);
+                    
+                    if (jsonResponse.has("data")) {
+                        JSONObject data = jsonResponse.getJSONObject("data");
+                        if (data.has("url") && data.has("is_silhouette")) {
+                            boolean isSilhouette = data.getBoolean("is_silhouette");
+                            String photoUrl = data.getString("url");
+                            
+                            if (!isSilhouette && photoUrl != null && !photoUrl.isEmpty()) {
+                                Log.d("TAG_Soccer", getClass().getSimpleName() + ".fetchRealFacebookPhotoUrl: Got real photo URL: " + photoUrl);
+                                return photoUrl;
+                            } else {
+                                Log.w("TAG_Soccer", getClass().getSimpleName() + ".fetchRealFacebookPhotoUrl: Photo is silhouette or URL is empty");
+                            }
+                        }
+                    }
+                } else {
+                    Log.w("TAG_Soccer", getClass().getSimpleName() + ".fetchRealFacebookPhotoUrl: HTTP error: " + response.code());
+                }
+            } catch (Exception e) {
+                Log.e("TAG_Soccer", getClass().getSimpleName() + ".fetchRealFacebookPhotoUrl: Failed to fetch real photo URL", e);
+            }
+            
+            // Return fallback URL if the Graph API call failed
+            return "https://graph.facebook.com/" + facebookId + "/picture";
+        });
+    }
+
     public void loginWithFacebookToken(String token, @Nullable String nickname, LoginCallback callback) {
         AuthCredential credential = FacebookAuthProvider.getCredential(token);
         firebaseAuth.signInWithCredential(credential)
@@ -181,9 +247,8 @@ public class FirebaseAuthManager {
                             if ("facebook.com".equals(profile.getProviderId())) {
                                 facebookId = profile.getUid();
                                 facebookName = profile.getDisplayName();
-                                if (profile.getPhotoUrl() != null) {
-                                    facebookPhotoUrl = profile.getPhotoUrl().toString();
-                                }
+                                // Don't use profile.getPhotoUrl() - it returns the generic URL
+                                // We'll fetch the real URL using the access token below
                                 break;
                             }
                         }
@@ -192,76 +257,152 @@ public class FirebaseAuthManager {
                     // Make Facebook data final for lambda capture
                     final String finalFacebookId = facebookId;
                     final String finalFacebookName = facebookName;
-                    final String finalFacebookPhotoUrl = facebookPhotoUrl;
                     
-                    // Log extracted Facebook data for debugging
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginWithFacebookToken: extracted Facebook data - ID: " 
-                            + (finalFacebookId != null ? finalFacebookId : "null") 
-                            + ", Name: " + (finalFacebookName != null ? finalFacebookName : "null") 
-                            + ", Photo: " + (finalFacebookPhotoUrl != null ? finalFacebookPhotoUrl : "null"));
+                    // Fetch real Facebook photo URL using access token
+                    CompletableFuture<String> photoUrlFuture = (finalFacebookId != null) 
+                            ? fetchRealFacebookPhotoUrl(finalFacebookId, token)
+                            : CompletableFuture.completedFuture(null);
+                    
+                    photoUrlFuture.thenAccept(realPhotoUrl -> {
+                        final String finalFacebookPhotoUrl = realPhotoUrl;
+                        
+                        // Log extracted Facebook data for debugging
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginWithFacebookToken: extracted Facebook data - ID: " 
+                                + (finalFacebookId != null ? finalFacebookId : "null") 
+                                + ", Name: " + (finalFacebookName != null ? finalFacebookName : "null") 
+                                + ", Photo: " + (finalFacebookPhotoUrl != null ? finalFacebookPhotoUrl : "null"));
 
-                    FirebaseFirestore db = FirebaseFirestore.getInstance();
-                    db.collection("users").document(uid).get(Source.SERVER)
-                            .addOnSuccessListener(doc -> {
-                                String existingNick = doc.getString("nickname");
-                                Map<String, Object> data = new HashMap<>();
-                                if (email != null) data.put("email", email);
-                                data.put("method", providerId);
-                                String langCode = LanguageManager.getCurrentLanguageCode(context);
-                                data.put("language", langCode);
-                                
-                                // Add Facebook-specific data
-                                if (finalFacebookId != null) data.put("facebookId", finalFacebookId);
-                                if (finalFacebookName != null) data.put("facebookName", finalFacebookName);
-                                if (finalFacebookPhotoUrl != null) data.put("facebookPhotoUrl", finalFacebookPhotoUrl);
+                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+                        db.collection("users").document(uid).get(Source.SERVER)
+                                .addOnSuccessListener(doc -> {
+                                    String existingNick = doc.getString("nickname");
+                                    Map<String, Object> data = new HashMap<>();
+                                    if (email != null) data.put("email", email);
+                                    data.put("method", providerId);
+                                    String langCode = LanguageManager.getCurrentLanguageCode(context);
+                                    data.put("language", langCode);
+                                    
+                                    // Add Facebook-specific data
+                                    if (finalFacebookId != null) data.put("facebookId", finalFacebookId);
+                                    if (finalFacebookName != null) data.put("facebookName", finalFacebookName);
+                                    if (finalFacebookPhotoUrl != null) data.put("facebookPhotoUrl", finalFacebookPhotoUrl);
 
-                                String nicknameToStore;
-                                if (existingNick == null || existingNick.isEmpty()) {
-                                    if (nickname != null && !nickname.isEmpty()) {
-                                        data.put("nickname", nickname);
-                                        data.put("nicknameLowercase", nickname.toLowerCase());
-                                        nicknameToStore = nickname;
+                                    String nicknameToStore;
+                                    if (existingNick == null || existingNick.isEmpty()) {
+                                        if (nickname != null && !nickname.isEmpty()) {
+                                            data.put("nickname", nickname);
+                                            data.put("nicknameLowercase", nickname.toLowerCase());
+                                            nicknameToStore = nickname;
+                                        } else {
+                                            nicknameToStore = null;
+                                        }
                                     } else {
-                                        nicknameToStore = null;
+                                        nicknameToStore = existingNick;
                                     }
-                                } else {
-                                    nicknameToStore = existingNick;
-                                }
-                                final String finalNickname = nicknameToStore;
+                                    final String finalNickname = nicknameToStore;
 
-                                if (doc.exists()) {
-                                    db.collection("users").document(uid).set(data, SetOptions.merge())
-                                            .addOnCompleteListener(task -> {
-                                                storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId, finalFacebookId, finalFacebookName, finalFacebookPhotoUrl);
-                                                ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
-                                                Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                                                        Objects.requireNonNull(new Object() {
-                                                        }.getClass().getEnclosingMethod()).getName() +
-                                                        ": login success uid=" + uid + ", nickname=" +
-                                                        (finalNickname != null ? finalNickname : "null"));
-                                                callback.onLoginSuccess();
-                                            });
-                                } else {
-                                    db.collection("users").document(uid).set(data, SetOptions.merge())
-                                            .addOnCompleteListener(task -> {
-                                                storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId, finalFacebookId, finalFacebookName, finalFacebookPhotoUrl);
-                                                ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
-                                                Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                                                        Objects.requireNonNull(new Object() {
-                                                        }.getClass().getEnclosingMethod()).getName() +
-                                                        ": login success uid=" + uid + ", nickname=" +
-                                                        (finalNickname != null ? finalNickname : "null"));
-                                                callback.onLoginSuccess();
-                                            });
-                                }
-                            })
-                            .addOnFailureListener(e -> {
-                                Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
-                                        Objects.requireNonNull(new Object() {
-                                        }.getClass().getEnclosingMethod()).getName() +
-                                        ": failed to read user data", e);
-                                callback.onLoginFailure(e.getMessage());
-                            });
+                                    if (doc.exists()) {
+                                        db.collection("users").document(uid).set(data, SetOptions.merge())
+                                                .addOnCompleteListener(task -> {
+                                                    storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId, finalFacebookId, finalFacebookName, finalFacebookPhotoUrl);
+                                                    ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
+                                                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                                                            Objects.requireNonNull(new Object() {
+                                                            }.getClass().getEnclosingMethod()).getName() +
+                                                            ": login success uid=" + uid + ", nickname=" +
+                                                            (finalNickname != null ? finalNickname : "null"));
+                                                    callback.onLoginSuccess();
+                                                });
+                                    } else {
+                                        db.collection("users").document(uid).set(data, SetOptions.merge())
+                                                .addOnCompleteListener(task -> {
+                                                    storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId, finalFacebookId, finalFacebookName, finalFacebookPhotoUrl);
+                                                    ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
+                                                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                                                            Objects.requireNonNull(new Object() {
+                                                            }.getClass().getEnclosingMethod()).getName() +
+                                                            ": login success uid=" + uid + ", nickname=" +
+                                                            (finalNickname != null ? finalNickname : "null"));
+                                                    callback.onLoginSuccess();
+                                                });
+                                    }
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
+                                            Objects.requireNonNull(new Object() {
+                                            }.getClass().getEnclosingMethod()).getName() +
+                                            ": failed to read user data", e);
+                                    callback.onLoginFailure(e.getMessage());
+                                });
+                    }).exceptionally(ex -> {
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + ".loginWithFacebookToken: Failed to fetch Facebook photo URL", ex);
+                        // Continue with login even if photo URL fetch fails - just use null
+                        final String finalFacebookPhotoUrl = null;
+                        
+                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+                        db.collection("users").document(uid).get(Source.SERVER)
+                                .addOnSuccessListener(doc -> {
+                                    String existingNick = doc.getString("nickname");
+                                    Map<String, Object> data = new HashMap<>();
+                                    if (email != null) data.put("email", email);
+                                    data.put("method", providerId);
+                                    String langCode = LanguageManager.getCurrentLanguageCode(context);
+                                    data.put("language", langCode);
+                                    
+                                    // Add Facebook-specific data
+                                    if (finalFacebookId != null) data.put("facebookId", finalFacebookId);
+                                    if (finalFacebookName != null) data.put("facebookName", finalFacebookName);
+                                    if (finalFacebookPhotoUrl != null) data.put("facebookPhotoUrl", finalFacebookPhotoUrl);
+
+                                    String nicknameToStore;
+                                    if (existingNick == null || existingNick.isEmpty()) {
+                                        if (nickname != null && !nickname.isEmpty()) {
+                                            data.put("nickname", nickname);
+                                            data.put("nicknameLowercase", nickname.toLowerCase());
+                                            nicknameToStore = nickname;
+                                        } else {
+                                            nicknameToStore = null;
+                                        }
+                                    } else {
+                                        nicknameToStore = existingNick;
+                                    }
+                                    final String finalNickname = nicknameToStore;
+
+                                    if (doc.exists()) {
+                                        db.collection("users").document(uid).set(data, SetOptions.merge())
+                                                .addOnCompleteListener(task -> {
+                                                    storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId, finalFacebookId, finalFacebookName, finalFacebookPhotoUrl);
+                                                    ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
+                                                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                                                            Objects.requireNonNull(new Object() {
+                                                            }.getClass().getEnclosingMethod()).getName() +
+                                                            ": login success uid=" + uid + ", nickname=" +
+                                                            (finalNickname != null ? finalNickname : "null"));
+                                                    callback.onLoginSuccess();
+                                                });
+                                    } else {
+                                        db.collection("users").document(uid).set(data, SetOptions.merge())
+                                                .addOnCompleteListener(task -> {
+                                                    storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId, finalFacebookId, finalFacebookName, finalFacebookPhotoUrl);
+                                                    ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
+                                                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                                                            Objects.requireNonNull(new Object() {
+                                                            }.getClass().getEnclosingMethod()).getName() +
+                                                            ": login success uid=" + uid + ", nickname=" +
+                                                            (finalNickname != null ? finalNickname : "null"));
+                                                    callback.onLoginSuccess();
+                                                });
+                                    }
+                                })
+                                .addOnFailureListener(e -> {
+                                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
+                                            Objects.requireNonNull(new Object() {
+                                            }.getClass().getEnclosingMethod()).getName() +
+                                            ": failed to read user data", e);
+                                    callback.onLoginFailure(e.getMessage());
+                                });
+                        return null;
+                    });
                 })
                 .addOnFailureListener(e -> {
                     Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
