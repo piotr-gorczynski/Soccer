@@ -21,6 +21,7 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.facebook.FacebookSdk;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -84,6 +85,8 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        FacebookSdk.sdkInitialize(getApplicationContext());
 
         String code = LanguageManager.getCurrentLanguageCode(this);
         AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(code));
