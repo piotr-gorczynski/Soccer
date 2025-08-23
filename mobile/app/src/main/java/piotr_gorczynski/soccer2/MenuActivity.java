@@ -229,7 +229,7 @@ public class MenuActivity extends BaseActivity {
                         shouldLogout = true;
                         logoutReason = "Missing facebookId for Facebook login";
                     }
-                } else if ("google.com".equals(methodField) || "password".equals(methodField)) {
+                } else if ("google.com".equals(methodField) || "email".equals(methodField)) {
                     // For email/Google login, email is required
                     if (emailField == null || emailField.isEmpty()) {
                         shouldLogout = true;
