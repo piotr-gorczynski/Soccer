@@ -21,6 +21,11 @@ import androidx.work.WorkManager;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.ads.MobileAds;
@@ -88,16 +93,28 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         super.onCreate();
 
         try {
+            // Try to load Facebook client token from assets first, then fall back to strings.xml
+            String clientToken = loadFacebookClientTokenFromAssets();
             int tokenRes = getResources().getIdentifier("facebook_client_token", "string", getPackageName());
             int appIdRes = getResources().getIdentifier("facebook_app_id", "string", getPackageName());
 
-            boolean hasToken = tokenRes != 0 && !getString(tokenRes).isEmpty() && !getString(tokenRes).equals("CLIENT_TOKEN_TO_BE_CONFIGURED");
+            // Use token from assets if available, otherwise fall back to strings.xml
+            boolean hasToken = false;
+            if (clientToken != null && !clientToken.isEmpty()) {
+                hasToken = true;
+                Log.d("TAG_Soccer", getClass().getSimpleName() + ".onCreate: Using Facebook client token from assets");
+            } else if (tokenRes != 0 && !getString(tokenRes).isEmpty() && !getString(tokenRes).equals("CLIENT_TOKEN_TO_BE_CONFIGURED")) {
+                clientToken = getString(tokenRes);
+                hasToken = true;
+                Log.d("TAG_Soccer", getClass().getSimpleName() + ".onCreate: Using Facebook client token from strings.xml");
+            }
+
             boolean hasAppId = appIdRes != 0 && !getString(appIdRes).isEmpty();
 
             Log.d("TAG_Soccer", getClass().getSimpleName() + ".onCreate: Facebook config check - hasToken=" + hasToken + ", hasAppId=" + hasAppId);
             
             if (hasToken && hasAppId) {
-                FacebookSdk.setClientToken(getString(tokenRes));
+                FacebookSdk.setClientToken(clientToken);
                 FacebookSdk.setApplicationId(getString(appIdRes));
                 FacebookSdk.sdkInitialize(getApplicationContext());
                 AppEventsLogger.activateApp(this);
@@ -116,13 +133,13 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                     Log.w(
                             "TAG_Soccer",
                             getClass().getSimpleName() + ".onCreate: Facebook Client Token missing, empty, or placeholder. " +
-                            "Please configure 'facebook_client_token' in strings.xml with your actual client token from Facebook App Dashboard."
+                            "Please configure 'facebook_client_token' either as an asset file or in strings.xml with your actual client token from Facebook App Dashboard."
                     );
                 }
                 Log.w(
                         "TAG_Soccer",
                         getClass().getSimpleName() + ".onCreate: Facebook SDK not configured; skipping initialization. " +
-                        "To fix: Add your Facebook Client Token to strings.xml as 'facebook_client_token'."
+                        "To fix: Add your Facebook Client Token as an asset file or to strings.xml as 'facebook_client_token'."
                 );
             }
         } catch (Throwable t) {
@@ -630,6 +647,27 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         LanguageManager.loadLanguageFromFirestore(this);
     }
 
+    /**
+     * Load Facebook client token from assets if available
+     * @return The client token string, or null if not found
+     */
+    private String loadFacebookClientTokenFromAssets() {
+        try (InputStream is = getAssets().open("facebook_client_token");
+             BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+            String line = reader.readLine();
+            if (line != null) {
+                String trimmed = line.trim();
+                if (!trimmed.isEmpty()) {
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".loadFacebookClientTokenFromAssets: Loaded client token from asset");
+                    return trimmed;
+                }
+            }
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".loadFacebookClientTokenFromAssets: facebook_client_token asset was empty");
+        } catch (IOException e) {
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".loadFacebookClientTokenFromAssets: facebook_client_token asset not found", e);
+        }
+        return null;
+    }
 
 
 }
