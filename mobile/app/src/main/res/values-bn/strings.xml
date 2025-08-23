@@ -156,6 +156,7 @@
     <string name="login_facebook">Facebook দিয়ে লগ ইন</string>
     <string name="login_microsoft">Microsoft দিয়ে লগ ইন</string>
     <string name="login_method_label">লগ ইন পদ্ধতি: %1$s</string>
+    <string name="facebook_name_label">Facebook নাম: %1$s</string>
     <string name="pref_title_facebook">Facebook কমিউনিটি</string>
     <string name="pref_summary_facebook">Facebook এ আমাদের কমিউনিটি পেজ খুলুন</string>
     <string name="ads_consent_required">বিজ্ঞাপন দেখানো অবকাঠামো রক্ষণাবেক্ষণের জন্য অর্থায়নে সহায়তা করে। যেহেতু আপনি বিজ্ঞাপন দেখাতে সম্মত হননি, এই বিকল্পটি উপলব্ধ নেই। আপনি সেটিংসে আপনার সম্মতি পরীক্ষা করতে পারেন।</string>
