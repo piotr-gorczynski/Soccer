@@ -87,9 +87,17 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     public void onCreate() {
         super.onCreate();
 
-        FacebookSdk.sdkInitialize(getApplicationContext());
-        AppEventsLogger.activateApp(this);
-        Log.d("TAG_Soccer", getClass().getSimpleName() + ".onCreate: Facebook SDK initialized");
+        try {
+            FacebookSdk.sdkInitialize(getApplicationContext());
+            AppEventsLogger.activateApp(this);
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".onCreate: Facebook SDK initialized");
+        } catch (Exception e) {
+            Log.w(
+                    "TAG_Soccer",
+                    getClass().getSimpleName() + ".onCreate: Facebook SDK init failed",
+                    e
+            );
+        }
 
         String code = LanguageManager.getCurrentLanguageCode(this);
         AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(code));
