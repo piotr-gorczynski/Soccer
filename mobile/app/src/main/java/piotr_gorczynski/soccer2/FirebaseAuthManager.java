@@ -60,6 +60,29 @@ public class FirebaseAuthManager {
                             ": signInWithProvider success");
                     String uid = authResult.getUser().getUid();
                     String email = authResult.getUser().getEmail();
+                    
+                    // Extract Facebook-specific data if this is a Facebook login
+                    String facebookId = null;
+                    String facebookName = null;
+                    String facebookPhotoUrl = null;
+                    
+                    if ("facebook.com".equals(providerId) && authResult.getUser() != null) {
+                        for (com.google.firebase.auth.UserInfo profile : authResult.getUser().getProviderData()) {
+                            if ("facebook.com".equals(profile.getProviderId())) {
+                                facebookId = profile.getUid();
+                                facebookName = profile.getDisplayName();
+                                if (profile.getPhotoUrl() != null) {
+                                    facebookPhotoUrl = profile.getPhotoUrl().toString();
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    
+                    // Make Facebook data final for lambda capture
+                    final String finalFacebookId = facebookId;
+                    final String finalFacebookName = facebookName;
+                    final String finalFacebookPhotoUrl = facebookPhotoUrl;
 
                     FirebaseFirestore db = FirebaseFirestore.getInstance();
                     db.collection("users").document(uid).get(Source.SERVER)
@@ -70,6 +93,13 @@ public class FirebaseAuthManager {
                                 data.put("method", providerId);
                                 String langCode = LanguageManager.getCurrentLanguageCode(context);
                                 data.put("language", langCode);
+                                
+                                // Add Facebook-specific data if this is a Facebook login
+                                if ("facebook.com".equals(providerId)) {
+                                    if (finalFacebookId != null) data.put("facebookId", finalFacebookId);
+                                    if (finalFacebookName != null) data.put("facebookName", finalFacebookName);
+                                    if (finalFacebookPhotoUrl != null) data.put("facebookPhotoUrl", finalFacebookPhotoUrl);
+                                }
 
                                 String nicknameToStore;
                                 if (existingNick == null || existingNick.isEmpty()) {
