@@ -21,6 +21,9 @@ exports.removeAccount = functions
 
     const updates = {
       email: admin.firestore.FieldValue.delete(),
+      facebookId: admin.firestore.FieldValue.delete(),
+      facebookName: admin.firestore.FieldValue.delete(),
+      facebookPhotoUrl: admin.firestore.FieldValue.delete(),
       nickname: '(Account removed)',
       nicknameLowercase: '(account removed)',
       accountDeleted: true,
