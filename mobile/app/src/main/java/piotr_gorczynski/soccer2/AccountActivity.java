@@ -68,9 +68,9 @@ public class AccountActivity extends BaseActivity {
             
             // Build Facebook info text
             StringBuilder facebookInfo = new StringBuilder();
-            facebookInfo.append("Facebook ID: ").append(facebookId);
+            facebookInfo.append(getString(R.string.facebook_id_label, facebookId));
             if (facebookName != null && !facebookName.isEmpty()) {
-                facebookInfo.append("\nFacebook Name: ").append(facebookName);
+                facebookInfo.append("\n").append(getString(R.string.facebook_name_label, facebookName));
             }
             facebookInfoView.setText(facebookInfo.toString());
             
