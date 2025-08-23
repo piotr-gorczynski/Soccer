@@ -207,12 +207,40 @@ public class MenuActivity extends BaseActivity {
             docRef.get().addOnSuccessListener(doc -> {
                 String emailField = doc.getString("email");
                 String methodField = doc.getString("method");
+                String facebookIdField = doc.getString("facebookId");
+                Boolean accountDeleted = doc.getBoolean("accountDeleted");
                 
-                // Allow users without email if they logged in via Facebook
-                if ((emailField == null || emailField.isEmpty()) && !"facebook.com".equals(methodField)) {
+                // Check if account is deleted - logout if true
+                if (accountDeleted != null && accountDeleted) {
                     Log.w("TAG_Soccer", getClass().getSimpleName() + "." +
                             Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
-                            ": Missing email in Firestore - logging out user");
+                            ": Account is deleted - logging out user");
+                    logoutUser();
+                    return;
+                }
+                
+                // Validate required fields based on login method
+                boolean shouldLogout = false;
+                String logoutReason = "";
+                
+                if ("facebook.com".equals(methodField)) {
+                    // For Facebook login, facebookId is required
+                    if (facebookIdField == null || facebookIdField.isEmpty()) {
+                        shouldLogout = true;
+                        logoutReason = "Missing facebookId for Facebook login";
+                    }
+                } else if ("google.com".equals(methodField) || "password".equals(methodField)) {
+                    // For email/Google login, email is required
+                    if (emailField == null || emailField.isEmpty()) {
+                        shouldLogout = true;
+                        logoutReason = "Missing email for email/Google login";
+                    }
+                }
+                
+                if (shouldLogout) {
+                    Log.w("TAG_Soccer", getClass().getSimpleName() + "." +
+                            Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                            ": " + logoutReason + " - logging out user");
                     logoutUser();
                     return;
                 }
@@ -272,6 +300,7 @@ public class MenuActivity extends BaseActivity {
     private void logoutUser() {
         String uid = FirebaseAuth.getInstance().getUid();
         if (uid != null) {
+            // Only call forceUserOffline if user is actually logged in
             ((SoccerApp) getApplication()).forceUserOffline(uid);
         }
 
