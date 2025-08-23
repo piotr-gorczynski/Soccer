@@ -88,14 +88,34 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         super.onCreate();
 
         try {
-            FacebookSdk.sdkInitialize(getApplicationContext());
-            AppEventsLogger.activateApp(this);
-            Log.d("TAG_Soccer", getClass().getSimpleName() + ".onCreate: Facebook SDK initialized");
-        } catch (Exception e) {
+            int tokenRes = getResources().getIdentifier("facebook_client_token", "string", getPackageName());
+            if (tokenRes != 0) {
+                String clientToken = getString(tokenRes);
+                if (!clientToken.isEmpty()) {
+                    FacebookSdk.setClientToken(clientToken);
+                    FacebookSdk.sdkInitialize(getApplicationContext());
+                    AppEventsLogger.activateApp(this);
+                    Log.d(
+                            "TAG_Soccer",
+                            getClass().getSimpleName() + ".onCreate: Facebook SDK initialized"
+                    );
+                } else {
+                    Log.w(
+                            "TAG_Soccer",
+                            getClass().getSimpleName() + ".onCreate: Facebook client token empty; skipping initialization"
+                    );
+                }
+            } else {
+                Log.w(
+                        "TAG_Soccer",
+                        getClass().getSimpleName() + ".onCreate: Facebook client token missing; skipping initialization"
+                );
+            }
+        } catch (Throwable t) {
             Log.w(
                     "TAG_Soccer",
                     getClass().getSimpleName() + ".onCreate: Facebook SDK init failed",
-                    e
+                    t
             );
         }
 
