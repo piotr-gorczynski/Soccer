@@ -165,7 +165,7 @@ public class UniversalLoginActivity extends BaseActivity {
             return;
         }
 
-        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile"));
+        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList( "public_profile"));
         LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult result) {
