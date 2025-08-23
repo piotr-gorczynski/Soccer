@@ -141,7 +141,7 @@
     <string name="login_facebook">Login with Facebook</string>
     <string name="login_microsoft">Login with Microsoft</string>
     <string name="facebook_app_id" translatable="false">1232966491486195</string>
-    <string name="facebook_client_token" translatable="false">CLIENT_TOKEN_TO_BE_CONFIGURED</string>
+    <string name="facebook_client_token" translatable="false">81faf471f6838874cbffb66b90af20d7</string>
     <string name="fb_login_protocol_scheme" translatable="false">fb1232966491486195</string>
     <string name="login_method_label">Login method: %1$s</string>
     <string name="pref_title_facebook">Facebook community</string>
