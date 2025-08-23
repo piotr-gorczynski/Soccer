@@ -85,6 +85,12 @@ public class TournamentResultsActivity extends BaseActivity {
 
                                 // Step 3: fetch all nicknames
                                 List<String> uids = new ArrayList<>(scoreMap.keySet());
+                                if (uids.isEmpty()) {
+                                    standings.clear();
+                                    adapter.notifyDataSetChanged();
+                                    return;
+                                }
+
                                 db.collection("users").whereIn(FieldPath.documentId(), uids)
                                         .get().addOnSuccessListener(userSnap -> {
                                             for (DocumentSnapshot user : userSnap) {
