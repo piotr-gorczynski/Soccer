@@ -29,12 +29,29 @@
             android:textStyle="bold"
             android:textColor="@color/colorGreenDark" />
 
+        <ImageView
+            android:id="@+id/accountProfilePhoto"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="8dp"
+            android:scaleType="centerCrop"
+            android:background="@android:drawable/ic_menu_gallery"
+            android:visibility="gone" />
+
         <TextView
             android:id="@+id/accountEmail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:textColor="@color/colorGreenDark" />
+
+        <TextView
+            android:id="@+id/accountFacebookInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/colorGreenDark"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/accountMethod"

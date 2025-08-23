@@ -118,7 +118,7 @@ public class FirebaseAuthManager {
                                 if (doc.exists()) {
                                     db.collection("users").document(uid).set(data, SetOptions.merge())
                                             .addOnCompleteListener(task -> {
-                                                storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId);
+                                                storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId, finalFacebookId, finalFacebookName, finalFacebookPhotoUrl);
                                                 ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
                                                 Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
                                                         Objects.requireNonNull(new Object() {
@@ -131,7 +131,7 @@ public class FirebaseAuthManager {
                                     // Create-or-update without wiping existing fields like `nickname`
                                     db.collection("users").document(uid).set(data, SetOptions.merge())
                                             .addOnCompleteListener(task -> {
-                                                storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId);
+                                                storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId, finalFacebookId, finalFacebookName, finalFacebookPhotoUrl);
                                                 ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
                                                 Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
                                                         Objects.requireNonNull(new Object() {
@@ -232,7 +232,7 @@ public class FirebaseAuthManager {
                                 if (doc.exists()) {
                                     db.collection("users").document(uid).set(data, SetOptions.merge())
                                             .addOnCompleteListener(task -> {
-                                                storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId);
+                                                storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId, finalFacebookId, finalFacebookName, finalFacebookPhotoUrl);
                                                 ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
                                                 Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
                                                         Objects.requireNonNull(new Object() {
@@ -244,7 +244,7 @@ public class FirebaseAuthManager {
                                 } else {
                                     db.collection("users").document(uid).set(data, SetOptions.merge())
                                             .addOnCompleteListener(task -> {
-                                                storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId);
+                                                storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId, finalFacebookId, finalFacebookName, finalFacebookPhotoUrl);
                                                 ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
                                                 Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
                                                         Objects.requireNonNull(new Object() {
@@ -280,6 +280,29 @@ public class FirebaseAuthManager {
                 .putString("nickname", nickname)
                 .putString("method", method)
                 .apply();
+    }
+
+    private void storeUserData(String uid, String email, String nickname, String method, 
+                              String facebookId, String facebookName, String facebookPhotoUrl) {
+        SharedPreferences.Editor editor = context.getSharedPreferences(LanguageManager.PREFS_FILE, Context.MODE_PRIVATE)
+                .edit()
+                .putString("uid", uid)
+                .putString("email", email)
+                .putString("nickname", nickname)
+                .putString("method", method);
+        
+        // Store Facebook-specific data if available
+        if (facebookId != null) {
+            editor.putString("facebookId", facebookId);
+        }
+        if (facebookName != null) {
+            editor.putString("facebookName", facebookName);
+        }
+        if (facebookPhotoUrl != null) {
+            editor.putString("facebookPhotoUrl", facebookPhotoUrl);
+        }
+        
+        editor.apply();
     }
 
     public void loginUser(String email, String password, LoginCallback callback) {
