@@ -206,7 +206,10 @@ public class MenuActivity extends BaseActivity {
                     .document(uid);
             docRef.get().addOnSuccessListener(doc -> {
                 String emailField = doc.getString("email");
-                if (emailField == null || emailField.isEmpty()) {
+                String methodField = doc.getString("method");
+                
+                // Allow users without email if they logged in via Facebook
+                if ((emailField == null || emailField.isEmpty()) && !"facebook.com".equals(methodField)) {
                     Log.w("TAG_Soccer", getClass().getSimpleName() + "." +
                             Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
                             ": Missing email in Firestore - logging out user");
