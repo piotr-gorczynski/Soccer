@@ -376,6 +376,12 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         }
     }
     private void setUserOnline() {
+        // Only set user online if user is authenticated
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                    + ": User not authenticated, skipping setUserOnline");
+            return;
+        }
 
         userStatusDbRef.setValue(buildOnline())
                 .addOnSuccessListener(v ->
@@ -387,6 +393,12 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     }
 
     public Task<Void> forceUserOffline(@NonNull String uid) {
+        // Validate that uid is not null or empty
+        if (uid == null || uid.isEmpty()) {
+            Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                    + ": Cannot force user offline - invalid UID");
+            return Tasks.forException(new IllegalArgumentException("Invalid UID"));
+        }
 
         cancelHeartbeat();                                   // stop worker first
 
