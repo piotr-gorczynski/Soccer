@@ -6,10 +6,20 @@ import android.widget.Button;
 import android.widget.Toast;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.view.View;
+
+import java.util.Arrays;
 import java.util.Objects;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Source;
@@ -18,6 +28,7 @@ public class UniversalLoginActivity extends BaseActivity {
 
     private FirebaseAuthManager authManager;
     private String storedNickname;
+    private CallbackManager callbackManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -30,6 +41,7 @@ public class UniversalLoginActivity extends BaseActivity {
         getSupportActionBar().setTitle(R.string.login);
 
         authManager = new FirebaseAuthManager(this);
+        callbackManager = CallbackManager.Factory.create();
 
         SharedPreferences prefs =
                 getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
@@ -45,8 +57,18 @@ public class UniversalLoginActivity extends BaseActivity {
         });
 
         btnGoogle.setOnClickListener(v -> handleProviderLogin("google.com"));
-        btnFacebook.setOnClickListener(v -> handleProviderLogin("facebook.com"));
         btnMicrosoft.setOnClickListener(v -> handleProviderLogin("microsoft.com"));
+
+        if (FacebookSdk.isInitialized()) {
+            btnFacebook.setVisibility(View.VISIBLE);
+            btnFacebook.setOnClickListener(v -> handleProviderLogin("facebook.com"));
+        } else {
+            Log.w(
+                    "TAG_Soccer",
+                    getClass().getSimpleName() + ".onCreate: Facebook SDK not initialized; hiding Facebook login"
+            );
+            btnFacebook.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -67,7 +89,7 @@ public class UniversalLoginActivity extends BaseActivity {
                 Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
                 ": Calling authManager.loginWithProvider");
 
-        authManager.loginWithProvider(this, provider, nickname, new FirebaseAuthManager.LoginCallback() {
+        FirebaseAuthManager.LoginCallback callback = new FirebaseAuthManager.LoginCallback() {
             @Override
             public void onLoginSuccess() {
                 Log.d(
@@ -123,6 +145,42 @@ public class UniversalLoginActivity extends BaseActivity {
                         ": onLoginFailure: " + message);
                 Toast.makeText(UniversalLoginActivity.this, getString(R.string.login_failed, message), Toast.LENGTH_LONG).show();
             }
+        };
+
+        if ("facebook.com".equals(provider)) {
+            handleFacebookLogin(callback);
+            return;
+        }
+
+        authManager.loginWithProvider(this, provider, nickname, callback);
+    }
+
+    private void handleFacebookLogin(FirebaseAuthManager.LoginCallback callback) {
+        if (!FacebookSdk.isInitialized()) {
+            Log.w(
+                    "TAG_Soccer",
+                    getClass().getSimpleName() + ".handleFacebookLogin: Facebook SDK not initialized"
+            );
+            callback.onLoginFailure("facebook_unavailable");
+            return;
+        }
+
+        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList( "public_profile"));
+        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult result) {
+                authManager.loginWithFacebookToken(result.getAccessToken().getToken(), storedNickname, callback);
+            }
+
+            @Override
+            public void onCancel() {
+                callback.onLoginFailure("cancelled");
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                callback.onLoginFailure(error.getMessage());
+            }
         });
     }
 
@@ -130,5 +188,11 @@ public class UniversalLoginActivity extends BaseActivity {
     public boolean onSupportNavigateUp() {
         finish();
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 }

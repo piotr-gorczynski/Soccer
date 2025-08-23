@@ -156,6 +156,7 @@
     <string name="login_facebook">Facebook کے ساتھ لاگ ان</string>
     <string name="login_microsoft">Microsoft کے ساتھ لاگ ان</string>
     <string name="login_method_label">لاگ ان کا طریقہ: %1$s</string>
+    <string name="facebook_name_label">Facebook نام: %1$s</string>
     <string name="pref_title_facebook">Facebook کمیونٹی</string>
     <string name="pref_summary_facebook">Facebook پر ہماری کمیونٹی کا صفحہ کھولیں</string>
     <string name="ads_consent_required">اشتہارات دکھانا انفراسٹرکچر کی دیکھ بھال کی مالی مدد کرتا ہے۔ چونکہ آپ نے اشتہارات دکھانے کے لیے رضامندی نہیں دی ہے، یہ آپشن دستیاب نہیں ہے۔ آپ سیٹنگز میں اپنی رضامندی چیک کر سکتے ہیں۔</string>

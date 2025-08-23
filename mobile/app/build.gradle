@@ -35,8 +35,8 @@ android {
         applicationId = "piotr_gorczynski.soccer2"
         minSdk = 24
         targetSdk = 36
-        versionCode = 7
-        versionName = '7.0'
+        versionCode = 8
+        versionName = '8.0'
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }
@@ -103,7 +103,14 @@ android {
     namespace = 'piotr_gorczynski.soccer2'
 }
 
+/*repositories {
+    mavenCentral()
+}*/
+
+
 dependencies {
+    implementation 'com.facebook.android:facebook-android-sdk:18.1.3'
+
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     //GPT fixes
 
@@ -114,7 +121,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:24.0.1'
     //GPT fixes
     implementation 'androidx.appcompat:appcompat:1.7.1'
-    implementation 'androidx.core:core:1.16.0'
+    implementation 'androidx.core:core:1.17.0'
     implementation 'com.google.android.material:material:1.12.0'
     implementation 'com.google.firebase:firebase-firestore:26.0.0' // or latest version
     //GPT fixes
@@ -142,6 +149,9 @@ dependencies {
     implementation 'com.google.android.ump:user-messaging-platform:3.2.0'
 
     implementation 'com.google.android.gms:play-services-ads:24.5.0' // or latest
+    
+    // Image loading for Facebook profile photos
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
 }
 // Register custom copy task
 tasks.register("copyGoogleServicesJson") {
@@ -180,12 +190,32 @@ tasks.register("copySoccerSecretKey") {
     }
 }
 
+// Copy the Facebook client token from the secrets repository into assets
+tasks.register("copyFacebookClientToken") {
+    doLast {
+        def source = file("../../secrets/facebook_client_token")
+        def assetsDir = file("src/main/assets")
+        def destination = new File(assetsDir, "facebook_client_token")
+
+        if (source.exists()) {
+            if (!assetsDir.exists()) {
+                assetsDir.mkdirs()
+            }
+            Files.copy(source.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING)
+            println("✅ facebook_client_token copied to assets/")
+        } else {
+            // Only warn, don't fail build - fall back to strings.xml
+            println("⚠️ facebook_client_token not found in secrets/, will use strings.xml fallback")
+        }
+    }
+}
+
 // Hook into the Firebase task *after* all plugins are applied
 afterEvaluate {
     tasks.matching { it.name =~ /process.*GoogleServices/ }.configureEach {
         dependsOn("copyGoogleServicesJson")
     }
     tasks.matching { it.name == "preBuild" }.configureEach {
-        dependsOn("copySoccerSecretKey")
+        dependsOn("copySoccerSecretKey", "copyFacebookClientToken")
     }
 }

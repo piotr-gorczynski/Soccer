@@ -15,6 +15,22 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+        <meta-data
+            android:name="com.facebook.sdk.ClientToken"
+            android:value="@string/facebook_client_token" />
+        <provider
+            android:name="com.facebook.FacebookContentProvider"
+            android:authorities="com.facebook.app.FacebookContentProvider1232966491486195"
+            android:exported="true" />
+        <activity
+            android:name="com.facebook.FacebookActivity"
+            android:exported="true"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name" />
+
         <activity android:name=".LanguageSelectionActivity"
             android:exported="true"
             android:theme="@style/AppTheme">
