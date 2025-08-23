@@ -17,6 +17,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -49,7 +50,6 @@ public class UniversalLoginActivity extends BaseActivity {
         Button btnEmail = findViewById(R.id.btnUniversalEmail);
         Button btnGoogle = findViewById(R.id.btnUniversalGoogle);
         Button btnFacebook = findViewById(R.id.btnUniversalFacebook);
-        btnFacebook.setVisibility(View.VISIBLE);
         Button btnMicrosoft = findViewById(R.id.btnUniversalMicrosoft);
 
         btnEmail.setOnClickListener(v -> {
@@ -57,8 +57,18 @@ public class UniversalLoginActivity extends BaseActivity {
         });
 
         btnGoogle.setOnClickListener(v -> handleProviderLogin("google.com"));
-        btnFacebook.setOnClickListener(v -> handleProviderLogin("facebook.com"));
         btnMicrosoft.setOnClickListener(v -> handleProviderLogin("microsoft.com"));
+
+        if (FacebookSdk.isInitialized()) {
+            btnFacebook.setVisibility(View.VISIBLE);
+            btnFacebook.setOnClickListener(v -> handleProviderLogin("facebook.com"));
+        } else {
+            Log.w(
+                    "TAG_Soccer",
+                    getClass().getSimpleName() + ".onCreate: Facebook SDK not initialized; hiding Facebook login"
+            );
+            btnFacebook.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -146,6 +156,15 @@ public class UniversalLoginActivity extends BaseActivity {
     }
 
     private void handleFacebookLogin(FirebaseAuthManager.LoginCallback callback) {
+        if (!FacebookSdk.isInitialized()) {
+            Log.w(
+                    "TAG_Soccer",
+                    getClass().getSimpleName() + ".handleFacebookLogin: Facebook SDK not initialized"
+            );
+            callback.onLoginFailure("facebook_unavailable");
+            return;
+        }
+
         LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile"));
         LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
