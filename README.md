@@ -2,6 +2,13 @@
 
 This is very simple game which originates from so called paper soccer
 
+## Recent Fixes
+
+### Facebook Profile Photo Fix
+Fixed an issue where Facebook users saw silhouette/blank profile photos instead of their actual photos. The app now uses Facebook Graph API with the user's access token to fetch the real profile photo URL instead of the generic `graph.facebook.com/{id}/picture` URL which returns a blank image for non-public profiles.
+
+**Technical details**: Uses `GET https://graph.facebook.com/v20.0/{facebookId}/picture?type=large&redirect=0&access_token={token}` to get the real CDN URL and stores that in Firestore.
+
 ## Creating tournaments
 
 A helper script is available in `tools/create-tournament/create-tournament.js` for quickly adding tournaments to Firestore. **Run it from the project root** so the relative path is resolved correctly:
