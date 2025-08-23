@@ -187,12 +187,32 @@ tasks.register("copySoccerSecretKey") {
     }
 }
 
+// Copy the Facebook client token from the secrets repository into assets
+tasks.register("copyFacebookClientToken") {
+    doLast {
+        def source = file("../../secrets/facebook_client_token")
+        def assetsDir = file("src/main/assets")
+        def destination = new File(assetsDir, "facebook_client_token")
+
+        if (source.exists()) {
+            if (!assetsDir.exists()) {
+                assetsDir.mkdirs()
+            }
+            Files.copy(source.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING)
+            println("✅ facebook_client_token copied to assets/")
+        } else {
+            // Only warn, don't fail build - fall back to strings.xml
+            println("⚠️ facebook_client_token not found in secrets/, will use strings.xml fallback")
+        }
+    }
+}
+
 // Hook into the Firebase task *after* all plugins are applied
 afterEvaluate {
     tasks.matching { it.name =~ /process.*GoogleServices/ }.configureEach {
         dependsOn("copyGoogleServicesJson")
     }
     tasks.matching { it.name == "preBuild" }.configureEach {
-        dependsOn("copySoccerSecretKey")
+        dependsOn("copySoccerSecretKey", "copyFacebookClientToken")
     }
 }

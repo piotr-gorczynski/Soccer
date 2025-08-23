@@ -32,6 +32,7 @@ Thumbs.db
 google-services.*.json
 /mobile/app/soccer_secret_key
 /mobile/app/src/main/assets/soccer_secret_key
+/mobile/app/src/main/assets/facebook_client_token
 node_modules/
 **/__pycache__/
 
