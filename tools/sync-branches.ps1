@@ -39,7 +39,7 @@ function Sync-Branches {
   )
 
   $originalBranch = (git rev-parse --abbrev-ref HEAD).Trim()
-  Write-Host "🔍 Current branch: $originalBranch"
+  Write-Host "Current branch: $originalBranch"
 
   try {
     Assert-CleanState
@@ -48,27 +48,27 @@ function Sync-Branches {
     Switch-And-Prep $Source
     Switch-And-Prep $Target
 
-    Write-Host "`n📝 Commits in '$Source' not in '$Target':"
+    Write-Host "`nCommits in '$Source' not in '$Target':"
     git log --oneline "$Target..$Source"
 
-    Write-Host "`n🔀 Merging '$Source' into '$Target'..."
+    Write-Host "`nMerging '$Source' into '$Target'..."
     git merge --no-edit $Source
 
     $unmerged = git diff --name-only --diff-filter=U
     if ($unmerged) { throw "Merge produced conflicts. Resolve them and re-run. Conflicted paths:`n$unmerged" }
 
-    Write-Host "`n🚀 Pushing '$Target' to remote..."
+    Write-Host "`nPushing '$Target' to remote..."
     git push origin $Target
 
-    Write-Host "`n✅ Done."
+    Write-Host "`nDone."
   }
   catch {
-    Write-Host "💥 ERROR: $($_.Exception.Message)"
+    Write-Host "ERROR: $($_.Exception.Message)"
   }
   finally {
     try {
       if (((git rev-parse --abbrev-ref HEAD).Trim()) -ne $originalBranch) {
-        Write-Host "`n🔁 Switching back to original branch '$originalBranch'..."
+        Write-Host "`nSwitching back to original branch '$originalBranch'..."
         git switch $originalBranch | Out-Null
       }
     } catch {}
