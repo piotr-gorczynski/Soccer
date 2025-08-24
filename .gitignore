@@ -40,3 +40,5 @@ node_modules/
 secrets/keystore.properties
 # Temporary development files
 secrets/
+firebase/functions/*/package-lock.json
+firebase/functions/*/node_modules/
