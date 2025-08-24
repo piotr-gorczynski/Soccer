@@ -23,6 +23,16 @@ exports.deleteUnverifiedUsers = functions.pubsub
           now - new Date(user.metadata.creationTime).getTime() > oneHourMillis
         ) {
           try {
+            // Check user's login method in Firestore before deleting
+            const userDoc = await db.collection("users").doc(user.uid).get();
+            const method = userDoc.exists ? userDoc.data().method : null;
+            
+            // Skip deletion for Facebook users as they don't require email verification
+            if (method === "facebook.com") {
+              console.log(`⏭️ Skipping Facebook user: ${user.uid} (no email verification required)`);
+              continue;
+            }
+
             await auth.deleteUser(user.uid);
             console.log(`🧹 Deleted unverified user from Auth: ${user.email}`);
 
