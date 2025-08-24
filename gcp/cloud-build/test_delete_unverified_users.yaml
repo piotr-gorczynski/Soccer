@@ -64,12 +64,15 @@ steps:
         sleep 30
 
         echo "Reading logs for function 'deleteUnverifiedUsers' from the last 5 minutes..."
-        # Show the last few lines of logs
+        # Calculate the start time 5 minutes ago in RFC3339 format
+        start_time=$(date -u -d '5 minutes ago' '+%Y-%m-%dT%H:%M:%SZ')
+
+        # Show the last few lines of logs from the calculated start time
         gcloud functions logs read deleteUnverifiedUsers \
           --region=us-central1 \
           --project="$project_id" \
           --limit=20 \
-          --freshness=5m \
+          --start-time="$start_time" \
           > /workspace/log_output.txt || true
 
         echo "===== LOG OUTPUT ====="
