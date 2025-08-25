@@ -33,6 +33,12 @@ exports.deleteUnverifiedUsers = functions.pubsub
               continue;
             }
 
+            // Skip deletion for anonymous users as they don't have email verification
+            if (method === "anonymous") {
+              console.log(`⏭️ Skipping anonymous user: ${user.uid} (no email verification required)`);
+              continue;
+            }
+
             await auth.deleteUser(user.uid);
             console.log(`🧹 Deleted unverified user from Auth: ${user.email}`);
 
