@@ -61,7 +61,7 @@ public class AccountActivity extends BaseActivity {
 
         nickView.setText(getString(R.string.nickname_label, nickname));
         
-        // Show Facebook info or email based on login method
+        // Show Facebook info, hide email for anonymous users, or display email for others
         if ("facebook.com".equals(method) && facebookId != null) {
             // Hide email view and show Facebook info
             emailView.setVisibility(View.GONE);
@@ -87,8 +87,14 @@ public class AccountActivity extends BaseActivity {
             } else {
                 profilePhotoView.setVisibility(View.GONE);
             }
+        } else if ("anonymous".equals(method)) {
+            // Hide email for anonymous users since no address exists
+            emailView.setVisibility(View.GONE);
+            facebookIdView.setVisibility(View.GONE);
+            facebookNameView.setVisibility(View.GONE);
+            profilePhotoView.setVisibility(View.GONE);
         } else {
-            // Show email for non-Facebook users
+            // Show email for non-Facebook, non-anonymous users
             emailView.setVisibility(View.VISIBLE);
             emailView.setText(getString(R.string.email_label, email));
             facebookIdView.setVisibility(View.GONE);
