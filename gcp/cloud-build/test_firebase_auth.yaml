@@ -3,6 +3,15 @@ substitutions:
   _FOLDER_NAME: 'soccer'
 
 steps:
+  # Step 0: Configure git to suppress default branch warning
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        git config --global init.defaultBranch main
+        echo "✅ Git default branch configured to suppress warnings"
+
   # Step 1: Retrieve the Firebase Project ID
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
