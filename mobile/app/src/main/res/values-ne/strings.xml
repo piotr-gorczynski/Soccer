@@ -175,6 +175,10 @@
     <string name="reauth_message">जारी राख्न कृपया आफ्नो पासवर्ड प्रविष्ट गर्नुहोस्।</string>
     <string name="reauth_failed">पुन: प्रमाणीकरण असफल। फेरि प्रयास गर्नुहोस्।</string>
     
+    <!-- Anonymous logout warning strings -->
+    <string name="anonymous_logout_warning_title">लगआउट चेतावनी</string>
+    <string name="anonymous_logout_warning_message">के तपाईं साँच्चै लगआउट गर्न चाहनुहुन्छ? गुमनाम विधिहरूको लागि यो कार्य फर्काउन सकिँदैन र यदि तपाईंले फेरि दर्ता गर्नुभयो भने पनि, तपाईंले आफ्नो खेल र परिणामहरूको इतिहासमा पहुँच पाउनुहुनेछैन।</string>
+    
     <!-- Common strings -->
     <string name="settings">सेटिङहरू</string>
     <string name="cancel">रद्द गर्नुहोस्</string>
