@@ -1,0 +1,7 @@
+-cp
+/dev/null
+-sourcepath
+/home/runner/work/Soccer/Soccer/mobile/app/src/main/java
+-d
+/tmp
+/home/runner/work/Soccer/Soccer/mobile/app/src/main/java/piotr_gorczynski/soccer2/UniversalLoginActivity.java
