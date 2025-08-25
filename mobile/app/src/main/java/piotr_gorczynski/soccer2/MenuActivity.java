@@ -180,7 +180,9 @@ public class MenuActivity extends BaseActivity {
                             }.getClass().getEnclosingMethod()).getName()
                             + ": ⚠️ No logged-in user; clearing stored credentials"
             );
-            prefs.edit().clear().commit();
+            // Note: Preserve ads consent data as requested in issue - only clear if there are specific user-related data in default prefs
+            // Currently no user-specific data is stored in default SharedPreferences, so we don't need to clear anything
+            // prefs.edit().clear().commit(); // Commented out to preserve ads consent data
             FirebaseMessaging.getInstance().deleteToken();
             FirebaseMessaging.getInstance().setAutoInitEnabled(false);
             FirebaseFirestore.getInstance()
@@ -308,10 +310,17 @@ public class MenuActivity extends BaseActivity {
 
         FirebaseAuth.getInstance().signOut();
 
+        // Remove only user-specific data, preserve language preferences and other device settings
         getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
                 .edit()
                 .remove(PREF_FCM_TOKEN)
-                .clear()
+                .remove("uid")
+                .remove("email")
+                .remove("nickname")
+                .remove("method")
+                .remove("facebookId")
+                .remove("facebookName")
+                .remove("facebookPhotoUrl")
                 .apply();
 
         FirebaseMessaging.getInstance().deleteToken()
@@ -374,10 +383,16 @@ public class MenuActivity extends BaseActivity {
                 getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
         String nickname = prefs.getString("nickname", null);
         if (auth.getCurrentUser() == null) {
-            String savedLang = prefs.getString(LanguageManager.PREF_LANGUAGE_CODE, "en");
+            // Remove only user-specific data, preserve language preferences and other device settings
             SharedPreferences.Editor ed = prefs.edit();
-            ed.clear();
-            ed.putString(LanguageManager.PREF_LANGUAGE_CODE, savedLang);
+            ed.remove("uid")
+              .remove("email")
+              .remove("nickname")
+              .remove("method")
+              .remove("facebookId")
+              .remove("facebookName")
+              .remove("facebookPhotoUrl")
+              .remove("fcmToken");
             ed.commit();
 
             FirebaseMessaging.getInstance().deleteToken();
