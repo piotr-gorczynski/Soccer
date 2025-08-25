@@ -167,7 +167,7 @@
     <string name="remove_account">Eliminar cuenta</string>
     <string name="remove_account_dialog_title">Eliminar cuenta</string>
     <string name="remove_account_dialog_message">¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no puede revertirse e incluso si te registras nuevamente, no tendrás acceso al historial de tus partidas y resultados.</string>
-    <string name="proceed">Continuar</string>
+    <string name="proceed_account_removal">Continuar</string>
     <string name="removing_account">Eliminando cuenta...</string>
     <string name="account_removed">Cuenta eliminada exitosamente</string>
     <string name="remove_account_failed">Error al eliminar cuenta. Por favor inténtalo de nuevo.</string>
@@ -196,8 +196,7 @@
     <!-- Anonymous login warning -->
     <string name="anonymous_login_warning_title">Advertencia de inicio de sesión anónimo</string>
     <string name="anonymous_login_warning_message">El inicio de sesión anónimo permite acceso a ciertas funciones, pero si pierdes tu dispositivo, reinstalàs la aplicación, obtienes un teléfono nuevo o cierras sesión, se perderá el enlace a tu cuenta anónima y no será posible iniciar sesión en la misma cuenta anónima. ¿Quieres continuar?</string>
-    <string name="proceed">Continuar</string>
-    <string name="cancel">Cancelar</string>
+    <string name="proceed_anonymous_login">Continuar</string>
     <string name="enter_email_address">Ingrese su dirección de correo electrónico</string>
     <string name="all_fields_required">Se requieren todos los campos</string>
     <string name="passwords_do_not_match">Las contraseñas no coinciden</string>

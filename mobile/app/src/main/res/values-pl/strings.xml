@@ -168,7 +168,7 @@
     <string name="remove_account">Usuń konto</string>
     <string name="remove_account_dialog_title">Usuń konto</string>
     <string name="remove_account_dialog_message">Czy na pewno chcesz usunąć swoje konto? Ta akcja nie może być cofnięta i nawet jeśli zarejestrujesz się ponownie, nie uzyskasz dostępu do historii swoich meczów i wyników.</string>
-    <string name="proceed">Kontynuuj</string>
+    <string name="proceed_account_removal">Kontynuuj</string>
     <string name="removing_account">Usuwanie konta...</string>
     <string name="account_removed">Konto usunięte pomyślnie</string>
     <string name="remove_account_failed">Nie udało się usunąć konta. Spróbuj ponownie.</string>
@@ -197,8 +197,7 @@
     <!-- Anonymous login warning -->
     <string name="anonymous_login_warning_title">Ostrzeżenie dotyczące logowania anonimowego</string>
     <string name="anonymous_login_warning_message">Logowanie anonimowe umożliwia dostęp do niektórych funkcji, ale jeśli stracisz urządzenie, przeinstalajesz aplikację, kupisz nowy telefon lub się wylogujesz, połączenie z kontem anonimowym zostanie utracone i nie będzie możliwe ponowne zalogowanie się na to samo konto anonimowe. Czy chcesz kontynuować?</string>
-    <string name="proceed">Kontynuuj</string>
-    <string name="cancel">Anuluj</string>
+    <string name="proceed_anonymous_login">Kontynuuj</string>
     <string name="enter_email_address">Wprowadź swój adres e-mail</string>
     <string name="all_fields_required">Wszystkie pola są wymagane</string>
     <string name="passwords_do_not_match">Hasła nie pasują</string>
