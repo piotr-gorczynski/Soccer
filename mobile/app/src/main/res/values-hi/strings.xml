@@ -155,6 +155,7 @@
     <string name="login_google">Google से लॉग इन करें</string>
     <string name="login_facebook">Facebook से लॉग इन करें</string>
     <string name="login_microsoft">Microsoft से लॉग इन करें</string>
+    <string name="login_anonymous">अज्ञात रूप से लॉग इन करें</string>
     <string name="login_method_label">लॉग इन विधि: %1$s</string>
     <string name="facebook_name_label">Facebook नाम: %1$s</string>
     <string name="pref_title_facebook">Facebook समुदाय</string>
@@ -191,6 +192,12 @@
     <string name="enter_email_and_password">कृपया ईमेल और पासवर्ड दोनों दर्ज करें</string>
     <string name="login_success">लॉग इन सफल!</string>
     <string name="login_failed">लॉगिन विफल: %1$s</string>
+    
+    <!-- Anonymous login warning -->
+    <string name="anonymous_login_warning_title">गुमनाम लॉगिन चेतावनी</string>
+    <string name="anonymous_login_warning_message">गुमनाम लॉगिन कुछ कार्यों तक पहुंच की अनुमति देता है, लेकिन यदि आप अपना डिवाइस खो देते हैं, ऐप को फिर से इंस्टॉल करते हैं, नया फोन लेते हैं, या लॉग आउट करते हैं, तो आपके गुमनाम खाते का लिंक खो जाएगा और उसी गुमनाम खाते में दोबारा लॉगिन करना संभव नहीं होगा। क्या आप आगे बढ़ना चाहते हैं?</string>
+    <string name="proceed">आगे बढ़ें</string>
+    <string name="cancel">रद्द करें</string>
     <string name="enter_email_address">कृपया अपना ईमेल एड्रेस इंटर करें</string>
     <string name="all_fields_required">सभी फ़ील् आवश्यक हैं</string>
     <string name="passwords_do_not_match">सांकेतिक शब्द मेल नहीं खाते</string>

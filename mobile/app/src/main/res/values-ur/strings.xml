@@ -155,6 +155,7 @@
     <string name="login_google">Google کے ساتھ لاگ ان</string>
     <string name="login_facebook">Facebook کے ساتھ لاگ ان</string>
     <string name="login_microsoft">Microsoft کے ساتھ لاگ ان</string>
+    <string name="login_anonymous">گمنام طور پر لاگ ان</string>
     <string name="login_method_label">لاگ ان کا طریقہ: %1$s</string>
     <string name="facebook_name_label">Facebook نام: %1$s</string>
     <string name="pref_title_facebook">Facebook کمیونٹی</string>
@@ -191,6 +192,12 @@
     <string name="enter_email_and_password">براہ کرم ای میل اور پاس ورڈ دونوں درج کریں</string>
     <string name="login_success">لاگ ان کامیاب!</string>
     <string name="login_failed">لاگ ان ناکام: %1$s</string>
+    
+    <!-- Anonymous login warning -->
+    <string name="anonymous_login_warning_title">گمنام لاگ ان کی تنبیہ</string>
+    <string name="anonymous_login_warning_message">گمنام لاگ ان کچھ فنکشنز تک رسائی کی اجازت دیتا ہے، لیکن اگر آپ اپنا ڈیوائس کھو دیتے ہیں، ایپ دوبارہ انسٹال کرتے ہیں، نیا فون حاصل کرتے ہیں، یا لاگ آؤٹ کرتے ہیں، تو آپ کے گمنام اکاؤنٹ کا لنک کھو جائے گا اور اسی گمنام اکاؤنٹ میں دوبارہ لاگ ان کرنا ممکن نہیں ہوگا۔ کیا آپ آگے بڑھنا چاہتے ہیں؟</string>
+    <string name="proceed">آگے بڑھیں</string>
+    <string name="cancel">منسوخ</string>
     <string name="enter_email_address">براہ کرم اپنا ای میل ایڈریس درج کریں</string>
     <string name="all_fields_required">تمام فیلڈز کی ضرورت ہے</string>
     <string name="passwords_do_not_match">پاس ورڈ مماثل نہیں ہیں</string>
