@@ -178,7 +178,9 @@ public class MenuActivity extends BaseActivity {
                             }.getClass().getEnclosingMethod()).getName()
                             + ": ⚠️ No logged-in user; clearing stored credentials"
             );
-            prefs.edit().clear().commit();
+            // Note: Preserve ads consent data as requested in issue - only clear if there are specific user-related data in default prefs
+            // Currently no user-specific data is stored in default SharedPreferences, so we don't need to clear anything
+            // prefs.edit().clear().commit(); // Commented out to preserve ads consent data
             FirebaseMessaging.getInstance().deleteToken();
             FirebaseMessaging.getInstance().setAutoInitEnabled(false);
             FirebaseFirestore.getInstance()

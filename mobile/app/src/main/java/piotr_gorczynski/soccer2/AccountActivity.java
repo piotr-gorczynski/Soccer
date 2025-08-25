@@ -268,10 +268,17 @@ public class AccountActivity extends BaseActivity {
         // Sign out from Firebase Auth
         FirebaseAuth.getInstance().signOut();
 
-        // Clear local preferences
+        // Clear local preferences - preserve language preferences and device settings
         getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
                 .edit()
-                .clear()
+                .remove("uid")
+                .remove("email")
+                .remove("nickname")
+                .remove("method")
+                .remove("facebookId")
+                .remove("facebookName")
+                .remove("facebookPhotoUrl")
+                .remove("fcmToken")
                 .apply();
 
         // Clear FCM token
