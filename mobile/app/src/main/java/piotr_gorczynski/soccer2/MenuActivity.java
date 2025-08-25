@@ -1,5 +1,6 @@
 package piotr_gorczynski.soccer2;
 
+import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
@@ -166,6 +167,7 @@ public class MenuActivity extends BaseActivity {
     }
 
     /* ───────────── misc tasks that must always run on launch ───────────── */
+    @SuppressLint("ApplySharedPref")
     private void runHousekeeping() {
         String uid = FirebaseAuth.getInstance().getUid();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -347,6 +349,7 @@ public class MenuActivity extends BaseActivity {
         }.getClass().getEnclosingMethod()).getName() + ": InvitationsActivity onNewIntent: " + intent.toUri(Intent.URI_INTENT_SCHEME));
     }
 
+    @SuppressLint("ApplySharedPref")
     @Override
     protected void onResume() {
         super.onResume();
