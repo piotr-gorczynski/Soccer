@@ -473,6 +473,13 @@ public class GameView extends View {
                     Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": <timeLimitReached>" + difference + "</timeLimitReached>");
                     break;
                 }
+                
+                // UNCONDITIONAL safety timeout to prevent hanging when no good move exists
+                int maxThinkingTime = Math.max(androidLevel + 5, 10); // At least 10 seconds
+                if(difference > maxThinkingTime) {
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": <maxThinkingTimeReached>" + difference + "</maxThinkingTimeReached>");
+                    break;
+                }
 
                 //if already landed in the gate
                 if((checkWinner(i.X, i.Y, Moves) == 1) && (Moves.get(Moves.size() - 1).P==1)){
@@ -572,6 +579,28 @@ public class GameView extends View {
                 masterNextMoveFound.victory=nextMoveFound.victory;
                 masterMinMoveTo.X=minMoveTo.X;
                 masterMinMoveTo.Y=minMoveTo.Y;
+            } else if (!possibleMoves.isEmpty() && treeDepthLevel == 0) {
+                // FAILSAFE: When no good move is found, pick the "least bad" move
+                // This prevents hanging when all moves lead to own goal
+                MoveTo leastBadMove = null;
+                int bestScore = Integer.MIN_VALUE;
+                
+                for (MoveTo move : possibleMoves) {
+                    int score = MINMAX(move.X, move.Y, Moves.get(Moves.size()-1).P);
+                    if (leastBadMove == null || score > bestScore) {
+                        leastBadMove = move;
+                        bestScore = score;
+                    }
+                }
+                
+                if (leastBadMove != null) {
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": <failsafeMove>" + leastBadMove + "</failsafeMove>");
+                    masterMinMoveTo.X = leastBadMove.X;
+                    masterMinMoveTo.Y = leastBadMove.Y;
+                    masterNextMoveFound.found = true;
+                    masterNextMoveFound.bouncingLevel = bouncingLevel;
+                    localNextMoveFound = true;
+                }
             }
         }
         difference = System.currentTimeMillis() - startTime;
