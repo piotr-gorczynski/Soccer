@@ -147,10 +147,17 @@ public class AccountActivity extends BaseActivity {
     }
 
     private void finishLogoutUi() {
+        // Remove only user-specific data, preserve language preferences and other device settings
         getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
                 .edit()
                 .remove("fcmToken") // ensure FCM token is wiped
-                .clear()
+                .remove("uid")
+                .remove("email")
+                .remove("nickname")
+                .remove("method")
+                .remove("facebookId")
+                .remove("facebookName")
+                .remove("facebookPhotoUrl")
                 .apply();
 
         FirebaseMessaging.getInstance().deleteToken()
