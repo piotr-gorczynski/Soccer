@@ -155,6 +155,7 @@
     <string name="login_google">Mit Google anmelden</string>
     <string name="login_facebook">Mit Facebook anmelden</string>
     <string name="login_microsoft">Mit Microsoft anmelden</string>
+    <string name="login_anonymous">Anonym anmelden</string>
     <string name="login_method_label">Anmeldemethode: %1$s</string>
     <string name="facebook_name_label">Facebook-Name: %1$s</string>
     <string name="pref_title_facebook">Facebook-Community</string>
@@ -191,6 +192,12 @@
     <string name="enter_email_and_password">Bitte geben Sie sowohl e-mail als auch Passwort ein</string>
     <string name="login_success">Login erfolgreich!</string>
     <string name="login_failed">Fehler bei der Anmeldung: %1$s</string>
+    
+    <!-- Anonymous login warning -->
+    <string name="anonymous_login_warning_title">Warnung zur anonymen Anmeldung</string>
+    <string name="anonymous_login_warning_message">Die anonyme Anmeldung ermöglicht den Zugang zu bestimmten Funktionen, aber wenn Sie Ihr Gerät verlieren, die App neu installieren, ein neues Telefon bekommen oder sich abmelden, geht die Verbindung zu Ihrem anonymen Konto verloren und es ist nicht möglich, sich wieder in dasselbe anonyme Konto einzuloggen. Möchten Sie fortfahren?</string>
+    <string name="proceed">Fortfahren</string>
+    <string name="cancel">Abbrechen</string>
     <string name="enter_email_address">Bitte geben Sie Ihre e-mail -Adresse ein</string>
     <string name="all_fields_required">Alle Felder sind erforderlich</string>
     <string name="passwords_do_not_match">Passwörter stimmen nicht überein</string>

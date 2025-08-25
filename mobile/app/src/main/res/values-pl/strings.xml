@@ -156,6 +156,7 @@
     <string name="login_google">Zaloguj się przez Google</string>
     <string name="login_facebook">Zaloguj się przez Facebook</string>
     <string name="login_microsoft">Zaloguj się przez Microsoft</string>
+    <string name="login_anonymous">Zaloguj się anonimowo</string>
     <string name="login_method_label">Metoda logowania: %1$s</string>
     <string name="facebook_name_label">Nazwa Facebook: %1$s</string>
     <string name="pref_title_facebook">Społeczność Facebook</string>
@@ -192,6 +193,12 @@
     <string name="enter_email_and_password">Wprowadź zarówno e-mail, jak i hasło</string>
     <string name="login_success">Zaloguj się sukces!</string>
     <string name="login_failed">Logowanie nie powiodło się: %1$s</string>
+    
+    <!-- Anonymous login warning -->
+    <string name="anonymous_login_warning_title">Ostrzeżenie dotyczące logowania anonimowego</string>
+    <string name="anonymous_login_warning_message">Logowanie anonimowe umożliwia dostęp do niektórych funkcji, ale jeśli stracisz urządzenie, przeinstalajesz aplikację, kupisz nowy telefon lub się wylogujesz, połączenie z kontem anonimowym zostanie utracone i nie będzie możliwe ponowne zalogowanie się na to samo konto anonimowe. Czy chcesz kontynuować?</string>
+    <string name="proceed">Kontynuuj</string>
+    <string name="cancel">Anuluj</string>
     <string name="enter_email_address">Wprowadź swój adres e-mail</string>
     <string name="all_fields_required">Wszystkie pola są wymagane</string>
     <string name="passwords_do_not_match">Hasła nie pasują</string>

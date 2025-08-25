@@ -261,5 +261,48 @@ steps:
           exit 1
         fi
 
+  # ────────────────────────────────
+  # Step 6: Enable Anonymous Sign-In
+  # ────────────────────────────────
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: enable-anonymous-auth
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -ex
+
+        firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
+        access_token=$(cat /workspace/access_token.txt)
+
+        echo "🔓 Enabling Anonymous Sign-In for project: $firebase_project_id"
+
+        # Enable anonymous authentication
+        patch_response=$(curl -s -w '\n%{http_code}' -X PATCH \
+          -H "Authorization: Bearer $access_token" \
+          -H "X-Goog-User-Project: $firebase_project_id" \
+          -H "Content-Type: application/json" \
+          "https://identitytoolkit.googleapis.com/admin/v2/projects/$firebase_project_id/config?updateMask=signIn.anonymous" \
+          -d '{
+            "signIn": {
+              "anonymous": {
+                "enabled": true
+              }
+            }
+          }')
+
+        patch_code=$(echo "$patch_response" | tail -n1)
+        patch_body=$(echo "$patch_response" | head -n-1)
+
+        if [[ "$patch_code" == "200" ]]; then
+          echo "✅ Anonymous sign-in successfully enabled."
+          echo "$patch_body"
+        else
+          echo "❌ Failed to enable Anonymous authentication. HTTP $patch_code"
+          echo "Response body:"
+          echo "$patch_body"
+          exit 1
+        fi
+
 options:
   logging: CLOUD_LOGGING_ONLY

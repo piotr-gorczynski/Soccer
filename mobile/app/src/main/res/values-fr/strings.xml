@@ -163,6 +163,7 @@
     <string name="login_google">Se connecter avec Google</string>
     <string name="login_facebook">Se connecter avec Facebook</string>
     <string name="login_microsoft">Se connecter avec Microsoft</string>
+    <string name="login_anonymous">Se connecter anonymement</string>
     <string name="login_method_label">Méthode de connexion : %1$s</string>
     <string name="facebook_name_label">Nom Facebook : %1$s</string>
     <string name="pref_title_facebook">Communauté Facebook</string>
@@ -194,6 +195,12 @@
     <string name="enter_email_and_password">Veuillez saisir l’e-mail et le mot de passe</string>
     <string name="login_success">Connexion réussie !</string>
     <string name="login_failed">Échec de la connexion : %1$s</string>
+    
+    <!-- Anonymous login warning -->
+    <string name="anonymous_login_warning_title">Avertissement de connexion anonyme</string>
+    <string name="anonymous_login_warning_message">La connexion anonyme permet l\'accès à certaines fonctions, mais si vous perdez votre appareil, réinstallez l\'application, obtenez un nouveau téléphone ou vous déconnectez, le lien vers votre compte anonyme sera perdu et il ne sera pas possible de vous reconnecter au même compte anonyme. Voulez-vous continuer ?</string>
+    <string name="proceed">Continuer</string>
+    <string name="cancel">Annuler</string>
     <string name="enter_email_address">Veuillez saisir votre adresse e-mail</string>
     <string name="all_fields_required">Tous les champs sont requis</string>
     <string name="passwords_do_not_match">Les mots de passe ne correspondent pas</string>

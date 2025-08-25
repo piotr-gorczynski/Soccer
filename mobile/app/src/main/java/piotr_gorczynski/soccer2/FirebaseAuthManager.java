@@ -617,4 +617,75 @@ public class FirebaseAuthManager {
                     }
                 });
     }
+
+    public void loginAnonymously(LoginCallback callback) {
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                Objects.requireNonNull(new Object() {
+                }.getClass().getEnclosingMethod()).getName() +
+                ": Starting anonymous login");
+
+        firebaseAuth.signInAnonymously()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        FirebaseUser user = firebaseAuth.getCurrentUser();
+                        if (user != null) {
+                            String uid = user.getUid();
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                                    Objects.requireNonNull(new Object() {
+                                    }.getClass().getEnclosingMethod()).getName() +
+                                    ": Anonymous login successful, UID: " + uid);
+
+                            FirebaseFirestore db = FirebaseFirestore.getInstance();
+                            
+                            // Check if user document already exists
+                            db.collection("users").document(uid).get(Source.SERVER)
+                                    .addOnSuccessListener(doc -> {
+                                        Map<String, Object> data = new HashMap<>();
+                                        data.put("method", "anonymous");
+                                        String langCode = LanguageManager.getCurrentLanguageCode(context);
+                                        data.put("language", langCode);
+                                        data.put("blockInviteFriend", false);
+
+                                        // Create-or-update without wiping existing fields like `nickname`
+                                        db.collection("users").document(uid).set(data, SetOptions.merge())
+                                                .addOnCompleteListener(updateTask -> {
+                                                    ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
+                                                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                                                            Objects.requireNonNull(new Object() {
+                                                            }.getClass().getEnclosingMethod()).getName() +
+                                                            ": Anonymous user document created/updated successfully");
+                                                    callback.onLoginSuccess();
+                                                })
+                                                .addOnFailureListener(e -> {
+                                                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
+                                                            Objects.requireNonNull(new Object() {
+                                                            }.getClass().getEnclosingMethod()).getName() +
+                                                            ": Failed to create/update anonymous user document: " + e.getMessage());
+                                                    callback.onLoginFailure("Failed to setup user profile: " + e.getMessage());
+                                                });
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
+                                                Objects.requireNonNull(new Object() {
+                                                }.getClass().getEnclosingMethod()).getName() +
+                                                ": Failed to check existing user document: " + e.getMessage());
+                                        callback.onLoginFailure("Failed to verify user profile: " + e.getMessage());
+                                    });
+                        } else {
+                            Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
+                                    Objects.requireNonNull(new Object() {
+                                    }.getClass().getEnclosingMethod()).getName() +
+                                    ": Anonymous login succeeded but user is null");
+                            callback.onLoginFailure("Authentication failed - user is null");
+                        }
+                    } else {
+                        String errorMsg = task.getException() != null ? task.getException().getMessage() : "Unknown error occurred";
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
+                                Objects.requireNonNull(new Object() {
+                                }.getClass().getEnclosingMethod()).getName() +
+                                ": Anonymous login failed: " + errorMsg);
+                        callback.onLoginFailure(errorMsg);
+                    }
+                });
+    }
 }

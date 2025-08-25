@@ -73,6 +73,19 @@
         android:textAllCaps="false"
         android:textColor="@color/colorWhite"
         android:visibility="gone" />
+
+    <Button
+        android:id="@+id/btnUniversalAnonymous"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:paddingStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/colorGreenDark"
+        android:drawableStart="@drawable/ic_anonymous_bg"
+        android:drawablePadding="8dp"
+        android:text="@string/login_anonymous"
+        android:textAllCaps="false"
+        android:textColor="@color/colorWhite" />
 </LinearLayout>
 
 </LinearLayout>
