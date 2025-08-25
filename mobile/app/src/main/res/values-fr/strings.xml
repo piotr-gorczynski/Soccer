@@ -185,7 +185,7 @@
     
     <!-- Anonymous logout warning strings -->
     <string name="anonymous_logout_warning_title">Avertissement de déconnexion</string>
-    <string name="anonymous_logout_warning_message">Êtes-vous sûr de vouloir vous déconnecter ? Pour les méthodes anonymes, cette action ne peut pas être annulée et même si vous vous réinscrivez, vous n'aurez pas accès à l'historique de vos matchs et résultats.</string>
+    <string name="anonymous_logout_warning_message">Êtes-vous sûr de vouloir vous déconnecter ? Pour les méthodes anonymes, cette action ne peut pas être annulée et même si vous vous réinscrivez, vous n’aurez pas accès à l’historique de vos matchs et résultats.</string>
     
     <!-- Field draw strings -->
     <string name="field_your_move">À vous de jouer !</string>
