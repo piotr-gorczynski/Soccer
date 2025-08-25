@@ -208,6 +208,8 @@
     <string name="nickname_too_long">Nickname must be 20 characters or less</string>
     <string name="not_logged_in">Not logged in</string>
     <string name="register_to_use_function">Please register yourself to use this function</string>
+    <string name="register_dialog_message">In order to use this function you need to register yourself. You can register even anonymously. Do you want to proceed?</string>
+    <string name="proceed">Proceed</string>
     <string name="network_error_checking_nickname">Network error while checking nickname</string>
     <string name="nickname_taken">Nickname already taken — choose another</string>
     <string name="nickname_saved">Nickname saved</string>

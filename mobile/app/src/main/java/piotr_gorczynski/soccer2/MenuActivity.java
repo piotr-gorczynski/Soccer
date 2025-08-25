@@ -602,6 +602,17 @@ public class MenuActivity extends BaseActivity {
                 .show();
     }
 
+    private void showRegistrationDialog() {
+        new AlertDialog.Builder(this)
+                .setMessage(R.string.register_dialog_message)
+                .setPositiveButton(R.string.proceed, (dialog, which) -> {
+                    startActivity(new Intent(this, UniversalLoginActivity.class));
+                    finish();
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
+    }
+
     private void showAdThenRun(Runnable action) {
         SharedPreferences prefs =
                 getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
@@ -783,7 +794,7 @@ public class MenuActivity extends BaseActivity {
 
     public void OpenInviteFriend(View view) {
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-            Toast.makeText(this, R.string.register_to_use_function, Toast.LENGTH_SHORT).show();
+            showRegistrationDialog();
             return;
         }
         if (!hasAdsConsent()) {
@@ -796,7 +807,7 @@ public class MenuActivity extends BaseActivity {
 
     public void OpenInvites(View view) {
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-            Toast.makeText(this, R.string.register_to_use_function, Toast.LENGTH_SHORT).show();
+            showRegistrationDialog();
             return;
         }
         if (!hasAdsConsent()) {
@@ -809,7 +820,7 @@ public class MenuActivity extends BaseActivity {
 
     public void OpenTournaments(View view) {
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-            Toast.makeText(this, R.string.register_to_use_function, Toast.LENGTH_SHORT).show();
+            showRegistrationDialog();
             return;
         }
         if (!hasAdsConsent()) {
@@ -822,7 +833,7 @@ public class MenuActivity extends BaseActivity {
 
     public void OpenRanking(View view) {
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-            Toast.makeText(this, R.string.register_to_use_function, Toast.LENGTH_SHORT).show();
+            showRegistrationDialog();
             return;
         }
         if (!hasAdsConsent()) {

@@ -210,6 +210,8 @@
     <string name="nickname_too_long">उपनाम 20 वर्ण वा कम हुनु पर्छ</string>
     <string name="not_logged_in">लग इन गरिएको छैन</string>
     <string name="register_to_use_function">कृपया यो सुविधा प्रयोग गर्न आफूलाई दर्ता गर्नुहोस्।</string>
+    <string name="register_dialog_message">यो सुविधा प्रयोग गर्नको लागि तपाईंले आफूलाई दर्ता गर्न आवश्यक छ। तपाईं अज्ञात रूपमा पनि दर्ता गर्न सक्नुहुन्छ। के तपाईं अगाडि बढ्न चाहनुहुन्छ?</string>
+    <string name="proceed">अगाडि बढ्नुहोस्</string>
     <string name="network_error_checking_nickname">नेटवर्क त्रुटि उपनाम जाँच गर्दा नेटवर्क त्रुटि</string>
     <string name="nickname_taken">उपनाम पहिले नै लिइएको छ - अर्को छनौट गर्नुहोस्</string>
     <string name="nickname_saved">उपनाम बचत भयो</string>
