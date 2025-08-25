@@ -152,7 +152,7 @@ public class AccountActivity extends BaseActivity {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.remove_account_dialog_title)
                 .setMessage(R.string.remove_account_dialog_message)
-                .setPositiveButton(R.string.proceed, (dialog, which) -> performAccountRemoval())
+                .setPositiveButton(R.string.proceed_account_removal, (dialog, which) -> performAccountRemoval())
                 .setNegativeButton(R.string.cancel, null)
                 .show();
     }
