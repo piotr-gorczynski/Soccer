@@ -140,6 +140,7 @@
     <string name="login_google">Login with Google</string>
     <string name="login_facebook">Login with Facebook</string>
     <string name="login_microsoft">Login with Microsoft</string>
+    <string name="login_anonymous">Login Anonymously</string>
     <string name="facebook_app_id" translatable="false">1232966491486195</string>
     <string name="facebook_client_token" translatable="false">CLIENT_TOKEN_TO_BE_CONFIGURED</string>
     <string name="fb_login_protocol_scheme" translatable="false">fb1232966491486195</string>
@@ -189,6 +190,12 @@
     <string name="enter_email_and_password">Please enter both email and password</string>
     <string name="login_success">Login successful!</string>
     <string name="login_failed">Login failed: %1$s</string>
+    
+    <!-- Anonymous login warning -->
+    <string name="anonymous_login_warning_title">Anonymous Login Warning</string>
+    <string name="anonymous_login_warning_message">Anonymous login allows access to certain functions, but if you lose your device, reinstall the app, get a new phone, or log out, the link to your anonymous account will be lost and it will not be possible to log back into the same anonymous account. Do you want to proceed?</string>
+    <string name="proceed">Proceed</string>
+    <string name="cancel">Cancel</string>
     <string name="enter_email_address">Please enter your email address</string>
     <string name="all_fields_required">All fields are required</string>
     <string name="passwords_do_not_match">Passwords do not match</string>

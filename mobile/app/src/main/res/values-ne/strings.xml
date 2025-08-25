@@ -155,6 +155,7 @@
     <string name="login_google">Google ले लग इन गर्नुहोस्</string>
     <string name="login_facebook">Facebook ले लग इन गर्नुहोस्</string>
     <string name="login_microsoft">Microsoft ले लग इन गर्नुहोस्</string>
+    <string name="login_anonymous">बेनामी रूपमा लग इन गर्नुहोस्</string>
     <string name="login_method_label">लग इन विधि: %1$s</string>
     <string name="facebook_name_label">Facebook नाम: %1$s</string>
     <string name="pref_title_facebook">Facebook समुदाय</string>
@@ -191,6 +192,12 @@
     <string name="enter_email_and_password">कृपया दुबै ईमेल र पासवर्ड प्रविष्ट गर्नुहोस्</string>
     <string name="login_success">लगइन सफल!</string>
     <string name="login_failed">लगइन असफल: %1$s</string>
+    
+    <!-- Anonymous login warning -->
+    <string name="anonymous_login_warning_title">गुमनाम लगइन चेतावनी</string>
+    <string name="anonymous_login_warning_message">गुमनाम लगइनले केही कार्यहरूमा पहुँचको अनुमति दिन्छ, तर यदि तपाईंले आफ्नो यन्त्र गुमाउनुभयो, एप पुनः स्थापना गर्नुभयो, नयाँ फोन प्राप्त गर्नुभयो, वा लगआउट गर्नुभयो भने, तपाईंको गुमनाम खाताको लिङ्क हराउनेछ र त्यही गुमनाम खातामा फेरि लगइन गर्न सम्भव हुनेछैन। के तपाईं अगाडि बढ्न चाहनुहुन्छ?</string>
+    <string name="proceed">अगाडि बढ्नुहोस्</string>
+    <string name="cancel">रद्द गर्नुहोस्</string>
     <string name="enter_email_address">कृपया तपाईंको ईमेल ठेगाना प्रविष्ट गर्नुहोस्</string>
     <string name="all_fields_required">सबै क्षेत्रहरू आवश्यक छ</string>
     <string name="passwords_do_not_match">पासवर्डहरू मेल खाँदैनन्</string>
