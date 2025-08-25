@@ -211,6 +211,8 @@
     <string name="nickname_too_long">Pseudonim musi mieć 20 znaków lub mniej</string>
     <string name="not_logged_in">Nie zalogowano</string>
     <string name="register_to_use_function">Zarejestruj się, aby korzystać z tej funkcji.</string>
+    <string name="register_dialog_message">Aby korzystać z tej funkcji, musisz się zarejestrować. Możesz zarejestrować się nawet anonimowo. Czy chcesz kontynuować?</string>
+    <string name="proceed">Kontynuuj</string>
     <string name="network_error_checking_nickname">Błąd sieci podczas sprawdzania pseudonim</string>
     <string name="nickname_taken">Pseudonim już zabrany - wybierz inny</string>
     <string name="nickname_saved">Zapisany pseudonim</string>
