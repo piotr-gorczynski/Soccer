@@ -46,7 +46,15 @@
             android:textColor="@color/colorGreenDark" />
 
         <TextView
-            android:id="@+id/accountFacebookInfo"
+            android:id="@+id/accountFacebookId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/colorGreenDark"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/accountFacebookName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"

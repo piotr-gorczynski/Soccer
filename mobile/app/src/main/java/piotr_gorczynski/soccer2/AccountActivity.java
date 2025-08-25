@@ -37,7 +37,8 @@ public class AccountActivity extends BaseActivity {
 
         TextView nickView = findViewById(R.id.accountNickname);
         TextView emailView = findViewById(R.id.accountEmail);
-        TextView facebookInfoView = findViewById(R.id.accountFacebookInfo);
+        TextView facebookIdView = findViewById(R.id.accountFacebookId);
+        TextView facebookNameView = findViewById(R.id.accountFacebookName);
         ImageView profilePhotoView = findViewById(R.id.accountProfilePhoto);
         TextView methodView = findViewById(R.id.accountMethod);
         Button logoutBtn = findViewById(R.id.btnLogout);
@@ -64,16 +65,16 @@ public class AccountActivity extends BaseActivity {
         if ("facebook.com".equals(method) && facebookId != null) {
             // Hide email view and show Facebook info
             emailView.setVisibility(View.GONE);
-            facebookInfoView.setVisibility(View.VISIBLE);
-            
-            // Build Facebook info text
-            StringBuilder facebookInfo = new StringBuilder();
-            facebookInfo.append(getString(R.string.facebook_id_label, facebookId));
+            facebookIdView.setVisibility(View.VISIBLE);
+            facebookIdView.setText(getString(R.string.facebook_id_label, facebookId));
+
             if (facebookName != null && !facebookName.isEmpty()) {
-                facebookInfo.append("\n").append(getString(R.string.facebook_name_label, facebookName));
+                facebookNameView.setVisibility(View.VISIBLE);
+                facebookNameView.setText(getString(R.string.facebook_name_label, facebookName));
+            } else {
+                facebookNameView.setVisibility(View.GONE);
             }
-            facebookInfoView.setText(facebookInfo.toString());
-            
+
             // Load Facebook profile photo if available
             if (facebookPhotoUrl != null && !facebookPhotoUrl.isEmpty()) {
                 profilePhotoView.setVisibility(View.VISIBLE);
@@ -90,7 +91,8 @@ public class AccountActivity extends BaseActivity {
             // Show email for non-Facebook users
             emailView.setVisibility(View.VISIBLE);
             emailView.setText(getString(R.string.email_label, email));
-            facebookInfoView.setVisibility(View.GONE);
+            facebookIdView.setVisibility(View.GONE);
+            facebookNameView.setVisibility(View.GONE);
             profilePhotoView.setVisibility(View.GONE);
         }
         methodView.setText(getString(R.string.login_method_label, method));
