@@ -167,7 +167,7 @@
     <string name="remove_account">اکاؤنٹ ہٹائیں</string>
     <string name="remove_account_dialog_title">اکاؤنٹ ہٹائیں</string>
     <string name="remove_account_dialog_message">کیا آپ واقعی اپنا اکاؤنٹ ہٹانا چاہتے ہیں؟ یہ عمل واپس نہیں کیا جا سکتا اور اگر آپ دوبارہ رجسٹر بھی کریں تو آپ کو اپنے میچز اور نتائج کی تاریخ تک رسائی نہیں ملے گی۔</string>
-    <string name="proceed">آگے بڑھیں</string>
+    <string name="proceed_account_removal">آگے بڑھیں</string>
     <string name="removing_account">اکاؤنٹ ہٹایا جا رہا ہے...</string>
     <string name="account_removed">اکاؤنٹ کامیابی سے ہٹا دیا گیا</string>
     <string name="remove_account_failed">اکاؤنٹ ہٹانے میں ناکام۔ دوبارہ کوشش کریں۔</string>
@@ -196,8 +196,7 @@
     <!-- Anonymous login warning -->
     <string name="anonymous_login_warning_title">گمنام لاگ ان کی تنبیہ</string>
     <string name="anonymous_login_warning_message">گمنام لاگ ان کچھ فنکشنز تک رسائی کی اجازت دیتا ہے، لیکن اگر آپ اپنا ڈیوائس کھو دیتے ہیں، ایپ دوبارہ انسٹال کرتے ہیں، نیا فون حاصل کرتے ہیں، یا لاگ آؤٹ کرتے ہیں، تو آپ کے گمنام اکاؤنٹ کا لنک کھو جائے گا اور اسی گمنام اکاؤنٹ میں دوبارہ لاگ ان کرنا ممکن نہیں ہوگا۔ کیا آپ آگے بڑھنا چاہتے ہیں؟</string>
-    <string name="proceed">آگے بڑھیں</string>
-    <string name="cancel">منسوخ</string>
+    <string name="proceed_anonymous_login">آگے بڑھیں</string>
     <string name="enter_email_address">براہ کرم اپنا ای میل ایڈریس درج کریں</string>
     <string name="all_fields_required">تمام فیلڈز کی ضرورت ہے</string>
     <string name="passwords_do_not_match">پاس ورڈ مماثل نہیں ہیں</string>

@@ -175,7 +175,7 @@
     <string name="remove_account">Supprimer le compte</string>
     <string name="remove_account_dialog_title">Supprimer le compte</string>
     <string name="remove_account_dialog_message">Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible et, même si vous vous réinscrivez, vous n’aurez pas accès à l’historique de vos matchs et résultats.</string>
-    <string name="proceed">Continuer</string>
+    <string name="proceed_account_removal">Continuer</string>
     <string name="removing_account">Suppression du compte…</string>
     <string name="account_removed">Compte supprimé avec succès</string>
     <string name="remove_account_failed">Échec de la suppression du compte. Veuillez réessayer.</string>
@@ -199,8 +199,7 @@
     <!-- Anonymous login warning -->
     <string name="anonymous_login_warning_title">Avertissement de connexion anonyme</string>
     <string name="anonymous_login_warning_message">La connexion anonyme permet l\'accès à certaines fonctions, mais si vous perdez votre appareil, réinstallez l\'application, obtenez un nouveau téléphone ou vous déconnectez, le lien vers votre compte anonyme sera perdu et il ne sera pas possible de vous reconnecter au même compte anonyme. Voulez-vous continuer ?</string>
-    <string name="proceed">Continuer</string>
-    <string name="cancel">Annuler</string>
+    <string name="proceed_anonymous_login">Continuer</string>
     <string name="enter_email_address">Veuillez saisir votre adresse e-mail</string>
     <string name="all_fields_required">Tous les champs sont requis</string>
     <string name="passwords_do_not_match">Les mots de passe ne correspondent pas</string>
