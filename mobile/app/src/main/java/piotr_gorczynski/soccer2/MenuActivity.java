@@ -306,10 +306,17 @@ public class MenuActivity extends BaseActivity {
 
         FirebaseAuth.getInstance().signOut();
 
+        // Remove only user-specific data, preserve language preferences and other device settings
         getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
                 .edit()
                 .remove(PREF_FCM_TOKEN)
-                .clear()
+                .remove("uid")
+                .remove("email")
+                .remove("nickname")
+                .remove("method")
+                .remove("facebookId")
+                .remove("facebookName")
+                .remove("facebookPhotoUrl")
                 .apply();
 
         FirebaseMessaging.getInstance().deleteToken()
@@ -371,10 +378,16 @@ public class MenuActivity extends BaseActivity {
                 getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
         String nickname = prefs.getString("nickname", null);
         if (auth.getCurrentUser() == null) {
-            String savedLang = prefs.getString(LanguageManager.PREF_LANGUAGE_CODE, "en");
+            // Remove only user-specific data, preserve language preferences and other device settings
             SharedPreferences.Editor ed = prefs.edit();
-            ed.clear();
-            ed.putString(LanguageManager.PREF_LANGUAGE_CODE, savedLang);
+            ed.remove("uid")
+              .remove("email")
+              .remove("nickname")
+              .remove("method")
+              .remove("facebookId")
+              .remove("facebookName")
+              .remove("facebookPhotoUrl")
+              .remove("fcmToken");
             ed.commit();
 
             FirebaseMessaging.getInstance().deleteToken();
