@@ -176,6 +176,10 @@
     <string name="reauth_message">Wprowadź swoje hasło, aby kontynuować.</string>
     <string name="reauth_failed">Ponowna autoryzacja nie powiodła się. Spróbuj ponownie.</string>
     
+    <!-- Anonymous logout warning strings -->
+    <string name="anonymous_logout_warning_title">Ostrzeżenie przed wylogowaniem</string>
+    <string name="anonymous_logout_warning_message">Czy na pewno chcesz się wylogować? W przypadku metod anonimowych tej akcji nie można cofnąć i nawet jeśli zarejestrujesz się ponownie, nie uzyskasz dostępu do historii swoich meczów i wyników.</string>
+    
     <!-- Common strings -->
     <string name="settings">Ustawienia</string>
     <string name="cancel">Anuluj</string>

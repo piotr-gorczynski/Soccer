@@ -166,6 +166,10 @@
     <string name="reauth_message">Please enter your password to continue.</string>
     <string name="reauth_failed">Re-authentication failed. Please try again.</string>
     
+    <!-- Anonymous logout warning strings -->
+    <string name="anonymous_logout_warning_title">Logout Warning</string>
+    <string name="anonymous_logout_warning_message">Are you sure you want to log out? For anonymous methods this action cannot be reverted and even if you register again, you will not get access to the history of your matches and results.</string>
+    
     <!-- Language strings -->
     <string name="select_language">Select Language</string>
     <string name="language_english">English</string>

@@ -175,6 +175,10 @@
     <string name="reauth_message">Por favor ingresa tu contraseña para continuar.</string>
     <string name="reauth_failed">Re-autenticación falló. Por favor inténtalo de nuevo.</string>
     
+    <!-- Anonymous logout warning strings -->
+    <string name="anonymous_logout_warning_title">Advertencia de cierre de sesión</string>
+    <string name="anonymous_logout_warning_message">¿Estás seguro de que quieres cerrar sesión? Para métodos anónimos esta acción no se puede revertir y aunque te registres de nuevo, no podrás acceder al historial de tus partidos y resultados.</string>
+    
     <!-- Common strings -->
     <string name="settings">Configuración</string>
     <string name="cancel">Cancelar</string>

@@ -175,6 +175,10 @@
     <string name="reauth_message">جاری رکھنے کے لیے براہ کرم اپنا پاس ورڈ داخل کریں۔</string>
     <string name="reauth_failed">دوبارہ تصدیق ناکام۔ دوبارہ کوشش کریں۔</string>
     
+    <!-- Anonymous logout warning strings -->
+    <string name="anonymous_logout_warning_title">لاگ آؤٹ کی تنبیہ</string>
+    <string name="anonymous_logout_warning_message">کیا آپ واقعی لاگ آؤٹ کرنا چاہتے ہیں؟ گمنام طریقوں کے لیے یہ عمل واپس نہیں ہو سکتا اور اگرچہ آپ دوبارہ رجسٹر کریں، آپ کو اپنے میچز اور نتائج کی تاریخ تک رسائی نہیں ملے گی۔</string>
+    
     <!-- Common strings -->
     <string name="settings">سیٹنگز</string>
     <string name="cancel">منسوخ کریں</string>

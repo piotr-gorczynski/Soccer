@@ -182,7 +182,11 @@
     <string name="reauth_title">Se réauthentifier</string>
     <string name="reauth_message">Veuillez entrer votre mot de passe pour continuer.</string>
     <string name="reauth_failed">Échec de la réauthentification. Veuillez réessayer.</string>
-
+    
+    <!-- Anonymous logout warning strings -->
+    <string name="anonymous_logout_warning_title">Avertissement de déconnexion</string>
+    <string name="anonymous_logout_warning_message">Êtes-vous sûr de vouloir vous déconnecter ? Pour les méthodes anonymes, cette action ne peut pas être annulée et même si vous vous réinscrivez, vous n'aurez pas accès à l'historique de vos matchs et résultats.</string>
+    
     <!-- Field draw strings -->
     <string name="field_your_move">À vous de jouer !</string>
     <string name="field_move_tail">coup ... ⏳ %1$s</string>
