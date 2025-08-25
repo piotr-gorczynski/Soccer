@@ -175,6 +175,10 @@
     <string name="reauth_message">Bitte geben Sie Ihr Passwort ein, um fortzufahren.</string>
     <string name="reauth_failed">Erneute Authentifizierung fehlgeschlagen. Versuchen Sie es erneut.</string>
     
+    <!-- Anonymous logout warning strings -->
+    <string name="anonymous_logout_warning_title">Abmelde-Warnung</string>
+    <string name="anonymous_logout_warning_message">Sind Sie sicher, dass Sie sich abmelden möchten? Bei anonymen Methoden kann diese Aktion nicht rückgängig gemacht werden und selbst wenn Sie sich erneut registrieren, erhalten Sie keinen Zugang zur Historie Ihrer Spiele und Ergebnisse.</string>
+    
     <!-- Common strings -->
     <string name="settings">Einstellungen</string>
     <string name="cancel">Abbrechen</string>
