@@ -103,7 +103,16 @@ public class AccountActivity extends BaseActivity {
         }
         methodView.setText(getString(R.string.login_method_label, method));
 
-        logoutBtn.setOnClickListener(v -> performLogout());
+        logoutBtn.setOnClickListener(v -> {
+            String method = getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
+                    .getString("method", "-");
+            
+            if ("anonymous".equals(method)) {
+                showAnonymousLogoutWarning();
+            } else {
+                performLogout();
+            }
+        });
 
         // Allow users to remove their account through the in-app option.
         // Tapping the button opens a confirmation dialog and triggers the deletion flow.
@@ -122,6 +131,19 @@ public class AccountActivity extends BaseActivity {
         FirebaseAuth.getInstance().signOut();
 
         finishLogoutUi();
+    }
+
+    /**
+     * Shows a warning dialog for anonymous users before logout.
+     * Anonymous logout cannot be reverted and user will lose access to match history.
+     */
+    private void showAnonymousLogoutWarning() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.anonymous_logout_warning_title)
+                .setMessage(R.string.anonymous_logout_warning_message)
+                .setPositiveButton(R.string.logout, (dialog, which) -> performLogout())
+                .setNegativeButton(R.string.cancel, null)
+                .show();
     }
 
     private void finishLogoutUi() {

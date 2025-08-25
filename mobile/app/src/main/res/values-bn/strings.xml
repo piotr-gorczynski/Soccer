@@ -175,6 +175,10 @@
     <string name="reauth_message">চালিয়ে যেতে অনুগ্রহ করে আপনার পাসওয়ার্ড প্রবেশ করান।</string>
     <string name="reauth_failed">পুনরায় প্রমাণীকরণ ব্যর্থ। আবার চেষ্টা করুন।</string>
     
+    <!-- Anonymous logout warning strings -->
+    <string name="anonymous_logout_warning_title">লগআউট সতর্কতা</string>
+    <string name="anonymous_logout_warning_message">আপনি কি সত্যিই লগআউট করতে চান? বেনামী পদ্ধতির জন্য এই কর্মটি প্রত্যাবর্তিত করা যাবে না এবং আপনি আবার নিবন্ধন করলেও, আপনার ম্যাচ এবং ফলাফলের ইতিহাসে অ্যাক্সেস পাবেন না।</string>
+    
     <!-- Common strings -->
     <string name="settings">সেটিংস</string>
    <string name="cancel">বাতিল করুন</string>
