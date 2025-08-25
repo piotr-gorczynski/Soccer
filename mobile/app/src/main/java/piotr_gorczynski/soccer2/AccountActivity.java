@@ -104,10 +104,10 @@ public class AccountActivity extends BaseActivity {
         methodView.setText(getString(R.string.login_method_label, method));
 
         logoutBtn.setOnClickListener(v -> {
-            String method = getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
+            String currentMethod = getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
                     .getString("method", "-");
-            
-            if ("anonymous".equals(method)) {
+
+            if ("anonymous".equals(currentMethod)) {
                 showAnonymousLogoutWarning();
             } else {
                 performLogout();
