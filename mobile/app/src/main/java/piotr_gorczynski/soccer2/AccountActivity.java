@@ -156,9 +156,9 @@ public class AccountActivity extends BaseActivity {
         FirebaseMessaging.getInstance().deleteToken()
                 .addOnCompleteListener(t -> {
                     if (t.isSuccessful()) {
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".finishLogoutUi: \u2705 FCM token deleted");
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".finishLogoutUi: ✅ FCM token deleted");
                     } else {
-                        Log.w("TAG_Soccer", getClass().getSimpleName() + ".finishLogoutUi: \u274C Failed to delete FCM token", t.getException());
+                        Log.w("TAG_Soccer", getClass().getSimpleName() + ".finishLogoutUi: ❌ Failed to delete FCM token", t.getException());
                     }
                 });
         FirebaseMessaging.getInstance().setAutoInitEnabled(false);
