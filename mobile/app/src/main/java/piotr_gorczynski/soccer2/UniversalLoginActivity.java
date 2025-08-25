@@ -138,7 +138,7 @@ public class UniversalLoginActivity extends BaseActivity {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.anonymous_login_warning_title)
                 .setMessage(R.string.anonymous_login_warning_message)
-                .setPositiveButton(R.string.proceed, (dialog, which) -> {
+                .setPositiveButton(R.string.proceed_anonymous_login, (dialog, which) -> {
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".handleAnonymousLogin: User accepted warning, proceeding with anonymous login");
                     FirebaseAuthManager.LoginCallback callback = createLoginCallback();
                     authManager.loginAnonymously(callback);

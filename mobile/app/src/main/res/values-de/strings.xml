@@ -167,7 +167,7 @@
     <string name="remove_account">Konto entfernen</string>
     <string name="remove_account_dialog_title">Konto entfernen</string>
     <string name="remove_account_dialog_message">Sind Sie sicher, dass Sie Ihr Konto entfernen möchten? Diese Aktion kann nicht rückgängig gemacht werden und selbst wenn Sie sich erneut registrieren, erhalten Sie keinen Zugang zur Historie Ihrer Spiele und Ergebnisse.</string>
-    <string name="proceed">Fortfahren</string>
+    <string name="proceed_account_removal">Fortfahren</string>
     <string name="removing_account">Konto wird entfernt...</string>
     <string name="account_removed">Konto erfolgreich entfernt</string>
     <string name="remove_account_failed">Konto konnte nicht entfernt werden. Versuchen Sie es erneut.</string>
@@ -196,8 +196,7 @@
     <!-- Anonymous login warning -->
     <string name="anonymous_login_warning_title">Warnung zur anonymen Anmeldung</string>
     <string name="anonymous_login_warning_message">Die anonyme Anmeldung ermöglicht den Zugang zu bestimmten Funktionen, aber wenn Sie Ihr Gerät verlieren, die App neu installieren, ein neues Telefon bekommen oder sich abmelden, geht die Verbindung zu Ihrem anonymen Konto verloren und es ist nicht möglich, sich wieder in dasselbe anonyme Konto einzuloggen. Möchten Sie fortfahren?</string>
-    <string name="proceed">Fortfahren</string>
-    <string name="cancel">Abbrechen</string>
+    <string name="proceed_anonymous_login">Fortfahren</string>
     <string name="enter_email_address">Bitte geben Sie Ihre e-mail -Adresse ein</string>
     <string name="all_fields_required">Alle Felder sind erforderlich</string>
     <string name="passwords_do_not_match">Passwörter stimmen nicht überein</string>
