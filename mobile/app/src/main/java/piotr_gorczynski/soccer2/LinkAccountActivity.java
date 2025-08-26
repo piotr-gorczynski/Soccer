@@ -39,12 +39,10 @@ public class LinkAccountActivity extends BaseActivity {
 
         Button btnEmail = findViewById(R.id.btnEmailLink);
         Button btnGoogle = findViewById(R.id.btnGoogleLink);
-        Button btnMicrosoft = findViewById(R.id.btnMicrosoftLink);
         Button btnFacebook = findViewById(R.id.btnFacebookLink);
 
         btnEmail.setOnClickListener(v -> showEmailLinkDialog());
         btnGoogle.setOnClickListener(v -> handleProviderLink("google.com"));
-        btnMicrosoft.setOnClickListener(v -> handleProviderLink("microsoft.com"));
 
         if (FacebookSdk.isInitialized()) {
             btnFacebook.setVisibility(android.view.View.VISIBLE);

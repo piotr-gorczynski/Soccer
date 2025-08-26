@@ -273,4 +273,5 @@
     <string name="link_account_failed">Fehler beim Verknüpfen des Kontos: %1$s</string>
     <string name="link_account_in_progress">Konto wird verknüpft...</string>
     <string name="account_already_exists_merge">Ein Konto mit diesen Anmeldedaten existiert bereits. Ihre aktuellen Daten werden beibehalten und zusammengeführt.</string>
+    <string name="credential_already_associated">Diese Anmeldedaten sind bereits mit einem anderen Benutzerkonto verknüpft.</string>
 </resources>
