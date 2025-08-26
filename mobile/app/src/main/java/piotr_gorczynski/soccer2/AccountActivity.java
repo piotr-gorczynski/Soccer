@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.view.View;
+import android.content.Intent;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
@@ -43,6 +44,7 @@ public class AccountActivity extends BaseActivity {
         TextView methodView = findViewById(R.id.accountMethod);
         Button logoutBtn = findViewById(R.id.btnLogout);
         Button removeAccountBtn = findViewById(R.id.btnRemoveAccount);
+        Button linkAccountBtn = findViewById(R.id.btnLinkAccount);
 
         String nickname = getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
                 .getString("nickname", "-");
@@ -93,6 +95,8 @@ public class AccountActivity extends BaseActivity {
             facebookIdView.setVisibility(View.GONE);
             facebookNameView.setVisibility(View.GONE);
             profilePhotoView.setVisibility(View.GONE);
+            // Show link account button for anonymous users
+            linkAccountBtn.setVisibility(View.VISIBLE);
         } else {
             // Show email for non-Facebook, non-anonymous users
             emailView.setVisibility(View.VISIBLE);
@@ -100,6 +104,8 @@ public class AccountActivity extends BaseActivity {
             facebookIdView.setVisibility(View.GONE);
             facebookNameView.setVisibility(View.GONE);
             profilePhotoView.setVisibility(View.GONE);
+            // Hide link account button for non-anonymous users
+            linkAccountBtn.setVisibility(View.GONE);
         }
         methodView.setText(getString(R.string.login_method_label, method));
 
@@ -117,6 +123,9 @@ public class AccountActivity extends BaseActivity {
         // Allow users to remove their account through the in-app option.
         // Tapping the button opens a confirmation dialog and triggers the deletion flow.
         removeAccountBtn.setOnClickListener(v -> showRemoveAccountDialog());
+
+        // Link anonymous account with registered account credentials
+        linkAccountBtn.setOnClickListener(v -> startLinkAccountActivity());
     }
 
     private void performLogout() {
@@ -299,5 +308,14 @@ public class AccountActivity extends BaseActivity {
 
         // Return to main menu (finish this activity to go back)
         finish();
+    }
+
+    /**
+     * Starts the link account activity to allow anonymous users to link their account
+     * with email, Google, or Facebook credentials.
+     */
+    private void startLinkAccountActivity() {
+        Intent intent = new Intent(this, LinkAccountActivity.class);
+        startActivity(intent);
     }
 }

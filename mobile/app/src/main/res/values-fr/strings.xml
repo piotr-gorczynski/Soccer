@@ -266,4 +266,12 @@
     <string name="authentication_failed">L’authentification a échoué.</string>
 
     <string name="could_not_cancel_invite">Impossible d’annuler l’invitation : %1$s</string>
+    <!-- Link Account functionality -->
+    <string name="link_to_registered_account">Lier au compte enregistre</string>
+    <string name="link_account_title">Lier un Compte Anonyme</string>
+    <string name="link_account_description">Liez votre compte anonyme avec email, Google ou Facebook pour securiser votre compte et l\'historique des jeux.</string>
+    <string name="link_account_success">Compte lie avec succes!</string>
+    <string name="link_account_failed">Echec de la liaison du compte: %1$s</string>
+    <string name="link_account_in_progress">Liaison du compte...</string>
+    <string name="account_already_exists_merge">Un compte avec ces identifiants existe deja. Vos donnees actuelles seront preservees et fusionnees.</string>
 </resources>
