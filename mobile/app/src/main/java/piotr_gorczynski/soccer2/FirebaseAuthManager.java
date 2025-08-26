@@ -721,8 +721,8 @@ public class FirebaseAuthManager {
                     Log.e("TAG_Soccer", getClass().getSimpleName() + ".linkWithEmailPassword: Link failed", e);
                     
                     if (e instanceof com.google.firebase.auth.FirebaseAuthUserCollisionException) {
-                        // Account already exists - this is the merge scenario
-                        callback.onLinkFailure("An account with this email already exists. Please use a different email or sign in with existing credentials.");
+                        // Account already exists - use the specific error message from strings
+                        callback.onLinkFailure(context.getString(R.string.credential_already_associated));
                     } else {
                         callback.onLinkFailure(e.getMessage() != null ? e.getMessage() : "Unknown error occurred");
                     }
@@ -778,7 +778,7 @@ public class FirebaseAuthManager {
                 .addOnFailureListener(e -> {
                     Log.e("TAG_Soccer", getClass().getSimpleName() + ".linkWithOAuthProvider: " + providerId + " link failed", e);
                     if (e instanceof com.google.firebase.auth.FirebaseAuthUserCollisionException) {
-                        callback.onLinkFailure("An account with this " + getProviderDisplayName(providerId) + " profile already exists.");
+                        callback.onLinkFailure(context.getString(R.string.credential_already_associated));
                     } else {
                         callback.onLinkFailure(e.getMessage() != null ? e.getMessage() : "Unknown error occurred");
                     }

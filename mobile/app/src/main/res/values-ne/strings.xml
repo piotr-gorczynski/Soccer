@@ -272,4 +272,5 @@
     <string name="link_account_failed">Failed to link account: %1$s</string>
     <string name="link_account_in_progress">Linking account...</string>
     <string name="account_already_exists_merge">An account with these credentials already exists. Your current data will be preserved and merged.</string>
+    <string name="credential_already_associated">यो प्रमाणपत्र पहिले नै फरक प्रयोगकर्ता खाताको साथ सम्बन्धित छ।</string>
 </resources>

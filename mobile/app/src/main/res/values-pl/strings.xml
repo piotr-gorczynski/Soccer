@@ -273,4 +273,5 @@
     <string name="link_account_failed">Nie udało się połączyć konta: %1$s</string>
     <string name="link_account_in_progress">Łączenie konta...</string>
     <string name="account_already_exists_merge">Konto z tymi danymi uwierzytelniającymi już istnieje. Twoje obecne dane zostaną zachowane i scalone.</string>
+    <string name="credential_already_associated">Te dane uwierzytelniające są już powiązane z innym kontem użytkownika.</string>
 </resources>
