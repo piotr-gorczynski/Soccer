@@ -273,4 +273,5 @@
     <string name="link_account_failed">Error al vincular cuenta: %1$s</string>
     <string name="link_account_in_progress">Vinculando cuenta...</string>
     <string name="account_already_exists_merge">Ya existe una cuenta con estas credenciales. Sus datos actuales se preservarán y se fusionarán.</string>
+    <string name="credential_already_associated">Esta credencial ya está asociada con una cuenta de usuario diferente.</string>
 </resources>

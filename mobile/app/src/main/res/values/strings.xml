@@ -271,6 +271,7 @@
     <string name="link_account_failed">Failed to link account: %1$s</string>
     <string name="link_account_in_progress">Linking account...</string>
     <string name="account_already_exists_merge">An account with these credentials already exists. Your current data will be preserved and merged.</string>
+    <string name="credential_already_associated">This credential is already associated with a different user account.</string>
     <string name="enter_email_and_password_to_link">Enter your email and password to link your anonymous account</string>
     <string name="link_with_email">Link with Email</string>
     <string name="link_with_google">Link with Google</string>
