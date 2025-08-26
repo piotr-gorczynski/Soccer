@@ -130,22 +130,40 @@ public class LinkAccountActivity extends BaseActivity {
                         .document(uid)
                         .get(Source.SERVER)
                         .addOnSuccessListener(doc -> {
-                            // Update stored preferences with new method
+                            // Update stored preferences with new method and all account data
+                            SharedPreferences.Editor editor = prefs.edit();
+                            
                             String newMethod = doc.getString("method");
                             String email = doc.getString("email");
+                            String facebookId = doc.getString("facebookId");
+                            String facebookName = doc.getString("facebookName");
+                            String facebookPhotoUrl = doc.getString("facebookPhotoUrl");
+                            
                             if (newMethod != null) {
-                                prefs.edit().putString("method", newMethod).apply();
+                                editor.putString("method", newMethod);
                             }
                             if (email != null) {
-                                prefs.edit().putString("email", email).apply();
+                                editor.putString("email", email);
                             }
+                            if (facebookId != null) {
+                                editor.putString("facebookId", facebookId);
+                            }
+                            if (facebookName != null) {
+                                editor.putString("facebookName", facebookName);
+                            }
+                            if (facebookPhotoUrl != null) {
+                                editor.putString("facebookPhotoUrl", facebookPhotoUrl);
+                            }
+                            editor.apply();
 
                             Toast.makeText(LinkAccountActivity.this, getString(R.string.link_account_success), Toast.LENGTH_SHORT).show();
+                            setResult(RESULT_OK); // Indicate successful linking
                             finish(); // Return to AccountActivity
                         })
                         .addOnFailureListener(e -> {
                             Log.w("TAG_Soccer", getClass().getSimpleName() + ".onLinkSuccess: Failed to fetch updated user data", e);
                             Toast.makeText(LinkAccountActivity.this, getString(R.string.link_account_success), Toast.LENGTH_SHORT).show();
+                            setResult(RESULT_OK); // Still indicate success since linking worked
                             finish(); // Return to AccountActivity anyway
                         });
             }
@@ -154,6 +172,7 @@ public class LinkAccountActivity extends BaseActivity {
             public void onLinkFailure(String message) {
                 Log.e("TAG_Soccer", getClass().getSimpleName() + ".onLinkFailure: " + message);
                 Toast.makeText(LinkAccountActivity.this, getString(R.string.link_account_failed, message), Toast.LENGTH_LONG).show();
+                setResult(RESULT_CANCELED); // Indicate failure
             }
         };
     }
