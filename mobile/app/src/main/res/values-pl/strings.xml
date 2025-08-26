@@ -265,4 +265,12 @@
     <string name="authentication_failed">Uwierzytelnianie nie powiodło się.</string>
 
     <string name="could_not_cancel_invite">Nie można anulować Zaproszenia: %1$s</string>
+    <!-- Link Account functionality -->
+    <string name="link_to_registered_account">Połącz z zarejestrowanym kontem</string>
+    <string name="link_account_title">Połącz Konto Anonimowe</string>
+    <string name="link_account_description">Połącz swoje anonimowe konto z e-mail, Google lub Facebook, aby zabezpieczyć swoje konto i historię gier.</string>
+    <string name="link_account_success">Konto zostało pomyślnie połączone!</string>
+    <string name="link_account_failed">Nie udało się połączyć konta: %1$s</string>
+    <string name="link_account_in_progress">Łączenie konta...</string>
+    <string name="account_already_exists_merge">Konto z tymi danymi uwierzytelniającymi już istnieje. Twoje obecne dane zostaną zachowane i scalone.</string>
 </resources>

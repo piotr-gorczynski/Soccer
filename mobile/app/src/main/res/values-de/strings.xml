@@ -264,4 +264,13 @@
     <string name="authentication_failed">Authentifizierung fehlgeschlagen.</string>
 
     <string name="could_not_cancel_invite">Konnte einladen nicht stornieren: %1$s</string>
+
+    <!-- Link Account functionality -->
+    <string name="link_to_registered_account">Mit registriertem Konto verknüpfen</string>
+    <string name="link_account_title">Anonymes Konto verknüpfen</string>
+    <string name="link_account_description">Verknüpfen Sie Ihr anonymes Konto mit E-Mail, Google oder Facebook, um Ihr Konto und Ihre Spielhistorie zu sichern.</string>
+    <string name="link_account_success">Konto erfolgreich verknüpft!</string>
+    <string name="link_account_failed">Fehler beim Verknüpfen des Kontos: %1$s</string>
+    <string name="link_account_in_progress">Konto wird verknüpft...</string>
+    <string name="account_already_exists_merge">Ein Konto mit diesen Anmeldedaten existiert bereits. Ihre aktuellen Daten werden beibehalten und zusammengeführt.</string>
 </resources>
