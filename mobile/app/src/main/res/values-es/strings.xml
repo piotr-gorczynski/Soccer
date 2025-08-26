@@ -264,4 +264,13 @@
     <string name="authentication_failed">La autenticación falló.</string>
 
     <string name="could_not_cancel_invite">No pudo cancelar la invitación: %1$s</string>
+
+    <!-- Link Account functionality -->
+    <string name="link_to_registered_account">Vincular a cuenta registrada</string>
+    <string name="link_account_title">Vincular Cuenta Anónima</string>
+    <string name="link_account_description">Vincule su cuenta anónima con email, Google o Facebook para asegurar su cuenta e historial de juegos.</string>
+    <string name="link_account_success">¡Cuenta vinculada exitosamente!</string>
+    <string name="link_account_failed">Error al vincular cuenta: %1$s</string>
+    <string name="link_account_in_progress">Vinculando cuenta...</string>
+    <string name="account_already_exists_merge">Ya existe una cuenta con estas credenciales. Sus datos actuales se preservarán y se fusionarán.</string>
 </resources>
