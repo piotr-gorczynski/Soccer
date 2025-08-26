@@ -97,6 +97,16 @@ public class LinkAccountActivity extends BaseActivity {
 
     private void handleProviderLink(String providerId) {
         Log.d("TAG_Soccer", getClass().getSimpleName() + ".handleProviderLink: Starting " + providerId + " link process");
+        
+        // Add specific Facebook SDK check for debugging
+        if ("facebook.com".equals(providerId)) {
+            if (!FacebookSdk.isInitialized()) {
+                Log.e("TAG_Soccer", getClass().getSimpleName() + ".handleProviderLink: Facebook SDK not initialized for linking");
+                Toast.makeText(this, "Facebook SDK not initialized", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".handleProviderLink: Facebook SDK is initialized, proceeding with linking");
+        }
 
         FirebaseAuthManager.LinkCallback callback = createLinkCallback();
         authManager.linkWithProvider(this, providerId, callback);
@@ -152,6 +162,10 @@ public class LinkAccountActivity extends BaseActivity {
     public boolean onSupportNavigateUp() {
         finish();
         return true;
+    }
+
+    public CallbackManager getCallbackManager() {
+        return callbackManager;
     }
 
     @Override
