@@ -310,12 +310,108 @@ public class AccountActivity extends BaseActivity {
         finish();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        
+        if (requestCode == LINK_ACCOUNT_REQUEST_CODE && resultCode == RESULT_OK) {
+            // Account linking was successful, refresh the UI with updated data
+            refreshAccountData();
+        }
+    }
+
+    /**
+     * Refreshes the account data from SharedPreferences and updates the UI.
+     * Called after successful account linking to reflect the new account state.
+     */
+    private void refreshAccountData() {
+        // Re-read data from SharedPreferences
+        String nickname = getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
+                .getString("nickname", "-");
+        String email = getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
+                .getString("email", "-");
+        String method = getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
+                .getString("method", "-");
+        
+        // Get Facebook-specific data
+        String facebookId = getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
+                .getString("facebookId", null);
+        String facebookName = getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
+                .getString("facebookName", null);
+        String facebookPhotoUrl = getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
+                .getString("facebookPhotoUrl", null);
+
+        // Get UI elements
+        TextView nickView = findViewById(R.id.accountNickname);
+        TextView emailView = findViewById(R.id.accountEmail);
+        TextView facebookIdView = findViewById(R.id.accountFacebookId);
+        TextView facebookNameView = findViewById(R.id.accountFacebookName);
+        ImageView profilePhotoView = findViewById(R.id.accountProfilePhoto);
+        TextView methodView = findViewById(R.id.accountMethod);
+        Button linkAccountBtn = findViewById(R.id.btnLinkAccount);
+
+        // Update nickname
+        nickView.setText(getString(R.string.nickname_label, nickname));
+        
+        // Update UI based on new method
+        if ("facebook.com".equals(method) && facebookId != null) {
+            // Hide email view and show Facebook info
+            emailView.setVisibility(View.GONE);
+            facebookIdView.setVisibility(View.VISIBLE);
+            facebookIdView.setText(getString(R.string.facebook_id_label, facebookId));
+
+            if (facebookName != null && !facebookName.isEmpty()) {
+                facebookNameView.setVisibility(View.VISIBLE);
+                facebookNameView.setText(getString(R.string.facebook_name_label, facebookName));
+            } else {
+                facebookNameView.setVisibility(View.GONE);
+            }
+
+            // Load Facebook profile photo if available
+            if (facebookPhotoUrl != null && !facebookPhotoUrl.isEmpty()) {
+                profilePhotoView.setVisibility(View.VISIBLE);
+                Glide.with(this)
+                        .load(facebookPhotoUrl)
+                        .circleCrop()
+                        .placeholder(android.R.drawable.ic_menu_gallery)
+                        .error(android.R.drawable.ic_menu_gallery)
+                        .into(profilePhotoView);
+            } else {
+                profilePhotoView.setVisibility(View.GONE);
+            }
+            
+            // Hide link account button for linked users
+            linkAccountBtn.setVisibility(View.GONE);
+        } else if ("anonymous".equals(method)) {
+            // This shouldn't happen after successful linking, but handle it
+            emailView.setVisibility(View.GONE);
+            facebookIdView.setVisibility(View.GONE);
+            facebookNameView.setVisibility(View.GONE);
+            profilePhotoView.setVisibility(View.GONE);
+            linkAccountBtn.setVisibility(View.VISIBLE);
+        } else {
+            // Show email for non-Facebook, non-anonymous users (Google or email)
+            emailView.setVisibility(View.VISIBLE);
+            emailView.setText(getString(R.string.email_label, email));
+            facebookIdView.setVisibility(View.GONE);
+            facebookNameView.setVisibility(View.GONE);
+            profilePhotoView.setVisibility(View.GONE);
+            // Hide link account button for linked users
+            linkAccountBtn.setVisibility(View.GONE);
+        }
+        
+        // Update method display
+        methodView.setText(getString(R.string.login_method_label, method));
+    }
+
+    private static final int LINK_ACCOUNT_REQUEST_CODE = 1001;
+
     /**
      * Starts the link account activity to allow anonymous users to link their account
      * with email, Google, or Facebook credentials.
      */
     private void startLinkAccountActivity() {
         Intent intent = new Intent(this, LinkAccountActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, LINK_ACCOUNT_REQUEST_CODE);
     }
 }

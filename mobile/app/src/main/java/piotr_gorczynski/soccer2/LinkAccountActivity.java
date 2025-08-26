@@ -141,11 +141,13 @@ public class LinkAccountActivity extends BaseActivity {
                             }
 
                             Toast.makeText(LinkAccountActivity.this, getString(R.string.link_account_success), Toast.LENGTH_SHORT).show();
+                            setResult(RESULT_OK); // Indicate successful linking
                             finish(); // Return to AccountActivity
                         })
                         .addOnFailureListener(e -> {
                             Log.w("TAG_Soccer", getClass().getSimpleName() + ".onLinkSuccess: Failed to fetch updated user data", e);
                             Toast.makeText(LinkAccountActivity.this, getString(R.string.link_account_success), Toast.LENGTH_SHORT).show();
+                            setResult(RESULT_OK); // Still indicate success since linking worked
                             finish(); // Return to AccountActivity anyway
                         });
             }
@@ -154,6 +156,7 @@ public class LinkAccountActivity extends BaseActivity {
             public void onLinkFailure(String message) {
                 Log.e("TAG_Soccer", getClass().getSimpleName() + ".onLinkFailure: " + message);
                 Toast.makeText(LinkAccountActivity.this, getString(R.string.link_account_failed, message), Toast.LENGTH_LONG).show();
+                setResult(RESULT_CANCELED); // Indicate failure
             }
         };
     }
