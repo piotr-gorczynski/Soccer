@@ -748,10 +748,130 @@ public class FirebaseAuthManager {
         }
     }
 
+    /**
+     * Link with Facebook using Facebook SDK
+     * Note: This requires the calling activity to have a CallbackManager and handle onActivityResult
+     */
+    public void linkWithFacebook(Activity activity, com.facebook.CallbackManager callbackManager, LinkCallback callback) {
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".linkWithFacebook: Starting Facebook account linking");
+        
+        // Check if Facebook SDK is initialized
+        if (!com.facebook.FacebookSdk.isInitialized()) {
+            Log.w("TAG_Soccer", getClass().getSimpleName() + ".linkWithFacebook: Facebook SDK not initialized");
+            callback.onLinkFailure("Facebook SDK not initialized");
+            return;
+        }
+
+        // Use Facebook LoginManager to get access token
+        com.facebook.login.LoginManager.getInstance().logInWithReadPermissions(activity, java.util.Arrays.asList("public_profile"));
+        
+        // Register callback for Facebook login result
+        com.facebook.login.LoginManager.getInstance().registerCallback(
+            callbackManager, 
+            new com.facebook.FacebookCallback<com.facebook.login.LoginResult>() {
+                @Override
+                public void onSuccess(com.facebook.login.LoginResult result) {
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".linkWithFacebook: Facebook login successful, proceeding with account linking");
+                    
+                    String accessToken = result.getAccessToken().getToken();
+                    AuthCredential credential = FacebookAuthProvider.getCredential(accessToken);
+                    
+                    FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+                    if (currentUser == null) {
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + ".linkWithFacebook: No current user found");
+                        callback.onLinkFailure("No user signed in");
+                        return;
+                    }
+                    
+                    // Link the Facebook credential to the current anonymous user
+                    currentUser.linkWithCredential(credential)
+                        .addOnSuccessListener(authResult -> {
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + ".linkWithFacebook: Account linking successful");
+                            
+                            // Extract Facebook data from the linked account
+                            String facebookId = null;
+                            String facebookName = null;
+                            String facebookPhotoUrl = null;
+                            String email = authResult.getUser().getEmail();
+                            
+                            for (com.google.firebase.auth.UserInfo profile : authResult.getUser().getProviderData()) {
+                                if ("facebook.com".equals(profile.getProviderId())) {
+                                    facebookId = profile.getUid();
+                                    facebookName = profile.getDisplayName();
+                                    // We'll fetch the real photo URL later
+                                    break;
+                                }
+                            }
+                            
+                            // Make Facebook data final for lambda capture
+                            final String finalFacebookId = facebookId;
+                            final String finalFacebookName = facebookName;
+                            
+                            // Fetch real Facebook photo URL using access token
+                            CompletableFuture<String> photoUrlFuture = (finalFacebookId != null) 
+                                    ? fetchRealFacebookPhotoUrl(finalFacebookId, accessToken)
+                                    : CompletableFuture.completedFuture(null);
+                            
+                            photoUrlFuture.thenAccept(realPhotoUrl -> {
+                                final String finalFacebookPhotoUrl = realPhotoUrl;
+                                
+                                Log.d("TAG_Soccer", getClass().getSimpleName() + ".linkWithFacebook: extracted Facebook data - ID: " 
+                                        + (finalFacebookId != null ? finalFacebookId : "null") 
+                                        + ", Name: " + (finalFacebookName != null ? finalFacebookName : "null") 
+                                        + ", Photo: " + (finalFacebookPhotoUrl != null ? finalFacebookPhotoUrl : "null"));
+                                
+                                // Update user document with Facebook data
+                                updateUserDocumentAfterLink("facebook.com", email, finalFacebookId, finalFacebookName, finalFacebookPhotoUrl, callback);
+                            }).exceptionally(ex -> {
+                                Log.e("TAG_Soccer", getClass().getSimpleName() + ".linkWithFacebook: Failed to fetch Facebook photo URL", ex);
+                                // Continue with linking even if photo URL fetch fails
+                                updateUserDocumentAfterLink("facebook.com", email, finalFacebookId, finalFacebookName, null, callback);
+                                return null;
+                            });
+                        })
+                        .addOnFailureListener(e -> {
+                            Log.e("TAG_Soccer", getClass().getSimpleName() + ".linkWithFacebook: Account linking failed", e);
+                            if (e instanceof com.google.firebase.auth.FirebaseAuthUserCollisionException) {
+                                callback.onLinkFailure(context.getString(R.string.credential_already_associated));
+                            } else {
+                                callback.onLinkFailure(e.getMessage() != null ? e.getMessage() : "Unknown error occurred");
+                            }
+                        });
+                }
+
+                @Override
+                public void onCancel() {
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".linkWithFacebook: Facebook login cancelled by user");
+                    callback.onLinkFailure("Login cancelled");
+                }
+
+                @Override
+                public void onError(com.facebook.FacebookException error) {
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".linkWithFacebook: Facebook login error", error);
+                    callback.onLinkFailure(error.getMessage());
+                }
+            }
+        );
+    }
+
     private void linkWithFacebook(Activity activity, LinkCallback callback) {
-        // For Facebook linking, we'll use a simpler approach
-        // Note: In a real implementation, this would involve Facebook SDK integration
-        callback.onLinkFailure("Facebook linking requires additional setup. Please use email or Google login for now.");
+        // This is a fallback method that tries to get the CallbackManager from LinkAccountActivity
+        // For a cleaner approach, activities should call linkWithFacebook(activity, callbackManager, callback) directly
+        
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".linkWithFacebook: Attempting to get CallbackManager from activity");
+        
+        try {
+            if (activity instanceof LinkAccountActivity) {
+                LinkAccountActivity linkActivity = (LinkAccountActivity) activity;
+                linkWithFacebook(activity, linkActivity.getCallbackManager(), callback);
+            } else {
+                Log.e("TAG_Soccer", getClass().getSimpleName() + ".linkWithFacebook: Activity is not LinkAccountActivity, cannot get CallbackManager");
+                callback.onLinkFailure("Internal error: incorrect activity type for Facebook linking");
+            }
+        } catch (Exception e) {
+            Log.e("TAG_Soccer", getClass().getSimpleName() + ".linkWithFacebook: Failed to get CallbackManager", e);
+            callback.onLinkFailure("Internal error: failed to initialize Facebook linking");
+        }
     }
 
     private void linkWithOAuthProvider(Activity activity, String providerId, LinkCallback callback) {
