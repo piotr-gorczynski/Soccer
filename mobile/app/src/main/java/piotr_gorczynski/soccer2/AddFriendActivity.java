@@ -115,10 +115,14 @@ public class AddFriendActivity extends BaseActivity {
                     java.util.List<DocumentSnapshot> docsAll = snap.getDocuments();
                     java.util.List<DocumentSnapshot> docs = new ArrayList<>();
                     for (DocumentSnapshot d : docsAll) {
-                        String email = d.getString("email");
-                        if (email != null && !email.trim().isEmpty()) {
-                            docs.add(d);
+                        // Filter out deleted accounts
+                        Boolean accountDeleted = d.getBoolean("accountDeleted");
+                        if (accountDeleted != null && accountDeleted) {
+                            continue;
                         }
+                        
+                        // Include all non-deleted accounts (anonymous, email, facebook, etc.)
+                        docs.add(d);
                     }
                     adapter.addResults(docs);
 
