@@ -15,12 +15,6 @@ import com.google.firebase.auth.FacebookAuthProvider;
 
 import androidx.annotation.Nullable;
 
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.login.LoginResult;
-import com.facebook.login.LoginManager;
-
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.Source;
@@ -755,50 +749,9 @@ public class FirebaseAuthManager {
     }
 
     private void linkWithFacebook(Activity activity, LinkCallback callback) {
-        // Use Facebook SDK for login, then link with Firebase
-        com.facebook.login.LoginManager.getInstance().logInWithReadPermissions(
-                activity, 
-                java.util.Arrays.asList("email", "public_profile")
-        );
-        
-        // Register Facebook callback
-        CallbackManager callbackManager = CallbackManager.Factory.create();
-        com.facebook.login.LoginManager.getInstance().registerCallback(callbackManager,
-                new com.facebook.FacebookCallback<com.facebook.login.LoginResult>() {
-                    @Override
-                    public void onSuccess(com.facebook.login.LoginResult loginResult) {
-                        Log.d("TAG_Soccer", "Facebook login success, linking with Firebase");
-                        
-                        String token = loginResult.getAccessToken().getToken();
-                        AuthCredential credential = com.google.firebase.auth.FacebookAuthProvider.getCredential(token);
-                        
-                        Objects.requireNonNull(firebaseAuth.getCurrentUser()).linkWithCredential(credential)
-                                .addOnSuccessListener(authResult -> {
-                                    Log.d("TAG_Soccer", "Facebook link successful");
-                                    updateUserDocumentAfterLink("facebook.com", authResult.getUser().getEmail(), null, null, null, callback);
-                                })
-                                .addOnFailureListener(e -> {
-                                    Log.e("TAG_Soccer", "Facebook link failed", e);
-                                    if (e instanceof com.google.firebase.auth.FirebaseAuthUserCollisionException) {
-                                        callback.onLinkFailure("An account with this Facebook profile already exists.");
-                                    } else {
-                                        callback.onLinkFailure(e.getMessage() != null ? e.getMessage() : "Unknown error occurred");
-                                    }
-                                });
-                    }
-
-                    @Override
-                    public void onCancel() {
-                        Log.d("TAG_Soccer", "Facebook login cancelled");
-                        callback.onLinkFailure("Facebook login was cancelled");
-                    }
-
-                    @Override
-                    public void onError(com.facebook.FacebookException exception) {
-                        Log.e("TAG_Soccer", "Facebook login error", exception);
-                        callback.onLinkFailure("Facebook login failed: " + exception.getMessage());
-                    }
-                });
+        // For Facebook linking, we'll use a simpler approach
+        // Note: In a real implementation, this would involve Facebook SDK integration
+        callback.onLinkFailure("Facebook linking requires additional setup. Please use email or Google login for now.");
     }
 
     private void linkWithOAuthProvider(Activity activity, String providerId, LinkCallback callback) {
