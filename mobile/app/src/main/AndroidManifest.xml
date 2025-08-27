@@ -59,6 +59,7 @@
         <activity android:name=".UniversalLoginActivity" />
         <activity android:name=".PickNicknameActivity" />
         <activity android:name=".AccountActivity" />
+        <activity android:name=".LinkAccountActivity" />
         <activity android:name=".AddFriendActivity" />
         <activity android:name=".FriendsListActivity" />
         <activity

@@ -163,6 +163,7 @@
     <string name="login_google">Se connecter avec Google</string>
     <string name="login_facebook">Se connecter avec Facebook</string>
     <string name="login_microsoft">Se connecter avec Microsoft</string>
+    <string name="login_anonymous">Se connecter anonymement</string>
     <string name="login_method_label">Méthode de connexion : %1$s</string>
     <string name="facebook_name_label">Nom Facebook : %1$s</string>
     <string name="pref_title_facebook">Communauté Facebook</string>
@@ -174,14 +175,18 @@
     <string name="remove_account">Supprimer le compte</string>
     <string name="remove_account_dialog_title">Supprimer le compte</string>
     <string name="remove_account_dialog_message">Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible et, même si vous vous réinscrivez, vous n’aurez pas accès à l’historique de vos matchs et résultats.</string>
-    <string name="proceed">Continuer</string>
+    <string name="proceed_account_removal">Continuer</string>
     <string name="removing_account">Suppression du compte…</string>
     <string name="account_removed">Compte supprimé avec succès</string>
     <string name="remove_account_failed">Échec de la suppression du compte. Veuillez réessayer.</string>
     <string name="reauth_title">Se réauthentifier</string>
     <string name="reauth_message">Veuillez entrer votre mot de passe pour continuer.</string>
     <string name="reauth_failed">Échec de la réauthentification. Veuillez réessayer.</string>
-
+    
+    <!-- Anonymous logout warning strings -->
+    <string name="anonymous_logout_warning_title">Avertissement de déconnexion</string>
+    <string name="anonymous_logout_warning_message">Êtes-vous sûr de vouloir vous déconnecter ? Pour les méthodes anonymes, cette action ne peut pas être annulée et même si vous vous réinscrivez, vous n’aurez pas accès à l’historique de vos matchs et résultats.</string>
+    
     <!-- Field draw strings -->
     <string name="field_your_move">À vous de jouer !</string>
     <string name="field_move_tail">coup ... ⏳ %1$s</string>
@@ -194,6 +199,11 @@
     <string name="enter_email_and_password">Veuillez saisir l’e-mail et le mot de passe</string>
     <string name="login_success">Connexion réussie !</string>
     <string name="login_failed">Échec de la connexion : %1$s</string>
+    
+    <!-- Anonymous login warning -->
+    <string name="anonymous_login_warning_title">Avertissement de connexion anonyme</string>
+    <string name="anonymous_login_warning_message">La connexion anonyme permet l\'accès à certaines fonctions, mais si vous perdez votre appareil, réinstallez l\'application, obtenez un nouveau téléphone ou vous déconnectez, le lien vers votre compte anonyme sera perdu et il ne sera pas possible de vous reconnecter au même compte anonyme. Voulez-vous continuer ?</string>
+    <string name="proceed_anonymous_login">Continuer</string>
     <string name="enter_email_address">Veuillez saisir votre adresse e-mail</string>
     <string name="all_fields_required">Tous les champs sont requis</string>
     <string name="passwords_do_not_match">Les mots de passe ne correspondent pas</string>
@@ -203,6 +213,8 @@
     <string name="nickname_too_long">Le pseudonyme doit comporter 20 caractères ou moins</string>
     <string name="not_logged_in">Non connecté</string>
     <string name="register_to_use_function">Veuillez vous inscrire pour utiliser cette fonction.</string>
+    <string name="register_dialog_message">Pour utiliser cette fonction, vous devez vous inscrire. Vous pouvez même vous inscrire de manière anonyme. Voulez-vous continuer?</string>
+    <string name="proceed">Continuer</string>
     <string name="network_error_checking_nickname">Erreur réseau lors de la vérification du pseudonyme</string>
     <string name="nickname_taken">Pseudonyme déjà pris — choisissez-en un autre</string>
     <string name="nickname_saved">Pseudonyme enregistré</string>
@@ -254,4 +266,13 @@
     <string name="authentication_failed">L’authentification a échoué.</string>
 
     <string name="could_not_cancel_invite">Impossible d’annuler l’invitation : %1$s</string>
+    <!-- Link Account functionality -->
+    <string name="link_to_registered_account">Lier au compte enregistre</string>
+    <string name="link_account_title">Lier un Compte Anonyme</string>
+    <string name="link_account_description">Liez votre compte anonyme avec email, Google ou Facebook pour securiser votre compte et l\'historique des jeux.</string>
+    <string name="link_account_success">Compte lie avec succes!</string>
+    <string name="link_account_failed">Echec de la liaison du compte: %1$s</string>
+    <string name="link_account_in_progress">Liaison du compte...</string>
+    <string name="account_already_exists_merge">Un compte avec ces identifiants existe deja. Vos donnees actuelles seront preservees et fusionnees.</string>
+    <string name="credential_already_associated">Ces identifiants sont deja associes a un autre compte utilisateur.</string>
 </resources>

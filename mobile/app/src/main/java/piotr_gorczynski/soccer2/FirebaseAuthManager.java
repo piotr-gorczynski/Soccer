@@ -8,6 +8,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.OAuthProvider;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
@@ -53,6 +54,12 @@ public class FirebaseAuthManager {
         void onResetPasswordSuccess();
 
         void onResetPasswordFailure(String message);
+    }
+
+    public interface LinkCallback {
+        void onLinkSuccess();
+
+        void onLinkFailure(String message);
     }
 
     public void loginWithProvider(Activity activity, String providerId, @Nullable String nickname, LoginCallback callback) {
@@ -615,6 +622,362 @@ public class FirebaseAuthManager {
                                 ": Password reset failed for: " + email + ", error: " + errorMsg);
                         callback.onResetPasswordFailure(errorMsg);
                     }
+                });
+    }
+
+    public void loginAnonymously(LoginCallback callback) {
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                Objects.requireNonNull(new Object() {
+                }.getClass().getEnclosingMethod()).getName() +
+                ": Starting anonymous login");
+
+        firebaseAuth.signInAnonymously()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        FirebaseUser user = firebaseAuth.getCurrentUser();
+                        if (user != null) {
+                            String uid = user.getUid();
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                                    Objects.requireNonNull(new Object() {
+                                    }.getClass().getEnclosingMethod()).getName() +
+                                    ": Anonymous login successful, UID: " + uid);
+
+                            FirebaseFirestore db = FirebaseFirestore.getInstance();
+                            
+                            // Check if user document already exists
+                            db.collection("users").document(uid).get(Source.SERVER)
+                                    .addOnSuccessListener(doc -> {
+                                        Map<String, Object> data = new HashMap<>();
+                                        data.put("method", "anonymous");
+                                        String langCode = LanguageManager.getCurrentLanguageCode(context);
+                                        data.put("language", langCode);
+                                        data.put("blockInviteFriend", false);
+
+                                        // Create-or-update without wiping existing fields like `nickname`
+                                        db.collection("users").document(uid).set(data, SetOptions.merge())
+                                                .addOnCompleteListener(updateTask -> {
+                                                    ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
+                                                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
+                                                            Objects.requireNonNull(new Object() {
+                                                            }.getClass().getEnclosingMethod()).getName() +
+                                                            ": Anonymous user document created/updated successfully");
+                                                    callback.onLoginSuccess();
+                                                })
+                                                .addOnFailureListener(e -> {
+                                                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
+                                                            Objects.requireNonNull(new Object() {
+                                                            }.getClass().getEnclosingMethod()).getName() +
+                                                            ": Failed to create/update anonymous user document: " + e.getMessage());
+                                                    callback.onLoginFailure("Failed to setup user profile: " + e.getMessage());
+                                                });
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
+                                                Objects.requireNonNull(new Object() {
+                                                }.getClass().getEnclosingMethod()).getName() +
+                                                ": Failed to check existing user document: " + e.getMessage());
+                                        callback.onLoginFailure("Failed to verify user profile: " + e.getMessage());
+                                    });
+                        } else {
+                            Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
+                                    Objects.requireNonNull(new Object() {
+                                    }.getClass().getEnclosingMethod()).getName() +
+                                    ": Anonymous login succeeded but user is null");
+                            callback.onLoginFailure("Authentication failed - user is null");
+                        }
+                    } else {
+                        String errorMsg = task.getException() != null ? task.getException().getMessage() : "Unknown error occurred";
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
+                                Objects.requireNonNull(new Object() {
+                                }.getClass().getEnclosingMethod()).getName() +
+                                ": Anonymous login failed: " + errorMsg);
+                        callback.onLoginFailure(errorMsg);
+                    }
+                });
+    }
+
+    /**
+     * Link anonymous account with email/password credentials
+     */
+    public void linkWithEmailPassword(String email, String password, LinkCallback callback) {
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        if (currentUser == null || !currentUser.isAnonymous()) {
+            callback.onLinkFailure("User must be signed in anonymously to link account");
+            return;
+        }
+
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".linkWithEmailPassword: Starting email link process");
+
+        AuthCredential credential = com.google.firebase.auth.EmailAuthProvider.getCredential(email, password);
+        
+        currentUser.linkWithCredential(credential)
+                .addOnSuccessListener(authResult -> {
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".linkWithEmailPassword: Link successful");
+                    
+                    // Update user document with new method and email
+                    updateUserDocumentAfterLink("email", email, null, null, null, callback);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".linkWithEmailPassword: Link failed", e);
+                    
+                    if (e instanceof com.google.firebase.auth.FirebaseAuthUserCollisionException) {
+                        // Account already exists - use the specific error message from strings
+                        callback.onLinkFailure(context.getString(R.string.credential_already_associated));
+                    } else {
+                        callback.onLinkFailure(e.getMessage() != null ? e.getMessage() : "Unknown error occurred");
+                    }
+                });
+    }
+
+    /**
+     * Link anonymous account with provider (Google, Facebook, Microsoft)
+     */
+    public void linkWithProvider(Activity activity, String providerId, LinkCallback callback) {
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        if (currentUser == null || !currentUser.isAnonymous()) {
+            callback.onLinkFailure("User must be signed in anonymously to link account");
+            return;
+        }
+
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".linkWithProvider: Starting " + providerId + " link process");
+
+        if ("facebook.com".equals(providerId)) {
+            linkWithFacebook(activity, callback);
+        } else {
+            linkWithOAuthProvider(activity, providerId, callback);
+        }
+    }
+
+    /**
+     * Link with Facebook using Facebook SDK
+     * Note: This requires the calling activity to have a CallbackManager and handle onActivityResult
+     */
+    public void linkWithFacebook(Activity activity, com.facebook.CallbackManager callbackManager, LinkCallback callback) {
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".linkWithFacebook: Starting Facebook account linking");
+        
+        // Check if Facebook SDK is initialized
+        if (!com.facebook.FacebookSdk.isInitialized()) {
+            Log.w("TAG_Soccer", getClass().getSimpleName() + ".linkWithFacebook: Facebook SDK not initialized");
+            callback.onLinkFailure("Facebook SDK not initialized");
+            return;
+        }
+
+        // Use Facebook LoginManager to get access token
+        com.facebook.login.LoginManager.getInstance().logInWithReadPermissions(activity, java.util.Arrays.asList("public_profile"));
+        
+        // Register callback for Facebook login result
+        com.facebook.login.LoginManager.getInstance().registerCallback(
+            callbackManager, 
+            new com.facebook.FacebookCallback<com.facebook.login.LoginResult>() {
+                @Override
+                public void onSuccess(com.facebook.login.LoginResult result) {
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".linkWithFacebook: Facebook login successful, proceeding with account linking");
+                    
+                    String accessToken = result.getAccessToken().getToken();
+                    AuthCredential credential = FacebookAuthProvider.getCredential(accessToken);
+                    
+                    FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+                    if (currentUser == null) {
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + ".linkWithFacebook: No current user found");
+                        callback.onLinkFailure("No user signed in");
+                        return;
+                    }
+                    
+                    // Link the Facebook credential to the current anonymous user
+                    currentUser.linkWithCredential(credential)
+                        .addOnSuccessListener(authResult -> {
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + ".linkWithFacebook: Account linking successful");
+                            
+                            // Extract Facebook data from the linked account
+                            String facebookId = null;
+                            String facebookName = null;
+                            String facebookPhotoUrl = null;
+                            String email = authResult.getUser().getEmail();
+                            
+                            for (com.google.firebase.auth.UserInfo profile : authResult.getUser().getProviderData()) {
+                                if ("facebook.com".equals(profile.getProviderId())) {
+                                    facebookId = profile.getUid();
+                                    facebookName = profile.getDisplayName();
+                                    // We'll fetch the real photo URL later
+                                    break;
+                                }
+                            }
+                            
+                            // Make Facebook data final for lambda capture
+                            final String finalFacebookId = facebookId;
+                            final String finalFacebookName = facebookName;
+                            
+                            // Fetch real Facebook photo URL using access token
+                            CompletableFuture<String> photoUrlFuture = (finalFacebookId != null) 
+                                    ? fetchRealFacebookPhotoUrl(finalFacebookId, accessToken)
+                                    : CompletableFuture.completedFuture(null);
+                            
+                            photoUrlFuture.thenAccept(realPhotoUrl -> {
+                                final String finalFacebookPhotoUrl = realPhotoUrl;
+                                
+                                Log.d("TAG_Soccer", getClass().getSimpleName() + ".linkWithFacebook: extracted Facebook data - ID: " 
+                                        + (finalFacebookId != null ? finalFacebookId : "null") 
+                                        + ", Name: " + (finalFacebookName != null ? finalFacebookName : "null") 
+                                        + ", Photo: " + (finalFacebookPhotoUrl != null ? finalFacebookPhotoUrl : "null"));
+                                
+                                // Update user document with Facebook data
+                                updateUserDocumentAfterLink("facebook.com", email, finalFacebookId, finalFacebookName, finalFacebookPhotoUrl, callback);
+                            }).exceptionally(ex -> {
+                                Log.e("TAG_Soccer", getClass().getSimpleName() + ".linkWithFacebook: Failed to fetch Facebook photo URL", ex);
+                                // Continue with linking even if photo URL fetch fails
+                                updateUserDocumentAfterLink("facebook.com", email, finalFacebookId, finalFacebookName, null, callback);
+                                return null;
+                            });
+                        })
+                        .addOnFailureListener(e -> {
+                            Log.e("TAG_Soccer", getClass().getSimpleName() + ".linkWithFacebook: Account linking failed", e);
+                            if (e instanceof com.google.firebase.auth.FirebaseAuthUserCollisionException) {
+                                callback.onLinkFailure(context.getString(R.string.credential_already_associated));
+                            } else {
+                                callback.onLinkFailure(e.getMessage() != null ? e.getMessage() : "Unknown error occurred");
+                            }
+                        });
+                }
+
+                @Override
+                public void onCancel() {
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".linkWithFacebook: Facebook login cancelled by user");
+                    callback.onLinkFailure("Login cancelled");
+                }
+
+                @Override
+                public void onError(com.facebook.FacebookException error) {
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".linkWithFacebook: Facebook login error", error);
+                    callback.onLinkFailure(error.getMessage());
+                }
+            }
+        );
+    }
+
+    private void linkWithFacebook(Activity activity, LinkCallback callback) {
+        // This is a fallback method that tries to get the CallbackManager from LinkAccountActivity
+        // For a cleaner approach, activities should call linkWithFacebook(activity, callbackManager, callback) directly
+        
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".linkWithFacebook: Attempting to get CallbackManager from activity");
+        
+        try {
+            if (activity instanceof LinkAccountActivity) {
+                LinkAccountActivity linkActivity = (LinkAccountActivity) activity;
+                linkWithFacebook(activity, linkActivity.getCallbackManager(), callback);
+            } else {
+                Log.e("TAG_Soccer", getClass().getSimpleName() + ".linkWithFacebook: Activity is not LinkAccountActivity, cannot get CallbackManager");
+                callback.onLinkFailure("Internal error: incorrect activity type for Facebook linking");
+            }
+        } catch (Exception e) {
+            Log.e("TAG_Soccer", getClass().getSimpleName() + ".linkWithFacebook: Failed to get CallbackManager", e);
+            callback.onLinkFailure("Internal error: failed to initialize Facebook linking");
+        }
+    }
+
+    private void linkWithOAuthProvider(Activity activity, String providerId, LinkCallback callback) {
+        OAuthProvider.Builder provider = OAuthProvider.newBuilder(providerId);
+        
+        // Set scopes based on provider
+        if ("google.com".equals(providerId)) {
+            provider.setScopes(java.util.Arrays.asList("email", "profile"));
+        } else if ("microsoft.com".equals(providerId)) {
+            provider.setScopes(java.util.Arrays.asList("email", "profile"));
+        }
+
+        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
+        if (currentUser == null) {
+            callback.onLinkFailure("User not signed in");
+            return;
+        }
+
+        currentUser.startActivityForLinkWithProvider(activity, provider.build())
+                .addOnSuccessListener(authResult -> {
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".linkWithOAuthProvider: " + providerId + " link successful");
+                    updateUserDocumentAfterLink(providerId, authResult.getUser().getEmail(), null, null, null, callback);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".linkWithOAuthProvider: " + providerId + " link failed", e);
+                    if (e instanceof com.google.firebase.auth.FirebaseAuthUserCollisionException) {
+                        callback.onLinkFailure(context.getString(R.string.credential_already_associated));
+                    } else {
+                        callback.onLinkFailure(e.getMessage() != null ? e.getMessage() : "Unknown error occurred");
+                    }
+                });
+    }
+
+    private String getProviderDisplayName(String providerId) {
+        switch (providerId) {
+            case "google.com":
+                return "Google";
+            case "microsoft.com":
+                return "Microsoft";
+            case "facebook.com":
+                return "Facebook";
+            default:
+                return "provider";
+        }
+    }
+
+    private void updateUserDocumentAfterLink(String method, String email, String facebookId, String facebookName, String facebookPhotoUrl, LinkCallback callback) {
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        if (user == null) {
+            callback.onLinkFailure("User not found after linking");
+            return;
+        }
+
+        String uid = user.getUid();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Get current user document to preserve existing data
+        db.collection("users").document(uid).get(Source.SERVER)
+                .addOnSuccessListener(doc -> {
+                    Map<String, Object> updateData = new HashMap<>();
+                    updateData.put("method", method);
+                    
+                    if (email != null) {
+                        updateData.put("email", email);
+                    }
+                    
+                    // Add Facebook data if provided
+                    if (facebookId != null) updateData.put("facebookId", facebookId);
+                    if (facebookName != null) updateData.put("facebookName", facebookName);
+                    if (facebookPhotoUrl != null) updateData.put("facebookPhotoUrl", facebookPhotoUrl);
+                    
+                    String langCode = LanguageManager.getCurrentLanguageCode(context);
+                    updateData.put("language", langCode);
+
+                    // Update user document, preserving existing fields like nickname
+                    db.collection("users").document(uid).set(updateData, SetOptions.merge())
+                            .addOnSuccessListener(v -> {
+                                Log.d("TAG_Soccer", getClass().getSimpleName() + ".updateUserDocumentAfterLink: User document updated successfully");
+                                
+                                // Update local preferences
+                                SharedPreferences.Editor editor = context.getSharedPreferences(LanguageManager.PREFS_FILE, Context.MODE_PRIVATE).edit();
+                                editor.putString("method", method);
+                                if (email != null) {
+                                    editor.putString("email", email);
+                                }
+                                if (facebookId != null) {
+                                    editor.putString("facebookId", facebookId);
+                                }
+                                if (facebookName != null) {
+                                    editor.putString("facebookName", facebookName);
+                                }
+                                if (facebookPhotoUrl != null) {
+                                    editor.putString("facebookPhotoUrl", facebookPhotoUrl);
+                                }
+                                editor.apply();
+                                
+                                callback.onLinkSuccess();
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.e("TAG_Soccer", getClass().getSimpleName() + ".updateUserDocumentAfterLink: Failed to update user document", e);
+                                callback.onLinkFailure("Failed to update user profile: " + e.getMessage());
+                            });
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".updateUserDocumentAfterLink: Failed to fetch user document", e);
+                    callback.onLinkFailure("Failed to fetch user profile: " + e.getMessage());
                 });
     }
 }

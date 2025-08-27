@@ -155,6 +155,7 @@
     <string name="login_google">Iniciar sesión con Google</string>
     <string name="login_facebook">Iniciar sesión con Facebook</string>
     <string name="login_microsoft">Iniciar sesión con Microsoft</string>
+    <string name="login_anonymous">Iniciar sesión anónimamente</string>
     <string name="login_method_label">Método de inicio de sesión: %1$s</string>
     <string name="facebook_name_label">Nombre de Facebook: %1$s</string>
     <string name="pref_title_facebook">Comunidad de Facebook</string>
@@ -166,13 +167,17 @@
     <string name="remove_account">Eliminar cuenta</string>
     <string name="remove_account_dialog_title">Eliminar cuenta</string>
     <string name="remove_account_dialog_message">¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no puede revertirse e incluso si te registras nuevamente, no tendrás acceso al historial de tus partidas y resultados.</string>
-    <string name="proceed">Continuar</string>
+    <string name="proceed_account_removal">Continuar</string>
     <string name="removing_account">Eliminando cuenta...</string>
     <string name="account_removed">Cuenta eliminada exitosamente</string>
     <string name="remove_account_failed">Error al eliminar cuenta. Por favor inténtalo de nuevo.</string>
     <string name="reauth_title">Re-autenticar</string>
     <string name="reauth_message">Por favor ingresa tu contraseña para continuar.</string>
     <string name="reauth_failed">Re-autenticación falló. Por favor inténtalo de nuevo.</string>
+    
+    <!-- Anonymous logout warning strings -->
+    <string name="anonymous_logout_warning_title">Advertencia de cierre de sesión</string>
+    <string name="anonymous_logout_warning_message">¿Estás seguro de que quieres cerrar sesión? Para métodos anónimos esta acción no se puede revertir y aunque te registres de nuevo, no podrás acceder al historial de tus partidos y resultados.</string>
     
     <!-- Common strings -->
     <string name="settings">Configuración</string>
@@ -191,6 +196,11 @@
     <string name="enter_email_and_password">Ingrese tanto correo electrónico como contraseña</string>
     <string name="login_success">¡Inicie sesión exitosa!</string>
     <string name="login_failed">Error de inicio de sesion: %1$s</string>
+    
+    <!-- Anonymous login warning -->
+    <string name="anonymous_login_warning_title">Advertencia de inicio de sesión anónimo</string>
+    <string name="anonymous_login_warning_message">El inicio de sesión anónimo permite acceso a ciertas funciones, pero si pierdes tu dispositivo, reinstalàs la aplicación, obtienes un teléfono nuevo o cierras sesión, se perderá el enlace a tu cuenta anónima y no será posible iniciar sesión en la misma cuenta anónima. ¿Quieres continuar?</string>
+    <string name="proceed_anonymous_login">Continuar</string>
     <string name="enter_email_address">Ingrese su dirección de correo electrónico</string>
     <string name="all_fields_required">Se requieren todos los campos</string>
     <string name="passwords_do_not_match">Las contraseñas no coinciden</string>
@@ -200,6 +210,8 @@
     <string name="nickname_too_long">El apodo debe ser 20 caracteres o menos</string>
     <string name="not_logged_in">No iniciado sesión</string>
     <string name="register_to_use_function">Por favor regístrate para usar esta función.</string>
+    <string name="register_dialog_message">Para usar esta función necesitas registrarte. Puedes registrarte incluso de forma anónima. ¿Quieres continuar?</string>
+    <string name="proceed">Continuar</string>
     <string name="network_error_checking_nickname">Error de red al verificar el apodo</string>
     <string name="nickname_taken">Apodo ya tomado - Elija otro</string>
     <string name="nickname_saved">Apodo guardado</string>
@@ -252,4 +264,14 @@
     <string name="authentication_failed">La autenticación falló.</string>
 
     <string name="could_not_cancel_invite">No pudo cancelar la invitación: %1$s</string>
+
+    <!-- Link Account functionality -->
+    <string name="link_to_registered_account">Vincular a cuenta registrada</string>
+    <string name="link_account_title">Vincular Cuenta Anónima</string>
+    <string name="link_account_description">Vincule su cuenta anónima con email, Google o Facebook para asegurar su cuenta e historial de juegos.</string>
+    <string name="link_account_success">¡Cuenta vinculada exitosamente!</string>
+    <string name="link_account_failed">Error al vincular cuenta: %1$s</string>
+    <string name="link_account_in_progress">Vinculando cuenta...</string>
+    <string name="account_already_exists_merge">Ya existe una cuenta con estas credenciales. Sus datos actuales se preservarán y se fusionarán.</string>
+    <string name="credential_already_associated">Esta credencial ya está asociada con una cuenta de usuario diferente.</string>
 </resources>

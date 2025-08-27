@@ -1,5 +1,6 @@
 package piotr_gorczynski.soccer2;
 
+import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
@@ -166,6 +167,7 @@ public class MenuActivity extends BaseActivity {
     }
 
     /* ───────────── misc tasks that must always run on launch ───────────── */
+    @SuppressLint("ApplySharedPref")
     private void runHousekeeping() {
         String uid = FirebaseAuth.getInstance().getUid();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -178,7 +180,9 @@ public class MenuActivity extends BaseActivity {
                             }.getClass().getEnclosingMethod()).getName()
                             + ": ⚠️ No logged-in user; clearing stored credentials"
             );
-            prefs.edit().clear().commit();
+            // Note: Preserve ads consent data as requested in issue - only clear if there are specific user-related data in default prefs
+            // Currently no user-specific data is stored in default SharedPreferences, so we don't need to clear anything
+            // prefs.edit().clear().commit(); // Commented out to preserve ads consent data
             FirebaseMessaging.getInstance().deleteToken();
             FirebaseMessaging.getInstance().setAutoInitEnabled(false);
             FirebaseFirestore.getInstance()
@@ -306,10 +310,17 @@ public class MenuActivity extends BaseActivity {
 
         FirebaseAuth.getInstance().signOut();
 
+        // Remove only user-specific data, preserve language preferences and other device settings
         getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
                 .edit()
                 .remove(PREF_FCM_TOKEN)
-                .clear()
+                .remove("uid")
+                .remove("email")
+                .remove("nickname")
+                .remove("method")
+                .remove("facebookId")
+                .remove("facebookName")
+                .remove("facebookPhotoUrl")
                 .apply();
 
         FirebaseMessaging.getInstance().deleteToken()
@@ -347,6 +358,7 @@ public class MenuActivity extends BaseActivity {
         }.getClass().getEnclosingMethod()).getName() + ": InvitationsActivity onNewIntent: " + intent.toUri(Intent.URI_INTENT_SCHEME));
     }
 
+    @SuppressLint("ApplySharedPref")
     @Override
     protected void onResume() {
         super.onResume();
@@ -371,10 +383,16 @@ public class MenuActivity extends BaseActivity {
                 getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
         String nickname = prefs.getString("nickname", null);
         if (auth.getCurrentUser() == null) {
-            String savedLang = prefs.getString(LanguageManager.PREF_LANGUAGE_CODE, "en");
+            // Remove only user-specific data, preserve language preferences and other device settings
             SharedPreferences.Editor ed = prefs.edit();
-            ed.clear();
-            ed.putString(LanguageManager.PREF_LANGUAGE_CODE, savedLang);
+            ed.remove("uid")
+              .remove("email")
+              .remove("nickname")
+              .remove("method")
+              .remove("facebookId")
+              .remove("facebookName")
+              .remove("facebookPhotoUrl")
+              .remove("fcmToken");
             ed.commit();
 
             FirebaseMessaging.getInstance().deleteToken();
@@ -599,6 +617,17 @@ public class MenuActivity extends BaseActivity {
                 .show();
     }
 
+    private void showRegistrationDialog() {
+        new AlertDialog.Builder(this)
+                .setMessage(R.string.register_dialog_message)
+                .setPositiveButton(R.string.proceed, (dialog, which) -> {
+                    startActivity(new Intent(this, UniversalLoginActivity.class));
+                    finish();
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .show();
+    }
+
     private void showAdThenRun(Runnable action) {
         SharedPreferences prefs =
                 getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
@@ -780,7 +809,7 @@ public class MenuActivity extends BaseActivity {
 
     public void OpenInviteFriend(View view) {
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-            Toast.makeText(this, R.string.register_to_use_function, Toast.LENGTH_SHORT).show();
+            showRegistrationDialog();
             return;
         }
         if (!hasAdsConsent()) {
@@ -793,7 +822,7 @@ public class MenuActivity extends BaseActivity {
 
     public void OpenInvites(View view) {
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-            Toast.makeText(this, R.string.register_to_use_function, Toast.LENGTH_SHORT).show();
+            showRegistrationDialog();
             return;
         }
         if (!hasAdsConsent()) {
@@ -806,7 +835,7 @@ public class MenuActivity extends BaseActivity {
 
     public void OpenTournaments(View view) {
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-            Toast.makeText(this, R.string.register_to_use_function, Toast.LENGTH_SHORT).show();
+            showRegistrationDialog();
             return;
         }
         if (!hasAdsConsent()) {
@@ -819,7 +848,7 @@ public class MenuActivity extends BaseActivity {
 
     public void OpenRanking(View view) {
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-            Toast.makeText(this, R.string.register_to_use_function, Toast.LENGTH_SHORT).show();
+            showRegistrationDialog();
             return;
         }
         if (!hasAdsConsent()) {

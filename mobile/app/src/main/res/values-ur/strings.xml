@@ -155,6 +155,7 @@
     <string name="login_google">Google کے ساتھ لاگ ان</string>
     <string name="login_facebook">Facebook کے ساتھ لاگ ان</string>
     <string name="login_microsoft">Microsoft کے ساتھ لاگ ان</string>
+    <string name="login_anonymous">گمنام طور پر لاگ ان</string>
     <string name="login_method_label">لاگ ان کا طریقہ: %1$s</string>
     <string name="facebook_name_label">Facebook نام: %1$s</string>
     <string name="pref_title_facebook">Facebook کمیونٹی</string>
@@ -166,13 +167,17 @@
     <string name="remove_account">اکاؤنٹ ہٹائیں</string>
     <string name="remove_account_dialog_title">اکاؤنٹ ہٹائیں</string>
     <string name="remove_account_dialog_message">کیا آپ واقعی اپنا اکاؤنٹ ہٹانا چاہتے ہیں؟ یہ عمل واپس نہیں کیا جا سکتا اور اگر آپ دوبارہ رجسٹر بھی کریں تو آپ کو اپنے میچز اور نتائج کی تاریخ تک رسائی نہیں ملے گی۔</string>
-    <string name="proceed">آگے بڑھیں</string>
+    <string name="proceed_account_removal">آگے بڑھیں</string>
     <string name="removing_account">اکاؤنٹ ہٹایا جا رہا ہے...</string>
     <string name="account_removed">اکاؤنٹ کامیابی سے ہٹا دیا گیا</string>
     <string name="remove_account_failed">اکاؤنٹ ہٹانے میں ناکام۔ دوبارہ کوشش کریں۔</string>
     <string name="reauth_title">دوبارہ تصدیق کریں</string>
     <string name="reauth_message">جاری رکھنے کے لیے براہ کرم اپنا پاس ورڈ داخل کریں۔</string>
     <string name="reauth_failed">دوبارہ تصدیق ناکام۔ دوبارہ کوشش کریں۔</string>
+    
+    <!-- Anonymous logout warning strings -->
+    <string name="anonymous_logout_warning_title">لاگ آؤٹ کی تنبیہ</string>
+    <string name="anonymous_logout_warning_message">کیا آپ واقعی لاگ آؤٹ کرنا چاہتے ہیں؟ گمنام طریقوں کے لیے یہ عمل واپس نہیں ہو سکتا اور اگرچہ آپ دوبارہ رجسٹر کریں، آپ کو اپنے میچز اور نتائج کی تاریخ تک رسائی نہیں ملے گی۔</string>
     
     <!-- Common strings -->
     <string name="settings">سیٹنگز</string>
@@ -191,6 +196,11 @@
     <string name="enter_email_and_password">براہ کرم ای میل اور پاس ورڈ دونوں درج کریں</string>
     <string name="login_success">لاگ ان کامیاب!</string>
     <string name="login_failed">لاگ ان ناکام: %1$s</string>
+    
+    <!-- Anonymous login warning -->
+    <string name="anonymous_login_warning_title">گمنام لاگ ان کی تنبیہ</string>
+    <string name="anonymous_login_warning_message">گمنام لاگ ان کچھ فنکشنز تک رسائی کی اجازت دیتا ہے، لیکن اگر آپ اپنا ڈیوائس کھو دیتے ہیں، ایپ دوبارہ انسٹال کرتے ہیں، نیا فون حاصل کرتے ہیں، یا لاگ آؤٹ کرتے ہیں، تو آپ کے گمنام اکاؤنٹ کا لنک کھو جائے گا اور اسی گمنام اکاؤنٹ میں دوبارہ لاگ ان کرنا ممکن نہیں ہوگا۔ کیا آپ آگے بڑھنا چاہتے ہیں؟</string>
+    <string name="proceed_anonymous_login">آگے بڑھیں</string>
     <string name="enter_email_address">براہ کرم اپنا ای میل ایڈریس درج کریں</string>
     <string name="all_fields_required">تمام فیلڈز کی ضرورت ہے</string>
     <string name="passwords_do_not_match">پاس ورڈ مماثل نہیں ہیں</string>
@@ -200,6 +210,8 @@
     <string name="nickname_too_long">عرفی نام 20 حروف یا اس سے کم ہونا چاہئے</string>
     <string name="not_logged_in">لاگ ان نہیں</string>
     <string name="register_to_use_function">براہ کرم اس فنکشن کو استعمال کرنے کے لیے خود کو رجسٹر کریں۔</string>
+    <string name="register_dialog_message">اس فنکشن کو استعمال کرنے کے لیے آپ کو اپنے آپ کو رجسٹر کرنے کی ضرورت ہے۔ آپ گمنام طور پر بھی رجسٹر کر سکتے ہیں۔ کیا آپ آگے بڑھنا چاہتے ہیں؟</string>
+    <string name="proceed">آگے بڑھیں</string>
     <string name="network_error_checking_nickname">عرفی نام کی جانچ پڑتال کے دوران نیٹ ورک کی خرابی</string>
     <string name="nickname_taken">پہلے سے لیا گیا عرفی نام - ایک اور کا انتخاب کریں</string>
     <string name="nickname_saved">عرفی نام بچ گیا</string>
@@ -252,4 +264,13 @@
     <string name="authentication_failed">تصدیق ناکام ہوگئی۔</string>
 
     <string name="could_not_cancel_invite">دعوت نامہ منسوخ نہیں کرسکا: %1$s</string>
+    <!-- Link Account functionality -->
+    <string name="link_to_registered_account">Link to registered account</string>
+    <string name="link_account_title">Link Anonymous Account</string>
+    <string name="link_account_description">Link your anonymous account with email, Google, or Facebook to secure your account and game history.</string>
+    <string name="link_account_success">Account linked successfully!</string>
+    <string name="link_account_failed">Failed to link account: %1$s</string>
+    <string name="link_account_in_progress">Linking account...</string>
+    <string name="account_already_exists_merge">An account with these credentials already exists. Your current data will be preserved and merged.</string>
+    <string name="credential_already_associated">یہ اسناد پہلے سے ہی کسی اور صارف اکاؤنٹ کے ساتھ منسلک ہے۔</string>
 </resources>
