@@ -30,6 +30,7 @@ public class UniversalLoginActivity extends BaseActivity {
     private FirebaseAuthManager authManager;
     private String storedNickname;
     private CallbackManager callbackManager;
+    private AnalyticsManager analyticsManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,6 +44,12 @@ public class UniversalLoginActivity extends BaseActivity {
 
         authManager = new FirebaseAuthManager(this);
         callbackManager = CallbackManager.Factory.create();
+        
+        // Get analytics manager from SoccerApp
+        analyticsManager = ((SoccerApp) getApplicationContext()).getAnalyticsManager();
+        
+        // Track that login screen was opened
+        analyticsManager.trackLoginScreenOpened();
 
         SharedPreferences prefs =
                 getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
@@ -145,7 +152,12 @@ public class UniversalLoginActivity extends BaseActivity {
                 })
                 .setNegativeButton(R.string.cancel, (dialog, which) -> {
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".handleAnonymousLogin: User cancelled anonymous login");
-                    dialog.dismiss();
+                    
+                    // Show signup decline reason dialog to understand why
+                    SignupDeclineReasonDialog.show(this, "anonymous_login_cancel", analyticsManager, reason -> {
+                        // User has provided feedback, no further action needed
+                        Log.d("TAG_Soccer", "User declined anonymous login, reason: " + reason);
+                    });
                 })
                 .show();
     }
@@ -161,6 +173,11 @@ public class UniversalLoginActivity extends BaseActivity {
                                 }.getClass().getEnclosingMethod()).getName() +
                                 ": onLoginSuccess"
                 );
+
+                // Track successful signup/login
+                String authMethod = determineAuthMethod();
+                analyticsManager.trackSignupSuccess(authMethod);
+                analyticsManager.addAuthBreadcrumb("login_success", "method=" + authMethod);
 
                 SharedPreferences prefs =
                         getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
@@ -205,9 +222,38 @@ public class UniversalLoginActivity extends BaseActivity {
                 Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
                         Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
                         ": onLoginFailure: " + message);
+                
+                // Track login/signup error
+                String authMethod = determineAuthMethod();
+                analyticsManager.trackSignupError(authMethod, "login_failure", message, "authentication");
+                analyticsManager.addAuthBreadcrumb("login_failure", "method=" + authMethod + ", error=" + message);
+                
                 Toast.makeText(UniversalLoginActivity.this, getString(R.string.login_failed, message), Toast.LENGTH_LONG).show();
             }
         };
+    }
+
+    /**
+     * Helper method to determine the authentication method used
+     */
+    private String determineAuthMethod() {
+        // This is a simple way to track which method was used
+        // In a more sophisticated implementation, we could track this per-call
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        if (auth.getCurrentUser() != null) {
+            if (auth.getCurrentUser().isAnonymous()) {
+                return "anonymous";
+            }
+            // Check provider data to determine method
+            for (var userInfo : auth.getCurrentUser().getProviderData()) {
+                String providerId = userInfo.getProviderId();
+                if ("google.com".equals(providerId)) return "google";
+                if ("facebook.com".equals(providerId)) return "facebook";
+                if ("microsoft.com".equals(providerId)) return "microsoft";
+                if ("password".equals(providerId)) return "email";
+            }
+        }
+        return "unknown";
     }
 
     @Override
