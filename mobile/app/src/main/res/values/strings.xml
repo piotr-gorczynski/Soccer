@@ -277,4 +277,24 @@
     <string name="link_with_google">Link with Google</string>
     <string name="link_with_microsoft">Link with Microsoft</string>
     <string name="link_with_facebook">Link with Facebook</string>
+
+    <!-- Analytics and User Research Strings -->
+    <string name="signup_decline_dialog_title">Play without account?</string>
+    <string name="signup_decline_dialog_message">Help us understand why you prefer not to register:</string>
+    <string name="decline_reason_offline">Just playing offline</string>
+    <string name="decline_reason_privacy">Privacy concerns</string>
+    <string name="decline_reason_complicated">Too complicated</string>
+    <string name="decline_reason_dont_use_providers">Don\'t use Google/Email</string>
+    <string name="decline_reason_other">Other reason</string>
+    
+    <!-- Anonymous user prompts -->
+    <string name="save_progress_title">Save your progress &amp; nickname</string>
+    <string name="save_progress_message">Link your account to save your stats and join tournaments!</string>
+    <string name="save_progress_button">Save Progress</string>
+    <string name="maybe_later">Maybe Later</string>
+    
+    <!-- In-app messaging for v7/v8 users -->
+    <string name="register_benefits_title">Join tournaments &amp; compete globally!</string>
+    <string name="register_benefits_message">Register to save your ranking and participate in tournaments with players worldwide.</string>
+    <string name="register_now">Register Now</string>
 </resources>

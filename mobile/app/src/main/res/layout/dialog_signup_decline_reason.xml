@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/signup_decline_dialog_message"
+        android:textSize="16sp"
+        android:layout_marginBottom="16dp"
+        android:gravity="center" />
+
+    <!-- One-tap buttons for different decline reasons -->
+    
+    <Button
+        android:id="@+id/btn_just_playing_offline"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="@string/decline_reason_offline"
+        android:background="?android:attr/selectableItemBackground"
+        android:textColor="?android:attr/textColorPrimary"
+        style="@style/Widget.AppCompat.Button.Borderless" />
+
+    <Button
+        android:id="@+id/btn_privacy_concerns"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="@string/decline_reason_privacy"
+        android:background="?android:attr/selectableItemBackground"
+        android:textColor="?android:attr/textColorPrimary"
+        style="@style/Widget.AppCompat.Button.Borderless" />
+
+    <Button
+        android:id="@+id/btn_too_complicated"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="@string/decline_reason_complicated"
+        android:background="?android:attr/selectableItemBackground"
+        android:textColor="?android:attr/textColorPrimary"
+        style="@style/Widget.AppCompat.Button.Borderless" />
+
+    <Button
+        android:id="@+id/btn_dont_use_providers"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="@string/decline_reason_dont_use_providers"
+        android:background="?android:attr/selectableItemBackground"
+        android:textColor="?android:attr/textColorPrimary"
+        style="@style/Widget.AppCompat.Button.Borderless" />
+
+    <Button
+        android:id="@+id/btn_other_reason"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/decline_reason_other"
+        android:background="?android:attr/selectableItemBackground"
+        android:textColor="?android:attr/textColorPrimary"
+        style="@style/Widget.AppCompat.Button.Borderless" />
+
+</LinearLayout>
