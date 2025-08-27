@@ -274,4 +274,29 @@
     <string name="link_account_in_progress">Vinculando cuenta...</string>
     <string name="account_already_exists_merge">Ya existe una cuenta con estas credenciales. Sus datos actuales se preservarán y se fusionarán.</string>
     <string name="credential_already_associated">Esta credencial ya está asociada con una cuenta de usuario diferente.</string>
+    <string name="enter_email_and_password_to_link">Ingrese su email y contraseña para vincular su cuenta anónima</string>
+    <string name="link_with_email">Vincular con Email</string>
+    <string name="link_with_google">Vincular con Google</string>
+    <string name="link_with_microsoft">Vincular con Microsoft</string>
+    <string name="link_with_facebook">Vincular con Facebook</string>
+
+    <!-- Analytics and User Research Strings -->
+    <string name="signup_decline_dialog_title">¿Jugar sin cuenta?</string>
+    <string name="signup_decline_dialog_message">Ayúdanos a entender por qué prefieres no registrarte:</string>
+    <string name="decline_reason_offline">Solo juego sin conexión</string>
+    <string name="decline_reason_privacy">Preocupaciones de privacidad</string>
+    <string name="decline_reason_complicated">Muy complicado</string>
+    <string name="decline_reason_dont_use_providers">No uso Google/Email</string>
+    <string name="decline_reason_other">Otra razón</string>
+    
+    <!-- Anonymous user prompts -->
+    <string name="save_progress_title">Guarda tu progreso &amp; apodo</string>
+    <string name="save_progress_message">¡Vincula tu cuenta para guardar tus estadísticas y unirte a torneos!</string>
+    <string name="save_progress_button">Guardar progreso</string>
+    <string name="maybe_later">Tal vez después</string>
+    
+    <!-- In-app messaging for v7/v8 users -->
+    <string name="register_benefits_title">¡Únete a torneos &amp; compite globalmente!</string>
+    <string name="register_benefits_message">Regístrate para guardar tu ranking y participar en torneos con jugadores de todo el mundo.</string>
+    <string name="register_now">Registrarse ahora</string>
 </resources>
