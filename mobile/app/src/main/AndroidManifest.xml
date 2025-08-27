@@ -132,6 +132,10 @@
             android:name=".TermsActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".AnalyticsTestActivity"
+            android:exported="false" />
+
         <service
             android:name=".notifications.MyFirebaseMessagingService"
             android:exported="false">
