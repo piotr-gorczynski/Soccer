@@ -46,7 +46,15 @@
             android:textColor="@color/colorGreenDark" />
 
         <TextView
-            android:id="@+id/accountFacebookInfo"
+            android:id="@+id/accountFacebookId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/colorGreenDark"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/accountFacebookName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -70,6 +78,18 @@
             android:textAllCaps="false"
             android:textColor="@color/colorWhite"
             android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnLinkAccount"
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="20dp"
+            android:background="@color/colorGreenDark"
+            android:text="@string/link_to_registered_account"
+            android:textAllCaps="false"
+            android:textColor="@color/colorWhite"
+            android:textStyle="bold"
+            android:visibility="gone" />
 
         <Button
             android:id="@+id/btnRemoveAccount"

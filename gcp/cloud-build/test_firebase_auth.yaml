@@ -9,7 +9,7 @@ steps:
     args:
       - '-c'
       - |
-        set -e
+        set -Eeuo pipefail
         echo "🔍 Checking if project starting with ${_FOLDER_NAME}-${_ENVIRONMENT} exists..."
         gcloud projects list \
           --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
@@ -21,60 +21,83 @@ steps:
         fi
         echo "✅ Using project: $(cat /workspace/soccer_project_id.txt)"
 
-  # Step 2: Retrieve the Firebase Project Number (using impersonation)
+  # Step 2: Retrieve the Firebase Project Number
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        set -e
-        firebase_project_id=$(cat /workspace/soccer_project_id.txt)
+        set -Eeuo pipefail
+        firebase_project_id="$(cat /workspace/soccer_project_id.txt)"
 
-        echo "🔢 Retrieving project number for $firebase_project_id..."
-        firebase_project_number=$(gcloud projects describe "$firebase_project_id" --format="value(projectNumber)")
+        echo "🔢 Retrieving project number for ${firebase_project_id}..."
+        firebase_project_number="$(gcloud projects describe "${firebase_project_id}" --format="value(projectNumber)")"
 
-        if [ -z "$firebase_project_number" ]; then
-          echo "❌ Error: Could not retrieve project number for $firebase_project_id."
+        if [ -z "${firebase_project_number}" ]; then
+          echo "❌ Error: Could not retrieve project number for ${firebase_project_id}."
           exit 1
         fi
 
-        echo "$firebase_project_number" > /workspace/firebase_project_number.txt
-        echo "✅ Project number retrieved: $firebase_project_number"
+        echo "${firebase_project_number}" > /workspace/firebase_project_number.txt
+        echo "✅ Project number retrieved: ${firebase_project_number}"
 
-  # Step 3: Retrieve the Firebase Web API Key (using impersonation)
+  # Step 3: Retrieve the Firebase Web API Key (pick Android auto key like TEST; fallback to Browser auto key)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        set -e
-        set -x  # Enables command echoing for debugging
-        firebase_project_id=$(cat /workspace/soccer_project_id.txt)
+        set -Eeuo pipefail
+        firebase_project_id="$(cat /workspace/soccer_project_id.txt)"
+        sa="firebase-adminsdk-fbsvc@${firebase_project_id}.iam.gserviceaccount.com"
 
-        echo "🌐 Retrieving Firebase Web API Key from project $firebase_project_id using impersonation..."
-        api_key_name=$(gcloud services api-keys list \
-          --format="value(name)" \
-          --project="$firebase_project_id" \
-          --impersonate-service-account=firebase-adminsdk-fbsvc@$firebase_project_id.iam.gserviceaccount.com \
-          | head -n 1)
+        echo "🌐 Selecting Firebase Web API Key from project ${firebase_project_id} (Android → Browser fallback) using impersonation..."
 
-        if [ -z "$api_key_name" ]; then
-          echo "❌ Error: No API keys found in project $firebase_project_id."
+        # Prefer the Android key (auto created by Firebase), like in TEST
+        api_key_name="$(gcloud services api-keys list \
+          --project="${firebase_project_id}" \
+          --impersonate-service-account="${sa}" \
+          --filter='displayName="Android key (auto created by Firebase)"' \
+          --format='value(name)')"
+
+        # Fallback to the Browser key (auto created by Firebase)
+        if [ -z "${api_key_name}" ]; then
+          api_key_name="$(gcloud services api-keys list \
+            --project="${firebase_project_id}" \
+            --impersonate-service-account="${sa}" \
+            --filter='displayName="Browser key (auto created by Firebase)"' \
+            --format='value(name)')"
+        fi
+
+        if [ -z "${api_key_name}" ]; then
+          echo "❌ Error: No suitable API key found (Android/Browser auto-created Firebase keys)."
           exit 1
         fi
 
-        echo "🔑 Found API Key resource name: $api_key_name"
-        firebase_api_key=$(gcloud services api-keys get-key-string "$api_key_name" \
-          --impersonate-service-account=firebase-adminsdk-fbsvc@$firebase_project_id.iam.gserviceaccount.com \
-          --format="value(keyString)")
+        # Show which key resource we picked (safe), but DO NOT print the key string
+        picked_dn="$(gcloud services api-keys describe "${api_key_name}" \
+          --impersonate-service-account="${sa}" \
+          --format='value(displayName)')"
+        echo "🔑 Using API Key resource: ${api_key_name}"
+        echo "   Display name: ${picked_dn}"
 
-        if [ -z "$firebase_api_key" ]; then
+        # Retrieve key string without echoing it in logs
+        # (turn off xtrace if enabled anywhere else)
+        set +x
+        firebase_api_key="$(gcloud services api-keys get-key-string "${api_key_name}" \
+          --impersonate-service-account="${sa}" \
+          --format='value(keyString)')"
+        set -x || true 2>/dev/null
+        set +x
+
+        if [ -z "${firebase_api_key}" ]; then
           echo "❌ Error: Could not resolve API key string."
           exit 1
         fi
 
-        echo "$firebase_api_key" > /workspace/firebase_api_key.txt
-        echo "✅ Firebase API Key string retrieved successfully!"
+        # Write to file only (no console print)
+        printf "%s" "${firebase_api_key}" > /workspace/firebase_api_key.txt
+        echo "✅ Firebase API Key string retrieved and stored."
 
   # Step 4: Authenticate as Firebase Admin SDK (impersonate service account)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
@@ -82,12 +105,12 @@ steps:
     args:
       - '-c'
       - |
-        set -e
-        set -x
-        firebase_project_id=$(cat /workspace/soccer_project_id.txt)
+        set -Eeuo pipefail
+        firebase_project_id="$(cat /workspace/soccer_project_id.txt)"
+        sa="firebase-adminsdk-fbsvc@${firebase_project_id}.iam.gserviceaccount.com"
 
         echo "🔑 Generating OAuth 2.0 access token for Firebase Admin SDK service account..."
-        gcloud auth print-access-token --impersonate-service-account=firebase-adminsdk-fbsvc@$firebase_project_id.iam.gserviceaccount.com > /workspace/token.txt
+        gcloud auth print-access-token --impersonate-service-account="${sa}" > /workspace/token.txt
         echo "✅ Obtained Firebase Admin SDK access token."
 
   # Step 5: Create Firebase test user (using Email/Password)
@@ -96,41 +119,41 @@ steps:
     args:
       - '-c'
       - |
-        set -e
-        set -x
-        apt-get update && apt-get install -y jq
-        firebase_api_key=$(cat /workspace/firebase_api_key.txt)
-        # Use the access token from Step 4 for authorization in the API request
-        access_token=$(cat /workspace/token.txt)
+        set -Eeuo pipefail
+        apt-get update -y >/dev/null 2>&1 && apt-get install -y jq >/dev/null 2>&1
+
+        firebase_api_key="$(cat /workspace/firebase_api_key.txt)"
+        access_token="$(cat /workspace/token.txt)"
 
         echo "🔍 Checking if Firebase test user already exists..."
-        existing_uid=$(curl -s -X POST "https://identitytoolkit.googleapis.com/v1/accounts:lookup" \
+        existing_uid="$(curl -s -X POST "https://identitytoolkit.googleapis.com/v1/accounts:lookup" \
           -H "Content-Type: application/json" \
-          -H "Authorization: Bearer $access_token" \
-          -d '{"email": ["test@test.test"]}' | jq -r '.users[0].localId')
+          -H "Authorization: Bearer ${access_token}" \
+          -d '{"email": ["test@test.test"]}' | jq -r '.users[0].localId')"
 
-        if [ -n "$existing_uid" ] && [ "$existing_uid" != "null" ]; then
-          echo "ℹ️ Firebase test user already exists. Skipping creation."
+        if [ -n "${existing_uid}" ] && [ "${existing_uid}" != "null" ]; then
+          echo "ℹ️ Firebase test user already exists (uid=${existing_uid}). Skipping creation."
           exit 0
         fi
 
         echo "📩 Creating Firebase test user..."
-        response=$(curl -s -o response.json -w "%{http_code}" -X POST "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${firebase_api_key}" \
+        # NOTE: accounts:signUp uses the API key; no OAuth header is required (and often ignored)
+        http_code="$(curl -s -o response.json -w '%{http_code}' -X POST \
+          "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${firebase_api_key}" \
           -H "Content-Type: application/json" \
-          -H "Authorization: Bearer $access_token" \
           -d '{
                 "email": "test@test.test",
                 "password": "TestPassword123!@",
                 "returnSecureToken": true
-              }')
+              }')"
 
-        if [[ "$response" -ne 200 ]]; then
-          echo "❌ Failed to create Firebase user. Response:"
+        if [ "${http_code}" != "200" ]; then
+          echo "❌ Failed to create Firebase user. HTTP ${http_code}. Response body:"
           cat response.json
           exit 1
         fi
 
         echo "✅ Firebase test user created successfully!"
-        
+
 options:
   logging: CLOUD_LOGGING_ONLY

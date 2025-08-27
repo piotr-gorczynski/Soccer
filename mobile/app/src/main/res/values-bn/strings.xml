@@ -155,6 +155,7 @@
     <string name="login_google">Google দিয়ে লগ ইন</string>
     <string name="login_facebook">Facebook দিয়ে লগ ইন</string>
     <string name="login_microsoft">Microsoft দিয়ে লগ ইন</string>
+    <string name="login_anonymous">নাম প্রকাশ না করে লগ ইন</string>
     <string name="login_method_label">লগ ইন পদ্ধতি: %1$s</string>
     <string name="facebook_name_label">Facebook নাম: %1$s</string>
     <string name="pref_title_facebook">Facebook কমিউনিটি</string>
@@ -166,13 +167,17 @@
     <string name="remove_account">অ্যাকাউন্ট মুছে ফেলুন</string>
     <string name="remove_account_dialog_title">অ্যাকাউন্ট মুছে ফেলুন</string>
     <string name="remove_account_dialog_message">আপনি কি সত্যিই আপনার অ্যাকাউন্ট মুছে ফেলতে চান? এই কাজটি ফিরিয়ে আনা যাবে না এবং যদি আপনি আবার নিবন্ধন করেন তবুও আপনি আপনার ম্যাচ এবং ফলাফলের ইতিহাসে অ্যাক্সেস পাবেন না।</string>
-    <string name="proceed">এগিয়ে যান</string>
+    <string name="proceed_account_removal">এগিয়ে যান</string>
     <string name="removing_account">অ্যাকাউন্ট মুছে ফেলা হচ্ছে...</string>
     <string name="account_removed">অ্যাকাউন্ট সফলভাবে মুছে ফেলা হয়েছে</string>
     <string name="remove_account_failed">অ্যাকাউন্ট মুছে ফেলতে ব্যর্থ। আবার চেষ্টা করুন।</string>
     <string name="reauth_title">পুনরায় প্রমাণীকরণ</string>
     <string name="reauth_message">চালিয়ে যেতে অনুগ্রহ করে আপনার পাসওয়ার্ড প্রবেশ করান।</string>
     <string name="reauth_failed">পুনরায় প্রমাণীকরণ ব্যর্থ। আবার চেষ্টা করুন।</string>
+    
+    <!-- Anonymous logout warning strings -->
+    <string name="anonymous_logout_warning_title">লগআউট সতর্কতা</string>
+    <string name="anonymous_logout_warning_message">আপনি কি সত্যিই লগআউট করতে চান? বেনামী পদ্ধতির জন্য এই কর্মটি প্রত্যাবর্তিত করা যাবে না এবং আপনি আবার নিবন্ধন করলেও, আপনার ম্যাচ এবং ফলাফলের ইতিহাসে অ্যাক্সেস পাবেন না।</string>
     
     <!-- Common strings -->
     <string name="settings">সেটিংস</string>
@@ -191,6 +196,11 @@
     <string name="enter_email_and_password">ইমেল এবং পাসওয়ার্ড উভয়ই লিখুন</string>
     <string name="login_success">লগইন সফল!</string>
     <string name="login_failed">লগইন ব্যর্থ: %1$s</string>
+    
+    <!-- Anonymous login warning -->
+    <string name="anonymous_login_warning_title">বেনামী লগইন সতর্কতা</string>
+    <string name="anonymous_login_warning_message">বেনামী লগইন কিছু ফাংশনে অ্যাক্সেসের অনুমতি দেয়, কিন্তু আপনি যদি আপনার ডিভাইস হারিয়ে ফেলেন, অ্যাপটি পুনরায় ইনস্টল করেন, নতুন ফোন পান বা লগ আউট করেন, তাহলে আপনার বেনামী অ্যাকাউন্টের লিঙ্ক হারিয়ে যাবে এবং একই বেনামী অ্যাকাউন্টে আবার লগইন করা সম্ভব হবে না। আপনি কি এগিয়ে যেতে চান?</string>
+    <string name="proceed_anonymous_login">এগিয়ে যান</string>
     <string name="enter_email_address">আপনার ইমেল ঠিকানা লিখুন দয়া করে</string>
     <string name="all_fields_required">সমস্ত ক্ষেত্র প্রয়োজন</string>
     <string name="passwords_do_not_match">পাসওয়ার্ড মেলে না</string>
@@ -200,6 +210,8 @@
     <string name="nickname_too_long">ডাকনাম অবশ্যই 20 টি অক্ষর বা তার চেয়ে কম হতে হবে</string>
     <string name="not_logged_in">লগ ইন নেই</string>
     <string name="register_to_use_function">এই ফাংশনটি ব্যবহার করতে দয়া করে নিজেকে নিবন্ধন করুন।</string>
+    <string name="register_dialog_message">এই ফাংশনটি ব্যবহার করার জন্য আপনাকে নিজেকে নিবন্ধন করতে হবে। আপনি এমনকি বেনামেও নিবন্ধন করতে পারেন। আপনি কি এগিয়ে যেতে চান?</string>
+    <string name="proceed">এগিয়ে যান</string>
     <string name="network_error_checking_nickname">ডাকনাম পরীক্ষা করার সময় নেটওয়ার্ক ত্রুটি</string>
     <string name="nickname_taken">ডাকনাম ইতিমধ্যে নেওয়া হয়েছে - অন্যটি বেছে নিন</string>
     <string name="nickname_saved">ডাকনাম সংরক্ষণ</string>
@@ -252,4 +264,13 @@
     <string name="authentication_failed">প্রমাণীকরণ ব্যর্থ হয়েছে।</string>
 
     <string name="could_not_cancel_invite">আমন্ত্রণ বাতিল করতে পারেনি: %1 $ গুলি</string>
+    <!-- Link Account functionality -->
+    <string name="link_to_registered_account">Link to registered account</string>
+    <string name="link_account_title">Link Anonymous Account</string>
+    <string name="link_account_description">Link your anonymous account with email, Google, or Facebook to secure your account and game history.</string>
+    <string name="link_account_success">Account linked successfully!</string>
+    <string name="link_account_failed">Failed to link account: %1$s</string>
+    <string name="link_account_in_progress">Linking account...</string>
+    <string name="account_already_exists_merge">An account with these credentials already exists. Your current data will be preserved and merged.</string>
+    <string name="credential_already_associated">এই প্রমাণপত্রটি ইতিমধ্যে একটি ভিন্ন ব্যবহারকারী অ্যাকাউন্টের সাথে যুক্ত।</string>
 </resources>

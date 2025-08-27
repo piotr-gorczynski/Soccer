@@ -156,6 +156,7 @@
     <string name="login_google">Zaloguj się przez Google</string>
     <string name="login_facebook">Zaloguj się przez Facebook</string>
     <string name="login_microsoft">Zaloguj się przez Microsoft</string>
+    <string name="login_anonymous">Zaloguj się anonimowo</string>
     <string name="login_method_label">Metoda logowania: %1$s</string>
     <string name="facebook_name_label">Nazwa Facebook: %1$s</string>
     <string name="pref_title_facebook">Społeczność Facebook</string>
@@ -167,13 +168,17 @@
     <string name="remove_account">Usuń konto</string>
     <string name="remove_account_dialog_title">Usuń konto</string>
     <string name="remove_account_dialog_message">Czy na pewno chcesz usunąć swoje konto? Ta akcja nie może być cofnięta i nawet jeśli zarejestrujesz się ponownie, nie uzyskasz dostępu do historii swoich meczów i wyników.</string>
-    <string name="proceed">Kontynuuj</string>
+    <string name="proceed_account_removal">Kontynuuj</string>
     <string name="removing_account">Usuwanie konta...</string>
     <string name="account_removed">Konto usunięte pomyślnie</string>
     <string name="remove_account_failed">Nie udało się usunąć konta. Spróbuj ponownie.</string>
     <string name="reauth_title">Ponowna autoryzacja</string>
     <string name="reauth_message">Wprowadź swoje hasło, aby kontynuować.</string>
     <string name="reauth_failed">Ponowna autoryzacja nie powiodła się. Spróbuj ponownie.</string>
+    
+    <!-- Anonymous logout warning strings -->
+    <string name="anonymous_logout_warning_title">Ostrzeżenie przed wylogowaniem</string>
+    <string name="anonymous_logout_warning_message">Czy na pewno chcesz się wylogować? W przypadku metod anonimowych tej akcji nie można cofnąć i nawet jeśli zarejestrujesz się ponownie, nie uzyskasz dostępu do historii swoich meczów i wyników.</string>
     
     <!-- Common strings -->
     <string name="settings">Ustawienia</string>
@@ -192,6 +197,11 @@
     <string name="enter_email_and_password">Wprowadź zarówno e-mail, jak i hasło</string>
     <string name="login_success">Zaloguj się sukces!</string>
     <string name="login_failed">Logowanie nie powiodło się: %1$s</string>
+    
+    <!-- Anonymous login warning -->
+    <string name="anonymous_login_warning_title">Ostrzeżenie dotyczące logowania anonimowego</string>
+    <string name="anonymous_login_warning_message">Logowanie anonimowe umożliwia dostęp do niektórych funkcji, ale jeśli stracisz urządzenie, przeinstalajesz aplikację, kupisz nowy telefon lub się wylogujesz, połączenie z kontem anonimowym zostanie utracone i nie będzie możliwe ponowne zalogowanie się na to samo konto anonimowe. Czy chcesz kontynuować?</string>
+    <string name="proceed_anonymous_login">Kontynuuj</string>
     <string name="enter_email_address">Wprowadź swój adres e-mail</string>
     <string name="all_fields_required">Wszystkie pola są wymagane</string>
     <string name="passwords_do_not_match">Hasła nie pasują</string>
@@ -201,6 +211,8 @@
     <string name="nickname_too_long">Pseudonim musi mieć 20 znaków lub mniej</string>
     <string name="not_logged_in">Nie zalogowano</string>
     <string name="register_to_use_function">Zarejestruj się, aby korzystać z tej funkcji.</string>
+    <string name="register_dialog_message">Aby korzystać z tej funkcji, musisz się zarejestrować. Możesz zarejestrować się nawet anonimowo. Czy chcesz kontynuować?</string>
+    <string name="proceed">Kontynuuj</string>
     <string name="network_error_checking_nickname">Błąd sieci podczas sprawdzania pseudonim</string>
     <string name="nickname_taken">Pseudonim już zabrany - wybierz inny</string>
     <string name="nickname_saved">Zapisany pseudonim</string>
@@ -253,4 +265,13 @@
     <string name="authentication_failed">Uwierzytelnianie nie powiodło się.</string>
 
     <string name="could_not_cancel_invite">Nie można anulować Zaproszenia: %1$s</string>
+    <!-- Link Account functionality -->
+    <string name="link_to_registered_account">Połącz z zarejestrowanym kontem</string>
+    <string name="link_account_title">Połącz Konto Anonimowe</string>
+    <string name="link_account_description">Połącz swoje anonimowe konto z e-mail, Google lub Facebook, aby zabezpieczyć swoje konto i historię gier.</string>
+    <string name="link_account_success">Konto zostało pomyślnie połączone!</string>
+    <string name="link_account_failed">Nie udało się połączyć konta: %1$s</string>
+    <string name="link_account_in_progress">Łączenie konta...</string>
+    <string name="account_already_exists_merge">Konto z tymi danymi uwierzytelniającymi już istnieje. Twoje obecne dane zostaną zachowane i scalone.</string>
+    <string name="credential_already_associated">Te dane uwierzytelniające są już powiązane z innym kontem użytkownika.</string>
 </resources>

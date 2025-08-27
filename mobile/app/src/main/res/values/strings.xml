@@ -140,6 +140,7 @@
     <string name="login_google">Login with Google</string>
     <string name="login_facebook">Login with Facebook</string>
     <string name="login_microsoft">Login with Microsoft</string>
+    <string name="login_anonymous">Login Anonymously</string>
     <string name="facebook_app_id" translatable="false">1232966491486195</string>
     <string name="facebook_client_token" translatable="false">CLIENT_TOKEN_TO_BE_CONFIGURED</string>
     <string name="fb_login_protocol_scheme" translatable="false">fb1232966491486195</string>
@@ -157,13 +158,17 @@
     <string name="remove_account_dialog_title">Remove Account</string>
     <string name="remove_account_dialog_message">Are you sure you want to remove your account? This action cannot be reverted and even if you register again, you will not get access to the history of your matches and results.</string>
     <string name="cancel">Cancel</string>
-    <string name="proceed">Proceed</string>
+    <string name="proceed_account_removal">Proceed</string>
     <string name="removing_account">Removing account...</string>
     <string name="account_removed">Account removed successfully</string>
     <string name="remove_account_failed">Failed to remove account. Please try again.</string>
     <string name="reauth_title">Re-authenticate</string>
     <string name="reauth_message">Please enter your password to continue.</string>
     <string name="reauth_failed">Re-authentication failed. Please try again.</string>
+    
+    <!-- Anonymous logout warning strings -->
+    <string name="anonymous_logout_warning_title">Logout Warning</string>
+    <string name="anonymous_logout_warning_message">Are you sure you want to log out? For anonymous methods this action cannot be reverted and even if you register again, you will not get access to the history of your matches and results.</string>
     
     <!-- Language strings -->
     <string name="select_language">Select Language</string>
@@ -189,6 +194,11 @@
     <string name="enter_email_and_password">Please enter both email and password</string>
     <string name="login_success">Login successful!</string>
     <string name="login_failed">Login failed: %1$s</string>
+    
+    <!-- Anonymous login warning -->
+    <string name="anonymous_login_warning_title">Anonymous Login Warning</string>
+    <string name="anonymous_login_warning_message">Anonymous login allows access to certain functions, but if you lose your device, reinstall the app, get a new phone, or log out, the link to your anonymous account will be lost and it will not be possible to log back into the same anonymous account. Do you want to proceed?</string>
+    <string name="proceed_anonymous_login">Proceed</string>
     <string name="enter_email_address">Please enter your email address</string>
     <string name="all_fields_required">All fields are required</string>
     <string name="passwords_do_not_match">Passwords do not match</string>
@@ -198,6 +208,8 @@
     <string name="nickname_too_long">Nickname must be 20 characters or less</string>
     <string name="not_logged_in">Not logged in</string>
     <string name="register_to_use_function">Please register yourself to use this function</string>
+    <string name="register_dialog_message">In order to use this function you need to register yourself. You can register even anonymously. Do you want to proceed?</string>
+    <string name="proceed">Proceed</string>
     <string name="network_error_checking_nickname">Network error while checking nickname</string>
     <string name="nickname_taken">Nickname already taken — choose another</string>
     <string name="nickname_saved">Nickname saved</string>
@@ -250,4 +262,19 @@
     <string name="authentication_failed">Authentication failed.</string>
 
     <string name="could_not_cancel_invite">Could not cancel invite: %1$s</string>
+
+    <!-- Link Account functionality -->
+    <string name="link_to_registered_account">Link to registered account</string>
+    <string name="link_account_title">Link Anonymous Account</string>
+    <string name="link_account_description">Link your anonymous account with email, Google, or Facebook to secure your account and game history.</string>
+    <string name="link_account_success">Account linked successfully!</string>
+    <string name="link_account_failed">Failed to link account: %1$s</string>
+    <string name="link_account_in_progress">Linking account...</string>
+    <string name="account_already_exists_merge">An account with these credentials already exists. Your current data will be preserved and merged.</string>
+    <string name="credential_already_associated">This credential is already associated with a different user account.</string>
+    <string name="enter_email_and_password_to_link">Enter your email and password to link your anonymous account</string>
+    <string name="link_with_email">Link with Email</string>
+    <string name="link_with_google">Link with Google</string>
+    <string name="link_with_microsoft">Link with Microsoft</string>
+    <string name="link_with_facebook">Link with Facebook</string>
 </resources>
