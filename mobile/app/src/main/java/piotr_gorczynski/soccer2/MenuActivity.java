@@ -75,6 +75,7 @@ public class MenuActivity extends BaseActivity {
     private Menu optionsMenu; // Hold reference to menu for updating warning icon
     private MenuItem accountMenuItem; // Reference to account menu item
     private String currentLanguage;
+    private AnalyticsManager analyticsManager;
 
     /**
      * Helper to fetch user details from Firestore and update prefs/UI. This is
@@ -554,6 +555,12 @@ public class MenuActivity extends BaseActivity {
         // Initialize backend service checker
         SoccerApp app = (SoccerApp) getApplication();
         serviceChecker = app.getServiceChecker();
+        
+        // Get analytics manager for user research
+        analyticsManager = app.getAnalyticsManager();
+        
+        // Check and show in-app messaging for v7/v8 users
+        InAppMessagingHelper.checkAndShowVersionMessage(this, analyticsManager);
         
         // Get initial backend availability state from the app
         isBackendAvailable = app.isBackendAvailable();

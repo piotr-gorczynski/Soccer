@@ -178,6 +178,13 @@ public class UniversalLoginActivity extends BaseActivity {
                 String authMethod = determineAuthMethod();
                 analyticsManager.trackSignupSuccess(authMethod);
                 analyticsManager.addAuthBreadcrumb("login_success", "method=" + authMethod);
+                
+                // Set user properties for segmentation
+                FirebaseAuth auth = FirebaseAuth.getInstance();
+                if (auth.getCurrentUser() != null) {
+                    String language = LanguageManager.getCurrentLanguageCode(UniversalLoginActivity.this);
+                    analyticsManager.setUserProperties(authMethod, "9.0", language, false); // will be updated when nickname is set
+                }
 
                 SharedPreferences prefs =
                         getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
