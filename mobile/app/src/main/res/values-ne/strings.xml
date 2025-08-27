@@ -273,4 +273,29 @@
     <string name="link_account_in_progress">Linking account...</string>
     <string name="account_already_exists_merge">An account with these credentials already exists. Your current data will be preserved and merged.</string>
     <string name="credential_already_associated">यो प्रमाणपत्र पहिले नै फरक प्रयोगकर्ता खाताको साथ सम्बन्धित छ।</string>
+    <string name="enter_email_and_password_to_link">आफ्नो गुमनाम खाता लिङ्क गर्न आफ्नो इमेल र पासवर्ड प्रविष्ट गर्नुहोस्</string>
+    <string name="link_with_email">इमेलसँग लिङ्क गर्नुहोस्</string>
+    <string name="link_with_google">गुगलसँग लिङ्क गर्नुहोस्</string>
+    <string name="link_with_microsoft">माइक्रोसफ्टसँग लिङ्क गर्नुहोस्</string>
+    <string name="link_with_facebook">फेसबुकसँग लिङ्क गर्नुहोस्</string>
+
+    <!-- Analytics and User Research Strings -->
+    <string name="signup_decline_dialog_title">खाता बिना खेल्नुहुन्छ?</string>
+    <string name="signup_decline_dialog_message">तपाईंले किन दर्ता नगर्न रुचाउनुभएको हो भनेर हामीलाई बुझ्न मद्दत गर्नुहोस्:</string>
+    <string name="decline_reason_offline">अफलाइन मात्र खेल्दै</string>
+    <string name="decline_reason_privacy">गोपनीयताको चिन्ता</string>
+    <string name="decline_reason_complicated">धेरै जटिल</string>
+    <string name="decline_reason_dont_use_providers">गुगल/इमेल प्रयोग गर्दिन</string>
+    <string name="decline_reason_other">अन्य कारण</string>
+    
+    <!-- Anonymous user prompts -->
+    <string name="save_progress_title">आफ्नो प्रगति &amp; उपनाम सेभ गर्नुहोस्</string>
+    <string name="save_progress_message">आफ्ना तथ्याङ्कहरू सेभ गर्न र प्रतियोगितामा सामेल हुन आफ्नो खाता लिङ्क गर्नुहोस्!</string>
+    <string name="save_progress_button">प्रगति सेभ गर्नुहोस्</string>
+    <string name="maybe_later">सायद पछि</string>
+    
+    <!-- In-app messaging for v7/v8 users -->
+    <string name="register_benefits_title">प्रतियोगितामा सामेल हुनुहोस् &amp; विश्वव्यापी प्रतिस्पर्धा गर्नुहोस्!</string>
+    <string name="register_benefits_message">आफ्नो र्याङ्किङ सेभ गर्न र विश्वभरका खेलाडीहरूसँग प्रतियोगितामा भाग लिन दर्ता गर्नुहोस्।</string>
+    <string name="register_now">अहिले नै दर्ता गर्नुहोस्</string>
 </resources>
