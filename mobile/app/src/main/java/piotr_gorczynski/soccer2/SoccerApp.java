@@ -118,7 +118,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
             if (hasToken && hasAppId) {
                 FacebookSdk.setClientToken(clientToken);
                 FacebookSdk.setApplicationId(getString(appIdRes));
-                FacebookSdk.sdkInitialize(getApplicationContext());
+                FacebookSdk.fullyInitialize();
                 AppEventsLogger.activateApp(this);
                 Log.d(
                         "TAG_Soccer",

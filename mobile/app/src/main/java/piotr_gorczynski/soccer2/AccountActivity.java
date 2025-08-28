@@ -10,6 +10,8 @@ import android.widget.Toast;
 import android.view.View;
 import android.content.Intent;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 
@@ -310,15 +312,15 @@ public class AccountActivity extends BaseActivity {
         finish();
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        
-        if (requestCode == LINK_ACCOUNT_REQUEST_CODE && resultCode == RESULT_OK) {
-            // Account linking was successful, refresh the UI with updated data
-            refreshAccountData();
-        }
-    }
+    private final ActivityResultLauncher<Intent> linkAccountLauncher =
+            registerForActivityResult(
+                    new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        if (result.getResultCode() == RESULT_OK) {
+                            // Account linking was successful, refresh the UI with updated data
+                            refreshAccountData();
+                        }
+                    });
 
     /**
      * Refreshes the account data from SharedPreferences and updates the UI.
@@ -404,14 +406,12 @@ public class AccountActivity extends BaseActivity {
         methodView.setText(getString(R.string.login_method_label, method));
     }
 
-    private static final int LINK_ACCOUNT_REQUEST_CODE = 1001;
-
     /**
      * Starts the link account activity to allow anonymous users to link their account
      * with email, Google, or Facebook credentials.
      */
     private void startLinkAccountActivity() {
         Intent intent = new Intent(this, LinkAccountActivity.class);
-        startActivityForResult(intent, LINK_ACCOUNT_REQUEST_CODE);
+        linkAccountLauncher.launch(intent);
     }
 }
