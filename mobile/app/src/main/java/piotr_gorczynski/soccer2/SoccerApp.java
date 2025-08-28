@@ -160,7 +160,8 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         // Disable FCM auto-init until a user signs in
         FirebaseMessaging.getInstance().setAutoInitEnabled(false);
 
-        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
+        // Set up comprehensive crash handling
+        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
 
 
         // Initialize backend service checker

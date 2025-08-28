@@ -121,32 +121,11 @@ public class GameActivity extends BaseActivity {
         }
     }
 
-    public static class ExceptionHandler implements Thread.UncaughtExceptionHandler {
-        private final Thread.UncaughtExceptionHandler existingHandler;
-
-        public ExceptionHandler() {
-            this.existingHandler = Thread.getDefaultUncaughtExceptionHandler();
-        }
-
-        @Override
-        public void uncaughtException(Thread thread, Throwable throwable) {
-            // 🔹 Your custom logic here (e.g., logging to file)
-            Log.e("TAG_Soccer", "Uncaught exception", throwable);
-
-            // 🔹 Call the original handler (important!)
-            if (existingHandler != null) {
-                existingHandler.uncaughtException(thread, throwable);
-            }
-        }
-    }
-
-
     @SuppressLint("ApplySharedPref")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
         //this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         if (savedInstanceState != null && (
                 (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && savedInstanceState.getParcelableArrayList("Moves", MoveTo.class) != null) ||
@@ -495,58 +474,140 @@ public class GameActivity extends BaseActivity {
     }
 
     private void onClockUpdate(DocumentSnapshot snap, FirebaseFirestoreException e) {
-        if (e != null || snap == null || !snap.exists()) return;
-        if (gameEnded) return;   // board frozen
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started");
-        String serverWinner = snap.getString("winner");
-        String reason       = snap.getString("reason");
-        if (serverWinner != null && Winner == -1) {      // nobody has shown a dialog yet
-            int winnerIdx = serverWinner.equals(player0Uid) ? 0 : 1;
-            if ("timeout".equals(reason) || "abandon".equals(reason)) {              // optional filter
-                runOnUiThread(() -> showWinner(winnerIdx));
-                return;                                  // nothing else to update
+        try {
+            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started");
+            
+            // Check for Firestore errors first
+            if (e != null) {
+                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Firestore error in clock update", e);
+                return;
             }
-        }
+            
+            // Check for null or non-existent snapshot
+            if (snap == null) {
+                Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Received null snapshot");
+                return;
+            }
+            
+            if (!snap.exists()) {
+                Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Received non-existent snapshot");
+                return;
+            }
+            
+            // Check game state
+            if (gameEnded) {
+                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Game already ended, ignoring update");
+                return;   // board frozen
+            }
+            
+            // Process winner/reason information safely
+            String serverWinner = null;
+            String reason = null;
+            try {
+                serverWinner = snap.getString("winner");
+                reason = snap.getString("reason");
+                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": serverWinner=" + serverWinner + ", reason=" + reason);
+            } catch (Exception ex) {
+                Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to read winner/reason fields", ex);
+            }
+            
+            if (serverWinner != null && Winner == -1) {      // nobody has shown a dialog yet
+                try {
+                    int winnerIdx = serverWinner.equals(player0Uid) ? 0 : 1;
+                    if ("timeout".equals(reason) || "abandon".equals(reason)) {              // optional filter
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Showing winner due to " + reason);
+                        runOnUiThread(() -> {
+                            try {
+                                showWinner(winnerIdx);
+                            } catch (Exception showWinnerEx) {
+                                Log.e("TAG_Soccer", getClass().getSimpleName() + ".onClockUpdate: Failed to show winner dialog", showWinnerEx);
+                            }
+                        });
+                        return;                                  // nothing else to update
+                    }
+                } catch (Exception winnerEx) {
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Error processing winner information", winnerEx);
+                }
+            }
 
-        if (!"active".equals(snap.getString("status"))) {
-            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ️ \uD83D\uDC80 Extra guard block was executed");
-            return;                                  // match over → ignore update
-        }
+            // Check match status safely
+            String status = null;
+            try {
+                status = snap.getString("status");
+                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Match status=" + status);
+            } catch (Exception statusEx) {
+                Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to read status field", statusEx);
+            }
+            
+            if (!"active".equals(status)) {
+                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ️ 🎯 Match not active, ignoring update");
+                return;                                  // match over → ignore update
+            }
 
-        Long rawT0 = snap.getLong("remainingTime0");
-        Long rawT1 = snap.getLong("remainingTime1");
-        // Read turnStartTime as a Timestamp or null
-        turnStartTimeTs = snap.getTimestamp("turnStartTime");
-        turnStartTime = (turnStartTimeTs != null) ? turnStartTimeTs.toDate().getTime() : null;
+            // Read timing information safely
+            Long rawT0 = null;
+            Long rawT1 = null;
+            Long turn = null;
+            
+            try {
+                rawT0 = snap.getLong("remainingTime0");
+                rawT1 = snap.getLong("remainingTime1");
+                turn = snap.getLong("turn");
+                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Read timing fields - rawT0=" + rawT0 + ", rawT1=" + rawT1 + ", turn=" + turn);
+            } catch (Exception timingEx) {
+                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to read timing fields", timingEx);
+                return;
+            }
+            
+            // Read turnStartTime safely
+            try {
+                turnStartTimeTs = snap.getTimestamp("turnStartTime");
+                turnStartTime = (turnStartTimeTs != null) ? turnStartTimeTs.toDate().getTime() : null;
+                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": turnStartTime=" + ((turnStartTime == null) ? "null" : String.valueOf(turnStartTime)));
+            } catch (Exception timestampEx) {
+                Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to read turnStartTime", timestampEx);
+                turnStartTimeTs = null;
+                turnStartTime = null;
+            }
 
-        Long turn = snap.getLong("turn");
-        if (rawT0 == null || rawT1 == null || turn==null) {
-            Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock fields missing on update!");
-            throw new IllegalStateException("Missing remainingTime0/1 or turn fields");
-        }
-        remainingTime0 = rawT0;
-        remainingTime1 = rawT1;
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                + ": remainingTime0="+remainingTime0
-                + " remainingTime1="+remainingTime1
-                + " turnStartTime="+((turnStartTime == null) ? "null" : String.valueOf(turnStartTime))
-                + " turn="+turn
-                + " clockStartAttempted="+clockStartAttempted);
-
-        //Continue only if times changed...
-        if(previousRemainingTime0==remainingTime0 && previousRemainingTime1==remainingTime1 && Objects.equals(previousTurnSTartTime, turnStartTime)) {
+            // Validate required fields
+            if (rawT0 == null || rawT1 == null || turn == null) {
+                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock fields missing on update! rawT0=" + rawT0 + ", rawT1=" + rawT1 + ", turn=" + turn);
+                return; // Don't throw exception, just return - the data might be in an intermediate state
+            }
+            
+            remainingTime0 = rawT0;
+            remainingTime1 = rawT1;
             Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                    + ": Times the same as previously, exiting");
-            return;
-        }
+                    + ": remainingTime0="+remainingTime0
+                    + " remainingTime1="+remainingTime1
+                    + " turnStartTime="+((turnStartTime == null) ? "null" : String.valueOf(turnStartTime))
+                    + " turn="+turn
+                    + " clockStartAttempted="+clockStartAttempted);
 
-        previousRemainingTime0 = remainingTime0;
-        previousRemainingTime1 = remainingTime1;
-        previousTurnSTartTime = turnStartTime;
+            //Continue only if times changed...
+            if(previousRemainingTime0==remainingTime0 && previousRemainingTime1==remainingTime1 && Objects.equals(previousTurnSTartTime, turnStartTime)) {
+                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                        + ": Times the same as previously, exiting");
+                return;
+            }
 
-        gameView.updateTimes(remainingTime0, remainingTime1, turnStartTime);
+            previousRemainingTime0 = remainingTime0;
+            previousRemainingTime1 = remainingTime1;
+            previousTurnSTartTime = turnStartTime;
 
-        DocumentReference matchRefThisSnap = snap.getReference();
+            // Update game view safely
+            try {
+                if (gameView != null) {
+                    gameView.updateTimes(remainingTime0, remainingTime1, turnStartTime);
+                } else {
+                    Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": gameView is null, cannot update times");
+                }
+            } catch (Exception gameViewEx) {
+                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to update game view", gameViewEx);
+            }
+
+            DocumentReference matchRefThisSnap = snap.getReference();
 
         //reseting the flag if the turn was nullified
         if (clockStartAttempted && turnStartTimeTs == null ) {
@@ -601,6 +662,22 @@ public class GameActivity extends BaseActivity {
 
             Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                             + ": Clock started locally for player " + turn);
+        }
+        
+        } catch (Exception ex) {
+            Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Unexpected error in onClockUpdate", ex);
+            // Additional context logging
+            try {
+                Log.e("TAG_Soccer", getClass().getSimpleName() + ".onClockUpdate: Context - gameEnded=" + gameEnded + 
+                      ", Winner=" + Winner + 
+                      ", localPlayerIndex=" + localPlayerIndex + 
+                      ", clockStartAttempted=" + clockStartAttempted);
+                if (snap != null && snap.getReference() != null) {
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".onClockUpdate: Document path=" + snap.getReference().getPath());
+                }
+            } catch (Exception contextEx) {
+                Log.e("TAG_Soccer", getClass().getSimpleName() + ".onClockUpdate: Failed to log context", contextEx);
+            }
         }
 
     }
