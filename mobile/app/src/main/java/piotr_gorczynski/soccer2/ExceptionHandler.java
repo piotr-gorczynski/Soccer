@@ -68,7 +68,9 @@ public class ExceptionHandler implements
         report.append("🚨 SOCCER APP CRASH REPORT").append(LINE_SEPARATOR);
         report.append("===============================================").append(LINE_SEPARATOR);
         report.append("Timestamp: ").append(sdf.format(new Date())).append(LINE_SEPARATOR);
-        report.append("Thread: ").append(thread.getName()).append(" (ID: ").append(thread.getId()).append(")").append(LINE_SEPARATOR);
+        @SuppressWarnings("deprecation")
+        long threadId = thread.getId();
+        report.append("Thread: ").append(thread.getName()).append(" (ID: ").append(threadId).append(")").append(LINE_SEPARATOR);
         report.append(LINE_SEPARATOR);
         
         // Exception information
@@ -166,10 +168,11 @@ public class ExceptionHandler implements
                 return "VISIBLE";
             case ActivityManager.RunningAppProcessInfo.IMPORTANCE_SERVICE:
                 return "SERVICE";
-            case ActivityManager.RunningAppProcessInfo.IMPORTANCE_BACKGROUND:
-                return "BACKGROUND";
-            case ActivityManager.RunningAppProcessInfo.IMPORTANCE_EMPTY:
-                return "EMPTY";
+            case ActivityManager.RunningAppProcessInfo.IMPORTANCE_CACHED:
+            case 500: // Deprecated IMPORTANCE_EMPTY
+                return "CACHED";
+            case ActivityManager.RunningAppProcessInfo.IMPORTANCE_GONE:
+                return "GONE";
             default:
                 return "UNKNOWN(" + importance + ")";
         }
