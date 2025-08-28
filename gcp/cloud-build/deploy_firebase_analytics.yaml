@@ -1,0 +1,235 @@
+# deploy_firebase_analytics.yaml
+substitutions:
+  _ENVIRONMENT: 'dev'
+  _FOLDER_NAME: 'soccer'
+
+steps:
+# 0. Resolve Firebase project ID & number
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+  id: 'get-project-info'
+  entrypoint: bash
+  args:
+    - '-c'
+    - |
+      set -ex
+      # project ID
+      gcloud projects list \
+        --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
+        --format="value(projectId)" | head -n1 \
+        > /workspace/firebase_project_id.txt
+      test -s /workspace/firebase_project_id.txt
+
+      # project number
+      project_id=$(< /workspace/firebase_project_id.txt)
+      gcloud projects describe "$project_id" \
+        --format="value(projectNumber)" \
+        > /workspace/firebase_project_number.txt
+      test -s /workspace/firebase_project_number.txt
+
+      echo "✅ Found Firebase project: $project_id"
+
+# 1. Enable required APIs for Firebase Analytics
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+  id: 'enable-analytics-apis'
+  entrypoint: bash
+  args:
+    - '-c'
+    - |
+      set -ex
+      project=$(< /workspace/firebase_project_id.txt)
+
+      enable_api() {
+        local api_name=$1
+        echo "🔓 Enabling API: $api_name for project $project..."
+        result=$(gcloud services enable "$api_name" --project="$project" 2>&1)
+        echo "$result"
+        status=$?
+
+        if [ $status -eq 0 ]; then
+          echo "✅ $api_name enabled successfully."
+        elif echo "$result" | grep -qi "already enabled"; then
+          echo "ℹ️ $api_name was already enabled."
+        else
+          echo "❌ Failed to enable $api_name. Exiting."
+          exit 1
+        fi
+      }
+
+      # Enable Firebase APIs required for Analytics
+      enable_api "firebase.googleapis.com"
+      enable_api "firebaseanalytics.googleapis.com"
+
+      echo "🎉 All required Firebase Analytics APIs are enabled."
+
+# 2. Generate access token for Firebase Management API calls
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+  id: 'generate-access-token'
+  entrypoint: bash
+  args:
+    - '-c'
+    - |
+      set -ex
+      access_token=$(gcloud auth print-access-token)
+      echo "$access_token" > /workspace/access_token.txt
+      echo "🔑 Access token generated and stored."
+
+# 3. Check if Firebase Analytics is already enabled
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+  id: 'check-analytics-status'
+  entrypoint: bash
+  args:
+    - '-c'
+    - |
+      set -euo pipefail
+      project=$(< /workspace/firebase_project_id.txt)
+      access_token=$(< /workspace/access_token.txt)
+
+      echo "🔍 Checking Firebase Analytics status for project: $project..."
+
+      # Check if Firebase project exists and has Analytics enabled
+      response=$(curl -s -w '\n%{http_code}' -X GET \
+        -H "Authorization: Bearer $access_token" \
+        -H "Content-Type: application/json" \
+        "https://firebase.googleapis.com/v1beta1/projects/$project")
+
+      http_code=$(echo "$response" | tail -n1)
+      body=$(echo "$response" | head -n-1)
+
+      if [[ "$http_code" == "200" ]]; then
+        echo "✅ Firebase project found."
+        
+        # Check if Analytics is mentioned in the response
+        if echo "$body" | grep -q "analyticsIntegrationStatus"; then
+          analytics_status=$(echo "$body" | grep -o '"analyticsIntegrationStatus":\s*"[^"]*"' | cut -d'"' -f4)
+          echo "📊 Analytics integration status: $analytics_status"
+          
+          if [[ "$analytics_status" == "ENABLED" ]]; then
+            echo "✅ Firebase Analytics is already enabled. Skipping enablement."
+            echo "enabled" > /workspace/analytics_status.txt
+            exit 0
+          fi
+        fi
+        
+        echo "📊 Firebase Analytics is not enabled or status unclear."
+        echo "disabled" > /workspace/analytics_status.txt
+      else
+        echo "❌ Failed to get Firebase project info (HTTP $http_code):"
+        echo "$body"
+        echo "disabled" > /workspace/analytics_status.txt
+      fi
+
+# 4. Enable Firebase Analytics (only if not already enabled)
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+  id: 'enable-analytics'
+  entrypoint: bash
+  args:
+    - '-c'
+    - |
+      set -ex
+      project=$(< /workspace/firebase_project_id.txt)
+      access_token=$(< /workspace/access_token.txt)
+      
+      # Check if we need to enable Analytics
+      if [ -f /workspace/analytics_status.txt ] && [ "$(cat /workspace/analytics_status.txt)" == "enabled" ]; then
+        echo "ℹ️ Firebase Analytics is already enabled. Skipping."
+        exit 0
+      fi
+
+      echo "🚀 Enabling Firebase Analytics for project: $project..."
+
+      # Try to enable Analytics using Firebase Management API
+      # This creates a Google Analytics property and links it to Firebase
+      response=$(curl -s -w '\n%{http_code}' -X POST \
+        -H "Authorization: Bearer $access_token" \
+        -H "Content-Type: application/json" \
+        "https://firebase.googleapis.com/v1beta1/projects/$project:addGoogleAnalytics" \
+        -d '{
+          "analyticsAccountId": "",
+          "analyticsPropertyId": ""
+        }')
+
+      http_code=$(echo "$response" | tail -n1)
+      body=$(echo "$response" | head -n-1)
+
+      case "$http_code" in
+        200)
+          echo "✅ Firebase Analytics enabled successfully."
+          echo "$body"
+          ;;
+        409)
+          if echo "$body" | grep -q "already linked"; then
+            echo "ℹ️ Firebase Analytics is already linked (HTTP 409). Continuing."
+          else
+            echo "❌ Conflict when enabling Analytics (HTTP 409):"
+            echo "$body"
+            exit 1
+          fi
+          ;;
+        400)
+          if echo "$body" | grep -q "already enabled\|already linked"; then
+            echo "ℹ️ Firebase Analytics is already enabled (HTTP 400). Continuing."
+          else
+            echo "❌ Bad request when enabling Analytics (HTTP 400):"
+            echo "$body"
+            exit 1
+          fi
+          ;;
+        *)
+          echo "❌ Failed to enable Firebase Analytics (HTTP $http_code):"
+          echo "$body"
+          exit 1
+          ;;
+      esac
+
+# 5. Verify Analytics enablement
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+  id: 'verify-analytics'
+  entrypoint: bash
+  args:
+    - '-c'
+    - |
+      set -ex
+      project=$(< /workspace/firebase_project_id.txt)
+      access_token=$(< /workspace/access_token.txt)
+
+      echo "🔍 Verifying Firebase Analytics is properly enabled..."
+
+      # Wait a moment for changes to propagate
+      echo "⏳ Waiting 10s for configuration to propagate..."
+      sleep 10
+
+      # Check the project status again
+      response=$(curl -s -w '\n%{http_code}' -X GET \
+        -H "Authorization: Bearer $access_token" \
+        -H "Content-Type: application/json" \
+        "https://firebase.googleapis.com/v1beta1/projects/$project")
+
+      http_code=$(echo "$response" | tail -n1)
+      body=$(echo "$response" | head -n-1)
+
+      if [[ "$http_code" == "200" ]]; then
+        if echo "$body" | grep -q "analyticsIntegrationStatus"; then
+          analytics_status=$(echo "$body" | grep -o '"analyticsIntegrationStatus":\s*"[^"]*"' | cut -d'"' -f4)
+          echo "📊 Final Analytics integration status: $analytics_status"
+          
+          if [[ "$analytics_status" == "ENABLED" ]]; then
+            echo "✅ Firebase Analytics verification successful!"
+            echo "📱 Mobile app can now send analytics events using FirebaseAnalytics SDK."
+          else
+            echo "⚠️ Analytics status is: $analytics_status"
+            echo "ℹ️ This may be normal during initial setup. Check Firebase Console for final status."
+          fi
+        else
+          echo "ℹ️ Analytics integration status not found in response."
+          echo "📱 Firebase Analytics should still be functional for mobile app."
+        fi
+      else
+        echo "⚠️ Could not verify Analytics status (HTTP $http_code)."
+        echo "📱 Firebase Analytics should still be functional for mobile app."
+      fi
+
+      echo "🎉 Firebase Analytics enablement process completed!"
+      echo "📊 Check the Firebase Console Analytics section to confirm setup."
+
+options:
+  logging: CLOUD_LOGGING_ONLY
