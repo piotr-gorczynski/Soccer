@@ -1,12 +1,9 @@
+# deploy_firebase_analytics.yaml
 substitutions:
-  _ENVIRONMENT: 'dev'
+  _ENVIRONMENT: 'dev'   # or test/prod
   _FOLDER_NAME: 'soccer'
-  # GA account that will own the properties (your 345156489)
   _GA_ACCOUNT_ID: "345156489"
-  # Who runs Cloud Build and must be able to create properties under that GA account:
   _GA_GRANT_TO: "cloud-build-sa@org-service-account-001.iam.gserviceaccount.com"
-  # Optional: if you prefer to impersonate a GA-admin service account for the Admin API call
-  # _GA_ADMIN_IMPERSONATE_SA: "ga-admin-sa@org-service-account-001.iam.gserviceaccount.com"
 
 steps:
 # 0) Resolve Firebase project ID & number
@@ -38,7 +35,7 @@ steps:
       gcloud services enable analyticsadmin.googleapis.com --project="$project" || true
       echo "✅ APIs enabled (firebase, analyticsadmin)."
 
-# 2) Prepare tokens (regular and optional-impersonated for GA)
+# 2) Prepare tokens (Firebase + GA)
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
   id: 'tokens'
   entrypoint: bash
@@ -49,15 +46,11 @@ steps:
       # Firebase Management API token
       gcloud auth print-access-token > /workspace/firebase_token.txt
 
-      # Token for Analytics Admin API (needs analytics.edit scope).
-      if [ -n "${_GA_ADMIN_IMPERSONATE_SA:-}" ]; then
-        gcloud auth application-default print-access-token \
-          --impersonate-service-account="${_GA_ADMIN_IMPERSONATE_SA}" \
-          --scopes="https://www.googleapis.com/auth/analytics.edit" > /workspace/ga_token.txt
-      else
-        gcloud auth application-default print-access-token \
-          --scopes="https://www.googleapis.com/auth/analytics.edit" > /workspace/ga_token.txt
-      fi
+      # Analytics Admin API token (explicit scope, using cloud-build-sa itself)
+      set +x
+      gcloud auth application-default print-access-token \
+        --scopes="https://www.googleapis.com/auth/analytics.edit" > /workspace/ga_token.txt
+      set -x
       echo "🔑 Tokens ready."
 
 # 3) If already linked, short-circuit
@@ -78,46 +71,7 @@ steps:
       fi
       echo "ℹ️ Analytics not linked yet. Proceeding…"
 
-# 4) Ensure the Cloud Build SA has GA access (optional convenience)
-- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-  id: 'grant-ga-editor'
-  entrypoint: bash
-  args:
-    - -c
-    - |
-      set -euo pipefail
-      ga_token=$(< /workspace/ga_token.txt)
-      ga_account_id="${_GA_ACCOUNT_ID}"
-      grant_to="${_GA_GRANT_TO}"
-
-      # Try to list userLinks; if forbidden, just warn (you can skip this step if you already granted access in GA UI).
-      list_code="$(curl -sS -o /dev/null -w '%{http_code}' \
-        -H "Authorization: Bearer $ga_token" \
-        "https://analyticsadmin.googleapis.com/v1beta/accounts/$ga_account_id/userLinks?pageSize=2000")"
-      if [ "$list_code" != "200" ]; then
-        echo "⚠️ Could not list GA userLinks (HTTP $list_code). Ensure $grant_to has Editor/Admin on GA account $ga_account_id."
-        exit 0
-      fi
-
-      # Idempotently add Editor role if missing.
-      if ! curl -sS -H "Authorization: Bearer $ga_token" \
-           "https://analyticsadmin.googleapis.com/v1beta/accounts/$ga_account_id/userLinks?pageSize=2000" \
-           | grep -q "\"emailAddress\": *\"$grant_to\""; then
-        payload='{"notifyNewUser":false,"userLink":{"emailAddress":"'"$grant_to"'","directRoles":["roles/editor"]}}'
-        create_code="$(curl -sS -o /dev/null -w '%{http_code}' -X POST \
-          -H "Authorization: Bearer $ga_token" -H "Content-Type: application/json" \
-          -d "$payload" \
-          "https://analyticsadmin.googleapis.com/v1beta/accounts/$ga_account_id/userLinks")"
-        if [ "$create_code" = "200" ] || [ "$create_code" = "201" ]; then
-          echo "✅ Granted GA Editor to $grant_to on account $ga_account_id."
-        else
-          echo "⚠️ Could not grant GA Editor automatically (HTTP $create_code). You can grant in GA UI."
-        fi
-      else
-        echo "ℹ️ $grant_to already has GA access."
-      fi
-
-# 5) CREATE a GA4 property named like the Firebase project (no jq)
+# 4) CREATE a GA4 property named like the Firebase project
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
   id: 'create-ga4-property'
   entrypoint: bash
@@ -128,7 +82,6 @@ steps:
       ga_token=$(< /workspace/ga_token.txt)
       project_id=$(< /workspace/firebase_project_id.txt)
 
-      # Build JSON without jq
       body_json=$(printf '{"displayName":"%s","timeZone":"%s","currencyCode":"%s"}' \
         "$project_id" "Europe/Warsaw" "USD")
 
@@ -146,15 +99,13 @@ steps:
         exit 1
       fi
 
-      # Extract property id without jq (cheap sed/grep)
       echo "$body" > /workspace/created_property.json
       prop_id="$(echo "$body" | sed -n 's/.*"name"[[:space:]]*:[[:space:]]*"properties\/\([0-9]\+\)".*/\1/p')"
       test -n "$prop_id"
       echo "$prop_id" > /workspace/ga_property_id.txt
       echo "✅ Created GA4 property ID: $prop_id"
 
-
-# 6) LINK the Firebase project to that GA4 property
+# 5) LINK the Firebase project to that GA4 property
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
   id: 'link-firebase-to-ga4'
   entrypoint: bash
@@ -175,7 +126,7 @@ steps:
       if [ "$code" != "200" ]; then
         echo "❌ addGoogleAnalytics failed (HTTP $code)"; echo "$body"; exit 1
       fi
-      # Poll the LRO until done
+
       op_name="$(echo "$body" | sed -n 's/.*"name"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1)"
       for _ in $(seq 1 36); do
         op="$(curl -sS -w '\n%{http_code}' -H "Authorization: Bearer $firebase_token" \
@@ -189,12 +140,11 @@ steps:
         fi
         sleep 5
       done
-      # Verify
+
       vcode="$(curl -sS -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $firebase_token" \
         "https://firebase.googleapis.com/v1beta1/projects/$project/analyticsDetails")"
       [ "$vcode" = "200" ] || { echo "❌ Could not verify link (HTTP $vcode)"; exit 1; }
       echo "🎉 Verified: Analytics is linked."
-      # Refs: Firebase addGoogleAnalytics & getAnalyticsDetails. :contentReference[oaicite:2]{index=2}
 
 options:
   logging: CLOUD_LOGGING_ONLY
