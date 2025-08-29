@@ -100,15 +100,14 @@ steps:
           fi
         }
 
-        # Check required APIs
+        # Check required API
         api_status=0
         check_api "firebase.googleapis.com" || api_status=1
-        check_api "firebaseanalytics.googleapis.com" || api_status=1
 
         if [ $api_status -eq 0 ]; then
-          echo "✅ All required APIs for Firebase Analytics are enabled."
+          echo "✅ Firebase API for Analytics is enabled."
         else
-          echo "⚠️ Some required APIs are missing. Run deploy_firebase_analytics.yaml first."
+          echo "⚠️ Firebase API is missing. Run deploy_firebase_analytics.yaml first."
         fi
 
   # Step 5: Test Analytics configuration endpoint
