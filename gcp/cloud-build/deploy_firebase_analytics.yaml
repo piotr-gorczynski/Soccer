@@ -35,7 +35,7 @@ steps:
       gcloud services enable analyticsadmin.googleapis.com --project="$project" || true
       echo "✅ APIs enabled (firebase, analyticsadmin)."
 
-# 2) Prepare tokens (Firebase + GA)
+# 2) Prepare tokens (Firebase + GA with impersonation)
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
   id: 'tokens'
   entrypoint: bash
@@ -46,10 +46,12 @@ steps:
       # Firebase Management API token
       gcloud auth print-access-token > /workspace/firebase_token.txt
 
-      # Analytics Admin API token (explicit scope, using cloud-build-sa itself)
+      # Analytics Admin API token via impersonation (cloud-build-sa itself)
       set +x
       gcloud auth application-default print-access-token \
-        --scopes="https://www.googleapis.com/auth/analytics.edit" > /workspace/ga_token.txt
+        --impersonate-service-account="cloud-build-sa@org-service-account-001.iam.gserviceaccount.com" \
+        --scopes="https://www.googleapis.com/auth/analytics.edit" \
+        > /workspace/ga_token.txt
       set -x
       echo "🔑 Tokens ready."
 
