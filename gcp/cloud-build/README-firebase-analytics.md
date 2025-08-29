@@ -10,13 +10,14 @@ Cloud Build script that enables Firebase Analytics for the project.
 **Features:**
 - Checks if Firebase Analytics is already enabled before attempting to enable it
 - Enables required API (`firebase.googleapis.com`)
-- Creates Google Analytics property and links it to Firebase
+- Creates Google Analytics property under your Analytics account and links it to Firebase
 - Provides comprehensive error handling for various scenarios
 - Verifies successful enablement
 
 **Usage:**
 ```bash
-gcloud builds submit --config gcp/cloud-build/deploy_firebase_analytics.yaml
+gcloud builds submit --config gcp/cloud-build/deploy_firebase_analytics.yaml \
+  --substitutions=_ANALYTICS_ACCOUNT_ID=YOUR_ACCOUNT_ID
 ```
 
 ### `test_firebase_analytics.yaml`
