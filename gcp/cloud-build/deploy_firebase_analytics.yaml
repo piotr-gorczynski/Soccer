@@ -157,44 +157,42 @@ steps:
         echo "✅ Analytics already enabled."; echo enabled > "$status_file"; exit 0
       fi
 
-      analytics_property_id="${_ANALYTICS_PROPERTY_ID"
-      analytics_account_id="${_ANALYTICS_ACCOUNT_ID"
-      echo "🧪 Substitution debug: _ANALYTICS_PROPERTY_ID='${analytics_property_id}' _ANALYTICS_ACCOUNT_ID='${analytics_account_id}'"
+      echo "🧪 Substitution debug: _ANALYTICS_PROPERTY_ID='${_ANALYTICS_PROPERTY_ID}' _ANALYTICS_ACCOUNT_ID='${_ANALYTICS_ACCOUNT_ID}'"
 
       # Require at least one ID – fail hard if missing.
-      if [ -z "$analytics_property_id" ] && [ -z "$analytics_account_id" ]; then
+      if [ -z "${_ANALYTICS_PROPERTY_ID}" ] && [ -z "${_ANALYTICS_ACCOUNT_ID}" ]; then
         echo "❌ No _ANALYTICS_PROPERTY_ID or _ANALYTICS_ACCOUNT_ID provided. Failing build."
         echo "   Set them in the trigger or pass --substitutions when building."
         exit 2
       fi
 
       # Optional preflight: if property provided, verify it’s visible and not already linked.
-      if [ -n "$analytics_property_id" ]; then
+      if [ -n "${_ANALYTICS_PROPERTY_ID}" ]; then
         admin_token="$(gcloud auth application-default print-access-token \
           --scopes=https://www.googleapis.com/auth/analytics.readonly)"
         # Property must exist and be readable
         prop_code="$(curl -sS -o /dev/null -w '%{http_code}' \
           -H "Authorization: Bearer $admin_token" \
-          "https://analyticsadmin.googleapis.com/v1beta/properties/${analytics_property_id}")"
+          "https://analyticsadmin.googleapis.com/v1beta/properties/${_ANALYTICS_PROPERTY_ID}")"
         if [ "$prop_code" != "200" ]; then
-          echo "❌ Analytics Admin API can’t read property ${analytics_property_id} (HTTP $prop_code)."
+          echo "❌ Analytics Admin API can’t read property ${_ANALYTICS_PROPERTY_ID} (HTTP $prop_code)."
           echo "   Ensure the calling principal has GA Editor/Admin on the owning account."
           exit 1
         fi
         # Property must not already have a Firebase link (only 1 allowed)
         links="$(curl -sS \
           -H "Authorization: Bearer $admin_token" \
-          "https://analyticsadmin.googleapis.com/v1beta/properties/${analytics_property_id}/firebaseLinks")"
+          "https://analyticsadmin.googleapis.com/v1beta/properties/${_ANALYTICS_PROPERTY_ID}/firebaseLinks")"
         if echo "$links" | grep -q '"firebaseLinks"'; then
-          echo "❌ GA property ${analytics_property_id} already has a Firebase link."
+          echo "❌ GA property ${_ANALYTICS_PROPERTY_ID} already has a Firebase link."
           echo "   A GA4 property can have at most one FirebaseLink. Use a different property or unlink first."
           exit 1
         fi
-        body_json="{\"analyticsPropertyId\":\"${analytics_property_id}\"}"
-        echo "ℹ️ Will link to existing GA4 property ID: ${analytics_property_id}"
+        body_json="{\"analyticsPropertyId\":\"${_ANALYTICS_PROPERTY_ID}\"}"
+        echo "ℹ️ Will link to existing GA4 property ID: ${_ANALYTICS_PROPERTY_ID}"
       else
-        body_json="{\"analyticsAccountId\":\"${analytics_account_id}\"}"
-        echo "ℹ️ Will create a new GA4 property under GA Account ID: ${analytics_account_id}"
+        body_json="{\"analyticsAccountId\":\"${_ANALYTICS_ACCOUNT_ID}\"}"
+        echo "ℹ️ Will create a new GA4 property under GA Account ID: ${_ANALYTICS_ACCOUNT_ID}"
       fi
 
       # Call addGoogleAnalytics (long-running op)
