@@ -2,6 +2,7 @@
 substitutions:
   _ENVIRONMENT: 'dev'
   _FOLDER_NAME: 'soccer'
+  _ANALYTICS_ACCOUNT_ID: ''
 
 steps:
 # 0. Resolve Firebase project ID & number
@@ -136,15 +137,20 @@ steps:
 
       echo "🚀 Enabling Firebase Analytics for project: $project..."
 
-      # Try to enable Analytics using Firebase Management API
-      # This creates a Google Analytics property and links it to Firebase.
-      # Sending an empty payload allows Firebase to create and link a
-      # property automatically without conflicting fields.
+      analytics_account_id="${_ANALYTICS_ACCOUNT_ID}"
+      if [ -z "$analytics_account_id" ]; then
+        echo "❌ _ANALYTICS_ACCOUNT_ID must be provided."
+        exit 1
+      fi
+
+      # Try to enable Analytics using Firebase Management API. This creates
+      # a Google Analytics property under the specified account and links it
+      # to Firebase.
       response=$(curl -s -w '\n%{http_code}' -X POST \
         -H "Authorization: Bearer $access_token" \
         -H "Content-Type: application/json" \
         "https://firebase.googleapis.com/v1beta1/projects/$project:addGoogleAnalytics" \
-        -d '{}')
+        -d "{\"analyticsAccountId\":\"$analytics_account_id\"}")
 
       http_code=$(echo "$response" | tail -n1)
       body=$(echo "$response" | head -n-1)
