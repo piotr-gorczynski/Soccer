@@ -137,12 +137,18 @@ steps:
 
       echo "🚀 Enabling Firebase Analytics for project: $project..."
       analytics_account_id="${_ANALYTICS_ACCOUNT_ID}"
+
+      # The Firebase Management API requires an existing Google Analytics
+      # account to either link or create a property. Attempting to call the
+      # endpoint without an account ID results in a 400 INVALID_ARGUMENT
+      # response, so fail fast with a clear message.
       if [ -z "$analytics_account_id" ]; then
-        echo "ℹ️ _ANALYTICS_ACCOUNT_ID not provided. Creating new Analytics property."
-        data='{}'
-      else
-        data="{\"analyticsAccountId\":\"$analytics_account_id\"}"
+        echo "❌ _ANALYTICS_ACCOUNT_ID not provided. A Google Analytics account ID is required to enable Firebase Analytics."
+        echo "   Provide the account ID via the _ANALYTICS_ACCOUNT_ID substitution."
+        exit 1
       fi
+
+      data="{\"analyticsAccountId\":\"$analytics_account_id\"}"
 
       # Try to enable Analytics using Firebase Management API. This creates
       # or links a Google Analytics property and associates it with Firebase.
