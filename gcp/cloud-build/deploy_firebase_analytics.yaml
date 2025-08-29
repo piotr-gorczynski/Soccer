@@ -118,7 +118,7 @@ steps:
         echo "disabled" > /workspace/analytics_status.txt
       fi
 
-# 4. Enable / link Google Analytics
+# 4) Enable / link Google Analytics (soft-skip if no IDs provided)
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
   id: 'enable-analytics'
   entrypoint: bash
@@ -127,68 +127,129 @@ steps:
     - |
       set -euo pipefail
 
+      # Inputs prepared by earlier steps
       project="$(< /workspace/firebase_project_id.txt)"
 
-      # Don't echo secrets
-      set +x
+      # Read token without echoing it
       access_token="$(< /workspace/access_token.txt)"
-      set -x
 
-      # Skip if a previous step already wrote "enabled"
-      if [ -f /workspace/analytics_status.txt ] && [ "$(cat /workspace/analytics_status.txt)" = "enabled" ]; then
-        echo "ℹ️ Firebase Analytics is already enabled. Skipping."
+      status_file="/workspace/analytics_status.txt"
+
+      echo "🔎 Checking current Analytics link status for '$project'…"
+      get_resp="$(curl -sS -w '\n%{http_code}' \
+        -H "Authorization: Bearer $access_token" \
+        "https://firebase.googleapis.com/v1beta1/projects/$project/analyticsDetails")"
+      get_code="$(echo "$get_resp" | tail -n1)"
+      get_body="$(echo "$get_resp" | head -n-1)"
+
+      if [ "$get_code" = "200" ]; then
+        echo "✅ Analytics already enabled."
+        echo "enabled" > "$status_file"
         exit 0
+      elif [ "$get_code" = "404" ]; then
+        echo "ℹ️ Analytics not linked yet."
+        echo "disabled" > "$status_file"
+      else
+        echo "⚠️ Unexpected status checking analyticsDetails (HTTP $get_code); proceeding with caution."
       fi
 
-      echo "🚀 Linking Firebase project '$project' with Google Analytics…"
-
+      echo "🚀 Linking Google Analytics…"
       analytics_account_id="${_ANALYTICS_ACCOUNT_ID:-}"
       analytics_property_id="${_ANALYTICS_PROPERTY_ID:-}"
 
       if [ -n "$analytics_property_id" ]; then
-        # Link to an existing GA4 property
         data="{\"analyticsPropertyId\":\"$analytics_property_id\"}"
         echo "ℹ️ Will link to existing GA4 property ID: $analytics_property_id"
       elif [ -n "$analytics_account_id" ]; then
-        # Create a new GA4 property in this GA account and link it
         data="{\"analyticsAccountId\":\"$analytics_account_id\"}"
         echo "ℹ️ Will create a new GA4 property under GA Account ID: $analytics_account_id"
       else
-        echo "❌ No Analytics IDs provided."
-        echo "   Set one of Cloud Build substitutions: _ANALYTICS_PROPERTY_ID (preferred) or _ANALYTICS_ACCOUNT_ID."
-        exit 1
+        echo "ℹ️ No _ANALYTICS_PROPERTY_ID or _ANALYTICS_ACCOUNT_ID provided; leaving Analytics disabled. Skipping."
+        exit 0
       fi
 
-      # Call Management API
-      response="$(curl -sS -w '\n%{http_code}' -X POST \
+      # Call addGoogleAnalytics (returns a long-running operation)
+      post_resp="$(curl -sS -w '\n%{http_code}' -X POST \
         -H "Authorization: Bearer $access_token" \
         -H "Content-Type: application/json" \
         "https://firebase.googleapis.com/v1beta1/projects/$project:addGoogleAnalytics" \
         -d "$data")"
+      post_code="$(echo "$post_resp" | tail -n1)"
+      post_body="$(echo "$post_resp" | head -n-1)"
 
-      http_code="$(echo "$response" | tail -n1)"
-      body="$(echo "$response" | head -n-1)"
-
-      case "$http_code" in
+      # Handle immediate API responses
+      case "$post_code" in
         200)
-          echo "✅ Request accepted. (Long-running operation returned.)"
-          echo "$body"
+          echo "✅ addGoogleAnalytics accepted. Waiting for operation to finish…"
           ;;
         400|409)
-          if echo "$body" | grep -qi "already linked\|already enabled"; then
+          if echo "$post_body" | grep -qi "already linked\|already enabled"; then
             echo "ℹ️ Analytics already linked. Continuing."
+            echo "enabled" > "$status_file"
+            exit 0
           else
-            echo "❌ API error $http_code:"
-            echo "$body"
+            echo "❌ API error $post_code:"
+            echo "$post_body"
             exit 1
           fi
           ;;
         *)
-          echo "❌ Failed (HTTP $http_code):"
-          echo "$body"
+          echo "❌ Failed (HTTP $post_code):"
+          echo "$post_body"
           exit 1
           ;;
       esac
+
+      # Extract operation name from JSON without jq
+      op_name="$(echo "$post_body" | sed -n 's/.*"name"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1)"
+      if [ -z "$op_name" ]; then
+        echo "⚠️ Could not parse operation name; will re-check analyticsDetails instead."
+      else
+        echo "⏳ Operation: $op_name"
+      fi
+
+      # Poll for completion (up to ~3 minutes)
+      attempts=36
+      sleep_secs=5
+      i=0
+      while [ $i -lt $attempts ]; do
+        i=$((i+1))
+        if [ -n "$op_name" ]; then
+          op_resp="$(curl -sS -w '\n%{http_code}' \
+            -H "Authorization: Bearer $access_token" \
+            "https://firebase.googleapis.com/v1beta1/$op_name")"
+          op_code="$(echo "$op_resp" | tail -n1)"
+          op_body="$(echo "$op_resp" | head -n-1)"
+
+          if [ "$op_code" = "200" ] && echo "$op_body" | grep -q '"done": *true'; then
+            if echo "$op_body" | grep -q '"error"'; then
+              echo "❌ Operation finished with error:"
+              echo "$op_body"
+              exit 1
+            fi
+            echo "✅ Operation finished."
+            break
+          fi
+        fi
+        sleep "$sleep_secs"
+      done
+
+      # Final verification
+      final_resp="$(curl -sS -w '\n%{http_code}' \
+        -H "Authorization: Bearer $access_token" \
+        "https://firebase.googleapis.com/v1beta1/projects/$project/analyticsDetails")"
+      final_code="$(echo "$final_resp" | tail -n1)"
+
+      if [ "$final_code" = "200" ]; then
+        echo "🎉 Analytics is now enabled."
+        echo "enabled" > "$status_file"
+        exit 0
+      fi
+
+      echo "⚠️ Could not confirm Analytics enablement (HTTP $final_code). Continuing anyway."
+      # Do not fail the build here; leave status as-is
+      exit 0
+
 
 # 5. Verify Analytics enablement
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
