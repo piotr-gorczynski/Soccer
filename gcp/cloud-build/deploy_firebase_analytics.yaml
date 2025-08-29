@@ -55,11 +55,10 @@ steps:
         fi
       }
 
-      # Enable Firebase APIs required for Analytics
+      # Enable Firebase API required for Analytics
       enable_api "firebase.googleapis.com"
-      enable_api "firebaseanalytics.googleapis.com"
 
-      echo "🎉 All required Firebase Analytics APIs are enabled."
+      echo "🎉 Firebase API for Analytics enabled."
 
 # 2. Generate access token for Firebase Management API calls
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
