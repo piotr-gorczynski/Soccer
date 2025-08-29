@@ -20,8 +20,9 @@ gcloud builds submit --config gcp/cloud-build/deploy_firebase_analytics.yaml \
   --substitutions=_ANALYTICS_ACCOUNT_ID=YOUR_ACCOUNT_ID
 ```
 
-If `_ANALYTICS_ACCOUNT_ID` is omitted, the script will create a new Google
-Analytics property automatically.
+The `_ANALYTICS_ACCOUNT_ID` substitution is **required**. The Firebase
+Management API needs the ID of an existing Google Analytics account to link or
+provision a property for the Firebase project.
 
 ### `test_firebase_analytics.yaml`
 Test script that validates Firebase Analytics configuration.
