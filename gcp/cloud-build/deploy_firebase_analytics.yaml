@@ -136,7 +136,7 @@ steps:
         *)       echo "❌ Failed ($create_code)"; echo "$create_body"; exit 1 ;;
       esac
 
-# 5) Enable / link Google Analytics (with preflight + clear diagnostics)
+# 5) Enable / link Google Analytics (fail-hard)
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
   id: 'enable-analytics'
   entrypoint: bash
@@ -144,114 +144,82 @@ steps:
     - -c
     - |
       set -euo pipefail
-
       project="$(< /workspace/firebase_project_id.txt)"
-      firebase_token="$(< /workspace/access_token.txt)"   # for Firebase Management API
+      firebase_token="$(< /workspace/access_token.txt)"
       status_file="/workspace/analytics_status.txt"
 
       echo "🔎 Checking current Analytics link status for '$project'…"
-      get_resp="$(curl -sS -w '\n%{http_code}' \
-        -H "Authorization: Bearer $firebase_token" \
-        "https://firebase.googleapis.com/v1beta1/projects/$project/analyticsDetails")"
-      get_code="$(echo "$get_resp" | tail -n1)"
-      if [ "$get_code" = "200" ]; then
-        echo "✅ Analytics already enabled."
-        echo "enabled" > "$status_file"; exit 0
+      if curl -sS -o /dev/null -w '%{http_code}' \
+           -H "Authorization: Bearer $firebase_token" \
+           "https://firebase.googleapis.com/v1beta1/projects/$project/analyticsDetails" \
+           | grep -qx 200; then
+        echo "✅ Analytics already enabled."; echo enabled > "$status_file"; exit 0
       fi
 
       analytics_property_id="${_ANALYTICS_PROPERTY_ID:-}"
       analytics_account_id="${_ANALYTICS_ACCOUNT_ID:-}"
-
       echo "🧪 Substitution debug: _ANALYTICS_PROPERTY_ID='${analytics_property_id}' _ANALYTICS_ACCOUNT_ID='${analytics_account_id}'"
 
-      # --- Preflight: verify property visibility + whether it's already linked ---
+      # Require at least one ID – fail hard if missing.
+      if [ -z "$analytics_property_id" ] && [ -z "$analytics_account_id" ]; then
+        echo "❌ No _ANALYTICS_PROPERTY_ID or _ANALYTICS_ACCOUNT_ID provided. Failing build."
+        echo "   Set them in the trigger or pass --substitutions when building."
+        exit 2
+      fi
+
+      # Optional preflight: if property provided, verify it’s visible and not already linked.
       if [ -n "$analytics_property_id" ]; then
-        echo "🧪 Preflight: checking GA property $analytics_property_id via Analytics Admin API…"
-        # Get a token with Analytics scopes (uses Cloud Build SA)
         admin_token="$(gcloud auth application-default print-access-token \
           --scopes=https://www.googleapis.com/auth/analytics.readonly)"
-
-        # 1) Property exists?
-        prop_resp="$(curl -sS -w '\n%{http_code}' \
+        # Property must exist and be readable
+        prop_code="$(curl -sS -o /dev/null -w '%{http_code}' \
           -H "Authorization: Bearer $admin_token" \
           "https://analyticsadmin.googleapis.com/v1beta/properties/${analytics_property_id}")"
-        prop_code="$(echo "$prop_resp" | tail -n1)"
-        prop_body="$(echo "$prop_resp" | head -n-1)"
-
         if [ "$prop_code" != "200" ]; then
-          echo "❌ GA Admin API can't read property $analytics_property_id (HTTP $prop_code)."
-          echo "$prop_body"
-          echo "ℹ️ Ensure the Cloud Build service account has 'Administrator' (or at least 'Editor') on the GA **account** that owns this property."
+          echo "❌ Analytics Admin API can’t read property ${analytics_property_id} (HTTP $prop_code)."
+          echo "   Ensure the calling principal has GA Editor/Admin on the owning account."
           exit 1
         fi
-
-        # Extract owning account and show it
-        account_path="$(echo "$prop_body" | sed -n 's/.*"account"[[:space:]]*:[[:space:]]*"\(accounts\/[0-9]\+\)".*/\1/p')"
-        account_id="${account_path##accounts/}"
-        echo "   • GA account owning the property: ${account_id}"
-
-        # 2) Already linked to a Firebase project?
-        links_resp="$(curl -sS -w '\n%{http_code}' \
+        # Property must not already have a Firebase link (only 1 allowed)
+        links="$(curl -sS \
           -H "Authorization: Bearer $admin_token" \
           "https://analyticsadmin.googleapis.com/v1beta/properties/${analytics_property_id}/firebaseLinks")"
-        links_code="$(echo "$links_resp" | tail -n1)"
-        links_body="$(echo "$links_resp" | head -n-1)"
-
-        if [ "$links_code" = "200" ] && echo "$links_body" | grep -q '"firebaseLinks"'; then
-          # If any link exists, Admin API guarantees there is at most one
-          linked_proj="$(echo "$links_body" | sed -n 's/.*"project"[[:space:]]*:[[:space:]]*"\(projects\/[0-9]\+\)".*/\1/p' | head -n1)"
-          if [ -n "$linked_proj" ]; then
-            echo "❌ This GA property is already linked to Firebase project: ${linked_proj}"
-            echo "   A GA4 property can be linked to only one Firebase project. Use a different GA4 property or unlink it first (GA Admin → Product links → Firebase links)."
-            exit 1
-          fi
+        if echo "$links" | grep -q '"firebaseLinks"'; then
+          echo "❌ GA property ${analytics_property_id} already has a Firebase link."
+          echo "   A GA4 property can have at most one FirebaseLink. Use a different property or unlink first."
+          exit 1
         fi
-      fi
-      # --- End preflight ---
-
-      echo "🚀 Linking Google Analytics…"
-      if [ -n "$analytics_property_id" ]; then
         body_json="{\"analyticsPropertyId\":\"${analytics_property_id}\"}"
         echo "ℹ️ Will link to existing GA4 property ID: ${analytics_property_id}"
-      elif [ -n "$analytics_account_id" ]; then
-        body_json="{\"analyticsAccountId\":\"${analytics_account_id}\"}"
-        echo "ℹ️ Will create a **new** GA4 property under GA Account ID: ${analytics_account_id}"
       else
-        echo "ℹ️ No _ANALYTICS_PROPERTY_ID or _ANALYTICS_ACCOUNT_ID provided; skipping."
-        exit 0
+        body_json="{\"analyticsAccountId\":\"${analytics_account_id}\"}"
+        echo "ℹ️ Will create a new GA4 property under GA Account ID: ${analytics_account_id}"
       fi
 
+      # Call addGoogleAnalytics (long-running op)
       post_resp="$(curl -sS -w '\n%{http_code}' -X POST \
-        -H "Authorization: Bearer $firebase_token" \
-        -H "Content-Type: application/json" \
-        "https://firebase.googleapis.com/v1beta1/projects/$project:addGoogleAnalytics" \
-        -d "$body_json")"
+        -H "Authorization: Bearer $firebase_token" -H "Content-Type: application/json" \
+        -d "$body_json" \
+        "https://firebase.googleapis.com/v1beta1/projects/$project:addGoogleAnalytics")"
       post_code="$(echo "$post_resp" | tail -n1)"
       post_body="$(echo "$post_resp" | head -n-1)"
 
       case "$post_code" in
-        200) echo "✅ addGoogleAnalytics accepted. Waiting for operation to finish…" ;;
+        200) echo "✅ addGoogleAnalytics accepted. Polling…" ;;
         400|409)
           if echo "$post_body" | grep -qi "already linked\|already enabled"; then
-            echo "ℹ️ Analytics already linked. Continuing."
-            echo "enabled" > "$status_file"; exit 0
+            echo "ℹ️ Analytics already linked."; echo enabled > "$status_file"; exit 0
           fi
-          echo "❌ API error $post_code from addGoogleAnalytics:"; echo "$post_body"
-          # Helpful hint for 400: often means the GA property is already linked elsewhere or not visible to caller.
-          echo "ℹ️ If you want to let Firebase create a fresh property instead, set _ANALYTICS_ACCOUNT_ID to the owning account (${account_id:-<unknown>}) and clear _ANALYTICS_PROPERTY_ID."
-          exit 1
-          ;;
+          echo "❌ addGoogleAnalytics returned $post_code:"; echo "$post_body"; exit 1 ;;
         403)
-          echo "❌ Permission denied. The caller must have at least 'Editor' on the GA account/property and Owner on the Firebase project."
+          echo "❌ Permission denied (caller needs GA Editor/Admin on the target property/account AND Firebase project ownership)."
           echo "$post_body"; exit 1 ;;
         *) echo "❌ Failed (HTTP $post_code):"; echo "$post_body"; exit 1 ;;
       esac
 
-      # Poll the LRO
+      # Poll the long-running operation
       op_name="$(echo "$post_body" | sed -n 's/.*"name"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1)"
-      attempts=36; sleep_secs=5; i=0
-      while [ $i -lt $attempts ]; do
-        i=$((i+1))
+      for _ in $(seq 1 36); do
         [ -n "$op_name" ] || break
         op_resp="$(curl -sS -w '\n%{http_code}' -H "Authorization: Bearer $firebase_token" \
           "https://firebase.googleapis.com/v1beta1/$op_name")"
@@ -263,19 +231,20 @@ steps:
           fi
           echo "✅ Operation finished."; break
         fi
-        sleep "$sleep_secs"
+        sleep 5
       done
 
-      # Final verification
-      final_code="$(curl -sS -o /dev/null -w '%{http_code}' \
-        -H "Authorization: Bearer $firebase_token" \
-        "https://firebase.googleapis.com/v1beta1/projects/$project/analyticsDetails")"
-      if [ "$final_code" = "200" ]; then
-        echo "🎉 Analytics is now enabled."; echo "enabled" > "$status_file"; exit 0
+      # Final verification must pass or fail hard
+      if curl -sS -o /dev/null -w '%{http_code}' \
+           -H "Authorization: Bearer $firebase_token" \
+           "https://firebase.googleapis.com/v1beta1/projects/$project/analyticsDetails" \
+           | grep -qx 200; then
+        echo "🎉 Analytics is now enabled."; echo enabled > "$status_file"; exit 0
       fi
-      echo "⚠️ Could not confirm Analytics enablement (HTTP $final_code). Continuing."; exit 0
+      echo "❌ Could not confirm Analytics enablement. Failing."
+      exit 1
 
-# 6) Verify Analytics enablement
+# 6) Verify Analytics enablement (fail-hard)
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
   id: 'verify-analytics'
   entrypoint: bash
@@ -284,25 +253,16 @@ steps:
     - |
       set -euo pipefail
       project="$(< /workspace/firebase_project_id.txt)"
-      access_token="$(< /workspace/access_token.txt)"
+      token="$(< /workspace/access_token.txt)"
       echo "🔍 Verifying Firebase Analytics link for '$project'…"
       sleep 10
-      resp="$(curl -sS -w '\n%{http_code}' -H "Authorization: Bearer $access_token" \
+      code="$(curl -sS -o /dev/null -w '%{http_code}' \
+        -H "Authorization: Bearer $token" \
         "https://firebase.googleapis.com/v1beta1/projects/$project/analyticsDetails")"
-      code="$(echo "$resp" | tail -n1)"; body="$(echo "$resp" | head -n-1)"
       if [ "$code" = "200" ]; then
-        echo "✅ Analytics is linked."
-        prop_id="$(echo "$body" | sed -n 's/.*"id"[[:space:]]*:[[:space:]]*"\([0-9]\+\)".*/\1/p' | head -n1)"
-        acct_id="$(echo "$body" | sed -n 's/.*"analyticsAccountId"[[:space:]]*:[[:space:]]*"\([0-9]\+\)".*/\1/p' | head -n1)"
-        [ -n "$prop_id" ] && echo "   • Property ID: $prop_id"
-        [ -n "$acct_id" ] && echo "   • Account  ID: $acct_id"
-        echo enabled > /workspace/analytics_status.txt
-      elif [ "$code" = "404" ]; then
-        echo "ℹ️ Analytics not linked yet (HTTP 404)."
-        echo disabled > /workspace/analytics_status.txt
-      else
-        echo "⚠️ Could not verify Analytics (HTTP $code):"; echo "$body"
+        echo "✅ Analytics is linked."; exit 0
       fi
+      echo "❌ Analytics not linked (HTTP $code). Failing."; exit 1
 
 options:
   logging: CLOUD_LOGGING_ONLY
