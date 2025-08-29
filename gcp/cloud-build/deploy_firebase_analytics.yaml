@@ -2,8 +2,9 @@
 substitutions:
   _ENVIRONMENT: 'dev'
   _FOLDER_NAME: 'soccer'
-  _ANALYTICS_ACCOUNT_ID: ''
-
+  _ANALYTICS_PROPERTY_ID: "477430796"
+  _GA_GRANT_TO: "cloud-build-sa@org-service-account-001.iam.gserviceaccount.com"
+  
 steps:
 # 0. Resolve Firebase project ID & number
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
