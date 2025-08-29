@@ -3,6 +3,7 @@ substitutions:
   _ENVIRONMENT: 'dev'
   _FOLDER_NAME: 'soccer'
   _ANALYTICS_PROPERTY_ID: "477430796"
+  _ANALYTICS_ACCOUNT_ID: "345156489"
   _GA_GRANT_TO: "cloud-build-sa@org-service-account-001.iam.gserviceaccount.com"
   # _GA_ADMIN_IMPERSONATE_SA: "ga-admin-sa@YOUR-PROJECT.iam.gserviceaccount.com"  # optional
 
@@ -156,8 +157,8 @@ steps:
         echo "✅ Analytics already enabled."; echo enabled > "$status_file"; exit 0
       fi
 
-      analytics_property_id="${_ANALYTICS_PROPERTY_ID:-}"
-      analytics_account_id="${_ANALYTICS_ACCOUNT_ID:-}"
+      analytics_property_id="${_ANALYTICS_PROPERTY_ID"
+      analytics_account_id="${_ANALYTICS_ACCOUNT_ID"
       echo "🧪 Substitution debug: _ANALYTICS_PROPERTY_ID='${analytics_property_id}' _ANALYTICS_ACCOUNT_ID='${analytics_account_id}'"
 
       # Require at least one ID – fail hard if missing.
