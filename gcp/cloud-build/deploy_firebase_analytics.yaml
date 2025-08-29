@@ -118,74 +118,73 @@ steps:
         echo "disabled" > /workspace/analytics_status.txt
       fi
 
-# 4. Enable Firebase Analytics (only if not already enabled)
+# 4. Enable / link Google Analytics
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
   id: 'enable-analytics'
   entrypoint: bash
   args:
-    - '-c'
+    - -c
     - |
-      set -ex
-      project=$(< /workspace/firebase_project_id.txt)
-      access_token=$(< /workspace/access_token.txt)
-      
-      # Check if we need to enable Analytics
-      if [ -f /workspace/analytics_status.txt ] && [ "$(cat /workspace/analytics_status.txt)" == "enabled" ]; then
+      set -euo pipefail
+
+      project="$(< /workspace/firebase_project_id.txt)"
+
+      # Don't echo secrets
+      set +x
+      access_token="$(< /workspace/access_token.txt)"
+      set -x
+
+      # Skip if a previous step already wrote "enabled"
+      if [ -f /workspace/analytics_status.txt ] && [ "$(cat /workspace/analytics_status.txt)" = "enabled" ]; then
         echo "ℹ️ Firebase Analytics is already enabled. Skipping."
         exit 0
       fi
 
-      echo "🚀 Enabling Firebase Analytics for project: $project..."
-      analytics_account_id="${_ANALYTICS_ACCOUNT_ID}"
+      echo "🚀 Linking Firebase project '$project' with Google Analytics…"
 
-      # The Firebase Management API requires an existing Google Analytics
-      # account to either link or create a property. Attempting to call the
-      # endpoint without an account ID results in a 400 INVALID_ARGUMENT
-      # response, so fail fast with a clear message.
-      if [ -z "$analytics_account_id" ]; then
-        echo "❌ _ANALYTICS_ACCOUNT_ID not provided. A Google Analytics account ID is required to enable Firebase Analytics."
-        echo "   Provide the account ID via the _ANALYTICS_ACCOUNT_ID substitution."
+      analytics_account_id="${_ANALYTICS_ACCOUNT_ID:-}"
+      analytics_property_id="${_ANALYTICS_PROPERTY_ID:-}"
+
+      if [ -n "$analytics_property_id" ]; then
+        # Link to an existing GA4 property
+        data="{\"analyticsPropertyId\":\"$analytics_property_id\"}"
+        echo "ℹ️ Will link to existing GA4 property ID: $analytics_property_id"
+      elif [ -n "$analytics_account_id" ]; then
+        # Create a new GA4 property in this GA account and link it
+        data="{\"analyticsAccountId\":\"$analytics_account_id\"}"
+        echo "ℹ️ Will create a new GA4 property under GA Account ID: $analytics_account_id"
+      else
+        echo "❌ No Analytics IDs provided."
+        echo "   Set one of Cloud Build substitutions: _ANALYTICS_PROPERTY_ID (preferred) or _ANALYTICS_ACCOUNT_ID."
         exit 1
       fi
 
-      data="{\"analyticsAccountId\":\"$analytics_account_id\"}"
-
-      # Try to enable Analytics using Firebase Management API. This creates
-      # or links a Google Analytics property and associates it with Firebase.
-      response=$(curl -s -w '\n%{http_code}' -X POST \
+      # Call Management API
+      response="$(curl -sS -w '\n%{http_code}' -X POST \
         -H "Authorization: Bearer $access_token" \
         -H "Content-Type: application/json" \
         "https://firebase.googleapis.com/v1beta1/projects/$project:addGoogleAnalytics" \
-        -d "$data")
+        -d "$data")"
 
-      http_code=$(echo "$response" | tail -n1)
-      body=$(echo "$response" | head -n-1)
+      http_code="$(echo "$response" | tail -n1)"
+      body="$(echo "$response" | head -n-1)"
 
       case "$http_code" in
         200)
-          echo "✅ Firebase Analytics enabled successfully."
+          echo "✅ Request accepted. (Long-running operation returned.)"
           echo "$body"
           ;;
-        409)
-          if echo "$body" | grep -q "already linked"; then
-            echo "ℹ️ Firebase Analytics is already linked (HTTP 409). Continuing."
+        400|409)
+          if echo "$body" | grep -qi "already linked\|already enabled"; then
+            echo "ℹ️ Analytics already linked. Continuing."
           else
-            echo "❌ Conflict when enabling Analytics (HTTP 409):"
-            echo "$body"
-            exit 1
-          fi
-          ;;
-        400)
-          if echo "$body" | grep -q "already enabled\|already linked"; then
-            echo "ℹ️ Firebase Analytics is already enabled (HTTP 400). Continuing."
-          else
-            echo "❌ Bad request when enabling Analytics (HTTP 400):"
+            echo "❌ API error $http_code:"
             echo "$body"
             exit 1
           fi
           ;;
         *)
-          echo "❌ Failed to enable Firebase Analytics (HTTP $http_code):"
+          echo "❌ Failed (HTTP $http_code):"
           echo "$body"
           exit 1
           ;;
