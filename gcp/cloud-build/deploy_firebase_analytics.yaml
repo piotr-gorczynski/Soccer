@@ -117,7 +117,7 @@ steps:
         echo "ℹ️ $grant_to already has GA access."
       fi
 
-# 5) CREATE a GA4 property named like the Firebase project
+# 5) CREATE a GA4 property named like the Firebase project (no jq)
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
   id: 'create-ga4-property'
   entrypoint: bash
@@ -127,27 +127,32 @@ steps:
       set -euxo pipefail
       ga_token=$(< /workspace/ga_token.txt)
       project_id=$(< /workspace/firebase_project_id.txt)
-      # You can adjust timeZone/currency as needed
-      body="$(jq -n --arg name "$project_id" \
-                   --arg tz "Europe/Warsaw" \
-                   --arg cur "USD" \
-                   '{displayName:$name, timeZone:$tz, currencyCode:$cur}')"
+
+      # Build JSON without jq
+      body_json=$(printf '{"displayName":"%s","timeZone":"%s","currencyCode":"%s"}' \
+        "$project_id" "Europe/Warsaw" "USD")
 
       resp="$(curl -sS -w '\n%{http_code}' -X POST \
-        -H "Authorization: Bearer $ga_token" -H "Content-Type: application/json" \
-        -d "$body" \
+        -H "Authorization: Bearer $ga_token" \
+        -H "Content-Type: application/json" \
+        -d "$body_json" \
         "https://analyticsadmin.googleapis.com/v1beta/properties")"
+
       code="$(echo "$resp" | tail -n1)"
       body="$(echo "$resp" | head -n-1)"
       if [ "$code" != "200" ] && [ "$code" != "201" ]; then
-        echo "❌ Failed to create GA4 property (HTTP $code)"; echo "$body"; exit 1
+        echo "❌ Failed to create GA4 property (HTTP $code)"
+        echo "$body"
+        exit 1
       fi
+
+      # Extract property id without jq (cheap sed/grep)
       echo "$body" > /workspace/created_property.json
-      prop_id="$(jq -r '.name | capture("properties/(?<id>[0-9]+)") .id' /workspace/created_property.json)"
+      prop_id="$(echo "$body" | sed -n 's/.*"name"[[:space:]]*:[[:space:]]*"properties\/\([0-9]\+\)".*/\1/p')"
+      test -n "$prop_id"
       echo "$prop_id" > /workspace/ga_property_id.txt
       echo "✅ Created GA4 property ID: $prop_id"
-      # Note: GA Admin API property create endpoint: https://analyticsadmin.googleapis.com/v1beta/properties
-      # Ref: GA Admin properties.create. :contentReference[oaicite:1]{index=1}
+
 
 # 6) LINK the Firebase project to that GA4 property
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
