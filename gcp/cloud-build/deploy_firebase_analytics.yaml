@@ -117,8 +117,114 @@ steps:
         echo "$body"
         echo "disabled" > /workspace/analytics_status.txt
       fi
+# 4) Ensure Cloud Build SA has GA Editor on the target account (uses GA Admin API)
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+  id: 'grant-ga-editor-to-cloudbuild'
+  entrypoint: bash
+  args:
+    - -c
+    - |
+      set -euo pipefail
 
-# 4) Enable / link Google Analytics (soft-skip if no IDs provided)
+      project_id="$(< /workspace/firebase_project_id.txt)"
+      project_num="$(< /workspace/firebase_project_number.txt)"
+      cb_sa="${project_num}@cloudbuild.gserviceaccount.com"
+
+      # GA account/property inputs (at least one required to resolve account)
+      ga_account_id="${_ANALYTICS_ACCOUNT_ID:-}"
+      ga_property_id="${_ANALYTICS_PROPERTY_ID:-}"
+
+      # Service account to impersonate that ALREADY has GA Admin on the account
+      # (Set this as a Cloud Build substitution: _GA_ADMIN_IMPERSONATE_SA=sa-name@project.iam.gserviceaccount.com)
+      ga_admin_sa="${_GA_ADMIN_IMPERSONATE_SA:-}"
+
+      if [ -z "$ga_admin_sa" ]; then
+        echo "❌ _GA_ADMIN_IMPERSONATE_SA not set."
+        echo "   Provide a service account email that already has Admin on your GA account (and allow Cloud Build SA to impersonate it)."
+        exit 1
+      fi
+
+      echo "🔧 Enabling Google Analytics Admin API in project $project_id (idempotent)…"
+      gcloud services enable analyticsadmin.googleapis.com --project="$project_id" >/dev/null
+
+      echo "🔑 Getting access token as $ga_admin_sa (requires iam.serviceAccounts.getAccessToken on that SA)…"
+      access_token="$(gcloud auth print-access-token --impersonate-service-account="$ga_admin_sa")"
+
+      # Resolve GA Account ID if only property was provided
+      if [ -z "$ga_account_id" ] && [ -n "$ga_property_id" ]; then
+        echo "🔎 Resolving GA account from property $ga_property_id…"
+        prop_resp="$(curl -sS -w '\n%{http_code}' \
+          -H "Authorization: Bearer $access_token" \
+          "https://analyticsadmin.googleapis.com/v1beta/properties/$ga_property_id")"
+        prop_code="$(echo "$prop_resp" | tail -n1)"
+        prop_body="$(echo "$prop_resp" | head -n-1)"
+        if [ "$prop_code" != "200" ]; then
+          echo "❌ Cannot look up GA account for property $ga_property_id (HTTP $prop_code):"
+          echo "$prop_body"
+          exit 1
+        fi
+        account_path="$(echo "$prop_body" | sed -n 's/.*"account"[[:space:]]*:[[:space:]]*"\(accounts\/[0-9]\+\)".*/\1/p')"
+        ga_account_id="${account_path##accounts/}"
+      fi
+
+      if [ -z "$ga_account_id" ]; then
+        echo "❌ Provide _ANALYTICS_ACCOUNT_ID or _ANALYTICS_PROPERTY_ID so I can identify the GA account."
+        exit 1
+      fi
+
+      echo "🔐 Ensuring GA account $ga_account_id grants Editor to $cb_sa…"
+
+      # Check if the link already exists
+      list_resp="$(curl -sS -w '\n%{http_code}' \
+        -H "Authorization: Bearer $access_token" \
+        "https://analyticsadmin.googleapis.com/v1beta/accounts/$ga_account_id/userLinks?pageSize=2000")"
+      list_code="$(echo "$list_resp" | tail -n1)"
+      list_body="$(echo "$list_resp" | head -n-1)"
+      if [ "$list_code" != "200" ]; then
+        echo "❌ Unable to list userLinks on account $ga_account_id (HTTP $list_code):"
+        echo "$list_body"
+        exit 1
+      fi
+
+      if echo "$list_body" | grep -q "\"emailAddress\": *\"$cb_sa\""; then
+        echo "ℹ️ Cloud Build SA already has access. Nothing to do."
+        exit 0
+      fi
+
+      echo "➕ Granting Editor on GA account $ga_account_id to $cb_sa…"
+      create_payload="$(cat <<JSON
+      {"notifyNewUser": false, "userLink": { "emailAddress": "$cb_sa", "directRoles": ["roles/editor"] }}
+      JSON
+      )"
+      create_resp="$(curl -sS -w '\n%{http_code}' -X POST \
+        -H "Authorization: Bearer $access_token" \
+        -H "Content-Type: application/json" \
+        "https://analyticsadmin.googleapis.com/v1beta/accounts/$ga_account_id/userLinks" \
+        -d "$create_payload")"
+      create_code="$(echo "$create_resp" | tail -n1)"
+      create_body="$(echo "$create_resp" | head -n-1)"
+
+      case "$create_code" in
+        200|201)
+          echo "✅ Granted Editor to $cb_sa on GA account $ga_account_id."
+          ;;
+        409)
+          echo "ℹ️ User link already exists (409). Continuing."
+          ;;
+        403)
+          echo "❌ Permission denied creating user link."
+          echo "   Ensure $ga_admin_sa is Admin on GA account $ga_account_id AND Cloud Build SA can impersonate it."
+          echo "$create_body"
+          exit 1
+          ;;
+        *)
+          echo "❌ Failed to create user link (HTTP $create_code):"
+          echo "$create_body"
+          exit 1
+          ;;
+      esac
+
+# 5) Enable / link Google Analytics (soft-skip if no IDs provided)
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
   id: 'enable-analytics'
   entrypoint: bash
@@ -251,55 +357,43 @@ steps:
       exit 0
 
 
-# 5. Verify Analytics enablement
+# 6) Verify Analytics enablement
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
   id: 'verify-analytics'
   entrypoint: bash
   args:
-    - '-c'
+    - -c
     - |
-      set -ex
-      project=$(< /workspace/firebase_project_id.txt)
-      access_token=$(< /workspace/access_token.txt)
+      set -euo pipefail
+      project="$(< /workspace/firebase_project_id.txt)"
+      access_token="$(< /workspace/access_token.txt)"
 
-      echo "🔍 Verifying Firebase Analytics is properly enabled..."
-
-      # Wait a moment for changes to propagate
-      echo "⏳ Waiting 10s for configuration to propagate..."
+      echo "🔍 Verifying Firebase Analytics link for '$project'…"
+      # Give the backend a few seconds to settle
       sleep 10
 
-      # Check the project status again
-      response=$(curl -s -w '\n%{http_code}' -X GET \
+      resp="$(curl -sS -w '\n%{http_code}' \
         -H "Authorization: Bearer $access_token" \
-        -H "Content-Type: application/json" \
-        "https://firebase.googleapis.com/v1beta1/projects/$project")
+        "https://firebase.googleapis.com/v1beta1/projects/$project/analyticsDetails")"
+      code="$(echo "$resp" | tail -n1)"
+      body="$(echo "$resp" | head -n-1)"
 
-      http_code=$(echo "$response" | tail -n1)
-      body=$(echo "$response" | head -n-1)
-
-      if [[ "$http_code" == "200" ]]; then
-        if echo "$body" | grep -q "analyticsIntegrationStatus"; then
-          analytics_status=$(echo "$body" | grep -o '"analyticsIntegrationStatus":\s*"[^"]*"' | cut -d'"' -f4)
-          echo "📊 Final Analytics integration status: $analytics_status"
-          
-          if [[ "$analytics_status" == "ENABLED" ]]; then
-            echo "✅ Firebase Analytics verification successful!"
-            echo "📱 Mobile app can now send analytics events using FirebaseAnalytics SDK."
-          else
-            echo "⚠️ Analytics status is: $analytics_status"
-            echo "ℹ️ This may be normal during initial setup. Check Firebase Console for final status."
-          fi
-        else
-          echo "ℹ️ Analytics integration status not found in response."
-          echo "📱 Firebase Analytics should still be functional for mobile app."
-        fi
+      if [ "$code" = "200" ]; then
+        echo "✅ Analytics is linked."
+        # Extract numeric IDs without jq
+        prop_id="$(echo "$body" | sed -n 's/.*"id"[[:space:]]*:[[:space:]]*"\([0-9]\+\)".*/\1/p' | head -n1)"
+        acct_id="$(echo "$body" | sed -n 's/.*"analyticsAccountId"[[:space:]]*:[[:space:]]*"\([0-9]\+\)".*/\1/p' | head -n1)"
+        [ -n "$prop_id" ] && echo "   • Property ID: $prop_id"
+        [ -n "$acct_id" ] && echo "   • Account  ID: $acct_id"
+        echo "enabled" > /workspace/analytics_status.txt
+      elif [ "$code" = "404" ]; then
+        echo "ℹ️ Analytics not linked yet (HTTP 404)."
+        echo "disabled" > /workspace/analytics_status.txt
       else
-        echo "⚠️ Could not verify Analytics status (HTTP $http_code)."
-        echo "📱 Firebase Analytics should still be functional for mobile app."
+        echo "⚠️ Could not verify Analytics (HTTP $code):"
+        echo "$body"
+        # Don't fail the build; leave status as-is
       fi
-
-      echo "🎉 Firebase Analytics enablement process completed!"
-      echo "📊 Check the Firebase Console Analytics section to confirm setup."
 
 options:
   logging: CLOUD_LOGGING_ONLY
