@@ -136,21 +136,21 @@ steps:
       fi
 
       echo "🚀 Enabling Firebase Analytics for project: $project..."
-
       analytics_account_id="${_ANALYTICS_ACCOUNT_ID}"
       if [ -z "$analytics_account_id" ]; then
-        echo "❌ _ANALYTICS_ACCOUNT_ID must be provided."
-        exit 1
+        echo "ℹ️ _ANALYTICS_ACCOUNT_ID not provided. Creating new Analytics property."
+        data='{}'
+      else
+        data="{\"analyticsAccountId\":\"$analytics_account_id\"}"
       fi
 
       # Try to enable Analytics using Firebase Management API. This creates
-      # a Google Analytics property under the specified account and links it
-      # to Firebase.
+      # or links a Google Analytics property and associates it with Firebase.
       response=$(curl -s -w '\n%{http_code}' -X POST \
         -H "Authorization: Bearer $access_token" \
         -H "Content-Type: application/json" \
         "https://firebase.googleapis.com/v1beta1/projects/$project:addGoogleAnalytics" \
-        -d "{\"analyticsAccountId\":\"$analytics_account_id\"}")
+        -d "$data")
 
       http_code=$(echo "$response" | tail -n1)
       body=$(echo "$response" | head -n-1)
