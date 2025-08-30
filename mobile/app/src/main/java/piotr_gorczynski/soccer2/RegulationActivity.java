@@ -23,6 +23,8 @@ public class RegulationActivity extends BaseActivity {
 
     private String tournamentId;
     private String regulationId;
+    private AnalyticsManager analyticsManager;
+    private Button acceptBtn;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -31,11 +33,14 @@ public class RegulationActivity extends BaseActivity {
 
         TextView nameTv = findViewById(R.id.regulationName);
         TextView bodyTv = findViewById(R.id.regulationBody);
-        Button acceptBtn = findViewById(R.id.acceptRegulation);
+        acceptBtn = findViewById(R.id.acceptRegulation);
         Button declineBtn = findViewById(R.id.declineRegulation);
 
         tournamentId = getIntent().getStringExtra("tournamentId");
         regulationId = getIntent().getStringExtra("regulationId");
+        
+        // Get analytics manager from SoccerApp  
+        analyticsManager = ((SoccerApp) getApplicationContext()).getAnalyticsManager();
 
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
                 Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
@@ -128,11 +133,15 @@ public class RegulationActivity extends BaseActivity {
                 Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
                 ": starting acceptAndJoin");
 
+        acceptBtn.setEnabled(false);
+        Toast.makeText(this, R.string.registration_in_progress, Toast.LENGTH_SHORT).show();
+
         if (TextUtils.isEmpty(tournamentId)) {
             Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
                     Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
                     ": empty tournamentId");
             Toast.makeText(this, getString(R.string.tournament_not_found), Toast.LENGTH_LONG).show();
+            acceptBtn.setEnabled(true);
             return;
         }
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -141,6 +150,7 @@ public class RegulationActivity extends BaseActivity {
                     Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
                     ": user not logged-in");
             Toast.makeText(this, getString(R.string.must_be_logged_in), Toast.LENGTH_LONG).show();
+            acceptBtn.setEnabled(true);
             return;
         }
 
@@ -165,21 +175,42 @@ public class RegulationActivity extends BaseActivity {
                         Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
                                 Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
                                 ": joinTournament success");
+                        
+                        // Track successful tournament join
+                        analyticsManager.trackTournamentJoinSuccess(tournamentId);
+                        analyticsManager.addTournamentBreadcrumb("join_success", tournamentId, "regulation_accepted");
+                        
                         Toast.makeText(this, getString(R.string.joined_wait_for_bracket), Toast.LENGTH_SHORT).show();
                         finish();
                     })
                     .addOnFailureListener(e -> {
+                        String errorCode = "unknown";
+                        String errorMessage = e.getMessage();
+                        
                         if (e instanceof FirebaseFunctionsException ffe) {
+                            errorCode = ffe.getCode().name();
                             Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                                     + ": code=" + ffe.getCode()
                                     + "  msg=" + ffe.getMessage()
                                     + "  details=" + ffe.getDetails());
                         }
+                        
+                        // Track tournament join error
+                        analyticsManager.trackTournamentJoinError(tournamentId, errorCode, errorMessage);
+                        analyticsManager.addTournamentBreadcrumb("join_error", tournamentId, "error=" + errorCode + ", msg=" + errorMessage);
+                        
                         Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
                                 Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
                                 ": joinTournament failed", e);
                         Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+                        acceptBtn.setEnabled(true);
                     });
+        }).addOnFailureListener(e -> {
+            Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
+                    Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                    ": token refresh failed", e);
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+            acceptBtn.setEnabled(true);
         });
     }
 }

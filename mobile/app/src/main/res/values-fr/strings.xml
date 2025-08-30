@@ -275,4 +275,29 @@
     <string name="link_account_in_progress">Liaison du compte...</string>
     <string name="account_already_exists_merge">Un compte avec ces identifiants existe deja. Vos donnees actuelles seront preservees et fusionnees.</string>
     <string name="credential_already_associated">Ces identifiants sont deja associes a un autre compte utilisateur.</string>
+    <string name="enter_email_and_password_to_link">Entrez votre e-mail et mot de passe pour lier votre compte anonyme</string>
+    <string name="link_with_email">Lier avec Email</string>
+    <string name="link_with_google">Lier avec Google</string>
+    <string name="link_with_microsoft">Lier avec Microsoft</string>
+    <string name="link_with_facebook">Lier avec Facebook</string>
+
+    <!-- Analytics and User Research Strings -->
+    <string name="signup_decline_dialog_title">Jouer sans compte ?</string>
+    <string name="signup_decline_dialog_message">Aidez-nous à comprendre pourquoi vous préférez ne pas vous inscrire :</string>
+    <string name="decline_reason_offline">Je joue juste hors ligne</string>
+    <string name="decline_reason_privacy">Préoccupations de confidentialité</string>
+    <string name="decline_reason_complicated">Trop compliqué</string>
+    <string name="decline_reason_dont_use_providers">N\'utilise pas Google/Email</string>
+    <string name="decline_reason_other">Autre raison</string>
+    
+    <!-- Anonymous user prompts -->
+    <string name="save_progress_title">Sauvegardez votre progression &amp; pseudonyme</string>
+    <string name="save_progress_message">Liez votre compte pour sauvegarder vos statistiques et rejoindre des tournois !</string>
+    <string name="save_progress_button">Sauvegarder la progression</string>
+    <string name="maybe_later">Peut-être plus tard</string>
+    
+    <!-- In-app messaging for v7/v8 users -->
+    <string name="register_benefits_title">Rejoignez des tournois &amp; participez mondialement !</string>
+    <string name="register_benefits_message">Inscrivez-vous pour sauvegarder votre classement et participer à des tournois avec des joueurs du monde entier.</string>
+    <string name="register_now">S\'inscrire maintenant</string>
 </resources>

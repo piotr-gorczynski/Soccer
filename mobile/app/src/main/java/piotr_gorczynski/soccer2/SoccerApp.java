@@ -60,6 +60,8 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     private DatabaseReference userStatusDbRef;
     private BackendServiceChecker serviceChecker;
     private boolean isBackendAvailable = true; // assume available initially
+    private AnalyticsManager analyticsManager;
+    private RemoteConfigHelper remoteConfigHelper;
 
     /* Creates {state:"online", last_heartbeat:TS} */
     private static Map<String,Object> buildOnline() {
@@ -116,7 +118,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
             if (hasToken && hasAppId) {
                 FacebookSdk.setClientToken(clientToken);
                 FacebookSdk.setApplicationId(getString(appIdRes));
-                FacebookSdk.sdkInitialize(getApplicationContext());
+                FacebookSdk.fullyInitialize();
                 AppEventsLogger.activateApp(this);
                 Log.d(
                         "TAG_Soccer",
@@ -158,11 +160,18 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         // Disable FCM auto-init until a user signs in
         FirebaseMessaging.getInstance().setAutoInitEnabled(false);
 
-        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler());
+        // Set up comprehensive crash handling
+        Thread.setDefaultUncaughtExceptionHandler(new ExceptionHandler(this));
 
 
         // Initialize backend service checker
         serviceChecker = new BackendServiceChecker(this);
+        
+        // Initialize analytics manager for user research
+        analyticsManager = new AnalyticsManager(this);
+        
+        // Initialize Remote Config for A/B testing
+        remoteConfigHelper = new RemoteConfigHelper(this);
         
         // Configure default project ID if needed
         // This could be moved to a configuration activity later
@@ -679,6 +688,22 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
             Log.d("TAG_Soccer", getClass().getSimpleName() + ".loadFacebookClientTokenFromAssets: facebook_client_token asset not found", e);
         }
         return null;
+    }
+    
+    /**
+     * Get the analytics manager instance for tracking user research events
+     * @return AnalyticsManager instance
+     */
+    public AnalyticsManager getAnalyticsManager() {
+        return analyticsManager;
+    }
+    
+    /**
+     * Get the Remote Config helper for A/B testing
+     * @return RemoteConfigHelper instance
+     */
+    public RemoteConfigHelper getRemoteConfigHelper() {
+        return remoteConfigHelper;
     }
 
 

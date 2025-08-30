@@ -3,6 +3,7 @@ package piotr_gorczynski.soccer2;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 import android.widget.TextView;
@@ -18,12 +19,16 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.FirebaseFunctionsException;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class TournamentsActivity extends BaseActivity {
+
+    private AnalyticsManager analyticsManager;
+    private RemoteConfigHelper remoteConfigHelper;
 
     @SuppressLint("NotifyDataSetChanged")
     @Override
@@ -34,6 +39,12 @@ public class TournamentsActivity extends BaseActivity {
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(R.string.tournaments);
+
+        // Get analytics manager from SoccerApp
+        analyticsManager = ((SoccerApp) getApplicationContext()).getAnalyticsManager();
+        
+        // Get Remote Config helper
+        remoteConfigHelper = ((SoccerApp) getApplicationContext()).getRemoteConfigHelper();
 
         // ── RecyclerView ─────────────────────────────────────────────
         RecyclerView registeringList = findViewById(R.id.registeringList);
@@ -145,6 +156,12 @@ public class TournamentsActivity extends BaseActivity {
                     || endedAdapter.getItemCount() > 0;
             emptyText.setVisibility(any ? View.GONE : View.VISIBLE);
 
+            // Track tournament list viewed with analytics
+            analyticsManager.trackTournamentListViewed(
+                    registeringAdapter.getItemCount(),
+                    runningAdapter.getItemCount(),
+                    endedAdapter.getItemCount()
+            );
 
         });
     }
@@ -155,6 +172,29 @@ public class TournamentsActivity extends BaseActivity {
 
         String tid = tournamentDoc.getId();
         String regId = tournamentDoc.getString("regulation");
+        
+        // Check if user is authenticated
+        boolean isAuthenticated = FirebaseAuth.getInstance().getCurrentUser() != null;
+        
+        // Track tournament join start
+        analyticsManager.trackTournamentJoinStart(tid, isAuthenticated);
+        analyticsManager.addTournamentBreadcrumb("join_start", tid, "authenticated=" + isAuthenticated);
+        
+        if (!isAuthenticated) {
+            // Check Remote Config to see if we should show decline dialog
+            if (remoteConfigHelper.shouldShowDeclineDialog()) {
+                // Show signup decline reason dialog for unauthenticated users trying to join tournaments
+                SignupDeclineReasonDialog.show(this, "tournament_join_unauthenticated", analyticsManager, reason -> {
+                    Log.d("TAG_Soccer", "User declined to register for tournament join, reason: " + reason);
+                    // Show registration prompt with A/B tested copy
+                    showRegistrationPrompt(tid);
+                });
+            } else {
+                // Just show registration prompt directly
+                showRegistrationPrompt(tid);
+            }
+            return;
+        }
 
         Intent i = new Intent(this, RegulationActivity.class)
                 .putExtra("tournamentId", tid)
@@ -188,6 +228,30 @@ public class TournamentsActivity extends BaseActivity {
                         Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });
+    }
+    
+    /**
+     * Show registration prompt with A/B tested copy
+     */
+    private void showRegistrationPrompt(String tournamentId) {
+        String title = remoteConfigHelper.getRegistrationTitle(this);
+        String message = remoteConfigHelper.getRegistrationMessage(this);
+        
+        new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(R.string.register_now, (dialog, which) -> {
+                    analyticsManager.addTournamentBreadcrumb("registration_prompt_accepted", tournamentId, "A/B variant: " + remoteConfigHelper.getRegistrationCopyVariant());
+                    
+                    // Open Universal Login Activity
+                    Intent intent = new Intent(this, UniversalLoginActivity.class);
+                    startActivity(intent);
+                })
+                .setNegativeButton(R.string.maybe_later, (dialog, which) -> {
+                    analyticsManager.addTournamentBreadcrumb("registration_prompt_declined", tournamentId, "A/B variant: " + remoteConfigHelper.getRegistrationCopyVariant());
+                    dialog.dismiss();
+                })
+                .show();
     }
 
     @Override
