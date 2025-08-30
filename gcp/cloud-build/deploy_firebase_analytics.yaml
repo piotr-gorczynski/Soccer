@@ -84,7 +84,7 @@ steps:
       fi
       echo "ℹ️ Analytics not linked yet. Proceeding…"
 
-# 4) CREATE a GA4 property named like the Firebase project
+# 4) CREATE a GA4 property named like the Firebase project (with parent)
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
   id: 'create-ga4-property'
   entrypoint: bash
@@ -95,8 +95,8 @@ steps:
       ga_token=$(< /workspace/ga_token.txt)
       project_id=$(< /workspace/firebase_project_id.txt)
 
-      body_json=$(printf '{"displayName":"%s","timeZone":"%s","currencyCode":"%s"}' \
-        "$project_id" "Europe/Warsaw" "USD")
+      body_json=$(printf '{"displayName":"%s","timeZone":"%s","currencyCode":"%s","parent":"accounts/%s"}' \
+        "$project_id" "Europe/Warsaw" "USD" "345156489")
 
       resp="$(curl -sS -w '\n%{http_code}' -X POST \
         -H "Authorization: Bearer $ga_token" \
