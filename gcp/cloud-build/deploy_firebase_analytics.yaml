@@ -6,6 +6,17 @@ substitutions:
   _GA_GRANT_TO: "cloud-build-sa@org-service-account-001.iam.gserviceaccount.com"
 
 steps:
+# (-1) Ensure Analytics Admin API is enabled in the BUILD project (org-service-account-001)
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+  id: 'enable-analyticsadmin-on-build'
+  entrypoint: bash
+  args:
+    - -c
+    - |
+      set -euxo pipefail
+      gcloud services enable analyticsadmin.googleapis.com --project=org-service-account-001 || true
+      echo "✅ Analytics Admin API enabled on build project."
+
 # 0) Resolve Firebase project ID & number
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
   id: 'get-project-info'
@@ -22,7 +33,7 @@ steps:
       gcloud projects describe "$project_id" --format="value(projectNumber)" > /workspace/firebase_project_number.txt
       echo "✅ Found Firebase project: $project_id"
 
-# 1) Enable required APIs
+# 1) Enable required APIs on the target Firebase project
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
   id: 'enable-apis'
   entrypoint: bash
@@ -33,9 +44,9 @@ steps:
       project=$(< /workspace/firebase_project_id.txt)
       gcloud services enable firebase.googleapis.com --project="$project" || true
       gcloud services enable analyticsadmin.googleapis.com --project="$project" || true
-      echo "✅ APIs enabled (firebase, analyticsadmin)."
+      echo "✅ APIs enabled on $project (firebase, analyticsadmin)."
 
-# 2) Prepare tokens (Firebase + GA with impersonation)
+# 2) Prepare tokens (Firebase + GA with impersonation of cloud-build-sa)
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
   id: 'tokens'
   entrypoint: bash
@@ -46,7 +57,7 @@ steps:
       # Firebase Management API token
       gcloud auth print-access-token > /workspace/firebase_token.txt
 
-      # Analytics Admin API token via impersonation (cloud-build-sa itself)
+      # Analytics Admin API token via impersonation (cloud-build-sa itself) with analytics.edit scope
       set +x
       gcloud auth application-default print-access-token \
         --impersonate-service-account="cloud-build-sa@org-service-account-001.iam.gserviceaccount.com" \
