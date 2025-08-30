@@ -26,12 +26,16 @@ public class PickNicknameActivity extends BaseActivity {
     private Button btnConfirm;
     private Toast nickToast;
     private static final int NICK_MAX = 20;
+    private AnalyticsManager analyticsManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("TAG_Soccer","PickNicknameActivity.onCreate entered");
         setContentView(R.layout.activity_pick_nickname);
+
+        // Get analytics manager from SoccerApp
+        analyticsManager = ((SoccerApp) getApplicationContext()).getAnalyticsManager();
 
         editNickname = findViewById(R.id.editNickname);
         btnConfirm = findViewById(R.id.btnConfirmNickname);
@@ -122,6 +126,24 @@ public class PickNicknameActivity extends BaseActivity {
                                   Toast.makeText(PickNicknameActivity.this,
                                           R.string.nickname_saved,
                                           Toast.LENGTH_SHORT).show();
+                                
+                                // Update user properties now that nickname is set
+                                FirebaseAuth auth = FirebaseAuth.getInstance();
+                                if (auth.getCurrentUser() != null) {
+                                    String authMethod = auth.getCurrentUser().isAnonymous() ? "anonymous" : "registered";
+                                    String language = LanguageManager.getCurrentLanguageCode(PickNicknameActivity.this);
+                                    analyticsManager.setUserProperties(authMethod, "9.0", language, true);
+                                }
+                                
+                                // Show anonymous linking prompt if user is anonymous  
+                                if (AnonymousLinkPromptHelper.shouldShowPrompt("pick_nickname")) {
+                                    AnonymousLinkPromptHelper.showSaveProgressPrompt(
+                                        PickNicknameActivity.this, 
+                                        "pick_nickname", 
+                                        analyticsManager
+                                    );
+                                }
+                                          
                                 if (isTaskRoot()) {
                                     startActivity(new Intent(
                                             PickNicknameActivity.this,

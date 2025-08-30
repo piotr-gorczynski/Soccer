@@ -273,4 +273,29 @@
     <string name="link_account_in_progress">Linking account...</string>
     <string name="account_already_exists_merge">An account with these credentials already exists. Your current data will be preserved and merged.</string>
     <string name="credential_already_associated">یہ اسناد پہلے سے ہی کسی اور صارف اکاؤنٹ کے ساتھ منسلک ہے۔</string>
+    <string name="enter_email_and_password_to_link">اپنا گمنام اکاؤنٹ منسلک کرنے کے لیے اپنا ای میل اور پاس ورڈ درج کریں</string>
+    <string name="link_with_email">ای میل کے ساتھ منسلک کریں</string>
+    <string name="link_with_google">گوگل کے ساتھ منسلک کریں</string>
+    <string name="link_with_microsoft">مائیکروسافٹ کے ساتھ منسلک کریں</string>
+    <string name="link_with_facebook">فیس بک کے ساتھ منسلک کریں</string>
+
+    <!-- Analytics and User Research Strings -->
+    <string name="signup_decline_dialog_title">اکاؤنٹ کے بغیر کھیلیں؟</string>
+    <string name="signup_decline_dialog_message">ہمیں یہ سمجھنے میں مدد کریں کہ آپ رجسٹر کیوں نہیں کرنا پسند کرتے:</string>
+    <string name="decline_reason_offline">صرف آف لائن کھیل رہا ہوں</string>
+    <string name="decline_reason_privacy">رازداری کے خدشات</string>
+    <string name="decline_reason_complicated">بہت پیچیدہ</string>
+    <string name="decline_reason_dont_use_providers">گوگل/ای میل استعمال نہیں کرتا</string>
+    <string name="decline_reason_other">دوسری وجہ</string>
+    
+    <!-- Anonymous user prompts -->
+    <string name="save_progress_title">اپنی پیش قدمی &amp; نام محفوظ کریں</string>
+    <string name="save_progress_message">اپنے اعداد و شمار محفوظ کرنے اور ٹورنامنٹ میں شامل ہونے کے لیے اپنا اکاؤنٹ منسلک کریں!</string>
+    <string name="save_progress_button">پیش قدمی محفوظ کریں</string>
+    <string name="maybe_later">شاید بعد میں</string>
+    
+    <!-- In-app messaging for v7/v8 users -->
+    <string name="register_benefits_title">ٹورنامنٹ میں شامل ہوں &amp; عالمی مقابلہ کریں!</string>
+    <string name="register_benefits_message">اپنی درجہ بندی محفوظ کرنے اور دنیا بھر کے کھلاڑیوں کے ساتھ ٹورنامنٹ میں حصہ لینے کے لیے رجسٹر کریں۔</string>
+    <string name="register_now">اب رجسٹر کریں</string>
 </resources>

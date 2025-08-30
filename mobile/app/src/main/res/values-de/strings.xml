@@ -274,4 +274,29 @@
     <string name="link_account_in_progress">Konto wird verknüpft...</string>
     <string name="account_already_exists_merge">Ein Konto mit diesen Anmeldedaten existiert bereits. Ihre aktuellen Daten werden beibehalten und zusammengeführt.</string>
     <string name="credential_already_associated">Diese Anmeldedaten sind bereits mit einem anderen Benutzerkonto verknüpft.</string>
+    <string name="enter_email_and_password_to_link">Geben Sie Ihre E-Mail und Ihr Passwort ein, um Ihr anonymes Konto zu verknüpfen</string>
+    <string name="link_with_email">Mit E-Mail verknüpfen</string>
+    <string name="link_with_google">Mit Google verknüpfen</string>
+    <string name="link_with_microsoft">Mit Microsoft verknüpfen</string>
+    <string name="link_with_facebook">Mit Facebook verknüpfen</string>
+
+    <!-- Analytics and User Research Strings -->
+    <string name="signup_decline_dialog_title">Ohne Konto spielen?</string>
+    <string name="signup_decline_dialog_message">Helfen Sie uns zu verstehen, warum Sie sich nicht registrieren möchten:</string>
+    <string name="decline_reason_offline">Spiele nur offline</string>
+    <string name="decline_reason_privacy">Datenschutzbedenken</string>
+    <string name="decline_reason_complicated">Zu kompliziert</string>
+    <string name="decline_reason_dont_use_providers">Nutze Google/E-Mail nicht</string>
+    <string name="decline_reason_other">Anderer Grund</string>
+    
+    <!-- Anonymous user prompts -->
+    <string name="save_progress_title">Speichern Sie Ihren Fortschritt &amp; Spitznamen</string>
+    <string name="save_progress_message">Verknüpfen Sie Ihr Konto, um Ihre Statistiken zu speichern und an Turnieren teilzunehmen!</string>
+    <string name="save_progress_button">Fortschritt speichern</string>
+    <string name="maybe_later">Vielleicht später</string>
+    
+    <!-- In-app messaging for v7/v8 users -->
+    <string name="register_benefits_title">Turnieren beitreten &amp; global konkurrieren!</string>
+    <string name="register_benefits_message">Registrieren Sie sich, um Ihr Ranking zu speichern und an Turnieren mit Spielern weltweit teilzunehmen.</string>
+    <string name="register_now">Jetzt registrieren</string>
 </resources>

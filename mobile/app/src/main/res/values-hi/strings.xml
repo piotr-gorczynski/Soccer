@@ -273,4 +273,29 @@
     <string name="link_account_in_progress">Linking account...</string>
     <string name="account_already_exists_merge">An account with these credentials already exists. Your current data will be preserved and merged.</string>
     <string name="credential_already_associated">यह प्रमाण पत्र पहले से ही एक अलग उपयोगकर्ता खाते से जुड़ा हुआ है।</string>
+    <string name="enter_email_and_password_to_link">अपना गुमनाम खाता लिंक करने के लिए अपना ईमेल और पासवर्ड दर्ज करें</string>
+    <string name="link_with_email">ईमेल के साथ लिंक करें</string>
+    <string name="link_with_google">गूगल के साथ लिंक करें</string>
+    <string name="link_with_microsoft">माइक्रोसॉफ्ट के साथ लिंक करें</string>
+    <string name="link_with_facebook">फेसबुक के साथ लिंक करें</string>
+
+    <!-- Analytics and User Research Strings -->
+    <string name="signup_decline_dialog_title">खाता के बिना खेलें?</string>
+    <string name="signup_decline_dialog_message">आप पंजीकरण नहीं करना क्यों पसंद करते हैं, यह समझने में हमारी मदद करें:</string>
+    <string name="decline_reason_offline">बस ऑफलाइन खेल रहा हूं</string>
+    <string name="decline_reason_privacy">गोपनीयता की चिंता</string>
+    <string name="decline_reason_complicated">बहुत जटिल</string>
+    <string name="decline_reason_dont_use_providers">गूगल/ईमेल का उपयोग नहीं करता</string>
+    <string name="decline_reason_other">अन्य कारण</string>
+    
+    <!-- Anonymous user prompts -->
+    <string name="save_progress_title">अपनी प्रगति &amp; उपनाम सेव करें</string>
+    <string name="save_progress_message">अपनी आंकड़े सेव करने और टूर्नामेंट में शामिल होने के लिए अपना खाता लिंक करें!</string>
+    <string name="save_progress_button">प्रगति सेव करें</string>
+    <string name="maybe_later">शायद बाद में</string>
+    
+    <!-- In-app messaging for v7/v8 users -->
+    <string name="register_benefits_title">टूर्नामेंट में शामिल हों &amp; विश्वव्यापी प्रतिस्पर्धा करें!</string>
+    <string name="register_benefits_message">अपनी रैंकिंग सेव करने और दुनिया भर के खिलाड़ियों के साथ टूर्नामेंट में भाग लेने के लिए पंजीकरण करें।</string>
+    <string name="register_now">अब पंजीकरण करें</string>
 </resources>

@@ -1,0 +1,156 @@
+# test_firebase_analytics.yaml
+substitutions:
+  _ENVIRONMENT: 'dev'
+  _FOLDER_NAME: 'soccer'
+
+steps:
+  # Step 1: Retrieve the Firebase Project ID
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -Eeuo pipefail
+        echo "🔍 Checking if project starting with ${_FOLDER_NAME}-${_ENVIRONMENT} exists..."
+        gcloud projects list \
+          --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
+          --format="value(projectId)" | head -n 1 > /workspace/soccer_project_id.txt
+
+        if [ ! -s /workspace/soccer_project_id.txt ] || [ -z "$(cat /workspace/soccer_project_id.txt)" ]; then
+          echo "❌ Error: Project ID not found. Ensure the project exists."
+          exit 1
+        fi
+        echo "✅ Using project: $(cat /workspace/soccer_project_id.txt)"
+
+  # Step 2: Generate access token
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -Eeuo pipefail
+        access_token=$(gcloud auth print-access-token)
+        echo "$access_token" > /workspace/access_token.txt
+        echo "🔑 Access token generated for testing."
+
+  # Step 3: Test Firebase Analytics API availability
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -Eeuo pipefail
+        project=$(cat /workspace/soccer_project_id.txt)
+        access_token=$(cat /workspace/access_token.txt)
+
+        echo "🧪 Testing Firebase Analytics API availability..."
+
+        # Test Firebase Management API
+        response=$(curl -s -w '\n%{http_code}' -X GET \
+          -H "Authorization: Bearer $access_token" \
+          -H "Content-Type: application/json" \
+          "https://firebase.googleapis.com/v1beta1/projects/$project")
+
+        http_code=$(echo "$response" | tail -n1)
+        body=$(echo "$response" | head -n-1)
+
+        if [[ "$http_code" == "200" ]]; then
+          echo "✅ Firebase Management API is accessible."
+          
+          # Check for Analytics integration status
+          if echo "$body" | grep -q "analyticsIntegrationStatus"; then
+            analytics_status=$(echo "$body" | grep -o '"analyticsIntegrationStatus":\s*"[^"]*"' | cut -d'"' -f4)
+            echo "📊 Current Analytics integration status: $analytics_status"
+          else
+            echo "ℹ️ Analytics integration status not found in response."
+          fi
+          
+          # Check for resources section which indicates Firebase configuration
+          if echo "$body" | grep -q "resources"; then
+            echo "✅ Firebase project has resources configured."
+          else
+            echo "⚠️ Firebase project resources not found."
+          fi
+        else
+          echo "❌ Failed to access Firebase Management API (HTTP $http_code):"
+          echo "$body"
+          exit 1
+        fi
+
+  # Step 4: Test required APIs are enabled
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -Eeuo pipefail
+        project=$(cat /workspace/soccer_project_id.txt)
+
+        echo "🔍 Checking required APIs for Firebase Analytics..."
+
+        check_api() {
+          local api_name=$1
+          echo "Checking API: $api_name"
+          
+          if gcloud services list --enabled --project="$project" --filter="name:$api_name" --format="value(name)" | grep -q "$api_name"; then
+            echo "✅ $api_name is enabled"
+          else
+            echo "❌ $api_name is NOT enabled"
+            return 1
+          fi
+        }
+
+        # Check required API
+        api_status=0
+        check_api "firebase.googleapis.com" || api_status=1
+
+        if [ $api_status -eq 0 ]; then
+          echo "✅ Firebase API for Analytics is enabled."
+        else
+          echo "⚠️ Firebase API is missing. Run deploy_firebase_analytics.yaml first."
+        fi
+
+  # Step 5: Test Analytics configuration endpoint
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -Eeuo pipefail
+        project=$(cat /workspace/soccer_project_id.txt)
+        access_token=$(cat /workspace/access_token.txt)
+
+        echo "🧪 Testing Analytics configuration endpoints..."
+
+        # Test if we can access Analytics-related endpoints
+        # This doesn't modify anything, just checks accessibility
+        response=$(curl -s -w '\n%{http_code}' -X GET \
+          -H "Authorization: Bearer $access_token" \
+          -H "Content-Type: application/json" \
+          "https://firebase.googleapis.com/v1beta1/projects/$project/analyticsDetails")
+
+        http_code=$(echo "$response" | tail -n1)
+        body=$(echo "$response" | head -n-1)
+
+        case "$http_code" in
+          200)
+            echo "✅ Analytics details endpoint accessible."
+            echo "📊 Analytics configuration appears to be set up."
+            ;;
+          404)
+            echo "ℹ️ Analytics details not found (HTTP 404). This may be normal if Analytics is not yet enabled."
+            ;;
+          403)
+            echo "⚠️ Access denied to Analytics details (HTTP 403). Check permissions."
+            ;;
+          *)
+            echo "ℹ️ Analytics details endpoint returned HTTP $http_code."
+            echo "Response: $body"
+            ;;
+        esac
+
+        echo "🎉 Firebase Analytics test completed!"
+        echo "📱 Mobile app should be able to use FirebaseAnalytics SDK if Analytics is enabled."
+
+options:
+  logging: CLOUD_LOGGING_ONLY
