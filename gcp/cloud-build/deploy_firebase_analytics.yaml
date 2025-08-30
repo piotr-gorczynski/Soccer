@@ -84,26 +84,36 @@ steps:
       fi
       echo "ℹ️ Analytics not linked yet. Proceeding…"
 
-# 4) FIND-OR-CREATE GA4 property named like the Firebase project
+# 4) USE-EXISTING-LINK or FIND/CREATE GA4 property
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-  id: 'find-or-create-ga4-property'
+  id: 'resolve-ga4-property-id'
   entrypoint: bash
   args:
     - -c
     - |
       set -euxo pipefail
       ga_token=$(< /workspace/ga_token.txt)
+      firebase_token=$(< /workspace/firebase_token.txt)
       project_id=$(< /workspace/firebase_project_id.txt)
       account_id="345156489"
 
-      # 4a) Try to find an existing property under the GA account with matching displayName
+      # 4a) If Firebase is already linked, reuse that property and exit
+      details="$(curl -sS -H "Authorization: Bearer $firebase_token" \
+        "https://firebase.googleapis.com/v1beta1/projects/$project_id/analyticsDetails" || true)"
+      linked_prop_id="$(echo "$details" | tr -d '\n' \
+        | sed -n 's/.*"analyticsProperty"[[:space:]]*:[[:space:]]*{[^}]*"id"[[:space:]]*:[[:space:]]*"\([0-9]\+\)".*/\1/p')"
+
+      if [ -n "$linked_prop_id" ]; then
+        echo "$linked_prop_id" > /workspace/ga_property_id.txt
+        echo "ℹ️ Firebase already linked to GA4 property $linked_prop_id — will reuse it."
+        exit 0
+      fi
+
+      # 4b) Not linked yet → try to find a property with the same displayName under the GA account
       list_resp="$(curl -sS -H "Authorization: Bearer $ga_token" \
         "https://analyticsadmin.googleapis.com/v1beta/properties?filter=parent:accounts/${account_id}&pageSize=200")"
-      # naive parse: look for an object where "displayName":"$project_id" and grab properties/<id>
-      found_prop_id="$(echo "$list_resp" | awk -v n="$project_id" '
-        match($0, /"name"\s*:\s*"properties\/[0-9]+"/) { name=substr($0, RSTART, RLENGTH) }
-        match($0, /"displayName"\s*:\s*"[^"]+"/) { dn=substr($0, RSTART, RLENGTH) ; gsub(/"displayName"\s*:\s*"/,"",dn); gsub(/"$/,"",dn); if (dn==n && name!="") { gsub(/"name"\s*:\s*"properties\//,"",name); gsub(/"/,"",name); print name; exit } }
-      ')"
+      found_prop_id="$(echo "$list_resp" | tr -d '\n' \
+        | sed -n "s/.*{[^}]*\"name\":\"properties\/\\([0-9]\\+\\)\"[^}]*\"displayName\":\"${project_id}\"[^}]*}.*/\\1/p")"
 
       if [ -n "$found_prop_id" ]; then
         echo "$found_prop_id" > /workspace/ga_property_id.txt
@@ -111,7 +121,7 @@ steps:
         exit 0
       fi
 
-      # 4b) Not found → create it
+      # 4c) Create a new property (only if no link and none found)
       body_json=$(printf '{"displayName":"%s","timeZone":"%s","currencyCode":"%s","parent":"accounts/%s"}' \
         "$project_id" "Europe/Warsaw" "USD" "$account_id")
 
@@ -128,6 +138,7 @@ steps:
       test -n "$prop_id"
       echo "$prop_id" > /workspace/ga_property_id.txt
       echo "✅ Created GA4 property ID: $prop_id"
+
 
 # 5) LINK-IF-NEEDED the Firebase project to that GA4 property (idempotent + robust parsing)
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
