@@ -129,7 +129,7 @@ steps:
       echo "$prop_id" > /workspace/ga_property_id.txt
       echo "✅ Created GA4 property ID: $prop_id"
 
-# 5) LINK-IF-NEEDED the Firebase project to that GA4 property (idempotent)
+# 5) LINK-IF-NEEDED the Firebase project to that GA4 property (idempotent + robust parsing)
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
   id: 'link-firebase-to-ga4-idempotent'
   entrypoint: bash
@@ -140,32 +140,33 @@ steps:
       project=$(< /workspace/firebase_project_id.txt)
       firebase_token=$(< /workspace/firebase_token.txt)
       target_prop_id=$(< /workspace/ga_property_id.txt)
+      force="${_FORCE_RELINK:-false}"
 
-      # Check current analyticsDetails
+      # Read current analyticsDetails and robustly extract the linked GA property id (if any)
       details="$(curl -sS -H "Authorization: Bearer $firebase_token" \
         "https://firebase.googleapis.com/v1beta1/projects/$project/analyticsDetails" || true)"
-      current_prop_id="$(echo "$details" | sed -n 's/.*"analyticsProperty"[[:space:]]*:[[:space:]]*{[^}]*"id"[[:space:]]*:[[:space:]]*"\([0-9]\+\)".*/\1/p')"
+      current_prop_id="$(echo "$details" | tr -d '\n' \
+        | sed -n 's/.*"analyticsProperty"[[:space:]]*:[[:space:]]*{[^}]*"id"[[:space:]]*:[[:space:]]*"\([0-9]\+\)".*/\1/p')"
 
       if [ -n "$current_prop_id" ]; then
         if [ "$current_prop_id" = "$target_prop_id" ]; then
-          echo "✅ Already linked to property $target_prop_id. Nothing to do."
+          echo "✅ Already linked to GA4 property $target_prop_id. Nothing to do."
           exit 0
         fi
 
-        # Different property is linked
-        if [ "${_FORCE_RELINK:-false}" = "true" ]; then
-          echo "⚠️ Different property ($current_prop_id) linked. Forcing relink to $target_prop_id…"
-          # Remove current link
+        if [ "$force" = "true" ]; then
+          echo "⚠️ Linked to a different property ($current_prop_id). Forcing relink to $target_prop_id…"
           rem_body="{\"analyticsPropertyId\":\"${current_prop_id}\"}"
           rem_resp="$(curl -sS -w '\n%{http_code}' -X POST \
             -H "Authorization: Bearer $firebase_token" -H "Content-Type: application/json" \
             -d "$rem_body" \
             "https://firebase.googleapis.com/v1beta1/projects/$project:removeGoogleAnalytics")"
-          rem_code="$(echo "$rem_resp" | tail -n1)"; rem_body_out="$(echo "$rem_resp" | head -n-1)"
+          rem_code="$(echo "$rem_resp" | tail -n1)"
+          rem_body_out="$(echo "$rem_resp" | head -n-1)"
           [ "$rem_code" = "200" ] || { echo "❌ removeGoogleAnalytics failed ($rem_code)"; echo "$rem_body_out"; exit 1; }
         else
-          echo "❌ Firebase project is already linked to GA property $current_prop_id."
-          echo "   Set _FORCE_RELINK=true to unlink and relink to $target_prop_id (will drop the old link)."
+          echo "❌ Firebase project is linked to GA property $current_prop_id already."
+          echo "   If you want to move it to $target_prop_id, rerun with _FORCE_RELINK=true"
           exit 2
         fi
       fi
@@ -176,19 +177,22 @@ steps:
         -H "Authorization: Bearer $firebase_token" -H "Content-Type: application/json" \
         -d "$add_body" \
         "https://firebase.googleapis.com/v1beta1/projects/$project:addGoogleAnalytics")"
-      code="$(echo "$post" | tail -n1)"; body="$(echo "$post" | head -n-1)"
+      code="$(echo "$post" | tail -n1)"
+      body="$(echo "$post" | head -n-1)"
       [ "$code" = "200" ] || { echo "❌ addGoogleAnalytics failed ($code)"; echo "$body"; exit 1; }
 
-      # Poll LRO
+      # Poll the long-running operation
       op_name="$(echo "$body" | sed -n 's/.*"name"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1)"
       for _ in $(seq 1 36); do
-        op="$(curl -sS -w '\n%{http_code}' -H "Authorization: Bearer $firebase_token" "https://firebase.googleapis.com/v1beta1/$op_name")"
+        op="$(curl -sS -w '\n%{http_code}' -H "Authorization: Bearer $firebase_token" \
+          "https://firebase.googleapis.com/v1beta1/$op_name")"
         oc="$(echo "$op" | tail -n1)"; ob="$(echo "$op" | head -n-1)"
         if [ "$oc" = "200" ] && echo "$ob" | grep -q '"done": *true'; then
           if echo "$ob" | grep -q '"error"'; then
-            echo "❌ Link op finished with error:"; echo "$ob"; exit 1
+            echo "❌ Link operation finished with error:"; echo "$ob"; exit 1
           fi
-          echo "✅ Link completed."; break
+          echo "✅ Link completed."
+          break
         fi
         sleep 5
       done
