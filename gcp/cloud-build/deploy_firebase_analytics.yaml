@@ -84,9 +84,9 @@ steps:
       fi
       echo "ℹ️ Analytics not linked yet. Proceeding…"
 
-# 4) CREATE a GA4 property named like the Firebase project (with parent)
+# 4) FIND-OR-CREATE GA4 property named like the Firebase project
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-  id: 'create-ga4-property'
+  id: 'find-or-create-ga4-property'
   entrypoint: bash
   args:
     - -c
@@ -94,33 +94,44 @@ steps:
       set -euxo pipefail
       ga_token=$(< /workspace/ga_token.txt)
       project_id=$(< /workspace/firebase_project_id.txt)
+      account_id="345156489"
 
+      # 4a) Try to find an existing property under the GA account with matching displayName
+      list_resp="$(curl -sS -H "Authorization: Bearer $ga_token" \
+        "https://analyticsadmin.googleapis.com/v1beta/properties?filter=parent:accounts/${account_id}&pageSize=200")"
+      # naive parse: look for an object where "displayName":"$project_id" and grab properties/<id>
+      found_prop_id="$(echo "$list_resp" | awk -v n="$project_id" '
+        match($0, /"name"\s*:\s*"properties\/[0-9]+"/) { name=substr($0, RSTART, RLENGTH) }
+        match($0, /"displayName"\s*:\s*"[^"]+"/) { dn=substr($0, RSTART, RLENGTH) ; gsub(/"displayName"\s*:\s*"/,"",dn); gsub(/"$/,"",dn); if (dn==n && name!="") { gsub(/"name"\s*:\s*"properties\//,"",name); gsub(/"/,"",name); print name; exit } }
+      ')"
+
+      if [ -n "$found_prop_id" ]; then
+        echo "$found_prop_id" > /workspace/ga_property_id.txt
+        echo "ℹ️ Reusing existing GA4 property ID: $found_prop_id"
+        exit 0
+      fi
+
+      # 4b) Not found → create it
       body_json=$(printf '{"displayName":"%s","timeZone":"%s","currencyCode":"%s","parent":"accounts/%s"}' \
-        "$project_id" "Europe/Warsaw" "USD" "345156489")
+        "$project_id" "Europe/Warsaw" "USD" "$account_id")
 
       resp="$(curl -sS -w '\n%{http_code}' -X POST \
-        -H "Authorization: Bearer $ga_token" \
-        -H "Content-Type: application/json" \
+        -H "Authorization: Bearer $ga_token" -H "Content-Type: application/json" \
         -d "$body_json" \
         "https://analyticsadmin.googleapis.com/v1beta/properties")"
-
       code="$(echo "$resp" | tail -n1)"
       body="$(echo "$resp" | head -n-1)"
       if [ "$code" != "200" ] && [ "$code" != "201" ]; then
-        echo "❌ Failed to create GA4 property (HTTP $code)"
-        echo "$body"
-        exit 1
+        echo "❌ Failed to create GA4 property (HTTP $code)"; echo "$body"; exit 1
       fi
-
-      echo "$body" > /workspace/created_property.json
       prop_id="$(echo "$body" | sed -n 's/.*"name"[[:space:]]*:[[:space:]]*"properties\/\([0-9]\+\)".*/\1/p')"
       test -n "$prop_id"
       echo "$prop_id" > /workspace/ga_property_id.txt
       echo "✅ Created GA4 property ID: $prop_id"
 
-# 5) LINK the Firebase project to that GA4 property
+# 5) LINK-IF-NEEDED the Firebase project to that GA4 property (idempotent)
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-  id: 'link-firebase-to-ga4'
+  id: 'link-firebase-to-ga4-idempotent'
   entrypoint: bash
   args:
     - -c
@@ -128,36 +139,65 @@ steps:
       set -euxo pipefail
       project=$(< /workspace/firebase_project_id.txt)
       firebase_token=$(< /workspace/firebase_token.txt)
-      ga_property_id=$(< /workspace/ga_property_id.txt)
+      target_prop_id=$(< /workspace/ga_property_id.txt)
 
-      body_json="{\"analyticsPropertyId\":\"${ga_property_id}\"}"
-      post="$(curl -sS -w '\n%{http_code}' -X POST \
-        -H "Authorization: Bearer $firebase_token" -H "Content-Type: application/json" \
-        -d "$body_json" \
-        "https://firebase.googleapis.com/v1beta1/projects/$project:addGoogleAnalytics")"
-      code="$(echo "$post" | tail -n1)"; body="$(echo "$post" | head -n-1)"
-      if [ "$code" != "200" ]; then
-        echo "❌ addGoogleAnalytics failed (HTTP $code)"; echo "$body"; exit 1
+      # Check current analyticsDetails
+      details="$(curl -sS -H "Authorization: Bearer $firebase_token" \
+        "https://firebase.googleapis.com/v1beta1/projects/$project/analyticsDetails" || true)"
+      current_prop_id="$(echo "$details" | sed -n 's/.*"analyticsProperty"[[:space:]]*:[[:space:]]*{[^}]*"id"[[:space:]]*:[[:space:]]*"\([0-9]\+\)".*/\1/p')"
+
+      if [ -n "$current_prop_id" ]; then
+        if [ "$current_prop_id" = "$target_prop_id" ]; then
+          echo "✅ Already linked to property $target_prop_id. Nothing to do."
+          exit 0
+        fi
+
+        # Different property is linked
+        if [ "${_FORCE_RELINK:-false}" = "true" ]; then
+          echo "⚠️ Different property ($current_prop_id) linked. Forcing relink to $target_prop_id…"
+          # Remove current link
+          rem_body="{\"analyticsPropertyId\":\"${current_prop_id}\"}"
+          rem_resp="$(curl -sS -w '\n%{http_code}' -X POST \
+            -H "Authorization: Bearer $firebase_token" -H "Content-Type: application/json" \
+            -d "$rem_body" \
+            "https://firebase.googleapis.com/v1beta1/projects/$project:removeGoogleAnalytics")"
+          rem_code="$(echo "$rem_resp" | tail -n1)"; rem_body_out="$(echo "$rem_resp" | head -n-1)"
+          [ "$rem_code" = "200" ] || { echo "❌ removeGoogleAnalytics failed ($rem_code)"; echo "$rem_body_out"; exit 1; }
+        else
+          echo "❌ Firebase project is already linked to GA property $current_prop_id."
+          echo "   Set _FORCE_RELINK=true to unlink and relink to $target_prop_id (will drop the old link)."
+          exit 2
+        fi
       fi
 
+      # Add link to target property
+      add_body="{\"analyticsPropertyId\":\"${target_prop_id}\"}"
+      post="$(curl -sS -w '\n%{http_code}' -X POST \
+        -H "Authorization: Bearer $firebase_token" -H "Content-Type: application/json" \
+        -d "$add_body" \
+        "https://firebase.googleapis.com/v1beta1/projects/$project:addGoogleAnalytics")"
+      code="$(echo "$post" | tail -n1)"; body="$(echo "$post" | head -n-1)"
+      [ "$code" = "200" ] || { echo "❌ addGoogleAnalytics failed ($code)"; echo "$body"; exit 1; }
+
+      # Poll LRO
       op_name="$(echo "$body" | sed -n 's/.*"name"[[:space:]]*:[[:space:]]*"\([^"]\+\)".*/\1/p' | head -n1)"
       for _ in $(seq 1 36); do
-        op="$(curl -sS -w '\n%{http_code}' -H "Authorization: Bearer $firebase_token" \
-              "https://firebase.googleapis.com/v1beta1/$op_name")"
+        op="$(curl -sS -w '\n%{http_code}' -H "Authorization: Bearer $firebase_token" "https://firebase.googleapis.com/v1beta1/$op_name")"
         oc="$(echo "$op" | tail -n1)"; ob="$(echo "$op" | head -n-1)"
         if [ "$oc" = "200" ] && echo "$ob" | grep -q '"done": *true'; then
           if echo "$ob" | grep -q '"error"'; then
-            echo "❌ Link operation finished with error:"; echo "$ob"; exit 1
+            echo "❌ Link op finished with error:"; echo "$ob"; exit 1
           fi
-          echo "✅ Firebase ↔ GA4 link completed."; break
+          echo "✅ Link completed."; break
         fi
         sleep 5
       done
 
+      # Verify
       vcode="$(curl -sS -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $firebase_token" \
         "https://firebase.googleapis.com/v1beta1/projects/$project/analyticsDetails")"
       [ "$vcode" = "200" ] || { echo "❌ Could not verify link (HTTP $vcode)"; exit 1; }
-      echo "🎉 Verified: Analytics is linked."
+      echo "🎉 Verified: Analytics is linked to property $target_prop_id."
 
 options:
   logging: CLOUD_LOGGING_ONLY
