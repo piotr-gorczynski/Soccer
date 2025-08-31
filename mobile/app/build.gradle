@@ -40,6 +40,11 @@ android {
         versionName = '9.0'
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        
+        // NDK configuration for debug symbols
+        ndk {
+            debugSymbolLevel 'FULL'
+        }
     }
 
     buildFeatures {
@@ -62,6 +67,19 @@ android {
             signingConfig signingConfigs.release
             minifyEnabled = true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            
+            // Ensure debug symbols are included in release build
+            debuggable false
+            jniDebuggable false
+            
+            ndk {
+                debugSymbolLevel 'FULL'
+            }
+        }
+        debug {
+            ndk {
+                debugSymbolLevel 'FULL'
+            }
         }
     }
 
