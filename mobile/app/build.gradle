@@ -36,10 +36,15 @@ android {
         applicationId = "piotr_gorczynski.soccer2"
         minSdk = 24
         targetSdk = 36
-        versionCode = 8
-        versionName = '8.0'
+        versionCode = 10
+        versionName = '10.0'
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        
+        // NDK configuration for debug symbols
+        ndk {
+            debugSymbolLevel 'FULL'
+        }
     }
 
     buildFeatures {
@@ -62,6 +67,19 @@ android {
             signingConfig signingConfigs.release
             minifyEnabled = true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            
+            // Ensure debug symbols are included in release build
+            debuggable false
+            jniDebuggable false
+            
+            ndk {
+                debugSymbolLevel 'FULL'
+            }
+        }
+        debug {
+            ndk {
+                debugSymbolLevel 'FULL'
+            }
         }
     }
 
@@ -119,7 +137,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
 
     //GPT fixes
-    implementation platform('com.google.firebase:firebase-bom:34.1.0')
+    implementation platform('com.google.firebase:firebase-bom:34.2.0')
     implementation 'com.google.firebase:firebase-auth:24.0.1'
     //GPT fixes
     implementation 'androidx.appcompat:appcompat:1.7.1'
@@ -142,7 +160,7 @@ dependencies {
     // Firebase Analytics for user research and funnel tracking
     implementation 'com.google.firebase:firebase-analytics:23.0.0'
     implementation 'com.google.firebase:firebase-config:23.0.0' // Remote Config for A/B testing
-    implementation 'com.google.firebase:firebase-crashlytics:20.0.0' // Enhanced error tracking
+    implementation 'com.google.firebase:firebase-crashlytics:20.0.1' // Enhanced error tracking
 
     implementation "com.google.guava:guava:33.4.8-android"
 
