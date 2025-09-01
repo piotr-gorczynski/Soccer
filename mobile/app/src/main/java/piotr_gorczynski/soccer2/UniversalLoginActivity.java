@@ -133,7 +133,21 @@ public class UniversalLoginActivity extends BaseActivity {
 
             @Override
             public void onError(FacebookException error) {
-                callback.onLoginFailure(error.getMessage());
+                String errorMessage = error.getMessage();
+                Log.e("TAG_Soccer", getClass().getSimpleName() + ".handleFacebookLogin: Facebook login error", error);
+                
+                // Provide specific guidance for key hash errors
+                if (errorMessage != null && errorMessage.toLowerCase().contains("key hash")) {
+                    String buildType = BuildConfig.DEBUG ? "debug" : "release";
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".handleFacebookLogin: Key hash error detected for " + buildType + " build");
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".handleFacebookLogin: To fix: Run './gradlew generateFacebookKeyHashes' and add the " + buildType + " keystore hash to Facebook App Dashboard");
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".handleFacebookLogin: Facebook Dashboard: https://developers.facebook.com/apps/1232966491486195/settings/basic/");
+                    
+                    // Provide user-friendly error message
+                    callback.onLoginFailure("Facebook login failed: App not properly configured for " + buildType + " builds. Please check the app logs for setup instructions.");
+                } else {
+                    callback.onLoginFailure(errorMessage);
+                }
             }
         });
     }
