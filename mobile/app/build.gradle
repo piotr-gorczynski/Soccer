@@ -8,7 +8,6 @@ import java.nio.file.StandardCopyOption
 import java.security.MessageDigest
 import java.security.KeyStore
 import java.security.cert.Certificate
-import java.util.Base64
 
 // Determine the environment based on -Penv or the build variant being run
 def detectEnvFromTasks = {
