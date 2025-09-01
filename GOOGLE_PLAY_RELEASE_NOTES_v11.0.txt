@@ -1,5 +1,4 @@
 <en-GB>
-⚽ Multi-language support (9 languages).  
 🔔 Better notifications for invites.  
 👤 Easier login (Google, Facebook, Microsoft, Email). Anonymous accounts can be linked.  
 🏆 Improved tournament joining.  
@@ -8,7 +7,6 @@
 </en-GB>
 
 <pl-PL>
-⚽ Wsparcie 9 języków.  
 🔔 Lepsze powiadomienia o zaproszeniach.  
 👤 Uproszczone logowanie (Google, Facebook, Microsoft, email). Anonimowe konta można łączyć.  
 🏆 Ulepszone dołączanie do turniejów.  
@@ -17,7 +15,6 @@
 </pl-PL>
 
 <de-DE>
-⚽ Unterstützung für 9 Sprachen.  
 🔔 Verbesserte Einladungs-Benachrichtigungen.  
 👤 Einfacheres Login (Google, Facebook, Microsoft, E-Mail). Anonyme Konten verknüpfbar.  
 🏆 Besserer Turnierbeitritt.  
@@ -26,7 +23,6 @@
 </de-DE>
 
 <fr-FR>
-⚽ Support multilingue (9 langues).  
 🔔 Notifications de jeu améliorées.  
 👤 Connexion simplifiée (Google, Facebook, Microsoft, email). Comptes anonymes liables.  
 🏆 Meilleure adhésion aux tournois.  
@@ -35,7 +31,6 @@
 </fr-FR>
 
 <es-ES>
-⚽ Soporte para 9 idiomas.  
 🔔 Notificaciones de invitación mejoradas.  
 👤 Inicio de sesión fácil (Google, Facebook, Microsoft, email). Cuentas anónimas vinculables.  
 🏆 Mejor unión a torneos.  
@@ -44,7 +39,6 @@
 </es-ES>
 
 <ur>
-⚽ 9 زبانوں کی سپورٹ۔  
 🔔 بہتر دعوت نوٹیفکیشن۔  
 👤 آسان لاگ اِن (Google، Facebook، Microsoft، ای میل)۔ گمنام اکاؤنٹس لنک ہوں۔  
 🏆 بہتر ٹورنامنٹ جوائننگ۔  
@@ -53,7 +47,6 @@
 </ur>
 
 <bn>
-⚽ 9 ভাষার সাপোর্ট।  
 🔔 উন্নত আমন্ত্রণ নোটিফিকেশন।  
 👤 সহজ লগইন (Google, Facebook, Microsoft, ইমেইল)। বেনামী অ্যাকাউন্ট লিঙ্কযোগ্য।  
 🏆 উন্নত টুর্নামেন্টে যোগদান।  
@@ -62,7 +55,6 @@
 </bn>
 
 <ne>
-⚽ ९ भाषाको समर्थन।  
 🔔 खेल निमन्त्रणा सूचना सुधार।  
 👤 सजिलो लगइन (Google, Facebook, Microsoft, इमेल)। बेनामी खाता लिंक गर्न सकिन्छ।  
 🏆 सुधारिएको प्रतियोगिता सहभागिता।  
@@ -71,7 +63,6 @@
 </ne>
 
 <hi-IN>
-⚽ 9 भाषाओं का समर्थन।  
 🔔 बेहतर निमंत्रण सूचनाएं।  
 👤 आसान लॉगिन (Google, Facebook, Microsoft, Email)। गुमनाम खाते लिंक करें।  
 🏆 बेहतर टूर्नामेंट जॉइनिंग।  
