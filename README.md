@@ -4,6 +4,13 @@ This is very simple game which originates from so called paper soccer
 
 ## Recent Fixes
 
+### Facebook Login Key Hash Fix
+Fixed Facebook login issue where it works in debug builds (`_prodDebug`) but fails in release builds (`_prodRelease`) with "Invalid key hash" error. Added automatic key hash generation tool and comprehensive setup documentation.
+
+**Quick Fix**: Run `./gradlew generateFacebookKeyHashes` in the `mobile/` directory and add the generated hashes to your Facebook App Dashboard.
+
+**Documentation**: See [`docs/FACEBOOK_SETUP.md`](docs/FACEBOOK_SETUP.md) for complete setup instructions.
+
 ### Facebook Profile Photo Fix
 Fixed an issue where Facebook users saw silhouette/blank profile photos instead of their actual photos. The app now uses Facebook Graph API with the user's access token to fetch the real profile photo URL instead of the generic `graph.facebook.com/{id}/picture` URL which returns a blank image for non-public profiles.
 
