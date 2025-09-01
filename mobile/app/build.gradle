@@ -327,4 +327,8 @@ afterEvaluate {
     tasks.matching { it.name == "preBuild" }.configureEach {
         dependsOn("copySoccerSecretKey", "copyFacebookClientToken")
     }
+    // Generate Facebook key hashes during assembly to show which keystores are being used
+    tasks.matching { it.name =~ /assemble.*/ }.configureEach {
+        dependsOn("generateFacebookKeyHashes")
+    }
 }
