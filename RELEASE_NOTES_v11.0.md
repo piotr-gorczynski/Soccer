@@ -1,8 +1,6 @@
-# Soccer 2 - Version 9.0 Release Notes
+# Soccer 2 - Version 11.0 Release Notes
 
 ## English
-⚽ **New Multi-Language Support!** - Soccer 2 now speaks your language! Choose from 9 languages including English, Polish, German, French, Spanish, Urdu, Bengali, Nepali, and Hindi in Settings.
-
 🔔 **Enhanced Notifications** - Never miss a game invite! Improved push notifications ensure you stay connected with friends and tournaments.
 
 👤 **Better Account Management** - Simplified login options with Google, Facebook, Microsoft, and email. Anonymous players can now easily link their accounts to save progress.
@@ -16,8 +14,6 @@
 ---
 
 ## Polish (Polski)
-⚽ **Nowe wsparcie wielu języków!** - Soccer 2 teraz mówi w Twoim języku! Wybieraj spośród 9 języków, w tym angielski, polski, niemiecki, francuski, hiszpański, urdu, bengalski, nepalski i hindi w Ustawieniach.
-
 🔔 **Ulepszone powiadomienia** - Nigdy nie przegap zaproszenia do gry! Ulepszone powiadomienia push zapewniają, że pozostaniesz w kontakcie z przyjaciółmi i turniejami.
 
 👤 **Lepsze zarządzanie kontem** - Uproszczone opcje logowania z Google, Facebook, Microsoft i email. Anonimowi gracze mogą teraz łatwo połączyć swoje konta, aby zapisać postęp.
@@ -31,8 +27,6 @@
 ---
 
 ## German (Deutsch)
-⚽ **Neue Mehrsprachige Unterstützung!** - Soccer 2 spricht jetzt Ihre Sprache! Wählen Sie aus 9 Sprachen einschließlich Englisch, Polnisch, Deutsch, Französisch, Spanisch, Urdu, Bengali, Nepali und Hindi in den Einstellungen.
-
 🔔 **Verbesserte Benachrichtigungen** - Verpassen Sie nie eine Spieleinladung! Verbesserte Push-Benachrichtigungen sorgen dafür, dass Sie mit Freunden und Turnieren verbunden bleiben.
 
 👤 **Bessere Kontoverwaltung** - Vereinfachte Anmeldeoptionen mit Google, Facebook, Microsoft und E-Mail. Anonyme Spieler können jetzt ihre Konten einfach verknüpfen, um den Fortschritt zu speichern.
@@ -46,8 +40,6 @@
 ---
 
 ## French (Français)
-⚽ **Nouveau support multilingue !** - Soccer 2 parle maintenant votre langue ! Choisissez parmi 9 langues, y compris l'anglais, le polonais, l'allemand, le français, l'espagnol, l'ourdou, le bengali, le népalais et l'hindi dans les Paramètres.
-
 🔔 **Notifications améliorées** - Ne ratez jamais une invitation de jeu ! Les notifications push améliorées vous assurent de rester connecté avec vos amis et les tournois.
 
 👤 **Meilleure gestion de compte** - Options de connexion simplifiées avec Google, Facebook, Microsoft et email. Les joueurs anonymes peuvent maintenant facilement lier leurs comptes pour sauvegarder leur progression.
@@ -61,8 +53,6 @@
 ---
 
 ## Spanish (Español)
-⚽ **¡Nuevo soporte multiidioma!** - ¡Soccer 2 ahora habla tu idioma! Elige entre 9 idiomas incluyendo inglés, polaco, alemán, francés, español, urdu, bengalí, nepalí e hindi en Configuración.
-
 🔔 **Notificaciones mejoradas** - ¡Nunca te pierdas una invitación de juego! Las notificaciones push mejoradas aseguran que te mantengas conectado con amigos y torneos.
 
 👤 **Mejor gestión de cuenta** - Opciones de inicio de sesión simplificadas con Google, Facebook, Microsoft y email. Los jugadores anónimos ahora pueden enlazar fácilmente sus cuentas para guardar el progreso.
@@ -76,8 +66,6 @@
 ---
 
 ## Urdu (اردو)
-⚽ **نئی کثیر لسانی سپورٹ!** - Soccer 2 اب آپ کی زبان بولتا ہے! سیٹنگز میں انگریزی، پولش، جرمن، فرانسیسی، ہسپانوی، اردو، بنگالی، نیپالی، اور ہندی سمیت 9 زبانوں میں سے انتخاب کریں۔
-
 🔔 **بہتر اطلاعات** - کبھی بھی کھیل کی دعوت نہ چھوڑیں! بہتر پش نوٹیفکیشنز یقینی بناتے ہیں کہ آپ دوستوں اور ٹورنامنٹس کے ساتھ جڑے رہیں۔
 
 👤 **بہتر اکاؤنٹ منیجمنٹ** - Google، Facebook، Microsoft، اور ای میل کے ساتھ آسان لاگ ان آپشنز۔ گمنام کھلاڑی اب آسانی سے اپنے اکاؤنٹس لنک کر کے ترقی محفوظ کر سکتے ہیں۔
@@ -91,8 +79,6 @@
 ---
 
 ## Bengali (বাংলা)
-⚽ **নতুন বহুভাষিক সাপোর্ট!** - Soccer 2 এখন আপনার ভাষায় কথা বলে! সেটিংসে ইংরেজি, পোলিশ, জার্মান, ফরাসি, স্প্যানিশ, উর্দু, বাংলা, নেপালি এবং হিন্দি সহ 9টি ভাষা থেকে বেছে নিন।
-
 🔔 **উন্নত নোটিফিকেশন** - কখনও গেমের আমন্ত্রণ মিস করবেন না! উন্নত পুশ নোটিফিকেশন নিশ্চিত করে যে আপনি বন্ধুদের এবং টুর্নামেন্টের সাথে সংযুক্ত থাকুন।
 
 👤 **উন্নত অ্যাকাউন্ট ব্যবস্থাপনা** - Google, Facebook, Microsoft এবং ইমেইলের সাথে সহজ লগইন অপশন। বেনামী খেলোয়াড়রা এখন সহজেই তাদের অ্যাকাউন্ট লিঙ্ক করে অগ্রগতি সংরক্ষণ করতে পারে।
@@ -106,8 +92,6 @@
 ---
 
 ## Nepali (नेपाली)
-⚽ **नयाँ बहुभाषिक समर्थन!** - Soccer 2 अब तपाईंको भाषामा बोल्छ! सेटिङहरूमा अंग्रेजी, पोलिश, जर्मन, फ्रान्सेली, स्पेनिश, उर्दू, बंगाली, नेपाली, र हिन्दी सहित 9 भाषाहरूबाट छान्नुहोस्।
-
 🔔 **सुधारिएको सूचनाहरू** - कहिल्यै खेल निमन्त्रणा नछुटाउनुहोस्! सुधारिएको पुश सूचनाहरूले तपाईं साथीहरू र प्रतियोगिताहरूसँग जोडिएर रहनुहुन्छ भन्ने सुनिश्चित गर्दछ।
 
 👤 **राम्रो खाता व्यवस्थापन** - Google, Facebook, Microsoft, र इमेलको साथ सरल लगइन विकल्पहरू। बेनामी खेलाडीहरूले अब सजिलै आफ्ना खाताहरू लिङ्क गरेर प्रगति बचत गर्न सक्छन्।
@@ -121,8 +105,6 @@
 ---
 
 ## Hindi (हिन्दी)
-⚽ **नई बहुभाषी सहायता!** - Soccer 2 अब आपकी भाषा बोलता है! सेटिंग्स में अंग्रेजी, पोलिश, जर्मन, फ्रेंच, स्पैनिश, उर्दू, बंगाली, नेपाली, और हिंदी सहित 9 भाषाओं में से चुनें।
-
 🔔 **बेहतर सूचनाएं** - कभी भी गेम इनवाइट न चूकें! बेहतर पुश नोटिफिकेशन यह सुनिश्चित करते हैं कि आप दोस्तों और टूर्नामेंट के साथ जुड़े रहें।
 
 👤 **बेहतर खाता प्रबंधन** - Google, Facebook, Microsoft, और ईमेल के साथ सरल लॉगिन विकल्प। गुमनाम खिलाड़ी अब आसानी से अपने खाते लिंक करके प्रगति सहेज सकते हैं।
