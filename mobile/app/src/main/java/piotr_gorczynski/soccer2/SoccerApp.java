@@ -120,9 +120,21 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                 FacebookSdk.setApplicationId(getString(appIdRes));
                 FacebookSdk.fullyInitialize();
                 AppEventsLogger.activateApp(this);
+                
+                // Log build configuration info for Facebook debugging
+                String buildType = BuildConfig.DEBUG ? "DEBUG" : "RELEASE";
                 Log.d(
                         "TAG_Soccer",
-                        getClass().getSimpleName() + ".onCreate: Facebook SDK initialized"
+                        getClass().getSimpleName() + ".onCreate: Facebook SDK initialized for " + buildType + " build"
+                );
+                Log.d(
+                        "TAG_Soccer", 
+                        getClass().getSimpleName() + ".onCreate: Facebook App ID: " + getString(appIdRes)
+                );
+                Log.d(
+                        "TAG_Soccer",
+                        getClass().getSimpleName() + ".onCreate: If Facebook login fails with 'Invalid key hash', " +
+                        "run './gradlew generateFacebookKeyHashes' and add the " + buildType.toLowerCase() + " hash to Facebook Dashboard"
                 );
             } else {
                 if (!hasAppId) {
