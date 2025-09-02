@@ -624,7 +624,6 @@ public class MenuActivity extends BaseActivity {
                 .setMessage(R.string.register_dialog_message)
                 .setPositiveButton(R.string.proceed, (dialog, which) -> {
                     startActivity(new Intent(this, UniversalLoginActivity.class));
-                    finish();
                 })
                 .setNegativeButton(R.string.cancel, null)
                 .show();
