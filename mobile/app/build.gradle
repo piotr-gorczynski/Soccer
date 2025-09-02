@@ -5,6 +5,9 @@ apply plugin: 'com.google.firebase.crashlytics'
 
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
+import java.security.MessageDigest
+import java.security.KeyStore
+import java.security.cert.Certificate
 
 // Determine the environment based on -Penv or the build variant being run
 def detectEnvFromTasks = {
@@ -36,8 +39,8 @@ android {
         applicationId = "piotr_gorczynski.soccer2"
         minSdk = 24
         targetSdk = 36
-        versionCode = 10
-        versionName = '10.0'
+        versionCode = 12
+        versionName = '12.0'
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         
@@ -235,6 +238,86 @@ tasks.register("copyFacebookClientToken") {
     }
 }
 
+// Generate Facebook key hashes for debug and release keystores
+tasks.register("generateFacebookKeyHashes") {
+    group = "facebook"
+    description = "Generates Facebook key hashes for debug and release keystores"
+    
+    doLast {
+        println("\n🔑 Facebook Key Hash Generator")
+        println("=" * 50)
+        
+        // Generate hash for debug keystore
+        def debugKeystorePath = System.getProperty("user.home") + "/.android/debug.keystore"
+        def debugKeystore = new File(debugKeystorePath)
+        
+        if (debugKeystore.exists()) {
+            try {
+                def debugHash = generateKeyHash(debugKeystore, "android", "androiddebugkey")
+                println("✅ DEBUG keystore hash: ${debugHash}")
+                println("   Location: ${debugKeystorePath}")
+            } catch (Exception e) {
+                println("❌ Failed to generate debug keystore hash: ${e.getMessage()}")
+            }
+        } else {
+            println("⚠️  Debug keystore not found at: ${debugKeystorePath}")
+        }
+        
+        // Generate hash for release keystore
+        def releaseSigningPropsFile = file("../../secrets/keystore.properties")
+        if (releaseSigningPropsFile.exists()) {
+            def releaseSigningProps = new Properties()
+            releaseSigningProps.load(new FileInputStream(releaseSigningPropsFile))
+            
+            def keystorePath = releaseSigningProps['KEYSTORE_FILE']
+            def keystorePassword = releaseSigningProps['KEYSTORE_PASSWORD']
+            def keyAlias = releaseSigningProps['KEY_ALIAS']
+            def keyPassword = releaseSigningProps['KEY_PASSWORD']
+            
+            if (keystorePath && keystorePassword && keyAlias && keyPassword) {
+                def releaseKeystore = file("../../${keystorePath}")
+                if (releaseKeystore.exists()) {
+                    try {
+                        def releaseHash = generateKeyHash(releaseKeystore, keystorePassword, keyAlias)
+                        println("✅ RELEASE keystore hash: ${releaseHash}")
+                        println("   Location: ${releaseKeystore.absolutePath}")
+                    } catch (Exception e) {
+                        println("❌ Failed to generate release keystore hash: ${e.getMessage()}")
+                    }
+                } else {
+                    println("❌ Release keystore not found at: ${releaseKeystore.absolutePath}")
+                }
+            } else {
+                println("❌ Missing keystore configuration in keystore.properties")
+            }
+        } else {
+            println("⚠️  Release keystore configuration not found at: ${releaseSigningPropsFile.absolutePath}")
+            println("   Create keystore.properties in secrets/ directory for release keystore hash")
+        }
+        
+        println("\n📋 Next Steps:")
+        println("1. Copy the key hash(es) above")
+        println("2. Go to Facebook App Dashboard: https://developers.facebook.com/apps/1232966491486195")
+        println("3. Navigate to Settings → Basic")
+        println("4. Add the key hash(es) to 'Key Hashes' field")
+        println("5. Save changes")
+        println("\n📖 For detailed instructions, see: docs/FACEBOOK_SETUP.md")
+    }
+}
+
+// Helper method to generate key hash
+ext.generateKeyHash = { keystoreFile, password, alias ->
+    def keystore = KeyStore.getInstance("JKS")
+    keystoreFile.withInputStream { stream ->
+        keystore.load(stream, password.toCharArray())
+    }
+    
+    Certificate cert = keystore.getCertificate(alias)
+    MessageDigest md = MessageDigest.getInstance("SHA1")
+    md.update(cert.getEncoded())
+    return Base64.getEncoder().encodeToString(md.digest())
+}
+
 // Hook into the Firebase task *after* all plugins are applied
 afterEvaluate {
     tasks.matching { it.name =~ /process.*GoogleServices/ }.configureEach {
@@ -242,5 +325,9 @@ afterEvaluate {
     }
     tasks.matching { it.name == "preBuild" }.configureEach {
         dependsOn("copySoccerSecretKey", "copyFacebookClientToken")
+    }
+    // Generate Facebook key hashes during assembly to show which keystores are being used
+    tasks.matching { it.name =~ /assemble.*/ }.configureEach {
+        dependsOn("generateFacebookKeyHashes")
     }
 }

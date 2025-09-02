@@ -186,9 +186,7 @@ public class MenuActivity extends BaseActivity {
             // prefs.edit().clear().commit(); // Commented out to preserve ads consent data
             FirebaseMessaging.getInstance().deleteToken();
             FirebaseMessaging.getInstance().setAutoInitEnabled(false);
-            FirebaseFirestore.getInstance()
-                    .terminate()
-                    .addOnSuccessListener(unused -> FirebaseFirestore.getInstance().clearPersistence());
+            // Removed Firestore terminate/clearPersistence to prevent AsyncQueue threading crash
             return;
         }
 
@@ -398,10 +396,7 @@ public class MenuActivity extends BaseActivity {
 
             FirebaseMessaging.getInstance().deleteToken();
             FirebaseMessaging.getInstance().setAutoInitEnabled(false);
-
-            FirebaseFirestore.getInstance()
-                    .terminate()
-                    .addOnSuccessListener(unused -> FirebaseFirestore.getInstance().clearPersistence());
+            // Removed Firestore terminate/clearPersistence to prevent AsyncQueue threading crash
             nickname = null;
         } else {
             String uid = auth.getUid();
@@ -629,7 +624,6 @@ public class MenuActivity extends BaseActivity {
                 .setMessage(R.string.register_dialog_message)
                 .setPositiveButton(R.string.proceed, (dialog, which) -> {
                     startActivity(new Intent(this, UniversalLoginActivity.class));
-                    finish();
                 })
                 .setNegativeButton(R.string.cancel, null)
                 .show();
