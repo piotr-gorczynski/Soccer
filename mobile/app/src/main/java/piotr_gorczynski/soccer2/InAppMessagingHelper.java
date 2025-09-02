@@ -1,5 +1,6 @@
 package piotr_gorczynski.soccer2;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -32,6 +33,18 @@ public class InAppMessagingHelper {
     public static void showVersionTargetedMessage(Context context, AnalyticsManager analyticsManager) {
         // Only show to unauthenticated users
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            return;
+        }
+        
+        // Ensure the context is a valid Activity that is still running
+        if (!(context instanceof Activity)) {
+            Log.d(TAG, "Skipping version targeted message - context is not an Activity");
+            return;
+        }
+        
+        Activity activity = (Activity) context;
+        if (activity.isFinishing() || activity.isDestroyed()) {
+            Log.d(TAG, "Skipping version targeted message - Activity is finishing or destroyed");
             return;
         }
         
@@ -86,7 +99,17 @@ public class InAppMessagingHelper {
             // Delay showing the message slightly so it doesn't appear immediately on app open
             android.os.Handler handler = new android.os.Handler(android.os.Looper.getMainLooper());
             handler.postDelayed(() -> {
-                showVersionTargetedMessage(context, analyticsManager);
+                // Re-check if the Activity is still valid before showing the message
+                if (context instanceof Activity) {
+                    Activity activity = (Activity) context;
+                    if (!activity.isFinishing() && !activity.isDestroyed()) {
+                        showVersionTargetedMessage(context, analyticsManager);
+                    } else {
+                        Log.d(TAG, "Skipping delayed version message - Activity no longer valid");
+                    }
+                } else {
+                    Log.d(TAG, "Skipping delayed version message - context is not an Activity");
+                }
             }, 3000); // 3 second delay
         }
     }
