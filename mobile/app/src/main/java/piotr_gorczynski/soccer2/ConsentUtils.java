@@ -74,7 +74,7 @@ public class ConsentUtils {
     public static boolean hasUmpConsent(Context ctx) {
         try {
             ConsentInformation consentInfo = UserMessagingPlatform.getConsentInformation(ctx);
-            ConsentInformation.ConsentStatus status = consentInfo.getConsentStatus();
+            @ConsentInformation.ConsentStatus int status = consentInfo.getConsentStatus();
             
             Log.d("TAG_Soccer", "UMP consent status: " + status);
             
