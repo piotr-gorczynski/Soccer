@@ -236,7 +236,9 @@ public class Field {
 
 
         // Shared banner width (95 % of the visible field)
-        float bannerWidthPx = rField.width() * 0.95f;
+        //PG: former: float bannerWidthPx = rField.width() * 0.95f;
+        //PG: now:
+        float bannerWidthPx = canvas.getWidth() * 0.95f;
 
         // Draw field
         canvas.drawRect(rField, pField);
