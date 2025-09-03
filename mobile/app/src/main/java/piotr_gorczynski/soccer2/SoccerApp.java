@@ -214,8 +214,8 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
 
         MobileAds.initialize(this, initializationStatus -> {});
         
-        // Set Firebase Analytics consent to DENIED by default for EEA compliance
-        // This ensures no data is collected until explicit consent is given
+        // Set Firebase Analytics consent to DENIED by default for privacy compliance
+        // This ensures no data is collected until explicit consent is given (EEA and US regulations)
         ConsentUtils.setDefaultFirebaseAnalyticsConsent(this);
     }
     public void syncFcmTokenIfNeeded() {
@@ -591,7 +591,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                             "showAdsConsentForm: user selected "
                                     + (personalised ? "PERSONALISED" : "NPA"));
                     
-                    // Update Firebase Analytics consent for EEA users
+                    // Update Firebase Analytics consent (supports both EEA and US regulations)
                     ConsentUtils.updateFirebaseAnalyticsConsent(activity);
                 });
     }
@@ -624,7 +624,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                                         PreferenceManager.getDefaultSharedPreferences(activity)
                                                 .edit().putBoolean("personalised_ads", personalised).apply();
                                         
-                                        // Update Firebase Analytics consent for EEA users
+                                        // Update Firebase Analytics consent (supports both EEA and US regulations)
                                         ConsentUtils.updateFirebaseAnalyticsConsent(activity);
                                     }
                                 });
