@@ -213,6 +213,10 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         }
 
         MobileAds.initialize(this, initializationStatus -> {});
+        
+        // Set Firebase Analytics consent to DENIED by default for EEA compliance
+        // This ensures no data is collected until explicit consent is given
+        ConsentUtils.setDefaultFirebaseAnalyticsConsent(this);
     }
     public void syncFcmTokenIfNeeded() {
         String uid = FirebaseAuth.getInstance().getUid();
