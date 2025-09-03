@@ -330,9 +330,36 @@ public class Field {
 
         // Possible moves
         Paint movePaint = Moves.get(Moves.size() - 1).P == 0 ? pPlayer0 : pPlayer1;
-        for (MoveTo pm : possibleMoves) {
-            canvas.drawCircle(w2x(flipX(pm.X)), h2y(flipY(pm.Y)), dotSize, movePaint);
-        }
+            // Pulsing animation for possible moves
+            final float animationDuration = 1000f; // ms
+            final float animationSizeIncreasePercent = 1.5f;
+            float pulseDotSize = dotSize;
+            boolean shouldPulse = false;
+            int currentTurn = Moves.get(Moves.size() - 1).P;
+            // Game type logic
+            if (gameType == 3) {
+                // Multiplayer: pulse only for current player and only on their screen
+                shouldPulse = (currentTurn == (isFlipped ? 1 : 0));
+            } else if (gameType == 1) {
+                // Player vs Android: pulse only for player
+                shouldPulse = (currentTurn == 0);
+            } else if (gameType == 2) {
+                // Both players can pulse
+                shouldPulse = true;
+            }
+
+            if (shouldPulse && turnStartTime != null) {
+                long now = System.currentTimeMillis();
+                long elapsed = (now - turnStartTime) % (long)animationDuration;
+                float progress = (float)elapsed / animationDuration;
+                // Use sine wave for smooth pulsing: goes from 0 to PI, so sin(0)=0, sin(PI)=0, sin(PI/2)=1
+                float pulse = (float)Math.sin(progress * Math.PI);
+                pulseDotSize = dotSize + (dotSize * (animationSizeIncreasePercent - 1f) * pulse);
+            }
+
+            for (MoveTo pm : possibleMoves) {
+                canvas.drawCircle(w2x(flipX(pm.X)), h2y(flipY(pm.Y)), pulseDotSize, movePaint);
+            }
 
         // Ball
         MoveTo last = Moves.get(Moves.size() - 1);
