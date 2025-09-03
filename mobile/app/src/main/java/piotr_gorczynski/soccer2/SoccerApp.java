@@ -586,6 +586,9 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                     Log.d("TAG_Soccer",
                             "showAdsConsentForm: user selected "
                                     + (personalised ? "PERSONALISED" : "NPA"));
+                    
+                    // Update Firebase Analytics consent for EEA users
+                    ConsentUtils.updateFirebaseAnalyticsConsent(activity);
                 });
     }
 
@@ -616,6 +619,9 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                                         boolean personalised = ConsentUtils.isPersonalisedAllowed(activity);
                                         PreferenceManager.getDefaultSharedPreferences(activity)
                                                 .edit().putBoolean("personalised_ads", personalised).apply();
+                                        
+                                        // Update Firebase Analytics consent for EEA users
+                                        ConsentUtils.updateFirebaseAnalyticsConsent(activity);
                                     }
                                 });
                     } else {
