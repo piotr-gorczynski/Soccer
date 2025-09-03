@@ -156,9 +156,8 @@ public class MenuActivity extends BaseActivity {
                     Boolean accepted = doc.getBoolean("termsAccepted");
                     if (accepted == null || !accepted) {
                         startActivity(new Intent(this, TermsActivity.class));
-                    } else if (!hasAdsConsent()) {
-                        ((SoccerApp) getApplication()).requestConsent(this);
                     }
+                    // Consent is now requested early in onCreate() for all users
                 })
                 .addOnFailureListener(e -> Log.e(
                         "TAG_Soccer",
@@ -540,6 +539,12 @@ public class MenuActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        
+        // Request consent early for EEA compliance - ensures GA4 doesn't collect data before consent
+        if (!hasAdsConsent()) {
+            ((SoccerApp) getApplication()).requestConsent(this);
+        }
+        
         /* ① Inflate the view immediately so onResume() has valid widgets */
         setContentView(R.layout.activity_menu);
         currentLanguage = LanguageManager.getCurrentLanguageCode(this);
