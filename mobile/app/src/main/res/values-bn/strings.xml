@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="facebook_id_label">Facebook ID: %1$s</string>
     <!-- Basic app strings in Bengali -->
     <string name="app_name">Soccer 2</string>
     <string name="menu_Settings">সেটিংস</string>
@@ -285,7 +286,7 @@
     <string name="decline_reason_offline">শুধু অফলাইনে খেলছি</string>
     <string name="decline_reason_privacy">গোপনীয়তার উদ্বেগ</string>
     <string name="decline_reason_complicated">খুব জটিল</string>
-    <string name="decline_reason_dont_use_providers">গুগল/ইমেইল ব্যবহার করি না</string>
+    <string name="decline_reason_dont_use_providers">গুগল/ফেসবুক/ইমেইল ব্যবহার করি না</string>
     <string name="decline_reason_other">অন্যান্য কারণ</string>
     
     <!-- Anonymous user prompts -->

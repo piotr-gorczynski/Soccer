@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="facebook_id_label">Facebook ID: %1$s</string>
     <!-- Basic app strings in Polish -->
     <string name="app_name">Soccer 2</string>
     <string name="menu_Settings">Ustawienia</string>
@@ -115,7 +116,7 @@
     <string name="logged_out">Zostałeś wylogowany</string>
     
     <!-- Game strings -->
-    <plurals name="wins_format">
+    <plurals name="wins_format" tools:ignore="MissingQuantity">
         <item quantity="one">%d wygrana</item>
         <item quantity="few">%d wygrane</item>
         <item quantity="other">%d wygranych</item>
@@ -286,7 +287,7 @@
     <string name="decline_reason_offline">Po prostu gram offline</string>
     <string name="decline_reason_privacy">Obawy o prywatność</string>
     <string name="decline_reason_complicated">Za skomplikowane</string>
-    <string name="decline_reason_dont_use_providers">Nie używam Google/e-maila</string>
+    <string name="decline_reason_dont_use_providers">Nie używam Google/Facebook/e-maila</string>
     <string name="decline_reason_other">Inny powód</string>
     
     <!-- Anonymous user prompts -->

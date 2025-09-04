@@ -156,9 +156,8 @@ public class MenuActivity extends BaseActivity {
                     Boolean accepted = doc.getBoolean("termsAccepted");
                     if (accepted == null || !accepted) {
                         startActivity(new Intent(this, TermsActivity.class));
-                    } else if (!hasAdsConsent()) {
-                        ((SoccerApp) getApplication()).requestConsent(this);
                     }
+                    // Consent is now requested early in onCreate() for all users
                 })
                 .addOnFailureListener(e -> Log.e(
                         "TAG_Soccer",
@@ -540,6 +539,12 @@ public class MenuActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        
+        // Request consent early for EEA compliance - ensures GA4 doesn't collect data before consent
+        if (!hasAdsConsent()) {
+            ((SoccerApp) getApplication()).requestConsent(this);
+        }
+        
         /* ① Inflate the view immediately so onResume() has valid widgets */
         setContentView(R.layout.activity_menu);
         currentLanguage = LanguageManager.getCurrentLanguageCode(this);
@@ -625,7 +630,13 @@ public class MenuActivity extends BaseActivity {
                 .setPositiveButton(R.string.proceed, (dialog, which) -> {
                     startActivity(new Intent(this, UniversalLoginActivity.class));
                 })
-                .setNegativeButton(R.string.cancel, null)
+                .setNegativeButton(R.string.cancel, (dialog, which) -> {
+                    // Show signup decline reason dialog to understand why
+                    SignupDeclineReasonDialog.show(this, "registration_dismiss", analyticsManager, reason -> {
+                        // User has provided feedback, no further action needed
+                        Log.d("TAG_Soccer", "User declined registration, reason: " + reason);
+                    });
+                })
                 .show();
     }
 
@@ -785,17 +796,29 @@ public class MenuActivity extends BaseActivity {
 
 
     public void OpenGamePlayerVsPlayer(View view) {
-        // Do something in response to button
-        Intent intent = new Intent(this, GameActivity.class);
-        intent.putExtra("GameType", 1);
-        startActivity(intent);
+        if (!hasAdsConsent()) {
+            showConsentRequiredDialog();
+            return;
+        }
+
+        showAdThenRun(() -> {
+            Intent intent = new Intent(this, GameActivity.class);
+            intent.putExtra("GameType", 1);
+            startActivity(intent);
+        });
     }
 
     public void OpenGamePlayerVsAndroid(View view) {
-        // Do something in response to button
-        Intent intent = new Intent(this, GameActivity.class);
-        intent.putExtra("GameType", 2);
-        startActivity(intent);
+        if (!hasAdsConsent()) {
+            showConsentRequiredDialog();
+            return;
+        }
+
+        showAdThenRun(() -> {
+            Intent intent = new Intent(this, GameActivity.class);
+            intent.putExtra("GameType", 2);
+            startActivity(intent);
+        });
     }
 
 

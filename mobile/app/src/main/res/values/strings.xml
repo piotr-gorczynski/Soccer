@@ -97,7 +97,7 @@
     <string name="tournament_running_ends">Tournament running. Ends %1$s</string>
     <string name="registration_ends">Registration ends %1$s</string>
     <string name="registration_closed">Registration closed. Tournament will start within 1 hour</string>
-    <string name="tournament_ends_now">Tournament ends now...</string>
+    <string name="tournament_ends_now">Tournament ends now…</string>
     <string name="tournament_ended">Ended %1$s</string>
     <string name="tournament_ended_short">Ended</string>
     <string name="logout">Log out</string>
@@ -159,7 +159,7 @@
     <string name="remove_account_dialog_message">Are you sure you want to remove your account? This action cannot be reverted and even if you register again, you will not get access to the history of your matches and results.</string>
     <string name="cancel">Cancel</string>
     <string name="proceed_account_removal">Proceed</string>
-    <string name="removing_account">Removing account...</string>
+    <string name="removing_account">Removing account…</string>
     <string name="account_removed">Account removed successfully</string>
     <string name="remove_account_failed">Failed to remove account. Please try again.</string>
     <string name="reauth_title">Re-authenticate</string>
@@ -184,13 +184,13 @@
 
     <!-- Field draw strings -->
     <string name="field_your_move">Your move!</string>
-    <string name="field_move_tail">move ... ⏳ %1$s</string>
+    <string name="field_move_tail">move … ⏳ %1$s</string>
     <string name="field_hourglass_tail">⏳ %1$s</string>
-    <string name="field_your_move_ellipsis">Your move...</string>
-    <string name="field_thinking">Thinking...</string>
-    <string name="field_move_ellipsis_tail">move... ⏳ %1$s</string>
+    <string name="field_your_move_ellipsis">Your move…</string>
+    <string name="field_thinking">Thinking…</string>
+    <string name="field_move_ellipsis_tail">move… ⏳ %1$s</string>
     <string name="field_waiting_for">Waiting for %1$s</string>
-    <string name="field_to_start_tail">to start... ⏳ %1$s</string>
+    <string name="field_to_start_tail">to start… ⏳ %1$s</string>
     <string name="enter_email_and_password">Please enter both email and password</string>
     <string name="login_success">Login successful!</string>
     <string name="login_failed">Login failed: %1$s</string>
@@ -202,7 +202,7 @@
     <string name="enter_email_address">Please enter your email address</string>
     <string name="all_fields_required">All fields are required</string>
     <string name="passwords_do_not_match">Passwords do not match</string>
-    <string name="registration_in_progress">Registration attempt in progress...</string>
+    <string name="registration_in_progress">Registration attempt in progress…</string>
     <string name="nickname_max_length_reached">Maximum 20 characters reached</string>
     <string name="nickname_required">Nickname is required</string>
     <string name="nickname_too_long">Nickname must be 20 characters or less</string>
@@ -269,7 +269,7 @@
     <string name="link_account_description">Link your anonymous account with email, Google, or Facebook to secure your account and game history.</string>
     <string name="link_account_success">Account linked successfully!</string>
     <string name="link_account_failed">Failed to link account: %1$s</string>
-    <string name="link_account_in_progress">Linking account...</string>
+    <string name="link_account_in_progress">Linking account…</string>
     <string name="account_already_exists_merge">An account with these credentials already exists. Your current data will be preserved and merged.</string>
     <string name="credential_already_associated">This credential is already associated with a different user account.</string>
     <string name="enter_email_and_password_to_link">Enter your email and password to link your anonymous account</string>
@@ -284,7 +284,7 @@
     <string name="decline_reason_offline">Just playing offline</string>
     <string name="decline_reason_privacy">Privacy concerns</string>
     <string name="decline_reason_complicated">Too complicated</string>
-    <string name="decline_reason_dont_use_providers">Don\'t use Google/Email</string>
+    <string name="decline_reason_dont_use_providers">Don\'t use Google/Facebook/Email</string>
     <string name="decline_reason_other">Other reason</string>
     
     <!-- Anonymous user prompts -->
