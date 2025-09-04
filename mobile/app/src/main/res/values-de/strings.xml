@@ -219,6 +219,7 @@
     <string name="nickname_save_failed">Spitzname nicht speichern</string>
 
     <string name="game_launch_failed">Spielstart fehlgeschlagen.</string>
+    <string name="app_launch_failed">App-Start fehlgeschlagen. Bitte versuchen Sie es erneut.</string>
     <string name="please_log_in_to_continue">Bitte melden Sie sich an, um fortzufahren.</string>
     <string name="match_not_found">Match nicht gefunden.</string>
     <string name="invalid_match_record">Ungültiger Match -Datensatz.</string>

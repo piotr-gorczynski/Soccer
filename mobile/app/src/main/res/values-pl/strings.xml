@@ -220,6 +220,7 @@
     <string name="nickname_save_failed">Nie udało się zapisać pseudonim</string>
 
     <string name="game_launch_failed">Uruchomienie gry nie powiodło się.</string>
+    <string name="app_launch_failed">Uruchomienie aplikacji nie powiodło się. Spróbuj ponownie.</string>
     <string name="please_log_in_to_continue">Zaloguj się, aby kontynuować.</string>
     <string name="match_not_found">Mecz nie został znaleziony.</string>
     <string name="invalid_match_record">Nieprawidłowy rekord meczu.</string>

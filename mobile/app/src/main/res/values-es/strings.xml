@@ -219,6 +219,7 @@
     <string name="nickname_save_failed">No se pudo salvar el apodo</string>
 
     <string name="game_launch_failed">El lanzamiento del juego falló.</string>
+    <string name="app_launch_failed">Falló el lanzamiento de la aplicación. Por favor, inténtalo de nuevo.</string>
     <string name="please_log_in_to_continue">Inicie sesión para continuar.</string>
     <string name="match_not_found">Coincidencia no encontrada.</string>
     <string name="invalid_match_record">Registro de partidos no válido.</string>
