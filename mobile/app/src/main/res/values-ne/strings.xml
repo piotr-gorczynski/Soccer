@@ -161,7 +161,7 @@
     <string name="facebook_name_label">Facebook नाम: %1$s</string>
     <string name="pref_title_facebook">Facebook समुदाय</string>
     <string name="pref_summary_facebook">Facebook मा हाम्रो समुदायको पृष्ठ खोल्नुहोस्</string>
-    <string name="ads_consent_required">विज्ञापनहरू देखाउनुले पूर्वाधार मर्मतसम्भारको वित्तपोषणमा मद्दत गर्छ। तपाईंले विज्ञापनहरू देखाउन सहमत नगरेको हुनाले, यो विकल्प उपलब्ध छैन। तपाईं सेटिङहरूमा आफ्नो सहमति जाँच गर्न सक्नुहुन्छ।</string>
+    <string name="ads_consent_required">विज्ञापनहरू देखाउनुले पूर्वाधार मर्मतसम्भारको वित्तपोषणमा मद्दत गर्छ। तपाईं सधैं सेटिङहरूमा आफ्नो सहमति जाँच गर्न सक्नुहुन्छ।</string>
     <string name="no_internet_for_privacy_options">गोपनीयता विकल्पहरू खोल्न इन्टरनेट जडान आवश्यक छ।</string>
     
     <!-- Account removal strings -->

@@ -161,7 +161,7 @@
     <string name="facebook_name_label">Facebook نام: %1$s</string>
     <string name="pref_title_facebook">Facebook کمیونٹی</string>
     <string name="pref_summary_facebook">Facebook پر ہماری کمیونٹی کا صفحہ کھولیں</string>
-    <string name="ads_consent_required">اشتہارات دکھانا انفراسٹرکچر کی دیکھ بھال کی مالی مدد کرتا ہے۔ چونکہ آپ نے اشتہارات دکھانے کے لیے رضامندی نہیں دی ہے، یہ آپشن دستیاب نہیں ہے۔ آپ سیٹنگز میں اپنی رضامندی چیک کر سکتے ہیں۔</string>
+    <string name="ads_consent_required">اشتہارات دکھانا انفراسٹرکچر کی دیکھ بھال کی مالی مدد کرتا ہے۔ آپ ہمیشہ سیٹنگز میں اپنی رضامندی چیک کر سکتے ہیں۔</string>
     <string name="no_internet_for_privacy_options">پرائیویسی آپشنز کھولنے کے لیے انٹرنیٹ کنکشن درکار ہے۔</string>
     
     <!-- Account removal strings -->
