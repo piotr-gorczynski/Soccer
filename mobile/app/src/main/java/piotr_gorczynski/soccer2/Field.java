@@ -332,9 +332,9 @@ public class Field {
         int currentTurn = Moves.get(Moves.size() - 1).P;
         Paint movePaint = currentTurn == 0 ? pPlayer0 : pPlayer1;
         // Pulsing animation for possible moves
-        final float animationDuration = 2000f; // ms
-        final float animationSizeIncreasePercent = 2.0f;
-        float pulseDotSize = dotSize;
+        final float animationDuration = 2000f; // ms for a full grow+shrink cycle
+        final float animationSizeIncreasePercent = 2.0f; // target: dotSize -> dotSize * percent -> dotSize
+        float pulseDotSize = dotSize; // default when not animating
         boolean shouldPulse = false;
         // Game type logic (corrected)
         if (gameType == 1) {
@@ -350,11 +350,19 @@ public class Field {
 
         if (shouldPulse && turnStartTime != null) {
             long now = System.currentTimeMillis();
-            long elapsed = (now - turnStartTime) % (long)animationDuration;
-            float progress = (float)elapsed / animationDuration;
-            // Use sine wave for smooth pulsing: goes from 0 to PI, so sin(0)=0, sin(PI)=0, sin(PI/2)=1
-            float pulse = (float)Math.sin(progress * Math.PI);
-            pulseDotSize = dotSize + (dotSize * (animationSizeIncreasePercent - 1f) * pulse);
+            long elapsed = (now - turnStartTime) % (long) animationDuration;
+            float progress = (float) elapsed / animationDuration; // [0..1)
+
+            // Ease from 0 -> 1 -> 0 using a cosine wave mapped to [0,1]
+            // This guarantees we always start at the base size on a new turn.
+            float ease01 = (1f - (float) Math.cos(progress * 2f * (float) Math.PI)) / 2f; // [0..1]
+
+            float minSize = dotSize;
+            float maxSize = dotSize * animationSizeIncreasePercent;
+            pulseDotSize = minSize + (maxSize - minSize) * ease01;
+
+            // Safety: never shrink below base dot size
+            if (pulseDotSize < dotSize) pulseDotSize = dotSize;
         }
 
         for (MoveTo pm : possibleMoves) {
