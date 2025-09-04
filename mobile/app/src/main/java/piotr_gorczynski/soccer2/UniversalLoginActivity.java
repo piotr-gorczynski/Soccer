@@ -166,12 +166,6 @@ public class UniversalLoginActivity extends BaseActivity {
                 })
                 .setNegativeButton(R.string.cancel, (dialog, which) -> {
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".handleAnonymousLogin: User cancelled anonymous login");
-                    
-                    // Show signup decline reason dialog to understand why
-                    SignupDeclineReasonDialog.show(this, "anonymous_login_cancel", analyticsManager, reason -> {
-                        // User has provided feedback, no further action needed
-                        Log.d("TAG_Soccer", "User declined anonymous login, reason: " + reason);
-                    });
                 })
                 .show();
     }
