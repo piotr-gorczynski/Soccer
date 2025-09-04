@@ -284,7 +284,7 @@
     <string name="decline_reason_offline">Just playing offline</string>
     <string name="decline_reason_privacy">Privacy concerns</string>
     <string name="decline_reason_complicated">Too complicated</string>
-    <string name="decline_reason_dont_use_providers">Don\'t use Google/Email</string>
+    <string name="decline_reason_dont_use_providers">Don\'t use Google/Facebook/Email</string>
     <string name="decline_reason_other">Other reason</string>
     
     <!-- Anonymous user prompts -->
