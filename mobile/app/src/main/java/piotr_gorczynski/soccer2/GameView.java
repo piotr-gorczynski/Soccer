@@ -160,6 +160,8 @@ public class GameView extends View {
 
         this.remTime0 = time0;
         this.remTime1 = time1;
+        // Persist the provided turn start time (or initialize if missing)
+        this.turnStartsTime = (turnStartTime != null) ? turnStartTime : System.currentTimeMillis();
 
         // construct Field with custom nicknames
         field = new Field(context, realMoves, possibleMovesForDrawing, GameType, player0Name, player1Name, localPlayerIndex);
@@ -169,8 +171,8 @@ public class GameView extends View {
         this.setFocusableInTouchMode(true);
 
         // pass the clock values into the Field
-                    startPulseIfNeeded();
-        field.setRemainingTimes(remTime0, remTime1, turnStartTime);
+        startPulseIfNeeded();
+        field.setRemainingTimes(remTime0, remTime1, this.turnStartsTime);
         // No Android move logic here, because GameType 3 is human vs. human
         startPulseIfNeeded();
     }
@@ -214,6 +216,9 @@ public class GameView extends View {
 
 
         field = new Field(context, realMoves, possibleMovesForDrawing, GameType, "Player 1", "Player 2",0);
+
+        // Initialize turn start time so pulsing animations have a time origin
+        this.turnStartsTime = System.currentTimeMillis();
 
         // To enable keypad
         this.setFocusable(true);
