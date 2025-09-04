@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="facebook_id_label">Facebook ID: %1$s</string>
     <!-- App / menus -->
     <string name="app_name">Soccer 2</string>
     <string name="menu_Settings">Paramètres</string>

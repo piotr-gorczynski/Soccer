@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="facebook_id_label">Facebook ID: %1$s</string>
     <!-- Basic app strings in Hindi -->
     <string name="app_name">Soccer 2</string>
     <string name="menu_Settings">सेटिंग्स</string>
