@@ -197,6 +197,7 @@
     <string name="enter_email_and_password">براہ کرم ای میل اور پاس ورڈ دونوں درج کریں</string>
     <string name="login_success">لاگ ان کامیاب!</string>
     <string name="login_failed">لاگ ان ناکام: %1$s</string>
+    <string name="login_in_progress">لاگ ان جاری ہے، براہ کرم انتظار کریں...</string>
     
     <!-- Anonymous login warning -->
     <string name="anonymous_login_warning_title">گمنام لاگ ان کی تنبیہ</string>
