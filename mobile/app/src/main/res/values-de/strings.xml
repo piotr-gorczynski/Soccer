@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="facebook_id_label">Facebook ID: %1$s</string>
     <!-- Basic app strings in German -->
     <string name="app_name">Soccer 2</string>
     <string name="menu_Settings">Einstellungen</string>
@@ -286,7 +287,7 @@
     <string name="decline_reason_offline">Spiele nur offline</string>
     <string name="decline_reason_privacy">Datenschutzbedenken</string>
     <string name="decline_reason_complicated">Zu kompliziert</string>
-    <string name="decline_reason_dont_use_providers">Nutze Google/E-Mail nicht</string>
+    <string name="decline_reason_dont_use_providers">Nutze Google/Facebook/E-Mail nicht</string>
     <string name="decline_reason_other">Anderer Grund</string>
     
     <!-- Anonymous user prompts -->

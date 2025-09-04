@@ -236,7 +236,9 @@ public class Field {
 
 
         // Shared banner width (95 % of the visible field)
-        float bannerWidthPx = rField.width() * 0.95f;
+        //PG: former: float bannerWidthPx = rField.width() * 0.95f;
+        //PG: now:
+        float bannerWidthPx = canvas.getWidth() * 0.95f;
 
         // Draw field
         canvas.drawRect(rField, pField);
@@ -327,9 +329,44 @@ public class Field {
         }
 
         // Possible moves
-        Paint movePaint = Moves.get(Moves.size() - 1).P == 0 ? pPlayer0 : pPlayer1;
+        int currentTurn = Moves.get(Moves.size() - 1).P;
+        Paint movePaint = currentTurn == 0 ? pPlayer0 : pPlayer1;
+        // Pulsing animation for possible moves
+        final float animationDuration = 2000f; // ms for a full grow+shrink cycle
+        final float animationSizeIncreasePercent = 2.0f; // target: dotSize -> dotSize * percent -> dotSize
+        float pulseDotSize = dotSize; // default when not animating
+        boolean shouldPulse = false;
+        // Game type logic (corrected)
+        if (gameType == 1) {
+            // Player vs Player: pulse for both players
+            shouldPulse = true;
+        } else if (gameType == 2) {
+            // Player vs Android: pulse only for player
+            shouldPulse = (currentTurn == 0);
+        } else if (gameType == 3) {
+            // Multiplayer: pulse only for current player and only on their screen
+            shouldPulse = (currentTurn == (isFlipped ? 1 : 0));
+        }
+
+        if (shouldPulse && turnStartTime != null) {
+            long now = System.currentTimeMillis();
+            long elapsed = (now - turnStartTime) % (long) animationDuration;
+            float progress = (float) elapsed / animationDuration; // [0..1)
+
+            // Ease from 0 -> 1 -> 0 using a cosine wave mapped to [0,1]
+            // This guarantees we always start at the base size on a new turn.
+            float ease01 = (1f - (float) Math.cos(progress * 2f * (float) Math.PI)) / 2f; // [0..1]
+
+            float minSize = dotSize;
+            float maxSize = dotSize * animationSizeIncreasePercent;
+            pulseDotSize = minSize + (maxSize - minSize) * ease01;
+
+            // Safety: never shrink below base dot size
+            if (pulseDotSize < dotSize) pulseDotSize = dotSize;
+        }
+
         for (MoveTo pm : possibleMoves) {
-            canvas.drawCircle(w2x(flipX(pm.X)), h2y(flipY(pm.Y)), dotSize, movePaint);
+            canvas.drawCircle(w2x(flipX(pm.X)), h2y(flipY(pm.Y)), pulseDotSize, movePaint);
         }
 
         // Ball
@@ -351,7 +388,6 @@ public class Field {
 
 
         // Turn indicator
-        int currentTurn = Moves.get(Moves.size() - 1).P;
         boolean isLocalTurn = currentTurn == (isFlipped ? 1 : 0);  // flipped view = player 1
 
         String textTop;
