@@ -332,20 +332,20 @@ public class Field {
         int currentTurn = Moves.get(Moves.size() - 1).P;
         Paint movePaint = currentTurn == 0 ? pPlayer0 : pPlayer1;
         // Pulsing animation for possible moves
-        final float animationDuration = 1000f; // ms
-        final float animationSizeIncreasePercent = 1.5f;
+        final float animationDuration = 2000f; // ms
+        final float animationSizeIncreasePercent = 2.0f;
         float pulseDotSize = dotSize;
         boolean shouldPulse = false;
-        // Game type logic
-        if (gameType == 3) {
-            // Multiplayer: pulse only for current player and only on their screen
-            shouldPulse = (currentTurn == (isFlipped ? 1 : 0));
-        } else if (gameType == 1) {
+        // Game type logic (corrected)
+        if (gameType == 1) {
+            // Player vs Player: pulse for both players
+            shouldPulse = true;
+        } else if (gameType == 2) {
             // Player vs Android: pulse only for player
             shouldPulse = (currentTurn == 0);
-        } else if (gameType == 2) {
-            // Both players can pulse
-            shouldPulse = true;
+        } else if (gameType == 3) {
+            // Multiplayer: pulse only for current player and only on their screen
+            shouldPulse = (currentTurn == (isFlipped ? 1 : 0));
         }
 
         if (shouldPulse && turnStartTime != null) {
