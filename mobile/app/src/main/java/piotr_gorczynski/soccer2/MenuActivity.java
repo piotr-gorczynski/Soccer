@@ -546,11 +546,37 @@ public class MenuActivity extends BaseActivity {
         }
         
         /* ① Inflate the view immediately so onResume() has valid widgets */
-        setContentView(R.layout.activity_menu);
+        try {
+            setContentView(R.layout.activity_menu);
+        } catch (Exception e) {
+            Log.e("TAG_Soccer", getClass().getSimpleName() + ".onCreate: Failed to set content view", e);
+            // Try to handle AppCompat theme/layout initialization failures
+            try {
+                // Attempt recovery by recreating the activity with basic theme handling
+                handleContentViewFailure(e);
+                return;
+            } catch (Exception recoveryException) {
+                Log.e("TAG_Soccer", getClass().getSimpleName() + ".onCreate: Recovery failed", recoveryException);
+                Toast.makeText(this, getString(R.string.app_launch_failed), Toast.LENGTH_LONG).show();
+                finish();
+                return;
+            }
+        }
+        
         currentLanguage = LanguageManager.getCurrentLanguageCode(this);
 
-        Toolbar toolbar = findViewById(R.id.menu_toolbar);
-        setSupportActionBar(toolbar);
+        // Setup toolbar with defensive error handling
+        try {
+            Toolbar toolbar = findViewById(R.id.menu_toolbar);
+            if (toolbar != null) {
+                setSupportActionBar(toolbar);
+            } else {
+                Log.w("TAG_Soccer", getClass().getSimpleName() + ".onCreate: Toolbar not found in layout, continuing without action bar");
+            }
+        } catch (Exception e) {
+            Log.e("TAG_Soccer", getClass().getSimpleName() + ".onCreate: Failed to setup toolbar", e);
+            // Continue without toolbar - non-critical failure
+        }
 
         // Initialize backend service checker
         SoccerApp app = (SoccerApp) getApplication();
@@ -1062,6 +1088,46 @@ public class MenuActivity extends BaseActivity {
                     warningItem.setVisible(false);
                 }
             });
+    }
+
+    /**
+     * Handles failures during setContentView() by attempting recovery strategies
+     * for AppCompat theme and layout initialization issues.
+     */
+    private void handleContentViewFailure(Exception originalException) {
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".handleContentViewFailure: Attempting recovery from setContentView failure");
+        
+        // Strategy 1: Try to reinitialize with a simple fallback layout
+        try {
+            // Create a minimal layout programmatically to avoid XML layout issues
+            android.widget.LinearLayout fallbackLayout = new android.widget.LinearLayout(this);
+            fallbackLayout.setOrientation(android.widget.LinearLayout.VERTICAL);
+            fallbackLayout.setGravity(android.view.Gravity.CENTER);
+            
+            android.widget.TextView errorText = new android.widget.TextView(this);
+            errorText.setText(getString(R.string.layout_initialization_error));
+            errorText.setTextSize(16);
+            errorText.setPadding(32, 32, 32, 32);
+            errorText.setGravity(android.view.Gravity.CENTER);
+            
+            android.widget.Button retryButton = new android.widget.Button(this);
+            retryButton.setText(getString(R.string.retry));
+            retryButton.setOnClickListener(v -> {
+                Log.d("TAG_Soccer", getClass().getSimpleName() + ".handleContentViewFailure: User requested retry");
+                recreate(); // Restart the activity
+            });
+            
+            fallbackLayout.addView(errorText);
+            fallbackLayout.addView(retryButton);
+            
+            setContentView(fallbackLayout);
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".handleContentViewFailure: Successfully set fallback layout");
+            
+        } catch (Exception fallbackException) {
+            Log.e("TAG_Soccer", getClass().getSimpleName() + ".handleContentViewFailure: Fallback layout also failed", fallbackException);
+            // Re-throw to trigger the outer exception handler
+            throw new RuntimeException("Failed to recover from setContentView failure", fallbackException);
+        }
     }
 
 }
