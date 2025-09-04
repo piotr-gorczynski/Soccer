@@ -31,6 +31,13 @@ public class UniversalLoginActivity extends BaseActivity {
     private String storedNickname;
     private CallbackManager callbackManager;
     private AnalyticsManager analyticsManager;
+    
+    // Login buttons for state management
+    private Button btnEmail;
+    private Button btnGoogle;
+    private Button btnFacebook;
+    private Button btnMicrosoft;
+    private Button btnAnonymous;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,11 +62,11 @@ public class UniversalLoginActivity extends BaseActivity {
                 getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
         storedNickname = prefs.getString("nickname", null);
 
-        Button btnEmail = findViewById(R.id.btnUniversalEmail);
-        Button btnGoogle = findViewById(R.id.btnUniversalGoogle);
-        Button btnFacebook = findViewById(R.id.btnUniversalFacebook);
-        Button btnMicrosoft = findViewById(R.id.btnUniversalMicrosoft);
-        Button btnAnonymous = findViewById(R.id.btnUniversalAnonymous);
+        btnEmail = findViewById(R.id.btnUniversalEmail);
+        btnGoogle = findViewById(R.id.btnUniversalGoogle);
+        btnFacebook = findViewById(R.id.btnUniversalFacebook);
+        btnMicrosoft = findViewById(R.id.btnUniversalMicrosoft);
+        btnAnonymous = findViewById(R.id.btnUniversalAnonymous);
 
         btnEmail.setOnClickListener(v -> {
             startActivity(new Intent(this, LoginActivity.class));
@@ -93,6 +100,10 @@ public class UniversalLoginActivity extends BaseActivity {
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
                 Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
                 ": Provider selected = " + provider);
+
+        // Disable all login buttons and show toast to prevent multiple clicks
+        setLoginButtonsEnabled(false);
+        Toast.makeText(this, getString(R.string.login_in_progress), Toast.LENGTH_SHORT).show();
 
         String nickname = storedNickname; // may be null
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
@@ -161,6 +172,11 @@ public class UniversalLoginActivity extends BaseActivity {
                 .setMessage(R.string.anonymous_login_warning_message)
                 .setPositiveButton(R.string.proceed_anonymous_login, (dialog, which) -> {
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".handleAnonymousLogin: User accepted warning, proceeding with anonymous login");
+                    
+                    // Disable all login buttons and show toast to prevent multiple clicks
+                    setLoginButtonsEnabled(false);
+                    Toast.makeText(this, getString(R.string.login_in_progress), Toast.LENGTH_SHORT).show();
+                    
                     FirebaseAuthManager.LoginCallback callback = createLoginCallback();
                     authManager.loginAnonymously(callback);
                 })
@@ -170,10 +186,34 @@ public class UniversalLoginActivity extends BaseActivity {
                 .show();
     }
 
+    /**
+     * Helper method to enable/disable all login buttons to prevent multiple clicks during login process
+     */
+    private void setLoginButtonsEnabled(boolean enabled) {
+        if (btnEmail != null) {
+            btnEmail.setEnabled(enabled);
+        }
+        if (btnGoogle != null) {
+            btnGoogle.setEnabled(enabled);
+        }
+        if (btnFacebook != null) {
+            btnFacebook.setEnabled(enabled);
+        }
+        if (btnMicrosoft != null) {
+            btnMicrosoft.setEnabled(enabled);
+        }
+        if (btnAnonymous != null) {
+            btnAnonymous.setEnabled(enabled);
+        }
+    }
+
     private FirebaseAuthManager.LoginCallback createLoginCallback() {
         return new FirebaseAuthManager.LoginCallback() {
             @Override
             public void onLoginSuccess() {
+                // Re-enable login buttons
+                setLoginButtonsEnabled(true);
+                
                 Log.d(
                         "TAG_Soccer",
                         getClass().getSimpleName() + "." +
@@ -234,6 +274,9 @@ public class UniversalLoginActivity extends BaseActivity {
 
             @Override
             public void onLoginFailure(String message) {
+                // Re-enable login buttons
+                setLoginButtonsEnabled(true);
+                
                 Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
                         Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
                         ": onLoginFailure: " + message);

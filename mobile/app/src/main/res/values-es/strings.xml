@@ -197,6 +197,7 @@
     <string name="enter_email_and_password">Ingrese tanto correo electrónico como contraseña</string>
     <string name="login_success">¡Inicie sesión exitosa!</string>
     <string name="login_failed">Error de inicio de sesion: %1$s</string>
+    <string name="login_in_progress">Inicio de sesión en proceso, por favor espere...</string>
     
     <!-- Anonymous login warning -->
     <string name="anonymous_login_warning_title">Advertencia de inicio de sesión anónimo</string>
