@@ -97,12 +97,17 @@ public class Field {
         rText = new Rect();
 
         Resources res = current.getResources();
-        flFieldMargin = res.getFraction(R.fraction.flFieldMargin,1,1);
-        flLinesWidth = res.getFraction(R.fraction.flLinesWidth,1,1);
-        flDots= res.getFraction(R.fraction.flDots,1,1);
-        flText = res.getFraction(R.fraction.flText,1,1);
-        intFieldWidth = res.getInteger(R.integer.intFieldHalfWidth)*2;
-        intFieldHeight = res.getInteger(R.integer.intFieldHalfHeight)*2;
+        try {
+            flFieldMargin = res.getFraction(R.fraction.flFieldMargin,1,1);
+            flLinesWidth = res.getFraction(R.fraction.flLinesWidth,1,1);
+            flDots= res.getFraction(R.fraction.flDots,1,1);
+            flText = res.getFraction(R.fraction.flText,1,1);
+            intFieldWidth = res.getInteger(R.integer.intFieldHalfWidth)*2;
+            intFieldHeight = res.getInteger(R.integer.intFieldHalfHeight)*2;
+        } catch (Exception e) {
+            Log.e("TAG_Soccer", getClass().getSimpleName() + ".<init>: Failed to load field resources", e);
+            throw new RuntimeException("Failed to load field configuration resources", e);
+        }
 
         pPlayer0=new Paint();
         pPlayer0.setStyle(Paint.Style.FILL);
@@ -124,7 +129,16 @@ public class Field {
         Paint pHintBalloon = new Paint();
         pHintBalloon.setStyle(Paint.Style.FILL);
         pHintBalloon.setColor(Color.YELLOW);
-        ballBitmap = BitmapFactory.decodeResource(current.getResources(), R.drawable.ball);
+        try {
+            ballBitmap = BitmapFactory.decodeResource(current.getResources(), R.drawable.ball);
+            if (ballBitmap == null) {
+                Log.w("TAG_Soccer", getClass().getSimpleName() + ".<init>: Ball bitmap could not be loaded from resources");
+                throw new RuntimeException("Failed to load ball bitmap resource");
+            }
+        } catch (Exception e) {
+            Log.e("TAG_Soccer", getClass().getSimpleName() + ".<init>: Failed to load ball bitmap", e);
+            throw new RuntimeException("Failed to load ball bitmap resource", e);
+        }
 
 
 

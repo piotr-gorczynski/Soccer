@@ -142,6 +142,15 @@ public class GameView extends View {
     // Constructor
     public GameView(Context context, ArrayList<MoveTo> argMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex, long time0, long time1, Long turnStartTime) {
         super(context);
+        
+        // Validate input parameters
+        if (context == null) {
+            throw new IllegalArgumentException("Context cannot be null");
+        }
+        if (argMoves == null) {
+            throw new IllegalArgumentException("Moves list cannot be null");
+        }
+        
         // simpler log—no reflection, no nulls
         Log.d("TAG_Soccer",getClass().getSimpleName() + ".<init>: Started, received argMoves.size=" + argMoves.size());
         this.localPlayerIndex = localPlayerIndex;
@@ -153,8 +162,13 @@ public class GameView extends View {
         gestureDetector = new GestureDetector(context, new SwipeListener());
 
         Resources res = context.getResources();
-        intFieldWidth = res.getInteger(R.integer.intFieldHalfWidth) * 2;
-        intFieldHeight = res.getInteger(R.integer.intFieldHalfHeight) * 2;
+        try {
+            intFieldWidth = res.getInteger(R.integer.intFieldHalfWidth) * 2;
+            intFieldHeight = res.getInteger(R.integer.intFieldHalfHeight) * 2;
+        } catch (Exception e) {
+            Log.e("TAG_Soccer", getClass().getSimpleName() + ".<init>: Failed to load field dimensions", e);
+            throw new RuntimeException("Failed to initialize game field dimensions", e);
+        }
 
         realMoves = argMoves;
 
@@ -164,7 +178,12 @@ public class GameView extends View {
         this.turnStartsTime = (turnStartTime != null) ? turnStartTime : System.currentTimeMillis();
 
         // construct Field with custom nicknames
-        field = new Field(context, realMoves, possibleMovesForDrawing, GameType, player0Name, player1Name, localPlayerIndex);
+        try {
+            field = new Field(context, realMoves, possibleMovesForDrawing, GameType, player0Name, player1Name, localPlayerIndex);
+        } catch (Exception e) {
+            Log.e("TAG_Soccer", getClass().getSimpleName() + ".<init>: Failed to create Field", e);
+            throw new RuntimeException("Failed to initialize game field", e);
+        }
 
         this.setFocusable(true);
         this.requestFocus();
@@ -191,6 +210,17 @@ public class GameView extends View {
     public GameView(Context context, ArrayList<MoveTo> argMoves, int argGameType,int androidLevel) {
         super(context);
 
+        // Validate input parameters
+        if (context == null) {
+            throw new IllegalArgumentException("Context cannot be null");
+        }
+        if (argMoves == null) {
+            throw new IllegalArgumentException("Moves list cannot be null");
+        }
+        if (argMoves.isEmpty()) {
+            throw new IllegalArgumentException("Moves list cannot be empty");
+        }
+
         mHandler = new MyHandler(this);
         GameType = argGameType;
         this.androidLevel=androidLevel;
@@ -198,9 +228,14 @@ public class GameView extends View {
         setBackgroundColor(ContextCompat.getColor(context, R.color.colorGreenDark));
         gestureDetector = new GestureDetector(context, new SwipeListener());
 
-        Resources res = context.getResources();
-        intFieldWidth = res.getInteger(R.integer.intFieldHalfWidth) * 2;
-        intFieldHeight = res.getInteger(R.integer.intFieldHalfHeight) * 2;
+        try {
+            Resources res = context.getResources();
+            intFieldWidth = res.getInteger(R.integer.intFieldHalfWidth) * 2;
+            intFieldHeight = res.getInteger(R.integer.intFieldHalfHeight) * 2;
+        } catch (Exception e) {
+            Log.e("TAG_Soccer", getClass().getSimpleName() + ".<init>: Failed to load field dimensions", e);
+            throw new RuntimeException("Failed to initialize game field dimensions", e);
+        }
 
         //Moves.addAll(argMoves);
         realMoves = argMoves;
@@ -214,8 +249,12 @@ public class GameView extends View {
         possibleMoves.add(new MoveTo(4,3,0));
         */
 
-
-        field = new Field(context, realMoves, possibleMovesForDrawing, GameType, "Player 1", "Player 2",0);
+        try {
+            field = new Field(context, realMoves, possibleMovesForDrawing, GameType, "Player 1", "Player 2",0);
+        } catch (Exception e) {
+            Log.e("TAG_Soccer", getClass().getSimpleName() + ".<init>: Failed to create Field", e);
+            throw new RuntimeException("Failed to initialize game field", e);
+        }
 
         // Initialize turn start time so pulsing animations have a time origin
         this.turnStartsTime = System.currentTimeMillis();
