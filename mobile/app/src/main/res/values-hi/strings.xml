@@ -219,6 +219,7 @@
     <string name="nickname_save_failed">उपनाम बचाने में विफल रहा</string>
 
     <string name="game_launch_failed">गेम लॉन्च विफल रहा।</string>
+    <string name="app_launch_failed">ऐप लॉन्च विफल हुआ। कृपया पुनः प्रयास करें।</string>
     <string name="please_log_in_to_continue">जारी रखने के लिए कृपया लॉगिन करें।</string>
     <string name="match_not_found">मैच नहीं मिला।</string>
     <string name="invalid_match_record">अमान्य मैच रिकॉर्ड।</string>
@@ -299,4 +300,7 @@
     <string name="register_benefits_title">टूर्नामेंट में शामिल हों &amp; विश्वव्यापी प्रतिस्पर्धा करें!</string>
     <string name="register_benefits_message">अपनी रैंकिंग सेव करने और दुनिया भर के खिलाड़ियों के साथ टूर्नामेंट में भाग लेने के लिए पंजीकरण करें।</string>
     <string name="register_now">अब पंजीकरण करें</string>
+
+    <string name="layout_initialization_error">ऐप को एक डिस्प्ले त्रुटि का सामना करना पड़ा। कृपया पुनः प्रयास करें।</string>
+    <string name="retry">पुनः प्रयास करें</string>
 </resources>

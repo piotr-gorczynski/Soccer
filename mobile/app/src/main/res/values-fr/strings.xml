@@ -223,6 +223,7 @@
 
     <!-- Match / network errors -->
     <string name="game_launch_failed">Le lancement du jeu a échoué.</string>
+    <string name="app_launch_failed">Le lancement de l'application a échoué. Veuillez réessayer.</string>
     <string name="please_log_in_to_continue">Veuillez vous connecter pour continuer.</string>
     <string name="match_not_found">Match introuvable.</string>
     <string name="invalid_match_record">Enregistrement de match invalide.</string>
@@ -301,4 +302,7 @@
     <string name="register_benefits_title">Rejoignez des tournois &amp; participez mondialement !</string>
     <string name="register_benefits_message">Inscrivez-vous pour sauvegarder votre classement et participer à des tournois avec des joueurs du monde entier.</string>
     <string name="register_now">S\'inscrire maintenant</string>
+
+    <string name="layout_initialization_error">L\'application a rencontré une erreur d\'affichage. Veuillez réessayer.</string>
+    <string name="retry">Réessayer</string>
 </resources>

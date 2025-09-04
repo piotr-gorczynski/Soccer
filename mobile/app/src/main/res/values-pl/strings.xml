@@ -220,6 +220,7 @@
     <string name="nickname_save_failed">Nie udało się zapisać pseudonim</string>
 
     <string name="game_launch_failed">Uruchomienie gry nie powiodło się.</string>
+    <string name="app_launch_failed">Uruchomienie aplikacji nie powiodło się. Spróbuj ponownie.</string>
     <string name="please_log_in_to_continue">Zaloguj się, aby kontynuować.</string>
     <string name="match_not_found">Mecz nie został znaleziony.</string>
     <string name="invalid_match_record">Nieprawidłowy rekord meczu.</string>
@@ -300,4 +301,7 @@
     <string name="register_benefits_title">Dołącz do turniejów &amp; rywalizuj globalnie!</string>
     <string name="register_benefits_message">Zarejestruj się, aby zapisać swój ranking i uczestniczyć w turniejach z graczami z całego świata.</string>
     <string name="register_now">Zarejestruj się teraz</string>
+
+    <string name="layout_initialization_error">Aplikacja napotkała błąd wyświetlania. Spróbuj ponownie.</string>
+    <string name="retry">Spróbuj ponownie</string>
 </resources>
