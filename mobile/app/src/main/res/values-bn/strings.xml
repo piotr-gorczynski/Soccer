@@ -219,6 +219,7 @@
     <string name="nickname_save_failed">ডাকনাম সংরক্ষণ করতে ব্যর্থ</string>
 
     <string name="game_launch_failed">গেম লঞ্চ ব্যর্থ হয়েছে।</string>
+    <string name="app_launch_failed">অ্যাপ লঞ্চ ব্যর্থ হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।</string>
     <string name="please_log_in_to_continue">চালিয়ে যেতে দয়া করে লগ ইন করুন।</string>
     <string name="match_not_found">ম্যাচ পাওয়া যায় নি।</string>
     <string name="invalid_match_record">অবৈধ ম্যাচের রেকর্ড।</string>
@@ -299,4 +300,7 @@
     <string name="register_benefits_title">টুর্নামেন্টে যোগ দিন &amp; বিশ্বব্যাপী প্রতিযোগিতা করুন!</string>
     <string name="register_benefits_message">আপনার র‌্যাঙ্কিং সংরক্ষণ করতে এবং বিশ্বব্যাপী খেলোয়াড়দের সাথে টুর্নামেন্টে অংশগ্রহণ করতে নিবন্ধন করুন।</string>
     <string name="register_now">এখনই নিবন্ধন করুন</string>
+
+    <string name="layout_initialization_error">অ্যাপটি একটি প্রদর্শন ত্রুটির সম্মুখীন হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।</string>
+    <string name="retry">আবার চেষ্টা করুন</string>
 </resources>
