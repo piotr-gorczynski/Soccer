@@ -27,6 +27,7 @@ import androidx.annotation.NonNull;
  * Created by pgorczynski on 2016-05-13.
  */
 public class GameView extends View {
+    private boolean inputEnabled = true;
 
     private final MyHandler mHandler;
     private final Field field;
@@ -48,7 +49,16 @@ public class GameView extends View {
 
     private Long turnStartsTime=null;
 
-    private boolean inputEnabled = true;
+    private final Handler pulseHandler = new Handler(Looper.getMainLooper());
+    private final Runnable pulseRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (shouldPulse()) {
+                invalidate();
+                pulseHandler.postDelayed(this, 16); // ~60 FPS
+            }
+        }
+    };
     /** Disable or re-enable all touches on the board */
     public void setInputEnabled(boolean enabled) {
         this.inputEnabled = enabled;
@@ -64,9 +74,11 @@ public class GameView extends View {
     }
 
     public void replaceMoves(ArrayList<MoveTo> newMoves) {
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started. newMoves.size=" + newMoves.size());
-        this.realMoves.clear();
-        this.realMoves.addAll(newMoves);
+    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started. newMoves.size=" + newMoves.size());
+    this.realMoves.clear();
+    this.realMoves.addAll(newMoves);
+    createPossibleMoves(possibleMovesForDrawing, realMoves);
+    startPulseIfNeeded();
     }
 
     public static class MyHandler extends Handler {
@@ -128,7 +140,6 @@ public class GameView extends View {
 
 
     // Constructor
-
     public GameView(Context context, ArrayList<MoveTo> argMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex, long time0, long time1, Long turnStartTime) {
         super(context);
         // simpler log—no reflection, no nulls
@@ -158,17 +169,21 @@ public class GameView extends View {
         this.setFocusableInTouchMode(true);
 
         // pass the clock values into the Field
+                    startPulseIfNeeded();
         field.setRemainingTimes(remTime0, remTime1, turnStartTime);
         // No Android move logic here, because GameType 3 is human vs. human
+        startPulseIfNeeded();
     }
 
     // allow later updates
     public void updateTimes(long time0, long time1, Long ts) {
-        remTime0 = time0;
-        remTime1 = time1;
-        turnStartsTime = ts;
-        field.setRemainingTimes(time0, time1, ts);
-        invalidate();
+    remTime0 = time0;
+    remTime1 = time1;
+    turnStartsTime = ts;
+    field.setRemainingTimes(time0, time1, ts);
+    createPossibleMoves(possibleMovesForDrawing, realMoves);
+    startPulseIfNeeded();
+    invalidate();
     }
 
     public GameView(Context context, ArrayList<MoveTo> argMoves, int argGameType,int androidLevel) {
@@ -210,6 +225,7 @@ public class GameView extends View {
         if ((GameType == 2) && (realMoves.get(realMoves.size() - 1).P == 1))
             //Send message for Android to move
             mHandler.sendEmptyMessage(1);
+        startPulseIfNeeded();
     }
 
     @Override
@@ -235,6 +251,22 @@ public class GameView extends View {
         createPossibleMoves(possibleMovesForDrawing, realMoves);
         field.setRemainingTimes(remTime0, remTime1,turnStartsTime);
         field.draw(canvas);
+        // Start or stop pulsing based on possible moves
+        startPulseIfNeeded();
+    }
+
+    private void startPulseIfNeeded() {
+        if (shouldPulse()) {
+            pulseHandler.removeCallbacks(pulseRunnable);
+            pulseHandler.post(pulseRunnable);
+        } else {
+            pulseHandler.removeCallbacks(pulseRunnable);
+        }
+    }
+
+    private boolean shouldPulse() {
+        // Pulse if there are possible moves to show
+        return possibleMovesForDrawing != null && !possibleMovesForDrawing.isEmpty();
     }
 
 
