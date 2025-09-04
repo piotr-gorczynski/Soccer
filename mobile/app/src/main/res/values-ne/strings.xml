@@ -219,6 +219,7 @@
     <string name="nickname_save_failed">उपनाम बचत गर्न असफल भयो</string>
 
     <string name="game_launch_failed">खेल सुरुवात असफल भयो।</string>
+    <string name="app_launch_failed">एप सुरु गर्न असफल भयो। कृपया फेरि प्रयास गर्नुहोस्।</string>
     <string name="please_log_in_to_continue">जारी राख्न कृपया लग इन गर्नुहोस्।</string>
     <string name="match_not_found">मेल भेटिएन।</string>
     <string name="invalid_match_record">अवैध खेल रेकर्ड।</string>

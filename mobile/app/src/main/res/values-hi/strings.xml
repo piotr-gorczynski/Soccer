@@ -219,6 +219,7 @@
     <string name="nickname_save_failed">उपनाम बचाने में विफल रहा</string>
 
     <string name="game_launch_failed">गेम लॉन्च विफल रहा।</string>
+    <string name="app_launch_failed">ऐप लॉन्च विफल हुआ। कृपया पुनः प्रयास करें।</string>
     <string name="please_log_in_to_continue">जारी रखने के लिए कृपया लॉगिन करें।</string>
     <string name="match_not_found">मैच नहीं मिला।</string>
     <string name="invalid_match_record">अमान्य मैच रिकॉर्ड।</string>

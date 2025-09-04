@@ -219,6 +219,7 @@
     <string name="nickname_save_failed">ডাকনাম সংরক্ষণ করতে ব্যর্থ</string>
 
     <string name="game_launch_failed">গেম লঞ্চ ব্যর্থ হয়েছে।</string>
+    <string name="app_launch_failed">অ্যাপ লঞ্চ ব্যর্থ হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।</string>
     <string name="please_log_in_to_continue">চালিয়ে যেতে দয়া করে লগ ইন করুন।</string>
     <string name="match_not_found">ম্যাচ পাওয়া যায় নি।</string>
     <string name="invalid_match_record">অবৈধ ম্যাচের রেকর্ড।</string>
