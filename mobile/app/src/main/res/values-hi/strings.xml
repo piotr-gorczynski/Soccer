@@ -299,4 +299,7 @@
     <string name="register_benefits_title">टूर्नामेंट में शामिल हों &amp; विश्वव्यापी प्रतिस्पर्धा करें!</string>
     <string name="register_benefits_message">अपनी रैंकिंग सेव करने और दुनिया भर के खिलाड़ियों के साथ टूर्नामेंट में भाग लेने के लिए पंजीकरण करें।</string>
     <string name="register_now">अब पंजीकरण करें</string>
+
+    <string name="layout_initialization_error">ऐप को एक डिस्प्ले त्रुटि का सामना करना पड़ा। कृपया पुनः प्रयास करें।</string>
+    <string name="retry">पुनः प्रयास करें</string>
 </resources>

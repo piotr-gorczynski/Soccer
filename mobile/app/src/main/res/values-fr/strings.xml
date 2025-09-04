@@ -301,4 +301,7 @@
     <string name="register_benefits_title">Rejoignez des tournois &amp; participez mondialement !</string>
     <string name="register_benefits_message">Inscrivez-vous pour sauvegarder votre classement et participer à des tournois avec des joueurs du monde entier.</string>
     <string name="register_now">S\'inscrire maintenant</string>
+
+    <string name="layout_initialization_error">L\'application a rencontré une erreur d\'affichage. Veuillez réessayer.</string>
+    <string name="retry">Réessayer</string>
 </resources>

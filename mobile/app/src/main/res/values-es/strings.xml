@@ -300,4 +300,7 @@
     <string name="register_benefits_title">¡Únete a torneos &amp; compite globalmente!</string>
     <string name="register_benefits_message">Regístrate para guardar tu ranking y participar en torneos con jugadores de todo el mundo.</string>
     <string name="register_now">Registrarse ahora</string>
+
+    <string name="layout_initialization_error">La aplicación encontró un error de visualización. Por favor, inténtalo de nuevo.</string>
+    <string name="retry">Reintentar</string>
 </resources>

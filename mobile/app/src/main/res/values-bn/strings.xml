@@ -299,4 +299,7 @@
     <string name="register_benefits_title">টুর্নামেন্টে যোগ দিন &amp; বিশ্বব্যাপী প্রতিযোগিতা করুন!</string>
     <string name="register_benefits_message">আপনার র‌্যাঙ্কিং সংরক্ষণ করতে এবং বিশ্বব্যাপী খেলোয়াড়দের সাথে টুর্নামেন্টে অংশগ্রহণ করতে নিবন্ধন করুন।</string>
     <string name="register_now">এখনই নিবন্ধন করুন</string>
+
+    <string name="layout_initialization_error">অ্যাপটি একটি প্রদর্শন ত্রুটির সম্মুখীন হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।</string>
+    <string name="retry">আবার চেষ্টা করুন</string>
 </resources>
