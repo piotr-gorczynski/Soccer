@@ -285,7 +285,7 @@
     <string name="decline_reason_offline">बस ऑफलाइन खेल रहा हूं</string>
     <string name="decline_reason_privacy">गोपनीयता की चिंता</string>
     <string name="decline_reason_complicated">बहुत जटिल</string>
-    <string name="decline_reason_dont_use_providers">गूगल/ईमेल का उपयोग नहीं करता</string>
+    <string name="decline_reason_dont_use_providers">गूगल/फेसबुक/ईमेल का उपयोग नहीं करता</string>
     <string name="decline_reason_other">अन्य कारण</string>
     
     <!-- Anonymous user prompts -->
