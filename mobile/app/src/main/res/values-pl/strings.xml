@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="facebook_id_label">Facebook ID: %1$s</string>
     <!-- Basic app strings in Polish -->
     <string name="app_name">Soccer 2</string>
     <string name="menu_Settings">Ustawienia</string>
@@ -115,7 +116,7 @@
     <string name="logged_out">Zostałeś wylogowany</string>
     
     <!-- Game strings -->
-    <plurals name="wins_format">
+    <plurals name="wins_format" tools:ignore="MissingQuantity">
         <item quantity="one">%d wygrana</item>
         <item quantity="few">%d wygrane</item>
         <item quantity="other">%d wygranych</item>
