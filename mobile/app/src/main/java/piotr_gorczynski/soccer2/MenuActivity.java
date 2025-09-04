@@ -154,7 +154,7 @@ public class MenuActivity extends BaseActivity {
         FirebaseFirestore.getInstance()
                 .collection("users")
                 .document(uid)
-                .get()
+                .get(Source.SERVER)
                 .addOnSuccessListener(doc -> {
                     if (FirebaseAuth.getInstance().getCurrentUser() == null) return;
                     Boolean accepted = doc.getBoolean("termsAccepted");
