@@ -161,7 +161,7 @@
     <string name="facebook_name_label">Facebook नाम: %1$s</string>
     <string name="pref_title_facebook">Facebook समुदाय</string>
     <string name="pref_summary_facebook">Facebook पर हमारा समुदाय पेज खोलें</string>
-    <string name="ads_consent_required">विज्ञापन दिखाना इन्फ्रास्ट्रक्चर रखरखाव के वित्तपोषण में मदद करता है। चूंकि आपने विज्ञापन दिखाने के लिए सहमति नहीं दी है, यह विकल्प उपलब्ध नहीं है। आप सेटिंग्स में अपनी सहमति की जांच कर सकते हैं।</string>
+    <string name="ads_consent_required">विज्ञापन दिखाना इन्फ्रास्ट्रक्चर रखरखाव के वित्तपोषण में मदद करता है। आप हमेशा सेटिंग्स में अपनी सहमति की जांच कर सकते हैं।</string>
     <string name="no_internet_for_privacy_options">गोपनीयता विकल्प खोलने के लिए इंटरनेट कनेक्शन आवश्यक है।</string>
     
     <!-- Account removal strings -->
