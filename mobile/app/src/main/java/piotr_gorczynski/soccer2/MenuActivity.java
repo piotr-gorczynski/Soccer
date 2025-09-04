@@ -432,7 +432,11 @@ public class MenuActivity extends BaseActivity {
         } else {
             labelText = getString(R.string.welcome_to_soccer);
         }
-        nicknameLabel.setText(labelText);
+        if (nicknameLabel != null) {
+            nicknameLabel.setText(labelText);
+        } else {
+            Log.e("TAG_Soccer", getClass().getSimpleName() + ".onResume: nicknameLabel is null, layout may not be properly inflated");
+        }
         Log.d(
                 "TAG_Soccer",
                 getClass().getSimpleName()
