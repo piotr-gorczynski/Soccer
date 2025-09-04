@@ -630,7 +630,13 @@ public class MenuActivity extends BaseActivity {
                 .setPositiveButton(R.string.proceed, (dialog, which) -> {
                     startActivity(new Intent(this, UniversalLoginActivity.class));
                 })
-                .setNegativeButton(R.string.cancel, null)
+                .setNegativeButton(R.string.cancel, (dialog, which) -> {
+                    // Show signup decline reason dialog to understand why
+                    SignupDeclineReasonDialog.show(this, "registration_dismiss", analyticsManager, reason -> {
+                        // User has provided feedback, no further action needed
+                        Log.d("TAG_Soccer", "User declined registration, reason: " + reason);
+                    });
+                })
                 .show();
     }
 
