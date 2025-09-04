@@ -104,14 +104,18 @@ public class MenuActivity extends BaseActivity {
                             ed.putString("nickname", remoteNick);
                             TextView nicknameLabel = findViewById(R.id.nicknameLabel);
                             String labelText = getString(R.string.hello_nickname, remoteNick);
-                            nicknameLabel.setText(labelText);
-                            Log.d(
-                                    "TAG_Soccer",
-                                    getClass().getSimpleName()
-                                            + ".fetchNicknameFromFirestore: nicknameLabel=\""
-                                            + labelText
-                                            + "\""
-                            );
+                            if (nicknameLabel != null) {
+                                nicknameLabel.setText(labelText);
+                                Log.d(
+                                        "TAG_Soccer",
+                                        getClass().getSimpleName()
+                                                + ".fetchNicknameFromFirestore: nicknameLabel=\""
+                                                + labelText
+                                                + "\""
+                                );
+                            } else {
+                                Log.e("TAG_Soccer", getClass().getSimpleName() + ".fetchNicknameFromFirestore: nicknameLabel is null, layout may not be properly inflated");
+                            }
                         }
                         String localEmail = prefs.getString("email", null);
                         if (remoteEmail != null && (localEmail == null || !localEmail.equals(remoteEmail))) {
@@ -467,17 +471,22 @@ public class MenuActivity extends BaseActivity {
         // Check if backend is available - if not, disable ALL buttons
         if (!isBackendAvailable) {
             // Disable all buttons when backend is unavailable
-            inviteBtn.setEnabled(false);
-            pendingBtn.setEnabled(false);
-            tournamentsBtn.setEnabled(false);
-            rankingBtn.setEnabled(false);
-            
-            // Visual cue (dim all buttons)
-            float disabledAlpha = 0.3f;
-            inviteBtn.setAlpha(disabledAlpha);
-            pendingBtn.setAlpha(disabledAlpha);
-            tournamentsBtn.setAlpha(disabledAlpha);
-            rankingBtn.setAlpha(disabledAlpha);
+            if (inviteBtn != null) {
+                inviteBtn.setEnabled(false);
+                inviteBtn.setAlpha(0.3f);
+            }
+            if (pendingBtn != null) {
+                pendingBtn.setEnabled(false);
+                pendingBtn.setAlpha(0.3f);
+            }
+            if (tournamentsBtn != null) {
+                tournamentsBtn.setEnabled(false);
+                tournamentsBtn.setAlpha(0.3f);
+            }
+            if (rankingBtn != null) {
+                rankingBtn.setEnabled(false);
+                rankingBtn.setAlpha(0.3f);
+            }
 
             return; // Skip the normal auth-based logic
         }
@@ -486,10 +495,18 @@ public class MenuActivity extends BaseActivity {
         // Dim buttons when the user is not logged in, but keep them clickable so we can
         // show a toast informing them to register.
         float alpha = loggedIn ? 1f : 0.4f;
-        inviteBtn.setAlpha(alpha);
-        pendingBtn.setAlpha(alpha);
-        tournamentsBtn.setAlpha(alpha);
-        rankingBtn.setAlpha(alpha);
+        if (inviteBtn != null) {
+            inviteBtn.setAlpha(alpha);
+        }
+        if (pendingBtn != null) {
+            pendingBtn.setAlpha(alpha);
+        }
+        if (tournamentsBtn != null) {
+            tournamentsBtn.setAlpha(alpha);
+        }
+        if (rankingBtn != null) {
+            rankingBtn.setAlpha(alpha);
+        }
     }
 
     private void checkForActiveMatch() {
