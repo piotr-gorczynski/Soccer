@@ -197,6 +197,7 @@
     <string name="enter_email_and_password">Bitte geben Sie sowohl e-mail als auch Passwort ein</string>
     <string name="login_success">Login erfolgreich!</string>
     <string name="login_failed">Fehler bei der Anmeldung: %1$s</string>
+    <string name="login_in_progress">Anmeldung läuft, bitte warten...</string>
     
     <!-- Anonymous login warning -->
     <string name="anonymous_login_warning_title">Warnung zur anonymen Anmeldung</string>
