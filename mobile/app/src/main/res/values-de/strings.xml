@@ -300,4 +300,7 @@
     <string name="register_benefits_title">Turnieren beitreten &amp; global konkurrieren!</string>
     <string name="register_benefits_message">Registrieren Sie sich, um Ihr Ranking zu speichern und an Turnieren mit Spielern weltweit teilzunehmen.</string>
     <string name="register_now">Jetzt registrieren</string>
+
+    <string name="layout_initialization_error">Die App ist auf einen Anzeigefehler gestoßen. Bitte versuchen Sie es erneut.</string>
+    <string name="retry">Wiederholen</string>
 </resources>

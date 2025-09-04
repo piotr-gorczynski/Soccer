@@ -299,4 +299,7 @@
     <string name="register_benefits_title">ٹورنامنٹ میں شامل ہوں &amp; عالمی مقابلہ کریں!</string>
     <string name="register_benefits_message">اپنی درجہ بندی محفوظ کرنے اور دنیا بھر کے کھلاڑیوں کے ساتھ ٹورنامنٹ میں حصہ لینے کے لیے رجسٹر کریں۔</string>
     <string name="register_now">اب رجسٹر کریں</string>
+
+    <string name="layout_initialization_error">ایپ کو ڈسپلے کی خرابی کا سامنا ہوا۔ براہ کرم دوبارہ کوشش کریں۔</string>
+    <string name="retry">دوبارہ کوشش کریں</string>
 </resources>

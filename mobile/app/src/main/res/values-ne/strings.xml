@@ -299,4 +299,7 @@
     <string name="register_benefits_title">प्रतियोगितामा सामेल हुनुहोस् &amp; विश्वव्यापी प्रतिस्पर्धा गर्नुहोस्!</string>
     <string name="register_benefits_message">आफ्नो र्याङ्किङ सेभ गर्न र विश्वभरका खेलाडीहरूसँग प्रतियोगितामा भाग लिन दर्ता गर्नुहोस्।</string>
     <string name="register_now">अहिले नै दर्ता गर्नुहोस्</string>
+
+    <string name="layout_initialization_error">एपमा डिस्प्ले त्रुटि भयो। कृपया फेरि प्रयास गर्नुहोस्।</string>
+    <string name="retry">फेरि प्रयास गर्नुहोस्</string>
 </resources>
