@@ -790,17 +790,29 @@ public class MenuActivity extends BaseActivity {
 
 
     public void OpenGamePlayerVsPlayer(View view) {
-        // Do something in response to button
-        Intent intent = new Intent(this, GameActivity.class);
-        intent.putExtra("GameType", 1);
-        startActivity(intent);
+        if (!hasAdsConsent()) {
+            showConsentRequiredDialog();
+            return;
+        }
+
+        showAdThenRun(() -> {
+            Intent intent = new Intent(this, GameActivity.class);
+            intent.putExtra("GameType", 1);
+            startActivity(intent);
+        });
     }
 
     public void OpenGamePlayerVsAndroid(View view) {
-        // Do something in response to button
-        Intent intent = new Intent(this, GameActivity.class);
-        intent.putExtra("GameType", 2);
-        startActivity(intent);
+        if (!hasAdsConsent()) {
+            showConsentRequiredDialog();
+            return;
+        }
+
+        showAdThenRun(() -> {
+            Intent intent = new Intent(this, GameActivity.class);
+            intent.putExtra("GameType", 2);
+            startActivity(intent);
+        });
     }
 
 
