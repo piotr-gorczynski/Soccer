@@ -790,10 +790,6 @@ public class MenuActivity extends BaseActivity {
 
 
     public void OpenGamePlayerVsPlayer(View view) {
-        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-            showRegistrationDialog();
-            return;
-        }
         if (!hasAdsConsent()) {
             showConsentRequiredDialog();
             return;
@@ -807,10 +803,6 @@ public class MenuActivity extends BaseActivity {
     }
 
     public void OpenGamePlayerVsAndroid(View view) {
-        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-            showRegistrationDialog();
-            return;
-        }
         if (!hasAdsConsent()) {
             showConsentRequiredDialog();
             return;
