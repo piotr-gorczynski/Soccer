@@ -65,14 +65,14 @@ public class AddFriendActivity extends BaseActivity {
         nicknameInput.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int st, int c, int a) {}
             @Override public void onTextChanged(CharSequence s, int st, int b, int c) {
-                searchButton.setEnabled(s.length() > 1);
+                searchButton.setEnabled(s.length() >= 1);
             }
             @Override public void afterTextChanged(Editable s) {}
         });
 
         searchButton.setOnClickListener(v -> {
             String query = nicknameInput.getText().toString().trim();
-            if (query.length() <= 1) return;
+            if (query.length() < 1) return;
             adapter.clear();
             lastVisible = null;
 
@@ -93,19 +93,15 @@ public class AddFriendActivity extends BaseActivity {
 
         Query q;
         if (fallbackMode) {
-            String normalized = originalQuery.substring(0, 1).toUpperCase() +
-                    originalQuery.substring(1).toLowerCase();
+            // Fallback mode: fetch all users ordered by nickname for client-side filtering
             q = db.collection("users")
                     .orderBy("nickname")
-                    .startAt(normalized)
-                    .endAt(normalized + "\uf8ff")
-                    .limit(10);
+                    .limit(50); // Increased limit for client-side filtering
         } else {
+            // Primary mode: fetch all users ordered by nicknameLowercase for client-side filtering
             q = db.collection("users")
                     .orderBy("nicknameLowercase")
-                    .startAt(currentQuery)
-                    .endAt(currentQuery + "\uf8ff")
-                    .limit(10);
+                    .limit(50); // Increased limit for client-side filtering
         }
 
         if (lastVisible != null) q = q.startAfter(lastVisible);
@@ -121,8 +117,11 @@ public class AddFriendActivity extends BaseActivity {
                             continue;
                         }
                         
-                        // Include all non-deleted accounts (anonymous, email, facebook, etc.)
-                        docs.add(d);
+                        // Client-side filtering: check if nickname contains the search query anywhere
+                        String nickname = fallbackMode ? d.getString("nickname") : d.getString("nicknameLowercase");
+                        if (nickname != null && nickname.toLowerCase().contains(currentQuery)) {
+                            docs.add(d);
+                        }
                     }
                     adapter.addResults(docs);
 
@@ -132,7 +131,7 @@ public class AddFriendActivity extends BaseActivity {
                         return;
                     }
 
-                    if (docsAll.size() == 10) {
+                    if (docsAll.size() == 50) { // Updated to match new limit
                         lastVisible = docsAll.get(docsAll.size() - 1);
                         loadMoreButton.setVisibility(View.VISIBLE);
                     } else {
