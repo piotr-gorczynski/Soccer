@@ -197,6 +197,7 @@
     <string name="enter_email_and_password">ইমেল এবং পাসওয়ার্ড উভয়ই লিখুন</string>
     <string name="login_success">লগইন সফল!</string>
     <string name="login_failed">লগইন ব্যর্থ: %1$s</string>
+    <string name="login_in_progress">লগইন চলছে, অনুগ্রহ করে অপেক্ষা করুন...</string>
     
     <!-- Anonymous login warning -->
     <string name="anonymous_login_warning_title">বেনামী লগইন সতর্কতা</string>
