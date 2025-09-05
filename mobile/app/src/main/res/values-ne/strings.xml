@@ -197,6 +197,7 @@
     <string name="enter_email_and_password">कृपया दुबै ईमेल र पासवर्ड प्रविष्ट गर्नुहोस्</string>
     <string name="login_success">लगइन सफल!</string>
     <string name="login_failed">लगइन असफल: %1$s</string>
+    <string name="login_in_progress">लगइन प्रगतिमा छ, कृपया प्रतीक्षा गर्नुहोस्...</string>
     
     <!-- Anonymous login warning -->
     <string name="anonymous_login_warning_title">गुमनाम लगइन चेतावनी</string>
