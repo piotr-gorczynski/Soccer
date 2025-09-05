@@ -161,7 +161,7 @@
     <string name="facebook_name_label">Facebook নাম: %1$s</string>
     <string name="pref_title_facebook">Facebook কমিউনিটি</string>
     <string name="pref_summary_facebook">Facebook এ আমাদের কমিউনিটি পেজ খুলুন</string>
-    <string name="ads_consent_required">বিজ্ঞাপন দেখানো অবকাঠামো রক্ষণাবেক্ষণের জন্য অর্থায়নে সহায়তা করে। যেহেতু আপনি বিজ্ঞাপন দেখাতে সম্মত হননি, এই বিকল্পটি উপলব্ধ নেই। আপনি সেটিংসে আপনার সম্মতি পরীক্ষা করতে পারেন।</string>
+    <string name="ads_consent_required">বিজ্ঞাপন দেখানো অবকাঠামো রক্ষণাবেক্ষণের জন্য অর্থায়নে সহায়তা করে। আপনি সর্বদা সেটিংসে আপনার সম্মতি পরীক্ষা করতে পারেন।</string>
     <string name="no_internet_for_privacy_options">গোপনীয়তা বিকল্প খোলার জন্য ইন্টারনেট সংযোগ প্রয়োজন।</string>
     
     <!-- Account removal strings -->
@@ -197,6 +197,7 @@
     <string name="enter_email_and_password">ইমেল এবং পাসওয়ার্ড উভয়ই লিখুন</string>
     <string name="login_success">লগইন সফল!</string>
     <string name="login_failed">লগইন ব্যর্থ: %1$s</string>
+    <string name="login_in_progress">লগইন চলছে, অনুগ্রহ করে অপেক্ষা করুন...</string>
     
     <!-- Anonymous login warning -->
     <string name="anonymous_login_warning_title">বেনামী লগইন সতর্কতা</string>
@@ -219,6 +220,7 @@
     <string name="nickname_save_failed">ডাকনাম সংরক্ষণ করতে ব্যর্থ</string>
 
     <string name="game_launch_failed">গেম লঞ্চ ব্যর্থ হয়েছে।</string>
+    <string name="app_launch_failed">অ্যাপ লঞ্চ ব্যর্থ হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।</string>
     <string name="please_log_in_to_continue">চালিয়ে যেতে দয়া করে লগ ইন করুন।</string>
     <string name="match_not_found">ম্যাচ পাওয়া যায় নি।</string>
     <string name="invalid_match_record">অবৈধ ম্যাচের রেকর্ড।</string>
@@ -299,4 +301,7 @@
     <string name="register_benefits_title">টুর্নামেন্টে যোগ দিন &amp; বিশ্বব্যাপী প্রতিযোগিতা করুন!</string>
     <string name="register_benefits_message">আপনার র‌্যাঙ্কিং সংরক্ষণ করতে এবং বিশ্বব্যাপী খেলোয়াড়দের সাথে টুর্নামেন্টে অংশগ্রহণ করতে নিবন্ধন করুন।</string>
     <string name="register_now">এখনই নিবন্ধন করুন</string>
+
+    <string name="layout_initialization_error">অ্যাপটি একটি প্রদর্শন ত্রুটির সম্মুখীন হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।</string>
+    <string name="retry">আবার চেষ্টা করুন</string>
 </resources>

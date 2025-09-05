@@ -161,7 +161,7 @@
     <string name="facebook_name_label">Facebook-Name: %1$s</string>
     <string name="pref_title_facebook">Facebook-Community</string>
     <string name="pref_summary_facebook">Unsere Community-Seite auf Facebook öffnen</string>
-    <string name="ads_consent_required">Die Anzeige von Werbung hilft bei der Finanzierung der Infrastruktur-Wartung. Da Sie der Anzeige von Werbung nicht zugestimmt haben, ist diese Option nicht verfügbar. Sie können Ihr Einverständnis in den Einstellungen überprüfen.</string>
+    <string name="ads_consent_required">Die Anzeige von Werbung hilft bei der Finanzierung der Infrastruktur-Wartung. Sie können Ihr Einverständnis jederzeit in den Einstellungen überprüfen.</string>
     <string name="no_internet_for_privacy_options">Internetverbindung erforderlich, um Datenschutzoptionen zu öffnen.</string>
     
     <!-- Account removal strings -->
@@ -197,6 +197,7 @@
     <string name="enter_email_and_password">Bitte geben Sie sowohl e-mail als auch Passwort ein</string>
     <string name="login_success">Login erfolgreich!</string>
     <string name="login_failed">Fehler bei der Anmeldung: %1$s</string>
+    <string name="login_in_progress">Anmeldung läuft, bitte warten...</string>
     
     <!-- Anonymous login warning -->
     <string name="anonymous_login_warning_title">Warnung zur anonymen Anmeldung</string>
@@ -219,6 +220,7 @@
     <string name="nickname_save_failed">Spitzname nicht speichern</string>
 
     <string name="game_launch_failed">Spielstart fehlgeschlagen.</string>
+    <string name="app_launch_failed">App-Start fehlgeschlagen. Bitte versuchen Sie es erneut.</string>
     <string name="please_log_in_to_continue">Bitte melden Sie sich an, um fortzufahren.</string>
     <string name="match_not_found">Match nicht gefunden.</string>
     <string name="invalid_match_record">Ungültiger Match -Datensatz.</string>
@@ -300,4 +302,7 @@
     <string name="register_benefits_title">Turnieren beitreten &amp; global konkurrieren!</string>
     <string name="register_benefits_message">Registrieren Sie sich, um Ihr Ranking zu speichern und an Turnieren mit Spielern weltweit teilzunehmen.</string>
     <string name="register_now">Jetzt registrieren</string>
+
+    <string name="layout_initialization_error">Die App ist auf einen Anzeigefehler gestoßen. Bitte versuchen Sie es erneut.</string>
+    <string name="retry">Wiederholen</string>
 </resources>

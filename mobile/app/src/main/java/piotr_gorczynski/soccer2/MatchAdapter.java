@@ -126,7 +126,7 @@ public class MatchAdapter
             String oppUidNow      = h.oppUid; // cached opponent UID
             // … but if they’re still null (very first tap), look them up
             if (mNow == null || oppUidNow == null) {
-                int pos = h.getAdapterPosition();
+                int pos = h.getBindingAdapterPosition();
                 if (pos == RecyclerView.NO_POSITION) return;
 
                 mNow       = matches.get(pos);

@@ -161,7 +161,7 @@
     <string name="facebook_name_label">Facebook नाम: %1$s</string>
     <string name="pref_title_facebook">Facebook समुदाय</string>
     <string name="pref_summary_facebook">Facebook पर हमारा समुदाय पेज खोलें</string>
-    <string name="ads_consent_required">विज्ञापन दिखाना इन्फ्रास्ट्रक्चर रखरखाव के वित्तपोषण में मदद करता है। चूंकि आपने विज्ञापन दिखाने के लिए सहमति नहीं दी है, यह विकल्प उपलब्ध नहीं है। आप सेटिंग्स में अपनी सहमति की जांच कर सकते हैं।</string>
+    <string name="ads_consent_required">विज्ञापन दिखाना इन्फ्रास्ट्रक्चर रखरखाव के वित्तपोषण में मदद करता है। आप हमेशा सेटिंग्स में अपनी सहमति की जांच कर सकते हैं।</string>
     <string name="no_internet_for_privacy_options">गोपनीयता विकल्प खोलने के लिए इंटरनेट कनेक्शन आवश्यक है।</string>
     
     <!-- Account removal strings -->
@@ -197,6 +197,7 @@
     <string name="enter_email_and_password">कृपया ईमेल और पासवर्ड दोनों दर्ज करें</string>
     <string name="login_success">लॉग इन सफल!</string>
     <string name="login_failed">लॉगिन विफल: %1$s</string>
+    <string name="login_in_progress">लॉगिन प्रगति में है, कृपया प्रतीक्षा करें...</string>
     
     <!-- Anonymous login warning -->
     <string name="anonymous_login_warning_title">गुमनाम लॉगिन चेतावनी</string>
@@ -219,6 +220,7 @@
     <string name="nickname_save_failed">उपनाम बचाने में विफल रहा</string>
 
     <string name="game_launch_failed">गेम लॉन्च विफल रहा।</string>
+    <string name="app_launch_failed">ऐप लॉन्च विफल हुआ। कृपया पुनः प्रयास करें।</string>
     <string name="please_log_in_to_continue">जारी रखने के लिए कृपया लॉगिन करें।</string>
     <string name="match_not_found">मैच नहीं मिला।</string>
     <string name="invalid_match_record">अमान्य मैच रिकॉर्ड।</string>
@@ -299,4 +301,7 @@
     <string name="register_benefits_title">टूर्नामेंट में शामिल हों &amp; विश्वव्यापी प्रतिस्पर्धा करें!</string>
     <string name="register_benefits_message">अपनी रैंकिंग सेव करने और दुनिया भर के खिलाड़ियों के साथ टूर्नामेंट में भाग लेने के लिए पंजीकरण करें।</string>
     <string name="register_now">अब पंजीकरण करें</string>
+
+    <string name="layout_initialization_error">ऐप को एक डिस्प्ले त्रुटि का सामना करना पड़ा। कृपया पुनः प्रयास करें।</string>
+    <string name="retry">पुनः प्रयास करें</string>
 </resources>
