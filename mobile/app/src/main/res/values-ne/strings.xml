@@ -161,7 +161,7 @@
     <string name="facebook_name_label">Facebook नाम: %1$s</string>
     <string name="pref_title_facebook">Facebook समुदाय</string>
     <string name="pref_summary_facebook">Facebook मा हाम्रो समुदायको पृष्ठ खोल्नुहोस्</string>
-    <string name="ads_consent_required">विज्ञापनहरू देखाउनुले पूर्वाधार मर्मतसम्भारको वित्तपोषणमा मद्दत गर्छ। तपाईंले विज्ञापनहरू देखाउन सहमत नगरेको हुनाले, यो विकल्प उपलब्ध छैन। तपाईं सेटिङहरूमा आफ्नो सहमति जाँच गर्न सक्नुहुन्छ।</string>
+    <string name="ads_consent_required">विज्ञापनहरू देखाउनुले पूर्वाधार मर्मतसम्भारको वित्तपोषणमा मद्दत गर्छ। तपाईं सधैं सेटिङहरूमा आफ्नो सहमति जाँच गर्न सक्नुहुन्छ।</string>
     <string name="no_internet_for_privacy_options">गोपनीयता विकल्पहरू खोल्न इन्टरनेट जडान आवश्यक छ।</string>
     
     <!-- Account removal strings -->
@@ -197,6 +197,7 @@
     <string name="enter_email_and_password">कृपया दुबै ईमेल र पासवर्ड प्रविष्ट गर्नुहोस्</string>
     <string name="login_success">लगइन सफल!</string>
     <string name="login_failed">लगइन असफल: %1$s</string>
+    <string name="login_in_progress">लगइन प्रगतिमा छ, कृपया प्रतीक्षा गर्नुहोस्...</string>
     
     <!-- Anonymous login warning -->
     <string name="anonymous_login_warning_title">गुमनाम लगइन चेतावनी</string>
@@ -219,6 +220,7 @@
     <string name="nickname_save_failed">उपनाम बचत गर्न असफल भयो</string>
 
     <string name="game_launch_failed">खेल सुरुवात असफल भयो।</string>
+    <string name="app_launch_failed">एप सुरु गर्न असफल भयो। कृपया फेरि प्रयास गर्नुहोस्।</string>
     <string name="please_log_in_to_continue">जारी राख्न कृपया लग इन गर्नुहोस्।</string>
     <string name="match_not_found">मेल भेटिएन।</string>
     <string name="invalid_match_record">अवैध खेल रेकर्ड।</string>
@@ -299,4 +301,7 @@
     <string name="register_benefits_title">प्रतियोगितामा सामेल हुनुहोस् &amp; विश्वव्यापी प्रतिस्पर्धा गर्नुहोस्!</string>
     <string name="register_benefits_message">आफ्नो र्याङ्किङ सेभ गर्न र विश्वभरका खेलाडीहरूसँग प्रतियोगितामा भाग लिन दर्ता गर्नुहोस्।</string>
     <string name="register_now">अहिले नै दर्ता गर्नुहोस्</string>
+
+    <string name="layout_initialization_error">एपमा डिस्प्ले त्रुटि भयो। कृपया फेरि प्रयास गर्नुहोस्।</string>
+    <string name="retry">फेरि प्रयास गर्नुहोस्</string>
 </resources>

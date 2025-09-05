@@ -169,7 +169,7 @@
     <string name="facebook_name_label">Nom Facebook : %1$s</string>
     <string name="pref_title_facebook">Communauté Facebook</string>
     <string name="pref_summary_facebook">Ouvrir notre page communauté sur Facebook</string>
-    <string name="ads_consent_required">L’affichage de publicités aide à financer la maintenance de l’infrastructure. Comme vous n’avez pas accepté l’affichage des publicités, cette option n’est pas disponible. Vous pouvez vérifier votre consentement dans les paramètres.</string>
+    <string name="ads_consent_required">L’affichage de publicités aide à financer la maintenance de l’infrastructure. Vous pouvez toujours vérifier votre consentement dans les paramètres.</string>
     <string name="no_internet_for_privacy_options">Connexion Internet requise pour ouvrir les options de confidentialité.</string>
 
     <!-- Account removal -->
@@ -200,6 +200,7 @@
     <string name="enter_email_and_password">Veuillez saisir l’e-mail et le mot de passe</string>
     <string name="login_success">Connexion réussie !</string>
     <string name="login_failed">Échec de la connexion : %1$s</string>
+    <string name="login_in_progress">Connexion en cours, veuillez patienter...</string>
     
     <!-- Anonymous login warning -->
     <string name="anonymous_login_warning_title">Avertissement de connexion anonyme</string>
@@ -223,6 +224,7 @@
 
     <!-- Match / network errors -->
     <string name="game_launch_failed">Le lancement du jeu a échoué.</string>
+    <string name="app_launch_failed">Le lancement de l’application a échoué. Veuillez réessayer.</string>
     <string name="please_log_in_to_continue">Veuillez vous connecter pour continuer.</string>
     <string name="match_not_found">Match introuvable.</string>
     <string name="invalid_match_record">Enregistrement de match invalide.</string>
@@ -301,4 +303,7 @@
     <string name="register_benefits_title">Rejoignez des tournois &amp; participez mondialement !</string>
     <string name="register_benefits_message">Inscrivez-vous pour sauvegarder votre classement et participer à des tournois avec des joueurs du monde entier.</string>
     <string name="register_now">S\'inscrire maintenant</string>
+
+    <string name="layout_initialization_error">L\'application a rencontré une erreur d\'affichage. Veuillez réessayer.</string>
+    <string name="retry">Réessayer</string>
 </resources>

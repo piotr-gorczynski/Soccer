@@ -127,6 +127,14 @@ public class GameActivity extends BaseActivity {
 
         super.onCreate(savedInstanceState);
         
+        // Early validation: ensure we have a valid Intent
+        if (getIntent() == null) {
+            Log.e("TAG_Soccer", getClass().getSimpleName() + ".onCreate: No Intent provided");
+            Toast.makeText(this, getString(R.string.game_launch_failed), Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+        
         // Set up GameActivity-specific crash handling to capture game state
         Thread.UncaughtExceptionHandler originalHandler = Thread.getDefaultUncaughtExceptionHandler();
         Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
@@ -163,8 +171,18 @@ public class GameActivity extends BaseActivity {
             }
         }
         else {
+            // Ensure Moves is properly initialized
+            if (Moves == null) {
+                Moves = new ArrayList<>();
+            }
             // Default position in the middle of the field
-            Moves.add( new MoveTo(getResources().getInteger(R.integer.intFieldHalfWidth),getResources().getInteger(R.integer.intFieldHalfHeight),0));
+            try {
+                Moves.add( new MoveTo(getResources().getInteger(R.integer.intFieldHalfWidth),getResources().getInteger(R.integer.intFieldHalfHeight),0));
+            } catch (Exception e) {
+                Log.e("TAG_Soccer", getClass().getSimpleName() + ".onCreate: Failed to initialize default move", e);
+                // Fallback to hardcoded values if resource access fails
+                Moves.add(new MoveTo(3, 4, 0));
+            }
 
             //Ticket #6 studying MINMAX situation if Android should trunc the defeat branch
             //Moves.add( new MoveTo(3,2,1));
@@ -257,6 +275,14 @@ public class GameActivity extends BaseActivity {
 
         GameType=getIntent().getIntExtra("GameType",0);
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Game Type entered: " + GameType);
+
+        // Validate GameType to prevent invalid states
+        if (GameType < 0 || GameType > 3) {
+            Log.e("TAG_Soccer", getClass().getSimpleName() + ".onCreate: Invalid GameType: " + GameType);
+            Toast.makeText(this, getString(R.string.game_launch_failed), Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
 
         if (GameType == 3) {
             matchPath = getIntent().getStringExtra("matchPath");
@@ -400,27 +426,50 @@ public class GameActivity extends BaseActivity {
         SharedPreferences sharedPreferences =
                 getSharedPreferences(LanguageManager.PREFS_FILE, Context.MODE_PRIVATE);
 
-        if (sharedPreferences.contains("android_level")) {
-            androidLevel = Integer.parseInt(sharedPreferences.getString("android_level", "1"));
-            Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Preference android_level=" + androidLevel);
+        if (sharedPreferences != null && sharedPreferences.contains("android_level")) {
+            try {
+                String levelStr = sharedPreferences.getString("android_level", "1");
+                if (levelStr != null) {
+                    androidLevel = Integer.parseInt(levelStr);
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Preference android_level=" + androidLevel);
+                }
+            } catch (NumberFormatException e) {
+                Log.w("TAG_Soccer", getClass().getSimpleName() + ".onCreate: Invalid android_level preference, using default", e);
+                androidLevel = 1;
+            }
         }
 
         //Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": GameActivity.onCreate entered");
         if (GameType != 3) {
-            gameView = new GameView(this, Moves, GameType, androidLevel);
-            setContentView(gameView);
+            // Additional validation before creating GameView
+            if (Moves == null || Moves.isEmpty()) {
+                Log.e("TAG_Soccer", getClass().getSimpleName() + ".onCreate: Moves list is null or empty for GameType " + GameType);
+                Toast.makeText(this, getString(R.string.game_launch_failed), Toast.LENGTH_LONG).show();
+                finish();
+                return;
+            }
+            
+            try {
+                gameView = new GameView(this, Moves, GameType, androidLevel);
+                setContentView(gameView);
 
-            getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
-                @Override
-                public void handleOnBackPressed() {
-                    new AlertDialog.Builder(GameActivity.this)
-                            .setTitle(R.string.leave_game_title)
-                            .setMessage(R.string.exit_confirm_message)
-                            .setPositiveButton(R.string.yes, (dialog, which) -> finish())
-                            .setNegativeButton(R.string.cancel, null)
-                            .show();
-                }
-            });
+                getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+                    @Override
+                    public void handleOnBackPressed() {
+                        new AlertDialog.Builder(GameActivity.this)
+                                .setTitle(R.string.leave_game_title)
+                                .setMessage(R.string.exit_confirm_message)
+                                .setPositiveButton(R.string.yes, (dialog, which) -> finish())
+                                .setNegativeButton(R.string.cancel, null)
+                                .show();
+                    }
+                });
+            } catch (Exception e) {
+                Log.e("TAG_Soccer", getClass().getSimpleName() + ".onCreate: Failed to create GameView", e);
+                Toast.makeText(this, getString(R.string.game_launch_failed), Toast.LENGTH_LONG).show();
+                finish();
+                return;
+            }
 
         }
 
