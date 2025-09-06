@@ -513,15 +513,19 @@ public class MenuActivity extends BaseActivity {
         // show a toast informing them to register.
         float alpha = loggedIn ? 1f : 0.4f;
         if (inviteBtn != null) {
+            inviteBtn.setEnabled(true);
             inviteBtn.setAlpha(alpha);
         }
         if (pendingBtn != null) {
+            pendingBtn.setEnabled(true);
             pendingBtn.setAlpha(alpha);
         }
         if (tournamentsBtn != null) {
+            tournamentsBtn.setEnabled(true);
             tournamentsBtn.setAlpha(alpha);
         }
         if (rankingBtn != null) {
+            rankingBtn.setEnabled(true);
             rankingBtn.setAlpha(alpha);
         }
     }
