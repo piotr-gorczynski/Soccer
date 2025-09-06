@@ -86,6 +86,17 @@ public class MenuActivity extends BaseActivity {
                                             @NonNull SharedPreferences prefs,
                                             @NonNull Runnable onMissing) {
 
+        // Skip nickname fetch if backend is unavailable to prevent Firestore errors
+        if (!isBackendAvailable) {
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".fetchNicknameFromFirestore: Skipping nickname fetch - backend unavailable");
+            // If we have no local nickname and backend is unavailable, run onMissing callback
+            String localNickname = prefs.getString("nickname", null);
+            if (localNickname == null || localNickname.trim().isEmpty()) {
+                onMissing.run();
+            }
+            return;
+        }
+
         FirebaseFirestore.getInstance()
                 .collection("users")
                 .document(uid)
@@ -151,6 +162,12 @@ public class MenuActivity extends BaseActivity {
     }
 
     private void ensureTermsAccepted(@NonNull String uid) {
+        // Skip terms check if backend is unavailable to prevent Firestore errors
+        if (!isBackendAvailable) {
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".ensureTermsAccepted: Skipping terms check - backend unavailable");
+            return;
+        }
+        
         FirebaseFirestore.getInstance()
                 .collection("users")
                 .document(uid)
