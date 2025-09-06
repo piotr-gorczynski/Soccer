@@ -1,0 +1,10 @@
+<en-GB>
+🎮 Add backend availability safeguards to prevent Firestore exceptions.
+🎮 Fix button responsiveness after backend recovery
+</en-GB>
+
+//for further use...
+🔔 Better notifications for invites.  
+👤 Easier login (Google, Facebook, Microsoft, Email). Anonymous accounts can be linked.  
+🏆 Improved tournament joining.  
+⚙️ New settings & privacy options.  
