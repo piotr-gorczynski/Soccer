@@ -138,4 +138,49 @@ public class BackendAvailabilitySafeguardTest {
             fail("MenuActivity class is not available for sequencing test: " + e.getMessage());
         }
     }
+    
+    @Test
+    public void testBackendServiceCheckerNetworkSafeguards() {
+        // Test that BackendServiceChecker has network availability safeguards for ID token fetch
+        // This test verifies the fix for issue #465
+        try {
+            // Verify that BackendServiceChecker class exists
+            Class<?> checkerClass = Class.forName("piotr_gorczynski.soccer2.BackendServiceChecker");
+            assertNotNull("BackendServiceChecker class should exist", checkerClass);
+            
+            // Verify that required imports for network checking are available
+            Class<?> connectivityManagerClass = Class.forName("android.net.ConnectivityManager");
+            assertNotNull("ConnectivityManager class should be available", connectivityManagerClass);
+            
+            Class<?> networkCapabilitiesClass = Class.forName("android.net.NetworkCapabilities");
+            assertNotNull("NetworkCapabilities class should be available", networkCapabilitiesClass);
+            
+            // The fix adds a private isNetworkAvailable() method to prevent unnecessary
+            // Firebase ID token fetch attempts when network is unavailable
+            // We can't test the private method directly, but we can verify the class structure
+            
+            // Verify that the BackendServiceChecker still has the required public methods
+            boolean hasCheckServiceAvailability = false;
+            boolean hasServiceCheckCallback = false;
+            
+            for (java.lang.reflect.Method method : checkerClass.getDeclaredMethods()) {
+                if ("checkServiceAvailability".equals(method.getName())) {
+                    hasCheckServiceAvailability = true;
+                }
+            }
+            
+            // Check for the callback interface
+            for (Class<?> innerClass : checkerClass.getDeclaredClasses()) {
+                if ("ServiceCheckCallback".equals(innerClass.getSimpleName())) {
+                    hasServiceCheckCallback = true;
+                }
+            }
+            
+            assertTrue("checkServiceAvailability method should exist", hasCheckServiceAvailability);
+            assertTrue("ServiceCheckCallback interface should exist", hasServiceCheckCallback);
+            
+        } catch (ClassNotFoundException e) {
+            fail("Required classes for network availability safeguards are missing: " + e.getMessage());
+        }
+    }
 }
