@@ -2,6 +2,9 @@ package piotr_gorczynski.soccer2;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -99,7 +102,7 @@ public class BackendServiceChecker {
         }
         
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
+        if (user != null && isNetworkAvailable()) {
             Log.d(TAG, "Fetching ID token for authenticated request");
             user.getIdToken(false)
                 .addOnSuccessListener(tokenResult -> {
@@ -112,7 +115,11 @@ public class BackendServiceChecker {
                     performRequest(requestBuilder.build(), callback, retryCount);
                 });
         } else {
-            Log.d(TAG, "No signed-in user; sending request without Authorization header");
+            if (user != null) {
+                Log.d(TAG, "Signed-in user found but network unavailable; sending request without Authorization header");
+            } else {
+                Log.d(TAG, "No signed-in user; sending request without Authorization header");
+            }
             performRequest(requestBuilder.build(), callback, retryCount);
         }
     }
@@ -285,6 +292,20 @@ public class BackendServiceChecker {
             Log.d(TAG, "Secret key trimmed before saving");
         }
         Log.d(TAG, "Secret key updated");
+    }
+    
+    /**
+     * Check if network is available before attempting Firebase operations
+     * Prevents unnecessary FirebaseNetworkException when connectivity is unavailable
+     */
+    private boolean isNetworkAvailable() {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm == null) return false;
+        Network network = cm.getActiveNetwork();
+        if (network == null) return false;
+        NetworkCapabilities capabilities = cm.getNetworkCapabilities(network);
+        return capabilities != null
+                && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
     }
     
     /**
