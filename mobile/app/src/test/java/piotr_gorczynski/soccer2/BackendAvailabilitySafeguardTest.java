@@ -107,4 +107,35 @@ public class BackendAvailabilitySafeguardTest {
             fail("Required Firestore classes are not available: " + e.getMessage());
         }
     }
+    
+    @Test
+    public void testOnResumeSequencingFix() {
+        // Test that the onResume sequencing fix is properly implemented
+        // This verifies that the new methods exist to handle the race condition fix
+        try {
+            // Verify that MenuActivity class exists and has the new methods for proper sequencing
+            Class<?> menuActivityClass = Class.forName("piotr_gorczynski.soccer2.MenuActivity");
+            assertNotNull("MenuActivity class should exist", menuActivityClass);
+            
+            // Verify that the methods for proper sequencing exist
+            // Note: We can't test the exact behavior without mocking, but we can verify structure
+            boolean hasCheckBackendMethod = false;
+            boolean hasContinueMethod = false;
+            
+            for (java.lang.reflect.Method method : menuActivityClass.getDeclaredMethods()) {
+                if ("checkBackendAvailabilityAndContinue".equals(method.getName())) {
+                    hasCheckBackendMethod = true;
+                }
+                if ("continueOnResumeAfterBackendCheck".equals(method.getName())) {
+                    hasContinueMethod = true;
+                }
+            }
+            
+            assertTrue("checkBackendAvailabilityAndContinue method should exist for proper sequencing", hasCheckBackendMethod);
+            assertTrue("continueOnResumeAfterBackendCheck method should exist for proper sequencing", hasContinueMethod);
+            
+        } catch (ClassNotFoundException e) {
+            fail("MenuActivity class is not available for sequencing test: " + e.getMessage());
+        }
+    }
 }
