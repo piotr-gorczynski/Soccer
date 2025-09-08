@@ -5,11 +5,84 @@ When the backend is unavailable, the app was attempting to make Firestore calls 
 - `MenuActivity.ensureTermsAccepted()` - trying to fetch terms acceptance status
 - `MenuActivity.fetchNicknameFromFirestore()` - trying to fetch user nickname
 
+**Root Cause**: Race condition in `onResume()` method where `checkBackendAvailability()` was called asynchronously, but authentication and Firestore operations proceeded immediately before the backend availability check could complete.
+
 ## Solution Implemented
 
 ### Changes Made
 
-#### 1. Modified `ensureTermsAccepted()` method
+#### 1. Fixed Race Condition in `onResume()` Method
+
+**Before (Problematic)**:
+```java
+@Override
+protected void onResume() {
+    // ... language check ...
+    
+    checkBackendAvailability();  // ← Asynchronous call
+    
+    // Firestore operations happened immediately here
+    ensureTermsAccepted(uid);
+    fetchNicknameFromFirestore(uid, prefs, pickNick);
+}
+```
+
+**After (Fixed)**:
+```java
+@Override
+protected void onResume() {
+    // ... language check ...
+    
+    checkBackendAvailabilityAndContinue();  // ← Will continue with auth logic in callback
+    
+    // FCM token sync only (no Firestore calls)
+    ((SoccerApp) getApplication()).syncFcmTokenIfNeeded();
+}
+```
+
+#### 2. Created `checkBackendAvailabilityAndContinue()` Method
+
+**Purpose**: Performs backend availability check and continues with authentication logic in the callback to ensure proper sequencing.
+
+```java
+private void checkBackendAvailabilityAndContinue() {
+    // ... backend availability check ...
+    
+    serviceChecker.checkServiceAvailability(new BackendServiceChecker.ServiceCheckCallback() {
+        @Override
+        public void onServiceAvailable() {
+            // Set isBackendAvailable = true
+            // Continue with authentication logic
+            continueOnResumeAfterBackendCheck();
+        }
+
+        @Override
+        public void onServiceUnavailable(String reason) {
+            // Set isBackendAvailable = false  
+            // Still continue with authentication logic (safeguards will handle it)
+            continueOnResumeAfterBackendCheck();
+        }
+    });
+}
+```
+
+#### 3. Created `continueOnResumeAfterBackendCheck()` Method
+
+**Purpose**: Contains all the authentication and UI logic that should only run after the backend availability check is complete.
+
+```java
+private void continueOnResumeAfterBackendCheck() {
+    // All the original authentication logic from onResume:
+    // - Firebase auth checks
+    // - ensureTermsAccepted(uid)  ← NOW properly guarded
+    // - fetchNicknameFromFirestore(uid, prefs, pickNick)  ← NOW properly guarded
+    // - UI updates
+    // - checkForActiveMatch()
+}
+```
+
+#### 4. Existing Safeguards in Backend Methods (Already Present)
+
 **File**: `mobile/app/src/main/java/piotr_gorczynski/soccer2/MenuActivity.java`
 
 ```java
@@ -22,17 +95,7 @@ private void ensureTermsAccepted(@NonNull String uid) {
     
     // Original Firestore call continues...
 }
-```
 
-**Behavior**: 
-- Checks `isBackendAvailable` flag before making Firestore call
-- Logs the skip action for debugging
-- Returns early to prevent FirebaseFirestoreException
-
-#### 2. Modified `fetchNicknameFromFirestore()` method
-**File**: `mobile/app/src/main/java/piotr_gorczynski/soccer2/MenuActivity.java`
-
-```java
 private void fetchNicknameFromFirestore(@NonNull String uid,
                                         @NonNull SharedPreferences prefs,
                                         @NonNull Runnable onMissing) {
@@ -51,12 +114,6 @@ private void fetchNicknameFromFirestore(@NonNull String uid,
     // Original Firestore call continues...
 }
 ```
-
-**Behavior**:
-- Checks `isBackendAvailable` flag before making Firestore call
-- Logs the skip action for debugging  
-- If no local nickname exists, still triggers the `onMissing` callback to maintain app flow
-- Returns early to prevent FirebaseFirestoreException
 
 ### Integration with Existing Backend Availability Tracking
 
@@ -96,11 +153,14 @@ com.google.firebase.firestore.FirebaseFirestoreException: Failed to get document
 ### Testing
 
 #### Test Coverage Added
-- Created `BackendAvailabilitySafeguardTest.java` with validation tests for:
+- Updated `BackendAvailabilitySafeguardTest.java` with validation for sequencing fix
+- Created verification script that validates:
   - Required string resources exist
   - Layout resources are properly configured
   - Backend availability infrastructure is in place
   - Firestore classes are available
+  - New sequencing methods exist and are properly called
+  - Backend availability check happens before authentication operations
 
 #### Manual Testing Scenarios
 1. **Backend Available**: Verify normal terms and nickname functionality
@@ -115,6 +175,7 @@ The implementation follows minimal change principles:
 - ✅ Added minimal safeguard checks without architectural changes
 - ✅ Maintained existing error handling for other scenarios
 - ✅ No deletion of working code
+- ✅ Fixed race condition with proper sequencing
 
 ### Future Enhancements
 
@@ -131,3 +192,10 @@ The changes can be verified by:
 2. Checking logs for the safeguard messages
 3. Confirming no `FirebaseFirestoreException` errors occur for these methods
 4. Ensuring app functionality is preserved when backend is available
+5. Running the verification script: `/tmp/verify_safeguards.sh`
+
+## Summary
+
+**Problem**: Race condition causing `FirebaseFirestoreException` when backend unavailable
+**Solution**: Proper sequencing of backend availability check before authentication operations
+**Result**: No more Firestore exceptions, graceful handling of backend unavailability
