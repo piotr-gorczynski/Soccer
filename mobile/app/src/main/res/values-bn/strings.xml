@@ -31,15 +31,26 @@
     </string-array>
     
     <!-- Language names in Bengali -->
-    <string name="language_english">ইংরেজি</string>
-    <string name="language_polish">পোলিশ</string>
-    <string name="language_german">জার্মান</string>
-    <string name="language_french">ফরাসি</string>
-    <string name="language_spanish">স্প্যানিশ</string>
-    <string name="language_urdu">উর্দু</string>
+    <string name="language_amharic">আমহারিক</string>
+    <string name="language_arabic">আরবি</string>
     <string name="language_bengali">বাংলা</string>
-    <string name="language_nepali">নেপালি</string>
+    <string name="language_burmese">বার্মিজ</string>
+    <string name="language_english">ইংরেজি</string>
+    <string name="language_french">ফরাসি</string>
+    <string name="language_german">জার্মান</string>
     <string name="language_hindi">হিন্দি</string>
+    <string name="language_khmer">খমের</string>
+    <string name="language_lao">লাও</string>
+    <string name="language_malagasy">মালাগাসি</string>
+    <string name="language_mongolian">মঙ্গোলিয়ান</string>
+    <string name="language_nepali">নেপালি</string>
+    <string name="language_persian">ফার্সি</string>
+    <string name="language_polish">পোলিশ</string>
+    <string name="language_sinhala">সিংহলা</string>
+    <string name="language_somali">সোমালি</string>
+    <string name="language_spanish">স্প্যানিশ</string>
+    <string name="language_swahili">সোয়াহিলি</string>
+    <string name="language_urdu">উর্দু</string>
     
     <!-- Authentication strings -->
     <string name="register">নিবন্ধন করুন</string>
@@ -304,4 +315,9 @@
 
     <string name="layout_initialization_error">অ্যাপটি একটি প্রদর্শন ত্রুটির সম্মুখীন হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।</string>
     <string name="retry">আবার চেষ্টা করুন</string>
+    
+    <!-- Game ready notification strings -->
+    <string name="game_ready_title">%1$s এর জন্য গেম প্রস্তুত!</string>
+    <string name="game_ready_message">আপনার ম্যাচ শুরু হওয়ার জন্য প্রস্তুত। যোগ দিতে ট্যাপ করুন!</string>
+    <string name="join_game_action">গেমে যোগ দিন</string>
 </resources>

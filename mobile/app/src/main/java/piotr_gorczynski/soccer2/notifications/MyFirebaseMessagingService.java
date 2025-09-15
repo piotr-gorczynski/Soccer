@@ -47,14 +47,9 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                                     && !"completed".equals(snapshot.getString("status"));
 
                     if (shouldStart) {
-                        Intent gameIntent = new Intent(this, GameActivity.class)
-                                .putExtra("GameType", 3)
-                                .putExtra("matchPath", matchPath)
-                                .putExtra("localNickname", localNickname)
-                                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP
-                                        | Intent.FLAG_ACTIVITY_CLEAR_TOP
-                                        | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(gameIntent);
+                        // Instead of directly starting activity (which causes RemoteServiceException),
+                        // show a notification that allows user to tap to join the game
+                        showGameReadyNotification(matchPath, localNickname);
                     } else {
                         Log.i("TAG_Soccer",
                                 "Match " + matchPath + " is already finished - skipping launch");
@@ -64,6 +59,74 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                         Log.e("TAG_Soccer",
                                 "Could not check match status – defaulting to *not* launching",
                                 e));
+    }
+    
+    /**
+     * Show a notification that allows user to tap to join a game.
+     * This replaces direct startActivity() calls which are restricted in background services.
+     */
+    private void showGameReadyNotification(@NonNull String matchPath, 
+                                          @NonNull String localNickname) {
+        Context context = getApplicationContext();
+        
+        // Create intent for the game activity
+        Intent gameIntent = new Intent(context, GameActivity.class)
+                .putExtra("GameType", 3)
+                .putExtra("matchPath", matchPath)
+                .putExtra("localNickname", localNickname)
+                .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP
+                        | Intent.FLAG_ACTIVITY_CLEAR_TOP
+                        | Intent.FLAG_ACTIVITY_NEW_TASK);
+        
+        // Create pending intent
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                context,
+                matchPath.hashCode(), // unique ID based on match path
+                gameIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+        
+        // Ensure notification channel exists (Android 8.0+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(
+                    "game_ready_channel",
+                    "Game Ready",
+                    NotificationManager.IMPORTANCE_HIGH
+            );
+            channel.setDescription("Notifications when a game is ready to join");
+            NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            if (nm != null) {
+                nm.createNotificationChannel(channel);
+            }
+        }
+        
+        // Build notification
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "game_ready_channel")
+                .setSmallIcon(R.drawable.ic_notifications)
+                .setContentTitle(getString(R.string.game_ready_title, localNickname))
+                .setContentText(getString(R.string.game_ready_message))
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent)
+                .addAction(R.drawable.ic_notifications, 
+                          getString(R.string.join_game_action), 
+                          pendingIntent);
+        
+        // Show notification with permission check
+        NotificationManagerCompat nm = NotificationManagerCompat.from(context);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU
+                || ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+                == PackageManager.PERMISSION_GRANTED) {
+            
+            int notificationId = ("game_ready_" + matchPath).hashCode();
+            nm.notify(notificationId, builder.build());
+            
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".showGameReadyNotification: " +
+                    "Game ready notification shown for match: " + matchPath);
+        } else {
+            Log.w("TAG_Soccer", getClass().getSimpleName() + ".showGameReadyNotification: " +
+                    "Missing POST_NOTIFICATIONS permission - cannot show game ready notification");
+        }
     }
 
     @Override

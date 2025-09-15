@@ -31,15 +31,26 @@
 
     <!-- Language picker -->
     <string name="select_language">Sélectionner la langue</string>
-    <string name="language_english">Anglais</string>
-    <string name="language_polish">Polonais</string>
-    <string name="language_german">Allemand</string>
-    <string name="language_french">Français</string>
-    <string name="language_spanish">Espagnol</string>
-    <string name="language_urdu">Ourdou</string>
+    <string name="language_amharic">Amharique</string>
+    <string name="language_arabic">Arabe</string>
     <string name="language_bengali">Bengali</string>
-    <string name="language_nepali">Népalais</string>
+    <string name="language_burmese">Birman</string>
+    <string name="language_english">Anglais</string>
+    <string name="language_french">Français</string>
+    <string name="language_german">Allemand</string>
     <string name="language_hindi">Hindi</string>
+    <string name="language_khmer">Khmer</string>
+    <string name="language_lao">Lao</string>
+    <string name="language_malagasy">Malgache</string>
+    <string name="language_mongolian">Mongol</string>
+    <string name="language_nepali">Népalais</string>
+    <string name="language_persian">Persan</string>
+    <string name="language_polish">Polonais</string>
+    <string name="language_sinhala">Cingalais</string>
+    <string name="language_somali">Somali</string>
+    <string name="language_spanish">Espagnol</string>
+    <string name="language_swahili">Swahili</string>
+    <string name="language_urdu">Ourdou</string>
 
     <!-- Auth -->
     <string name="register">S’inscrire</string>
@@ -306,4 +317,9 @@
 
     <string name="layout_initialization_error">L\'application a rencontré une erreur d\'affichage. Veuillez réessayer.</string>
     <string name="retry">Réessayer</string>
+    
+    <!-- Game ready notification strings -->
+    <string name="game_ready_title">Jeu Prêt pour %1$s !</string>
+    <string name="game_ready_message">Votre match est prêt à commencer. Appuyez pour rejoindre !</string>
+    <string name="join_game_action">Rejoindre le Jeu</string>
 </resources>
