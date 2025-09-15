@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Basic app strings in Arabic -->
+    <string name="app_name">Soccer 2</string>
+    <string name="select_language">اختر اللغة</string>
+    
+    <!-- Language names in Arabic -->
+    <string name="language_amharic">الأمهرية</string>
+    <string name="language_arabic">العربية</string>
+    <string name="language_bengali">البنغالية</string>
+    <string name="language_burmese">البورمية</string>
+    <string name="language_english">الإنجليزية</string>
+    <string name="language_french">الفرنسية</string>
+    <string name="language_german">الألمانية</string>
+    <string name="language_hindi">الهندية</string>
+    <string name="language_khmer">الخمير</string>
+    <string name="language_lao">اللاوية</string>
+    <string name="language_malagasy">المالاجاشية</string>
+    <string name="language_mongolian">المنغولية</string>
+    <string name="language_nepali">النيبالية</string>
+    <string name="language_persian">الفارسية</string>
+    <string name="language_polish">البولندية</string>
+    <string name="language_sinhala">السنهالية</string>
+    <string name="language_somali">الصومالية</string>
+    <string name="language_spanish">الإسبانية</string>
+    <string name="language_swahili">السواحيلية</string>
+    <string name="language_urdu">الأردية</string>
+    
+    <!-- Basic interface -->
+    <string name="settings">الإعدادات</string>
+    <string name="cancel">إلغاء</string>
+    <string name="confirm">تأكيد</string>
+</resources>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Basic app strings in Persian -->
+    <string name="app_name">Soccer 2</string>
+    <string name="select_language">زبان را انتخاب کنید</string>
+    
+    <!-- Language names in Persian -->
+    <string name="language_amharic">آمهری</string>
+    <string name="language_arabic">عربی</string>
+    <string name="language_bengali">بنگالی</string>
+    <string name="language_burmese">برمه‌ای</string>
+    <string name="language_english">انگلیسی</string>
+    <string name="language_french">فرانسوی</string>
+    <string name="language_german">آلمانی</string>
+    <string name="language_hindi">هندی</string>
+    <string name="language_khmer">خمری</string>
+    <string name="language_lao">لائوسی</string>
+    <string name="language_malagasy">مالاگاسی</string>
+    <string name="language_mongolian">مغولی</string>
+    <string name="language_nepali">نپالی</string>
+    <string name="language_persian">فارسی</string>
+    <string name="language_polish">لهستانی</string>
+    <string name="language_sinhala">سینهالی</string>
+    <string name="language_somali">سومالیایی</string>
+    <string name="language_spanish">اسپانیایی</string>
+    <string name="language_swahili">سواحیلی</string>
+    <string name="language_urdu">اردو</string>
+    
+    <!-- Basic interface -->
+    <string name="settings">تنظیمات</string>
+    <string name="cancel">لغو</string>
+    <string name="confirm">تأیید</string>
+</resources>
