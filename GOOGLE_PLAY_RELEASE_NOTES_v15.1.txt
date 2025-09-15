@@ -5,6 +5,62 @@
 🔔 Add language support for 11 new languages
 </en-GB>
 
+<pl-PL>
+🎮 Dodano zabezpieczenia dostępności backendu, aby zapobiec wyjątkom Firestore.
+🎮 Naprawiono responsywność przycisków po odzyskaniu backendu
+🎮 Naprawiono krytyczny błąd występujący w usłudze Firebase messaging
+🔔 Dodano obsługę 11 nowych języków
+</pl-PL>
+
+<de-DE>
+🎮 Backend-Verfügbkeitsschutz hinzugefügt, um Firestore-Ausnahmen zu verhindern.
+🎮 Button-Reaktionsfähigkeit nach Backend-Wiederherstellung behoben
+🎮 Kritischer Absturz im Firebase-Messaging-Service behoben
+🔔 Unterstützung für 11 neue Sprachen hinzugefügt
+</de-DE>
+
+<fr-FR>
+🎮 Ajout de protections de disponibilité backend pour éviter les exceptions Firestore.
+🎮 Correction de la réactivité des boutons après la récupération du backend
+🎮 Correction d'un crash critique dans le service de messagerie Firebase
+🔔 Ajout de la prise en charge de 11 nouvelles langues
+</fr-FR>
+
+<es-ES>
+🎮 Añadir salvaguardas de disponibilidad del backend para prevenir excepciones de Firestore.
+🎮 Corregir la capacidad de respuesta de los botones después de la recuperación del backend
+🎮 Corrige un fallo crítico que ocurre en el servicio de mensajería de Firebase
+🔔 Añadir soporte para 11 nuevos idiomas
+</es-ES>
+
+<ur>
+🎮 Firestore exceptions سے بچنے کے لیے backend availability safeguards شامل کیے گئے۔
+🎮 Backend recovery کے بعد button responsiveness ٹھیک کی گئی
+🎮 Firebase messaging service میں ہونے والی critical crash کو ٹھیک کیا گیا
+🔔 11 نئی زبانوں کی سپورٹ شامل کی گئی
+</ur>
+
+<bn>
+🎮 Firestore ব্যতিক্রম প্রতিরোধ করতে ব্যাকএন্ড উপলব্ধতা সুরক্ষা যোগ করা হয়েছে।
+🎮 ব্যাকএন্ড পুনরুদ্ধারের পরে বোতামের প্রতিক্রিয়াশীলতা ঠিক করা হয়েছে
+🎮 Firebase মেসেজিং সেবায় একটি গুরুত্বপূর্ণ ক্র্যাশ ঠিক করা হয়েছে
+🔔 ১১টি নতুন ভাষার সমর্থন যোগ করা হয়েছে
+</bn>
+
+<ne>
+🎮 Firestore exceptions रोक्न backend availability safeguards थपियो।
+🎮 Backend recovery पछि button responsiveness ठीक गरियो
+🎮 Firebase messaging service मा हुने critical crash ठीक गरियो
+🔔 ११ नयाँ भाषाहरूको समर्थन थपियो
+</ne>
+
+<hi-IN>
+🎮 Firestore exceptions को रोकने के लिए backend availability safeguards जोड़े गए।
+🎮 Backend recovery के बाद button responsiveness को ठीक किया गया
+🎮 Firebase messaging service में होने वाली critical crash को ठीक किया गया
+🔔 11 नई भाषाओं का समर्थन जोड़ा गया
+</hi-IN>
+
 //for further use...
 🔔 Better notifications for invites.  
 👤 Easier login (Google, Facebook, Microsoft, Email). Anonymous accounts can be linked.  
