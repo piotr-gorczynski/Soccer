@@ -31,15 +31,26 @@
     </string-array>
     
     <!-- Language names in Nepali -->
-    <string name="language_english">अंग्रेजी</string>
-    <string name="language_polish">पोलिस</string>
-    <string name="language_german">जर्मन</string>
-    <string name="language_french">फ्रेन्च</string>
-    <string name="language_spanish">स्पेनिस</string>
-    <string name="language_urdu">उर्दु</string>
+    <string name="language_amharic">अम्हारिक</string>
+    <string name="language_arabic">अरबी</string>
     <string name="language_bengali">बंगाली</string>
-    <string name="language_nepali">नेपाली</string>
+    <string name="language_burmese">बर्मी</string>
+    <string name="language_english">अंग्रेजी</string>
+    <string name="language_french">फ्रेन्च</string>
+    <string name="language_german">जर्मन</string>
     <string name="language_hindi">हिन्दी</string>
+    <string name="language_khmer">खमेर</string>
+    <string name="language_lao">लाओ</string>
+    <string name="language_malagasy">मालागासी</string>
+    <string name="language_mongolian">मंगोलियाई</string>
+    <string name="language_nepali">नेपाली</string>
+    <string name="language_persian">फारसी</string>
+    <string name="language_polish">पोलिस</string>
+    <string name="language_sinhala">सिंहला</string>
+    <string name="language_somali">सोमाली</string>
+    <string name="language_spanish">स्पेनिस</string>
+    <string name="language_swahili">स्वाहिली</string>
+    <string name="language_urdu">उर्दु</string>
     
     <!-- Authentication strings -->
     <string name="register">दर्ता गर्नुहोस्</string>
