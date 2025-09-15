@@ -137,9 +137,3 @@
 🎮 Imesahihi hitilafu muhimu inayotokea katika huduma ya ujumbe wa Firebase
 🔔 Imeongezwa msaada kwa lugha mpya 11
 </sw>
-
-//for further use...
-🔔 Better notifications for invites.  
-👤 Easier login (Google, Facebook, Microsoft, Email). Anonymous accounts can be linked.  
-🏆 Improved tournament joining.  
-⚙️ New settings & privacy options.  
