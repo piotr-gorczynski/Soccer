@@ -315,4 +315,9 @@
 
     <string name="layout_initialization_error">অ্যাপটি একটি প্রদর্শন ত্রুটির সম্মুখীন হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।</string>
     <string name="retry">আবার চেষ্টা করুন</string>
+    
+    <!-- Game ready notification strings -->
+    <string name="game_ready_title">%1$s এর জন্য গেম প্রস্তুত!</string>
+    <string name="game_ready_message">আপনার ম্যাচ শুরু হওয়ার জন্য প্রস্তুত। যোগ দিতে ট্যাপ করুন!</string>
+    <string name="join_game_action">গেমে যোগ দিন</string>
 </resources>

@@ -30,4 +30,9 @@
     <string name="settings">Mipangilio</string>
     <string name="cancel">Ghairi</string>
     <string name="confirm">Thibitisha</string>
+    
+    <!-- Game ready notification strings -->
+    <string name="game_ready_title">Mchezo Uko Tayari kwa %1$s!</string>
+    <string name="game_ready_message">Mechi yako iko tayari kuanza. Gusa ili kujiunga!</string>
+    <string name="join_game_action">Jiunge na Mchezo</string>
 </resources>

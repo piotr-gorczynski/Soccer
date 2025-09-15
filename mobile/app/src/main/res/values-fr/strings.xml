@@ -317,4 +317,9 @@
 
     <string name="layout_initialization_error">L\'application a rencontré une erreur d\'affichage. Veuillez réessayer.</string>
     <string name="retry">Réessayer</string>
+    
+    <!-- Game ready notification strings -->
+    <string name="game_ready_title">Jeu Prêt pour %1$s !</string>
+    <string name="game_ready_message">Votre match est prêt à commencer. Appuyez pour rejoindre !</string>
+    <string name="join_game_action">Rejoindre le Jeu</string>
 </resources>
