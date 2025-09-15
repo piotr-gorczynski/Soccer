@@ -301,4 +301,9 @@
     <string name="register_benefits_title">Join tournaments &amp; compete globally!</string>
     <string name="register_benefits_message">Register to save your ranking and participate in tournaments with players worldwide.</string>
     <string name="register_now">Register Now</string>
+    
+    <!-- Game ready notification strings -->
+    <string name="game_ready_title">Game Ready for %1$s!</string>
+    <string name="game_ready_message">Your match is ready to begin. Tap to join!</string>
+    <string name="join_game_action">Join Game</string>
 </resources>
