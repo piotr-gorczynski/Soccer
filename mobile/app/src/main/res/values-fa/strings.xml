@@ -30,4 +30,9 @@
     <string name="settings">تنظیمات</string>
     <string name="cancel">لغو</string>
     <string name="confirm">تأیید</string>
+    
+    <!-- Game ready notification strings -->
+    <string name="game_ready_title">بازی برای %1$s آماده است!</string>
+    <string name="game_ready_message">مسابقه شما آماده شروع است. برای پیوستن ضربه بزنید!</string>
+    <string name="join_game_action">پیوستن به بازی</string>
 </resources>

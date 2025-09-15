@@ -30,4 +30,9 @@
     <string name="settings">Тохиргоо</string>
     <string name="cancel">Цуцлах</string>
     <string name="confirm">Баталгаажуулах</string>
+    
+    <!-- Game ready notification strings -->
+    <string name="game_ready_title">%1$s-д зориулсан тоглоом бэлэн!</string>
+    <string name="game_ready_message">Таны тоглолт эхлэхэд бэлэн байна. Нэгдэхийн тулд товшино уу!</string>
+    <string name="join_game_action">Тоглоомд нэгдэх</string>
 </resources>

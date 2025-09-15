@@ -30,4 +30,9 @@
     <string name="settings">ການຕັ້ງຄ່າ</string>
     <string name="cancel">ຍົກເລີກ</string>
     <string name="confirm">ຢືນຢັນ</string>
+    
+    <!-- Game ready notification strings -->
+    <string name="game_ready_title">ເກມພ້ອມສໍາລັບ %1$s!</string>
+    <string name="game_ready_message">ເກມຂອງເຈົ້າພ້ອມທີ່ຈະເລີ່ມແລ້ວ. ກົດເພື່ອເຂົ້າຮ່ວມ!</string>
+    <string name="join_game_action">ເຂົ້າຮ່ວມເກມ</string>
 </resources>

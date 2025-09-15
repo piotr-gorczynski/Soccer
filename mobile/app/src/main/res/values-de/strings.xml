@@ -316,4 +316,9 @@
 
     <string name="layout_initialization_error">Die App ist auf einen Anzeigefehler gestoßen. Bitte versuchen Sie es erneut.</string>
     <string name="retry">Wiederholen</string>
+    
+    <!-- Game ready notification strings -->
+    <string name="game_ready_title">Spiel Bereit für %1$s!</string>
+    <string name="game_ready_message">Ihr Match ist bereit zu beginnen. Antippen zum Beitreten!</string>
+    <string name="join_game_action">Spiel Beitreten</string>
 </resources>

@@ -30,4 +30,9 @@
     <string name="settings">ការកំណត់</string>
     <string name="cancel">បោះបង់</string>
     <string name="confirm">បញ្ជាក់</string>
+    
+    <!-- Game ready notification strings -->
+    <string name="game_ready_title">ល្បែងអាចលេងបានសម្រាប់ %1$s!</string>
+    <string name="game_ready_message">ការប្រកួតរបស់អ្នកបានរួចរាល់ហើយ។ ចុចដើម្បីចូលរួម!</string>
+    <string name="join_game_action">ចូលរួមល្បែង</string>
 </resources>

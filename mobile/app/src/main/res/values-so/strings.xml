@@ -30,4 +30,9 @@
     <string name="settings">Dejinta</string>
     <string name="cancel">Ka noqo</string>
     <string name="confirm">Xaqiiji</string>
+    
+    <!-- Game ready notification strings -->
+    <string name="game_ready_title">Ciyaarta waa diyaar u tahay %1$s!</string>
+    <string name="game_ready_message">Tartankaagu waa diyaar inuu bilaabo. Taabo si aad ugu biirto!</string>
+    <string name="join_game_action">Ku Biir Ciyaarta</string>
 </resources>

@@ -30,4 +30,9 @@
     <string name="settings">ቅንብሮች</string>
     <string name="cancel">ይሰርዝ</string>
     <string name="confirm">ያረጋግጡ</string>
+    
+    <!-- Game ready notification strings -->
+    <string name="game_ready_title">ለ%1$s ጨዋታ ዝግጁ ነው!</string>
+    <string name="game_ready_message">ጨዋታዎ ለመጀመር ዝግጁ ነው። ለመቀላቀል ይንኩ!</string>
+    <string name="join_game_action">ጨዋታ ተቀላቀል</string>
 </resources>

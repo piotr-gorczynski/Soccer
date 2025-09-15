@@ -315,4 +315,9 @@
 
     <string name="layout_initialization_error">एपमा डिस्प्ले त्रुटि भयो। कृपया फेरि प्रयास गर्नुहोस्।</string>
     <string name="retry">फेरि प्रयास गर्नुहोस्</string>
+    
+    <!-- Game ready notification strings -->
+    <string name="game_ready_title">%1$s को लागि खेल तयार!</string>
+    <string name="game_ready_message">तपाईंको खेल सुरु हुन तयार छ। सामेल हुन ट्याप गर्नुहोस्!</string>
+    <string name="join_game_action">खेलमा सामेल हुनुहोस्</string>
 </resources>
