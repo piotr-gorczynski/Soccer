@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Basic app strings in Mongolian -->
+    <string name="app_name">Soccer 2</string>
+    <string name="select_language">Хэл сонгох</string>
+    
+    <!-- Language names in Mongolian -->
+    <string name="language_amharic">Амхарик</string>
+    <string name="language_arabic">Араб</string>
+    <string name="language_bengali">Бенгал</string>
+    <string name="language_burmese">Бирм</string>
+    <string name="language_english">Англи</string>
+    <string name="language_french">Франц</string>
+    <string name="language_german">Герман</string>
+    <string name="language_hindi">Хинди</string>
+    <string name="language_khmer">Кхмер</string>
+    <string name="language_lao">Лаос</string>
+    <string name="language_malagasy">Малагаси</string>
+    <string name="language_mongolian">Монгол</string>
+    <string name="language_nepali">Непал</string>
+    <string name="language_persian">Перс</string>
+    <string name="language_polish">Польш</string>
+    <string name="language_sinhala">Синхала</string>
+    <string name="language_somali">Сомали</string>
+    <string name="language_spanish">Испани</string>
+    <string name="language_swahili">Свахили</string>
+    <string name="language_urdu">Урду</string>
+    
+    <!-- Basic interface -->
+    <string name="settings">Тохиргоо</string>
+    <string name="cancel">Цуцлах</string>
+    <string name="confirm">Баталгаажуулах</string>
+</resources>
