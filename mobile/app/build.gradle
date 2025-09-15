@@ -39,8 +39,8 @@ android {
         applicationId = "piotr_gorczynski.soccer2"
         minSdk = 24
         targetSdk = 36
-        versionCode = 15
-        versionName = '15.0'
+        versionCode = 16
+        versionName = '15.1'
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         
