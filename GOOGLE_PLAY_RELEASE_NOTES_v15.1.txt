@@ -1,6 +1,8 @@
 <en-GB>
 🎮 Add backend availability safeguards to prevent Firestore exceptions.
 🎮 Fix button responsiveness after backend recovery
+🎮 Fixes a critical crash occurring in the Firebase messaging service
+🔔 Add language support for 11 new languages
 </en-GB>
 
 //for further use...
