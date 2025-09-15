@@ -215,7 +215,7 @@
     <string name="register_to_use_function">Zarejestruj się, aby korzystać z tej funkcji.</string>
     <string name="register_dialog_message">Aby korzystać z tej funkcji, musisz się zarejestrować. Możesz zarejestrować się nawet anonimowo. Czy chcesz kontynuować?</string>
     <string name="proceed">Kontynuuj</string>
-    <string name="network_error_checking_nickname">Błąd sieci podczas sprawdzania pseudonim</string>
+    <string name="network_error_checking_nickname">Błąd sieci podczas sprawdzania pseudonimu</string>
     <string name="nickname_taken">Pseudonim już zabrany - wybierz inny</string>
     <string name="nickname_saved">Zapisany pseudonim</string>
     <string name="nickname_save_failed">Nie udało się zapisać pseudonim</string>
@@ -241,7 +241,7 @@
     <string name="must_be_logged_in">Musisz zostać zalogowany.</string>
     <string name="joined_wait_for_bracket">Dołączył! </string>
     <string name="accept_invitation_title">Zaakceptuj zaproszenie</string>
-    <string name="accept_invitation_message">Chcesz zaakceptować tę grę zaproszoną?</string>
+    <string name="accept_invitation_message">Chcesz zaakceptować te zaproszenie do gry?</string>
     <string name="leave_game_title">Opuścić grę?</string>
     <string name="exit_confirm_message">Czy na pewno chcesz wyjść?</string>
     <string name="exit_forfeit_message">Czy na pewno chcesz wyjść? </string>
@@ -256,7 +256,7 @@
     <string name="android_label">Android</string>
     <string name="player_with_number">Gracz %1$d.</string>
     <string name="winner_timeout">%1$s zabrakło czasu.</string>
-    <string name="winner_abandon">%1$s przepadło grę.</string>
+    <string name="winner_abandon">%1$s poddał grę.</string>
     <string name="winner_is">Zwycięzcą jest %1$s!</string>
 
     <string name="could_not_accept_invite">Nie można zaakceptować zaproszenia.</string>
