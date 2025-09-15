@@ -86,6 +86,17 @@ public class MenuActivity extends BaseActivity {
                                             @NonNull SharedPreferences prefs,
                                             @NonNull Runnable onMissing) {
 
+        // Skip nickname fetch if backend is unavailable to prevent Firestore errors
+        if (!isBackendAvailable) {
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".fetchNicknameFromFirestore: Skipping nickname fetch - backend unavailable");
+            // If we have no local nickname and backend is unavailable, run onMissing callback
+            String localNickname = prefs.getString("nickname", null);
+            if (localNickname == null || localNickname.trim().isEmpty()) {
+                onMissing.run();
+            }
+            return;
+        }
+
         FirebaseFirestore.getInstance()
                 .collection("users")
                 .document(uid)
@@ -151,6 +162,12 @@ public class MenuActivity extends BaseActivity {
     }
 
     private void ensureTermsAccepted(@NonNull String uid) {
+        // Skip terms check if backend is unavailable to prevent Firestore errors
+        if (!isBackendAvailable) {
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".ensureTermsAccepted: Skipping terms check - backend unavailable");
+            return;
+        }
+        
         FirebaseFirestore.getInstance()
                 .collection("users")
                 .document(uid)
@@ -373,12 +390,18 @@ public class MenuActivity extends BaseActivity {
             return;
         }
 
-        // Check backend availability when activity resumes
-        checkBackendAvailability();
+        // Check backend availability when activity resumes - this will trigger authentication logic when done
+        checkBackendAvailabilityAndContinue();
 
         // Ensure the FCM token is stored after login
         ((SoccerApp) getApplication()).syncFcmTokenIfNeeded();
+    }
 
+    /**
+     * Continue with authentication and UI logic after backend availability check is complete
+     */
+    @SuppressLint("ApplySharedPref")
+    private void continueOnResumeAfterBackendCheck() {
         FirebaseAuth auth = FirebaseAuth.getInstance();
 
         SharedPreferences prefs =
@@ -439,12 +462,12 @@ public class MenuActivity extends BaseActivity {
         if (nicknameLabel != null) {
             nicknameLabel.setText(labelText);
         } else {
-            Log.e("TAG_Soccer", getClass().getSimpleName() + ".onResume: nicknameLabel is null, layout may not be properly inflated");
+            Log.e("TAG_Soccer", getClass().getSimpleName() + ".continueOnResumeAfterBackendCheck: nicknameLabel is null, layout may not be properly inflated");
         }
         Log.d(
                 "TAG_Soccer",
                 getClass().getSimpleName()
-                        + ".onResume: nicknameLabel=\""
+                        + ".continueOnResumeAfterBackendCheck: nicknameLabel=\""
                         + labelText
                         + "\""
         );
@@ -456,7 +479,7 @@ public class MenuActivity extends BaseActivity {
 
         Button youVsAndroid = findViewById(R.id.youVsAndroidBtn);
         if (youVsAndroid != null) {
-            Log.d("TAG_Soccer", getClass().getSimpleName() + ".onResume: youVsAndroid=" + youVsAndroid.getText());
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".continueOnResumeAfterBackendCheck: youVsAndroid=" + youVsAndroid.getText());
         }
     }
 
@@ -496,15 +519,19 @@ public class MenuActivity extends BaseActivity {
         // show a toast informing them to register.
         float alpha = loggedIn ? 1f : 0.4f;
         if (inviteBtn != null) {
+            inviteBtn.setEnabled(true);
             inviteBtn.setAlpha(alpha);
         }
         if (pendingBtn != null) {
+            pendingBtn.setEnabled(true);
             pendingBtn.setAlpha(alpha);
         }
         if (tournamentsBtn != null) {
+            tournamentsBtn.setEnabled(true);
             tournamentsBtn.setAlpha(alpha);
         }
         if (rankingBtn != null) {
+            rankingBtn.setEnabled(true);
             rankingBtn.setAlpha(alpha);
         }
     }
@@ -978,6 +1005,92 @@ public class MenuActivity extends BaseActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Check backend service availability and continue with onResume logic when complete
+     */
+    private void checkBackendAvailabilityAndContinue() {
+        if (serviceChecker == null) {
+            Log.w(
+                "TAG_Soccer",
+                getClass().getSimpleName() + ".checkBackendAvailabilityAndContinue: Service checker not available, assuming backend is available"
+            );
+            isBackendAvailable = true;
+            // Continue with the rest of onResume logic
+            continueOnResumeAfterBackendCheck();
+            return;
+        }
+        
+        Log.d(
+            "TAG_Soccer",
+            getClass().getSimpleName() + ".checkBackendAvailabilityAndContinue: Checking backend availability before continuing onResume"
+        );
+        
+        serviceChecker.checkServiceAvailability(new BackendServiceChecker.ServiceCheckCallback() {
+            @Override
+            public void onServiceAvailable() {
+                Log.d(
+                    "TAG_Soccer",
+                    getClass().getSimpleName() + ".checkBackendAvailabilityAndContinue: Backend is available - continuing onResume"
+                );
+                runOnUiThread(() -> {
+                    isBackendAvailable = true;
+
+                    // Reset flag so next outage will display a toast again
+                    backendUnavailableToastShown = false;
+
+                    ((SoccerApp) getApplication()).setBackendAvailable(true);
+
+                    updateUiForAuthState();
+                    if (optionsMenu != null) {
+                        MenuItem offlineItem = optionsMenu.findItem(R.id.action_offline);
+                        if (offlineItem != null) {
+                            offlineItem.setVisible(false);
+                        }
+                        if (accountMenuItem != null && accountMenuItem.getIcon() != null) {
+                            accountMenuItem.getIcon().setAlpha(255);
+                        }
+                    }
+                    
+                    // Continue with the rest of onResume logic now that backend availability is confirmed
+                    continueOnResumeAfterBackendCheck();
+                });
+            }
+
+            @Override
+            public void onServiceUnavailable(String reason) {
+                Log.w(
+                    "TAG_Soccer",
+                    getClass().getSimpleName() + ".checkBackendAvailabilityAndContinue: Backend is unavailable: " + reason + " - continuing onResume"
+                );
+                runOnUiThread(() -> {
+                    isBackendAvailable = false;
+                    ((SoccerApp) getApplication()).setBackendAvailable(false);
+                    updateUiForAuthState();
+                    if (optionsMenu != null) {
+                        MenuItem offlineItem = optionsMenu.findItem(R.id.action_offline);
+                        if (offlineItem != null) {
+                            offlineItem.setVisible(true);
+                        }
+                        if (accountMenuItem != null && accountMenuItem.getIcon() != null) {
+                            accountMenuItem.getIcon().setAlpha(130);
+                        }
+                    }
+                    // Show toast notification once when the backend becomes unavailable
+                    if (!backendUnavailableToastShown) {
+                        Toast.makeText(MenuActivity.this,
+                                R.string.server_unavailable_message,
+                                Toast.LENGTH_LONG).show();
+                        backendUnavailableToastShown = true;
+                    }
+                    
+                    // Continue with the rest of onResume logic even when backend is unavailable
+                    // (the safeguards in ensureTermsAccepted and fetchNicknameFromFirestore will handle this)
+                    continueOnResumeAfterBackendCheck();
+                });
+            }
+        });
     }
 
     /**

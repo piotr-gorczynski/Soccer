@@ -13,15 +13,26 @@
     <string name="select_language">Wybierz język</string>
     
     <!-- Language names in Polish -->
-    <string name="language_english">Angielski</string>
-    <string name="language_polish">Polski</string>
-    <string name="language_german">Niemiecki</string>
-    <string name="language_french">Francuski</string>
-    <string name="language_spanish">Hiszpański</string>
-    <string name="language_urdu">Urdu</string>
+    <string name="language_amharic">Amharski</string>
+    <string name="language_arabic">Arabski</string>
     <string name="language_bengali">Bengalski</string>
-    <string name="language_nepali">Nepalski</string>
+    <string name="language_burmese">Birmański</string>
+    <string name="language_english">Angielski</string>
+    <string name="language_french">Francuski</string>
+    <string name="language_german">Niemiecki</string>
     <string name="language_hindi">Hindi</string>
+    <string name="language_khmer">Khmerski</string>
+    <string name="language_lao">Laoski</string>
+    <string name="language_malagasy">Malgaski</string>
+    <string name="language_mongolian">Mongolski</string>
+    <string name="language_nepali">Nepalski</string>
+    <string name="language_persian">Perski</string>
+    <string name="language_polish">Polski</string>
+    <string name="language_sinhala">Syngaleski</string>
+    <string name="language_somali">Somalijski</string>
+    <string name="language_spanish">Hiszpański</string>
+    <string name="language_swahili">Suahili</string>
+    <string name="language_urdu">Urdu</string>
     
     <!-- Menu strings -->
     <string name="menu_YouvsAndroid">Trening z Androidem</string>
@@ -215,7 +226,7 @@
     <string name="register_to_use_function">Zarejestruj się, aby korzystać z tej funkcji.</string>
     <string name="register_dialog_message">Aby korzystać z tej funkcji, musisz się zarejestrować. Możesz zarejestrować się nawet anonimowo. Czy chcesz kontynuować?</string>
     <string name="proceed">Kontynuuj</string>
-    <string name="network_error_checking_nickname">Błąd sieci podczas sprawdzania pseudonim</string>
+    <string name="network_error_checking_nickname">Błąd sieci podczas sprawdzania pseudonimu</string>
     <string name="nickname_taken">Pseudonim już zabrany - wybierz inny</string>
     <string name="nickname_saved">Zapisany pseudonim</string>
     <string name="nickname_save_failed">Nie udało się zapisać pseudonim</string>
@@ -241,7 +252,7 @@
     <string name="must_be_logged_in">Musisz zostać zalogowany.</string>
     <string name="joined_wait_for_bracket">Dołączył! </string>
     <string name="accept_invitation_title">Zaakceptuj zaproszenie</string>
-    <string name="accept_invitation_message">Chcesz zaakceptować tę grę zaproszoną?</string>
+    <string name="accept_invitation_message">Chcesz zaakceptować te zaproszenie do gry?</string>
     <string name="leave_game_title">Opuścić grę?</string>
     <string name="exit_confirm_message">Czy na pewno chcesz wyjść?</string>
     <string name="exit_forfeit_message">Czy na pewno chcesz wyjść? </string>
@@ -256,7 +267,7 @@
     <string name="android_label">Android</string>
     <string name="player_with_number">Gracz %1$d.</string>
     <string name="winner_timeout">%1$s zabrakło czasu.</string>
-    <string name="winner_abandon">%1$s przepadło grę.</string>
+    <string name="winner_abandon">%1$s poddał grę.</string>
     <string name="winner_is">Zwycięzcą jest %1$s!</string>
 
     <string name="could_not_accept_invite">Nie można zaakceptować zaproszenia.</string>
@@ -305,4 +316,9 @@
 
     <string name="layout_initialization_error">Aplikacja napotkała błąd wyświetlania. Spróbuj ponownie.</string>
     <string name="retry">Spróbuj ponownie</string>
+    
+    <!-- Game ready notification strings -->
+    <string name="game_ready_title">Gra Gotowa dla %1$s!</string>
+    <string name="game_ready_message">Twój mecz jest gotowy do rozpoczęcia. Dotknij, aby dołączyć!</string>
+    <string name="join_game_action">Dołącz do Gry</string>
 </resources>

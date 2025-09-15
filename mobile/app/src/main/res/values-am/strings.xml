@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Basic app strings in Amharic -->
+    <string name="app_name">Soccer 2</string>
+    <string name="select_language">ቋንቋ ይምረጡ</string>
+    
+    <!-- Language names in Amharic -->
+    <string name="language_amharic">አማርኛ</string>
+    <string name="language_arabic">አረብኛ</string>
+    <string name="language_bengali">ቤንጋሊ</string>
+    <string name="language_burmese">በርማኛ</string>
+    <string name="language_english">እንግሊዝኛ</string>
+    <string name="language_french">ፈረንሳይኛ</string>
+    <string name="language_german">ጀርመንኛ</string>
+    <string name="language_hindi">ሂንዲ</string>
+    <string name="language_khmer">ክህመር</string>
+    <string name="language_lao">ላኦ</string>
+    <string name="language_malagasy">ማላጋሲ</string>
+    <string name="language_mongolian">ሞንጎላይኛ</string>
+    <string name="language_nepali">ኔፓሊ</string>
+    <string name="language_persian">ፋርሲ</string>
+    <string name="language_polish">ፖላንድኛ</string>
+    <string name="language_sinhala">ሲንሃላ</string>
+    <string name="language_somali">ሶማሊ</string>
+    <string name="language_spanish">ስፓንኛ</string>
+    <string name="language_swahili">ስዋሂሊ</string>
+    <string name="language_urdu">ኡርዱ</string>
+    
+    <!-- Basic interface -->
+    <string name="settings">ቅንብሮች</string>
+    <string name="cancel">ይሰርዝ</string>
+    <string name="confirm">ያረጋግጡ</string>
+    
+    <!-- Game ready notification strings -->
+    <string name="game_ready_title">ለ%1$s ጨዋታ ዝግጁ ነው!</string>
+    <string name="game_ready_message">ጨዋታዎ ለመጀመር ዝግጁ ነው። ለመቀላቀል ይንኩ!</string>
+    <string name="join_game_action">ጨዋታ ተቀላቀል</string>
+</resources>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Basic app strings in Lao -->
+    <string name="app_name">Soccer 2</string>
+    <string name="select_language">ເລືອກພາສາ</string>
+    
+    <!-- Language names in Lao -->
+    <string name="language_amharic">ອາມຮາລິກ</string>
+    <string name="language_arabic">ອາຣັບ</string>
+    <string name="language_bengali">ເບັງກາລີ</string>
+    <string name="language_burmese">ພະມ້າ</string>
+    <string name="language_english">ອັງກິດ</string>
+    <string name="language_french">ຝຣັ່ງ</string>
+    <string name="language_german">ເຢຍລະມັນ</string>
+    <string name="language_hindi">ຮິນດູ</string>
+    <string name="language_khmer">ຂະແມ</string>
+    <string name="language_lao">ລາວ</string>
+    <string name="language_malagasy">ມາລາກາສີ</string>
+    <string name="language_mongolian">ມົງໂກເລຍ</string>
+    <string name="language_nepali">ເນປານ</string>
+    <string name="language_persian">ເປີເຊຍ</string>
+    <string name="language_polish">ໂປແລນ</string>
+    <string name="language_sinhala">ສິນຫາລາ</string>
+    <string name="language_somali">ໂຊມາລີ</string>
+    <string name="language_spanish">ສະເປນ</string>
+    <string name="language_swahili">ສະວາຮີລີ</string>
+    <string name="language_urdu">ອູຣດູ</string>
+    
+    <!-- Basic interface -->
+    <string name="settings">ການຕັ້ງຄ່າ</string>
+    <string name="cancel">ຍົກເລີກ</string>
+    <string name="confirm">ຢືນຢັນ</string>
+    
+    <!-- Game ready notification strings -->
+    <string name="game_ready_title">ເກມພ້ອມສໍາລັບ %1$s!</string>
+    <string name="game_ready_message">ເກມຂອງເຈົ້າພ້ອມທີ່ຈະເລີ່ມແລ້ວ. ກົດເພື່ອເຂົ້າຮ່ວມ!</string>
+    <string name="join_game_action">ເຂົ້າຮ່ວມເກມ</string>
+</resources>

@@ -236,29 +236,62 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         String code = LanguageManager.getCurrentLanguageCode(requireContext());
         String label;
         switch (code) {
-            case "pl":
-                label = getString(R.string.language_polish);
+            case "am":
+                label = getString(R.string.language_amharic);
                 break;
-            case "de":
-                label = getString(R.string.language_german);
-                break;
-            case "fr":
-                label = getString(R.string.language_french);
-                break;
-            case "es":
-                label = getString(R.string.language_spanish);
-                break;
-            case "ur":
-                label = getString(R.string.language_urdu);
+            case "ar":
+                label = getString(R.string.language_arabic);
                 break;
             case "bn":
                 label = getString(R.string.language_bengali);
                 break;
-            case "ne":
-                label = getString(R.string.language_nepali);
+            case "my":
+                label = getString(R.string.language_burmese);
+                break;
+            case "fr":
+                label = getString(R.string.language_french);
+                break;
+            case "de":
+                label = getString(R.string.language_german);
                 break;
             case "hi":
                 label = getString(R.string.language_hindi);
+                break;
+            case "km":
+                label = getString(R.string.language_khmer);
+                break;
+            case "lo":
+                label = getString(R.string.language_lao);
+                break;
+            case "mg":
+                label = getString(R.string.language_malagasy);
+                break;
+            case "mn":
+                label = getString(R.string.language_mongolian);
+                break;
+            case "ne":
+                label = getString(R.string.language_nepali);
+                break;
+            case "fa":
+                label = getString(R.string.language_persian);
+                break;
+            case "pl":
+                label = getString(R.string.language_polish);
+                break;
+            case "si":
+                label = getString(R.string.language_sinhala);
+                break;
+            case "so":
+                label = getString(R.string.language_somali);
+                break;
+            case "es":
+                label = getString(R.string.language_spanish);
+                break;
+            case "sw":
+                label = getString(R.string.language_swahili);
+                break;
+            case "ur":
+                label = getString(R.string.language_urdu);
                 break;
             default:
                 label = getString(R.string.language_english);
@@ -280,12 +313,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         String[] languages = LanguageManager.getAvailableLanguages(requireContext());
         String currentLanguageCode = LanguageManager.getCurrentLanguageCode(requireContext());
 
-        // Find current selection index using non-localized names for consistent mapping
-        String[] nonLocalizedLanguages = LanguageManager.getAvailableLanguages();
+        // Find current selection index by finding the current language's localized name
         int currentIndex = 0;
-        for (int i = 0; i < nonLocalizedLanguages.length; i++) {
-            String code = LanguageManager.getLanguageCode(nonLocalizedLanguages[i]);
-            if (code.equals(currentLanguageCode)) {
+        String currentLanguageName = LanguageManager.getCurrentLanguageName(requireContext());
+        for (int i = 0; i < languages.length; i++) {
+            if (languages[i].equals(currentLanguageName)) {
                 currentIndex = i;
                 break;
             }
@@ -294,8 +326,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle(R.string.select_language);
         builder.setSingleChoiceItems(languages, currentIndex, (dialog, which) -> {
-            String selectedLanguage = nonLocalizedLanguages[which]; // Use non-localized for mapping
-            String languageCode = LanguageManager.getLanguageCode(selectedLanguage);
+            String selectedLocalizedLanguage = languages[which];
+            String languageCode = LanguageManager.getLanguageCodeFromLocalizedName(requireContext(), selectedLocalizedLanguage);
             
             // Set the language
             LanguageManager.setLanguage(requireContext(), languageCode);
