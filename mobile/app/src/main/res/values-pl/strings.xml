@@ -316,4 +316,9 @@
 
     <string name="layout_initialization_error">Aplikacja napotkała błąd wyświetlania. Spróbuj ponownie.</string>
     <string name="retry">Spróbuj ponownie</string>
+    
+    <!-- Game ready notification strings -->
+    <string name="game_ready_title">Gra Gotowa dla %1$s!</string>
+    <string name="game_ready_message">Twój mecz jest gotowy do rozpoczęcia. Dotknij, aby dołączyć!</string>
+    <string name="join_game_action">Dołącz do Gry</string>
 </resources>

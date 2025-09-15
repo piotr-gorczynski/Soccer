@@ -30,4 +30,9 @@
     <string name="settings">සැකසුම්</string>
     <string name="cancel">අවලංගු කරන්න</string>
     <string name="confirm">තහවුරු කරන්න</string>
+    
+    <!-- Game ready notification strings -->
+    <string name="game_ready_title">%1$s සඳහා ක්‍රීඩාව සූදානම්!</string>
+    <string name="game_ready_message">ඔබේ තරගය ආරම්භ කිරීමට සූදානම්. සම්බන්ධ වීමට ස්පර්ශ කරන්න!</string>
+    <string name="join_game_action">ක්‍රීඩාවට සම්බන්ධ වන්න</string>
 </resources>

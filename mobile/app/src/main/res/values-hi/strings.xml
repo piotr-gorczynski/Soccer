@@ -315,4 +315,9 @@
 
     <string name="layout_initialization_error">ऐप को एक डिस्प्ले त्रुटि का सामना करना पड़ा। कृपया पुनः प्रयास करें।</string>
     <string name="retry">पुनः प्रयास करें</string>
+    
+    <!-- Game ready notification strings -->
+    <string name="game_ready_title">%1$s के लिए खेल तैयार!</string>
+    <string name="game_ready_message">आपका मैच शुरू होने के लिए तैयार है। जुड़ने के लिए टैप करें!</string>
+    <string name="join_game_action">गेम जॉइन करें</string>
 </resources>
