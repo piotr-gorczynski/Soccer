@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Basic app strings in Sinhala -->
+    <string name="app_name">Soccer 2</string>
+    <string name="select_language">භාෂාව තෝරන්න</string>
+    
+    <!-- Language names in Sinhala -->
+    <string name="language_amharic">අම්හාරික්</string>
+    <string name="language_arabic">අරාබි</string>
+    <string name="language_bengali">බෙංගාලි</string>
+    <string name="language_burmese">බර්මි</string>
+    <string name="language_english">ඉංග්‍රීසි</string>
+    <string name="language_french">ප්‍රංශ</string>
+    <string name="language_german">ජර්මන්</string>
+    <string name="language_hindi">හින්දි</string>
+    <string name="language_khmer">කමෙර්</string>
+    <string name="language_lao">ලාඕ</string>
+    <string name="language_malagasy">මලගාසි</string>
+    <string name="language_mongolian">මොන්ගෝලියානු</string>
+    <string name="language_nepali">නේපාල</string>
+    <string name="language_persian">පර්සියානු</string>
+    <string name="language_polish">පෝලන්ත</string>
+    <string name="language_sinhala">සිංහල</string>
+    <string name="language_somali">සෝමාලි</string>
+    <string name="language_spanish">ස්පාඤ්ඤ</string>
+    <string name="language_swahili">ස්වහිලි</string>
+    <string name="language_urdu">උර්දු</string>
+    
+    <!-- Basic interface -->
+    <string name="settings">සැකසුම්</string>
+    <string name="cancel">අවලංගු කරන්න</string>
+    <string name="confirm">තහවුරු කරන්න</string>
+</resources>

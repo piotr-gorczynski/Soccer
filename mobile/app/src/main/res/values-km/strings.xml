@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Basic app strings in Khmer -->
+    <string name="app_name">Soccer 2</string>
+    <string name="select_language">ជ្រើសរើសភាសា</string>
+    
+    <!-- Language names in Khmer -->
+    <string name="language_amharic">អាំហារិក</string>
+    <string name="language_arabic">អារ៉ាប់</string>
+    <string name="language_bengali">បង់ក្លាដែស</string>
+    <string name="language_burmese">ភូមា</string>
+    <string name="language_english">អង់គ្លេស</string>
+    <string name="language_french">បារាំង</string>
+    <string name="language_german">អាល្លឺម៉ង់</string>
+    <string name="language_hindi">ហិណ្ឌូ</string>
+    <string name="language_khmer">ខ្មែរ</string>
+    <string name="language_lao">ឡាវ</string>
+    <string name="language_malagasy">ម៉ាឡាហ្គាស៊ី</string>
+    <string name="language_mongolian">ម៉ុងហ្គោលី</string>
+    <string name="language_nepali">នេប៉ាល់</string>
+    <string name="language_persian">ពែរ្សៀ</string>
+    <string name="language_polish">ប៉ូឡូញ</string>
+    <string name="language_sinhala">ស៊ីនហាឡា</string>
+    <string name="language_somali">សូម៉ាលី</string>
+    <string name="language_spanish">អេស្ប៉ាញ</string>
+    <string name="language_swahili">ស្វាហ៊ីលី</string>
+    <string name="language_urdu">អ៊ុយឌូ</string>
+    
+    <!-- Basic interface -->
+    <string name="settings">ការកំណត់</string>
+    <string name="cancel">បោះបង់</string>
+    <string name="confirm">បញ្ជាក់</string>
+</resources>

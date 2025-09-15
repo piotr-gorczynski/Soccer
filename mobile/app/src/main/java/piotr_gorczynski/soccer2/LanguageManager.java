@@ -27,29 +27,51 @@ public class LanguageManager {
     // Language code to display name resource mapping
     private static final Map<String, Integer> LANGUAGE_NAME_RES_IDS = new HashMap<>();
     static {
-        LANGUAGE_NAME_RES_IDS.put("en", R.string.language_english);
-        LANGUAGE_NAME_RES_IDS.put("pl", R.string.language_polish);
-        LANGUAGE_NAME_RES_IDS.put("de", R.string.language_german);
-        LANGUAGE_NAME_RES_IDS.put("fr", R.string.language_french);
-        LANGUAGE_NAME_RES_IDS.put("es", R.string.language_spanish);
-        LANGUAGE_NAME_RES_IDS.put("ur", R.string.language_urdu);
+        LANGUAGE_NAME_RES_IDS.put("am", R.string.language_amharic);
+        LANGUAGE_NAME_RES_IDS.put("ar", R.string.language_arabic);
         LANGUAGE_NAME_RES_IDS.put("bn", R.string.language_bengali);
-        LANGUAGE_NAME_RES_IDS.put("ne", R.string.language_nepali);
+        LANGUAGE_NAME_RES_IDS.put("my", R.string.language_burmese);
+        LANGUAGE_NAME_RES_IDS.put("en", R.string.language_english);
+        LANGUAGE_NAME_RES_IDS.put("fr", R.string.language_french);
+        LANGUAGE_NAME_RES_IDS.put("de", R.string.language_german);
         LANGUAGE_NAME_RES_IDS.put("hi", R.string.language_hindi);
+        LANGUAGE_NAME_RES_IDS.put("km", R.string.language_khmer);
+        LANGUAGE_NAME_RES_IDS.put("lo", R.string.language_lao);
+        LANGUAGE_NAME_RES_IDS.put("mg", R.string.language_malagasy);
+        LANGUAGE_NAME_RES_IDS.put("mn", R.string.language_mongolian);
+        LANGUAGE_NAME_RES_IDS.put("ne", R.string.language_nepali);
+        LANGUAGE_NAME_RES_IDS.put("fa", R.string.language_persian);
+        LANGUAGE_NAME_RES_IDS.put("pl", R.string.language_polish);
+        LANGUAGE_NAME_RES_IDS.put("si", R.string.language_sinhala);
+        LANGUAGE_NAME_RES_IDS.put("so", R.string.language_somali);
+        LANGUAGE_NAME_RES_IDS.put("es", R.string.language_spanish);
+        LANGUAGE_NAME_RES_IDS.put("sw", R.string.language_swahili);
+        LANGUAGE_NAME_RES_IDS.put("ur", R.string.language_urdu);
     }
     
     // Language display name to code mapping
     private static final Map<String, String> LANGUAGE_CODES = new HashMap<>();
     static {
-        LANGUAGE_CODES.put("English", "en");
-        LANGUAGE_CODES.put("Polish", "pl");
-        LANGUAGE_CODES.put("German", "de");
-        LANGUAGE_CODES.put("French", "fr");
-        LANGUAGE_CODES.put("Spanish", "es");
-        LANGUAGE_CODES.put("Urdu", "ur");
+        LANGUAGE_CODES.put("Amharic", "am");
+        LANGUAGE_CODES.put("Arabic", "ar");
         LANGUAGE_CODES.put("Bengali", "bn");
-        LANGUAGE_CODES.put("Nepali", "ne");
+        LANGUAGE_CODES.put("Burmese", "my");
+        LANGUAGE_CODES.put("English", "en");
+        LANGUAGE_CODES.put("French", "fr");
+        LANGUAGE_CODES.put("German", "de");
         LANGUAGE_CODES.put("Hindi", "hi");
+        LANGUAGE_CODES.put("Khmer", "km");
+        LANGUAGE_CODES.put("Lao", "lo");
+        LANGUAGE_CODES.put("Malagasy", "mg");
+        LANGUAGE_CODES.put("Mongolian", "mn");
+        LANGUAGE_CODES.put("Nepali", "ne");
+        LANGUAGE_CODES.put("Persian", "fa");
+        LANGUAGE_CODES.put("Polish", "pl");
+        LANGUAGE_CODES.put("Sinhala", "si");
+        LANGUAGE_CODES.put("Somali", "so");
+        LANGUAGE_CODES.put("Spanish", "es");
+        LANGUAGE_CODES.put("Swahili", "sw");
+        LANGUAGE_CODES.put("Urdu", "ur");
     }
     
     /**
@@ -121,15 +143,26 @@ public class LanguageManager {
      */
     public static String[] getAvailableLanguages(Context context) {
         return new String[]{
-            context.getString(R.string.language_english),
-            context.getString(R.string.language_polish),
-            context.getString(R.string.language_german),
-            context.getString(R.string.language_french),
-            context.getString(R.string.language_spanish),
-            context.getString(R.string.language_urdu),
+            context.getString(R.string.language_amharic),
+            context.getString(R.string.language_arabic),
             context.getString(R.string.language_bengali),
+            context.getString(R.string.language_burmese),
+            context.getString(R.string.language_english),
+            context.getString(R.string.language_french),
+            context.getString(R.string.language_german),
+            context.getString(R.string.language_hindi),
+            context.getString(R.string.language_khmer),
+            context.getString(R.string.language_lao),
+            context.getString(R.string.language_malagasy),
+            context.getString(R.string.language_mongolian),
             context.getString(R.string.language_nepali),
-            context.getString(R.string.language_hindi)
+            context.getString(R.string.language_persian),
+            context.getString(R.string.language_polish),
+            context.getString(R.string.language_sinhala),
+            context.getString(R.string.language_somali),
+            context.getString(R.string.language_spanish),
+            context.getString(R.string.language_swahili),
+            context.getString(R.string.language_urdu)
         };
     }
     
@@ -138,8 +171,10 @@ public class LanguageManager {
      */
     public static String[] getAvailableLanguages() {
         return new String[]{
-            "English", "Polish", "German", "French", "Spanish", 
-            "Urdu", "Bengali", "Nepali", "Hindi"
+            "Amharic", "Arabic", "Bengali", "Burmese", "English", "French", 
+            "German", "Hindi", "Khmer", "Lao", "Malagasy", "Mongolian", 
+            "Nepali", "Persian", "Polish", "Sinhala", "Somali", "Spanish", 
+            "Swahili", "Urdu"
         };
     }
     

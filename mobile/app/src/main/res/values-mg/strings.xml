@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Basic app strings in Malagasy -->
+    <string name="app_name">Soccer 2</string>
+    <string name="select_language">Safidio ny fiteny</string>
+    
+    <!-- Language names in Malagasy -->
+    <string name="language_amharic">Amharika</string>
+    <string name="language_arabic">Arabo</string>
+    <string name="language_bengali">Bengali</string>
+    <string name="language_burmese">Birmana</string>
+    <string name="language_english">Anglisy</string>
+    <string name="language_french">Frantsay</string>
+    <string name="language_german">Alemanina</string>
+    <string name="language_hindi">Hindi</string>
+    <string name="language_khmer">Khmer</string>
+    <string name="language_lao">Laosianina</string>
+    <string name="language_malagasy">Malagasy</string>
+    <string name="language_mongolian">Mongolianina</string>
+    <string name="language_nepali">Nepalais</string>
+    <string name="language_persian">Persiana</string>
+    <string name="language_polish">Polonay</string>
+    <string name="language_sinhala">Sinhala</string>
+    <string name="language_somali">Somalianina</string>
+    <string name="language_spanish">Espaniola</string>
+    <string name="language_swahili">Swahili</string>
+    <string name="language_urdu">Urdu</string>
+    
+    <!-- Basic interface -->
+    <string name="settings">Fandrindrana</string>
+    <string name="cancel">Foana</string>
+    <string name="confirm">Manamarina</string>
+</resources>
