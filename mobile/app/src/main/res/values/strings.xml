@@ -172,15 +172,26 @@
     
     <!-- Language strings -->
     <string name="select_language">Select Language</string>
-    <string name="language_english">English</string>
-    <string name="language_polish">Polish</string>
-    <string name="language_german">German</string>
-    <string name="language_french">French</string>
-    <string name="language_spanish">Spanish</string>
-    <string name="language_urdu">Urdu</string>
+    <string name="language_amharic">Amharic</string>
+    <string name="language_arabic">Arabic</string>
     <string name="language_bengali">Bengali</string>
-    <string name="language_nepali">Nepali</string>
+    <string name="language_burmese">Burmese</string>
+    <string name="language_english">English</string>
+    <string name="language_french">French</string>
+    <string name="language_german">German</string>
     <string name="language_hindi">Hindi</string>
+    <string name="language_khmer">Khmer</string>
+    <string name="language_lao">Lao</string>
+    <string name="language_malagasy">Malagasy</string>
+    <string name="language_mongolian">Mongolian</string>
+    <string name="language_nepali">Nepali</string>
+    <string name="language_persian">Persian</string>
+    <string name="language_polish">Polish</string>
+    <string name="language_sinhala">Sinhala</string>
+    <string name="language_somali">Somali</string>
+    <string name="language_spanish">Spanish</string>
+    <string name="language_swahili">Swahili</string>
+    <string name="language_urdu">Urdu</string>
 
     <!-- Field draw strings -->
     <string name="field_your_move">Your move!</string>

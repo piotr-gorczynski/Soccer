@@ -13,15 +13,26 @@
     <string name="select_language">Seleccionar idioma</string>
     
     <!-- Language names in Spanish -->
-    <string name="language_english">Inglés</string>
-    <string name="language_polish">Polaco</string>
-    <string name="language_german">Alemán</string>
-    <string name="language_french">Francés</string>
-    <string name="language_spanish">Español</string>
-    <string name="language_urdu">Urdu</string>
+    <string name="language_amharic">Amárico</string>
+    <string name="language_arabic">Árabe</string>
     <string name="language_bengali">Bengalí</string>
-    <string name="language_nepali">Nepalí</string>
+    <string name="language_burmese">Birmano</string>
+    <string name="language_english">Inglés</string>
+    <string name="language_french">Francés</string>
+    <string name="language_german">Alemán</string>
     <string name="language_hindi">Hindi</string>
+    <string name="language_khmer">Jemer</string>
+    <string name="language_lao">Lao</string>
+    <string name="language_malagasy">Malgache</string>
+    <string name="language_mongolian">Mongol</string>
+    <string name="language_nepali">Nepalí</string>
+    <string name="language_persian">Persa</string>
+    <string name="language_polish">Polaco</string>
+    <string name="language_sinhala">Cingalés</string>
+    <string name="language_somali">Somalí</string>
+    <string name="language_spanish">Español</string>
+    <string name="language_swahili">Suajili</string>
+    <string name="language_urdu">Urdu</string>
     
     <!-- Menu strings -->
     <string name="menu_YouvsAndroid">Práctica con Android</string>

@@ -236,29 +236,62 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         String code = LanguageManager.getCurrentLanguageCode(requireContext());
         String label;
         switch (code) {
-            case "pl":
-                label = getString(R.string.language_polish);
+            case "am":
+                label = getString(R.string.language_amharic);
                 break;
-            case "de":
-                label = getString(R.string.language_german);
-                break;
-            case "fr":
-                label = getString(R.string.language_french);
-                break;
-            case "es":
-                label = getString(R.string.language_spanish);
-                break;
-            case "ur":
-                label = getString(R.string.language_urdu);
+            case "ar":
+                label = getString(R.string.language_arabic);
                 break;
             case "bn":
                 label = getString(R.string.language_bengali);
                 break;
-            case "ne":
-                label = getString(R.string.language_nepali);
+            case "my":
+                label = getString(R.string.language_burmese);
+                break;
+            case "fr":
+                label = getString(R.string.language_french);
+                break;
+            case "de":
+                label = getString(R.string.language_german);
                 break;
             case "hi":
                 label = getString(R.string.language_hindi);
+                break;
+            case "km":
+                label = getString(R.string.language_khmer);
+                break;
+            case "lo":
+                label = getString(R.string.language_lao);
+                break;
+            case "mg":
+                label = getString(R.string.language_malagasy);
+                break;
+            case "mn":
+                label = getString(R.string.language_mongolian);
+                break;
+            case "ne":
+                label = getString(R.string.language_nepali);
+                break;
+            case "fa":
+                label = getString(R.string.language_persian);
+                break;
+            case "pl":
+                label = getString(R.string.language_polish);
+                break;
+            case "si":
+                label = getString(R.string.language_sinhala);
+                break;
+            case "so":
+                label = getString(R.string.language_somali);
+                break;
+            case "es":
+                label = getString(R.string.language_spanish);
+                break;
+            case "sw":
+                label = getString(R.string.language_swahili);
+                break;
+            case "ur":
+                label = getString(R.string.language_urdu);
                 break;
             default:
                 label = getString(R.string.language_english);

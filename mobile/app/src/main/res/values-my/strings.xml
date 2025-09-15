@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Basic app strings in Burmese -->
+    <string name="app_name">Soccer 2</string>
+    <string name="select_language">ဘာသာစကားရွေးချယ်ပါ</string>
+    
+    <!-- Language names in Burmese -->
+    <string name="language_amharic">အမ်ဟာရစ်</string>
+    <string name="language_arabic">အာရေဗီ</string>
+    <string name="language_bengali">ဘင်္ဂါလီ</string>
+    <string name="language_burmese">မြန်မာ</string>
+    <string name="language_english">အင်္ဂလိပ်</string>
+    <string name="language_french">ပြင်သစ်</string>
+    <string name="language_german">ဂျာမန်</string>
+    <string name="language_hindi">ဟိန္ဒီ</string>
+    <string name="language_khmer">ခမာ</string>
+    <string name="language_lao">လာအို</string>
+    <string name="language_malagasy">မလဂက်စီ</string>
+    <string name="language_mongolian">မွန်ဂိုလီးယား</string>
+    <string name="language_nepali">နီပေါ</string>
+    <string name="language_persian">ပါရှန်</string>
+    <string name="language_polish">ပိုလန်</string>
+    <string name="language_sinhala">စင်ဟာလ</string>
+    <string name="language_somali">ဆိုမာလီ</string>
+    <string name="language_spanish">စပိန်</string>
+    <string name="language_swahili">ဆွာဟီလီ</string>
+    <string name="language_urdu">အူရ်ဒူ</string>
+    
+    <!-- Basic interface -->
+    <string name="settings">ဆက်တင်များ</string>
+    <string name="cancel">ပယ်ဖျက်</string>
+    <string name="confirm">အတည်ပြု</string>
+</resources>

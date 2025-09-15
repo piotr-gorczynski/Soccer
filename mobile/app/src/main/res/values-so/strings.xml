@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Basic app strings in Somali -->
+    <string name="app_name">Soccer 2</string>
+    <string name="select_language">Luqadda dooro</string>
+    
+    <!-- Language names in Somali -->
+    <string name="language_amharic">Axmaarika</string>
+    <string name="language_arabic">Carabi</string>
+    <string name="language_bengali">Bengali</string>
+    <string name="language_burmese">Burmis</string>
+    <string name="language_english">Ingiriisi</string>
+    <string name="language_french">Faransiis</string>
+    <string name="language_german">Jarmal</string>
+    <string name="language_hindi">Hindi</string>
+    <string name="language_khmer">Khmer</string>
+    <string name="language_lao">Laao</string>
+    <string name="language_malagasy">Malagaasi</string>
+    <string name="language_mongolian">Mongooliya</string>
+    <string name="language_nepali">Nebaali</string>
+    <string name="language_persian">Faaris</string>
+    <string name="language_polish">Booliish</string>
+    <string name="language_sinhala">Sinhaala</string>
+    <string name="language_somali">Soomaali</string>
+    <string name="language_spanish">Isbaanish</string>
+    <string name="language_swahili">Sawaaxili</string>
+    <string name="language_urdu">Urduu</string>
+    
+    <!-- Basic interface -->
+    <string name="settings">Dejinta</string>
+    <string name="cancel">Ka noqo</string>
+    <string name="confirm">Xaqiiji</string>
+</resources>
