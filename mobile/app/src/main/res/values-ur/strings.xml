@@ -315,4 +315,9 @@
 
     <string name="layout_initialization_error">ایپ کو ڈسپلے کی خرابی کا سامنا ہوا۔ براہ کرم دوبارہ کوشش کریں۔</string>
     <string name="retry">دوبارہ کوشش کریں</string>
+    
+    <!-- Game ready notification strings -->
+    <string name="game_ready_title">%1$s کے لیے کھیل تیار!</string>
+    <string name="game_ready_message">آپ کا میچ شروع ہونے کے لیے تیار ہے۔ شامل ہونے کے لیے ٹیپ کریں!</string>
+    <string name="join_game_action">گیم میں شامل ہوں</string>
 </resources>

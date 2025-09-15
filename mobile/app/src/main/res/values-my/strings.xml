@@ -30,4 +30,9 @@
     <string name="settings">ဆက်တင်များ</string>
     <string name="cancel">ပယ်ဖျက်</string>
     <string name="confirm">အတည်ပြု</string>
+    
+    <!-- Game ready notification strings -->
+    <string name="game_ready_title">%1$s အတွက် ဂိမ်းပြင်ဆင်ပြီးပါပြီ!</string>
+    <string name="game_ready_message">သင်၏ပွဲစဉ် စတင်ရန်အသင့်ဖြစ်ပါပြီ။ ပါဝင်ရန်တို့ပါ!</string>
+    <string name="join_game_action">ဂိမ်းတွင်ပါဝင်ပါ</string>
 </resources>

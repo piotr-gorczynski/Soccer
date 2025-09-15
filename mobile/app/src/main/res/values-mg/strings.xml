@@ -30,4 +30,9 @@
     <string name="settings">Fandrindrana</string>
     <string name="cancel">Foana</string>
     <string name="confirm">Manamarina</string>
+    
+    <!-- Game ready notification strings -->
+    <string name="game_ready_title">Lalao vonona ho an'ny %1$s!</string>
+    <string name="game_ready_message">Ny lalao nataonao dia vonona hanomboka. Tsindrio hiditra!</string>
+    <string name="join_game_action">Hiditra amin'ny Lalao</string>
 </resources>

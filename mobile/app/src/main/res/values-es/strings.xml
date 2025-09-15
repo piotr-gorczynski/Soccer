@@ -316,4 +316,9 @@
 
     <string name="layout_initialization_error">La aplicación encontró un error de visualización. Por favor, inténtalo de nuevo.</string>
     <string name="retry">Reintentar</string>
+    
+    <!-- Game ready notification strings -->
+    <string name="game_ready_title">¡Juego Listo para %1$s!</string>
+    <string name="game_ready_message">Tu partido está listo para comenzar. ¡Toca para unirte!</string>
+    <string name="join_game_action">Unirse al Juego</string>
 </resources>
