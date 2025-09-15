@@ -313,12 +313,11 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         String[] languages = LanguageManager.getAvailableLanguages(requireContext());
         String currentLanguageCode = LanguageManager.getCurrentLanguageCode(requireContext());
 
-        // Find current selection index using non-localized names for consistent mapping
-        String[] nonLocalizedLanguages = LanguageManager.getAvailableLanguages();
+        // Find current selection index by finding the current language's localized name
         int currentIndex = 0;
-        for (int i = 0; i < nonLocalizedLanguages.length; i++) {
-            String code = LanguageManager.getLanguageCode(nonLocalizedLanguages[i]);
-            if (code.equals(currentLanguageCode)) {
+        String currentLanguageName = LanguageManager.getCurrentLanguageName(requireContext());
+        for (int i = 0; i < languages.length; i++) {
+            if (languages[i].equals(currentLanguageName)) {
                 currentIndex = i;
                 break;
             }
@@ -327,8 +326,8 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         builder.setTitle(R.string.select_language);
         builder.setSingleChoiceItems(languages, currentIndex, (dialog, which) -> {
-            String selectedLanguage = nonLocalizedLanguages[which]; // Use non-localized for mapping
-            String languageCode = LanguageManager.getLanguageCode(selectedLanguage);
+            String selectedLocalizedLanguage = languages[which];
+            String languageCode = LanguageManager.getLanguageCodeFromLocalizedName(requireContext(), selectedLocalizedLanguage);
             
             // Set the language
             LanguageManager.setLanguage(requireContext(), languageCode);

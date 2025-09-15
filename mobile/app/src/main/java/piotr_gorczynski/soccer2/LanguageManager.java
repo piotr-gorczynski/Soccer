@@ -12,6 +12,7 @@ import androidx.core.os.LocaleListCompat;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.Collator;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -48,31 +49,7 @@ public class LanguageManager {
         LANGUAGE_NAME_RES_IDS.put("sw", R.string.language_swahili);
         LANGUAGE_NAME_RES_IDS.put("ur", R.string.language_urdu);
     }
-    
-    // Language display name to code mapping
-    private static final Map<String, String> LANGUAGE_CODES = new HashMap<>();
-    static {
-        LANGUAGE_CODES.put("Amharic", "am");
-        LANGUAGE_CODES.put("Arabic", "ar");
-        LANGUAGE_CODES.put("Bengali", "bn");
-        LANGUAGE_CODES.put("Burmese", "my");
-        LANGUAGE_CODES.put("English", "en");
-        LANGUAGE_CODES.put("French", "fr");
-        LANGUAGE_CODES.put("German", "de");
-        LANGUAGE_CODES.put("Hindi", "hi");
-        LANGUAGE_CODES.put("Khmer", "km");
-        LANGUAGE_CODES.put("Lao", "lo");
-        LANGUAGE_CODES.put("Malagasy", "mg");
-        LANGUAGE_CODES.put("Mongolian", "mn");
-        LANGUAGE_CODES.put("Nepali", "ne");
-        LANGUAGE_CODES.put("Persian", "fa");
-        LANGUAGE_CODES.put("Polish", "pl");
-        LANGUAGE_CODES.put("Sinhala", "si");
-        LANGUAGE_CODES.put("Somali", "so");
-        LANGUAGE_CODES.put("Spanish", "es");
-        LANGUAGE_CODES.put("Swahili", "sw");
-        LANGUAGE_CODES.put("Urdu", "ur");
-    }
+
     
     /**
      * Get the currently selected language code from preferences
@@ -139,50 +116,54 @@ public class LanguageManager {
     }
     
     /**
-     * Get all available languages as display names (localized)
+     * Get all available languages as display names (localized) sorted alphabetically
+     * in the current locale
      */
     public static String[] getAvailableLanguages(Context context) {
-        return new String[]{
-            context.getString(R.string.language_amharic),
-            context.getString(R.string.language_arabic),
-            context.getString(R.string.language_bengali),
-            context.getString(R.string.language_burmese),
-            context.getString(R.string.language_english),
-            context.getString(R.string.language_french),
-            context.getString(R.string.language_german),
-            context.getString(R.string.language_hindi),
-            context.getString(R.string.language_khmer),
-            context.getString(R.string.language_lao),
-            context.getString(R.string.language_malagasy),
-            context.getString(R.string.language_mongolian),
-            context.getString(R.string.language_nepali),
-            context.getString(R.string.language_persian),
-            context.getString(R.string.language_polish),
-            context.getString(R.string.language_sinhala),
-            context.getString(R.string.language_somali),
-            context.getString(R.string.language_spanish),
-            context.getString(R.string.language_swahili),
-            context.getString(R.string.language_urdu)
-        };
+        // Create a list of all language codes with their corresponding resource IDs
+        java.util.List<java.util.Map.Entry<String, Integer>> languageEntries = 
+            new java.util.ArrayList<>(LANGUAGE_NAME_RES_IDS.entrySet());
+        
+        // Create a list to store language names with their codes for sorting
+        java.util.List<LocalizedLanguage> localizedLanguages = new java.util.ArrayList<>();
+        
+        for (java.util.Map.Entry<String, Integer> entry : languageEntries) {
+            String languageCode = entry.getKey();
+            Integer resourceId = entry.getValue();
+            String localizedName = context.getString(resourceId);
+            localizedLanguages.add(new LocalizedLanguage(localizedName, languageCode));
+        }
+        
+        // Sort by localized name using current locale's collation rules
+        java.text.Collator collator = java.text.Collator.getInstance();
+        localizedLanguages.sort((lang1, lang2) -> 
+            collator.compare(lang1.localizedName, lang2.localizedName));
+        
+        // Extract sorted localized names
+        String[] sortedLanguages = new String[localizedLanguages.size()];
+        for (int i = 0; i < localizedLanguages.size(); i++) {
+            sortedLanguages[i] = localizedLanguages.get(i).localizedName;
+        }
+        
+        return sortedLanguages;
     }
     
-    /**
-     * Get all available languages as display names (non-localized for consistent mapping)
-     */
-    public static String[] getAvailableLanguages() {
-        return new String[]{
-            "Amharic", "Arabic", "Bengali", "Burmese", "English", "French", 
-            "German", "Hindi", "Khmer", "Lao", "Malagasy", "Mongolian", 
-            "Nepali", "Persian", "Polish", "Sinhala", "Somali", "Spanish", 
-            "Swahili", "Urdu"
-        };
-    }
+
     
     /**
-     * Get language code from display name
+     * Get language code from localized display name
      */
-    public static String getLanguageCode(String displayName) {
-        return LANGUAGE_CODES.getOrDefault(displayName, "en");
+    public static String getLanguageCodeFromLocalizedName(Context context, String localizedName) {
+        // Find the language code that corresponds to the given localized name
+        for (Map.Entry<String, Integer> entry : LANGUAGE_NAME_RES_IDS.entrySet()) {
+            String languageCode = entry.getKey();
+            Integer resourceId = entry.getValue();
+            String resourceLocalizedName = context.getString(resourceId);
+            if (resourceLocalizedName.equals(localizedName)) {
+                return languageCode;
+            }
+        }
+        return "en"; // Default to English if not found
     }
     
     /**
@@ -230,6 +211,19 @@ public class LanguageManager {
                 })
                 .addOnFailureListener(e ->
                     Log.e(TAG, "Failed to load language preference from Firestore", e));
+        }
+    }
+    
+    /**
+     * Helper class to store a language's localized name with its code
+     */
+    private static class LocalizedLanguage {
+        final String localizedName;
+        final String languageCode;
+        
+        LocalizedLanguage(String localizedName, String languageCode) {
+            this.localizedName = localizedName;
+            this.languageCode = languageCode;
         }
     }
 }
