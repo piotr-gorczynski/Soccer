@@ -5,6 +5,139 @@
 🔔 Add language support for 11 new languages
 </en-GB>
 
+<pl-PL>
+🎮 Dodano zabezpieczenia dostępności backendu, aby zapobiec wyjątkom Firestore.
+🎮 Naprawiono responsywność przycisków po odzyskaniu backendu
+🎮 Naprawiono krytyczny błąd występujący w usłudze Firebase messaging
+🔔 Dodano obsługę 11 nowych języków
+</pl-PL>
+
+<de-DE>
+🎮 Backend-Verfügbkeitsschutz hinzugefügt, um Firestore-Ausnahmen zu verhindern.
+🎮 Button-Reaktionsfähigkeit nach Backend-Wiederherstellung behoben
+🎮 Kritischer Absturz im Firebase-Messaging-Service behoben
+🔔 Unterstützung für 11 neue Sprachen hinzugefügt
+</de-DE>
+
+<fr-FR>
+🎮 Ajout de protections de disponibilité backend pour éviter les exceptions Firestore.
+🎮 Correction de la réactivité des boutons après la récupération du backend
+🎮 Correction d'un crash critique dans le service de messagerie Firebase
+🔔 Ajout de la prise en charge de 11 nouvelles langues
+</fr-FR>
+
+<es-ES>
+🎮 Añadir salvaguardas de disponibilidad del backend para prevenir excepciones de Firestore.
+🎮 Corregir la capacidad de respuesta de los botones después de la recuperación del backend
+🎮 Corrige un fallo crítico que ocurre en el servicio de mensajería de Firebase
+🔔 Añadir soporte para 11 nuevos idiomas
+</es-ES>
+
+<ur>
+🎮 Firestore exceptions سے بچنے کے لیے backend availability safeguards شامل کیے گئے۔
+🎮 Backend recovery کے بعد button responsiveness ٹھیک کی گئی
+🎮 Firebase messaging service میں ہونے والی critical crash کو ٹھیک کیا گیا
+🔔 11 نئی زبانوں کی سپورٹ شامل کی گئی
+</ur>
+
+<bn>
+🎮 Firestore ব্যতিক্রম প্রতিরোধ করতে ব্যাকএন্ড উপলব্ধতা সুরক্ষা যোগ করা হয়েছে।
+🎮 ব্যাকএন্ড পুনরুদ্ধারের পরে বোতামের প্রতিক্রিয়াশীলতা ঠিক করা হয়েছে
+🎮 Firebase মেসেজিং সেবায় একটি গুরুত্বপূর্ণ ক্র্যাশ ঠিক করা হয়েছে
+🔔 ১১টি নতুন ভাষার সমর্থন যোগ করা হয়েছে
+</bn>
+
+<ne>
+🎮 Firestore exceptions रोक्न backend availability safeguards थपियो।
+🎮 Backend recovery पछि button responsiveness ठीक गरियो
+🎮 Firebase messaging service मा हुने critical crash ठीक गरियो
+🔔 ११ नयाँ भाषाहरूको समर्थन थपियो
+</ne>
+
+<hi-IN>
+🎮 Firestore exceptions को रोकने के लिए backend availability safeguards जोड़े गए।
+🎮 Backend recovery के बाद button responsiveness को ठीक किया गया
+🎮 Firebase messaging service में होने वाली critical crash को ठीक किया गया
+🔔 11 नई भाषाओं का समर्थन जोड़ा गया
+</hi-IN>
+
+<am>
+🎮 የFirestore ባህሪያት ለመከላከል የbackend availability safeguards ተጨምሯል።
+🎮 Backend recovery በኋላ የbutton responsiveness ተስተካክሏል
+🎮 በFirebase messaging service ውስጥ ያለው critical crash ተስተካክሏል
+🔔 የ11 አዳዲስ ቋንቋዎች ድጋፍ ተጨምሯል
+</am>
+
+<ar>
+🎮 تمت إضافة ضمانات توفر الخلفية لمنع استثناءات Firestore.
+🎮 تم إصلاح استجابة الأزرار بعد استعادة الخلفية
+🎮 تم إصلاح عطل حرج يحدث في خدمة Firebase للرسائل
+🔔 تمت إضافة دعم لـ 11 لغة جديدة
+</ar>
+
+<my>
+🎮 Firestore exceptions များကို ကာကွယ်ရန် backend availability safeguards များ ထည့်သွင်းခဲ့သည်။
+🎮 Backend recovery နောက် button responsiveness ကို ပြင်ဆင်ခဲ့သည်
+🎮 Firebase messaging service တွင် ဖြစ်ပေါ်နေသော critical crash ကို ပြင်ဆင်ခဲ့သည်
+🔔 ဘာသာစကား အသစ် ၁၁ ခုအတွက် ပံ့ပိုးမှု ထည့်သွင်းခဲ့သည်
+</my>
+
+<km>
+🎮 បានបន្ថែម backend availability safeguards ដើម្បីការពារ Firestore exceptions។
+🎮 បានកែតម្រូវ button responsiveness បន្ទាប់ពី backend recovery
+🎮 បានកែតម្រូវការគាំង critical ដែលកើតឡើងនៅក្នុង Firebase messaging service
+🔔 បានបន្ថែមការគាំទ្រសម្រាប់ភាសាថ្មី ១១ ភាសា
+</km>
+
+<lo>
+🎮 ເພີ່ມ backend availability safeguards ເພື່ອປ້ອງກັນ Firestore exceptions.
+🎮 ແກ້ໄຂ button responsiveness ຫຼັງຈາກ backend recovery
+🎮 ແກ້ໄຂການຫຍັງທີ່ສຳຄັນທີ່ເກີດຂຶ້ນໃນ Firebase messaging service
+🔔 ເພີ່ມການສະໜັບສະໜູນສຳລັບ 11 ພາສາໃໝ່
+</lo>
+
+<mg>
+🎮 Nanampy backend availability safeguards mba hisoroka ny Firestore exceptions.
+🎮 Namboatra ny button responsiveness taorian'ny backend recovery
+🎮 Namboatra ny critical crash mitranga amin'ny Firebase messaging service
+🎮 Nanampy fanohanana ho an'ny fiteny vaovao 11
+</mg>
+
+<mn>
+🎮 Firestore-ийн онцгой байдлаас сэргийлэхийн тулд арын талын хүртээмжийн хамгаалалт нэмэгдсэн.
+🎮 Арын тал сэргээсний дараа товчлууруудын хариу үйлдлийг засварласан
+🎮 Firebase мессежийн үйлчилгээнд тохиолдож байсан чухал алдааг засварласан
+🔔 11 шинэ хэлний дэмжлэг нэмэгдсэн
+</mn>
+
+<fa>
+🎮 محافظت‌های در دسترس بودن بک‌اند برای جلوگیری از استثناهای Firestore اضافه شد.
+🎮 پاسخگویی دکمه‌ها پس از بازیابی بک‌اند اصلاح شد
+🎮 خرابی حیاتی که در سرویس پیام‌رسانی Firebase رخ می‌داد اصلاح شد
+🔔 پشتیبانی از 11 زبان جدید اضافه شد
+</fa>
+
+<si>
+🎮 Firestore exceptions වැළැක්වීම සඳහා backend availability safeguards එකතු කරන ලදී.
+🎮 Backend recovery පසු button responsiveness සකස් කරන ලදී
+🎮 Firebase messaging service හි සිදුවන critical crash එකක් සකස් කරන ලදී
+🔔 අලුත් භාෂා 11 ක් සඳහා සහාය එකතු කරන ලදී
+</si>
+
+<so>
+🎮 Waxaa la daray ilaalinta helitaanka backend si looga hortago Firestore exceptions.
+🎮 Waxaa la saxay jawaabinta batoonada ka dib backend recovery
+🎮 Waxaa la saxay shil muhiim ah oo ka dhaca adeegga farriinta Firebase
+🔔 Waxaa la daray taageero 11 luqadood oo cusub
+</so>
+
+<sw>
+🎮 Ongezwa ulinzi wa upatikanaji wa backend ili kuzuia pengine za Firestore.
+🎮 Imesahihi ujibu wa vitufe baada ya kurudi kwa backend
+🎮 Imesahihi hitilafu muhimu inayotokea katika huduma ya ujumbe wa Firebase
+🔔 Imeongezwa msaada kwa lugha mpya 11
+</sw>
+
 //for further use...
 🔔 Better notifications for invites.  
 👤 Easier login (Google, Facebook, Microsoft, Email). Anonymous accounts can be linked.  
