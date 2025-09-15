@@ -29,16 +29,15 @@ public class LanguageSelectionActivity extends BaseActivity {
         builder.setTitle(R.string.select_language);
         builder.setCancelable(false); // Force user to select a language
         builder.setSingleChoiceItems(languages, 0, (dialog, which) -> {
-            // Use non-localized names for consistent mapping
-            String[] nonLocalizedLanguages = LanguageManager.getAvailableLanguages();
-            String selectedLanguage = nonLocalizedLanguages[which];
-            String languageCode = LanguageManager.getLanguageCode(selectedLanguage);
+            // Get the selected localized language name
+            String selectedLocalizedLanguage = languages[which];
+            String languageCode = LanguageManager.getLanguageCodeFromLocalizedName(this, selectedLocalizedLanguage);
 
             Log.d(
                     "TAG_Soccer",
                     getClass().getSimpleName()
                             + ".showLanguageSelectionDialog: selectedLanguage="
-                            + selectedLanguage
+                            + selectedLocalizedLanguage
                             + ", code="
                             + languageCode
             );
