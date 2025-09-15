@@ -31,15 +31,26 @@
     </string-array>
     
     <!-- Language names in Urdu -->
-    <string name="language_english">انگریزی</string>
-    <string name="language_polish">پولش</string>
-    <string name="language_german">جرمن</string>
-    <string name="language_french">فرانسیسی</string>
-    <string name="language_spanish">ہسپانوی</string>
-    <string name="language_urdu">اردو</string>
+    <string name="language_amharic">امہاری</string>
+    <string name="language_arabic">عربی</string>
     <string name="language_bengali">بنگالی</string>
-    <string name="language_nepali">نیپالی</string>
+    <string name="language_burmese">برمی</string>
+    <string name="language_english">انگریزی</string>
+    <string name="language_french">فرانسیسی</string>
+    <string name="language_german">جرمن</string>
     <string name="language_hindi">ہندی</string>
+    <string name="language_khmer">خمیر</string>
+    <string name="language_lao">لاؤ</string>
+    <string name="language_malagasy">ملاگاسی</string>
+    <string name="language_mongolian">منگولیائی</string>
+    <string name="language_nepali">نیپالی</string>
+    <string name="language_persian">فارسی</string>
+    <string name="language_polish">پولش</string>
+    <string name="language_sinhala">سنہالا</string>
+    <string name="language_somali">صومالی</string>
+    <string name="language_spanish">ہسپانوی</string>
+    <string name="language_swahili">سواحیلی</string>
+    <string name="language_urdu">اردو</string>
     
     <!-- Authentication strings -->
     <string name="register">رجسٹر کریں</string>
