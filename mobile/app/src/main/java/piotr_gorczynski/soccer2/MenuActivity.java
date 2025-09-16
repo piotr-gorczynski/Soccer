@@ -10,6 +10,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.content.SharedPreferences;
@@ -63,6 +65,7 @@ public class MenuActivity extends BaseActivity {
     private static final String PREF_AD_FREQUENCY = "adsFrequency";
     private static final int DEFAULT_AD_FREQUENCY = 10;
     private static final int FAILSAFE_AD_FREQUENCY = 1;
+    private static final long AD_RETRY_DELAY_MS = 30_000L;
 
     private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 101;
 
@@ -77,6 +80,9 @@ public class MenuActivity extends BaseActivity {
     private MenuItem accountMenuItem; // Reference to account menu item
     private String currentLanguage;
     private AnalyticsManager analyticsManager;
+    private final Handler adRetryHandler = new Handler(Looper.getMainLooper());
+    private final Runnable adRetryRunnable = this::loadInterstitialAd;
+    private boolean isAdLoading = false;
 
     /**
      * Helper to fetch user details from Firestore and update prefs/UI. This is
@@ -650,6 +656,26 @@ public class MenuActivity extends BaseActivity {
 
     }
     private void loadInterstitialAd() {
+        adRetryHandler.removeCallbacks(adRetryRunnable);
+
+        if (isFinishing() || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed())) {
+            Log.d(
+                    "TAG_Soccer",
+                    getClass().getSimpleName() + ".loadInterstitialAd: Activity finishing, skipping load"
+            );
+            return;
+        }
+
+        if (isAdLoading) {
+            Log.d(
+                    "TAG_Soccer",
+                    getClass().getSimpleName() + ".loadInterstitialAd: load already in progress"
+            );
+            return;
+        }
+
+        isAdLoading = true;
+
         AdRequest.Builder builder = new AdRequest.Builder();
 
         if (!ConsentUtils.isPersonalisedAllowed(this)) {
@@ -674,22 +700,34 @@ public class MenuActivity extends BaseActivity {
                             getClass().getSimpleName() + ".onAdLoaded: Interstitial ad loaded"
                         );
                         mInterstitialAd = interstitialAd;
+                        isAdLoading = false;
+                        adRetryHandler.removeCallbacks(adRetryRunnable);
                     }
 
                     @Override
                     public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
                         Log.d(
                             "TAG_Soccer",
-                            getClass().getSimpleName() + ".onAdFailedToLoad: Interstitial ad failed to load: " + loadAdError.getMessage()
+                            getClass().getSimpleName()
+                                    + ".onAdFailedToLoad: Interstitial ad failed to load: "
+                                    + loadAdError.getMessage()
+                                    + ", retrying in "
+                                    + AD_RETRY_DELAY_MS
+                                    + "ms"
                         );
                         mInterstitialAd = null;
+                        isAdLoading = false;
+                        adRetryHandler.removeCallbacks(adRetryRunnable);
+                        adRetryHandler.postDelayed(adRetryRunnable, AD_RETRY_DELAY_MS);
                     }
                 });
     }
 
     private boolean hasAdsConsent() {
         ConsentInformation ci = UserMessagingPlatform.getConsentInformation(this);
-        return ci.getConsentStatus() == ConsentInformation.ConsentStatus.OBTAINED;
+        @ConsentInformation.ConsentStatus int status = ci.getConsentStatus();
+        return status == ConsentInformation.ConsentStatus.OBTAINED
+                || status == ConsentInformation.ConsentStatus.NOT_REQUIRED;
     }
 
     private void showConsentRequiredDialog() {
@@ -800,6 +838,13 @@ public class MenuActivity extends BaseActivity {
 
                         mInterstitialAd.show(this);
                     } else {
+                        Log.d(
+                                "TAG_Soccer",
+                                getClass().getSimpleName() + ".showAdThenRun: No cached interstitial - running action now"
+                        );
+                        if (!isAdLoading) {
+                            loadInterstitialAd();
+                        }
                         action.run();
                     }
                 });
@@ -1025,6 +1070,12 @@ public class MenuActivity extends BaseActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        adRetryHandler.removeCallbacks(adRetryRunnable);
     }
 
     /**
