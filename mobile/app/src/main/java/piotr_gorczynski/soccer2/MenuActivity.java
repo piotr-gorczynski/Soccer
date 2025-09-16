@@ -62,6 +62,7 @@ public class MenuActivity extends BaseActivity {
     private static final String PREF_AD_COUNTER = "adsCounter";
     private static final String PREF_AD_FREQUENCY = "adsFrequency";
     private static final int DEFAULT_AD_FREQUENCY = 10;
+    private static final int FAILSAFE_AD_FREQUENCY = 1;
 
     private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 101;
 
@@ -718,6 +719,8 @@ public class MenuActivity extends BaseActivity {
         SharedPreferences prefs =
                 getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
 
+        final int[] resolvedFrequency = {prefs.getInt(PREF_AD_FREQUENCY, DEFAULT_AD_FREQUENCY)};
+
         FirebaseFirestore.getInstance()
                 .collection("settings")
                 .document("adsFreuency")
@@ -725,20 +728,37 @@ public class MenuActivity extends BaseActivity {
                 .addOnSuccessListener(doc -> {
                     Long freq = doc.getLong("value");
                     if (freq != null) {
-                        prefs.edit().putInt(PREF_AD_FREQUENCY, freq.intValue()).apply();
+                        int refreshedFrequency = Math.max(FAILSAFE_AD_FREQUENCY, freq.intValue());
+                        resolvedFrequency[0] = refreshedFrequency;
+                        prefs.edit().putInt(PREF_AD_FREQUENCY, refreshedFrequency).apply();
                         Log.d(
                                 "TAG_Soccer",
-                                getClass().getSimpleName() + ".showAdThenRun: refreshed ads frequency=" + freq
+                                getClass().getSimpleName() + ".showAdThenRun: refreshed ads frequency=" + refreshedFrequency
+                        );
+                    } else {
+                        resolvedFrequency[0] = FAILSAFE_AD_FREQUENCY;
+                        prefs.edit().putInt(PREF_AD_FREQUENCY, FAILSAFE_AD_FREQUENCY).apply();
+                        Log.w(
+                                "TAG_Soccer",
+                                getClass().getSimpleName()
+                                        + ".showAdThenRun: missing frequency value, defaulting to "
+                                        + FAILSAFE_AD_FREQUENCY
                         );
                     }
                 })
-                .addOnFailureListener(e ->
-                        Log.w(
-                                "TAG_Soccer",
-                                getClass().getSimpleName() + ".showAdThenRun: failed to refresh ads frequency",
-                                e))
+                .addOnFailureListener(e -> {
+                    resolvedFrequency[0] = FAILSAFE_AD_FREQUENCY;
+                    prefs.edit().putInt(PREF_AD_FREQUENCY, FAILSAFE_AD_FREQUENCY).apply();
+                    Log.w(
+                            "TAG_Soccer",
+                            getClass().getSimpleName()
+                                    + ".showAdThenRun: failed to refresh ads frequency, defaulting to "
+                                    + FAILSAFE_AD_FREQUENCY,
+                            e
+                    );
+                })
                 .addOnCompleteListener(task -> {
-                    int frequency = prefs.getInt(PREF_AD_FREQUENCY, DEFAULT_AD_FREQUENCY);
+                    int frequency = resolvedFrequency[0];
                     int counter = prefs.getInt(PREF_AD_COUNTER, 0) + 1;
                     if (counter < frequency) {
                         prefs.edit().putInt(PREF_AD_COUNTER, counter).apply();
