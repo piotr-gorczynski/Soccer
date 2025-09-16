@@ -23,6 +23,8 @@ import com.google.firebase.functions.FirebaseFunctionsException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.HashSet;
 
 public class AddFriendActivity extends BaseActivity {
 
@@ -37,6 +39,7 @@ public class AddFriendActivity extends BaseActivity {
     private String currentQuery;
     private String originalQuery;
     private boolean fallbackMode;
+    private Set<String> friendUids = new HashSet<>();
 
     FirebaseFirestore db;
     FirebaseAuth auth;
@@ -87,6 +90,28 @@ public class AddFriendActivity extends BaseActivity {
 
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
+        
+        // Load friends list to determine which users already are friends
+        loadFriends();
+    }
+    
+    private void loadFriends() {
+        String uid = Objects.requireNonNull(auth.getCurrentUser()).getUid();
+        db.collection("users").document(uid).collection("friends").get()
+                .addOnSuccessListener(snap -> {
+                    Set<String> newFriendUids = new HashSet<>();
+                    for (DocumentSnapshot doc : snap.getDocuments()) {
+                        newFriendUids.add(doc.getId());
+                    }
+                    friendUids = newFriendUids;
+                    adapter.setFriendUids(friendUids);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".loadFriends: Failed to load friends", e);
+                    // Continue with empty friends list
+                    friendUids = new HashSet<>();
+                    adapter.setFriendUids(friendUids);
+                });
     }
 
     private void searchPage() {
@@ -169,6 +194,9 @@ public class AddFriendActivity extends BaseActivity {
                 .call(data)
                 .addOnSuccessListener(res -> {
                     resultText.setText(R.string.add_friend);
+                    // Add the friend to our local set and update the adapter
+                    friendUids.add(friendId);
+                    adapter.setFriendUids(friendUids);
                 })
                 .addOnFailureListener(e -> {
                     String text = getString(R.string.failed_to_add_friend);
