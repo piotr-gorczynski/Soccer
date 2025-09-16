@@ -13,6 +13,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 
 class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.VH> {
     interface OnAddClick { void onAdd(String uid); }
@@ -30,6 +32,7 @@ class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.VH> {
 
     private final List<DocumentSnapshot> data = new ArrayList<>();
     private final OnAddClick listener;
+    private Set<String> friendUids = new HashSet<>();
 
     UserSearchAdapter(OnAddClick listener) {
         this.listener = listener;
@@ -55,6 +58,11 @@ class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.VH> {
         String nick = d.getString("nickname");
         if (nick == null) nick = h.uid.substring(0, 6);
         h.nickname.setText(nick);
+        
+        // Disable "Add" button if this user is already a friend
+        boolean isAlreadyFriend = friendUids.contains(h.uid);
+        h.addBtn.setEnabled(!isAlreadyFriend);
+        h.addBtn.setAlpha(isAlreadyFriend ? 0.3f : 1.0f);
     }
 
     @Override
@@ -74,5 +82,10 @@ class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.VH> {
     void clear() {
         data.clear();
         notifyDataSetChanged();
+    }
+    
+    void setFriendUids(Set<String> friendUids) {
+        this.friendUids = new HashSet<>(friendUids);
+        notifyDataSetChanged(); // Refresh all items to update button states
     }
 }
