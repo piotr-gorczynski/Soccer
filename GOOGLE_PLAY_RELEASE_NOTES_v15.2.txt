@@ -1,7 +1,141 @@
 <en-GB>
 🎮 Fix ads frequency logic to ensure proper display for unauthorized users
+🔔 Disable Add Friend buttons for existing friends in search results
+🔔 Hide current user from friend search results
+🔔 Filter users without accepted terms
 </en-GB>
 
 
-🎮 ...
-🔔 ...
+<pl-PL>
+🎮 Naprawiono logikę częstotliwości reklam, aby zapewnić prawidłowe wyświetlanie dla nieautoryzowanych użytkowników
+🔔 Wyłączono przyciski Dodaj Znajomego dla istniejących znajomych w wynikach wyszukiwania
+🔔 Ukryto bieżącego użytkownika z wyników wyszukiwania znajomych
+🔔 Filtrowanie użytkowników bez zaakceptowanych warunków
+</pl-PL>
+
+<de-DE>
+🎮 Anzeigenfrequenz-Logik korrigiert, um korrekte Anzeige für nicht autorisierte Benutzer sicherzustellen
+🔔 Freund hinzufügen-Schaltflächen für bestehende Freunde in Suchergebnissen deaktiviert
+🔔 Aktueller Benutzer aus Freundesuchergebnissen ausgeblendet
+🔔 Benutzer ohne akzeptierte Bedingungen gefiltert
+</de-DE>
+
+<fr-FR>
+🎮 Correction de la logique de fréquence des publicités pour assurer un affichage correct pour les utilisateurs non autorisés
+🔔 Désactiver les boutons Ajouter un ami pour les amis existants dans les résultats de recherche
+🔔 Masquer l'utilisateur actuel des résultats de recherche d'amis
+🔔 Filtrer les utilisateurs sans conditions acceptées
+</fr-FR>
+
+<es-ES>
+🎮 Corregir la lógica de frecuencia de anuncios para asegurar la visualización adecuada para usuarios no autorizados
+🔔 Deshabilitar botones de Agregar Amigo para amigos existentes en resultados de búsqueda
+🔔 Ocultar usuario actual de los resultados de búsqueda de amigos
+🔔 Filtrar usuarios sin términos aceptados
+</es-ES>
+
+<ur>
+🎮 غیر مجاز صارفین کے لیے مناسب ڈسپلے کو یقینی بنانے کے لیے اشتہارات کی فریکوینسی لاجک ٹھیک کیا گیا
+🔔 سرچ رزلٹ میں موجودہ دوستوں کے لیے دوست شامل کرنے کے بٹن غیر فعال کیے گئے
+🔔 دوستوں کی تلاش کے نتائج سے موجودہ صارف کو چھپایا گیا
+🔔 قبول شدہ شرائط کے بغیر صارفین کو فلٹر کیا گیا
+</ur>
+
+<bn>
+🎮 অনধিকৃত ব্যবহারকারীদের জন্য সঠিক প্রদর্শন নিশ্চিত করতে বিজ্ঞাপনের ফ্রিকোয়েন্সি লজিক ঠিক করা হয়েছে
+🔔 অনুসন্ধান ফলাফলে বিদ্যমান বন্ধুদের জন্য বন্ধু যোগ বোতাম নিষ্ক্রিয় করা হয়েছে
+🔔 বন্ধু অনুসন্ধান ফলাফল থেকে বর্তমান ব্যবহারকারী লুকানো হয়েছে
+🔔 গৃহীত শর্তাবলী ছাড়া ব্যবহারকারীদের ফিল্টার করা হয়েছে
+</bn>
+
+<ne>
+🎮 अनधिकृत प्रयोगकर्ताहरूको लागि उचित प्रदर्शन सुनिश्चित गर्न विज्ञापन आवृत्ति तर्क ठीक गरियो
+🔔 खोज परिणामहरूमा अवस्थित साथीहरूको लागि साथी थप्ने बटनहरू अक्षम गरियो
+🔔 साथी खोज परिणामहरूबाट हालको प्रयोगकर्ता लुकाइयो
+🔔 स्वीकार गरिएका सर्तहरू बिना प्रयोगकर्ताहरूलाई फिल्टर गरियो
+</ne>
+
+<hi-IN>
+🎮 अनधिकृत उपयोगकर्ताओं के लिए उचित प्रदर्शन सुनिश्चित करने के लिए विज्ञापन आवृत्ति तर्क ठीक किया गया
+🔔 खोज परिणामों में मौजूदा मित्रों के लिए मित्र जोड़ें बटन अक्षम किए गए
+🔔 मित्र खोज परिणामों से वर्तमान उपयोगकर्ता छुपाया गया
+🔔 स्वीकृत शर्तों के बिना उपयोगकर्ताओं को फिल्टर किया गया
+</hi-IN>
+
+<am>
+🎮 ስልጣን ለሌላቸው ተጠቃሚዎች ትክክለኛ አሳይታ ለማረጋገጥ የማስታወቂያ ድግግሞሽ ሎጂክ ተስተካክሏል
+🔔 በፍለጋ ውጤቶች ውስጥ ላሉ የሚኖሩ ጓደኞች የጓደኛ ማከል አዝራሮች ተሰናክለዋል
+🔔 ከጓደኛ ፍለጋ ውጤቶች የአሁኑ ተጠቃሚ ተደብቋል
+🔔 የተቀበሉ ውሎች የሌላቸው ተጠቃሚዎች ተመርጠዋል
+</am>
+
+<ar>
+🎮 تم إصلاح منطق تكرار الإعلانات لضمان العرض السليم للمستخدمين غير المصرح لهم
+🔔 تم تعطيل أزرار إضافة صديق للأصدقاء الموجودين في نتائج البحث
+🔔 تم إخفاء المستخدم الحالي من نتائج البحث عن الأصدقاء
+🔔 تم تصفية المستخدمين بدون شروط مقبولة
+</ar>
+
+<my>
+🎮 ခွင့်ပြုချက်မရှိသော အသုံးပြုသူများအတွက် သင့်လျော်သော ပြသမှုကို သေချာစေရန် ကြော်ငြာ ကြိမ်နှုန်း ယုတ္တိကို ပြင်ဆင်ခဲ့သည်
+🔔 ရှာဖွေမှု ရလဒ်များတွင် ရှိပြီးသား မိတ်ဆွေများအတွက် မိတ်ဆွေ ထည့်ခြင်း ခလုတ်များကို ပိတ်ထားခဲ့သည်
+🔔 မိတ်ဆွေ ရှာဖွေမှု ရလဒ်များမှ လက်ရှိ အသုံးပြုသူကို ဖုံးကွယ်ထားခဲ့သည်
+🔔 လက်ခံထားသော စည်းကမ်းများ မရှိသော အသုံးပြုသူများကို စစ်ထုတ်ခဲ့သည်
+</my>
+
+<km>
+🎮 បានកែតម្រូវតក្កវិជ្ជាអត្រាផ្សាយពាណិជ្ជកម្ម ដើម្បីធានាការបង្ហាញត្រឹមត្រូវសម្រាប់អ្នកប្រើប្រាស់មិនមានការអនុញ្ញាត
+🔔 បានបិទប៊ូតុងបន្ថែមមិត្តភ័ក្តិសម្រាប់មិត្តភ័ក្តិដែលមានស្រាប់ក្នុងលទ្ធផលស្វែងរក
+🔔 បានលាក់អ្នកប្រើប្រាស់បច្ចុប្បន្នពីលទ្ធផលស្វែងរកមិត្តភ័ក្តិ
+🔔 បានចម្រាញ់អ្នកប្រើប្រាស់ដែលគ្មានលក្ខខណ្ឌដែលទទួលយក
+</km>
+
+<lo>
+🎮 ແກ້ໄຂກົດໝາຍຄວາມຖີ່ຂອງໂຄສະນາເພື່ອຮັບປະກັນການສະແດງທີ່ເໝາະສົມສໍາລັບຜູ້ໃຊ້ທີ່ບໍ່ໄດ້ຮັບອະນຸຍາດ
+🔔 ປິດການນໍາໃຊ້ປຸ່ມເພີ່ມເພື່ອນສໍາລັບເພື່ອນທີ່ມີຢູ່ແລ້ວໃນຜົນການຊອກຫາ
+🔔 ເຊື່ອງຜູ້ໃຊ້ປັດຈຸບັນຈາກຜົນການຊອກຫາເພື່ອນ
+🔔 ກອງຜູ້ໃຊ້ທີ່ບໍ່ມີເງື່ອນໄຂທີ່ຍອມຮັບ
+</lo>
+
+<mg>
+🎮 Namboarina ny lojikan'ny matetika doka mba hahazoana antoka fa miseho tsara ho an'ireo mpampiasa tsy nahazo alalana
+🔔 Nokasenina ny bokotra Manampy Namana ho an'ireo namana efa misy amin'ny valin'ny fikarohana
+🔔 Nafenina ny mpampiasa ankehitriny avy amin'ny valin'ny fikarohana namana
+🔔 Nosivana ireo mpampiasa tsy misy fepetra ekena
+</mg>
+
+<mn>
+🎮 Зөвшөөрөлгүй хэрэглэгчдэд зөв харуулахыг баталгаажуулахын тулд зар сурталчилгааны давтамжийн логикийг засварласан
+🔔 Хайлтын үр дүн дэх байгаа найзуудын хувьд Найз нэмэх товчлууруудыг идэвхгүй болгосон
+🔔 Найзын хайлтын үр дүнгээс одоогийн хэрэглэгчийг нуусан
+🔔 Зөвшөөрсөн нөхцөлгүй хэрэглэгчдийг шүүсэн
+</mn>
+
+<fa>
+🎮 منطق فرکانس تبلیغات برای اطمینان از نمایش مناسب برای کاربران غیرمجاز اصلاح شد
+🔔 دکمه‌های افزودن دوست برای دوستان موجود در نتایج جستجو غیرفعال شد
+🔔 کاربر فعلی از نتایج جستجوی دوستان پنهان شد
+🔔 کاربران بدون شرایط پذیرفته شده فیلتر شدند
+</fa>
+
+<si>
+🎮 අවසර නැති පරිශීලකයින් සඳහා නිසි ප්‍රදර්ශනය සහතික කිරීම සඳහා වෙළඳ දැන්වීම් සංඛ්‍යාත තර්කනය සකස් කරන ලදී
+🔔 සෙවුම් ප්‍රතිඵල වල ඇති මිතුරන් සඳහා මිතුරු එකතු කිරීමේ බොත්තම් අක්‍රිය කරන ලදී
+🔔 මිතුරු සෙවුම් ප්‍රතිඵල වලින් වර්තමාන පරිශීලකයා සඟවන ලදී
+🔔 පිළිගත් කොන්දේසි නොමැති පරිශීලකයින් පෙරහන් කරන ලදී
+</si>
+
+<so>
+🎮 Waxaa la saxay nidaamka inta jeer ee xayaysiinta si loo hubiyo bandhig saxan loogu talagalay isticmaalayaasha aan la ogolayn
+🔔 Waxaa la joojiyay badhannada Ku dar Saaxiib ee saaxiibada jira natiijooyinka raadinta
+🔔 Waxaa la qariyay isticmaalaha hadda natiijooyinka raadinta saaxiibada
+🔔 Waxaa la shaandheyay isticmaalayaasha aan lahayn shuruudo la aqbalay
+</so>
+
+<sw>
+🎮 Imerekebisha mantiki ya marudio ya matangazo kuhakikisha onyesho sahihi kwa watumiaji wasioruhusiwa
+🔔 Imezima vitufe vya Ongeza Rafiki kwa marafiki waliopo katika matokeo ya utafutaji
+🔔 Imeficha mtumiaji wa sasa kutoka matokeo ya utafutaji wa marafiki
+🔔 Imechuja watumiaji bila masharti yaliyokubaliwa
+</sw>
+
