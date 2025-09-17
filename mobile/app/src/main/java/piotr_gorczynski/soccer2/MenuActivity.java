@@ -10,6 +10,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.content.SharedPreferences;
@@ -62,6 +64,8 @@ public class MenuActivity extends BaseActivity {
     private static final String PREF_AD_COUNTER = "adsCounter";
     private static final String PREF_AD_FREQUENCY = "adsFrequency";
     private static final int DEFAULT_AD_FREQUENCY = 10;
+    private static final int FAILSAFE_AD_FREQUENCY = 1;
+    private static final long AD_RETRY_DELAY_MS = 30_000L;
 
     private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 101;
 
@@ -76,6 +80,9 @@ public class MenuActivity extends BaseActivity {
     private MenuItem accountMenuItem; // Reference to account menu item
     private String currentLanguage;
     private AnalyticsManager analyticsManager;
+    private final Handler adRetryHandler = new Handler(Looper.getMainLooper());
+    private final Runnable adRetryRunnable = this::loadInterstitialAd;
+    private boolean isAdLoading = false;
 
     /**
      * Helper to fetch user details from Firestore and update prefs/UI. This is
@@ -649,6 +656,26 @@ public class MenuActivity extends BaseActivity {
 
     }
     private void loadInterstitialAd() {
+        adRetryHandler.removeCallbacks(adRetryRunnable);
+
+        if (isFinishing() || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed())) {
+            Log.d(
+                    "TAG_Soccer",
+                    getClass().getSimpleName() + ".loadInterstitialAd: Activity finishing, skipping load"
+            );
+            return;
+        }
+
+        if (isAdLoading) {
+            Log.d(
+                    "TAG_Soccer",
+                    getClass().getSimpleName() + ".loadInterstitialAd: load already in progress"
+            );
+            return;
+        }
+
+        isAdLoading = true;
+
         AdRequest.Builder builder = new AdRequest.Builder();
 
         if (!ConsentUtils.isPersonalisedAllowed(this)) {
@@ -673,22 +700,34 @@ public class MenuActivity extends BaseActivity {
                             getClass().getSimpleName() + ".onAdLoaded: Interstitial ad loaded"
                         );
                         mInterstitialAd = interstitialAd;
+                        isAdLoading = false;
+                        adRetryHandler.removeCallbacks(adRetryRunnable);
                     }
 
                     @Override
                     public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
                         Log.d(
                             "TAG_Soccer",
-                            getClass().getSimpleName() + ".onAdFailedToLoad: Interstitial ad failed to load: " + loadAdError.getMessage()
+                            getClass().getSimpleName()
+                                    + ".onAdFailedToLoad: Interstitial ad failed to load: "
+                                    + loadAdError.getMessage()
+                                    + ", retrying in "
+                                    + AD_RETRY_DELAY_MS
+                                    + "ms"
                         );
                         mInterstitialAd = null;
+                        isAdLoading = false;
+                        adRetryHandler.removeCallbacks(adRetryRunnable);
+                        adRetryHandler.postDelayed(adRetryRunnable, AD_RETRY_DELAY_MS);
                     }
                 });
     }
 
     private boolean hasAdsConsent() {
         ConsentInformation ci = UserMessagingPlatform.getConsentInformation(this);
-        return ci.getConsentStatus() == ConsentInformation.ConsentStatus.OBTAINED;
+        @ConsentInformation.ConsentStatus int status = ci.getConsentStatus();
+        return status == ConsentInformation.ConsentStatus.OBTAINED
+                || status == ConsentInformation.ConsentStatus.NOT_REQUIRED;
     }
 
     private void showConsentRequiredDialog() {
@@ -715,74 +754,149 @@ public class MenuActivity extends BaseActivity {
     }
 
     private void showAdThenRun(Runnable action) {
+        // Check consent before proceeding with ads logic
+        if (!hasAdsConsent()) {
+            Log.w("TAG_Soccer", getClass().getSimpleName() + ".showAdThenRun: No ads consent, running action directly");
+            showConsentRequiredDialog();
+            action.run();
+            return;
+        }
+
         SharedPreferences prefs =
                 getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
+        
+        // Determine if user is authorized to get appropriate frequency
+        boolean isUserAuthorized = FirebaseAuth.getInstance().getCurrentUser() != null;
+        
+        // For unauthorized users, use FAILSAFE_AD_FREQUENCY (1) as default
+        // For authorized users, use stored frequency or DEFAULT_AD_FREQUENCY (10)
+        int defaultFreq = isUserAuthorized ? DEFAULT_AD_FREQUENCY : FAILSAFE_AD_FREQUENCY;
+        final int[] resolvedFrequency = {prefs.getInt(PREF_AD_FREQUENCY, defaultFreq)};
 
-        FirebaseFirestore.getInstance()
-                .collection("settings")
-                .document("adsFreuency")
-                .get()
-                .addOnSuccessListener(doc -> {
-                    Long freq = doc.getLong("value");
-                    if (freq != null) {
-                        prefs.edit().putInt(PREF_AD_FREQUENCY, freq.intValue()).apply();
-                        Log.d(
-                                "TAG_Soccer",
-                                getClass().getSimpleName() + ".showAdThenRun: refreshed ads frequency=" + freq
-                        );
-                    }
-                })
-                .addOnFailureListener(e ->
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".showAdThenRun: User authorized=" + isUserAuthorized + 
+              ", default frequency=" + defaultFreq + ", stored frequency=" + resolvedFrequency[0]);
+
+        if (isUserAuthorized) {
+            // For authorized users, try to fetch frequency from Firebase
+            FirebaseFirestore.getInstance()
+                    .collection("settings")
+                    .document("adsFreuency")
+                    .get()
+                    .addOnSuccessListener(doc -> {
+                        Long freq = doc.getLong("value");
+                        if (freq != null) {
+                            int refreshedFrequency = Math.max(FAILSAFE_AD_FREQUENCY, freq.intValue());
+                            resolvedFrequency[0] = refreshedFrequency;
+                            prefs.edit().putInt(PREF_AD_FREQUENCY, refreshedFrequency).apply();
+                            Log.d(
+                                    "TAG_Soccer",
+                                    getClass().getSimpleName() + ".showAdThenRun: refreshed ads frequency=" + refreshedFrequency
+                            );
+                        } else {
+                            resolvedFrequency[0] = DEFAULT_AD_FREQUENCY;
+                            prefs.edit().putInt(PREF_AD_FREQUENCY, DEFAULT_AD_FREQUENCY).apply();
+                            Log.w(
+                                    "TAG_Soccer",
+                                    getClass().getSimpleName()
+                                            + ".showAdThenRun: missing frequency value for authorized user, defaulting to "
+                                            + DEFAULT_AD_FREQUENCY
+                            );
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        resolvedFrequency[0] = DEFAULT_AD_FREQUENCY;
+                        prefs.edit().putInt(PREF_AD_FREQUENCY, DEFAULT_AD_FREQUENCY).apply();
                         Log.w(
                                 "TAG_Soccer",
-                                getClass().getSimpleName() + ".showAdThenRun: failed to refresh ads frequency",
-                                e))
-                .addOnCompleteListener(task -> {
-                    int frequency = prefs.getInt(PREF_AD_FREQUENCY, DEFAULT_AD_FREQUENCY);
-                    int counter = prefs.getInt(PREF_AD_COUNTER, 0) + 1;
-                    if (counter < frequency) {
-                        prefs.edit().putInt(PREF_AD_COUNTER, counter).apply();
-                        action.run();
-                        return;
-                    }
-                    prefs.edit().putInt(PREF_AD_COUNTER, 0).apply();
+                                getClass().getSimpleName()
+                                        + ".showAdThenRun: failed to refresh ads frequency for authorized user, defaulting to "
+                                        + DEFAULT_AD_FREQUENCY,
+                                e
+                        );
+                    })
+                    .addOnCompleteListener(task -> processAdLogic(action, prefs, resolvedFrequency[0]));
+        } else {
+            // For unauthorized users, use FAILSAFE_AD_FREQUENCY directly
+            resolvedFrequency[0] = FAILSAFE_AD_FREQUENCY;
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".showAdThenRun: unauthorized user, using failsafe frequency=" + FAILSAFE_AD_FREQUENCY);
+            processAdLogic(action, prefs, resolvedFrequency[0]);
+        }
+    }
 
+    private void processAdLogic(Runnable action, SharedPreferences prefs, int frequency) {
+        int counter = prefs.getInt(PREF_AD_COUNTER, 0) + 1;
+        
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".processAdLogic: counter=" + counter + 
+              ", frequency=" + frequency + ", should show ad=" + (counter >= frequency));
+        
+        if (counter < frequency) {
+            prefs.edit().putInt(PREF_AD_COUNTER, counter).apply();
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".processAdLogic: counter below threshold, running action directly");
+            action.run();
+            return;
+        }
+        
+        // Reset counter and try to show ad
+        prefs.edit().putInt(PREF_AD_COUNTER, 0).apply();
+
+        // Double-check consent before showing ad
+        if (!hasAdsConsent()) {
+            Log.w("TAG_Soccer", getClass().getSimpleName() + ".processAdLogic: Lost ads consent, running action directly");
+            showConsentRequiredDialog();
+            action.run();
+            return;
+        }
+
+        Log.d(
+                "TAG_Soccer",
+                getClass().getSimpleName() + ".processAdLogic: Ad ready=" + (mInterstitialAd != null) + 
+                ", consent=" + hasAdsConsent()
+        );
+        
+        if (mInterstitialAd != null) {
+            mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+                @Override
+                public void onAdDismissedFullScreenContent() {
                     Log.d(
                             "TAG_Soccer",
-                            getClass().getSimpleName() + ".showAdThenRun: Ad ready=" + (mInterstitialAd != null)
+                            getClass().getSimpleName() + ".onAdDismissedFullScreenContent"
                     );
-                    if (mInterstitialAd != null) {
-                        mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
-                            @Override
-                            public void onAdDismissedFullScreenContent() {
-                                Log.d(
-                                        "TAG_Soccer",
-                                        getClass().getSimpleName() + ".onAdDismissedFullScreenContent"
-                                );
-                                action.run();
-                                loadInterstitialAd();
-                            }
+                    action.run();
+                    loadInterstitialAd();
+                }
 
-                            @Override
-                            public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
-                                Log.d(
-                                        "TAG_Soccer",
-                                        getClass().getSimpleName() + ".onAdFailedToShowFullScreenContent: " + adError.getMessage()
-                                );
-                                action.run();
-                            }
+                @Override
+                public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
+                    Log.d(
+                            "TAG_Soccer",
+                            getClass().getSimpleName() + ".onAdFailedToShowFullScreenContent: " + adError.getMessage()
+                    );
+                    action.run();
+                }
 
-                            @Override
-                            public void onAdShowedFullScreenContent() {
-                                mInterstitialAd = null;
-                            }
-                        });
+                @Override
+                public void onAdShowedFullScreenContent() {
+                    Log.d(
+                            "TAG_Soccer",
+                            getClass().getSimpleName() + ".onAdShowedFullScreenContent: Ad displayed successfully"
+                    );
+                    mInterstitialAd = null;
+                }
+            });
 
-                        mInterstitialAd.show(this);
-                    } else {
-                        action.run();
-                    }
-                });
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".processAdLogic: Showing interstitial ad");
+            mInterstitialAd.show(this);
+        } else {
+            Log.d(
+                    "TAG_Soccer",
+                    getClass().getSimpleName() + ".processAdLogic: No cached interstitial - running action now"
+            );
+            if (!isAdLoading) {
+                Log.d("TAG_Soccer", getClass().getSimpleName() + ".processAdLogic: Starting ad load");
+                loadInterstitialAd();
+            }
+            action.run();
+        }
     }
     /* helper: launch GameActivity then finish this MenuActivity */
     private void startGame(String matchPath, SharedPreferences prefs) {
@@ -870,11 +984,6 @@ public class MenuActivity extends BaseActivity {
 
 
     public void OpenGamePlayerVsPlayer(View view) {
-        if (!hasAdsConsent()) {
-            showConsentRequiredDialog();
-            return;
-        }
-
         showAdThenRun(() -> {
             Intent intent = new Intent(this, GameActivity.class);
             intent.putExtra("GameType", 1);
@@ -883,11 +992,6 @@ public class MenuActivity extends BaseActivity {
     }
 
     public void OpenGamePlayerVsAndroid(View view) {
-        if (!hasAdsConsent()) {
-            showConsentRequiredDialog();
-            return;
-        }
-
         showAdThenRun(() -> {
             Intent intent = new Intent(this, GameActivity.class);
             intent.putExtra("GameType", 2);
@@ -910,10 +1014,6 @@ public class MenuActivity extends BaseActivity {
             showRegistrationDialog();
             return;
         }
-        if (!hasAdsConsent()) {
-            showConsentRequiredDialog();
-            return;
-        }
 
         showAdThenRun(() -> startActivity(new Intent(MenuActivity.this, FriendsListActivity.class)));
     }
@@ -921,10 +1021,6 @@ public class MenuActivity extends BaseActivity {
     public void OpenInvites(View view) {
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             showRegistrationDialog();
-            return;
-        }
-        if (!hasAdsConsent()) {
-            showConsentRequiredDialog();
             return;
         }
 
@@ -936,10 +1032,6 @@ public class MenuActivity extends BaseActivity {
             showRegistrationDialog();
             return;
         }
-        if (!hasAdsConsent()) {
-            showConsentRequiredDialog();
-            return;
-        }
 
         showAdThenRun(() -> startActivity(new Intent(this, TournamentsActivity.class)));
     }
@@ -947,10 +1039,6 @@ public class MenuActivity extends BaseActivity {
     public void OpenRanking(View view) {
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             showRegistrationDialog();
-            return;
-        }
-        if (!hasAdsConsent()) {
-            showConsentRequiredDialog();
             return;
         }
 
@@ -1005,6 +1093,12 @@ public class MenuActivity extends BaseActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        adRetryHandler.removeCallbacks(adRetryRunnable);
     }
 
     /**
