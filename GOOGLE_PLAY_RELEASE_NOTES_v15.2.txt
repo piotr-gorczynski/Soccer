@@ -5,6 +5,7 @@
 🔔 Filter users without accepted terms
 </en-GB>
 
+
 <pl-PL>
 🎮 Naprawiono logikę częstotliwości reklam, aby zapewnić prawidłowe wyświetlanie dla nieautoryzowanych użytkowników
 🔔 Wyłączono przyciski Dodaj Znajomego dla istniejących znajomych w wynikach wyszukiwania
@@ -137,3 +138,4 @@
 🔔 Imeficha mtumiaji wa sasa kutoka matokeo ya utafutaji wa marafiki
 🔔 Imechuja watumiaji bila masharti yaliyokubaliwa
 </sw>
+
