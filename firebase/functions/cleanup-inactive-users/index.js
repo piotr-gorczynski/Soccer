@@ -3,8 +3,11 @@ const admin = require("firebase-admin");
 
 admin.initializeApp();
 
-exports.cleanupInactiveUsers = functions.pubsub
+exports.cleanupInactiveUsers = functions
+  .region('us-central1')
+  .pubsub
   .schedule("every 24 hours")
+  .timeZone('Europe/Warsaw')
   .onRun(async (context) => {
     const auth = admin.auth();
     const db = admin.firestore();
@@ -27,6 +30,8 @@ exports.cleanupInactiveUsers = functions.pubsub
           ? new Date(user.metadata.lastSignInTime).getTime()
           : new Date(user.metadata.creationTime).getTime(); // Fallback to creation time if never signed in
         
+        const daysSinceLastActivity = Math.floor((now - lastSignInTime) / (24 * 60 * 60 * 1000));
+        
         if (now - lastSignInTime > oneMonthMillis) {
           try {
             // Check if user has accepted terms in Firestore
@@ -35,6 +40,7 @@ exports.cleanupInactiveUsers = functions.pubsub
             if (userDoc.exists) {
               const userData = userDoc.data();
               const termsAccepted = userData.termsAccepted;
+              const method = userData.method; // Also check login method for additional context
               
               // Only delete if terms are not accepted (missing or false)
               if (termsAccepted !== true) {
@@ -44,12 +50,14 @@ exports.cleanupInactiveUsers = functions.pubsub
                   uid: user.uid,
                   email: user.email,
                   lastSignInTime: user.metadata.lastSignInTime || user.metadata.creationTime,
-                  termsAccepted: termsAccepted
+                  daysSinceLastActivity: daysSinceLastActivity,
+                  termsAccepted: termsAccepted,
+                  method: method
                 });
                 
-                console.log(`🧹 Deleted inactive user: ${user.email} (UID: ${user.uid})`);
+                console.log(`🧹 Deleted inactive user: ${user.email} (UID: ${user.uid}, inactive for ${daysSinceLastActivity} days)`);
               } else {
-                console.log(`⏭️ Skipping user with accepted terms: ${user.email} (UID: ${user.uid})`);
+                console.log(`⏭️ Skipping user with accepted terms: ${user.email} (UID: ${user.uid}, inactive for ${daysSinceLastActivity} days)`);
               }
             } else {
               // User document doesn't exist in Firestore, but exists in Auth - delete
@@ -59,13 +67,15 @@ exports.cleanupInactiveUsers = functions.pubsub
                 uid: user.uid,
                 email: user.email,
                 lastSignInTime: user.metadata.lastSignInTime || user.metadata.creationTime,
-                termsAccepted: null
+                daysSinceLastActivity: daysSinceLastActivity,
+                termsAccepted: null,
+                method: null
               });
               
-              console.log(`🧹 Deleted orphaned user (no Firestore doc): ${user.email} (UID: ${user.uid})`);
+              console.log(`🧹 Deleted orphaned user (no Firestore doc): ${user.email} (UID: ${user.uid}, inactive for ${daysSinceLastActivity} days)`);
             }
           } catch (err) {
-            console.error(`❌ Failed to process user ${user.uid}: ${err.message}`);
+            console.error(`❌ Failed to process user ${user.uid} (${user.email}): ${err.message}`);
           }
         }
       }
@@ -79,7 +89,7 @@ exports.cleanupInactiveUsers = functions.pubsub
     if (deletedUsers.length > 0) {
       console.log(`📋 Deleted users summary:`);
       deletedUsers.forEach(user => {
-        console.log(`   - ${user.email} (UID: ${user.uid}, Last Sign In: ${user.lastSignInTime}, Terms: ${user.termsAccepted})`);
+        console.log(`   - ${user.email} (UID: ${user.uid}, inactive: ${user.daysSinceLastActivity} days, terms: ${user.termsAccepted}, method: ${user.method})`);
       });
     }
 
@@ -131,29 +141,23 @@ async function deleteUserCompletely(auth, db, rtdb, uid, email) {
  * Remove a user ID from all other users' friends subcollections
  */
 async function removeFromAllFriendsCollections(db, uidToRemove) {
-  // Query all users to find friends subcollections that contain this user
-  const usersSnapshot = await db.collection('users').get();
+  // Use collectionGroup query to find all friend documents with this UID
+  // This is more efficient than querying all users individually
+  const friendsQuery = db.collectionGroup('friends').where(admin.firestore.FieldPath.documentId(), '==', uidToRemove);
+  const friendsSnapshot = await friendsQuery.get();
   
+  if (friendsSnapshot.empty) {
+    console.log(`   👥 No friend relationships found for ${uidToRemove}`);
+    return;
+  }
+
   const batch = db.batch();
   let friendsRemovalCount = 0;
 
-  for (const userDoc of usersSnapshot.docs) {
-    const userUid = userDoc.id;
-    
-    // Skip the user being deleted (though their doc should already be gone)
-    if (userUid === uidToRemove) {
-      continue;
-    }
-    
-    // Check if this user has the deleted user as a friend
-    const friendRef = db.collection('users').doc(userUid).collection('friends').doc(uidToRemove);
-    const friendDoc = await friendRef.get();
-    
-    if (friendDoc.exists) {
-      batch.delete(friendRef);
-      friendsRemovalCount++;
-    }
-  }
+  friendsSnapshot.forEach(doc => {
+    batch.delete(doc.ref);
+    friendsRemovalCount++;
+  });
   
   if (friendsRemovalCount > 0) {
     await batch.commit();
