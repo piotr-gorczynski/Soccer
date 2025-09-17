@@ -85,6 +85,10 @@
     {
       "source": "functions/remove-account",
       "codebase": "remove-account"
+    },
+    {
+      "source": "functions/cleanup-inactive-users",
+      "codebase": "cleanup-inactive-users"
     }
   ],
   "firestore": {
