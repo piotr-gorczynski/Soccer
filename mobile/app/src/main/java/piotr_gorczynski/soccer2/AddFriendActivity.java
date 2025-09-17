@@ -115,6 +115,7 @@ public class AddFriendActivity extends BaseActivity {
     }
 
     private void searchPage() {
+        String currentUserId = Objects.requireNonNull(auth.getCurrentUser()).getUid();
 
         Query q;
         if (fallbackMode) {
@@ -139,6 +140,11 @@ public class AddFriendActivity extends BaseActivity {
                         // Filter out deleted accounts
                         Boolean accountDeleted = d.getBoolean("accountDeleted");
                         if (accountDeleted != null && accountDeleted) {
+                            continue;
+                        }
+                        
+                        // Filter out current user - users shouldn't see themselves in search results
+                        if (d.getId().equals(currentUserId)) {
                             continue;
                         }
                         
