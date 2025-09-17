@@ -1,7 +1,6 @@
 <en-GB>
 🎮 Fix ads frequency logic to ensure proper display for unauthorized users
+🔔 Disable Add Friend buttons for existing friends in search results
+🔔 Hide current user from friend search results
+🔔 Filter users without accepted terms
 </en-GB>
-
-
-🎮 ...
-🔔 ...
