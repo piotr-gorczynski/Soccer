@@ -143,6 +143,12 @@ public class AddFriendActivity extends BaseActivity {
                             continue;
                         }
                         
+                        // Filter out users who haven't accepted terms
+                        Boolean termsAccepted = d.getBoolean("termsAccepted");
+                        if (termsAccepted == null || !termsAccepted) {
+                            continue;
+                        }
+                        
                         // Filter out current user - users shouldn't see themselves in search results
                         if (d.getId().equals(currentUserId)) {
                             continue;
