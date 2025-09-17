@@ -64,7 +64,7 @@ public class MenuActivity extends BaseActivity {
     private static final String PREF_AD_COUNTER = "adsCounter";
     private static final String PREF_AD_FREQUENCY = "adsFrequency";
     private static final int DEFAULT_AD_FREQUENCY = 10;
-    private static final int FAILSAFE_AD_FREQUENCY = 1;
+    private static final int FAILSAFE_AD_FREQUENCY = 2;
     private static final long AD_RETRY_DELAY_MS = 30_000L;
 
     private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 101;
