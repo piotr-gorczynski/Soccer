@@ -69,5 +69,20 @@ public class StringFormattingCrashTest {
         } catch (Exception e) {
             fail("winner_abandon formatting should not crash: " + e.getMessage());
         }
+        
+        // Test additional format strings that were fixed
+        try {
+            String sendMoveResult = context.getString(R.string.failed_to_send_move, "Error");
+            assertNotNull("failed_to_send_move should format successfully", sendMoveResult);
+        } catch (Exception e) {
+            fail("failed_to_send_move formatting should not crash: " + e.getMessage());
+        }
+        
+        try {
+            String registeredResult = context.getString(R.string.registered_as, "Player1");
+            assertNotNull("registered_as should format successfully", registeredResult);
+        } catch (Exception e) {
+            fail("registered_as formatting should not crash: " + e.getMessage());
+        }
     }
 }
