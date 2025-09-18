@@ -1199,7 +1199,14 @@ public class GameActivity extends BaseActivity {
         }
 
         // GameType 1 or 2 fallback
-        builder.setMessage(getString(R.string.winner_is, (Winner == 0 ? sPlayer0 : sPlayer1)));
+        try {
+            builder.setMessage(getString(R.string.winner_is, (Winner == 0 ? sPlayer0 : sPlayer1)));
+        } catch (java.util.IllegalFormatException e) {
+            Log.e("TAG_Soccer", getClass().getSimpleName() + ".showWinner: String formatting error in winner_is, using fallback", e);
+            // Fallback to basic message without formatting
+            String winnerName = (Winner == 0 ? sPlayer0 : sPlayer1);
+            builder.setMessage("The winner is " + winnerName + "!");
+        }
         builder.setPositiveButton(R.string.close, (dialog, which) -> finish());
         dialogWinner = builder.create();
         dialogWinner.show();
