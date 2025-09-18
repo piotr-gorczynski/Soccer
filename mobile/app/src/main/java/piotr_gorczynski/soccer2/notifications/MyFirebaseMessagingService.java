@@ -103,7 +103,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // Build notification
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "game_ready_channel")
                 .setSmallIcon(R.drawable.ic_notifications)
-                .setContentTitle(getString(R.string.game_ready_title, localNickname))
+                .setContentTitle(SafeStringFormatter.safeGetString(this, R.string.game_ready_title, localNickname))
                 .setContentText(getString(R.string.game_ready_message))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setAutoCancel(true)

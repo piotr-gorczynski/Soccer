@@ -1041,7 +1041,7 @@ public class GameActivity extends BaseActivity {
                             .addOnFailureListener(err -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to update match")))*/
                     .addOnFailureListener(err -> {
                         Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to send move");
-                        Toast.makeText(this, getString(R.string.failed_to_send_move, err), LENGTH_SHORT).show();
+                        Toast.makeText(this, SafeStringFormatter.safeGetString(this, R.string.failed_to_send_move, err), LENGTH_SHORT).show();
                     });
         } else {
             // Send the move
@@ -1049,7 +1049,7 @@ public class GameActivity extends BaseActivity {
                     .addOnSuccessListener(docRef -> Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Sent move (bouncing). x="+x+" y="+y+" p="+p))
                     .addOnFailureListener(err -> {
                         Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to send move");
-                        Toast.makeText(this, getString(R.string.failed_to_send_move, err), LENGTH_SHORT).show();
+                        Toast.makeText(this, SafeStringFormatter.safeGetString(this, R.string.failed_to_send_move, err), LENGTH_SHORT).show();
                     });
         }
     }
@@ -1110,12 +1110,12 @@ public class GameActivity extends BaseActivity {
                 sPlayer1 = getString(R.string.android_label);
             }
             case 3 -> {
-                sPlayer0 = player0Name != null ? player0Name : getString(R.string.player_with_number, 0);
-                sPlayer1 = player1Name != null ? player1Name : getString(R.string.player_with_number, 1);
+                sPlayer0 = player0Name != null ? player0Name : SafeStringFormatter.safeGetString(this, R.string.player_with_number, 0);
+                sPlayer1 = player1Name != null ? player1Name : SafeStringFormatter.safeGetString(this, R.string.player_with_number, 1);
             }
             default -> { //case 1 :-)
-                sPlayer0 = getString(R.string.player_with_number, 1);
-                sPlayer1 = getString(R.string.player_with_number, 2);
+                sPlayer0 = SafeStringFormatter.safeGetString(this, R.string.player_with_number, 1);
+                sPlayer1 = SafeStringFormatter.safeGetString(this, R.string.player_with_number, 2);
             }
         }
 
@@ -1163,12 +1163,12 @@ public class GameActivity extends BaseActivity {
                                 String reason = doc.getString("reason");
                                 String msg="";
                                 if ("timeout".equals(reason)) {
-                                    msg = getString(R.string.winner_timeout, sLooser);
+                                    msg = SafeStringFormatter.safeGetString(this, R.string.winner_timeout, sLooser);
                                 } else if ("abandon".equals(reason)) {
-                                    msg = getString(R.string.winner_abandon, sLooser);
+                                    msg = SafeStringFormatter.safeGetString(this, R.string.winner_abandon, sLooser);
                                 }
 
-                                msg += getString(R.string.winner_is, sWinner);
+                                msg += SafeStringFormatter.safeGetString(this, R.string.winner_is, sWinner);
                                 builder.setMessage(msg);
 
                                 builder.setPositiveButton(R.string.close, (dialog, which) -> finish());
@@ -1199,14 +1199,7 @@ public class GameActivity extends BaseActivity {
         }
 
         // GameType 1 or 2 fallback
-        try {
-            builder.setMessage(getString(R.string.winner_is, (Winner == 0 ? sPlayer0 : sPlayer1)));
-        } catch (java.util.IllegalFormatException e) {
-            Log.e("TAG_Soccer", getClass().getSimpleName() + ".showWinner: String formatting error in winner_is, using fallback", e);
-            // Fallback to basic message without formatting
-            String winnerName = (Winner == 0 ? sPlayer0 : sPlayer1);
-            builder.setMessage("The winner is " + winnerName + "!");
-        }
+        builder.setMessage(SafeStringFormatter.safeGetString(this, R.string.winner_is, (Winner == 0 ? sPlayer0 : sPlayer1)));
         builder.setPositiveButton(R.string.close, (dialog, which) -> finish());
         dialogWinner = builder.create();
         dialogWinner.show();

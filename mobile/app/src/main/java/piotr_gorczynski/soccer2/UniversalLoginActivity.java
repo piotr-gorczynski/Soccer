@@ -286,7 +286,7 @@ public class UniversalLoginActivity extends BaseActivity {
                 analyticsManager.trackSignupError(authMethod, "login_failure", message, "authentication");
                 analyticsManager.addAuthBreadcrumb("login_failure", "method=" + authMethod + ", error=" + message);
                 
-                Toast.makeText(UniversalLoginActivity.this, getString(R.string.login_failed, message), Toast.LENGTH_LONG).show();
+                Toast.makeText(UniversalLoginActivity.this, SafeStringFormatter.safeGetString(UniversalLoginActivity.this, R.string.login_failed, message), Toast.LENGTH_LONG).show();
             }
         };
     }
