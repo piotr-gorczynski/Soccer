@@ -246,7 +246,7 @@
     <string name="invalid_response_from_server">सर्भरबाट अवैध प्रतिक्रिया।</string>
     <string name="invite_accepted_starting_game">स्वीकार स्वीकार गरियो! </string>
     <string name="authentication_error_try_again">प्रमाणीकरण त्रुटि। </string>
-    <string name="registered_as">को रूपमा दर्ता गरियो:% $ s</string>
+    <string name="registered_as">को रूपमा दर्ता गरियो: %1$s</string>
     <string name="tournament_not_found">टूर्नामेन्ट फेला परेन।</string>
     <string name="must_be_logged_in">तपाईं लग इन हुनु पर्छ।</string>
     <string name="joined_wait_for_bracket">सामेल भए! </string>
@@ -265,7 +265,7 @@
     <string name="player_label">खेलाडी</string>
     <string name="android_label">एन्ड्रोइड</string>
     <string name="player_with_number">खेलाडी%1$d</string>
-    <string name="winner_timeout">% 1 $ एस समय सकियो।</string>
+    <string name="winner_timeout">%1$s समय सकियो। </string>
     <string name="winner_abandon">%1$s खेल fefed।</string>
     <string name="winner_is">विजेता%1$s छ!</string>
 

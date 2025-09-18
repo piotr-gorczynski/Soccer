@@ -264,7 +264,7 @@
     <string name="registration_failed_title">पंजीकरण विफल रहा</string>
     <string name="player_label">खिलाड़ी</string>
     <string name="android_label">एंड्रॉइड</string>
-    <string name="player_with_number">खिलाड़ी %1 $ डी</string>
+    <string name="player_with_number">खिलाड़ी %1$d</string>
     <string name="winner_timeout">%1$s समय से बाहर चला गया।</string>
     <string name="winner_abandon">%1$s ने खेल को जब्त कर लिया।</string>
     <string name="winner_is">विजेता %1$s है!</string>

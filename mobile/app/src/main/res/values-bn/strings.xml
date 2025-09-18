@@ -238,7 +238,7 @@
     <string name="failed_to_load_opponent">প্রতিপক্ষ লোড করতে ব্যর্থ।</string>
     <string name="network_error">নেটওয়ার্ক ত্রুটি।</string>
     <string name="game_is_over">খেলা শেষ।</string>
-    <string name="failed_to_send_move">পদক্ষেপ পাঠাতে ব্যর্থ: %1 $ গুলি</string>
+    <string name="failed_to_send_move">পদক্ষেপ পাঠাতে ব্যর্থ: %1$s</string>
     <string name="fatal_error_matchpath_null">মারাত্মক ত্রুটি ম্যাচপথ == নাল</string>
     <string name="failed_to_load_match">ম্যাচ লোড করতে ব্যর্থ।</string>
     <string name="invitation_not_found">আমন্ত্রণ পাওয়া যায় নি।</string>
@@ -260,14 +260,14 @@
     <string name="verification_email_sent">যাচাইকরণ ইমেল প্রেরণ</string>
     <string name="check_email_to_verify">আপনার অ্যাকাউন্ট যাচাই করতে আপনার ইমেলটি পরীক্ষা করুন।</string>
     <string name="email_verification_failed">ইমেল যাচাইকরণ ব্যর্থ হয়েছে</string>
-    <string name="could_not_send_verification_email">যাচাইকরণ ইমেল প্রেরণ করতে পারেনি: %1 $ গুলি</string>
+    <string name="could_not_send_verification_email">যাচাইকরণ ইমেল প্রেরণ করতে পারেনি: %1$s</string>
     <string name="registration_failed_title">নিবন্ধকরণ ব্যর্থ</string>
     <string name="player_label">খেলোয়াড়</string>
     <string name="android_label">অ্যান্ড্রয়েড</string>
     <string name="player_with_number">প্লেয়ার %1$d</string>
-    <string name="winner_timeout">%1 $ এস সময়ের বাইরে চলে গেছে।</string>
-    <string name="winner_abandon">%1 $ গুলি গেমটি বাজেয়াপ্ত করেছে।</string>
-    <string name="winner_is">বিজয়ী %1 $ গুলি!</string>
+    <string name="winner_timeout">%1$s সময়ের বাইরে চলে গেছে। </string>
+    <string name="winner_abandon">%1$s গেমটি বাজেয়াপ্ত করেছে। </string>
+    <string name="winner_is">বিজয়ী %1$s!</string>
 
     <string name="could_not_accept_invite">আমন্ত্রণ গ্রহণ করতে পারেনি।</string>
     <string name="invite_was_cancelled">আমন্ত্রণ বাতিল করা হয়েছিল।</string>
@@ -277,7 +277,7 @@
     <string name="please_verify_email_before_login">লগ ইন করার আগে দয়া করে আপনার ইমেল ঠিকানাটি যাচাই করুন।</string>
     <string name="authentication_failed">প্রমাণীকরণ ব্যর্থ হয়েছে।</string>
 
-    <string name="could_not_cancel_invite">আমন্ত্রণ বাতিল করতে পারেনি: %1 $ গুলি</string>
+    <string name="could_not_cancel_invite">আমন্ত্রণ বাতিল করতে পারেনি: %1$s</string>
     <!-- Link Account functionality -->
     <string name="link_to_registered_account">Link to registered account</string>
     <string name="link_account_title">Link Anonymous Account</string>
