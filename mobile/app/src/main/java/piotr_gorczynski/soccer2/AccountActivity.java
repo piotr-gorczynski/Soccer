@@ -63,18 +63,18 @@ public class AccountActivity extends BaseActivity {
         String facebookPhotoUrl = getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
                 .getString("facebookPhotoUrl", null);
 
-        nickView.setText(getString(R.string.nickname_label, nickname));
+        nickView.setText(SafeStringFormatter.safeGetString(this, R.string.nickname_label, nickname));
         
         // Show Facebook info, hide email for anonymous users, or display email for others
         if ("facebook.com".equals(method) && facebookId != null) {
             // Hide email view and show Facebook info
             emailView.setVisibility(View.GONE);
             facebookIdView.setVisibility(View.VISIBLE);
-            facebookIdView.setText(getString(R.string.facebook_id_label, facebookId));
+            facebookIdView.setText(SafeStringFormatter.safeGetString(this, R.string.facebook_id_label, facebookId));
 
             if (facebookName != null && !facebookName.isEmpty()) {
                 facebookNameView.setVisibility(View.VISIBLE);
-                facebookNameView.setText(getString(R.string.facebook_name_label, facebookName));
+                facebookNameView.setText(SafeStringFormatter.safeGetString(this, R.string.facebook_name_label, facebookName));
             } else {
                 facebookNameView.setVisibility(View.GONE);
             }
@@ -102,14 +102,14 @@ public class AccountActivity extends BaseActivity {
         } else {
             // Show email for non-Facebook, non-anonymous users
             emailView.setVisibility(View.VISIBLE);
-            emailView.setText(getString(R.string.email_label, email));
+            emailView.setText(SafeStringFormatter.safeGetString(this, R.string.email_label, email));
             facebookIdView.setVisibility(View.GONE);
             facebookNameView.setVisibility(View.GONE);
             profilePhotoView.setVisibility(View.GONE);
             // Hide link account button for non-anonymous users
             linkAccountBtn.setVisibility(View.GONE);
         }
-        methodView.setText(getString(R.string.login_method_label, method));
+        methodView.setText(SafeStringFormatter.safeGetString(this, R.string.login_method_label, method));
 
         logoutBtn.setOnClickListener(v -> {
             String currentMethod = getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
@@ -353,18 +353,18 @@ public class AccountActivity extends BaseActivity {
         Button linkAccountBtn = findViewById(R.id.btnLinkAccount);
 
         // Update nickname
-        nickView.setText(getString(R.string.nickname_label, nickname));
+        nickView.setText(SafeStringFormatter.safeGetString(this, R.string.nickname_label, nickname));
         
         // Update UI based on new method
         if ("facebook.com".equals(method) && facebookId != null) {
             // Hide email view and show Facebook info
             emailView.setVisibility(View.GONE);
             facebookIdView.setVisibility(View.VISIBLE);
-            facebookIdView.setText(getString(R.string.facebook_id_label, facebookId));
+            facebookIdView.setText(SafeStringFormatter.safeGetString(this, R.string.facebook_id_label, facebookId));
 
             if (facebookName != null && !facebookName.isEmpty()) {
                 facebookNameView.setVisibility(View.VISIBLE);
-                facebookNameView.setText(getString(R.string.facebook_name_label, facebookName));
+                facebookNameView.setText(SafeStringFormatter.safeGetString(this, R.string.facebook_name_label, facebookName));
             } else {
                 facebookNameView.setVisibility(View.GONE);
             }
@@ -394,7 +394,7 @@ public class AccountActivity extends BaseActivity {
         } else {
             // Show email for non-Facebook, non-anonymous users (Google or email)
             emailView.setVisibility(View.VISIBLE);
-            emailView.setText(getString(R.string.email_label, email));
+            emailView.setText(SafeStringFormatter.safeGetString(this, R.string.email_label, email));
             facebookIdView.setVisibility(View.GONE);
             facebookNameView.setVisibility(View.GONE);
             profilePhotoView.setVisibility(View.GONE);
@@ -403,7 +403,7 @@ public class AccountActivity extends BaseActivity {
         }
         
         // Update method display
-        methodView.setText(getString(R.string.login_method_label, method));
+        methodView.setText(SafeStringFormatter.safeGetString(this, R.string.login_method_label, method));
     }
 
     /**

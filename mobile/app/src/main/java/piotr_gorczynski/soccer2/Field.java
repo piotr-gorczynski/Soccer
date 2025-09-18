@@ -425,10 +425,10 @@ public class Field {
             } else {
 
                 textBottom = fitNameInBanner(localName,
-                        " " + context.getString(R.string.field_move_tail, localTime),
+                        " " + SafeStringFormatter.safeGetString(context, R.string.field_move_tail, localTime),
                         pHintText, bannerWidthPx);
                 textTop = fitNameInBanner(opponentName,
-                        " " + context.getString(R.string.field_hourglass_tail, oponentTime),
+                        " " + SafeStringFormatter.safeGetString(context, R.string.field_hourglass_tail, oponentTime),
                         pHintText, bannerWidthPx);
 
                 pHintText.getTextBounds(textTop, 0, textTop.length(), rText);
@@ -457,15 +457,15 @@ public class Field {
 
                 if (turnStartTime != null) {
                     textTop = fitNameInBanner(opponentName,
-                            " " + context.getString(R.string.field_move_ellipsis_tail, oponentTime),
+                            " " + SafeStringFormatter.safeGetString(context, R.string.field_move_ellipsis_tail, oponentTime),
                             pHintText, bannerWidthPx);
                 } else {
-                    textTop = fitNameInBanner(context.getString(R.string.field_waiting_for, opponentName),
-                            " " + context.getString(R.string.field_to_start_tail, oponentTime),
+                    textTop = fitNameInBanner(SafeStringFormatter.safeGetString(context, R.string.field_waiting_for, opponentName),
+                            " " + SafeStringFormatter.safeGetString(context, R.string.field_to_start_tail, oponentTime),
                             pHintText, bannerWidthPx);
                 }
                 textBottom = fitNameInBanner(localName,
-                        " " + context.getString(R.string.field_hourglass_tail, localTime),
+                        " " + SafeStringFormatter.safeGetString(context, R.string.field_hourglass_tail, localTime),
                         pHintText, bannerWidthPx);
 
                 pHintText.getTextBounds(textBottom, 0, textBottom.length(), rText);

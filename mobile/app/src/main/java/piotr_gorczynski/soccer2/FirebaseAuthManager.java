@@ -538,7 +538,7 @@ public class FirebaseAuthManager {
                     if (task.isSuccessful()) {
                         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
                         }.getClass().getEnclosingMethod()).getName() + ": User registered: " + Objects.requireNonNull(firebaseAuth.getCurrentUser()).getEmail());
-                        Toast.makeText(context, context.getString(R.string.registered_as, firebaseAuth.getCurrentUser().getEmail()), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, SafeStringFormatter.safeGetString(context, R.string.registered_as, firebaseAuth.getCurrentUser().getEmail()), Toast.LENGTH_SHORT).show();
 
                         ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
                         // Store basic user data in Firestore
@@ -581,7 +581,7 @@ public class FirebaseAuthManager {
                                                 : "Unknown error";
                                         new AlertDialog.Builder(context)
                                                 .setTitle(R.string.email_verification_failed)
-                                                .setMessage(context.getString(R.string.could_not_send_verification_email, error))
+                                                .setMessage(SafeStringFormatter.safeGetString(context, R.string.could_not_send_verification_email, error))
                                                 .setPositiveButton(R.string.ok, null)
                                                 .show();
                                     }
