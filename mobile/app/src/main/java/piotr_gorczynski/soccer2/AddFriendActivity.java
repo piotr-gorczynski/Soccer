@@ -216,7 +216,7 @@ public class AddFriendActivity extends BaseActivity {
                         String reason = ffe.getMessage();
                         Log.e("TAG_Soccer", "addFriend failed: " + reason, ffe);
                         if (reason != null && !reason.isEmpty()) {
-                            text = getString(R.string.failed_to_add_friend_reason, reason);
+                            text = SafeStringFormatter.safeGetString(this, R.string.failed_to_add_friend_reason, reason);
                         }
                     } else {
                         Log.e("TAG_Soccer", "addFriend failed", e);
