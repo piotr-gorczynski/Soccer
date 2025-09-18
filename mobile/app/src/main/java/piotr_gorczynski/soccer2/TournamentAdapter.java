@@ -105,14 +105,14 @@ public class TournamentAdapter
         /* ---------- common fields ---------- */
         h.name.setText(name);
         h.slots.setText(
-                h.itemView.getContext().getString(R.string.slots_format, joined, max)
+                SafeStringFormatter.safeGetString(h.itemView.getContext(), R.string.slots_format, joined, max)
         );
 
         /* ---------- branching by status ---------- */
         if (isEndedMode) {
             // === Ended mode ===
             String endedWhen = endDL != null
-                    ? h.itemView.getContext().getString(
+                    ? SafeStringFormatter.safeGetString(h.itemView.getContext(),
                             R.string.tournament_ended,
                             relativeTime(endDL.toDate().getTime()))
                     : h.itemView.getContext().getString(R.string.tournament_ended_short);
