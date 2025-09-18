@@ -85,4 +85,51 @@ public class StringFormattingCrashTest {
             fail("registered_as formatting should not crash: " + e.getMessage());
         }
     }
+    
+    @Test
+    public void testSafeStringFormatterUtility() {
+        Context context = ApplicationProvider.getApplicationContext();
+        
+        // Test SafeStringFormatter with valid format strings
+        String validResult = SafeStringFormatter.safeGetString(context, R.string.winner_is, "TestPlayer");
+        assertNotNull("SafeStringFormatter should return non-null result", validResult);
+        assertTrue("SafeStringFormatter result should contain player name", validResult.contains("TestPlayer"));
+        
+        // Test SafeStringFormatter with multiple parameters
+        String multiParamResult = SafeStringFormatter.safeGetString(context, R.string.slots_format, 5, 10);
+        assertNotNull("SafeStringFormatter should handle multiple parameters", multiParamResult);
+        assertTrue("Multi-parameter result should contain numbers", 
+                   multiParamResult.contains("5") && multiParamResult.contains("10"));
+        
+        // Test SafeStringFormatter fallback behavior by using a non-existent resource
+        // This tests the ultimate fallback behavior
+        try {
+            String fallbackResult = SafeStringFormatter.safeFormat("Invalid format %z", "test");
+            assertNotNull("SafeStringFormatter should provide fallback for invalid format", fallbackResult);
+            assertTrue("Fallback should contain original argument", fallbackResult.contains("test"));
+        } catch (Exception e) {
+            fail("SafeStringFormatter should never throw exceptions: " + e.getMessage());
+        }
+    }
+    
+    @Test
+    public void testSafeFormatMethod() {
+        // Test valid format string
+        String validFormat = SafeStringFormatter.safeFormat("Hello %s!", "World");
+        assertEquals("Valid format should work correctly", "Hello World!", validFormat);
+        
+        // Test invalid format string - should fallback gracefully
+        String invalidFormat = SafeStringFormatter.safeFormat("Hello %z!", "World");
+        assertNotNull("Invalid format should return fallback", invalidFormat);
+        assertTrue("Fallback should contain the argument", invalidFormat.contains("World"));
+        
+        // Test with no arguments
+        String noArgs = SafeStringFormatter.safeFormat("Just text");
+        assertEquals("No args format should work", "Just text", noArgs);
+        
+        // Test with multiple arguments
+        String multiArgs = SafeStringFormatter.safeFormat("Player %s scored %d goals", "John", 3);
+        assertTrue("Multi-arg format should contain all args", 
+                   multiArgs.contains("John") && multiArgs.contains("3"));
+    }
 }

@@ -298,7 +298,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                 break;
         }
 
-        String summary = getString(R.string.current_language, label);
+        String summary = SafeStringFormatter.safeGetString(requireContext(), R.string.current_language, label);
         preference.setSummary(summary);
         Log.d(
                 "TAG_Soccer",
