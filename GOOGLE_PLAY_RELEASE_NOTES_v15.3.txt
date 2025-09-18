@@ -3,3 +3,98 @@
 🔔 Comprehensive string formatting safeguards to prevent crashes from malformed localized strings
 </en-GB>
 
+<pl-PL>
+🎮 Naprawiono błąd produkcyjny spowodowany nieprawidłowymi specyfikatorami formatu w zlokalizowanych ciągach znaków
+🔔 Kompleksowe zabezpieczenia formatowania ciągów znaków, aby zapobiec awariom z powodu nieprawidłowych zlokalizowanych ciągów znaków
+</pl-PL>
+
+<de-DE>
+🎮 Produktionsabsturz durch fehlerhafte Formatspezifikatoren in lokalisierten Strings behoben
+🔔 Umfassende String-Formatierungs-Sicherheitsvorkehrungen zur Verhinderung von Abstürzen durch fehlerhafte lokalisierte Strings
+</de-DE>
+
+<fr-FR>
+🎮 Correction d'un crash en production causé par des spécificateurs de format malformés dans les chaînes localisées
+🔔 Protections complètes de formatage de chaînes pour éviter les crashes dus aux chaînes localisées malformées
+</fr-FR>
+
+<es-ES>
+🎮 Corregir fallo de producción por especificadores de formato malformados en cadenas localizadas
+🔔 Salvaguardas integrales de formato de cadenas para prevenir fallos por cadenas localizadas malformadas
+</es-ES>
+
+<ur>
+🎮 مقامی strings میں malformed format specifiers سے ہونے والی production crash کو ٹھیک کیا گیا
+🔔 malformed localized strings سے crashes کو روکنے کے لیے جامع string formatting safeguards
+</ur>
+
+<bn>
+🎮 স্থানীয় স্ট্রিংগুলিতে ত্রুটিপূর্ণ ফরম্যাট স্পেসিফায়ার থেকে প্রোডাকশন ক্র্যাশ ঠিক করা হয়েছে
+🔔 ত্রুটিপূর্ণ স্থানীয় স্ট্রিংগুলি থেকে ক্র্যাশ প্রতিরোধ করার জন্য ব্যাপক স্ট্রিং ফর্ম্যাটিং সুরক্ষা
+</bn>
+
+<ne>
+🎮 स्थानीयकृत strings मा malformed format specifiers बाट हुने production crash ठीक गरियो
+🔔 malformed localized strings बाट crashes रोक्न व्यापक string formatting safeguards
+</ne>
+
+<hi-IN>
+🎮 स्थानीयकृत स्ट्रिंग्स में गलत फॉर्मेट स्पेसिफायर्स से उत्पादन क्रैश को ठीक किया गया
+🔔 गलत स्थानीयकृत स्ट्रिंग्स से क्रैश को रोकने के लिए व्यापक स्ट्रिंग फॉर्मेटिंग सुरक्षा उपाय
+</hi-IN>
+
+<am>
+🎮 በአካባቢያዊ ሃረጎች ውስጥ ሳይሳሳቱ format specifiers ከሚመጡ የምርት መበላሸት ተስተካክሏል
+🔔 ሳይሳሳቱ አካባቢያዊ ሃረጎች ከሚመጡ መበላሸት ለመከላከል ሰፊ የሃረግ formatting ጥበቃዎች
+</am>
+
+<ar>
+🎮 إصلاح انهيار الإنتاج من مواصفات التنسيق المشوهة في السلاسل المترجمة
+🔔 ضمانات شاملة لتنسيق السلاسل لمنع الانهيارات من السلاسل المترجمة المشوهة
+</ar>
+
+<my>
+🎮 ဒေသန္တရ strings များရှိ malformed format specifiers များမှ production crash ကို ပြင်ဆင်ခဲ့သည်
+🔔 malformed localized strings များမှ crashes များကို တားဆီးရန် ကျယ်ပြန့်သော string formatting safeguards များ
+</my>
+
+<km>
+🎮 បានកែតម្រូវការគាំងផលិតកម្មពី format specifiers ខូចនៅក្នុង strings បែបមូលដ្ឋាន
+🔔 ការការពារ string formatting ដ៏ទូលំទូលាយដើម្បីការពារការគាំងពី strings បែបមូលដ្ឋានខូច
+</km>
+
+<lo>
+🎮 ແກ້ໄຂການຫຍັງການຜະລິດຈາກ format specifiers ທີ່ຜິດຮູບແບບໃນ strings ທ້ອງຖິ່ນ
+🔔 ການປົກປ້ອງການຈັດຮູບແບບ string ທີ່ກວ້າງຂວາງເພື່ອປ້ອງກັນການຫຍັງຈາກ localized strings ທີ່ຜິດຮູບແບບ
+</lo>
+
+<mg>
+🎮 Namboatra ny fihapotehana famokarana avy amin'ny format specifiers simba amin'ny teny an-toerana
+🔔 Fiarovana fanaovana format string midadasika mba hisorohana ny fihapotehana avy amin'ny teny an-toerana simba
+</mg>
+
+<mn>
+🎮 Орон нутгийн мөр дэх буруу формат тодорхойлогчоос үүсэх үйлдвэрлэлийн алдааг засварласан
+🔔 Буруу орон нутгийн мөрөөс үүсэх алдаануудаас сэргийлэх дэлгэрэнгүй мөр форматлах хамгаалалт
+</mn>
+
+<fa>
+🎮 رفع خرابی تولید از مشخص‌کننده‌های فرمت ناقص در رشته‌های محلی‌سازی شده
+🔔 محافظت‌های جامع فرمت‌بندی رشته برای جلوگیری از خرابی‌ها از رشته‌های محلی‌سازی شده ناقص
+</fa>
+
+<si>
+🎮 ප්‍රාදේශීය strings වල malformed format specifiers වලින් production crash සකස් කරන ලදී
+🔔 malformed localized strings වලින් crashes වැළැක්වීම සඳහා පුළුල් string formatting safeguards
+</si>
+
+<so>
+🎮 Waxaa la saxay burburka wax soo saarka ee ka yimaada qeexayaasha qaabka burbursan ee ku jira xargaha maxalliga ah
+🔔 Ilaalinta qaabeynta xargaha oo ballaaran si looga hortago burburka ka yimaada xargaha maxalliga ah ee burbursan
+</so>
+
+<sw>
+🎮 Imesahihi kuvunjika kwa uzalishaji kutoka kwa viainishi vya muundo vilivyoharibika katika mistari ya kimazingira
+🔔 Ulinzi mkuu wa uumbaji wa mistari ili kuzuia kuvunjika kutoka kwa mistari ya kimazingira yaliyoharibika
+</sw>
+
