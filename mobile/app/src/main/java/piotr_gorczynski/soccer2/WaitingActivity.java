@@ -68,7 +68,7 @@ public class WaitingActivity extends BaseActivity {
                             String nick = userDoc.getString("nickname");
                             if (!TextUtils.isEmpty(nick)) {
                                 waitingMessage.setText(
-                                        getString(R.string.waiting_for_opponent_named, nick));
+                                        SafeStringFormatter.safeGetString(this, R.string.waiting_for_opponent_named, nick));
                             }
                         });
             }
@@ -243,7 +243,7 @@ public class WaitingActivity extends BaseActivity {
                     Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {}.getClass().getEnclosingMethod()).getName()
                             + ": cancelInvite failed", e);
                     Toast.makeText(this,
-                            getString(R.string.could_not_cancel_invite, e.getMessage()),
+                            SafeStringFormatter.safeGetString(this, R.string.could_not_cancel_invite, e.getMessage()),
                             Toast.LENGTH_LONG).show();
                     finish();
                 });

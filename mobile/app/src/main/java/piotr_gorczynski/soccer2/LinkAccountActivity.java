@@ -171,7 +171,7 @@ public class LinkAccountActivity extends BaseActivity {
             @Override
             public void onLinkFailure(String message) {
                 Log.e("TAG_Soccer", getClass().getSimpleName() + ".onLinkFailure: " + message);
-                Toast.makeText(LinkAccountActivity.this, getString(R.string.link_account_failed, message), Toast.LENGTH_LONG).show();
+                Toast.makeText(LinkAccountActivity.this, SafeStringFormatter.safeGetString(LinkAccountActivity.this, R.string.link_account_failed, message), Toast.LENGTH_LONG).show();
                 setResult(RESULT_CANCELED); // Indicate failure
             }
         };

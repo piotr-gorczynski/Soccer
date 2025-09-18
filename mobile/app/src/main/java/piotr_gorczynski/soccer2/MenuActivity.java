@@ -121,7 +121,7 @@ public class MenuActivity extends BaseActivity {
                         if (local == null || !local.equals(remoteNick)) {
                             ed.putString("nickname", remoteNick);
                             TextView nicknameLabel = findViewById(R.id.nicknameLabel);
-                            String labelText = getString(R.string.hello_nickname, remoteNick);
+                            String labelText = SafeStringFormatter.safeGetString(this, R.string.hello_nickname, remoteNick);
                             if (nicknameLabel != null) {
                                 nicknameLabel.setText(labelText);
                                 Log.d(
@@ -462,7 +462,7 @@ public class MenuActivity extends BaseActivity {
                             + ": Nickname: "
                             + nickname
             );
-            labelText = getString(R.string.hello_nickname, nickname);
+            labelText = SafeStringFormatter.safeGetString(this, R.string.hello_nickname, nickname);
         } else {
             labelText = getString(R.string.welcome_to_soccer);
         }
