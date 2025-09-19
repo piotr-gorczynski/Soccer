@@ -26,6 +26,12 @@
     <string name="language_swahili">Sawaaxili</string>
     <string name="language_urdu">Urduu</string>
     
+    <!-- Critical interface strings -->
+    <string name="menu_Settings">Dejinta</string>
+    <string name="title_activity_settings">Dejinta</string>
+    <string name="welcome_to_soccer">Ku soo dhowow Soccer!</string>
+    <string name="hello_nickname">Salaan %1$s!</string>
+    
     <!-- Basic interface -->
     <string name="settings">Dejinta</string>
     <string name="cancel">Ka noqo</string>

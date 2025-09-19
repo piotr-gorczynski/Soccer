@@ -26,6 +26,12 @@
     <string name="language_swahili">Kiswahili</string>
     <string name="language_urdu">Kiurdu</string>
     
+    <!-- Critical interface strings -->
+    <string name="menu_Settings">Mipangilio</string>
+    <string name="title_activity_settings">Mipangilio</string>
+    <string name="welcome_to_soccer">Karibu Soccer!</string>
+    <string name="hello_nickname">Hujambo %1$s!</string>
+    
     <!-- Basic interface -->
     <string name="settings">Mipangilio</string>
     <string name="cancel">Ghairi</string>
