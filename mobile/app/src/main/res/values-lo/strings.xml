@@ -26,6 +26,12 @@
     <string name="language_swahili">ສະວາຮີລີ</string>
     <string name="language_urdu">ອູຣດູ</string>
     
+    <!-- Critical interface strings -->
+    <string name="menu_Settings">ການຕັ້ງຄ່າ</string>
+    <string name="title_activity_settings">ການຕັ້ງຄ່າ</string>
+    <string name="welcome_to_soccer">ຍິນດີຕ້ອນຮັບສູ່ Soccer!</string>
+    <string name="hello_nickname">ສະບາຍດີ %1$s!</string>
+    
     <!-- Basic interface -->
     <string name="settings">ການຕັ້ງຄ່າ</string>
     <string name="cancel">ຍົກເລີກ</string>
