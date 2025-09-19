@@ -37,6 +37,36 @@
     <string name="cancel">අවලංගු කරන්න</string>
     <string name="confirm">තහවුරු කරන්න</string>
     
+    <!-- Menu button strings -->
+    <string name="menu_YouvsAndroid">Android සහ පුහුණුව</string>
+    <string name="menu_Player1vsPlayer2">මෙම උපකරණයේ ක්‍රීඩකයින් දෙදෙනෙක්</string>
+    <string name="invite_a_friend">මිතුරෙකු ආරාධනා කරන්න</string>
+    <string name="pending_invites">විමසුම් කරන ආරාධනා</string>
+    <string name="tournaments">තරඟාවලි</string>
+    <string name="ranking">ශ්‍රේණිගත කිරීම</string>
+    
+    <!-- Settings strings -->
+    <string name="pref_title_level">Android මට්ටම</string>
+    <string name="pref_title_block_invite_friend">'මිතුරෙකු ආරාධනා කරන්න' ඉල්ලීම් අවහිර කරන්න</string>
+    <string name="pref_summary_block_invite_friend">අනෙකුත් ක්‍රීඩකයින්ට 'මිතුරෙකු ආරාධනා කරන්න' හරහා ඔබට ආරාධනා කළ නොහැක (තරඟාවලිවලට බලපාන්නේ නැත)</string>
+    <string name="pref_title_ads_consent">පුද්ගලික දැන්වීම් කැමැත්ත</string>
+    <string name="pref_summary_ads_consent">පුද්ගලික දැන්වීම් පෙන්වීම සඳහා ඔබේ කැමැත්ත සමාලෝචනය කරන්න හෝ වෙනස් කරන්න</string>
+    <string name="pref_title_language">භාෂාව</string>
+    <string name="pref_summary_language">ඔබ කැමති භාෂාව තෝරන්න</string>
+    <string name="current_language">වර්තමාන: %1$s</string>
+    <string name="pref_title_facebook">Facebook ප්‍රජාව</string>
+    <string name="pref_summary_facebook">Facebook හි අපගේ ප්‍රජා පිටුව විවෘත කරන්න</string>
+    
+    <!-- Level difficulty strings -->
+    <string-array name="pref_level_titles">
+        <item>පහසු</item>
+        <item>මධ්‍යම</item>
+        <item>දුෂ්කර</item>
+    </string-array>
+    
+    <!-- Basic interface strings -->
+    <string name="hello">ආයුබෝවන්!</string>
+    
     <!-- Game ready notification strings -->
     <string name="game_ready_title">%1$s සඳහා ක්‍රීඩාව සූදානම්!</string>
     <string name="game_ready_message">ඔබේ තරගය ආරම්භ කිරීමට සූදානම්. සම්බන්ධ වීමට ස්පර්ශ කරන්න!</string>
