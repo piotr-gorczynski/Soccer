@@ -26,6 +26,12 @@
     <string name="language_swahili">Свахили</string>
     <string name="language_urdu">Урду</string>
     
+    <!-- Critical interface strings -->
+    <string name="menu_Settings">Тохиргоо</string>
+    <string name="title_activity_settings">Тохиргоо</string>
+    <string name="welcome_to_soccer">Soccer-д тавтай морил!</string>
+    <string name="hello_nickname">Сайн уу %1$s!</string>
+    
     <!-- Basic interface -->
     <string name="settings">Тохиргоо</string>
     <string name="cancel">Цуцлах</string>
