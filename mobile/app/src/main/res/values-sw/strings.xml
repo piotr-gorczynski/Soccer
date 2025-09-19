@@ -37,6 +37,36 @@
     <string name="cancel">Ghairi</string>
     <string name="confirm">Thibitisha</string>
     
+    <!-- Menu button strings -->
+    <string name="menu_YouvsAndroid">Mazoezi na Android</string>
+    <string name="menu_Player1vsPlayer2">Wachezaji wawili kwenye kifaa hiki</string>
+    <string name="invite_a_friend">Alika Rafiki</string>
+    <string name="pending_invites">Mialiko Inayongoja</string>
+    <string name="tournaments">Mashindano</string>
+    <string name="ranking">Upangaji</string>
+    
+    <!-- Settings strings -->
+    <string name="pref_title_level">Ngazi ya Android</string>
+    <string name="pref_title_block_invite_friend">Zuia ombi la 'Alika Rafiki'</string>
+    <string name="pref_summary_block_invite_friend">Wachezaji wengine hawawezi kukulika kupitia 'Alika Rafiki' (mashindano hayataathirika)</string>
+    <string name="pref_title_ads_consent">Idhini ya matangazo ya kibinafsi</string>
+    <string name="pref_summary_ads_consent">Kagua au badilisha idhini yako ya kuonyesha matangazo ya kibinafsi</string>
+    <string name="pref_title_language">Lugha</string>
+    <string name="pref_summary_language">Chagua lugha unayopendelea</string>
+    <string name="current_language">Ya sasa: %1$s</string>
+    <string name="pref_title_facebook">Jumuiya ya Facebook</string>
+    <string name="pref_summary_facebook">Fungua ukurasa wa jumuiya yetu kwenye Facebook</string>
+    
+    <!-- Level difficulty strings -->
+    <string-array name="pref_level_titles">
+        <item>Rahisi</item>
+        <item>Wastani</item>
+        <item>Ngumu</item>
+    </string-array>
+    
+    <!-- Basic interface strings -->
+    <string name="hello">Hujambo!</string>
+    
     <!-- Game ready notification strings -->
     <string name="game_ready_title">Mchezo Uko Tayari kwa %1$s!</string>
     <string name="game_ready_message">Mechi yako iko tayari kuanza. Gusa ili kujiunga!</string>

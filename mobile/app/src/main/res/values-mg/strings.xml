@@ -37,8 +37,38 @@
     <string name="cancel">Foana</string>
     <string name="confirm">Manamarina</string>
     
+    <!-- Menu button strings -->
+    <string name="menu_YouvsAndroid">Fanazaran-tena miaraka amin'ny Android</string>
+    <string name="menu_Player1vsPlayer2">Mpilalao roa eto amin'ity fitaovana ity</string>
+    <string name="invite_a_friend">Asao namana</string>
+    <string name="pending_invites">Fanasana miandry</string>
+    <string name="tournaments">Fifaninanana</string>
+    <string name="ranking">Fandrindrana</string>
+    
+    <!-- Settings strings -->
+    <string name="pref_title_level">Haavon'ny Android</string>
+    <string name="pref_title_block_invite_friend">Sakano ny fangatahana 'Asao namana'</string>
+    <string name="pref_summary_block_invite_friend">Ny mpilalao hafa tsy afaka manasa anao amin'ny alalan'ny 'Asao namana' (tsy misy fiantraikany amin'ny fifaninanana)</string>
+    <string name="pref_title_ads_consent">Fanekena dokam-barotra manokana</string>
+    <string name="pref_summary_ads_consent">Jereo na ovay ny fanekena anao amin'ny fampisehoana dokam-barotra manokana</string>
+    <string name="pref_title_language">Fiteny</string>
+    <string name="pref_summary_language">Safidio ny fiteny tianao</string>
+    <string name="current_language">Ankehitriny: %1$s</string>
+    <string name="pref_title_facebook">Vondron'olona Facebook</string>
+    <string name="pref_summary_facebook">Sokafy ny pejy vondrona anay ao amin'ny Facebook</string>
+    
+    <!-- Level difficulty strings -->
+    <string-array name="pref_level_titles">
+        <item>Mora</item>
+        <item>Antonony</item>
+        <item>Sarotra</item>
+    </string-array>
+    
+    <!-- Basic interface strings -->
+    <string name="hello">Salama!</string>
+    
     <!-- Game ready notification strings -->
-    <string name="game_ready_title">Lalao vonona ho an`ny %1$s!</string>
+    <string name="game_ready_title">Lalao vonona ho an'ny %1$s!</string>
     <string name="game_ready_message">Ny lalao nataonao dia vonona hanomboka. Tsindrio hiditra!</string>
-    <string name="join_game_action">Hiditra amin`ny Lalao</string>
+    <string name="join_game_action">Hiditra amin'ny Lalao</string>
 </resources>
