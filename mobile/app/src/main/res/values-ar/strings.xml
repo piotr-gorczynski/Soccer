@@ -26,6 +26,12 @@
     <string name="language_swahili">السواحيلية</string>
     <string name="language_urdu">الأردية</string>
     
+    <!-- Critical interface strings -->
+    <string name="menu_Settings">الإعدادات</string>
+    <string name="title_activity_settings">الإعدادات</string>
+    <string name="welcome_to_soccer">مرحباً بك في Soccer!</string>
+    <string name="hello_nickname">مرحباً، %1$s!</string>
+    
     <!-- Basic interface -->
     <string name="settings">الإعدادات</string>
     <string name="cancel">إلغاء</string>
