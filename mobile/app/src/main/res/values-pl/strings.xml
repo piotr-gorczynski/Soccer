@@ -321,4 +321,11 @@
     <string name="game_ready_title">Gra Gotowa dla %1$s!</string>
     <string name="game_ready_message">Twój mecz jest gotowy do rozpoczęcia. Dotknij, aby dołączyć!</string>
     <string name="join_game_action">Dołącz do Gry</string>
+    
+    <!-- Preference level values -->
+    <string-array name="pref_level_values">
+        <item>1</item>
+        <item>10</item>
+        <item>30</item>
+    </string-array>
 </resources>
