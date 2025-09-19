@@ -321,4 +321,11 @@
     <string name="game_ready_title">¡Juego Listo para %1$s!</string>
     <string name="game_ready_message">Tu partido está listo para comenzar. ¡Toca para unirte!</string>
     <string name="join_game_action">Unirse al Juego</string>
+    
+    <!-- Preference level values -->
+    <string-array name="pref_level_values">
+        <item>1</item>
+        <item>10</item>
+        <item>30</item>
+    </string-array>
 </resources>

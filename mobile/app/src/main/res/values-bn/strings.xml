@@ -320,4 +320,11 @@
     <string name="game_ready_title">%1$s এর জন্য গেম প্রস্তুত!</string>
     <string name="game_ready_message">আপনার ম্যাচ শুরু হওয়ার জন্য প্রস্তুত। যোগ দিতে ট্যাপ করুন!</string>
     <string name="join_game_action">গেমে যোগ দিন</string>
+    
+    <!-- Preference level values -->
+    <string-array name="pref_level_values">
+        <item>1</item>
+        <item>10</item>
+        <item>30</item>
+    </string-array>
 </resources>
