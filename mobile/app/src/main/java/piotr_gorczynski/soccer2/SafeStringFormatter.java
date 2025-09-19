@@ -22,6 +22,25 @@ public class SafeStringFormatter {
     public static String safeGetString(Context context, int stringRes, Object... formatArgs) {
         try {
             return context.getString(stringRes, formatArgs);
+        } catch (java.util.UnknownFormatConversionException e) {
+            Log.e(TAG, "SafeStringFormatter.safeGetString: Unknown format conversion in resource " + 
+                  context.getResources().getResourceName(stringRes) + " (conversion: '" + e.getConversion() + "'), using fallback", e);
+            
+            // Get the raw string to use as fallback
+            String rawString = context.getString(stringRes);
+            
+            // Create a simple fallback by concatenating the raw string with arguments
+            StringBuilder fallback = new StringBuilder(rawString);
+            if (formatArgs.length > 0) {
+                fallback.append(" (");
+                for (int i = 0; i < formatArgs.length; i++) {
+                    if (i > 0) fallback.append(", ");
+                    fallback.append(formatArgs[i]);
+                }
+                fallback.append(")");
+            }
+            
+            return fallback.toString();
         } catch (java.util.IllegalFormatException e) {
             Log.e(TAG, "SafeStringFormatter.safeGetString: String formatting error for resource " + 
                   context.getResources().getResourceName(stringRes) + ", using fallback", e);
@@ -64,6 +83,22 @@ public class SafeStringFormatter {
     public static String safeFormat(String format, Object... args) {
         try {
             return String.format(format, args);
+        } catch (java.util.UnknownFormatConversionException e) {
+            Log.e(TAG, "SafeStringFormatter.safeFormat: Unknown format conversion in format '" + 
+                  format + "' (conversion: '" + e.getConversion() + "'), using fallback", e);
+            
+            // Create a simple fallback by concatenating format with arguments
+            StringBuilder fallback = new StringBuilder(format);
+            if (args.length > 0) {
+                fallback.append(" (");
+                for (int i = 0; i < args.length; i++) {
+                    if (i > 0) fallback.append(", ");
+                    fallback.append(args[i]);
+                }
+                fallback.append(")");
+            }
+            
+            return fallback.toString();
         } catch (java.util.IllegalFormatException e) {
             Log.e(TAG, "SafeStringFormatter.safeFormat: String formatting error for format '" + 
                   format + "', using fallback", e);
