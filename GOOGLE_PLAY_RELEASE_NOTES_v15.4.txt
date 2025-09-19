@@ -1,4 +1,5 @@
 <en-GB>
 🎮 Fix SafeStringFormatter to handle UnknownFormatConversionException crashes
-🔔 Fix ANR caused by recursive UnknownFormatConversionException in SafeStringFormatter
+🎮 Fix ANR caused by recursive UnknownFormatConversionException in SafeStringFormatter
+🎮 Fix language selection for newly added languages by adding missing UI strings
 </en-GB>
