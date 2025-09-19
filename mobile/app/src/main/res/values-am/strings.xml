@@ -26,6 +26,12 @@
     <string name="language_swahili">ስዋሂሊ</string>
     <string name="language_urdu">ኡርዱ</string>
     
+    <!-- Critical interface strings -->
+    <string name="menu_Settings">ቅንብሮች</string>
+    <string name="title_activity_settings">ቅንብሮች</string>
+    <string name="welcome_to_soccer">እንኳን ወደ ሳከር በደህና መጡ!</string>
+    <string name="hello_nickname">ሰላም፣ %1$s!</string>
+    
     <!-- Basic interface -->
     <string name="settings">ቅንብሮች</string>
     <string name="cancel">ይሰርዝ</string>

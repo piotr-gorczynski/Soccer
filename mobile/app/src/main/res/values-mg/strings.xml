@@ -26,6 +26,12 @@
     <string name="language_swahili">Swahili</string>
     <string name="language_urdu">Urdu</string>
     
+    <!-- Critical interface strings -->
+    <string name="menu_Settings">Fandrindrana</string>
+    <string name="title_activity_settings">Fandrindrana</string>
+    <string name="welcome_to_soccer">Tongasoa eto amin`ny Soccer!</string>
+    <string name="hello_nickname">Salama %1$s!</string>
+    
     <!-- Basic interface -->
     <string name="settings">Fandrindrana</string>
     <string name="cancel">Foana</string>

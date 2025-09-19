@@ -26,6 +26,12 @@
     <string name="language_swahili">ස්වහිලි</string>
     <string name="language_urdu">උර්දු</string>
     
+    <!-- Critical interface strings -->
+    <string name="menu_Settings">සැකසුම්</string>
+    <string name="title_activity_settings">සැකසුම්</string>
+    <string name="welcome_to_soccer">Soccer වෙත සාදරයෙන් පිළිගනිමු!</string>
+    <string name="hello_nickname">ආයුබෝවන් %1$s!</string>
+    
     <!-- Basic interface -->
     <string name="settings">සැකසුම්</string>
     <string name="cancel">අවලංගු කරන්න</string>
