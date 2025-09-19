@@ -37,6 +37,36 @@
     <string name="cancel">لغو</string>
     <string name="confirm">تأیید</string>
     
+    <!-- Menu button strings -->
+    <string name="menu_YouvsAndroid">تمرین با اندروید</string>
+    <string name="menu_Player1vsPlayer2">دو بازیکن روی این دستگاه</string>
+    <string name="invite_a_friend">دعوت از دوست</string>
+    <string name="pending_invites">دعوت‌های در انتظار</string>
+    <string name="tournaments">تورنمنت‌ها</string>
+    <string name="ranking">رتبه‌بندی</string>
+    
+    <!-- Settings strings -->
+    <string name="pref_title_level">سطح اندروید</string>
+    <string name="pref_title_block_invite_friend">مسدود کردن درخواست‌های 'دعوت از دوست'</string>
+    <string name="pref_summary_block_invite_friend">بازیکنان دیگر نمی‌توانند از طریق 'دعوت از دوست' شما را دعوت کنند (بر تورنمنت‌ها تأثیر ندارد)</string>
+    <string name="pref_title_ads_consent">رضایت تبلیغات شخصی‌سازی شده</string>
+    <string name="pref_summary_ads_consent">رضایت خود را برای نمایش تبلیغات شخصی‌سازی شده بررسی یا تغییر دهید</string>
+    <string name="pref_title_language">زبان</string>
+    <string name="pref_summary_language">زبان مورد نظر خود را انتخاب کنید</string>
+    <string name="current_language">فعلی: %1$s</string>
+    <string name="pref_title_facebook">جامعه فیس‌بوک</string>
+    <string name="pref_summary_facebook">صفحه جامعه ما را در فیس‌بوک باز کنید</string>
+    
+    <!-- Level difficulty strings -->
+    <string-array name="pref_level_titles">
+        <item>آسان</item>
+        <item>متوسط</item>
+        <item>سخت</item>
+    </string-array>
+    
+    <!-- Basic interface strings -->
+    <string name="hello">سلام!</string>
+    
     <!-- Game ready notification strings -->
     <string name="game_ready_title">بازی برای %1$s آماده است!</string>
     <string name="game_ready_message">مسابقه شما آماده شروع است. برای پیوستن ضربه بزنید!</string>
