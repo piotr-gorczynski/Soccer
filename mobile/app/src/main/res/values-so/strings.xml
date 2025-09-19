@@ -37,6 +37,36 @@
     <string name="cancel">Ka noqo</string>
     <string name="confirm">Xaqiiji</string>
     
+    <!-- Menu button strings -->
+    <string name="menu_YouvsAndroid">Android la tababar</string>
+    <string name="menu_Player1vsPlayer2">Laba ciyaaryahan oo ku jira qalabkan</string>
+    <string name="invite_a_friend">Saaxiib casumo</string>
+    <string name="pending_invites">Casumooyin sugaya</string>
+    <string name="tournaments">Tartamada</string>
+    <string name="ranking">Kala daragga</string>
+    
+    <!-- Settings strings -->
+    <string name="pref_title_level">Heerka Android</string>
+    <string name="pref_title_block_invite_friend">Xidh codsiga 'Saaxiib casumo'</string>
+    <string name="pref_summary_block_invite_friend">Ciyaaryahanka kale kuma casumi karaan 'Saaxiib casumo' dhexdeeda (tartamada maan saameyn)</string>
+    <string name="pref_title_ads_consent">Ogolaanshaha xayeysiinta gaarka ah</string>
+    <string name="pref_summary_ads_consent">Dib u eeg ama bedel oggolaanshahaaga soo bandhigida xayeysiinta gaarka ah</string>
+    <string name="pref_title_language">Luqadda</string>
+    <string name="pref_summary_language">Dooro luqaddaada aan jecelnahay</string>
+    <string name="current_language">Hadda: %1$s</string>
+    <string name="pref_title_facebook">Bulshada Facebook</string>
+    <string name="pref_summary_facebook">Fur bogga bulshadeenna Facebook</string>
+    
+    <!-- Level difficulty strings -->
+    <string-array name="pref_level_titles">
+        <item>Sahlan</item>
+        <item>Dhexdhexaad</item>
+        <item>Adag</item>
+    </string-array>
+    
+    <!-- Basic interface strings -->
+    <string name="hello">Salaan!</string>
+    
     <!-- Game ready notification strings -->
     <string name="game_ready_title">Ciyaarta waa diyaar u tahay %1$s!</string>
     <string name="game_ready_message">Tartankaagu waa diyaar inuu bilaabo. Taabo si aad ugu biirto!</string>

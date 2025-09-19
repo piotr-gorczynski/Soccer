@@ -37,6 +37,36 @@
     <string name="cancel">ပယ်ဖျက်</string>
     <string name="confirm">အတည်ပြု</string>
     
+    <!-- Menu button strings -->
+    <string name="menu_YouvsAndroid">Android နှင့်လေ့ကျင့်ပါ</string>
+    <string name="menu_Player1vsPlayer2">ဤစက်တွင် ကစားသူနှစ်ယောက်</string>
+    <string name="invite_a_friend">သူငယ်ချင်းကိုဖိတ်ကြားပါ</string>
+    <string name="pending_invites">စောင့်ဆိုင်းနေသော ဖိတ်ကြားချက်များ</string>
+    <string name="tournaments">ပြိုင်ပွဲများ</string>
+    <string name="ranking">အဆင့်သတ်မှတ်ခြင်း</string>
+    
+    <!-- Settings strings -->
+    <string name="pref_title_level">Android အဆင့်</string>
+    <string name="pref_title_block_invite_friend">\'သူငယ်ချင်းကိုဖိတ်ကြားပါ\' တောင်းဆိုမှုများကို ပိတ်ဆို့ပါ</string>
+    <string name="pref_summary_block_invite_friend">အခြားကစားသူများမှ \'သူငယ်ချင်းကိုဖိတ်ကြားပါ\' မှတစ်ဆင့် သင့်ကိုဖိတ်ကြားမနိုင်ပါ (ပြိုင်ပွဲများအားလုံးထိခိုက်မည်မဟုတ်)</string>
+    <string name="pref_title_ads_consent">စိတ်ကြိုက်ကြော်ငြာများ သဘောတူခြင်း</string>
+    <string name="pref_summary_ads_consent">စိတ်ကြိုက်ကြော်ငြာများပြသခြင်းအတွက် သင်၏သဘောတူညီမှုကို ပြန်လည်သုံးသပ်ပါ သို့မဟုတ် ပြောင်းလဲပါ</string>
+    <string name="pref_title_language">ဘာသာစကား</string>
+    <string name="pref_summary_language">သင်နှစ်သက်သော ဘာသာစကားကို ရွေးချယ်ပါ</string>
+    <string name="current_language">လက်ရှိ: %1$s</string>
+    <string name="pref_title_facebook">Facebook အသိုင်းအဝိုင်း</string>
+    <string name="pref_summary_facebook">Facebook တွင် ကျွန်ုပ်တို့၏အသိုင်းအဝိုင်းစာမျက်နှာကို ဖွင့်ပါ</string>
+    
+    <!-- Level difficulty strings -->
+    <string-array name="pref_level_titles">
+        <item>လွယ်ကူ</item>
+        <item>အလယ်အလတ်</item>
+        <item>ခက်ခဲ</item>
+    </string-array>
+    
+    <!-- Basic interface strings -->
+    <string name="hello">မင်္ဂလာပါ!</string>
+    
     <!-- Game ready notification strings -->
     <string name="game_ready_title">%1$s အတွက် ဂိမ်းပြင်ဆင်ပြီးပါပြီ!</string>
     <string name="game_ready_message">သင်၏ပွဲစဉ် စတင်ရန်အသင့်ဖြစ်ပါပြီ။ ပါဝင်ရန်တို့ပါ!</string>

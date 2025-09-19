@@ -37,6 +37,36 @@
     <string name="cancel">បោះបង់</string>
     <string name="confirm">បញ្ជាក់</string>
     
+    <!-- Menu button strings -->
+    <string name="menu_YouvsAndroid">អនុវត្តជាមួយ Android</string>
+    <string name="menu_Player1vsPlayer2">អ្នកលេងពីរនាក់នៅលើឧបករណ៍នេះ</string>
+    <string name="invite_a_friend">អញ្ជើញមិត្តភ័ក្តិ</string>
+    <string name="pending_invites">ការអញ្ជើញកំពុងរង់ចាំ</string>
+    <string name="tournaments">ការប្រកួត</string>
+    <string name="ranking">ចំណាត់ថ្នាក់</string>
+    
+    <!-- Settings strings -->
+    <string name="pref_title_level">កម្រិត Android</string>
+    <string name="pref_title_block_invite_friend">រារាំងសំណើ \'អញ្ជើញមិត្តភ័ក្តិ\'</string>
+    <string name="pref_summary_block_invite_friend">អ្នកលេងផ្សេងទៀតមិនអាចអញ្ជើញអ្នកតាមរយៈ \'អញ្ជើញមិត្តភ័ក្តិ\' បានទេ (ការប្រកួតមិនមានបញ្ហាទេ)</string>
+    <string name="pref_title_ads_consent">ការយល់ព្រមការផ្សាយពាណិជ្ជកម្មផ្ទាល់ខ្លួន</string>
+    <string name="pref_summary_ads_consent">ពិនិត្យឬផ្លាស់ប្តូរការយល់ព្រមរបស់អ្នកសម្រាប់ការបង្ហាញការផ្សាយពាណិជ្ជកម្មផ្ទាល់ខ្លួន</string>
+    <string name="pref_title_language">ភាសា</string>
+    <string name="pref_summary_language">ជ្រើសរើសភាសាដែលអ្នកចូលចិត្ត</string>
+    <string name="current_language">បច្ចុប្បន្ន៖ %1$s</string>
+    <string name="pref_title_facebook">សហគមន៍ Facebook</string>
+    <string name="pref_summary_facebook">បើកទំព័រសហគមន៍របស់យើងនៅលើ Facebook</string>
+    
+    <!-- Level difficulty strings -->
+    <string-array name="pref_level_titles">
+        <item>ងាយស្រួល</item>
+        <item>មធ្យម</item>
+        <item>ពិបាក</item>
+    </string-array>
+    
+    <!-- Basic interface strings -->
+    <string name="hello">សួស្តី!</string>
+    
     <!-- Game ready notification strings -->
     <string name="game_ready_title">ល្បែងអាចលេងបានសម្រាប់ %1$s!</string>
     <string name="game_ready_message">ការប្រកួតរបស់អ្នកបានរួចរាល់ហើយ។ ចុចដើម្បីចូលរួម!</string>

@@ -37,6 +37,36 @@
     <string name="cancel">ይሰርዝ</string>
     <string name="confirm">ያረጋግጡ</string>
     
+    <!-- Menu button strings -->
+    <string name="menu_YouvsAndroid">ከአንድሮይድ ጋር ልምምድ</string>
+    <string name="menu_Player1vsPlayer2">በዚህ መሳሪያ ላይ ሁለት ተጫዋቾች</string>
+    <string name="invite_a_friend">ጓደኛ ጋብዝ</string>
+    <string name="pending_invites">ሽሪ ትዊታዎች</string>
+    <string name="tournaments">ውድድሮች</string>
+    <string name="ranking">ደረጃ አሰጣጥ</string>
+    
+    <!-- Settings strings -->
+    <string name="pref_title_level">የአንድሮይድ ደረጃ</string>
+    <string name="pref_title_block_invite_friend">\'ጓደኛ ጋብዝ\' ጥያቄዎችን ይዝጉ</string>
+    <string name="pref_summary_block_invite_friend">ሌሎች ተጫዋቾች በ\'ጓደኛ ጋብዝ\' በኩል ሊጋብዙዎት አይችሉም (ውድድሮች አልተጎዱም)</string>
+    <string name="pref_title_ads_consent">የግላዊ ማስታወቂያዎች ፈቃድ</string>
+    <string name="pref_summary_ads_consent">ለግላዊ ማስታወቂያዎች ማሳያ ያለዎትን ፈቃድ ይገምግሙ ወይም ይቀይሩ</string>
+    <string name="pref_title_language">ቋንቋ</string>
+    <string name="pref_summary_language">የእርስዎ ተመራጭ ቋንቋ ይምረጡ</string>
+    <string name="current_language">አሁን: %1$s</string>
+    <string name="pref_title_facebook">የፌስቡክ ማህበረሰብ</string>
+    <string name="pref_summary_facebook">የእኛን የማህበረሰብ ገጽ በፌስቡክ ይክፈቱ</string>
+    
+    <!-- Level difficulty strings -->
+    <string-array name="pref_level_titles">
+        <item>ቀላል</item>
+        <item>መካከለኛ</item>
+        <item>ከባድ</item>
+    </string-array>
+    
+    <!-- Basic interface strings -->
+    <string name="hello">ሰላም!</string>
+    
     <!-- Game ready notification strings -->
     <string name="game_ready_title">ለ%1$s ጨዋታ ዝግጁ ነው!</string>
     <string name="game_ready_message">ጨዋታዎ ለመጀመር ዝግጁ ነው። ለመቀላቀል ይንኩ!</string>

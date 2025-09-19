@@ -37,6 +37,36 @@
     <string name="cancel">إلغاء</string>
     <string name="confirm">تأكيد</string>
     
+    <!-- Menu button strings -->
+    <string name="menu_YouvsAndroid">تدرب مع الأندرويد</string>
+    <string name="menu_Player1vsPlayer2">لاعبان على هذا الجهاز</string>
+    <string name="invite_a_friend">ادعُ صديقاً</string>
+    <string name="pending_invites">الدعوات المعلقة</string>
+    <string name="tournaments">البطولات</string>
+    <string name="ranking">الترتيب</string>
+    
+    <!-- Settings strings -->
+    <string name="pref_title_level">مستوى الأندرويد</string>
+    <string name="pref_title_block_invite_friend">حظر طلبات \'ادعُ صديقاً\'</string>
+    <string name="pref_summary_block_invite_friend">لا يمكن للاعبين الآخرين دعوتك عبر \'ادعُ صديقاً\' (البطولات غير متأثرة)</string>
+    <string name="pref_title_ads_consent">موافقة الإعلانات المخصصة</string>
+    <string name="pref_summary_ads_consent">راجع أو غيّر موافقتك لعرض الإعلانات المخصصة</string>
+    <string name="pref_title_language">اللغة</string>
+    <string name="pref_summary_language">اختر لغتك المفضلة</string>
+    <string name="current_language">الحالية: %1$s</string>
+    <string name="pref_title_facebook">مجتمع فيسبوك</string>
+    <string name="pref_summary_facebook">افتح صفحة مجتمعنا على فيسبوك</string>
+    
+    <!-- Level difficulty strings -->
+    <string-array name="pref_level_titles">
+        <item>سهل</item>
+        <item>متوسط</item>
+        <item>صعب</item>
+    </string-array>
+    
+    <!-- Basic interface strings -->
+    <string name="hello">مرحباً!</string>
+    
     <!-- Game ready notification strings -->
     <string name="game_ready_title">اللعبة جاهزة لـ %1$s!</string>
     <string name="game_ready_message">مباراتك جاهزة للبدء. اضغط للانضمام!</string>
