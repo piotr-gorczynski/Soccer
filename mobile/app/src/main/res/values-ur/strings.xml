@@ -320,4 +320,8 @@
     <string name="game_ready_title">%1$s کے لیے کھیل تیار!</string>
     <string name="game_ready_message">آپ کا میچ شروع ہونے کے لیے تیار ہے۔ شامل ہونے کے لیے ٹیپ کریں!</string>
     <string name="join_game_action">گیم میں شامل ہوں</string>
+    
+    <!-- Release notes v15.4 -->
+    <string name="release_notes_v15_4_fix_safestring">🎮 SafeStringFormatter کو UnknownFormatConversionException crashes کو handle کرنے کے لیے ٹھیک کیا گیا</string>
+    <string name="release_notes_v15_4_fix_anr">🔔 SafeStringFormatter میں recursive UnknownFormatConversionException کی وجہ سے ہونے والا ANR ٹھیک کیا گیا</string>
 </resources>

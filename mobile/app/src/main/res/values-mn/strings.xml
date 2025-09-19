@@ -35,4 +35,8 @@
     <string name="game_ready_title">%1$s-д зориулсан тоглоом бэлэн!</string>
     <string name="game_ready_message">Таны тоглолт эхлэхэд бэлэн байна. Нэгдэхийн тулд товшино уу!</string>
     <string name="join_game_action">Тоглоомд нэгдэх</string>
+    
+    <!-- Release notes v15.4 -->
+    <string name="release_notes_v15_4_fix_safestring">🎮 SafeStringFormatter-ийг UnknownFormatConversionException алдаануудыг зохицуулахаар засварласан</string>
+    <string name="release_notes_v15_4_fix_anr">🔔 SafeStringFormatter дэх давтамж UnknownFormatConversionException-аас үүсэх ANR-г засварласан</string>
 </resources>

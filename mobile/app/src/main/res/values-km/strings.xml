@@ -35,4 +35,8 @@
     <string name="game_ready_title">ល្បែងអាចលេងបានសម្រាប់ %1$s!</string>
     <string name="game_ready_message">ការប្រកួតរបស់អ្នកបានរួចរាល់ហើយ។ ចុចដើម្បីចូលរួម!</string>
     <string name="join_game_action">ចូលរួមល្បែង</string>
+    
+    <!-- Release notes v15.4 -->
+    <string name="release_notes_v15_4_fix_safestring">🎮 កែតម្រូវ SafeStringFormatter ដើម្បីដោះស្រាយការគាំង UnknownFormatConversionException</string>
+    <string name="release_notes_v15_4_fix_anr">🔔 កែតម្រូវ ANR បណ្តាលមកពី UnknownFormatConversionException បន្តបន្ទាប់នៅក្នុង SafeStringFormatter</string>
 </resources>

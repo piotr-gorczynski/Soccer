@@ -35,4 +35,8 @@
     <string name="game_ready_title">بازی برای %1$s آماده است!</string>
     <string name="game_ready_message">مسابقه شما آماده شروع است. برای پیوستن ضربه بزنید!</string>
     <string name="join_game_action">پیوستن به بازی</string>
+    
+    <!-- Release notes v15.4 -->
+    <string name="release_notes_v15_4_fix_safestring">🎮 رفع SafeStringFormatter برای مدیریت خرابی‌های UnknownFormatConversionException</string>
+    <string name="release_notes_v15_4_fix_anr">🔔 رفع ANR ناشی از UnknownFormatConversionException بازگشتی در SafeStringFormatter</string>
 </resources>

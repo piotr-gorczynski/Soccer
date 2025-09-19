@@ -35,4 +35,8 @@
     <string name="game_ready_title">%1$s සඳහා ක්‍රීඩාව සූදානම්!</string>
     <string name="game_ready_message">ඔබේ තරගය ආරම්භ කිරීමට සූදානම්. සම්බන්ධ වීමට ස්පර්ශ කරන්න!</string>
     <string name="join_game_action">ක්‍රීඩාවට සම්බන්ධ වන්න</string>
+    
+    <!-- Release notes v15.4 -->
+    <string name="release_notes_v15_4_fix_safestring">🎮 UnknownFormatConversionException crashes හැසිරවීමට SafeStringFormatter සකස් කරන ලදී</string>
+    <string name="release_notes_v15_4_fix_anr">🔔 SafeStringFormatter හි recursive UnknownFormatConversionException මගින් ඇති වූ ANR සකස් කරන ලදී</string>
 </resources>

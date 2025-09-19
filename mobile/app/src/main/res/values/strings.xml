@@ -317,4 +317,8 @@
     <string name="game_ready_title">Game Ready for %1$s!</string>
     <string name="game_ready_message">Your match is ready to begin. Tap to join!</string>
     <string name="join_game_action">Join Game</string>
+    
+    <!-- Release notes v15.4 -->
+    <string name="release_notes_v15_4_fix_safestring">🎮 Fix SafeStringFormatter to handle UnknownFormatConversionException crashes</string>
+    <string name="release_notes_v15_4_fix_anr">🔔 Fix ANR caused by recursive UnknownFormatConversionException in SafeStringFormatter</string>
 </resources>

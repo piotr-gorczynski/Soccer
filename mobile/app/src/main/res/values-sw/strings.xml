@@ -35,4 +35,8 @@
     <string name="game_ready_title">Mchezo Uko Tayari kwa %1$s!</string>
     <string name="game_ready_message">Mechi yako iko tayari kuanza. Gusa ili kujiunga!</string>
     <string name="join_game_action">Jiunge na Mchezo</string>
+    
+    <!-- Release notes v15.4 -->
+    <string name="release_notes_v15_4_fix_safestring">🎮 Kurekebisha SafeStringFormatter kushughulikia kuvunjika kwa UnknownFormatConversionException</string>
+    <string name="release_notes_v15_4_fix_anr">🔔 Kurekebisha ANR iliyosababishwa na UnknownFormatConversionException ya mzunguko katika SafeStringFormatter</string>
 </resources>

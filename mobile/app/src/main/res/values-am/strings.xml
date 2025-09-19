@@ -35,4 +35,8 @@
     <string name="game_ready_title">ለ%1$s ጨዋታ ዝግጁ ነው!</string>
     <string name="game_ready_message">ጨዋታዎ ለመጀመር ዝግጁ ነው። ለመቀላቀል ይንኩ!</string>
     <string name="join_game_action">ጨዋታ ተቀላቀል</string>
+    
+    <!-- Release notes v15.4 -->
+    <string name="release_notes_v15_4_fix_safestring">🎮 SafeStringFormatter ተስተካክሏል UnknownFormatConversionException crashes ለማስተናገድ</string>
+    <string name="release_notes_v15_4_fix_anr">🔔 በSafeStringFormatter ውስጥ በተደጋጋሚ UnknownFormatConversionException የተነሳ ANR ተስተካክሏል</string>
 </resources>

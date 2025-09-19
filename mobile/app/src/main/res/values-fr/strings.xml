@@ -322,4 +322,8 @@
     <string name="game_ready_title">Jeu Prêt pour %1$s !</string>
     <string name="game_ready_message">Votre match est prêt à commencer. Appuyez pour rejoindre !</string>
     <string name="join_game_action">Rejoindre le Jeu</string>
+    
+    <!-- Release notes v15.4 -->
+    <string name="release_notes_v15_4_fix_safestring">🎮 Correction de SafeStringFormatter pour gérer les crashes UnknownFormatConversionException</string>
+    <string name="release_notes_v15_4_fix_anr">🔔 Correction ANR causé par UnknownFormatConversionException récursive dans SafeStringFormatter</string>
 </resources>

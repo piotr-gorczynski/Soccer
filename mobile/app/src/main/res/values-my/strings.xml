@@ -35,4 +35,8 @@
     <string name="game_ready_title">%1$s အတွက် ဂိမ်းပြင်ဆင်ပြီးပါပြီ!</string>
     <string name="game_ready_message">သင်၏ပွဲစဉ် စတင်ရန်အသင့်ဖြစ်ပါပြီ။ ပါဝင်ရန်တို့ပါ!</string>
     <string name="join_game_action">ဂိမ်းတွင်ပါဝင်ပါ</string>
+    
+    <!-- Release notes v15.4 -->
+    <string name="release_notes_v15_4_fix_safestring">🎮 SafeStringFormatter ကို UnknownFormatConversionException crashes များကိုင်တွယ်ရန် ပြင်ဆင်ခဲ့သည်</string>
+    <string name="release_notes_v15_4_fix_anr">🔔 SafeStringFormatter တွင် recursive UnknownFormatConversionException ကြောင့်ဖြစ်သော ANR ကို ပြင်ဆင်ခဲ့သည်</string>
 </resources>

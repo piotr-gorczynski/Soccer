@@ -321,4 +321,8 @@
     <string name="game_ready_title">Gra Gotowa dla %1$s!</string>
     <string name="game_ready_message">Twój mecz jest gotowy do rozpoczęcia. Dotknij, aby dołączyć!</string>
     <string name="join_game_action">Dołącz do Gry</string>
+    
+    <!-- Release notes v15.4 -->
+    <string name="release_notes_v15_4_fix_safestring">🎮 Naprawiono SafeStringFormatter aby obsługiwać awarie UnknownFormatConversionException</string>
+    <string name="release_notes_v15_4_fix_anr">🔔 Naprawiono ANR spowodowany rekurencyjnym UnknownFormatConversionException w SafeStringFormatter</string>
 </resources>

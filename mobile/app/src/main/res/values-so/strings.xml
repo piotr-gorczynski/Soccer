@@ -35,4 +35,8 @@
     <string name="game_ready_title">Ciyaarta waa diyaar u tahay %1$s!</string>
     <string name="game_ready_message">Tartankaagu waa diyaar inuu bilaabo. Taabo si aad ugu biirto!</string>
     <string name="join_game_action">Ku Biir Ciyaarta</string>
+    
+    <!-- Release notes v15.4 -->
+    <string name="release_notes_v15_4_fix_safestring">🎮 Waxaa la saxay SafeStringFormatter si uu u maareeyo burburka UnknownFormatConversionException</string>
+    <string name="release_notes_v15_4_fix_anr">🔔 Waxaa la saxay ANR ka dhashay UnknownFormatConversionException soo celceliya ah oo ku jira SafeStringFormatter</string>
 </resources>

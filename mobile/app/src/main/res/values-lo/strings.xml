@@ -35,4 +35,8 @@
     <string name="game_ready_title">ເກມພ້ອມສໍາລັບ %1$s!</string>
     <string name="game_ready_message">ເກມຂອງເຈົ້າພ້ອມທີ່ຈະເລີ່ມແລ້ວ. ກົດເພື່ອເຂົ້າຮ່ວມ!</string>
     <string name="join_game_action">ເຂົ້າຮ່ວມເກມ</string>
+    
+    <!-- Release notes v15.4 -->
+    <string name="release_notes_v15_4_fix_safestring">🎮 ແກ້ໄຂ SafeStringFormatter ເພື່ອຈັດການກັບການຫຍັງ UnknownFormatConversionException</string>
+    <string name="release_notes_v15_4_fix_anr">🔔 ແກ້ໄຂ ANR ທີ່ເກີດຈາກ UnknownFormatConversionException ແບບວນຊ້ຳໃນ SafeStringFormatter</string>
 </resources>

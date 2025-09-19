@@ -35,4 +35,8 @@
     <string name="game_ready_title">Lalao vonona ho an`ny %1$s!</string>
     <string name="game_ready_message">Ny lalao nataonao dia vonona hanomboka. Tsindrio hiditra!</string>
     <string name="join_game_action">Hiditra amin`ny Lalao</string>
+    
+    <!-- Release notes v15.4 -->
+    <string name="release_notes_v15_4_fix_safestring">🎮 Namboatra ny SafeStringFormatter mba hitantana ny fihapotehana UnknownFormatConversionException</string>
+    <string name="release_notes_v15_4_fix_anr">🔔 Namboatra ny ANR nateraky ny UnknownFormatConversionException miverimberina ao amin'ny SafeStringFormatter</string>
 </resources>
