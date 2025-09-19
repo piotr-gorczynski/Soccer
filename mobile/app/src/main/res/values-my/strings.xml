@@ -26,6 +26,12 @@
     <string name="language_swahili">ဆွာဟီလီ</string>
     <string name="language_urdu">အူရ်ဒူ</string>
     
+    <!-- Critical interface strings -->
+    <string name="menu_Settings">ဆက်တင်များ</string>
+    <string name="title_activity_settings">ဆက်တင်များ</string>
+    <string name="welcome_to_soccer">Soccer မှကြိုဆိုပါတယ်!</string>
+    <string name="hello_nickname">မင်္ဂလာပါ %1$s!</string>
+    
     <!-- Basic interface -->
     <string name="settings">ဆက်တင်များ</string>
     <string name="cancel">ပယ်ဖျက်</string>
