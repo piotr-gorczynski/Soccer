@@ -320,4 +320,11 @@
     <string name="game_ready_title">%1$s के लिए खेल तैयार!</string>
     <string name="game_ready_message">आपका मैच शुरू होने के लिए तैयार है। जुड़ने के लिए टैप करें!</string>
     <string name="join_game_action">गेम जॉइन करें</string>
+    
+    <!-- Preference level values -->
+    <string-array name="pref_level_values">
+        <item>1</item>
+        <item>10</item>
+        <item>30</item>
+    </string-array>
 </resources>

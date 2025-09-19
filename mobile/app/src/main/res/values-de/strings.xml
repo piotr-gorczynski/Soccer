@@ -321,4 +321,11 @@
     <string name="game_ready_title">Spiel Bereit für %1$s!</string>
     <string name="game_ready_message">Ihr Match ist bereit zu beginnen. Antippen zum Beitreten!</string>
     <string name="join_game_action">Spiel Beitreten</string>
+    
+    <!-- Preference level values -->
+    <string-array name="pref_level_values">
+        <item>1</item>
+        <item>10</item>
+        <item>30</item>
+    </string-array>
 </resources>
