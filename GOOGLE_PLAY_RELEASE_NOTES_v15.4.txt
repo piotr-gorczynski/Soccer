@@ -1,0 +1,4 @@
+<en-GB>
+🎮 Fix SafeStringFormatter to handle UnknownFormatConversionException crashes
+🔔 Fix ANR caused by recursive UnknownFormatConversionException in SafeStringFormatter
+</en-GB>
