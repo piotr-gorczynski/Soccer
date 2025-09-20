@@ -279,13 +279,13 @@
 
     <string name="could_not_cancel_invite">আমন্ত্রণ বাতিল করতে পারেনি: %1$s</string>
     <!-- Link Account functionality -->
-    <string name="link_to_registered_account">Link to registered account</string>
-    <string name="link_account_title">Link Anonymous Account</string>
-    <string name="link_account_description">Link your anonymous account with email, Google, or Facebook to secure your account and game history.</string>
-    <string name="link_account_success">Account linked successfully!</string>
-    <string name="link_account_failed">Failed to link account: %1$s</string>
-    <string name="link_account_in_progress">Linking account...</string>
-    <string name="account_already_exists_merge">An account with these credentials already exists. Your current data will be preserved and merged.</string>
+    <string name="link_to_registered_account">নিবন্ধিত অ্যাকাউন্টের সাথে লিঙ্ক করুন</string>
+    <string name="link_account_title">বেনামী অ্যাকাউন্ট লিঙ্ক করুন</string>
+    <string name="link_account_description">আপনার অ্যাকাউন্ট ও গেম ইতিহাস সুরক্ষিত রাখতে আপনার বেনামী অ্যাকাউন্টকে ইমেইল, Google বা Facebook-এর সাথে লিঙ্ক করুন।</string>
+    <string name="link_account_success">অ্যাকাউন্ট সফলভাবে লিঙ্ক হয়েছে!</string>
+    <string name="link_account_failed">অ্যাকাউন্ট লিঙ্ক করতে ব্যর্থ: %1$s</string>
+    <string name="link_account_in_progress">অ্যাকাউন্ট লিঙ্ক করা হচ্ছে...</string>
+    <string name="account_already_exists_merge">এই প্রমাণপত্র দিয়ে একটি অ্যাকাউন্ট ইতিমধ্যে রয়েছে। আপনার বর্তমান ডেটা সংরক্ষিত থাকবে এবং একত্রিত করা হবে।</string>
     <string name="credential_already_associated">এই প্রমাণপত্রটি ইতিমধ্যে একটি ভিন্ন ব্যবহারকারী অ্যাকাউন্টের সাথে যুক্ত।</string>
     <string name="enter_email_and_password_to_link">আপনার বেনামী অ্যাকাউন্ট লিঙ্ক করতে আপনার ইমেইল এবং পাসওয়ার্ড প্রবেশ করান</string>
     <string name="link_with_email">ইমেইলের সাথে লিঙ্ক করুন</string>

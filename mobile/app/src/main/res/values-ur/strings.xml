@@ -279,13 +279,13 @@
 
     <string name="could_not_cancel_invite">دعوت نامہ منسوخ نہیں کرسکا: %1$s</string>
     <!-- Link Account functionality -->
-    <string name="link_to_registered_account">Link to registered account</string>
-    <string name="link_account_title">Link Anonymous Account</string>
-    <string name="link_account_description">Link your anonymous account with email, Google, or Facebook to secure your account and game history.</string>
-    <string name="link_account_success">Account linked successfully!</string>
-    <string name="link_account_failed">Failed to link account: %1$s</string>
-    <string name="link_account_in_progress">Linking account...</string>
-    <string name="account_already_exists_merge">An account with these credentials already exists. Your current data will be preserved and merged.</string>
+    <string name="link_to_registered_account">رجسٹرڈ اکاؤنٹ سے لنک کریں</string>
+    <string name="link_account_title">گمنام اکاؤنٹ لنک کریں</string>
+    <string name="link_account_description">اپنے اکاؤنٹ اور گیم کی تاریخ کو محفوظ بنانے کے لیے اپنے گمنام اکاؤنٹ کو ای میل، Google یا Facebook کے ساتھ لنک کریں۔</string>
+    <string name="link_account_success">اکاؤنٹ کامیابی سے لنک ہو گیا!</string>
+    <string name="link_account_failed">اکاؤنٹ لنک کرنے میں ناکام: %1$s</string>
+    <string name="link_account_in_progress">اکاؤنٹ لنک کیا جا رہا ہے...</string>
+    <string name="account_already_exists_merge">ان اسناد کے ساتھ ایک اکاؤنٹ پہلے ہی موجود ہے۔ آپ کا موجودہ ڈیٹا محفوظ رہے گا اور ضم کر دیا جائے گا۔</string>
     <string name="credential_already_associated">یہ اسناد پہلے سے ہی کسی اور صارف اکاؤنٹ کے ساتھ منسلک ہے۔</string>
     <string name="enter_email_and_password_to_link">اپنا گمنام اکاؤنٹ منسلک کرنے کے لیے اپنا ای میل اور پاس ورڈ درج کریں</string>
     <string name="link_with_email">ای میل کے ساتھ منسلک کریں</string>
