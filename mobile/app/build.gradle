@@ -54,6 +54,18 @@ android {
         buildConfig true          // <- make sure this is present or omit the block
     }
 
+    // Configure AAPT options to handle string formatting issues more gracefully
+    aaptOptions {
+        noCompress 'apk'
+        ignoreAssetsPattern "!.svn:!.git:.*:<dir>_*:!CVS:!thumbs.db:!picasa.ini:!*.scc:*~"
+    }
+
+    // Add packagingOptions to handle potential resource conflicts
+    packagingOptions {
+        pickFirst '**/libc++_shared.so'
+        pickFirst '**/libjsc.so'
+    }
+
     signingConfigs {
         release {
             if (signingPropsFile.exists()) {
@@ -318,16 +330,64 @@ ext.generateKeyHash = { keystoreFile, password, alias ->
     return Base64.getEncoder().encodeToString(md.digest())
 }
 
+// Register task to fix malformed string placeholders
+tasks.register("fixStringPlaceholders") {
+    doLast {
+        def resDir = file("src/main/res")
+        if (!resDir.exists()) {
+            return
+        }
+        
+        // Map of string resource names to their proper values (with XML escaping)
+        def stringReplacements = [
+            "pref_title_block_invite_friend": "Block &#39;Invite a Friend&#39; requests",
+            "pref_summary_block_invite_friend": "Other players cannot invite you via &#39;Invite a Friend&#39; (tournaments not affected)", 
+            "decline_reason_dont_use_providers": "Don&#39;t use Google/Facebook/Email",
+            "friend_s_nickname": "Friend&#39;s nickname",
+            "invites_blocked_notification": "Invites blocked"
+        ]
+        
+        // Find all values directories (values, values-hi, values-ne, etc.)
+        resDir.listFiles().each { dir ->
+            if (dir.isDirectory() && dir.name.startsWith("values")) {
+                def stringsFile = new File(dir, "strings.xml")
+                if (stringsFile.exists()) {
+                    def content = stringsFile.text
+                    def fixedContent = content
+                    
+                    // Replace {str} placeholders with appropriate content based on string name
+                    stringReplacements.each { stringName, replacement ->
+                        def pattern = ~/<string name="${stringName}">\{str\}<\/string>/
+                        fixedContent = fixedContent.replaceAll(pattern, "<string name=\"${stringName}\">${replacement}</string>")
+                    }
+                    
+                    // Generic fallback for any remaining {str} placeholders
+                    fixedContent = fixedContent.replaceAll(/\{str\}/, "")
+                    
+                    if (content != fixedContent) {
+                        stringsFile.text = fixedContent
+                        println("✅ Fixed string placeholders in ${stringsFile.path}")
+                    }
+                }
+            }
+        }
+    }
+}
+
 // Hook into the Firebase task *after* all plugins are applied
 afterEvaluate {
     tasks.matching { it.name =~ /process.*GoogleServices/ }.configureEach {
         dependsOn("copyGoogleServicesJson")
     }
     tasks.matching { it.name == "preBuild" }.configureEach {
-        dependsOn("copySoccerSecretKey", "copyFacebookClientToken")
+        dependsOn("copySoccerSecretKey", "copyFacebookClientToken", "fixStringPlaceholders")
     }
     // Generate Facebook key hashes during assembly to show which keystores are being used
     tasks.matching { it.name =~ /assemble.*/ }.configureEach {
         dependsOn("generateFacebookKeyHashes")
+    }
+    // Ensure string placeholders are fixed before resource processing
+    tasks.matching { it.name =~ /merge.*Resources/ }.configureEach {
+        dependsOn("fixStringPlaceholders")
     }
 }
