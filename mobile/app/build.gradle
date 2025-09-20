@@ -8,8 +8,6 @@ import java.nio.file.StandardCopyOption
 import java.security.MessageDigest
 import java.security.KeyStore
 import java.security.cert.Certificate
-import java.util.regex.Matcher
-import java.util.regex.Pattern
 
 // Determine the environment based on -Penv or the build variant being run
 def detectEnvFromTasks = {
@@ -56,17 +54,9 @@ android {
         buildConfig true          // <- make sure this is present or omit the block
     }
 
-    // Configure AAPT options to handle string formatting issues more gracefully
-    aaptOptions {
-        noCompress 'apk'
-        ignoreAssetsPattern "!.svn:!.git:.*:<dir>_*:!CVS:!thumbs.db:!picasa.ini:!*.scc:*~"
-    }
 
-    // Add packagingOptions to handle potential resource conflicts
-    packagingOptions {
-        pickFirst '**/libc++_shared.so'
-        pickFirst '**/libjsc.so'
-    }
+
+
 
     signingConfigs {
         release {
@@ -332,82 +322,7 @@ ext.generateKeyHash = { keystoreFile, password, alias ->
     return Base64.getEncoder().encodeToString(md.digest())
 }
 
-// Register task to fix malformed string placeholders
-tasks.register("fixStringPlaceholders") {
-    doLast {
-        def resDir = file("src/main/res")
-        if (!resDir.exists()) {
-            return
-        }
 
-        // Load canonical values from the default strings.xml so we can fall back to them
-        def baseStrings = [:]
-        def baseStringsFile = new File(resDir, "values/strings.xml")
-        if (baseStringsFile.exists()) {
-            def parser = new groovy.util.XmlSlurper(false, false)
-            def baseXml = parser.parse(baseStringsFile)
-            baseXml.string.each { node ->
-                def nameAttr = node.@name?.text()
-                if (nameAttr) {
-                    baseStrings[nameAttr] = node.text()
-                }
-            }
-        }
-
-        // Additional manual fallbacks in case a string is missing from the base file
-        def manualFallbacks = [
-            "pref_title_block_invite_friend": "Block 'Invite a Friend' requests",
-            "pref_summary_block_invite_friend": "Other players cannot invite you via 'Invite a Friend' (tournaments not affected)",
-            "decline_reason_dont_use_providers": "Don't use Google/Facebook/Email",
-            "friend_s_nickname": "Friend's nickname",
-            "invites_blocked_notification": "Invites blocked",
-            "you_can_t_invite_yourself": "You can't invite yourself."
-        ]
-
-        manualFallbacks.each { key, value ->
-            baseStrings.putIfAbsent(key, value)
-        }
-
-        // Find all values directories (values, values-hi, values-ne, etc.)
-        resDir.listFiles().each { dir ->
-            if (dir.isDirectory() && dir.name.startsWith("values")) {
-                def stringsFile = new File(dir, "strings.xml")
-                if (stringsFile.exists()) {
-                    def content = stringsFile.getText("UTF-8")
-                    def fixedContent = content
-                    def updated = false
-
-                    baseStrings.each { stringName, fallbackValue ->
-                        def escapedFallback = groovy.xml.XmlUtil.escapeXml(fallbackValue ?: "")
-                        def pattern = Pattern.compile("(?s)(<string[^>]*name=\\\"${Pattern.quote(stringName)}\\\"[^>]*>\\s*)\\{str\\}(\\s*</string>)")
-                        def matcher = pattern.matcher(fixedContent)
-                        if (matcher.find()) {
-                            updated = true
-                            def buffer = new StringBuffer()
-                            matcher.reset()
-                            while (matcher.find()) {
-                                def replacement = matcher.group(1) + escapedFallback + matcher.group(2)
-                                matcher.appendReplacement(buffer, Matcher.quoteReplacement(replacement))
-                            }
-                            matcher.appendTail(buffer)
-                            fixedContent = buffer.toString()
-                        }
-                    }
-
-                    if (fixedContent.contains("{str}")) {
-                        updated = true
-                        fixedContent = fixedContent.replace("{str}", "")
-                    }
-
-                    if (content != fixedContent && updated) {
-                        stringsFile.write(fixedContent, "UTF-8")
-                        println("✅ Fixed string placeholders in ${stringsFile.path}")
-                    }
-                }
-            }
-        }
-    }
-}
 
 // Hook into the Firebase task *after* all plugins are applied
 afterEvaluate {
@@ -415,14 +330,11 @@ afterEvaluate {
         dependsOn("copyGoogleServicesJson")
     }
     tasks.matching { it.name == "preBuild" }.configureEach {
-        dependsOn("copySoccerSecretKey", "copyFacebookClientToken", "fixStringPlaceholders")
+        dependsOn("copySoccerSecretKey", "copyFacebookClientToken")
     }
     // Generate Facebook key hashes during assembly to show which keystores are being used
     tasks.matching { it.name =~ /assemble.*/ }.configureEach {
         dependsOn("generateFacebookKeyHashes")
     }
-    // Ensure string placeholders are fixed before resource processing
-    tasks.matching { it.name =~ /merge.*Resources/ }.configureEach {
-        dependsOn("fixStringPlaceholders")
-    }
+
 }
