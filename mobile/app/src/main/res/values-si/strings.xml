@@ -47,8 +47,8 @@
     
     <!-- Settings strings -->
     <string name="pref_title_level">Android මට්ටම</string>
-    <string name="pref_title_block_invite_friend">&apos;මිතුරෙකු ආරාධනා කරන්න&apos; ඉල්ලීම් අවහිර කරන්න</string>
-    <string name="pref_summary_block_invite_friend">අනෙකුත් ක්‍රීඩකයින්ට &apos;මිතුරෙකු ආරාධනා කරන්න&apos; හරහා ඔබට ආරාධනා කළ නොහැක (තරඟාවලිවලට බලපාන්නේ නැත)</string>
+    <string name="pref_title_block_invite_friend">`මිතුරෙකු ආරාධනා කරන්න` ඉල්ලීම් අවහිර කරන්න</string>
+    <string name="pref_summary_block_invite_friend">අනෙකුත් ක්‍රීඩකයින්ට `මිතුරෙකු ආරාධනා කරන්න` හරහා ඔබට ආරාධනා කළ නොහැක (තරඟාවලිවලට බලපාන්නේ නැත)</string>
     <string name="pref_title_ads_consent">පුද්ගලික දැන්වීම් කැමැත්ත</string>
     <string name="pref_summary_ads_consent">පුද්ගලික දැන්වීම් පෙන්වීම සඳහා ඔබේ කැමැත්ත සමාලෝචනය කරන්න හෝ වෙනස් කරන්න</string>
     <string name="pref_title_language">භාෂාව</string>
@@ -114,7 +114,7 @@
     <string name="load_more">තවත් පූරණය කරන්න</string>
     <string name="add_friend_label">එක් කරන්න</string>
     <string name="invite_blocked">%1$s ආරාධනා අවහිර කර ඇත.</string>
-    <string name="invites_blocked_notification">වෙනත් ක්‍රීඩකයින්ට \&apos;මිතුරෙකු ආරාධනා කරන්න\&apos; ක්‍රියාවලිය හරහා ඔබට ආරාධනා කිරීමට නොහැක. ඔබට එය සැකසුම් තුළ වෙනස් කළ හැක.</string>
+    <string name="invites_blocked_notification">වෙනත් ක්‍රීඩකයින්ට \`මිතුරෙකු ආරාධනා කරන්න\` ක්‍රියාවලිය හරහා ඔබට ආරාධනා කිරීමට නොහැක. ඔබට එය සැකසුම් තුළ වෙනස් කළ හැක.</string>
     <string name="pending_game_invitations">අපේක්ෂිත ක්‍රීඩා ආරාධනා</string>
     <string name="no_pending_invites">අපේක්ෂිත ආරාධනා නොමැත.</string>
     <string name="invite_already_sent">ඔබට දැනටමත් වෙනත් ආරාධනයක් අපේක්ෂිතව ඇත.</string>

@@ -47,8 +47,8 @@
     
     <!-- Settings strings -->
     <string name="pref_title_level">កម្រិត Android</string>
-    <string name="pref_title_block_invite_friend">រារាំងសំណើ \&apos;អញ្ជើញមិត្តភ័ក្តិ\&apos;</string>
-    <string name="pref_summary_block_invite_friend">អ្នកលេងផ្សេងទៀតមិនអាចអញ្ជើញអ្នកតាមរយៈ \&apos;អញ្ជើញមិត្តភ័ក្តិ\&apos; បានទេ (ការប្រកួតមិនមានបញ្ហាទេ)</string>
+    <string name="pref_title_block_invite_friend">រារាំងសំណើ \`អញ្ជើញមិត្តភ័ក្តិ\`</string>
+    <string name="pref_summary_block_invite_friend">អ្នកលេងផ្សេងទៀតមិនអាចអញ្ជើញអ្នកតាមរយៈ \`អញ្ជើញមិត្តភ័ក្តិ\` បានទេ (ការប្រកួតមិនមានបញ្ហាទេ)</string>
     <string name="pref_title_ads_consent">ការយល់ព្រមការផ្សាយពាណិជ្ជកម្មផ្ទាល់ខ្លួន</string>
     <string name="pref_summary_ads_consent">ពិនិត្យឬផ្លាស់ប្តូរការយល់ព្រមរបស់អ្នកសម្រាប់ការបង្ហាញការផ្សាយពាណិជ្ជកម្មផ្ទាល់ខ្លួន</string>
     <string name="pref_title_language">ភាសា</string>
@@ -114,7 +114,7 @@
     <string name="load_more">ផ្ទុកបន្ថែម</string>
     <string name="add_friend_label">បន្ថែម</string>
     <string name="invite_blocked">%1$s បានទប់ស្កាត់ការអញ្ជើញ។</string>
-    <string name="invites_blocked_notification">អ្នកលេងផ្សេងទៀតមិនអាចអញ្ជើញអ្នកតាមមុខងារ \&apos;អញ្ជើញមិត្តភក្តិ\&apos; បានទេ។ អ្នកអាចផ្លាស់ប្តូរវានៅក្នុងការកំណត់។</string>
+    <string name="invites_blocked_notification">អ្នកលេងផ្សេងទៀតមិនអាចអញ្ជើញអ្នកតាមមុខងារ \`អញ្ជើញមិត្តភក្តិ\` បានទេ។ អ្នកអាចផ្លាស់ប្តូរវានៅក្នុងការកំណត់។</string>
     <string name="pending_game_invitations">ការអញ្ជើញល្បែងកំពុងរង់ចាំ</string>
     <string name="no_pending_invites">មិនមានការអញ្ជើញកំពុងរង់ចាំទេ។</string>
     <string name="invite_already_sent">អ្នកមានការអញ្ជើញផ្សេងទៀតកំពុងរង់ចាំរួចហើយ។</string>

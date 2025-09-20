@@ -36,8 +36,8 @@
     <string name="tournaments">تورنمنت‌ها</string>
     <string name="ranking">رتبه‌بندی</string>
     <string name="pref_title_level">سطح اندروید</string>
-    <string name="pref_title_block_invite_friend">مسدود کردن درخواست‌های &#39;دعوت از دوست&#39;</string>
-    <string name="pref_summary_block_invite_friend">بازیکنان دیگر نمی‌توانند از طریق &#39;دعوت از دوست&#39; شما را دعوت کنند (بر تورنمنت‌ها تأثیر ندارد)</string>
+    <string name="pref_title_block_invite_friend">مسدود کردن درخواست‌های `دعوت از دوست`</string>
+    <string name="pref_summary_block_invite_friend">بازیکنان دیگر نمی‌توانند از طریق `دعوت از دوست` شما را دعوت کنند (بر تورنمنت‌ها تأثیر ندارد)</string>
     <string name="pref_title_ads_consent">رضایت تبلیغات شخصی‌سازی شده</string>
     <string name="pref_summary_ads_consent">رضایت خود را برای نمایش تبلیغات شخصی‌سازی شده بررسی یا تغییر دهید</string>
     <string name="pref_title_language">زبان</string>
