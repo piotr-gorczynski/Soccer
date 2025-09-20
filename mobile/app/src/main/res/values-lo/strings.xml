@@ -47,8 +47,8 @@
     
     <!-- Settings strings -->
     <string name="pref_title_level">ລະດັບ Android</string>
-    <string name="pref_title_block_invite_friend">ບລັອກຄໍາຮ້ອງຂໍ \&apos;ເຊີນເພື່ອນ\&apos;</string>
-    <string name="pref_summary_block_invite_friend">ຜູ້ຫຼິ້ນອື່ນໆບໍ່ສາມາດເຊີນເຈົ້າຜ່ານ \&apos;ເຊີນເພື່ອນ\&apos; ໄດ້ (ການແຂ່ງຂັນບໍ່ໄດ້ຮັບຜົນກະທົບ)</string>
+    <string name="pref_title_block_invite_friend">ບລັອກຄໍາຮ້ອງຂໍ \`ເຊີນເພື່ອນ\`</string>
+    <string name="pref_summary_block_invite_friend">ຜູ້ຫຼິ້ນອື່ນໆບໍ່ສາມາດເຊີນເຈົ້າຜ່ານ \`ເຊີນເພື່ອນ\` ໄດ້ (ການແຂ່ງຂັນບໍ່ໄດ້ຮັບຜົນກະທົບ)</string>
     <string name="pref_title_ads_consent">ການຍິນຍອມໂຄສະນາສ່ວນບຸກຄົນ</string>
     <string name="pref_summary_ads_consent">ທົບທວນ ຫຼື ປ່ຽນການຍິນຍອມຂອງເຈົ້າສໍາລັບການສະແດງໂຄສະນາສ່ວນບຸກຄົນ</string>
     <string name="pref_title_language">ພາສາ</string>

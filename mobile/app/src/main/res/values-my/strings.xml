@@ -47,8 +47,8 @@
     
     <!-- Settings strings -->
     <string name="pref_title_level">Android အဆင့်</string>
-    <string name="pref_title_block_invite_friend">\&apos;သူငယ်ချင်းကိုဖိတ်ကြားပါ\&apos; တောင်းဆိုမှုများကို ပိတ်ဆို့ပါ</string>
-    <string name="pref_summary_block_invite_friend">အခြားကစားသူများမှ \&apos;သူငယ်ချင်းကိုဖိတ်ကြားပါ\&apos; မှတစ်ဆင့် သင့်ကိုဖိတ်ကြားမနိုင်ပါ (ပြိုင်ပွဲများအားလုံးထိခိုက်မည်မဟုတ်)</string>
+    <string name="pref_title_block_invite_friend">\`သူငယ်ချင်းကိုဖိတ်ကြားပါ\` တောင်းဆိုမှုများကို ပိတ်ဆို့ပါ</string>
+    <string name="pref_summary_block_invite_friend">အခြားကစားသူများမှ \`သူငယ်ချင်းကိုဖိတ်ကြားပါ\` မှတစ်ဆင့် သင့်ကိုဖိတ်ကြားမနိုင်ပါ (ပြိုင်ပွဲများအားလုံးထိခိုက်မည်မဟုတ်)</string>
     <string name="pref_title_ads_consent">စိတ်ကြိုက်ကြော်ငြာများ သဘောတူခြင်း</string>
     <string name="pref_summary_ads_consent">စိတ်ကြိုက်ကြော်ငြာများပြသခြင်းအတွက် သင်၏သဘောတူညီမှုကို ပြန်လည်သုံးသပ်ပါ သို့မဟုတ် ပြောင်းလဲပါ</string>
     <string name="pref_title_language">ဘာသာစကား</string>
@@ -114,7 +114,7 @@
     <string name="load_more">နောက်ထပ်တင်ပါ</string>
     <string name="add_friend_label">ထည့်ပါ</string>
     <string name="invite_blocked">%1$s သည် ဖိတ်ကြားချက်များကို ပိတ်ဆို့ထားသည်။</string>
-    <string name="invites_blocked_notification">အခြားကစားသူများသည် \&apos;သူငယ်ချင်းကိုဖိတ်ကြားပါ\&apos; ဖန်ရှင်မှတစ်ဆင့် သင့်ကို ဖိတ်ခေါ်မနိုင်ပါ။ သင်သည် ဆက်တင်များတွင် ပြင်ဆင်နိုင်ပါသည်။</string>
+    <string name="invites_blocked_notification">အခြားကစားသူများသည် \`သူငယ်ချင်းကိုဖိတ်ကြားပါ\` ဖန်ရှင်မှတစ်ဆင့် သင့်ကို ဖိတ်ခေါ်မနိုင်ပါ။ သင်သည် ဆက်တင်များတွင် ပြင်ဆင်နိုင်ပါသည်။</string>
     <string name="pending_game_invitations">ဆိုင်းငံ့ထားသော ဂိမ်းဖိတ်ကြားချက်များ</string>
     <string name="no_pending_invites">ဆိုင်းငံ့ထားသော ဖိတ်ကြားချက်များ မရှိပါ။</string>
     <string name="invite_already_sent">သင့်တွင် ဆိုင်းငံ့နေသေးသော ဖိတ်ကြားချက်တစ်ခု ရှိပြီးသားဖြစ်သည်။</string>

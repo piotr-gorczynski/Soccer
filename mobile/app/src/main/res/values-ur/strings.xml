@@ -18,8 +18,8 @@
     
     <!-- Settings preferences -->
     <string name="pref_title_level">Android لیول</string>
-    <string name="pref_title_block_invite_friend">&#39;دوست کو دعوت دیں&#39; کی درخواستوں کو بلاک کریں</string>
-    <string name="pref_summary_block_invite_friend">دوسرے کھلاڑی آپ کو &#39;دوست کو دعوت دیں&#39; کے ذریعے دعوت نہیں دے سکتے (ٹورنامنٹ متاثر نہیں)</string>
+    <string name="pref_title_block_invite_friend">`دوست کو دعوت دیں` کی درخواستوں کو بلاک کریں</string>
+    <string name="pref_summary_block_invite_friend">دوسرے کھلاڑی آپ کو `دوست کو دعوت دیں` کے ذریعے دعوت نہیں دے سکتے (ٹورنامنٹ متاثر نہیں)</string>
     <string name="pref_title_ads_consent">ذاتی اشتہارات کی رضامندی</string>
     <string name="pref_summary_ads_consent">ذاتی اشتہارات دکھانے کے لیے اپنی رضامندی کا جائزہ لیں یا تبدیل کریں</string>
     
@@ -95,7 +95,7 @@
     <string name="load_more">مزید لوڈ کریں</string>
     <string name="add_friend_label">شامل کریں</string>
     <string name="invite_blocked">%1$s نے دعوتیں بلاک کر دی ہیں۔</string>
-    <string name="invites_blocked_notification">دوسرے کھلاڑی آپ کو &#39;دوست کو دعوت دیں&#39; فنکشن کے ذریعے دعوت نہیں دے سکتے۔ آپ اسے سیٹنگز میں تبدیل کر سکتے ہیں۔</string>
+    <string name="invites_blocked_notification">دوسرے کھلاڑی آپ کو `دوست کو دعوت دیں` فنکشن کے ذریعے دعوت نہیں دے سکتے۔ آپ اسے سیٹنگز میں تبدیل کر سکتے ہیں۔</string>
     
     <!-- Invitations strings -->
     <string name="pending_game_invitations">زیر التواء گیم دعوتیں</string>

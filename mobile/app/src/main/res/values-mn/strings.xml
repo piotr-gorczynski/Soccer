@@ -47,8 +47,8 @@
     
     <!-- Settings strings -->
     <string name="pref_title_level">Android түвшин</string>
-    <string name="pref_title_block_invite_friend">&apos;Найзыг урих&apos; хүсэлтийг блоклох</string>
-    <string name="pref_summary_block_invite_friend">Бусад тоглогчид танд &apos;Найзыг урих&apos;-аар урилга илгээх боломжгүй (тэмцээнд нөлөөлөхгүй)</string>
+    <string name="pref_title_block_invite_friend">`Найзыг урих` хүсэлтийг блоклох</string>
+    <string name="pref_summary_block_invite_friend">Бусад тоглогчид танд `Найзыг урих`-аар урилга илгээх боломжгүй (тэмцээнд нөлөөлөхгүй)</string>
     <string name="pref_title_ads_consent">Хувийн зар сурталчилгааны зөвшөөрөл</string>
     <string name="pref_summary_ads_consent">Хувийн зар сурталчилгаа харуулахад зориулсан өөрийн зөвшөөрлийг шалгах эсвэл өөрчлөх</string>
     <string name="pref_title_language">Хэл</string>
