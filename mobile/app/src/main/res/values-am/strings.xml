@@ -47,8 +47,8 @@
     
     <!-- Settings strings -->
     <string name="pref_title_level">የአንድሮይድ ደረጃ</string>
-    <string name="pref_title_block_invite_friend">'ጓደኛ ጋብዝ' ጥያቄዎችን ይዝጉ</string>
-    <string name="pref_summary_block_invite_friend">ሌሎች ተጫዋቾች በ'ጓደኛ ጋብዝ' በኩል ሊጋብዙዎት አይችሉም (ውድድሮች አልተጎዱም)</string>
+    <string name="pref_title_block_invite_friend">&#39;ጓደኛ ጋብዝ&#39; ጥያቄዎችን ይዝጉ</string>
+    <string name="pref_summary_block_invite_friend">ሌሎች ተጫዋቾች በ&#39;ጓደኛ ጋብዝ&#39; በኩል ሊጋብዙዎት አይችሉም (ውድድሮች አልተጎዱም)</string>
     <string name="pref_title_ads_consent">የግላዊ ማስታወቂያዎች ፈቃድ</string>
     <string name="pref_summary_ads_consent">ለግላዊ ማስታወቂያዎች ማሳያ ያለዎትን ፈቃድ ይገምግሙ ወይም ይቀይሩ</string>
     <string name="pref_title_language">ቋንቋ</string>
