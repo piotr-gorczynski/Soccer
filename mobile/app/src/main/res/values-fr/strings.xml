@@ -215,7 +215,7 @@
     
     <!-- Anonymous login warning -->
     <string name="anonymous_login_warning_title">Avertissement de connexion anonyme</string>
-    <string name="anonymous_login_warning_message">La connexion anonyme permet l\'accès à certaines fonctions, mais si vous perdez votre appareil, réinstallez l\'application, obtenez un nouveau téléphone ou vous déconnectez, le lien vers votre compte anonyme sera perdu et il ne sera pas possible de vous reconnecter au même compte anonyme. Voulez-vous continuer ?</string>
+    <string name="anonymous_login_warning_message">La connexion anonyme permet l&#39;accès à certaines fonctions, mais si vous perdez votre appareil, réinstallez l&#39;application, obtenez un nouveau téléphone ou vous déconnectez, le lien vers votre compte anonyme sera perdu et il ne sera pas possible de vous reconnecter au même compte anonyme. Voulez-vous continuer ?</string>
     <string name="proceed_anonymous_login">Continuer</string>
     <string name="enter_email_address">Veuillez saisir votre adresse e-mail</string>
     <string name="all_fields_required">Tous les champs sont requis</string>
@@ -283,7 +283,7 @@
     <!-- Link Account functionality -->
     <string name="link_to_registered_account">Lier au compte enregistre</string>
     <string name="link_account_title">Lier un Compte Anonyme</string>
-    <string name="link_account_description">Liez votre compte anonyme avec email, Google ou Facebook pour securiser votre compte et l\'historique des jeux.</string>
+    <string name="link_account_description">Liez votre compte anonyme avec email, Google ou Facebook pour securiser votre compte et l&#39;historique des jeux.</string>
     <string name="link_account_success">Compte lie avec succes!</string>
     <string name="link_account_failed">Echec de la liaison du compte: %1$s</string>
     <string name="link_account_in_progress">Liaison du compte...</string>
@@ -301,7 +301,7 @@
     <string name="decline_reason_offline">Je joue juste hors ligne</string>
     <string name="decline_reason_privacy">Préoccupations de confidentialité</string>
     <string name="decline_reason_complicated">Trop compliqué</string>
-    <string name="decline_reason_dont_use_providers">N\'utilise pas Google/Facebook/Email</string>
+    <string name="decline_reason_dont_use_providers">N&#39;utilise pas Google/Facebook/Email</string>
     <string name="decline_reason_other">Autre raison</string>
     
     <!-- Anonymous user prompts -->
@@ -313,9 +313,9 @@
     <!-- In-app messaging for v7/v8 users -->
     <string name="register_benefits_title">Rejoignez des tournois &amp; participez mondialement !</string>
     <string name="register_benefits_message">Inscrivez-vous pour sauvegarder votre classement et participer à des tournois avec des joueurs du monde entier.</string>
-    <string name="register_now">S\'inscrire maintenant</string>
+    <string name="register_now">S&#39;inscrire maintenant</string>
 
-    <string name="layout_initialization_error">L\'application a rencontré une erreur d\'affichage. Veuillez réessayer.</string>
+    <string name="layout_initialization_error">L&#39;application a rencontré une erreur d&#39;affichage. Veuillez réessayer.</string>
     <string name="retry">Réessayer</string>
     
     <!-- Game ready notification strings -->
