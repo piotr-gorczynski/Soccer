@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Soccer 2</string>
     <string name="select_language">زبان را انتخاب کنید</string>
@@ -274,4 +274,7 @@
     <string name="register_benefits_title">به تورنمنت‌ها بپیوندید و جهانی رقابت کنید!</string>
     <string name="register_benefits_message">ثبت‌نام کنید تا رتبه خود را حفظ کنید و در تورنمنت‌های بازیکنان سراسر جهان شرکت کنید.</string>
     <string name="register_now">همین حالا ثبت‌نام کنید</string>
+    <string name="facebook_app_id" translatable="false">1232966491486195</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb1232966491486195</string>
+    <string name="facebook_client_token" translatable="false">CLIENT_TOKEN_TO_BE_CONFIGURED</string>
 </resources>

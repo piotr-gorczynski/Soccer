@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Basic app strings in Lao -->
     <string name="app_name">Soccer 2</string>
     <string name="select_language">ເລືອກພາສາ</string>
-    
-    <!-- Language names in Lao -->
     <string name="language_amharic">ອາມຮາລິກ</string>
     <string name="language_arabic">ອາຣັບ</string>
     <string name="language_bengali">ເບັງກາລີ</string>
@@ -25,30 +22,22 @@
     <string name="language_spanish">ສະເປນ</string>
     <string name="language_swahili">ສະວາຮີລີ</string>
     <string name="language_urdu">ອູຣດູ</string>
-    
-    <!-- Critical interface strings -->
     <string name="menu_Settings">ການຕັ້ງຄ່າ</string>
     <string name="title_activity_settings">ການຕັ້ງຄ່າ</string>
     <string name="welcome_to_soccer">ຍິນດີຕ້ອນຮັບສູ່ Soccer!</string>
     <string name="hello_nickname">ສະບາຍດີ %1$s!</string>
-    
-    <!-- Basic interface -->
     <string name="settings">ການຕັ້ງຄ່າ</string>
     <string name="cancel">ຍົກເລີກ</string>
     <string name="confirm">ຢືນຢັນ</string>
-    
-    <!-- Menu button strings -->
     <string name="menu_YouvsAndroid">ຝຶກຊ້ອມກັບ Android</string>
     <string name="menu_Player1vsPlayer2">ຜູ້ຫຼິ້ນສອງຄົນໃນອຸປະກອນນີ້</string>
     <string name="invite_a_friend">ເຊີນເພື່ອນ</string>
     <string name="pending_invites">ການເຊີນທີ່ລໍຖ້າ</string>
     <string name="tournaments">ການແຂ່ງຂັນ</string>
     <string name="ranking">ການຈັດອັນດັບ</string>
-    
-    <!-- Settings strings -->
     <string name="pref_title_level">ລະດັບ Android</string>
-    <string name="pref_title_block_invite_friend">ບລັອກຄໍາຮ້ອງຂໍ \&apos;ເຊີນເພື່ອນ\&apos;</string>
-    <string name="pref_summary_block_invite_friend">ຜູ້ຫຼິ້ນອື່ນໆບໍ່ສາມາດເຊີນເຈົ້າຜ່ານ \&apos;ເຊີນເພື່ອນ\&apos; ໄດ້ (ການແຂ່ງຂັນບໍ່ໄດ້ຮັບຜົນກະທົບ)</string>
+    <string name="pref_title_block_invite_friend">ບລັອກຄໍາຮ້ອງຂໍ \'ເຊີນເພື່ອນ\'</string>
+    <string name="pref_summary_block_invite_friend">ຜູ້ຫຼິ້ນອື່ນໆບໍ່ສາມາດເຊີນເຈົ້າຜ່ານ \'ເຊີນເພື່ອນ\' ໄດ້ (ການແຂ່ງຂັນບໍ່ໄດ້ຮັບຜົນກະທົບ)</string>
     <string name="pref_title_ads_consent">ການຍິນຍອມໂຄສະນາສ່ວນບຸກຄົນ</string>
     <string name="pref_summary_ads_consent">ທົບທວນ ຫຼື ປ່ຽນການຍິນຍອມຂອງເຈົ້າສໍາລັບການສະແດງໂຄສະນາສ່ວນບຸກຄົນ</string>
     <string name="pref_title_language">ພາສາ</string>
@@ -56,23 +45,15 @@
     <string name="current_language">ປັດຈຸບັນ: %1$s</string>
     <string name="pref_title_facebook">ຊຸມຊົນ Facebook</string>
     <string name="pref_summary_facebook">ເປີດໜ້າຊຸມຊົນຂອງພວກເຮົາໃນ Facebook</string>
-    
-    <!-- Level difficulty strings -->
     <string-array name="pref_level_titles">
         <item>ງ່າຍ</item>
         <item>ປານກາງ</item>
         <item>ຍາກ</item>
     </string-array>
-    
-    <!-- Basic interface strings -->
     <string name="hello">ສະບາຍດີ!</string>
-    
-    <!-- Game ready notification strings -->
     <string name="game_ready_title">ເກມພ້ອມສໍາລັບ %1$s!</string>
     <string name="game_ready_message">ເກມຂອງເຈົ້າພ້ອມທີ່ຈະເລີ່ມແລ້ວ. ກົດເພື່ອເຂົ້າຮ່ວມ!</string>
     <string name="join_game_action">ເຂົ້າຮ່ວມເກມ</string>
-
-    <!-- Additional translations needed -->
     <string-array name="pref_level_values">
         <item>1</item>
         <item>10</item>
@@ -293,4 +274,7 @@
     <string name="register_benefits_title">ເຂົ້າຮ່ວມການແຂ່ງຂັນແລະແຂ່ງຂັນກັບທົ່ວໂລກ!</string>
     <string name="register_benefits_message">ລົງທະບຽນເພື່ອບັນທຶກອັນດັບຂອງທ່ານ ແລະຮ່ວມແຂ່ງກັບນັກຫຼິ້ນຈາກທົ່ວໂລກ.</string>
     <string name="register_now">ລົງທະບຽນດຽວນີ້</string>
+    <string name="facebook_app_id" translatable="false">1232966491486195</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb1232966491486195</string>
+    <string name="facebook_client_token" translatable="false">CLIENT_TOKEN_TO_BE_CONFIGURED</string>
 </resources>
