@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Basic app strings in Burmese -->
     <string name="app_name">Soccer 2</string>
     <string name="select_language">ဘာသာစကားရွေးချယ်ပါ</string>
+    
+    <!-- Language names in Burmese -->
     <string name="language_amharic">အမ်ဟာရစ်</string>
     <string name="language_arabic">အာရေဗီ</string>
     <string name="language_bengali">ဘင်္ဂါလီ</string>
@@ -22,22 +25,30 @@
     <string name="language_spanish">စပိန်</string>
     <string name="language_swahili">ဆွာဟီလီ</string>
     <string name="language_urdu">အူရ်ဒူ</string>
+    
+    <!-- Critical interface strings -->
     <string name="menu_Settings">ဆက်တင်များ</string>
     <string name="title_activity_settings">ဆက်တင်များ</string>
     <string name="welcome_to_soccer">Soccer မှကြိုဆိုပါတယ်!</string>
     <string name="hello_nickname">မင်္ဂလာပါ %1$s!</string>
+    
+    <!-- Basic interface -->
     <string name="settings">ဆက်တင်များ</string>
     <string name="cancel">ပယ်ဖျက်</string>
     <string name="confirm">အတည်ပြု</string>
+    
+    <!-- Menu button strings -->
     <string name="menu_YouvsAndroid">Android နှင့်လေ့ကျင့်ပါ</string>
     <string name="menu_Player1vsPlayer2">ဤစက်တွင် ကစားသူနှစ်ယောက်</string>
     <string name="invite_a_friend">သူငယ်ချင်းကိုဖိတ်ကြားပါ</string>
     <string name="pending_invites">စောင့်ဆိုင်းနေသော ဖိတ်ကြားချက်များ</string>
     <string name="tournaments">ပြိုင်ပွဲများ</string>
     <string name="ranking">အဆင့်သတ်မှတ်ခြင်း</string>
+    
+    <!-- Settings strings -->
     <string name="pref_title_level">Android အဆင့်</string>
-    <string name="pref_title_block_invite_friend">\'သူငယ်ချင်းကိုဖိတ်ကြားပါ\' တောင်းဆိုမှုများကို ပိတ်ဆို့ပါ</string>
-    <string name="pref_summary_block_invite_friend">အခြားကစားသူများမှ \'သူငယ်ချင်းကိုဖိတ်ကြားပါ\' မှတစ်ဆင့် သင့်ကိုဖိတ်ကြားမနိုင်ပါ (ပြိုင်ပွဲများအားလုံးထိခိုက်မည်မဟုတ်)</string>
+    <string name="pref_title_block_invite_friend">\&apos;သူငယ်ချင်းကိုဖိတ်ကြားပါ\&apos; တောင်းဆိုမှုများကို ပိတ်ဆို့ပါ</string>
+    <string name="pref_summary_block_invite_friend">အခြားကစားသူများမှ \&apos;သူငယ်ချင်းကိုဖိတ်ကြားပါ\&apos; မှတစ်ဆင့် သင့်ကိုဖိတ်ကြားမနိုင်ပါ (ပြိုင်ပွဲများအားလုံးထိခိုက်မည်မဟုတ်)</string>
     <string name="pref_title_ads_consent">စိတ်ကြိုက်ကြော်ငြာများ သဘောတူခြင်း</string>
     <string name="pref_summary_ads_consent">စိတ်ကြိုက်ကြော်ငြာများပြသခြင်းအတွက် သင်၏သဘောတူညီမှုကို ပြန်လည်သုံးသပ်ပါ သို့မဟုတ် ပြောင်းလဲပါ</string>
     <string name="pref_title_language">ဘာသာစကား</string>
@@ -45,15 +56,23 @@
     <string name="current_language">လက်ရှိ: %1$s</string>
     <string name="pref_title_facebook">Facebook အသိုင်းအဝိုင်း</string>
     <string name="pref_summary_facebook">Facebook တွင် ကျွန်ုပ်တို့၏အသိုင်းအဝိုင်းစာမျက်နှာကို ဖွင့်ပါ</string>
+    
+    <!-- Level difficulty strings -->
     <string-array name="pref_level_titles">
         <item>လွယ်ကူ</item>
         <item>အလယ်အလတ်</item>
         <item>ခက်ခဲ</item>
     </string-array>
+    
+    <!-- Basic interface strings -->
     <string name="hello">မင်္ဂလာပါ!</string>
+    
+    <!-- Game ready notification strings -->
     <string name="game_ready_title">%1$s အတွက် ဂိမ်းပြင်ဆင်ပြီးပါပြီ!</string>
     <string name="game_ready_message">သင်၏ပွဲစဉ် စတင်ရန်အသင့်ဖြစ်ပါပြီ။ ပါဝင်ရန် တို့ပါ!</string>
     <string name="join_game_action">ဂိမ်းတွင်ပါဝင်ပါ</string>
+
+    <!-- Additional translations needed -->
     <string-array name="pref_level_values">
         <item>1</item>
         <item>10</item>
@@ -95,7 +114,7 @@
     <string name="load_more">နောက်ထပ်တင်ပါ</string>
     <string name="add_friend_label">ထည့်ပါ</string>
     <string name="invite_blocked">%1$s သည် ဖိတ်ကြားချက်များကို ပိတ်ဆို့ထားသည်။</string>
-    <string name="invites_blocked_notification">အခြားကစားသူများသည် \'သူငယ်ချင်းကိုဖိတ်ကြားပါ\' ဖန်ရှင်မှတစ်ဆင့် သင့်ကို ဖိတ်ခေါ်မနိုင်ပါ။ သင်သည် ဆက်တင်များတွင် ပြင်ဆင်နိုင်ပါသည်။</string>
+    <string name="invites_blocked_notification">အခြားကစားသူများသည် \&apos;သူငယ်ချင်းကိုဖိတ်ကြားပါ\&apos; ဖန်ရှင်မှတစ်ဆင့် သင့်ကို ဖိတ်ခေါ်မနိုင်ပါ။ သင်သည် ဆက်တင်များတွင် ပြင်ဆင်နိုင်ပါသည်။</string>
     <string name="pending_game_invitations">ဆိုင်းငံ့ထားသော ဂိမ်းဖိတ်ကြားချက်များ</string>
     <string name="no_pending_invites">ဆိုင်းငံ့ထားသော ဖိတ်ကြားချက်များ မရှိပါ။</string>
     <string name="invite_already_sent">သင့်တွင် ဆိုင်းငံ့နေသေးသော ဖိတ်ကြားချက်တစ်ခု ရှိပြီးသားဖြစ်သည်။</string>
@@ -275,6 +294,6 @@
     <string name="register_benefits_message">သင့်အဆင့်သတ်မှတ်ချက်ကို သိမ်းဆည်းကာ ကမ္ဘာအနှံ့ရှိ ကစားသူများနှင့် ပြိုင်ပွဲများတွင် ပါဝင်ရန် စာရင်းသွင်းပါ။</string>
     <string name="register_now">အခုစာရင်းသွင်းပါ</string>
     <string name="facebook_app_id" translatable="false">1232966491486195</string>
-    <string name="fb_login_protocol_scheme" translatable="false">fb1232966491486195</string>
     <string name="facebook_client_token" translatable="false">CLIENT_TOKEN_TO_BE_CONFIGURED</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb1232966491486195</string>
 </resources>

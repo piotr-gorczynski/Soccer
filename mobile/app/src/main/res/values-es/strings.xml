@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="facebook_id_label">Facebook ID: %1$s</string>
+    <!-- Basic app strings in Spanish -->
     <string name="app_name">Soccer 2</string>
     <string name="menu_Settings">Configuración</string>
     <string name="title_activity_settings">Configuración</string>
+    
+    <!-- Settings strings -->
     <string name="pref_title_language">Idioma</string>
     <string name="pref_summary_language">Elige tu idioma preferido</string>
     <string name="current_language">Actual: %1$s</string>
     <string name="select_language">Seleccionar idioma</string>
+    
+    <!-- Language names in Spanish -->
     <string name="language_amharic">Amárico</string>
     <string name="language_arabic">Árabe</string>
     <string name="language_bengali">Bengalí</string>
@@ -28,18 +33,26 @@
     <string name="language_spanish">Español</string>
     <string name="language_swahili">Suajili</string>
     <string name="language_urdu">Urdu</string>
+    
+    <!-- Menu strings -->
     <string name="menu_YouvsAndroid">Práctica con Android</string>
     <string name="menu_Player1vsPlayer2">Dos jugadores en este dispositivo</string>
+    
+    <!-- Settings preferences -->
     <string name="pref_title_level">Nivel de Android</string>
     <string name="pref_title_block_invite_friend">Bloquear solicitudes de \'Invitar amigo\'</string>
     <string name="pref_summary_block_invite_friend">Otros jugadores no pueden invitarte a través de \'Invitar amigo\' (torneos no afectados)</string>
     <string name="pref_title_ads_consent">Consentimiento para anuncios personalizados</string>
     <string name="pref_summary_ads_consent">Revisar o cambiar tu consentimiento para mostrar anuncios personalizados</string>
+    
+    <!-- Level arrays -->
     <string-array name="pref_level_titles">
         <item>Fácil</item>
         <item>Medio</item>
         <item>Difícil</item>
     </string-array>
+    
+    <!-- Authentication strings -->
     <string name="register">Registrarse</string>
     <string name="confirm_password">Confirmar contraseña</string>
     <string name="email">Correo electrónico</string>
@@ -57,6 +70,8 @@
     <string name="reset_password_success">Si existe una cuenta con este correo, se ha enviado un email para restablecer la contraseña.</string>
     <string name="reset_password_failed">Error al enviar el email para restablecer la contraseña. Inténtalo de nuevo.</string>
     <string name="nickname">Apodo</string>
+    
+    <!-- Friends strings -->
     <string name="enter_nickname_to_invite">Ingresa el apodo a invitar:</string>
     <string name="enter_nickname_to_search">Ingresa el apodo a buscar:</string>
     <string name="friend_s_nickname">Apodo del amigo</string>
@@ -81,12 +96,16 @@
     <string name="add_friend_label">Agregar</string>
     <string name="invite_blocked">%1$s bloqueó invitaciones.</string>
     <string name="invites_blocked_notification">Otros jugadores no pueden invitarte a través de la función \'Invitar amigo\'. Puedes cambiarlo en Configuración.</string>
+    
+    <!-- Invitations strings -->
     <string name="pending_game_invitations">Invitaciones de juego pendientes</string>
     <string name="pending_invites">Invitaciones pendientes</string>
     <string name="no_pending_invites">No hay invitaciones pendientes.</string>
     <string name="invite_already_sent">Ya tienes otra invitación pendiente.</string>
     <string name="waiting_for_opponent_named">Esperando que %1$s acepte…</string>
     <string name="waiting_for_opponent">Esperando que el oponente acepte…</string>
+    
+    <!-- Tournament strings -->
     <string name="tournaments">Torneos</string>
     <string name="ranking">Clasificación</string>
     <string name="no_ranking_yet">No se han completado torneos para mostrar clasificación aún.</string>
@@ -106,6 +125,8 @@
     <string name="tournament_ended_short">Terminado</string>
     <string name="logout">Cerrar sesión</string>
     <string name="logged_out">Has cerrado sesión</string>
+    
+    <!-- Game strings -->
     <plurals name="wins_format">
         <item quantity="one">%d victoria</item>
         <item quantity="other">%d victorias</item>
@@ -126,16 +147,22 @@
     <string name="decline">Rechazar</string>
     <string name="match_completed_win">completado, ganaste 🏆</string>
     <string name="match_completed_lose">completado, perdiste 😞</string>
+    
+    <!-- Error strings -->
     <string name="regulation_not_found">Reglamento no encontrado.</string>
     <string name="regulation_load_error">Error al cargar el reglamento.</string>
     <string name="regulation_auth_required">Por favor inicia sesión para ver el reglamento.</string>
     <string name="server_unavailable">Servidor no disponible</string>
     <string name="server_unavailable_message">Lo sentimos, pero el servidor de Soccer no está disponible en este momento…</string>
+    
+    <!-- Account strings -->
     <string name="account">Cuenta</string>
     <string name="account_information">Información de la cuenta</string>
     <string name="nickname_label">Apodo: %1$s</string>
     <string name="email_label">Correo: %1$s</string>
     <string name="not_registered">No estás registrado en este torneo.</string>
+    
+    <!-- Login methods -->
     <string name="login_email">Iniciar sesión con correo</string>
     <string name="login_google">Iniciar sesión con Google</string>
     <string name="login_facebook">Iniciar sesión con Facebook</string>
@@ -147,6 +174,8 @@
     <string name="pref_summary_facebook">Abrir nuestra página de comunidad en Facebook</string>
     <string name="ads_consent_required">Mostrar anuncios ayuda a financiar el mantenimiento de la infraestructura. Siempre puedes verificar tu consentimiento en configuración.</string>
     <string name="no_internet_for_privacy_options">Se requiere conexión a Internet para abrir opciones de privacidad.</string>
+    
+    <!-- Account removal strings -->
     <string name="remove_account">Eliminar cuenta</string>
     <string name="remove_account_dialog_title">Eliminar cuenta</string>
     <string name="remove_account_dialog_message">¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no puede revertirse e incluso si te registras nuevamente, no tendrás acceso al historial de tus partidas y resultados.</string>
@@ -157,11 +186,17 @@
     <string name="reauth_title">Re-autenticar</string>
     <string name="reauth_message">Por favor ingresa tu contraseña para continuar.</string>
     <string name="reauth_failed">Re-autenticación falló. Por favor inténtalo de nuevo.</string>
+    
+    <!-- Anonymous logout warning strings -->
     <string name="anonymous_logout_warning_title">Advertencia de cierre de sesión</string>
     <string name="anonymous_logout_warning_message">¿Estás seguro de que quieres cerrar sesión? Para métodos anónimos esta acción no se puede revertir y aunque te registres de nuevo, no podrás acceder al historial de tus partidos y resultados.</string>
+    
+    <!-- Common strings -->
     <string name="settings">Configuración</string>
     <string name="cancel">Cancelar</string>
     <string name="confirm">Confirmar</string>
+
+    <!-- Field draw strings -->
     <string name="field_your_move">¡Tu turno!</string>
     <string name="field_move_tail">mueve ... ⏳ %1$s</string>
     <string name="field_hourglass_tail">⏳ %1$s</string>
@@ -174,6 +209,8 @@
     <string name="login_success">¡Inicie sesión exitosa!</string>
     <string name="login_failed">Error de inicio de sesion: %1$s</string>
     <string name="login_in_progress">Inicio de sesión en proceso, por favor espere...</string>
+    
+    <!-- Anonymous login warning -->
     <string name="anonymous_login_warning_title">Advertencia de inicio de sesión anónimo</string>
     <string name="anonymous_login_warning_message">El inicio de sesión anónimo permite acceso a ciertas funciones, pero si pierdes tu dispositivo, reinstalàs la aplicación, obtienes un teléfono nuevo o cierras sesión, se perderá el enlace a tu cuenta anónima y no será posible iniciar sesión en la misma cuenta anónima. ¿Quieres continuar?</string>
     <string name="proceed_anonymous_login">Continuar</string>
@@ -192,6 +229,7 @@
     <string name="nickname_taken">Apodo ya tomado - Elija otro</string>
     <string name="nickname_saved">Apodo guardado</string>
     <string name="nickname_save_failed">No se pudo salvar el apodo</string>
+
     <string name="game_launch_failed">El lanzamiento del juego falló.</string>
     <string name="app_launch_failed">Falló el lanzamiento de la aplicación. Por favor, inténtalo de nuevo.</string>
     <string name="please_log_in_to_continue">Inicie sesión para continuar.</string>
@@ -230,13 +268,18 @@
     <string name="winner_timeout">%1$s se quedó sin tiempo.</string>
     <string name="winner_abandon">%1$s perdió el juego.</string>
     <string name="winner_is">El ganador es %1$s!</string>
+
     <string name="could_not_accept_invite">No pude aceptar la invitación.</string>
     <string name="invite_was_cancelled">La invitación fue cancelada.</string>
     <string name="invite_no_longer_available">La invitación ya no está disponible.</string>
     <string name="invite_has_expired">La invitación ha expirado.</string>
+
     <string name="please_verify_email_before_login">Verifique su dirección de correo electrónico antes de iniciar sesión.</string>
     <string name="authentication_failed">La autenticación falló.</string>
+
     <string name="could_not_cancel_invite">No pudo cancelar la invitación: %1$s</string>
+
+    <!-- Link Account functionality -->
     <string name="link_to_registered_account">Vincular a cuenta registrada</string>
     <string name="link_account_title">Vincular Cuenta Anónima</string>
     <string name="link_account_description">Vincule su cuenta anónima con email, Google o Facebook para asegurar su cuenta e historial de juegos.</string>
@@ -250,6 +293,8 @@
     <string name="link_with_google">Vincular con Google</string>
     <string name="link_with_microsoft">Vincular con Microsoft</string>
     <string name="link_with_facebook">Vincular con Facebook</string>
+
+    <!-- Analytics and User Research Strings -->
     <string name="signup_decline_dialog_title">¿Jugar sin cuenta?</string>
     <string name="signup_decline_dialog_message">Ayúdanos a entender por qué prefieres no registrarte:</string>
     <string name="decline_reason_offline">Solo juego sin conexión</string>
@@ -257,24 +302,33 @@
     <string name="decline_reason_complicated">Muy complicado</string>
     <string name="decline_reason_dont_use_providers">No uso Google/Facebook/Email</string>
     <string name="decline_reason_other">Otra razón</string>
+    
+    <!-- Anonymous user prompts -->
     <string name="save_progress_title">Guarda tu progreso &amp; apodo</string>
     <string name="save_progress_message">¡Vincula tu cuenta para guardar tus estadísticas y unirte a torneos!</string>
     <string name="save_progress_button">Guardar progreso</string>
     <string name="maybe_later">Tal vez después</string>
+    
+    <!-- In-app messaging for v7/v8 users -->
     <string name="register_benefits_title">¡Únete a torneos &amp; compite globalmente!</string>
     <string name="register_benefits_message">Regístrate para guardar tu ranking y participar en torneos con jugadores de todo el mundo.</string>
     <string name="register_now">Registrarse ahora</string>
+
     <string name="layout_initialization_error">La aplicación encontró un error de visualización. Por favor, inténtalo de nuevo.</string>
     <string name="retry">Reintentar</string>
+    
+    <!-- Game ready notification strings -->
     <string name="game_ready_title">¡Juego Listo para %1$s!</string>
     <string name="game_ready_message">Tu partido está listo para comenzar. ¡Toca para unirte!</string>
     <string name="join_game_action">Unirse al Juego</string>
+    
+    <!-- Preference level values -->
     <string-array name="pref_level_values">
         <item>1</item>
         <item>10</item>
         <item>30</item>
     </string-array>
     <string name="facebook_app_id" translatable="false">1232966491486195</string>
-    <string name="fb_login_protocol_scheme" translatable="false">fb1232966491486195</string>
     <string name="facebook_client_token" translatable="false">CLIENT_TOKEN_TO_BE_CONFIGURED</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb1232966491486195</string>
 </resources>

@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Basic app strings in Khmer -->
     <string name="app_name">Soccer 2</string>
     <string name="select_language">ជ្រើសរើសភាសា</string>
+    
+    <!-- Language names in Khmer -->
     <string name="language_amharic">អាំហារិក</string>
     <string name="language_arabic">អារ៉ាប់</string>
     <string name="language_bengali">បង់ក្លាដែស</string>
@@ -22,22 +25,30 @@
     <string name="language_spanish">អេស្ប៉ាញ</string>
     <string name="language_swahili">ស្វាហ៊ីលី</string>
     <string name="language_urdu">អ៊ុយឌូ</string>
+    
+    <!-- Critical interface strings -->
     <string name="menu_Settings">ការកំណត់</string>
     <string name="title_activity_settings">ការកំណត់</string>
     <string name="welcome_to_soccer">សូមស្វាគមន៍មកកាន់ Soccer!</string>
     <string name="hello_nickname">សួស្តី %1$s!</string>
+    
+    <!-- Basic interface -->
     <string name="settings">ការកំណត់</string>
     <string name="cancel">បោះបង់</string>
     <string name="confirm">បញ្ជាក់</string>
+    
+    <!-- Menu button strings -->
     <string name="menu_YouvsAndroid">អនុវត្តជាមួយ Android</string>
     <string name="menu_Player1vsPlayer2">អ្នកលេងពីរនាក់នៅលើឧបករណ៍នេះ</string>
     <string name="invite_a_friend">អញ្ជើញមិត្តភ័ក្តិ</string>
     <string name="pending_invites">ការអញ្ជើញកំពុងរង់ចាំ</string>
     <string name="tournaments">ការប្រកួត</string>
     <string name="ranking">ចំណាត់ថ្នាក់</string>
+    
+    <!-- Settings strings -->
     <string name="pref_title_level">កម្រិត Android</string>
-    <string name="pref_title_block_invite_friend">រារាំងសំណើ \'អញ្ជើញមិត្តភ័ក្តិ\'</string>
-    <string name="pref_summary_block_invite_friend">អ្នកលេងផ្សេងទៀតមិនអាចអញ្ជើញអ្នកតាមរយៈ \'អញ្ជើញមិត្តភ័ក្តិ\' បានទេ (ការប្រកួតមិនមានបញ្ហាទេ)</string>
+    <string name="pref_title_block_invite_friend">រារាំងសំណើ \&apos;អញ្ជើញមិត្តភ័ក្តិ\&apos;</string>
+    <string name="pref_summary_block_invite_friend">អ្នកលេងផ្សេងទៀតមិនអាចអញ្ជើញអ្នកតាមរយៈ \&apos;អញ្ជើញមិត្តភ័ក្តិ\&apos; បានទេ (ការប្រកួតមិនមានបញ្ហាទេ)</string>
     <string name="pref_title_ads_consent">ការយល់ព្រមការផ្សាយពាណិជ្ជកម្មផ្ទាល់ខ្លួន</string>
     <string name="pref_summary_ads_consent">ពិនិត្យឬផ្លាស់ប្តូរការយល់ព្រមរបស់អ្នកសម្រាប់ការបង្ហាញការផ្សាយពាណិជ្ជកម្មផ្ទាល់ខ្លួន</string>
     <string name="pref_title_language">ភាសា</string>
@@ -45,15 +56,23 @@
     <string name="current_language">បច្ចុប្បន្ន៖ %1$s</string>
     <string name="pref_title_facebook">សហគមន៍ Facebook</string>
     <string name="pref_summary_facebook">បើកទំព័រសហគមន៍របស់យើងនៅលើ Facebook</string>
+    
+    <!-- Level difficulty strings -->
     <string-array name="pref_level_titles">
         <item>ងាយស្រួល</item>
         <item>មធ្យម</item>
         <item>ពិបាក</item>
     </string-array>
+    
+    <!-- Basic interface strings -->
     <string name="hello">សួស្តី!</string>
+    
+    <!-- Game ready notification strings -->
     <string name="game_ready_title">ល្បែងអាចលេងបានសម្រាប់ %1$s!</string>
     <string name="game_ready_message">ការប្រកួតរបស់អ្នកបានរួចរាល់ហើយ។ ចុចដើម្បីចូលរួម!</string>
     <string name="join_game_action">ចូលរួមល្បែង</string>
+
+    <!-- Additional translations needed -->
     <string-array name="pref_level_values">
         <item>1</item>
         <item>10</item>
@@ -95,7 +114,7 @@
     <string name="load_more">ផ្ទុកបន្ថែម</string>
     <string name="add_friend_label">បន្ថែម</string>
     <string name="invite_blocked">%1$s បានទប់ស្កាត់ការអញ្ជើញ។</string>
-    <string name="invites_blocked_notification">អ្នកលេងផ្សេងទៀតមិនអាចអញ្ជើញអ្នកតាមមុខងារ \'អញ្ជើញមិត្តភក្តិ\' បានទេ។ អ្នកអាចផ្លាស់ប្តូរវានៅក្នុងការកំណត់។</string>
+    <string name="invites_blocked_notification">អ្នកលេងផ្សេងទៀតមិនអាចអញ្ជើញអ្នកតាមមុខងារ \&apos;អញ្ជើញមិត្តភក្តិ\&apos; បានទេ។ អ្នកអាចផ្លាស់ប្តូរវានៅក្នុងការកំណត់។</string>
     <string name="pending_game_invitations">ការអញ្ជើញល្បែងកំពុងរង់ចាំ</string>
     <string name="no_pending_invites">មិនមានការអញ្ជើញកំពុងរង់ចាំទេ។</string>
     <string name="invite_already_sent">អ្នកមានការអញ្ជើញផ្សេងទៀតកំពុងរង់ចាំរួចហើយ។</string>
@@ -275,6 +294,6 @@
     <string name="register_benefits_message">ចុះឈ្មោះដើម្បីរក្សាទុកចំណាត់ថ្នាក់របស់អ្នក និងចូលរួមប្រកួតជាមួយអ្នកលេងទូទាំងពិភពលោក។</string>
     <string name="register_now">ចុះឈ្មោះឥឡូវនេះ</string>
     <string name="facebook_app_id" translatable="false">1232966491486195</string>
-    <string name="fb_login_protocol_scheme" translatable="false">fb1232966491486195</string>
     <string name="facebook_client_token" translatable="false">CLIENT_TOKEN_TO_BE_CONFIGURED</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb1232966491486195</string>
 </resources>

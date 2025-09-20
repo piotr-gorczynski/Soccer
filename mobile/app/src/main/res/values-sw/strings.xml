@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Basic app strings in Swahili -->
     <string name="app_name">Soccer 2</string>
     <string name="select_language">Chagua lugha</string>
+    
+    <!-- Language names in Swahili -->
     <string name="language_amharic">Kiamhara</string>
     <string name="language_arabic">Kiarabu</string>
     <string name="language_bengali">Kibengali</string>
@@ -22,22 +25,30 @@
     <string name="language_spanish">Kihispania</string>
     <string name="language_swahili">Kiswahili</string>
     <string name="language_urdu">Kiurdu</string>
+    
+    <!-- Critical interface strings -->
     <string name="menu_Settings">Mipangilio</string>
     <string name="title_activity_settings">Mipangilio</string>
     <string name="welcome_to_soccer">Karibu Soccer!</string>
     <string name="hello_nickname">Hujambo %1$s!</string>
+    
+    <!-- Basic interface -->
     <string name="settings">Mipangilio</string>
     <string name="cancel">Ghairi</string>
     <string name="confirm">Thibitisha</string>
+    
+    <!-- Menu button strings -->
     <string name="menu_YouvsAndroid">Mazoezi na Android</string>
     <string name="menu_Player1vsPlayer2">Wachezaji wawili kwenye kifaa hiki</string>
     <string name="invite_a_friend">Alika Rafiki</string>
     <string name="pending_invites">Mialiko Inayongoja</string>
     <string name="tournaments">Mashindano</string>
     <string name="ranking">Upangaji</string>
+    
+    <!-- Settings strings -->
     <string name="pref_title_level">Ngazi ya Android</string>
-    <string name="pref_title_block_invite_friend">Zuia ombi la 'Alika Rafiki'</string>
-    <string name="pref_summary_block_invite_friend">Wachezaji wengine hawawezi kukulika kupitia 'Alika Rafiki' (mashindano hayataathirika)</string>
+    <string name="pref_title_block_invite_friend">Zuia ombi la &apos;Alika Rafiki&apos;</string>
+    <string name="pref_summary_block_invite_friend">Wachezaji wengine hawawezi kukulika kupitia &apos;Alika Rafiki&apos; (mashindano hayataathirika)</string>
     <string name="pref_title_ads_consent">Idhini ya matangazo ya kibinafsi</string>
     <string name="pref_summary_ads_consent">Kagua au badilisha idhini yako ya kuonyesha matangazo ya kibinafsi</string>
     <string name="pref_title_language">Lugha</string>
@@ -45,15 +56,23 @@
     <string name="current_language">Ya sasa: %1$s</string>
     <string name="pref_title_facebook">Jumuiya ya Facebook</string>
     <string name="pref_summary_facebook">Fungua ukurasa wa jumuiya yetu kwenye Facebook</string>
+    
+    <!-- Level difficulty strings -->
     <string-array name="pref_level_titles">
         <item>Rahisi</item>
         <item>Wastani</item>
         <item>Ngumu</item>
     </string-array>
+    
+    <!-- Basic interface strings -->
     <string name="hello">Hujambo!</string>
+    
+    <!-- Game ready notification strings -->
     <string name="game_ready_title">Mchezo Uko Tayari kwa %1$s!</string>
     <string name="game_ready_message">Mechi yako iko tayari kuanza. Gusa ili kujiunga!</string>
     <string name="join_game_action">Jiunge na Mchezo</string>
+
+    <!-- Additional translations needed -->
     <string-array name="pref_level_values">
         <item>1</item>
         <item>10</item>
@@ -95,7 +114,7 @@
     <string name="load_more">Pakia zaidi</string>
     <string name="add_friend_label">Ongeza</string>
     <string name="invite_blocked">%1$s amezuia mialiko.</string>
-    <string name="invites_blocked_notification">Wachezaji wengine hawawezi kukualika kupitia kipengele cha 'Alika Rafiki'. Unaweza kubadilisha hili katika Mipangilio.</string>
+    <string name="invites_blocked_notification">Wachezaji wengine hawawezi kukualika kupitia kipengele cha &apos;Alika Rafiki&apos;. Unaweza kubadilisha hili katika Mipangilio.</string>
     <string name="pending_game_invitations">Mialiko ya Mchezo Inayosubiri</string>
     <string name="no_pending_invites">Hakuna mialiko inayosubiri.</string>
     <string name="invite_already_sent">Tayari una mwaliko mwingine unaosubiri.</string>
@@ -275,6 +294,6 @@
     <string name="register_benefits_message">Jisajili ili kuhifadhi msimamo wako na kushiriki katika mashindano na wachezaji duniani kote.</string>
     <string name="register_now">Jisajili Sasa</string>
     <string name="facebook_app_id" translatable="false">1232966491486195</string>
-    <string name="fb_login_protocol_scheme" translatable="false">fb1232966491486195</string>
     <string name="facebook_client_token" translatable="false">CLIENT_TOKEN_TO_BE_CONFIGURED</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb1232966491486195</string>
 </resources>

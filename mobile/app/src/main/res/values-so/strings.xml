@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Basic app strings in Somali -->
     <string name="app_name">Soccer 2</string>
     <string name="select_language">Luqadda dooro</string>
+
+    <!-- Language names in Somali -->
     <string name="language_amharic">Axmaarika</string>
     <string name="language_arabic">Carabi</string>
     <string name="language_bengali">Bengali</string>
@@ -22,22 +25,30 @@
     <string name="language_spanish">Isbaanish</string>
     <string name="language_swahili">Sawaaxili</string>
     <string name="language_urdu">Urduu</string>
+
+    <!-- Critical interface strings -->
     <string name="menu_Settings">Dejinta</string>
     <string name="title_activity_settings">Dejinta</string>
     <string name="welcome_to_soccer">Ku soo dhowow Soccer!</string>
     <string name="hello_nickname">Salaan %1$s!</string>
+
+    <!-- Basic interface -->
     <string name="settings">Dejinta</string>
     <string name="cancel">Ka noqo</string>
     <string name="confirm">Xaqiiji</string>
+
+    <!-- Menu button strings -->
     <string name="menu_YouvsAndroid">Android la tababar</string>
     <string name="menu_Player1vsPlayer2">Laba ciyaaryahan oo ku jira qalabkan</string>
     <string name="invite_a_friend">Saaxiib casumo</string>
     <string name="pending_invites">Casumooyin sugaya</string>
     <string name="tournaments">Tartamada</string>
     <string name="ranking">Kala daragga</string>
+
+    <!-- Settings strings -->
     <string name="pref_title_level">Heerka Android</string>
-    <string name="pref_title_block_invite_friend">Xidh codsiga 'Saaxiib casumo'</string>
-    <string name="pref_summary_block_invite_friend">Ciyaartoyda kale kuma casumi karaan shaqada 'Saaxiib casumo' (tartamada ma saameeyaan)</string>
+    <string name="pref_title_block_invite_friend">Xidh codsiga &apos;Saaxiib casumo&apos;</string>
+    <string name="pref_summary_block_invite_friend">Ciyaartoyda kale kuma casumi karaan shaqada &apos;Saaxiib casumo&apos; (tartamada ma saameeyaan)</string>
     <string name="pref_title_ads_consent">Ogolaanshaha xayeysiinta gaarka ah</string>
     <string name="pref_summary_ads_consent">Dib u eeg ama beddel ogolaanshahaaga muujinta xayeysiisyada gaarka ah</string>
     <string name="pref_title_language">Luqadda</string>
@@ -45,15 +56,23 @@
     <string name="current_language">Hadda: %1$s</string>
     <string name="pref_title_facebook">Bulshada Facebook</string>
     <string name="pref_summary_facebook">Fur bogga bulshadeenna Facebook</string>
+
+    <!-- Level difficulty strings -->
     <string-array name="pref_level_titles">
         <item>Sahlan</item>
         <item>Dhexdhexaad</item>
         <item>Adag</item>
     </string-array>
+
+    <!-- Basic interface strings -->
     <string name="hello">Salaan!</string>
+
+    <!-- Game ready notification strings -->
     <string name="game_ready_title">Ciyaarta waa diyaar u tahay %1$s!</string>
     <string name="game_ready_message">Tartankaagu waa diyaar inuu bilaabo. Taabo si aad ugu biirto!</string>
     <string name="join_game_action">Ku Biir Ciyaarta</string>
+
+    <!-- Additional translations -->
     <string-array name="pref_level_values">
         <item>1</item>
         <item>10</item>
@@ -95,7 +114,7 @@
     <string name="load_more">Soo bandhig kuwo kale</string>
     <string name="add_friend_label">Ku dar</string>
     <string name="invite_blocked">%1$s wuu xannibay casuumaadaha.</string>
-    <string name="invites_blocked_notification">Ciyaartoyda kale kuma casumi karaan shaqada 'Saaxiib casumo'. Waxaad ka beddeli kartaa Dejinta.</string>
+    <string name="invites_blocked_notification">Ciyaartoyda kale kuma casumi karaan shaqada &apos;Saaxiib casumo&apos;. Waxaad ka beddeli kartaa Dejinta.</string>
     <string name="pending_game_invitations">Casuumaadaha ciyaarta ee sugaya</string>
     <string name="no_pending_invites">Casuumaado sugaya ma jiraan.</string>
     <string name="invite_already_sent">Waxaad hore u leedahay casuumaad kale oo sugaya.</string>
@@ -275,6 +294,6 @@
     <string name="register_benefits_message">Isdiiwaangeli si aad u kaydiso darajadaada oo aad uga qaybqaadato tartamada ciyaartoyda caalamka.</string>
     <string name="register_now">Isdiiwaangeli hadda</string>
     <string name="facebook_app_id" translatable="false">1232966491486195</string>
-    <string name="fb_login_protocol_scheme" translatable="false">fb1232966491486195</string>
     <string name="facebook_client_token" translatable="false">CLIENT_TOKEN_TO_BE_CONFIGURED</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb1232966491486195</string>
 </resources>

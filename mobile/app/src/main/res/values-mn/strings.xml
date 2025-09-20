@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Basic app strings in Mongolian -->
     <string name="app_name">Soccer 2</string>
     <string name="select_language">Хэл сонгох</string>
+    
+    <!-- Language names in Mongolian -->
     <string name="language_amharic">Амхарик</string>
     <string name="language_arabic">Араб</string>
     <string name="language_bengali">Бенгал</string>
@@ -22,22 +25,30 @@
     <string name="language_spanish">Испани</string>
     <string name="language_swahili">Свахили</string>
     <string name="language_urdu">Урду</string>
+    
+    <!-- Critical interface strings -->
     <string name="menu_Settings">Тохиргоо</string>
     <string name="title_activity_settings">Тохиргоо</string>
     <string name="welcome_to_soccer">Soccer-д тавтай морил!</string>
     <string name="hello_nickname">Сайн уу %1$s!</string>
+    
+    <!-- Basic interface -->
     <string name="settings">Тохиргоо</string>
     <string name="cancel">Цуцлах</string>
     <string name="confirm">Баталгаажуулах</string>
+    
+    <!-- Menu button strings -->
     <string name="menu_YouvsAndroid">Android-тэй дадлага хийх</string>
     <string name="menu_Player1vsPlayer2">Энэ төхөөрөмж дээр хоёр тоглогч</string>
     <string name="invite_a_friend">Найзыг урих</string>
     <string name="pending_invites">Хүлээгдэж буй урилга</string>
     <string name="tournaments">Тэмцээн</string>
     <string name="ranking">Зэрэглэл</string>
+    
+    <!-- Settings strings -->
     <string name="pref_title_level">Android түвшин</string>
-    <string name="pref_title_block_invite_friend">'Найзыг урих' хүсэлтийг блоклох</string>
-    <string name="pref_summary_block_invite_friend">Бусад тоглогчид танд 'Найзыг урих'-аар урилга илгээх боломжгүй (тэмцээнд нөлөөлөхгүй)</string>
+    <string name="pref_title_block_invite_friend">&apos;Найзыг урих&apos; хүсэлтийг блоклох</string>
+    <string name="pref_summary_block_invite_friend">Бусад тоглогчид танд &apos;Найзыг урих&apos;-аар урилга илгээх боломжгүй (тэмцээнд нөлөөлөхгүй)</string>
     <string name="pref_title_ads_consent">Хувийн зар сурталчилгааны зөвшөөрөл</string>
     <string name="pref_summary_ads_consent">Хувийн зар сурталчилгаа харуулахад зориулсан өөрийн зөвшөөрлийг шалгах эсвэл өөрчлөх</string>
     <string name="pref_title_language">Хэл</string>
@@ -45,15 +56,23 @@
     <string name="current_language">Одоогийн: %1$s</string>
     <string name="pref_title_facebook">Facebook нийгэмлэг</string>
     <string name="pref_summary_facebook">Facebook дээр манай нийгэмлэгийн хуудсыг нээнэ үү</string>
+    
+    <!-- Level difficulty strings -->
     <string-array name="pref_level_titles">
         <item>Амархан</item>
         <item>Дунд</item>
         <item>Хэцүү</item>
     </string-array>
+    
+    <!-- Basic interface strings -->
     <string name="hello">Сайн уу!</string>
+    
+    <!-- Game ready notification strings -->
     <string name="game_ready_title">%1$s-д зориулсан тоглоом бэлэн!</string>
     <string name="game_ready_message">Таны тоглолт эхлэхэд бэлэн байна. Нэгдэхийн тулд товшино уу!</string>
     <string name="join_game_action">Тоглоомд нэгдэх</string>
+
+    <!-- Additional translations needed -->
     <string-array name="pref_level_values">
         <item>1</item>
         <item>10</item>
@@ -275,6 +294,6 @@
     <string name="register_benefits_message">Дэлхийн тоглогчидтой тэмцээнд оролцож, үнэлгээгээ хадгалахын тулд бүртгүүлнэ үү.</string>
     <string name="register_now">Одоо бүртгүүлэх</string>
     <string name="facebook_app_id" translatable="false">1232966491486195</string>
-    <string name="fb_login_protocol_scheme" translatable="false">fb1232966491486195</string>
     <string name="facebook_client_token" translatable="false">CLIENT_TOKEN_TO_BE_CONFIGURED</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb1232966491486195</string>
 </resources>

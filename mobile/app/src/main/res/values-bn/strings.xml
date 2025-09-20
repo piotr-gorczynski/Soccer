@@ -1,25 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="facebook_id_label">Facebook ID: %1$s</string>
+    <!-- Basic app strings in Bengali -->
     <string name="app_name">Soccer 2</string>
     <string name="menu_Settings">সেটিংস</string>
     <string name="title_activity_settings">সেটিংস</string>
+    
+    <!-- Menu strings -->
     <string name="menu_YouvsAndroid">অ্যান্ড্রয়েডের সাথে অনুশীলন</string>
     <string name="menu_Player1vsPlayer2">এই ডিভাইসে দুই খেলোয়াড়</string>
+    
+    <!-- Settings strings -->
     <string name="pref_title_language">ভাষা</string>
     <string name="pref_summary_language">আপনার পছন্দের ভাষা নির্বাচন করুন</string>
     <string name="current_language">বর্তমান: %1$s</string>
     <string name="select_language">ভাষা নির্বাচন করুন</string>
+    
+    <!-- Settings preferences -->
     <string name="pref_title_level">অ্যান্ড্রয়েড স্তর</string>
     <string name="pref_title_block_invite_friend">\'বন্ধুকে আমন্ত্রণ জানান\' অনুরোধ ব্লক করুন</string>
     <string name="pref_summary_block_invite_friend">অন্য খেলোয়াড়রা \'বন্ধুকে আমন্ত্রণ জানান\' এর মাধ্যমে আপনাকে আমন্ত্রণ জানাতে পারবে না (টুর্নামেন্ট প্রভাবিত নয়)</string>
     <string name="pref_title_ads_consent">ব্যক্তিগত বিজ্ঞাপনের সম্মতি</string>
     <string name="pref_summary_ads_consent">ব্যক্তিগত বিজ্ঞাপন প্রদর্শনের জন্য আপনার সম্মতি পর্যালোচনা বা পরিবর্তন করুন</string>
+    
+    <!-- Level arrays -->
     <string-array name="pref_level_titles">
         <item>সহজ</item>
         <item>মাঝারি</item>
         <item>কঠিন</item>
     </string-array>
+    
+    <!-- Language names in Bengali -->
     <string name="language_amharic">আমহারিক</string>
     <string name="language_arabic">আরবি</string>
     <string name="language_bengali">বাংলা</string>
@@ -40,6 +51,8 @@
     <string name="language_spanish">স্প্যানিশ</string>
     <string name="language_swahili">সোয়াহিলি</string>
     <string name="language_urdu">উর্দু</string>
+    
+    <!-- Authentication strings -->
     <string name="register">নিবন্ধন করুন</string>
     <string name="confirm_password">পাসওয়ার্ড নিশ্চিত করুন</string>
     <string name="email">ইমেইল</string>
@@ -57,6 +70,8 @@
     <string name="reset_password_success">যদি এই ইমেইল দিয়ে কোনো অ্যাকাউন্ট থাকে, তাহলে পাসওয়ার্ড রিসেট ইমেইল পাঠানো হয়েছে।</string>
     <string name="reset_password_failed">পাসওয়ার্ড রিসেট ইমেইল পাঠাতে ব্যর্থ। আবার চেষ্টা করুন।</string>
     <string name="nickname">ডাকনাম</string>
+    
+    <!-- Friends strings -->
     <string name="enter_nickname_to_invite">আমন্ত্রণ জানানোর জন্য ডাকনাম প্রবেশ করান:</string>
     <string name="enter_nickname_to_search">অনুসন্ধানের জন্য ডাকনাম প্রবেশ করান:</string>
     <string name="friend_s_nickname">বন্ধুর ডাকনাম</string>
@@ -81,12 +96,16 @@
     <string name="add_friend_label">যোগ করুন</string>
     <string name="invite_blocked">%1$s আমন্ত্রণ ব্লক করেছে।</string>
     <string name="invites_blocked_notification">অন্য খেলোয়াড়রা \'বন্ধুকে আমন্ত্রণ জানান\' ফাংশনের মাধ্যমে আপনাকে আমন্ত্রণ জানাতে পারবে না। আপনি সেটিংসে এটি পরিবর্তন করতে পারেন।</string>
+    
+    <!-- Invitations strings -->
     <string name="pending_game_invitations">মুলতুবি গেম আমন্ত্রণ</string>
     <string name="pending_invites">মুলতুবি আমন্ত্রণ</string>
     <string name="no_pending_invites">কোনো মুলতুবি আমন্ত্রণ নেই।</string>
     <string name="invite_already_sent">আপনার ইতিমধ্যে আরেকটি আমন্ত্রণ মুলতুবি আছে।</string>
     <string name="waiting_for_opponent_named">%1$s এর গ্রহণের অপেক্ষায়…</string>
     <string name="waiting_for_opponent">প্রতিপক্ষের গ্রহণের অপেক্ষায়…</string>
+    
+    <!-- Tournament strings -->
     <string name="tournaments">টুর্নামেন্ট</string>
     <string name="ranking">র‌্যাংকিং</string>
     <string name="no_ranking_yet">র‌্যাংকিং দেখানোর জন্য এখনো কোনো টুর্নামেন্ট সম্পন্ন হয়নি।</string>
@@ -106,6 +125,8 @@
     <string name="tournament_ended_short">শেষ হয়েছে</string>
     <string name="logout">লগ আউট</string>
     <string name="logged_out">আপনি লগ আউট হয়েছেন</string>
+    
+    <!-- Game strings -->
     <plurals name="wins_format">
         <item quantity="one">%d জয়</item>
         <item quantity="other">%d জয়</item>
@@ -126,16 +147,22 @@
     <string name="decline">প্রত্যাখ্যান করুন</string>
     <string name="match_completed_win">সম্পন্ন, আপনি জিতেছেন 🏆</string>
     <string name="match_completed_lose">সম্পন্ন, আপনি হেরেছেন 😞</string>
+    
+    <!-- Error strings -->
     <string name="regulation_not_found">নিয়মাবলী পাওয়া যায়নি।</string>
     <string name="regulation_load_error">নিয়মাবলী লোড করতে ব্যর্থ।</string>
     <string name="regulation_auth_required">নিয়মাবলী দেখতে অনুগ্রহ করে লগ ইন করুন।</string>
     <string name="server_unavailable">সার্ভার অনুপলব্ধ</string>
     <string name="server_unavailable_message">আমরা দুঃখিত, কিন্তু Soccer সার্ভার এই মুহূর্তে উপলব্ধ নেই…</string>
+    
+    <!-- Account strings -->
     <string name="account">অ্যাকাউন্ট</string>
     <string name="account_information">অ্যাকাউন্টের তথ্য</string>
     <string name="nickname_label">ডাকনাম: %1$s</string>
     <string name="email_label">ইমেইল: %1$s</string>
     <string name="not_registered">আপনি এই টুর্নামেন্টের জন্য নিবন্ধিত নন।</string>
+    
+    <!-- Login methods -->
     <string name="login_email">ইমেইল দিয়ে লগ ইন</string>
     <string name="login_google">Google দিয়ে লগ ইন</string>
     <string name="login_facebook">Facebook দিয়ে লগ ইন</string>
@@ -147,6 +174,8 @@
     <string name="pref_summary_facebook">Facebook এ আমাদের কমিউনিটি পেজ খুলুন</string>
     <string name="ads_consent_required">বিজ্ঞাপন দেখানো অবকাঠামো রক্ষণাবেক্ষণের জন্য অর্থায়নে সহায়তা করে। আপনি সর্বদা সেটিংসে আপনার সম্মতি পরীক্ষা করতে পারেন।</string>
     <string name="no_internet_for_privacy_options">গোপনীয়তা বিকল্প খোলার জন্য ইন্টারনেট সংযোগ প্রয়োজন।</string>
+    
+    <!-- Account removal strings -->
     <string name="remove_account">অ্যাকাউন্ট মুছে ফেলুন</string>
     <string name="remove_account_dialog_title">অ্যাকাউন্ট মুছে ফেলুন</string>
     <string name="remove_account_dialog_message">আপনি কি সত্যিই আপনার অ্যাকাউন্ট মুছে ফেলতে চান? এই কাজটি ফিরিয়ে আনা যাবে না এবং যদি আপনি আবার নিবন্ধন করেন তবুও আপনি আপনার ম্যাচ এবং ফলাফলের ইতিহাসে অ্যাক্সেস পাবেন না।</string>
@@ -157,11 +186,17 @@
     <string name="reauth_title">পুনরায় প্রমাণীকরণ</string>
     <string name="reauth_message">চালিয়ে যেতে অনুগ্রহ করে আপনার পাসওয়ার্ড প্রবেশ করান।</string>
     <string name="reauth_failed">পুনরায় প্রমাণীকরণ ব্যর্থ। আবার চেষ্টা করুন।</string>
+    
+    <!-- Anonymous logout warning strings -->
     <string name="anonymous_logout_warning_title">লগআউট সতর্কতা</string>
     <string name="anonymous_logout_warning_message">আপনি কি সত্যিই লগআউট করতে চান? বেনামী পদ্ধতির জন্য এই কর্মটি প্রত্যাবর্তিত করা যাবে না এবং আপনি আবার নিবন্ধন করলেও, আপনার ম্যাচ এবং ফলাফলের ইতিহাসে অ্যাক্সেস পাবেন না।</string>
+    
+    <!-- Common strings -->
     <string name="settings">সেটিংস</string>
-    <string name="cancel">বাতিল করুন</string>
-    <string name="confirm">নিশ্চিত করুন</string>
+   <string name="cancel">বাতিল করুন</string>
+   <string name="confirm">নিশ্চিত করুন</string>
+
+    <!-- Field draw strings -->
     <string name="field_your_move">আপনার চাল!</string>
     <string name="field_move_tail">চাল ... ⏳ %1$s</string>
     <string name="field_hourglass_tail">⏳ %1$s</string>
@@ -174,6 +209,8 @@
     <string name="login_success">লগইন সফল!</string>
     <string name="login_failed">লগইন ব্যর্থ: %1$s</string>
     <string name="login_in_progress">লগইন চলছে, অনুগ্রহ করে অপেক্ষা করুন...</string>
+    
+    <!-- Anonymous login warning -->
     <string name="anonymous_login_warning_title">বেনামী লগইন সতর্কতা</string>
     <string name="anonymous_login_warning_message">বেনামী লগইন কিছু ফাংশনে অ্যাক্সেসের অনুমতি দেয়, কিন্তু আপনি যদি আপনার ডিভাইস হারিয়ে ফেলেন, অ্যাপটি পুনরায় ইনস্টল করেন, নতুন ফোন পান বা লগ আউট করেন, তাহলে আপনার বেনামী অ্যাকাউন্টের লিঙ্ক হারিয়ে যাবে এবং একই বেনামী অ্যাকাউন্টে আবার লগইন করা সম্ভব হবে না। আপনি কি এগিয়ে যেতে চান?</string>
     <string name="proceed_anonymous_login">এগিয়ে যান</string>
@@ -192,6 +229,7 @@
     <string name="nickname_taken">ডাকনাম ইতিমধ্যে নেওয়া হয়েছে - অন্যটি বেছে নিন</string>
     <string name="nickname_saved">ডাকনাম সংরক্ষণ</string>
     <string name="nickname_save_failed">ডাকনাম সংরক্ষণ করতে ব্যর্থ</string>
+
     <string name="game_launch_failed">গেম লঞ্চ ব্যর্থ হয়েছে।</string>
     <string name="app_launch_failed">অ্যাপ লঞ্চ ব্যর্থ হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।</string>
     <string name="please_log_in_to_continue">চালিয়ে যেতে দয়া করে লগ ইন করুন।</string>
@@ -230,13 +268,17 @@
     <string name="winner_timeout">%1$s সময়ের বাইরে চলে গেছে। </string>
     <string name="winner_abandon">%1$s গেমটি বাজেয়াপ্ত করেছে। </string>
     <string name="winner_is">বিজয়ী %1$s!</string>
+
     <string name="could_not_accept_invite">আমন্ত্রণ গ্রহণ করতে পারেনি।</string>
     <string name="invite_was_cancelled">আমন্ত্রণ বাতিল করা হয়েছিল।</string>
     <string name="invite_no_longer_available">আমন্ত্রণ আর পাওয়া যায় না।</string>
     <string name="invite_has_expired">আমন্ত্রণ মেয়াদ শেষ হয়েছে।</string>
+
     <string name="please_verify_email_before_login">লগ ইন করার আগে দয়া করে আপনার ইমেল ঠিকানাটি যাচাই করুন।</string>
     <string name="authentication_failed">প্রমাণীকরণ ব্যর্থ হয়েছে।</string>
+
     <string name="could_not_cancel_invite">আমন্ত্রণ বাতিল করতে পারেনি: %1$s</string>
+    <!-- Link Account functionality -->
     <string name="link_to_registered_account">নিবন্ধিত অ্যাকাউন্টের সাথে লিঙ্ক করুন</string>
     <string name="link_account_title">বেনামী অ্যাকাউন্ট লিঙ্ক করুন</string>
     <string name="link_account_description">আপনার অ্যাকাউন্ট ও গেম ইতিহাস সুরক্ষিত রাখতে আপনার বেনামী অ্যাকাউন্টকে ইমেইল, Google বা Facebook-এর সাথে লিঙ্ক করুন।</string>
@@ -250,6 +292,8 @@
     <string name="link_with_google">গুগলের সাথে লিঙ্ক করুন</string>
     <string name="link_with_microsoft">মাইক্রোসফটের সাথে লিঙ্ক করুন</string>
     <string name="link_with_facebook">ফেসবুকের সাথে লিঙ্ক করুন</string>
+
+    <!-- Analytics and User Research Strings -->
     <string name="signup_decline_dialog_title">অ্যাকাউন্ট ছাড়া খেলবেন?</string>
     <string name="signup_decline_dialog_message">আপনি কেন নিবন্ধন করতে পছন্দ করেন না তা বুঝতে আমাদের সাহায্য করুন:</string>
     <string name="decline_reason_offline">শুধু অফলাইনে খেলছি</string>
@@ -257,24 +301,33 @@
     <string name="decline_reason_complicated">খুব জটিল</string>
     <string name="decline_reason_dont_use_providers">গুগল/ফেসবুক/ইমেইল ব্যবহার করি না</string>
     <string name="decline_reason_other">অন্যান্য কারণ</string>
+    
+    <!-- Anonymous user prompts -->
     <string name="save_progress_title">আপনার অগ্রগতি &amp; ডাকনাম সংরক্ষণ করুন</string>
     <string name="save_progress_message">আপনার পরিসংখ্যান সংরক্ষণ করতে এবং টুর্নামেন্টে যোগ দিতে আপনার অ্যাকাউন্ট লিঙ্ক করুন!</string>
     <string name="save_progress_button">অগ্রগতি সংরক্ষণ করুন</string>
     <string name="maybe_later">হয়তো পরে</string>
+    
+    <!-- In-app messaging for v7/v8 users -->
     <string name="register_benefits_title">টুর্নামেন্টে যোগ দিন &amp; বিশ্বব্যাপী প্রতিযোগিতা করুন!</string>
     <string name="register_benefits_message">আপনার র‌্যাঙ্কিং সংরক্ষণ করতে এবং বিশ্বব্যাপী খেলোয়াড়দের সাথে টুর্নামেন্টে অংশগ্রহণ করতে নিবন্ধন করুন।</string>
     <string name="register_now">এখনই নিবন্ধন করুন</string>
+
     <string name="layout_initialization_error">অ্যাপটি একটি প্রদর্শন ত্রুটির সম্মুখীন হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।</string>
     <string name="retry">আবার চেষ্টা করুন</string>
+    
+    <!-- Game ready notification strings -->
     <string name="game_ready_title">%1$s এর জন্য গেম প্রস্তুত!</string>
     <string name="game_ready_message">আপনার ম্যাচ শুরু হওয়ার জন্য প্রস্তুত। যোগ দিতে ট্যাপ করুন!</string>
     <string name="join_game_action">গেমে যোগ দিন</string>
+    
+    <!-- Preference level values -->
     <string-array name="pref_level_values">
         <item>1</item>
         <item>10</item>
         <item>30</item>
     </string-array>
     <string name="facebook_app_id" translatable="false">1232966491486195</string>
-    <string name="fb_login_protocol_scheme" translatable="false">fb1232966491486195</string>
     <string name="facebook_client_token" translatable="false">CLIENT_TOKEN_TO_BE_CONFIGURED</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb1232966491486195</string>
 </resources>

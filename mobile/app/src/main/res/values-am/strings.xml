@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Basic app strings in Amharic -->
     <string name="app_name">Soccer 2</string>
     <string name="select_language">ቋንቋ ይምረጡ</string>
+    
+    <!-- Language names in Amharic -->
     <string name="language_amharic">አማርኛ</string>
     <string name="language_arabic">አረብኛ</string>
     <string name="language_bengali">ቤንጋሊ</string>
@@ -22,19 +25,27 @@
     <string name="language_spanish">ስፓንኛ</string>
     <string name="language_swahili">ስዋሂሊ</string>
     <string name="language_urdu">ኡርዱ</string>
+    
+    <!-- Critical interface strings -->
     <string name="menu_Settings">ቅንብሮች</string>
     <string name="title_activity_settings">ቅንብሮች</string>
     <string name="welcome_to_soccer">እንኳን ወደ ሳከር በደህና መጡ!</string>
     <string name="hello_nickname">ሰላም፣ %1$s!</string>
+    
+    <!-- Basic interface -->
     <string name="settings">ቅንብሮች</string>
     <string name="cancel">ይሰርዝ</string>
     <string name="confirm">ያረጋግጡ</string>
+    
+    <!-- Menu button strings -->
     <string name="menu_YouvsAndroid">ከአንድሮይድ ጋር ልምምድ</string>
     <string name="menu_Player1vsPlayer2">በዚህ መሳሪያ ላይ ሁለት ተጫዋቾች</string>
     <string name="invite_a_friend">ጓደኛ ጋብዝ</string>
     <string name="pending_invites">ሽሪ ትዊታዎች</string>
     <string name="tournaments">ውድድሮች</string>
     <string name="ranking">ደረጃ አሰጣጥ</string>
+    
+    <!-- Settings strings -->
     <string name="pref_title_level">የአንድሮይድ ደረጃ</string>
     <string name="pref_title_block_invite_friend">'ጓደኛ ጋብዝ' ጥያቄዎችን ይዝጉ</string>
     <string name="pref_summary_block_invite_friend">ሌሎች ተጫዋቾች በ'ጓደኛ ጋብዝ' በኩል ሊጋብዙዎት አይችሉም (ውድድሮች አልተጎዱም)</string>
@@ -45,15 +56,23 @@
     <string name="current_language">አሁን: %1$s</string>
     <string name="pref_title_facebook">የፌስቡክ ማህበረሰብ</string>
     <string name="pref_summary_facebook">የእኛን የማህበረሰብ ገጽ በፌስቡክ ይክፈቱ</string>
+    
+    <!-- Level difficulty strings -->
     <string-array name="pref_level_titles">
         <item>ቀላል</item>
         <item>መካከለኛ</item>
         <item>ከባድ</item>
     </string-array>
+    
+    <!-- Basic interface strings -->
     <string name="hello">ሰላም!</string>
+    
+    <!-- Game ready notification strings -->
     <string name="game_ready_title">ለ%1$s ጨዋታ ዝግጁ ነው!</string>
     <string name="game_ready_message">ጨዋታዎ ለመጀመር ዝግጁ ነው። ለመቀላቀል ይንኩ!</string>
     <string name="join_game_action">ጨዋታ ተቀላቀል</string>
+
+    <!-- Additional translations needed -->
     <string-array name="pref_level_values">
         <item>1</item>
         <item>10</item>
@@ -275,6 +294,6 @@
     <string name="register_benefits_message">ደረጃዎን ለማስቀመጥ እና በዓለም ዙሪያ ካሉ ተጫዋቾች ጋር በውድድር ለመሳተፍ ይመዝገቡ።</string>
     <string name="register_now">አሁን ይመዝገቡ</string>
     <string name="facebook_app_id" translatable="false">1232966491486195</string>
-    <string name="fb_login_protocol_scheme" translatable="false">fb1232966491486195</string>
     <string name="facebook_client_token" translatable="false">CLIENT_TOKEN_TO_BE_CONFIGURED</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb1232966491486195</string>
 </resources>
