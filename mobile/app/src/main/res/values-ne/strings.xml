@@ -18,8 +18,8 @@
     
     <!-- Settings preferences -->
     <string name="pref_title_level">एन्ड्रोइड स्तर</string>
-    <string name="pref_title_block_invite_friend">\'मित्रलाई निमन्त्रणा दिनुहोस्\' अनुरोधहरू ब्लक गर्नुहोस्</string>
-    <string name="pref_summary_block_invite_friend">अन्य खेलाडीहरूले तपाईंलाई \'मित्रलाई निमन्त्रणा दिनुहोस्\' मार्फत निमन्त्रणा दिन सक्दैनन् (प्रतियोगिताहरू प्रभावित छैनन्)</string>
+    <string name="pref_title_block_invite_friend">&#39;मित्रलाई निमन्त्रणा दिनुहोस्&#39; अनुरोधहरू ब्लक गर्नुहोस्</string>
+    <string name="pref_summary_block_invite_friend">अन्य खेलाडीहरूले तपाईंलाई &#39;मित्रलाई निमन्त्रणा दिनुहोस्&#39; मार्फत निमन्त्रणा दिन सक्दैनन् (प्रतियोगिताहरू प्रभावित छैनन्)</string>
     <string name="pref_title_ads_consent">व्यक्तिगत विज्ञापनहरूको सहमति</string>
     <string name="pref_summary_ads_consent">व्यक्तिगत विज्ञापनहरू देखाउनको लागि आफ्नो सहमति समीक्षा वा परिवर्तन गर्नुहोस्</string>
     
@@ -95,7 +95,7 @@
     <string name="load_more">थप लोड गर्नुहोस्</string>
     <string name="add_friend_label">थप्नुहोस्</string>
     <string name="invite_blocked">%1$s ले निमन्त्रणाहरू ब्लक गरेको छ।</string>
-    <string name="invites_blocked_notification">अन्य खेलाडीहरूले तपाईंलाई \'मित्रलाई निमन्त्रणा दिनुहोस्\' प्रकार्य मार्फत निमन्त्रणा दिन सक्दैनन्। तपाईं यसलाई सेटिङहरूमा परिवर्तन गर्न सक्नुहुन्छ।</string>
+    <string name="invites_blocked_notification">अन्य खेलाडीहरूले तपाईंलाई &#39;मित्रलाई निमन्त्रणा दिनुहोस्&#39; प्रकार्य मार्फत निमन्त्रणा दिन सक्दैनन्। तपाईं यसलाई सेटिङहरूमा परिवर्तन गर्न सक्नुहुन्छ।</string>
     
     <!-- Invitations strings -->
     <string name="pending_game_invitations">पेन्डिङ खेल निमन्त्रणाहरू</string>
