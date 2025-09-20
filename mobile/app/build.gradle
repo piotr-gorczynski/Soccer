@@ -8,6 +8,8 @@ import java.nio.file.StandardCopyOption
 import java.security.MessageDigest
 import java.security.KeyStore
 import java.security.cert.Certificate
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 // Determine the environment based on -Penv or the build variant being run
 def detectEnvFromTasks = {
@@ -337,35 +339,68 @@ tasks.register("fixStringPlaceholders") {
         if (!resDir.exists()) {
             return
         }
-        
-        // Map of string resource names to their proper values (with XML escaping)
-        def stringReplacements = [
-            "pref_title_block_invite_friend": "Block &#39;Invite a Friend&#39; requests",
-            "pref_summary_block_invite_friend": "Other players cannot invite you via &#39;Invite a Friend&#39; (tournaments not affected)", 
-            "decline_reason_dont_use_providers": "Don&#39;t use Google/Facebook/Email",
-            "friend_s_nickname": "Friend&#39;s nickname",
-            "invites_blocked_notification": "Invites blocked"
+
+        // Load canonical values from the default strings.xml so we can fall back to them
+        def baseStrings = [:]
+        def baseStringsFile = new File(resDir, "values/strings.xml")
+        if (baseStringsFile.exists()) {
+            def parser = new groovy.util.XmlSlurper(false, false)
+            def baseXml = parser.parse(baseStringsFile)
+            baseXml.string.each { node ->
+                def nameAttr = node.@name?.text()
+                if (nameAttr) {
+                    baseStrings[nameAttr] = node.text()
+                }
+            }
+        }
+
+        // Additional manual fallbacks in case a string is missing from the base file
+        def manualFallbacks = [
+            "pref_title_block_invite_friend": "Block 'Invite a Friend' requests",
+            "pref_summary_block_invite_friend": "Other players cannot invite you via 'Invite a Friend' (tournaments not affected)",
+            "decline_reason_dont_use_providers": "Don't use Google/Facebook/Email",
+            "friend_s_nickname": "Friend's nickname",
+            "invites_blocked_notification": "Invites blocked",
+            "you_can_t_invite_yourself": "You can't invite yourself."
         ]
-        
+
+        manualFallbacks.each { key, value ->
+            baseStrings.putIfAbsent(key, value)
+        }
+
         // Find all values directories (values, values-hi, values-ne, etc.)
         resDir.listFiles().each { dir ->
             if (dir.isDirectory() && dir.name.startsWith("values")) {
                 def stringsFile = new File(dir, "strings.xml")
                 if (stringsFile.exists()) {
-                    def content = stringsFile.text
+                    def content = stringsFile.getText("UTF-8")
                     def fixedContent = content
-                    
-                    // Replace {str} placeholders with appropriate content based on string name
-                    stringReplacements.each { stringName, replacement ->
-                        def pattern = ~/<string name="${stringName}">\{str\}<\/string>/
-                        fixedContent = fixedContent.replaceAll(pattern, "<string name=\"${stringName}\">${replacement}</string>")
+                    def updated = false
+
+                    baseStrings.each { stringName, fallbackValue ->
+                        def escapedFallback = groovy.xml.XmlUtil.escapeXml(fallbackValue ?: "")
+                        def pattern = Pattern.compile("(?s)(<string[^>]*name=\\\"${Pattern.quote(stringName)}\\\"[^>]*>\\s*)\\{str\\}(\\s*</string>)")
+                        def matcher = pattern.matcher(fixedContent)
+                        if (matcher.find()) {
+                            updated = true
+                            def buffer = new StringBuffer()
+                            matcher.reset()
+                            while (matcher.find()) {
+                                def replacement = matcher.group(1) + escapedFallback + matcher.group(2)
+                                matcher.appendReplacement(buffer, Matcher.quoteReplacement(replacement))
+                            }
+                            matcher.appendTail(buffer)
+                            fixedContent = buffer.toString()
+                        }
                     }
-                    
-                    // Generic fallback for any remaining {str} placeholders
-                    fixedContent = fixedContent.replaceAll(/\{str\}/, "")
-                    
-                    if (content != fixedContent) {
-                        stringsFile.text = fixedContent
+
+                    if (fixedContent.contains("{str}")) {
+                        updated = true
+                        fixedContent = fixedContent.replace("{str}", "")
+                    }
+
+                    if (content != fixedContent && updated) {
+                        stringsFile.write(fixedContent, "UTF-8")
                         println("✅ Fixed string placeholders in ${stringsFile.path}")
                     }
                 }
