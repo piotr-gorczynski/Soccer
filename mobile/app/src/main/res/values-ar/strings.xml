@@ -36,8 +36,8 @@
     <string name="tournaments">البطولات</string>
     <string name="ranking">الترتيب</string>
     <string name="pref_title_level">مستوى الأندرويد</string>
-    <string name="pref_title_block_invite_friend">حظر طلبات \'ادعُ صديقاً\'</string>
-    <string name="pref_summary_block_invite_friend">لا يمكن للاعبين الآخرين دعوتك عبر \'ادعُ صديقاً\' (البطولات غير متأثرة)</string>
+    <string name="pref_title_block_invite_friend">حظر طلبات &#39;ادعُ صديقاً&#39;</string>
+    <string name="pref_summary_block_invite_friend">لا يمكن للاعبين الآخرين دعوتك عبر &#39;ادعُ صديقاً&#39; (البطولات غير متأثرة)</string>
     <string name="pref_title_ads_consent">موافقة الإعلانات المخصصة</string>
     <string name="pref_summary_ads_consent">راجع أو غيّر موافقتك لعرض الإعلانات المخصصة</string>
     <string name="pref_title_language">اللغة</string>
