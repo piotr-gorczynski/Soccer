@@ -53,6 +53,52 @@ public class AnalyticsTestActivity extends BaseActivity {
         analyticsManager.trackSignupError("test", "test_error", "Test error message", "test_step");
         analyticsManager.trackSignupDeclineReason("test_reason");
         
+        // Test null safety - this was the regression issue
+        Log.d(TAG, "Testing null safety for all analytics methods...");
+        try {
+            analyticsManager.trackSignupError(null, null, null, null);
+            Log.d(TAG, "✅ trackSignupError: Null parameters handled successfully");
+        } catch (NullPointerException e) {
+            Log.e(TAG, "❌ trackSignupError: NullPointerException with null parameters: " + e.getMessage());
+        }
+        
+        try {
+            analyticsManager.trackSignupDeclineReason(null);
+            Log.d(TAG, "✅ trackSignupDeclineReason: Null parameter handled successfully");
+        } catch (NullPointerException e) {
+            Log.e(TAG, "❌ trackSignupDeclineReason: NullPointerException with null parameter: " + e.getMessage());
+        }
+        
+        try {
+            analyticsManager.trackTournamentJoinError(null, null, null);
+            Log.d(TAG, "✅ trackTournamentJoinError: Null parameters handled successfully");
+        } catch (NullPointerException e) {
+            Log.e(TAG, "❌ trackTournamentJoinError: NullPointerException with null parameters: " + e.getMessage());
+        }
+        
+        try {
+            analyticsManager.trackAnonymousLinkPrompt(null);
+            analyticsManager.trackAnonymousLinkDecision(null, null);
+            Log.d(TAG, "✅ Anonymous link methods: Null parameters handled successfully");
+        } catch (NullPointerException e) {
+            Log.e(TAG, "❌ Anonymous link methods: NullPointerException with null parameters: " + e.getMessage());
+        }
+        
+        try {
+            analyticsManager.addAuthBreadcrumb(null, null);
+            analyticsManager.addTournamentBreadcrumb(null, null, null);
+            Log.d(TAG, "✅ Breadcrumb methods: Null parameters handled successfully");
+        } catch (NullPointerException e) {
+            Log.e(TAG, "❌ Breadcrumb methods: NullPointerException with null parameters: " + e.getMessage());
+        }
+        
+        try {
+            analyticsManager.trackSignupError("google", null, "Network error", null);
+            Log.d(TAG, "✅ Partial null parameters handled successfully");
+        } catch (NullPointerException e) {
+            Log.e(TAG, "❌ NullPointerException with partial null parameters: " + e.getMessage());
+        }
+        
         // Test tournament events
         analyticsManager.trackTournamentListViewed(5, 3, 2);
         analyticsManager.trackTournamentJoinStart("test_tournament", true);

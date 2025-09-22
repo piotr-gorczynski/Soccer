@@ -39,8 +39,8 @@ android {
         applicationId = "piotr_gorczynski.soccer2"
         minSdk = 24
         targetSdk = 36
-        versionCode = 18
-        versionName = '15.3'
+        versionCode = 21
+        versionName = '15.6'
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         
@@ -53,6 +53,10 @@ android {
     buildFeatures {
         buildConfig true          // <- make sure this is present or omit the block
     }
+
+
+
+
 
     signingConfigs {
         release {
@@ -140,35 +144,35 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
 
     //GPT fixes
-    implementation platform('com.google.firebase:firebase-bom:34.2.0')
+    implementation platform('com.google.firebase:firebase-bom:34.3.0')
     implementation 'com.google.firebase:firebase-auth:24.0.1'
     //GPT fixes
     implementation 'androidx.appcompat:appcompat:1.7.1'
     implementation 'androidx.core:core:1.17.0'
     implementation 'com.google.android.material:material:1.13.0'
-    implementation 'com.google.firebase:firebase-firestore:26.0.0' // or latest version
+    implementation 'com.google.firebase:firebase-firestore:26.0.1' // or latest version
     //GPT fixes
     implementation 'androidx.preference:preference:1.2.1'
     implementation 'androidx.work:work-runtime:2.10.4'
-    implementation 'com.google.firebase:firebase-database:22.0.0'
+    implementation 'com.google.firebase:firebase-database:22.0.1'
     //GPT fixes
     // Instrumented test dependencies
     androidTestImplementation 'androidx.test.ext:junit:1.3.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.7.0'
     //Added dependencies for invoking acceptInvite
-    implementation 'com.google.firebase:firebase-functions:22.0.0'
+    implementation 'com.google.firebase:firebase-functions:22.0.1'
     // FCM
-    implementation 'com.google.firebase:firebase-messaging:25.0.0' // Latest as of May 2025
+    implementation 'com.google.firebase:firebase-messaging:25.0.1' // Latest as of May 2025
     
     // Firebase Analytics for user research and funnel tracking
     implementation 'com.google.firebase:firebase-analytics:23.0.0'
-    implementation 'com.google.firebase:firebase-config:23.0.0' // Remote Config for A/B testing
-    implementation 'com.google.firebase:firebase-crashlytics:20.0.1' // Enhanced error tracking
+    implementation 'com.google.firebase:firebase-config:23.0.1' // Remote Config for A/B testing
+    implementation 'com.google.firebase:firebase-crashlytics:20.0.2' // Enhanced error tracking
 
     implementation "com.google.guava:guava:33.4.8-android"
 
-    implementation "androidx.lifecycle:lifecycle-process:2.9.3"
-    implementation "androidx.lifecycle:lifecycle-common-java8:2.9.3"
+    implementation "androidx.lifecycle:lifecycle-process:2.9.4"
+    implementation "androidx.lifecycle:lifecycle-common-java8:2.9.4"
     
     // HTTP client for backend service checks
     implementation 'com.squareup.okhttp3:okhttp:5.1.0'
@@ -318,6 +322,8 @@ ext.generateKeyHash = { keystoreFile, password, alias ->
     return Base64.getEncoder().encodeToString(md.digest())
 }
 
+
+
 // Hook into the Firebase task *after* all plugins are applied
 afterEvaluate {
     tasks.matching { it.name =~ /process.*GoogleServices/ }.configureEach {
@@ -330,4 +336,5 @@ afterEvaluate {
     tasks.matching { it.name =~ /assemble.*/ }.configureEach {
         dependsOn("generateFacebookKeyHashes")
     }
+
 }

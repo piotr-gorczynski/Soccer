@@ -1,0 +1,119 @@
+<en-GB>
+🎮 Fix SafeStringFormatter to handle UnknownFormatConversionException crashes
+🎮 Fix ANR caused by recursive UnknownFormatConversionException in SafeStringFormatter
+🎮 Fix language selection for newly added languages by adding missing UI strings
+</en-GB>
+
+<pl-PL>
+🎮 Naprawiono SafeStringFormatter do obsługi awarii UnknownFormatConversionException
+🎮 Naprawiono ANR spowodowany rekursywnym UnknownFormatConversionException w SafeStringFormatter
+🎮 Naprawiono wybór języka dla nowo dodanych języków poprzez dodanie brakujących tekstów interfejsu
+</pl-PL>
+
+<de-DE>
+🎮 SafeStringFormatter zur Behandlung von UnknownFormatConversionException-Abstürzen behoben
+🎮 ANR durch rekursive UnknownFormatConversionException in SafeStringFormatter behoben
+🎮 Sprachauswahl für neu hinzugefügte Sprachen durch Hinzufügen fehlender UI-Strings behoben
+</de-DE>
+
+<fr-FR>
+🎮 Correction de SafeStringFormatter pour gérer les plantages UnknownFormatConversionException
+🎮 Correction d'ANR causé par UnknownFormatConversionException récursif dans SafeStringFormatter
+🎮 Correction de la sélection de langue pour les langues nouvellement ajoutées en ajoutant les chaînes d'interface utilisateur manquantes
+</fr-FR>
+
+<es-ES>
+🎮 Corregir SafeStringFormatter para manejar fallos de UnknownFormatConversionException
+🎮 Corregir ANR causado por UnknownFormatConversionException recursivo en SafeStringFormatter
+🎮 Corregir selección de idioma para idiomas recién agregados añadiendo cadenas de interfaz de usuario faltantes
+</es-ES>
+
+<ur>
+🎮 SafeStringFormatter کو UnknownFormatConversionException crashes کو handle کرنے کے لیے ٹھیک کیا گیا
+🎮 SafeStringFormatter میں recursive UnknownFormatConversionException کی وجہ سے ہونے والی ANR کو ٹھیک کیا گیا
+🎮 نئی شامل کردہ زبانوں کے لیے language selection کو missing UI strings شامل کرکے ٹھیک کیا گیا
+</ur>
+
+<bn>
+🎮 UnknownFormatConversionException ক্র্যাশ হ্যান্ডল করার জন্য SafeStringFormatter ঠিক করা হয়েছে
+🎮 SafeStringFormatter এ recursive UnknownFormatConversionException দ্বারা সৃষ্ট ANR ঠিক করা হয়েছে
+🎮 অনুপস্থিত UI strings যোগ করে নতুন যোগ করা ভাষাগুলির জন্য ভাষা নির্বাচন ঠিক করা হয়েছে
+</bn>
+
+<ne>
+🎮 UnknownFormatConversionException crashes handle गर्न SafeStringFormatter ठीक गरियो
+🎮 SafeStringFormatter मा recursive UnknownFormatConversionException बाट हुने ANR ठीक गरियो
+🎮 हराएको UI strings थपेर नयाँ थपिएका भाषाहरूको लागि भाषा चयन ठीक गरियो
+</ne>
+
+<hi-IN>
+🎮 UnknownFormatConversionException crashes को handle करने के लिए SafeStringFormatter को ठीक किया गया
+🎮 SafeStringFormatter में recursive UnknownFormatConversionException से होने वाली ANR को ठीक किया गया
+🎮 गायब UI strings जोड़कर नई जोड़ी गई भाषाओं के लिए भाषा चयन को ठीक किया गया
+</hi-IN>
+
+<am>
+🎮 UnknownFormatConversionException መበላሸቶችን ለማስተዳደር SafeStringFormatter ተስተካክሏል
+🎮 በSafeStringFormatter ውስጥ በተደጋጋሚ UnknownFormatConversionException የሚፈጠር ANR ተስተካክሏል
+🎮 የጎደሉ UI strings በመጨመር አዲስ ለተጨመሩ ቋንቋዎች ቋንቋ ምርጫ ተስተካክሏል
+</am>
+
+<ar>
+🎮 إصلاح SafeStringFormatter للتعامل مع أعطال UnknownFormatConversionException
+🎮 إصلاح ANR الناتج عن UnknownFormatConversionException المتكرر في SafeStringFormatter
+🎮 إصلاح اختيار اللغة للغات المضافة حديثاً بإضافة نصوص واجهة المستخدم المفقودة
+</ar>
+
+<my>
+🎮 UnknownFormatConversionException crashes များကို handle လုပ်ရန် SafeStringFormatter ကို ပြင်ဆင်ခဲ့သည်
+🎮 SafeStringFormatter တွင် recursive UnknownFormatConversionException ကြောင့် ဖြစ်ပေါ်သော ANR ကို ပြင်ဆင်ခဲ့သည်
+🎮 ပျောက်နေသော UI strings များ ထည့်သွင်းခြင်းဖြင့် အသစ်ထည့်သွင်းထားသော ဘာသာစကားများအတွက် ဘာသာစကားရွေးချယ်မှုကို ပြင်ဆင်ခဲ့သည်
+</my>
+
+<km>
+🎮 បានកែតម្រូវ SafeStringFormatter ដើម្បីដោះស្រាយការគាំង UnknownFormatConversionException
+🎮 បានកែតម្រូវ ANR ដែលបណ្តាលមកពី UnknownFormatConversionException ដដែលៗនៅក្នុង SafeStringFormatter
+🎮 បានកែតម្រូវការជ្រើសរើសភាសាសម្រាប់ភាសាថ្មីដែលបានបន្ថែមដោយបន្ថែម UI strings ដែលបាត់បង់
+</km>
+
+<lo>
+🎮 ແກ້ໄຂ SafeStringFormatter ເພື່ອຈັດການກັບການຫຍັງ UnknownFormatConversionException
+🎮 ແກ້ໄຂ ANR ທີ່ເກີດຈາກ UnknownFormatConversionException ຊ້ຳໆໃນ SafeStringFormatter
+🎮 ແກ້ໄຂການເລືອກພາສາສຳລັບພາສາທີ່ເພີ່ມໃໝ່ໂດຍການເພີ່ມ UI strings ທີ່ຂາດຫາຍ
+</lo>
+
+<mg>
+🎮 Namboatra SafeStringFormatter hikarakara ny fiapotrahana UnknownFormatConversionException
+🎮 Namboatra ANR vokatry ny UnknownFormatConversionException miverimberina ao amin'ny SafeStringFormatter
+🎮 Namboatra ny fisafidianana fiteny ho an'ny fiteny vao nampiana tamin'ny alalan'ny fanampiana UI strings tsy hita
+</mg>
+
+<mn>
+🎮 UnknownFormatConversionException алдааг зохицуулах SafeStringFormatter-ийг засварласан
+🎮 SafeStringFormatter дээр давтагдах UnknownFormatConversionException-аас үүссэн ANR-ийг засварласан
+🎮 Дутуу UI strings нэмж шинээр нэмсэн хэлнүүдийн хэлний сонголтыг засварласан
+</mn>
+
+<fa>
+🎮 SafeStringFormatter برای مدیریت خرابی‌های UnknownFormatConversionException اصلاح شد
+🎮 ANR ناشی از UnknownFormatConversionException بازگشتی در SafeStringFormatter اصلاح شد
+🎮 انتخاب زبان برای زبان‌های تازه اضافه شده با افزودن رشته‌های رابط کاربری گم‌شده اصلاح شد
+</fa>
+
+<si>
+🎮 UnknownFormatConversionException crashes හසුරුවන්න SafeStringFormatter සකස් කරන ලදී
+🎮 SafeStringFormatter හි recursive UnknownFormatConversionException මගින් ඇති වන ANR සකස් කරන ලදී
+🎮 අතුරුදහන් UI strings එකතු කිරීමෙන් අලුතින් එකතු කරන ලද භාෂා සඳහා භාෂා තේරීම සකස් කරන ලදී
+</si>
+
+<so>
+🎮 Waxaa la saxay SafeStringFormatter si uu u maareeyo burburka UnknownFormatConversionException
+🎮 Waxaa la saxay ANR ee ka dhasha UnknownFormatConversionException celceliska ah ee ku jira SafeStringFormatter
+🎮 Waxaa la saxay doorashada luqadda luqadaha cusub ee la daray iyadoo la kordhiyay UI strings maqan
+</so>
+
+<sw>
+🎮 Imesahihi SafeStringFormatter kushughulikia kuvunjika kwa UnknownFormatConversionException
+🎮 Imesahihi ANR inayosababishwa na UnknownFormatConversionException inayojirudia katika SafeStringFormatter
+🎮 Imesahihi uchaguzi wa lugha kwa lugha zilizongezwa hivi karibuni kwa kuongeza mistari ya UI iliyokosekana
+</sw>

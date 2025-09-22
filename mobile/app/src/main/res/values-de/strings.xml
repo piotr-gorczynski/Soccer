@@ -40,8 +40,8 @@
     
     <!-- Settings preferences -->
     <string name="pref_title_level">Android-Level</string>
-    <string name="pref_title_block_invite_friend">\'Freund einladen\'-Anfragen blockieren</string>
-    <string name="pref_summary_block_invite_friend">Andere Spieler können Sie nicht über \'Freund einladen\' einladen (Turniere nicht betroffen)</string>
+    <string name="pref_title_block_invite_friend">`Freund einladen`-Anfragen blockieren</string>
+    <string name="pref_summary_block_invite_friend">Andere Spieler können Sie nicht über `Freund einladen` einladen (Turniere nicht betroffen)</string>
     <string name="pref_title_ads_consent">Einverständnis für personalisierte Werbung</string>
     <string name="pref_summary_ads_consent">Überprüfen oder ändern Sie Ihr Einverständnis für die Anzeige personalisierter Werbung</string>
     
@@ -95,7 +95,7 @@
     <string name="load_more">Mehr laden</string>
     <string name="add_friend_label">Hinzufügen</string>
     <string name="invite_blocked">%1$s hat Einladungen blockiert.</string>
-    <string name="invites_blocked_notification">Andere Spieler können Sie nicht über die \'Freund einladen\'-Funktion einladen. Sie können dies in den Einstellungen ändern.</string>
+    <string name="invites_blocked_notification">Andere Spieler können Sie nicht über die `Freund einladen`-Funktion einladen. Sie können dies in den Einstellungen ändern.</string>
     
     <!-- Invitations strings -->
     <string name="pending_game_invitations">Ausstehende Spieleinladungen</string>
@@ -321,4 +321,11 @@
     <string name="game_ready_title">Spiel Bereit für %1$s!</string>
     <string name="game_ready_message">Ihr Match ist bereit zu beginnen. Antippen zum Beitreten!</string>
     <string name="join_game_action">Spiel Beitreten</string>
+    
+    <!-- Preference level values -->
+    <string-array name="pref_level_values">
+        <item>1</item>
+        <item>10</item>
+        <item>30</item>
+    </string-array>
 </resources>

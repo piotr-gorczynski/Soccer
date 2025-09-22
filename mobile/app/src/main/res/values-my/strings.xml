@@ -26,13 +26,271 @@
     <string name="language_swahili">ဆွာဟီလီ</string>
     <string name="language_urdu">အူရ်ဒူ</string>
     
+    <!-- Critical interface strings -->
+    <string name="menu_Settings">ဆက်တင်များ</string>
+    <string name="title_activity_settings">ဆက်တင်များ</string>
+    <string name="welcome_to_soccer">Soccer မှကြိုဆိုပါတယ်!</string>
+    <string name="hello_nickname">မင်္ဂလာပါ %1$s!</string>
+    
     <!-- Basic interface -->
     <string name="settings">ဆက်တင်များ</string>
     <string name="cancel">ပယ်ဖျက်</string>
     <string name="confirm">အတည်ပြု</string>
     
+    <!-- Menu button strings -->
+    <string name="menu_YouvsAndroid">Android နှင့်လေ့ကျင့်ပါ</string>
+    <string name="menu_Player1vsPlayer2">ဤစက်တွင် ကစားသူနှစ်ယောက်</string>
+    <string name="invite_a_friend">သူငယ်ချင်းကိုဖိတ်ကြားပါ</string>
+    <string name="pending_invites">စောင့်ဆိုင်းနေသော ဖိတ်ကြားချက်များ</string>
+    <string name="tournaments">ပြိုင်ပွဲများ</string>
+    <string name="ranking">အဆင့်သတ်မှတ်ခြင်း</string>
+    
+    <!-- Settings strings -->
+    <string name="pref_title_level">Android အဆင့်</string>
+    <string name="pref_title_block_invite_friend">\`သူငယ်ချင်းကိုဖိတ်ကြားပါ\` တောင်းဆိုမှုများကို ပိတ်ဆို့ပါ</string>
+    <string name="pref_summary_block_invite_friend">အခြားကစားသူများမှ \`သူငယ်ချင်းကိုဖိတ်ကြားပါ\` မှတစ်ဆင့် သင့်ကိုဖိတ်ကြားမနိုင်ပါ (ပြိုင်ပွဲများအားလုံးထိခိုက်မည်မဟုတ်)</string>
+    <string name="pref_title_ads_consent">စိတ်ကြိုက်ကြော်ငြာများ သဘောတူခြင်း</string>
+    <string name="pref_summary_ads_consent">စိတ်ကြိုက်ကြော်ငြာများပြသခြင်းအတွက် သင်၏သဘောတူညီမှုကို ပြန်လည်သုံးသပ်ပါ သို့မဟုတ် ပြောင်းလဲပါ</string>
+    <string name="pref_title_language">ဘာသာစကား</string>
+    <string name="pref_summary_language">သင်နှစ်သက်သော ဘာသာစကားကို ရွေးချယ်ပါ</string>
+    <string name="current_language">လက်ရှိ: %1$s</string>
+    <string name="pref_title_facebook">Facebook အသိုင်းအဝိုင်း</string>
+    <string name="pref_summary_facebook">Facebook တွင် ကျွန်ုပ်တို့၏အသိုင်းအဝိုင်းစာမျက်နှာကို ဖွင့်ပါ</string>
+    
+    <!-- Level difficulty strings -->
+    <string-array name="pref_level_titles">
+        <item>လွယ်ကူ</item>
+        <item>အလယ်အလတ်</item>
+        <item>ခက်ခဲ</item>
+    </string-array>
+    
+    <!-- Basic interface strings -->
+    <string name="hello">မင်္ဂလာပါ!</string>
+    
     <!-- Game ready notification strings -->
     <string name="game_ready_title">%1$s အတွက် ဂိမ်းပြင်ဆင်ပြီးပါပြီ!</string>
-    <string name="game_ready_message">သင်၏ပွဲစဉ် စတင်ရန်အသင့်ဖြစ်ပါပြီ။ ပါဝင်ရန်တို့ပါ!</string>
+    <string name="game_ready_message">သင်၏ပွဲစဉ် စတင်ရန်အသင့်ဖြစ်ပါပြီ။ ပါဝင်ရန် တို့ပါ!</string>
     <string name="join_game_action">ဂိမ်းတွင်ပါဝင်ပါ</string>
+
+    <!-- Additional translations needed -->
+    <string-array name="pref_level_values">
+        <item>1</item>
+        <item>10</item>
+        <item>30</item>
+    </string-array>
+    <string name="register">စာရင်းသွင်းပါ</string>
+    <string name="confirm_password">စကားဝှက်အတည်ပြုပါ</string>
+    <string name="email">အီးမေးလ်</string>
+    <string name="password">စကားဝှက်</string>
+    <string name="login">ဝင်ရောက်ပါ</string>
+    <string name="log_in">ဝင်ရောက်ပါ</string>
+    <string name="register_new_account">အကောင့်အသစ်စာရင်းသွင်းပါ</string>
+    <string name="reset_password">စကားဝှက်ပြန်သတ်မှတ်ပါ</string>
+    <string name="reset_password_email_hint">သင်၏ အီးမေးလ်လိပ်စာကို ထည့်ပါ</string>
+    <string name="reset_password_title">စကားဝှက်ပြန်သတ်မှတ်ပါ</string>
+    <string name="reset_password_message">ကျေးဇူးပြု၍ သင်၏ အီးမေးလ်လိပ်စာကို ထည့်ပါ။ ဤအီးမေးလ်နှင့် အကောင့်ရှိပါက စကားဝှက်ပြန်သတ်မှတ်မိန့်စာတစ်စောင်ကို ပို့ပေးပါမည်။</string>
+    <string name="reset_password_success">ဤအီးမေးလ်ဖြင့် အကောင့်ရှိပါက စကားဝှက်ပြန်သတ်မှတ်မိန့်စာကို ပို့ပြီးပါပြီ။</string>
+    <string name="reset_password_failed">စကားဝှက်ပြန်သတ်မှတ်မိန့်စာ ပို့ရန် မအောင်မြင်ပါ။ ကျေးဇူးပြု၍ ထပ်မံကြိုးစားပါ။</string>
+    <string name="nickname">အမည်ပြောင်</string>
+    <string name="enter_nickname_to_invite">ဖိတ်ခေါ်ရန် အမည်ပြောင်ကို ထည့်ပါ:</string>
+    <string name="enter_nickname_to_search">ရှာဖွေရန် အမည်ပြောင်ကို ထည့်ပါ:</string>
+    <string name="friend_s_nickname">သူငယ်ချင်း၏ အမည်ပြောင်</string>
+    <string name="send_invitation">ဖိတ်ကြားချက်ပို့ပါ</string>
+    <string name="add_a_friend">သူငယ်ချင်းတစ်ဦးကို ထည့်ပါ</string>
+    <string name="add_friend">သူငယ်ချင်းကို အောင်မြင်စွာထည့်ပြီးပါပြီ</string>
+    <string name="no_friends">သို့အတိုင် သူငယ်ချင်းများကို မထည့်ရသေးပါ…</string>
+    <string name="no_tournaments">ပြိုင်ပွဲများကို မဖန်တီးရသေးပါ။</string>
+    <string name="please_enter_a_nickname">ကျေးဇူးပြု၍ အမည်ပြောင်ထည့်ပါ။</string>
+    <string name="user_not_found">အသုံးပြုသူကို ရှာမတွေ့ပါ။</string>
+    <string name="you_can_t_invite_yourself">သင်ကိုယ်တိုင်ကို ဖိတ်ခေါ်မရပါ။</string>
+    <string name="error_searching_user">အသုံးပြုသူ ရှာဖွေရင်း အမှားရှိခဲ့သည်။</string>
+    <string name="invitation_sent">ဖိတ်ကြားချက်ပို့ပြီးပါပြီ!</string>
+    <string name="failed_to_send_invite">ဖိတ်ကြားချက်ပို့ရန် မအောင်မြင်ပါ။</string>
+    <string name="account_no_longer_available">အသုံးပြုသူအကောင့် ထပ်မရှိတော့ပါ။</string>
+    <string name="failed_to_add_friend">သူငယ်ချင်းထည့်ရာ မအောင်မြင်ပါ။</string>
+    <string name="failed_to_add_friend_reason">သူငယ်ချင်းထည့်ရာ မအောင်မြင်ပါ: %1$s</string>
+    <string name="failed_to_load_nickname">အမည်ပြောင်တင်ရာ မအောင်မြင်ပါ။</string>
+    <string name="search">ရှာဖွေပါ</string>
+    <string name="load_more">နောက်ထပ်တင်ပါ</string>
+    <string name="add_friend_label">ထည့်ပါ</string>
+    <string name="invite_blocked">%1$s သည် ဖိတ်ကြားချက်များကို ပိတ်ဆို့ထားသည်။</string>
+    <string name="invites_blocked_notification">အခြားကစားသူများသည် \`သူငယ်ချင်းကိုဖိတ်ကြားပါ\` ဖန်ရှင်မှတစ်ဆင့် သင့်ကို ဖိတ်ခေါ်မနိုင်ပါ။ သင်သည် ဆက်တင်များတွင် ပြင်ဆင်နိုင်ပါသည်။</string>
+    <string name="pending_game_invitations">ဆိုင်းငံ့ထားသော ဂိမ်းဖိတ်ကြားချက်များ</string>
+    <string name="no_pending_invites">ဆိုင်းငံ့ထားသော ဖိတ်ကြားချက်များ မရှိပါ။</string>
+    <string name="invite_already_sent">သင့်တွင် ဆိုင်းငံ့နေသေးသော ဖိတ်ကြားချက်တစ်ခု ရှိပြီးသားဖြစ်သည်။</string>
+    <string name="waiting_for_opponent_named">ကျွန်ုပ်တို့ %1$s က လက်ခံသည်အထိ စောင့်ဆိုင်းနေပါသည်…</string>
+    <string name="waiting_for_opponent">ကျွန်ုပ်တို့ အပြိုင်ဘက်က လက်ခံသည်အထိ စောင့်ဆိုင်းနေပါသည်…</string>
+    <string name="no_ranking_yet">အဆင့်သတ်မှတ်ရန် ပြိုင်ပွဲများ ပြီးဆုံးမထားသေးပါ။</string>
+    <string name="join">ပါဝင်ပါ</string>
+    <string name="slots_format">%1$d / %2$d</string>
+    <string name="open">ဖွင့်ထား</string>
+    <string name="lobby_started">ပြိုင်ပွဲ စတင်ပြီးပါပြီ!</string>
+    <string name="ended">ပြီးဆုံးခဲ့သည်…</string>
+    <string name="running">လည်ပတ်နေသည်…</string>
+    <string name="registering">စာရင်းသွင်းနေသည်…</string>
+    <string name="view_results">ရလဒ်ကြည့်ရှုပါ</string>
+    <string name="tournament_running_ends">ပြိုင်ပွဲ လည်ပတ်နေသည်။ %1$s တွင် ပြီးဆုံးမည်။</string>
+    <string name="registration_ends">စာရင်းသွင်းခြင်း %1$s တွင် ပိတ်လိမ့်မည်။</string>
+    <string name="registration_closed">စာရင်းသွင်းခြင်း ပိတ်ပြီးပါပြီ။ ပြိုင်ပွဲသည် ၁ နာရီအတွင်း စတင်မည်။</string>
+    <string name="tournament_ends_now">ပြိုင်ပွဲ ယခုချိန်တွင် ပြီးဆုံးပါပြီ…</string>
+    <string name="tournament_ended">%1$s တွင် ပြီးဆုံးခဲ့သည်။</string>
+    <string name="tournament_ended_short">ပြီးဆုံးခဲ့သည်</string>
+    <string name="logout">ထွက်ပါ</string>
+    <string name="logged_out">သင် ထွက်လိုက်ပါပြီ။</string>
+    <plurals name="wins_format">
+        <item quantity="one">%d ကြိမ်အနိုင်</item>
+        <item quantity="other">%d ကြိမ်အနိုင်</item>
+    </plurals>
+    <string name="toast_not_your_turn">သင့်အလှည့် မရသေးပါ!</string>
+    <string name="five_minutes">05:00</string>
+    <string name="cancel_invite">ဖိတ်ကြားချက်ဖျက်ပါ</string>
+    <string name="remove">ဖယ်ရှားပါ</string>
+    <string name="invite_expired">ဖိတ်ကြားချက်၏ သက်တမ်းကုန်သွားပါပြီ။</string>
+    <string name="leave">ထွက်သွားပါ</string>
+    <string name="leave_tournament_confirm">ဤပြိုင်ပွဲမှ ထွက်လိုသည်မှာ သေချာပြီလား?</string>
+    <string name="left_tournament">သင် ပြိုင်ပွဲမှ ထွက်သွားပါပြီ။</string>
+    <string name="leave_waiting_confirm">စောင့်ဆိုင်းနေသော မျက်နှာစာမှ ထွက်သွားလျှင် သင်၏ ဖိတ်ကြားချက် ဖျက်သိမ်းသွားပါမည်။ သေချာပြီလား?</string>
+    <string name="yes">ဟုတ်ကဲ့</string>
+    <string name="no">မဟုတ်ဘူး</string>
+    <string name="target_player_busy">အဲဒီကစားသမားမှာ တခြားဖိတ်ကြားချက်တစ်ခုနဲ့ ရှုပ်ထွေးနေပြီ။</string>
+    <string name="accept">လက်ခံပါ</string>
+    <string name="decline">ငြင်းပယ်ပါ</string>
+    <string name="match_completed_win">ပြီးဆုံးပြီး၊ သင်အနိုင်ရပြီ 🏆</string>
+    <string name="match_completed_lose">ပြီးဆုံးပြီး၊ သင်ရှုံးနိမ့်ခဲ့သည် 😞</string>
+    <string name="regulation_not_found">စည်းမျဉ်း မတွေ့ပါ။</string>
+    <string name="regulation_load_error">စည်းမျဉ်းဖော်ပြရန် မအောင်မြင်ပါ။</string>
+    <string name="regulation_auth_required">စည်းမျဉ်းကို ကြည့်ရှုရန် ဝင်ရောက်ပါ။</string>
+    <string name="server_unavailable">ဆာဗာမရှိပါ</string>
+    <string name="server_unavailable_message">ကျွန်ုပ်တို့ ဝမ်းနည်းပါသည်၊ ယခုအခါ Soccer ဆာဗာ မရရှိနိုင်ပါ…</string>
+    <string name="account">အကောင့်</string>
+    <string name="account_information">အကောင့်သတင်းအချက်အလက်</string>
+    <string name="nickname_label">အမည်ပြောင်: %1$s</string>
+    <string name="email_label">အီးမေးလ်: %1$s</string>
+    <string name="not_registered">ဤပြိုင်ပွဲတွင် သင်စာရင်းမသွင်းရသေးပါ။</string>
+    <string name="login_email">အီးမေးလ်ဖြင့် ဝင်ရောက်ပါ</string>
+    <string name="login_google">Google ဖြင့် ဝင်ရောက်ပါ</string>
+    <string name="login_facebook">Facebook ဖြင့် ဝင်ရောက်ပါ</string>
+    <string name="login_microsoft">Microsoft ဖြင့် ဝင်ရောက်ပါ</string>
+    <string name="login_anonymous">အမည်မပါ ဝင်ရောက်ပါ</string>
+    <string name="login_method_label">ဝင်ရောက်သောနည်းလမ်း: %1$s</string>
+    <string name="facebook_id_label">Facebook ID: %1$s</string>
+    <string name="facebook_name_label">Facebook နာမည်: %1$s</string>
+    <string name="ads_consent_required">ကြော်ငြာပြသခြင်းသည် အခြေခံအဆောက်အဦးထိန်းသိမ်းမှုအတွက် ငွေကြေးထောက်ပံ့ကူညီပါသည်။ သင်၏ သဘောတူညီမှုကို ဆက်တင်များတွင် အချိန်မရွေး စစ်ဆေးနိုင်ပါသည်။</string>
+    <string name="no_internet_for_privacy_options">ကိုယ်ရေးဂုဏ်ရည်ရွေးချယ်စရာများဖွင့်ရန် အင်တာနက်ချိတ်ဆက်မှုလိုအပ်ပါသည်။</string>
+    <string name="remove_account">အကောင့်ဖယ်ရှားပါ</string>
+    <string name="remove_account_dialog_title">အကောင့်ဖယ်ရှားပါ</string>
+    <string name="remove_account_dialog_message">သင့်အကောင့်ကို ဖယ်ရှားလိုသည်မှာ သေချာပြီလား? ဤလုပ်ဆောင်ချက်ကို ပြန်ပြင်လိုက်မရနိုင်သကဲ့သို့ မည်သည့်အခါကမှ တန်ပြန်လိမ့်မည်မဟုတ်ပါ။ ပြန်လည်စာရင်းသွင်းထားသော်လည်း သင့်ပြိုင်ပွဲများနှင့် ရလဒ် မှတ်တမ်းများကို ပြန်လည်ရယူမရနိုင်ပါ။</string>
+    <string name="proceed_account_removal">ရှေ့ဆက်ပါ</string>
+    <string name="removing_account">အကောင့်ဖယ်ရှားနေသည်…</string>
+    <string name="account_removed">အကောင့်ကို အောင်မြင်စွာ ဖယ်ရှားပြီးပါပြီ။</string>
+    <string name="remove_account_failed">အကောင့်ဖယ်ရှားရာ မအောင်မြင်ပါ။ ထပ်မံကြိုးစားပါ။</string>
+    <string name="reauth_title">ပြန်လည်အတည်ပြုပါ</string>
+    <string name="reauth_message">ဆက်လက်လုပ်ဆောင်ရန် သင်၏ စကားဝှက်ကို ထည့်ပါ။</string>
+    <string name="reauth_failed">ပြန်လည်အတည်ပြုခြင်း မအောင်မြင်ပါ။ ထပ်မံကြိုးစားပါ။</string>
+    <string name="anonymous_logout_warning_title">ထွက်ရန် သတိပေးချက်</string>
+    <string name="anonymous_logout_warning_message">ထွက်လိုသည်မှာ သေချာပြီလား? အမည်မပါ နည်းလမ်းများအတွက် ဤလုပ်ဆောင်ချက်ကို ပြန်ပြင်၍ မရပါ၊ ထပ်မံစာရင်းသွင်းသော်လည်း သင့်ပြိုင်ပွဲနှင့် ရလဒ်မှတ်တမ်းများကို ရယူ၍မရနိုင်ပါ။</string>
+    <string name="field_your_move">သင့်အလှည့်!</string>
+    <string name="field_move_tail">အလှည့် … ⏳ %1$s</string>
+    <string name="field_hourglass_tail">⏳ %1$s</string>
+    <string name="field_your_move_ellipsis">သင့်အလှည့်…</string>
+    <string name="field_thinking">စဉ်းစားနေသည်…</string>
+    <string name="field_move_ellipsis_tail">အလှည့်… ⏳ %1$s</string>
+    <string name="field_waiting_for">%1$s ကို စောင့်ဆိုင်းနေသည်</string>
+    <string name="field_to_start_tail">စတင်ရန်… ⏳ %1$s</string>
+    <string name="enter_email_and_password">အီးမေးလ်နှင့် စကားဝှက် နှစ်ခုလုံး ထည့်ပါ</string>
+    <string name="login_success">ဝင်ရောက်မှု အောင်မြင်ပါသည်!</string>
+    <string name="login_failed">ဝင်ရောက်မှု မအောင်မြင်ပါ: %1$s</string>
+    <string name="login_in_progress">ဝင်ရောက်နေဆဲဖြစ်သည်၊ ကျေးဇူးပြု၍ စောင့်ပါ…</string>
+    <string name="anonymous_login_warning_title">အမည်မပါ ဝင်ရောက်သတိပေးချက်</string>
+    <string name="anonymous_login_warning_message">အမည်မပါ ဝင်ရောက်ခြင်းသည် အချို့လုပ်ဆောင်ချက်များသို့ ဝင်ရောက်ခွင့်ပေးသော်လည်း သင်၏ စက်ကိုဆုံးရှုံးပါက၊ အက်ပ်ကို ပြန်တင်ပါက၊ ဖုန်းအသစ်တစ်လုံး ရရှိပါက သို့မဟုတ် ထွက်သွားပါက သင့်အမည်မပါ အကောင့်နှင့် ချိတ်ဆက်မှု ပျက်သွားပြီး နောက်တစ်ကြိမ် အမည်မပါ အကောင့်တည်းလို့ မပြန်ဝင်နိုင်တော့ပါ။ ဆက်လက်လုပ်ဆောင်လိုပါသလား?</string>
+    <string name="proceed_anonymous_login">ရှေ့ဆက်ပါ</string>
+    <string name="enter_email_address">ကျေးဇူးပြု၍ သင့် အီးမေးလ်လိပ်စာ ထည့်ပါ</string>
+    <string name="all_fields_required">အကွက်အားလုံးလိုအပ်ပါသည်</string>
+    <string name="passwords_do_not_match">စကားဝှက်နှစ်ခု မကိုက်ညီပါ</string>
+    <string name="registration_in_progress">စာရင်းသွင်းရန် ကြိုးစားနေသည်…</string>
+    <string name="nickname_max_length_reached">အများဆုံး ၂၀ အက္ခရာရောက်ပြီ</string>
+    <string name="nickname_required">အမည်ပြောင်လိုအပ်ပါသည်</string>
+    <string name="nickname_too_long">အမည်ပြောင်သည် အက္ခရာ ၂၀ ထက် မပိုရပါ</string>
+    <string name="not_logged_in">ဝင်ရောက်ထားခြင်းမရှိပါ</string>
+    <string name="register_to_use_function">ဤလုပ်ဆောင်ချက်ကို သုံးရန် စာရင်းသွင်းပါ</string>
+    <string name="register_dialog_message">ဤလုပ်ဆောင်ချက်ကို သုံးရန် သင်သည် စာရင်းသွင်းရပါမည်။ အမည်မပါ အကောင့်ဖြင့်တောင် စာရင်းသွင်းနိုင်ပါသည်။ ဆက်လက်လုပ်ဆောင်လိုပါသလား?</string>
+    <string name="proceed">ရှေ့ဆက်ပါ</string>
+    <string name="network_error_checking_nickname">အမည်ပြောင်စစ်ဆေးနေစဉ် ကွန်ယက်ချိုးယွင်းသည်</string>
+    <string name="nickname_taken">အမည်ပြောင်ကို တစ်စုံတယောက် အသုံးပြုနေပြီး — တစ်ခုသစ်ရွေးချယ်ပါ</string>
+    <string name="nickname_saved">အမည်ပြောင်ကို သိမ်းဆည်းထားပါသည်</string>
+    <string name="nickname_save_failed">အမည်ပြောင်ကို သိမ်းဆည်းရန် မအောင်မြင်ပါ။</string>
+    <string name="game_launch_failed">ဂိမ်းစတင်ရန် မအောင်မြင်ပါ။</string>
+    <string name="app_launch_failed">အက်ပ်စတင်ရန် မအောင်မြင်ပါ။ ထပ်မံကြိုးစားပါ။</string>
+    <string name="layout_initialization_error">အက်ပ်တွင် ပြသမှုအမှားတစ်ခု ဖြစ်ပွားခဲ့သည်။ ထပ်မံကြိုးစားပါ။</string>
+    <string name="retry">ထပ်မံကြိုးစားပါ</string>
+    <string name="please_log_in_to_continue">ဆက်လက်လုပ်ဆောင်ရန် ဝင်ရောက်ပါ။</string>
+    <string name="match_not_found">ပြိုင်ဆိုင်ပွဲ မတွေ့ပါ။</string>
+    <string name="invalid_match_record">ပြိုင်ဆိုင်ပွဲမှတ်တမ်း မမှန်ကန်ပါ။</string>
+    <string name="failed_to_load_opponent">အပြိုင်ဘက်ကို တင်ရန် မအောင်မြင်ပါ။</string>
+    <string name="network_error">ကွန်ယက်အမှား။</string>
+    <string name="game_is_over">ဂိမ်း ပြီးဆုံးပါပြီ။</string>
+    <string name="failed_to_send_move">လှုပ်ရှားမှု ပို့ရန် မအောင်မြင်ပါ: %1$s</string>
+    <string name="fatal_error_matchpath_null">ပြင်းထန်သော အမှား matchPath == null</string>
+    <string name="failed_to_load_match">ပြိုင်ပွဲကို တင်ရန် မအောင်မြင်ပါ။</string>
+    <string name="invitation_not_found">ဖိတ်ကြားချက် မတွေ့ပါ။</string>
+    <string name="must_log_in_to_accept_invites">ဖိတ်ကြားချက်များ လက်ခံရန် ဝင်ရောက်ထားရမည်။</string>
+    <string name="invalid_response_from_server">ဆာဗာထံမှ မမှန်ကန်သော တုံ့ပြန်ချက် ရရှိခဲ့သည်။</string>
+    <string name="invite_accepted_starting_game">ဖိတ်ကြားချက်ကို လက်ခံလိုက်ပါပြီ! ဂိမ်းစတင်နေပြီ…</string>
+    <string name="authentication_error_try_again">အသိအမှတ်ပြုခြင်း အမှား။ ထပ်မံဝင်ရောက်ကြည့်ပါ။</string>
+    <string name="registered_as">စာရင်းသွင်းထားသည်: %1$s</string>
+    <string name="tournament_not_found">ပြိုင်ပွဲ မတွေ့ပါ။</string>
+    <string name="must_be_logged_in">ဝင်ရောက်ထားရမည်။</string>
+    <string name="joined_wait_for_bracket">ပါဝင်ပြီးပါပြီ! ဇယားစတင်မည့်အထိ စောင့်ပါ။</string>
+    <string name="accept_invitation_title">ဖိတ်ကြားချက် လက်ခံပါ</string>
+    <string name="accept_invitation_message">ဤဂိမ်းဖိတ်ကြားချက်ကို လက်ခံလိုပါသလား?</string>
+    <string name="leave_game_title">ဂိမ်းထွက်ပါမလား?</string>
+    <string name="exit_confirm_message">ထွက်လိုသည်မှာ သေချာပြီလား?</string>
+    <string name="exit_forfeit_message">ထွက်လိုသည်မှာ သေချာပြီလား? ထွက်မည်ဆိုပါက ခွင့်လွှတ်ထားခြင်းအဖြစ် စာရင်းဝင်မည်။</string>
+    <string name="close">ပိတ်ပါ</string>
+    <string name="ok">အိုကေ</string>
+    <string name="verification_email_sent">အတည်ပြု အီးမေးလ် ပို့ပြီးပါပြီ</string>
+    <string name="check_email_to_verify">အကောင့်ကို အတည်ပြုရန် အီးမေးလ်စစ်ဆေးပါ။</string>
+    <string name="email_verification_failed">အီးမေးလ်အတည်ပြုမှု မအောင်မြင်ပါ</string>
+    <string name="could_not_send_verification_email">အတည်ပြု အီးမေးလ် ပို့မရနိုင်ပါ: %1$s</string>
+    <string name="registration_failed_title">စာရင်းသွင်းခြင်း မအောင်မြင်ပါ</string>
+    <string name="player_label">ကစားသမား</string>
+    <string name="android_label">Android</string>
+    <string name="player_with_number">ကစားသမား %1$d</string>
+    <string name="winner_timeout">%1$s သည် အချိန်ကုန်သွားပါပြီ။</string>
+    <string name="winner_abandon">%1$s သည် ဂိမ်းကို စွန့်လွှတ်ခဲ့သည်။</string>
+    <string name="winner_is">အနိုင်ရသူမှာ %1$s ဖြစ်သည်!</string>
+    <string name="could_not_accept_invite">ဖိတ်ကြားချက် လက်ခံ၍ မရနိုင်ပါ။</string>
+    <string name="invite_was_cancelled">ဖိတ်ကြားချက်ကို ဖျက်သိမ်းခဲ့သည်။</string>
+    <string name="invite_no_longer_available">ဖိတ်ကြားချက် မရှိတော့ပါ။</string>
+    <string name="invite_has_expired">ဖိတ်ကြားချက် သက်တမ်းကုန်သွားပါပြီ။</string>
+    <string name="please_verify_email_before_login">ဝင်ရောက်မီ သင်၏ အီးမေးလ်လိပ်စာကို အတည်ပြုပါ။</string>
+    <string name="authentication_failed">အသိအမှတ်ပြုခြင်း မအောင်မြင်ပါ။</string>
+    <string name="could_not_cancel_invite">ဖိတ်ကြားချက် ဖျက်မရနိုင်ပါ: %1$s</string>
+    <string name="link_to_registered_account">စာရင်းသွင်းထားသော အကောင့်နှင့် ချိတ်ဆက်ပါ</string>
+    <string name="link_account_title">အမည်မပါ အကောင့်ချိတ်ဆက်ပါ</string>
+    <string name="link_account_description">သင့်အမည်မပါ အကောင့်ကို အီးမေးလ်၊ Google သို့မဟုတ် Facebook နှင့် ချိတ်ဆက်ပြီး သင့်အကောင့်နှင့် ဂိမ်းမှတ်တမ်းများကို လုံခြုံစေပါ။</string>
+    <string name="link_account_success">အကောင့်ကို အောင်မြင်စွာ ချိတ်ဆက်ပြီးပါပြီ!</string>
+    <string name="link_account_failed">အကောင့်ချိတ်ဆက်မှု မအောင်မြင်ပါ: %1$s</string>
+    <string name="link_account_in_progress">အကောင့်ချိတ်ဆက်နေသည်…</string>
+    <string name="account_already_exists_merge">ဤလက်မှတ်များနှင့် အကောင့်တစ်ခုရှိပြီးသားဖြစ်သည်။ သင့်လက်ရှိဒေတာကို သိမ်းဆည်းကာ ပေါင်းစည်းပေးပါမည်။</string>
+    <string name="credential_already_associated">ဤလက်မှတ်သည် အခြားအသုံးပြုသူအကောင့်နှင့် ဆက်စပ်နေပြီးသားဖြစ်သည်။</string>
+    <string name="enter_email_and_password_to_link">သင့်အမည်မပါ အကောင့်ကို ချိတ်ဆက်ရန် အီးမေးလ်နှင့် စကားဝှက်ကို ထည့်ပါ</string>
+    <string name="link_with_email">အီးမေးလ်ဖြင့် ချိတ်ဆက်ပါ</string>
+    <string name="link_with_google">Google ဖြင့် ချိတ်ဆက်ပါ</string>
+    <string name="link_with_microsoft">Microsoft ဖြင့် ချိတ်ဆက်ပါ</string>
+    <string name="link_with_facebook">Facebook ဖြင့် ချိတ်ဆက်ပါ</string>
+    <string name="signup_decline_dialog_title">အကောင့်မရှိဘဲ ကစားမလား?</string>
+    <string name="signup_decline_dialog_message">သင်ဘာကြောင့် စာရင်းမသွင်းလိုကြောင်း ကျွန်ုပ်တို့ နားလည်နိုင်ရန် ကူညီပါ:</string>
+    <string name="decline_reason_offline">အော့ဖ်လိုင်းသာ ကစားနေသည်</string>
+    <string name="decline_reason_privacy">ကိုယ်ရေးအချက်အလက် ပူစရာများ</string>
+    <string name="decline_reason_complicated">ရှုပ်ထွေးလွန်းသည်</string>
+    <string name="decline_reason_dont_use_providers">Google/Facebook/အီးမေးလ် မသုံးပါ</string>
+    <string name="decline_reason_other">အခြားအကြောင်းရင်း</string>
+    <string name="save_progress_title">သင့်တိုးတက်မှုနှင့် အမည်ပြောင်ကို သိမ်းဆည်းပါ</string>
+    <string name="save_progress_message">သင့်အကောင့်ကို ချိတ်ဆက်ပြီး သင့်စာရင်းအချက်အလက်များကို သိမ်းဆည်းကာ ပြိုင်ပွဲများတွင် ပါဝင်ပါ!</string>
+    <string name="save_progress_button">တိုးတက်မှု သိမ်းပါ</string>
+    <string name="maybe_later">နောက်မှ</string>
+    <string name="register_benefits_title">ပြိုင်ပွဲများတွင် ပါဝင်ပြီး ကမ္ဘာအနှံ့ယှဉ်ပြိုင်ပါ!</string>
+    <string name="register_benefits_message">သင့်အဆင့်သတ်မှတ်ချက်ကို သိမ်းဆည်းကာ ကမ္ဘာအနှံ့ရှိ ကစားသူများနှင့် ပြိုင်ပွဲများတွင် ပါဝင်ရန် စာရင်းသွင်းပါ။</string>
+    <string name="register_now">အခုစာရင်းသွင်းပါ</string>
 </resources>

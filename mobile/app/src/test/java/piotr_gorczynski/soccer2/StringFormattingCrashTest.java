@@ -132,4 +132,30 @@ public class StringFormattingCrashTest {
         assertTrue("Multi-arg format should contain all args", 
                    multiArgs.contains("John") && multiArgs.contains("3"));
     }
+    
+    @Test
+    public void testUnknownFormatConversionExceptionHandling() {
+        // Test format strings that would cause UnknownFormatConversionException
+        // This is the specific case from the crash report: "Conversion = ' '"
+        String formatWithSpace = "Winner is %1 $s!"; // Space between %1 and $s
+        String result = SafeStringFormatter.safeFormat(formatWithSpace, "TestPlayer");
+        
+        assertNotNull("SafeStringFormatter should handle UnknownFormatConversionException", result);
+        assertTrue("Result should contain the player name", result.contains("TestPlayer"));
+        assertTrue("Result should contain some fallback text", result.length() > 0);
+        
+        // Test another malformed format that could cause UnknownFormatConversionException
+        String formatWithInvalidConversion = "The winner is %1$z!"; // Invalid conversion 'z'
+        String result2 = SafeStringFormatter.safeFormat(formatWithInvalidConversion, "Player2");
+        
+        assertNotNull("SafeStringFormatter should handle invalid conversion", result2);
+        assertTrue("Result should contain the player name", result2.contains("Player2"));
+        
+        // Test format with invalid character that would cause "Conversion = ' '" error
+        String formatCausingSpaceConversion = "Winner: %1$ s"; // Space after $
+        String result3 = SafeStringFormatter.safeFormat(formatCausingSpaceConversion, "Player3");
+        
+        assertNotNull("SafeStringFormatter should handle space conversion error", result3);
+        assertTrue("Result should contain the player name", result3.contains("Player3"));
+    }
 }

@@ -1,0 +1,71 @@
+<en-GB>
+🎮 Fix null safety in AnalyticsManager to prevent crashes in trackSignupError
+</en-GB>
+
+<pl-PL>
+🎮 Naprawiono obsługę null safety w AnalyticsManager, aby zapobiec awariom w trackSignupError
+</pl-PL>
+
+<de-DE>
+🎮 Null-Safety in AnalyticsManager behoben, um Abstürze in trackSignupError zu verhindern
+</de-DE>
+
+<fr-FR>
+🎮 Correction de la sécurité des valeurs nulles dans AnalyticsManager afin d’éviter les plantages dans trackSignupError
+</fr-FR>
+
+<es-ES>
+🎮 Se corrigió la seguridad de nulos en AnalyticsManager para evitar bloqueos en trackSignupError
+</es-ES>
+
+<ur>
+🎮 AnalyticsManager میں null safety کو درست کیا گیا تاکہ trackSignupError میں کریشز سے بچا جا سکے
+</ur>
+
+<bn-BD>
+🎮 AnalyticsManager-এ null safety ঠিক করা হয়েছে যাতে trackSignupError-এ ক্র্যাশ না হয়
+</bn-BD>
+
+<ne-NP>
+🎮 trackSignupError मा क्र्यास रोक्न AnalyticsManager मा null safety सुधार गरियो
+</ne-NP>
+
+<hi-IN>
+🎮 trackSignupError में क्रैश से बचने के लिए AnalyticsManager में null safety को ठीक किया गया
+</hi-IN>
+
+<am>
+🎮 በAnalyticsManager ውስጥ null safety ተቀናበረ እና በtrackSignupError ውስጥ የሚከሰቱ መቃኘቶች ተከላከሉ
+</am>
+
+<ar>
+🎮 إصلاح خاصية null safety في AnalyticsManager لمنع الأعطال في trackSignupError
+</ar>
+
+<my-MM>
+🎮 trackSignupError တွင် crash မဖြစ်စေရန် AnalyticsManager တွင် null safety ကို ပြင်ဆင်ခဲ့သည်
+</my-MM>
+
+<km-KH>
+🎮 កែ Null safety នៅក្នុង AnalyticsManager ដើម្បីបង្ការ crash ក្នុង trackSignupError
+</km-KH>
+
+<lo-LA>
+🎮 ແກ້ໄຂ null safety ໃນ AnalyticsManager ເພື່ອປ້ອງກັນການ crash ໃນ trackSignupError
+</lo-LA>
+
+<mn-MN>
+🎮 trackSignupError дээр алдаа гарахаас сэргийлэхийн тулд AnalyticsManager дахь null safety-г зассан
+</mn-MN>
+
+<fa-IR>
+🎮 رفع مشکل null safety در AnalyticsManager برای جلوگیری از کرش در trackSignupError
+</fa-IR>
+
+<si-LK>
+🎮 trackSignupError හි බිඳ වැටීම් වලක්වා ගැනීමට AnalyticsManager හි null safety සකසා ඇත
+</si-LK>
+
+<sw>
+🎮 Imerekebishwa null safety katika AnalyticsManager ili kuzuia migongano kwenye trackSignupError
+</sw>
