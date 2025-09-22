@@ -26,13 +26,271 @@
     <string name="language_swahili">ስዋሂሊ</string>
     <string name="language_urdu">ኡርዱ</string>
     
+    <!-- Critical interface strings -->
+    <string name="menu_Settings">ቅንብሮች</string>
+    <string name="title_activity_settings">ቅንብሮች</string>
+    <string name="welcome_to_soccer">እንኳን ወደ ሳከር በደህና መጡ!</string>
+    <string name="hello_nickname">ሰላም፣ %1$s!</string>
+    
     <!-- Basic interface -->
     <string name="settings">ቅንብሮች</string>
     <string name="cancel">ይሰርዝ</string>
     <string name="confirm">ያረጋግጡ</string>
     
+    <!-- Menu button strings -->
+    <string name="menu_YouvsAndroid">ከአንድሮይድ ጋር ልምምድ</string>
+    <string name="menu_Player1vsPlayer2">በዚህ መሳሪያ ላይ ሁለት ተጫዋቾች</string>
+    <string name="invite_a_friend">ጓደኛ ጋብዝ</string>
+    <string name="pending_invites">ሽሪ ትዊታዎች</string>
+    <string name="tournaments">ውድድሮች</string>
+    <string name="ranking">ደረጃ አሰጣጥ</string>
+    
+    <!-- Settings strings -->
+    <string name="pref_title_level">የአንድሮይድ ደረጃ</string>
+    <string name="pref_title_block_invite_friend">`ጓደኛ ጋብዝ` ጥያቄዎችን ይዝጉ</string>
+    <string name="pref_summary_block_invite_friend">ሌሎች ተጫዋቾች በ`ጓደኛ ጋብዝ` በኩል ሊጋብዙዎት አይችሉም (ውድድሮች አልተጎዱም)</string>
+    <string name="pref_title_ads_consent">የግላዊ ማስታወቂያዎች ፈቃድ</string>
+    <string name="pref_summary_ads_consent">ለግላዊ ማስታወቂያዎች ማሳያ ያለዎትን ፈቃድ ይገምግሙ ወይም ይቀይሩ</string>
+    <string name="pref_title_language">ቋንቋ</string>
+    <string name="pref_summary_language">የእርስዎ ተመራጭ ቋንቋ ይምረጡ</string>
+    <string name="current_language">አሁን: %1$s</string>
+    <string name="pref_title_facebook">የፌስቡክ ማህበረሰብ</string>
+    <string name="pref_summary_facebook">የእኛን የማህበረሰብ ገጽ በፌስቡክ ይክፈቱ</string>
+    
+    <!-- Level difficulty strings -->
+    <string-array name="pref_level_titles">
+        <item>ቀላል</item>
+        <item>መካከለኛ</item>
+        <item>ከባድ</item>
+    </string-array>
+    
+    <!-- Basic interface strings -->
+    <string name="hello">ሰላም!</string>
+    
     <!-- Game ready notification strings -->
     <string name="game_ready_title">ለ%1$s ጨዋታ ዝግጁ ነው!</string>
     <string name="game_ready_message">ጨዋታዎ ለመጀመር ዝግጁ ነው። ለመቀላቀል ይንኩ!</string>
     <string name="join_game_action">ጨዋታ ተቀላቀል</string>
+
+    <!-- Additional translations needed -->
+    <string-array name="pref_level_values">
+        <item>1</item>
+        <item>10</item>
+        <item>30</item>
+    </string-array>
+    <string name="register">ይመዝገቡ</string>
+    <string name="confirm_password">የይለፍ ቃል ያረጋግጡ</string>
+    <string name="email">ኢሜል</string>
+    <string name="password">የይለፍ ቃል</string>
+    <string name="login">ይግቡ</string>
+    <string name="log_in">ይግቡ</string>
+    <string name="register_new_account">አዲስ መለያ ይመዝገቡ</string>
+    <string name="reset_password">የይለፍ ቃል ዳግም አስጀምር</string>
+    <string name="reset_password_email_hint">የኢሜል አድራሻዎን ያስገቡ</string>
+    <string name="reset_password_title">የይለፍ ቃል ዳግም አስጀምር</string>
+    <string name="reset_password_message">እባክዎ የኢሜል አድራሻዎን ያስገቡ። ከዚህ ኢሜል ጋር የተያያዘ መለያ ካለ የይለፍ ቃል መመለሻ መልእክት ታገኛሉ።</string>
+    <string name="reset_password_success">ከዚህ ኢሜል ጋር የተያያዘ መለያ ካለ የይለፍ ቃል መመለሻ መልእክት ተልኳል።</string>
+    <string name="reset_password_failed">የይለፍ ቃል መመለሻ መልእክት መላክ አልተሳካም። እባክዎ እንደገና ይሞክሩ።</string>
+    <string name="nickname">ቅጽል ስም</string>
+    <string name="enter_nickname_to_invite">ለመጋበዝ ቅጽል ስም ያስገቡ፡</string>
+    <string name="enter_nickname_to_search">ለመፈለግ ቅጽል ስም ያስገቡ፡</string>
+    <string name="friend_s_nickname">የጓደኛዎ ቅጽል ስም</string>
+    <string name="send_invitation">ግብዣ ላክ</string>
+    <string name="add_a_friend">ጓደኛ አክል</string>
+    <string name="add_friend">ጓደኛው በተሳካ ሁኔታ ታክሏል</string>
+    <string name="no_friends">እስካሁን ድረስ ምንም ጓደኛ አልታከለም…</string>
+    <string name="no_tournaments">እስካሁን ድረስ ምንም ውድድር አልተፈጠረም።</string>
+    <string name="please_enter_a_nickname">እባክዎ ቅጽል ስም ያስገቡ።</string>
+    <string name="user_not_found">ተጠቃሚው አልተገኘም።</string>
+    <string name="you_can_t_invite_yourself">ራስዎን መጋበዝ አይችሉም።</string>
+    <string name="error_searching_user">ተጠቃሚን ለመፈለግ ሲፈልጉ ስህተት ተፈጥሯል።</string>
+    <string name="invitation_sent">ግብዣው ተልኳል!</string>
+    <string name="failed_to_send_invite">ግብዣ መላክ አልተሳካም።</string>
+    <string name="account_no_longer_available">የተጠቃሚው መለያ እንደገና አይገኝም።</string>
+    <string name="failed_to_add_friend">ጓደኛ ማከል አልተሳካም።</string>
+    <string name="failed_to_add_friend_reason">ጓደኛ ማከል አልተሳካም፡ %1$s</string>
+    <string name="failed_to_load_nickname">ቅጽል ስምን መጫን አልተሳካም።</string>
+    <string name="search">ፈልግ</string>
+    <string name="load_more">ተጨማሪ አስገባ</string>
+    <string name="add_friend_label">አክል</string>
+    <string name="invite_blocked">%1$s ግብዣዎችን አግዷል።</string>
+    <string name="invites_blocked_notification">ሌሎች ተጫዋቾች “ጓደኛን ጋብዝ” ተግባር በመጠቀም ሊጋብዙዎት አይችሉም። ይህን በቅንብሮች ውስጥ መቀየር ትችላላችሁ።</string>
+    <string name="pending_game_invitations">በመጠባበቅ ያሉ የጨዋታ ግብዣዎች</string>
+    <string name="no_pending_invites">የተጠባበቁ ግብዣዎች የሉም።</string>
+    <string name="invite_already_sent">አሁንም በመጠባበቅ ላይ ያለ ሌላ ግብዣ አለዎት።</string>
+    <string name="waiting_for_opponent_named">%1$s እንዲቀበል በመጠበቅ ላይ…</string>
+    <string name="waiting_for_opponent">ተቃዋሚው እንዲቀበል በመጠበቅ ላይ…</string>
+    <string name="no_ranking_yet">ደረጃ ለማሳየት ተጠናቀቁ ውድድሮች ገና የሉም።</string>
+    <string name="join">ተቀላቀል</string>
+    <string name="slots_format">%1$d / %2$d</string>
+    <string name="open">ክፈት</string>
+    <string name="lobby_started">ውድድሩ ተጀመረ!</string>
+    <string name="ended">ተጠናቋል…</string>
+    <string name="running">በመካከል ነው…</string>
+    <string name="registering">በመመዝገብ ላይ…</string>
+    <string name="view_results">ውጤቶችን ይመልከቱ</string>
+    <string name="tournament_running_ends">ውድድሩ በሂደት ላይ ነው። %1$s ይያበቃል</string>
+    <string name="registration_ends">ምዝገባው %1$s ይያበቃል</string>
+    <string name="registration_closed">ምዝገባው ተዘግቷል። ውድድሩ በ1 ሰዓት ውስጥ ይጀምራል።</string>
+    <string name="tournament_ends_now">ውድድሩ አሁን በመያበቅ ላይ ነው…</string>
+    <string name="tournament_ended">%1$s ተጠናቀቀ</string>
+    <string name="tournament_ended_short">ተጠናቋል</string>
+    <string name="logout">ውጣ</string>
+    <string name="logged_out">ከመለያዎ ወጥተዋል።</string>
+    <plurals name="wins_format">
+        <item quantity="one">%d ድል</item>
+        <item quantity="other">%d ድሎች</item>
+    </plurals>
+    <string name="toast_not_your_turn">ገና የእርስዎ ተራ አይደለም!</string>
+    <string name="five_minutes">05:00</string>
+    <string name="cancel_invite">ግብዣን ሰርዝ</string>
+    <string name="remove">አስወግድ</string>
+    <string name="invite_expired">ግብዣው ጊዜው አልፎበታል።</string>
+    <string name="leave">ተው</string>
+    <string name="leave_tournament_confirm">ይህንን ውድድር ለመተው በእርግጥ ይፈልጋሉ?</string>
+    <string name="left_tournament">ውድድሩን ትተዋል።</string>
+    <string name="leave_waiting_confirm">የመጠባበቂያውን ማያ ገጽ መተው ግብዣዎን ይሰርዛል። እርግጠኛ ነዎት?</string>
+    <string name="yes">አዎ</string>
+    <string name="no">አይ</string>
+    <string name="target_player_busy">ያ ተጫዋች ከሌላ ግብዣ ጋር በስራ ላይ ነው።</string>
+    <string name="accept">ተቀበል</string>
+    <string name="decline">አትቀበል</string>
+    <string name="match_completed_win">ተጠናቀቀ፣ እርስዎ አሸንፉ 🏆</string>
+    <string name="match_completed_lose">ተጠናቀቀ፣ ተሸነፉ 😞</string>
+    <string name="regulation_not_found">ደንብ አልተገኘም።</string>
+    <string name="regulation_load_error">ደንቡን መጫን አልተሳካም።</string>
+    <string name="regulation_auth_required">ደንቡን ለመመልከት እባክዎ ይግቡ።</string>
+    <string name="server_unavailable">አገልጋዩ አይገኝም</string>
+    <string name="server_unavailable_message">ይቅርታ እናልሳለን፣ የSoccer አገልጋዩ በአሁኑ ጊዜ አይገኝም…</string>
+    <string name="account">መለያ</string>
+    <string name="account_information">የመለያ መረጃ</string>
+    <string name="nickname_label">ቅጽል ስም፡ %1$s</string>
+    <string name="email_label">ኢሜል፡ %1$s</string>
+    <string name="not_registered">ለዚህ ውድድር አልተመዘገቡም።</string>
+    <string name="login_email">በኢሜል ይግቡ</string>
+    <string name="login_google">በGoogle ይግቡ</string>
+    <string name="login_facebook">በፌስቡክ ይግቡ</string>
+    <string name="login_microsoft">በMicrosoft ይግቡ</string>
+    <string name="login_anonymous">ስም-አልባ ግባ</string>
+    <string name="login_method_label">የመግቢያ ዘዴ፡ %1$s</string>
+    <string name="facebook_id_label">የፌስቡክ መታወቂያ፡ %1$s</string>
+    <string name="facebook_name_label">የፌስቡክ ስም፡ %1$s</string>
+    <string name="ads_consent_required">ማስታወቂያዎችን ማሳየት የኢንፍስትራክቸር ጥገናን ለመደገፍ ይረዳል። ፈቃድዎን ሁልጊዜ በቅንብሮች ውስጥ መመርመር ወይም መቀየር ትችላላችሁ።</string>
+    <string name="no_internet_for_privacy_options">የግላዊነት አማራጮችን ለመክፈት የኢንተርኔት ግንኙነት ያስፈልጋል።</string>
+    <string name="remove_account">መለያ አስወግድ</string>
+    <string name="remove_account_dialog_title">መለያ አስወግድ</string>
+    <string name="remove_account_dialog_message">መለያዎን ለማስወገድ በእርግጥ ይፈልጋሉ? ይህ እርምጃ መመለስ አይቻልም፣ እንኳን እንደገና ቢመዘገቡም የጨዋታዎችና ውጤቶችዎ ታሪክ አይመለስም።</string>
+    <string name="proceed_account_removal">ቀጥል</string>
+    <string name="removing_account">መለያ በማስወገድ ላይ…</string>
+    <string name="account_removed">መለያው በተሳካ ሁኔታ ተወግዷል</string>
+    <string name="remove_account_failed">መለያ ማስወገድ አልተሳካም። እባክዎ እንደገና ይሞክሩ።</string>
+    <string name="reauth_title">እንደገና ይግቡ</string>
+    <string name="reauth_message">እባክዎ ለመቀጠል የይለፍ ቃልዎን ያስገቡ።</string>
+    <string name="reauth_failed">እንደገና መግባት አልተሳካም። እባክዎ እንደገና ይሞክሩ።</string>
+    <string name="anonymous_logout_warning_title">የመውጣት ማስጠንቀቂያ</string>
+    <string name="anonymous_logout_warning_message">መውጣት በእርግጥ ይፈልጋሉ? ስም-አልባ መንገዶች ላይ ይህ እርምጃ ማስመለስ አይቻልም፣ እንኳን እንደገና ቢመዘገቡም የጨዋታዎችና ውጤቶች ታሪክ አይመለስም።</string>
+    <string name="field_your_move">የእርስዎ እንቅስቃሴ!</string>
+    <string name="field_move_tail">እንቅስቃሴ … ⏳ %1$s</string>
+    <string name="field_hourglass_tail">⏳ %1$s</string>
+    <string name="field_your_move_ellipsis">የእርስዎ እንቅስቃሴ…</string>
+    <string name="field_thinking">በማሰብ ላይ…</string>
+    <string name="field_move_ellipsis_tail">እንቅስቃሴ… ⏳ %1$s</string>
+    <string name="field_waiting_for">%1$sን በመጠበቅ ላይ</string>
+    <string name="field_to_start_tail">ለመጀመር… ⏳ %1$s</string>
+    <string name="enter_email_and_password">እባክዎ ኢሜልና የይለፍ ቃልዎን በአንድ ጊዜ ያስገቡ</string>
+    <string name="login_success">መግባት ተሳክቷል!</string>
+    <string name="login_failed">መግባት አልተሳካም፡ %1$s</string>
+    <string name="login_in_progress">መግባት በሂደት ላይ ነው፣ እባክዎ ይጠብቁ…</string>
+    <string name="anonymous_login_warning_title">ስም-አልባ መግቢያ ማስጠንቀቂያ</string>
+    <string name="anonymous_login_warning_message">ስም-አልባ መግቢያ አንዳንድ ተግባሮችን ይፈቅዳል፣ ግን መሣሪያዎን ካጡ፣ መተግበሪያውን ካጠፉ ወይም ከዚህ መለያ ቢወጡ ወደ ተመሳሳይ ስም-አልባ መለያ መመለስ አይቻልም። መቀጠል ይፈልጋሉ?</string>
+    <string name="proceed_anonymous_login">ቀጥል</string>
+    <string name="enter_email_address">እባክዎ የኢሜል አድራሻዎን ያስገቡ</string>
+    <string name="all_fields_required">ሁሉም መስኮች ያስፈልጋሉ</string>
+    <string name="passwords_do_not_match">የይለፍ ቃላት አይዛመዱም</string>
+    <string name="registration_in_progress">የመመዝገቢያ ሙከራ በሂደት ላይ ነው…</string>
+    <string name="nickname_max_length_reached">ከፍተኛው 20 ቁምፊ ተሞልቷል</string>
+    <string name="nickname_required">ቅጽል ስም ያስፈልጋል</string>
+    <string name="nickname_too_long">ቅጽል ስም 20 ቁምፊ ወይም ከዚያ በታች መሆን አለበት</string>
+    <string name="not_logged_in">አልተገቡም</string>
+    <string name="register_to_use_function">ይህን ተግባር ለመጠቀም እባክዎ ይመዝገቡ።</string>
+    <string name="register_dialog_message">ይህን ተግባር ለመጠቀም መመዝገብ ያስፈልግዎታል። እንኳን ስም-አልባ በመሆን መመዝገብ ትችላላችሁ። መቀጠል ይፈልጋሉ?</string>
+    <string name="proceed">ቀጥል</string>
+    <string name="network_error_checking_nickname">ቅጽል ስም ሲረጋገጥ የአውታረ መረብ ስህተት ተፈጥሯል</string>
+    <string name="nickname_taken">ቅጽል ስም ቀድሞ ተጠቅመዋል — ሌላ ይምረጡ</string>
+    <string name="nickname_saved">ቅጽል ስም ተቀምጧል</string>
+    <string name="nickname_save_failed">ቅጽል ስም ማቀመጥ አልተሳካም</string>
+    <string name="game_launch_failed">ጨዋታውን ማስጀመር አልተሳካም።</string>
+    <string name="app_launch_failed">መተግበሪያውን ማስጀመር አልተሳካም። እባክዎ እንደገና ይሞክሩ።</string>
+    <string name="layout_initialization_error">መተግበሪያው የማሳያ ስህተት አጋጥሞታል። እባክዎ እንደገና ይሞክሩ።</string>
+    <string name="retry">እንደገና ሞክር</string>
+    <string name="please_log_in_to_continue">እባክዎ ለመቀጠል ይግቡ።</string>
+    <string name="match_not_found">ጨዋታ አልተገኘም።</string>
+    <string name="invalid_match_record">ልክ ያልሆነ የጨዋታ መዝገብ።</string>
+    <string name="failed_to_load_opponent">ተቃዋሚውን መጫን አልተሳካም።</string>
+    <string name="network_error">የአውታረ መረብ ስህተት።</string>
+    <string name="game_is_over">ጨዋታው ተጠናቀቀ።</string>
+    <string name="failed_to_send_move">እንቅስቃሴን መላክ አልተሳካም፡ %1$s</string>
+    <string name="fatal_error_matchpath_null">አደገኛ ስህተት፡ matchPath == null</string>
+    <string name="failed_to_load_match">ጨዋታን መጫን አልተሳካም።</string>
+    <string name="invitation_not_found">ግብዣ አልተገኘም።</string>
+    <string name="must_log_in_to_accept_invites">ግብዣዎችን ለመቀበል መለያ መግባት አለብዎት።</string>
+    <string name="invalid_response_from_server">ከአገልጋዩ የመጣ ልክ ያልሆነ ምላሽ።</string>
+    <string name="invite_accepted_starting_game">ግብዣው ተቀብሏል! ጨዋታ በመጀመር ላይ…</string>
+    <string name="authentication_error_try_again">የማረጋገጫ ስህተት። እባክዎ እንደገና ይግቡ።</string>
+    <string name="registered_as">እንደ %1$s ተመዝግበዋል</string>
+    <string name="tournament_not_found">ውድድር አልተገኘም።</string>
+    <string name="must_be_logged_in">መለያ መግባት አለብዎት።</string>
+    <string name="joined_wait_for_bracket">ተቀላቀሉ! ቅንፉ እስኪጀምር ይጠብቁ።</string>
+    <string name="accept_invitation_title">ግብዣን ተቀበል</string>
+    <string name="accept_invitation_message">ይህን የጨዋታ ግብዣ መቀበል ትፈልጋለህ?</string>
+    <string name="leave_game_title">ጨዋታውን መተው?</string>
+    <string name="exit_confirm_message">መውጣት በእርግጥ ይፈልጋሉ?</string>
+    <string name="exit_forfeit_message">መውጣት በእርግጥ ይፈልጋሉ? ይህ እንደ መተው ይቆጠራል።</string>
+    <string name="close">ዝጋ</string>
+    <string name="ok">እሺ</string>
+    <string name="verification_email_sent">የማረጋገጫ ኢሜል ተልኳል</string>
+    <string name="check_email_to_verify">መለያዎን ለማረጋገጥ እባክዎ ኢሜልዎን ያረጋግጡ።</string>
+    <string name="email_verification_failed">የኢሜል ማረጋገጥ አልተሳካም።</string>
+    <string name="could_not_send_verification_email">የማረጋገጫ ኢሜል መላክ አልተቻለም፡ %1$s</string>
+    <string name="registration_failed_title">ምዝገባው አልተሳካም</string>
+    <string name="player_label">ተጫዋች</string>
+    <string name="android_label">አንድሮይድ</string>
+    <string name="player_with_number">ተጫዋች %1$d</string>
+    <string name="winner_timeout">%1$s ጊዜው አለፈበት።</string>
+    <string name="winner_abandon">%1$s ጨዋታውን ተወው።</string>
+    <string name="winner_is">አሸናፊው %1$s ነው!</string>
+    <string name="could_not_accept_invite">ግብዣውን መቀበል አልተቻለም።</string>
+    <string name="invite_was_cancelled">ግብዣው ተሰርዟል።</string>
+    <string name="invite_no_longer_available">ግብዣው ከእንግዲህ አይገኝም።</string>
+    <string name="invite_has_expired">ግብዣው ጊዜው አልፎበታል።</string>
+    <string name="please_verify_email_before_login">ከመግባትዎ በፊት እባክዎ የኢሜል አድራሻዎን ያረጋግጡ።</string>
+    <string name="authentication_failed">ማረጋገጥ አልተሳካም።</string>
+    <string name="could_not_cancel_invite">ግብዣውን መሰረዝ አልተቻለም፡ %1$s</string>
+    <string name="link_to_registered_account">ወደ ተመዘገበ መለያ አገናኝ</string>
+    <string name="link_account_title">ስም-አልባ መለያ አገናኝ</string>
+    <string name="link_account_description">መለያዎን እና የጨዋታ ታሪክዎን ለማስጠበቅ ስም-አልባ መለያዎን ከኢሜል፣ Google ወይም ከፌስቡክ ጋር ያገናኙ።</string>
+    <string name="link_account_success">መለያው በተሳካ ሁኔታ ተገናኝቷል!</string>
+    <string name="link_account_failed">መለያ ማገናኘት አልተሳካም፡ %1$s</string>
+    <string name="link_account_in_progress">መለያ በማገናኘት ላይ…</string>
+    <string name="account_already_exists_merge">ከእነዚህ ማረጋገጫዎች ጋር ተያይዞ መለያ ቀድሞውኑ አለ። የአሁኑ ውሂብዎ ይጠበቃልና ይዋሃዳል።</string>
+    <string name="credential_already_associated">ይህ ማረጋገጫ ከሌላ የተጠቃሚ መለያ ጋር ቀድሞውኑ ተያይዟል።</string>
+    <string name="enter_email_and_password_to_link">ስም-አልባ መለያዎን ለማገናኘት ኢሜልዎን እና የይለፍ ቃልዎን ያስገቡ</string>
+    <string name="link_with_email">በኢሜል ያገናኙ</string>
+    <string name="link_with_google">በGoogle ያገናኙ</string>
+    <string name="link_with_microsoft">በMicrosoft ያገናኙ</string>
+    <string name="link_with_facebook">በፌስቡክ ያገናኙ</string>
+    <string name="signup_decline_dialog_title">ያለ መለያ ልጫወት?</string>
+    <string name="signup_decline_dialog_message">መመዝገብ ለማትመርጡበት ምክንያት እንድንረዳዎ እባክዎን፡</string>
+    <string name="decline_reason_offline">ከመስመር ውጭ ብቻ ማጫወት</string>
+    <string name="decline_reason_privacy">የግላዊነት እንግዳነቶች</string>
+    <string name="decline_reason_complicated">በጣም የተወሳሰበ</string>
+    <string name="decline_reason_dont_use_providers">Google/ፌስቡክ/ኢሜል አልጠቀምም</string>
+    <string name="decline_reason_other">ሌላ ምክንያት</string>
+    <string name="save_progress_title">እድገትዎን እና ቅጽል ስምዎን ያስቀምጡ</string>
+    <string name="save_progress_message">ተሞክሮዎን ለማስቀመጥ እና ውድድሮችን ለመቀላቀል መለያዎን ያገናኙ!</string>
+    <string name="save_progress_button">እድገት አስቀምጥ</string>
+    <string name="maybe_later">ከዚያ በኋላ ላይ ምናልባት</string>
+    <string name="register_benefits_title">ውድድሮችን ተቀላቀልና በዓለም አቀፍ ውድድር ተወዳድር!</string>
+    <string name="register_benefits_message">ደረጃዎን ለማስቀመጥ እና በዓለም ዙሪያ ካሉ ተጫዋቾች ጋር በውድድር ለመሳተፍ ይመዝገቡ።</string>
+    <string name="register_now">አሁን ይመዝገቡ</string>
 </resources>

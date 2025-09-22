@@ -301,15 +301,19 @@ public class MatchAdapter
 
 
 
-        // Determine button visibility
+        // Determine button visibility - enable invites for recently active users
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
                 Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                 + ": inviteBtn visibility logic: st=" + st + ", pState=" + pState);
 
         boolean isActiveOrCompleted = "playing".equals(st) || "completed".equals(st);
-        boolean isOffline = pState == null || "offline".equalsIgnoreCase(pState);
+        
+        // Enable invites for users who are recently active (within 20 minutes), even if state is "offline"
+        long lastHeartbeat = hbCache.getOrDefault(oppUid, 0L);
+        boolean isTrulyOffline = (pState == null || "offline".equalsIgnoreCase(pState)) && 
+                (System.currentTimeMillis() - lastHeartbeat > 20 * 60_000L);
 
-        if (isActiveOrCompleted || isOffline) {
+        if (isActiveOrCompleted || isTrulyOffline) {
             h.inviteBtn.setVisibility(View.GONE);
         } else {
             h.inviteBtn.setVisibility(View.VISIBLE);
@@ -360,8 +364,12 @@ public class MatchAdapter
                 // 🧠 Also update invite button visibility here!
                 String status = h.snap.getString("status");
                 boolean isActiveOrCompleted = "playing".equals(status) || "completed".equals(status);
-                boolean isOffline = "offline".equalsIgnoreCase(pState);
-                h.inviteBtn.setVisibility((isActiveOrCompleted || isOffline)
+                
+                // Enable invites for users who are recently active (within 20 minutes), even if state is "offline"
+                boolean isTrulyOffline = "offline".equalsIgnoreCase(pState) && 
+                        (System.currentTimeMillis() - lastHb > 20 * 60_000L);
+                        
+                h.inviteBtn.setVisibility((isActiveOrCompleted || isTrulyOffline)
                         ? View.GONE : View.VISIBLE);
                 return;
             }

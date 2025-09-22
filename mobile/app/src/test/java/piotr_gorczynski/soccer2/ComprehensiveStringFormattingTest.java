@@ -107,6 +107,17 @@ public class ComprehensiveStringFormattingTest {
         
         String emptyFormat = SafeStringFormatter.safeFormat("", "test");
         assertNotNull("SafeFormat should handle empty format string", emptyFormat);
+        
+        // Test malformed format that would cause UnknownFormatConversionException
+        String malformedFormat = "Winner is %1 s!"; // Space between %1 and s
+        String malformedResult = SafeStringFormatter.safeFormat(malformedFormat, "TestPlayer");
+        assertNotNull("SafeFormat should handle malformed format causing UnknownFormatConversionException", malformedResult);
+        assertTrue("Result should contain fallback content for malformed format", malformedResult.contains("TestPlayer"));
+        
+        // Test another malformed format with invalid conversion
+        String invalidConversion = "Score: %1$x!"; // Using 'x' which might not be valid for strings
+        String invalidResult = SafeStringFormatter.safeFormat(invalidConversion, "NotANumber");
+        assertNotNull("SafeFormat should handle invalid conversion specifiers", invalidResult);
     }
     
     @Test

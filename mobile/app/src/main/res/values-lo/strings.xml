@@ -26,13 +26,271 @@
     <string name="language_swahili">ສະວາຮີລີ</string>
     <string name="language_urdu">ອູຣດູ</string>
     
+    <!-- Critical interface strings -->
+    <string name="menu_Settings">ການຕັ້ງຄ່າ</string>
+    <string name="title_activity_settings">ການຕັ້ງຄ່າ</string>
+    <string name="welcome_to_soccer">ຍິນດີຕ້ອນຮັບສູ່ Soccer!</string>
+    <string name="hello_nickname">ສະບາຍດີ %1$s!</string>
+    
     <!-- Basic interface -->
     <string name="settings">ການຕັ້ງຄ່າ</string>
     <string name="cancel">ຍົກເລີກ</string>
     <string name="confirm">ຢືນຢັນ</string>
     
+    <!-- Menu button strings -->
+    <string name="menu_YouvsAndroid">ຝຶກຊ້ອມກັບ Android</string>
+    <string name="menu_Player1vsPlayer2">ຜູ້ຫຼິ້ນສອງຄົນໃນອຸປະກອນນີ້</string>
+    <string name="invite_a_friend">ເຊີນເພື່ອນ</string>
+    <string name="pending_invites">ການເຊີນທີ່ລໍຖ້າ</string>
+    <string name="tournaments">ການແຂ່ງຂັນ</string>
+    <string name="ranking">ການຈັດອັນດັບ</string>
+    
+    <!-- Settings strings -->
+    <string name="pref_title_level">ລະດັບ Android</string>
+    <string name="pref_title_block_invite_friend">ບລັອກຄໍາຮ້ອງຂໍ \`ເຊີນເພື່ອນ\`</string>
+    <string name="pref_summary_block_invite_friend">ຜູ້ຫຼິ້ນອື່ນໆບໍ່ສາມາດເຊີນເຈົ້າຜ່ານ \`ເຊີນເພື່ອນ\` ໄດ້ (ການແຂ່ງຂັນບໍ່ໄດ້ຮັບຜົນກະທົບ)</string>
+    <string name="pref_title_ads_consent">ການຍິນຍອມໂຄສະນາສ່ວນບຸກຄົນ</string>
+    <string name="pref_summary_ads_consent">ທົບທວນ ຫຼື ປ່ຽນການຍິນຍອມຂອງເຈົ້າສໍາລັບການສະແດງໂຄສະນາສ່ວນບຸກຄົນ</string>
+    <string name="pref_title_language">ພາສາ</string>
+    <string name="pref_summary_language">ເລືອກພາສາທີ່ເຈົ້າມັກ</string>
+    <string name="current_language">ປັດຈຸບັນ: %1$s</string>
+    <string name="pref_title_facebook">ຊຸມຊົນ Facebook</string>
+    <string name="pref_summary_facebook">ເປີດໜ້າຊຸມຊົນຂອງພວກເຮົາໃນ Facebook</string>
+    
+    <!-- Level difficulty strings -->
+    <string-array name="pref_level_titles">
+        <item>ງ່າຍ</item>
+        <item>ປານກາງ</item>
+        <item>ຍາກ</item>
+    </string-array>
+    
+    <!-- Basic interface strings -->
+    <string name="hello">ສະບາຍດີ!</string>
+    
     <!-- Game ready notification strings -->
     <string name="game_ready_title">ເກມພ້ອມສໍາລັບ %1$s!</string>
     <string name="game_ready_message">ເກມຂອງເຈົ້າພ້ອມທີ່ຈະເລີ່ມແລ້ວ. ກົດເພື່ອເຂົ້າຮ່ວມ!</string>
     <string name="join_game_action">ເຂົ້າຮ່ວມເກມ</string>
+
+    <!-- Additional translations needed -->
+    <string-array name="pref_level_values">
+        <item>1</item>
+        <item>10</item>
+        <item>30</item>
+    </string-array>
+    <string name="register">ລົງທະບຽນ</string>
+    <string name="confirm_password">ຢືນຢັນລະຫັດຜ່ານ</string>
+    <string name="email">ອີເມວ</string>
+    <string name="password">ລະຫັດຜ່ານ</string>
+    <string name="login">ເຂົ້າລະບົບ</string>
+    <string name="log_in">ເຂົ້າລະບົບ</string>
+    <string name="register_new_account">ສ້າງບັນຊີໃຫມ່</string>
+    <string name="reset_password">ຕັ້ງລະຫັດຜ່ານໃໝ່</string>
+    <string name="reset_password_email_hint">ກະລຸນາໃສ່ທີ່ຢູ່ອີເມວຂອງທ່ານ</string>
+    <string name="reset_password_title">ຕັ້ງລະຫັດຜ່ານໃໝ່</string>
+    <string name="reset_password_message">ກະລຸນາໃສ່ອີເມວຂອງທ່ານ. ຖ້າມີບັນຊີທີ່ໃຊ້ອີເມວນີ້ ທ່ານຈະໄດ້ຮັບອີເມວເພື່ອຕັ້ງລະຫັດຜ່ານໃໝ່.</string>
+    <string name="reset_password_success">ຖ້າມີບັນຊີທີ່ໃຊ້ອີເມວນີ້ ອີເມວຕັ້ງລະຫັດຜ່ານໃໝ່ໄດ້ສົ່ງໄປແລ້ວ.</string>
+    <string name="reset_password_failed">ສົ່ງອີເມວຕັ້ງລະຫັດຜ່ານໃໝ່ບໍ່ສໍາເລັດ. ກະລຸນາລອງໃໝ່.</string>
+    <string name="nickname">ຊື່ເລັ່ນ</string>
+    <string name="enter_nickname_to_invite">ໃສ່ຊື່ເລັ່ນເພື່ອເຊີນ:</string>
+    <string name="enter_nickname_to_search">ໃສ່ຊື່ເລັ່ນເພື່ອຄົ້ນຫາ:</string>
+    <string name="friend_s_nickname">ຊື່ເລັ່ນຂອງໝູ່</string>
+    <string name="send_invitation">ສົ່ງຄໍາເຊີນ</string>
+    <string name="add_a_friend">ເພີ່ມໝູ່</string>
+    <string name="add_friend">ເພີ່ມໝູ່ສໍາເລັດ</string>
+    <string name="no_friends">ຍັງບໍ່ມີໝູ່ທີ່ຖືກເພີ່ມ...</string>
+    <string name="no_tournaments">ຍັງບໍ່ມີການສ້າງການແຂ່ງຂັນ.</string>
+    <string name="please_enter_a_nickname">ກະລຸນາໃສ່ຊື່ເລັ່ນ.</string>
+    <string name="user_not_found">ບໍ່ພົບຜູ້ໃຊ້.</string>
+    <string name="you_can_t_invite_yourself">ບໍ່ສາມາດເຊີນຕົວເອງໄດ້.</string>
+    <string name="error_searching_user">ຜິດພາດໃນການຄົ້ນຫາຜູ້ໃຊ້.</string>
+    <string name="invitation_sent">ສົ່ງຄໍາເຊີນແລ້ວ!</string>
+    <string name="failed_to_send_invite">ສົ່ງຄໍາເຊີນບໍ່ສໍາເລັດ.</string>
+    <string name="account_no_longer_available">ບັນຊີນີ້ບໍ່ມີອີກແລ້ວ.</string>
+    <string name="failed_to_add_friend">ເພີ່ມໝູ່ບໍ່ສໍາເລັດ.</string>
+    <string name="failed_to_add_friend_reason">ເພີ່ມໝູ່ບໍ່ສໍາເລັດ: %1$s</string>
+    <string name="failed_to_load_nickname">ໂຫລດຊື່ເລັ່ນບໍ່ສໍາເລັດ.</string>
+    <string name="search">ຄົ້ນຫາ</string>
+    <string name="load_more">ໂຫລດເພີ່ມ</string>
+    <string name="add_friend_label">ເພີ່ມ</string>
+    <string name="invite_blocked">%1$s ປິດຮັບຄໍາເຊີນ.</string>
+    <string name="invites_blocked_notification">ຜູ້ຫຼິ້ນອື່ນບໍ່ສາມາດເຊີນທ່ານຜ່ານຟັງຊັນ "ເຊີນໝູ່" ໄດ້. ທ່ານສາມາດປ່ຽນໄດ້ໃນການຕັ້ງຄ່າ.</string>
+    <string name="pending_game_invitations">ຄໍາເຊີນເກມທີ່ລໍຖ້າ</string>
+    <string name="no_pending_invites">ບໍ່ມີຄໍາເຊີນທີ່ລໍຖ້າ.</string>
+    <string name="invite_already_sent">ທ່ານມີຄໍາເຊີນອື່ນທີ່ລໍຖ້າຢູ່ແລ້ວ.</string>
+    <string name="waiting_for_opponent_named">ກໍາລັງລໍຖ້າ %1$s ຢືນຢັນ...</string>
+    <string name="waiting_for_opponent">ກໍາລັງລໍຖ້າຄູ່ແຂ່ງຢືນຢັນ...</string>
+    <string name="no_ranking_yet">ຍັງບໍ່ມີການແຂ່ງຂັນທີ່ຈົບເພື່ອສະແດງອັນດັບ.</string>
+    <string name="join">ເຂົ້າຮ່ວມ</string>
+    <string name="slots_format">%1$d / %2$d</string>
+    <string name="open">ເປີດ</string>
+    <string name="lobby_started">ເລີ່ມການແຂ່ງຂັນແລ້ວ!</string>
+    <string name="ended">ສິ້ນສຸດ...</string>
+    <string name="running">ກໍາລັງດໍາເນີນ...</string>
+    <string name="registering">ກໍາລັງລົງທະບຽນ...</string>
+    <string name="view_results">ເບິ່ງຜົນ</string>
+    <string name="tournament_running_ends">ການແຂ່ງຂັນກໍາລັງດໍາເນີນ. ສິ້ນສຸດ %1$s</string>
+    <string name="registration_ends">ປິດຮັບລົງທະບຽນ %1$s</string>
+    <string name="registration_closed">ປິດຮັບລົງທະບຽນແລ້ວ. ການແຂ່ງຂັນຈະເລີ່ມໃນ 1 ຊົ່ວໂມງ</string>
+    <string name="tournament_ends_now">ການແຂ່ງຂັນກໍາລັງສິ້ນສຸດ...</string>
+    <string name="tournament_ended">ສິ້ນສຸດ %1$s</string>
+    <string name="tournament_ended_short">ສິ້ນສຸດ</string>
+    <string name="logout">ອອກລະບົບ</string>
+    <string name="logged_out">ທ່ານອອກຈາກລະບົບແລ້ວ</string>
+    <plurals name="wins_format">
+        <item quantity="one">%d ຊັຍຊະນະ</item>
+        <item quantity="other">%d ຊັຍຊະນະ</item>
+    </plurals>
+    <string name="toast_not_your_turn">ຍັງບໍ່ເຖິງຕາຂອງທ່ານ!</string>
+    <string name="five_minutes">05:00</string>
+    <string name="cancel_invite">ຍົກເລີກຄໍາເຊີນ</string>
+    <string name="remove">ລຶບ</string>
+    <string name="invite_expired">ຄໍາເຊີນຫມົດອາຍຸ.</string>
+    <string name="leave">ອອກ</string>
+    <string name="leave_tournament_confirm">ທ່ານແນ່ໃຈບໍ່ວ່າຈະອອກຈາກການແຂ່ງຂັນນີ້?</string>
+    <string name="left_tournament">ທ່ານອອກຈາກການແຂ່ງຂັນແລ້ວ.</string>
+    <string name="leave_waiting_confirm">ການອອກຈາກໜ້າລໍຖ້າຈະຍົກເລີກຄໍາເຊີນຂອງທ່ານ. ທ່ານແນ່ໃຈບໍ່?</string>
+    <string name="yes">ແມ່ນ</string>
+    <string name="no">ບໍ່</string>
+    <string name="target_player_busy">ຜູ້ຫຼິ້ນນັ້ນກໍາລັງຕິດກັບຄໍາເຊີນອື່ນແລ້ວ.</string>
+    <string name="accept">ຮັບ</string>
+    <string name="decline">ປະຕິເສດ</string>
+    <string name="match_completed_win">ເກມສໍາເລັດ, ທ່ານຊະນະ 🏆</string>
+    <string name="match_completed_lose">ເກມສໍາເລັດ, ທ່ານແພ້ 😞</string>
+    <string name="regulation_not_found">ບໍ່ພົບກົດລະບຽບ.</string>
+    <string name="regulation_load_error">ໂຫລດກົດລະບຽບບໍ່ສໍາເລັດ.</string>
+    <string name="regulation_auth_required">ກະລຸນາເຂົ້າລະບົບເພື່ອເບິ່ງກົດລະບຽບ.</string>
+    <string name="server_unavailable">ເຊີບເວີບໍ່ວ່າງ</string>
+    <string name="server_unavailable_message">ຂໍອະໄພ, ເຊີບເວີ Soccer ບໍ່ພ້ອມໃຊ້ງານໃນຂະນະນີ້...</string>
+    <string name="account">ບັນຊີ</string>
+    <string name="account_information">ຂໍ້ມູນບັນຊີ</string>
+    <string name="nickname_label">ຊື່ເລັ່ນ: %1$s</string>
+    <string name="email_label">ອີເມວ: %1$s</string>
+    <string name="not_registered">ທ່ານຍັງບໍ່ໄດ້ລົງທະບຽນໃນການແຂ່ງຂັນນີ້.</string>
+    <string name="login_email">ເຂົ້າລະບົບດ້ວຍອີເມວ</string>
+    <string name="login_google">ເຂົ້າລະບົບດ້ວຍ Google</string>
+    <string name="login_facebook">ເຂົ້າລະບົບດ້ວຍ Facebook</string>
+    <string name="login_microsoft">ເຂົ້າລະບົບດ້ວຍ Microsoft</string>
+    <string name="login_anonymous">ເຂົ້າລະບົບແບບນິລະນາມ</string>
+    <string name="login_method_label">ວິທີການເຂົ້າລະບົບ: %1$s</string>
+    <string name="facebook_id_label">Facebook ID: %1$s</string>
+    <string name="facebook_name_label">ຊື່ Facebook: %1$s</string>
+    <string name="ads_consent_required">ການສະແດງໂຄສະນາຊ່ວຍສະໜັບສະໜູນການບໍາລຸງຮັກສາລະບົບ. ທ່ານສາມາດກວດສອບການຍິນຍອມໄດ້ໃນການຕັ້ງຄ່າ.</string>
+    <string name="no_internet_for_privacy_options">ຈໍາເປັນຕ້ອງມີອິນເຕີເນັດເພື່ອເປີດທາງເລືອກຄວາມເປັນສ່ວນຕົວ.</string>
+    <string name="remove_account">ລົບບັນຊີ</string>
+    <string name="remove_account_dialog_title">ລົບບັນຊີ</string>
+    <string name="remove_account_dialog_message">ທ່ານແນ່ໃຈບໍ່ວ່າຈະລົບບັນຊີຂອງທ່ານ? ການດໍາເນີນການນີ້ບໍ່ສາມາດຍ້ອນກັບໄດ້ ແລະແມ່ນແຕ່ທ່ານລົງທະບຽນອີກຄັ້ງ ກໍຈະບໍ່ສາມາດເຂົ້າເຖິງປະຫວັດການແຂ່ງຂັນແລະຜົນການໄດ້.</string>
+    <string name="proceed_account_removal">ດໍາເນີນການ</string>
+    <string name="removing_account">ກໍາລັງລົບບັນຊີ…</string>
+    <string name="account_removed">ລົບບັນຊີສໍາເລັດແລ້ວ</string>
+    <string name="remove_account_failed">ລົບບັນຊີບໍ່ສໍາເລັດ. ກະລຸນາລອງອີກຄັ້ງ.</string>
+    <string name="reauth_title">ເຂົ້າລະບົບຢືນຢັນອີກຄັ້ງ</string>
+    <string name="reauth_message">ກະລຸນາໃສ່ລະຫັດຜ່ານຂອງທ່ານເພື່ອສືບຕໍ່.</string>
+    <string name="reauth_failed">ການຢືນຢັນອີກຄັ້ງບໍ່ສໍາເລັດ. ກະລຸນາລອງອີກຄັ້ງ.</string>
+    <string name="anonymous_logout_warning_title">ແຈ້ງເຕືອນການອອກຈາກລະບົບ</string>
+    <string name="anonymous_logout_warning_message">ທ່ານແນ່ໃຈບໍ່ວ່າຈະອອກຈາກລະບົບ? ສໍາລັບວິທີນິລະນາມ ການດໍາເນີນການນີ້ບໍ່ສາມາດຍ້ອນກັບໄດ້ ແລະແມ່ນແຕ່ທ່ານລົງທະບຽນອີກ ກໍຈະບໍ່ສາມາດເຂົ້າເຖິງປະຫວັດແລະຜົນການແຂ່ງຂັນເກົ່າໄດ້.</string>
+    <string name="field_your_move">ເປັນຕາທ່ານແລ້ວ!</string>
+    <string name="field_move_tail">ກໍາລັງເຄື່ອນໄຫວ … ⏳ %1$s</string>
+    <string name="field_hourglass_tail">⏳ %1$s</string>
+    <string name="field_your_move_ellipsis">ເປັນຕາທ່ານ…</string>
+    <string name="field_thinking">ກໍາລັງຄິດ…</string>
+    <string name="field_move_ellipsis_tail">ກໍາລັງເຄື່ອນໄຫວ… ⏳ %1$s</string>
+    <string name="field_waiting_for">ກໍາລັງລໍຖ້າ %1$s</string>
+    <string name="field_to_start_tail">ໃຫ້ເລີ່ມ… ⏳ %1$s</string>
+    <string name="enter_email_and_password">ກະລຸນາໃສ່ທັງອີເມວແລະລະຫັດຜ່ານ</string>
+    <string name="login_success">ເຂົ້າລະບົບສໍາເລັດ!</string>
+    <string name="login_failed">ເຂົ້າລະບົບບໍ່ສໍາເລັດ: %1$s</string>
+    <string name="login_in_progress">ກໍາລັງເຂົ້າລະບົບ, ກະລຸນາລໍຖ້າ...</string>
+    <string name="anonymous_login_warning_title">ເຕືອນກ່ອນເຂົ້າລະບົບແບບນິລະນາມ</string>
+    <string name="anonymous_login_warning_message">ການເຂົ້າລະບົບແບບນິລະນາມໃຫ້ເຂົ້າເຖິງຟັງຊັນບາງຢ່າງ, ແຕ່ຖ້າທ່ານເສຍເຄື່ອງ, ລົງແອັບໃໝ່, ປ່ຽນໂທລະສັບ ຫຼືອອກລະບົບ, ການເຊື່ອມກັບບັນຊີນິລະນາມຈະຖືກສູນເສຍ ແລະບໍ່ສາມາດເຂົ້າໄປໃນບັນຊີເກົ່າໄດ້. ຈະສືບຕໍ່ບໍ?</string>
+    <string name="proceed_anonymous_login">ສືບຕໍ່</string>
+    <string name="enter_email_address">ກະລຸນາໃສ່ອີເມວຂອງທ່ານ</string>
+    <string name="all_fields_required">ຕ້ອງໃສ່ຂໍ້ມູນທຸກຊ່ອງ</string>
+    <string name="passwords_do_not_match">ລະຫັດຜ່ານບໍ່ກົງກັນ</string>
+    <string name="registration_in_progress">ກໍາລັງລອງລົງທະບຽນ...</string>
+    <string name="nickname_max_length_reached">ສາມາດໃສ່ໄດ້ສູງສຸດ 20 ຕົວອັກສອນ</string>
+    <string name="nickname_required">ຈໍາເປັນຕ້ອງມີຊື່ເລັ່ນ</string>
+    <string name="nickname_too_long">ຊື່ເລັ່ນຕ້ອງຍາວບໍ່ເກີນ 20 ຕົວອັກສອນ</string>
+    <string name="not_logged_in">ບໍ່ໄດ້ເຂົ້າລະບົບ</string>
+    <string name="register_to_use_function">ກະລຸນາລົງທະບຽນເພື່ອໃຊ້ຟັງຊັນນີ້.</string>
+    <string name="register_dialog_message">ເພື່ອໃຊ້ຟັງຊັນນີ້ທ່ານຕ້ອງລົງທະບຽນກ່ອນ. ທ່ານສາມາດລົງທະບຽນແບບນິລະນາມກໍໄດ້. ຈະສືບຕໍ່ບໍ?</string>
+    <string name="proceed">ສືບຕໍ່</string>
+    <string name="network_error_checking_nickname">ເກີດຂໍ້ຜິດພາດເນື່ອງຈາກເຄືອຂ່າຍໃນຂະນະກວດຊື່ເລັ່ນ</string>
+    <string name="nickname_taken">ຊື່ເລັ່ນນີ້ຖືກໃຊ້ແລ້ວ — ກະລຸນາເລືອກຊື່ໃໝ່</string>
+    <string name="nickname_saved">ບັນທຶກຊື່ເລັ່ນແລ້ວ</string>
+    <string name="nickname_save_failed">ບັນທຶກຊື່ເລັ່ນບໍ່ສໍາເລັດ</string>
+    <string name="game_launch_failed">ເປີດເກມບໍ່ສໍາເລັດ.</string>
+    <string name="app_launch_failed">ເປີດແອັບບໍ່ສໍາເລັດ. ກະລຸນາລອງອີກຄັ້ງ.</string>
+    <string name="layout_initialization_error">ແອັບພົບຂໍ້ຜິດພາດເວລາສະແດງຜົນ. ກະລຸນາລອງອີກຄັ້ງ.</string>
+    <string name="retry">ລອງໃໝ່</string>
+    <string name="please_log_in_to_continue">ກະລຸນາເຂົ້າລະບົບເພື່ອສືບຕໍ່.</string>
+    <string name="match_not_found">ບໍ່ພົບການແຂ່ງຂັນ.</string>
+    <string name="invalid_match_record">ບັນທຶກການແຂ່ງຂັນບໍ່ຖືກຕ້ອງ.</string>
+    <string name="failed_to_load_opponent">ໂຫລດຄູ່ແຂ່ງບໍ່ສໍາເລັດ.</string>
+    <string name="network_error">ເຄືອຂ່າຍຜິດພາດ.</string>
+    <string name="game_is_over">ເກມສິ້ນສຸດແລ້ວ.</string>
+    <string name="failed_to_send_move">ສົ່ງການເຄື່ອນໄຫວບໍ່ສໍາເລັດ: %1$s</string>
+    <string name="fatal_error_matchpath_null">ຜິດພາດຮ້າຍແຮງ matchPath == null</string>
+    <string name="failed_to_load_match">ໂຫລດການແຂ່ງຂັນບໍ່ສໍາເລັດ.</string>
+    <string name="invitation_not_found">ບໍ່ພົບຄໍາເຊີນ.</string>
+    <string name="must_log_in_to_accept_invites">ທ່ານຕ້ອງເຂົ້າລະບົບເພື່ອຮັບຄໍາເຊີນ.</string>
+    <string name="invalid_response_from_server">ການຕອບກັບຈາກເຊີບເວີບໍ່ຖືກຕ້ອງ.</string>
+    <string name="invite_accepted_starting_game">ຮັບຄໍາເຊີນແລ້ວ! ກໍາລັງເລີ່ມເກມ…</string>
+    <string name="authentication_error_try_again">ການຢືນຢັນຕົວຕົນຜິດພາດ. ກະລຸນາເຂົ້າລະບົບອີກຄັ້ງ.</string>
+    <string name="registered_as">ລົງທະບຽນໃນນາມ: %1$s</string>
+    <string name="tournament_not_found">ບໍ່ພົບການແຂ່ງຂັນທົ່ວໄປ.</string>
+    <string name="must_be_logged_in">ທ່ານຕ້ອງເຂົ້າລະບົບ.</string>
+    <string name="joined_wait_for_bracket">ເຂົ້າຮ່ວມແລ້ວ! ກະລຸນາລໍຖ້າໃຫ້ຕາຕະລາງເລີ່ມ.</string>
+    <string name="accept_invitation_title">ຮັບຄໍາເຊີນ</string>
+    <string name="accept_invitation_message">ທ່ານຕ້ອງການຮັບຄໍາເຊີນເກມນີ້ບໍ?</string>
+    <string name="leave_game_title">ອອກຈາກເກມ?</string>
+    <string name="exit_confirm_message">ທ່ານແນ່ໃຈບໍ່ວ່າຈະອອກ?</string>
+    <string name="exit_forfeit_message">ທ່ານແນ່ໃຈບໍ່ວ່າຈະອອກ? ນີ້ຈະຖືກນັບວ່າປະລະການແຂ່ງຂັນ.</string>
+    <string name="close">ປິດ</string>
+    <string name="ok">ຕົກລົງ</string>
+    <string name="verification_email_sent">ສົ່ງອີເມວຢືນຢັນແລ້ວ</string>
+    <string name="check_email_to_verify">ກະລຸນາກວດອີເມວເພື່ອຢືນຢັນບັນຊີຂອງທ່ານ.</string>
+    <string name="email_verification_failed">ຢືນຢັນອີເມວບໍ່ສໍາເລັດ</string>
+    <string name="could_not_send_verification_email">ສົ່ງອີເມວຢືນຢັນບໍ່ໄດ້: %1$s</string>
+    <string name="registration_failed_title">ລົງທະບຽນບໍ່ສໍາເລັດ</string>
+    <string name="player_label">ຜູ້ເລ່ນ</string>
+    <string name="android_label">Android</string>
+    <string name="player_with_number">ຜູ້ເລ່ນ %1$d</string>
+    <string name="winner_timeout">%1$s ໝົດເວລາ.</string>
+    <string name="winner_abandon">%1$s ຖອນຕົວອອກຈາກເກມ.</string>
+    <string name="winner_is">ຜູ້ຊະນະຄື %1$s!</string>
+    <string name="could_not_accept_invite">ຮັບຄໍາເຊີນບໍ່ໄດ້.</string>
+    <string name="invite_was_cancelled">ຄໍາເຊີນຖືກຍົກເລີກ.</string>
+    <string name="invite_no_longer_available">ຄໍາເຊີນບໍ່ພ້ອມໃຊ້ອີກແລ້ວ.</string>
+    <string name="invite_has_expired">ຄໍາເຊີນໝົດອາຍຸ.</string>
+    <string name="please_verify_email_before_login">ກະລຸນາຢືນຢັນອີເມວຂອງທ່ານກ່ອນເຂົ້າລະບົບ.</string>
+    <string name="authentication_failed">ການຢືນຢັນຕົວຕົນບໍ່ສໍາເລັດ.</string>
+    <string name="could_not_cancel_invite">ຍົກເລີກຄໍາເຊີນບໍ່ໄດ້: %1$s</string>
+    <string name="link_to_registered_account">ເຊື່ອມກັບບັນຊີທີ່ລົງທະບຽນ</string>
+    <string name="link_account_title">ເຊື່ອມບັນຊີນິລະນາມ</string>
+    <string name="link_account_description">ເຊື່ອມບັນຊີນິລະນາມຂອງທ່ານກັບອີເມວ, Google ຫຼື Facebook ເພື່ອຮັກສາຄວາມປອດໄພຂອງບັນຊີແລະປະຫວັດເກມ.</string>
+    <string name="link_account_success">ເຊື່ອມບັນຊີສໍາເລັດ!</string>
+    <string name="link_account_failed">ເຊື່ອມບັນຊີບໍ່ສໍາເລັດ: %1$s</string>
+    <string name="link_account_in_progress">ກໍາລັງເຊື່ອມບັນຊີ…</string>
+    <string name="account_already_exists_merge">ມີບັນຊີທີ່ໃຊ້ຂໍ້ມູນນີ້ຢູ່ແລ້ວ. ຂໍ້ມູນປັດຈຸບັນຂອງທ່ານຈະຖືກຮັກສາແລະລວມກັນ.</string>
+    <string name="credential_already_associated">ຂໍ້ມູນຢືນຢັນນີ້ຖືກເຊື່ອມກັບບັນຊີຜູ້ໃຊ້ອື່ນແລ້ວ.</string>
+    <string name="enter_email_and_password_to_link">ໃສ່ອີເມວແລະລະຫັດຜ່ານເພື່ອເຊື່ອມບັນຊີນິລະນາມຂອງທ່ານ</string>
+    <string name="link_with_email">ເຊື່ອມດ້ວຍອີເມວ</string>
+    <string name="link_with_google">ເຊື່ອມດ້ວຍ Google</string>
+    <string name="link_with_microsoft">ເຊື່ອມດ້ວຍ Microsoft</string>
+    <string name="link_with_facebook">ເຊື່ອມດ້ວຍ Facebook</string>
+    <string name="signup_decline_dialog_title">ເລີ່ມຫຼິ້ນໂດຍບໍ່ມີບັນຊີ?</string>
+    <string name="signup_decline_dialog_message">ຊ່ວຍໃຫ້ພວກເຮົາເຂົ້າໃຈເຫດຜົນທີ່ທ່ານບໍ່ຢາກລົງທະບຽນ:</string>
+    <string name="decline_reason_offline">ຫຼິ້ນອອຟລາຍຢ່າງດຽວ</string>
+    <string name="decline_reason_privacy">ກັງວົນເລື່ອງຄວາມເປັນສ່ວນຕົວ</string>
+    <string name="decline_reason_complicated">ຂັ້ນຕອນຊັບຊ້ອນເກີນໄປ</string>
+    <string name="decline_reason_dont_use_providers">ບໍ່ໃຊ້ Google/Facebook/Email</string>
+    <string name="decline_reason_other">ເຫດຜົນອື່ນ</string>
+    <string name="save_progress_title">ບັນທຶກຄວາມຄືບໜ້າແລະຊື່ເລັ່ນຂອງທ່ານ</string>
+    <string name="save_progress_message">ເຊື່ອມບັນຊີຂອງທ່ານເພື່ອບັນທຶກສະຖິຕິແລະເຂົ້າຮ່ວມການແຂ່ງຂັນ!</string>
+    <string name="save_progress_button">ບັນທຶກຄວາມຄືບໜ້າ</string>
+    <string name="maybe_later">ໄວ້ຄ່ອຍວ່າກັນ</string>
+    <string name="register_benefits_title">ເຂົ້າຮ່ວມການແຂ່ງຂັນແລະແຂ່ງຂັນກັບທົ່ວໂລກ!</string>
+    <string name="register_benefits_message">ລົງທະບຽນເພື່ອບັນທຶກອັນດັບຂອງທ່ານ ແລະຮ່ວມແຂ່ງກັບນັກຫຼິ້ນຈາກທົ່ວໂລກ.</string>
+    <string name="register_now">ລົງທະບຽນດຽວນີ້</string>
 </resources>

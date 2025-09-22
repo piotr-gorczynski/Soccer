@@ -26,13 +26,271 @@
     <string name="language_swahili">Kiswahili</string>
     <string name="language_urdu">Kiurdu</string>
     
+    <!-- Critical interface strings -->
+    <string name="menu_Settings">Mipangilio</string>
+    <string name="title_activity_settings">Mipangilio</string>
+    <string name="welcome_to_soccer">Karibu Soccer!</string>
+    <string name="hello_nickname">Hujambo %1$s!</string>
+    
     <!-- Basic interface -->
     <string name="settings">Mipangilio</string>
     <string name="cancel">Ghairi</string>
     <string name="confirm">Thibitisha</string>
     
+    <!-- Menu button strings -->
+    <string name="menu_YouvsAndroid">Mazoezi na Android</string>
+    <string name="menu_Player1vsPlayer2">Wachezaji wawili kwenye kifaa hiki</string>
+    <string name="invite_a_friend">Alika Rafiki</string>
+    <string name="pending_invites">Mialiko Inayongoja</string>
+    <string name="tournaments">Mashindano</string>
+    <string name="ranking">Upangaji</string>
+    
+    <!-- Settings strings -->
+    <string name="pref_title_level">Ngazi ya Android</string>
+    <string name="pref_title_block_invite_friend">Zuia ombi la `Alika Rafiki`</string>
+    <string name="pref_summary_block_invite_friend">Wachezaji wengine hawawezi kukulika kupitia `Alika Rafiki` (mashindano hayataathirika)</string>
+    <string name="pref_title_ads_consent">Idhini ya matangazo ya kibinafsi</string>
+    <string name="pref_summary_ads_consent">Kagua au badilisha idhini yako ya kuonyesha matangazo ya kibinafsi</string>
+    <string name="pref_title_language">Lugha</string>
+    <string name="pref_summary_language">Chagua lugha unayopendelea</string>
+    <string name="current_language">Ya sasa: %1$s</string>
+    <string name="pref_title_facebook">Jumuiya ya Facebook</string>
+    <string name="pref_summary_facebook">Fungua ukurasa wa jumuiya yetu kwenye Facebook</string>
+    
+    <!-- Level difficulty strings -->
+    <string-array name="pref_level_titles">
+        <item>Rahisi</item>
+        <item>Wastani</item>
+        <item>Ngumu</item>
+    </string-array>
+    
+    <!-- Basic interface strings -->
+    <string name="hello">Hujambo!</string>
+    
     <!-- Game ready notification strings -->
     <string name="game_ready_title">Mchezo Uko Tayari kwa %1$s!</string>
     <string name="game_ready_message">Mechi yako iko tayari kuanza. Gusa ili kujiunga!</string>
     <string name="join_game_action">Jiunge na Mchezo</string>
+
+    <!-- Additional translations needed -->
+    <string-array name="pref_level_values">
+        <item>1</item>
+        <item>10</item>
+        <item>30</item>
+    </string-array>
+    <string name="register">Jisajili</string>
+    <string name="confirm_password">Thibitisha Nenosiri</string>
+    <string name="email">Barua pepe</string>
+    <string name="password">Nenosiri</string>
+    <string name="login">Ingia</string>
+    <string name="log_in">Ingia</string>
+    <string name="register_new_account">Sajili akaunti mpya</string>
+    <string name="reset_password">Weka upya nenosiri</string>
+    <string name="reset_password_email_hint">Ingiza anwani yako ya barua pepe</string>
+    <string name="reset_password_title">Weka upya Nenosiri</string>
+    <string name="reset_password_message">Tafadhali ingiza anwani yako ya barua pepe. Ikiwa akaunti yenye barua pepe hii ipo, utapokea barua pepe ya kuweka upya nenosiri.</string>
+    <string name="reset_password_success">Ikiwa akaunti yenye barua pepe hii ipo, barua pepe ya kuweka upya nenosiri imetumwa.</string>
+    <string name="reset_password_failed">Imeshindwa kutuma barua pepe ya kuweka upya nenosiri. Tafadhali jaribu tena.</string>
+    <string name="nickname">Jina la utani</string>
+    <string name="enter_nickname_to_invite">Ingiza jina la utani ili kualika:</string>
+    <string name="enter_nickname_to_search">Ingiza jina la utani ili kutafuta:</string>
+    <string name="friend_s_nickname">Jina la utani la rafiki</string>
+    <string name="send_invitation">Tuma mwaliko</string>
+    <string name="add_a_friend">Ongeza rafiki</string>
+    <string name="add_friend">Rafiki ameongezwa kwa mafanikio</string>
+    <string name="no_friends">Bado hujaongeza marafiki…</string>
+    <string name="no_tournaments">Hakuna mashindano yaliyoundwa bado.</string>
+    <string name="please_enter_a_nickname">Tafadhali ingiza jina la utani.</string>
+    <string name="user_not_found">Mtumiaji hakupatikana.</string>
+    <string name="you_can_t_invite_yourself">Huwezi kujialika.</string>
+    <string name="error_searching_user">Hitilafu wakati wa kutafuta mtumiaji.</string>
+    <string name="invitation_sent">Mwaliko umetumwa!</string>
+    <string name="failed_to_send_invite">Imeshindwa kutuma mwaliko.</string>
+    <string name="account_no_longer_available">Akaunti ya mtumiaji haipatikani tena.</string>
+    <string name="failed_to_add_friend">Imeshindwa kuongeza rafiki.</string>
+    <string name="failed_to_add_friend_reason">Imeshindwa kuongeza rafiki: %1$s</string>
+    <string name="failed_to_load_nickname">Imeshindwa kupakia jina la utani.</string>
+    <string name="search">Tafuta</string>
+    <string name="load_more">Pakia zaidi</string>
+    <string name="add_friend_label">Ongeza</string>
+    <string name="invite_blocked">%1$s amezuia mialiko.</string>
+    <string name="invites_blocked_notification">Wachezaji wengine hawawezi kukualika kupitia kipengele cha `Alika Rafiki`. Unaweza kubadilisha hili katika Mipangilio.</string>
+    <string name="pending_game_invitations">Mialiko ya Mchezo Inayosubiri</string>
+    <string name="no_pending_invites">Hakuna mialiko inayosubiri.</string>
+    <string name="invite_already_sent">Tayari una mwaliko mwingine unaosubiri.</string>
+    <string name="waiting_for_opponent_named">Inasubiri %1$s akubali…</string>
+    <string name="waiting_for_opponent">Inasubiri mpinzani akubali…</string>
+    <string name="no_ranking_yet">Hakuna mashindano yaliyokamilika ili kuonyesha upangaji bado.</string>
+    <string name="join">Jiunge</string>
+    <string name="slots_format">%1$d / %2$d</string>
+    <string name="open">Wazi</string>
+    <string name="lobby_started">Mashindano yameanza!</string>
+    <string name="ended">Yameisha…</string>
+    <string name="running">Inaendelea…</string>
+    <string name="registering">Usajili unaendelea…</string>
+    <string name="view_results">Tazama Matokeo</string>
+    <string name="tournament_running_ends">Mashindano yanaendelea. Yataisha %1$s</string>
+    <string name="registration_ends">Usajili unaisha %1$s</string>
+    <string name="registration_closed">Usajili umefungwa. Mashindano yataanza ndani ya saa 1.</string>
+    <string name="tournament_ends_now">Mashindano yanaisha sasa…</string>
+    <string name="tournament_ended">Yameisha %1$s</string>
+    <string name="tournament_ended_short">Yameisha</string>
+    <string name="logout">Toka</string>
+    <string name="logged_out">Umetoka</string>
+    <plurals name="wins_format">
+        <item quantity="one">%d ushindi</item>
+        <item quantity="other">%d ushindi</item>
+    </plurals>
+    <string name="toast_not_your_turn">Bado si zamu yako!</string>
+    <string name="five_minutes">05:00</string>
+    <string name="cancel_invite">Ghairi mwaliko</string>
+    <string name="remove">Ondoa</string>
+    <string name="invite_expired">Mwaliko umeisha muda.</string>
+    <string name="leave">Ondoka</string>
+    <string name="leave_tournament_confirm">Una uhakika unataka kuondoka kwenye mashindano haya?</string>
+    <string name="left_tournament">Umeondoka kwenye mashindano.</string>
+    <string name="leave_waiting_confirm">Ukiondoka kwenye skrini ya kusubiri mwaliko wako utabatilishwa. Una uhakika?</string>
+    <string name="yes">Ndiyo</string>
+    <string name="no">Hapana</string>
+    <string name="target_player_busy">Mchezaji huyo tayari ana mwaliko mwingine.</string>
+    <string name="accept">Kubali</string>
+    <string name="decline">Kataa</string>
+    <string name="match_completed_win">Imekamilika, umeshinda 🏆</string>
+    <string name="match_completed_lose">Imekamilika, umepoteza 😞</string>
+    <string name="regulation_not_found">Kanuni haijapatikana.</string>
+    <string name="regulation_load_error">Imeshindwa kupakia kanuni.</string>
+    <string name="regulation_auth_required">Tafadhali ingia ili kuona kanuni.</string>
+    <string name="server_unavailable">Seva haipatikani</string>
+    <string name="server_unavailable_message">Samahani, seva ya Soccer haipatikani kwa sasa…</string>
+    <string name="account">Akaunti</string>
+    <string name="account_information">Taarifa za akaunti</string>
+    <string name="nickname_label">Jina la utani: %1$s</string>
+    <string name="email_label">Barua pepe: %1$s</string>
+    <string name="not_registered">Hujaandikishwa kwa mashindano haya.</string>
+    <string name="login_email">Ingia kwa Barua Pepe</string>
+    <string name="login_google">Ingia kwa Google</string>
+    <string name="login_facebook">Ingia kwa Facebook</string>
+    <string name="login_microsoft">Ingia kwa Microsoft</string>
+    <string name="login_anonymous">Ingia bila kujulikana</string>
+    <string name="login_method_label">Njia ya kuingia: %1$s</string>
+    <string name="facebook_id_label">Kitambulisho cha Facebook: %1$s</string>
+    <string name="facebook_name_label">Jina la Facebook: %1$s</string>
+    <string name="ads_consent_required">Kuonyesha matangazo husaidia kugharamia matengenezo ya miundombinu. Unaweza kukagua idhini yako wakati wowote kwenye mipangilio.</string>
+    <string name="no_internet_for_privacy_options">Muunganisho wa intaneti unahitajika kufungua chaguo za faragha.</string>
+    <string name="remove_account">Ondoa akaunti</string>
+    <string name="remove_account_dialog_title">Ondoa Akaunti</string>
+    <string name="remove_account_dialog_message">Una uhakika unataka kuondoa akaunti yako? Kitendo hiki hakiwezi kubatilishwa na hata ukijisajili tena, hutapata historia ya mechi na matokeo yako.</string>
+    <string name="proceed_account_removal">Endelea</string>
+    <string name="removing_account">Inaondoa akaunti…</string>
+    <string name="account_removed">Akaunti imeondolewa kwa mafanikio</string>
+    <string name="remove_account_failed">Imeshindwa kuondoa akaunti. Tafadhali jaribu tena.</string>
+    <string name="reauth_title">Thibitisha tena</string>
+    <string name="reauth_message">Tafadhali ingiza nenosiri lako ili kuendelea.</string>
+    <string name="reauth_failed">Uthibitishaji wa pili umeshindwa. Tafadhali jaribu tena.</string>
+    <string name="anonymous_logout_warning_title">Onyo la Kutoka</string>
+    <string name="anonymous_logout_warning_message">Una uhakika unataka kutoka? Kwa njia zisizo na utambulisho, kitendo hiki hakiwezi kubatilishwa na hata ukijisajili tena, hutapata historia ya mechi na matokeo yako.</string>
+    <string name="field_your_move">Ni zamu yako!</string>
+    <string name="field_move_tail">yuko kwenye zamu … ⏳ %1$s</string>
+    <string name="field_hourglass_tail">⏳ %1$s</string>
+    <string name="field_your_move_ellipsis">Ni zamu yako…</string>
+    <string name="field_thinking">Anafikiria…</string>
+    <string name="field_move_ellipsis_tail">yuko kwenye zamu… ⏳ %1$s</string>
+    <string name="field_waiting_for">Inasubiri %1$s</string>
+    <string name="field_to_start_tail">aanze… ⏳ %1$s</string>
+    <string name="enter_email_and_password">Tafadhali ingiza barua pepe na nenosiri</string>
+    <string name="login_success">Umeingia kwa mafanikio!</string>
+    <string name="login_failed">Kuingia kumeshindikana: %1$s</string>
+    <string name="login_in_progress">Kuingia kunaendelea, tafadhali subiri...</string>
+    <string name="anonymous_login_warning_title">Onyo la Kuingia Bila Utambulisho</string>
+    <string name="anonymous_login_warning_message">Kuingia bila utambulisho kunakupa ufikiaji wa baadhi ya vipengele, lakini ukipoteza kifaa chako, ukaweka upya programu, ukapata simu mpya, au ukatoka, uhusiano na akaunti yako isiyo na utambulisho utapotea na hutaweza kuingia tena kwenye akaunti hiyo hiyo. Unataka kuendelea?</string>
+    <string name="proceed_anonymous_login">Endelea</string>
+    <string name="enter_email_address">Tafadhali ingiza anwani yako ya barua pepe</string>
+    <string name="all_fields_required">Sehemu zote zinahitajika</string>
+    <string name="passwords_do_not_match">Nenosiri hayalingani</string>
+    <string name="registration_in_progress">Jaribio la usajili linaendelea…</string>
+    <string name="nickname_max_length_reached">Umefikia kikomo cha herufi 20</string>
+    <string name="nickname_required">Jina la utani linahitajika</string>
+    <string name="nickname_too_long">Jina la utani linapaswa kuwa na herufi 20 au chini ya hapo</string>
+    <string name="not_logged_in">Hujaingia</string>
+    <string name="register_to_use_function">Tafadhali jisajili ili kutumia kipengele hiki</string>
+    <string name="register_dialog_message">Ili kutumia kipengele hiki unapaswa kujisajili. Unaweza hata kujisajili bila utambulisho. Unataka kuendelea?</string>
+    <string name="proceed">Endelea</string>
+    <string name="network_error_checking_nickname">Hitilafu ya mtandao wakati wa kukagua jina la utani</string>
+    <string name="nickname_taken">Jina la utani tayari limetumika — chagua jingine</string>
+    <string name="nickname_saved">Jina la utani limehifadhiwa</string>
+    <string name="nickname_save_failed">Imeshindwa kuhifadhi jina la utani</string>
+    <string name="game_launch_failed">Uzinduzi wa mchezo umeshindikana.</string>
+    <string name="app_launch_failed">Uzinduzi wa programu umeshindikana. Tafadhali jaribu tena.</string>
+    <string name="layout_initialization_error">Programu imekumbana na hitilafu ya onyesho. Tafadhali jaribu tena.</string>
+    <string name="retry">Jaribu tena</string>
+    <string name="please_log_in_to_continue">Tafadhali ingia ili kuendelea.</string>
+    <string name="match_not_found">Mechi haijapatikana.</string>
+    <string name="invalid_match_record">Rekodi ya mechi si sahihi.</string>
+    <string name="failed_to_load_opponent">Imeshindwa kupakia mpinzani.</string>
+    <string name="network_error">Hitilafu ya mtandao.</string>
+    <string name="game_is_over">Mchezo umekwisha.</string>
+    <string name="failed_to_send_move">Imeshindwa kutuma hatua: %1$s</string>
+    <string name="fatal_error_matchpath_null">Hitilafu kubwa matchPath == null</string>
+    <string name="failed_to_load_match">Imeshindwa kupakia mechi.</string>
+    <string name="invitation_not_found">Mwaliko haujapatikana.</string>
+    <string name="must_log_in_to_accept_invites">Lazima uwe umeingia ili kukubali mialiko.</string>
+    <string name="invalid_response_from_server">Jibu batili kutoka kwa seva.</string>
+    <string name="invite_accepted_starting_game">Mwaliko umekubaliwa! Kuanzisha mchezo…</string>
+    <string name="authentication_error_try_again">Hitilafu ya uthibitishaji. Jaribu kuingia tena.</string>
+    <string name="registered_as">Umesajiliwa kama: %1$s</string>
+    <string name="tournament_not_found">Mashindano hayajapatikana.</string>
+    <string name="must_be_logged_in">Lazima uwe umeingia.</string>
+    <string name="joined_wait_for_bracket">Umejiunga! Subiri droo ianze.</string>
+    <string name="accept_invitation_title">Kubali Mwaliko</string>
+    <string name="accept_invitation_message">Je, unataka kukubali mwaliko huu wa mchezo?</string>
+    <string name="leave_game_title">Utoke kwenye mchezo?</string>
+    <string name="exit_confirm_message">Una uhakika unataka kutoka?</string>
+    <string name="exit_forfeit_message">Una uhakika unataka kutoka? Hii itahesabika kama kujiondoa.</string>
+    <string name="close">Funga</string>
+    <string name="ok">Sawa</string>
+    <string name="verification_email_sent">Barua Pepe ya Uthibitisho Imetumwa</string>
+    <string name="check_email_to_verify">Tafadhali angalia barua pepe yako ili kuthibitisha akaunti yako.</string>
+    <string name="email_verification_failed">Uthibitishaji wa barua pepe umeshindikana</string>
+    <string name="could_not_send_verification_email">Haikuweza kutuma barua pepe ya uthibitisho: %1$s</string>
+    <string name="registration_failed_title">Usajili umeshindikana</string>
+    <string name="player_label">Mchezaji</string>
+    <string name="android_label">Android</string>
+    <string name="player_with_number">Mchezaji %1$d</string>
+    <string name="winner_timeout">%1$s ameisha muda.</string>
+    <string name="winner_abandon">%1$s amejitoa kwenye mchezo.</string>
+    <string name="winner_is">Mshindi ni %1$s!</string>
+    <string name="could_not_accept_invite">Haikuweza kukubali mwaliko.</string>
+    <string name="invite_was_cancelled">Mwaliko umebatilishwa.</string>
+    <string name="invite_no_longer_available">Mwaliko haupatikani tena.</string>
+    <string name="invite_has_expired">Mwaliko umeisha muda wake.</string>
+    <string name="please_verify_email_before_login">Tafadhali thibitisha anwani yako ya barua pepe kabla ya kuingia.</string>
+    <string name="authentication_failed">Uthibitishaji umeshindikana.</string>
+    <string name="could_not_cancel_invite">Haikuweza kughairi mwaliko: %1$s</string>
+    <string name="link_to_registered_account">Unganisha na akaunti iliyosajiliwa</string>
+    <string name="link_account_title">Unganisha Akaunti Isiyo na Utambulisho</string>
+    <string name="link_account_description">Unganisha akaunti yako isiyo na utambulisho na barua pepe, Google, au Facebook ili kulinda akaunti yako na historia ya michezo.</string>
+    <string name="link_account_success">Akaunti imeunganishwa kwa mafanikio!</string>
+    <string name="link_account_failed">Imeshindwa kuunganisha akaunti: %1$s</string>
+    <string name="link_account_in_progress">Inaunganisha akaunti…</string>
+    <string name="account_already_exists_merge">Akaunti iliyo na vitambulisho hivi tayari ipo. Taarifa zako za sasa zitahifadhiwa na kuunganishwa.</string>
+    <string name="credential_already_associated">Kitambulisho hiki tayari kimeunganishwa na akaunti nyingine ya mtumiaji.</string>
+    <string name="enter_email_and_password_to_link">Ingiza barua pepe na nenosiri lako ili kuunganisha akaunti yako isiyo na utambulisho</string>
+    <string name="link_with_email">Unganisha kwa Barua Pepe</string>
+    <string name="link_with_google">Unganisha kwa Google</string>
+    <string name="link_with_microsoft">Unganisha kwa Microsoft</string>
+    <string name="link_with_facebook">Unganisha kwa Facebook</string>
+    <string name="signup_decline_dialog_title">Cheza bila akaunti?</string>
+    <string name="signup_decline_dialog_message">Tusaidie kuelewa kwa nini hupendi kujisajili:</string>
+    <string name="decline_reason_offline">Ninacheza nje ya mtandao tu</string>
+    <string name="decline_reason_privacy">Masuala ya faragha</string>
+    <string name="decline_reason_complicated">Ni ngumu sana</string>
+    <string name="decline_reason_dont_use_providers">Situmii Google/Facebook/Barua pepe</string>
+    <string name="decline_reason_other">Sababu nyingine</string>
+    <string name="save_progress_title">Hifadhi maendeleo yako na jina la utani</string>
+    <string name="save_progress_message">Unganisha akaunti yako ili kuhifadhi takwimu zako na kujiunga na mashindano!</string>
+    <string name="save_progress_button">Hifadhi Maendeleo</string>
+    <string name="maybe_later">Labda Baadaye</string>
+    <string name="register_benefits_title">Jiunge na mashindano na ushindane kimataifa!</string>
+    <string name="register_benefits_message">Jisajili ili kuhifadhi msimamo wako na kushiriki katika mashindano na wachezaji duniani kote.</string>
+    <string name="register_now">Jisajili Sasa</string>
 </resources>

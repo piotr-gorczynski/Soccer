@@ -18,8 +18,8 @@
     
     <!-- Settings preferences -->
     <string name="pref_title_level">Android स्तर</string>
-    <string name="pref_title_block_invite_friend">\'मित्र को आमंत्रित करें\' अनुरोधों को ब्लॉक करें</string>
-    <string name="pref_summary_block_invite_friend">अन्य खिलाड़ी आपको \'मित्र को आमंत्रित करें\' के माध्यम से आमंत्रित नहीं कर सकते (टूर्नामेंट प्रभावित नहीं)</string>
+    <string name="pref_title_block_invite_friend">`मित्र को आमंत्रित करें` अनुरोधों को ब्लॉक करें</string>
+    <string name="pref_summary_block_invite_friend">अन्य खिलाड़ी आपको `मित्र को आमंत्रित करें` के माध्यम से आमंत्रित नहीं कर सकते (टूर्नामेंट प्रभावित नहीं)</string>
     <string name="pref_title_ads_consent">व्यक्तिगत विज्ञापनों की सहमति</string>
     <string name="pref_summary_ads_consent">व्यक्तिगत विज्ञापन दिखाने के लिए अपनी सहमति की समीक्षा करें या बदलें</string>
     
@@ -95,7 +95,7 @@
     <string name="load_more">और लोड करें</string>
     <string name="add_friend_label">जोड़ें</string>
     <string name="invite_blocked">%1$s ने आमंत्रण ब्लॉक कर दिए हैं।</string>
-    <string name="invites_blocked_notification">अन्य खिलाड़ी आपको \'मित्र को आमंत्रित करें\' फ़ंक्शन के माध्यम से आमंत्रित नहीं कर सकते। आप इसे सेटिंग्स में बदल सकते हैं।</string>
+    <string name="invites_blocked_notification">अन्य खिलाड़ी आपको `मित्र को आमंत्रित करें` फ़ंक्शन के माध्यम से आमंत्रित नहीं कर सकते। आप इसे सेटिंग्स में बदल सकते हैं।</string>
     
     <!-- Invitations strings -->
     <string name="pending_game_invitations">लंबित गेम आमंत्रण</string>
@@ -320,4 +320,11 @@
     <string name="game_ready_title">%1$s के लिए खेल तैयार!</string>
     <string name="game_ready_message">आपका मैच शुरू होने के लिए तैयार है। जुड़ने के लिए टैप करें!</string>
     <string name="join_game_action">गेम जॉइन करें</string>
+    
+    <!-- Preference level values -->
+    <string-array name="pref_level_values">
+        <item>1</item>
+        <item>10</item>
+        <item>30</item>
+    </string-array>
 </resources>

@@ -40,8 +40,8 @@
     
     <!-- Settings preferences -->
     <string name="pref_title_level">Nivel de Android</string>
-    <string name="pref_title_block_invite_friend">Bloquear solicitudes de \'Invitar amigo\'</string>
-    <string name="pref_summary_block_invite_friend">Otros jugadores no pueden invitarte a través de \'Invitar amigo\' (torneos no afectados)</string>
+    <string name="pref_title_block_invite_friend">Bloquear solicitudes de `Invitar amigo`</string>
+    <string name="pref_summary_block_invite_friend">Otros jugadores no pueden invitarte a través de `Invitar amigo` (torneos no afectados)</string>
     <string name="pref_title_ads_consent">Consentimiento para anuncios personalizados</string>
     <string name="pref_summary_ads_consent">Revisar o cambiar tu consentimiento para mostrar anuncios personalizados</string>
     
@@ -95,7 +95,7 @@
     <string name="load_more">Cargar más</string>
     <string name="add_friend_label">Agregar</string>
     <string name="invite_blocked">%1$s bloqueó invitaciones.</string>
-    <string name="invites_blocked_notification">Otros jugadores no pueden invitarte a través de la función \'Invitar amigo\'. Puedes cambiarlo en Configuración.</string>
+    <string name="invites_blocked_notification">Otros jugadores no pueden invitarte a través de la función `Invitar amigo`. Puedes cambiarlo en Configuración.</string>
     
     <!-- Invitations strings -->
     <string name="pending_game_invitations">Invitaciones de juego pendientes</string>
@@ -321,4 +321,11 @@
     <string name="game_ready_title">¡Juego Listo para %1$s!</string>
     <string name="game_ready_message">Tu partido está listo para comenzar. ¡Toca para unirte!</string>
     <string name="join_game_action">Unirse al Juego</string>
+    
+    <!-- Preference level values -->
+    <string-array name="pref_level_values">
+        <item>1</item>
+        <item>10</item>
+        <item>30</item>
+    </string-array>
 </resources>
