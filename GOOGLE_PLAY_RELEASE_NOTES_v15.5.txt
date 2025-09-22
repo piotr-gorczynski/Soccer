@@ -23,10 +23,10 @@
 🔔 Implementación de la lógica de invitación para usuarios recientemente activos
 </es-ES>
 
-<ur-PK>
+<ur>
 🎮 UnknownFormatConversionException کریشز کو ٹھیک کر دیا گیا
 🔔 حال ہی میں سرگرم صارفین کے لیے دعوتی منطق نافذ کر دی گئی
-</ur-PK>
+</ur>
 
 <bn-BD>
 🎮 UnknownFormatConversionException ক্র্যাশ ঠিক করা হয়েছে
@@ -43,15 +43,15 @@
 🔔 हाल ही में सक्रिय उपयोगकर्ताओं के लिए आमंत्रण लॉजिक लागू किया गया
 </hi-IN>
 
-<am-ET>
+<am>
 🎮 አልተለመደ የቅርጸ-ቃላት ስህተት (UnknownFormatConversionException) መቃኘት ተቀናበረ
 🔔 ለበለጠ በቅርቡ እንቅስቃሴ ያሳዩ ተጠቃሚዎች የግብዣ ሎጂክ ተተገበረ
-</am-ET>
+</am>
 
-<ar-SA>
+<ar>
 🎮 إصلاح أعطال UnknownFormatConversionException
 🔔 تنفيذ منطق الدعوات للمستخدمين النشطين مؤخرًا
-</ar-SA>
+</ar>
 
 <my-MM>
 🎮 UnknownFormatConversionException အမှားများကို ပြင်ဆင်ပြီးပါပြီ
@@ -68,11 +68,6 @@
 🔔 ນຳໃຊ້ logic ການເຊີນສຳລັບຜູ້ໃຊ້ທີ່ມີການເຄື່ອນໄຫວໃນລະຫວ່າງນີ້
 </lo-LA>
 
-<mg-MG>
-🎮 Namaha ny fianjerana UnknownFormatConversionException
-🔔 Nampiharina ny lojikan'ny fanasana ho an'ny mpampiasa vao haingana no mavitrika
-</mg-MG>
-
 <mn-MN>
 🎮 UnknownFormatConversionException алдааг зассан
 🔔 Сүүлд идэвхтэй хэрэглэгчдэд зориулсан урилгын логик хэрэгжүүлсэн
@@ -88,12 +83,7 @@
 🔔 නවතම ක්‍රියාකාරී භාවිතාකරුවන් සඳහා ආරාධනා තර්කය ක්‍රියාත්මක කරන ලදී
 </si-LK>
 
-<so-SO>
-🎮 Waxaa la hagaajiyay cilladaha UnknownFormatConversionException
-🔔 Waxaa la hirgeliyay xeerka casuumaadda ee isticmaalayaasha dhawaan firfircoon
-</so-SO>
-
-<sw-KE>
+<sw>
 🎮 Imerekebishwa hitilafu za UnknownFormatConversionException
 🔔 Utekelezaji wa mantiki ya mwaliko kwa watumiaji waliotumika hivi karibuni
-</sw-KE>
+</sw>
