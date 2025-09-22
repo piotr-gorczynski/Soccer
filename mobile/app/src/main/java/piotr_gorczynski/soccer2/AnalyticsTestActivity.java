@@ -53,6 +53,22 @@ public class AnalyticsTestActivity extends BaseActivity {
         analyticsManager.trackSignupError("test", "test_error", "Test error message", "test_step");
         analyticsManager.trackSignupDeclineReason("test_reason");
         
+        // Test null safety - this was the regression issue
+        Log.d(TAG, "Testing null safety...");
+        try {
+            analyticsManager.trackSignupError(null, null, null, null);
+            Log.d(TAG, "✅ Null parameters handled successfully");
+        } catch (NullPointerException e) {
+            Log.e(TAG, "❌ NullPointerException with null parameters: " + e.getMessage());
+        }
+        
+        try {
+            analyticsManager.trackSignupError("google", null, "Network error", null);
+            Log.d(TAG, "✅ Partial null parameters handled successfully");
+        } catch (NullPointerException e) {
+            Log.e(TAG, "❌ NullPointerException with partial null parameters: " + e.getMessage());
+        }
+        
         // Test tournament events
         analyticsManager.trackTournamentListViewed(5, 3, 2);
         analyticsManager.trackTournamentJoinStart("test_tournament", true);
