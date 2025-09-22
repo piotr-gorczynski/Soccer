@@ -211,7 +211,7 @@ public class AddFriendActivity extends BaseActivity {
                     adapter.setFriendUids(friendUids);
                 })
                 .addOnFailureListener(e -> {
-                    String text = getString(R.string.failed_to_add_friend);
+                    String text = SafeStringFormatter.safeGetString(this, R.string.failed_to_add_friend);
                     if (e instanceof FirebaseFunctionsException ffe) {
                         String reason = ffe.getMessage();
                         Log.e("TAG_Soccer", "addFriend failed: " + reason, ffe);
