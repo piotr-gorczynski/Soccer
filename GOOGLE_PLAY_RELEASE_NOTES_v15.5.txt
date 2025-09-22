@@ -1,3 +1,4 @@
 <en-GB>
 🎮 Fix UnknownFormatConversionException crashes
+🔔 Implement invite logic for recently active users
 </en-GB>
