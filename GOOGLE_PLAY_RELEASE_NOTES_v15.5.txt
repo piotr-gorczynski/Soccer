@@ -2,3 +2,98 @@
 🎮 Fix UnknownFormatConversionException crashes
 🔔 Implement invite logic for recently active users
 </en-GB>
+
+<am>
+🎮 አልተለመደ የቅርጸ-ቃላት ስህተት (UnknownFormatConversionException) መቃኘት ተቀናበረ
+🔔 ለበለጠ በቅርቡ እንቅስቃሴ ያሳዩ ተጠቃሚዎች የግብዣ ሎጂክ ተተገበረ
+</am>
+
+<ar>
+🎮 إصلاح أعطال UnknownFormatConversionException
+🔔 تنفيذ منطق الدعوات للمستخدمين النشطين مؤخرًا
+</ar>
+
+<bn>
+🎮 UnknownFormatConversionException ক্র্যাশ ঠিক করা হয়েছে
+🔔 সম্প্রতি সক্রিয় ব্যবহারকারীদের জন্য আমন্ত্রণ লজিক যোগ করা হয়েছে
+</bn>
+
+<my>
+🎮 UnknownFormatConversionException အမှားများကို ပြင်ဆင်ပြီးပါပြီ
+🔔 မကြာသေးမီက အကျိုးပြုခဲ့သော အသုံးပြုသူများအတွက် ဖိတ်ကြားမှု လိုဂျစ် အပြည့်စုံ ထည့်သွင်းထားသည်
+</my>
+
+<fr>
+🎮 Correction des plantages liés à UnknownFormatConversionException
+🔔 Mise en œuvre de la logique d'invitation pour les utilisateurs récemment actifs
+</fr>
+
+<de>
+🎮 Behebung von UnknownFormatConversionException-Abstürzen
+🔔 Einladungslogik für kürzlich aktive Nutzer implementiert
+</de>
+
+<hi>
+🎮 UnknownFormatConversionException क्रैश को ठीक किया गया
+🔔 हाल ही में सक्रिय उपयोगकर्ताओं के लिए आमंत्रण लॉजिक लागू किया गया
+</hi>
+
+<km>
+🎮 ការបង្ហាញកំហុស UnknownFormatConversionException ត្រូវបានជួសជុល
+🔔 អនុវត្តតក្ក invite សម្រាប់អ្នកប្រើដែលសកម្មថ្មីៗ
+</km>
+
+<lo>
+🎮 ແກ້ໄຂການຂັດຂ້ອງ UnknownFormatConversionException
+🔔 ນຳໃຊ້ logic ການເຊີນສຳລັບຜູ້ໃຊ້ທີ່ມີການເຄື່ອນໄຫວໃນລະຫວ່າງນີ້
+</lo>
+
+<mg>
+🎮 Namaha ny fianjerana UnknownFormatConversionException
+🔔 Nampiharina ny lojikan'ny fanasana ho an'ny mpampiasa vao haingana no mavitrika
+</mg>
+
+<mn>
+🎮 UnknownFormatConversionException алдааг зассан
+🔔 Сүүлд идэвхтэй хэрэглэгчдэд зориулсан урилгын логик хэрэгжүүлсэн
+</mn>
+
+<ne>
+🎮 UnknownFormatConversionException क्र्यासहरू सुधार गरियो
+🔔 हालै सक्रिय प्रयोगकर्ताहरूका लागि निमन्त्रणा तर्क लागू गरियो
+</ne>
+
+<fa>
+🎮 رفع خطاهای ناشی از UnknownFormatConversionException
+🔔 پیاده‌سازی منطق دعوت برای کاربران اخیراً فعال
+</fa>
+
+<pl>
+🎮 Naprawiono awarie UnknownFormatConversionException
+🔔 Wdrożono logikę zaproszeń dla ostatnio aktywnych użytkowników
+</pl>
+
+<si>
+🎮 UnknownFormatConversionException බිඳ වැටීම් සවි කරන ලදී
+🔔 නවතම ක්‍රියාකාරී භාවිතාකරුවන් සඳහා ආරාධනා තර්කය ක්‍රියාත්මක කරන ලදී
+</si>
+
+<so>
+🎮 Waxaa la hagaajiyay cilladaha UnknownFormatConversionException
+🔔 Waxaa la hirgeliyay xeerka casuumaadda ee isticmaalayaasha dhawaan firfircoon
+</so>
+
+<es>
+🎮 Corrección de fallos de UnknownFormatConversionException
+🔔 Implementación de lógica de invitación para usuarios recientemente activos
+</es>
+
+<sw>
+🎮 Imerekebishwa hitilafu za UnknownFormatConversionException
+🔔 Utekelezaji wa mantiki ya mwaliko kwa watumiaji waliotumika hivi karibuni
+</sw>
+
+<ur>
+🎮 UnknownFormatConversionException کریشز کو ٹھیک کر دیا گیا
+🔔 حال ہی میں سرگرم صارفین کے لیے دعوتی منطق نافذ کر دی گئی
+</ur>
