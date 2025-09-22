@@ -52,18 +52,28 @@ public class AnalyticsManager {
     
     /**
      * Track signup error with details
+     * @param method Authentication method (e.g. "google", "email", "facebook", "anonymous")
+     * @param errorCode Error code identifier
+     * @param errorMessage Human-readable error message
+     * @param step Step in the authentication flow where error occurred
      */
     public void trackSignupError(String method, String errorCode, String errorMessage, String step) {
-        Bundle params = new Bundle();
-        params.putString("method", method);
-        params.putString("code", errorCode);
-        params.putString("message", errorMessage);
-        params.putString("step", step);
+        // Null-safe parameter handling to prevent NullPointerExceptions
+        String safeMethod = method != null ? method : "unknown";
+        String safeErrorCode = errorCode != null ? errorCode : "unknown_error";
+        String safeErrorMessage = errorMessage != null ? errorMessage : "Unknown error occurred";
+        String safeStep = step != null ? step : "unknown_step";
         
-        crashlytics.recordException(new Exception("Signup error: " + errorMessage));
-        crashlytics.log("Signup error - Method: " + method + ", Step: " + step + ", Error: " + errorMessage);
+        Bundle params = new Bundle();
+        params.putString("method", safeMethod);
+        params.putString("code", safeErrorCode);
+        params.putString("message", safeErrorMessage);
+        params.putString("step", safeStep);
+        
+        crashlytics.recordException(new Exception("Signup error: " + safeErrorMessage));
+        crashlytics.log("Signup error - Method: " + safeMethod + ", Step: " + safeStep + ", Error: " + safeErrorMessage);
         firebaseAnalytics.logEvent("sign_up_error", params);
-        Log.d(TAG, "Tracked: signup error - " + method + " at " + step + ": " + errorMessage);
+        Log.d(TAG, "Tracked: signup error - " + safeMethod + " at " + safeStep + ": " + safeErrorMessage);
     }
     
     /**
@@ -124,17 +134,25 @@ public class AnalyticsManager {
     
     /**
      * Track tournament join error
+     * @param tournamentId Tournament identifier
+     * @param errorCode Error code identifier  
+     * @param errorMessage Human-readable error message
      */
     public void trackTournamentJoinError(String tournamentId, String errorCode, String errorMessage) {
-        Bundle params = new Bundle();
-        params.putString("tournament_id", tournamentId);
-        params.putString("error_code", errorCode);
-        params.putString("error_message", errorMessage);
+        // Null-safe parameter handling to prevent NullPointerExceptions
+        String safeTournamentId = tournamentId != null ? tournamentId : "unknown_tournament";
+        String safeErrorCode = errorCode != null ? errorCode : "unknown_error";
+        String safeErrorMessage = errorMessage != null ? errorMessage : "Unknown error occurred";
         
-        crashlytics.recordException(new Exception("Tournament join error: " + errorMessage));
-        crashlytics.log("Tournament join error: " + tournamentId + " - " + errorMessage);
+        Bundle params = new Bundle();
+        params.putString("tournament_id", safeTournamentId);
+        params.putString("error_code", safeErrorCode);
+        params.putString("error_message", safeErrorMessage);
+        
+        crashlytics.recordException(new Exception("Tournament join error: " + safeErrorMessage));
+        crashlytics.log("Tournament join error: " + safeTournamentId + " - " + safeErrorMessage);
         firebaseAnalytics.logEvent("tournament_join_error", params);
-        Log.d(TAG, "Tracked: tournament join error for " + tournamentId + ": " + errorMessage);
+        Log.d(TAG, "Tracked: tournament join error for " + safeTournamentId + ": " + safeErrorMessage);
     }
     
     // ═══════════════════════════════════════════════════════════════════
