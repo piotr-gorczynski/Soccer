@@ -154,8 +154,12 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
         };
         h.presence.setText(label);
         h.presence.setTextColor(colour);
-        boolean isOffline = "offline".equalsIgnoreCase(state);
-        h.inviteBtn.setVisibility(isOffline ? View.GONE : View.VISIBLE);
+        
+        // Enable invites for users who are recently active (within 20 minutes), even if state is "offline"
+        long lastHeartbeat = hbCache.getOrDefault(uid, 0L);
+        boolean isTrulyOffline = "offline".equalsIgnoreCase(state) && 
+                (System.currentTimeMillis() - lastHeartbeat > 20 * 60_000L);
+        h.inviteBtn.setVisibility(isTrulyOffline ? View.GONE : View.VISIBLE);
         h.removeBtn.setVisibility(View.VISIBLE);
     }
 
