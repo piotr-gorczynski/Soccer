@@ -52,30 +52,44 @@ public class AnalyticsManager {
     
     /**
      * Track signup error with details
+     * @param method Authentication method (e.g. "google", "email", "facebook", "anonymous")
+     * @param errorCode Error code identifier
+     * @param errorMessage Human-readable error message
+     * @param step Step in the authentication flow where error occurred
      */
     public void trackSignupError(String method, String errorCode, String errorMessage, String step) {
-        Bundle params = new Bundle();
-        params.putString("method", method);
-        params.putString("code", errorCode);
-        params.putString("message", errorMessage);
-        params.putString("step", step);
+        // Null-safe parameter handling to prevent NullPointerExceptions
+        String safeMethod = method != null ? method : "unknown";
+        String safeErrorCode = errorCode != null ? errorCode : "unknown_error";
+        String safeErrorMessage = errorMessage != null ? errorMessage : "Unknown error occurred";
+        String safeStep = step != null ? step : "unknown_step";
         
-        crashlytics.recordException(new Exception("Signup error: " + errorMessage));
-        crashlytics.log("Signup error - Method: " + method + ", Step: " + step + ", Error: " + errorMessage);
+        Bundle params = new Bundle();
+        params.putString("method", safeMethod);
+        params.putString("code", safeErrorCode);
+        params.putString("message", safeErrorMessage);
+        params.putString("step", safeStep);
+        
+        crashlytics.recordException(new Exception("Signup error: " + safeErrorMessage));
+        crashlytics.log("Signup error - Method: " + safeMethod + ", Step: " + safeStep + ", Error: " + safeErrorMessage);
         firebaseAnalytics.logEvent("sign_up_error", params);
-        Log.d(TAG, "Tracked: signup error - " + method + " at " + step + ": " + errorMessage);
+        Log.d(TAG, "Tracked: signup error - " + safeMethod + " at " + safeStep + ": " + safeErrorMessage);
     }
     
     /**
      * Track when user declines to register with reason
+     * @param reason User's reason for declining registration
      */
     public void trackSignupDeclineReason(String reason) {
-        Bundle params = new Bundle();
-        params.putString("reason", reason);
+        // Null-safe parameter handling
+        String safeReason = reason != null ? reason : "no_reason_provided";
         
-        crashlytics.log("Signup declined: " + reason);
+        Bundle params = new Bundle();
+        params.putString("reason", safeReason);
+        
+        crashlytics.log("Signup declined: " + safeReason);
         firebaseAnalytics.logEvent("signup_decline_reason", params);
-        Log.d(TAG, "Tracked: signup decline reason=" + reason);
+        Log.d(TAG, "Tracked: signup decline reason=" + safeReason);
     }
     
     // ═══════════════════════════════════════════════════════════════════
@@ -124,17 +138,25 @@ public class AnalyticsManager {
     
     /**
      * Track tournament join error
+     * @param tournamentId Tournament identifier
+     * @param errorCode Error code identifier  
+     * @param errorMessage Human-readable error message
      */
     public void trackTournamentJoinError(String tournamentId, String errorCode, String errorMessage) {
-        Bundle params = new Bundle();
-        params.putString("tournament_id", tournamentId);
-        params.putString("error_code", errorCode);
-        params.putString("error_message", errorMessage);
+        // Null-safe parameter handling to prevent NullPointerExceptions
+        String safeTournamentId = tournamentId != null ? tournamentId : "unknown_tournament";
+        String safeErrorCode = errorCode != null ? errorCode : "unknown_error";
+        String safeErrorMessage = errorMessage != null ? errorMessage : "Unknown error occurred";
         
-        crashlytics.recordException(new Exception("Tournament join error: " + errorMessage));
-        crashlytics.log("Tournament join error: " + tournamentId + " - " + errorMessage);
+        Bundle params = new Bundle();
+        params.putString("tournament_id", safeTournamentId);
+        params.putString("error_code", safeErrorCode);
+        params.putString("error_message", safeErrorMessage);
+        
+        crashlytics.recordException(new Exception("Tournament join error: " + safeErrorMessage));
+        crashlytics.log("Tournament join error: " + safeTournamentId + " - " + safeErrorMessage);
         firebaseAnalytics.logEvent("tournament_join_error", params);
-        Log.d(TAG, "Tracked: tournament join error for " + tournamentId + ": " + errorMessage);
+        Log.d(TAG, "Tracked: tournament join error for " + safeTournamentId + ": " + safeErrorMessage);
     }
     
     // ═══════════════════════════════════════════════════════════════════
@@ -143,27 +165,37 @@ public class AnalyticsManager {
     
     /**
      * Track when anonymous user is prompted to link account
+     * @param trigger What triggered the prompt (e.g. "tournament_join", "win_match", "pick_nickname")
      */
     public void trackAnonymousLinkPrompt(String trigger) {
-        Bundle params = new Bundle();
-        params.putString("trigger", trigger); // "tournament_join", "win_match", "pick_nickname"
+        // Null-safe parameter handling
+        String safeTrigger = trigger != null ? trigger : "unknown_trigger";
         
-        crashlytics.log("Anonymous link prompt shown: " + trigger);
+        Bundle params = new Bundle();
+        params.putString("trigger", safeTrigger);
+        
+        crashlytics.log("Anonymous link prompt shown: " + safeTrigger);
         firebaseAnalytics.logEvent("anonymous_link_prompt", params);
-        Log.d(TAG, "Tracked: anonymous link prompt - trigger=" + trigger);
+        Log.d(TAG, "Tracked: anonymous link prompt - trigger=" + safeTrigger);
     }
     
     /**
      * Track anonymous user decision on linking
+     * @param decision User's decision ("link", "dismiss", "later")
+     * @param trigger What triggered the original prompt
      */
     public void trackAnonymousLinkDecision(String decision, String trigger) {
-        Bundle params = new Bundle();
-        params.putString("decision", decision); // "link", "dismiss", "later"
-        params.putString("trigger", trigger);
+        // Null-safe parameter handling
+        String safeDecision = decision != null ? decision : "unknown_decision";
+        String safeTrigger = trigger != null ? trigger : "unknown_trigger";
         
-        crashlytics.log("Anonymous link decision: " + decision + " (trigger: " + trigger + ")");
+        Bundle params = new Bundle();
+        params.putString("decision", safeDecision);
+        params.putString("trigger", safeTrigger);
+        
+        crashlytics.log("Anonymous link decision: " + safeDecision + " (trigger: " + safeTrigger + ")");
         firebaseAnalytics.logEvent("anonymous_link_decision", params);
-        Log.d(TAG, "Tracked: anonymous link decision=" + decision + " trigger=" + trigger);
+        Log.d(TAG, "Tracked: anonymous link decision=" + safeDecision + " trigger=" + safeTrigger);
     }
     
     // ═══════════════════════════════════════════════════════════════════
@@ -192,17 +224,31 @@ public class AnalyticsManager {
     
     /**
      * Add breadcrumb for debugging auth flow issues
+     * @param step Current step in the auth flow
+     * @param details Additional details about the step
      */
     public void addAuthBreadcrumb(String step, String details) {
-        crashlytics.log("AUTH: " + step + " - " + details);
-        Log.d(TAG, "Auth breadcrumb: " + step + " - " + details);
+        // Null-safe parameter handling
+        String safeStep = step != null ? step : "unknown_step";
+        String safeDetails = details != null ? details : "no_details";
+        
+        crashlytics.log("AUTH: " + safeStep + " - " + safeDetails);
+        Log.d(TAG, "Auth breadcrumb: " + safeStep + " - " + safeDetails);
     }
     
     /**
      * Add breadcrumb for debugging tournament flow issues
+     * @param step Current step in the tournament flow
+     * @param tournamentId Tournament identifier
+     * @param details Additional details about the step
      */
     public void addTournamentBreadcrumb(String step, String tournamentId, String details) {
-        crashlytics.log("TOURNAMENT: " + step + " [" + tournamentId + "] - " + details);
-        Log.d(TAG, "Tournament breadcrumb: " + step + " [" + tournamentId + "] - " + details);
+        // Null-safe parameter handling
+        String safeStep = step != null ? step : "unknown_step";
+        String safeTournamentId = tournamentId != null ? tournamentId : "unknown_tournament";
+        String safeDetails = details != null ? details : "no_details";
+        
+        crashlytics.log("TOURNAMENT: " + safeStep + " [" + safeTournamentId + "] - " + safeDetails);
+        Log.d(TAG, "Tournament breadcrumb: " + safeStep + " [" + safeTournamentId + "] - " + safeDetails);
     }
 }
