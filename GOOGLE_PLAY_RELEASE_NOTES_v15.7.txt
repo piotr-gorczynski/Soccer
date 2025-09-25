@@ -1,0 +1,89 @@
+<en-GB>
+🎮 Fix AnalyticsManager.trackSignupError regression - prevent NPE when Firebase services are null
+🎮 Fix GameActivity.onNewIntent crash by removing flawed exception throwing logic
+</en-GB>
+
+<pl-PL>
+🎮 Naprawiono obsługę null safety w AnalyticsManager, aby zapobiec awariom w trackSignupError
+🎮 Naprawiono awarię w GameActivity.onNewIntent poprzez usunięcie błędnej logiki rzucania wyjątków
+</pl-PL>
+
+<de-DE>
+🎮 Null-Safety in AnalyticsManager behoben, um Abstürze in trackSignupError zu verhindern
+🎮 Absturz in GameActivity.onNewIntent behoben durch Entfernen fehlerhafter Ausnahme-Logik
+</de-DE>
+
+<fr-FR>
+🎮 Correction de la sécurité des valeurs nulles dans AnalyticsManager afin d’éviter les plantages dans trackSignupError
+🎮 Correction du plantage dans GameActivity.onNewIntent en supprimant la logique erronée de lancement d’exception
+</fr-FR>
+
+<es-ES>
+🎮 Se corrigió la seguridad de nulos en AnalyticsManager para evitar bloqueos en trackSignupError
+🎮 Se corrigió el bloqueo en GameActivity.onNewIntent eliminando la lógica defectuosa de lanzamiento de excepciones
+</es-ES>
+
+<ur>
+🎮 AnalyticsManager میں null safety کو درست کیا گیا تاکہ trackSignupError میں کریشز سے بچا جا سکے
+🎮 GameActivity.onNewIntent میں کریش کو غلط exception logic ہٹا کر درست کیا گیا
+</ur>
+
+<bn-BD>
+🎮 AnalyticsManager-এ null safety ঠিক করা হয়েছে যাতে trackSignupError-এ ক্র্যাশ না হয়
+🎮 ভুল exception throwing logic সরিয়ে GameActivity.onNewIntent-এ ক্র্যাশ ঠিক করা হয়েছে
+</bn-BD>
+
+<ne-NP>
+🎮 trackSignupError मा क्र्यास रोक्न AnalyticsManager मा null safety सुधार गरियो
+🎮 GameActivity.onNewIntent मा भएको क्र्यासलाई त्रुटिपूर्ण exception logic हटाएर समाधान गरियो
+</ne-NP>
+
+<hi-IN>
+🎮 trackSignupError में क्रैश से बचने के लिए AnalyticsManager में null safety को ठीक किया गया
+🎮 GameActivity.onNewIntent में क्रैश को गलत exception logic हटाकर ठीक किया गया
+</hi-IN>
+
+<am>
+🎮 በAnalyticsManager ውስጥ null safety ተቀናበረ እና በtrackSignupError ውስጥ የሚከሰቱ መቃኘቶች ተከላከሉ
+🎮 በGameActivity.onNewIntent ውስጥ የተከሰተው መቃኘት በተሳሳተ የexception ሎጂክ ማስወገድ ተቀናበረ
+</am>
+
+<ar>
+🎮 إصلاح خاصية null safety في AnalyticsManager لمنع الأعطال في trackSignupError
+🎮 إصلاح العطل في GameActivity.onNewIntent عن طريق إزالة منطق استثناء خاطئ
+</ar>
+
+<my-MM>
+🎮 trackSignupError တွင် crash မဖြစ်စေရန် AnalyticsManager တွင် null safety ကို ပြင်ဆင်ခဲ့သည်
+🎮 GameActivity.onNewIntent တွင် exception logic မမှန်သောအတွက် crash ဖြစ်သည်ကို ဖယ်ရှားပြီး ဖြေရှင်းခဲ့သည်
+</my-MM>
+
+<km-KH>
+🎮 កែ Null safety នៅក្នុង AnalyticsManager ដើម្បីបង្ការ crash ក្នុង trackSignupError
+🎮 កែបញ្ហា crash ក្នុង GameActivity.onNewIntent ដោយលុបចោល logic ការបោះចោលករណីខុស
+</km-KH>
+
+<lo-LA>
+🎮 ແກ້ໄຂ null safety ໃນ AnalyticsManager ເພື່ອປ້ອງກັນການ crash ໃນ trackSignupError
+🎮 ແກ້ໄຂການ crash ໃນ GameActivity.onNewIntent ໂດຍລຶບ logic ການໂຍນ exception ທີ່ຜິດ
+</lo-LA>
+
+<mn-MN>
+🎮 trackSignupError дээр алдаа гарахаас сэргийлэхийн тулд AnalyticsManager дахь null safety-г зассан
+🎮 GameActivity.onNewIntent дээрх алдааг буруу exception логикийг устгаж зассан
+</mn-MN>
+
+<fa-IR>
+🎮 رفع مشکل null safety در AnalyticsManager برای جلوگیری از کرش در trackSignupError
+🎮 رفع کرش در GameActivity.onNewIntent با حذف منطق نادرست پرتاب استثنا
+</fa-IR>
+
+<si-LK>
+🎮 trackSignupError හි බිඳ වැටීම් වලක්වා ගැනීමට AnalyticsManager හි null safety සකසා ඇත
+🎮 GameActivity.onNewIntent හි ඇති වූ බිඳ වැටීම වැරදි exception logic ඉවත් කිරීමෙන් විසඳා ඇත
+</si-LK>
+
+<sw>
+🎮 Imerekebishwa null safety katika AnalyticsManager ili kuzuia migongano kwenye trackSignupError
+🎮 Imerekebishwa tatizo la kuanguka katika GameActivity.onNewIntent kwa kuondoa mantiki mbovu ya kutupa exception
+</sw>
