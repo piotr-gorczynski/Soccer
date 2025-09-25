@@ -107,18 +107,34 @@ public class GameActivity extends BaseActivity {
         super.onNewIntent(intent);
 
         // Don’t even replace the intent if it’s identical
-        String newPath = intent.getStringExtra("matchPath");
-        String currentPath = getIntent().getStringExtra("matchPath");
+        String newPath = intent != null ? intent.getStringExtra("matchPath") : null;
+        String currentPath = getIntent() != null ? getIntent().getStringExtra("matchPath") : null;
 
-        // If nothing has changed, bail out
-        if (newPath != null && newPath.equals(currentPath)) {
+        // Handle different scenarios appropriately
+        if (Objects.equals(newPath, currentPath)) {
+            // Paths are identical (including both null) - safe to skip
             Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                     + ": identical matchPath, skipping");
-        } else {
-            Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                    + ": ❌ CRITICAL ERROR: Different matchPath on 2nd call!");
-            throw new IllegalStateException("❌ CRITICAL ERROR: Dirrenten match_id on 2nd call!");
+            return;
         }
+
+        // For online games (GameType 3), we need to be more careful about changing matchPath
+        int gameType = getIntent() != null ? getIntent().getIntExtra("GameType", -1) : -1;
+        
+        if (gameType == 3) {
+            // Online multiplayer game - validate the change
+            if (currentPath != null && newPath != null && !currentPath.equals(newPath)) {
+                // This could be problematic - different active matches
+                Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                        + ": Warning - Different matchPath for online game: " + currentPath + " -> " + newPath);
+                // For now, allow it but log as warning instead of crashing
+            }
+        }
+
+        // Update to new intent (this is the expected behavior for singleTop launch mode)
+        setIntent(intent);
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                + ": Intent updated successfully");
     }
 
     @SuppressLint("ApplySharedPref")

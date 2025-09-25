@@ -18,10 +18,24 @@ public class AnalyticsManager {
     private final FirebaseCrashlytics crashlytics;
     
     public AnalyticsManager(Context context) {
-        this.firebaseAnalytics = FirebaseAnalytics.getInstance(context);
-        this.crashlytics = FirebaseCrashlytics.getInstance();
+        if (context == null) {
+            Log.e(TAG, "AnalyticsManager: Context is null, Firebase services will be disabled");
+            this.firebaseAnalytics = null;
+            this.crashlytics = null;
+            return;
+        }
         
-        Log.d(TAG, "AnalyticsManager initialized");
+        try {
+            this.firebaseAnalytics = FirebaseAnalytics.getInstance(context);
+            this.crashlytics = FirebaseCrashlytics.getInstance();
+            Log.d(TAG, "AnalyticsManager initialized successfully");
+        } catch (Exception e) {
+            Log.e(TAG, "AnalyticsManager: Failed to initialize Firebase services", e);
+            // This should not happen, but in case of any initialization issues
+            // we'll set them to null to prevent NPE later
+            this.firebaseAnalytics = null;
+            this.crashlytics = null;
+        }
     }
     
     // ═══════════════════════════════════════════════════════════════════
@@ -32,9 +46,23 @@ public class AnalyticsManager {
      * Track when login screen is opened
      */
     public void trackLoginScreenOpened() {
-        crashlytics.log("Login screen opened");
-        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, new Bundle());
         Log.d(TAG, "Tracked: login screen opened");
+        
+        if (crashlytics != null) {
+            try {
+                crashlytics.log("Login screen opened");
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log to Crashlytics", e);
+            }
+        }
+        
+        if (firebaseAnalytics != null) {
+            try {
+                firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, new Bundle());
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log to Firebase Analytics", e);
+            }
+        }
     }
     
     /**
@@ -42,12 +70,26 @@ public class AnalyticsManager {
      * @param method "google", "email", "facebook", "anonymous"
      */
     public void trackSignupSuccess(String method) {
-        Bundle params = new Bundle();
-        params.putString(FirebaseAnalytics.Param.METHOD, method);
+        String safeMethod = method != null ? method : "unknown";
+        Log.d(TAG, "Tracked: signup success with method=" + safeMethod);
         
-        crashlytics.log("Signup success: " + method);
-        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SIGN_UP, params);
-        Log.d(TAG, "Tracked: signup success with method=" + method);
+        if (crashlytics != null) {
+            try {
+                crashlytics.log("Signup success: " + safeMethod);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log signup success to Crashlytics", e);
+            }
+        }
+        
+        if (firebaseAnalytics != null) {
+            try {
+                Bundle params = new Bundle();
+                params.putString(FirebaseAnalytics.Param.METHOD, safeMethod);
+                firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SIGN_UP, params);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log signup success to Firebase Analytics", e);
+            }
+        }
     }
     
     /**
@@ -64,16 +106,35 @@ public class AnalyticsManager {
         String safeErrorMessage = errorMessage != null ? errorMessage : "Unknown error occurred";
         String safeStep = step != null ? step : "unknown_step";
         
-        Bundle params = new Bundle();
-        params.putString("method", safeMethod);
-        params.putString("code", safeErrorCode);
-        params.putString("message", safeErrorMessage);
-        params.putString("step", safeStep);
-        
-        crashlytics.recordException(new Exception("Signup error: " + safeErrorMessage));
-        crashlytics.log("Signup error - Method: " + safeMethod + ", Step: " + safeStep + ", Error: " + safeErrorMessage);
-        firebaseAnalytics.logEvent("sign_up_error", params);
+        // Always log locally for debugging, even if Firebase is unavailable
         Log.d(TAG, "Tracked: signup error - " + safeMethod + " at " + safeStep + ": " + safeErrorMessage);
+        
+        // Check if Firebase services are available before using them
+        if (crashlytics != null) {
+            try {
+                crashlytics.recordException(new Exception("Signup error: " + safeErrorMessage));
+                crashlytics.log("Signup error - Method: " + safeMethod + ", Step: " + safeStep + ", Error: " + safeErrorMessage);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to record crash analytics for signup error", e);
+            }
+        } else {
+            Log.w(TAG, "Crashlytics not available, skipping crash analytics for signup error");
+        }
+        
+        if (firebaseAnalytics != null) {
+            try {
+                Bundle params = new Bundle();
+                params.putString("method", safeMethod);
+                params.putString("code", safeErrorCode);
+                params.putString("message", safeErrorMessage);
+                params.putString("step", safeStep);
+                firebaseAnalytics.logEvent("sign_up_error", params);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log Firebase analytics for signup error", e);
+            }
+        } else {
+            Log.w(TAG, "Firebase Analytics not available, skipping analytics for signup error");
+        }
     }
     
     /**
