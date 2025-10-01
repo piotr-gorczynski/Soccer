@@ -14,8 +14,8 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics;
 public class AnalyticsManager {
     private static final String TAG = "AnalyticsManager";
     
-    private final FirebaseAnalytics firebaseAnalytics;
-    private final FirebaseCrashlytics crashlytics;
+    private FirebaseAnalytics firebaseAnalytics;
+    private FirebaseCrashlytics crashlytics;
     
     public AnalyticsManager(Context context) {
         if (context == null) {
