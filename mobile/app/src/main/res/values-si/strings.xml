@@ -253,7 +253,7 @@
     <string name="email_verification_failed">ඊමේල් සත්‍යාපනය අසාර්ථක විය</string>
     <string name="could_not_send_verification_email">සත්‍යාපන ඊමේල් යැවීමට නොහැකි විය: %1$s</string>
     <string name="registration_failed_title">ලියාපදිංචිය අසාර්ථක විය</string>
-    <string name="player_label">ක්‍රීඩකයා</string>
+    <string name="player_label">ක්‍රීඩක</string>
     <string name="android_label">Android</string>
     <string name="player_with_number">ක්‍රීඩක %1$d</string>
     <string name="winner_timeout">%1$s ට කාලය අවසන් විය.</string>
