@@ -231,8 +231,8 @@ public class MatchAdapter
                     String state = "offline";
                     if ("online".equals(stateStr)) {
                         state = "online";
-                    } else if (System.currentTimeMillis() - lastHb < 20 * 60_000L) {
-                        state = "active";           // seen within 20 min window
+                    } else if (lastHb > 0L) {
+                        state = "active";
                     }
 
                     presCache.put(oppUid, state);
@@ -301,17 +301,16 @@ public class MatchAdapter
 
 
 
-        // Determine button visibility - enable invites for recently active users
+        // Determine button visibility
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
                 Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                 + ": inviteBtn visibility logic: st=" + st + ", pState=" + pState);
 
         boolean isActiveOrCompleted = "playing".equals(st) || "completed".equals(st);
         
-        // Enable invites for users who are recently active (within 20 minutes), even if state is "offline"
+        // Show invite button for all users except those with no heartbeat data
         long lastHeartbeat = hbCache.getOrDefault(oppUid, 0L);
-        boolean isTrulyOffline = (pState == null || "offline".equalsIgnoreCase(pState)) && 
-                (System.currentTimeMillis() - lastHeartbeat > 20 * 60_000L);
+        boolean isTrulyOffline = (pState == null || "offline".equalsIgnoreCase(pState)) && lastHeartbeat == 0L;
 
         if (isActiveOrCompleted || isTrulyOffline) {
             h.inviteBtn.setVisibility(View.GONE);
@@ -365,9 +364,8 @@ public class MatchAdapter
                 String status = h.snap.getString("status");
                 boolean isActiveOrCompleted = "playing".equals(status) || "completed".equals(status);
                 
-                // Enable invites for users who are recently active (within 20 minutes), even if state is "offline"
-                boolean isTrulyOffline = "offline".equalsIgnoreCase(pState) && 
-                        (System.currentTimeMillis() - lastHb > 20 * 60_000L);
+                // Show invite button for all users except those with no heartbeat data
+                boolean isTrulyOffline = "offline".equalsIgnoreCase(pState) && lastHb == 0L;
                         
                 h.inviteBtn.setVisibility((isActiveOrCompleted || isTrulyOffline)
                         ? View.GONE : View.VISIBLE);
