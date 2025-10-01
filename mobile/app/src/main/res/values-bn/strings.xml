@@ -264,7 +264,7 @@
     <string name="registration_failed_title">নিবন্ধকরণ ব্যর্থ</string>
     <string name="player_label">খেলোয়াড়</string>
     <string name="android_label">অ্যান্ড্রয়েড</string>
-    <string name="player_with_number">প্লেয়ার %1$d</string>
+    <string name="player_with_number">খেলোয়াড় %1$d</string>
     <string name="winner_timeout">%1$s সময়ের বাইরে চলে গেছে। </string>
     <string name="winner_abandon">%1$s গেমটি বাজেয়াপ্ত করেছে। </string>
     <string name="winner_is">বিজয়ী %1$s!</string>

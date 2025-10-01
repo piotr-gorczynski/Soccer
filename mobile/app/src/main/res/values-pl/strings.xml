@@ -263,7 +263,7 @@
     <string name="email_verification_failed">Weryfikacja e-maila nie powiodła się</string>
     <string name="could_not_send_verification_email">Nie można wysłać weryfikacji e-mail: %1$s</string>
     <string name="registration_failed_title">Rejestracja nie powiodła się</string>
-    <string name="player_label">Odtwarzacz</string>
+    <string name="player_label">Gracz</string>
     <string name="android_label">Android</string>
     <string name="player_with_number">Gracz %1$d.</string>
     <string name="winner_timeout">%1$s zabrakło czasu.</string>
