@@ -277,5 +277,5 @@
     
     <!-- Friend invitation statistics -->
     <string name="loading_invite_stats">در حال بارگذاری آمار دعوت‌نامه…</string>
-    <string name="invite_stats_format">دعوت‌نامه‌های ارسال شده: %1$d / پذیرفته شده: %2$d</string>
+    <string name="invite_stats_format">Sent: %1$d (accepted: %2$d) | Received: %3$d (accepted: %4$d)</string>
 </resources>
