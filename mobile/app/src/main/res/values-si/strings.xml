@@ -293,4 +293,8 @@
     <string name="register_benefits_title">තරඟාවලියට එක් වී ගෝලීය වශයෙන් තරඟ කරන්න!</string>
     <string name="register_benefits_message">ඔබේ ශ්‍රේණිගත වීම සුරකින්න සහ ලොව පුරා ක්‍රීඩකයින් සමඟ තරඟ කිරීමට ලියාපදිංචි වන්න.</string>
     <string name="register_now">දැන්ම ලියාපදිංචි වන්න</string>
+    
+    <!-- Friend invitation statistics -->
+    <string name="loading_invite_stats">ආරාධනා සංඛ්‍යාලේඛන පූරණය වෙමින්…</string>
+    <string name="invite_stats_format">යැවූ ආරාධනා: %1$d / පිළිගත්: %2$d</string>
 </resources>

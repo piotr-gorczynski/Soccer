@@ -293,4 +293,8 @@
     <string name="register_benefits_title">Ku biir tartamada &amp; si caalami ah u tartan!</string>
     <string name="register_benefits_message">Isdiiwaangeli si aad u kaydiso darajadaada oo aad uga qaybqaadato tartamada ciyaartoyda caalamka.</string>
     <string name="register_now">Isdiiwaangeli hadda</string>
+    
+    <!-- Friend invitation statistics -->
+    <string name="loading_invite_stats">Waxaa la soo dejinayaa tirakoobka casuumaha…</string>
+    <string name="invite_stats_format">Casuumo la diray: %1$d / La aqbalay: %2$d</string>
 </resources>

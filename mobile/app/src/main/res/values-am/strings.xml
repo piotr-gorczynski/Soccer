@@ -293,4 +293,8 @@
     <string name="register_benefits_title">ውድድሮችን ተቀላቀልና በዓለም አቀፍ ውድድር ተወዳድር!</string>
     <string name="register_benefits_message">ደረጃዎን ለማስቀመጥ እና በዓለም ዙሪያ ካሉ ተጫዋቾች ጋር በውድድር ለመሳተፍ ይመዝገቡ።</string>
     <string name="register_now">አሁን ይመዝገቡ</string>
+    
+    <!-- Friend invitation statistics -->
+    <string name="loading_invite_stats">የግብዣ ስታቲስቲክስ በመጫን ላይ…</string>
+    <string name="invite_stats_format">የተላኩ ግብዣዎች: %1$d / የተቀበሉ: %2$d</string>
 </resources>
