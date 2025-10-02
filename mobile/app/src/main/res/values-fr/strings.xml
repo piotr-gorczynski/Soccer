@@ -324,6 +324,6 @@
     <string name="join_game_action">Rejoindre le Jeu</string>
     
     <!-- Friend invitation statistics -->
-    <string name="loading_invite_stats">Chargement des statistiques d'invitation…</string>
+    <string name="loading_invite_stats">Chargement des statistiques d`invitation…</string>
     <string name="invite_stats_format">Envoyé : %1$d (accepté : %2$d) | Reçu : %3$d (accepté : %4$d)</string>
 </resources>
