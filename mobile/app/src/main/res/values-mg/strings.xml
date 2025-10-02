@@ -296,5 +296,5 @@
     
     <!-- Friend invitation statistics -->
     <string name="loading_invite_stats">Mampiditra statistika fanasana…</string>
-    <string name="invite_stats_format">Fanasana nalefa: %1$d / Nanaiky: %2$d</string>
+    <string name="invite_stats_format">Sent: %1$d (accepted: %2$d) | Received: %3$d (accepted: %4$d)</string>
 </resources>
