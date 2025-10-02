@@ -36,6 +36,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
         final Button inviteBtn;
         final Button removeBtn;
         final TextView inviteStats;
+        final TextView matchStats;
         String uid;
         DocumentSnapshot doc; // not used but kept for parity
         VH(@NonNull View v) {
@@ -45,6 +46,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
             inviteBtn = v.findViewById(R.id.inviteBtn);
             removeBtn = v.findViewById(R.id.removeBtn);
             inviteStats = v.findViewById(R.id.inviteStats);
+            matchStats = v.findViewById(R.id.matchStats);
         }
     }
 
@@ -58,6 +60,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
     private static final class RtdbSub { final DatabaseReference ref; final ValueEventListener l; RtdbSub(DatabaseReference r, ValueEventListener l){this.ref=r;this.l=l;}}
     private final Map<String,RtdbSub> presSubs = new HashMap<>();
     private final Map<String,String> inviteStatsCache = new HashMap<>();
+    private final Map<String,String> matchStatsCache = new HashMap<>();
     private String currentUserId;
 
     FriendAdapter(Context context, OnInviteClick listener, OnRemoveClick removeListener, String currentUserId) {
@@ -105,6 +108,9 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
                 } else if ("inviteStats".equals(payload)) {
                     String stats = inviteStatsCache.get(uid);
                     if (stats != null) h.inviteStats.setText(stats);
+                } else if ("matchStats".equals(payload)) {
+                    String stats = matchStatsCache.get(uid);
+                    if (stats != null) h.matchStats.setText(stats);
                 }
             }
         }
@@ -169,6 +175,15 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
             fetchInviteStats(uid, h);
         } else {
             h.inviteStats.setText(cachedStats);
+        }
+        
+        // Fetch and display match statistics
+        String cachedMatchStats = matchStatsCache.get(uid);
+        if (cachedMatchStats == null) {
+            h.matchStats.setText("");
+            fetchMatchStats(uid, h);
+        } else {
+            h.matchStats.setText(cachedMatchStats);
         }
     }
 
@@ -280,6 +295,149 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
                     int idx = indexForUid(targetUid);
                     if (idx != RecyclerView.NO_POSITION) {
                         notifyItemChanged(idx, "inviteStats");
+                    }
+                });
+    }
+
+    private void fetchMatchStats(@NonNull String targetUid, @NonNull VH h) {
+        if (currentUserId == null) {
+            h.matchStats.setText("");
+            return;
+        }
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        
+        // Query 1: matches from /matches collection where current user played with friend
+        com.google.android.gms.tasks.Task<com.google.firebase.firestore.QuerySnapshot> friendlyMatchesTask = 
+                db.collection("matches")
+                .whereIn("status", java.util.Arrays.asList("completed"))
+                .get();
+        
+        // Query 2: Get all tournaments to query their matches sub-collections
+        com.google.android.gms.tasks.Task<com.google.firebase.firestore.QuerySnapshot> tournamentsTask = 
+                db.collection("tournaments")
+                .get();
+        
+        // Wait for both initial queries to complete
+        com.google.android.gms.tasks.Tasks.whenAllSuccess(friendlyMatchesTask, tournamentsTask)
+                .addOnSuccessListener(results -> {
+                    // Process friendly matches
+                    com.google.firebase.firestore.QuerySnapshot friendlySnapshot = 
+                            (com.google.firebase.firestore.QuerySnapshot) results.get(0);
+                    
+                    int wins = 0;
+                    int losses = 0;
+                    
+                    // Count wins/losses from friendly matches
+                    for (DocumentSnapshot doc : friendlySnapshot) {
+                        String player0 = doc.getString("player0");
+                        String player1 = doc.getString("player1");
+                        String winner = doc.getString("winner");
+                        
+                        // Check if this match involves both current user and friend
+                        boolean isRelevantMatch = 
+                            (currentUserId.equals(player0) && targetUid.equals(player1)) ||
+                            (currentUserId.equals(player1) && targetUid.equals(player0));
+                        
+                        if (isRelevantMatch && winner != null) {
+                            if (winner.equals(currentUserId)) {
+                                wins++;
+                            } else if (winner.equals(targetUid)) {
+                                losses++;
+                            }
+                        }
+                    }
+                    
+                    // Process tournament matches
+                    com.google.firebase.firestore.QuerySnapshot tournamentsSnapshot = 
+                            (com.google.firebase.firestore.QuerySnapshot) results.get(1);
+                    
+                    // Create a list of tasks to fetch matches from all tournaments
+                    java.util.List<com.google.android.gms.tasks.Task<com.google.firebase.firestore.QuerySnapshot>> tournamentMatchesTasks = 
+                            new java.util.ArrayList<>();
+                    
+                    for (DocumentSnapshot tournament : tournamentsSnapshot) {
+                        com.google.android.gms.tasks.Task<com.google.firebase.firestore.QuerySnapshot> tournamentMatchesTask = 
+                                db.collection("tournaments")
+                                .document(tournament.getId())
+                                .collection("matches")
+                                .whereIn("status", java.util.Arrays.asList("completed", "done"))
+                                .get();
+                        tournamentMatchesTasks.add(tournamentMatchesTask);
+                    }
+                    
+                    // If there are no tournaments, directly update the stats
+                    if (tournamentMatchesTasks.isEmpty()) {
+                        String statsText = context.getString(R.string.match_stats_format, wins, losses);
+                        matchStatsCache.put(targetUid, statsText);
+                        
+                        int idx = indexForUid(targetUid);
+                        if (idx != RecyclerView.NO_POSITION) {
+                            notifyItemChanged(idx, "matchStats");
+                        }
+                        return;
+                    }
+                    
+                    // Wait for all tournament matches queries to complete
+                    final int finalWins = wins;
+                    final int finalLosses = losses;
+                    
+                    com.google.android.gms.tasks.Tasks.whenAllSuccess(tournamentMatchesTasks)
+                            .addOnSuccessListener(tournamentResults -> {
+                                int totalWins = finalWins;
+                                int totalLosses = finalLosses;
+                                
+                                // Count wins/losses from tournament matches
+                                for (Object result : tournamentResults) {
+                                    com.google.firebase.firestore.QuerySnapshot tournamentMatchesSnapshot = 
+                                            (com.google.firebase.firestore.QuerySnapshot) result;
+                                    
+                                    for (DocumentSnapshot doc : tournamentMatchesSnapshot) {
+                                        String player0 = doc.getString("player0");
+                                        String player1 = doc.getString("player1");
+                                        String winner = doc.getString("winner");
+                                        
+                                        // Check if this match involves both current user and friend
+                                        boolean isRelevantMatch = 
+                                            (currentUserId.equals(player0) && targetUid.equals(player1)) ||
+                                            (currentUserId.equals(player1) && targetUid.equals(player0));
+                                        
+                                        if (isRelevantMatch && winner != null) {
+                                            if (winner.equals(currentUserId)) {
+                                                totalWins++;
+                                            } else if (winner.equals(targetUid)) {
+                                                totalLosses++;
+                                            }
+                                        }
+                                    }
+                                }
+                                
+                                String statsText = context.getString(R.string.match_stats_format, totalWins, totalLosses);
+                                matchStatsCache.put(targetUid, statsText);
+                                
+                                int idx = indexForUid(targetUid);
+                                if (idx != RecyclerView.NO_POSITION) {
+                                    notifyItemChanged(idx, "matchStats");
+                                }
+                            })
+                            .addOnFailureListener(e -> {
+                                // If tournament queries fail, still show the friendly matches stats
+                                String statsText = context.getString(R.string.match_stats_format, finalWins, finalLosses);
+                                matchStatsCache.put(targetUid, statsText);
+                                
+                                int idx = indexForUid(targetUid);
+                                if (idx != RecyclerView.NO_POSITION) {
+                                    notifyItemChanged(idx, "matchStats");
+                                }
+                            });
+                })
+                .addOnFailureListener(e -> {
+                    String errorText = context.getString(R.string.match_stats_format, 0, 0);
+                    matchStatsCache.put(targetUid, errorText);
+                    
+                    int idx = indexForUid(targetUid);
+                    if (idx != RecyclerView.NO_POSITION) {
+                        notifyItemChanged(idx, "matchStats");
                     }
                 });
     }
