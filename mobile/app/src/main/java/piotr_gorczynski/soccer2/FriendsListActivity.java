@@ -14,10 +14,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class FriendsListActivity extends BaseActivity {
@@ -67,10 +72,52 @@ public class FriendsListActivity extends BaseActivity {
                     if (docs.isEmpty()) {
                         emptyText.setVisibility(View.VISIBLE);
                         adapter.setData(new ArrayList<>());
-                    } else {
-                        emptyText.setVisibility(View.GONE);
-                        adapter.setData(docs);
+                        return;
                     }
+                    
+                    // Extract friend UIDs
+                    List<String> friendUids = new ArrayList<>();
+                    for (DocumentSnapshot doc : docs) {
+                        friendUids.add(doc.getId());
+                    }
+                    
+                    // Fetch user documents to get nicknames for sorting
+                    db.collection("users").whereIn(FieldPath.documentId(), friendUids)
+                            .get()
+                            .addOnSuccessListener(userSnap -> {
+                                // Create a map of UID to nickname (lowercase for case-insensitive sorting)
+                                Map<String, String> nicknameMap = new HashMap<>();
+                                for (DocumentSnapshot userDoc : userSnap.getDocuments()) {
+                                    String nickname = userDoc.getString("nickname");
+                                    if (nickname != null) {
+                                        nicknameMap.put(userDoc.getId(), nickname.toLowerCase());
+                                    }
+                                }
+                                
+                                // Sort friend documents by nickname
+                                Collections.sort(docs, new Comparator<DocumentSnapshot>() {
+                                    @Override
+                                    public int compare(DocumentSnapshot d1, DocumentSnapshot d2) {
+                                        String nick1 = nicknameMap.get(d1.getId());
+                                        String nick2 = nicknameMap.get(d2.getId());
+                                        
+                                        // Handle null nicknames (put them at the end)
+                                        if (nick1 == null && nick2 == null) return 0;
+                                        if (nick1 == null) return 1;
+                                        if (nick2 == null) return -1;
+                                        
+                                        return nick1.compareTo(nick2);
+                                    }
+                                });
+                                
+                                emptyText.setVisibility(View.GONE);
+                                adapter.setData(docs);
+                            })
+                            .addOnFailureListener(e -> {
+                                // If fetching user data fails, still show the friends (unsorted)
+                                emptyText.setVisibility(View.GONE);
+                                adapter.setData(docs);
+                            });
                 })
                 .addOnFailureListener(e -> emptyText.setVisibility(View.VISIBLE));
     }
