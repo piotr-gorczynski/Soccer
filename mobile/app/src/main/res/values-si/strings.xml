@@ -297,4 +297,7 @@
     <!-- Friend invitation statistics -->
     <string name="loading_invite_stats">ආරාධනා සංඛ්‍යාලේඛන පූරණය වෙමින්…</string>
     <string name="invite_stats_format">Sent: %1$d (accepted: %2$d) | Received: %3$d (accepted: %4$d)</string>
+    
+    <!-- Friend match statistics -->
+    <string name="match_stats_format">ජයග්‍රහණ 🏆: %1$d | පරාජයන් 😞: %2$d</string>
 </resources>

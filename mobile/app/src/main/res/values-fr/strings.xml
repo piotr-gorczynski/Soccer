@@ -326,4 +326,7 @@
     <!-- Friend invitation statistics -->
     <string name="loading_invite_stats">Chargement des statistiques d`invitation…</string>
     <string name="invite_stats_format">Envoyé : %1$d (accepté : %2$d) | Reçu : %3$d (accepté : %4$d)</string>
+    
+    <!-- Friend match statistics -->
+    <string name="match_stats_format">Victoires 🏆 : %1$d | Défaites 😞 : %2$d</string>
 </resources>
