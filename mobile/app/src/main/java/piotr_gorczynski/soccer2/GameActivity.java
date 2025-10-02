@@ -107,18 +107,34 @@ public class GameActivity extends BaseActivity {
         super.onNewIntent(intent);
 
         // Don’t even replace the intent if it’s identical
-        String newPath = intent.getStringExtra("matchPath");
-        String currentPath = getIntent().getStringExtra("matchPath");
+        String newPath = intent != null ? intent.getStringExtra("matchPath") : null;
+        String currentPath = getIntent() != null ? getIntent().getStringExtra("matchPath") : null;
 
-        // If nothing has changed, bail out
-        if (newPath != null && newPath.equals(currentPath)) {
+        // Handle different scenarios appropriately
+        if (Objects.equals(newPath, currentPath)) {
+            // Paths are identical (including both null) - safe to skip
             Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                     + ": identical matchPath, skipping");
-        } else {
-            Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                    + ": ❌ CRITICAL ERROR: Different matchPath on 2nd call!");
-            throw new IllegalStateException("❌ CRITICAL ERROR: Dirrenten match_id on 2nd call!");
+            return;
         }
+
+        // For online games (GameType 3), we need to be more careful about changing matchPath
+        int gameType = getIntent() != null ? getIntent().getIntExtra("GameType", -1) : -1;
+        
+        if (gameType == 3) {
+            // Online multiplayer game - validate the change
+            if (currentPath != null && newPath != null && !currentPath.equals(newPath)) {
+                // This could be problematic - different active matches
+                Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                        + ": Warning - Different matchPath for online game: " + currentPath + " -> " + newPath);
+                // For now, allow it but log as warning instead of crashing
+            }
+        }
+
+        // Update to new intent (this is the expected behavior for singleTop launch mode)
+        setIntent(intent);
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                + ": Intent updated successfully");
     }
 
     @SuppressLint("ApplySharedPref")
@@ -1156,45 +1172,53 @@ public class GameActivity extends BaseActivity {
                     .addOnFailureListener(e ->
                             Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ❌ Failed to record match result", e));
 
+
+            // Show dialog immediately with default message to avoid ANR
+            // This prevents blocking the main thread while waiting for Firestore data
+            String defaultMsg = SafeStringFormatter.safeGetString(this, R.string.winner_is, sWinner);
+            builder.setMessage(defaultMsg);
+            builder.setPositiveButton(R.string.close, (dialog, which) -> finish());
+            
+            // make sure we're still alive before showing dialog
+            if (!isFinishing() && !isDestroyed()) {
+                dialogWinner = builder.create();
+                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": dialogWinner show (immediate): "+defaultMsg);
+                dialogWinner.show();
+            } else {
+                Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Tried to show dialog when activity is finishing or destroyed");
+                return;
+            }
+
+            // Asynchronously fetch additional match details (reason) and update dialog if available
             matchRef.get()
                     .addOnSuccessListener(
-                            GameActivity.this,      // ← executor tied to this Activity’s main looper
+                            GameActivity.this,      // ← executor tied to this Activity's main looper
                             doc -> {
                                 String reason = doc.getString("reason");
-                                String msg="";
-                                if ("timeout".equals(reason)) {
-                                    msg = SafeStringFormatter.safeGetString(this, R.string.winner_timeout, sLooser);
-                                } else if ("abandon".equals(reason)) {
-                                    msg = SafeStringFormatter.safeGetString(this, R.string.winner_abandon, sLooser);
+                                if (reason != null && !reason.equals("goal")) {
+                                    // Only update dialog if there's a special reason (timeout/abandon)
+                                    String msg="";
+                                    if ("timeout".equals(reason)) {
+                                        msg = SafeStringFormatter.safeGetString(this, R.string.winner_timeout, sLooser);
+                                    } else if ("abandon".equals(reason)) {
+                                        msg = SafeStringFormatter.safeGetString(this, R.string.winner_abandon, sLooser);
+                                    }
+                                    
+                                    if (!msg.isEmpty()) {
+                                        msg += SafeStringFormatter.safeGetString(this, R.string.winner_is, sWinner);
+                                        
+                                        // Update the dialog message if it's still showing
+                                        if (dialogWinner != null && dialogWinner.isShowing()) {
+                                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Updating dialogWinner message: "+msg);
+                                            dialogWinner.setMessage(msg);
+                                        }
+                                    }
                                 }
-
-                                msg += SafeStringFormatter.safeGetString(this, R.string.winner_is, sWinner);
-                                builder.setMessage(msg);
-
-                                builder.setPositiveButton(R.string.close, (dialog, which) -> finish());
-                                // make sure we’re still alive
-                                if (!isFinishing() && !isDestroyed()) {
-                                    dialogWinner = builder.create();
-                                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": dialogWinner show: "+msg);
-                                    dialogWinner.show();
-                                } else {
-                                    Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Tried to show dialog when activity is finishing or destroyed");
-                                }
-
                             })
                     .addOnFailureListener(err -> {
-                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to load match reason", err);
-                        Toast.makeText(this, SafeStringFormatter.safeGetString(this, R.string.failed_to_load_match), Toast.LENGTH_LONG).show();
-                        // make sure we’re still alive, on the UI thread
-                        /*runOnUiThread(() -> {
-                            if (!isFinishing() && !isDestroyed()) {
-                                dialogWinner = builder.create();
-                                dialogWinner.show();
-                            } else {
-                                Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Tried to show dialog when activity is finishing or destroyed");
-                            }
-                            });*/
-                        });
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to load match reason (non-critical)", err);
+                        // Don't show error toast since dialog is already showing with default message
+                    });
             return; // Avoid showing duplicate dialog below
         }
 

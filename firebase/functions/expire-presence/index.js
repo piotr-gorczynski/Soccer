@@ -35,7 +35,7 @@ exports.expirePresence = functions
       ) {
         updates[uid] = {
           state: 'offline',
-          last_heartbeat: 0
+          last_heartbeat: lastHeartbeat  // Preserve last heartbeat timestamp
         };
         count++;
       }

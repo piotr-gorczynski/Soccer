@@ -1,0 +1,107 @@
+<en-GB>
+🎮 Fix translation errors in player_label strings for Polish, Bengali, and Sinhala
+🎮 Fix ANR triggered by thread waiting for Firestore binder transaction in showWinner()
+🔔 Remove 20-minute active user restriction to allow inviting players regardless of last seen time
+</en-GB>
+
+<pl-PL>
+🎮 Naprawiono błędy tłumaczeń w ciągach player_label dla języków polskiego, bengalskiego i syngaleskiego
+🎮 Naprawiono ANR wywołany przez wątek oczekujący na transakcję Firestore binder w showWinner()
+🔔 Usunięto ograniczenie 20 minut aktywności, aby umożliwić zapraszanie graczy niezależnie od czasu ostatniego logowania
+</pl-PL>
+
+<de-DE>
+🎮 Übersetzungsfehler in player_label-Strings für Polnisch, Bengalisch und Singhalesisch behoben
+🎮 ANR behoben, der durch Thread-Warten auf Firestore-Binder-Transaktion in showWinner() ausgelöst wurde
+🔔 20-Minuten-Beschränkung für aktive Benutzer entfernt, damit Spieler unabhängig von der letzten Aktivität eingeladen werden können
+</de-DE>
+
+<fr-FR>
+🎮 Correction des erreurs de traduction dans les chaînes player_label pour le polonais, le bengali et le cinghalais
+🎮 Correction d’un ANR déclenché par un thread en attente d’une transaction Firestore binder dans showWinner()
+🔔 Suppression de la restriction de 20 minutes d’activité afin de permettre l’invitation de joueurs quel que soit leur dernier passage
+</fr-FR>
+
+<es-ES>
+🎮 Se corrigieron errores de traducción en las cadenas player_label para polaco, bengalí y cingalés
+🎮 Se corrigió un ANR provocado por un hilo esperando una transacción de Firestore binder en showWinner()
+🔔 Se eliminó la restricción de 20 minutos de usuario activo para permitir invitar jugadores sin importar su última conexión
+</es-ES>
+
+<ur>
+🎮 Polish، Bengali اور Sinhala کے لیے player_label سٹرنگز میں ترجمے کی غلطیاں درست کی گئیں
+🎮 showWinner() میں Firestore binder ٹرانزیکشن کا انتظار کرنے والے تھریڈ کی وجہ سے ہونے والا ANR درست کیا گیا
+🔔 20 منٹ کی سرگرمی کی پابندی ہٹا دی گئی تاکہ کھلاڑیوں کو آخری بار دیکھے گئے وقت کی پرواہ کیے بغیر مدعو کیا جا سکے
+</ur>
+
+<bn-BD>
+🎮 Polish, Bengali এবং Sinhala-এর জন্য player_label স্ট্রিংগুলিতে অনুবাদের ভুল সংশোধন করা হয়েছে
+🎮 showWinner()-এ Firestore binder লেনদেনের জন্য অপেক্ষার সময় থ্রেড দ্বারা ট্রিগার হওয়া ANR ঠিক করা হয়েছে
+🔔 শেষবার দেখা সময় নির্বিশেষে খেলোয়াড়দের আমন্ত্রণ জানানোর জন্য 20 মিনিটের সক্রিয় ব্যবহারকারীর সীমাবদ্ধতা সরানো হয়েছে
+</bn-BD>
+
+<ne-NP>
+🎮 पोलिश, बङ्गाली र सिंहलीका लागि player_label स्ट्रिङमा अनुवाद त्रुटिहरू सच्याइयो
+🎮 showWinner() मा Firestore binder लेनदेन कुर्दा ट्रिगर भएको ANR समाधान गरियो
+🔔 अन्तिम पटक देखिएको समयलाई पर्वाह नगरी खेलाडीलाई निम्त्याउन २० मिनेट सक्रिय प्रयोगकर्ता प्रतिबन्ध हटाइयो
+</ne-NP>
+
+<hi-IN>
+🎮 Polish, Bengali और Sinhala के लिए player_label स्ट्रिंग्स में अनुवाद की गलतियाँ ठीक की गईं
+🎮 showWinner() में Firestore binder ट्रांजैक्शन का इंतजार कर रहे थ्रेड से उत्पन्न ANR को ठीक किया गया
+🔔 खिलाड़ियों को आमंत्रित करने की अनुमति देने के लिए 20-मिनट की सक्रिय उपयोगकर्ता सीमा हटा दी गई, चाहे अंतिम बार कब देखा गया हो
+</hi-IN>
+
+<am>
+🎮 ለፖሊሽ፣ ቤንጋሊ እና ሲንሃላ player_label ቃላት ውስጥ የትርጉም ስህተቶች ተቀናበሩ
+🎮 በshowWinner() ውስጥ የFirestore binder ግብይትን በመጠበቅ የተነሳው ANR ተፈታ
+🔔 የ20-ደቂቃ ንቁ ተጠቃሚ ገደብ ተወግዶ ተጫዋቾችን ከመጨረሻ የታዩ ጊዜ ጋር ሳይገናኝ ማስተዋወቅ ተፈቅዷል
+</am>
+
+<ar>
+🎮 تصحيح أخطاء الترجمة في سلاسل player_label للغة البولندية والبنغالية والسنهالية
+🎮 إصلاح ANR الناتج عن انتظار خيط لمعاملة Firestore binder في showWinner()
+🔔 إزالة قيد المستخدم النشط لمدة 20 دقيقة للسماح بدعوة اللاعبين بغض النظر عن وقت الظهور الأخير
+</ar>
+
+<my-MM>
+🎮 Polish, Bengali နှင့် Sinhala အတွက် player_label စာကြောင်းများတွင် ဘာသာပြန် အမှားများကို ပြင်ဆင်ခဲ့သည်
+🎮 showWinner() တွင် Firestore binder လုပ်ငန်းစဉ်ကို စောင့်နေသော thread ကြောင့် ဖြစ်သော ANR ကို ပြင်ဆင်ခဲ့သည်
+🔔 နောက်ဆုံး သုံးစွဲချိန်ကို မစဉ်းစားဘဲ ကစားသူများကို ဖိတ်ခေါ်နိုင်ရန် 20 မိနစ် အကျိုးပြုသူ ကန့်သတ်ချက်ကို ဖယ်ရှားခဲ့သည်
+</my-MM>
+
+<km-KH>
+🎮 កែប្រែកំហុសបកប្រែនៅក្នុង player_label សម្រាប់ភាសា Polish, Bengali និង Sinhala
+🎮 កែ ANR ដែលបង្កឡើងដោយ thread រង់ចាំប្រតិបត្តិការរបស់ Firestore binder ក្នុង showWinner()
+🔔 លុបការកំណត់ 20 នាទីសម្រាប់អ្នកប្រើសកម្ម ដើម្បីអាចអញ្ជើញអ្នកលេងដោយមិនគិតពីពេលដែលបានឃើញចុងក្រោយ
+</km-KH>
+
+<lo-LA>
+🎮 ແກ້ໄຂຄວາມຜິດພາດໃນການແປ player_label ສຳລັບພາສາ Polish, Bengali ແລະ Sinhala
+🎮 ແກ້ໄຂ ANR ທີ່ເກີດຈາກ thread ທີ່ລໍຖ້າ Firestore binder transaction ໃນ showWinner()
+🔔 ຍົກເລີກຂໍ້ຈຳກັດ 20 ນາທີຂອງຜູ້ໃຊ້ເພື່ອອະນຸຍາດໃຫ້ເຊີນຜູ້ເລີ່ນໂດຍບໍ່ຄຳນຶງເຖິງເວລາທີ່ເຫັນຄັ້ງສຸດທ້າຍ
+</lo-LA>
+
+<mn-MN>
+🎮 Польш, Бенгал, Сингал хэлний player_label мөрүүдийн орчуулгын алдааг зассан
+🎮 showWinner() дотор Firestore binder гүйлгээг хүлээж байсан thread-ээс үүдэлтэй ANR-ийг зассан
+🔔 Сүүлд идэвхтэй байсан хугацаанаас үл хамааран тоглогчдыг урих боломжтой болгохын тулд 20 минутын хязгаарыг арилгав
+</mn-MN>
+
+<fa-IR>
+🎮 رفع خطاهای ترجمه در رشته‌های player_label برای زبان‌های لهستانی، بنگالی و سینهالی
+🎮 رفع ANR ناشی از انتظار رشته برای تراکنش Firestore binder در showWinner()
+🔔 حذف محدودیت ۲۰ دقیقه کاربر فعال برای امکان دعوت بازیکنان بدون توجه به زمان آخرین مشاهده
+</fa-IR>
+
+<si-LK>
+🎮 පොලිෂ්, බෙංගාලි සහ සිංහල සඳහා player_label strings වල ඇති පරිවර්තන දෝෂ නිවැරදි කරන ලදි
+🎮 showWinner() හි Firestore binder ගනුදෙනුවක් රැඳී සිටින ත්‍රෙඩ් එක නිසා ඇති වූ ANR නිවැරදි කරන ලදි
+🔔 අවසන් වරට දැක්වු කාලය නොසලකා පරිශීලකයින්ට ආරාධනා කිරීමට ඉඩදීමට මිනිත්තු 20 ක් වූ සීමාව ඉවත් කරන ලදි
+</si-LK>
+
+<sw>
+🎮 Imerekebishwa makosa ya tafsiri kwenye misemo ya player_label kwa Kipolishi, Kibengali na Kisinhalese
+🎮 Imerekebishwa ANR iliyosababishwa na thread inayosubiri muamala wa Firestore binder katika showWinner()
+🔔 Kizuizi cha mtumiaji aliyekuwa hai kwa dakika 20 kimeondolewa ili kuruhusu kualika wachezaji bila kujali muda wa mwisho walipoonekana
+</sw>

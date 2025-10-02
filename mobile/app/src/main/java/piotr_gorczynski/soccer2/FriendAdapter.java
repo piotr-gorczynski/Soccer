@@ -118,7 +118,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
                     String state = "offline";
                     if ("online".equals(stateStr)) {
                         state = "online";
-                    } else if (System.currentTimeMillis() - lastHb < 20 * 60_000L) {
+                    } else if (lastHb > 0L) {
                         state = "active";
                     }
                     presCache.put(uid, state);
@@ -155,10 +155,9 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
         h.presence.setText(label);
         h.presence.setTextColor(colour);
         
-        // Enable invites for users who are recently active (within 20 minutes), even if state is "offline"
+        // Show invite button for all users except those with no heartbeat data
         long lastHeartbeat = hbCache.getOrDefault(uid, 0L);
-        boolean isTrulyOffline = "offline".equalsIgnoreCase(state) && 
-                (System.currentTimeMillis() - lastHeartbeat > 20 * 60_000L);
+        boolean isTrulyOffline = "offline".equalsIgnoreCase(state) && lastHeartbeat == 0L;
         h.inviteBtn.setVisibility(isTrulyOffline ? View.GONE : View.VISIBLE);
         h.removeBtn.setVisibility(View.VISIBLE);
     }

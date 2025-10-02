@@ -39,8 +39,8 @@ android {
         applicationId = "piotr_gorczynski.soccer2"
         minSdk = 24
         targetSdk = 36
-        versionCode = 21
-        versionName = '15.6'
+        versionCode = 23
+        versionName = '15.8'
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         
@@ -153,7 +153,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore:26.0.1' // or latest version
     //GPT fixes
     implementation 'androidx.preference:preference:1.2.1'
-    implementation 'androidx.work:work-runtime:2.10.4'
+    implementation 'androidx.work:work-runtime:2.10.5'
     implementation 'com.google.firebase:firebase-database:22.0.1'
     //GPT fixes
     // Instrumented test dependencies
@@ -169,7 +169,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-config:23.0.1' // Remote Config for A/B testing
     implementation 'com.google.firebase:firebase-crashlytics:20.0.2' // Enhanced error tracking
 
-    implementation "com.google.guava:guava:33.4.8-android"
+    implementation "com.google.guava:guava:33.5.0-android"
 
     implementation "androidx.lifecycle:lifecycle-process:2.9.4"
     implementation "androidx.lifecycle:lifecycle-common-java8:2.9.4"
