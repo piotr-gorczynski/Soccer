@@ -322,6 +322,10 @@
     <string name="game_ready_message">Tu partido está listo para comenzar. ¡Toca para unirte!</string>
     <string name="join_game_action">Unirse al Juego</string>
     
+    <!-- Friend invitation statistics -->
+    <string name="loading_invite_stats">Cargando estadísticas de invitación…</string>
+    <string name="invite_stats_format">Invitaciones enviadas: %1$d / Aceptadas: %2$d</string>
+    
     <!-- Preference level values -->
     <string-array name="pref_level_values">
         <item>1</item>

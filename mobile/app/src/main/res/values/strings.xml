@@ -317,4 +317,8 @@
     <string name="game_ready_title">Game Ready for %1$s!</string>
     <string name="game_ready_message">Your match is ready to begin. Tap to join!</string>
     <string name="join_game_action">Join Game</string>
+    
+    <!-- Friend invitation statistics -->
+    <string name="loading_invite_stats">Loading invite stats…</string>
+    <string name="invite_stats_format">Invites sent: %1$d / Invites accepted: %2$d</string>
 </resources>

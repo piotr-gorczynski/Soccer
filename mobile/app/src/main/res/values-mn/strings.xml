@@ -293,4 +293,8 @@
     <string name="register_benefits_title">Тэмцээнд нэгдэж дэлхий дахинаа өрсөлд!</string>
     <string name="register_benefits_message">Дэлхийн тоглогчидтой тэмцээнд оролцож, үнэлгээгээ хадгалахын тулд бүртгүүлнэ үү.</string>
     <string name="register_now">Одоо бүртгүүлэх</string>
+    
+    <!-- Friend invitation statistics -->
+    <string name="loading_invite_stats">Урилгын статистик ачааллаж байна…</string>
+    <string name="invite_stats_format">Илгээсэн урилга: %1$d / Хүлээн авсан: %2$d</string>
 </resources>

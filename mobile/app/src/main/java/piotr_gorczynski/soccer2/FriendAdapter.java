@@ -165,7 +165,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
         // Fetch and display invitation statistics
         String cachedStats = inviteStatsCache.get(uid);
         if (cachedStats == null) {
-            h.inviteStats.setText("Loading invite stats...");
+            h.inviteStats.setText(context.getString(R.string.loading_invite_stats));
             fetchInviteStats(uid, h);
         } else {
             h.inviteStats.setText(cachedStats);
@@ -233,7 +233,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
                         }
                     }
                     
-                    String statsText = "Invites sent: " + totalSent + " / Invites accepted: " + totalAccepted;
+                    String statsText = context.getString(R.string.invite_stats_format, totalSent, totalAccepted);
                     inviteStatsCache.put(targetUid, statsText);
                     
                     int idx = indexForUid(targetUid);
@@ -242,7 +242,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
                     }
                 })
                 .addOnFailureListener(e -> {
-                    String errorText = "Invites sent: 0 / Invites accepted: 0";
+                    String errorText = context.getString(R.string.invite_stats_format, 0, 0);
                     inviteStatsCache.put(targetUid, errorText);
                     
                     int idx = indexForUid(targetUid);

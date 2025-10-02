@@ -293,4 +293,8 @@
     <string name="register_benefits_title">ចូលរួមការប្រកួត និងប្រកួតប្រជែងទូទាំងពិភពលោក!</string>
     <string name="register_benefits_message">ចុះឈ្មោះដើម្បីរក្សាទុកចំណាត់ថ្នាក់របស់អ្នក និងចូលរួមប្រកួតជាមួយអ្នកលេងទូទាំងពិភពលោក។</string>
     <string name="register_now">ចុះឈ្មោះឥឡូវនេះ</string>
+    
+    <!-- Friend invitation statistics -->
+    <string name="loading_invite_stats">កំពុងផ្ទុកស្ថិតិការអញ្ជើញ…</string>
+    <string name="invite_stats_format">ការអញ្ជើញដែលបានផ្ញើ៖ %1$d / បានទទួល៖ %2$d</string>
 </resources>

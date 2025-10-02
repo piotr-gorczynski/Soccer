@@ -274,4 +274,8 @@
     <string name="register_benefits_title">به تورنمنت‌ها بپیوندید و جهانی رقابت کنید!</string>
     <string name="register_benefits_message">ثبت‌نام کنید تا رتبه خود را حفظ کنید و در تورنمنت‌های بازیکنان سراسر جهان شرکت کنید.</string>
     <string name="register_now">همین حالا ثبت‌نام کنید</string>
+    
+    <!-- Friend invitation statistics -->
+    <string name="loading_invite_stats">در حال بارگذاری آمار دعوت‌نامه…</string>
+    <string name="invite_stats_format">دعوت‌نامه‌های ارسال شده: %1$d / پذیرفته شده: %2$d</string>
 </resources>
