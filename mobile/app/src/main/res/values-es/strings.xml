@@ -324,7 +324,7 @@
     
     <!-- Friend invitation statistics -->
     <string name="loading_invite_stats">Cargando estadísticas de invitación…</string>
-    <string name="invite_stats_format">Invitaciones enviadas: %1$d / Aceptadas: %2$d</string>
+    <string name="invite_stats_format">Enviado: %1$d (aceptado: %2$d) | Recibido: %3$d (aceptado: %4$d)</string>
     
     <!-- Preference level values -->
     <string-array name="pref_level_values">
