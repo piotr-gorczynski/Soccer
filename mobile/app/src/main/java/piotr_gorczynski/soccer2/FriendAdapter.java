@@ -218,22 +218,54 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
             return;
         }
 
-        FirebaseFirestore.getInstance().collection("invitations")
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        
+        // Query for invites sent FROM current user TO friend
+        com.google.android.gms.tasks.Task<com.google.firebase.firestore.QuerySnapshot> sentTask = 
+                db.collection("invitations")
                 .whereEqualTo("from", currentUserId)
                 .whereEqualTo("to", targetUid)
-                .get()
-                .addOnSuccessListener(querySnapshot -> {
-                    int totalSent = querySnapshot.size();
-                    int totalAccepted = 0;
+                .get();
+        
+        // Query for invites received FROM friend TO current user
+        com.google.android.gms.tasks.Task<com.google.firebase.firestore.QuerySnapshot> receivedTask = 
+                db.collection("invitations")
+                .whereEqualTo("from", targetUid)
+                .whereEqualTo("to", currentUserId)
+                .get();
+        
+        // Wait for both queries to complete
+        com.google.android.gms.tasks.Tasks.whenAllSuccess(sentTask, receivedTask)
+                .addOnSuccessListener(results -> {
+                    // Process sent invites
+                    com.google.firebase.firestore.QuerySnapshot sentSnapshot = 
+                            (com.google.firebase.firestore.QuerySnapshot) results.get(0);
+                    int totalSent = sentSnapshot.size();
+                    int totalSentAccepted = 0;
                     
-                    for (DocumentSnapshot doc : querySnapshot) {
+                    for (DocumentSnapshot doc : sentSnapshot) {
                         String status = doc.getString("status");
                         if ("accepted".equals(status)) {
-                            totalAccepted++;
+                            totalSentAccepted++;
                         }
                     }
                     
-                    String statsText = context.getString(R.string.invite_stats_format, totalSent, totalAccepted);
+                    // Process received invites
+                    com.google.firebase.firestore.QuerySnapshot receivedSnapshot = 
+                            (com.google.firebase.firestore.QuerySnapshot) results.get(1);
+                    int totalReceived = receivedSnapshot.size();
+                    int totalReceivedAccepted = 0;
+                    
+                    for (DocumentSnapshot doc : receivedSnapshot) {
+                        String status = doc.getString("status");
+                        if ("accepted".equals(status)) {
+                            totalReceivedAccepted++;
+                        }
+                    }
+                    
+                    // Format: Sent: X (accepted: Y) | Received: Z (accepted: W)
+                    String statsText = context.getString(R.string.invite_stats_format, 
+                            totalSent, totalSentAccepted, totalReceived, totalReceivedAccepted);
                     inviteStatsCache.put(targetUid, statsText);
                     
                     int idx = indexForUid(targetUid);
@@ -242,7 +274,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
                     }
                 })
                 .addOnFailureListener(e -> {
-                    String errorText = context.getString(R.string.invite_stats_format, 0, 0);
+                    String errorText = context.getString(R.string.invite_stats_format, 0, 0, 0, 0);
                     inviteStatsCache.put(targetUid, errorText);
                     
                     int idx = indexForUid(targetUid);
