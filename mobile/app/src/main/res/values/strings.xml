@@ -323,5 +323,5 @@
     <string name="invite_stats_format">Sent: %1$d (accepted: %2$d) | Received: %3$d (accepted: %4$d)</string>
     
     <!-- Friend match statistics -->
-    <string name="match_stats_format">Wins: %1$d | Losses: %2$d</string>
+    <string name="match_stats_format">Wins 🏆: %1$d | Losses 😞: %2$d</string>
 </resources>

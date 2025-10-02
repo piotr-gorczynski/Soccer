@@ -326,6 +326,9 @@
     <string name="loading_invite_stats">Lade Einladungsstatistiken…</string>
     <string name="invite_stats_format">Gesendet: %1$d (angenommen: %2$d) | Empfangen: %3$d (angenommen: %4$d)</string>
     
+    <!-- Friend match statistics -->
+    <string name="match_stats_format">Siege 🏆: %1$d | Niederlagen 😞: %2$d</string>
+    
     <!-- Preference level values -->
     <string-array name="pref_level_values">
         <item>1</item>
