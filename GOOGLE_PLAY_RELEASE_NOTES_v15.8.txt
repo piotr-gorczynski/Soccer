@@ -2,6 +2,7 @@
 🎮 Fix translation errors in player_label strings for Polish, Bengali, and Sinhala
 🎮 Fix ANR triggered by thread waiting for Firestore binder transaction in showWinner()
 🔔 Remove 20-minute active user restriction to allow inviting players regardless of last seen time
+🔔 Add invitation statistics display to friend list items
 </en-GB>
 
 <pl-PL>
