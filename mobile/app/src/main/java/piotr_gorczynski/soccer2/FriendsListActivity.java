@@ -46,7 +46,8 @@ public class FriendsListActivity extends BaseActivity {
         auth = FirebaseAuth.getInstance();
 
         list.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new FriendAdapter(this, this::sendInviteViaCF, this::removeFriend);
+        String currentUserId = auth.getCurrentUser() != null ? auth.getCurrentUser().getUid() : null;
+        adapter = new FriendAdapter(this, this::sendInviteViaCF, this::removeFriend, currentUserId);
         list.setAdapter(adapter);
 
         addBtn.setOnClickListener(v -> startActivity(new Intent(this, AddFriendActivity.class)));

@@ -35,6 +35,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
         final TextView presence;
         final Button inviteBtn;
         final Button removeBtn;
+        final TextView inviteStats;
         String uid;
         DocumentSnapshot doc; // not used but kept for parity
         VH(@NonNull View v) {
@@ -43,6 +44,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
             presence = v.findViewById(R.id.presence);
             inviteBtn = v.findViewById(R.id.inviteBtn);
             removeBtn = v.findViewById(R.id.removeBtn);
+            inviteStats = v.findViewById(R.id.inviteStats);
         }
     }
 
@@ -55,11 +57,14 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
     private final Map<String,Long> hbCache = new HashMap<>();
     private static final class RtdbSub { final DatabaseReference ref; final ValueEventListener l; RtdbSub(DatabaseReference r, ValueEventListener l){this.ref=r;this.l=l;}}
     private final Map<String,RtdbSub> presSubs = new HashMap<>();
+    private final Map<String,String> inviteStatsCache = new HashMap<>();
+    private String currentUserId;
 
-    FriendAdapter(Context context, OnInviteClick listener, OnRemoveClick removeListener) {
+    FriendAdapter(Context context, OnInviteClick listener, OnRemoveClick removeListener, String currentUserId) {
         this.context = context;
         this.listener = listener;
         this.removeListener = removeListener;
+        this.currentUserId = currentUserId;
         setHasStableIds(true);
     }
 
@@ -80,6 +85,29 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
     @Override
     public long getItemId(int position) {
         return docs.get(position).getId().hashCode() & 0xffffffffL;
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull VH h, int position, @NonNull List<Object> payloads) {
+        if (payloads.isEmpty()) {
+            onBindViewHolder(h, position);
+        } else {
+            String uid = h.uid;
+            if (uid == null) return;
+            
+            for (Object payload : payloads) {
+                if ("nickname".equals(payload)) {
+                    String nick = nickCache.get(uid);
+                    if (nick != null) h.nickname.setText(nick);
+                } else if ("presence".equals(payload)) {
+                    String pState = presCache.get(uid);
+                    if (pState != null) bindPresence(h, uid, pState);
+                } else if ("inviteStats".equals(payload)) {
+                    String stats = inviteStatsCache.get(uid);
+                    if (stats != null) h.inviteStats.setText(stats);
+                }
+            }
+        }
     }
 
     @Override
@@ -133,6 +161,15 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
         } else {
             bindPresence(h, uid, pState);
         }
+
+        // Fetch and display invitation statistics
+        String cachedStats = inviteStatsCache.get(uid);
+        if (cachedStats == null) {
+            h.inviteStats.setText("Loading invite stats...");
+            fetchInviteStats(uid, h);
+        } else {
+            h.inviteStats.setText(cachedStats);
+        }
     }
 
     private void bindPresence(@NonNull VH h, @NonNull String uid, @NonNull String state) {
@@ -173,6 +210,46 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
         docs.clear();
         docs.addAll(friends);
         notifyDataSetChanged();
+    }
+
+    private void fetchInviteStats(@NonNull String targetUid, @NonNull VH h) {
+        if (currentUserId == null) {
+            h.inviteStats.setText("");
+            return;
+        }
+
+        FirebaseFirestore.getInstance().collection("invitations")
+                .whereEqualTo("from", currentUserId)
+                .whereEqualTo("to", targetUid)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    int totalSent = querySnapshot.size();
+                    int totalAccepted = 0;
+                    
+                    for (DocumentSnapshot doc : querySnapshot) {
+                        String status = doc.getString("status");
+                        if ("accepted".equals(status)) {
+                            totalAccepted++;
+                        }
+                    }
+                    
+                    String statsText = "Invites sent: " + totalSent + " / Invites accepted: " + totalAccepted;
+                    inviteStatsCache.put(targetUid, statsText);
+                    
+                    int idx = indexForUid(targetUid);
+                    if (idx != RecyclerView.NO_POSITION) {
+                        notifyItemChanged(idx, "inviteStats");
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    String errorText = "Invites sent: 0 / Invites accepted: 0";
+                    inviteStatsCache.put(targetUid, errorText);
+                    
+                    int idx = indexForUid(targetUid);
+                    if (idx != RecyclerView.NO_POSITION) {
+                        notifyItemChanged(idx, "inviteStats");
+                    }
+                });
     }
 
     @Override
