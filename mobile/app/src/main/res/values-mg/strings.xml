@@ -293,4 +293,8 @@
     <string name="register_benefits_title">Midira amin`ny fifaninanana &amp; mifaninana eran-tany!</string>
     <string name="register_benefits_message">Misorata anarana mba hitahiry ny laharanao sy handray anjara amin`ny fifaninanana miaraka amin`ny mpilalao maneran-tany.</string>
     <string name="register_now">Misorata anarana izao</string>
+    
+    <!-- Friend invitation statistics -->
+    <string name="loading_invite_stats">Mampiditra statistika fanasana…</string>
+    <string name="invite_stats_format">Fanasana nalefa: %1$d / Nanaiky: %2$d</string>
 </resources>

@@ -322,6 +322,10 @@
     <string name="game_ready_message">Twój mecz jest gotowy do rozpoczęcia. Dotknij, aby dołączyć!</string>
     <string name="join_game_action">Dołącz do Gry</string>
     
+    <!-- Friend invitation statistics -->
+    <string name="loading_invite_stats">Ładowanie statystyk zaproszeń…</string>
+    <string name="invite_stats_format">Wysłano zaproszeń: %1$d / Zaakceptowano: %2$d</string>
+    
     <!-- Preference level values -->
     <string-array name="pref_level_values">
         <item>1</item>

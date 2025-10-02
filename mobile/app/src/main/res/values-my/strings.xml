@@ -293,4 +293,8 @@
     <string name="register_benefits_title">ပြိုင်ပွဲများတွင် ပါဝင်ပြီး ကမ္ဘာအနှံ့ယှဉ်ပြိုင်ပါ!</string>
     <string name="register_benefits_message">သင့်အဆင့်သတ်မှတ်ချက်ကို သိမ်းဆည်းကာ ကမ္ဘာအနှံ့ရှိ ကစားသူများနှင့် ပြိုင်ပွဲများတွင် ပါဝင်ရန် စာရင်းသွင်းပါ။</string>
     <string name="register_now">အခုစာရင်းသွင်းပါ</string>
+    
+    <!-- Friend invitation statistics -->
+    <string name="loading_invite_stats">ဖိတ်ကြားချက်စာရင်းအင်းများ တင်နေသည်…</string>
+    <string name="invite_stats_format">ပေးပို့ခဲ့သော ဖိတ်ကြားချက်များ: %1$d / လက်ခံခဲ့သည်များ: %2$d</string>
 </resources>

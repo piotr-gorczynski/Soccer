@@ -274,4 +274,8 @@
     <string name="register_benefits_title">انضم إلى البطولات وتنافس عالمياً!</string>
     <string name="register_benefits_message">سجّل لحفظ ترتيبك والمشاركة في بطولات مع لاعبين حول العالم.</string>
     <string name="register_now">سجّل الآن</string>
+    
+    <!-- Friend invitation statistics -->
+    <string name="loading_invite_stats">جارٍ تحميل إحصاءات الدعوة…</string>
+    <string name="invite_stats_format">الدعوات المرسلة: %1$d / المقبولة: %2$d</string>
 </resources>

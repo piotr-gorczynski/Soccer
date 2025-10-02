@@ -321,6 +321,10 @@
     <string name="game_ready_message">আপনার ম্যাচ শুরু হওয়ার জন্য প্রস্তুত। যোগ দিতে ট্যাপ করুন!</string>
     <string name="join_game_action">গেমে যোগ দিন</string>
     
+    <!-- Friend invitation statistics -->
+    <string name="loading_invite_stats">আমন্ত্রণ পরিসংখ্যান লোড করা হচ্ছে…</string>
+    <string name="invite_stats_format">প্রেরিত আমন্ত্রণ: %1$d / গৃহীত: %2$d</string>
+    
     <!-- Preference level values -->
     <string-array name="pref_level_values">
         <item>1</item>
