@@ -296,5 +296,5 @@
     
     <!-- Friend invitation statistics -->
     <string name="loading_invite_stats">ກຳລັງໂຫຼດສະຖິຕິການເຊີນ…</string>
-    <string name="invite_stats_format">ການເຊີນທີ່ສົ່ງ: %1$d / ຍອມຮັບແລ້ວ: %2$d</string>
+    <string name="invite_stats_format">Sent: %1$d (accepted: %2$d) | Received: %3$d (accepted: %4$d)</string>
 </resources>
