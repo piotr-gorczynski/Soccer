@@ -325,6 +325,9 @@
     <string name="loading_invite_stats">আমন্ত্রণ পরিসংখ্যান লোড করা হচ্ছে…</string>
     <string name="invite_stats_format">Sent: %1$d (accepted: %2$d) | Received: %3$d (accepted: %4$d)</string>
     
+    <!-- Friend match statistics -->
+    <string name="match_stats_format">জয় 🏆: %1$d | পরাজয় 😞: %2$d</string>
+    
     <!-- Preference level values -->
     <string-array name="pref_level_values">
         <item>1</item>
