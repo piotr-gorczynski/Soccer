@@ -99,6 +99,8 @@
     <string name="add_a_friend">သူငယ်ချင်းတစ်ဦးကို ထည့်ပါ</string>
     <string name="add_friend">သူငယ်ချင်းကို အောင်မြင်စွာထည့်ပြီးပါပြီ</string>
     <string name="no_friends">သို့အတိုင် သူငယ်ချင်းများကို မထည့်ရသေးပါ…</string>
+    <string name="sort_by_last_seen">နောက်ဆုံးတွေ့မြင်သည့်အချိန်အလိုက် စီစဉ်ပါ</string>
+    <string name="sort_alphabetically">အက္ခရာစဉ်အလိုက် စီစဉ်ပါ</string>
     <string name="no_tournaments">ပြိုင်ပွဲများကို မဖန်တီးရသေးပါ။</string>
     <string name="please_enter_a_nickname">ကျေးဇူးပြု၍ အမည်ပြောင်ထည့်ပါ။</string>
     <string name="user_not_found">အသုံးပြုသူကို ရှာမတွေ့ပါ။</string>

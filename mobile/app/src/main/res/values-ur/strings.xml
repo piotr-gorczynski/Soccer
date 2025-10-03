@@ -80,6 +80,8 @@
     <string name="add_a_friend">دوست شامل کریں</string>
     <string name="add_friend">دوست کامیابی سے شامل ہوا</string>
     <string name="no_friends">ابھی تک کوئی دوست شامل نہیں کیا گیا…</string>
+    <string name="sort_by_last_seen">آخری بار دیکھے گئے کے مطابق ترتیب دیں</string>
+    <string name="sort_alphabetically">حروف تہجی کے مطابق ترتیب دیں</string>
     <string name="no_tournaments">ابھی تک کوئی ٹورنامنٹ نہیں بنایا گیا۔</string>
     <string name="please_enter_a_nickname">براہ کرم ایک عرفی نام داخل کریں۔</string>
     <string name="user_not_found">صارف نہیں ملا۔</string>

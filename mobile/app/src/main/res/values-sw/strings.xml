@@ -99,6 +99,8 @@
     <string name="add_a_friend">Ongeza rafiki</string>
     <string name="add_friend">Rafiki ameongezwa kwa mafanikio</string>
     <string name="no_friends">Bado hujaongeza marafiki…</string>
+    <string name="sort_by_last_seen">Panga kwa mwisho kuonekana</string>
+    <string name="sort_alphabetically">Panga kwa alfabeti</string>
     <string name="no_tournaments">Hakuna mashindano yaliyoundwa bado.</string>
     <string name="please_enter_a_nickname">Tafadhali ingiza jina la utani.</string>
     <string name="user_not_found">Mtumiaji hakupatikana.</string>

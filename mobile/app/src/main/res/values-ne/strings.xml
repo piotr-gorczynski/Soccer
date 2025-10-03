@@ -80,6 +80,8 @@
     <string name="add_a_friend">मित्र थप्नुहोस्</string>
     <string name="add_friend">मित्र सफलतापूर्वक थपियो</string>
     <string name="no_friends">अहिलेसम्म कुनै मित्र थपिएको छैन…</string>
+    <string name="sort_by_last_seen">अन्तिम पटक देखिएको अनुसार क्रमबद्ध गर्नुहोस्</string>
+    <string name="sort_alphabetically">वर्णमाला अनुसार क्रमबद्ध गर्नुहोस्</string>
     <string name="no_tournaments">अहिलेसम्म कुनै प्रतियोगिता सिर्जना गरिएको छैन।</string>
     <string name="please_enter_a_nickname">कृपया उपनाम प्रविष्ट गर्नुहोस्।</string>
     <string name="user_not_found">प्रयोगकर्ता फेला परेन।</string>
