@@ -59,6 +59,8 @@
     <string name="add_a_friend">Add a Friend</string>
     <string name="add_friend">Friend added successfully</string>
     <string name="no_friends">No friends added so far…</string>
+    <string name="sort_by_last_seen">Sort by last seen</string>
+    <string name="sort_alphabetically">Sort alphabetically</string>
     <string name="no_tournaments">No tournaments have been created yet.</string>
     <string name="please_enter_a_nickname">Please enter a nickname.</string>
     <string name="user_not_found">User not found.</string>

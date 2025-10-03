@@ -32,6 +32,13 @@
         android:textAllCaps="false"
         android:text="@string/add_a_friend" />
 
+    <Spinner
+        android:id="@+id/sortSpinner"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:spinnerMode="dropdown" />
+
     <TextView
         android:id="@+id/emptyFriends"
         android:layout_width="wrap_content"
