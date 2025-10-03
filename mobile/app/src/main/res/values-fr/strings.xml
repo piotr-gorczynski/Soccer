@@ -88,6 +88,8 @@
     <string name="add_friend">Ami ajouté avec succès</string>
     <string name="no_friends">Aucun ami ajouté pour l’instant…</string>
     <string name="no_tournaments">Aucun tournoi n’a encore été créé.</string>
+    <string name="sort_by_last_seen">Trier par dernière vue</string>
+    <string name="sort_alphabetically">Trier par ordre alphabétique</string>
     <string name="please_enter_a_nickname">Veuillez entrer un pseudonyme.</string>
     <string name="user_not_found">Utilisateur introuvable.</string>
     <string name="you_can_t_invite_yourself">Vous ne pouvez pas vous inviter vous-même.</string>

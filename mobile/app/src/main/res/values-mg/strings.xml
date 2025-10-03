@@ -99,6 +99,8 @@
     <string name="add_a_friend">Ampio namana</string>
     <string name="add_friend">Vita ny nanampy namana</string>
     <string name="no_friends">Tsy mbola nisy namana nampiana…</string>
+    <string name="sort_by_last_seen">Alamino araka ny nahitana farany</string>
+    <string name="sort_alphabetically">Alamino araka ny abidy</string>
     <string name="no_tournaments">Tsy mbola nisy fifaninanana noforonina.</string>
     <string name="please_enter_a_nickname">Ampidiro anaram-bositra azafady.</string>
     <string name="user_not_found">Tsy hita ilay mpampiasa.</string>

@@ -99,6 +99,8 @@
     <string name="add_a_friend">បន្ថែមមិត្តភក្តិ</string>
     <string name="add_friend">បន្ថែមមិត្តភក្តិដោយជោគជ័យ</string>
     <string name="no_friends">មិនទាន់មានមិត្តភក្ត្រទេ…</string>
+    <string name="sort_by_last_seen">តម្រៀបតាមពេលបានឃើញចុងក្រោយ</string>
+    <string name="sort_alphabetically">តម្រៀបតាមលំដាប់អក្សរ</string>
     <string name="no_tournaments">មិនទាន់មានការប្រកួតត្រូវបានបង្កើតនៅឡើយទេ។</string>
     <string name="please_enter_a_nickname">សូមបញ្ចូលឈ្មោះហៅក្រៅ។</string>
     <string name="user_not_found">រកមិនឃើញអ្នកប្រើ។</string>

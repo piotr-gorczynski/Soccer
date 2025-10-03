@@ -99,6 +99,8 @@
     <string name="add_a_friend">මිතුරෙකු එක් කරන්න</string>
     <string name="add_friend">මිතුරා සාර්ථකව එක් කර ඇත</string>
     <string name="no_friends">දැනට තෙක් මිතුරන් කිසිවකු එක් කර නොමැත…</string>
+    <string name="sort_by_last_seen">අවසන් වරට දැක්කේ අනුව පිළිවෙළට සකසන්න</string>
+    <string name="sort_alphabetically">අක්ෂර මාලා අනුපිළිවෙළට සකසන්න</string>
     <string name="no_tournaments">තවමත් තරඟාවලියක් සෑදී නොමැත.</string>
     <string name="please_enter_a_nickname">කරුණාකර අතුරු නාමයක් ඇතුල් කරන්න.</string>
     <string name="user_not_found">පරිශීලකයා සොයාගත නොහැකි විය.</string>
