@@ -80,6 +80,8 @@
     <string name="add_a_friend">Freund hinzufügen</string>
     <string name="add_friend">Freund erfolgreich hinzugefügt</string>
     <string name="no_friends">Bisher keine Freunde hinzugefügt…</string>
+    <string name="sort_by_last_seen">Nach zuletzt gesehen sortieren</string>
+    <string name="sort_alphabetically">Alphabetisch sortieren</string>
     <string name="no_tournaments">Es wurden noch keine Turniere erstellt.</string>
     <string name="please_enter_a_nickname">Bitte geben Sie einen Spitznamen ein.</string>
     <string name="user_not_found">Benutzer nicht gefunden.</string>

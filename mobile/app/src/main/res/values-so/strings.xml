@@ -99,6 +99,8 @@
     <string name="add_a_friend">Ku dar saaxiib</string>
     <string name="add_friend">Saaxiib si guul leh ayaa loo daray</string>
     <string name="no_friends">Saaxiibo weli lama darin…</string>
+    <string name="sort_by_last_seen">Kala sooc markii ugu dambeysay ee la arkay</string>
+    <string name="sort_alphabetically">Kala sooc si alifbeed ah</string>
     <string name="no_tournaments">Tartan weli lama abuurin.</string>
     <string name="please_enter_a_nickname">Fadlan geli naanays.</string>
     <string name="user_not_found">Isticmaale lama helin.</string>
