@@ -99,6 +99,8 @@
     <string name="add_a_friend">ጓደኛ አክል</string>
     <string name="add_friend">ጓደኛው በተሳካ ሁኔታ ታክሏል</string>
     <string name="no_friends">እስካሁን ድረስ ምንም ጓደኛ አልታከለም…</string>
+    <string name="sort_by_last_seen">በመጨረሻ በተታየበት ጊዜ ደርድር</string>
+    <string name="sort_alphabetically">በፊደል ቅደም ተከተል ደርድር</string>
     <string name="no_tournaments">እስካሁን ድረስ ምንም ውድድር አልተፈጠረም።</string>
     <string name="please_enter_a_nickname">እባክዎ ቅጽል ስም ያስገቡ።</string>
     <string name="user_not_found">ተጠቃሚው አልተገኘም።</string>

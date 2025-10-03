@@ -80,6 +80,8 @@
     <string name="add_a_friend">Dodaj znajomego</string>
     <string name="add_friend">Znajomy dodany pomyślnie</string>
     <string name="no_friends">Nie dodano jeszcze żadnych znajomych…</string>
+    <string name="sort_by_last_seen">Sortuj według ostatnio widzianego</string>
+    <string name="sort_alphabetically">Sortuj alfabetycznie</string>
     <string name="no_tournaments">Nie utworzono jeszcze żadnych turniejów.</string>
     <string name="please_enter_a_nickname">Wprowadź pseudonim.</string>
     <string name="user_not_found">Użytkownik nie znaleziony.</string>

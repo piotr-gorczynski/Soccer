@@ -80,6 +80,8 @@
     <string name="add_a_friend">একজন বন্ধু যোগ করুন</string>
     <string name="add_friend">বন্ধু সফলভাবে যোগ করা হয়েছে</string>
     <string name="no_friends">এখনো কোনো বন্ধু যোগ করা হয়নি…</string>
+    <string name="sort_by_last_seen">সর্বশেষ দেখা অনুযায়ী সাজান</string>
+    <string name="sort_alphabetically">বর্ণানুক্রমিকভাবে সাজান</string>
     <string name="no_tournaments">এখনো কোনো টুর্নামেন্ট তৈরি করা হয়নি।</string>
     <string name="please_enter_a_nickname">অনুগ্রহ করে একটি ডাকনাম প্রবেশ করান।</string>
     <string name="user_not_found">ব্যবহারকারী পাওয়া যায়নি।</string>

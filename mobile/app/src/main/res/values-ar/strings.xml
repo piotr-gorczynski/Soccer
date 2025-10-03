@@ -80,6 +80,8 @@
     <string name="add_a_friend">أضف صديقاً</string>
     <string name="add_friend">تمت إضافة الصديق بنجاح</string>
     <string name="no_friends">لم تتم إضافة أي أصدقاء بعد…</string>
+    <string name="sort_by_last_seen">الترتيب حسب آخر ظهور</string>
+    <string name="sort_alphabetically">الترتيب أبجدياً</string>
     <string name="no_tournaments">لم يتم إنشاء أي بطولات بعد.</string>
     <string name="please_enter_a_nickname">يرجى إدخال اسم مستعار.</string>
     <string name="user_not_found">لم يتم العثور على المستخدم.</string>

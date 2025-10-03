@@ -99,6 +99,8 @@
     <string name="add_a_friend">Найз нэмэх</string>
     <string name="add_friend">Найзыг амжилттай нэмлээ</string>
     <string name="no_friends">Одоогоор найз нэмэгдээгүй байна…</string>
+    <string name="sort_by_last_seen">Сүүлд харагдсанаар эрэмбэлэх</string>
+    <string name="sort_alphabetically">Цагаан толгойн дарааллаар эрэмбэлэх</string>
     <string name="no_tournaments">Одоогоор ямар ч тэмцээн үүсээгүй байна.</string>
     <string name="please_enter_a_nickname">Хоч нэр оруулна уу.</string>
     <string name="user_not_found">Хэрэглэгч олдсонгүй.</string>
