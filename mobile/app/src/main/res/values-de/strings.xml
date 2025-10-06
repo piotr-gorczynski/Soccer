@@ -331,6 +331,27 @@
     <!-- Friend match statistics -->
     <string name="match_stats_format">Siege 🏆: %1$d | Niederlagen 😞: %2$d</string>
     
+    <!-- Past invites -->
+    <string name="past_invites">Frühere Einladungen</string>
+    <string name="no_past_invites">Keine früheren Einladungen</string>
+    <string name="invite_and_add_to_friend">Einladen und als Freund hinzufügen</string>
+    <string name="invite_status_accepted">Status: Akzeptiert</string>
+    <string name="invite_status_cancelled">Status: Abgebrochen</string>
+    <string name="invite_status_expired">Status: Abgelaufen</string>
+    <string name="invite_from_loading">Lädt…</string>
+    <string name="invite_from_format">Einladung von: %1$s</string>
+    <string name="presence_online">Online</string>
+    <string name="presence_last_seen">Zuletzt gesehen %1$s</string>
+    <string name="presence_offline">Offline</string>
+    <string name="error_checking_friend_status">Fehler beim Überprüfen des Freundstatus</string>
+    <string name="friend_added">Freund erfolgreich hinzugefügt</string>
+    <string name="failed_to_add_friend">Freund konnte nicht hinzugefügt werden</string>
+    <string name="failed_to_send_invite">Einladung konnte nicht gesendet werden</string>
+    <string name="active_invitation_exists">Aktive Einladung existiert bereits</string>
+    <string name="user_blocked_invites">Benutzer hat Einladungen blockiert</string>
+    <string name="cannot_invite_this_user">Kann diesen Benutzer nicht einladen</string>
+    <string name="user_not_found">Benutzer nicht gefunden</string>
+    
     <!-- Preference level values -->
     <string-array name="pref_level_values">
         <item>1</item>

@@ -330,6 +330,27 @@
     <!-- Friend match statistics -->
     <string name="match_stats_format">جیتیں 🏆: %1$d | ہاریں 😞: %2$d</string>
     
+    <!-- Past invites -->
+    <string name="past_invites">پچھلی دعوتیں</string>
+    <string name="no_past_invites">کوئی پچھلی دعوتیں نہیں</string>
+    <string name="invite_and_add_to_friend">دعوت دیں اور دوست میں شامل کریں</string>
+    <string name="invite_status_accepted">حیثیت: قبول شدہ</string>
+    <string name="invite_status_cancelled">حیثیت: منسوخ شدہ</string>
+    <string name="invite_status_expired">حیثیت: ختم شدہ</string>
+    <string name="invite_from_loading">لوڈ ہو رہا ہے…</string>
+    <string name="invite_from_format">دعوت از: %1$s</string>
+    <string name="presence_online">آن لائن</string>
+    <string name="presence_last_seen">آخری بار دیکھا گیا %1$s</string>
+    <string name="presence_offline">آف لائن</string>
+    <string name="error_checking_friend_status">دوست کی حیثیت چیک کرنے میں خرابی</string>
+    <string name="friend_added">دوست کامیابی سے شامل ہوا</string>
+    <string name="failed_to_add_friend">دوست شامل کرنے میں ناکام</string>
+    <string name="failed_to_send_invite">دعوت بھیجنے میں ناکام</string>
+    <string name="active_invitation_exists">فعال دعوت پہلے سے موجود ہے</string>
+    <string name="user_blocked_invites">صارف نے دعوتیں بلاک کر دی ہیں</string>
+    <string name="cannot_invite_this_user">اس صارف کو دعوت نہیں دی جا سکتی</string>
+    <string name="user_not_found">صارف نہیں ملا</string>
+    
     <!-- Preference level values -->
     <string-array name="pref_level_values">
         <item>1</item>
