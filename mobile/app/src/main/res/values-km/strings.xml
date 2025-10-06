@@ -302,4 +302,25 @@
     
     <!-- Friend match statistics -->
     <string name="match_stats_format">ជ័យជម្នះ 🏆: %1$d | ចាញ់ 😞: %2$d</string>
+    
+    <!-- Past invites -->
+    <string name="past_invites">ការអញ្ជើញពីមុន</string>
+    <string name="no_past_invites">មិនមានការអញ្ជើញពីមុន</string>
+    <string name="invite_and_add_to_friend">អញ្ជើញនិងបន្ថែមជាមិត្ត</string>
+    <string name="invite_status_accepted">ស្ថានភាព: បានទទួលយក</string>
+    <string name="invite_status_cancelled">ស្ថានភាព: បានលុបចោល</string>
+    <string name="invite_status_expired">ស្ថានភាព: ផុតកំណត់</string>
+    <string name="invite_from_loading">កំពុងផ្ទុក…</string>
+    <string name="invite_from_format">ការអញ្ជើញពី: %1$s</string>
+    <string name="presence_online">លើបណ្តាញ</string>
+    <string name="presence_last_seen">បានឃើញចុងក្រោយ %1$s</string>
+    <string name="presence_offline">មិនលើបណ្តាញ</string>
+    <string name="error_checking_friend_status">កំហុសក្នុងការពិនិត្យស្ថានភាពមិត្ត</string>
+    <string name="friend_added">បានបន្ថែមមិត្តដោយជោគជ័យ</string>
+    <string name="failed_to_add_friend">បរាជ័យក្នុងការបន្ថែមមិត្ត</string>
+    <string name="failed_to_send_invite">បរាជ័យក្នុងការផ្ញើការអញ្ជើញ</string>
+    <string name="active_invitation_exists">ការអញ្ជើញសកម្មមានរួចហើយ</string>
+    <string name="user_blocked_invites">អ្នកប្រើបានទប់ស្កាត់ការអញ្ជើញ</string>
+    <string name="cannot_invite_this_user">មិនអាចអញ្ជើញអ្នកប្រើនេះបានទេ</string>
+    <string name="user_not_found">រកមិនឃើញអ្នកប្រើ</string>
 </resources>

@@ -302,4 +302,25 @@
     
     <!-- Friend match statistics -->
     <string name="match_stats_format">Fandresena 🏆: %1$d | Faharesena 😞: %2$d</string>
+    
+    <!-- Past invites -->
+    <string name="past_invites">Fanasana Taloha</string>
+    <string name="no_past_invites">Tsy misy fanasana taloha</string>
+    <string name="invite_and_add_to_friend">Manasa sy Manampy ho Namana</string>
+    <string name="invite_status_accepted">Toe-javatra: Nekena</string>
+    <string name="invite_status_cancelled">Toe-javatra: Nofoanana</string>
+    <string name="invite_status_expired">Toe-javatra: Lany daty</string>
+    <string name="invite_from_loading">Mampiditra…</string>
+    <string name="invite_from_format">Fanasana avy amin\'ny: %1$s</string>
+    <string name="presence_online">An-tserasera</string>
+    <string name="presence_last_seen">Hita farany %1$s</string>
+    <string name="presence_offline">Tsy an-tserasera</string>
+    <string name="error_checking_friend_status">Fahadisoana tamin\'ny fanamarinana ny toe-javatra namana</string>
+    <string name="friend_added">Namana nanampy tamim-pahombiazana</string>
+    <string name="failed_to_add_friend">Tsy nahomby ny fanampy namana</string>
+    <string name="failed_to_send_invite">Tsy nahomby ny fandefasana fanasana</string>
+    <string name="active_invitation_exists">Fanasana mavitrika efa misy</string>
+    <string name="user_blocked_invites">Ny mpampiasa dia nanakana ny fanasana</string>
+    <string name="cannot_invite_this_user">Tsy afaka manasa io mpampiasa io</string>
+    <string name="user_not_found">Mpampiasa tsy hita</string>
 </resources>

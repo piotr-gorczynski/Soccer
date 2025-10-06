@@ -302,4 +302,25 @@
     
     <!-- Friend match statistics -->
     <string name="match_stats_format">ድሎች 🏆: %1$d | ሽንፈቶች 😞: %2$d</string>
+    
+    <!-- Past invites -->
+    <string name="past_invites">ያለፉ ግብዣዎች</string>
+    <string name="no_past_invites">ያለፉ ግብዣዎች የሉም</string>
+    <string name="invite_and_add_to_friend">ግብዣ ላክ እና ጓደኛ አክል</string>
+    <string name="invite_status_accepted">ሁኔታ: ተቀባይነት አግኝቷል</string>
+    <string name="invite_status_cancelled">ሁኔታ: ተሰርዟል</string>
+    <string name="invite_status_expired">ሁኔታ: ጊዜው አልፏል</string>
+    <string name="invite_from_loading">በመጫን ላይ…</string>
+    <string name="invite_from_format">ግብዣ ከ: %1$s</string>
+    <string name="presence_online">መስመር ላይ</string>
+    <string name="presence_last_seen">መጨረሻ የታየው %1$s</string>
+    <string name="presence_offline">ከመስመር ውጭ</string>
+    <string name="error_checking_friend_status">የጓደኛ ሁኔታን በማረጋገጥ ላይ ስህተት</string>
+    <string name="friend_added">ጓደኛ በተሳካ ሁኔታ ታክሏል</string>
+    <string name="failed_to_add_friend">ጓደኛን ማከል አልተሳካም</string>
+    <string name="failed_to_send_invite">ግብዣ መላክ አልተሳካም</string>
+    <string name="active_invitation_exists">ንቁ ግብዣ አስቀድሞ አለ</string>
+    <string name="user_blocked_invites">ተጠቃሚ ግብዣዎችን አግዷል</string>
+    <string name="cannot_invite_this_user">ይህን ተጠቃሚ ግብዣ ልላክ አልችልም</string>
+    <string name="user_not_found">ተጠቃሚ አልተገኘም</string>
 </resources>
