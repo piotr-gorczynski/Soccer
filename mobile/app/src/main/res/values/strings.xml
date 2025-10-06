@@ -326,4 +326,25 @@
     
     <!-- Friend match statistics -->
     <string name="match_stats_format">Wins 🏆: %1$d | Losses 😞: %2$d</string>
+    
+    <!-- Past invites -->
+    <string name="past_invites">Past Invites</string>
+    <string name="no_past_invites">No past invites</string>
+    <string name="invite_and_add_to_friend">Invite and Add to Friend</string>
+    <string name="invite_status_accepted">Status: Accepted</string>
+    <string name="invite_status_cancelled">Status: Cancelled</string>
+    <string name="invite_status_expired">Status: Expired</string>
+    <string name="invite_from_loading">Loading…</string>
+    <string name="invite_from_format">Invite from: %1$s</string>
+    <string name="presence_online">Online</string>
+    <string name="presence_last_seen">Last seen %1$s</string>
+    <string name="presence_offline">Offline</string>
+    <string name="error_checking_friend_status">Error checking friend status</string>
+    <string name="friend_added">Friend added successfully</string>
+    <string name="failed_to_add_friend">Failed to add friend</string>
+    <string name="failed_to_send_invite">Failed to send invite</string>
+    <string name="active_invitation_exists">Active invitation already exists</string>
+    <string name="user_blocked_invites">User has blocked invites</string>
+    <string name="cannot_invite_this_user">Cannot invite this user</string>
+    <string name="user_not_found">User not found</string>
 </resources>
