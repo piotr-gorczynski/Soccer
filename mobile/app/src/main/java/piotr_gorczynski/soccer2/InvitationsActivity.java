@@ -11,6 +11,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -18,9 +20,17 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.*;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.FirebaseFunctionsException;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -34,10 +44,16 @@ public class InvitationsActivity extends BaseActivity {
     final ArrayList<String> inviteDescriptions = new ArrayList<>();
     final ArrayList<String> inviteIds = new ArrayList<>();
 
+    RecyclerView pastInvitesList;
+    TextView pastInvitesLabel;
+    TextView emptyPastInvites;
+    PastInviteAdapter pastAdapter;
+
     FirebaseFirestore db;
     FirebaseAuth auth;
 
     private ListenerRegistration invitesSub;   // keep handle so we can remove it later
+    private ListenerRegistration pastInvitesSub;
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -60,10 +76,18 @@ public class InvitationsActivity extends BaseActivity {
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, inviteDescriptions);
         invitesList.setAdapter(adapter);
 
+        pastInvitesList = findViewById(R.id.pastInvitesList);
+        pastInvitesLabel = findViewById(R.id.pastInvitesLabel);
+        emptyPastInvites = findViewById(R.id.emptyPastInvites);
+        pastInvitesList.setLayoutManager(new LinearLayoutManager(this));
+        pastAdapter = new PastInviteAdapter(this, this::inviteAndAddFriend);
+        pastInvitesList.setAdapter(pastAdapter);
+
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
 
         listenForInvites();
+        listenForPastInvites();
 
         invitesList.setOnItemClickListener((parent, view, position, id) -> {
             String inviteId = inviteIds.get(position);
@@ -246,9 +270,192 @@ public class InvitationsActivity extends BaseActivity {
                 });
     }
 
+    private void listenForPastInvites() {
+        String currentUserId = Objects.requireNonNull(auth.getCurrentUser()).getUid();
+
+        pastInvitesSub = db.collection("invitations")
+                .whereEqualTo("to", currentUserId)
+                .whereIn("status", java.util.Arrays.asList("accepted", "cancelled", "expired"))
+                .addSnapshotListener((querySnapshot, e) -> {
+                    if (e != null) {
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + ".listenForPastInvites: Listen failed", e);
+                        emptyPastInvites.setVisibility(View.VISIBLE);
+                        return;
+                    }
+
+                    List<DocumentSnapshot> pastInvitesList = new ArrayList<>();
+                    for (DocumentSnapshot doc : Objects.requireNonNull(querySnapshot)) {
+                        pastInvitesList.add(doc);
+                    }
+
+                    // Sort by last heartbeat (descending)
+                    sortPastInvitesByHeartbeat(pastInvitesList);
+                });
+    }
+
+    private void sortPastInvitesByHeartbeat(List<DocumentSnapshot> docs) {
+        if (docs.isEmpty()) {
+            emptyPastInvites.setVisibility(View.VISIBLE);
+            pastAdapter.setData(docs);
+            return;
+        }
+
+        // Fetch heartbeat data for all users
+        Map<String, Long> heartbeatMap = new HashMap<>();
+        final int[] pendingRequests = {docs.size()};
+
+        for (DocumentSnapshot doc : docs) {
+            String fromUid = doc.getString("from");
+            if (fromUid == null) {
+                pendingRequests[0]--;
+                continue;
+            }
+
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("status").child(fromUid);
+            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    Long lastHb = snapshot.child("last_heartbeat").getValue(Long.class);
+                    if (lastHb != null) {
+                        heartbeatMap.put(fromUid, lastHb);
+                    } else {
+                        heartbeatMap.put(fromUid, 0L);
+                    }
+
+                    pendingRequests[0]--;
+                    if (pendingRequests[0] == 0) {
+                        // All requests completed, now sort
+                        Collections.sort(docs, new Comparator<DocumentSnapshot>() {
+                            @Override
+                            public int compare(DocumentSnapshot d1, DocumentSnapshot d2) {
+                                String uid1 = d1.getString("from");
+                                String uid2 = d2.getString("from");
+                                Long hb1 = heartbeatMap.get(uid1);
+                                Long hb2 = heartbeatMap.get(uid2);
+
+                                if (hb1 == null) hb1 = 0L;
+                                if (hb2 == null) hb2 = 0L;
+
+                                // Sort descending (most recent first)
+                                return Long.compare(hb2, hb1);
+                            }
+                        });
+
+                        emptyPastInvites.setVisibility(View.GONE);
+                        pastAdapter.setData(docs);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".sortPastInvitesByHeartbeat: Error fetching heartbeat for " + fromUid, error.toException());
+                    pendingRequests[0]--;
+                    if (pendingRequests[0] == 0) {
+                        emptyPastInvites.setVisibility(View.GONE);
+                        pastAdapter.setData(docs);
+                    }
+                }
+            });
+        }
+    }
+
+    private void inviteAndAddFriend(@NonNull String targetUid) {
+        // First check if already friends
+        String currentUserId = Objects.requireNonNull(auth.getCurrentUser()).getUid();
+        
+        db.collection("users").document(currentUserId).collection("friends").document(targetUid).get()
+                .addOnSuccessListener(friendDoc -> {
+                    if (friendDoc.exists()) {
+                        // Already friends, just send invite
+                        sendInviteViaCF(targetUid);
+                    } else {
+                        // Not friends, add as friend first then send invite
+                        addFriend(targetUid);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".inviteAndAddFriend: Error checking friend status", e);
+                    Toast.makeText(this, R.string.error_checking_friend_status, Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void addFriend(@NonNull String targetUid) {
+        String currentUserId = Objects.requireNonNull(auth.getCurrentUser()).getUid();
+        
+        // Add to both users' friends subcollections
+        db.collection("users").document(currentUserId).collection("friends").document(targetUid)
+                .set(Collections.singletonMap("addedAt", com.google.firebase.firestore.FieldValue.serverTimestamp()))
+                .addOnSuccessListener(aVoid -> {
+                    // Also add current user to target's friends
+                    db.collection("users").document(targetUid).collection("friends").document(currentUserId)
+                            .set(Collections.singletonMap("addedAt", com.google.firebase.firestore.FieldValue.serverTimestamp()))
+                            .addOnSuccessListener(aVoid2 -> {
+                                Toast.makeText(this, R.string.friend_added, Toast.LENGTH_SHORT).show();
+                                // Now send the invite
+                                sendInviteViaCF(targetUid);
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.e("TAG_Soccer", getClass().getSimpleName() + ".addFriend: Error adding to target's friends", e);
+                                Toast.makeText(this, R.string.failed_to_add_friend, Toast.LENGTH_SHORT).show();
+                            });
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".addFriend: Error adding friend", e);
+                    Toast.makeText(this, R.string.failed_to_add_friend, Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void sendInviteViaCF(@NonNull String targetUid) {
+        Map<String,Object> data = Collections.singletonMap("toUid", targetUid);
+        FirebaseFunctions.getInstance("us-central1")
+                .getHttpsCallable("createInvite")
+                .call(data)
+                .addOnSuccessListener(res -> {
+                    @SuppressWarnings("unchecked")
+                    String inviteId = (String)((Map<String,Object>)Objects.requireNonNull(res.getData())).get("inviteId");
+                    if (inviteId != null) {
+                        startActivity(new Intent(this, WaitingActivity.class).putExtra("inviteId", inviteId));
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    int msgId = R.string.failed_to_send_invite;
+                    String customMessage = null;
+
+                    if (e instanceof FirebaseFunctionsException ffe) {
+                        FirebaseFunctionsException.Code code = ffe.getCode();
+                        String details = ffe.getMessage();
+                        
+                        switch (code) {
+                            case ALREADY_EXISTS:
+                                if (details != null && details.contains("active invitation")) {
+                                    msgId = R.string.active_invitation_exists;
+                                } else if (details != null && details.contains("blocked")) {
+                                    msgId = R.string.user_blocked_invites;
+                                }
+                                break;
+                            case FAILED_PRECONDITION:
+                                msgId = R.string.cannot_invite_this_user;
+                                break;
+                            case NOT_FOUND:
+                                msgId = R.string.user_not_found;
+                                break;
+                            default:
+                                customMessage = details;
+                        }
+                    }
+
+                    if (customMessage != null) {
+                        Toast.makeText(this, getString(msgId) + ": " + customMessage, Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(this, msgId, Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
+
     @Override protected void onDestroy() {
         super.onDestroy();
         if (invitesSub != null) invitesSub.remove();
+        if (pastInvitesSub != null) pastInvitesSub.remove();
     }
 
     @Override

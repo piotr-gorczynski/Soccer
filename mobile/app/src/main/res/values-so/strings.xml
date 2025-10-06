@@ -302,4 +302,25 @@
     
     <!-- Friend match statistics -->
     <string name="match_stats_format">Guulo 🏆: %1$d | Khasaaro 😞: %2$d</string>
+    
+    <!-- Past invites -->
+    <string name="past_invites">Casumadihii Hore</string>
+    <string name="no_past_invites">Ma jiraan casumado hore</string>
+    <string name="invite_and_add_to_friend">Casumo U Dir oo Saaxiib Ku Dar</string>
+    <string name="invite_status_accepted">Xaalad: La aqbalay</string>
+    <string name="invite_status_cancelled">Xaalad: La joojiyay</string>
+    <string name="invite_status_expired">Xaalad: Waqtigii dhammaaday</string>
+    <string name="invite_from_loading">Waa la rarayo…</string>
+    <string name="invite_from_format">Casumo ka: %1$s</string>
+    <string name="presence_online">Khadka</string>
+    <string name="presence_last_seen">Ugu dambeyn waxaa la arkay %1$s</string>
+    <string name="presence_offline">Offline</string>
+    <string name="error_checking_friend_status">Khalad xaqiijinta xaaladda saaxiibka</string>
+    <string name="friend_added">Saaxiibka si guul leh ayaa loo daray</string>
+    <string name="failed_to_add_friend">Lama darin karo saaxiibka</string>
+    <string name="failed_to_send_invite">Lama dirin karo casuumada</string>
+    <string name="active_invitation_exists">Casumo firfircoon ayaa jira</string>
+    <string name="user_blocked_invites">Isticmaaluhu wuu xannibay casumadaha</string>
+    <string name="cannot_invite_this_user">Lama casumi karo isticmaalahaas</string>
+    <string name="user_not_found">Isticmaaluhu lama helin</string>
 </resources>
