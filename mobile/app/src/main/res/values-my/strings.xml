@@ -120,6 +120,9 @@
     <string name="pending_game_invitations">ဆိုင်းငံ့ထားသော ဂိမ်းဖိတ်ကြားချက်များ</string>
     <string name="no_pending_invites">ဆိုင်းငံ့ထားသော ဖိတ်ကြားချက်များ မရှိပါ။</string>
     <string name="invite_already_sent">သင့်တွင် ဆိုင်းငံ့နေသေးသော ဖိတ်ကြားချက်တစ်ခု ရှိပြီးသားဖြစ်သည်။</string>
+    <string name="missed_invite_title">ဖိတ်ကြားချက် လွတ်သွားခြင်း</string>
+    <string name="missed_invite_message">သင် အော့ဖ်လိုင်းဖြစ်နေစဉ် ဖိတ်ကြားချက်တစ်ခု ရရှိခဲ့သည်။</string>
+    <string name="see_invites">ဖိတ်ကြားချက်များ ကြည့်ရန်</string>
     <string name="waiting_for_opponent_named">ကျွန်ုပ်တို့ %1$s က လက်ခံသည်အထိ စောင့်ဆိုင်းနေပါသည်…</string>
     <string name="waiting_for_opponent">ကျွန်ုပ်တို့ အပြိုင်ဘက်က လက်ခံသည်အထိ စောင့်ဆိုင်းနေပါသည်…</string>
     <string name="no_ranking_yet">အဆင့်သတ်မှတ်ရန် ပြိုင်ပွဲများ ပြီးဆုံးမထားသေးပါ။</string>

@@ -70,6 +70,7 @@ public class MenuActivity extends BaseActivity {
     private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 101;
 
     private static final String PREF_FCM_TOKEN = "fcmToken";
+    private static final String PREF_LAST_ACTIVE_TIMESTAMP = "lastActiveTimestamp";
 
     private boolean isBackendAvailable = true; // Track backend availability
     // Track whether we've already shown the offline toast while the
@@ -927,6 +928,8 @@ public class MenuActivity extends BaseActivity {
                     if (snap.isEmpty()) {
                         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
                         }.getClass().getEnclosingMethod()).getName() + ": continueWithInviteRestore: no pending invites");
+                        // After checking for outgoing invites, check for new incoming invites
+                        checkForMissedInvitations();
                         return;
                     }
 
@@ -949,14 +952,19 @@ public class MenuActivity extends BaseActivity {
                     } else {
                         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
                         }.getClass().getEnclosingMethod()).getName() + ": continueWithInviteRestore: invite " + inviteId + " is already expired → skipping");
+                        // After checking for outgoing invites, check for new incoming invites
+                        checkForMissedInvitations();
                     }
                 })
-                .addOnFailureListener(e ->
+                .addOnFailureListener(e -> {
                         Log.e(
                                 "TAG_Soccer",
                                 getClass().getSimpleName() + ".continueWithInviteRestore: failed to query invites",
                                 e
-                        )
+                        );
+                        // Even if outgoing invite query fails, check for incoming invites
+                        checkForMissedInvitations();
+                }
                 );
     }
 
@@ -1356,6 +1364,98 @@ public class MenuActivity extends BaseActivity {
             // Re-throw to trigger the outer exception handler
             throw new RuntimeException("Failed to recover from setContentView failure", fallbackException);
         }
+    }
+
+    /**
+     * Check if user received any invitations while they were offline
+     * and show a notification dialog if appropriate
+     */
+    private void checkForMissedInvitations() {
+        // Skip check if backend is unavailable
+        if (!isBackendAvailable) {
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".checkForMissedInvitations: Skipping - backend unavailable");
+            updateLastActiveTimestamp();
+            return;
+        }
+
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null) {
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".checkForMissedInvitations: Skipping - user not logged in");
+            return;
+        }
+
+        SharedPreferences prefs = getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
+        long lastActiveTimestamp = prefs.getLong(PREF_LAST_ACTIVE_TIMESTAMP, 0L);
+        
+        // Update timestamp for next check
+        updateLastActiveTimestamp();
+
+        // Skip on first run (no previous timestamp)
+        if (lastActiveTimestamp == 0L) {
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".checkForMissedInvitations: First run, skipping notification");
+            return;
+        }
+
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".checkForMissedInvitations: Checking for invites since " + lastActiveTimestamp);
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        long nowMs = System.currentTimeMillis();
+
+        // Query for pending invitations that were created since last active time
+        db.collection("invitations")
+                .whereEqualTo("to", uid)
+                .whereEqualTo("status", "pending")
+                .whereGreaterThan("createdAt", new com.google.firebase.Timestamp(lastActiveTimestamp / 1000, 0))
+                .orderBy("createdAt")
+                .limit(1)
+                .get()
+                .addOnSuccessListener(snap -> {
+                    if (snap.isEmpty()) {
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".checkForMissedInvitations: No new invites");
+                        return;
+                    }
+
+                    DocumentSnapshot doc = snap.getDocuments().get(0);
+                    
+                    // Check if invite is still valid (not expired)
+                    if (doc.getTimestamp("expireAt") != null &&
+                            Objects.requireNonNull(doc.getTimestamp("expireAt")).toDate().getTime() > nowMs) {
+                        
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".checkForMissedInvitations: Found missed invite, showing dialog");
+                        showMissedInviteDialog();
+                    } else {
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".checkForMissedInvitations: Invite found but already expired");
+                    }
+                })
+                .addOnFailureListener(e ->
+                        Log.e(
+                                "TAG_Soccer",
+                                getClass().getSimpleName() + ".checkForMissedInvitations: Failed to query invites",
+                                e
+                        )
+                );
+    }
+
+    /**
+     * Show dialog informing user about missed invitation
+     */
+    private void showMissedInviteDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.missed_invite_title)
+                .setMessage(R.string.missed_invite_message)
+                .setPositiveButton(R.string.see_invites, (dialog, which) -> {
+                    startActivity(new Intent(this, InvitationsActivity.class));
+                })
+                .setNegativeButton(R.string.close, null)
+                .show();
+    }
+
+    /**
+     * Update the last active timestamp in SharedPreferences
+     */
+    private void updateLastActiveTimestamp() {
+        SharedPreferences prefs = getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
+        prefs.edit().putLong(PREF_LAST_ACTIVE_TIMESTAMP, System.currentTimeMillis()).apply();
     }
 
 }

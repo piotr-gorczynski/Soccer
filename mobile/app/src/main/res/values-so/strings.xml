@@ -120,6 +120,9 @@
     <string name="pending_game_invitations">Casuumaadaha ciyaarta ee sugaya</string>
     <string name="no_pending_invites">Casuumaado sugaya ma jiraan.</string>
     <string name="invite_already_sent">Waxaad hore u leedahay casuumaad kale oo sugaya.</string>
+    <string name="missed_invite_title">Waad lumisay casuumad</string>
+    <string name="missed_invite_message">Waxaad heshay casuumad markaad offline ahayd.</string>
+    <string name="see_invites">Eeg casuumadaha</string>
     <string name="waiting_for_opponent_named">Waxaa la sugaa %1$s inuu aqbalo…</string>
     <string name="waiting_for_opponent">Waxaa la sugaa cayaaryahanka kale inuu aqbalo…</string>
     <string name="no_ranking_yet">Weliba lama dhammaystirin tartamo si darajo loo soo bandhigo.</string>

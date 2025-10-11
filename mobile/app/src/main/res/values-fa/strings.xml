@@ -101,6 +101,9 @@
     <string name="pending_game_invitations">دعوت‌های بازی در انتظار</string>
     <string name="no_pending_invites">دعوت در انتظاری وجود ندارد.</string>
     <string name="invite_already_sent">شما هم‌اکنون یک دعوت در انتظار دارید.</string>
+    <string name="missed_invite_title">دعوت از دست رفته</string>
+    <string name="missed_invite_message">شما در حالی که آفلاین بودید یک دعوت دریافت کردید.</string>
+    <string name="see_invites">مشاهده دعوت‌ها</string>
     <string name="waiting_for_opponent_named">در انتظار پذیرش %1$s…</string>
     <string name="waiting_for_opponent">در انتظار پذیرش حریف…</string>
     <string name="no_ranking_yet">هنوز هیچ تورنمنتی تکمیل نشده تا رتبه‌بندی نمایش داده شود.</string>
