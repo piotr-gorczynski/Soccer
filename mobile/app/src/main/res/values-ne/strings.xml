@@ -104,6 +104,9 @@
     <string name="pending_invites">पेन्डिङ निमन्त्रणाहरू</string>
     <string name="no_pending_invites">कुनै पेन्डिङ निमन्त्रणाहरू छैनन्।</string>
     <string name="invite_already_sent">तपाईंसँग पहिले नै अर्को पेन्डिङ निमन्त्रणा छ।</string>
+    <string name="missed_invite_title">तपाईंले निमन्त्रणा गुमाउनुभयो</string>
+    <string name="missed_invite_message">तपाईं अफलाइन हुँदा तपाईंलाई निमन्त्रणा प्राप्त भयो।</string>
+    <string name="see_invites">निमन्त्रणा हेर्नुहोस्</string>
     <string name="waiting_for_opponent_named">%1$s को स्वीकार गर्ने प्रतीक्षामा…</string>
     <string name="waiting_for_opponent">प्रतिपक्षको स्वीकार गर्ने प्रतीक्षामा…</string>
     

@@ -81,6 +81,9 @@
     <string name="pending_invites">Pending Invites</string>
     <string name="no_pending_invites">No pending invitations.</string>
     <string name="invite_already_sent">You already have another invite pending.</string>
+    <string name="missed_invite_title">You Missed an Invitation</string>
+    <string name="missed_invite_message">You received an invitation while you were offline.</string>
+    <string name="see_invites">See Invites</string>
     <string name="waiting_for_opponent_named">Waiting for %1$s to accept…</string>
     <string name="waiting_for_opponent">Waiting for opponent to accept…</string>
     <string name="tournaments">Tournaments</string>

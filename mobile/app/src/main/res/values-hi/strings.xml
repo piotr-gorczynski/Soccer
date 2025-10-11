@@ -104,6 +104,9 @@
     <string name="pending_invites">लंबित आमंत्रण</string>
     <string name="no_pending_invites">कोई लंबित आमंत्रण नहीं।</string>
     <string name="invite_already_sent">आपके पास पहले से ही एक और लंबित आमंत्रण है।</string>
+    <string name="missed_invite_title">आपसे निमंत्रण चूक गया</string>
+    <string name="missed_invite_message">आपको ऑफ़लाइन रहते हुए एक निमंत्रण मिला।</string>
+    <string name="see_invites">निमंत्रण देखें</string>
     <string name="waiting_for_opponent_named">%1$s के स्वीकार करने की प्रतीक्षा में…</string>
     <string name="waiting_for_opponent">प्रतिद्वंद्वी के स्वीकार करने की प्रतीक्षा में…</string>
     
