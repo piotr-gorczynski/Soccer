@@ -120,6 +120,9 @@
     <string name="pending_game_invitations">අපේක්ෂිත ක්‍රීඩා ආරාධනා</string>
     <string name="no_pending_invites">අපේක්ෂිත ආරාධනා නොමැත.</string>
     <string name="invite_already_sent">ඔබට දැනටමත් වෙනත් ආරාධනයක් අපේක්ෂිතව ඇත.</string>
+    <string name="missed_invite_title">ඔබට ආරාධනාවක් මග හැරුණි</string>
+    <string name="missed_invite_message">ඔබ නොබැඳිව සිටියදී ඔබට ආරාධනාවක් ලැබුණි.</string>
+    <string name="see_invites">ආරාධනා බලන්න</string>
     <string name="waiting_for_opponent_named">අපි %1$s එය පිළිගැනීමට බලාසිටී…</string>
     <string name="waiting_for_opponent">අපි ප්‍රතිවාදියා එය පිළිගැනීමට බලාසිටී…</string>
     <string name="no_ranking_yet">ශ්‍රේණිගත කිරීම පෙන්වීමට තවමත් තරඟාවලි අවසන් වී නොමැත.</string>

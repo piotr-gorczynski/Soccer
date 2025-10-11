@@ -120,6 +120,9 @@
     <string name="pending_game_invitations">Mialiko ya Mchezo Inayosubiri</string>
     <string name="no_pending_invites">Hakuna mialiko inayosubiri.</string>
     <string name="invite_already_sent">Tayari una mwaliko mwingine unaosubiri.</string>
+    <string name="missed_invite_title">Umekosa mwaliko</string>
+    <string name="missed_invite_message">Ulipokea mwaliko ulipokuwa nje ya mtandao.</string>
+    <string name="see_invites">Tazama mialiko</string>
     <string name="waiting_for_opponent_named">Inasubiri %1$s akubali…</string>
     <string name="waiting_for_opponent">Inasubiri mpinzani akubali…</string>
     <string name="no_ranking_yet">Hakuna mashindano yaliyokamilika ili kuonyesha upangaji bado.</string>

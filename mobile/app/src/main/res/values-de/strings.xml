@@ -104,6 +104,9 @@
     <string name="pending_invites">Ausstehende Einladungen</string>
     <string name="no_pending_invites">Keine ausstehenden Einladungen.</string>
     <string name="invite_already_sent">Sie haben bereits eine andere ausstehende Einladung.</string>
+    <string name="missed_invite_title">Verpasste Einladung</string>
+    <string name="missed_invite_message">Sie haben eine Einladung erhalten, während Sie offline waren.</string>
+    <string name="see_invites">Einladungen anzeigen</string>
     <string name="waiting_for_opponent_named">Warte auf Annahme von %1$s…</string>
     <string name="waiting_for_opponent">Warte auf Annahme des Gegners…</string>
     

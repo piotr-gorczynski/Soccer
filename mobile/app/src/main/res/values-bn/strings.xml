@@ -104,6 +104,9 @@
     <string name="pending_invites">মুলতুবি আমন্ত্রণ</string>
     <string name="no_pending_invites">কোনো মুলতুবি আমন্ত্রণ নেই।</string>
     <string name="invite_already_sent">আপনার ইতিমধ্যে আরেকটি আমন্ত্রণ মুলতুবি আছে।</string>
+    <string name="missed_invite_title">আপনার আমন্ত্রণ মিস হয়েছে</string>
+    <string name="missed_invite_message">আপনি অফলাইন থাকার সময় একটি আমন্ত্রণ পেয়েছিলেন।</string>
+    <string name="see_invites">আমন্ত্রণ দেখুন</string>
     <string name="waiting_for_opponent_named">%1$s এর গ্রহণের অপেক্ষায়…</string>
     <string name="waiting_for_opponent">প্রতিপক্ষের গ্রহণের অপেক্ষায়…</string>
     

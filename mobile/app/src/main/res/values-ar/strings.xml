@@ -101,6 +101,9 @@
     <string name="pending_game_invitations">دعوات اللعب المعلقة</string>
     <string name="no_pending_invites">لا توجد دعوات معلقة.</string>
     <string name="invite_already_sent">لديك دعوة أخرى قيد الانتظار بالفعل.</string>
+    <string name="missed_invite_title">فاتتك دعوة</string>
+    <string name="missed_invite_message">تلقيت دعوة أثناء عدم اتصالك.</string>
+    <string name="see_invites">عرض الدعوات</string>
     <string name="waiting_for_opponent_named">في انتظار قبول %1$s…</string>
     <string name="waiting_for_opponent">في انتظار قبول الخصم…</string>
     <string name="no_ranking_yet">لم تُستكمل أي بطولات لعرض الترتيب بعد.</string>
