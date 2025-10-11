@@ -104,6 +104,9 @@
     <string name="pending_invites">زیر التواء دعوتیں</string>
     <string name="no_pending_invites">کوئی زیر التواء دعوت نہیں۔</string>
     <string name="invite_already_sent">آپ کی پہلے سے ہی ایک اور دعوت زیر التواء ہے۔</string>
+    <string name="missed_invite_title">آپ سے دعوت چھوٹ گئی</string>
+    <string name="missed_invite_message">آپ کو آف لائن ہونے کے دوران دعوت موصول ہوئی۔</string>
+    <string name="see_invites">دعوتیں دیکھیں</string>
     <string name="waiting_for_opponent_named">%1$s کے قبول کرنے کا انتظار…</string>
     <string name="waiting_for_opponent">حریف کے قبول کرنے کا انتظار…</string>
     

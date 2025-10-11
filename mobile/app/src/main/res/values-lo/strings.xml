@@ -120,6 +120,9 @@
     <string name="pending_game_invitations">ຄໍາເຊີນເກມທີ່ລໍຖ້າ</string>
     <string name="no_pending_invites">ບໍ່ມີຄໍາເຊີນທີ່ລໍຖ້າ.</string>
     <string name="invite_already_sent">ທ່ານມີຄໍາເຊີນອື່ນທີ່ລໍຖ້າຢູ່ແລ້ວ.</string>
+    <string name="missed_invite_title">ທ່ານພາດຄຳເຊື້ອເຊີນ</string>
+    <string name="missed_invite_message">ທ່ານໄດ້ຮັບຄຳເຊື້ອເຊີນໃນຂະນະທີ່ທ່ານອອບລາຍ.</string>
+    <string name="see_invites">ເບິ່ງຄຳເຊື້ອເຊີນ</string>
     <string name="waiting_for_opponent_named">ກໍາລັງລໍຖ້າ %1$s ຢືນຢັນ...</string>
     <string name="waiting_for_opponent">ກໍາລັງລໍຖ້າຄູ່ແຂ່ງຢືນຢັນ...</string>
     <string name="no_ranking_yet">ຍັງບໍ່ມີການແຂ່ງຂັນທີ່ຈົບເພື່ອສະແດງອັນດັບ.</string>

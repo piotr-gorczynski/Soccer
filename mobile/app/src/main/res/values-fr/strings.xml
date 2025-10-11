@@ -110,6 +110,9 @@
     <string name="pending_invites">Invitations en attente</string>
     <string name="no_pending_invites">Aucune invitation en attente.</string>
     <string name="invite_already_sent">Vous avez déjà une autre invitation en attente.</string>
+    <string name="missed_invite_title">Invitation manquée</string>
+    <string name="missed_invite_message">Vous avez reçu une invitation pendant que vous étiez hors ligne.</string>
+    <string name="see_invites">Voir les invitations</string>
     <string name="waiting_for_opponent_named">En attente de l’acceptation de %1$s…</string>
     <string name="waiting_for_opponent">En attente de l’acceptation de l’adversaire…</string>
 

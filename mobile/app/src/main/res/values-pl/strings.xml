@@ -104,6 +104,9 @@
     <string name="pending_invites">Oczekujące zaproszenia</string>
     <string name="no_pending_invites">Brak oczekujących zaproszeń.</string>
     <string name="invite_already_sent">Masz już inne oczekujące zaproszenie.</string>
+    <string name="missed_invite_title">Nie odebrałeś zaproszenia</string>
+    <string name="missed_invite_message">Otrzymałeś zaproszenie, gdy byłeś offline.</string>
+    <string name="see_invites">Zobacz zaproszenia</string>
     <string name="waiting_for_opponent_named">Czekam na akceptację przez %1$s…</string>
     <string name="waiting_for_opponent">Czekam na akceptację przez przeciwnika…</string>
     

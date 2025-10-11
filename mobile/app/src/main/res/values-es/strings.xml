@@ -104,6 +104,9 @@
     <string name="pending_invites">Invitaciones pendientes</string>
     <string name="no_pending_invites">No hay invitaciones pendientes.</string>
     <string name="invite_already_sent">Ya tienes otra invitación pendiente.</string>
+    <string name="missed_invite_title">Invitación perdida</string>
+    <string name="missed_invite_message">Recibiste una invitación mientras estabas desconectado.</string>
+    <string name="see_invites">Ver invitaciones</string>
     <string name="waiting_for_opponent_named">Esperando que %1$s acepte…</string>
     <string name="waiting_for_opponent">Esperando que el oponente acepte…</string>
     

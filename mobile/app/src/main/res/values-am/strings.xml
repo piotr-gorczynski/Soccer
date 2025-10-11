@@ -120,6 +120,9 @@
     <string name="pending_game_invitations">በመጠባበቅ ያሉ የጨዋታ ግብዣዎች</string>
     <string name="no_pending_invites">የተጠባበቁ ግብዣዎች የሉም።</string>
     <string name="invite_already_sent">አሁንም በመጠባበቅ ላይ ያለ ሌላ ግብዣ አለዎት።</string>
+    <string name="missed_invite_title">ግብዣን አምልጥዋል</string>
+    <string name="missed_invite_message">ከመስመር ውጭ በነበሩበት ጊዜ ግብዣ ደርሶዎታል።</string>
+    <string name="see_invites">ግብዣዎችን ይመልከቱ</string>
     <string name="waiting_for_opponent_named">%1$s እንዲቀበል በመጠበቅ ላይ…</string>
     <string name="waiting_for_opponent">ተቃዋሚው እንዲቀበል በመጠበቅ ላይ…</string>
     <string name="no_ranking_yet">ደረጃ ለማሳየት ተጠናቀቁ ውድድሮች ገና የሉም።</string>
