@@ -48,19 +48,41 @@ User opens app
     ↓
 MenuActivity.onResume()
     ↓
-Check backend availability
+checkBackendAvailabilityAndContinue()
     ↓
-Check for active matches
+continueOnResumeAfterBackendCheck()
     ↓
-Check for outgoing pending invites (continueWithInviteRestore)
-    ↓
-Check for missed invitations (NEW)
-    ↓
-If new invitation found → Show dialog
-    ↓
-User clicks "See Invites" → Open InvitationsActivity
-OR
-User clicks "Close" → Dialog dismissed
+checkForActiveMatch()
+    ├─ Active match found → Resume game
+    └─ No active match found → continueWithInviteRestore()
+           ↓
+       Query for outgoing pending invites (from current user)
+           ├─ Valid outgoing invite found → Resume WaitingActivity
+           └─ No outgoing invites OR expired → checkForMissedInvitations() [NEW]
+                  ↓
+              Check if backend is available
+                  ├─ Backend unavailable → Skip check, update timestamp
+                  └─ Backend available → Query for incoming invites
+                         ↓
+                     Query Firestore for invitations:
+                         - to: current user
+                         - status: "pending"
+                         - createdAt > lastActiveTimestamp
+                         - orderBy: "createdAt"
+                         - limit: 1
+                         ↓
+                     Found valid (not expired) invitation?
+                         ├─ Yes → showMissedInviteDialog()
+                         │           ↓
+                         │       Show AlertDialog:
+                         │           - Title: "You Missed an Invitation"
+                         │           - Message: "You received an invitation..."
+                         │           - Button 1: "See Invites" → Open InvitationsActivity
+                         │           - Button 2: "Close" → Dismiss dialog
+                         │
+                         └─ No → Continue normally
+                     
+                     Update lastActiveTimestamp for next check
 ```
 
 ### Edge Cases Handled
@@ -70,6 +92,51 @@ User clicks "Close" → Dialog dismissed
 3. **Expired Invitations**: Only valid (not expired) invitations trigger the notification
 4. **User Not Logged In**: Check is skipped if user is not authenticated
 5. **Multiple Invitations**: Only one notification is shown even if multiple invitations arrived
+
+### Code Example
+
+The key method `checkForMissedInvitations()` works as follows:
+
+```java
+private void checkForMissedInvitations() {
+    // Skip check if backend is unavailable
+    if (!isBackendAvailable) {
+        updateLastActiveTimestamp();
+        return;
+    }
+
+    String uid = FirebaseAuth.getInstance().getUid();
+    if (uid == null) return;  // Not logged in
+
+    SharedPreferences prefs = getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
+    long lastActiveTimestamp = prefs.getLong(PREF_LAST_ACTIVE_TIMESTAMP, 0L);
+    
+    // Update timestamp for next check
+    updateLastActiveTimestamp();
+
+    // Skip on first run (no previous timestamp)
+    if (lastActiveTimestamp == 0L) return;
+
+    // Query for pending invitations created since last active time
+    db.collection("invitations")
+            .whereEqualTo("to", uid)
+            .whereEqualTo("status", "pending")
+            .whereGreaterThan("createdAt", new Timestamp(lastActiveTimestamp / 1000, 0))
+            .orderBy("createdAt")
+            .limit(1)
+            .get()
+            .addOnSuccessListener(snap -> {
+                if (!snap.isEmpty()) {
+                    DocumentSnapshot doc = snap.getDocuments().get(0);
+                    // Check if invite is still valid (not expired)
+                    if (doc.getTimestamp("expireAt") != null &&
+                            doc.getTimestamp("expireAt").toDate().getTime() > nowMs) {
+                        showMissedInviteDialog();
+                    }
+                }
+            });
+}
+```
 
 ### Testing
 
