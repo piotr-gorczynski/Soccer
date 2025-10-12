@@ -348,12 +348,9 @@
     <string name="presence_offline">Offline</string>
     <string name="error_checking_friend_status">Fehler beim Überprüfen des Freundstatus</string>
     <string name="friend_added">Freund erfolgreich hinzugefügt</string>
-    <string name="failed_to_add_friend">Freund konnte nicht hinzugefügt werden</string>
-    <string name="failed_to_send_invite">Einladung konnte nicht gesendet werden</string>
     <string name="active_invitation_exists">Aktive Einladung existiert bereits</string>
     <string name="user_blocked_invites">Benutzer hat Einladungen blockiert</string>
     <string name="cannot_invite_this_user">Kann diesen Benutzer nicht einladen</string>
-    <string name="user_not_found">Benutzer nicht gefunden</string>
     
     <!-- Preference level values -->
     <string-array name="pref_level_values">

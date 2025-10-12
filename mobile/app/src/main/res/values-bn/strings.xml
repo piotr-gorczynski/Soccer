@@ -347,12 +347,9 @@
     <string name="presence_offline">অফলাইন</string>
     <string name="error_checking_friend_status">বন্ধুর অবস্থা পরীক্ষা করতে ত্রুটি</string>
     <string name="friend_added">সফলভাবে বন্ধু যোগ হয়েছে</string>
-    <string name="failed_to_add_friend">বন্ধু যোগ করতে ব্যর্থ</string>
-    <string name="failed_to_send_invite">আমন্ত্রণ পাঠাতে ব্যর্থ</string>
     <string name="active_invitation_exists">সক্রিয় আমন্ত্রণ ইতিমধ্যে বিদ্যমান</string>
     <string name="user_blocked_invites">ব্যবহারকারী আমন্ত্রণ ব্লক করেছেন</string>
     <string name="cannot_invite_this_user">এই ব্যবহারকারীকে আমন্ত্রণ জানানো যাবে না</string>
-    <string name="user_not_found">ব্যবহারকারী পাওয়া যায়নি</string>
     
     <!-- Preference level values -->
     <string-array name="pref_level_values">
