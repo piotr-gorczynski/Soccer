@@ -98,7 +98,9 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
             for (Object payload : payloads) {
                 if ("nickname".equals(payload)) {
                     String nick = nickCache.get(uid);
-                    if (nick != null) h.nickname.setText(nick);
+                    if (nick != null) {
+                        h.nickname.setText(context.getString(R.string.invite_from_format, nick));
+                    }
                 } else if ("presence".equals(payload)) {
                     String pState = presCache.get(uid);
                     if (pState != null) bindPresence(h, uid, pState);
@@ -115,6 +117,16 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
         // Get the 'from' uid from the invitation
         String uid = d.getString("from");
         h.uid = uid;
+
+        if (uid == null) {
+            h.inviteReceivedTime.setText("");
+            h.inviteStatus.setText("");
+            h.nickname.setText(context.getString(R.string.invite_from_loading));
+            h.presence.setText("");
+            h.sendInviteBtn.setEnabled(false);
+            h.addFriendBtn.setEnabled(false);
+            return;
+        }
         
         // Display when the invite was received (createdAt timestamp)
         com.google.firebase.Timestamp createdAt = d.getTimestamp("createdAt");
@@ -150,22 +162,21 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
             h.nickname.setText(context.getString(R.string.invite_from_loading));
             FirebaseFirestore.getInstance().collection("users").document(uid).get()
                     .addOnSuccessListener(doc -> {
-                        int idx = indexForUid(uid);
                         if (doc.exists()) {
                             String n = doc.getString("nickname");
                             if (n != null) {
                                 nickCache.put(uid, n);
-                                if (idx != RecyclerView.NO_POSITION) notifyItemChanged(idx, "nickname");
+                                notifyUidChanged(uid, "nickname");
                             }
 
                             // Check if user is deleted
                             Boolean deleted = doc.getBoolean("deleted");
                             userDeletedCache.put(uid, deleted != null && deleted);
-                            if (idx != RecyclerView.NO_POSITION) notifyItemChanged(idx, "presence");
+                            notifyUidChanged(uid, "presence");
                         } else {
                             // User document doesn't exist, mark as deleted
                             userDeletedCache.put(uid, true);
-                            if (idx != RecyclerView.NO_POSITION) notifyItemChanged(idx, "presence");
+                            notifyUidChanged(uid, "presence");
                         }
                     });
         } else {
@@ -182,8 +193,7 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
                     if (!snap.exists()) {
                         presCache.put(uid, "offline");
                         hbCache.put(uid, 0L);
-                        int idx = indexForUid(uid);
-                        if (idx != RecyclerView.NO_POSITION) notifyItemChanged(idx, "presence");
+                        notifyUidChanged(uid, "presence");
                         return;
                     }
                     String stateStr = snap.child("state").getValue(String.class);
@@ -197,8 +207,7 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
                     }
                     presCache.put(uid, state);
                     hbCache.put(uid, lastHb);
-                    int idx = indexForUid(uid);
-                    if (idx != RecyclerView.NO_POSITION) notifyItemChanged(idx, "presence");
+                    notifyUidChanged(uid, "presence");
                 }
                 @Override public void onCancelled(@NonNull DatabaseError error) {}
             };
@@ -245,12 +254,13 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
     @Override
     public int getItemCount() { return docs.size(); }
 
-    private int indexForUid(@NonNull String uid) {
-        for (int i=0;i<docs.size();i++) {
+    private void notifyUidChanged(@NonNull String uid, @NonNull Object payload) {
+        for (int i = 0; i < docs.size(); i++) {
             String fromUid = docs.get(i).getString("from");
-            if (uid.equals(fromUid)) return i;
+            if (uid.equals(fromUid)) {
+                notifyItemChanged(i, payload);
+            }
         }
-        return -1;
     }
 
     void setData(List<DocumentSnapshot> invites) {
