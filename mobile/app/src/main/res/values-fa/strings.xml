@@ -286,4 +286,13 @@
     
     <!-- Friend match statistics -->
     <string name="match_stats_format">پیروزی‌ها 🏆: %1$d | باخت‌ها 😞: %2$d</string>
+    <!-- Past invites -->
+    <string name="past_invites">دعوت‌های گذشته</string>
+    <string name="no_past_invites">دعوت گذشته‌ای وجود ندارد</string>
+    <string name="invite_and_add_to_friend">دعوت و افزودن به دوستان</string>
+    <string name="invite_received_format">دریافت شده %1$s</string>
+    <string name="invite_status_accepted">وضعیت: پذیرفته شده</string>
+    <string name="invite_status_cancelled">وضعیت: لغو شده</string>
+    <string name="invite_status_expired">وضعیت: منقضی شده</string>
+
 </resources>

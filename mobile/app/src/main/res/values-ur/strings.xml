@@ -337,6 +337,7 @@
     <string name="past_invites">پچھلی دعوتیں</string>
     <string name="no_past_invites">کوئی پچھلی دعوتیں نہیں</string>
     <string name="invite_and_add_to_friend">دعوت دیں اور دوست میں شامل کریں</string>
+    <string name="invite_received_format">موصول ہوا %1$s</string>
     <string name="invite_status_accepted">حیثیت: قبول شدہ</string>
     <string name="invite_status_cancelled">حیثیت: منسوخ شدہ</string>
     <string name="invite_status_expired">حیثیت: ختم شدہ</string>
