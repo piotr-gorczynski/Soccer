@@ -344,10 +344,7 @@
     <string name="presence_offline">Offline</string>
     <string name="error_checking_friend_status">Error checking friend status</string>
     <string name="friend_added">Friend added successfully</string>
-    <string name="failed_to_add_friend">Failed to add friend</string>
-    <string name="failed_to_send_invite">Failed to send invite</string>
     <string name="active_invitation_exists">Active invitation already exists</string>
     <string name="user_blocked_invites">User has blocked invites</string>
     <string name="cannot_invite_this_user">Cannot invite this user</string>
-    <string name="user_not_found">User not found</string>
 </resources>
