@@ -340,4 +340,13 @@
         <item>10</item>
         <item>30</item>
     </string-array>
+    <!-- Past invites -->
+    <string name="past_invites">Invitaciones Pasadas</string>
+    <string name="no_past_invites">No hay invitaciones pasadas</string>
+    <string name="invite_and_add_to_friend">Invitar y Añadir como Amigo</string>
+    <string name="invite_received_format">Recibido %1$s</string>
+    <string name="invite_status_accepted">Estado: Aceptado</string>
+    <string name="invite_status_cancelled">Estado: Cancelado</string>
+    <string name="invite_status_expired">Estado: Expirado</string>
+
 </resources>

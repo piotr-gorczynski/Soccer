@@ -339,4 +339,13 @@
         <item>10</item>
         <item>30</item>
     </string-array>
+    <!-- Past invites -->
+    <string name="past_invites">विगतका निमन्त्रणाहरू</string>
+    <string name="no_past_invites">विगतका निमन्त्रणाहरू छैनन्</string>
+    <string name="invite_and_add_to_friend">निमन्त्रणा र साथी थप्नुहोस्</string>
+    <string name="invite_received_format">प्राप्त %1$s</string>
+    <string name="invite_status_accepted">स्थिति: स्वीकृत</string>
+    <string name="invite_status_cancelled">स्थिति: रद्द गरिएको</string>
+    <string name="invite_status_expired">स्थिति: म्याद समाप्त</string>
+
 </resources>

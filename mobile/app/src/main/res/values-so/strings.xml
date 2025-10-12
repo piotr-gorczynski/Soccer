@@ -310,6 +310,7 @@
     <string name="past_invites">Casumadihii Hore</string>
     <string name="no_past_invites">Ma jiraan casumado hore</string>
     <string name="invite_and_add_to_friend">Casumo U Dir oo Saaxiib Ku Dar</string>
+    <string name="invite_received_format">La helay %1$s</string>
     <string name="invite_status_accepted">Xaalad: La aqbalay</string>
     <string name="invite_status_cancelled">Xaalad: La joojiyay</string>
     <string name="invite_status_expired">Xaalad: Waqtigii dhammaaday</string>

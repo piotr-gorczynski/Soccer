@@ -305,4 +305,13 @@
     
     <!-- Friend match statistics -->
     <string name="match_stats_format">ජයග්‍රහණ 🏆: %1$d | පරාජයන් 😞: %2$d</string>
+    <!-- Past invites -->
+    <string name="past_invites">පසුගිය ආරාධනා</string>
+    <string name="no_past_invites">පසුගිය ආරාධනා නැත</string>
+    <string name="invite_and_add_to_friend">ආරාධනා කර මිතුරකු ලෙස එක් කරන්න</string>
+    <string name="invite_received_format">ලැබුණි %1$s</string>
+    <string name="invite_status_accepted">තත්ත්වය: පිළිගත්</string>
+    <string name="invite_status_cancelled">තත්ත්වය: අවලංගු</string>
+    <string name="invite_status_expired">තත්ත්වය: කල් ඉකුත්</string>
+
 </resources>
