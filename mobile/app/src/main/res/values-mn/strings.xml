@@ -305,4 +305,13 @@
     
     <!-- Friend match statistics -->
     <string name="match_stats_format">Ялалт 🏆: %1$d | Ялагдал 😞: %2$d</string>
+    <!-- Past invites -->
+    <string name="past_invites">Өнгөрсөн урилгууд</string>
+    <string name="no_past_invites">Өнгөрсөн урилга байхгүй</string>
+    <string name="invite_and_add_to_friend">Урих ба Найз нэмэх</string>
+    <string name="invite_received_format">Хүлээн авсан %1$s</string>
+    <string name="invite_status_accepted">Төлөв: Зөвшөөрсөн</string>
+    <string name="invite_status_cancelled">Төлөв: Цуцалсан</string>
+    <string name="invite_status_expired">Төлөв: Дууссан</string>
+
 </resources>
