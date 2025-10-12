@@ -320,10 +320,7 @@
     <string name="presence_offline">Tsy an-tserasera</string>
     <string name="error_checking_friend_status">Fahadisoana tamin\'ny fanamarinana ny toe-javatra namana</string>
     <string name="friend_added">Namana nanampy tamim-pahombiazana</string>
-    <string name="failed_to_add_friend">Tsy nahomby ny fanampy namana</string>
-    <string name="failed_to_send_invite">Tsy nahomby ny fandefasana fanasana</string>
     <string name="active_invitation_exists">Fanasana mavitrika efa misy</string>
     <string name="user_blocked_invites">Ny mpampiasa dia nanakana ny fanasana</string>
     <string name="cannot_invite_this_user">Tsy afaka manasa io mpampiasa io</string>
-    <string name="user_not_found">Mpampiasa tsy hita</string>
 </resources>
