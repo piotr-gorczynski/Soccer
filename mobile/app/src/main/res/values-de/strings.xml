@@ -338,6 +338,7 @@
     <string name="past_invites">Frühere Einladungen</string>
     <string name="no_past_invites">Keine früheren Einladungen</string>
     <string name="invite_and_add_to_friend">Einladen und als Freund hinzufügen</string>
+    <string name="invite_received_format">Erhalten %1$s</string>
     <string name="invite_status_accepted">Status: Akzeptiert</string>
     <string name="invite_status_cancelled">Status: Abgebrochen</string>
     <string name="invite_status_expired">Status: Abgelaufen</string>

@@ -6,6 +6,14 @@
     android:padding="8dp">
 
     <TextView
+        android:id="@+id/inviteReceivedTime"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textColor="@color/colorGrey"
+        android:layout_marginBottom="4dp" />
+
+    <TextView
         android:id="@+id/nickname"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -26,11 +34,30 @@
         android:textSize="12sp"
         android:textColor="@color/colorGrey" />
 
-    <Button
-        android:id="@+id/inviteAndAddBtn"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
-        android:text="@string/invite_and_add_to_friend" />
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp">
+
+        <Button
+            android:id="@+id/sendInviteBtn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="4dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:text="@string/send_invitation" />
+
+        <Button
+            android:id="@+id/addFriendBtn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="4dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:text="@string/add_friend_label" />
+    </LinearLayout>
 </LinearLayout>

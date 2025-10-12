@@ -305,4 +305,13 @@
     
     <!-- Friend match statistics -->
     <string name="match_stats_format">အနိုင်များ 🏆: %1$d | အရှုံးများ 😞: %2$d</string>
+    <!-- Past invites -->
+    <string name="past_invites">ယခင်ဖိတ်စာများ</string>
+    <string name="no_past_invites">ယခင်ဖိတ်စာများမရှိပါ</string>
+    <string name="invite_and_add_to_friend">ဖိတ်ကြားပြီး သူငယ်ချင်းအဖြစ်ထည့်ရန်</string>
+    <string name="invite_received_format">လက်ခံရရှိသည် %1$s</string>
+    <string name="invite_status_accepted">အခြေအနေ: လက်ခံပြီး</string>
+    <string name="invite_status_cancelled">အခြေအနေ: ပယ်ဖျက်ပြီး</string>
+    <string name="invite_status_expired">အခြေအနေ: သက်တမ်းကုန်ပြီး</string>
+
 </resources>

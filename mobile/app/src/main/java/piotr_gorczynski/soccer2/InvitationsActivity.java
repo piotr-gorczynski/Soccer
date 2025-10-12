@@ -20,16 +20,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.*;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.FirebaseFunctionsException;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -80,7 +73,7 @@ public class InvitationsActivity extends BaseActivity {
         pastInvitesLabel = findViewById(R.id.pastInvitesLabel);
         emptyPastInvites = findViewById(R.id.emptyPastInvites);
         pastInvitesList.setLayoutManager(new LinearLayoutManager(this));
-        pastAdapter = new PastInviteAdapter(this, this::inviteAndAddFriend);
+        pastAdapter = new PastInviteAdapter(this, this::sendInviteViaCF, this::addFriend);
         pastInvitesList.setAdapter(pastAdapter);
 
         db = FirebaseFirestore.getInstance();
@@ -276,6 +269,7 @@ public class InvitationsActivity extends BaseActivity {
         pastInvitesSub = db.collection("invitations")
                 .whereEqualTo("to", currentUserId)
                 .whereIn("status", java.util.Arrays.asList("accepted", "cancelled", "expired"))
+                .orderBy("createdAt", Query.Direction.DESCENDING)
                 .addSnapshotListener((querySnapshot, e) -> {
                     if (e != null) {
                         Log.e("TAG_Soccer", getClass().getSimpleName() + ".listenForPastInvites: Listen failed", e);
@@ -288,94 +282,13 @@ public class InvitationsActivity extends BaseActivity {
                         pastInvitesList.add(doc);
                     }
 
-                    // Sort by last heartbeat (descending)
-                    sortPastInvitesByHeartbeat(pastInvitesList);
-                });
-    }
-
-    private void sortPastInvitesByHeartbeat(List<DocumentSnapshot> docs) {
-        if (docs.isEmpty()) {
-            emptyPastInvites.setVisibility(View.VISIBLE);
-            pastAdapter.setData(docs);
-            return;
-        }
-
-        // Fetch heartbeat data for all users
-        Map<String, Long> heartbeatMap = new HashMap<>();
-        final int[] pendingRequests = {docs.size()};
-
-        for (DocumentSnapshot doc : docs) {
-            String fromUid = doc.getString("from");
-            if (fromUid == null) {
-                pendingRequests[0]--;
-                continue;
-            }
-
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("status").child(fromUid);
-            ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    Long lastHb = snapshot.child("last_heartbeat").getValue(Long.class);
-                    if (lastHb != null) {
-                        heartbeatMap.put(fromUid, lastHb);
+                    // Data is already sorted by createdAt in descending order (latest to oldest)
+                    if (pastInvitesList.isEmpty()) {
+                        emptyPastInvites.setVisibility(View.VISIBLE);
                     } else {
-                        heartbeatMap.put(fromUid, 0L);
-                    }
-
-                    pendingRequests[0]--;
-                    if (pendingRequests[0] == 0) {
-                        // All requests completed, now sort
-                        Collections.sort(docs, new Comparator<DocumentSnapshot>() {
-                            @Override
-                            public int compare(DocumentSnapshot d1, DocumentSnapshot d2) {
-                                String uid1 = d1.getString("from");
-                                String uid2 = d2.getString("from");
-                                Long hb1 = heartbeatMap.get(uid1);
-                                Long hb2 = heartbeatMap.get(uid2);
-
-                                if (hb1 == null) hb1 = 0L;
-                                if (hb2 == null) hb2 = 0L;
-
-                                // Sort descending (most recent first)
-                                return Long.compare(hb2, hb1);
-                            }
-                        });
-
                         emptyPastInvites.setVisibility(View.GONE);
-                        pastAdapter.setData(docs);
                     }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".sortPastInvitesByHeartbeat: Error fetching heartbeat for " + fromUid, error.toException());
-                    pendingRequests[0]--;
-                    if (pendingRequests[0] == 0) {
-                        emptyPastInvites.setVisibility(View.GONE);
-                        pastAdapter.setData(docs);
-                    }
-                }
-            });
-        }
-    }
-
-    private void inviteAndAddFriend(@NonNull String targetUid) {
-        // First check if already friends
-        String currentUserId = Objects.requireNonNull(auth.getCurrentUser()).getUid();
-        
-        db.collection("users").document(currentUserId).collection("friends").document(targetUid).get()
-                .addOnSuccessListener(friendDoc -> {
-                    if (friendDoc.exists()) {
-                        // Already friends, just send invite
-                        sendInviteViaCF(targetUid);
-                    } else {
-                        // Not friends, add as friend first then send invite
-                        addFriend(targetUid);
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".inviteAndAddFriend: Error checking friend status", e);
-                    Toast.makeText(this, R.string.error_checking_friend_status, Toast.LENGTH_SHORT).show();
+                    pastAdapter.setData(pastInvitesList);
                 });
     }
 
@@ -391,8 +304,6 @@ public class InvitationsActivity extends BaseActivity {
                             .set(Collections.singletonMap("addedAt", com.google.firebase.firestore.FieldValue.serverTimestamp()))
                             .addOnSuccessListener(aVoid2 -> {
                                 Toast.makeText(this, R.string.friend_added, Toast.LENGTH_SHORT).show();
-                                // Now send the invite
-                                sendInviteViaCF(targetUid);
                             })
                             .addOnFailureListener(e -> {
                                 Log.e("TAG_Soccer", getClass().getSimpleName() + ".addFriend: Error adding to target's friends", e);
