@@ -26,27 +26,33 @@ import java.util.Map;
 
 public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH> {
 
-    public interface OnInviteAndAddClick { void onInviteAndAdd(String uid); }
+    public interface OnInviteClick { void onInvite(String uid); }
+    public interface OnAddFriendClick { void onAddFriend(String uid); }
 
     static class VH extends RecyclerView.ViewHolder {
+        final TextView inviteReceivedTime;
         final TextView nickname;
         final TextView inviteStatus;
         final TextView presence;
-        final Button inviteAndAddBtn;
+        final Button sendInviteBtn;
+        final Button addFriendBtn;
         String uid;
         DocumentSnapshot doc;
         
         VH(@NonNull View v) {
             super(v);
+            inviteReceivedTime = v.findViewById(R.id.inviteReceivedTime);
             nickname = v.findViewById(R.id.nickname);
             inviteStatus = v.findViewById(R.id.inviteStatus);
             presence = v.findViewById(R.id.presence);
-            inviteAndAddBtn = v.findViewById(R.id.inviteAndAddBtn);
+            sendInviteBtn = v.findViewById(R.id.sendInviteBtn);
+            addFriendBtn = v.findViewById(R.id.addFriendBtn);
         }
     }
 
     private final Context context;
-    private final OnInviteAndAddClick listener;
+    private final OnInviteClick inviteListener;
+    private final OnAddFriendClick addFriendListener;
     private final List<DocumentSnapshot> docs = new ArrayList<>();
     private final Map<String,String> nickCache = new HashMap<>();
     private final Map<String,String> presCache = new HashMap<>();
@@ -55,9 +61,10 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
     private static final class RtdbSub { final DatabaseReference ref; final ValueEventListener l; RtdbSub(DatabaseReference r, ValueEventListener l){this.ref=r;this.l=l;}}
     private final Map<String,RtdbSub> presSubs = new HashMap<>();
 
-    PastInviteAdapter(Context context, OnInviteAndAddClick listener) {
+    PastInviteAdapter(Context context, OnInviteClick inviteListener, OnAddFriendClick addFriendListener) {
         this.context = context;
-        this.listener = listener;
+        this.inviteListener = inviteListener;
+        this.addFriendListener = addFriendListener;
         setHasStableIds(true);
     }
 
@@ -66,8 +73,11 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
     public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_past_invite, parent, false);
         VH h = new VH(v);
-        h.inviteAndAddBtn.setOnClickListener(btn -> {
-            if (h.uid != null) listener.onInviteAndAdd(h.uid);
+        h.sendInviteBtn.setOnClickListener(btn -> {
+            if (h.uid != null) inviteListener.onInvite(h.uid);
+        });
+        h.addFriendBtn.setOnClickListener(btn -> {
+            if (h.uid != null) addFriendListener.onAddFriend(h.uid);
         });
         return h;
     }
@@ -105,6 +115,16 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
         // Get the 'from' uid from the invitation
         String uid = d.getString("from");
         h.uid = uid;
+        
+        // Display when the invite was received (createdAt timestamp)
+        com.google.firebase.Timestamp createdAt = d.getTimestamp("createdAt");
+        if (createdAt != null) {
+            long createdAtMillis = createdAt.toDate().getTime();
+            String relativeTime = MatchAdapter.englishRelative(createdAtMillis);
+            h.inviteReceivedTime.setText(context.getString(R.string.invite_received_format, relativeTime));
+        } else {
+            h.inviteReceivedTime.setText("");
+        }
         
         // Display invite status
         String status = d.getString("status");
@@ -209,15 +229,17 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
         h.presence.setText(label);
         h.presence.setTextColor(colour);
         
-        // Enable/disable button based on user status
+        // Enable/disable buttons based on user status
         Boolean isDeleted = userDeletedCache.get(uid);
         boolean userDeleted = isDeleted != null && isDeleted;
         
-        // Button is disabled if user is deleted OR if user is offline (no heartbeat data)
+        // Buttons are disabled if user is deleted OR if user is offline (no heartbeat data)
         long lastHeartbeat = hbCache.getOrDefault(uid, 0L);
         boolean isTrulyOffline = "offline".equalsIgnoreCase(state) && lastHeartbeat == 0L;
         
-        h.inviteAndAddBtn.setEnabled(!userDeleted && !isTrulyOffline);
+        boolean enabled = !userDeleted && !isTrulyOffline;
+        h.sendInviteBtn.setEnabled(enabled);
+        h.addFriendBtn.setEnabled(enabled);
     }
 
     @Override

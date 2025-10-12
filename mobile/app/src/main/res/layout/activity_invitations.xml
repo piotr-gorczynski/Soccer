@@ -26,6 +26,15 @@
             android:layout_height="wrap_content">
 
             <TextView
+                android:id="@+id/pendingInvitesLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/pending_invites"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:layout_marginBottom="8dp"/>
+
+            <TextView
                 android:id="@+id/emptyInvites"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
