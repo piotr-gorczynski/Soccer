@@ -130,14 +130,14 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
             h.nickname.setText(context.getString(R.string.invite_from_loading));
             FirebaseFirestore.getInstance().collection("users").document(uid).get()
                     .addOnSuccessListener(doc -> {
+                        int idx = indexForUid(uid);
                         if (doc.exists()) {
                             String n = doc.getString("nickname");
                             if (n != null) {
                                 nickCache.put(uid, n);
-                                int idx = indexForUid(uid);
                                 if (idx != RecyclerView.NO_POSITION) notifyItemChanged(idx, "nickname");
                             }
-                            
+
                             // Check if user is deleted
                             Boolean deleted = doc.getBoolean("deleted");
                             userDeletedCache.put(uid, deleted != null && deleted);
@@ -145,7 +145,6 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
                         } else {
                             // User document doesn't exist, mark as deleted
                             userDeletedCache.put(uid, true);
-                            int idx = indexForUid(uid);
                             if (idx != RecyclerView.NO_POSITION) notifyItemChanged(idx, "presence");
                         }
                     });
