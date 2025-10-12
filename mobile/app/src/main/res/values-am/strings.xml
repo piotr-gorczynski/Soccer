@@ -320,10 +320,7 @@
     <string name="presence_offline">ከመስመር ውጭ</string>
     <string name="error_checking_friend_status">የጓደኛ ሁኔታን በማረጋገጥ ላይ ስህተት</string>
     <string name="friend_added">ጓደኛ በተሳካ ሁኔታ ታክሏል</string>
-    <string name="failed_to_add_friend">ጓደኛን ማከል አልተሳካም</string>
-    <string name="failed_to_send_invite">ግብዣ መላክ አልተሳካም</string>
     <string name="active_invitation_exists">ንቁ ግብዣ አስቀድሞ አለ</string>
     <string name="user_blocked_invites">ተጠቃሚ ግብዣዎችን አግዷል</string>
     <string name="cannot_invite_this_user">ይህን ተጠቃሚ ግብዣ ልላክ አልችልም</string>
-    <string name="user_not_found">ተጠቃሚ አልተገኘም</string>
 </resources>

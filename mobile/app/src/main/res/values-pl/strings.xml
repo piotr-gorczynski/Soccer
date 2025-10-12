@@ -348,12 +348,9 @@
     <string name="presence_offline">Offline</string>
     <string name="error_checking_friend_status">Błąd sprawdzania statusu znajomego</string>
     <string name="friend_added">Znajomy dodany pomyślnie</string>
-    <string name="failed_to_add_friend">Nie udało się dodać znajomego</string>
-    <string name="failed_to_send_invite">Nie udało się wysłać zaproszenia</string>
     <string name="active_invitation_exists">Aktywne zaproszenie już istnieje</string>
     <string name="user_blocked_invites">Użytkownik zablokował zaproszenia</string>
     <string name="cannot_invite_this_user">Nie można zaprosić tego użytkownika</string>
-    <string name="user_not_found">Użytkownik nie znaleziony</string>
     
     <!-- Preference level values -->
     <string-array name="pref_level_values">

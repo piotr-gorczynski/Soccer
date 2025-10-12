@@ -347,12 +347,9 @@
     <string name="presence_offline">آف لائن</string>
     <string name="error_checking_friend_status">دوست کی حیثیت چیک کرنے میں خرابی</string>
     <string name="friend_added">دوست کامیابی سے شامل ہوا</string>
-    <string name="failed_to_add_friend">دوست شامل کرنے میں ناکام</string>
-    <string name="failed_to_send_invite">دعوت بھیجنے میں ناکام</string>
     <string name="active_invitation_exists">فعال دعوت پہلے سے موجود ہے</string>
     <string name="user_blocked_invites">صارف نے دعوتیں بلاک کر دی ہیں</string>
     <string name="cannot_invite_this_user">اس صارف کو دعوت نہیں دی جا سکتی</string>
-    <string name="user_not_found">صارف نہیں ملا</string>
     
     <!-- Preference level values -->
     <string-array name="pref_level_values">

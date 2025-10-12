@@ -301,10 +301,7 @@
     <string name="presence_offline">غير متصل</string>
     <string name="error_checking_friend_status">خطأ في التحقق من حالة الصديق</string>
     <string name="friend_added">تمت إضافة الصديق بنجاح</string>
-    <string name="failed_to_add_friend">فشل في إضافة الصديق</string>
-    <string name="failed_to_send_invite">فشل في إرسال الدعوة</string>
     <string name="active_invitation_exists">الدعوة النشطة موجودة بالفعل</string>
     <string name="user_blocked_invites">المستخدم قد حظر الدعوات</string>
     <string name="cannot_invite_this_user">لا يمكن دعوة هذا المستخدم</string>
-    <string name="user_not_found">المستخدم غير موجود</string>
 </resources>
