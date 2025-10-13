@@ -323,6 +323,12 @@ public class InvitationsActivity extends BaseActivity {
         if (pastAdapter != null && pastInvitesObserver != null) {
             pastAdapter.unregisterAdapterDataObserver(pastInvitesObserver);
         }
+        if (invitesSub != null) {
+            invitesSub.remove();
+        }
+        if (pastInvitesSub != null) {
+            pastInvitesSub.remove();
+        }
     }
 
     private void addFriend(@NonNull String targetUid) {
@@ -395,13 +401,6 @@ public class InvitationsActivity extends BaseActivity {
                     }
                 });
     }
-
-    @Override protected void onDestroy() {
-        super.onDestroy();
-        if (invitesSub != null) invitesSub.remove();
-        if (pastInvitesSub != null) pastInvitesSub.remove();
-    }
-
     @Override
     public boolean onSupportNavigateUp() {
         finish();
