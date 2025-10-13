@@ -343,6 +343,20 @@
     <!-- Past invites -->
     <string name="past_invites">Invitaciones Pasadas</string>
     <string name="no_past_invites">No hay invitaciones pasadas</string>
+    <string name="invite_and_add_to_friend">Invitar y agregar como amigo</string>
+    <string name="invite_received_format">Recibido %1$s</string>
+    <string name="invite_status_accepted">Estado: Aceptado</string>
+    <string name="invite_status_cancelled">Estado: Cancelado</string>
+    <string name="invite_status_expired">Estado: Expirado</string>
+    <string name="invite_from_loading">Cargando…</string>
+    <string name="invite_from_format">Invitación de: %1$s</string>
+    <string name="invite_received_and_status">Recibido: %1$s | %2$s</string>
+    <string name="presence_online">En línea</string>
+    <string name="presence_last_seen">Visto por última vez %1$s</string>
+    <string name="presence_offline">Desconectado</string>
+    <string name="presence_user_online">%1$s estado: En línea</string>
+    <string name="presence_user_last_seen">%1$s estado: Visto por última vez %2$s</string>
+    <string name="presence_user_offline">%1$s estado: Desconectado</string>
     <string name="invite_and_add_to_friend">Invitar y Añadir como Amigo</string>
     <string name="invite_received_format">Recibido %1$s</string>
     <string name="invite_status_accepted">Estado: Aceptado</string>
