@@ -95,7 +95,7 @@
     <string name="failed_to_load_nickname">Nie udało się wczytać pseudonimu.</string>
     <string name="search">Szukaj</string>
     <string name="load_more">Załaduj więcej</string>
-    <string name="add_friend_label">Dodaj</string>
+    <string name="add_friend_label">Dodaj do znajomych</string>
     <string name="invite_blocked">%1$s zablokował zaproszenia.</string>
     <string name="invites_blocked_notification">Inni gracze nie mogą Cię zapraszać przez funkcję "Zaproś znajomego". Możesz to zmienić w Ustawieniach.</string>
     

@@ -95,7 +95,7 @@
     <string name="failed_to_load_nickname">فشل تحميل الاسم المستعار.</string>
     <string name="search">بحث</string>
     <string name="load_more">تحميل المزيد</string>
-    <string name="add_friend_label">إضافة</string>
+    <string name="add_friend_label">أضف إلى الأصدقاء</string>
     <string name="invite_blocked">%1$s قام بحظر الدعوات.</string>
     <string name="invites_blocked_notification">لا يمكن للاعبين الآخرين دعوتك عبر وظيفة "ادعُ صديقاً". يمكنك تغيير ذلك في الإعدادات.</string>
     <string name="pending_game_invitations">دعوات اللعب المعلقة</string>

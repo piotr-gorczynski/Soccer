@@ -41,6 +41,7 @@ public class InvitationsActivity extends BaseActivity {
     TextView pastInvitesLabel;
     TextView emptyPastInvites;
     PastInviteAdapter pastAdapter;
+    RecyclerView.AdapterDataObserver pastInvitesObserver;
 
     FirebaseFirestore db;
     FirebaseAuth auth;
@@ -75,6 +76,23 @@ public class InvitationsActivity extends BaseActivity {
         pastInvitesList.setLayoutManager(new LinearLayoutManager(this));
         pastAdapter = new PastInviteAdapter(this, this::sendInviteViaCF, this::addFriend);
         pastInvitesList.setAdapter(pastAdapter);
+        pastInvitesObserver = new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                updatePastInvitesEmptyState();
+            }
+
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                updatePastInvitesEmptyState();
+            }
+
+            @Override
+            public void onItemRangeRemoved(int positionStart, int itemCount) {
+                updatePastInvitesEmptyState();
+            }
+        };
+        pastAdapter.registerAdapterDataObserver(pastInvitesObserver);
 
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
@@ -282,14 +300,29 @@ public class InvitationsActivity extends BaseActivity {
                         pastInvitesList.add(doc);
                     }
 
-                    // Data is already sorted by createdAt in descending order (latest to oldest)
-                    if (pastInvitesList.isEmpty()) {
-                        emptyPastInvites.setVisibility(View.VISIBLE);
-                    } else {
-                        emptyPastInvites.setVisibility(View.GONE);
-                    }
                     pastAdapter.setData(pastInvitesList);
+                    updatePastInvitesEmptyState();
                 });
+    }
+
+    private void updatePastInvitesEmptyState() {
+        if (emptyPastInvites == null || pastAdapter == null) {
+            return;
+        }
+
+        if (pastAdapter.getItemCount() == 0) {
+            emptyPastInvites.setVisibility(View.VISIBLE);
+        } else {
+            emptyPastInvites.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (pastAdapter != null && pastInvitesObserver != null) {
+            pastAdapter.unregisterAdapterDataObserver(pastInvitesObserver);
+        }
     }
 
     private void addFriend(@NonNull String targetUid) {

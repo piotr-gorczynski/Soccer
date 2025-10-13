@@ -95,7 +95,7 @@
     <string name="failed_to_load_nickname">उपनाम लोड करने में विफल।</string>
     <string name="search">खोजें</string>
     <string name="load_more">और लोड करें</string>
-    <string name="add_friend_label">जोड़ें</string>
+    <string name="add_friend_label">दोस्तों में जोड़ें</string>
     <string name="invite_blocked">%1$s ने आमंत्रण ब्लॉक कर दिए हैं।</string>
     <string name="invites_blocked_notification">अन्य खिलाड़ी आपको `मित्र को आमंत्रित करें` फ़ंक्शन के माध्यम से आमंत्रित नहीं कर सकते। आप इसे सेटिंग्स में बदल सकते हैं।</string>
     
