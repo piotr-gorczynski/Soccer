@@ -21,8 +21,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH> {
 
@@ -58,6 +60,7 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
     private final Map<String,Boolean> userDeletedCache = new HashMap<>();
     private static final class RtdbSub { final DatabaseReference ref; final ValueEventListener l; RtdbSub(DatabaseReference r, ValueEventListener l){this.ref=r;this.l=l;}}
     private final Map<String,RtdbSub> presSubs = new HashMap<>();
+    private Set<String> friendUids = new HashSet<>();
 
     PastInviteAdapter(Context context, OnInviteClick inviteListener, OnAddFriendClick addFriendListener) {
         this.context = context;
@@ -122,6 +125,8 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
             h.presence.setText("");
             h.sendInviteBtn.setEnabled(false);
             h.addFriendBtn.setEnabled(false);
+            h.addFriendBtn.setAlpha(0.3f);
+            h.addFriendBtn.setText(R.string.add_friend_label);
             return;
         }
         
@@ -251,14 +256,21 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
         // Enable/disable buttons based on user status
         Boolean isDeleted = userDeletedCache.get(uid);
         boolean userDeleted = isDeleted != null && isDeleted;
-        
+
         // Buttons are disabled if user is deleted OR if user is offline (no heartbeat data)
         long lastHeartbeat = hbCache.getOrDefault(uid, 0L);
         boolean isTrulyOffline = "offline".equalsIgnoreCase(state) && lastHeartbeat == 0L;
-        
+
         boolean enabled = !userDeleted && !isTrulyOffline;
+        boolean alreadyFriend = friendUids.contains(uid);
+
         h.sendInviteBtn.setEnabled(enabled);
-        h.addFriendBtn.setEnabled(enabled);
+        boolean canAddFriend = enabled && !alreadyFriend;
+        h.addFriendBtn.setEnabled(canAddFriend);
+        h.addFriendBtn.setAlpha(canAddFriend ? 1f : 0.3f);
+        h.addFriendBtn.setText(alreadyFriend
+                ? context.getString(R.string.already_friends)
+                : context.getString(R.string.add_friend_label));
     }
 
     @Override
@@ -277,6 +289,23 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
         docs.clear();
         docs.addAll(invites);
         notifyDataSetChanged();
+    }
+
+    void setFriendUids(@NonNull Set<String> friendUids) {
+        this.friendUids = new HashSet<>(friendUids);
+        notifyDataSetChanged();
+    }
+
+    void addFriendUid(@NonNull String friendUid) {
+        if (!this.friendUids.add(friendUid)) {
+            return;
+        }
+        for (int i = 0; i < docs.size(); i++) {
+            String fromUid = docs.get(i).getString("from");
+            if (friendUid.equals(fromUid)) {
+                notifyItemChanged(i);
+            }
+        }
     }
 
     @Override

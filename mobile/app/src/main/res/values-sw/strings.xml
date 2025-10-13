@@ -115,6 +115,7 @@
     <string name="search">Tafuta</string>
     <string name="load_more">Pakia zaidi</string>
     <string name="add_friend_label">Ongeza kwa marafiki</string>
+    <string name="already_friends">Tayari marafiki</string>
     <string name="invite_blocked">%1$s amezuia mialiko.</string>
     <string name="invites_blocked_notification">Wachezaji wengine hawawezi kukualika kupitia kipengele cha `Alika Rafiki`. Unaweza kubadilisha hili katika Mipangilio.</string>
     <string name="pending_game_invitations">Mialiko ya Mchezo Inayosubiri</string>

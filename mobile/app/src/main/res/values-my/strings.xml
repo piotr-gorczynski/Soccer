@@ -115,6 +115,7 @@
     <string name="search">ရှာဖွေပါ</string>
     <string name="load_more">နောက်ထပ်တင်ပါ</string>
     <string name="add_friend_label">မိတ်ဆွေများထဲထည့်ပါ</string>
+    <string name="already_friends">မိတ်ဆွေဖြစ်ပြီးသားပါပြီ</string>
     <string name="invite_blocked">%1$s သည် ဖိတ်ကြားချက်များကို ပိတ်ဆို့ထားသည်။</string>
     <string name="invites_blocked_notification">အခြားကစားသူများသည် \`သူငယ်ချင်းကိုဖိတ်ကြားပါ\` ဖန်ရှင်မှတစ်ဆင့် သင့်ကို ဖိတ်ခေါ်မနိုင်ပါ။ သင်သည် ဆက်တင်များတွင် ပြင်ဆင်နိုင်ပါသည်။</string>
     <string name="pending_game_invitations">ဆိုင်းငံ့ထားသော ဂိမ်းဖိတ်ကြားချက်များ</string>
