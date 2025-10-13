@@ -39,8 +39,8 @@ android {
         applicationId = "piotr_gorczynski.soccer2"
         minSdk = 24
         targetSdk = 36
-        versionCode = 24
-        versionName = '15.8'
+        versionCode = 25
+        versionName = '15.9'
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         
@@ -144,13 +144,13 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
 
     //GPT fixes
-    implementation platform('com.google.firebase:firebase-bom:34.3.0')
+    implementation platform('com.google.firebase:firebase-bom:34.4.0')
     implementation 'com.google.firebase:firebase-auth:24.0.1'
     //GPT fixes
     implementation 'androidx.appcompat:appcompat:1.7.1'
     implementation 'androidx.core:core:1.17.0'
     implementation 'com.google.android.material:material:1.13.0'
-    implementation 'com.google.firebase:firebase-firestore:26.0.1' // or latest version
+    implementation 'com.google.firebase:firebase-firestore:26.0.2' // or latest version
     //GPT fixes
     implementation 'androidx.preference:preference:1.2.1'
     implementation 'androidx.work:work-runtime:2.10.5'
@@ -167,7 +167,7 @@ dependencies {
     // Firebase Analytics for user research and funnel tracking
     implementation 'com.google.firebase:firebase-analytics:23.0.0'
     implementation 'com.google.firebase:firebase-config:23.0.1' // Remote Config for A/B testing
-    implementation 'com.google.firebase:firebase-crashlytics:20.0.2' // Enhanced error tracking
+    implementation 'com.google.firebase:firebase-crashlytics:20.0.3' // Enhanced error tracking
 
     implementation "com.google.guava:guava:33.5.0-android"
 
@@ -175,12 +175,12 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-common-java8:2.9.4"
     
     // HTTP client for backend service checks
-    implementation 'com.squareup.okhttp3:okhttp:5.1.0'
+    implementation 'com.squareup.okhttp3:okhttp:5.2.1'
 
     // User Messaging Platform SDK
     implementation 'com.google.android.ump:user-messaging-platform:3.2.0'
 
-    implementation 'com.google.android.gms:play-services-ads:24.6.0' // or latest
+    implementation 'com.google.android.gms:play-services-ads:24.7.0' // or latest
     
     // Image loading for Facebook profile photos
     implementation 'com.github.bumptech.glide:glide:5.0.5'
