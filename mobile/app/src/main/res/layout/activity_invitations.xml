@@ -43,11 +43,11 @@
                 android:visibility="gone"
                 android:layout_marginBottom="16dp"/>
 
-            <ListView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/invitesList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="true" />
+                android:nestedScrollingEnabled="false" />
 
             <TextView
                 android:id="@+id/pastInvitesLabel"
