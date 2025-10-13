@@ -303,10 +303,5 @@
     <string name="presence_user_online">%1$s وضعیت: آنلاین</string>
     <string name="presence_user_last_seen">%1$s وضعیت: آخرین بار دیده شد %2$s</string>
     <string name="presence_user_offline">%1$s وضعیت: آفلاین</string>
-    <string name="invite_and_add_to_friend">دعوت و افزودن به دوستان</string>
-    <string name="invite_received_format">دریافت شده %1$s</string>
-    <string name="invite_status_accepted">وضعیت: پذیرفته شده</string>
-    <string name="invite_status_cancelled">وضعیت: لغو شده</string>
-    <string name="invite_status_expired">وضعیت: منقضی شده</string>
 
 </resources>
