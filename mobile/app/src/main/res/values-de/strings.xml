@@ -96,6 +96,7 @@
     <string name="search">Suchen</string>
     <string name="load_more">Mehr laden</string>
     <string name="add_friend_label">Zu Freunden hinzufügen</string>
+    <string name="already_friends">Bereits befreundet</string>
     <string name="invite_blocked">%1$s hat Einladungen blockiert.</string>
     <string name="invites_blocked_notification">Andere Spieler können Sie nicht über die `Freund einladen`-Funktion einladen. Sie können dies in den Einstellungen ändern.</string>
     
