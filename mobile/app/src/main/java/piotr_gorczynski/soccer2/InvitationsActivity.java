@@ -4,13 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -35,11 +33,10 @@ import android.content.SharedPreferences;
 
 public class InvitationsActivity extends BaseActivity {
 
-    ListView invitesList;
+    RecyclerView invitesList;
     TextView emptyText;
-    ArrayAdapter<String> adapter;
-    final ArrayList<String> inviteDescriptions = new ArrayList<>();
-    final ArrayList<String> inviteIds = new ArrayList<>();
+    PendingInviteAdapter pendingAdapter;
+    RecyclerView.AdapterDataObserver pendingInvitesObserver;
 
     RecyclerView pastInvitesList;
     TextView pastInvitesLabel;
@@ -72,8 +69,26 @@ public class InvitationsActivity extends BaseActivity {
 
         invitesList = findViewById(R.id.invitesList);
         emptyText = findViewById(R.id.emptyInvites);
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, inviteDescriptions);
-        invitesList.setAdapter(adapter);
+        invitesList.setLayoutManager(new LinearLayoutManager(this));
+        pendingAdapter = new PendingInviteAdapter(this, this::acceptInvite);
+        invitesList.setAdapter(pendingAdapter);
+        pendingInvitesObserver = new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                updatePendingInvitesEmptyState();
+            }
+
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                updatePendingInvitesEmptyState();
+            }
+
+            @Override
+            public void onItemRangeRemoved(int positionStart, int itemCount) {
+                updatePendingInvitesEmptyState();
+            }
+        };
+        pendingAdapter.registerAdapterDataObserver(pendingInvitesObserver);
 
         pastInvitesList = findViewById(R.id.pastInvitesList);
         pastInvitesLabel = findViewById(R.id.pastInvitesLabel);
@@ -106,17 +121,6 @@ public class InvitationsActivity extends BaseActivity {
         listenForInvites();
         listenForPastInvites();
         loadFriends();
-
-        invitesList.setOnItemClickListener((parent, view, position, id) -> {
-            String inviteId = inviteIds.get(position);
-
-            new AlertDialog.Builder(this)
-                    .setTitle(R.string.accept_invitation_title)
-                    .setMessage(R.string.accept_invitation_message)
-                    .setPositiveButton(R.string.accept, (dialog, which) -> acceptInvite(inviteId))
-                    .setNegativeButton(R.string.cancel, null)
-                    .show();
-        });
 
     }
 
@@ -208,11 +212,9 @@ public class InvitationsActivity extends BaseActivity {
                                 Toast.makeText(this, userMsg, Toast.LENGTH_LONG).show();
 
                                 /* ⬇️  remove the stale item locally so the list refreshes */
-                                int idx = inviteIds.indexOf(invitationId);
-                                if (idx != -1) {
-                                    inviteIds.remove(idx);
-                                    inviteDescriptions.remove(idx);
-                                    refreshPendingInvitesView();
+                                if (pendingAdapter != null) {
+                                    pendingAdapter.removeInviteById(invitationId);
+                                    updatePendingInvitesEmptyState();
                                 }
                             });
 
@@ -237,17 +239,17 @@ public class InvitationsActivity extends BaseActivity {
                 .orderBy("expireAt")                // ← added
                 .addSnapshotListener((querySnapshot, e) -> {
                     if (e != null) {
-                        inviteDescriptions.clear();
-                        inviteIds.clear();
-                        refreshPendingInvitesView();
+                        if (pendingAdapter != null) {
+                            pendingAdapter.clear();
+                        }
                         emptyText.setVisibility(View.VISIBLE);
+                        updatePendingInvitesEmptyState();
                         Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                                 + ": Listen failed", e);
                         return;
                     }
 
-                    inviteDescriptions.clear();
-                    inviteIds.clear();
+                    List<DocumentSnapshot> pendingInvites = new ArrayList<>();
 
                     long nowMillis = System.currentTimeMillis();      // 🕔 current client time
                     for (DocumentSnapshot doc : Objects.requireNonNull(querySnapshot)) {
@@ -258,71 +260,36 @@ public class InvitationsActivity extends BaseActivity {
                         if (exp != null && exp.toDate().getTime() <= nowMillis) {
                             continue;       // skip – TTL passed
                         }
-                        String fromUid = doc.getString("from");
-
-                        // optimistic placeholder
-                        inviteDescriptions.add("Invite from: ...");
-                        inviteIds.add(doc.getId());
-
-                        // async nickname lookup
-                        db.collection("users").document(Objects.requireNonNull(fromUid)).get()
-                                .addOnSuccessListener(userSnap -> {
-                                    String nick = userSnap.getString("nickname");
-                                    int idx = inviteIds.indexOf(doc.getId());
-                                    if (idx != -1 && nick != null) {
-                                        inviteDescriptions.set(idx, "Invite from: " + nick);
-                                        adapter.notifyDataSetChanged();
-                                    }
-                                });
+                        pendingInvites.add(doc);
                     }
 
-                    refreshPendingInvitesView();
+                    if (pendingAdapter != null) {
+                        pendingInvites.sort((left, right) -> {
+                            Timestamp leftCreatedAt = left.getTimestamp("createdAt");
+                            Timestamp rightCreatedAt = right.getTimestamp("createdAt");
+
+                            long leftMillis = leftCreatedAt != null ? leftCreatedAt.toDate().getTime() : Long.MAX_VALUE;
+                            long rightMillis = rightCreatedAt != null ? rightCreatedAt.toDate().getTime() : Long.MAX_VALUE;
+
+                            return Long.compare(leftMillis, rightMillis);
+                        });
+                        pendingAdapter.setData(pendingInvites);
+                    }
+
+                    updatePendingInvitesEmptyState();
                 });
     }
 
-    private void refreshPendingInvitesView() {
-        if (adapter == null || invitesList == null) {
+    private void updatePendingInvitesEmptyState() {
+        if (emptyText == null || pendingAdapter == null) {
             return;
         }
 
-        adapter.notifyDataSetChanged();
-
-        invitesList.post(this::updatePendingInvitesHeight);
-
-        if (inviteIds.isEmpty()) {
+        if (pendingAdapter.getItemCount() == 0) {
             emptyText.setVisibility(View.VISIBLE);
         } else {
             emptyText.setVisibility(View.GONE);
         }
-    }
-
-    private void updatePendingInvitesHeight() {
-        if (invitesList == null) {
-            return;
-        }
-
-        ListAdapter listAdapter = invitesList.getAdapter();
-        if (listAdapter == null) {
-            return;
-        }
-
-        int totalHeight = 0;
-        int listWidth = invitesList.getWidth();
-        if (listWidth <= 0) {
-            listWidth = invitesList.getResources().getDisplayMetrics().widthPixels;
-        }
-        int widthMeasureSpec = View.MeasureSpec.makeMeasureSpec(listWidth, View.MeasureSpec.AT_MOST);
-
-        for (int i = 0; i < listAdapter.getCount(); i++) {
-            View listItem = listAdapter.getView(i, null, invitesList);
-            listItem.measure(widthMeasureSpec, View.MeasureSpec.UNSPECIFIED);
-            totalHeight += listItem.getMeasuredHeight();
-        }
-
-        ViewGroup.LayoutParams params = invitesList.getLayoutParams();
-        params.height = totalHeight + invitesList.getDividerHeight() * Math.max(0, listAdapter.getCount() - 1);
-        invitesList.setLayoutParams(params);
-        invitesList.requestLayout();
     }
 
     private void listenForPastInvites() {
@@ -399,6 +366,12 @@ public class InvitationsActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (pendingAdapter != null && pendingInvitesObserver != null) {
+            pendingAdapter.unregisterAdapterDataObserver(pendingInvitesObserver);
+        }
+        if (pendingAdapter != null) {
+            pendingAdapter.removePresenceSubscriptions();
+        }
         if (pastAdapter != null && pastInvitesObserver != null) {
             pastAdapter.unregisterAdapterDataObserver(pastInvitesObserver);
         }
