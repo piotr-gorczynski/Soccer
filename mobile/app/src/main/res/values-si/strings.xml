@@ -114,7 +114,7 @@
     <string name="failed_to_load_nickname">අතුරු නාමය පූරණය කිරීමට අසමත් විය.</string>
     <string name="search">සොයන්න</string>
     <string name="load_more">තවත් පූරණය කරන්න</string>
-    <string name="add_friend_label">එක් කරන්න</string>
+    <string name="add_friend_label">මිතුරන් වෙත එක් කරන්න</string>
     <string name="invite_blocked">%1$s ආරාධනා අවහිර කර ඇත.</string>
     <string name="invites_blocked_notification">වෙනත් ක්‍රීඩකයින්ට \`මිතුරෙකු ආරාධනා කරන්න\` ක්‍රියාවලිය හරහා ඔබට ආරාධනා කිරීමට නොහැක. ඔබට එය සැකසුම් තුළ වෙනස් කළ හැක.</string>
     <string name="pending_game_invitations">අපේක්ෂිත ක්‍රීඩා ආරාධනා</string>

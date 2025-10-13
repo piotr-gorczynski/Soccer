@@ -114,7 +114,7 @@
     <string name="failed_to_load_nickname">Tsy voaray ny anaram-bositra.</string>
     <string name="search">Karohy</string>
     <string name="load_more">Ampidiro bebe kokoa</string>
-    <string name="add_friend_label">Ampio</string>
+    <string name="add_friend_label">Ampio amin'ny namana</string>
     <string name="invite_blocked">Nanakana fanasana i %1$s.</string>
     <string name="invites_blocked_notification">Ny mpilalao hafa tsy afaka manasa anao amin`ny fiasa `Asao namana`. Azonao ovaina ao amin`ny Fandrindrana izany.</string>
     <string name="pending_game_invitations">Fanasana lalao miandry</string>

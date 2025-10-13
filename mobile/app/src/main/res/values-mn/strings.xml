@@ -114,7 +114,7 @@
     <string name="failed_to_load_nickname">Хоч нэр ачаалж чадсангүй.</string>
     <string name="search">Хайх</string>
     <string name="load_more">Илүүг ачааллах</string>
-    <string name="add_friend_label">Нэмэх</string>
+    <string name="add_friend_label">Найзууд руу нэмэх</string>
     <string name="invite_blocked">%1$s урилга авахыг хаасан.</string>
     <string name="invites_blocked_notification">Бусад тоглогчид “Найзаа урих” функцаар таныг урих боломжгүй. Та үүнийг тохиргоонд өөрчилж болно.</string>
     <string name="pending_game_invitations">Хүлээгдэж буй тоглоомын урилгууд</string>
