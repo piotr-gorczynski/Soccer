@@ -357,10 +357,5 @@
     <string name="presence_user_online">%1$s estado: En línea</string>
     <string name="presence_user_last_seen">%1$s estado: Visto por última vez %2$s</string>
     <string name="presence_user_offline">%1$s estado: Desconectado</string>
-    <string name="invite_and_add_to_friend">Invitar y Añadir como Amigo</string>
-    <string name="invite_received_format">Recibido %1$s</string>
-    <string name="invite_status_accepted">Estado: Aceptado</string>
-    <string name="invite_status_cancelled">Estado: Cancelado</string>
-    <string name="invite_status_expired">Estado: Expirado</string>
 
 </resources>
