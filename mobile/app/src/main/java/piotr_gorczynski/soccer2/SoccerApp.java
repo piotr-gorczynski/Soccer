@@ -33,9 +33,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -58,10 +61,13 @@ import androidx.lifecycle.LifecycleOwner;
 public class SoccerApp extends Application implements DefaultLifecycleObserver {
 
     private DatabaseReference userStatusDbRef;
+    private DatabaseReference connectedRef;
+    private ValueEventListener connectedListener;
     private BackendServiceChecker serviceChecker;
     private boolean isBackendAvailable = true; // assume available initially
     private AnalyticsManager analyticsManager;
     private RemoteConfigHelper remoteConfigHelper;
+    private boolean appInForeground;
 
     /* Creates {state:"online", last_heartbeat:TS} */
     private static Map<String,Object> buildOnline() {
@@ -259,6 +265,8 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         userStatusDbRef.onDisconnect().updateChildren(buildAway());
         setUserOnline();
         cancelHeartbeat();
+
+        ensureConnectionListener();
     }
 
     /* ---------------- tidy up when a user signs out --------------------- */
@@ -267,6 +275,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         if (userStatusDbRef == null) return;   // nothing to do
 
         cancelHeartbeat();                     // stop WM
+        removeConnectionListener();
 
         // Mark “logged-out” exactly once
         userStatusDbRef.updateChildren(buildLoggedOut());
@@ -280,10 +289,13 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                 + ": APP RETURNS TO FOREGROUND");
 
+        appInForeground = true;
+
         // Always apply the saved language when returning to the foreground
         checkLanguagePreference();
 
         if (userStatusDbRef == null) return;             // ← ADD
+        ensureConnectionListener();
         FirebaseDatabase.getInstance().goOnline();
         cancelHeartbeat();
 
@@ -295,6 +307,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     @Override public void onStop(@NonNull LifecycleOwner owner) {
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                 + ": APP GOES TO BACKGROUND");
+        appInForeground = false;
         if (userStatusDbRef == null) return;             // ← ADD
 
         Map<String,Object> offline = buildAway();      // fresh TS each time
@@ -389,6 +402,46 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                 .addOnFailureListener(e ->
                         Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                             + ": ❌ setUserOnline failed", e));
+    }
+
+    private void ensureConnectionListener() {
+        if (connectedListener != null) return;
+
+        connectedRef = FirebaseDatabase.getInstance().getReference(".info/connected");
+        connectedListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Boolean connected = snapshot.getValue(Boolean.class);
+                if (!Boolean.TRUE.equals(connected)) return;
+
+                if (userStatusDbRef == null) return;
+
+                userStatusDbRef.onDisconnect().updateChildren(buildAway());
+
+                if (!appInForeground) return;
+
+                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                        + ": 🔁 RTDB reconnected; refreshing presence");
+                setUserOnline();
+                cancelHeartbeat();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                        + ": ⚠️ .info/connected listener cancelled", error.toException());
+            }
+        };
+
+        connectedRef.addValueEventListener(connectedListener);
+    }
+
+    private void removeConnectionListener() {
+        if (connectedRef == null || connectedListener == null) return;
+
+        connectedRef.removeEventListener(connectedListener);
+        connectedListener = null;
+        connectedRef = null;
     }
 
     public Task<Void> forceUserOffline(@NonNull String uid) {
