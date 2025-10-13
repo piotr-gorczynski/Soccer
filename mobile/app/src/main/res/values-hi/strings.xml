@@ -356,10 +356,5 @@
     <string name="presence_user_online">%1$s स्थिति: ऑनलाइन</string>
     <string name="presence_user_last_seen">%1$s स्थिति: अंतिम बार देखा गया %2$s</string>
     <string name="presence_user_offline">%1$s स्थिति: ऑफ़लाइन</string>
-    <string name="invite_and_add_to_friend">आमंत्रित करें और मित्र जोड़ें</string>
-    <string name="invite_received_format">प्राप्त %1$s</string>
-    <string name="invite_status_accepted">स्थिति: स्वीकृत</string>
-    <string name="invite_status_cancelled">स्थिति: रद्द</string>
-    <string name="invite_status_expired">स्थिति: समाप्त</string>
 
 </resources>

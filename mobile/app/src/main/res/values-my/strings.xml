@@ -322,10 +322,5 @@
     <string name="presence_user_online">%1$s အခြေအနေ: အွန်လိုင်း</string>
     <string name="presence_user_last_seen">%1$s အခြေအနေ: နောက်ဆုံးမြင်တွေ့ %2$s</string>
     <string name="presence_user_offline">%1$s အခြေအနေ: အော့ဖ်လိုင်း</string>
-    <string name="invite_and_add_to_friend">ဖိတ်ကြားပြီး သူငယ်ချင်းအဖြစ်ထည့်ရန်</string>
-    <string name="invite_received_format">လက်ခံရရှိသည် %1$s</string>
-    <string name="invite_status_accepted">အခြေအနေ: လက်ခံပြီး</string>
-    <string name="invite_status_cancelled">အခြေအနေ: ပယ်ဖျက်ပြီး</string>
-    <string name="invite_status_expired">အခြေအနေ: သက်တမ်းကုန်ပြီး</string>
 
 </resources>
