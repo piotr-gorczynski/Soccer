@@ -30,9 +30,8 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
     public interface OnAddFriendClick { void onAddFriend(String uid); }
 
     static class VH extends RecyclerView.ViewHolder {
-        final TextView inviteReceivedTime;
+        final TextView inviteReceivedAndStatus;
         final TextView nickname;
-        final TextView inviteStatus;
         final TextView presence;
         final Button sendInviteBtn;
         final Button addFriendBtn;
@@ -41,9 +40,8 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
         
         VH(@NonNull View v) {
             super(v);
-            inviteReceivedTime = v.findViewById(R.id.inviteReceivedTime);
+            inviteReceivedAndStatus = v.findViewById(R.id.inviteReceivedAndStatus);
             nickname = v.findViewById(R.id.nickname);
-            inviteStatus = v.findViewById(R.id.inviteStatus);
             presence = v.findViewById(R.id.presence);
             sendInviteBtn = v.findViewById(R.id.sendInviteBtn);
             addFriendBtn = v.findViewById(R.id.addFriendBtn);
@@ -119,8 +117,7 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
         h.uid = uid;
 
         if (uid == null) {
-            h.inviteReceivedTime.setText("");
-            h.inviteStatus.setText("");
+            h.inviteReceivedAndStatus.setText("");
             h.nickname.setText(context.getString(R.string.invite_from_loading));
             h.presence.setText("");
             h.sendInviteBtn.setEnabled(false);
@@ -128,20 +125,18 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
             return;
         }
         
-        // Display when the invite was received (createdAt timestamp)
+        // Display when the invite was received (createdAt timestamp) and status combined
         com.google.firebase.Timestamp createdAt = d.getTimestamp("createdAt");
+        String relativeTime = "";
         if (createdAt != null) {
             long createdAtMillis = createdAt.toDate().getTime();
-            String relativeTime = MatchAdapter.englishRelative(createdAtMillis);
-            h.inviteReceivedTime.setText(context.getString(R.string.invite_received_format, relativeTime));
-        } else {
-            h.inviteReceivedTime.setText("");
+            relativeTime = MatchAdapter.englishRelative(createdAtMillis);
         }
         
-        // Display invite status
+        // Get invite status
         String status = d.getString("status");
+        String statusText = "";
         if (status != null) {
-            String statusText = "";
             switch (status) {
                 case "accepted":
                     statusText = context.getString(R.string.invite_status_accepted);
@@ -153,7 +148,17 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
                     statusText = context.getString(R.string.invite_status_expired);
                     break;
             }
-            h.inviteStatus.setText(statusText);
+        }
+        
+        // Combine received time and status into one line
+        if (!relativeTime.isEmpty() && !statusText.isEmpty()) {
+            h.inviteReceivedAndStatus.setText(context.getString(R.string.invite_received_and_status, relativeTime, statusText));
+        } else if (!relativeTime.isEmpty()) {
+            h.inviteReceivedAndStatus.setText(context.getString(R.string.invite_received_format, relativeTime));
+        } else if (!statusText.isEmpty()) {
+            h.inviteReceivedAndStatus.setText(statusText);
+        } else {
+            h.inviteReceivedAndStatus.setText("");
         }
 
         // Load nickname
@@ -220,18 +225,23 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
 
     private void bindPresence(@NonNull VH h, @NonNull String uid, @NonNull String state) {
         String label;
+        String username = nickCache.get(uid);
+        if (username == null) {
+            username = "User"; // Fallback if username not loaded yet
+        }
+        
         int colour = switch (state) {
             case "online" -> {
-                label = context.getString(R.string.presence_online);
+                label = context.getString(R.string.presence_user_online, username);
                 yield ContextCompat.getColor(h.itemView.getContext(), R.color.colorGreenDark);
             }
             case "active" -> {
                 long last = hbCache.getOrDefault(uid,0L);
-                label = context.getString(R.string.presence_last_seen, MatchAdapter.englishRelative(last));
+                label = context.getString(R.string.presence_user_last_seen, username, MatchAdapter.englishRelative(last));
                 yield ContextCompat.getColor(h.itemView.getContext(), R.color.colorGreenDark);
             }
             default -> {
-                label = context.getString(R.string.presence_offline);
+                label = context.getString(R.string.presence_user_offline, username);
                 yield ContextCompat.getColor(h.itemView.getContext(), R.color.colorGrey);
             }
         };

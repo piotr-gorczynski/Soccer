@@ -308,6 +308,20 @@
     <!-- Past invites -->
     <string name="past_invites">පසුගිය ආරාධනා</string>
     <string name="no_past_invites">පසුගිය ආරාධනා නැත</string>
+    <string name="invite_and_add_to_friend">ආරාධනය කර මිතුරෙකු ලෙස එකතු කරන්න</string>
+    <string name="invite_received_format">ලැබුණි %1$s</string>
+    <string name="invite_status_accepted">තත්ත්වය: පිළිගත්තා</string>
+    <string name="invite_status_cancelled">තත්ත්වය: අවලංගු කළා</string>
+    <string name="invite_status_expired">තත්ත්වය: කල් ඉකුත් වී ඇත</string>
+    <string name="invite_from_loading">පූරණය වෙමින්…</string>
+    <string name="invite_from_format">ආරාධනාව: %1$s ගෙන්</string>
+    <string name="invite_received_and_status">ලැබුණි: %1$s | %2$s</string>
+    <string name="presence_online">සබැඳිව</string>
+    <string name="presence_last_seen">අවසන් වරට දුටු %1$s</string>
+    <string name="presence_offline">අසම්බන්ධිත</string>
+    <string name="presence_user_online">%1$s තත්ත්වය: සබැඳිව</string>
+    <string name="presence_user_last_seen">%1$s තත්ත්වය: අවසන් වරට දුටු %2$s</string>
+    <string name="presence_user_offline">%1$s තත්ත්වය: අසම්බන්ධිත</string>
     <string name="invite_and_add_to_friend">ආරාධනා කර මිතුරකු ලෙස එක් කරන්න</string>
     <string name="invite_received_format">ලැබුණි %1$s</string>
     <string name="invite_status_accepted">තත්ත්වය: පිළිගත්</string>
