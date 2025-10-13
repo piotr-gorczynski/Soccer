@@ -1401,26 +1401,39 @@ public class MenuActivity extends BaseActivity {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         long nowMs = System.currentTimeMillis();
 
-        // Query for pending invitations that were created since last active time
+        // Query for pending invitations and filter client-side to avoid requiring composite Firestore indexes
         db.collection("invitations")
                 .whereEqualTo("to", uid)
                 .whereEqualTo("status", "pending")
-                .whereGreaterThan("createdAt", new com.google.firebase.Timestamp(lastActiveTimestamp / 1000, 0))
-                .orderBy("createdAt")
-                .limit(1)
                 .get()
                 .addOnSuccessListener(snap -> {
                     if (snap.isEmpty()) {
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".checkForMissedInvitations: No new invites");
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".checkForMissedInvitations: No pending invites");
                         return;
                     }
 
-                    DocumentSnapshot doc = snap.getDocuments().get(0);
-                    
+                    DocumentSnapshot recentInvite = null;
+                    for (DocumentSnapshot doc : snap.getDocuments()) {
+                        com.google.firebase.Timestamp createdAtTs = doc.getTimestamp("createdAt");
+                        if (createdAtTs == null) {
+                            continue;
+                        }
+
+                        long createdAtMs = createdAtTs.toDate().getTime();
+                        if (createdAtMs > lastActiveTimestamp) {
+                            recentInvite = doc;
+                            break;
+                        }
+                    }
+
+                    if (recentInvite == null) {
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".checkForMissedInvitations: No new invites after filtering");
+                        return;
+                    }
+
                     // Check if invite is still valid (not expired)
-                    if (doc.getTimestamp("expireAt") != null &&
-                            Objects.requireNonNull(doc.getTimestamp("expireAt")).toDate().getTime() > nowMs) {
-                        
+                    com.google.firebase.Timestamp expireAtTs = recentInvite.getTimestamp("expireAt");
+                    if (expireAtTs != null && expireAtTs.toDate().getTime() > nowMs) {
                         Log.d("TAG_Soccer", getClass().getSimpleName() + ".checkForMissedInvitations: Found missed invite, showing dialog");
                         showMissedInviteDialog();
                     } else {
