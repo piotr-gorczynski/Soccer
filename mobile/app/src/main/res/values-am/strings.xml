@@ -316,9 +316,13 @@
     <string name="invite_status_expired">ሁኔታ: ጊዜው አልፏል</string>
     <string name="invite_from_loading">በመጫን ላይ…</string>
     <string name="invite_from_format">ግብዣ ከ: %1$s</string>
+    <string name="invite_received_and_status">ደርሷል: %1$s | %2$s</string>
     <string name="presence_online">መስመር ላይ</string>
     <string name="presence_last_seen">መጨረሻ የታየው %1$s</string>
     <string name="presence_offline">ከመስመር ውጭ</string>
+    <string name="presence_user_online">%1$s ሁኔታ: መስመር ላይ</string>
+    <string name="presence_user_last_seen">%1$s ሁኔታ: መጨረሻ የታየው %2$s</string>
+    <string name="presence_user_offline">%1$s ሁኔታ: ከመስመር ውጭ</string>
     <string name="error_checking_friend_status">የጓደኛ ሁኔታን በማረጋገጥ ላይ ስህተት</string>
     <string name="friend_added">ጓደኛ በተሳካ ሁኔታ ታክሏል</string>
     <string name="active_invitation_exists">ንቁ ግብዣ አስቀድሞ አለ</string>

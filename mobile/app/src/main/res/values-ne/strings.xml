@@ -342,6 +342,20 @@
     <!-- Past invites -->
     <string name="past_invites">विगतका निमन्त्रणाहरू</string>
     <string name="no_past_invites">विगतका निमन्त्रणाहरू छैनन्</string>
+    <string name="invite_and_add_to_friend">निमन्त्रणा पठाउनुहोस् र साथी थप्नुहोस्</string>
+    <string name="invite_received_format">प्राप्त भयो %1$s</string>
+    <string name="invite_status_accepted">स्थिति: स्वीकृत</string>
+    <string name="invite_status_cancelled">स्थिति: रद्द गरियो</string>
+    <string name="invite_status_expired">स्थिति: म्याद सकियो</string>
+    <string name="invite_from_loading">लोड गर्दै…</string>
+    <string name="invite_from_format">निमन्त्रणा: %1$s बाट</string>
+    <string name="invite_received_and_status">प्राप्त भयो: %1$s | %2$s</string>
+    <string name="presence_online">अनलाइन</string>
+    <string name="presence_last_seen">अन्तिम पटक देखिएको %1$s</string>
+    <string name="presence_offline">अफलाइन</string>
+    <string name="presence_user_online">%1$s स्थिति: अनलाइन</string>
+    <string name="presence_user_last_seen">%1$s स्थिति: अन्तिम पटक देखिएको %2$s</string>
+    <string name="presence_user_offline">%1$s स्थिति: अफलाइन</string>
     <string name="invite_and_add_to_friend">निमन्त्रणा र साथी थप्नुहोस्</string>
     <string name="invite_received_format">प्राप्त %1$s</string>
     <string name="invite_status_accepted">स्थिति: स्वीकृत</string>

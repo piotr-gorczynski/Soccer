@@ -297,9 +297,13 @@
     <string name="invite_status_expired">الحالة: منتهية الصلاحية</string>
     <string name="invite_from_loading">جارٍ التحميل…</string>
     <string name="invite_from_format">دعوة من: %1$s</string>
+    <string name="invite_received_and_status">تم الاستلام: %1$s | %2$s</string>
     <string name="presence_online">متصل</string>
     <string name="presence_last_seen">آخر ظهور %1$s</string>
     <string name="presence_offline">غير متصل</string>
+    <string name="presence_user_online">%1$s الحالة: متصل</string>
+    <string name="presence_user_last_seen">%1$s الحالة: آخر ظهور %2$s</string>
+    <string name="presence_user_offline">%1$s الحالة: غير متصل</string>
     <string name="error_checking_friend_status">خطأ في التحقق من حالة الصديق</string>
     <string name="friend_added">تمت إضافة الصديق بنجاح</string>
     <string name="active_invitation_exists">الدعوة النشطة موجودة بالفعل</string>

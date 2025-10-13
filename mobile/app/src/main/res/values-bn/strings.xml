@@ -343,9 +343,13 @@
     <string name="invite_status_expired">অবস্থা: মেয়াদ শেষ</string>
     <string name="invite_from_loading">লোড হচ্ছে…</string>
     <string name="invite_from_format">আমন্ত্রণ থেকে: %1$s</string>
+    <string name="invite_received_and_status">প্রাপ্ত: %1$s | %2$s</string>
     <string name="presence_online">অনলাইন</string>
     <string name="presence_last_seen">শেষ দেখা হয়েছে %1$s</string>
     <string name="presence_offline">অফলাইন</string>
+    <string name="presence_user_online">%1$s অবস্থা: অনলাইন</string>
+    <string name="presence_user_last_seen">%1$s অবস্থা: শেষ দেখা হয়েছে %2$s</string>
+    <string name="presence_user_offline">%1$s অবস্থা: অফলাইন</string>
     <string name="error_checking_friend_status">বন্ধুর অবস্থা পরীক্ষা করতে ত্রুটি</string>
     <string name="friend_added">সফলভাবে বন্ধু যোগ হয়েছে</string>
     <string name="active_invitation_exists">সক্রিয় আমন্ত্রণ ইতিমধ্যে বিদ্যমান</string>

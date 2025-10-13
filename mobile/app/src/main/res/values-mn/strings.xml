@@ -308,6 +308,20 @@
     <!-- Past invites -->
     <string name="past_invites">Өнгөрсөн урилгууд</string>
     <string name="no_past_invites">Өнгөрсөн урилга байхгүй</string>
+    <string name="invite_and_add_to_friend">Урих ба найз нэмэх</string>
+    <string name="invite_received_format">Хүлээн авсан %1$s</string>
+    <string name="invite_status_accepted">Төлөв: Зөвшөөрсөн</string>
+    <string name="invite_status_cancelled">Төлөв: Цуцалсан</string>
+    <string name="invite_status_expired">Төлөв: Хугацаа дууссан</string>
+    <string name="invite_from_loading">Ачааллаж байна…</string>
+    <string name="invite_from_format">Урилга -аас: %1$s</string>
+    <string name="invite_received_and_status">Хүлээн авсан: %1$s | %2$s</string>
+    <string name="presence_online">Онлайн</string>
+    <string name="presence_last_seen">Сүүлд харагдсан %1$s</string>
+    <string name="presence_offline">Оффлайн</string>
+    <string name="presence_user_online">%1$s төлөв: Онлайн</string>
+    <string name="presence_user_last_seen">%1$s төлөв: Сүүлд харагдсан %2$s</string>
+    <string name="presence_user_offline">%1$s төлөв: Оффлайн</string>
     <string name="invite_and_add_to_friend">Урих ба Найз нэмэх</string>
     <string name="invite_received_format">Хүлээн авсан %1$s</string>
     <string name="invite_status_accepted">Төлөв: Зөвшөөрсөн</string>
