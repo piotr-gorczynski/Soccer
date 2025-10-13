@@ -322,10 +322,5 @@
     <string name="presence_user_online">%1$s තත්ත්වය: සබැඳිව</string>
     <string name="presence_user_last_seen">%1$s තත්ත්වය: අවසන් වරට දුටු %2$s</string>
     <string name="presence_user_offline">%1$s තත්ත්වය: අසම්බන්ධිත</string>
-    <string name="invite_and_add_to_friend">ආරාධනා කර මිතුරකු ලෙස එක් කරන්න</string>
-    <string name="invite_received_format">ලැබුණි %1$s</string>
-    <string name="invite_status_accepted">තත්ත්වය: පිළිගත්</string>
-    <string name="invite_status_cancelled">තත්ත්වය: අවලංගු</string>
-    <string name="invite_status_expired">තත්ත්වය: කල් ඉකුත්</string>
 
 </resources>
