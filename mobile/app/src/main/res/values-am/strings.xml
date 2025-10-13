@@ -114,7 +114,7 @@
     <string name="failed_to_load_nickname">ቅጽል ስምን መጫን አልተሳካም።</string>
     <string name="search">ፈልግ</string>
     <string name="load_more">ተጨማሪ አስገባ</string>
-    <string name="add_friend_label">አክል</string>
+    <string name="add_friend_label">ወደ ጓደኞች አክል</string>
     <string name="invite_blocked">%1$s ግብዣዎችን አግዷል።</string>
     <string name="invites_blocked_notification">ሌሎች ተጫዋቾች “ጓደኛን ጋብዝ” ተግባር በመጠቀም ሊጋብዙዎት አይችሉም። ይህን በቅንብሮች ውስጥ መቀየር ትችላላችሁ።</string>
     <string name="pending_game_invitations">በመጠባበቅ ያሉ የጨዋታ ግብዣዎች</string>

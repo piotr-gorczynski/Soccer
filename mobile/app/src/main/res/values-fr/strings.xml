@@ -102,7 +102,7 @@
     <string name="failed_to_load_nickname">Échec du chargement du pseudonyme.</string>
     <string name="search">Rechercher</string>
     <string name="load_more">Charger plus</string>
-    <string name="add_friend_label">Ajouter</string>
+    <string name="add_friend_label">Ajouter aux amis</string>
     <string name="invite_blocked">%1$s a bloqué les invitations.</string>
     <string name="invites_blocked_notification">Les autres joueurs ne peuvent pas vous inviter via « Inviter un ami ». Vous pouvez modifier ce réglage dans Paramètres.</string>
 
