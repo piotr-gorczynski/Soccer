@@ -114,14 +114,14 @@
     <string name="failed_to_load_nickname">Tsy voaray ny anaram-bositra.</string>
     <string name="search">Karohy</string>
     <string name="load_more">Ampidiro bebe kokoa</string>
-    <string name="add_friend_label">Ampio amin'ny namana</string>
+    <string name="add_friend_label">Ampio amin`ny namana</string>
     <string name="invite_blocked">Nanakana fanasana i %1$s.</string>
     <string name="invites_blocked_notification">Ny mpilalao hafa tsy afaka manasa anao amin`ny fiasa `Asao namana`. Azonao ovaina ao amin`ny Fandrindrana izany.</string>
     <string name="pending_game_invitations">Fanasana lalao miandry</string>
     <string name="no_pending_invites">Tsy misy fanasana miandry.</string>
     <string name="invite_already_sent">Efa manana fanasana hafa miandry ianao.</string>
     <string name="missed_invite_title">Nandao fanasana ianao</string>
-    <string name="missed_invite_message">Nahazo fanasana ianao raha tsy tafiditra tamin'ny Internet.</string>
+    <string name="missed_invite_message">Nahazo fanasana ianao raha tsy tafiditra tamin`ny Internet.</string>
     <string name="see_invites">Jereo ny fanasana</string>
     <string name="waiting_for_opponent_named">Miandry an`i %1$s hanaiky…</string>
     <string name="waiting_for_opponent">Miandry ny mpifanandrina hanaiky…</string>
