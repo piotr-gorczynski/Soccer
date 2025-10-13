@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.*;
 
 import androidx.annotation.NonNull;
@@ -211,10 +212,7 @@ public class InvitationsActivity extends BaseActivity {
                                 if (idx != -1) {
                                     inviteIds.remove(idx);
                                     inviteDescriptions.remove(idx);
-                                    adapter.notifyDataSetChanged();
-                                    if (inviteIds.isEmpty()) {
-                                        emptyText.setVisibility(View.VISIBLE);
-                                    }
+                                    refreshPendingInvitesView();
                                 }
                             });
 
@@ -241,7 +239,7 @@ public class InvitationsActivity extends BaseActivity {
                     if (e != null) {
                         inviteDescriptions.clear();
                         inviteIds.clear();
-                        adapter.notifyDataSetChanged();
+                        refreshPendingInvitesView();
                         emptyText.setVisibility(View.VISIBLE);
                         Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                                 + ": Listen failed", e);
@@ -278,13 +276,53 @@ public class InvitationsActivity extends BaseActivity {
                                 });
                     }
 
-                    adapter.notifyDataSetChanged();
-                    if (inviteIds.isEmpty()) {
-                        emptyText.setVisibility(View.VISIBLE);
-                    } else {
-                        emptyText.setVisibility(View.GONE);
-                    }
+                    refreshPendingInvitesView();
                 });
+    }
+
+    private void refreshPendingInvitesView() {
+        if (adapter == null || invitesList == null) {
+            return;
+        }
+
+        adapter.notifyDataSetChanged();
+
+        invitesList.post(this::updatePendingInvitesHeight);
+
+        if (inviteIds.isEmpty()) {
+            emptyText.setVisibility(View.VISIBLE);
+        } else {
+            emptyText.setVisibility(View.GONE);
+        }
+    }
+
+    private void updatePendingInvitesHeight() {
+        if (invitesList == null) {
+            return;
+        }
+
+        ListAdapter listAdapter = invitesList.getAdapter();
+        if (listAdapter == null) {
+            return;
+        }
+
+        int totalHeight = 0;
+        int listWidth = invitesList.getWidth();
+        if (listWidth <= 0) {
+            listWidth = invitesList.getResources().getDisplayMetrics().widthPixels;
+        }
+        int widthMeasureSpec = View.MeasureSpec.makeMeasureSpec(listWidth, View.MeasureSpec.AT_MOST);
+
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            View listItem = listAdapter.getView(i, null, invitesList);
+            listItem.measure(widthMeasureSpec, View.MeasureSpec.UNSPECIFIED);
+            totalHeight += listItem.getMeasuredHeight();
+        }
+
+        ViewGroup.LayoutParams params = invitesList.getLayoutParams();
+        params.height = totalHeight + invitesList.getDividerHeight() * Math.max(0, listAdapter.getCount() - 1);
+        invitesList.setLayoutParams(params);
+        invitesList.requestLayout();
     }
 
     private void listenForPastInvites() {
