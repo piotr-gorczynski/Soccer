@@ -115,6 +115,7 @@
     <string name="search">Хайх</string>
     <string name="load_more">Илүүг ачааллах</string>
     <string name="add_friend_label">Найзууд руу нэмэх</string>
+    <string name="already_friends">Аль хэдийн найзууд</string>
     <string name="invite_blocked">%1$s урилга авахыг хаасан.</string>
     <string name="invites_blocked_notification">Бусад тоглогчид “Найзаа урих” функцаар таныг урих боломжгүй. Та үүнийг тохиргоонд өөрчилж болно.</string>
     <string name="pending_game_invitations">Хүлээгдэж буй тоглоомын урилгууд</string>

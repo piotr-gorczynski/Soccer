@@ -75,6 +75,7 @@
     <string name="search">Search</string>
     <string name="load_more">Load more</string>
     <string name="add_friend_label">Add to friends</string>
+    <string name="already_friends">Already friends</string>
     <string name="invite_blocked">%1$s blocked invites.</string>
     <string name="invites_blocked_notification">Other players cannot invite you via `Invite a Friend` function. You can change it in Settings.</string>
     <string name="pending_game_invitations">Pending Game Invitations</string>

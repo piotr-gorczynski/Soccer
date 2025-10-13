@@ -23,9 +23,12 @@ import com.google.firebase.functions.FirebaseFunctionsException;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import android.content.SharedPreferences;
 
@@ -45,6 +48,7 @@ public class InvitationsActivity extends BaseActivity {
 
     FirebaseFirestore db;
     FirebaseAuth auth;
+    private Set<String> friendUids = new HashSet<>();
 
     private ListenerRegistration invitesSub;   // keep handle so we can remove it later
     private ListenerRegistration pastInvitesSub;
@@ -75,6 +79,7 @@ public class InvitationsActivity extends BaseActivity {
         emptyPastInvites = findViewById(R.id.emptyPastInvites);
         pastInvitesList.setLayoutManager(new LinearLayoutManager(this));
         pastAdapter = new PastInviteAdapter(this, this::sendInviteViaCF, this::addFriend);
+        pastAdapter.setFriendUids(friendUids);
         pastInvitesList.setAdapter(pastAdapter);
         pastInvitesObserver = new RecyclerView.AdapterDataObserver() {
             @Override
@@ -99,6 +104,7 @@ public class InvitationsActivity extends BaseActivity {
 
         listenForInvites();
         listenForPastInvites();
+        loadFriends();
 
         invitesList.setOnItemClickListener((parent, view, position, id) -> {
             String inviteId = inviteIds.get(position);
@@ -314,6 +320,32 @@ public class InvitationsActivity extends BaseActivity {
                 });
     }
 
+    private void loadFriends() {
+        FirebaseUser currentUser = auth.getCurrentUser();
+        if (currentUser == null) {
+            Log.w("TAG_Soccer", getClass().getSimpleName() + ".loadFriends: User not signed-in");
+            return;
+        }
+
+        db.collection("users")
+                .document(currentUser.getUid())
+                .collection("friends")
+                .get()
+                .addOnSuccessListener(snap -> {
+                    Set<String> newFriendUids = new HashSet<>();
+                    for (DocumentSnapshot doc : snap.getDocuments()) {
+                        newFriendUids.add(doc.getId());
+                    }
+                    friendUids = newFriendUids;
+                    pastAdapter.setFriendUids(friendUids);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".loadFriends: Failed to load friends", e);
+                    friendUids = new HashSet<>();
+                    pastAdapter.setFriendUids(friendUids);
+                });
+    }
+
     private void updatePastInvitesEmptyState() {
         if (emptyPastInvites == null || pastAdapter == null) {
             return;
@@ -341,26 +373,46 @@ public class InvitationsActivity extends BaseActivity {
     }
 
     private void addFriend(@NonNull String targetUid) {
-        String currentUserId = Objects.requireNonNull(auth.getCurrentUser()).getUid();
-        
-        // Add to both users' friends subcollections
-        db.collection("users").document(currentUserId).collection("friends").document(targetUid)
-                .set(Collections.singletonMap("addedAt", com.google.firebase.firestore.FieldValue.serverTimestamp()))
-                .addOnSuccessListener(aVoid -> {
-                    // Also add current user to target's friends
-                    db.collection("users").document(targetUid).collection("friends").document(currentUserId)
-                            .set(Collections.singletonMap("addedAt", com.google.firebase.firestore.FieldValue.serverTimestamp()))
-                            .addOnSuccessListener(aVoid2 -> {
-                                Toast.makeText(this, R.string.friend_added, Toast.LENGTH_SHORT).show();
-                            })
-                            .addOnFailureListener(e -> {
-                                Log.e("TAG_Soccer", getClass().getSimpleName() + ".addFriend: Error adding to target's friends", e);
-                                Toast.makeText(this, R.string.failed_to_add_friend, Toast.LENGTH_SHORT).show();
-                            });
+        FirebaseUser currentUser = auth.getCurrentUser();
+        if (currentUser == null) {
+            Log.e("TAG_Soccer", getClass().getSimpleName() + ".addFriend: User not signed-in");
+            Toast.makeText(this, R.string.must_log_in_to_accept_invites, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (friendUids.contains(targetUid)) {
+            Toast.makeText(this, R.string.already_friends, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        sendAddFriendViaCF(currentUser.getUid(), targetUid);
+    }
+
+    private void sendAddFriendViaCF(@NonNull String userId, @NonNull String friendId) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("userId", userId);
+        data.put("friendId", friendId);
+
+        FirebaseFunctions.getInstance("us-central1")
+                .getHttpsCallable("addFriend")
+                .call(data)
+                .addOnSuccessListener(res -> {
+                    Toast.makeText(this, R.string.friend_added, Toast.LENGTH_SHORT).show();
+                    friendUids.add(friendId);
+                    pastAdapter.addFriendUid(friendId);
                 })
                 .addOnFailureListener(e -> {
-                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".addFriend: Error adding friend", e);
-                    Toast.makeText(this, R.string.failed_to_add_friend, Toast.LENGTH_SHORT).show();
+                    String text = SafeStringFormatter.safeGetString(this, R.string.failed_to_add_friend);
+                    if (e instanceof FirebaseFunctionsException ffe) {
+                        String reason = ffe.getMessage();
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + ".addFriend: addFriend failed: " + reason, ffe);
+                        if (reason != null && !reason.isEmpty()) {
+                            text = SafeStringFormatter.safeGetString(this, R.string.failed_to_add_friend_reason, reason);
+                        }
+                    } else {
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + ".addFriend: addFriend failed", e);
+                    }
+                    Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
                 });
     }
 
