@@ -287,7 +287,6 @@ public class InvitationsActivity extends BaseActivity {
         pastInvitesSub = db.collection("invitations")
                 .whereEqualTo("to", currentUserId)
                 .whereIn("status", java.util.Arrays.asList("accepted", "cancelled", "expired"))
-                .orderBy("createdAt", Query.Direction.DESCENDING)
                 .addSnapshotListener((querySnapshot, e) -> {
                     if (e != null) {
                         Log.e("TAG_Soccer", getClass().getSimpleName() + ".listenForPastInvites: Listen failed", e);
@@ -299,6 +298,16 @@ public class InvitationsActivity extends BaseActivity {
                     for (DocumentSnapshot doc : Objects.requireNonNull(querySnapshot)) {
                         pastInvitesList.add(doc);
                     }
+
+                    pastInvitesList.sort((left, right) -> {
+                        Timestamp leftCreatedAt = left.getTimestamp("createdAt");
+                        Timestamp rightCreatedAt = right.getTimestamp("createdAt");
+
+                        long leftMillis = leftCreatedAt != null ? leftCreatedAt.toDate().getTime() : Long.MIN_VALUE;
+                        long rightMillis = rightCreatedAt != null ? rightCreatedAt.toDate().getTime() : Long.MIN_VALUE;
+
+                        return Long.compare(rightMillis, leftMillis);
+                    });
 
                     pastAdapter.setData(pastInvitesList);
                     updatePastInvitesEmptyState();
