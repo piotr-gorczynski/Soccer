@@ -344,13 +344,13 @@
     <string name="invite_status_expired">Status: Abgelaufen</string>
     <string name="invite_from_loading">Lädt…</string>
     <string name="invite_from_format">Einladung von: %1$s</string>
-    <string name="invite_received_and_status">Received: %1$s | %2$s</string>
+    <string name="invite_received_and_status">Erhalten: %1$s | %2$s</string>
     <string name="presence_online">Online</string>
     <string name="presence_last_seen">Zuletzt gesehen %1$s</string>
     <string name="presence_offline">Offline</string>
-    <string name="presence_user_online">%1$s status: Online</string>
-    <string name="presence_user_last_seen">%1$s status: Last seen %2$s</string>
-    <string name="presence_user_offline">%1$s status: Offline</string>
+    <string name="presence_user_online">%1$s Status: Online</string>
+    <string name="presence_user_last_seen">%1$s Status: Zuletzt gesehen %2$s</string>
+    <string name="presence_user_offline">%1$s Status: Offline</string>
     <string name="error_checking_friend_status">Fehler beim Überprüfen des Freundstatus</string>
     <string name="friend_added">Freund erfolgreich hinzugefügt</string>
     <string name="active_invitation_exists">Aktive Einladung existiert bereits</string>

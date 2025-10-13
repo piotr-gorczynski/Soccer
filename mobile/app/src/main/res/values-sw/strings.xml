@@ -308,6 +308,20 @@
     <!-- Past invites -->
     <string name="past_invites">Mialiko Iliyopita</string>
     <string name="no_past_invites">Hakuna mialiko iliyopita</string>
+    <string name="invite_and_add_to_friend">Alika na uongeze kama rafiki</string>
+    <string name="invite_received_format">Imepokelewa %1$s</string>
+    <string name="invite_status_accepted">Hali: Imekubaliwa</string>
+    <string name="invite_status_cancelled">Hali: Imefutwa</string>
+    <string name="invite_status_expired">Hali: Imeisha muda</string>
+    <string name="invite_from_loading">Inapakia…</string>
+    <string name="invite_from_format">Mwaliko kutoka: %1$s</string>
+    <string name="invite_received_and_status">Imepokelewa: %1$s | %2$s</string>
+    <string name="presence_online">Mtandaoni</string>
+    <string name="presence_last_seen">Alionekana mwisho %1$s</string>
+    <string name="presence_offline">Nje ya mtandao</string>
+    <string name="presence_user_online">%1$s hali: Mtandaoni</string>
+    <string name="presence_user_last_seen">%1$s hali: Alionekana mwisho %2$s</string>
+    <string name="presence_user_offline">%1$s hali: Nje ya mtandao</string>
     <string name="invite_and_add_to_friend">Alika na Ongeza kama Rafiki</string>
     <string name="invite_received_format">Imepokewa %1$s</string>
     <string name="invite_status_accepted">Hali: Imekubaliwa</string>
