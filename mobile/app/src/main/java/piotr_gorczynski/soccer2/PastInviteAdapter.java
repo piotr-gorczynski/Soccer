@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -78,7 +79,14 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
             if (h.uid != null) inviteListener.onInvite(h.uid);
         });
         h.addFriendBtn.setOnClickListener(btn -> {
-            if (h.uid != null) addFriendListener.onAddFriend(h.uid);
+            if (h.uid == null) {
+                return;
+            }
+            if (friendUids.contains(h.uid)) {
+                Toast.makeText(context, R.string.already_friends, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            addFriendListener.onAddFriend(h.uid);
         });
         return h;
     }
@@ -268,9 +276,7 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
         boolean canAddFriend = enabled && !alreadyFriend;
         h.addFriendBtn.setEnabled(canAddFriend);
         h.addFriendBtn.setAlpha(canAddFriend ? 1f : 0.3f);
-        h.addFriendBtn.setText(alreadyFriend
-                ? context.getString(R.string.already_friends)
-                : context.getString(R.string.add_friend_label));
+        h.addFriendBtn.setText(context.getString(R.string.add_friend_label));
     }
 
     @Override
