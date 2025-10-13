@@ -95,7 +95,7 @@
     <string name="failed_to_load_nickname">بارگذاری نام مستعار ناموفق بود.</string>
     <string name="search">جستجو</string>
     <string name="load_more">بارگذاری بیشتر</string>
-    <string name="add_friend_label">افزودن</string>
+    <string name="add_friend_label">افزودن به دوستان</string>
     <string name="invite_blocked">%1$s دعوت‌ها را مسدود کرده است.</string>
     <string name="invites_blocked_notification">بازیکنان دیگر نمی‌توانند از طریق «دعوت از دوست» شما را دعوت کنند. می‌توانید این گزینه را در تنظیمات تغییر دهید.</string>
     <string name="pending_game_invitations">دعوت‌های بازی در انتظار</string>

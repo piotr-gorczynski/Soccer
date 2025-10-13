@@ -95,7 +95,7 @@
     <string name="failed_to_load_nickname">Error al cargar apodo.</string>
     <string name="search">Buscar</string>
     <string name="load_more">Cargar más</string>
-    <string name="add_friend_label">Agregar</string>
+    <string name="add_friend_label">Agregar a amigos</string>
     <string name="invite_blocked">%1$s bloqueó invitaciones.</string>
     <string name="invites_blocked_notification">Otros jugadores no pueden invitarte a través de la función `Invitar amigo`. Puedes cambiarlo en Configuración.</string>
     
