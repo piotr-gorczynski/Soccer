@@ -429,37 +429,41 @@ public class InvitationsActivity extends BaseActivity {
                     }
                 })
                 .addOnFailureListener(e -> {
+                    /* default fallback */
                     int msgId = R.string.failed_to_send_invite;
                     String customMessage = null;
 
                     if (e instanceof FirebaseFunctionsException ffe) {
                         FirebaseFunctionsException.Code code = ffe.getCode();
-                        String details = ffe.getMessage();
-                        
-                        switch (code) {
-                            case ALREADY_EXISTS:
-                                if (details != null && details.contains("active invitation")) {
-                                    msgId = R.string.active_invitation_exists;
-                                } else if (details != null && details.contains("blocked")) {
-                                    msgId = R.string.user_blocked_invites;
-                                }
-                                break;
-                            case FAILED_PRECONDITION:
-                                msgId = R.string.cannot_invite_this_user;
-                                break;
-                            case NOT_FOUND:
-                                msgId = R.string.user_not_found;
-                                break;
-                            default:
-                                customMessage = details;
+                        if (code == FirebaseFunctionsException.Code.FAILED_PRECONDITION) {
+                            /* Cloud Function puts a short reason in getMessage() */
+                            String reason = String.valueOf(ffe.getMessage()); // never null
+
+                            if (reason.contains("blocked invites")) {
+                                customMessage = reason; // Use the full message from the server
+                            } else {
+                                msgId = switch (reason) {
+                                    /* inviter already has an unanswered invite */
+                                    case "sender_busy" -> R.string.invite_already_sent;
+                                    /* target has its own outgoing invite and is waiting */
+                                    case "target_busy" -> R.string.target_player_busy;
+                                    case "User account no longer available" -> R.string.account_no_longer_available;
+                                    default -> R.string.failed_to_send_invite;
+                                };
+                            }
+                        } else if (code == FirebaseFunctionsException.Code.PERMISSION_DENIED) {
+                            msgId = R.string.invite_already_sent;    // inviter cancelled meanwhile
                         }
                     }
 
                     if (customMessage != null) {
-                        Toast.makeText(this, getString(msgId) + ": " + customMessage, Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, customMessage, Toast.LENGTH_LONG).show();
                     } else {
                         Toast.makeText(this, msgId, Toast.LENGTH_LONG).show();
                     }
+
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                            + ": createInvite failed", e);
                 });
     }
     @Override
