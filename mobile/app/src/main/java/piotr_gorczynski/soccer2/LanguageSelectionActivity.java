@@ -23,6 +23,12 @@ public class LanguageSelectionActivity extends BaseActivity {
     }
 
     private void showLanguageSelectionDialog() {
+        // Check if activity is still valid before showing dialog
+        if (isFinishing() || isDestroyed()) {
+            Log.w("TAG_Soccer", getClass().getSimpleName() + ".showLanguageSelectionDialog: Activity finishing or destroyed, skipping dialog");
+            return;
+        }
+        
         String[] languages = LanguageManager.getAvailableLanguages(this);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
