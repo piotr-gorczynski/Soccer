@@ -107,7 +107,7 @@ class PendingInviteAdapter extends RecyclerView.Adapter<PendingInviteAdapter.VH>
             if ("nickname".equals(payload)) {
                 String nick = nickCache.get(uid);
                 if (nick != null) {
-                    holder.nickname.setText(context.getString(R.string.invite_from_format, nick));
+                    holder.nickname.setText(SafeStringFormatter.safeGetString(context, R.string.invite_from_format, nick));
                 }
             } else if ("presence".equals(payload)) {
                 String state = presCache.get(uid);
@@ -162,7 +162,7 @@ class PendingInviteAdapter extends RecyclerView.Adapter<PendingInviteAdapter.VH>
                         }
                     });
         } else {
-            holder.nickname.setText(context.getString(R.string.invite_from_format, cachedNick));
+            holder.nickname.setText(SafeStringFormatter.safeGetString(context, R.string.invite_from_format, cachedNick));
         }
 
         String presenceState = presCache.get(uid);
@@ -214,16 +214,16 @@ class PendingInviteAdapter extends RecyclerView.Adapter<PendingInviteAdapter.VH>
         int colour;
         switch (state) {
             case "online":
-                label = context.getString(R.string.presence_user_online, username);
+                label = SafeStringFormatter.safeGetString(context, R.string.presence_user_online, username);
                 colour = ContextCompat.getColor(holder.itemView.getContext(), R.color.colorGreenDark);
                 break;
             case "active":
                 long last = hbCache.getOrDefault(uid, 0L);
-                label = context.getString(R.string.presence_user_last_seen, username, MatchAdapter.englishRelative(last));
+                label = SafeStringFormatter.safeGetString(context, R.string.presence_user_last_seen, username, MatchAdapter.englishRelative(last));
                 colour = ContextCompat.getColor(holder.itemView.getContext(), R.color.colorGreenDark);
                 break;
             default:
-                label = context.getString(R.string.presence_user_offline, username);
+                label = SafeStringFormatter.safeGetString(context, R.string.presence_user_offline, username);
                 colour = ContextCompat.getColor(holder.itemView.getContext(), R.color.colorGrey);
                 break;
         }
