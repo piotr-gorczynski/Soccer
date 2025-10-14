@@ -315,6 +315,7 @@
     <string name="invite_status_cancelled">තත්ත්වය: අවලංගු කළා</string>
     <string name="invite_status_expired">තත්ත්වය: කල් ඉකුත් වී ඇත</string>
     <string name="invite_from_loading">පූරණය වෙමින්…</string>
+    <string name="menu_loading_message">පූරණය වෙමින්…</string>
     <string name="invite_from_format">ආරාධනාව: %1$s ගෙන්</string>
     <string name="invite_received_and_status">ලැබුණි: %1$s | %2$s</string>
     <string name="presence_online">සබැඳිව</string>

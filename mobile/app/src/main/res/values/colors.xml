@@ -7,4 +7,5 @@
     <color name="colorPlayer0">#FF2D2D</color>
     <color name="colorPlayer1">#2D2DFF</color>
     <color name="colorGrey">#808080</color>   <!-- medium gray -->
+    <color name="colorDimOverlay">#CC000000</color>
 </resources>

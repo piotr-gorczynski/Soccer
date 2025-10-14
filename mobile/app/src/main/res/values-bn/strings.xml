@@ -343,6 +343,7 @@
     <string name="invite_status_cancelled">অবস্থা: বাতিল</string>
     <string name="invite_status_expired">অবস্থা: মেয়াদ শেষ</string>
     <string name="invite_from_loading">লোড হচ্ছে…</string>
+    <string name="menu_loading_message">লোড হচ্ছে…</string>
     <string name="invite_from_format">আমন্ত্রণ থেকে: %1$s</string>
     <string name="invite_received_and_status">প্রাপ্ত: %1$s | %2$s</string>
     <string name="presence_online">অনলাইন</string>
