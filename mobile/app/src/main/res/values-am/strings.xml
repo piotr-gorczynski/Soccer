@@ -316,6 +316,7 @@
     <string name="invite_status_cancelled">ሁኔታ: ተሰርዟል</string>
     <string name="invite_status_expired">ሁኔታ: ጊዜው አልፏል</string>
     <string name="invite_from_loading">በመጫን ላይ…</string>
+    <string name="menu_loading_message">በመጫን ላይ…</string>
     <string name="invite_from_format">ግብዣ ከ: %1$s</string>
     <string name="invite_received_and_status">ደርሷል: %1$s | %2$s</string>
     <string name="presence_online">መስመር ላይ</string>
