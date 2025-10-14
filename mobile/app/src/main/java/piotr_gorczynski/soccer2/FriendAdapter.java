@@ -299,6 +299,14 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
                 });
     }
 
+    void invalidateInviteStatsFor(@NonNull String uid) {
+        inviteStatsCache.remove(uid);
+        int idx = indexForUid(uid);
+        if (idx != RecyclerView.NO_POSITION) {
+            notifyItemChanged(idx);
+        }
+    }
+
     private void fetchMatchStats(@NonNull String targetUid, @NonNull VH h) {
         if (currentUserId == null) {
             h.matchStats.setText("");
