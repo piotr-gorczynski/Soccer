@@ -71,6 +71,7 @@ public class MenuActivity extends BaseActivity {
     private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 101;
 
     private static final String PREF_FCM_TOKEN = "fcmToken";
+    static final String PREF_LAST_INVITES_SEEN_TIMESTAMP = "lastInvitesSeenTimestamp";
     private static final String PREF_LAST_ACTIVE_TIMESTAMP = "lastActiveTimestamp";
 
     private boolean isBackendAvailable = true; // Track backend availability
@@ -1387,6 +1388,7 @@ public class MenuActivity extends BaseActivity {
 
         SharedPreferences prefs = getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
         long lastActiveTimestamp = prefs.getLong(PREF_LAST_ACTIVE_TIMESTAMP, 0L);
+        final long lastInvitesSeenTimestamp = prefs.getLong(PREF_LAST_INVITES_SEEN_TIMESTAMP, 0L);
         
         // Update timestamp for next check
         updateLastActiveTimestamp();
@@ -1456,6 +1458,15 @@ public class MenuActivity extends BaseActivity {
 
                     if (recentInvite == null) {
                         Log.d("TAG_Soccer", getClass().getSimpleName() + ".checkForMissedInvitations: No new invites after filtering");
+                        return;
+                    }
+
+                    if (mostRecentCreatedAt <= lastInvitesSeenTimestamp) {
+                        Log.d(
+                                "TAG_Soccer",
+                                getClass().getSimpleName()
+                                        + ".checkForMissedInvitations: Latest invite already viewed in InvitationsActivity; skipping dialog"
+                        );
                         return;
                     }
 
