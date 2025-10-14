@@ -59,6 +59,14 @@ public class InvitationsActivity extends BaseActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        SharedPreferences prefs = getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
+        prefs.edit().putLong(MenuActivity.PREF_LAST_INVITES_SEEN_TIMESTAMP, System.currentTimeMillis()).apply();
+    }
+
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_invitations);
