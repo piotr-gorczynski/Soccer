@@ -96,6 +96,7 @@
     <string name="search">بحث</string>
     <string name="load_more">تحميل المزيد</string>
     <string name="add_friend_label">أضف إلى الأصدقاء</string>
+    <string name="add_friend_short_label">أضف</string>
     <string name="already_friends">أصدقاء بالفعل</string>
     <string name="invite_blocked">%1$s قام بحظر الدعوات.</string>
     <string name="invites_blocked_notification">لا يمكن للاعبين الآخرين دعوتك عبر وظيفة "ادعُ صديقاً". يمكنك تغيير ذلك في الإعدادات.</string>

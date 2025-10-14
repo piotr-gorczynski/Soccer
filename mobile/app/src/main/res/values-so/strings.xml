@@ -115,6 +115,7 @@
     <string name="search">Raadi</string>
     <string name="load_more">Soo bandhig kuwo kale</string>
     <string name="add_friend_label">Ku dar saaxiibada</string>
+    <string name="add_friend_short_label">Ku dar</string>
     <string name="already_friends">Horeba waa saaxiibo</string>
     <string name="invite_blocked">%1$s wuu xannibay casuumaadaha.</string>
     <string name="invites_blocked_notification">Ciyaartoyda kale kuma casumi karaan shaqada `Saaxiib casumo`. Waxaad ka beddeli kartaa Dejinta.</string>

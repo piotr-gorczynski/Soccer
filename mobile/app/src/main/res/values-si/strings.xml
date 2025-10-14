@@ -115,6 +115,7 @@
     <string name="search">සොයන්න</string>
     <string name="load_more">තවත් පූරණය කරන්න</string>
     <string name="add_friend_label">මිතුරන් වෙත එක් කරන්න</string>
+    <string name="add_friend_short_label">එක් කරන්න</string>
     <string name="already_friends">දැනටමත් මිතුරන්</string>
     <string name="invite_blocked">%1$s ආරාධනා අවහිර කර ඇත.</string>
     <string name="invites_blocked_notification">වෙනත් ක්‍රීඩකයින්ට \`මිතුරෙකු ආරාධනා කරන්න\` ක්‍රියාවලිය හරහා ඔබට ආරාධනා කිරීමට නොහැක. ඔබට එය සැකසුම් තුළ වෙනස් කළ හැක.</string>
