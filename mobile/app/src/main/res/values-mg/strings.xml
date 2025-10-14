@@ -115,6 +115,7 @@
     <string name="search">Karohy</string>
     <string name="load_more">Ampidiro bebe kokoa</string>
     <string name="add_friend_label">Ampio amin`ny namana</string>
+    <string name="add_friend_short_label">Ampio</string>
     <string name="already_friends">Efa namana</string>
     <string name="invite_blocked">Nanakana fanasana i %1$s.</string>
     <string name="invites_blocked_notification">Ny mpilalao hafa tsy afaka manasa anao amin`ny fiasa `Asao namana`. Azonao ovaina ao amin`ny Fandrindrana izany.</string>
