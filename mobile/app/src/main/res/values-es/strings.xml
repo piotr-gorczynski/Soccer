@@ -345,11 +345,8 @@
     <!-- Past invites -->
     <string name="past_invites">Invitaciones Pasadas</string>
     <string name="no_past_invites">No hay invitaciones pasadas</string>
-    <string name="invite_and_add_to_friend">Invitar y agregar como amigo</string>
-    <string name="invite_received_format">Recibido %1$s</string>
-    <string name="invite_status_accepted">Estado: Aceptado</string>
-    <string name="invite_status_cancelled">Estado: Cancelado</string>
-    <string name="invite_status_expired">Estado: Expirado</string>
+
+
     <string name="invite_from_loading">Cargando…</string>
     <string name="menu_loading_message">Cargando…</string>
     <string name="invite_from_format">Invitación de: %1$s</string>

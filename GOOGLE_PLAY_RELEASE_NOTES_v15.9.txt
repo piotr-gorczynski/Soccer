@@ -2,140 +2,124 @@
 🎮 Fix AnalyticsManager null safety regression - prevent NPE crashes in 10 methods
 🔔 Add Historical Invites feature to Invitations screen
 🔔 Add missed invitation notification when user returns to app
+🔔 Change button behavior in MenuActivity
 </en-GB>
 
 <pl-PL>
-🎮 Naprawiono błędy tłumaczeń player_label dla polskiego, bengalskiego i syngaleskiego
-🎮 Naprawiono ANR przy oczekiwaniu na Firestore binder w showWinner()
-🔔 Usunięto limit 20 min aktywności, zaproszenia działają zawsze
-🔔 Dodano statystyki zaproszeń w liście znajomych
-🔔 Dodano sortowanie znajomych alfabetycznie i wg ostatniej aktywności
+🎮 Naprawiono regresję null safety w AnalyticsManager – zapobiega awariom NPE w 10 metodach
+🔔 Dodano funkcję „Historyczne zaproszenia” na ekranie Zaproszeń
+🔔 Dodano powiadomienie o pominiętym zaproszeniu po powrocie do aplikacji
+🔔 Zmieniono zachowanie przycisków w MenuActivity
 </pl-PL>
 
 <de-DE>
-🎮 Übersetzungsfehler in player_label für Polnisch, Bengalisch, Singhalesisch behoben
-🎮 ANR durch Firestore binder-Warten in showWinner() behoben
-🔔 20-Minuten-Limit für Einladungen entfernt
-🔔 Einladungsstatistiken in Freundesliste angezeigt
-🔔 Freundesliste sortierbar nach Name/Zuletzt gesehen
+🎮 Null-Safety-Regression in AnalyticsManager behoben – NPE-Abstürze in 10 Methoden verhindert
+🔔 Funktion „Historische Einladungen“ im Einladungen-Screen hinzugefügt
+🔔 Benachrichtigung über verpasste Einladung beim Zurückkehren zur App hinzugefügt
+🔔 Schaltflächenverhalten in MenuActivity geändert
 </de-DE>
 
 <fr-FR>
-🎮 Erreurs de traduction player_label pour polonais, bengali, cinghalais corrigées
-🎮 Correction d’un ANR lié à Firestore binder dans showWinner()
-🔔 Suppression de la limite de 20 min pour inviter
-🔔 Ajout des stats d’invitations dans la liste d’amis
-🔔 Liste d’amis triable par nom/dernière activité
+🎮 Correction de la régression de null safety dans AnalyticsManager — empêche les plantages NPE dans 10 méthodes
+🔔 Ajout de la fonction « Invitations historiques » à l’écran Invitations
+🔔 Ajout d’une notification d’invitation manquée au retour dans l’app
+🔔 Modification du comportement des boutons dans MenuActivity
 </fr-FR>
 
 <es-ES>
-🎮 Errores de traducción en player_label (polaco, bengalí, cingalés) corregidos
-🎮 Corregido ANR por espera de Firestore binder en showWinner()
-🔔 Eliminado límite de 20 min para invitar
-🔔 Estadísticas de invitaciones en lista de amigos
-🔔 Lista de amigos ordenable por nombre/última conexión
+🎮 Corrección de la regresión de null safety en AnalyticsManager: evita fallos NPE en 10 métodos
+🔔 Se añadió la función «Invitaciones históricas» a la pantalla Invitaciones
+🔔 Se añadió una notificación de invitación perdida al volver a la app
+🔔 Se cambió el comportamiento de los botones en MenuActivity
 </es-ES>
 
 <ur>
-🎮 player_label میں ترجمے کی غلطیاں درست کی گئیں (Polish, Bengali, Sinhala)
-🎮 showWinner() میں Firestore binder انتظار سے ANR درست
-🔔 20 منٹ کی حد ہٹا دی، اب دعوت ہمیشہ ممکن
-🔔 دوستوں کی فہرست میں دعوت کے اعدادوشمار
-🔔 دوستوں کی فہرست حروف/آخری بار دیکھے مطابق
+🎮 AnalyticsManager میں null safety ریگریشن درست — 10 میتھڈز میں NPE کریشز روکے گئے
+🔔 Invitations اسکرین میں «Historical Invites» فیچر شامل
+🔔 صارف کے ایپ میں واپس آنے پر مسڈ دعوت کی اطلاع شامل
+🔔 MenuActivity میں بٹن کے رویّے میں تبدیلی
 </ur>
 
 <bn-BD>
-🎮 player_label-এ অনুবাদ ভুল (Polish, Bengali, Sinhala) ঠিক করা হয়েছে
-🎮 showWinner()-এ Firestore binder অপেক্ষা থেকে ANR ঠিক
-🔔 20 মিনিট সীমা সরানো হয়েছে, আমন্ত্রণ সবসময় সম্ভব
-🔔 বন্ধু তালিকায় আমন্ত্রণের পরিসংখ্যান যোগ
-🔔 বন্ধু তালিকা সাজানো যায় নাম/শেষ দেখা দিয়ে
+🎮 AnalyticsManager-এ null safety রিগ্রেশন ঠিক করা হয়েছে — ১০টি মেথডে NPE ক্র্যাশ প্রতিরোধ
+🔔 Invitations স্ক্রিনে ‘Historical Invites’ ফিচার যোগ
+🔔 ব্যবহারকারী অ্যাপে ফিরলে মিসড আমন্ত্রণ নোটিফিকেশন যোগ
+🔔 MenuActivity-তে বোতামের আচরণ পরিবর্তন
 </bn-BD>
 
 <ne-NP>
-🎮 player_label अनुवाद त्रुटि (Polish, Bengali, Sinhala) सच्याइयो
-🎮 showWinner() मा Firestore binder पर्खेर ANR समाधान
-🔔 २० मिनेटको सीमा हटाइयो, सधैं निमन्त्रण सम्भव
-🔔 साथी सूचीमा निमन्त्रण तथ्याङ्क देखाइयो
-🔔 साथी सूची नाम/अन्तिम देखिएको अनुसार मिलाइने
+🎮 AnalyticsManager मा null safety regression सुधार — १० विधिमा NPE क्र्यास रोकियो
+🔔 Invitations स्क्रिनमा ‘Historical Invites’ सुविधा थपियो
+🔔 प्रयोगकर्ता एपमा फर्किँदा मिस भएको निमन्त्रणाको सूचना थपियो
+🔔 MenuActivity मा बटनको व्यवहार परिवर्तन
 </ne-NP>
 
 <hi-IN>
-🎮 player_label अनुवाद त्रुटियाँ (Polish, Bengali, Sinhala) ठीक की गईं
-🎮 showWinner() में Firestore binder प्रतीक्षा से ANR ठीक
-🔔 20-मिनट सीमा हटाई, निमंत्रण हमेशा संभव
-🔔 मित्र सूची में निमंत्रण आँकड़े
-🔔 मित्र सूची क्रमबद्ध नाम/अंतिम बार देखा से
+🎮 AnalyticsManager में null safety रिग्रेशन ठीक — 10 मेथड में NPE क्रैश रोके
+🔔 Invitations स्क्रीन पर ‘Historical Invites’ फीचर जोड़ा
+🔔 यूज़र के ऐप में लौटने पर मिस्ड इनविटेशन नोटिफ़िकेशन जोड़ा
+🔔 MenuActivity में बटन का व्यवहार बदला
 </hi-IN>
 
 <am>
-🎮 player_label ትርጉም ስህተት (Polish, Bengali, Sinhala) ተስተካክሏል
-🎮 showWinner() ውስጥ Firestore binder ጠብቆ ANR ተፈታ
-🔔 20 ደቂቃ ገደብ ተወግዶ ማስገባት ሁሌ ይቻላል
-🔔 የግብዣ ስታቲስቲክስ በወዳጅ ዝርዝር
-🔔 ዝርዝር ከስም/መጨረሻ ጊዜ ይደራል
+🎮 በAnalyticsManager ውስጥ የnull safety ድጋፍ መመለስ ተስተካክሏል — በ10 ዘዴዎች የNPE መቃኘት ተከለከለ
+🔔 በInvitations ስክሪን ‘Historical Invites’ ተጨምሯል
+🔔 ተጠቃሚው ወደ መተግበሪያው ሲመለስ ስለተሰናከለ መጋበዣ ማሳወቂያ ታክሏል
+🔔 በMenuActivity ውስጥ የአዝራር ባህሪ ተቀይሯል
 </am>
 
 <ar>
-🎮 إصلاح أخطاء player_label للبولندية، البنغالية، السنهالية
-🎮 إصلاح ANR بسبب انتظار Firestore binder في showWinner()
-🔔 إزالة حد 20 دقيقة للدعوات
-🔔 عرض إحصاءات الدعوات في قائمة الأصدقاء
-🔔 قائمة أصدقاء قابلة للفرز بالاسم/آخر ظهور
+🎮 تصحيح تراجع ‎null safety‎ في ‎AnalyticsManager‎ — منع أعطال ‎NPE‎ في 10 أساليب
+🔔 إضافة ميزة «الدعوات التاريخية» إلى شاشة الدعوات
+🔔 إضافة إشعار بالدعوة الفائتة عند عودة المستخدم إلى التطبيق
+🔔 تغيير سلوك الأزرار في ‎MenuActivity‎
 </ar>
 
 <my-MM>
-🎮 player_label ဘာသာပြန် အမှား (Polish, Bengali, Sinhala) ပြင်ပြီး
-🎮 showWinner() တွင် Firestore binder စောင့်ရင်း ANR ဖြေရှင်း
-🔔 20 မိနစ် ကန့်သတ်ချက် ဖယ်, ဖိတ်ခေါ် များချိန်မရွေး
-🔔 မိတ်ဆွေစာရင်းတွင် ဖိတ်ခေါ် စာရင်းအင်း
-🔔 မိတ်ဆွေစာရင်း အက္ခရာ/နောက်ဆုံး မြင်သည့်အချိန် အလိုက် စီ
+🎮 AnalyticsManager တွင် null safety regression ကို ပြင်ဆင်ပြီး — 10 methods ထဲမှ NPE crash မဖြစ်ရန် ကာကွယ်
+🔔 Invitations စခရင်တွင် ‘Historical Invites’ အင်္ဂါရပ် ထည့်သွင်း
+🔔 အသုံးပြုသူ အဖြတ်ပြီး ပြန်ဝင်လာသည့်အခါ မိဆွဲမိသော ဖိတ်ကြားမှု အသိပေးချက် ထည့်သွင်း
+🔔 MenuActivity တွင် ခလုတ် ပြုမူပုံ ပြောင်းလဲ
 </my-MM>
 
 <km-KH>
-🎮 កែ player_label បកប្រែ (Polish, Bengali, Sinhala)
-🎮 កែ ANR ពី Firestore binder ក្នុង showWinner()
-🔔 លុបកំណត់ 20 នាទីសម្រាប់អញ្ជើញ
-🔔 បង្ហាញស្ថិតិអញ្ជើញក្នុងបញ្ជីមិត្ត
-🔔 បញ្ជីមិត្តអាចតម្រៀបតាមឈ្មោះ/ពេលឃើញចុងក្រោយ
+🎮 កែការថយក្រោយ null safety ក្នុង AnalyticsManager — ការពារ NPE crash ក្នុងវិធីសាស្ត្រ ១០
+🔔 បន្ថែមមុខងារ «Historical Invites» លើអេក្រង់ Invitations
+🔔 បន្ថែមការជូនដំណឹងអំពីការអញ្ជើញដែលខកខាន នៅពេលអ្នកប្រើត្រឡប់មកកម្មវិធី
+🔔 ផ្លាស់ប្ដូរប្រតិបត្តិការប៊ូតុងក្នុង MenuActivity
 </km-KH>
 
 <lo-LA>
-🎮 ແກ້ player_label ຜິດ (Polish, Bengali, Sinhala)
-🎮 ແກ້ ANR ຈາກ Firestore binder ໃນ showWinner()
-🔔 ຍົກເລີກຂໍ້ຈຳກັດ 20 ນາທີໃນການເຊີນ
-🔔 ສະແດງສະຖິຕິເຊີນໃນລາຍຊື່ໝູ່
-🔔 ລາຍຊື່ໝູ່ຈັດຕາມຊື່/ເວລາລ່າສຸດ
+🎮 ແກ້ການຖອຍຫຼັງ null safety ໃນ AnalyticsManager — ປ້ອງກັນ NPE ລົ້ມເຫຼວໃນ 10 ວິທີ
+🔔 ເພີ່ມຟີເຈີ «Historical Invites» ໃນໜ້າ Invitations
+🔔 ເພີ່ມແຈ້ງເຕືອນຄໍາເຊີນທີ່ພາດເມື່ອຜູ້ໃຊ້ກັບເຂົ້າແອັບ
+🔔 ປ່ຽນແປງພ຤ດິກໍາປຸ່ມໃນ MenuActivity
 </lo-LA>
 
 <mn-MN>
-🎮 player_label орчуулгын алдаа (Polish, Bengali, Sinhala) зассан
-🎮 showWinner() д Firestore binder-ээс ANR зассан
-🔔 20 минутын хязгаар арилгав, урих боломжтой
-🔔 Найзын жагсаалтад урилгын статистик
-🔔 Найзын жагсаалт нэр/сүүлд харснаар эрэмбэлнэ
+🎮 AnalyticsManager-ийн null safety бууралтыг засав — 10 арга дээрх NPE алдааас сэргийлэв
+🔔 Invitations дэлгэцэд “Historical Invites” боломж нэмэв
+🔔 Хэрэглэгч апп-д буцахад алгассан урилгын мэдэгдэл нэмэв
+🔔 MenuActivity дахь товчлуурын зан үйл өөрчлөгдлөө
 </mn-MN>
 
 <fa-IR>
-🎮 خطاهای ترجمه player_label (لهستانی، بنگالی، سینهالی) رفع شد
-🎮 رفع ANR ناشی از انتظار Firestore binder در showWinner()
-🔔 حذف محدودیت ۲۰ دقیقه دعوت
-🔔 نمایش آمار دعوت در فهرست دوستان
-🔔 فهرست دوستان مرتب‌شدنی با نام/آخرین بازدید
+🎮 رفع عقب‌گرد ‎null safety‎ در ‎AnalyticsManager‎ — جلوگیری از کرش‌های ‎NPE‎ در ۱۰ متد
+🔔 افزودن قابلیت «دعوت‌های تاریخی» به صفحه Invitations
+🔔 افزودن اعلان دعوتِ از دست‌رفته هنگام بازگشت کاربر به اپ
+🔔 تغییر رفتار دکمه‌ها در ‎MenuActivity‎
 </fa-IR>
 
 <si-LK>
-🎮 player_label පරිවර්තන දෝෂ (Polish, Bengali, Sinhala) නිවැරදි
-🎮 showWinner() හි Firestore binder නිසා ANR විසඳා ඇත
-🔔 මිනිත්තු 20 සීමාව ඉවත්, ආරාධනා හැම විටම
-🔔 මිතුරු ලැයිස්තුවේ ආරාධනා තොරතුරු
-🔔 මිතුරු ලැයිස්තුව නාම/අවසන් දැක්වූ කාලය අනුව
+🎮 AnalyticsManager හි null safety regression නිවැරදි කර — ක්‍රම 10කදී NPE බිඳවැටීම් වැළැක්වයි
+🔔 Invitations තිරයට ‘Historical Invites’ විශේෂතාව එක් කළා
+🔔 පරිශීලකයා යෙදුමට නැවත පැමිණි විට මගහැරුණු ආරාධනා පිළිබඳ දැනුම්දීම එක් කළා
+🔔 MenuActivity හි බොත්තම් හැසිරීම වෙනස් කළා
 </si-LK>
 
 <sw>
-🎮 Marekebisho ya tafsiri player_label (Kipolishi, Kibengali, Kisinhalese)
-🎮 ANR ya showWinner() kwa Firestore binder imeondolewa
-🔔 Kizuizi cha dakika 20 cha mwaliko kimeondolewa
-🔔 Takwimu za mialiko kwenye orodha ya marafiki
-🔔 Orodha ya marafiki inapangwa kwa jina/uliyeonekana mwisho
+🎮 Kurekebisha kurudi nyuma kwa null safety kwenye AnalyticsManager — kuzuia hitilafu za NPE katika mbinu 10
+🔔 Kuongeza kipengele ‘Historical Invites’ kwenye skrini ya Invitations
+🔔 Kuongeza arifa ya mwaliko uliokosa mtumiaji akirudi kwenye app
+🔔 Kubadili mwenendo wa vitufe katika MenuActivity
 </sw>
