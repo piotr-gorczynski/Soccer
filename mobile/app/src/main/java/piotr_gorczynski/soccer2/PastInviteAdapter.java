@@ -108,7 +108,7 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
                 if ("nickname".equals(payload)) {
                     String nick = nickCache.get(uid);
                     if (nick != null) {
-                        h.nickname.setText(context.getString(R.string.invite_from_format, nick));
+                        h.nickname.setText(SafeStringFormatter.safeGetString(context, R.string.invite_from_format, nick));
                     }
                 } else if ("presence".equals(payload)) {
                     String pState = presCache.get(uid);
@@ -165,9 +165,9 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
         
         // Combine received time and status into one line
         if (!relativeTime.isEmpty() && !statusText.isEmpty()) {
-            h.inviteReceivedAndStatus.setText(context.getString(R.string.invite_received_and_status, relativeTime, statusText));
+            h.inviteReceivedAndStatus.setText(SafeStringFormatter.safeGetString(context, R.string.invite_received_and_status, relativeTime, statusText));
         } else if (!relativeTime.isEmpty()) {
-            h.inviteReceivedAndStatus.setText(context.getString(R.string.invite_received_format, relativeTime));
+            h.inviteReceivedAndStatus.setText(SafeStringFormatter.safeGetString(context, R.string.invite_received_format, relativeTime));
         } else if (!statusText.isEmpty()) {
             h.inviteReceivedAndStatus.setText(statusText);
         } else {
@@ -198,7 +198,7 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
                         }
                     });
         } else {
-            h.nickname.setText(context.getString(R.string.invite_from_format, nick));
+            h.nickname.setText(SafeStringFormatter.safeGetString(context, R.string.invite_from_format, nick));
         }
 
         // Load presence/heartbeat info
@@ -245,16 +245,16 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
         
         int colour = switch (state) {
             case "online" -> {
-                label = context.getString(R.string.presence_user_online, username);
+                label = SafeStringFormatter.safeGetString(context, R.string.presence_user_online, username);
                 yield ContextCompat.getColor(h.itemView.getContext(), R.color.colorGreenDark);
             }
             case "active" -> {
                 long last = hbCache.getOrDefault(uid,0L);
-                label = context.getString(R.string.presence_user_last_seen, username, MatchAdapter.englishRelative(last));
+                label = SafeStringFormatter.safeGetString(context, R.string.presence_user_last_seen, username, MatchAdapter.englishRelative(last));
                 yield ContextCompat.getColor(h.itemView.getContext(), R.color.colorGreenDark);
             }
             default -> {
-                label = context.getString(R.string.presence_user_offline, username);
+                label = SafeStringFormatter.safeGetString(context, R.string.presence_user_offline, username);
                 yield ContextCompat.getColor(h.itemView.getContext(), R.color.colorGrey);
             }
         };
