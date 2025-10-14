@@ -96,6 +96,7 @@
     <string name="search">खोज्नुहोस्</string>
     <string name="load_more">थप लोड गर्नुहोस्</string>
     <string name="add_friend_label">साथीहरूमा थप्नुहोस्</string>
+    <string name="add_friend_short_label">थप्नुहोस्</string>
     <string name="already_friends">पहिले नै साथी हुन्</string>
     <string name="invite_blocked">%1$s ले निमन्त्रणाहरू ब्लक गरेको छ।</string>
     <string name="invites_blocked_notification">अन्य खेलाडीहरूले तपाईंलाई `मित्रलाई निमन्त्रणा दिनुहोस्` प्रकार्य मार्फत निमन्त्रणा दिन सक्दैनन्। तपाईं यसलाई सेटिङहरूमा परिवर्तन गर्न सक्नुहुन्छ।</string>

@@ -96,6 +96,7 @@
     <string name="search">تلاش</string>
     <string name="load_more">مزید لوڈ کریں</string>
     <string name="add_friend_label">دوستوں میں شامل کریں</string>
+    <string name="add_friend_short_label">شامل کریں</string>
     <string name="already_friends">پہلے ہی دوست ہیں</string>
     <string name="invite_blocked">%1$s نے دعوتیں بلاک کر دی ہیں۔</string>
     <string name="invites_blocked_notification">دوسرے کھلاڑی آپ کو `دوست کو دعوت دیں` فنکشن کے ذریعے دعوت نہیں دے سکتے۔ آپ اسے سیٹنگز میں تبدیل کر سکتے ہیں۔</string>
