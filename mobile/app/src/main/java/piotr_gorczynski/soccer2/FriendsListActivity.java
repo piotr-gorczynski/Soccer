@@ -45,6 +45,8 @@ public class FriendsListActivity extends BaseActivity {
     private FirebaseFirestore db;
     private Spinner sortSpinner;
     private int currentSortMode = SORT_BY_LAST_SEEN;  // Default to sort by last seen
+    @Nullable
+    private String pendingInviteStatsRefreshUid;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -97,6 +99,16 @@ public class FriendsListActivity extends BaseActivity {
     protected void onStart() {
         super.onStart();
         loadFriends();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (pendingInviteStatsRefreshUid != null && adapter != null) {
+            adapter.invalidateInviteStatsFor(pendingInviteStatsRefreshUid);
+            pendingInviteStatsRefreshUid = null;
+        }
     }
 
     private void loadFriends() {
@@ -249,6 +261,7 @@ public class FriendsListActivity extends BaseActivity {
                     @SuppressWarnings("unchecked")
                     String inviteId = (String)((java.util.Map<String,Object>)java.util.Objects.requireNonNull(res.getData())).get("inviteId");
                     if (inviteId != null) {
+                        pendingInviteStatsRefreshUid = targetUid;
                         startActivity(new Intent(this, WaitingActivity.class).putExtra("inviteId", inviteId));
                     }
                 })
