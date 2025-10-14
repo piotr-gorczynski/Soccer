@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.content.SharedPreferences;
@@ -86,6 +87,11 @@ public class MenuActivity extends BaseActivity {
     private final Handler adRetryHandler = new Handler(Looper.getMainLooper());
     private final Runnable adRetryRunnable = this::loadInterstitialAd;
     private boolean isAdLoading = false;
+    private View loadingOverlay;
+    private final Handler overlayHandler = new Handler(Looper.getMainLooper());
+    private final Runnable hideOverlayRunnable = this::hideLoadingOverlayImmediate;
+    private long loadingOverlayShownAtMs = 0L;
+    private static final long MIN_LOADING_OVERLAY_DURATION_MS = 250L;
 
     /**
      * Helper to fetch user details from Firestore and update prefs/UI. This is
@@ -620,8 +626,15 @@ public class MenuActivity extends BaseActivity {
                 return;
             }
         }
-        
+
         currentLanguage = LanguageManager.getCurrentLanguageCode(this);
+
+        loadingOverlay = findViewById(R.id.menu_loading_overlay);
+        if (loadingOverlay != null) {
+            loadingOverlay.setOnClickListener(v -> {
+                // consume clicks while loading to avoid double taps
+            });
+        }
 
         // Setup toolbar with defensive error handling
         try {
@@ -740,6 +753,48 @@ public class MenuActivity extends BaseActivity {
                 .show();
     }
 
+    private void showLoadingOverlay() {
+        if (loadingOverlay == null) {
+            return;
+        }
+        overlayHandler.removeCallbacks(hideOverlayRunnable);
+        loadingOverlayShownAtMs = SystemClock.elapsedRealtime();
+        if (loadingOverlay.getVisibility() != View.VISIBLE) {
+            loadingOverlay.setAlpha(0f);
+            loadingOverlay.setVisibility(View.VISIBLE);
+            loadingOverlay.animate().alpha(1f).setDuration(150L).start();
+        } else {
+            loadingOverlay.animate().cancel();
+            loadingOverlay.setAlpha(1f);
+        }
+    }
+
+    private void hideLoadingOverlayWithMinimumDuration() {
+        if (loadingOverlay == null) {
+            return;
+        }
+        long elapsed = SystemClock.elapsedRealtime() - loadingOverlayShownAtMs;
+        long delay = Math.max(0L, MIN_LOADING_OVERLAY_DURATION_MS - elapsed);
+        overlayHandler.removeCallbacks(hideOverlayRunnable);
+        overlayHandler.postDelayed(hideOverlayRunnable, delay);
+    }
+
+    private void hideLoadingOverlayImmediate() {
+        if (loadingOverlay == null) {
+            return;
+        }
+        if (loadingOverlay.getVisibility() != View.VISIBLE) {
+            return;
+        }
+        loadingOverlay.animate().cancel();
+        loadingOverlay.animate().alpha(0f).setDuration(150L).withEndAction(() -> {
+            if (loadingOverlay != null) {
+                loadingOverlay.setVisibility(View.GONE);
+                loadingOverlay.setAlpha(1f);
+            }
+        }).start();
+    }
+
     private void showRegistrationDialog() {
         new AlertDialog.Builder(this)
                 .setMessage(R.string.register_dialog_message)
@@ -757,11 +812,20 @@ public class MenuActivity extends BaseActivity {
     }
 
     private void showAdThenRun(Runnable action) {
+        showLoadingOverlay();
+        Runnable guardedAction = () -> {
+            try {
+                action.run();
+            } finally {
+                hideLoadingOverlayWithMinimumDuration();
+            }
+        };
+
         // Check consent before proceeding with ads logic
         if (!hasAdsConsent()) {
             Log.w("TAG_Soccer", getClass().getSimpleName() + ".showAdThenRun: No ads consent, running action directly");
             showConsentRequiredDialog();
-            action.run();
+            guardedAction.run();
             return;
         }
 
@@ -817,12 +881,12 @@ public class MenuActivity extends BaseActivity {
                                 e
                         );
                     })
-                    .addOnCompleteListener(task -> processAdLogic(action, prefs, resolvedFrequency[0]));
+                    .addOnCompleteListener(task -> processAdLogic(guardedAction, prefs, resolvedFrequency[0]));
         } else {
             // For unauthorized users, use FAILSAFE_AD_FREQUENCY directly
             resolvedFrequency[0] = FAILSAFE_AD_FREQUENCY;
             Log.d("TAG_Soccer", getClass().getSimpleName() + ".showAdThenRun: unauthorized user, using failsafe frequency=" + FAILSAFE_AD_FREQUENCY);
-            processAdLogic(action, prefs, resolvedFrequency[0]);
+            processAdLogic(guardedAction, prefs, resolvedFrequency[0]);
         }
     }
 
@@ -1109,6 +1173,7 @@ public class MenuActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         adRetryHandler.removeCallbacks(adRetryRunnable);
+        overlayHandler.removeCallbacks(hideOverlayRunnable);
     }
 
     /**

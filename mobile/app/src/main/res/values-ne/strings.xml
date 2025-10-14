@@ -349,6 +349,7 @@
     <string name="invite_status_cancelled">स्थिति: रद्द गरियो</string>
     <string name="invite_status_expired">स्थिति: म्याद सकियो</string>
     <string name="invite_from_loading">लोड गर्दै…</string>
+    <string name="menu_loading_message">लोड गर्दै…</string>
     <string name="invite_from_format">निमन्त्रणा: %1$s बाट</string>
     <string name="invite_received_and_status">प्राप्त भयो: %1$s | %2$s</string>
     <string name="presence_online">अनलाइन</string>

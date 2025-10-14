@@ -316,6 +316,7 @@
     <string name="invite_status_cancelled">Xaalad: La joojiyay</string>
     <string name="invite_status_expired">Xaalad: Waqtigii dhammaaday</string>
     <string name="invite_from_loading">Waa la rarayo…</string>
+    <string name="menu_loading_message">Waa la rarayo…</string>
     <string name="invite_from_format">Casumo ka: %1$s</string>
     <string name="invite_received_and_status">La helay: %1$s | %2$s</string>
     <string name="presence_online">Khadka</string>
