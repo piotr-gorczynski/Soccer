@@ -46,6 +46,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 import com.google.android.gms.ads.AdRequest;
@@ -1401,18 +1402,19 @@ public class MenuActivity extends BaseActivity {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         long nowMs = System.currentTimeMillis();
 
-        // Query for pending invitations and filter client-side to avoid requiring composite Firestore indexes
+        // Query for invitations and filter client-side to avoid requiring composite Firestore indexes
         db.collection("invitations")
                 .whereEqualTo("to", uid)
-                .whereEqualTo("status", "pending")
+                .whereIn("status", Arrays.asList("pending", "cancelled", "expired"))
                 .get()
                 .addOnSuccessListener(snap -> {
                     if (snap.isEmpty()) {
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".checkForMissedInvitations: No pending invites");
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".checkForMissedInvitations: No invites for user");
                         return;
                     }
 
                     DocumentSnapshot recentInvite = null;
+                    long mostRecentCreatedAt = Long.MIN_VALUE;
                     for (DocumentSnapshot doc : snap.getDocuments()) {
                         com.google.firebase.Timestamp createdAtTs = doc.getTimestamp("createdAt");
                         if (createdAtTs == null) {
@@ -1420,9 +1422,35 @@ public class MenuActivity extends BaseActivity {
                         }
 
                         long createdAtMs = createdAtTs.toDate().getTime();
-                        if (createdAtMs > lastActiveTimestamp) {
+                        if (createdAtMs <= lastActiveTimestamp) {
+                            continue;
+                        }
+
+                        String status = doc.getString("status");
+                        if (status == null) {
+                            continue;
+                        }
+
+                        boolean shouldNotify = false;
+                        if ("pending".equals(status)) {
+                            com.google.firebase.Timestamp expireAtTs = doc.getTimestamp("expireAt");
+                            if (expireAtTs == null || expireAtTs.toDate().getTime() > nowMs) {
+                                shouldNotify = true;
+                            } else {
+                                Log.d(
+                                        "TAG_Soccer",
+                                        getClass().getSimpleName()
+                                                + ".checkForMissedInvitations: Pending invite expired before notification could be shown"
+                                );
+                                shouldNotify = true; // Still notify so user knows invite was missed
+                            }
+                        } else if ("cancelled".equals(status) || "expired".equals(status)) {
+                            shouldNotify = true;
+                        }
+
+                        if (shouldNotify && createdAtMs > mostRecentCreatedAt) {
+                            mostRecentCreatedAt = createdAtMs;
                             recentInvite = doc;
-                            break;
                         }
                     }
 
@@ -1432,13 +1460,25 @@ public class MenuActivity extends BaseActivity {
                     }
 
                     // Check if invite is still valid (not expired)
+                    String status = recentInvite.getString("status");
                     com.google.firebase.Timestamp expireAtTs = recentInvite.getTimestamp("expireAt");
-                    if (expireAtTs != null && expireAtTs.toDate().getTime() > nowMs) {
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".checkForMissedInvitations: Found missed invite, showing dialog");
-                        showMissedInviteDialog();
-                    } else {
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".checkForMissedInvitations: Invite found but already expired");
+                    boolean inviteActive = expireAtTs != null && expireAtTs.toDate().getTime() > nowMs;
+
+                    if ("pending".equals(status) && !inviteActive) {
+                        Log.d(
+                                "TAG_Soccer",
+                                getClass().getSimpleName() + ".checkForMissedInvitations: Invite found but already expired"
+                        );
                     }
+
+                    Log.d(
+                            "TAG_Soccer",
+                            getClass().getSimpleName()
+                                    + ".checkForMissedInvitations: Found missed invite (status="
+                                    + status
+                                    + "), showing dialog"
+                    );
+                    showMissedInviteDialog();
                 })
                 .addOnFailureListener(e ->
                         Log.e(
