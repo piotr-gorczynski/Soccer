@@ -315,6 +315,7 @@
     <string name="invite_status_cancelled">Төлөв: Цуцалсан</string>
     <string name="invite_status_expired">Төлөв: Хугацаа дууссан</string>
     <string name="invite_from_loading">Ачааллаж байна…</string>
+    <string name="menu_loading_message">Ачааллаж байна…</string>
     <string name="invite_from_format">Урилга -аас: %1$s</string>
     <string name="invite_received_and_status">Хүлээн авсан: %1$s | %2$s</string>
     <string name="presence_online">Онлайн</string>
