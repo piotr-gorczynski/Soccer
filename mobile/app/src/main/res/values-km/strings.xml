@@ -115,6 +115,7 @@
     <string name="search">ស្វែងរក</string>
     <string name="load_more">ផ្ទុកបន្ថែម</string>
     <string name="add_friend_label">បន្ថែមទៅកាន់មិត្តភក្តិ</string>
+    <string name="add_friend_short_label">បន្ថែម</string>
     <string name="already_friends">ជាមិត្តរួចហើយ</string>
     <string name="invite_blocked">%1$s បានទប់ស្កាត់ការអញ្ជើញ។</string>
     <string name="invites_blocked_notification">អ្នកលេងផ្សេងទៀតមិនអាចអញ្ជើញអ្នកតាមមុខងារ \`អញ្ជើញមិត្តភក្តិ\` បានទេ។ អ្នកអាចផ្លាស់ប្តូរវានៅក្នុងការកំណត់។</string>

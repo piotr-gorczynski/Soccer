@@ -115,6 +115,7 @@
     <string name="search">ຄົ້ນຫາ</string>
     <string name="load_more">ໂຫລດເພີ່ມ</string>
     <string name="add_friend_label">ເພີ່ມເຂົ້າໝູ່ເພື່ອນ</string>
+    <string name="add_friend_short_label">ເພີ່ມ</string>
     <string name="already_friends">ເປັນໝູ່ກັນແລ້ວ</string>
     <string name="invite_blocked">%1$s ປິດຮັບຄໍາເຊີນ.</string>
     <string name="invites_blocked_notification">ຜູ້ຫຼິ້ນອື່ນບໍ່ສາມາດເຊີນທ່ານຜ່ານຟັງຊັນ "ເຊີນໝູ່" ໄດ້. ທ່ານສາມາດປ່ຽນໄດ້ໃນການຕັ້ງຄ່າ.</string>
