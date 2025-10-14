@@ -279,7 +279,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
                     }
                     
                     // Format: Sent: X (accepted: Y) | Received: Z (accepted: W)
-                    String statsText = context.getString(R.string.invite_stats_format, 
+                    String statsText = SafeStringFormatter.safeGetString(context, R.string.invite_stats_format, 
                             totalSent, totalSentAccepted, totalReceived, totalReceivedAccepted);
                     inviteStatsCache.put(targetUid, statsText);
                     
@@ -289,7 +289,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
                     }
                 })
                 .addOnFailureListener(e -> {
-                    String errorText = context.getString(R.string.invite_stats_format, 0, 0, 0, 0);
+                    String errorText = SafeStringFormatter.safeGetString(context, R.string.invite_stats_format, 0, 0, 0, 0);
                     inviteStatsCache.put(targetUid, errorText);
                     
                     int idx = indexForUid(targetUid);
@@ -376,7 +376,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
                     
                     // If there are no tournaments, directly update the stats
                     if (tournamentMatchesTasks.isEmpty()) {
-                        String statsText = context.getString(R.string.match_stats_format, wins, losses);
+                        String statsText = SafeStringFormatter.safeGetString(context, R.string.match_stats_format, wins, losses);
                         matchStatsCache.put(targetUid, statsText);
                         
                         int idx = indexForUid(targetUid);
@@ -420,7 +420,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
                                     }
                                 }
                                 
-                                String statsText = context.getString(R.string.match_stats_format, totalWins, totalLosses);
+                                String statsText = SafeStringFormatter.safeGetString(context, R.string.match_stats_format, totalWins, totalLosses);
                                 matchStatsCache.put(targetUid, statsText);
                                 
                                 int idx = indexForUid(targetUid);
@@ -430,7 +430,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
                             })
                             .addOnFailureListener(e -> {
                                 // If tournament queries fail, still show the friendly matches stats
-                                String statsText = context.getString(R.string.match_stats_format, finalWins, finalLosses);
+                                String statsText = SafeStringFormatter.safeGetString(context, R.string.match_stats_format, finalWins, finalLosses);
                                 matchStatsCache.put(targetUid, statsText);
                                 
                                 int idx = indexForUid(targetUid);
@@ -440,7 +440,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
                             });
                 })
                 .addOnFailureListener(e -> {
-                    String errorText = context.getString(R.string.match_stats_format, 0, 0);
+                    String errorText = SafeStringFormatter.safeGetString(context, R.string.match_stats_format, 0, 0);
                     matchStatsCache.put(targetUid, errorText);
                     
                     int idx = indexForUid(targetUid);
