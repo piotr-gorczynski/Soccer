@@ -99,6 +99,8 @@
     <string name="add_a_friend">ເພີ່ມໝູ່</string>
     <string name="add_friend">ເພີ່ມໝູ່ສໍາເລັດ</string>
     <string name="no_friends">ຍັງບໍ່ມີໝູ່ທີ່ຖືກເພີ່ມ...</string>
+    <string name="sort_by_last_seen">ຈັດລຽງຕາມເວລາທີ່ເຫັນຄັ້ງສຸດທ້າຍ</string>
+    <string name="sort_alphabetically">ຈັດລຽງຕາມຕົວອັກສອນ</string>
     <string name="no_tournaments">ຍັງບໍ່ມີການສ້າງການແຂ່ງຂັນ.</string>
     <string name="please_enter_a_nickname">ກະລຸນາໃສ່ຊື່ເລັ່ນ.</string>
     <string name="user_not_found">ບໍ່ພົບຜູ້ໃຊ້.</string>
@@ -112,12 +114,17 @@
     <string name="failed_to_load_nickname">ໂຫລດຊື່ເລັ່ນບໍ່ສໍາເລັດ.</string>
     <string name="search">ຄົ້ນຫາ</string>
     <string name="load_more">ໂຫລດເພີ່ມ</string>
-    <string name="add_friend_label">ເພີ່ມ</string>
+    <string name="add_friend_label">ເພີ່ມເຂົ້າໝູ່ເພື່ອນ</string>
+    <string name="add_friend_short_label">ເພີ່ມ</string>
+    <string name="already_friends">ເປັນໝູ່ກັນແລ້ວ</string>
     <string name="invite_blocked">%1$s ປິດຮັບຄໍາເຊີນ.</string>
     <string name="invites_blocked_notification">ຜູ້ຫຼິ້ນອື່ນບໍ່ສາມາດເຊີນທ່ານຜ່ານຟັງຊັນ "ເຊີນໝູ່" ໄດ້. ທ່ານສາມາດປ່ຽນໄດ້ໃນການຕັ້ງຄ່າ.</string>
     <string name="pending_game_invitations">ຄໍາເຊີນເກມທີ່ລໍຖ້າ</string>
     <string name="no_pending_invites">ບໍ່ມີຄໍາເຊີນທີ່ລໍຖ້າ.</string>
     <string name="invite_already_sent">ທ່ານມີຄໍາເຊີນອື່ນທີ່ລໍຖ້າຢູ່ແລ້ວ.</string>
+    <string name="missed_invite_title">ທ່ານພາດຄຳເຊື້ອເຊີນ</string>
+    <string name="missed_invite_message">ທ່ານໄດ້ຮັບຄຳເຊື້ອເຊີນໃນຂະນະທີ່ທ່ານອອບລາຍ.</string>
+    <string name="see_invites">ເບິ່ງຄຳເຊື້ອເຊີນ</string>
     <string name="waiting_for_opponent_named">ກໍາລັງລໍຖ້າ %1$s ຢືນຢັນ...</string>
     <string name="waiting_for_opponent">ກໍາລັງລໍຖ້າຄູ່ແຂ່ງຢືນຢັນ...</string>
     <string name="no_ranking_yet">ຍັງບໍ່ມີການແຂ່ງຂັນທີ່ຈົບເພື່ອສະແດງອັນດັບ.</string>
@@ -293,4 +300,30 @@
     <string name="register_benefits_title">ເຂົ້າຮ່ວມການແຂ່ງຂັນແລະແຂ່ງຂັນກັບທົ່ວໂລກ!</string>
     <string name="register_benefits_message">ລົງທະບຽນເພື່ອບັນທຶກອັນດັບຂອງທ່ານ ແລະຮ່ວມແຂ່ງກັບນັກຫຼິ້ນຈາກທົ່ວໂລກ.</string>
     <string name="register_now">ລົງທະບຽນດຽວນີ້</string>
+    
+    <!-- Friend invitation statistics -->
+    <string name="loading_invite_stats">ກຳລັງໂຫຼດສະຖິຕິການເຊີນ…</string>
+    <string name="invite_stats_format">Sent: %1$d (accepted: %2$d) | Received: %3$d (accepted: %4$d)</string>
+    
+    <!-- Friend match statistics -->
+    <string name="match_stats_format">ຊະນະ 🏆: %1$d | ພ້າຍແພ້ 😞: %2$d</string>
+    <!-- Past invites -->
+    <string name="past_invites">ການເຊື້ອເຊີນທີ່ຜ່ານມາ</string>
+    <string name="no_past_invites">ບໍ່ມີການເຊື້ອເຊີນທີ່ຜ່ານມາ</string>
+    <string name="invite_and_add_to_friend">ເຊື້ອເຊີນ ແລະ ເພີ່ມເປັນເພື່ອນ</string>
+    <string name="invite_received_format">ໄດ້ຮັບ %1$s</string>
+    <string name="invite_status_accepted">ສະຖານະ: ຍອມຮັບແລ້ວ</string>
+    <string name="invite_status_cancelled">ສະຖານະ: ຍົກເລີກແລ້ວ</string>
+    <string name="invite_status_expired">ສະຖານະ: ໝົດອາຍຸແລ້ວ</string>
+    <string name="invite_from_loading">ກຳລັງໂຫລດ…</string>
+    <string name="menu_loading_message">ກຳລັງໂຫລດ…</string>
+    <string name="invite_from_format">ເຊື້ອເຊີນຈາກ: %1$s</string>
+    <string name="invite_received_and_status">ໄດ້ຮັບ: %1$s | %2$s</string>
+    <string name="presence_online">ອອນໄລນ໌</string>
+    <string name="presence_last_seen">ເຫັນຄັ້ງສຸດທ້າຍ %1$s</string>
+    <string name="presence_offline">ອອບໄລນ໌</string>
+    <string name="presence_user_online">%1$s ສະຖານະ: ອອນໄລນ໌</string>
+    <string name="presence_user_last_seen">%1$s ສະຖານະ: ເຫັນຄັ້ງສຸດທ້າຍ %2$s</string>
+    <string name="presence_user_offline">%1$s ສະຖານະ: ອອບໄລນ໌</string>
+
 </resources>

@@ -99,6 +99,8 @@
     <string name="add_a_friend">මිතුරෙකු එක් කරන්න</string>
     <string name="add_friend">මිතුරා සාර්ථකව එක් කර ඇත</string>
     <string name="no_friends">දැනට තෙක් මිතුරන් කිසිවකු එක් කර නොමැත…</string>
+    <string name="sort_by_last_seen">අවසන් වරට දැක්කේ අනුව පිළිවෙළට සකසන්න</string>
+    <string name="sort_alphabetically">අක්ෂර මාලා අනුපිළිවෙළට සකසන්න</string>
     <string name="no_tournaments">තවමත් තරඟාවලියක් සෑදී නොමැත.</string>
     <string name="please_enter_a_nickname">කරුණාකර අතුරු නාමයක් ඇතුල් කරන්න.</string>
     <string name="user_not_found">පරිශීලකයා සොයාගත නොහැකි විය.</string>
@@ -112,12 +114,17 @@
     <string name="failed_to_load_nickname">අතුරු නාමය පූරණය කිරීමට අසමත් විය.</string>
     <string name="search">සොයන්න</string>
     <string name="load_more">තවත් පූරණය කරන්න</string>
-    <string name="add_friend_label">එක් කරන්න</string>
+    <string name="add_friend_label">මිතුරන් වෙත එක් කරන්න</string>
+    <string name="add_friend_short_label">එක් කරන්න</string>
+    <string name="already_friends">දැනටමත් මිතුරන්</string>
     <string name="invite_blocked">%1$s ආරාධනා අවහිර කර ඇත.</string>
     <string name="invites_blocked_notification">වෙනත් ක්‍රීඩකයින්ට \`මිතුරෙකු ආරාධනා කරන්න\` ක්‍රියාවලිය හරහා ඔබට ආරාධනා කිරීමට නොහැක. ඔබට එය සැකසුම් තුළ වෙනස් කළ හැක.</string>
     <string name="pending_game_invitations">අපේක්ෂිත ක්‍රීඩා ආරාධනා</string>
     <string name="no_pending_invites">අපේක්ෂිත ආරාධනා නොමැත.</string>
     <string name="invite_already_sent">ඔබට දැනටමත් වෙනත් ආරාධනයක් අපේක්ෂිතව ඇත.</string>
+    <string name="missed_invite_title">ඔබට ආරාධනාවක් මග හැරුණි</string>
+    <string name="missed_invite_message">ඔබ නොබැඳිව සිටියදී ඔබට ආරාධනාවක් ලැබුණි.</string>
+    <string name="see_invites">ආරාධනා බලන්න</string>
     <string name="waiting_for_opponent_named">අපි %1$s එය පිළිගැනීමට බලාසිටී…</string>
     <string name="waiting_for_opponent">අපි ප්‍රතිවාදියා එය පිළිගැනීමට බලාසිටී…</string>
     <string name="no_ranking_yet">ශ්‍රේණිගත කිරීම පෙන්වීමට තවමත් තරඟාවලි අවසන් වී නොමැත.</string>
@@ -293,4 +300,30 @@
     <string name="register_benefits_title">තරඟාවලියට එක් වී ගෝලීය වශයෙන් තරඟ කරන්න!</string>
     <string name="register_benefits_message">ඔබේ ශ්‍රේණිගත වීම සුරකින්න සහ ලොව පුරා ක්‍රීඩකයින් සමඟ තරඟ කිරීමට ලියාපදිංචි වන්න.</string>
     <string name="register_now">දැන්ම ලියාපදිංචි වන්න</string>
+    
+    <!-- Friend invitation statistics -->
+    <string name="loading_invite_stats">ආරාධනා සංඛ්‍යාලේඛන පූරණය වෙමින්…</string>
+    <string name="invite_stats_format">Sent: %1$d (accepted: %2$d) | Received: %3$d (accepted: %4$d)</string>
+    
+    <!-- Friend match statistics -->
+    <string name="match_stats_format">ජයග්‍රහණ 🏆: %1$d | පරාජයන් 😞: %2$d</string>
+    <!-- Past invites -->
+    <string name="past_invites">පසුගිය ආරාධනා</string>
+    <string name="no_past_invites">පසුගිය ආරාධනා නැත</string>
+    <string name="invite_and_add_to_friend">ආරාධනය කර මිතුරෙකු ලෙස එකතු කරන්න</string>
+    <string name="invite_received_format">ලැබුණි %1$s</string>
+    <string name="invite_status_accepted">තත්ත්වය: පිළිගත්තා</string>
+    <string name="invite_status_cancelled">තත්ත්වය: අවලංගු කළා</string>
+    <string name="invite_status_expired">තත්ත්වය: කල් ඉකුත් වී ඇත</string>
+    <string name="invite_from_loading">පූරණය වෙමින්…</string>
+    <string name="menu_loading_message">පූරණය වෙමින්…</string>
+    <string name="invite_from_format">ආරාධනාව: %1$s ගෙන්</string>
+    <string name="invite_received_and_status">ලැබුණි: %1$s | %2$s</string>
+    <string name="presence_online">සබැඳිව</string>
+    <string name="presence_last_seen">අවසන් වරට දුටු %1$s</string>
+    <string name="presence_offline">අසම්බන්ධිත</string>
+    <string name="presence_user_online">%1$s තත්ත්වය: සබැඳිව</string>
+    <string name="presence_user_last_seen">%1$s තත්ත්වය: අවසන් වරට දුටු %2$s</string>
+    <string name="presence_user_offline">%1$s තත්ත්වය: අසම්බන්ධිත</string>
+
 </resources>

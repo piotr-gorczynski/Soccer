@@ -80,6 +80,8 @@
     <string name="add_a_friend">একজন বন্ধু যোগ করুন</string>
     <string name="add_friend">বন্ধু সফলভাবে যোগ করা হয়েছে</string>
     <string name="no_friends">এখনো কোনো বন্ধু যোগ করা হয়নি…</string>
+    <string name="sort_by_last_seen">সর্বশেষ দেখা অনুযায়ী সাজান</string>
+    <string name="sort_alphabetically">বর্ণানুক্রমিকভাবে সাজান</string>
     <string name="no_tournaments">এখনো কোনো টুর্নামেন্ট তৈরি করা হয়নি।</string>
     <string name="please_enter_a_nickname">অনুগ্রহ করে একটি ডাকনাম প্রবেশ করান।</string>
     <string name="user_not_found">ব্যবহারকারী পাওয়া যায়নি।</string>
@@ -93,7 +95,9 @@
     <string name="failed_to_load_nickname">ডাকনাম লোড করতে ব্যর্থ।</string>
     <string name="search">অনুসন্ধান</string>
     <string name="load_more">আরো লোড করুন</string>
-    <string name="add_friend_label">যোগ করুন</string>
+    <string name="add_friend_label">বন্ধুদের মধ্যে যোগ করুন</string>
+    <string name="add_friend_short_label">যোগ করুন</string>
+    <string name="already_friends">ইতিমধ্যেই বন্ধু</string>
     <string name="invite_blocked">%1$s আমন্ত্রণ ব্লক করেছে।</string>
     <string name="invites_blocked_notification">অন্য খেলোয়াড়রা `বন্ধুকে আমন্ত্রণ জানান` ফাংশনের মাধ্যমে আপনাকে আমন্ত্রণ জানাতে পারবে না। আপনি সেটিংসে এটি পরিবর্তন করতে পারেন।</string>
     
@@ -102,6 +106,9 @@
     <string name="pending_invites">মুলতুবি আমন্ত্রণ</string>
     <string name="no_pending_invites">কোনো মুলতুবি আমন্ত্রণ নেই।</string>
     <string name="invite_already_sent">আপনার ইতিমধ্যে আরেকটি আমন্ত্রণ মুলতুবি আছে।</string>
+    <string name="missed_invite_title">আপনার আমন্ত্রণ মিস হয়েছে</string>
+    <string name="missed_invite_message">আপনি অফলাইন থাকার সময় একটি আমন্ত্রণ পেয়েছিলেন।</string>
+    <string name="see_invites">আমন্ত্রণ দেখুন</string>
     <string name="waiting_for_opponent_named">%1$s এর গ্রহণের অপেক্ষায়…</string>
     <string name="waiting_for_opponent">প্রতিপক্ষের গ্রহণের অপেক্ষায়…</string>
     
@@ -320,6 +327,37 @@
     <string name="game_ready_title">%1$s এর জন্য গেম প্রস্তুত!</string>
     <string name="game_ready_message">আপনার ম্যাচ শুরু হওয়ার জন্য প্রস্তুত। যোগ দিতে ট্যাপ করুন!</string>
     <string name="join_game_action">গেমে যোগ দিন</string>
+    
+    <!-- Friend invitation statistics -->
+    <string name="loading_invite_stats">আমন্ত্রণ পরিসংখ্যান লোড করা হচ্ছে…</string>
+    <string name="invite_stats_format">Sent: %1$d (accepted: %2$d) | Received: %3$d (accepted: %4$d)</string>
+    
+    <!-- Friend match statistics -->
+    <string name="match_stats_format">জয় 🏆: %1$d | পরাজয় 😞: %2$d</string>
+    
+    <!-- Past invites -->
+    <string name="past_invites">পূর্বের আমন্ত্রণ</string>
+    <string name="no_past_invites">কোনো পূর্বের আমন্ত্রণ নেই</string>
+    <string name="invite_and_add_to_friend">আমন্ত্রণ জানান এবং বন্ধু হিসাবে যোগ করুন</string>
+    <string name="invite_received_format">গৃহীত %1$s</string>
+    <string name="invite_status_accepted">অবস্থা: গৃহীত</string>
+    <string name="invite_status_cancelled">অবস্থা: বাতিল</string>
+    <string name="invite_status_expired">অবস্থা: মেয়াদ শেষ</string>
+    <string name="invite_from_loading">লোড হচ্ছে…</string>
+    <string name="menu_loading_message">লোড হচ্ছে…</string>
+    <string name="invite_from_format">আমন্ত্রণ থেকে: %1$s</string>
+    <string name="invite_received_and_status">প্রাপ্ত: %1$s | %2$s</string>
+    <string name="presence_online">অনলাইন</string>
+    <string name="presence_last_seen">শেষ দেখা হয়েছে %1$s</string>
+    <string name="presence_offline">অফলাইন</string>
+    <string name="presence_user_online">%1$s অবস্থা: অনলাইন</string>
+    <string name="presence_user_last_seen">%1$s অবস্থা: শেষ দেখা হয়েছে %2$s</string>
+    <string name="presence_user_offline">%1$s অবস্থা: অফলাইন</string>
+    <string name="error_checking_friend_status">বন্ধুর অবস্থা পরীক্ষা করতে ত্রুটি</string>
+    <string name="friend_added">সফলভাবে বন্ধু যোগ হয়েছে</string>
+    <string name="active_invitation_exists">সক্রিয় আমন্ত্রণ ইতিমধ্যে বিদ্যমান</string>
+    <string name="user_blocked_invites">ব্যবহারকারী আমন্ত্রণ ব্লক করেছেন</string>
+    <string name="cannot_invite_this_user">এই ব্যবহারকারীকে আমন্ত্রণ জানানো যাবে না</string>
     
     <!-- Preference level values -->
     <string-array name="pref_level_values">

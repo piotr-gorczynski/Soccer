@@ -80,6 +80,8 @@
     <string name="add_a_friend">افزودن دوست</string>
     <string name="add_friend">دوست با موفقیت اضافه شد</string>
     <string name="no_friends">تا کنون دوستی اضافه نشده است…</string>
+    <string name="sort_by_last_seen">مرتب‌سازی بر اساس آخرین بازدید</string>
+    <string name="sort_alphabetically">مرتب‌سازی الفبایی</string>
     <string name="no_tournaments">هنوز هیچ تورنمنتی ساخته نشده است.</string>
     <string name="please_enter_a_nickname">لطفاً یک نام مستعار وارد کنید.</string>
     <string name="user_not_found">کاربر پیدا نشد.</string>
@@ -93,12 +95,17 @@
     <string name="failed_to_load_nickname">بارگذاری نام مستعار ناموفق بود.</string>
     <string name="search">جستجو</string>
     <string name="load_more">بارگذاری بیشتر</string>
-    <string name="add_friend_label">افزودن</string>
+    <string name="add_friend_label">افزودن به دوستان</string>
+    <string name="add_friend_short_label">افزودن</string>
+    <string name="already_friends">قبلاً دوست هستید</string>
     <string name="invite_blocked">%1$s دعوت‌ها را مسدود کرده است.</string>
     <string name="invites_blocked_notification">بازیکنان دیگر نمی‌توانند از طریق «دعوت از دوست» شما را دعوت کنند. می‌توانید این گزینه را در تنظیمات تغییر دهید.</string>
     <string name="pending_game_invitations">دعوت‌های بازی در انتظار</string>
     <string name="no_pending_invites">دعوت در انتظاری وجود ندارد.</string>
     <string name="invite_already_sent">شما هم‌اکنون یک دعوت در انتظار دارید.</string>
+    <string name="missed_invite_title">دعوت از دست رفته</string>
+    <string name="missed_invite_message">شما در حالی که آفلاین بودید یک دعوت دریافت کردید.</string>
+    <string name="see_invites">مشاهده دعوت‌ها</string>
     <string name="waiting_for_opponent_named">در انتظار پذیرش %1$s…</string>
     <string name="waiting_for_opponent">در انتظار پذیرش حریف…</string>
     <string name="no_ranking_yet">هنوز هیچ تورنمنتی تکمیل نشده تا رتبه‌بندی نمایش داده شود.</string>
@@ -274,4 +281,30 @@
     <string name="register_benefits_title">به تورنمنت‌ها بپیوندید و جهانی رقابت کنید!</string>
     <string name="register_benefits_message">ثبت‌نام کنید تا رتبه خود را حفظ کنید و در تورنمنت‌های بازیکنان سراسر جهان شرکت کنید.</string>
     <string name="register_now">همین حالا ثبت‌نام کنید</string>
+    
+    <!-- Friend invitation statistics -->
+    <string name="loading_invite_stats">در حال بارگذاری آمار دعوت‌نامه…</string>
+    <string name="invite_stats_format">Sent: %1$d (accepted: %2$d) | Received: %3$d (accepted: %4$d)</string>
+    
+    <!-- Friend match statistics -->
+    <string name="match_stats_format">پیروزی‌ها 🏆: %1$d | باخت‌ها 😞: %2$d</string>
+    <!-- Past invites -->
+    <string name="past_invites">دعوت‌های گذشته</string>
+    <string name="no_past_invites">دعوت گذشته‌ای وجود ندارد</string>
+    <string name="invite_and_add_to_friend">دعوت و افزودن به دوستان</string>
+    <string name="invite_received_format">دریافت شد %1$s</string>
+    <string name="invite_status_accepted">وضعیت: پذیرفته شده</string>
+    <string name="invite_status_cancelled">وضعیت: لغو شده</string>
+    <string name="invite_status_expired">وضعیت: منقضی شده</string>
+    <string name="invite_from_loading">در حال بارگذاری…</string>
+    <string name="menu_loading_message">در حال بارگذاری…</string>
+    <string name="invite_from_format">دعوت از: %1$s</string>
+    <string name="invite_received_and_status">دریافت شد: %1$s | %2$s</string>
+    <string name="presence_online">آنلاین</string>
+    <string name="presence_last_seen">آخرین بار دیده شد %1$s</string>
+    <string name="presence_offline">آفلاین</string>
+    <string name="presence_user_online">%1$s وضعیت: آنلاین</string>
+    <string name="presence_user_last_seen">%1$s وضعیت: آخرین بار دیده شد %2$s</string>
+    <string name="presence_user_offline">%1$s وضعیت: آفلاین</string>
+
 </resources>

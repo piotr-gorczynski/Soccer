@@ -80,6 +80,8 @@
     <string name="add_a_friend">Agregar un amigo</string>
     <string name="add_friend">Amigo agregado exitosamente</string>
     <string name="no_friends">No se han agregado amigos aún…</string>
+    <string name="sort_by_last_seen">Ordenar por última vez visto</string>
+    <string name="sort_alphabetically">Ordenar alfabéticamente</string>
     <string name="no_tournaments">No se han creado torneos aún.</string>
     <string name="please_enter_a_nickname">Por favor ingresa un apodo.</string>
     <string name="user_not_found">Usuario no encontrado.</string>
@@ -93,7 +95,9 @@
     <string name="failed_to_load_nickname">Error al cargar apodo.</string>
     <string name="search">Buscar</string>
     <string name="load_more">Cargar más</string>
-    <string name="add_friend_label">Agregar</string>
+    <string name="add_friend_label">Agregar a amigos</string>
+    <string name="add_friend_short_label">Agregar</string>
+    <string name="already_friends">Ya son amigos</string>
     <string name="invite_blocked">%1$s bloqueó invitaciones.</string>
     <string name="invites_blocked_notification">Otros jugadores no pueden invitarte a través de la función `Invitar amigo`. Puedes cambiarlo en Configuración.</string>
     
@@ -102,6 +106,9 @@
     <string name="pending_invites">Invitaciones pendientes</string>
     <string name="no_pending_invites">No hay invitaciones pendientes.</string>
     <string name="invite_already_sent">Ya tienes otra invitación pendiente.</string>
+    <string name="missed_invite_title">Invitación perdida</string>
+    <string name="missed_invite_message">Recibiste una invitación mientras estabas desconectado.</string>
+    <string name="see_invites">Ver invitaciones</string>
     <string name="waiting_for_opponent_named">Esperando que %1$s acepte…</string>
     <string name="waiting_for_opponent">Esperando que el oponente acepte…</string>
     
@@ -322,10 +329,33 @@
     <string name="game_ready_message">Tu partido está listo para comenzar. ¡Toca para unirte!</string>
     <string name="join_game_action">Unirse al Juego</string>
     
+    <!-- Friend invitation statistics -->
+    <string name="loading_invite_stats">Cargando estadísticas de invitación…</string>
+    <string name="invite_stats_format">Enviado: %1$d (aceptado: %2$d) | Recibido: %3$d (aceptado: %4$d)</string>
+    
+    <!-- Friend match statistics -->
+    <string name="match_stats_format">Victorias 🏆: %1$d | Derrotas 😞: %2$d</string>
+    
     <!-- Preference level values -->
     <string-array name="pref_level_values">
         <item>1</item>
         <item>10</item>
         <item>30</item>
     </string-array>
+    <!-- Past invites -->
+    <string name="past_invites">Invitaciones Pasadas</string>
+    <string name="no_past_invites">No hay invitaciones pasadas</string>
+
+
+    <string name="invite_from_loading">Cargando…</string>
+    <string name="menu_loading_message">Cargando…</string>
+    <string name="invite_from_format">Invitación de: %1$s</string>
+    <string name="invite_received_and_status">Recibido: %1$s | %2$s</string>
+    <string name="presence_online">En línea</string>
+    <string name="presence_last_seen">Visto por última vez %1$s</string>
+    <string name="presence_offline">Desconectado</string>
+    <string name="presence_user_online">%1$s estado: En línea</string>
+    <string name="presence_user_last_seen">%1$s estado: Visto por última vez %2$s</string>
+    <string name="presence_user_offline">%1$s estado: Desconectado</string>
+
 </resources>

@@ -99,6 +99,8 @@
     <string name="add_a_friend">Найз нэмэх</string>
     <string name="add_friend">Найзыг амжилттай нэмлээ</string>
     <string name="no_friends">Одоогоор найз нэмэгдээгүй байна…</string>
+    <string name="sort_by_last_seen">Сүүлд харагдсанаар эрэмбэлэх</string>
+    <string name="sort_alphabetically">Цагаан толгойн дарааллаар эрэмбэлэх</string>
     <string name="no_tournaments">Одоогоор ямар ч тэмцээн үүсээгүй байна.</string>
     <string name="please_enter_a_nickname">Хоч нэр оруулна уу.</string>
     <string name="user_not_found">Хэрэглэгч олдсонгүй.</string>
@@ -112,12 +114,17 @@
     <string name="failed_to_load_nickname">Хоч нэр ачаалж чадсангүй.</string>
     <string name="search">Хайх</string>
     <string name="load_more">Илүүг ачааллах</string>
-    <string name="add_friend_label">Нэмэх</string>
+    <string name="add_friend_label">Найзууд руу нэмэх</string>
+    <string name="add_friend_short_label">Нэмэх</string>
+    <string name="already_friends">Аль хэдийн найзууд</string>
     <string name="invite_blocked">%1$s урилга авахыг хаасан.</string>
     <string name="invites_blocked_notification">Бусад тоглогчид “Найзаа урих” функцаар таныг урих боломжгүй. Та үүнийг тохиргоонд өөрчилж болно.</string>
     <string name="pending_game_invitations">Хүлээгдэж буй тоглоомын урилгууд</string>
     <string name="no_pending_invites">Хүлээгдэж буй урилга байхгүй.</string>
     <string name="invite_already_sent">Та өөр нэг хүлээгдэж буй урилгатай байна.</string>
+    <string name="missed_invite_title">Та урилга алдсан</string>
+    <string name="missed_invite_message">Та офлайн байхдаа урилга хүлээн авсан.</string>
+    <string name="see_invites">Урилга харах</string>
     <string name="waiting_for_opponent_named">%1$s хүлээн авахыг хүлээж байна…</string>
     <string name="waiting_for_opponent">Эсрэг тоглогч хүлээн авахыг хүлээж байна…</string>
     <string name="no_ranking_yet">Одоогоор үнэлгээ харуулах тэмцээн дуусаагүй байна.</string>
@@ -293,4 +300,30 @@
     <string name="register_benefits_title">Тэмцээнд нэгдэж дэлхий дахинаа өрсөлд!</string>
     <string name="register_benefits_message">Дэлхийн тоглогчидтой тэмцээнд оролцож, үнэлгээгээ хадгалахын тулд бүртгүүлнэ үү.</string>
     <string name="register_now">Одоо бүртгүүлэх</string>
+    
+    <!-- Friend invitation statistics -->
+    <string name="loading_invite_stats">Урилгын статистик ачааллаж байна…</string>
+    <string name="invite_stats_format">Sent: %1$d (accepted: %2$d) | Received: %3$d (accepted: %4$d)</string>
+    
+    <!-- Friend match statistics -->
+    <string name="match_stats_format">Ялалт 🏆: %1$d | Ялагдал 😞: %2$d</string>
+    <!-- Past invites -->
+    <string name="past_invites">Өнгөрсөн урилгууд</string>
+    <string name="no_past_invites">Өнгөрсөн урилга байхгүй</string>
+    <string name="invite_and_add_to_friend">Урих ба найз нэмэх</string>
+    <string name="invite_received_format">Хүлээн авсан %1$s</string>
+    <string name="invite_status_accepted">Төлөв: Зөвшөөрсөн</string>
+    <string name="invite_status_cancelled">Төлөв: Цуцалсан</string>
+    <string name="invite_status_expired">Төлөв: Хугацаа дууссан</string>
+    <string name="invite_from_loading">Ачааллаж байна…</string>
+    <string name="menu_loading_message">Ачааллаж байна…</string>
+    <string name="invite_from_format">Урилга -аас: %1$s</string>
+    <string name="invite_received_and_status">Хүлээн авсан: %1$s | %2$s</string>
+    <string name="presence_online">Онлайн</string>
+    <string name="presence_last_seen">Сүүлд харагдсан %1$s</string>
+    <string name="presence_offline">Оффлайн</string>
+    <string name="presence_user_online">%1$s төлөв: Онлайн</string>
+    <string name="presence_user_last_seen">%1$s төлөв: Сүүлд харагдсан %2$s</string>
+    <string name="presence_user_offline">%1$s төлөв: Оффлайн</string>
+
 </resources>

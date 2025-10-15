@@ -99,6 +99,8 @@
     <string name="add_a_friend">သူငယ်ချင်းတစ်ဦးကို ထည့်ပါ</string>
     <string name="add_friend">သူငယ်ချင်းကို အောင်မြင်စွာထည့်ပြီးပါပြီ</string>
     <string name="no_friends">သို့အတိုင် သူငယ်ချင်းများကို မထည့်ရသေးပါ…</string>
+    <string name="sort_by_last_seen">နောက်ဆုံးတွေ့မြင်သည့်အချိန်အလိုက် စီစဉ်ပါ</string>
+    <string name="sort_alphabetically">အက္ခရာစဉ်အလိုက် စီစဉ်ပါ</string>
     <string name="no_tournaments">ပြိုင်ပွဲများကို မဖန်တီးရသေးပါ။</string>
     <string name="please_enter_a_nickname">ကျေးဇူးပြု၍ အမည်ပြောင်ထည့်ပါ။</string>
     <string name="user_not_found">အသုံးပြုသူကို ရှာမတွေ့ပါ။</string>
@@ -112,12 +114,17 @@
     <string name="failed_to_load_nickname">အမည်ပြောင်တင်ရာ မအောင်မြင်ပါ။</string>
     <string name="search">ရှာဖွေပါ</string>
     <string name="load_more">နောက်ထပ်တင်ပါ</string>
-    <string name="add_friend_label">ထည့်ပါ</string>
+    <string name="add_friend_label">မိတ်ဆွေများထဲထည့်ပါ</string>
+    <string name="add_friend_short_label">ထည့်ပါ</string>
+    <string name="already_friends">မိတ်ဆွေဖြစ်ပြီးသားပါပြီ</string>
     <string name="invite_blocked">%1$s သည် ဖိတ်ကြားချက်များကို ပိတ်ဆို့ထားသည်။</string>
     <string name="invites_blocked_notification">အခြားကစားသူများသည် \`သူငယ်ချင်းကိုဖိတ်ကြားပါ\` ဖန်ရှင်မှတစ်ဆင့် သင့်ကို ဖိတ်ခေါ်မနိုင်ပါ။ သင်သည် ဆက်တင်များတွင် ပြင်ဆင်နိုင်ပါသည်။</string>
     <string name="pending_game_invitations">ဆိုင်းငံ့ထားသော ဂိမ်းဖိတ်ကြားချက်များ</string>
     <string name="no_pending_invites">ဆိုင်းငံ့ထားသော ဖိတ်ကြားချက်များ မရှိပါ။</string>
     <string name="invite_already_sent">သင့်တွင် ဆိုင်းငံ့နေသေးသော ဖိတ်ကြားချက်တစ်ခု ရှိပြီးသားဖြစ်သည်။</string>
+    <string name="missed_invite_title">ဖိတ်ကြားချက် လွတ်သွားခြင်း</string>
+    <string name="missed_invite_message">သင် အော့ဖ်လိုင်းဖြစ်နေစဉ် ဖိတ်ကြားချက်တစ်ခု ရရှိခဲ့သည်။</string>
+    <string name="see_invites">ဖိတ်ကြားချက်များ ကြည့်ရန်</string>
     <string name="waiting_for_opponent_named">ကျွန်ုပ်တို့ %1$s က လက်ခံသည်အထိ စောင့်ဆိုင်းနေပါသည်…</string>
     <string name="waiting_for_opponent">ကျွန်ုပ်တို့ အပြိုင်ဘက်က လက်ခံသည်အထိ စောင့်ဆိုင်းနေပါသည်…</string>
     <string name="no_ranking_yet">အဆင့်သတ်မှတ်ရန် ပြိုင်ပွဲများ ပြီးဆုံးမထားသေးပါ။</string>
@@ -293,4 +300,30 @@
     <string name="register_benefits_title">ပြိုင်ပွဲများတွင် ပါဝင်ပြီး ကမ္ဘာအနှံ့ယှဉ်ပြိုင်ပါ!</string>
     <string name="register_benefits_message">သင့်အဆင့်သတ်မှတ်ချက်ကို သိမ်းဆည်းကာ ကမ္ဘာအနှံ့ရှိ ကစားသူများနှင့် ပြိုင်ပွဲများတွင် ပါဝင်ရန် စာရင်းသွင်းပါ။</string>
     <string name="register_now">အခုစာရင်းသွင်းပါ</string>
+    
+    <!-- Friend invitation statistics -->
+    <string name="loading_invite_stats">ဖိတ်ကြားချက်စာရင်းအင်းများ တင်နေသည်…</string>
+    <string name="invite_stats_format">Sent: %1$d (accepted: %2$d) | Received: %3$d (accepted: %4$d)</string>
+    
+    <!-- Friend match statistics -->
+    <string name="match_stats_format">အနိုင်များ 🏆: %1$d | အရှုံးများ 😞: %2$d</string>
+    <!-- Past invites -->
+    <string name="past_invites">ယခင်ဖိတ်စာများ</string>
+    <string name="no_past_invites">ယခင်ဖိတ်စာများမရှိပါ</string>
+    <string name="invite_and_add_to_friend">ဖိတ်ခေါ်ပြီး သူငယ်ချင်းအဖြစ် ထည့်ရန်</string>
+    <string name="invite_received_format">လက်ခံရရှိသည် %1$s</string>
+    <string name="invite_status_accepted">အခြေအနေ: လက်ခံပြီး</string>
+    <string name="invite_status_cancelled">အခြေအနေ: ပယ်ဖျက်ပြီး</string>
+    <string name="invite_status_expired">အခြေအနေ: သက်တမ်းကုန်ဆုံးပြီး</string>
+    <string name="invite_from_loading">ဖွင့်နေသည်…</string>
+    <string name="menu_loading_message">ဖွင့်နေသည်…</string>
+    <string name="invite_from_format">ဖိတ်ခေါ်သူ: %1$s</string>
+    <string name="invite_received_and_status">လက်ခံရရှိသည်: %1$s | %2$s</string>
+    <string name="presence_online">အွန်လိုင်း</string>
+    <string name="presence_last_seen">နောက်ဆုံးမြင်တွေ့ %1$s</string>
+    <string name="presence_offline">အော့ဖ်လိုင်း</string>
+    <string name="presence_user_online">%1$s အခြေအနေ: အွန်လိုင်း</string>
+    <string name="presence_user_last_seen">%1$s အခြေအနေ: နောက်ဆုံးမြင်တွေ့ %2$s</string>
+    <string name="presence_user_offline">%1$s အခြေအနေ: အော့ဖ်လိုင်း</string>
+
 </resources>

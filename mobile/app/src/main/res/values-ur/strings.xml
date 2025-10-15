@@ -80,6 +80,8 @@
     <string name="add_a_friend">دوست شامل کریں</string>
     <string name="add_friend">دوست کامیابی سے شامل ہوا</string>
     <string name="no_friends">ابھی تک کوئی دوست شامل نہیں کیا گیا…</string>
+    <string name="sort_by_last_seen">آخری بار دیکھے گئے کے مطابق ترتیب دیں</string>
+    <string name="sort_alphabetically">حروف تہجی کے مطابق ترتیب دیں</string>
     <string name="no_tournaments">ابھی تک کوئی ٹورنامنٹ نہیں بنایا گیا۔</string>
     <string name="please_enter_a_nickname">براہ کرم ایک عرفی نام داخل کریں۔</string>
     <string name="user_not_found">صارف نہیں ملا۔</string>
@@ -93,7 +95,9 @@
     <string name="failed_to_load_nickname">عرفی نام لوڈ کرنے میں ناکام۔</string>
     <string name="search">تلاش</string>
     <string name="load_more">مزید لوڈ کریں</string>
-    <string name="add_friend_label">شامل کریں</string>
+    <string name="add_friend_label">دوستوں میں شامل کریں</string>
+    <string name="add_friend_short_label">شامل کریں</string>
+    <string name="already_friends">پہلے ہی دوست ہیں</string>
     <string name="invite_blocked">%1$s نے دعوتیں بلاک کر دی ہیں۔</string>
     <string name="invites_blocked_notification">دوسرے کھلاڑی آپ کو `دوست کو دعوت دیں` فنکشن کے ذریعے دعوت نہیں دے سکتے۔ آپ اسے سیٹنگز میں تبدیل کر سکتے ہیں۔</string>
     
@@ -102,6 +106,9 @@
     <string name="pending_invites">زیر التواء دعوتیں</string>
     <string name="no_pending_invites">کوئی زیر التواء دعوت نہیں۔</string>
     <string name="invite_already_sent">آپ کی پہلے سے ہی ایک اور دعوت زیر التواء ہے۔</string>
+    <string name="missed_invite_title">آپ سے دعوت چھوٹ گئی</string>
+    <string name="missed_invite_message">آپ کو آف لائن ہونے کے دوران دعوت موصول ہوئی۔</string>
+    <string name="see_invites">دعوتیں دیکھیں</string>
     <string name="waiting_for_opponent_named">%1$s کے قبول کرنے کا انتظار…</string>
     <string name="waiting_for_opponent">حریف کے قبول کرنے کا انتظار…</string>
     
@@ -320,6 +327,37 @@
     <string name="game_ready_title">%1$s کے لیے کھیل تیار!</string>
     <string name="game_ready_message">آپ کا میچ شروع ہونے کے لیے تیار ہے۔ شامل ہونے کے لیے ٹیپ کریں!</string>
     <string name="join_game_action">گیم میں شامل ہوں</string>
+    
+    <!-- Friend invitation statistics -->
+    <string name="loading_invite_stats">دعوت کے اعداد و شمار لوڈ ہو رہے ہیں…</string>
+    <string name="invite_stats_format">Sent: %1$d (accepted: %2$d) | Received: %3$d (accepted: %4$d)</string>
+    
+    <!-- Friend match statistics -->
+    <string name="match_stats_format">جیتیں 🏆: %1$d | ہاریں 😞: %2$d</string>
+    
+    <!-- Past invites -->
+    <string name="past_invites">پچھلی دعوتیں</string>
+    <string name="no_past_invites">کوئی پچھلی دعوتیں نہیں</string>
+    <string name="invite_and_add_to_friend">دعوت دیں اور دوست میں شامل کریں</string>
+    <string name="invite_received_format">موصول ہوا %1$s</string>
+    <string name="invite_status_accepted">حیثیت: قبول شدہ</string>
+    <string name="invite_status_cancelled">حیثیت: منسوخ شدہ</string>
+    <string name="invite_status_expired">حیثیت: ختم شدہ</string>
+    <string name="invite_from_loading">لوڈ ہو رہا ہے…</string>
+    <string name="menu_loading_message">لوڈ ہو رہا ہے…</string>
+    <string name="invite_from_format">دعوت از: %1$s</string>
+    <string name="invite_received_and_status">موصول ہوا: %1$s | %2$s</string>
+    <string name="presence_online">آن لائن</string>
+    <string name="presence_last_seen">آخری بار دیکھا گیا %1$s</string>
+    <string name="presence_offline">آف لائن</string>
+    <string name="presence_user_online">%1$s حیثیت: آن لائن</string>
+    <string name="presence_user_last_seen">%1$s حیثیت: آخری بار دیکھا گیا %2$s</string>
+    <string name="presence_user_offline">%1$s حیثیت: آف لائن</string>
+    <string name="error_checking_friend_status">دوست کی حیثیت چیک کرنے میں خرابی</string>
+    <string name="friend_added">دوست کامیابی سے شامل ہوا</string>
+    <string name="active_invitation_exists">فعال دعوت پہلے سے موجود ہے</string>
+    <string name="user_blocked_invites">صارف نے دعوتیں بلاک کر دی ہیں</string>
+    <string name="cannot_invite_this_user">اس صارف کو دعوت نہیں دی جا سکتی</string>
     
     <!-- Preference level values -->
     <string-array name="pref_level_values">

@@ -112,10 +112,9 @@ public class AnalyticsManager {
         // Check if Firebase services are available before using them
         if (crashlytics != null) {
             try {
-                crashlytics.recordException(new Exception("Signup error: " + safeErrorMessage));
                 crashlytics.log("Signup error - Method: " + safeMethod + ", Step: " + safeStep + ", Error: " + safeErrorMessage);
             } catch (Exception e) {
-                Log.e(TAG, "Failed to record crash analytics for signup error", e);
+                Log.e(TAG, "Failed to log crash analytics for signup error", e);
             }
         } else {
             Log.w(TAG, "Crashlytics not available, skipping crash analytics for signup error");
@@ -145,12 +144,25 @@ public class AnalyticsManager {
         // Null-safe parameter handling
         String safeReason = reason != null ? reason : "no_reason_provided";
         
-        Bundle params = new Bundle();
-        params.putString("reason", safeReason);
-        
-        crashlytics.log("Signup declined: " + safeReason);
-        firebaseAnalytics.logEvent("signup_decline_reason", params);
         Log.d(TAG, "Tracked: signup decline reason=" + safeReason);
+        
+        if (crashlytics != null) {
+            try {
+                crashlytics.log("Signup declined: " + safeReason);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log to Crashlytics", e);
+            }
+        }
+        
+        if (firebaseAnalytics != null) {
+            try {
+                Bundle params = new Bundle();
+                params.putString("reason", safeReason);
+                firebaseAnalytics.logEvent("signup_decline_reason", params);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log to Firebase Analytics", e);
+            }
+        }
     }
     
     // ═══════════════════════════════════════════════════════════════════
@@ -161,40 +173,80 @@ public class AnalyticsManager {
      * Track when tournament list is viewed
      */
     public void trackTournamentListViewed(int registeringCount, int runningCount, int endedCount) {
-        Bundle params = new Bundle();
-        params.putInt("registering_count", registeringCount);
-        params.putInt("running_count", runningCount);
-        params.putInt("ended_count", endedCount);
-        params.putInt("total_count", registeringCount + runningCount + endedCount);
+        int totalCount = registeringCount + runningCount + endedCount;
+        Log.d(TAG, "Tracked: tournament list viewed with " + totalCount + " tournaments");
         
-        crashlytics.log("Tournament list viewed: " + (registeringCount + runningCount + endedCount) + " tournaments");
-        firebaseAnalytics.logEvent("tournament_view", params);
-        Log.d(TAG, "Tracked: tournament list viewed with " + params.getInt("total_count") + " tournaments");
+        if (crashlytics != null) {
+            try {
+                crashlytics.log("Tournament list viewed: " + totalCount + " tournaments");
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log to Crashlytics", e);
+            }
+        }
+        
+        if (firebaseAnalytics != null) {
+            try {
+                Bundle params = new Bundle();
+                params.putInt("registering_count", registeringCount);
+                params.putInt("running_count", runningCount);
+                params.putInt("ended_count", endedCount);
+                params.putInt("total_count", totalCount);
+                firebaseAnalytics.logEvent("tournament_view", params);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log to Firebase Analytics", e);
+            }
+        }
     }
     
     /**
      * Track when user starts joining a tournament
      */
     public void trackTournamentJoinStart(String tournamentId, boolean isUserAuthenticated) {
-        Bundle params = new Bundle();
-        params.putString("tournament_id", tournamentId);
-        params.putBoolean("is_authenticated", isUserAuthenticated);
-        
-        crashlytics.log("Tournament join started: " + tournamentId + " (authenticated: " + isUserAuthenticated + ")");
-        firebaseAnalytics.logEvent("tournament_join_start", params);
         Log.d(TAG, "Tracked: tournament join start for " + tournamentId + " (auth: " + isUserAuthenticated + ")");
+        
+        if (crashlytics != null) {
+            try {
+                crashlytics.log("Tournament join started: " + tournamentId + " (authenticated: " + isUserAuthenticated + ")");
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log to Crashlytics", e);
+            }
+        }
+        
+        if (firebaseAnalytics != null) {
+            try {
+                Bundle params = new Bundle();
+                params.putString("tournament_id", tournamentId);
+                params.putBoolean("is_authenticated", isUserAuthenticated);
+                firebaseAnalytics.logEvent("tournament_join_start", params);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log to Firebase Analytics", e);
+            }
+        }
     }
     
     /**
      * Track successful tournament join
      */
     public void trackTournamentJoinSuccess(String tournamentId) {
-        Bundle params = new Bundle();
-        params.putString("tournament_id", tournamentId);
-        
-        crashlytics.log("Tournament join success: " + tournamentId);
-        firebaseAnalytics.logEvent("tournament_join_success", params);
         Log.d(TAG, "Tracked: tournament join success for " + tournamentId);
+        
+        if (crashlytics != null) {
+            try {
+                crashlytics.log("Tournament join success: " + tournamentId);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log to Crashlytics", e);
+            }
+        }
+        
+        if (firebaseAnalytics != null) {
+            try {
+                Bundle params = new Bundle();
+                params.putString("tournament_id", tournamentId);
+                firebaseAnalytics.logEvent("tournament_join_success", params);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log to Firebase Analytics", e);
+            }
+        }
     }
     
     /**
@@ -209,15 +261,27 @@ public class AnalyticsManager {
         String safeErrorCode = errorCode != null ? errorCode : "unknown_error";
         String safeErrorMessage = errorMessage != null ? errorMessage : "Unknown error occurred";
         
-        Bundle params = new Bundle();
-        params.putString("tournament_id", safeTournamentId);
-        params.putString("error_code", safeErrorCode);
-        params.putString("error_message", safeErrorMessage);
-        
-        crashlytics.recordException(new Exception("Tournament join error: " + safeErrorMessage));
-        crashlytics.log("Tournament join error: " + safeTournamentId + " - " + safeErrorMessage);
-        firebaseAnalytics.logEvent("tournament_join_error", params);
         Log.d(TAG, "Tracked: tournament join error for " + safeTournamentId + ": " + safeErrorMessage);
+        
+        if (crashlytics != null) {
+            try {
+                crashlytics.log("Tournament join error: " + safeTournamentId + " - " + safeErrorMessage);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log to Crashlytics", e);
+            }
+        }
+        
+        if (firebaseAnalytics != null) {
+            try {
+                Bundle params = new Bundle();
+                params.putString("tournament_id", safeTournamentId);
+                params.putString("error_code", safeErrorCode);
+                params.putString("error_message", safeErrorMessage);
+                firebaseAnalytics.logEvent("tournament_join_error", params);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log to Firebase Analytics", e);
+            }
+        }
     }
     
     // ═══════════════════════════════════════════════════════════════════
@@ -232,12 +296,25 @@ public class AnalyticsManager {
         // Null-safe parameter handling
         String safeTrigger = trigger != null ? trigger : "unknown_trigger";
         
-        Bundle params = new Bundle();
-        params.putString("trigger", safeTrigger);
-        
-        crashlytics.log("Anonymous link prompt shown: " + safeTrigger);
-        firebaseAnalytics.logEvent("anonymous_link_prompt", params);
         Log.d(TAG, "Tracked: anonymous link prompt - trigger=" + safeTrigger);
+        
+        if (crashlytics != null) {
+            try {
+                crashlytics.log("Anonymous link prompt shown: " + safeTrigger);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log to Crashlytics", e);
+            }
+        }
+        
+        if (firebaseAnalytics != null) {
+            try {
+                Bundle params = new Bundle();
+                params.putString("trigger", safeTrigger);
+                firebaseAnalytics.logEvent("anonymous_link_prompt", params);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log to Firebase Analytics", e);
+            }
+        }
     }
     
     /**
@@ -250,13 +327,26 @@ public class AnalyticsManager {
         String safeDecision = decision != null ? decision : "unknown_decision";
         String safeTrigger = trigger != null ? trigger : "unknown_trigger";
         
-        Bundle params = new Bundle();
-        params.putString("decision", safeDecision);
-        params.putString("trigger", safeTrigger);
-        
-        crashlytics.log("Anonymous link decision: " + safeDecision + " (trigger: " + safeTrigger + ")");
-        firebaseAnalytics.logEvent("anonymous_link_decision", params);
         Log.d(TAG, "Tracked: anonymous link decision=" + safeDecision + " trigger=" + safeTrigger);
+        
+        if (crashlytics != null) {
+            try {
+                crashlytics.log("Anonymous link decision: " + safeDecision + " (trigger: " + safeTrigger + ")");
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log to Crashlytics", e);
+            }
+        }
+        
+        if (firebaseAnalytics != null) {
+            try {
+                Bundle params = new Bundle();
+                params.putString("decision", safeDecision);
+                params.putString("trigger", safeTrigger);
+                firebaseAnalytics.logEvent("anonymous_link_decision", params);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log to Firebase Analytics", e);
+            }
+        }
     }
     
     // ═══════════════════════════════════════════════════════════════════
@@ -267,16 +357,28 @@ public class AnalyticsManager {
      * Set user properties for segmentation
      */
     public void setUserProperties(String authMethod, String appVersion, String language, boolean hasNickname) {
-        firebaseAnalytics.setUserProperty("auth_method", authMethod);
-        firebaseAnalytics.setUserProperty("app_version", appVersion);
-        firebaseAnalytics.setUserProperty("language", language);
-        firebaseAnalytics.setUserProperty("has_nickname", hasNickname ? "true" : "false");
-        
-        crashlytics.setCustomKey("auth_method", authMethod);
-        crashlytics.setCustomKey("app_version", appVersion);
-        crashlytics.setCustomKey("language", language);
-        
         Log.d(TAG, "Set user properties: auth=" + authMethod + ", version=" + appVersion + ", lang=" + language);
+        
+        if (firebaseAnalytics != null) {
+            try {
+                firebaseAnalytics.setUserProperty("auth_method", authMethod);
+                firebaseAnalytics.setUserProperty("app_version", appVersion);
+                firebaseAnalytics.setUserProperty("language", language);
+                firebaseAnalytics.setUserProperty("has_nickname", hasNickname ? "true" : "false");
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to set Firebase Analytics user properties", e);
+            }
+        }
+        
+        if (crashlytics != null) {
+            try {
+                crashlytics.setCustomKey("auth_method", authMethod);
+                crashlytics.setCustomKey("app_version", appVersion);
+                crashlytics.setCustomKey("language", language);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to set Crashlytics custom keys", e);
+            }
+        }
     }
     
     // ═══════════════════════════════════════════════════════════════════
@@ -293,8 +395,15 @@ public class AnalyticsManager {
         String safeStep = step != null ? step : "unknown_step";
         String safeDetails = details != null ? details : "no_details";
         
-        crashlytics.log("AUTH: " + safeStep + " - " + safeDetails);
         Log.d(TAG, "Auth breadcrumb: " + safeStep + " - " + safeDetails);
+        
+        if (crashlytics != null) {
+            try {
+                crashlytics.log("AUTH: " + safeStep + " - " + safeDetails);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log auth breadcrumb to Crashlytics", e);
+            }
+        }
     }
     
     /**
@@ -309,7 +418,14 @@ public class AnalyticsManager {
         String safeTournamentId = tournamentId != null ? tournamentId : "unknown_tournament";
         String safeDetails = details != null ? details : "no_details";
         
-        crashlytics.log("TOURNAMENT: " + safeStep + " [" + safeTournamentId + "] - " + safeDetails);
         Log.d(TAG, "Tournament breadcrumb: " + safeStep + " [" + safeTournamentId + "] - " + safeDetails);
+        
+        if (crashlytics != null) {
+            try {
+                crashlytics.log("TOURNAMENT: " + safeStep + " [" + safeTournamentId + "] - " + safeDetails);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log tournament breadcrumb to Crashlytics", e);
+            }
+        }
     }
 }

@@ -88,6 +88,8 @@
     <string name="add_friend">Ami ajouté avec succès</string>
     <string name="no_friends">Aucun ami ajouté pour l’instant…</string>
     <string name="no_tournaments">Aucun tournoi n’a encore été créé.</string>
+    <string name="sort_by_last_seen">Trier par dernière vue</string>
+    <string name="sort_alphabetically">Trier par ordre alphabétique</string>
     <string name="please_enter_a_nickname">Veuillez entrer un pseudonyme.</string>
     <string name="user_not_found">Utilisateur introuvable.</string>
     <string name="you_can_t_invite_yourself">Vous ne pouvez pas vous inviter vous-même.</string>
@@ -100,7 +102,9 @@
     <string name="failed_to_load_nickname">Échec du chargement du pseudonyme.</string>
     <string name="search">Rechercher</string>
     <string name="load_more">Charger plus</string>
-    <string name="add_friend_label">Ajouter</string>
+    <string name="add_friend_label">Ajouter aux amis</string>
+    <string name="add_friend_short_label">Ajouter</string>
+    <string name="already_friends">Déjà amis</string>
     <string name="invite_blocked">%1$s a bloqué les invitations.</string>
     <string name="invites_blocked_notification">Les autres joueurs ne peuvent pas vous inviter via « Inviter un ami ». Vous pouvez modifier ce réglage dans Paramètres.</string>
 
@@ -108,6 +112,9 @@
     <string name="pending_invites">Invitations en attente</string>
     <string name="no_pending_invites">Aucune invitation en attente.</string>
     <string name="invite_already_sent">Vous avez déjà une autre invitation en attente.</string>
+    <string name="missed_invite_title">Invitation manquée</string>
+    <string name="missed_invite_message">Vous avez reçu une invitation pendant que vous étiez hors ligne.</string>
+    <string name="see_invites">Voir les invitations</string>
     <string name="waiting_for_opponent_named">En attente de l’acceptation de %1$s…</string>
     <string name="waiting_for_opponent">En attente de l’acceptation de l’adversaire…</string>
 
@@ -322,4 +329,30 @@
     <string name="game_ready_title">Jeu Prêt pour %1$s !</string>
     <string name="game_ready_message">Votre match est prêt à commencer. Appuyez pour rejoindre !</string>
     <string name="join_game_action">Rejoindre le Jeu</string>
+    
+    <!-- Friend invitation statistics -->
+    <string name="loading_invite_stats">Chargement des statistiques d`invitation…</string>
+    <string name="invite_stats_format">Envoyé : %1$d (accepté : %2$d) | Reçu : %3$d (accepté : %4$d)</string>
+    
+    <!-- Friend match statistics -->
+    <string name="match_stats_format">Victoires 🏆 : %1$d | Défaites 😞 : %2$d</string>
+    <!-- Past invites -->
+    <string name="past_invites">Invitations Passées</string>
+    <string name="no_past_invites">Aucune invitation passée</string>
+    <string name="invite_and_add_to_friend">Inviter et ajouter comme ami</string>
+    <string name="invite_received_format">Reçu %1$s</string>
+    <string name="invite_status_accepted">Statut: Accepté</string>
+    <string name="invite_status_cancelled">Statut: Annulé</string>
+    <string name="invite_status_expired">Statut: Expiré</string>
+    <string name="invite_from_loading">Chargement…</string>
+    <string name="menu_loading_message">Chargement…</string>
+    <string name="invite_from_format">Invitation de: %1$s</string>
+    <string name="invite_received_and_status">Reçu: %1$s | %2$s</string>
+    <string name="presence_online">En ligne</string>
+    <string name="presence_last_seen">Vu pour la dernière fois %1$s</string>
+    <string name="presence_offline">Hors ligne</string>
+    <string name="presence_user_online">%1$s statut: En ligne</string>
+    <string name="presence_user_last_seen">%1$s statut: Vu pour la dernière fois %2$s</string>
+    <string name="presence_user_offline">%1$s statut: Hors ligne</string>
+
 </resources>

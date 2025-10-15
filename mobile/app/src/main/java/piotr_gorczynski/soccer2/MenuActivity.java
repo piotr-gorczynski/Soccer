@@ -3,15 +3,21 @@ package piotr_gorczynski.soccer2;
 import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 
 import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkRequest;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.content.SharedPreferences;
@@ -46,6 +52,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 import com.google.android.gms.ads.AdRequest;
@@ -70,11 +77,17 @@ public class MenuActivity extends BaseActivity {
     private static final int NOTIFICATION_PERMISSION_REQUEST_CODE = 101;
 
     private static final String PREF_FCM_TOKEN = "fcmToken";
+    static final String PREF_LAST_INVITES_SEEN_TIMESTAMP = "lastInvitesSeenTimestamp";
+    private static final String PREF_LAST_ACTIVE_TIMESTAMP = "lastActiveTimestamp";
 
     private boolean isBackendAvailable = true; // Track backend availability
     // Track whether we've already shown the offline toast while the
     // backend is unavailable to avoid spamming the user on every resume
     private boolean backendUnavailableToastShown = false;
+    private boolean isBackendCheckInProgress = false;
+    private ConnectivityManager connectivityManager;
+    private ConnectivityManager.NetworkCallback networkCallback;
+    private boolean networkCallbackRegistered = false;
     private BackendServiceChecker serviceChecker;
     private Menu optionsMenu; // Hold reference to menu for updating warning icon
     private MenuItem accountMenuItem; // Reference to account menu item
@@ -83,6 +96,11 @@ public class MenuActivity extends BaseActivity {
     private final Handler adRetryHandler = new Handler(Looper.getMainLooper());
     private final Runnable adRetryRunnable = this::loadInterstitialAd;
     private boolean isAdLoading = false;
+    private View loadingOverlay;
+    private final Handler overlayHandler = new Handler(Looper.getMainLooper());
+    private final Runnable hideOverlayRunnable = this::hideLoadingOverlayImmediate;
+    private long loadingOverlayShownAtMs = 0L;
+    private static final long MIN_LOADING_OVERLAY_DURATION_MS = 250L;
 
     /**
      * Helper to fetch user details from Firestore and update prefs/UI. This is
@@ -404,6 +422,18 @@ public class MenuActivity extends BaseActivity {
         ((SoccerApp) getApplication()).syncFcmTokenIfNeeded();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        registerNetworkCallback();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterNetworkCallback();
+    }
+
     /**
      * Continue with authentication and UI logic after backend availability check is complete
      */
@@ -617,8 +647,15 @@ public class MenuActivity extends BaseActivity {
                 return;
             }
         }
-        
+
         currentLanguage = LanguageManager.getCurrentLanguageCode(this);
+
+        loadingOverlay = findViewById(R.id.menu_loading_overlay);
+        if (loadingOverlay != null) {
+            loadingOverlay.setOnClickListener(v -> {
+                // consume clicks while loading to avoid double taps
+            });
+        }
 
         // Setup toolbar with defensive error handling
         try {
@@ -737,6 +774,48 @@ public class MenuActivity extends BaseActivity {
                 .show();
     }
 
+    private void showLoadingOverlay() {
+        if (loadingOverlay == null) {
+            return;
+        }
+        overlayHandler.removeCallbacks(hideOverlayRunnable);
+        loadingOverlayShownAtMs = SystemClock.elapsedRealtime();
+        if (loadingOverlay.getVisibility() != View.VISIBLE) {
+            loadingOverlay.setAlpha(0f);
+            loadingOverlay.setVisibility(View.VISIBLE);
+            loadingOverlay.animate().alpha(1f).setDuration(150L).start();
+        } else {
+            loadingOverlay.animate().cancel();
+            loadingOverlay.setAlpha(1f);
+        }
+    }
+
+    private void hideLoadingOverlayWithMinimumDuration() {
+        if (loadingOverlay == null) {
+            return;
+        }
+        long elapsed = SystemClock.elapsedRealtime() - loadingOverlayShownAtMs;
+        long delay = Math.max(0L, MIN_LOADING_OVERLAY_DURATION_MS - elapsed);
+        overlayHandler.removeCallbacks(hideOverlayRunnable);
+        overlayHandler.postDelayed(hideOverlayRunnable, delay);
+    }
+
+    private void hideLoadingOverlayImmediate() {
+        if (loadingOverlay == null) {
+            return;
+        }
+        if (loadingOverlay.getVisibility() != View.VISIBLE) {
+            return;
+        }
+        loadingOverlay.animate().cancel();
+        loadingOverlay.animate().alpha(0f).setDuration(150L).withEndAction(() -> {
+            if (loadingOverlay != null) {
+                loadingOverlay.setVisibility(View.GONE);
+                loadingOverlay.setAlpha(1f);
+            }
+        }).start();
+    }
+
     private void showRegistrationDialog() {
         new AlertDialog.Builder(this)
                 .setMessage(R.string.register_dialog_message)
@@ -754,11 +833,20 @@ public class MenuActivity extends BaseActivity {
     }
 
     private void showAdThenRun(Runnable action) {
+        showLoadingOverlay();
+        Runnable guardedAction = () -> {
+            try {
+                action.run();
+            } finally {
+                hideLoadingOverlayWithMinimumDuration();
+            }
+        };
+
         // Check consent before proceeding with ads logic
         if (!hasAdsConsent()) {
             Log.w("TAG_Soccer", getClass().getSimpleName() + ".showAdThenRun: No ads consent, running action directly");
             showConsentRequiredDialog();
-            action.run();
+            guardedAction.run();
             return;
         }
 
@@ -814,12 +902,12 @@ public class MenuActivity extends BaseActivity {
                                 e
                         );
                     })
-                    .addOnCompleteListener(task -> processAdLogic(action, prefs, resolvedFrequency[0]));
+                    .addOnCompleteListener(task -> processAdLogic(guardedAction, prefs, resolvedFrequency[0]));
         } else {
             // For unauthorized users, use FAILSAFE_AD_FREQUENCY directly
             resolvedFrequency[0] = FAILSAFE_AD_FREQUENCY;
             Log.d("TAG_Soccer", getClass().getSimpleName() + ".showAdThenRun: unauthorized user, using failsafe frequency=" + FAILSAFE_AD_FREQUENCY);
-            processAdLogic(action, prefs, resolvedFrequency[0]);
+            processAdLogic(guardedAction, prefs, resolvedFrequency[0]);
         }
     }
 
@@ -927,6 +1015,8 @@ public class MenuActivity extends BaseActivity {
                     if (snap.isEmpty()) {
                         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
                         }.getClass().getEnclosingMethod()).getName() + ": continueWithInviteRestore: no pending invites");
+                        // After checking for outgoing invites, check for new incoming invites
+                        checkForMissedInvitations();
                         return;
                     }
 
@@ -949,14 +1039,19 @@ public class MenuActivity extends BaseActivity {
                     } else {
                         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
                         }.getClass().getEnclosingMethod()).getName() + ": continueWithInviteRestore: invite " + inviteId + " is already expired → skipping");
+                        // After checking for outgoing invites, check for new incoming invites
+                        checkForMissedInvitations();
                     }
                 })
-                .addOnFailureListener(e ->
+                .addOnFailureListener(e -> {
                         Log.e(
                                 "TAG_Soccer",
                                 getClass().getSimpleName() + ".continueWithInviteRestore: failed to query invites",
                                 e
-                        )
+                        );
+                        // Even if outgoing invite query fails, check for incoming invites
+                        checkForMissedInvitations();
+                }
                 );
     }
 
@@ -1099,12 +1194,21 @@ public class MenuActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         adRetryHandler.removeCallbacks(adRetryRunnable);
+        overlayHandler.removeCallbacks(hideOverlayRunnable);
     }
 
     /**
      * Check backend service availability and continue with onResume logic when complete
      */
     private void checkBackendAvailabilityAndContinue() {
+        if (isBackendCheckInProgress) {
+            Log.d(
+                "TAG_Soccer",
+                getClass().getSimpleName() + ".checkBackendAvailabilityAndContinue: Check already in progress - skipping"
+            );
+            return;
+        }
+
         if (serviceChecker == null) {
             Log.w(
                 "TAG_Soccer",
@@ -1115,18 +1219,21 @@ public class MenuActivity extends BaseActivity {
             continueOnResumeAfterBackendCheck();
             return;
         }
-        
+
+        isBackendCheckInProgress = true;
+
         Log.d(
             "TAG_Soccer",
             getClass().getSimpleName() + ".checkBackendAvailabilityAndContinue: Checking backend availability before continuing onResume"
         );
-        
-        serviceChecker.checkServiceAvailability(new BackendServiceChecker.ServiceCheckCallback() {
-            @Override
-            public void onServiceAvailable() {
-                Log.d(
-                    "TAG_Soccer",
-                    getClass().getSimpleName() + ".checkBackendAvailabilityAndContinue: Backend is available - continuing onResume"
+
+        try {
+            serviceChecker.checkServiceAvailability(new BackendServiceChecker.ServiceCheckCallback() {
+                @Override
+                public void onServiceAvailable() {
+                    Log.d(
+                        "TAG_Soccer",
+                        getClass().getSimpleName() + ".checkBackendAvailabilityAndContinue: Backend is available - continuing onResume"
                 );
                 runOnUiThread(() -> {
                     isBackendAvailable = true;
@@ -1146,9 +1253,11 @@ public class MenuActivity extends BaseActivity {
                             accountMenuItem.getIcon().setAlpha(255);
                         }
                     }
-                    
+
                     // Continue with the rest of onResume logic now that backend availability is confirmed
                     continueOnResumeAfterBackendCheck();
+
+                    isBackendCheckInProgress = false;
                 });
             }
 
@@ -1178,13 +1287,112 @@ public class MenuActivity extends BaseActivity {
                                 Toast.LENGTH_LONG).show();
                         backendUnavailableToastShown = true;
                     }
-                    
+
                     // Continue with the rest of onResume logic even when backend is unavailable
                     // (the safeguards in ensureTermsAccepted and fetchNicknameFromFirestore will handle this)
                     continueOnResumeAfterBackendCheck();
+
+                    isBackendCheckInProgress = false;
                 });
             }
-        });
+            });
+        } catch (Exception e) {
+            isBackendCheckInProgress = false;
+            Log.e(
+                "TAG_Soccer",
+                getClass().getSimpleName() + ".checkBackendAvailabilityAndContinue: Service check failed to start",
+                e
+            );
+        }
+    }
+
+    private void registerNetworkCallback() {
+        if (networkCallbackRegistered) {
+            return;
+        }
+
+        if (connectivityManager == null) {
+            connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        }
+
+        if (connectivityManager == null) {
+            Log.w(
+                "TAG_Soccer",
+                getClass().getSimpleName() + ".registerNetworkCallback: ConnectivityManager not available"
+            );
+            return;
+        }
+
+        if (networkCallback == null) {
+            networkCallback = new ConnectivityManager.NetworkCallback() {
+                @Override
+                public void onAvailable(@NonNull Network network) {
+                    if (!isBackendAvailable) {
+                        Log.d(
+                            "TAG_Soccer",
+                            getClass().getSimpleName() + ".registerNetworkCallback: Network available - rechecking backend"
+                        );
+                        runOnUiThread(() -> checkBackendAvailabilityAndContinue());
+                    }
+                }
+
+                @Override
+                public void onLost(@NonNull Network network) {
+                    if (!isNetworkStillAvailable()) {
+                        Log.d(
+                            "TAG_Soccer",
+                            getClass().getSimpleName() + ".registerNetworkCallback: Network lost"
+                        );
+                    }
+                }
+            };
+        }
+
+        try {
+            NetworkRequest request = new NetworkRequest.Builder()
+                    .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                    .build();
+            connectivityManager.registerNetworkCallback(request, networkCallback);
+            networkCallbackRegistered = true;
+        } catch (Exception e) {
+            Log.w(
+                "TAG_Soccer",
+                getClass().getSimpleName() + ".registerNetworkCallback: Failed to register network callback",
+                e
+            );
+        }
+    }
+
+    private void unregisterNetworkCallback() {
+        if (!networkCallbackRegistered || connectivityManager == null || networkCallback == null) {
+            return;
+        }
+
+        try {
+            connectivityManager.unregisterNetworkCallback(networkCallback);
+        } catch (Exception e) {
+            Log.w(
+                "TAG_Soccer",
+                getClass().getSimpleName() + ".unregisterNetworkCallback: Failed to unregister network callback",
+                e
+            );
+        } finally {
+            networkCallbackRegistered = false;
+        }
+    }
+
+    private boolean isNetworkStillAvailable() {
+        if (connectivityManager == null) {
+            return false;
+        }
+
+        Network activeNetwork = connectivityManager.getActiveNetwork();
+        if (activeNetwork == null) {
+            return false;
+        }
+
+        NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(activeNetwork);
+        return capabilities != null && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
     }
 
     /**
@@ -1356,6 +1564,160 @@ public class MenuActivity extends BaseActivity {
             // Re-throw to trigger the outer exception handler
             throw new RuntimeException("Failed to recover from setContentView failure", fallbackException);
         }
+    }
+
+    /**
+     * Check if user received any invitations while they were offline
+     * and show a notification dialog if appropriate
+     */
+    private void checkForMissedInvitations() {
+        // Skip check if backend is unavailable
+        if (!isBackendAvailable) {
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".checkForMissedInvitations: Skipping - backend unavailable");
+            updateLastActiveTimestamp();
+            return;
+        }
+
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null) {
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".checkForMissedInvitations: Skipping - user not logged in");
+            return;
+        }
+
+        SharedPreferences prefs = getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
+        long lastActiveTimestamp = prefs.getLong(PREF_LAST_ACTIVE_TIMESTAMP, 0L);
+        final long lastInvitesSeenTimestamp = prefs.getLong(PREF_LAST_INVITES_SEEN_TIMESTAMP, 0L);
+        
+        // Update timestamp for next check
+        updateLastActiveTimestamp();
+
+        // Skip on first run (no previous timestamp)
+        if (lastActiveTimestamp == 0L) {
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".checkForMissedInvitations: First run, skipping notification");
+            return;
+        }
+
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".checkForMissedInvitations: Checking for invites since " + lastActiveTimestamp);
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        long nowMs = System.currentTimeMillis();
+
+        // Query for invitations and filter client-side to avoid requiring composite Firestore indexes
+        db.collection("invitations")
+                .whereEqualTo("to", uid)
+                .whereIn("status", Arrays.asList("pending", "cancelled", "expired"))
+                .get()
+                .addOnSuccessListener(snap -> {
+                    if (snap.isEmpty()) {
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".checkForMissedInvitations: No invites for user");
+                        return;
+                    }
+
+                    DocumentSnapshot recentInvite = null;
+                    long mostRecentCreatedAt = Long.MIN_VALUE;
+                    for (DocumentSnapshot doc : snap.getDocuments()) {
+                        com.google.firebase.Timestamp createdAtTs = doc.getTimestamp("createdAt");
+                        if (createdAtTs == null) {
+                            continue;
+                        }
+
+                        long createdAtMs = createdAtTs.toDate().getTime();
+                        if (createdAtMs <= lastActiveTimestamp) {
+                            continue;
+                        }
+
+                        String status = doc.getString("status");
+                        if (status == null) {
+                            continue;
+                        }
+
+                        boolean shouldNotify = false;
+                        if ("pending".equals(status)) {
+                            com.google.firebase.Timestamp expireAtTs = doc.getTimestamp("expireAt");
+                            if (expireAtTs == null || expireAtTs.toDate().getTime() > nowMs) {
+                                shouldNotify = true;
+                            } else {
+                                Log.d(
+                                        "TAG_Soccer",
+                                        getClass().getSimpleName()
+                                                + ".checkForMissedInvitations: Pending invite expired before notification could be shown"
+                                );
+                                shouldNotify = true; // Still notify so user knows invite was missed
+                            }
+                        } else if ("cancelled".equals(status) || "expired".equals(status)) {
+                            shouldNotify = true;
+                        }
+
+                        if (shouldNotify && createdAtMs > mostRecentCreatedAt) {
+                            mostRecentCreatedAt = createdAtMs;
+                            recentInvite = doc;
+                        }
+                    }
+
+                    if (recentInvite == null) {
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".checkForMissedInvitations: No new invites after filtering");
+                        return;
+                    }
+
+                    if (mostRecentCreatedAt <= lastInvitesSeenTimestamp) {
+                        Log.d(
+                                "TAG_Soccer",
+                                getClass().getSimpleName()
+                                        + ".checkForMissedInvitations: Latest invite already viewed in InvitationsActivity; skipping dialog"
+                        );
+                        return;
+                    }
+
+                    // Check if invite is still valid (not expired)
+                    String status = recentInvite.getString("status");
+                    com.google.firebase.Timestamp expireAtTs = recentInvite.getTimestamp("expireAt");
+                    boolean inviteActive = expireAtTs != null && expireAtTs.toDate().getTime() > nowMs;
+
+                    if ("pending".equals(status) && !inviteActive) {
+                        Log.d(
+                                "TAG_Soccer",
+                                getClass().getSimpleName() + ".checkForMissedInvitations: Invite found but already expired"
+                        );
+                    }
+
+                    Log.d(
+                            "TAG_Soccer",
+                            getClass().getSimpleName()
+                                    + ".checkForMissedInvitations: Found missed invite (status="
+                                    + status
+                                    + "), showing dialog"
+                    );
+                    showMissedInviteDialog();
+                })
+                .addOnFailureListener(e ->
+                        Log.e(
+                                "TAG_Soccer",
+                                getClass().getSimpleName() + ".checkForMissedInvitations: Failed to query invites",
+                                e
+                        )
+                );
+    }
+
+    /**
+     * Show dialog informing user about missed invitation
+     */
+    private void showMissedInviteDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.missed_invite_title)
+                .setMessage(R.string.missed_invite_message)
+                .setPositiveButton(R.string.see_invites, (dialog, which) -> {
+                    startActivity(new Intent(this, InvitationsActivity.class));
+                })
+                .setNegativeButton(R.string.close, null)
+                .show();
+    }
+
+    /**
+     * Update the last active timestamp in SharedPreferences
+     */
+    private void updateLastActiveTimestamp() {
+        SharedPreferences prefs = getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
+        prefs.edit().putLong(PREF_LAST_ACTIVE_TIMESTAMP, System.currentTimeMillis()).apply();
     }
 
 }
