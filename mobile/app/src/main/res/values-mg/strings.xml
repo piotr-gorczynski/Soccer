@@ -99,6 +99,8 @@
     <string name="add_a_friend">Ampio namana</string>
     <string name="add_friend">Vita ny nanampy namana</string>
     <string name="no_friends">Tsy mbola nisy namana nampiana…</string>
+    <string name="sort_by_last_seen">Alamino araka ny nahitana farany</string>
+    <string name="sort_alphabetically">Alamino araka ny abidy</string>
     <string name="no_tournaments">Tsy mbola nisy fifaninanana noforonina.</string>
     <string name="please_enter_a_nickname">Ampidiro anaram-bositra azafady.</string>
     <string name="user_not_found">Tsy hita ilay mpampiasa.</string>
@@ -112,12 +114,17 @@
     <string name="failed_to_load_nickname">Tsy voaray ny anaram-bositra.</string>
     <string name="search">Karohy</string>
     <string name="load_more">Ampidiro bebe kokoa</string>
-    <string name="add_friend_label">Ampio</string>
+    <string name="add_friend_label">Ampio amin`ny namana</string>
+    <string name="add_friend_short_label">Ampio</string>
+    <string name="already_friends">Efa namana</string>
     <string name="invite_blocked">Nanakana fanasana i %1$s.</string>
     <string name="invites_blocked_notification">Ny mpilalao hafa tsy afaka manasa anao amin`ny fiasa `Asao namana`. Azonao ovaina ao amin`ny Fandrindrana izany.</string>
     <string name="pending_game_invitations">Fanasana lalao miandry</string>
     <string name="no_pending_invites">Tsy misy fanasana miandry.</string>
     <string name="invite_already_sent">Efa manana fanasana hafa miandry ianao.</string>
+    <string name="missed_invite_title">Nandao fanasana ianao</string>
+    <string name="missed_invite_message">Nahazo fanasana ianao raha tsy tafiditra tamin`ny Internet.</string>
+    <string name="see_invites">Jereo ny fanasana</string>
     <string name="waiting_for_opponent_named">Miandry an`i %1$s hanaiky…</string>
     <string name="waiting_for_opponent">Miandry ny mpifanandrina hanaiky…</string>
     <string name="no_ranking_yet">Tsy mbola nisy fifaninanana vita hanehoana laharana.</string>
@@ -293,4 +300,35 @@
     <string name="register_benefits_title">Midira amin`ny fifaninanana &amp; mifaninana eran-tany!</string>
     <string name="register_benefits_message">Misorata anarana mba hitahiry ny laharanao sy handray anjara amin`ny fifaninanana miaraka amin`ny mpilalao maneran-tany.</string>
     <string name="register_now">Misorata anarana izao</string>
+    
+    <!-- Friend invitation statistics -->
+    <string name="loading_invite_stats">Mampiditra statistika fanasana…</string>
+    <string name="invite_stats_format">Sent: %1$d (accepted: %2$d) | Received: %3$d (accepted: %4$d)</string>
+    
+    <!-- Friend match statistics -->
+    <string name="match_stats_format">Fandresena 🏆: %1$d | Faharesena 😞: %2$d</string>
+    
+    <!-- Past invites -->
+    <string name="past_invites">Fanasana Taloha</string>
+    <string name="no_past_invites">Tsy misy fanasana taloha</string>
+    <string name="invite_and_add_to_friend">Manasa sy Manampy ho Namana</string>
+    <string name="invite_received_format">Noraisina %1$s</string>
+    <string name="invite_status_accepted">Toe-javatra: Nekena</string>
+    <string name="invite_status_cancelled">Toe-javatra: Nofoanana</string>
+    <string name="invite_status_expired">Toe-javatra: Lany daty</string>
+    <string name="invite_from_loading">Mampiditra…</string>
+    <string name="menu_loading_message">Mampiditra…</string>
+    <string name="invite_from_format">Fanasana avy amin\'ny: %1$s</string>
+    <string name="invite_received_and_status">Voaray: %1$s | %2$s</string>
+    <string name="presence_online">An-tserasera</string>
+    <string name="presence_last_seen">Hita farany %1$s</string>
+    <string name="presence_offline">Tsy an-tserasera</string>
+    <string name="presence_user_online">%1$s toe-javatra: An-tserasera</string>
+    <string name="presence_user_last_seen">%1$s toe-javatra: Hita farany %2$s</string>
+    <string name="presence_user_offline">%1$s toe-javatra: Tsy an-tserasera</string>
+    <string name="error_checking_friend_status">Fahadisoana tamin\'ny fanamarinana ny toe-javatra namana</string>
+    <string name="friend_added">Namana nanampy tamim-pahombiazana</string>
+    <string name="active_invitation_exists">Fanasana mavitrika efa misy</string>
+    <string name="user_blocked_invites">Ny mpampiasa dia nanakana ny fanasana</string>
+    <string name="cannot_invite_this_user">Tsy afaka manasa io mpampiasa io</string>
 </resources>

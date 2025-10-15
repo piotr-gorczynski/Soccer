@@ -1199,24 +1199,24 @@ public class GameActivity extends BaseActivity {
                                     // Only update dialog if there's a special reason (timeout/abandon)
                                     String msg="";
                                     if ("timeout".equals(reason)) {
-                                        msg = SafeStringFormatter.safeGetString(this, R.string.winner_timeout, sLooser);
+                                        msg = SafeStringFormatter.safeGetString(GameActivity.this, R.string.winner_timeout, sLooser);
                                     } else if ("abandon".equals(reason)) {
-                                        msg = SafeStringFormatter.safeGetString(this, R.string.winner_abandon, sLooser);
+                                        msg = SafeStringFormatter.safeGetString(GameActivity.this, R.string.winner_abandon, sLooser);
                                     }
                                     
                                     if (!msg.isEmpty()) {
-                                        msg += SafeStringFormatter.safeGetString(this, R.string.winner_is, sWinner);
+                                        msg += SafeStringFormatter.safeGetString(GameActivity.this, R.string.winner_is, sWinner);
                                         
                                         // Update the dialog message if it's still showing
                                         if (dialogWinner != null && dialogWinner.isShowing()) {
-                                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Updating dialogWinner message: "+msg);
+                                            Log.d("TAG_Soccer", GameActivity.this.getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Updating dialogWinner message: "+msg);
                                             dialogWinner.setMessage(msg);
                                         }
                                     }
                                 }
                             })
                     .addOnFailureListener(err -> {
-                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to load match reason (non-critical)", err);
+                        Log.e("TAG_Soccer", GameActivity.this.getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to load match reason (non-critical)", err);
                         // Don't show error toast since dialog is already showing with default message
                     });
             return; // Avoid showing duplicate dialog below

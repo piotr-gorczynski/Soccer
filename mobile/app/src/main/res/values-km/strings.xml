@@ -99,6 +99,8 @@
     <string name="add_a_friend">បន្ថែមមិត្តភក្តិ</string>
     <string name="add_friend">បន្ថែមមិត្តភក្តិដោយជោគជ័យ</string>
     <string name="no_friends">មិនទាន់មានមិត្តភក្ត្រទេ…</string>
+    <string name="sort_by_last_seen">តម្រៀបតាមពេលបានឃើញចុងក្រោយ</string>
+    <string name="sort_alphabetically">តម្រៀបតាមលំដាប់អក្សរ</string>
     <string name="no_tournaments">មិនទាន់មានការប្រកួតត្រូវបានបង្កើតនៅឡើយទេ។</string>
     <string name="please_enter_a_nickname">សូមបញ្ចូលឈ្មោះហៅក្រៅ។</string>
     <string name="user_not_found">រកមិនឃើញអ្នកប្រើ។</string>
@@ -112,12 +114,17 @@
     <string name="failed_to_load_nickname">មិនអាចផ្ទុកឈ្មោះហៅក្រៅបានទេ។</string>
     <string name="search">ស្វែងរក</string>
     <string name="load_more">ផ្ទុកបន្ថែម</string>
-    <string name="add_friend_label">បន្ថែម</string>
+    <string name="add_friend_label">បន្ថែមទៅកាន់មិត្តភក្តិ</string>
+    <string name="add_friend_short_label">បន្ថែម</string>
+    <string name="already_friends">ជាមិត្តរួចហើយ</string>
     <string name="invite_blocked">%1$s បានទប់ស្កាត់ការអញ្ជើញ។</string>
     <string name="invites_blocked_notification">អ្នកលេងផ្សេងទៀតមិនអាចអញ្ជើញអ្នកតាមមុខងារ \`អញ្ជើញមិត្តភក្តិ\` បានទេ។ អ្នកអាចផ្លាស់ប្តូរវានៅក្នុងការកំណត់។</string>
     <string name="pending_game_invitations">ការអញ្ជើញល្បែងកំពុងរង់ចាំ</string>
     <string name="no_pending_invites">មិនមានការអញ្ជើញកំពុងរង់ចាំទេ។</string>
     <string name="invite_already_sent">អ្នកមានការអញ្ជើញផ្សេងទៀតកំពុងរង់ចាំរួចហើយ។</string>
+    <string name="missed_invite_title">អ្នកបានខកខានការអញ្ជើញ</string>
+    <string name="missed_invite_message">អ្នកបានទទួលការអញ្ជើញនៅពេលអ្នកនៅក្រៅបណ្តាញ។</string>
+    <string name="see_invites">មើលការអញ្ជើញ</string>
     <string name="waiting_for_opponent_named">កំពុងរង់ចាំឱ្យ %1$s ព្រមទទួល…</string>
     <string name="waiting_for_opponent">កំពុងរង់ចាំឱ្យគូប្រកួតព្រមទទួល…</string>
     <string name="no_ranking_yet">មិនទាន់មានការប្រកួតបញ្ចប់ដើម្បីបង្ហាញចំណាត់ថ្នាក់ឡើយ។</string>
@@ -293,4 +300,35 @@
     <string name="register_benefits_title">ចូលរួមការប្រកួត និងប្រកួតប្រជែងទូទាំងពិភពលោក!</string>
     <string name="register_benefits_message">ចុះឈ្មោះដើម្បីរក្សាទុកចំណាត់ថ្នាក់របស់អ្នក និងចូលរួមប្រកួតជាមួយអ្នកលេងទូទាំងពិភពលោក។</string>
     <string name="register_now">ចុះឈ្មោះឥឡូវនេះ</string>
+    
+    <!-- Friend invitation statistics -->
+    <string name="loading_invite_stats">កំពុងផ្ទុកស្ថិតិការអញ្ជើញ…</string>
+    <string name="invite_stats_format">Sent: %1$d (accepted: %2$d) | Received: %3$d (accepted: %4$d)</string>
+    
+    <!-- Friend match statistics -->
+    <string name="match_stats_format">ជ័យជម្នះ 🏆: %1$d | ចាញ់ 😞: %2$d</string>
+    
+    <!-- Past invites -->
+    <string name="past_invites">ការអញ្ជើញពីមុន</string>
+    <string name="no_past_invites">មិនមានការអញ្ជើញពីមុន</string>
+    <string name="invite_and_add_to_friend">អញ្ជើញនិងបន្ថែមជាមិត្ត</string>
+    <string name="invite_received_format">បានទទួល %1$s</string>
+    <string name="invite_status_accepted">ស្ថានភាព: បានទទួលយក</string>
+    <string name="invite_status_cancelled">ស្ថានភាព: បានលុបចោល</string>
+    <string name="invite_status_expired">ស្ថានភាព: ផុតកំណត់</string>
+    <string name="invite_from_loading">កំពុងផ្ទុក…</string>
+    <string name="menu_loading_message">កំពុងផ្ទុក…</string>
+    <string name="invite_from_format">ការអញ្ជើញពី: %1$s</string>
+    <string name="invite_received_and_status">បានទទួល: %1$s | %2$s</string>
+    <string name="presence_online">លើបណ្តាញ</string>
+    <string name="presence_last_seen">បានឃើញចុងក្រោយ %1$s</string>
+    <string name="presence_offline">មិនលើបណ្តាញ</string>
+    <string name="presence_user_online">%1$s ស្ថានភាព: លើបណ្តាញ</string>
+    <string name="presence_user_last_seen">%1$s ស្ថានភាព: បានឃើញចុងក្រោយ %2$s</string>
+    <string name="presence_user_offline">%1$s ស្ថានភាព: មិនលើបណ្តាញ</string>
+    <string name="error_checking_friend_status">កំហុសក្នុងការពិនិត្យស្ថានភាពមិត្ត</string>
+    <string name="friend_added">បានបន្ថែមមិត្តដោយជោគជ័យ</string>
+    <string name="active_invitation_exists">ការអញ្ជើញសកម្មមានរួចហើយ</string>
+    <string name="user_blocked_invites">អ្នកប្រើបានទប់ស្កាត់ការអញ្ជើញ</string>
+    <string name="cannot_invite_this_user">មិនអាចអញ្ជើញអ្នកប្រើនេះបានទេ</string>
 </resources>

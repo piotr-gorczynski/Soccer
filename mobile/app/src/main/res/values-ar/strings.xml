@@ -80,6 +80,8 @@
     <string name="add_a_friend">أضف صديقاً</string>
     <string name="add_friend">تمت إضافة الصديق بنجاح</string>
     <string name="no_friends">لم تتم إضافة أي أصدقاء بعد…</string>
+    <string name="sort_by_last_seen">الترتيب حسب آخر ظهور</string>
+    <string name="sort_alphabetically">الترتيب أبجدياً</string>
     <string name="no_tournaments">لم يتم إنشاء أي بطولات بعد.</string>
     <string name="please_enter_a_nickname">يرجى إدخال اسم مستعار.</string>
     <string name="user_not_found">لم يتم العثور على المستخدم.</string>
@@ -93,12 +95,17 @@
     <string name="failed_to_load_nickname">فشل تحميل الاسم المستعار.</string>
     <string name="search">بحث</string>
     <string name="load_more">تحميل المزيد</string>
-    <string name="add_friend_label">إضافة</string>
+    <string name="add_friend_label">أضف إلى الأصدقاء</string>
+    <string name="add_friend_short_label">أضف</string>
+    <string name="already_friends">أصدقاء بالفعل</string>
     <string name="invite_blocked">%1$s قام بحظر الدعوات.</string>
     <string name="invites_blocked_notification">لا يمكن للاعبين الآخرين دعوتك عبر وظيفة "ادعُ صديقاً". يمكنك تغيير ذلك في الإعدادات.</string>
     <string name="pending_game_invitations">دعوات اللعب المعلقة</string>
     <string name="no_pending_invites">لا توجد دعوات معلقة.</string>
     <string name="invite_already_sent">لديك دعوة أخرى قيد الانتظار بالفعل.</string>
+    <string name="missed_invite_title">فاتتك دعوة</string>
+    <string name="missed_invite_message">تلقيت دعوة أثناء عدم اتصالك.</string>
+    <string name="see_invites">عرض الدعوات</string>
     <string name="waiting_for_opponent_named">في انتظار قبول %1$s…</string>
     <string name="waiting_for_opponent">في انتظار قبول الخصم…</string>
     <string name="no_ranking_yet">لم تُستكمل أي بطولات لعرض الترتيب بعد.</string>
@@ -274,4 +281,35 @@
     <string name="register_benefits_title">انضم إلى البطولات وتنافس عالمياً!</string>
     <string name="register_benefits_message">سجّل لحفظ ترتيبك والمشاركة في بطولات مع لاعبين حول العالم.</string>
     <string name="register_now">سجّل الآن</string>
+    
+    <!-- Friend invitation statistics -->
+    <string name="loading_invite_stats">جارٍ تحميل إحصاءات الدعوة…</string>
+    <string name="invite_stats_format">Sent: %1$d (accepted: %2$d) | Received: %3$d (accepted: %4$d)</string>
+    
+    <!-- Friend match statistics -->
+    <string name="match_stats_format">انتصارات 🏆: %1$d | خسائر 😞: %2$d</string>
+    
+    <!-- Past invites -->
+    <string name="past_invites">الدعوات السابقة</string>
+    <string name="no_past_invites">لا توجد دعوات سابقة</string>
+    <string name="invite_and_add_to_friend">دعوة وإضافة كصديق</string>
+    <string name="invite_received_format">تم الاستلام %1$s</string>
+    <string name="invite_status_accepted">الحالة: مقبولة</string>
+    <string name="invite_status_cancelled">الحالة: ملغاة</string>
+    <string name="invite_status_expired">الحالة: منتهية الصلاحية</string>
+    <string name="invite_from_loading">جارٍ التحميل…</string>
+    <string name="menu_loading_message">جارٍ التحميل…</string>
+    <string name="invite_from_format">دعوة من: %1$s</string>
+    <string name="invite_received_and_status">تم الاستلام: %1$s | %2$s</string>
+    <string name="presence_online">متصل</string>
+    <string name="presence_last_seen">آخر ظهور %1$s</string>
+    <string name="presence_offline">غير متصل</string>
+    <string name="presence_user_online">%1$s الحالة: متصل</string>
+    <string name="presence_user_last_seen">%1$s الحالة: آخر ظهور %2$s</string>
+    <string name="presence_user_offline">%1$s الحالة: غير متصل</string>
+    <string name="error_checking_friend_status">خطأ في التحقق من حالة الصديق</string>
+    <string name="friend_added">تمت إضافة الصديق بنجاح</string>
+    <string name="active_invitation_exists">الدعوة النشطة موجودة بالفعل</string>
+    <string name="user_blocked_invites">المستخدم قد حظر الدعوات</string>
+    <string name="cannot_invite_this_user">لا يمكن دعوة هذا المستخدم</string>
 </resources>

@@ -99,6 +99,8 @@
     <string name="add_a_friend">ጓደኛ አክል</string>
     <string name="add_friend">ጓደኛው በተሳካ ሁኔታ ታክሏል</string>
     <string name="no_friends">እስካሁን ድረስ ምንም ጓደኛ አልታከለም…</string>
+    <string name="sort_by_last_seen">በመጨረሻ በተታየበት ጊዜ ደርድር</string>
+    <string name="sort_alphabetically">በፊደል ቅደም ተከተል ደርድር</string>
     <string name="no_tournaments">እስካሁን ድረስ ምንም ውድድር አልተፈጠረም።</string>
     <string name="please_enter_a_nickname">እባክዎ ቅጽል ስም ያስገቡ።</string>
     <string name="user_not_found">ተጠቃሚው አልተገኘም።</string>
@@ -112,12 +114,17 @@
     <string name="failed_to_load_nickname">ቅጽል ስምን መጫን አልተሳካም።</string>
     <string name="search">ፈልግ</string>
     <string name="load_more">ተጨማሪ አስገባ</string>
-    <string name="add_friend_label">አክል</string>
+    <string name="add_friend_label">ወደ ጓደኞች አክል</string>
+    <string name="add_friend_short_label">አክል</string>
+    <string name="already_friends">ቀድሞ ጓደኛ ናቸው</string>
     <string name="invite_blocked">%1$s ግብዣዎችን አግዷል።</string>
     <string name="invites_blocked_notification">ሌሎች ተጫዋቾች “ጓደኛን ጋብዝ” ተግባር በመጠቀም ሊጋብዙዎት አይችሉም። ይህን በቅንብሮች ውስጥ መቀየር ትችላላችሁ።</string>
     <string name="pending_game_invitations">በመጠባበቅ ያሉ የጨዋታ ግብዣዎች</string>
     <string name="no_pending_invites">የተጠባበቁ ግብዣዎች የሉም።</string>
     <string name="invite_already_sent">አሁንም በመጠባበቅ ላይ ያለ ሌላ ግብዣ አለዎት።</string>
+    <string name="missed_invite_title">ግብዣን አምልጥዋል</string>
+    <string name="missed_invite_message">ከመስመር ውጭ በነበሩበት ጊዜ ግብዣ ደርሶዎታል።</string>
+    <string name="see_invites">ግብዣዎችን ይመልከቱ</string>
     <string name="waiting_for_opponent_named">%1$s እንዲቀበል በመጠበቅ ላይ…</string>
     <string name="waiting_for_opponent">ተቃዋሚው እንዲቀበል በመጠበቅ ላይ…</string>
     <string name="no_ranking_yet">ደረጃ ለማሳየት ተጠናቀቁ ውድድሮች ገና የሉም።</string>
@@ -293,4 +300,35 @@
     <string name="register_benefits_title">ውድድሮችን ተቀላቀልና በዓለም አቀፍ ውድድር ተወዳድር!</string>
     <string name="register_benefits_message">ደረጃዎን ለማስቀመጥ እና በዓለም ዙሪያ ካሉ ተጫዋቾች ጋር በውድድር ለመሳተፍ ይመዝገቡ።</string>
     <string name="register_now">አሁን ይመዝገቡ</string>
+    
+    <!-- Friend invitation statistics -->
+    <string name="loading_invite_stats">የግብዣ ስታቲስቲክስ በመጫን ላይ…</string>
+    <string name="invite_stats_format">Sent: %1$d (accepted: %2$d) | Received: %3$d (accepted: %4$d)</string>
+    
+    <!-- Friend match statistics -->
+    <string name="match_stats_format">ድሎች 🏆: %1$d | ሽንፈቶች 😞: %2$d</string>
+    
+    <!-- Past invites -->
+    <string name="past_invites">ያለፉ ግብዣዎች</string>
+    <string name="no_past_invites">ያለፉ ግብዣዎች የሉም</string>
+    <string name="invite_and_add_to_friend">ግብዣ ላክ እና ጓደኛ አክል</string>
+    <string name="invite_received_format">ተቀብሏል %1$s</string>
+    <string name="invite_status_accepted">ሁኔታ: ተቀባይነት አግኝቷል</string>
+    <string name="invite_status_cancelled">ሁኔታ: ተሰርዟል</string>
+    <string name="invite_status_expired">ሁኔታ: ጊዜው አልፏል</string>
+    <string name="invite_from_loading">በመጫን ላይ…</string>
+    <string name="menu_loading_message">በመጫን ላይ…</string>
+    <string name="invite_from_format">ግብዣ ከ: %1$s</string>
+    <string name="invite_received_and_status">ደርሷል: %1$s | %2$s</string>
+    <string name="presence_online">መስመር ላይ</string>
+    <string name="presence_last_seen">መጨረሻ የታየው %1$s</string>
+    <string name="presence_offline">ከመስመር ውጭ</string>
+    <string name="presence_user_online">%1$s ሁኔታ: መስመር ላይ</string>
+    <string name="presence_user_last_seen">%1$s ሁኔታ: መጨረሻ የታየው %2$s</string>
+    <string name="presence_user_offline">%1$s ሁኔታ: ከመስመር ውጭ</string>
+    <string name="error_checking_friend_status">የጓደኛ ሁኔታን በማረጋገጥ ላይ ስህተት</string>
+    <string name="friend_added">ጓደኛ በተሳካ ሁኔታ ታክሏል</string>
+    <string name="active_invitation_exists">ንቁ ግብዣ አስቀድሞ አለ</string>
+    <string name="user_blocked_invites">ተጠቃሚ ግብዣዎችን አግዷል</string>
+    <string name="cannot_invite_this_user">ይህን ተጠቃሚ ግብዣ ልላክ አልችልም</string>
 </resources>

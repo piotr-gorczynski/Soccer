@@ -99,6 +99,8 @@
     <string name="add_a_friend">Ku dar saaxiib</string>
     <string name="add_friend">Saaxiib si guul leh ayaa loo daray</string>
     <string name="no_friends">Saaxiibo weli lama darin…</string>
+    <string name="sort_by_last_seen">Kala sooc markii ugu dambeysay ee la arkay</string>
+    <string name="sort_alphabetically">Kala sooc si alifbeed ah</string>
     <string name="no_tournaments">Tartan weli lama abuurin.</string>
     <string name="please_enter_a_nickname">Fadlan geli naanays.</string>
     <string name="user_not_found">Isticmaale lama helin.</string>
@@ -112,12 +114,17 @@
     <string name="failed_to_load_nickname">Ku guuldarraystay soo dejinta naanayska.</string>
     <string name="search">Raadi</string>
     <string name="load_more">Soo bandhig kuwo kale</string>
-    <string name="add_friend_label">Ku dar</string>
+    <string name="add_friend_label">Ku dar saaxiibada</string>
+    <string name="add_friend_short_label">Ku dar</string>
+    <string name="already_friends">Horeba waa saaxiibo</string>
     <string name="invite_blocked">%1$s wuu xannibay casuumaadaha.</string>
     <string name="invites_blocked_notification">Ciyaartoyda kale kuma casumi karaan shaqada `Saaxiib casumo`. Waxaad ka beddeli kartaa Dejinta.</string>
     <string name="pending_game_invitations">Casuumaadaha ciyaarta ee sugaya</string>
     <string name="no_pending_invites">Casuumaado sugaya ma jiraan.</string>
     <string name="invite_already_sent">Waxaad hore u leedahay casuumaad kale oo sugaya.</string>
+    <string name="missed_invite_title">Waad lumisay casuumad</string>
+    <string name="missed_invite_message">Waxaad heshay casuumad markaad offline ahayd.</string>
+    <string name="see_invites">Eeg casuumadaha</string>
     <string name="waiting_for_opponent_named">Waxaa la sugaa %1$s inuu aqbalo…</string>
     <string name="waiting_for_opponent">Waxaa la sugaa cayaaryahanka kale inuu aqbalo…</string>
     <string name="no_ranking_yet">Weliba lama dhammaystirin tartamo si darajo loo soo bandhigo.</string>
@@ -293,4 +300,35 @@
     <string name="register_benefits_title">Ku biir tartamada &amp; si caalami ah u tartan!</string>
     <string name="register_benefits_message">Isdiiwaangeli si aad u kaydiso darajadaada oo aad uga qaybqaadato tartamada ciyaartoyda caalamka.</string>
     <string name="register_now">Isdiiwaangeli hadda</string>
+    
+    <!-- Friend invitation statistics -->
+    <string name="loading_invite_stats">Waxaa la soo dejinayaa tirakoobka casuumaha…</string>
+    <string name="invite_stats_format">Sent: %1$d (accepted: %2$d) | Received: %3$d (accepted: %4$d)</string>
+    
+    <!-- Friend match statistics -->
+    <string name="match_stats_format">Guulo 🏆: %1$d | Khasaaro 😞: %2$d</string>
+    
+    <!-- Past invites -->
+    <string name="past_invites">Casumadihii Hore</string>
+    <string name="no_past_invites">Ma jiraan casumado hore</string>
+    <string name="invite_and_add_to_friend">Casumo U Dir oo Saaxiib Ku Dar</string>
+    <string name="invite_received_format">La helay %1$s</string>
+    <string name="invite_status_accepted">Xaalad: La aqbalay</string>
+    <string name="invite_status_cancelled">Xaalad: La joojiyay</string>
+    <string name="invite_status_expired">Xaalad: Waqtigii dhammaaday</string>
+    <string name="invite_from_loading">Waa la rarayo…</string>
+    <string name="menu_loading_message">Waa la rarayo…</string>
+    <string name="invite_from_format">Casumo ka: %1$s</string>
+    <string name="invite_received_and_status">La helay: %1$s | %2$s</string>
+    <string name="presence_online">Khadka</string>
+    <string name="presence_last_seen">Ugu dambeyn waxaa la arkay %1$s</string>
+    <string name="presence_offline">Offline</string>
+    <string name="presence_user_online">%1$s xaalada: Khadka</string>
+    <string name="presence_user_last_seen">%1$s xaalada: Ugu dambeyn waxaa la arkay %2$s</string>
+    <string name="presence_user_offline">%1$s xaalada: Offline</string>
+    <string name="error_checking_friend_status">Khalad xaqiijinta xaaladda saaxiibka</string>
+    <string name="friend_added">Saaxiibka si guul leh ayaa loo daray</string>
+    <string name="active_invitation_exists">Casumo firfircoon ayaa jira</string>
+    <string name="user_blocked_invites">Isticmaaluhu wuu xannibay casumadaha</string>
+    <string name="cannot_invite_this_user">Lama casumi karo isticmaalahaas</string>
 </resources>

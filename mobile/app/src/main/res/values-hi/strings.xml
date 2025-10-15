@@ -80,6 +80,8 @@
     <string name="add_a_friend">एक मित्र जोड़ें</string>
     <string name="add_friend">मित्र सफलतापूर्वक जोड़ा गया</string>
     <string name="no_friends">अभी तक कोई मित्र नहीं जोड़े गए…</string>
+    <string name="sort_by_last_seen">अंतिम बार देखे गए के अनुसार क्रमबद्ध करें</string>
+    <string name="sort_alphabetically">वर्णानुक्रम में क्रमबद्ध करें</string>
     <string name="no_tournaments">अभी तक कोई टूर्नामेंट नहीं बनाए गए हैं।</string>
     <string name="please_enter_a_nickname">कृपया एक उपनाम दर्ज करें।</string>
     <string name="user_not_found">उपयोगकर्ता नहीं मिला।</string>
@@ -93,7 +95,9 @@
     <string name="failed_to_load_nickname">उपनाम लोड करने में विफल।</string>
     <string name="search">खोजें</string>
     <string name="load_more">और लोड करें</string>
-    <string name="add_friend_label">जोड़ें</string>
+    <string name="add_friend_label">दोस्तों में जोड़ें</string>
+    <string name="add_friend_short_label">जोड़ें</string>
+    <string name="already_friends">पहले से दोस्त हैं</string>
     <string name="invite_blocked">%1$s ने आमंत्रण ब्लॉक कर दिए हैं।</string>
     <string name="invites_blocked_notification">अन्य खिलाड़ी आपको `मित्र को आमंत्रित करें` फ़ंक्शन के माध्यम से आमंत्रित नहीं कर सकते। आप इसे सेटिंग्स में बदल सकते हैं।</string>
     
@@ -102,6 +106,9 @@
     <string name="pending_invites">लंबित आमंत्रण</string>
     <string name="no_pending_invites">कोई लंबित आमंत्रण नहीं।</string>
     <string name="invite_already_sent">आपके पास पहले से ही एक और लंबित आमंत्रण है।</string>
+    <string name="missed_invite_title">आपसे निमंत्रण चूक गया</string>
+    <string name="missed_invite_message">आपको ऑफ़लाइन रहते हुए एक निमंत्रण मिला।</string>
+    <string name="see_invites">निमंत्रण देखें</string>
     <string name="waiting_for_opponent_named">%1$s के स्वीकार करने की प्रतीक्षा में…</string>
     <string name="waiting_for_opponent">प्रतिद्वंद्वी के स्वीकार करने की प्रतीक्षा में…</string>
     
@@ -321,10 +328,36 @@
     <string name="game_ready_message">आपका मैच शुरू होने के लिए तैयार है। जुड़ने के लिए टैप करें!</string>
     <string name="join_game_action">गेम जॉइन करें</string>
     
+    <!-- Friend invitation statistics -->
+    <string name="loading_invite_stats">आमंत्रण सांख्यिकी लोड हो रही है…</string>
+    <string name="invite_stats_format">Sent: %1$d (accepted: %2$d) | Received: %3$d (accepted: %4$d)</string>
+    
+    <!-- Friend match statistics -->
+    <string name="match_stats_format">जीत 🏆: %1$d | हार 😞: %2$d</string>
+    
     <!-- Preference level values -->
     <string-array name="pref_level_values">
         <item>1</item>
         <item>10</item>
         <item>30</item>
     </string-array>
+    <!-- Past invites -->
+    <string name="past_invites">पिछले आमंत्रण</string>
+    <string name="no_past_invites">कोई पिछले आमंत्रण नहीं</string>
+    <string name="invite_and_add_to_friend">आमंत्रण भेजें और मित्र जोड़ें</string>
+    <string name="invite_received_format">प्राप्त हुआ %1$s</string>
+    <string name="invite_status_accepted">स्थिति: स्वीकृत</string>
+    <string name="invite_status_cancelled">स्थिति: रद्द किया गया</string>
+    <string name="invite_status_expired">स्थिति: समाप्त हो गया</string>
+    <string name="invite_from_loading">लोड हो रहा है…</string>
+    <string name="menu_loading_message">लोड हो रहा है…</string>
+    <string name="invite_from_format">आमंत्रण से: %1$s</string>
+    <string name="invite_received_and_status">प्राप्त हुआ: %1$s | %2$s</string>
+    <string name="presence_online">ऑनलाइन</string>
+    <string name="presence_last_seen">अंतिम बार देखा गया %1$s</string>
+    <string name="presence_offline">ऑफ़लाइन</string>
+    <string name="presence_user_online">%1$s स्थिति: ऑनलाइन</string>
+    <string name="presence_user_last_seen">%1$s स्थिति: अंतिम बार देखा गया %2$s</string>
+    <string name="presence_user_offline">%1$s स्थिति: ऑफ़लाइन</string>
+
 </resources>

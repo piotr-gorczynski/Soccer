@@ -80,6 +80,8 @@
     <string name="add_a_friend">Dodaj znajomego</string>
     <string name="add_friend">Znajomy dodany pomyślnie</string>
     <string name="no_friends">Nie dodano jeszcze żadnych znajomych…</string>
+    <string name="sort_by_last_seen">Sortuj według ostatnio widzianego</string>
+    <string name="sort_alphabetically">Sortuj alfabetycznie</string>
     <string name="no_tournaments">Nie utworzono jeszcze żadnych turniejów.</string>
     <string name="please_enter_a_nickname">Wprowadź pseudonim.</string>
     <string name="user_not_found">Użytkownik nie znaleziony.</string>
@@ -93,7 +95,9 @@
     <string name="failed_to_load_nickname">Nie udało się wczytać pseudonimu.</string>
     <string name="search">Szukaj</string>
     <string name="load_more">Załaduj więcej</string>
-    <string name="add_friend_label">Dodaj</string>
+    <string name="add_friend_label">Dodaj do znajomych</string>
+    <string name="add_friend_short_label">Dodaj</string>
+    <string name="already_friends">Już znajomi</string>
     <string name="invite_blocked">%1$s zablokował zaproszenia.</string>
     <string name="invites_blocked_notification">Inni gracze nie mogą Cię zapraszać przez funkcję "Zaproś znajomego". Możesz to zmienić w Ustawieniach.</string>
     
@@ -102,6 +106,9 @@
     <string name="pending_invites">Oczekujące zaproszenia</string>
     <string name="no_pending_invites">Brak oczekujących zaproszeń.</string>
     <string name="invite_already_sent">Masz już inne oczekujące zaproszenie.</string>
+    <string name="missed_invite_title">Nie odebrałeś zaproszenia</string>
+    <string name="missed_invite_message">Otrzymałeś zaproszenie, gdy byłeś offline.</string>
+    <string name="see_invites">Zobacz zaproszenia</string>
     <string name="waiting_for_opponent_named">Czekam na akceptację przez %1$s…</string>
     <string name="waiting_for_opponent">Czekam na akceptację przez przeciwnika…</string>
     
@@ -321,6 +328,37 @@
     <string name="game_ready_title">Gra Gotowa dla %1$s!</string>
     <string name="game_ready_message">Twój mecz jest gotowy do rozpoczęcia. Dotknij, aby dołączyć!</string>
     <string name="join_game_action">Dołącz do Gry</string>
+    
+    <!-- Friend invitation statistics -->
+    <string name="loading_invite_stats">Ładowanie statystyk zaproszeń…</string>
+    <string name="invite_stats_format">Wysłane: %1$d (zaakceptowane: %2$d) | Otrzymane: %3$d (zaakceptowane: %4$d)</string>
+    
+    <!-- Friend match statistics -->
+    <string name="match_stats_format">Wygrane 🏆: %1$d | Przegrane 😞: %2$d</string>
+    
+    <!-- Past invites -->
+    <string name="past_invites">Poprzednie Zaproszenia</string>
+    <string name="no_past_invites">Brak poprzednich zaproszeń</string>
+    <string name="invite_and_add_to_friend">Zaproś i Dodaj do Znajomych</string>
+    <string name="invite_received_format">Otrzymano %1$s</string>
+    <string name="invite_status_accepted">Status: Zaakceptowane</string>
+    <string name="invite_status_cancelled">Status: Anulowane</string>
+    <string name="invite_status_expired">Status: Wygasłe</string>
+    <string name="invite_from_loading">Ładowanie…</string>
+    <string name="menu_loading_message">Ładowanie…</string>
+    <string name="invite_from_format">Zaproszenie od: %1$s</string>
+    <string name="invite_received_and_status">Otrzymano: %1$s | %2$s</string>
+    <string name="presence_online">Online</string>
+    <string name="presence_last_seen">Ostatnio widziany %1$s</string>
+    <string name="presence_offline">Offline</string>
+    <string name="presence_user_online">%1$s status: Online</string>
+    <string name="presence_user_last_seen">%1$s status: Ostatnio widziany %2$s</string>
+    <string name="presence_user_offline">%1$s status: Offline</string>
+    <string name="error_checking_friend_status">Błąd sprawdzania statusu znajomego</string>
+    <string name="friend_added">Znajomy dodany pomyślnie</string>
+    <string name="active_invitation_exists">Aktywne zaproszenie już istnieje</string>
+    <string name="user_blocked_invites">Użytkownik zablokował zaproszenia</string>
+    <string name="cannot_invite_this_user">Nie można zaprosić tego użytkownika</string>
     
     <!-- Preference level values -->
     <string-array name="pref_level_values">

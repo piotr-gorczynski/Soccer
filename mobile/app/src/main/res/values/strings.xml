@@ -59,6 +59,8 @@
     <string name="add_a_friend">Add a Friend</string>
     <string name="add_friend">Friend added successfully</string>
     <string name="no_friends">No friends added so far…</string>
+    <string name="sort_by_last_seen">Sort by last seen</string>
+    <string name="sort_alphabetically">Sort alphabetically</string>
     <string name="no_tournaments">No tournaments have been created yet.</string>
     <string name="please_enter_a_nickname">Please enter a nickname.</string>
     <string name="user_not_found">User not found.</string>
@@ -72,13 +74,18 @@
     <string name="failed_to_load_nickname">Failed to load nickname.</string>
     <string name="search">Search</string>
     <string name="load_more">Load more</string>
-    <string name="add_friend_label">Add</string>
+    <string name="add_friend_label">Add to friends</string>
+    <string name="add_friend_short_label">Add</string>
+    <string name="already_friends">Already friends</string>
     <string name="invite_blocked">%1$s blocked invites.</string>
     <string name="invites_blocked_notification">Other players cannot invite you via `Invite a Friend` function. You can change it in Settings.</string>
     <string name="pending_game_invitations">Pending Game Invitations</string>
     <string name="pending_invites">Pending Invites</string>
     <string name="no_pending_invites">No pending invitations.</string>
     <string name="invite_already_sent">You already have another invite pending.</string>
+    <string name="missed_invite_title">You Missed an Invitation</string>
+    <string name="missed_invite_message">You received an invitation while you were offline.</string>
+    <string name="see_invites">See Invites</string>
     <string name="waiting_for_opponent_named">Waiting for %1$s to accept…</string>
     <string name="waiting_for_opponent">Waiting for opponent to accept…</string>
     <string name="tournaments">Tournaments</string>
@@ -317,4 +324,35 @@
     <string name="game_ready_title">Game Ready for %1$s!</string>
     <string name="game_ready_message">Your match is ready to begin. Tap to join!</string>
     <string name="join_game_action">Join Game</string>
+    
+    <!-- Friend invitation statistics -->
+    <string name="loading_invite_stats">Loading invite stats…</string>
+    <string name="invite_stats_format">Sent: %1$d (accepted: %2$d) | Received: %3$d (accepted: %4$d)</string>
+    
+    <!-- Friend match statistics -->
+    <string name="match_stats_format">Wins 🏆: %1$d | Losses 😞: %2$d</string>
+    
+    <!-- Past invites -->
+    <string name="past_invites">Past Invites</string>
+    <string name="no_past_invites">No past invites</string>
+    <string name="invite_and_add_to_friend">Invite and Add to Friend</string>
+    <string name="invite_received_format">Received %1$s</string>
+    <string name="invite_status_accepted">Status: Accepted</string>
+    <string name="invite_status_cancelled">Status: Cancelled</string>
+    <string name="invite_status_expired">Status: Expired</string>
+    <string name="invite_from_loading">Loading…</string>
+    <string name="menu_loading_message">Loading…</string>
+    <string name="invite_from_format">Invite from: %1$s</string>
+    <string name="invite_received_and_status">Received: %1$s | %2$s</string>
+    <string name="presence_online">Online</string>
+    <string name="presence_last_seen">Last seen %1$s</string>
+    <string name="presence_offline">Offline</string>
+    <string name="presence_user_online">%1$s status: Online</string>
+    <string name="presence_user_last_seen">%1$s status: Last seen %2$s</string>
+    <string name="presence_user_offline">%1$s status: Offline</string>
+    <string name="error_checking_friend_status">Error checking friend status</string>
+    <string name="friend_added">Friend added successfully</string>
+    <string name="active_invitation_exists">Active invitation already exists</string>
+    <string name="user_blocked_invites">User has blocked invites</string>
+    <string name="cannot_invite_this_user">Cannot invite this user</string>
 </resources>

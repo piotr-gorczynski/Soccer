@@ -27,7 +27,8 @@ public class SafeStringFormatter {
                   context.getResources().getResourceName(stringRes) + " (conversion: '" + e.getConversion() + "'), using fallback", e);
             
             // Get the raw string to use as fallback
-            String rawString = context.getString(stringRes);
+            // Use getText instead of getString to avoid format processing which would throw the same exception
+            String rawString = context.getResources().getText(stringRes).toString();
             
             // Create a simple fallback by concatenating the raw string with arguments
             StringBuilder fallback = new StringBuilder(rawString);
