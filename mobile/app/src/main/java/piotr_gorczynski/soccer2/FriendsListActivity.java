@@ -121,13 +121,15 @@ public class FriendsListActivity extends BaseActivity {
                         adapter.setData(new ArrayList<>());
                         return;
                     }
-                    
+
+                    emptyText.setVisibility(View.GONE);
+
                     // Extract friend UIDs
                     List<String> friendUids = new ArrayList<>();
                     for (DocumentSnapshot doc : docs) {
                         friendUids.add(doc.getId());
                     }
-                    
+
                     if (currentSortMode == SORT_ALPHABETICALLY) {
                         // Sort alphabetically by nickname
                         sortByNickname(docs, friendUids);
@@ -180,73 +182,57 @@ public class FriendsListActivity extends BaseActivity {
     }
 
     private void sortByLastSeen(List<DocumentSnapshot> docs, List<String> friendUids) {
-        // Fetch heartbeat data from Firebase Realtime Database
-        Map<String, Long> heartbeatMap = new HashMap<>();
-        final int[] pendingRequests = {friendUids.size()};
-        
+        // Work on a mutable copy so we can safely sort without modifying the Firestore snapshot list
+        List<DocumentSnapshot> mutableDocs = new ArrayList<>(docs);
+
+        // Show the list immediately while we wait for heartbeat data. This avoids a blank screen
+        // in scenarios where the realtime database lookups are slow or fail altogether.
+        adapter.setData(mutableDocs);
+
         if (friendUids.isEmpty()) {
-            emptyText.setVisibility(View.GONE);
-            adapter.setData(docs);
             return;
         }
-        
+
+        Map<String, Long> heartbeatMap = new HashMap<>();
+        final int[] pendingRequests = {friendUids.size()};
+
+        Runnable finishIfDone = () -> {
+            if (pendingRequests[0] == 0) {
+                Collections.sort(mutableDocs, new Comparator<DocumentSnapshot>() {
+                    @Override
+                    public int compare(DocumentSnapshot d1, DocumentSnapshot d2) {
+                        Long hb1 = heartbeatMap.get(d1.getId());
+                        Long hb2 = heartbeatMap.get(d2.getId());
+
+                        if (hb1 == null) hb1 = 0L;
+                        if (hb2 == null) hb2 = 0L;
+
+                        // Sort descending (most recent first)
+                        return Long.compare(hb2, hb1);
+                    }
+                });
+
+                adapter.setData(mutableDocs);
+            }
+        };
+
         for (String friendUid : friendUids) {
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("status").child(friendUid);
             ref.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     Long lastHb = snapshot.child("last_heartbeat").getValue(Long.class);
-                    if (lastHb != null) {
-                        heartbeatMap.put(friendUid, lastHb);
-                    } else {
-                        heartbeatMap.put(friendUid, 0L);
-                    }
-                    
+                    heartbeatMap.put(friendUid, lastHb != null ? lastHb : 0L);
+
                     pendingRequests[0]--;
-                    if (pendingRequests[0] == 0) {
-                        // All requests completed, now sort
-                        Collections.sort(docs, new Comparator<DocumentSnapshot>() {
-                            @Override
-                            public int compare(DocumentSnapshot d1, DocumentSnapshot d2) {
-                                Long hb1 = heartbeatMap.get(d1.getId());
-                                Long hb2 = heartbeatMap.get(d2.getId());
-                                
-                                if (hb1 == null) hb1 = 0L;
-                                if (hb2 == null) hb2 = 0L;
-                                
-                                // Sort descending (most recent first)
-                                return Long.compare(hb2, hb1);
-                            }
-                        });
-                        
-                        emptyText.setVisibility(View.GONE);
-                        adapter.setData(docs);
-                    }
+                    finishIfDone.run();
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
                     heartbeatMap.put(friendUid, 0L);
                     pendingRequests[0]--;
-                    if (pendingRequests[0] == 0) {
-                        // Still sort even if some requests failed
-                        Collections.sort(docs, new Comparator<DocumentSnapshot>() {
-                            @Override
-                            public int compare(DocumentSnapshot d1, DocumentSnapshot d2) {
-                                Long hb1 = heartbeatMap.get(d1.getId());
-                                Long hb2 = heartbeatMap.get(d2.getId());
-                                
-                                if (hb1 == null) hb1 = 0L;
-                                if (hb2 == null) hb2 = 0L;
-                                
-                                // Sort descending (most recent first)
-                                return Long.compare(hb2, hb1);
-                            }
-                        });
-                        
-                        emptyText.setVisibility(View.GONE);
-                        adapter.setData(docs);
-                    }
+                    finishIfDone.run();
                 }
             });
         }
