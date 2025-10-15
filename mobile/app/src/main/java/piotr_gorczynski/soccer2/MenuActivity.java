@@ -3,12 +3,17 @@ package piotr_gorczynski.soccer2;
 import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 
 import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkRequest;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -79,6 +84,10 @@ public class MenuActivity extends BaseActivity {
     // Track whether we've already shown the offline toast while the
     // backend is unavailable to avoid spamming the user on every resume
     private boolean backendUnavailableToastShown = false;
+    private boolean isBackendCheckInProgress = false;
+    private ConnectivityManager connectivityManager;
+    private ConnectivityManager.NetworkCallback networkCallback;
+    private boolean networkCallbackRegistered = false;
     private BackendServiceChecker serviceChecker;
     private Menu optionsMenu; // Hold reference to menu for updating warning icon
     private MenuItem accountMenuItem; // Reference to account menu item
@@ -411,6 +420,18 @@ public class MenuActivity extends BaseActivity {
 
         // Ensure the FCM token is stored after login
         ((SoccerApp) getApplication()).syncFcmTokenIfNeeded();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        registerNetworkCallback();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterNetworkCallback();
     }
 
     /**
@@ -1180,6 +1201,14 @@ public class MenuActivity extends BaseActivity {
      * Check backend service availability and continue with onResume logic when complete
      */
     private void checkBackendAvailabilityAndContinue() {
+        if (isBackendCheckInProgress) {
+            Log.d(
+                "TAG_Soccer",
+                getClass().getSimpleName() + ".checkBackendAvailabilityAndContinue: Check already in progress - skipping"
+            );
+            return;
+        }
+
         if (serviceChecker == null) {
             Log.w(
                 "TAG_Soccer",
@@ -1190,18 +1219,21 @@ public class MenuActivity extends BaseActivity {
             continueOnResumeAfterBackendCheck();
             return;
         }
-        
+
+        isBackendCheckInProgress = true;
+
         Log.d(
             "TAG_Soccer",
             getClass().getSimpleName() + ".checkBackendAvailabilityAndContinue: Checking backend availability before continuing onResume"
         );
-        
-        serviceChecker.checkServiceAvailability(new BackendServiceChecker.ServiceCheckCallback() {
-            @Override
-            public void onServiceAvailable() {
-                Log.d(
-                    "TAG_Soccer",
-                    getClass().getSimpleName() + ".checkBackendAvailabilityAndContinue: Backend is available - continuing onResume"
+
+        try {
+            serviceChecker.checkServiceAvailability(new BackendServiceChecker.ServiceCheckCallback() {
+                @Override
+                public void onServiceAvailable() {
+                    Log.d(
+                        "TAG_Soccer",
+                        getClass().getSimpleName() + ".checkBackendAvailabilityAndContinue: Backend is available - continuing onResume"
                 );
                 runOnUiThread(() -> {
                     isBackendAvailable = true;
@@ -1221,9 +1253,11 @@ public class MenuActivity extends BaseActivity {
                             accountMenuItem.getIcon().setAlpha(255);
                         }
                     }
-                    
+
                     // Continue with the rest of onResume logic now that backend availability is confirmed
                     continueOnResumeAfterBackendCheck();
+
+                    isBackendCheckInProgress = false;
                 });
             }
 
@@ -1253,13 +1287,112 @@ public class MenuActivity extends BaseActivity {
                                 Toast.LENGTH_LONG).show();
                         backendUnavailableToastShown = true;
                     }
-                    
+
                     // Continue with the rest of onResume logic even when backend is unavailable
                     // (the safeguards in ensureTermsAccepted and fetchNicknameFromFirestore will handle this)
                     continueOnResumeAfterBackendCheck();
+
+                    isBackendCheckInProgress = false;
                 });
             }
-        });
+            });
+        } catch (Exception e) {
+            isBackendCheckInProgress = false;
+            Log.e(
+                "TAG_Soccer",
+                getClass().getSimpleName() + ".checkBackendAvailabilityAndContinue: Service check failed to start",
+                e
+            );
+        }
+    }
+
+    private void registerNetworkCallback() {
+        if (networkCallbackRegistered) {
+            return;
+        }
+
+        if (connectivityManager == null) {
+            connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        }
+
+        if (connectivityManager == null) {
+            Log.w(
+                "TAG_Soccer",
+                getClass().getSimpleName() + ".registerNetworkCallback: ConnectivityManager not available"
+            );
+            return;
+        }
+
+        if (networkCallback == null) {
+            networkCallback = new ConnectivityManager.NetworkCallback() {
+                @Override
+                public void onAvailable(@NonNull Network network) {
+                    if (!isBackendAvailable) {
+                        Log.d(
+                            "TAG_Soccer",
+                            getClass().getSimpleName() + ".registerNetworkCallback: Network available - rechecking backend"
+                        );
+                        runOnUiThread(() -> checkBackendAvailabilityAndContinue());
+                    }
+                }
+
+                @Override
+                public void onLost(@NonNull Network network) {
+                    if (!isNetworkStillAvailable()) {
+                        Log.d(
+                            "TAG_Soccer",
+                            getClass().getSimpleName() + ".registerNetworkCallback: Network lost"
+                        );
+                    }
+                }
+            };
+        }
+
+        try {
+            NetworkRequest request = new NetworkRequest.Builder()
+                    .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                    .build();
+            connectivityManager.registerNetworkCallback(request, networkCallback);
+            networkCallbackRegistered = true;
+        } catch (Exception e) {
+            Log.w(
+                "TAG_Soccer",
+                getClass().getSimpleName() + ".registerNetworkCallback: Failed to register network callback",
+                e
+            );
+        }
+    }
+
+    private void unregisterNetworkCallback() {
+        if (!networkCallbackRegistered || connectivityManager == null || networkCallback == null) {
+            return;
+        }
+
+        try {
+            connectivityManager.unregisterNetworkCallback(networkCallback);
+        } catch (Exception e) {
+            Log.w(
+                "TAG_Soccer",
+                getClass().getSimpleName() + ".unregisterNetworkCallback: Failed to unregister network callback",
+                e
+            );
+        } finally {
+            networkCallbackRegistered = false;
+        }
+    }
+
+    private boolean isNetworkStillAvailable() {
+        if (connectivityManager == null) {
+            return false;
+        }
+
+        Network activeNetwork = connectivityManager.getActiveNetwork();
+        if (activeNetwork == null) {
+            return false;
+        }
+
+        NetworkCapabilities capabilities = connectivityManager.getNetworkCapabilities(activeNetwork);
+        return capabilities != null && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
     }
 
     /**
