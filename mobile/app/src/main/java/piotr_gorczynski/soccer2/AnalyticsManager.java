@@ -112,10 +112,9 @@ public class AnalyticsManager {
         // Check if Firebase services are available before using them
         if (crashlytics != null) {
             try {
-                crashlytics.recordException(new Exception("Signup error: " + safeErrorMessage));
                 crashlytics.log("Signup error - Method: " + safeMethod + ", Step: " + safeStep + ", Error: " + safeErrorMessage);
             } catch (Exception e) {
-                Log.e(TAG, "Failed to record crash analytics for signup error", e);
+                Log.e(TAG, "Failed to log crash analytics for signup error", e);
             }
         } else {
             Log.w(TAG, "Crashlytics not available, skipping crash analytics for signup error");
@@ -266,7 +265,6 @@ public class AnalyticsManager {
         
         if (crashlytics != null) {
             try {
-                crashlytics.recordException(new Exception("Tournament join error: " + safeErrorMessage));
                 crashlytics.log("Tournament join error: " + safeTournamentId + " - " + safeErrorMessage);
             } catch (Exception e) {
                 Log.e(TAG, "Failed to log to Crashlytics", e);
