@@ -14,9 +14,11 @@ sortSpinner.setOnItemSelectedListener(...);    // Then attach listener
 
 When `setSelection()` is called BEFORE attaching the `OnItemSelectedListener`, the listener callback is NOT triggered reliably. This is because the listener wasn't attached yet when the selection was set.
 
-According to Android behavior:
-- If you call `setSelection()` BEFORE `setOnItemSelectedListener()`, the callback is NOT triggered
-- If you call `setSelection()` AFTER `setOnItemSelectedListener()`, the callback IS triggered (either immediately or during next layout)
+According to observed Android behavior (varies by Android version):
+- If you call `setSelection()` BEFORE `setOnItemSelectedListener()`, the callback is typically NOT triggered
+- If you call `setSelection()` AFTER `setOnItemSelectedListener()`, the callback IS typically triggered (either immediately or during next layout)
+
+Note: This behavior is based on common patterns observed in Android development. The official documentation doesn't explicitly specify this, but it's a widely-recognized pattern in the Android development community.
 
 ## Solution
 
@@ -54,7 +56,7 @@ This prevents issues when:
 
 ## Expected Behavior After Fix
 
-1. **On Activity Start:**
+### On Activity Start
    - Spinner is initialized with listener attached
    - Selection is set to "Sort by last seen" (position 0)
    - `onItemSelected(0)` is triggered automatically
@@ -62,12 +64,12 @@ This prevents issues when:
    - Friends are sorted by heartbeat timestamp (most recent first)
    - Sorted list is displayed to user
 
-2. **Sorting Logic:**
+### Sorting Logic
    - Friends with higher heartbeat timestamps appear first (most recently seen)
    - Friends with no heartbeat data (0) appear at the end
    - When heartbeats are equal, friends are sorted by UID for stable ordering
 
-3. **User Interaction:**
+### User Interaction
    - User can still manually change sorting via the spinner
    - Changing to "Sort alphabetically" sorts by nickname
    - Changing back to "Sort by last seen" re-sorts by heartbeat
