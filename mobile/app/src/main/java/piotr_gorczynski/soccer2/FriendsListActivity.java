@@ -192,8 +192,27 @@ public class FriendsListActivity extends BaseActivity {
                 .addOnSuccessListener(snapshot -> {
                     Map<String, Long> heartbeatMap = new HashMap<>();
                     for (String friendUid : friendUids) {
-                        Long lastHb = snapshot.child(friendUid).child("last_heartbeat").getValue(Long.class);
-                        heartbeatMap.put(friendUid, lastHb != null ? lastHb : 0L);
+                        Long lastHb = 0L;
+
+                        // Try to read the heartbeat as a generic number so we gracefully handle
+                        // any schema differences (Long vs Double) that may exist in existing data.
+                        Number hbNumber = snapshot.child(friendUid).child("last_heartbeat").getValue(Number.class);
+                        if (hbNumber != null) {
+                            lastHb = hbNumber.longValue();
+                        }
+
+                        // As a fallback, re-use the cached heartbeat value from the adapter if we
+                        // have already subscribed to presence updates for this friend.  This keeps
+                        // the sorting stable even when the status entry is temporarily missing in
+                        // the RTDB snapshot (for example right after a user goes offline).
+                        if (lastHb == 0L && adapter != null) {
+                            Long cachedHb = adapter.getCachedHeartbeatFor(friendUid);
+                            if (cachedHb != null) {
+                                lastHb = cachedHb;
+                            }
+                        }
+
+                        heartbeatMap.put(friendUid, lastHb);
                     }
 
                     Collections.sort(mutableDocs, new Comparator<DocumentSnapshot>() {
