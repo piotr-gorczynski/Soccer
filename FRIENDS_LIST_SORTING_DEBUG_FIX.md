@@ -109,6 +109,8 @@ D/FriendsListActivity: sortByNickname: Sorted friends alphabetically, updating a
 1. Enable USB debugging on your Android device
 2. Connect device to computer
 3. Run: `adb logcat -s FriendsListActivity:D *:S`
+   - Note: On Windows, you may need to use the full path to adb.exe
+   - Alternatively, use Android Studio's Logcat viewer: View → Tool Windows → Logcat, then filter by "FriendsListActivity"
 4. Open the Friends List screen in the app
 5. Try changing the sort dropdown
 6. Copy the logs and paste them in the issue
@@ -171,8 +173,9 @@ D/FriendsListActivity: sortByNickname: Sorted friends alphabetically, updating a
 6. Re-sorted list is displayed
 
 ## Files Modified
-- `FriendsListActivity.java`: Added logging and fixed initialization
-- `FriendsListSortingTest.java`: Added tests for alphabetical sorting
+- `mobile/app/src/main/java/piotr_gorczynski/soccer2/FriendsListActivity.java`: Added logging and fixed initialization
+- `mobile/app/src/test/java/piotr_gorczynski/soccer2/FriendsListSortingTest.java`: Added tests for alphabetical sorting
+- `FRIENDS_LIST_SORTING_DEBUG_FIX.md`: This documentation file
 
 ## Summary
 The fix ensures:
