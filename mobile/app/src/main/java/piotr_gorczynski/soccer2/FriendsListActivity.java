@@ -16,11 +16,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -185,57 +182,39 @@ public class FriendsListActivity extends BaseActivity {
         // Work on a mutable copy so we can safely sort without modifying the Firestore snapshot list
         List<DocumentSnapshot> mutableDocs = new ArrayList<>(docs);
 
-        // Show the list immediately while we wait for heartbeat data. This avoids a blank screen
-        // in scenarios where the realtime database lookups are slow or fail altogether.
-        adapter.setData(mutableDocs);
-
         if (friendUids.isEmpty()) {
+            adapter.setData(mutableDocs);
             return;
         }
 
-        Map<String, Long> heartbeatMap = new HashMap<>();
-        final int[] pendingRequests = {friendUids.size()};
-
-        Runnable finishIfDone = () -> {
-            if (pendingRequests[0] == 0) {
-                Collections.sort(mutableDocs, new Comparator<DocumentSnapshot>() {
-                    @Override
-                    public int compare(DocumentSnapshot d1, DocumentSnapshot d2) {
-                        Long hb1 = heartbeatMap.get(d1.getId());
-                        Long hb2 = heartbeatMap.get(d2.getId());
-
-                        if (hb1 == null) hb1 = 0L;
-                        if (hb2 == null) hb2 = 0L;
-
-                        // Sort descending (most recent first)
-                        return Long.compare(hb2, hb1);
+        DatabaseReference statusRef = FirebaseDatabase.getInstance().getReference("status");
+        statusRef.get()
+                .addOnSuccessListener(snapshot -> {
+                    Map<String, Long> heartbeatMap = new HashMap<>();
+                    for (String friendUid : friendUids) {
+                        Long lastHb = snapshot.child(friendUid).child("last_heartbeat").getValue(Long.class);
+                        heartbeatMap.put(friendUid, lastHb != null ? lastHb : 0L);
                     }
-                });
 
-                adapter.setData(mutableDocs);
-            }
-        };
+                    Collections.sort(mutableDocs, new Comparator<DocumentSnapshot>() {
+                        @Override
+                        public int compare(DocumentSnapshot d1, DocumentSnapshot d2) {
+                            long hb1 = heartbeatMap.getOrDefault(d1.getId(), 0L);
+                            long hb2 = heartbeatMap.getOrDefault(d2.getId(), 0L);
 
-        for (String friendUid : friendUids) {
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("status").child(friendUid);
-            ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    Long lastHb = snapshot.child("last_heartbeat").getValue(Long.class);
-                    heartbeatMap.put(friendUid, lastHb != null ? lastHb : 0L);
+                            int result = Long.compare(hb2, hb1);  // Sort descending (most recent first)
+                            if (result != 0) {
+                                return result;
+                            }
 
-                    pendingRequests[0]--;
-                    finishIfDone.run();
-                }
+                            // When heartbeats are equal fall back to UID comparison to keep order stable
+                            return d1.getId().compareTo(d2.getId());
+                        }
+                    });
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    heartbeatMap.put(friendUid, 0L);
-                    pendingRequests[0]--;
-                    finishIfDone.run();
-                }
-            });
-        }
+                    adapter.setData(mutableDocs);
+                })
+                .addOnFailureListener(e -> adapter.setData(mutableDocs));
     }
 
     private void sendInviteViaCF(@NonNull String targetUid) {
