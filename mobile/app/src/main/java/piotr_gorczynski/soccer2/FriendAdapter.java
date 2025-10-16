@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.core.content.ContextCompat;
 
@@ -219,6 +220,11 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
 
     private int indexForUid(@NonNull String uid) {
         for (int i=0;i<docs.size();i++) if (uid.equals(docs.get(i).getId())) return i; return -1;
+    }
+
+    @Nullable
+    Long getCachedHeartbeatFor(@NonNull String uid) {
+        return hbCache.get(uid);
     }
 
     void setData(List<DocumentSnapshot> friends) {
