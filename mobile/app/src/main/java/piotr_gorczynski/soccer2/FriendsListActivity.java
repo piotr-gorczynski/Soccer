@@ -44,6 +44,7 @@ public class FriendsListActivity extends BaseActivity {
     private int currentSortMode = SORT_BY_LAST_SEEN;  // Default to sort by last seen
     @Nullable
     private String pendingInviteStatsRefreshUid;
+    private boolean isLoadingFriends = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -74,7 +75,6 @@ public class FriendsListActivity extends BaseActivity {
         spinnerAdapter.add(getString(R.string.sort_by_last_seen));
         spinnerAdapter.add(getString(R.string.sort_alphabetically));
         sortSpinner.setAdapter(spinnerAdapter);
-        sortSpinner.setSelection(SORT_BY_LAST_SEEN);  // Default to "Sort by last seen"
         
         sortSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -88,6 +88,9 @@ public class FriendsListActivity extends BaseActivity {
                 // Do nothing
             }
         });
+        
+        // Set selection AFTER attaching listener to ensure onItemSelected is triggered
+        sortSpinner.setSelection(SORT_BY_LAST_SEEN);  // Default to "Sort by last seen"
 
         addBtn.setOnClickListener(v -> startActivity(new Intent(this, AddFriendActivity.class)));
     }
@@ -109,9 +112,15 @@ public class FriendsListActivity extends BaseActivity {
     }
 
     private void loadFriends() {
+        if (isLoadingFriends) {
+            return;  // Prevent concurrent loads
+        }
+        isLoadingFriends = true;
+        
         String uid = Objects.requireNonNull(auth.getCurrentUser()).getUid();
         db.collection("users").document(uid).collection("friends").get()
                 .addOnSuccessListener(snap -> {
+                    isLoadingFriends = false;
                     List<DocumentSnapshot> docs = snap.getDocuments();
                     if (docs.isEmpty()) {
                         emptyText.setVisibility(View.VISIBLE);
@@ -135,7 +144,10 @@ public class FriendsListActivity extends BaseActivity {
                         sortByLastSeen(docs, friendUids);
                     }
                 })
-                .addOnFailureListener(e -> emptyText.setVisibility(View.VISIBLE));
+                .addOnFailureListener(e -> {
+                    isLoadingFriends = false;
+                    emptyText.setVisibility(View.VISIBLE);
+                });
     }
 
     private void sortByNickname(List<DocumentSnapshot> docs, List<String> friendUids) {
