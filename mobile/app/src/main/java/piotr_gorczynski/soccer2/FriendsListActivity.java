@@ -280,19 +280,25 @@ public class FriendsListActivity extends BaseActivity {
             return;
         }
 
-        DatabaseReference statusRef = FirebaseDatabase.getInstance().getReference("status");
-        Log.d(TAG, "sortByLastSeen: Calling RTDB to get status data");
-        statusRef.get()
-                .addOnSuccessListener(snapshot -> {
-                    Log.d(TAG, "sortByLastSeen: Successfully retrieved status data from RTDB");
-                    
-                    Map<String, Long> heartbeatMap = new HashMap<>();
-                    for (String friendUid : friendUids) {
+        // Fetch heartbeat data for each friend individually to respect database rules
+        Map<String, Long> heartbeatMap = new HashMap<>();
+        final int[] completedFetches = {0};
+        final int totalFriends = friendUids.size();
+
+        Log.d(TAG, "sortByLastSeen: Calling RTDB to get status data for each friend individually");
+        
+        for (String friendUid : friendUids) {
+            DatabaseReference friendStatusRef = FirebaseDatabase.getInstance()
+                    .getReference("status")
+                    .child(friendUid);
+            
+            friendStatusRef.get()
+                    .addOnSuccessListener(snapshot -> {
                         Long lastHb = 0L;
 
                         // Try to read the heartbeat as a generic number so we gracefully handle
                         // any schema differences (Long vs Double) that may exist in existing data.
-                        Number hbNumber = snapshot.child(friendUid).child("last_heartbeat").getValue(Number.class);
+                        Number hbNumber = snapshot.child("last_heartbeat").getValue(Number.class);
                         if (hbNumber != null) {
                             lastHb = hbNumber.longValue();
                             Log.d(TAG, "sortByLastSeen: Friend " + friendUid + " has heartbeat from RTDB: " + lastHb);
@@ -313,55 +319,71 @@ public class FriendsListActivity extends BaseActivity {
                         }
 
                         heartbeatMap.put(friendUid, lastHb);
-                    }
+                        completedFetches[0]++;
 
-                    Log.d(TAG, "sortByLastSeen: About to sort " + mutableDocs.size() + " friends by heartbeat");
-                    
-                    try {
-                        Collections.sort(mutableDocs, new Comparator<DocumentSnapshot>() {
-                            @Override
-                            public int compare(DocumentSnapshot d1, DocumentSnapshot d2) {
-                                long hb1 = heartbeatMap.getOrDefault(d1.getId(), 0L);
-                                long hb2 = heartbeatMap.getOrDefault(d2.getId(), 0L);
-
-                                int result = Long.compare(hb2, hb1);  // Sort descending (most recent first)
-                                if (result != 0) {
-                                    return result;
-                                }
-
-                                // When heartbeats are equal fall back to UID comparison to keep order stable
-                                return d1.getId().compareTo(d2.getId());
-                            }
-                        });
-                        
-                        Log.d(TAG, "sortByLastSeen: Successfully sorted friends by last seen");
-                    } catch (Exception e) {
-                        Log.e(TAG, "sortByLastSeen: Exception while sorting", e);
-                    }
-
-                    // Log the sorted order for debugging
-                    StringBuilder sortedOrder = new StringBuilder("sortByLastSeen: Sorted order: ");
-                    for (int i = 0; i < Math.min(5, mutableDocs.size()); i++) {
-                        String uid = mutableDocs.get(i).getId();
-                        Long hb = heartbeatMap.get(uid);
-                        sortedOrder.append(uid).append("(").append(hb).append(")");
-                        if (i < Math.min(4, mutableDocs.size() - 1)) {
-                            sortedOrder.append(", ");
+                        // Once all friend statuses are fetched, sort and update the adapter
+                        if (completedFetches[0] == totalFriends) {
+                            Log.d(TAG, "sortByLastSeen: Successfully retrieved status data from RTDB for all friends");
+                            performSortByLastSeen(mutableDocs, heartbeatMap);
                         }
-                    }
-                    if (mutableDocs.size() > 5) {
-                        sortedOrder.append("...");
-                    }
-                    Log.d(TAG, sortedOrder.toString());
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e(TAG, "sortByLastSeen: Failed to fetch heartbeat data for friend " + friendUid, e);
+                        // Use 0 as default heartbeat for this friend
+                        heartbeatMap.put(friendUid, 0L);
+                        completedFetches[0]++;
 
-                    Log.d(TAG, "sortByLastSeen: Updating adapter with " + mutableDocs.size() + " friends");
-                    adapter.setData(mutableDocs);
-                })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "sortByLastSeen: Failed to fetch heartbeat data from RTDB", e);
-                    Log.d(TAG, "sortByLastSeen: Updating adapter with unsorted list due to error");
-                    adapter.setData(mutableDocs);
-                });
+                        // Once all friend statuses are fetched (or failed), sort and update the adapter
+                        if (completedFetches[0] == totalFriends) {
+                            Log.d(TAG, "sortByLastSeen: Completed fetching status data (some may have failed)");
+                            performSortByLastSeen(mutableDocs, heartbeatMap);
+                        }
+                    });
+        }
+    }
+
+    private void performSortByLastSeen(List<DocumentSnapshot> mutableDocs, Map<String, Long> heartbeatMap) {
+        Log.d(TAG, "performSortByLastSeen: About to sort " + mutableDocs.size() + " friends by heartbeat");
+        
+        try {
+            Collections.sort(mutableDocs, new Comparator<DocumentSnapshot>() {
+                @Override
+                public int compare(DocumentSnapshot d1, DocumentSnapshot d2) {
+                    long hb1 = heartbeatMap.getOrDefault(d1.getId(), 0L);
+                    long hb2 = heartbeatMap.getOrDefault(d2.getId(), 0L);
+
+                    int result = Long.compare(hb2, hb1);  // Sort descending (most recent first)
+                    if (result != 0) {
+                        return result;
+                    }
+
+                    // When heartbeats are equal fall back to UID comparison to keep order stable
+                    return d1.getId().compareTo(d2.getId());
+                }
+            });
+            
+            Log.d(TAG, "performSortByLastSeen: Successfully sorted friends by last seen");
+        } catch (Exception e) {
+            Log.e(TAG, "performSortByLastSeen: Exception while sorting", e);
+        }
+
+        // Log the sorted order for debugging
+        StringBuilder sortedOrder = new StringBuilder("performSortByLastSeen: Sorted order: ");
+        for (int i = 0; i < Math.min(5, mutableDocs.size()); i++) {
+            String uid = mutableDocs.get(i).getId();
+            Long hb = heartbeatMap.get(uid);
+            sortedOrder.append(uid).append("(").append(hb).append(")");
+            if (i < Math.min(4, mutableDocs.size() - 1)) {
+                sortedOrder.append(", ");
+            }
+        }
+        if (mutableDocs.size() > 5) {
+            sortedOrder.append("...");
+        }
+        Log.d(TAG, sortedOrder.toString());
+
+        Log.d(TAG, "performSortByLastSeen: Updating adapter with " + mutableDocs.size() + " friends");
+        adapter.setData(mutableDocs);
     }
 
     private void sendInviteViaCF(@NonNull String targetUid) {
