@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.core.content.ContextCompat;
 
@@ -221,10 +222,34 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
         for (int i=0;i<docs.size();i++) if (uid.equals(docs.get(i).getId())) return i; return -1;
     }
 
+    @Nullable
+    Long getCachedHeartbeatFor(@NonNull String uid) {
+        return hbCache.get(uid);
+    }
+
     void setData(List<DocumentSnapshot> friends) {
+        android.util.Log.d("TAG_Soccer", "setData: Updating adapter with " + friends.size() + " friends");
+        
+        // Log first few friend UIDs for debugging
+        if (!friends.isEmpty()) {
+            StringBuilder friendIds = new StringBuilder("setData: Friend UIDs: ");
+            for (int i = 0; i < Math.min(5, friends.size()); i++) {
+                friendIds.append(friends.get(i).getId());
+                if (i < Math.min(4, friends.size() - 1)) {
+                    friendIds.append(", ");
+                }
+            }
+            if (friends.size() > 5) {
+                friendIds.append("...");
+            }
+            android.util.Log.d("TAG_Soccer", friendIds.toString());
+        }
+        
         docs.clear();
         docs.addAll(friends);
         notifyDataSetChanged();
+        
+        android.util.Log.d("TAG_Soccer", "setData: notifyDataSetChanged() called, adapter now has " + docs.size() + " items");
     }
 
     private void fetchInviteStats(@NonNull String targetUid, @NonNull VH h) {
