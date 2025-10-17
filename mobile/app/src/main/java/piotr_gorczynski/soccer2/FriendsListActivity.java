@@ -84,13 +84,19 @@ public class FriendsListActivity extends BaseActivity {
         sortSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Log.d(TAG, "onItemSelected: position=" + position + ", spinnerInitialized=" + spinnerInitialized);
+                Log.d(TAG, "onItemSelected: Called with position=" + position + 
+                    ", spinnerInitialized=" + spinnerInitialized + 
+                    ", isLoadingFriends=" + isLoadingFriends);
+                
+                int previousSortMode = currentSortMode;
                 currentSortMode = position;
+                
+                Log.d(TAG, "onItemSelected: Sort mode changed from " + previousSortMode + " to " + currentSortMode +
+                    " (" + (currentSortMode == SORT_BY_LAST_SEEN ? "SORT_BY_LAST_SEEN" : "SORT_ALPHABETICALLY") + ")");
                 
                 // Only reload friends if this is a user-initiated selection change (not the initial setup)
                 if (spinnerInitialized) {
-                    Log.d(TAG, "onItemSelected: User changed sort mode to " + 
-                        (position == SORT_BY_LAST_SEEN ? "SORT_BY_LAST_SEEN" : "SORT_ALPHABETICALLY"));
+                    Log.d(TAG, "onItemSelected: User changed sort mode, calling loadFriends()");
                     loadFriends();
                 } else {
                     Log.d(TAG, "onItemSelected: Initial spinner setup, marking as initialized");
@@ -100,7 +106,7 @@ public class FriendsListActivity extends BaseActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                Log.d(TAG, "onNothingSelected called");
+                Log.d(TAG, "onNothingSelected: Called");
             }
         });
         
@@ -116,15 +122,18 @@ public class FriendsListActivity extends BaseActivity {
     protected void onStart() {
         super.onStart();
         Log.d(TAG, "onStart: Loading friends with currentSortMode=" + 
-            (currentSortMode == SORT_BY_LAST_SEEN ? "SORT_BY_LAST_SEEN" : "SORT_ALPHABETICALLY"));
+            (currentSortMode == SORT_BY_LAST_SEEN ? "SORT_BY_LAST_SEEN" : "SORT_ALPHABETICALLY") +
+            " (position=" + currentSortMode + ")");
         loadFriends();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d(TAG, "onResume: Activity resumed");
 
         if (pendingInviteStatsRefreshUid != null && adapter != null) {
+            Log.d(TAG, "onResume: Invalidating invite stats for " + pendingInviteStatsRefreshUid);
             adapter.invalidateInviteStatsFor(pendingInviteStatsRefreshUid);
             pendingInviteStatsRefreshUid = null;
         }
@@ -138,9 +147,12 @@ public class FriendsListActivity extends BaseActivity {
         isLoadingFriends = true;
         
         Log.d(TAG, "loadFriends: Starting to load friends with sortMode=" + 
-            (currentSortMode == SORT_BY_LAST_SEEN ? "SORT_BY_LAST_SEEN" : "SORT_ALPHABETICALLY"));
+            (currentSortMode == SORT_BY_LAST_SEEN ? "SORT_BY_LAST_SEEN" : "SORT_ALPHABETICALLY") +
+            " (position=" + currentSortMode + ")");
         
         String uid = Objects.requireNonNull(auth.getCurrentUser()).getUid();
+        Log.d(TAG, "loadFriends: Current user UID: " + uid);
+        
         db.collection("users").document(uid).collection("friends").get()
                 .addOnSuccessListener(snap -> {
                     isLoadingFriends = false;
@@ -165,28 +177,33 @@ public class FriendsListActivity extends BaseActivity {
 
                     if (currentSortMode == SORT_ALPHABETICALLY) {
                         // Sort alphabetically by nickname
-                        Log.d(TAG, "loadFriends: Sorting alphabetically");
+                        Log.d(TAG, "loadFriends: Sorting alphabetically (currentSortMode=" + currentSortMode + ")");
                         sortByNickname(docs, friendUids);
                     } else {
                         // Sort by last seen (descending)
-                        Log.d(TAG, "loadFriends: Sorting by last seen");
+                        Log.d(TAG, "loadFriends: Sorting by last seen (currentSortMode=" + currentSortMode + ")");
                         sortByLastSeen(docs, friendUids);
                     }
                 })
                 .addOnFailureListener(e -> {
                     isLoadingFriends = false;
                     emptyText.setVisibility(View.VISIBLE);
-                    Log.e(TAG, "loadFriends: Failed to load friends", e);
+                    Log.e(TAG, "loadFriends: Failed to load friends from Firestore", e);
                 });
     }
 
     private void sortByNickname(List<DocumentSnapshot> docs, List<String> friendUids) {
         Log.d(TAG, "sortByNickname: Fetching user documents for " + friendUids.size() + " friends");
         
+        // Work on a mutable copy so we can safely sort without modifying the Firestore snapshot list
+        List<DocumentSnapshot> mutableDocs = new ArrayList<>(docs);
+        
         // Fetch user documents to get nicknames for sorting
         db.collection("users").whereIn(FieldPath.documentId(), friendUids)
                 .get()
                 .addOnSuccessListener(userSnap -> {
+                    Log.d(TAG, "sortByNickname: Successfully fetched " + userSnap.size() + " user documents");
+                    
                     // Create a map of UID to nickname (lowercase for case-insensitive sorting)
                     Map<String, String> nicknameMap = new HashMap<>();
                     for (DocumentSnapshot userDoc : userSnap.getDocuments()) {
@@ -199,31 +216,55 @@ public class FriendsListActivity extends BaseActivity {
                         }
                     }
                     
-                    // Sort friend documents by nickname (ascending)
-                    Collections.sort(docs, new Comparator<DocumentSnapshot>() {
-                        @Override
-                        public int compare(DocumentSnapshot d1, DocumentSnapshot d2) {
-                            String nick1 = nicknameMap.get(d1.getId());
-                            String nick2 = nicknameMap.get(d2.getId());
-                            
-                            // Handle null nicknames (put them at the end)
-                            if (nick1 == null && nick2 == null) return 0;
-                            if (nick1 == null) return 1;
-                            if (nick2 == null) return -1;
-                            
-                            return nick1.compareTo(nick2);
-                        }
-                    });
+                    Log.d(TAG, "sortByNickname: About to sort " + mutableDocs.size() + " friends alphabetically");
                     
-                    Log.d(TAG, "sortByNickname: Sorted friends alphabetically, updating adapter");
+                    // Sort friend documents by nickname (ascending)
+                    try {
+                        Collections.sort(mutableDocs, new Comparator<DocumentSnapshot>() {
+                            @Override
+                            public int compare(DocumentSnapshot d1, DocumentSnapshot d2) {
+                                String nick1 = nicknameMap.get(d1.getId());
+                                String nick2 = nicknameMap.get(d2.getId());
+                                
+                                // Handle null nicknames (put them at the end)
+                                if (nick1 == null && nick2 == null) return 0;
+                                if (nick1 == null) return 1;
+                                if (nick2 == null) return -1;
+                                
+                                return nick1.compareTo(nick2);
+                            }
+                        });
+                        
+                        Log.d(TAG, "sortByNickname: Successfully sorted friends alphabetically");
+                        
+                        // Log the sorted order for debugging
+                        StringBuilder sortedOrder = new StringBuilder("sortByNickname: Sorted order: ");
+                        for (int i = 0; i < Math.min(5, mutableDocs.size()); i++) {
+                            String uid = mutableDocs.get(i).getId();
+                            String nick = nicknameMap.get(uid);
+                            sortedOrder.append(uid).append("(").append(nick != null ? nick : "null").append(")");
+                            if (i < Math.min(4, mutableDocs.size() - 1)) {
+                                sortedOrder.append(", ");
+                            }
+                        }
+                        if (mutableDocs.size() > 5) {
+                            sortedOrder.append("...");
+                        }
+                        Log.d(TAG, sortedOrder.toString());
+                        
+                    } catch (Exception e) {
+                        Log.e(TAG, "sortByNickname: Exception while sorting", e);
+                    }
+                    
+                    Log.d(TAG, "sortByNickname: Updating adapter with " + mutableDocs.size() + " friends");
                     emptyText.setVisibility(View.GONE);
-                    adapter.setData(docs);
+                    adapter.setData(mutableDocs);
                 })
                 .addOnFailureListener(e -> {
                     // If fetching user data fails, still show the friends (unsorted)
                     Log.e(TAG, "sortByNickname: Failed to fetch user data for sorting", e);
                     emptyText.setVisibility(View.GONE);
-                    adapter.setData(docs);
+                    adapter.setData(mutableDocs);
                 });
     }
 
@@ -234,13 +275,17 @@ public class FriendsListActivity extends BaseActivity {
         Log.d(TAG, "sortByLastSeen: Fetching heartbeat data for " + friendUids.size() + " friends");
 
         if (friendUids.isEmpty()) {
+            Log.d(TAG, "sortByLastSeen: No friends to sort, updating adapter with empty list");
             adapter.setData(mutableDocs);
             return;
         }
 
         DatabaseReference statusRef = FirebaseDatabase.getInstance().getReference("status");
+        Log.d(TAG, "sortByLastSeen: Calling RTDB to get status data");
         statusRef.get()
                 .addOnSuccessListener(snapshot -> {
+                    Log.d(TAG, "sortByLastSeen: Successfully retrieved status data from RTDB");
+                    
                     Map<String, Long> heartbeatMap = new HashMap<>();
                     for (String friendUid : friendUids) {
                         Long lastHb = 0L;
@@ -250,6 +295,9 @@ public class FriendsListActivity extends BaseActivity {
                         Number hbNumber = snapshot.child(friendUid).child("last_heartbeat").getValue(Number.class);
                         if (hbNumber != null) {
                             lastHb = hbNumber.longValue();
+                            Log.d(TAG, "sortByLastSeen: Friend " + friendUid + " has heartbeat from RTDB: " + lastHb);
+                        } else {
+                            Log.d(TAG, "sortByLastSeen: Friend " + friendUid + " has no heartbeat in RTDB");
                         }
 
                         // As a fallback, re-use the cached heartbeat value from the adapter if we
@@ -260,30 +308,37 @@ public class FriendsListActivity extends BaseActivity {
                             Long cachedHb = adapter.getCachedHeartbeatFor(friendUid);
                             if (cachedHb != null) {
                                 lastHb = cachedHb;
+                                Log.d(TAG, "sortByLastSeen: Friend " + friendUid + " using cached heartbeat: " + lastHb);
                             }
                         }
 
                         heartbeatMap.put(friendUid, lastHb);
-                        Log.d(TAG, "sortByLastSeen: Friend " + friendUid + " has heartbeat: " + lastHb);
                     }
 
-                    Collections.sort(mutableDocs, new Comparator<DocumentSnapshot>() {
-                        @Override
-                        public int compare(DocumentSnapshot d1, DocumentSnapshot d2) {
-                            long hb1 = heartbeatMap.getOrDefault(d1.getId(), 0L);
-                            long hb2 = heartbeatMap.getOrDefault(d2.getId(), 0L);
+                    Log.d(TAG, "sortByLastSeen: About to sort " + mutableDocs.size() + " friends by heartbeat");
+                    
+                    try {
+                        Collections.sort(mutableDocs, new Comparator<DocumentSnapshot>() {
+                            @Override
+                            public int compare(DocumentSnapshot d1, DocumentSnapshot d2) {
+                                long hb1 = heartbeatMap.getOrDefault(d1.getId(), 0L);
+                                long hb2 = heartbeatMap.getOrDefault(d2.getId(), 0L);
 
-                            int result = Long.compare(hb2, hb1);  // Sort descending (most recent first)
-                            if (result != 0) {
-                                return result;
+                                int result = Long.compare(hb2, hb1);  // Sort descending (most recent first)
+                                if (result != 0) {
+                                    return result;
+                                }
+
+                                // When heartbeats are equal fall back to UID comparison to keep order stable
+                                return d1.getId().compareTo(d2.getId());
                             }
+                        });
+                        
+                        Log.d(TAG, "sortByLastSeen: Successfully sorted friends by last seen");
+                    } catch (Exception e) {
+                        Log.e(TAG, "sortByLastSeen: Exception while sorting", e);
+                    }
 
-                            // When heartbeats are equal fall back to UID comparison to keep order stable
-                            return d1.getId().compareTo(d2.getId());
-                        }
-                    });
-
-                    Log.d(TAG, "sortByLastSeen: Sorted friends by last seen, updating adapter");
                     // Log the sorted order for debugging
                     StringBuilder sortedOrder = new StringBuilder("sortByLastSeen: Sorted order: ");
                     for (int i = 0; i < Math.min(5, mutableDocs.size()); i++) {
@@ -299,10 +354,12 @@ public class FriendsListActivity extends BaseActivity {
                     }
                     Log.d(TAG, sortedOrder.toString());
 
+                    Log.d(TAG, "sortByLastSeen: Updating adapter with " + mutableDocs.size() + " friends");
                     adapter.setData(mutableDocs);
                 })
                 .addOnFailureListener(e -> {
-                    Log.e(TAG, "sortByLastSeen: Failed to fetch heartbeat data", e);
+                    Log.e(TAG, "sortByLastSeen: Failed to fetch heartbeat data from RTDB", e);
+                    Log.d(TAG, "sortByLastSeen: Updating adapter with unsorted list due to error");
                     adapter.setData(mutableDocs);
                 });
     }
