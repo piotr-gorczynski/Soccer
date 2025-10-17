@@ -38,6 +38,7 @@ public class FriendsListActivity extends BaseActivity {
     private static final String TAG = "TAG_Soccer";
     private static final int SORT_BY_LAST_SEEN = 0;
     private static final int SORT_ALPHABETICALLY = 1;
+    private static final int SORT_TIMEOUT_MS = 5000; // 5 second timeout for Firebase queries
 
     private RecyclerView list;
     private TextView emptyText;
@@ -210,7 +211,6 @@ public class FriendsListActivity extends BaseActivity {
         Log.d(TAG, "sortByNickname: Will fetch user data in " + totalBatches + " batch(es)");
         
         // Set up a timeout to ensure we don't wait indefinitely for Firestore queries
-        final int TIMEOUT_MS = 5000; // 5 second timeout
         Handler timeoutHandler = new Handler(Looper.getMainLooper());
         Runnable timeoutRunnable = new Runnable() {
             @Override
@@ -223,7 +223,7 @@ public class FriendsListActivity extends BaseActivity {
                 }
             }
         };
-        timeoutHandler.postDelayed(timeoutRunnable, TIMEOUT_MS);
+        timeoutHandler.postDelayed(timeoutRunnable, SORT_TIMEOUT_MS);
         
         // Process friend UIDs in batches of 30
         for (int i = 0; i < friendUids.size(); i += BATCH_SIZE) {
@@ -359,7 +359,6 @@ public class FriendsListActivity extends BaseActivity {
         
         // Set up a timeout to ensure we don't wait indefinitely for RTDB queries
         // If some queries hang or don't complete, we'll proceed with whatever data we have
-        final int TIMEOUT_MS = 5000; // 5 second timeout
         Handler timeoutHandler = new Handler(Looper.getMainLooper());
         Runnable timeoutRunnable = new Runnable() {
             @Override
@@ -382,7 +381,7 @@ public class FriendsListActivity extends BaseActivity {
                 }
             }
         };
-        timeoutHandler.postDelayed(timeoutRunnable, TIMEOUT_MS);
+        timeoutHandler.postDelayed(timeoutRunnable, SORT_TIMEOUT_MS);
         
         for (String friendUid : friendUids) {
             // Capture the UID to avoid issues with lambda variable capture in the loop
