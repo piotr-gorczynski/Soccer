@@ -280,24 +280,36 @@ public class FriendsListActivity extends BaseActivity {
             return;
         }
 
-        DatabaseReference statusRef = FirebaseDatabase.getInstance().getReference("status");
-        Log.d(TAG, "sortByLastSeen: Calling RTDB to get status data");
-        statusRef.get()
-                .addOnSuccessListener(snapshot -> {
-                    Log.d(TAG, "sortByLastSeen: Successfully retrieved status data from RTDB");
-                    
-                    Map<String, Long> heartbeatMap = new HashMap<>();
-                    for (String friendUid : friendUids) {
+        // Fetch heartbeat data for each friend individually to respect database rules
+        // Note: Firebase callbacks run on the main thread in Android, so we use simple
+        // collections without additional synchronization. The heartbeatMap and counter
+        // are only accessed from Firebase callbacks which execute serially on main thread.
+        Map<String, Long> heartbeatMap = new HashMap<>();
+        final int[] completedFetches = {0};
+        final int totalFriends = friendUids.size();
+
+        Log.d(TAG, "sortByLastSeen: Calling RTDB to get status data for each friend individually");
+        
+        for (String friendUid : friendUids) {
+            // Capture the UID to avoid issues with lambda variable capture in the loop
+            final String capturedUid = friendUid;
+            
+            DatabaseReference friendStatusRef = FirebaseDatabase.getInstance()
+                    .getReference("status")
+                    .child(capturedUid);
+            
+            friendStatusRef.get()
+                    .addOnSuccessListener(snapshot -> {
                         Long lastHb = 0L;
 
                         // Try to read the heartbeat as a generic number so we gracefully handle
                         // any schema differences (Long vs Double) that may exist in existing data.
-                        Number hbNumber = snapshot.child(friendUid).child("last_heartbeat").getValue(Number.class);
+                        Number hbNumber = snapshot.child("last_heartbeat").getValue(Number.class);
                         if (hbNumber != null) {
                             lastHb = hbNumber.longValue();
-                            Log.d(TAG, "sortByLastSeen: Friend " + friendUid + " has heartbeat from RTDB: " + lastHb);
+                            Log.d(TAG, "sortByLastSeen: Friend " + capturedUid + " has heartbeat from RTDB: " + lastHb);
                         } else {
-                            Log.d(TAG, "sortByLastSeen: Friend " + friendUid + " has no heartbeat in RTDB");
+                            Log.d(TAG, "sortByLastSeen: Friend " + capturedUid + " has no heartbeat in RTDB");
                         }
 
                         // As a fallback, re-use the cached heartbeat value from the adapter if we
@@ -305,63 +317,85 @@ public class FriendsListActivity extends BaseActivity {
                         // the sorting stable even when the status entry is temporarily missing in
                         // the RTDB snapshot (for example right after a user goes offline).
                         if (lastHb == 0L && adapter != null) {
-                            Long cachedHb = adapter.getCachedHeartbeatFor(friendUid);
+                            Long cachedHb = adapter.getCachedHeartbeatFor(capturedUid);
                             if (cachedHb != null) {
                                 lastHb = cachedHb;
-                                Log.d(TAG, "sortByLastSeen: Friend " + friendUid + " using cached heartbeat: " + lastHb);
+                                Log.d(TAG, "sortByLastSeen: Friend " + capturedUid + " using cached heartbeat: " + lastHb);
                             }
                         }
 
-                        heartbeatMap.put(friendUid, lastHb);
+                        heartbeatMap.put(capturedUid, lastHb);
+                        completedFetches[0]++;
+
+                        // Once all friend statuses are fetched, sort and update the adapter
+                        checkCompletionAndSort(mutableDocs, heartbeatMap, completedFetches[0], totalFriends, true);
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e(TAG, "sortByLastSeen: Failed to fetch heartbeat data for friend " + capturedUid, e);
+                        // Use 0 as default heartbeat for this friend
+                        heartbeatMap.put(capturedUid, 0L);
+                        completedFetches[0]++;
+
+                        // Once all friend statuses are fetched (or failed), sort and update the adapter
+                        checkCompletionAndSort(mutableDocs, heartbeatMap, completedFetches[0], totalFriends, false);
+                    });
+        }
+    }
+
+    private void checkCompletionAndSort(List<DocumentSnapshot> mutableDocs, Map<String, Long> heartbeatMap,
+                                        int completedCount, int totalFriends, boolean allSuccessful) {
+        if (completedCount == totalFriends) {
+            if (allSuccessful) {
+                Log.d(TAG, "sortByLastSeen: Successfully retrieved status data from RTDB for all friends");
+            } else {
+                Log.d(TAG, "sortByLastSeen: Completed fetching status data (some may have failed)");
+            }
+            performSortByLastSeen(mutableDocs, heartbeatMap);
+        }
+    }
+
+    private void performSortByLastSeen(List<DocumentSnapshot> mutableDocs, Map<String, Long> heartbeatMap) {
+        Log.d(TAG, "performSortByLastSeen: About to sort " + mutableDocs.size() + " friends by heartbeat");
+        
+        try {
+            Collections.sort(mutableDocs, new Comparator<DocumentSnapshot>() {
+                @Override
+                public int compare(DocumentSnapshot d1, DocumentSnapshot d2) {
+                    long hb1 = heartbeatMap.getOrDefault(d1.getId(), 0L);
+                    long hb2 = heartbeatMap.getOrDefault(d2.getId(), 0L);
+
+                    int result = Long.compare(hb2, hb1);  // Sort descending (most recent first)
+                    if (result != 0) {
+                        return result;
                     }
 
-                    Log.d(TAG, "sortByLastSeen: About to sort " + mutableDocs.size() + " friends by heartbeat");
-                    
-                    try {
-                        Collections.sort(mutableDocs, new Comparator<DocumentSnapshot>() {
-                            @Override
-                            public int compare(DocumentSnapshot d1, DocumentSnapshot d2) {
-                                long hb1 = heartbeatMap.getOrDefault(d1.getId(), 0L);
-                                long hb2 = heartbeatMap.getOrDefault(d2.getId(), 0L);
+                    // When heartbeats are equal fall back to UID comparison to keep order stable
+                    return d1.getId().compareTo(d2.getId());
+                }
+            });
+            
+            Log.d(TAG, "performSortByLastSeen: Successfully sorted friends by last seen");
+        } catch (Exception e) {
+            Log.e(TAG, "performSortByLastSeen: Exception while sorting", e);
+        }
 
-                                int result = Long.compare(hb2, hb1);  // Sort descending (most recent first)
-                                if (result != 0) {
-                                    return result;
-                                }
+        // Log the sorted order for debugging
+        StringBuilder sortedOrder = new StringBuilder("performSortByLastSeen: Sorted order: ");
+        for (int i = 0; i < Math.min(5, mutableDocs.size()); i++) {
+            String uid = mutableDocs.get(i).getId();
+            Long hb = heartbeatMap.get(uid);
+            sortedOrder.append(uid).append("(").append(hb).append(")");
+            if (i < Math.min(4, mutableDocs.size() - 1)) {
+                sortedOrder.append(", ");
+            }
+        }
+        if (mutableDocs.size() > 5) {
+            sortedOrder.append("...");
+        }
+        Log.d(TAG, sortedOrder.toString());
 
-                                // When heartbeats are equal fall back to UID comparison to keep order stable
-                                return d1.getId().compareTo(d2.getId());
-                            }
-                        });
-                        
-                        Log.d(TAG, "sortByLastSeen: Successfully sorted friends by last seen");
-                    } catch (Exception e) {
-                        Log.e(TAG, "sortByLastSeen: Exception while sorting", e);
-                    }
-
-                    // Log the sorted order for debugging
-                    StringBuilder sortedOrder = new StringBuilder("sortByLastSeen: Sorted order: ");
-                    for (int i = 0; i < Math.min(5, mutableDocs.size()); i++) {
-                        String uid = mutableDocs.get(i).getId();
-                        Long hb = heartbeatMap.get(uid);
-                        sortedOrder.append(uid).append("(").append(hb).append(")");
-                        if (i < Math.min(4, mutableDocs.size() - 1)) {
-                            sortedOrder.append(", ");
-                        }
-                    }
-                    if (mutableDocs.size() > 5) {
-                        sortedOrder.append("...");
-                    }
-                    Log.d(TAG, sortedOrder.toString());
-
-                    Log.d(TAG, "sortByLastSeen: Updating adapter with " + mutableDocs.size() + " friends");
-                    adapter.setData(mutableDocs);
-                })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "sortByLastSeen: Failed to fetch heartbeat data from RTDB", e);
-                    Log.d(TAG, "sortByLastSeen: Updating adapter with unsorted list due to error");
-                    adapter.setData(mutableDocs);
-                });
+        Log.d(TAG, "performSortByLastSeen: Updating adapter with " + mutableDocs.size() + " friends");
+        adapter.setData(mutableDocs);
     }
 
     private void sendInviteViaCF(@NonNull String targetUid) {
