@@ -258,4 +258,116 @@ public class FriendsListSortingTest {
         assertEquals("Should have one friend", 1, friends.size());
         assertEquals("Friend should be friend1", "friend1", friends.get(0).getId());
     }
+
+    @Test
+    public void testSortAlphabetically() {
+        // Test alphabetical sorting by nickname
+        List<MockFriend> friends = new ArrayList<>();
+        friends.add(new MockFriend("uid1"));
+        friends.add(new MockFriend("uid2"));
+        friends.add(new MockFriend("uid3"));
+        friends.add(new MockFriend("uid4"));
+        
+        // Create a map of UID to nickname (lowercase for case-insensitive sorting)
+        Map<String, String> nicknameMap = new HashMap<>();
+        nicknameMap.put("uid1", "zebra");      // Should be last
+        nicknameMap.put("uid2", "alice");      // Should be first
+        nicknameMap.put("uid3", "charlie");    // Should be third
+        nicknameMap.put("uid4", "bob");        // Should be second
+        
+        // Sort using the same logic as FriendsListActivity.sortByNickname()
+        Collections.sort(friends, new Comparator<MockFriend>() {
+            @Override
+            public int compare(MockFriend d1, MockFriend d2) {
+                String nick1 = nicknameMap.get(d1.getId());
+                String nick2 = nicknameMap.get(d2.getId());
+                
+                // Handle null nicknames (put them at the end)
+                if (nick1 == null && nick2 == null) return 0;
+                if (nick1 == null) return 1;
+                if (nick2 == null) return -1;
+                
+                return nick1.compareTo(nick2);
+            }
+        });
+        
+        // Verify alphabetical order (ascending)
+        assertEquals("First friend should be uid2 (alice)", "uid2", friends.get(0).getId());
+        assertEquals("Second friend should be uid4 (bob)", "uid4", friends.get(1).getId());
+        assertEquals("Third friend should be uid3 (charlie)", "uid3", friends.get(2).getId());
+        assertEquals("Fourth friend should be uid1 (zebra)", "uid1", friends.get(3).getId());
+    }
+
+    @Test
+    public void testSortAlphabeticallyWithNulls() {
+        // Test alphabetical sorting when some friends have no nickname
+        List<MockFriend> friends = new ArrayList<>();
+        friends.add(new MockFriend("uid1"));
+        friends.add(new MockFriend("uid2"));
+        friends.add(new MockFriend("uid3"));
+        
+        // Create a map with some null nicknames
+        Map<String, String> nicknameMap = new HashMap<>();
+        nicknameMap.put("uid1", "bob");
+        nicknameMap.put("uid2", null);  // No nickname, should go to end
+        nicknameMap.put("uid3", "alice");
+        
+        // Sort using the same logic as FriendsListActivity.sortByNickname()
+        Collections.sort(friends, new Comparator<MockFriend>() {
+            @Override
+            public int compare(MockFriend d1, MockFriend d2) {
+                String nick1 = nicknameMap.get(d1.getId());
+                String nick2 = nicknameMap.get(d2.getId());
+                
+                // Handle null nicknames (put them at the end)
+                if (nick1 == null && nick2 == null) return 0;
+                if (nick1 == null) return 1;
+                if (nick2 == null) return -1;
+                
+                return nick1.compareTo(nick2);
+            }
+        });
+        
+        // uid3 (alice) should be first, uid1 (bob) second, uid2 (null) last
+        assertEquals("First friend should be uid3 (alice)", "uid3", friends.get(0).getId());
+        assertEquals("Second friend should be uid1 (bob)", "uid1", friends.get(1).getId());
+        assertEquals("Third friend should be uid2 (null nickname)", "uid2", friends.get(2).getId());
+    }
+
+    @Test
+    public void testSortAlphabeticallyCaseInsensitive() {
+        // Test that alphabetical sorting is case-insensitive
+        List<MockFriend> friends = new ArrayList<>();
+        friends.add(new MockFriend("uid1"));
+        friends.add(new MockFriend("uid2"));
+        friends.add(new MockFriend("uid3"));
+        
+        // Mix of upper and lower case
+        Map<String, String> nicknameMap = new HashMap<>();
+        nicknameMap.put("uid1", "CHARLIE");  // Should be third when lowercased
+        nicknameMap.put("uid2", "alice");    // Should be first
+        nicknameMap.put("uid3", "Bob");      // Should be second when lowercased
+        
+        // Sort using the same logic as FriendsListActivity.sortByNickname()
+        // Note: In the actual activity, nicknames are lowercased before putting in the map
+        Collections.sort(friends, new Comparator<MockFriend>() {
+            @Override
+            public int compare(MockFriend d1, MockFriend d2) {
+                String nick1 = nicknameMap.get(d1.getId());
+                String nick2 = nicknameMap.get(d2.getId());
+                
+                if (nick1 == null && nick2 == null) return 0;
+                if (nick1 == null) return 1;
+                if (nick2 == null) return -1;
+                
+                // Convert to lowercase for case-insensitive comparison
+                return nick1.toLowerCase().compareTo(nick2.toLowerCase());
+            }
+        });
+        
+        // Verify case-insensitive alphabetical order
+        assertEquals("First friend should be uid2 (alice)", "uid2", friends.get(0).getId());
+        assertEquals("Second friend should be uid3 (Bob)", "uid3", friends.get(1).getId());
+        assertEquals("Third friend should be uid1 (CHARLIE)", "uid1", friends.get(2).getId());
+    }
 }
