@@ -1,7 +1,7 @@
 # Friends List Sorting Fix - Version 3
 
 ## Issue Summary
-The friends list sorting feature had persistent problems after previous fix attempts:
+The friends list sorting feature had problems after previous fix attempts:
 1. The list was not reliably sorted by "last seen" on activity start
 2. The dropdown stopped working - when selecting "alphabetically", the list was not being sorted
 3. More comprehensive debug logging was needed to diagnose the issues
@@ -115,7 +115,7 @@ FriendAdapter: setData: notifyDataSetChanged() called, adapter now has N items
 
 ## How to Use Debug Logs
 
-### For Android Developers
+### For Developers Using Command Line
 
 1. **Enable USB debugging** on your Android device
 2. **Connect device** to your computer via USB
