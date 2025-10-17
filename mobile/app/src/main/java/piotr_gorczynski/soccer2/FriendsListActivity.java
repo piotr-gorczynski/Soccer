@@ -33,7 +33,7 @@ import java.util.Objects;
 
 public class FriendsListActivity extends BaseActivity {
 
-    private static final String TAG = "FriendsListActivity";
+    private static final String TAG = "TAG_Soccer";
     private static final int SORT_BY_LAST_SEEN = 0;
     private static final int SORT_ALPHABETICALLY = 1;
 

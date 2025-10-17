@@ -228,7 +228,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
     }
 
     void setData(List<DocumentSnapshot> friends) {
-        android.util.Log.d("FriendAdapter", "setData: Updating adapter with " + friends.size() + " friends");
+        android.util.Log.d("TAG_Soccer", "setData: Updating adapter with " + friends.size() + " friends");
         
         // Log first few friend UIDs for debugging
         if (!friends.isEmpty()) {
@@ -242,14 +242,14 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
             if (friends.size() > 5) {
                 friendIds.append("...");
             }
-            android.util.Log.d("FriendAdapter", friendIds.toString());
+            android.util.Log.d("TAG_Soccer", friendIds.toString());
         }
         
         docs.clear();
         docs.addAll(friends);
         notifyDataSetChanged();
         
-        android.util.Log.d("FriendAdapter", "setData: notifyDataSetChanged() called, adapter now has " + docs.size() + " items");
+        android.util.Log.d("TAG_Soccer", "setData: notifyDataSetChanged() called, adapter now has " + docs.size() + " items");
     }
 
     private void fetchInviteStats(@NonNull String targetUid, @NonNull VH h) {
