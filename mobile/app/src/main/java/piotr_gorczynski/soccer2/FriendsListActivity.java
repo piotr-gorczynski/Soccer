@@ -198,74 +198,103 @@ public class FriendsListActivity extends BaseActivity {
         // Work on a mutable copy so we can safely sort without modifying the Firestore snapshot list
         List<DocumentSnapshot> mutableDocs = new ArrayList<>(docs);
         
-        // Fetch user documents to get nicknames for sorting
-        db.collection("users").whereIn(FieldPath.documentId(), friendUids)
-                .get()
-                .addOnSuccessListener(userSnap -> {
-                    Log.d(TAG, "sortByNickname: Successfully fetched " + userSnap.size() + " user documents");
-                    
-                    // Create a map of UID to nickname (lowercase for case-insensitive sorting)
-                    Map<String, String> nicknameMap = new HashMap<>();
-                    for (DocumentSnapshot userDoc : userSnap.getDocuments()) {
-                        String nickname = userDoc.getString("nickname");
-                        if (nickname != null) {
-                            nicknameMap.put(userDoc.getId(), nickname.toLowerCase());
-                            Log.d(TAG, "sortByNickname: User " + userDoc.getId() + " has nickname: " + nickname);
-                        } else {
-                            Log.w(TAG, "sortByNickname: User " + userDoc.getId() + " has no nickname");
-                        }
-                    }
-                    
-                    Log.d(TAG, "sortByNickname: About to sort " + mutableDocs.size() + " friends alphabetically");
-                    
-                    // Sort friend documents by nickname (ascending)
-                    try {
-                        Collections.sort(mutableDocs, new Comparator<DocumentSnapshot>() {
-                            @Override
-                            public int compare(DocumentSnapshot d1, DocumentSnapshot d2) {
-                                String nick1 = nicknameMap.get(d1.getId());
-                                String nick2 = nicknameMap.get(d2.getId());
-                                
-                                // Handle null nicknames (put them at the end)
-                                if (nick1 == null && nick2 == null) return 0;
-                                if (nick1 == null) return 1;
-                                if (nick2 == null) return -1;
-                                
-                                return nick1.compareTo(nick2);
-                            }
-                        });
+        // Firestore IN queries support maximum 30 items, so we need to batch the requests
+        final int BATCH_SIZE = 30;
+        final Map<String, String> nicknameMap = new HashMap<>();
+        final int totalBatches = (int) Math.ceil((double) friendUids.size() / BATCH_SIZE);
+        final int[] completedBatches = {0};
+        
+        Log.d(TAG, "sortByNickname: Will fetch user data in " + totalBatches + " batch(es)");
+        
+        // Process friend UIDs in batches of 30
+        for (int i = 0; i < friendUids.size(); i += BATCH_SIZE) {
+            int endIndex = Math.min(i + BATCH_SIZE, friendUids.size());
+            List<String> batch = friendUids.subList(i, endIndex);
+            final int batchNumber = (i / BATCH_SIZE) + 1;
+            
+            Log.d(TAG, "sortByNickname: Fetching batch " + batchNumber + "/" + totalBatches + " (" + batch.size() + " users)");
+            
+            // Fetch user documents to get nicknames for sorting
+            db.collection("users").whereIn(FieldPath.documentId(), batch)
+                    .get()
+                    .addOnSuccessListener(userSnap -> {
+                        Log.d(TAG, "sortByNickname: Successfully fetched batch " + batchNumber + " with " + userSnap.size() + " user documents");
                         
-                        Log.d(TAG, "sortByNickname: Successfully sorted friends alphabetically");
-                        
-                        // Log the sorted order for debugging
-                        StringBuilder sortedOrder = new StringBuilder("sortByNickname: Sorted order: ");
-                        for (int i = 0; i < Math.min(5, mutableDocs.size()); i++) {
-                            String uid = mutableDocs.get(i).getId();
-                            String nick = nicknameMap.get(uid);
-                            sortedOrder.append(uid).append("(").append(nick != null ? nick : "null").append(")");
-                            if (i < Math.min(4, mutableDocs.size() - 1)) {
-                                sortedOrder.append(", ");
+                        // Add nicknames to the map (lowercase for case-insensitive sorting)
+                        for (DocumentSnapshot userDoc : userSnap.getDocuments()) {
+                            String nickname = userDoc.getString("nickname");
+                            if (nickname != null) {
+                                nicknameMap.put(userDoc.getId(), nickname.toLowerCase());
+                                Log.d(TAG, "sortByNickname: User " + userDoc.getId() + " has nickname: " + nickname);
+                            } else {
+                                Log.w(TAG, "sortByNickname: User " + userDoc.getId() + " has no nickname");
                             }
                         }
-                        if (mutableDocs.size() > 5) {
-                            sortedOrder.append("...");
-                        }
-                        Log.d(TAG, sortedOrder.toString());
                         
-                    } catch (Exception e) {
-                        Log.e(TAG, "sortByNickname: Exception while sorting", e);
-                    }
+                        completedBatches[0]++;
+                        Log.d(TAG, "sortByNickname: Completed " + completedBatches[0] + "/" + totalBatches + " batches");
+                        
+                        // Once all batches are complete, sort and update the adapter
+                        if (completedBatches[0] == totalBatches) {
+                            performSortByNickname(mutableDocs, nicknameMap);
+                        }
+                    })
+                    .addOnFailureListener(e -> {
+                        Log.e(TAG, "sortByNickname: Failed to fetch batch " + batchNumber, e);
+                        completedBatches[0]++;
+                        
+                        // Even if some batches fail, continue when all are complete
+                        if (completedBatches[0] == totalBatches) {
+                            performSortByNickname(mutableDocs, nicknameMap);
+                        }
+                    });
+        }
+    }
+    
+    private void performSortByNickname(List<DocumentSnapshot> mutableDocs, Map<String, String> nicknameMap) {
+        Log.d(TAG, "performSortByNickname: About to sort " + mutableDocs.size() + " friends alphabetically");
+        
+        // Sort friend documents by nickname (ascending)
+        try {
+            Collections.sort(mutableDocs, new Comparator<DocumentSnapshot>() {
+                @Override
+                public int compare(DocumentSnapshot d1, DocumentSnapshot d2) {
+                    String nick1 = nicknameMap.get(d1.getId());
+                    String nick2 = nicknameMap.get(d2.getId());
                     
-                    Log.d(TAG, "sortByNickname: Updating adapter with " + mutableDocs.size() + " friends");
-                    emptyText.setVisibility(View.GONE);
-                    adapter.setData(mutableDocs);
-                })
-                .addOnFailureListener(e -> {
-                    // If fetching user data fails, still show the friends (unsorted)
-                    Log.e(TAG, "sortByNickname: Failed to fetch user data for sorting", e);
-                    emptyText.setVisibility(View.GONE);
-                    adapter.setData(mutableDocs);
-                });
+                    // Handle null nicknames (put them at the end)
+                    if (nick1 == null && nick2 == null) return 0;
+                    if (nick1 == null) return 1;
+                    if (nick2 == null) return -1;
+                    
+                    return nick1.compareTo(nick2);
+                }
+            });
+            
+            Log.d(TAG, "performSortByNickname: Successfully sorted friends alphabetically");
+            
+            // Log the sorted order for debugging
+            StringBuilder sortedOrder = new StringBuilder("performSortByNickname: Sorted order: ");
+            for (int i = 0; i < Math.min(5, mutableDocs.size()); i++) {
+                String uid = mutableDocs.get(i).getId();
+                String nick = nicknameMap.get(uid);
+                sortedOrder.append(uid).append("(").append(nick != null ? nick : "null").append(")");
+                if (i < Math.min(4, mutableDocs.size() - 1)) {
+                    sortedOrder.append(", ");
+                }
+            }
+            if (mutableDocs.size() > 5) {
+                sortedOrder.append("...");
+            }
+            Log.d(TAG, sortedOrder.toString());
+            
+        } catch (Exception e) {
+            Log.e(TAG, "performSortByNickname: Exception while sorting", e);
+        }
+        
+        Log.d(TAG, "performSortByNickname: Updating adapter with " + mutableDocs.size() + " friends");
+        emptyText.setVisibility(View.GONE);
+        adapter.setData(mutableDocs);
     }
 
     private void sortByLastSeen(List<DocumentSnapshot> docs, List<String> friendUids) {
