@@ -302,14 +302,21 @@ public class FriendsListActivity extends BaseActivity {
                     .addOnSuccessListener(snapshot -> {
                         Long lastHb = 0L;
 
-                        // Try to read the heartbeat as a generic number so we gracefully handle
-                        // any schema differences (Long vs Double) that may exist in existing data.
-                        Number hbNumber = snapshot.child("last_heartbeat").getValue(Number.class);
-                        if (hbNumber != null) {
-                            lastHb = hbNumber.longValue();
+                        // Try to read the heartbeat as Long first. Firebase Database doesn't support
+                        // deserializing to Number.class, so we must use concrete types.
+                        Long hbLong = snapshot.child("last_heartbeat").getValue(Long.class);
+                        if (hbLong != null) {
+                            lastHb = hbLong;
                             Log.d(TAG, "sortByLastSeen: Friend " + capturedUid + " has heartbeat from RTDB: " + lastHb);
                         } else {
-                            Log.d(TAG, "sortByLastSeen: Friend " + capturedUid + " has no heartbeat in RTDB");
+                            // Try Double as fallback in case data was stored as floating point
+                            Double hbDouble = snapshot.child("last_heartbeat").getValue(Double.class);
+                            if (hbDouble != null) {
+                                lastHb = hbDouble.longValue();
+                                Log.d(TAG, "sortByLastSeen: Friend " + capturedUid + " has heartbeat from RTDB (Double): " + lastHb);
+                            } else {
+                                Log.d(TAG, "sortByLastSeen: Friend " + capturedUid + " has no heartbeat in RTDB");
+                            }
                         }
 
                         // As a fallback, re-use the cached heartbeat value from the adapter if we
