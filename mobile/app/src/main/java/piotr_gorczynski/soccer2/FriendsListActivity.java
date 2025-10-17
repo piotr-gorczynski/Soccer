@@ -2,6 +2,8 @@ package piotr_gorczynski.soccer2;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -316,8 +318,36 @@ public class FriendsListActivity extends BaseActivity {
         Map<String, Long> heartbeatMap = new HashMap<>();
         final int[] completedFetches = {0};
         final int totalFriends = friendUids.size();
+        final boolean[] timeoutTriggered = {false};
 
         Log.d(TAG, "sortByLastSeen: Calling RTDB to get status data for each friend individually");
+        
+        // Set up a timeout to ensure we don't wait indefinitely for RTDB queries
+        // If some queries hang or don't complete, we'll proceed with whatever data we have
+        final int TIMEOUT_MS = 5000; // 5 second timeout
+        Handler timeoutHandler = new Handler(Looper.getMainLooper());
+        Runnable timeoutRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (completedFetches[0] < totalFriends && !timeoutTriggered[0]) {
+                    timeoutTriggered[0] = true;
+                    Log.w(TAG, "sortByLastSeen: Timeout reached. Completed " + completedFetches[0] + 
+                          " of " + totalFriends + " fetches. Proceeding with available data.");
+                    
+                    // Fill in missing friends with 0 heartbeat
+                    for (String uid : friendUids) {
+                        if (!heartbeatMap.containsKey(uid)) {
+                            Log.d(TAG, "sortByLastSeen: Adding default heartbeat (0) for friend " + uid + " due to timeout");
+                            heartbeatMap.put(uid, 0L);
+                        }
+                    }
+                    
+                    // Proceed with sorting
+                    performSortByLastSeen(mutableDocs, heartbeatMap);
+                }
+            }
+        };
+        timeoutHandler.postDelayed(timeoutRunnable, TIMEOUT_MS);
         
         for (String friendUid : friendUids) {
             // Capture the UID to avoid issues with lambda variable capture in the loop
@@ -329,6 +359,12 @@ public class FriendsListActivity extends BaseActivity {
             
             friendStatusRef.get()
                     .addOnSuccessListener(snapshot -> {
+                        if (timeoutTriggered[0]) {
+                            Log.d(TAG, "sortByLastSeen: Ignoring late success callback for " + capturedUid + 
+                                  " (timeout already triggered)");
+                            return;
+                        }
+                        
                         Long lastHb = 0L;
 
                         // Try to read the heartbeat as Long first. Firebase Database doesn't support
@@ -362,33 +398,41 @@ public class FriendsListActivity extends BaseActivity {
 
                         heartbeatMap.put(capturedUid, lastHb);
                         completedFetches[0]++;
+                        
+                        Log.d(TAG, "sortByLastSeen: Progress: " + completedFetches[0] + " of " + totalFriends + " completed");
 
                         // Once all friend statuses are fetched, sort and update the adapter
-                        checkCompletionAndSort(mutableDocs, heartbeatMap, completedFetches[0], totalFriends, true);
+                        if (completedFetches[0] == totalFriends) {
+                            timeoutHandler.removeCallbacks(timeoutRunnable);
+                            Log.d(TAG, "sortByLastSeen: All " + totalFriends + " fetches completed successfully");
+                            performSortByLastSeen(mutableDocs, heartbeatMap);
+                        }
                     })
                     .addOnFailureListener(e -> {
+                        if (timeoutTriggered[0]) {
+                            Log.d(TAG, "sortByLastSeen: Ignoring late failure callback for " + capturedUid + 
+                                  " (timeout already triggered)");
+                            return;
+                        }
+                        
                         Log.e(TAG, "sortByLastSeen: Failed to fetch heartbeat data for friend " + capturedUid, e);
                         // Use 0 as default heartbeat for this friend
                         heartbeatMap.put(capturedUid, 0L);
                         completedFetches[0]++;
+                        
+                        Log.d(TAG, "sortByLastSeen: Progress: " + completedFetches[0] + " of " + totalFriends + " completed (with error)");
 
                         // Once all friend statuses are fetched (or failed), sort and update the adapter
-                        checkCompletionAndSort(mutableDocs, heartbeatMap, completedFetches[0], totalFriends, false);
+                        if (completedFetches[0] == totalFriends) {
+                            timeoutHandler.removeCallbacks(timeoutRunnable);
+                            Log.d(TAG, "sortByLastSeen: All " + totalFriends + " fetches completed (some with errors)");
+                            performSortByLastSeen(mutableDocs, heartbeatMap);
+                        }
                     });
         }
     }
 
-    private void checkCompletionAndSort(List<DocumentSnapshot> mutableDocs, Map<String, Long> heartbeatMap,
-                                        int completedCount, int totalFriends, boolean allSuccessful) {
-        if (completedCount == totalFriends) {
-            if (allSuccessful) {
-                Log.d(TAG, "sortByLastSeen: Successfully retrieved status data from RTDB for all friends");
-            } else {
-                Log.d(TAG, "sortByLastSeen: Completed fetching status data (some may have failed)");
-            }
-            performSortByLastSeen(mutableDocs, heartbeatMap);
-        }
-    }
+
 
     private void performSortByLastSeen(List<DocumentSnapshot> mutableDocs, Map<String, Long> heartbeatMap) {
         Log.d(TAG, "performSortByLastSeen: About to sort " + mutableDocs.size() + " friends by heartbeat");
