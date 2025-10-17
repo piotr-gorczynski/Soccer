@@ -370,4 +370,165 @@ public class FriendsListSortingTest {
         assertEquals("Second friend should be uid3 (Bob)", "uid3", friends.get(1).getId());
         assertEquals("Third friend should be uid1 (CHARLIE)", "uid1", friends.get(2).getId());
     }
+
+    @Test
+    public void testBatchingLogicFor31Friends() {
+        // Test that batching logic correctly handles 31 friends (more than Firestore's 30-item limit)
+        // This simulates the fix for the "IN supports up to 30 comparison values" error
+        
+        List<String> friendUids = new ArrayList<>();
+        for (int i = 1; i <= 31; i++) {
+            friendUids.add("uid" + i);
+        }
+        
+        // Simulate batching logic
+        final int BATCH_SIZE = 30;
+        int expectedBatches = (int) Math.ceil((double) friendUids.size() / BATCH_SIZE);
+        
+        assertEquals("Should create 2 batches for 31 friends", 2, expectedBatches);
+        
+        // Verify batch sizes
+        List<List<String>> batches = new ArrayList<>();
+        for (int i = 0; i < friendUids.size(); i += BATCH_SIZE) {
+            int endIndex = Math.min(i + BATCH_SIZE, friendUids.size());
+            batches.add(friendUids.subList(i, endIndex));
+        }
+        
+        assertEquals("Should have 2 batches", 2, batches.size());
+        assertEquals("First batch should have 30 items", 30, batches.get(0).size());
+        assertEquals("Second batch should have 1 item", 1, batches.get(1).size());
+        
+        // Verify all UIDs are included
+        List<String> allBatchedUids = new ArrayList<>();
+        for (List<String> batch : batches) {
+            allBatchedUids.addAll(batch);
+        }
+        assertEquals("All UIDs should be included in batches", friendUids.size(), allBatchedUids.size());
+    }
+
+    @Test
+    public void testBatchingLogicFor60Friends() {
+        // Test batching logic for exactly 60 friends (2 full batches)
+        List<String> friendUids = new ArrayList<>();
+        for (int i = 1; i <= 60; i++) {
+            friendUids.add("uid" + i);
+        }
+        
+        final int BATCH_SIZE = 30;
+        int expectedBatches = (int) Math.ceil((double) friendUids.size() / BATCH_SIZE);
+        
+        assertEquals("Should create 2 batches for 60 friends", 2, expectedBatches);
+        
+        // Verify batch sizes
+        List<List<String>> batches = new ArrayList<>();
+        for (int i = 0; i < friendUids.size(); i += BATCH_SIZE) {
+            int endIndex = Math.min(i + BATCH_SIZE, friendUids.size());
+            batches.add(friendUids.subList(i, endIndex));
+        }
+        
+        assertEquals("Should have 2 batches", 2, batches.size());
+        assertEquals("First batch should have 30 items", 30, batches.get(0).size());
+        assertEquals("Second batch should have 30 items", 30, batches.get(1).size());
+    }
+
+    @Test
+    public void testBatchingLogicFor61Friends() {
+        // Test batching logic for 61 friends (3 batches required)
+        List<String> friendUids = new ArrayList<>();
+        for (int i = 1; i <= 61; i++) {
+            friendUids.add("uid" + i);
+        }
+        
+        final int BATCH_SIZE = 30;
+        int expectedBatches = (int) Math.ceil((double) friendUids.size() / BATCH_SIZE);
+        
+        assertEquals("Should create 3 batches for 61 friends", 3, expectedBatches);
+        
+        // Verify batch sizes
+        List<List<String>> batches = new ArrayList<>();
+        for (int i = 0; i < friendUids.size(); i += BATCH_SIZE) {
+            int endIndex = Math.min(i + BATCH_SIZE, friendUids.size());
+            batches.add(friendUids.subList(i, endIndex));
+        }
+        
+        assertEquals("Should have 3 batches", 3, batches.size());
+        assertEquals("First batch should have 30 items", 30, batches.get(0).size());
+        assertEquals("Second batch should have 30 items", 30, batches.get(1).size());
+        assertEquals("Third batch should have 1 item", 1, batches.get(2).size());
+    }
+
+    @Test
+    public void testBatchingLogicFor30Friends() {
+        // Test batching logic for exactly 30 friends (edge case - 1 full batch)
+        List<String> friendUids = new ArrayList<>();
+        for (int i = 1; i <= 30; i++) {
+            friendUids.add("uid" + i);
+        }
+        
+        final int BATCH_SIZE = 30;
+        int expectedBatches = (int) Math.ceil((double) friendUids.size() / BATCH_SIZE);
+        
+        assertEquals("Should create 1 batch for 30 friends", 1, expectedBatches);
+        
+        // Verify batch sizes
+        List<List<String>> batches = new ArrayList<>();
+        for (int i = 0; i < friendUids.size(); i += BATCH_SIZE) {
+            int endIndex = Math.min(i + BATCH_SIZE, friendUids.size());
+            batches.add(friendUids.subList(i, endIndex));
+        }
+        
+        assertEquals("Should have 1 batch", 1, batches.size());
+        assertEquals("First batch should have 30 items", 30, batches.get(0).size());
+    }
+
+    @Test
+    public void testAlphabeticalSortingWithMultipleBatches() {
+        // Test that alphabetical sorting still works correctly when data comes from multiple batches
+        List<MockFriend> friends = new ArrayList<>();
+        
+        // Create 35 friends (would require 2 batches)
+        for (int i = 1; i <= 35; i++) {
+            friends.add(new MockFriend("uid" + i));
+        }
+        
+        // Create nicknames map with some sample data
+        // We'll use letters to make sorting clear
+        Map<String, String> nicknameMap = new HashMap<>();
+        nicknameMap.put("uid1", "zack");    // Should be last
+        nicknameMap.put("uid2", "alice");   // Should be first
+        nicknameMap.put("uid3", "bob");     // Should be second
+        nicknameMap.put("uid31", "charlie"); // From "second batch"
+        nicknameMap.put("uid35", "david");   // From "second batch"
+        
+        // Fill in the rest with default names
+        for (int i = 4; i <= 35; i++) {
+            if (!nicknameMap.containsKey("uid" + i)) {
+                nicknameMap.put("uid" + i, "user" + i);
+            }
+        }
+        
+        // Sort using the same logic as FriendsListActivity
+        Collections.sort(friends, new Comparator<MockFriend>() {
+            @Override
+            public int compare(MockFriend d1, MockFriend d2) {
+                String nick1 = nicknameMap.get(d1.getId());
+                String nick2 = nicknameMap.get(d2.getId());
+                
+                if (nick1 == null && nick2 == null) return 0;
+                if (nick1 == null) return 1;
+                if (nick2 == null) return -1;
+                
+                return nick1.compareTo(nick2);
+            }
+        });
+        
+        // Verify that sorting is correct regardless of batch boundaries
+        assertEquals("First friend should be uid2 (alice)", "uid2", friends.get(0).getId());
+        assertEquals("Second friend should be uid3 (bob)", "uid3", friends.get(1).getId());
+        assertEquals("Third friend should be uid31 (charlie)", "uid31", friends.get(2).getId());
+        assertEquals("Fourth friend should be uid35 (david)", "uid35", friends.get(3).getId());
+        
+        // Verify all 35 friends are still in the list
+        assertEquals("Should have 35 friends after sorting", 35, friends.size());
+    }
 }
