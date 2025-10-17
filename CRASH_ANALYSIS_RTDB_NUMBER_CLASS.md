@@ -14,7 +14,7 @@
 ### From Crashlytics Report
 - **Version**: 15.11 (27)
 - **Platform**: Android
-- **Date**: Fri Oct 17 2025 09:38:57 GMT+0200 (07:38:57 UTC)
+- **Date**: Friday, October 17, 2025 at 09:38:57 GMT+0200 (07:38:57 UTC)
 - **Exception**: `com.google.firebase.database.DatabaseException: Deserializing values to Number is not supported`
 
 ### Stack Trace
@@ -83,9 +83,9 @@ if (hbLong != null) {
 
 | Time (UTC) | Event |
 |------------|-------|
-| 07:38:57 | Crash reported from version 15.11 |
-| 08:30:34 | PR #612 merged (different issue) |
-| Current  | Code contains fix using Long.class/Double.class |
+| 07:38:57   | Crash reported from version 15.11 |
+| 08:30:34   | PR #612 merged (different issue) |
+| Current    | Code contains fix using Long.class/Double.class |
 
 ## Conclusion
 
