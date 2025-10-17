@@ -205,8 +205,25 @@ public class FriendsListActivity extends BaseActivity {
         final Map<String, String> nicknameMap = new HashMap<>();
         final int totalBatches = (int) Math.ceil((double) friendUids.size() / BATCH_SIZE);
         final int[] completedBatches = {0};
+        final boolean[] timeoutTriggered = {false};
         
         Log.d(TAG, "sortByNickname: Will fetch user data in " + totalBatches + " batch(es)");
+        
+        // Set up a timeout to ensure we don't wait indefinitely for Firestore queries
+        final int TIMEOUT_MS = 5000; // 5 second timeout
+        Handler timeoutHandler = new Handler(Looper.getMainLooper());
+        Runnable timeoutRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (completedBatches[0] < totalBatches && !timeoutTriggered[0]) {
+                    timeoutTriggered[0] = true;
+                    Log.w(TAG, "sortByNickname: Timeout reached. Completed " + completedBatches[0] + 
+                          " of " + totalBatches + " batches. Proceeding with available data.");
+                    performSortByNickname(mutableDocs, nicknameMap);
+                }
+            }
+        };
+        timeoutHandler.postDelayed(timeoutRunnable, TIMEOUT_MS);
         
         // Process friend UIDs in batches of 30
         for (int i = 0; i < friendUids.size(); i += BATCH_SIZE) {
@@ -220,6 +237,12 @@ public class FriendsListActivity extends BaseActivity {
             db.collection("users").whereIn(FieldPath.documentId(), batch)
                     .get()
                     .addOnSuccessListener(userSnap -> {
+                        if (timeoutTriggered[0]) {
+                            Log.d(TAG, "sortByNickname: Ignoring late success callback for batch " + batchNumber + 
+                                  " (timeout already triggered)");
+                            return;
+                        }
+                        
                         Log.d(TAG, "sortByNickname: Successfully fetched batch " + batchNumber + " with " + userSnap.size() + " user documents");
                         
                         // Add nicknames to the map (lowercase for case-insensitive sorting)
@@ -238,15 +261,27 @@ public class FriendsListActivity extends BaseActivity {
                         
                         // Once all batches are complete, sort and update the adapter
                         if (completedBatches[0] == totalBatches) {
+                            timeoutHandler.removeCallbacks(timeoutRunnable);
+                            Log.d(TAG, "sortByNickname: All " + totalBatches + " batches completed successfully");
                             performSortByNickname(mutableDocs, nicknameMap);
                         }
                     })
                     .addOnFailureListener(e -> {
+                        if (timeoutTriggered[0]) {
+                            Log.d(TAG, "sortByNickname: Ignoring late failure callback for batch " + batchNumber + 
+                                  " (timeout already triggered)");
+                            return;
+                        }
+                        
                         Log.e(TAG, "sortByNickname: Failed to fetch batch " + batchNumber, e);
                         completedBatches[0]++;
                         
+                        Log.d(TAG, "sortByNickname: Completed " + completedBatches[0] + "/" + totalBatches + " batches (with error)");
+                        
                         // Even if some batches fail, continue when all are complete
                         if (completedBatches[0] == totalBatches) {
+                            timeoutHandler.removeCallbacks(timeoutRunnable);
+                            Log.d(TAG, "sortByNickname: All " + totalBatches + " batches completed (some with errors)");
                             performSortByNickname(mutableDocs, nicknameMap);
                         }
                     });
