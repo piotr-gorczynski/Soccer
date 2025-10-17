@@ -228,9 +228,28 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
     }
 
     void setData(List<DocumentSnapshot> friends) {
+        android.util.Log.d("FriendAdapter", "setData: Updating adapter with " + friends.size() + " friends");
+        
+        // Log first few friend UIDs for debugging
+        if (!friends.isEmpty()) {
+            StringBuilder friendIds = new StringBuilder("setData: Friend UIDs: ");
+            for (int i = 0; i < Math.min(5, friends.size()); i++) {
+                friendIds.append(friends.get(i).getId());
+                if (i < Math.min(4, friends.size() - 1)) {
+                    friendIds.append(", ");
+                }
+            }
+            if (friends.size() > 5) {
+                friendIds.append("...");
+            }
+            android.util.Log.d("FriendAdapter", friendIds.toString());
+        }
+        
         docs.clear();
         docs.addAll(friends);
         notifyDataSetChanged();
+        
+        android.util.Log.d("FriendAdapter", "setData: notifyDataSetChanged() called, adapter now has " + docs.size() + " items");
     }
 
     private void fetchInviteStats(@NonNull String targetUid, @NonNull VH h) {
