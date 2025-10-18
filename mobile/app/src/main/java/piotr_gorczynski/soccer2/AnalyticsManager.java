@@ -12,7 +12,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics;
  * Implements GA4 recommended events for auth and tournament funnels
  */
 public class AnalyticsManager {
-    private static final String TAG = "AnalyticsManager";
+    private static final String TAG = "TAG_Soccer";
     
     private FirebaseAnalytics firebaseAnalytics;
     private FirebaseCrashlytics crashlytics;

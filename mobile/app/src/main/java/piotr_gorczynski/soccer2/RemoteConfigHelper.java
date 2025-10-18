@@ -10,7 +10,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
  * Implements experimentation features suggested in the user research plan
  */
 public class RemoteConfigHelper {
-    private static final String TAG = "RemoteConfigHelper";
+    private static final String TAG = "TAG_Soccer";
     
     // Remote Config parameter keys
     public static final String SIGNUP_PROMPT_VARIANT = "signup_prompt_variant";
