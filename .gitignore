@@ -42,3 +42,4 @@ secrets/keystore.properties
 secrets/
 firebase/functions/*/package-lock.json
 firebase/functions/*/node_modules/
+secrets/
