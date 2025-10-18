@@ -14,7 +14,7 @@ import com.google.firebase.auth.FirebaseAuth;
  * Implements targeted messaging as suggested in the user research plan
  */
 public class InAppMessagingHelper {
-    private static final String TAG = "InAppMessaging";
+    private static final String TAG = "TAG_Soccer";
     
     // SharedPreferences keys for tracking message display
     private static final String PREF_KEY_MESSAGES_SHOWN = "messages_shown_count";
