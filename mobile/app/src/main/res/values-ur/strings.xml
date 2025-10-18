@@ -272,7 +272,7 @@
     <string name="player_label">پلیئر</string>
     <string name="android_label">android</string>
     <string name="player_with_number">پلیئر %1$d</string>
-    <string name="winner_timeout">٪ 1 $ وقت ختم ہوا۔</string>
+    <string name="winner_timeout">%1$s وقت ختم ہوا۔</string>
     <string name="winner_abandon">%1$s نے کھیل کو ضبط کیا۔</string>
     <string name="winner_is">فاتح %1$s ہے!</string>
 
