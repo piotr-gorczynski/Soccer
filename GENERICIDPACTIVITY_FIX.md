@@ -10,16 +10,17 @@ The crash typically occurs when:
 3. GenericIdpActivity tries to resume but has lost its state due to ProGuard obfuscation or missing activity lifecycle handling
 
 ## Solution
-Added ProGuard rules to keep Firebase Auth internal classes, specifically:
-- `com.google.firebase.auth.internal.**` - All internal Firebase Auth classes
-- `com.google.firebase.auth.api.**` - Firebase Auth API classes
-- `GenericIdpActivity` - The specific activity that handles OAuth flows
+Added ProGuard rules to keep Firebase Auth classes, specifically:
+- `com.google.firebase.auth.**` - All Firebase Auth classes (including internal ones like GenericIdpActivity)
+- `com.facebook.**` - Facebook SDK classes used in OAuth flow
+- `okhttp3.**` - OkHttp classes (public API only) used for network requests
 
 ## Changes Made
 1. **Updated `mobile/app/proguard-rules.pro`**:
-   - Added `-keep` rules for Firebase Auth internal classes
+   - Added comprehensive `-keep` rule for all Firebase Auth classes (including internal GenericIdpActivity)
    - Added `-keep` rules for Facebook SDK (used in OAuth flow)
-   - Added `-dontwarn` rules for OkHttp (used for network requests)
+   - Added `-keep` rules for OkHttp public API (used for network requests)
+   - Added `-dontwarn` rules to suppress warnings for OkHttp and Okio
 
 ## Testing
 The ProGuard rules have been validated for syntax. To fully test:

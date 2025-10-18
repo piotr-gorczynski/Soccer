@@ -22,22 +22,15 @@
 
 # Firebase Auth - Keep GenericIdpActivity and related classes to prevent crashes
 # during OAuth sign-in flow (Google, Microsoft, Facebook)
--keep class com.google.firebase.auth.internal.** { *; }
--keep class com.google.firebase.auth.api.** { *; }
--keepclassmembers class com.google.firebase.auth.internal.GenericIdpActivity {
-    *;
-}
-
-# Keep Firebase Auth public API
+# The comprehensive rule below covers all Firebase Auth classes including internal ones
 -keep class com.google.firebase.auth.** { *; }
--keepclassmembers class com.google.firebase.auth.** { *; }
 
-# Facebook SDK
+# Facebook SDK - Keep all classes to ensure proper OAuth flow
 -keep class com.facebook.** { *; }
--keepclassmembers class com.facebook.** { *; }
 
 # OkHttp (used for Facebook photo fetching)
+# Only keep public API to minimize APK size impact
 -dontwarn okhttp3.**
 -dontwarn okio.**
--keep class okhttp3.** { *; }
+-keep class okhttp3.** { public *; }
 -keep interface okhttp3.** { *; }
