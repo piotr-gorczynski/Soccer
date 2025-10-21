@@ -13,7 +13,7 @@ import androidx.appcompat.app.AlertDialog;
  * Implements one-tap research as suggested in the ChatGPT response
  */
 public class SignupDeclineReasonDialog {
-    private static final String TAG = "SignupDeclineDialog";
+    private static final String TAG = "TAG_Soccer";
     
     public interface OnReasonSelectedListener {
         void onReasonSelected(String reason);
