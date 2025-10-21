@@ -11,7 +11,7 @@ import androidx.annotation.Nullable;
  * This demonstrates all the analytics features working together
  */
 public class AnalyticsTestActivity extends BaseActivity {
-    private static final String TAG = "AnalyticsTest";
+    private static final String TAG = "TAG_Soccer";
     
     private AnalyticsManager analyticsManager;
     private RemoteConfigHelper remoteConfigHelper;

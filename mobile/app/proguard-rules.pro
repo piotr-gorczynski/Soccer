@@ -19,3 +19,18 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# Firebase Auth - Keep GenericIdpActivity and related classes to prevent crashes
+# during OAuth sign-in flow (Google, Microsoft, Facebook)
+# The comprehensive rule below covers all Firebase Auth classes including internal ones
+-keep class com.google.firebase.auth.** { *; }
+
+# Facebook SDK - Keep all classes to ensure proper OAuth flow
+-keep class com.facebook.** { *; }
+
+# OkHttp (used for Facebook photo fetching)
+# Only keep public API to minimize APK size impact
+-dontwarn okhttp3.**
+-dontwarn okio.**
+-keep class okhttp3.** { public *; }
+-keep interface okhttp3.** { *; }

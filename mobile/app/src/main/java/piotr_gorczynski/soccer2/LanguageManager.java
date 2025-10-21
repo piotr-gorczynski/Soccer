@@ -22,7 +22,7 @@ public class LanguageManager {
     /** Preferences file name used across the entire app. */
     public static final String PREFS_FILE = "app_prefs";
 
-    private static final String TAG = "LanguageManager";
+    private static final String TAG = "TAG_Soccer";
     public static final String PREF_LANGUAGE_CODE = "language_code";
     
     // Language code to display name resource mapping

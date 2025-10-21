@@ -12,7 +12,7 @@ import com.google.firebase.auth.FirebaseAuth;
  * Implements progressive prompting as suggested in the user research plan
  */
 public class AnonymousLinkPromptHelper {
-    private static final String TAG = "AnonymousLinkPrompt";
+    private static final String TAG = "TAG_Soccer";
     
     /**
      * Show prompt to anonymous user to save their progress by linking account
