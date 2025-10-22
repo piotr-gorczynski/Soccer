@@ -114,6 +114,7 @@
     <string name="failed_to_load_nickname">ໂຫລດຊື່ເລັ່ນບໍ່ສໍາເລັດ.</string>
     <string name="search">ຄົ້ນຫາ</string>
     <string name="load_more">ໂຫລດເພີ່ມ</string>
+    <string name="failed_to_load_more_invites">ບໍ່ສາມາດໂຫລດຄຳເຊີນເພີ່ມໄດ້</string>
     <string name="add_friend_label">ເພີ່ມເຂົ້າໝູ່ເພື່ອນ</string>
     <string name="add_friend_short_label">ເພີ່ມ</string>
     <string name="already_friends">ເປັນໝູ່ກັນແລ້ວ</string>

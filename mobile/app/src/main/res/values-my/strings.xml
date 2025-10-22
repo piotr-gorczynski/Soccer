@@ -114,6 +114,7 @@
     <string name="failed_to_load_nickname">အမည်ပြောင်တင်ရာ မအောင်မြင်ပါ။</string>
     <string name="search">ရှာဖွေပါ</string>
     <string name="load_more">နောက်ထပ်တင်ပါ</string>
+    <string name="failed_to_load_more_invites">ဖိတ်စာများကို နောက်ထပ်တင်၍မရပါ</string>
     <string name="add_friend_label">မိတ်ဆွေများထဲထည့်ပါ</string>
     <string name="add_friend_short_label">ထည့်ပါ</string>
     <string name="already_friends">မိတ်ဆွေဖြစ်ပြီးသားပါပြီ</string>
