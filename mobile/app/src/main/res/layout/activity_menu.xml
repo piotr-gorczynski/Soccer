@@ -28,14 +28,23 @@
             android:orientation="vertical"
             android:gravity="center">
 
-    <TextView
-        android:id="@+id/nicknameLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/hello"
-        android:textColor="@color/colorGreenDark"
-        android:textStyle="bold" />
+        <ImageView
+            android:id="@+id/menu_running_player"
+            android:layout_width="128dp"
+            android:layout_height="128dp"
+            android:layout_marginBottom="8dp"
+            android:contentDescription="@string/menu_running_player_content_description"
+            android:importantForAccessibility="no"
+            android:scaleType="fitCenter" />
+
+        <TextView
+            android:id="@+id/nicknameLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/hello"
+            android:textColor="@color/colorGreenDark"
+            android:textStyle="bold" />
 
 
     <Button
