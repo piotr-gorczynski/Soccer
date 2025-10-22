@@ -95,6 +95,7 @@
     <string name="failed_to_load_nickname">ডাকনাম লোড করতে ব্যর্থ।</string>
     <string name="search">অনুসন্ধান</string>
     <string name="load_more">আরো লোড করুন</string>
+    <string name="failed_to_load_more_invites">আরো আমন্ত্রণ লোড করতে ব্যর্থ</string>
     <string name="add_friend_label">বন্ধুদের মধ্যে যোগ করুন</string>
     <string name="add_friend_short_label">যোগ করুন</string>
     <string name="already_friends">ইতিমধ্যেই বন্ধু</string>

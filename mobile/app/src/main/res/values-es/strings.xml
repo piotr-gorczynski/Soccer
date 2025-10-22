@@ -95,6 +95,7 @@
     <string name="failed_to_load_nickname">Error al cargar apodo.</string>
     <string name="search">Buscar</string>
     <string name="load_more">Cargar más</string>
+    <string name="failed_to_load_more_invites">Error al cargar más invitaciones</string>
     <string name="add_friend_label">Agregar a amigos</string>
     <string name="add_friend_short_label">Agregar</string>
     <string name="already_friends">Ya son amigos</string>
