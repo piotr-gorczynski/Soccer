@@ -297,6 +297,12 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
         notifyDataSetChanged();
     }
 
+    void appendData(@NonNull List<DocumentSnapshot> invites) {
+        int startPosition = docs.size();
+        docs.addAll(invites);
+        notifyItemRangeInserted(startPosition, invites.size());
+    }
+
     void setFriendUids(@NonNull Set<String> friendUids) {
         this.friendUids = new HashSet<>(friendUids);
         notifyDataSetChanged();

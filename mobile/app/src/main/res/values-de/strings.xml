@@ -95,6 +95,7 @@
     <string name="failed_to_load_nickname">Spitzname konnte nicht geladen werden.</string>
     <string name="search">Suchen</string>
     <string name="load_more">Mehr laden</string>
+    <string name="failed_to_load_more_invites">Weitere Einladungen konnten nicht geladen werden</string>
     <string name="add_friend_label">Zu Freunden hinzufügen</string>
     <string name="add_friend_short_label">Hinzufügen</string>
     <string name="already_friends">Bereits befreundet</string>

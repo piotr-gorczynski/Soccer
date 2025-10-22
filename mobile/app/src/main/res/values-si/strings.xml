@@ -114,6 +114,7 @@
     <string name="failed_to_load_nickname">අතුරු නාමය පූරණය කිරීමට අසමත් විය.</string>
     <string name="search">සොයන්න</string>
     <string name="load_more">තවත් පූරණය කරන්න</string>
+    <string name="failed_to_load_more_invites">තවත් ආරාධනා පූරණය කිරීම අසාර්ථක විය</string>
     <string name="add_friend_label">මිතුරන් වෙත එක් කරන්න</string>
     <string name="add_friend_short_label">එක් කරන්න</string>
     <string name="already_friends">දැනටමත් මිතුරන්</string>
