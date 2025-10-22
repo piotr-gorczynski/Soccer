@@ -20,6 +20,7 @@ import android.os.Looper;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.content.SharedPreferences;
 import androidx.preference.PreferenceManager;
 import android.widget.Button;
@@ -870,6 +871,25 @@ public class MenuActivity extends BaseActivity {
         }
 
         int frameHeight = Math.min(RUNNING_PLAYER_FRAME_HEIGHT, sheetHeight);
+        int targetWidthPx = RUNNING_PLAYER_FRAME_WIDTH;
+        int targetHeightPx = RUNNING_PLAYER_FRAME_HEIGHT;
+        ViewGroup.LayoutParams layoutParams = runningPlayerView.getLayoutParams();
+        if (layoutParams != null) {
+            if (layoutParams.width > 0) {
+                targetWidthPx = layoutParams.width;
+            }
+            if (layoutParams.height > 0) {
+                targetHeightPx = layoutParams.height;
+            }
+        }
+
+        if (targetWidthPx <= 0) {
+            targetWidthPx = RUNNING_PLAYER_FRAME_WIDTH;
+        }
+        if (targetHeightPx <= 0) {
+            targetHeightPx = RUNNING_PLAYER_FRAME_HEIGHT;
+        }
+
         Bitmap[] frames = new Bitmap[framesAvailable];
         for (int i = 0; i < framesAvailable; i++) {
             int frameWidth = Math.min(RUNNING_PLAYER_FRAME_WIDTH, sheetWidth - (i * RUNNING_PLAYER_FRAME_WIDTH));
@@ -889,13 +909,36 @@ public class MenuActivity extends BaseActivity {
                 return;
             }
             try {
-                frames[i] = Bitmap.createBitmap(
+                Bitmap frame = Bitmap.createBitmap(
                         spriteSheet,
                         i * RUNNING_PLAYER_FRAME_WIDTH,
                         0,
                         frameWidth,
                         frameHeight
                 );
+                if (frame == null) {
+                    continue;
+                }
+
+                if (frame.getWidth() != targetWidthPx || frame.getHeight() != targetHeightPx) {
+                    try {
+                        Bitmap scaledFrame = Bitmap.createScaledBitmap(frame, targetWidthPx, targetHeightPx, true);
+                        if (scaledFrame != frame) {
+                            frame.recycle();
+                        }
+                        frame = scaledFrame;
+                    } catch (IllegalArgumentException scaleException) {
+                        Log.e(
+                                "TAG_Soccer",
+                                getClass().getSimpleName()
+                                        + ".setupRunningPlayerAnimation: Failed to scale frame at index "
+                                        + i,
+                                scaleException
+                        );
+                    }
+                }
+
+                frames[i] = frame;
             } catch (IllegalArgumentException e) {
                 Log.e(
                         "TAG_Soccer",
