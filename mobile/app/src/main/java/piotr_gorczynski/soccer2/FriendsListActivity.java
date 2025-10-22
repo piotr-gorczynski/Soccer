@@ -49,6 +49,8 @@ public class FriendsListActivity extends BaseActivity {
     private int currentSortMode = SORT_BY_LAST_SEEN;  // Default to sort by last seen
     @Nullable
     private String pendingInviteStatsRefreshUid;
+    @Nullable
+    private String pendingMatchStatsRefreshUid;
     private boolean isLoadingFriends = false;
     private boolean spinnerInitialized = false;
 
@@ -139,6 +141,12 @@ public class FriendsListActivity extends BaseActivity {
             Log.d(TAG, "onResume: Invalidating invite stats for " + pendingInviteStatsRefreshUid);
             adapter.invalidateInviteStatsFor(pendingInviteStatsRefreshUid);
             pendingInviteStatsRefreshUid = null;
+        }
+        
+        if (pendingMatchStatsRefreshUid != null && adapter != null) {
+            Log.d(TAG, "onResume: Invalidating match stats for " + pendingMatchStatsRefreshUid);
+            adapter.invalidateMatchStatsFor(pendingMatchStatsRefreshUid);
+            pendingMatchStatsRefreshUid = null;
         }
     }
 
@@ -522,6 +530,7 @@ public class FriendsListActivity extends BaseActivity {
                     String inviteId = (String)((java.util.Map<String,Object>)java.util.Objects.requireNonNull(res.getData())).get("inviteId");
                     if (inviteId != null) {
                         pendingInviteStatsRefreshUid = targetUid;
+                        pendingMatchStatsRefreshUid = targetUid;
                         startActivity(new Intent(this, WaitingActivity.class).putExtra("inviteId", inviteId));
                     }
                 })
