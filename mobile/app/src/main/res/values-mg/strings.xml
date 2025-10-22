@@ -114,6 +114,7 @@
     <string name="failed_to_load_nickname">Tsy voaray ny anaram-bositra.</string>
     <string name="search">Karohy</string>
     <string name="load_more">Ampidiro bebe kokoa</string>
+    <string name="failed_to_load_more_invites">Tsy afaka nampiditra fanasana fanampiny</string>
     <string name="add_friend_label">Ampio amin`ny namana</string>
     <string name="add_friend_short_label">Ampio</string>
     <string name="already_friends">Efa namana</string>
