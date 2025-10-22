@@ -1,0 +1,143 @@
+<en-GB>
+🎮 Fix translation errors in player_label for Polish, Bengali, Sinhala
+🎮 Fix ANR from thread waiting on Firestore binder in showWinner()
+🔔 Remove 20-min active user limit so invites work anytime
+🔔 Add invite stats in friend list
+🔔 Add sortable friends list by name/last seen
+</en-GB>
+
+<pl-PL>
+🎮 Naprawiono błędy tłumaczeń player_label dla polskiego, bengalskiego i syngaleskiego
+🎮 Naprawiono ANR przy oczekiwaniu na Firestore binder w showWinner()
+🔔 Usunięto limit 20 min aktywności, zaproszenia działają zawsze
+🔔 Dodano statystyki zaproszeń w liście znajomych
+🔔 Dodano sortowanie znajomych alfabetycznie i wg ostatniej aktywności
+</pl-PL>
+
+<de-DE>
+🎮 Übersetzungsfehler in player_label für Polnisch, Bengalisch, Singhalesisch behoben
+🎮 ANR durch Firestore binder-Warten in showWinner() behoben
+🔔 20-Minuten-Limit für Einladungen entfernt
+🔔 Einladungsstatistiken in Freundesliste angezeigt
+🔔 Freundesliste sortierbar nach Name/Zuletzt gesehen
+</de-DE>
+
+<fr-FR>
+🎮 Erreurs de traduction player_label pour polonais, bengali, cinghalais corrigées
+🎮 Correction d’un ANR lié à Firestore binder dans showWinner()
+🔔 Suppression de la limite de 20 min pour inviter
+🔔 Ajout des stats d’invitations dans la liste d’amis
+🔔 Liste d’amis triable par nom/dernière activité
+</fr-FR>
+
+<es-ES>
+🎮 Errores de traducción en player_label (polaco, bengalí, cingalés) corregidos
+🎮 Corregido ANR por espera de Firestore binder en showWinner()
+🔔 Eliminado límite de 20 min para invitar
+🔔 Estadísticas de invitaciones en lista de amigos
+🔔 Lista de amigos ordenable por nombre/última conexión
+</es-ES>
+
+<ur>
+🎮 player_label میں ترجمے کی غلطیاں درست کی گئیں (Polish, Bengali, Sinhala)
+🎮 showWinner() میں Firestore binder انتظار سے ANR درست
+🔔 20 منٹ کی حد ہٹا دی، اب دعوت ہمیشہ ممکن
+🔔 دوستوں کی فہرست میں دعوت کے اعدادوشمار
+🔔 دوستوں کی فہرست حروف/آخری بار دیکھے مطابق
+</ur>
+
+<bn-BD>
+🎮 player_label-এ অনুবাদ ভুল (Polish, Bengali, Sinhala) ঠিক করা হয়েছে
+🎮 showWinner()-এ Firestore binder অপেক্ষা থেকে ANR ঠিক
+🔔 20 মিনিট সীমা সরানো হয়েছে, আমন্ত্রণ সবসময় সম্ভব
+🔔 বন্ধু তালিকায় আমন্ত্রণের পরিসংখ্যান যোগ
+🔔 বন্ধু তালিকা সাজানো যায় নাম/শেষ দেখা দিয়ে
+</bn-BD>
+
+<ne-NP>
+🎮 player_label अनुवाद त्रुटि (Polish, Bengali, Sinhala) सच्याइयो
+🎮 showWinner() मा Firestore binder पर्खेर ANR समाधान
+🔔 २० मिनेटको सीमा हटाइयो, सधैं निमन्त्रण सम्भव
+🔔 साथी सूचीमा निमन्त्रण तथ्याङ्क देखाइयो
+🔔 साथी सूची नाम/अन्तिम देखिएको अनुसार मिलाइने
+</ne-NP>
+
+<hi-IN>
+🎮 player_label अनुवाद त्रुटियाँ (Polish, Bengali, Sinhala) ठीक की गईं
+🎮 showWinner() में Firestore binder प्रतीक्षा से ANR ठीक
+🔔 20-मिनट सीमा हटाई, निमंत्रण हमेशा संभव
+🔔 मित्र सूची में निमंत्रण आँकड़े
+🔔 मित्र सूची क्रमबद्ध नाम/अंतिम बार देखा से
+</hi-IN>
+
+<am>
+🎮 player_label ትርጉም ስህተት (Polish, Bengali, Sinhala) ተስተካክሏል
+🎮 showWinner() ውስጥ Firestore binder ጠብቆ ANR ተፈታ
+🔔 20 ደቂቃ ገደብ ተወግዶ ማስገባት ሁሌ ይቻላል
+🔔 የግብዣ ስታቲስቲክስ በወዳጅ ዝርዝር
+🔔 ዝርዝር ከስም/መጨረሻ ጊዜ ይደራል
+</am>
+
+<ar>
+🎮 إصلاح أخطاء player_label للبولندية، البنغالية، السنهالية
+🎮 إصلاح ANR بسبب انتظار Firestore binder في showWinner()
+🔔 إزالة حد 20 دقيقة للدعوات
+🔔 عرض إحصاءات الدعوات في قائمة الأصدقاء
+🔔 قائمة أصدقاء قابلة للفرز بالاسم/آخر ظهور
+</ar>
+
+<my-MM>
+🎮 player_label ဘာသာပြန် အမှား (Polish, Bengali, Sinhala) ပြင်ပြီး
+🎮 showWinner() တွင် Firestore binder စောင့်ရင်း ANR ဖြေရှင်း
+🔔 20 မိနစ် ကန့်သတ်ချက် ဖယ်, ဖိတ်ခေါ် များချိန်မရွေး
+🔔 မိတ်ဆွေစာရင်းတွင် ဖိတ်ခေါ် စာရင်းအင်း
+🔔 မိတ်ဆွေစာရင်း အက္ခရာ/နောက်ဆုံး မြင်သည့်အချိန် အလိုက် စီ
+</my-MM>
+
+<km-KH>
+🎮 កែ player_label បកប្រែ (Polish, Bengali, Sinhala)
+🎮 កែ ANR ពី Firestore binder ក្នុង showWinner()
+🔔 លុបកំណត់ 20 នាទីសម្រាប់អញ្ជើញ
+🔔 បង្ហាញស្ថិតិអញ្ជើញក្នុងបញ្ជីមិត្ត
+🔔 បញ្ជីមិត្តអាចតម្រៀបតាមឈ្មោះ/ពេលឃើញចុងក្រោយ
+</km-KH>
+
+<lo-LA>
+🎮 ແກ້ player_label ຜິດ (Polish, Bengali, Sinhala)
+🎮 ແກ້ ANR ຈາກ Firestore binder ໃນ showWinner()
+🔔 ຍົກເລີກຂໍ້ຈຳກັດ 20 ນາທີໃນການເຊີນ
+🔔 ສະແດງສະຖິຕິເຊີນໃນລາຍຊື່ໝູ່
+🔔 ລາຍຊື່ໝູ່ຈັດຕາມຊື່/ເວລາລ່າສຸດ
+</lo-LA>
+
+<mn-MN>
+🎮 player_label орчуулгын алдаа (Polish, Bengali, Sinhala) зассан
+🎮 showWinner() д Firestore binder-ээс ANR зассан
+🔔 20 минутын хязгаар арилгав, урих боломжтой
+🔔 Найзын жагсаалтад урилгын статистик
+🔔 Найзын жагсаалт нэр/сүүлд харснаар эрэмбэлнэ
+</mn-MN>
+
+<fa-IR>
+🎮 خطاهای ترجمه player_label (لهستانی، بنگالی، سینهالی) رفع شد
+🎮 رفع ANR ناشی از انتظار Firestore binder در showWinner()
+🔔 حذف محدودیت ۲۰ دقیقه دعوت
+🔔 نمایش آمار دعوت در فهرست دوستان
+🔔 فهرست دوستان مرتب‌شدنی با نام/آخرین بازدید
+</fa-IR>
+
+<si-LK>
+🎮 player_label පරිවර්තන දෝෂ (Polish, Bengali, Sinhala) නිවැරදි
+🎮 showWinner() හි Firestore binder නිසා ANR විසඳා ඇත
+🔔 මිනිත්තු 20 සීමාව ඉවත්, ආරාධනා හැම විටම
+🔔 මිතුරු ලැයිස්තුවේ ආරාධනා තොරතුරු
+🔔 මිතුරු ලැයිස්තුව නාම/අවසන් දැක්වූ කාලය අනුව
+</si-LK>
+
+<sw>
+🎮 Marekebisho ya tafsiri player_label (Kipolishi, Kibengali, Kisinhalese)
+🎮 ANR ya showWinner() kwa Firestore binder imeondolewa
+🔔 Kizuizi cha dakika 20 cha mwaliko kimeondolewa
+🔔 Takwimu za mialiko kwenye orodha ya marafiki
+🔔 Orodha ya marafiki inapangwa kwa jina/uliyeonekana mwisho
+</sw>

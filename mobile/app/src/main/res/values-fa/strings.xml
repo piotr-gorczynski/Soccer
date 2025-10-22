@@ -95,6 +95,7 @@
     <string name="failed_to_load_nickname">بارگذاری نام مستعار ناموفق بود.</string>
     <string name="search">جستجو</string>
     <string name="load_more">بارگذاری بیشتر</string>
+    <string name="failed_to_load_more_invites">بارگذاری دعوت‌نامه‌های بیشتر ناموفق بود</string>
     <string name="add_friend_label">افزودن به دوستان</string>
     <string name="add_friend_short_label">افزودن</string>
     <string name="already_friends">قبلاً دوست هستید</string>

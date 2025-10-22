@@ -114,6 +114,7 @@
     <string name="failed_to_load_nickname">Imeshindwa kupakia jina la utani.</string>
     <string name="search">Tafuta</string>
     <string name="load_more">Pakia zaidi</string>
+    <string name="failed_to_load_more_invites">Imeshindwa kupakia mialiko zaidi</string>
     <string name="add_friend_label">Ongeza kwa marafiki</string>
     <string name="add_friend_short_label">Ongeza</string>
     <string name="already_friends">Tayari marafiki</string>
