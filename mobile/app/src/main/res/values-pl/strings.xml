@@ -95,6 +95,7 @@
     <string name="failed_to_load_nickname">Nie udało się wczytać pseudonimu.</string>
     <string name="search">Szukaj</string>
     <string name="load_more">Załaduj więcej</string>
+    <string name="failed_to_load_more_invites">Nie udało się załadować więcej zaproszeń</string>
     <string name="add_friend_label">Dodaj do znajomych</string>
     <string name="add_friend_short_label">Dodaj</string>
     <string name="already_friends">Już znajomi</string>

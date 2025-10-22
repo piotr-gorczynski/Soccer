@@ -95,6 +95,7 @@
     <string name="failed_to_load_nickname">فشل تحميل الاسم المستعار.</string>
     <string name="search">بحث</string>
     <string name="load_more">تحميل المزيد</string>
+    <string name="failed_to_load_more_invites">فشل تحميل المزيد من الدعوات</string>
     <string name="add_friend_label">أضف إلى الأصدقاء</string>
     <string name="add_friend_short_label">أضف</string>
     <string name="already_friends">أصدقاء بالفعل</string>

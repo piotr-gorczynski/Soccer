@@ -114,6 +114,7 @@
     <string name="failed_to_load_nickname">មិនអាចផ្ទុកឈ្មោះហៅក្រៅបានទេ។</string>
     <string name="search">ស្វែងរក</string>
     <string name="load_more">ផ្ទុកបន្ថែម</string>
+    <string name="failed_to_load_more_invites">បរាជ័យក្នុងការផ្ទុកការអញ្ជើញបន្ថែម</string>
     <string name="add_friend_label">បន្ថែមទៅកាន់មិត្តភក្តិ</string>
     <string name="add_friend_short_label">បន្ថែម</string>
     <string name="already_friends">ជាមិត្តរួចហើយ</string>
