@@ -114,6 +114,7 @@
     <string name="failed_to_load_nickname">Ku guuldarraystay soo dejinta naanayska.</string>
     <string name="search">Raadi</string>
     <string name="load_more">Soo bandhig kuwo kale</string>
+    <string name="failed_to_load_more_invites">Lama guuleysan in la soo bandhigo casuumado dheeraad ah</string>
     <string name="add_friend_label">Ku dar saaxiibada</string>
     <string name="add_friend_short_label">Ku dar</string>
     <string name="already_friends">Horeba waa saaxiibo</string>

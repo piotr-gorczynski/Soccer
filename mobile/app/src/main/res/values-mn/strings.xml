@@ -114,6 +114,7 @@
     <string name="failed_to_load_nickname">Хоч нэр ачаалж чадсангүй.</string>
     <string name="search">Хайх</string>
     <string name="load_more">Илүүг ачааллах</string>
+    <string name="failed_to_load_more_invites">Илүү урилга ачаалж чадсангүй</string>
     <string name="add_friend_label">Найзууд руу нэмэх</string>
     <string name="add_friend_short_label">Нэмэх</string>
     <string name="already_friends">Аль хэдийн найзууд</string>

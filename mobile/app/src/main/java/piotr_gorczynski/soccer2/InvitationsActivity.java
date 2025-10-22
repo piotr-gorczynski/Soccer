@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,16 +35,21 @@ import android.content.SharedPreferences;
 
 public class InvitationsActivity extends BaseActivity {
 
+    private static final int PENDING_INVITES_PAGE_SIZE = 10;
+    private static final int PAST_INVITES_PAGE_SIZE = 10;
+
     RecyclerView invitesList;
     TextView emptyText;
     PendingInviteAdapter pendingAdapter;
     RecyclerView.AdapterDataObserver pendingInvitesObserver;
+    Button loadMorePendingButton;
 
     RecyclerView pastInvitesList;
     TextView pastInvitesLabel;
     TextView emptyPastInvites;
     PastInviteAdapter pastAdapter;
     RecyclerView.AdapterDataObserver pastInvitesObserver;
+    Button loadMorePastButton;
 
     FirebaseFirestore db;
     FirebaseAuth auth;
@@ -51,6 +57,11 @@ public class InvitationsActivity extends BaseActivity {
 
     private ListenerRegistration invitesSub;   // keep handle so we can remove it later
     private ListenerRegistration pastInvitesSub;
+    
+    private DocumentSnapshot lastPendingDoc = null;
+    private DocumentSnapshot lastPastDoc = null;
+    private boolean hasMorePendingInvites = true;
+    private boolean hasMorePastInvites = true;
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -78,6 +89,7 @@ public class InvitationsActivity extends BaseActivity {
 
         invitesList = findViewById(R.id.invitesList);
         emptyText = findViewById(R.id.emptyInvites);
+        loadMorePendingButton = findViewById(R.id.loadMorePendingButton);
         invitesList.setLayoutManager(new LinearLayoutManager(this));
         pendingAdapter = new PendingInviteAdapter(this, this::acceptInvite);
         invitesList.setAdapter(pendingAdapter);
@@ -98,10 +110,13 @@ public class InvitationsActivity extends BaseActivity {
             }
         };
         pendingAdapter.registerAdapterDataObserver(pendingInvitesObserver);
+        
+        loadMorePendingButton.setOnClickListener(v -> loadMorePendingInvites());
 
         pastInvitesList = findViewById(R.id.pastInvitesList);
         pastInvitesLabel = findViewById(R.id.pastInvitesLabel);
         emptyPastInvites = findViewById(R.id.emptyPastInvites);
+        loadMorePastButton = findViewById(R.id.loadMorePastButton);
         pastInvitesList.setLayoutManager(new LinearLayoutManager(this));
         pastAdapter = new PastInviteAdapter(this, this::sendInviteViaCF, this::addFriend);
         pastAdapter.setFriendUids(friendUids);
@@ -123,6 +138,8 @@ public class InvitationsActivity extends BaseActivity {
             }
         };
         pastAdapter.registerAdapterDataObserver(pastInvitesObserver);
+        
+        loadMorePastButton.setOnClickListener(v -> loadMorePastInvites());
 
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
@@ -242,11 +259,18 @@ public class InvitationsActivity extends BaseActivity {
     private void listenForInvites() {
         String currentUserId = Objects.requireNonNull(auth.getCurrentUser()).getUid();
 
-        invitesSub = db.collection("invitations")
+        // Remove previous subscription if exists
+        if (invitesSub != null) {
+            invitesSub.remove();
+        }
+
+        Query query = db.collection("invitations")
                 .whereEqualTo("to", currentUserId)
                 .whereEqualTo("status", "pending")
-                .orderBy("expireAt")                // ← added
-                .addSnapshotListener((querySnapshot, e) -> {
+                .orderBy("expireAt")
+                .limit(PENDING_INVITES_PAGE_SIZE);
+
+        invitesSub = query.addSnapshotListener((querySnapshot, e) -> {
                     if (e != null) {
                         if (pendingAdapter != null) {
                             pendingAdapter.clear();
@@ -285,8 +309,79 @@ public class InvitationsActivity extends BaseActivity {
                         pendingAdapter.setData(pendingInvites);
                     }
 
+                    // Update pagination state
+                    if (!pendingInvites.isEmpty()) {
+                        lastPendingDoc = pendingInvites.get(pendingInvites.size() - 1);
+                        hasMorePendingInvites = pendingInvites.size() >= PENDING_INVITES_PAGE_SIZE;
+                    } else {
+                        lastPendingDoc = null;
+                        hasMorePendingInvites = false;
+                    }
+
                     updatePendingInvitesEmptyState();
+                    updateLoadMorePendingButtonVisibility();
                 });
+    }
+
+    private void loadMorePendingInvites() {
+        if (!hasMorePendingInvites || lastPendingDoc == null) {
+            return;
+        }
+
+        String currentUserId = Objects.requireNonNull(auth.getCurrentUser()).getUid();
+
+        loadMorePendingButton.setEnabled(false);
+
+        db.collection("invitations")
+                .whereEqualTo("to", currentUserId)
+                .whereEqualTo("status", "pending")
+                .orderBy("expireAt")
+                .startAfter(lastPendingDoc)
+                .limit(PENDING_INVITES_PAGE_SIZE)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    List<DocumentSnapshot> pendingInvites = new ArrayList<>();
+
+                    long nowMillis = System.currentTimeMillis();
+                    for (DocumentSnapshot doc : querySnapshot) {
+                        Timestamp exp = doc.getTimestamp("expireAt");
+                        if (exp != null && exp.toDate().getTime() <= nowMillis) {
+                            continue;
+                        }
+                        pendingInvites.add(doc);
+                    }
+
+                    if (!pendingInvites.isEmpty()) {
+                        pendingInvites.sort((left, right) -> {
+                            Timestamp leftCreatedAt = left.getTimestamp("createdAt");
+                            Timestamp rightCreatedAt = right.getTimestamp("createdAt");
+
+                            long leftMillis = leftCreatedAt != null ? leftCreatedAt.toDate().getTime() : Long.MAX_VALUE;
+                            long rightMillis = rightCreatedAt != null ? rightCreatedAt.toDate().getTime() : Long.MAX_VALUE;
+
+                            return Long.compare(leftMillis, rightMillis);
+                        });
+                        pendingAdapter.appendData(pendingInvites);
+                        lastPendingDoc = pendingInvites.get(pendingInvites.size() - 1);
+                        hasMorePendingInvites = pendingInvites.size() >= PENDING_INVITES_PAGE_SIZE;
+                    } else {
+                        hasMorePendingInvites = false;
+                    }
+
+                    loadMorePendingButton.setEnabled(true);
+                    updateLoadMorePendingButtonVisibility();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".loadMorePendingInvites: Failed", e);
+                    Toast.makeText(this, R.string.failed_to_load_more_invites, Toast.LENGTH_SHORT).show();
+                    loadMorePendingButton.setEnabled(true);
+                });
+    }
+
+    private void updateLoadMorePendingButtonVisibility() {
+        if (loadMorePendingButton != null) {
+            loadMorePendingButton.setVisibility(hasMorePendingInvites ? View.VISIBLE : View.GONE);
+        }
     }
 
     private void updatePendingInvitesEmptyState() {
@@ -304,10 +399,18 @@ public class InvitationsActivity extends BaseActivity {
     private void listenForPastInvites() {
         String currentUserId = Objects.requireNonNull(auth.getCurrentUser()).getUid();
 
-        pastInvitesSub = db.collection("invitations")
+        // Remove previous subscription if exists
+        if (pastInvitesSub != null) {
+            pastInvitesSub.remove();
+        }
+
+        Query query = db.collection("invitations")
                 .whereEqualTo("to", currentUserId)
                 .whereIn("status", java.util.Arrays.asList("accepted", "cancelled", "expired"))
-                .addSnapshotListener((querySnapshot, e) -> {
+                .orderBy("createdAt", Query.Direction.DESCENDING)
+                .limit(PAST_INVITES_PAGE_SIZE);
+
+        pastInvitesSub = query.addSnapshotListener((querySnapshot, e) -> {
                     if (e != null) {
                         Log.e("TAG_Soccer", getClass().getSimpleName() + ".listenForPastInvites: Listen failed", e);
                         emptyPastInvites.setVisibility(View.VISIBLE);
@@ -319,19 +422,66 @@ public class InvitationsActivity extends BaseActivity {
                         pastInvitesList.add(doc);
                     }
 
-                    pastInvitesList.sort((left, right) -> {
-                        Timestamp leftCreatedAt = left.getTimestamp("createdAt");
-                        Timestamp rightCreatedAt = right.getTimestamp("createdAt");
-
-                        long leftMillis = leftCreatedAt != null ? leftCreatedAt.toDate().getTime() : Long.MIN_VALUE;
-                        long rightMillis = rightCreatedAt != null ? rightCreatedAt.toDate().getTime() : Long.MIN_VALUE;
-
-                        return Long.compare(rightMillis, leftMillis);
-                    });
-
                     pastAdapter.setData(pastInvitesList);
+
+                    // Update pagination state
+                    if (!pastInvitesList.isEmpty()) {
+                        lastPastDoc = pastInvitesList.get(pastInvitesList.size() - 1);
+                        hasMorePastInvites = pastInvitesList.size() >= PAST_INVITES_PAGE_SIZE;
+                    } else {
+                        lastPastDoc = null;
+                        hasMorePastInvites = false;
+                    }
+
                     updatePastInvitesEmptyState();
+                    updateLoadMorePastButtonVisibility();
                 });
+    }
+
+    private void loadMorePastInvites() {
+        if (!hasMorePastInvites || lastPastDoc == null) {
+            return;
+        }
+
+        String currentUserId = Objects.requireNonNull(auth.getCurrentUser()).getUid();
+
+        loadMorePastButton.setEnabled(false);
+
+        db.collection("invitations")
+                .whereEqualTo("to", currentUserId)
+                .whereIn("status", java.util.Arrays.asList("accepted", "cancelled", "expired"))
+                .orderBy("createdAt", Query.Direction.DESCENDING)
+                .startAfter(lastPastDoc)
+                .limit(PAST_INVITES_PAGE_SIZE)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    List<DocumentSnapshot> pastInvitesList = new ArrayList<>();
+                    for (DocumentSnapshot doc : querySnapshot) {
+                        pastInvitesList.add(doc);
+                    }
+
+                    if (!pastInvitesList.isEmpty()) {
+                        pastAdapter.appendData(pastInvitesList);
+                        lastPastDoc = pastInvitesList.get(pastInvitesList.size() - 1);
+                        hasMorePastInvites = pastInvitesList.size() >= PAST_INVITES_PAGE_SIZE;
+                    } else {
+                        hasMorePastInvites = false;
+                    }
+
+                    loadMorePastButton.setEnabled(true);
+                    updateLoadMorePastButtonVisibility();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".loadMorePastInvites: Failed", e);
+                    Toast.makeText(this, R.string.failed_to_load_more_invites, Toast.LENGTH_SHORT).show();
+                    loadMorePastButton.setEnabled(true);
+                });
+    }
+
+    private void updateLoadMorePastButtonVisibility() {
+        if (loadMorePastButton != null) {
+            loadMorePastButton.setVisibility(hasMorePastInvites ? View.VISIBLE : View.GONE);
+        }
     }
 
     private void loadFriends() {

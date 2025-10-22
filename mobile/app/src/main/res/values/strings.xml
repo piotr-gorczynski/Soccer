@@ -74,6 +74,7 @@
     <string name="failed_to_load_nickname">Failed to load nickname.</string>
     <string name="search">Search</string>
     <string name="load_more">Load more</string>
+    <string name="failed_to_load_more_invites">Failed to load more invitations</string>
     <string name="add_friend_label">Add to friends</string>
     <string name="add_friend_short_label">Add</string>
     <string name="already_friends">Already friends</string>

@@ -259,6 +259,12 @@ class PendingInviteAdapter extends RecyclerView.Adapter<PendingInviteAdapter.VH>
         notifyDataSetChanged();
     }
 
+    void appendData(@NonNull List<DocumentSnapshot> invites) {
+        int startPosition = docs.size();
+        docs.addAll(invites);
+        notifyItemRangeInserted(startPosition, invites.size());
+    }
+
     void clear() {
         removePresenceSubscriptions();
         docs.clear();
