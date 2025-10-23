@@ -321,8 +321,8 @@ public class InvitationsActivity extends BaseActivity {
                         for (DocumentSnapshot invite : pendingInvites) {
                             Log.d("TAG_Soccer", getClass().getSimpleName() + ".listenForInvites: Pending invite ID: " + invite.getId());
                         }
-                        
-                        pendingAdapter.setData(pendingInvites);
+
+                        pendingAdapter.setData(pendingInvites, invitesList);
                     }
 
                     // Log what's displayed in UI after initial load
@@ -474,7 +474,7 @@ public class InvitationsActivity extends BaseActivity {
                         Log.d("TAG_Soccer", getClass().getSimpleName() + ".listenForPastInvites: Past invite ID: " + invite.getId());
                     }
 
-                    pastAdapter.setData(pastInvitesList);
+                    pastAdapter.setData(pastInvitesList, InvitationsActivity.this.pastInvitesList);
 
                     // Log what's displayed in UI after initial load
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".listenForPastInvites: After setData, UI shows " + pastAdapter.getItemCount() + " items in RecyclerView");

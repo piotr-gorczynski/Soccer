@@ -291,16 +291,25 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
         }
     }
 
-    void setData(List<DocumentSnapshot> invites) {
+    void setData(@NonNull List<DocumentSnapshot> invites, @NonNull RecyclerView recyclerView) {
         docs.clear();
         docs.addAll(invites);
         notifyDataSetChanged();
-        
+
         // Log what's actually in the adapter after setData
         android.util.Log.d("TAG_Soccer", "PastInviteAdapter.setData: Adapter now contains " + docs.size() + " items");
         for (int i = 0; i < docs.size(); i++) {
             android.util.Log.d("TAG_Soccer", "PastInviteAdapter.setData: [" + i + "] ID: " + docs.get(i).getId());
         }
+
+        // Force RecyclerView to remeasure itself after the new dataset is applied
+        recyclerView.post(() -> {
+            recyclerView.requestLayout();
+
+            android.util.Log.d("TAG_Soccer", "PastInviteAdapter.setData: RecyclerView.getChildCount() = " + recyclerView.getChildCount());
+            android.util.Log.d("TAG_Soccer", "PastInviteAdapter.setData: RecyclerView.getLayoutManager().getItemCount() = " +
+                    (recyclerView.getLayoutManager() != null ? recyclerView.getLayoutManager().getItemCount() : "null"));
+        });
     }
 
     void appendData(@NonNull List<DocumentSnapshot> invites, @NonNull RecyclerView recyclerView) {
