@@ -67,11 +67,11 @@
       "queryScope": "COLLECTION",
       "fields": [
         {
-          "fieldPath": "status",
+          "fieldPath": "to",
           "order": "ASCENDING"
         },
         {
-          "fieldPath": "to",
+          "fieldPath": "status",
           "order": "ASCENDING"
         },
         {
