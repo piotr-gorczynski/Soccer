@@ -265,15 +265,25 @@ class PendingInviteAdapter extends RecyclerView.Adapter<PendingInviteAdapter.VH>
         }
     }
 
-    void appendData(@NonNull List<DocumentSnapshot> invites) {
+    void appendData(@NonNull List<DocumentSnapshot> invites, @NonNull RecyclerView recyclerView) {
+        int oldSize = docs.size();
         docs.addAll(invites);
         notifyDataSetChanged();
         
-        // Log what's actually in the adapter after appendData
-        android.util.Log.d("TAG_Soccer", "PendingInviteAdapter.appendData: Appended " + invites.size() + " items, adapter now contains " + docs.size() + " total items");
-        for (int i = 0; i < docs.size(); i++) {
-            android.util.Log.d("TAG_Soccer", "PendingInviteAdapter.appendData: [" + i + "] ID: " + docs.get(i).getId());
-        }
+        // Force RecyclerView to remeasure itself after data change
+        // This is needed because the RecyclerView is inside a ScrollView with wrap_content
+        recyclerView.post(() -> {
+            recyclerView.requestLayout();
+            
+            // Log what's actually in the adapter after appendData and remeasure
+            android.util.Log.d("TAG_Soccer", "PendingInviteAdapter.appendData: Appended " + invites.size() + " items, adapter now contains " + docs.size() + " total items");
+            android.util.Log.d("TAG_Soccer", "PendingInviteAdapter.appendData: RecyclerView.getChildCount() = " + recyclerView.getChildCount());
+            android.util.Log.d("TAG_Soccer", "PendingInviteAdapter.appendData: RecyclerView.getLayoutManager().getItemCount() = " + 
+                (recyclerView.getLayoutManager() != null ? recyclerView.getLayoutManager().getItemCount() : "null"));
+            for (int i = 0; i < docs.size(); i++) {
+                android.util.Log.d("TAG_Soccer", "PendingInviteAdapter.appendData: [" + i + "] ID: " + docs.get(i).getId());
+            }
+        });
     }
 
     void clear() {
