@@ -395,7 +395,7 @@ public class InvitationsActivity extends BaseActivity {
                             Log.d("TAG_Soccer", getClass().getSimpleName() + ".loadMorePendingInvites: Pending invite ID: " + invite.getId());
                         }
                         
-                        pendingAdapter.appendData(pendingInvites);
+                        pendingAdapter.appendData(pendingInvites, invitesList);
                         lastPendingDoc = pendingInvites.get(pendingInvites.size() - 1);
                     } else {
                         hasMorePendingInvites = false;
@@ -530,7 +530,7 @@ public class InvitationsActivity extends BaseActivity {
                             Log.d("TAG_Soccer", getClass().getSimpleName() + ".loadMorePastInvites: Past invite ID: " + invite.getId());
                         }
                         
-                        pastAdapter.appendData(pastInvitesList);
+                        pastAdapter.appendData(pastInvitesList, InvitationsActivity.this.pastInvitesList);
                         lastPastDoc = pastInvitesList.get(pastInvitesList.size() - 1);
                     } else {
                         hasMorePastInvites = false;
