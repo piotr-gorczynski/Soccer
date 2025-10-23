@@ -826,7 +826,9 @@ public class MenuActivity extends BaseActivity {
 
         Bitmap spriteSheet;
         try {
-            spriteSheet = BitmapFactory.decodeResource(getResources(), spriteSheetResId);
+            BitmapFactory.Options decodeOptions = new BitmapFactory.Options();
+            decodeOptions.inScaled = false;
+            spriteSheet = BitmapFactory.decodeResource(getResources(), spriteSheetResId, decodeOptions);
         } catch (Exception e) {
             Log.e(
                     "TAG_Soccer",
