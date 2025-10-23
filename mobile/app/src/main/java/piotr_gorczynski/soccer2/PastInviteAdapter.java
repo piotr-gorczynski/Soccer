@@ -304,9 +304,8 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
     }
 
     void appendData(@NonNull List<DocumentSnapshot> invites) {
-        int startPosition = docs.size();
         docs.addAll(invites);
-        notifyItemRangeInserted(startPosition, invites.size());
+        notifyDataSetChanged();
         
         // Log what's actually in the adapter after appendData
         android.util.Log.d("TAG_Soccer", "PastInviteAdapter.appendData: Appended " + invites.size() + " items, adapter now contains " + docs.size() + " total items");
