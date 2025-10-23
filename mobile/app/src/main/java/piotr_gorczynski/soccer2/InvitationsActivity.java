@@ -264,11 +264,12 @@ public class InvitationsActivity extends BaseActivity {
             invitesSub.remove();
         }
 
+        // Query with PAGE_SIZE + 1 to detect if there are more results
         Query query = db.collection("invitations")
                 .whereEqualTo("to", currentUserId)
                 .whereEqualTo("status", "pending")
                 .orderBy("expireAt")
-                .limit(PENDING_INVITES_PAGE_SIZE);
+                .limit(PENDING_INVITES_PAGE_SIZE + 1);
 
         invitesSub = query.addSnapshotListener((querySnapshot, e) -> {
                     if (e != null) {
@@ -306,13 +307,22 @@ public class InvitationsActivity extends BaseActivity {
 
                             return Long.compare(leftMillis, rightMillis);
                         });
+                        
+                        // Check if there are more results than PAGE_SIZE
+                        if (pendingInvites.size() > PENDING_INVITES_PAGE_SIZE) {
+                            hasMorePendingInvites = true;
+                            // Remove the extra item before displaying
+                            pendingInvites.remove(pendingInvites.size() - 1);
+                        } else {
+                            hasMorePendingInvites = false;
+                        }
+                        
                         pendingAdapter.setData(pendingInvites);
                     }
 
                     // Update pagination state
                     if (!pendingInvites.isEmpty()) {
                         lastPendingDoc = pendingInvites.get(pendingInvites.size() - 1);
-                        hasMorePendingInvites = pendingInvites.size() >= PENDING_INVITES_PAGE_SIZE;
                     } else {
                         lastPendingDoc = null;
                         hasMorePendingInvites = false;
@@ -332,12 +342,13 @@ public class InvitationsActivity extends BaseActivity {
 
         loadMorePendingButton.setEnabled(false);
 
+        // Query with PAGE_SIZE + 1 to detect if there are more results
         db.collection("invitations")
                 .whereEqualTo("to", currentUserId)
                 .whereEqualTo("status", "pending")
                 .orderBy("expireAt")
                 .startAfter(lastPendingDoc)
-                .limit(PENDING_INVITES_PAGE_SIZE)
+                .limit(PENDING_INVITES_PAGE_SIZE + 1)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     List<DocumentSnapshot> pendingInvites = new ArrayList<>();
@@ -361,9 +372,18 @@ public class InvitationsActivity extends BaseActivity {
 
                             return Long.compare(leftMillis, rightMillis);
                         });
+                        
+                        // Check if there are more results than PAGE_SIZE
+                        if (pendingInvites.size() > PENDING_INVITES_PAGE_SIZE) {
+                            hasMorePendingInvites = true;
+                            // Remove the extra item before displaying
+                            pendingInvites.remove(pendingInvites.size() - 1);
+                        } else {
+                            hasMorePendingInvites = false;
+                        }
+                        
                         pendingAdapter.appendData(pendingInvites);
                         lastPendingDoc = pendingInvites.get(pendingInvites.size() - 1);
-                        hasMorePendingInvites = pendingInvites.size() >= PENDING_INVITES_PAGE_SIZE;
                     } else {
                         hasMorePendingInvites = false;
                     }
@@ -404,11 +424,12 @@ public class InvitationsActivity extends BaseActivity {
             pastInvitesSub.remove();
         }
 
+        // Query with PAGE_SIZE + 1 to detect if there are more results
         Query query = db.collection("invitations")
                 .whereEqualTo("to", currentUserId)
                 .whereIn("status", java.util.Arrays.asList("accepted", "cancelled", "expired"))
                 .orderBy("createdAt", Query.Direction.DESCENDING)
-                .limit(PAST_INVITES_PAGE_SIZE);
+                .limit(PAST_INVITES_PAGE_SIZE + 1);
 
         pastInvitesSub = query.addSnapshotListener((querySnapshot, e) -> {
                     if (e != null) {
@@ -422,12 +443,20 @@ public class InvitationsActivity extends BaseActivity {
                         pastInvitesList.add(doc);
                     }
 
+                    // Check if there are more results than PAGE_SIZE
+                    if (pastInvitesList.size() > PAST_INVITES_PAGE_SIZE) {
+                        hasMorePastInvites = true;
+                        // Remove the extra item before displaying
+                        pastInvitesList.remove(pastInvitesList.size() - 1);
+                    } else {
+                        hasMorePastInvites = false;
+                    }
+
                     pastAdapter.setData(pastInvitesList);
 
                     // Update pagination state
                     if (!pastInvitesList.isEmpty()) {
                         lastPastDoc = pastInvitesList.get(pastInvitesList.size() - 1);
-                        hasMorePastInvites = pastInvitesList.size() >= PAST_INVITES_PAGE_SIZE;
                     } else {
                         lastPastDoc = null;
                         hasMorePastInvites = false;
@@ -447,12 +476,13 @@ public class InvitationsActivity extends BaseActivity {
 
         loadMorePastButton.setEnabled(false);
 
+        // Query with PAGE_SIZE + 1 to detect if there are more results
         db.collection("invitations")
                 .whereEqualTo("to", currentUserId)
                 .whereIn("status", java.util.Arrays.asList("accepted", "cancelled", "expired"))
                 .orderBy("createdAt", Query.Direction.DESCENDING)
                 .startAfter(lastPastDoc)
-                .limit(PAST_INVITES_PAGE_SIZE)
+                .limit(PAST_INVITES_PAGE_SIZE + 1)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     List<DocumentSnapshot> pastInvitesList = new ArrayList<>();
@@ -461,9 +491,17 @@ public class InvitationsActivity extends BaseActivity {
                     }
 
                     if (!pastInvitesList.isEmpty()) {
+                        // Check if there are more results than PAGE_SIZE
+                        if (pastInvitesList.size() > PAST_INVITES_PAGE_SIZE) {
+                            hasMorePastInvites = true;
+                            // Remove the extra item before displaying
+                            pastInvitesList.remove(pastInvitesList.size() - 1);
+                        } else {
+                            hasMorePastInvites = false;
+                        }
+                        
                         pastAdapter.appendData(pastInvitesList);
                         lastPastDoc = pastInvitesList.get(pastInvitesList.size() - 1);
-                        hasMorePastInvites = pastInvitesList.size() >= PAST_INVITES_PAGE_SIZE;
                     } else {
                         hasMorePastInvites = false;
                     }
