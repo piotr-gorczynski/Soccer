@@ -266,9 +266,8 @@ class PendingInviteAdapter extends RecyclerView.Adapter<PendingInviteAdapter.VH>
     }
 
     void appendData(@NonNull List<DocumentSnapshot> invites) {
-        int startPosition = docs.size();
         docs.addAll(invites);
-        notifyItemRangeInserted(startPosition, invites.size());
+        notifyDataSetChanged();
         
         // Log what's actually in the adapter after appendData
         android.util.Log.d("TAG_Soccer", "PendingInviteAdapter.appendData: Appended " + invites.size() + " items, adapter now contains " + docs.size() + " total items");
