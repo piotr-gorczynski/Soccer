@@ -325,6 +325,9 @@ public class InvitationsActivity extends BaseActivity {
                         pendingAdapter.setData(pendingInvites);
                     }
 
+                    // Log what's displayed in UI after initial load
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".listenForInvites: After setData, UI shows " + pendingAdapter.getItemCount() + " items in RecyclerView");
+
                     // Update pagination state
                     if (!pendingInvites.isEmpty()) {
                         lastPendingDoc = pendingInvites.get(pendingInvites.size() - 1);
@@ -398,6 +401,9 @@ public class InvitationsActivity extends BaseActivity {
                         hasMorePendingInvites = false;
                     }
 
+                    // Log what's displayed in UI after load more
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".loadMorePendingInvites: After appendData, UI shows " + pendingAdapter.getItemCount() + " items in RecyclerView");
+
                     loadMorePendingButton.setEnabled(true);
                     updateLoadMorePendingButtonVisibility();
                 })
@@ -470,6 +476,9 @@ public class InvitationsActivity extends BaseActivity {
 
                     pastAdapter.setData(pastInvitesList);
 
+                    // Log what's displayed in UI after initial load
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".listenForPastInvites: After setData, UI shows " + pastAdapter.getItemCount() + " items in RecyclerView");
+
                     // Update pagination state
                     if (!pastInvitesList.isEmpty()) {
                         lastPastDoc = pastInvitesList.get(pastInvitesList.size() - 1);
@@ -526,6 +535,9 @@ public class InvitationsActivity extends BaseActivity {
                     } else {
                         hasMorePastInvites = false;
                     }
+
+                    // Log what's displayed in UI after load more
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".loadMorePastInvites: After appendData, UI shows " + pastAdapter.getItemCount() + " items in RecyclerView");
 
                     loadMorePastButton.setEnabled(true);
                     updateLoadMorePastButtonVisibility();
