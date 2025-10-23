@@ -317,6 +317,11 @@ public class InvitationsActivity extends BaseActivity {
                             hasMorePendingInvites = false;
                         }
                         
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".listenForInvites: Showing " + pendingInvites.size() + " pending invites");
+                        for (DocumentSnapshot invite : pendingInvites) {
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + ".listenForInvites: Pending invite ID: " + invite.getId());
+                        }
+                        
                         pendingAdapter.setData(pendingInvites);
                     }
 
@@ -382,6 +387,11 @@ public class InvitationsActivity extends BaseActivity {
                             hasMorePendingInvites = false;
                         }
                         
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".loadMorePendingInvites: Loading " + pendingInvites.size() + " more pending invites");
+                        for (DocumentSnapshot invite : pendingInvites) {
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + ".loadMorePendingInvites: Pending invite ID: " + invite.getId());
+                        }
+                        
                         pendingAdapter.appendData(pendingInvites);
                         lastPendingDoc = pendingInvites.get(pendingInvites.size() - 1);
                     } else {
@@ -401,6 +411,7 @@ public class InvitationsActivity extends BaseActivity {
     private void updateLoadMorePendingButtonVisibility() {
         if (loadMorePendingButton != null) {
             loadMorePendingButton.setVisibility(hasMorePendingInvites ? View.VISIBLE : View.GONE);
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".updateLoadMorePendingButtonVisibility: Load More Pending button visibility = " + (hasMorePendingInvites ? "VISIBLE" : "GONE"));
         }
     }
 
@@ -452,6 +463,11 @@ public class InvitationsActivity extends BaseActivity {
                         hasMorePastInvites = false;
                     }
 
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".listenForPastInvites: Showing " + pastInvitesList.size() + " past invites");
+                    for (DocumentSnapshot invite : pastInvitesList) {
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".listenForPastInvites: Past invite ID: " + invite.getId());
+                    }
+
                     pastAdapter.setData(pastInvitesList);
 
                     // Update pagination state
@@ -500,6 +516,11 @@ public class InvitationsActivity extends BaseActivity {
                             hasMorePastInvites = false;
                         }
                         
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".loadMorePastInvites: Loading " + pastInvitesList.size() + " more past invites");
+                        for (DocumentSnapshot invite : pastInvitesList) {
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + ".loadMorePastInvites: Past invite ID: " + invite.getId());
+                        }
+                        
                         pastAdapter.appendData(pastInvitesList);
                         lastPastDoc = pastInvitesList.get(pastInvitesList.size() - 1);
                     } else {
@@ -519,6 +540,7 @@ public class InvitationsActivity extends BaseActivity {
     private void updateLoadMorePastButtonVisibility() {
         if (loadMorePastButton != null) {
             loadMorePastButton.setVisibility(hasMorePastInvites ? View.VISIBLE : View.GONE);
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".updateLoadMorePastButtonVisibility: Load More Past button visibility = " + (hasMorePastInvites ? "VISIBLE" : "GONE"));
         }
     }
 
