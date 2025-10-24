@@ -1,6 +1,7 @@
 <en-GB>
 🎮 Fix: Refresh match statistics when returning from completed game
-🔔 Add pagination with "Load More" buttons to InvitationsActivity  
+🔔 Add pagination with "Load More" buttons to InvitationsActivity
+🔔 Handle optional running player spritesheet
 🎮 ...
 </en-GB>
 
