@@ -79,10 +79,11 @@ class WrapContentLinearLayoutManager extends LinearLayoutManager {
 
             detachAndScrapView(view, recycler);
 
-            if (heightMode == View.MeasureSpec.AT_MOST && height >= heightSize) {
-                height = heightSize;
-                break;
-            }
+            // When hosted in a ScrollView the RecyclerView receives an AT_MOST
+            // height spec equal to the viewport size. Returning that limited
+            // height would prevent the ScrollView from growing to fit the
+            // entire list, so we intentionally ignore the bound and allow the
+            // view to report the full height that it requires.
         }
 
         width += getPaddingLeft() + getPaddingRight();
@@ -95,8 +96,6 @@ class WrapContentLinearLayoutManager extends LinearLayoutManager {
 
         if (heightMode == View.MeasureSpec.EXACTLY) {
             height = heightSize;
-        } else if (heightMode == View.MeasureSpec.AT_MOST) {
-            height = Math.min(height, heightSize);
         }
 
         setMeasuredDimension(width, height);
