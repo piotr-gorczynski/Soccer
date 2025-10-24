@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -92,6 +93,7 @@ public class InvitationsActivity extends BaseActivity {
         invitesList.setLayoutManager(new WrapContentLinearLayoutManager(this));
         pendingAdapter = new PendingInviteAdapter(this, this::acceptInvite);
         invitesList.setAdapter(pendingAdapter);
+        disableChangeAnimations(invitesList);
         pendingInvitesObserver = new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
@@ -120,6 +122,7 @@ public class InvitationsActivity extends BaseActivity {
         pastAdapter = new PastInviteAdapter(this, this::sendInviteViaCF, this::addFriend);
         pastAdapter.setFriendUids(friendUids);
         pastInvitesList.setAdapter(pastAdapter);
+        disableChangeAnimations(pastInvitesList);
         pastInvitesObserver = new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
@@ -147,6 +150,13 @@ public class InvitationsActivity extends BaseActivity {
         listenForPastInvites();
         loadFriends();
 
+    }
+
+    private void disableChangeAnimations(@NonNull RecyclerView recyclerView) {
+        RecyclerView.ItemAnimator animator = recyclerView.getItemAnimator();
+        if (animator instanceof SimpleItemAnimator) {
+            ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
+        }
     }
 
     // At the top of the class — keeps logcat tidy
