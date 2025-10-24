@@ -12,7 +12,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.Timestamp;
@@ -90,7 +89,7 @@ public class InvitationsActivity extends BaseActivity {
         invitesList = findViewById(R.id.invitesList);
         emptyText = findViewById(R.id.emptyInvites);
         loadMorePendingButton = findViewById(R.id.loadMorePendingButton);
-        invitesList.setLayoutManager(new LinearLayoutManager(this));
+        invitesList.setLayoutManager(new WrapContentLinearLayoutManager(this));
         pendingAdapter = new PendingInviteAdapter(this, this::acceptInvite);
         invitesList.setAdapter(pendingAdapter);
         pendingInvitesObserver = new RecyclerView.AdapterDataObserver() {
@@ -117,7 +116,7 @@ public class InvitationsActivity extends BaseActivity {
         pastInvitesLabel = findViewById(R.id.pastInvitesLabel);
         emptyPastInvites = findViewById(R.id.emptyPastInvites);
         loadMorePastButton = findViewById(R.id.loadMorePastButton);
-        pastInvitesList.setLayoutManager(new LinearLayoutManager(this));
+        pastInvitesList.setLayoutManager(new WrapContentLinearLayoutManager(this));
         pastAdapter = new PastInviteAdapter(this, this::sendInviteViaCF, this::addFriend);
         pastAdapter.setFriendUids(friendUids);
         pastInvitesList.setAdapter(pastAdapter);
