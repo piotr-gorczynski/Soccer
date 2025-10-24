@@ -157,6 +157,14 @@ public class InvitationsActivity extends BaseActivity {
         if (animator instanceof SimpleItemAnimator) {
             ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
         }
+
+        // Recent RecyclerView versions can crash when animations are running while the
+        // adapter dataset is invalidated and the view is being remeasured (see
+        // DefaultItemAnimator#runPendingAnimations). Because InvitationsActivity updates the
+        // lists by calling notifyDataSetChanged() followed by requestLayout(), it is safer to
+        // disable the animator entirely so that RecyclerView never tries to operate on a null
+        // ViewHolder during those layout passes.
+        recyclerView.setItemAnimator(null);
     }
 
     // At the top of the class — keeps logcat tidy
