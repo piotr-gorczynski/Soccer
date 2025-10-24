@@ -291,7 +291,7 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
         }
     }
 
-    void setData(@NonNull List<DocumentSnapshot> invites, @NonNull RecyclerView recyclerView) {
+    void setData(@NonNull List<DocumentSnapshot> invites) {
         docs.clear();
         docs.addAll(invites);
         notifyDataSetChanged();
@@ -301,36 +301,6 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
         for (int i = 0; i < docs.size(); i++) {
             android.util.Log.d("TAG_Soccer", "PastInviteAdapter.setData: [" + i + "] ID: " + docs.get(i).getId());
         }
-
-        // Force RecyclerView to remeasure itself after the new dataset is applied
-        recyclerView.post(() -> {
-            recyclerView.requestLayout();
-
-            android.util.Log.d("TAG_Soccer", "PastInviteAdapter.setData: RecyclerView.getChildCount() = " + recyclerView.getChildCount());
-            android.util.Log.d("TAG_Soccer", "PastInviteAdapter.setData: RecyclerView.getLayoutManager().getItemCount() = " +
-                    (recyclerView.getLayoutManager() != null ? recyclerView.getLayoutManager().getItemCount() : "null"));
-        });
-    }
-
-    void appendData(@NonNull List<DocumentSnapshot> invites, @NonNull RecyclerView recyclerView) {
-        int oldSize = docs.size();
-        docs.addAll(invites);
-        notifyDataSetChanged();
-        
-        // Force RecyclerView to remeasure itself after data change
-        // This is needed because the RecyclerView is inside a ScrollView with wrap_content
-        recyclerView.post(() -> {
-            recyclerView.requestLayout();
-            
-            // Log what's actually in the adapter after appendData and remeasure
-            android.util.Log.d("TAG_Soccer", "PastInviteAdapter.appendData: Appended " + invites.size() + " items, adapter now contains " + docs.size() + " total items");
-            android.util.Log.d("TAG_Soccer", "PastInviteAdapter.appendData: RecyclerView.getChildCount() = " + recyclerView.getChildCount());
-            android.util.Log.d("TAG_Soccer", "PastInviteAdapter.appendData: RecyclerView.getLayoutManager().getItemCount() = " + 
-                (recyclerView.getLayoutManager() != null ? recyclerView.getLayoutManager().getItemCount() : "null"));
-            for (int i = 0; i < docs.size(); i++) {
-                android.util.Log.d("TAG_Soccer", "PastInviteAdapter.appendData: [" + i + "] ID: " + docs.get(i).getId());
-            }
-        });
     }
 
     void setFriendUids(@NonNull Set<String> friendUids) {
