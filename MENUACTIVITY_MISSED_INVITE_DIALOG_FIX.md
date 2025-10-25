@@ -8,9 +8,9 @@ App was potentially crashing with `WindowLeaked` exception in `MenuActivity.show
 The crash occurred in `MenuActivity.showMissedInviteDialog()` method due to missing defensive checks:
 
 ### The Problem Flow:
-1. **Line 2122 (checkForMissedInvitations)**: `showMissedInviteDialog()` is called asynchronously after Firestore query completes
+1. **checkForMissedInvitations()**: `showMissedInviteDialog()` is called asynchronously after Firestore query completes
 2. Between this call and the actual dialog display, the activity could be finishing or destroyed
-3. **Line 2146 (BEFORE FIX)**: `builder.show()` attempts to show the dialog
+3. **showMissedInviteDialog() (BEFORE FIX)**: `AlertDialog.Builder.show()` attempts to show the dialog
 4. **BUG**: If the activity is finishing/destroyed, showing a dialog causes `WindowLeaked` exception
 5. This exception crashes the app or causes ANR (Application Not Responding)
 
@@ -26,7 +26,7 @@ The `showMissedInviteDialog()` method showed an AlertDialog without checking if 
 
 ## The Fix
 
-Added defensive check following the same pattern used in `GameActivity.showWinner()` (line 1183), `MenuActivity.loadInterstitialAd()` (line 858), and `LanguageSelectionActivity.showLanguageSelectionDialog()` (line 26):
+Added defensive check following the same pattern used in `GameActivity.showWinner()`, `MenuActivity.loadInterstitialAd()`, and `LanguageSelectionActivity.showLanguageSelectionDialog()`:
 
 ```java
 private void showMissedInviteDialog() {
@@ -69,21 +69,21 @@ private void showMissedInviteDialog() {
 ## Files Changed
 
 1. **MenuActivity.java**
-   - Added defensive check before showing dialog (lines 2137-2144)
+   - Added defensive check in `showMissedInviteDialog()` before showing dialog
    - Minimal change: 9 lines added
 
 2. **MenuActivityCrashTest.java**
-   - Added test for missed invite dialog string resources (lines 153-181)
+   - Added test method `testMissedInviteDialogStringResources()` 
    - Validates that all required string resources exist
    - 31 lines added
 
 ## Related Code Patterns
 
 This fix follows the established defensive pattern used in:
-- `GameActivity.showWinner()` - line 1183
-- `MenuActivity.loadInterstitialAd()` - line 858
-- `LanguageSelectionActivity.showLanguageSelectionDialog()` - line 26
-- `InAppMessagingHelper.showDialog()` - line 46
+- `GameActivity.showWinner()`
+- `MenuActivity.loadInterstitialAd()`
+- `LanguageSelectionActivity.showLanguageSelectionDialog()`
+- `InAppMessagingHelper.showDialog()`
 
 ## Verification
 
