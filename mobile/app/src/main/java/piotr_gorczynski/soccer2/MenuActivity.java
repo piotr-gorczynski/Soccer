@@ -2134,6 +2134,15 @@ public class MenuActivity extends BaseActivity {
      * Show dialog informing user about missed invitation
      */
     private void showMissedInviteDialog() {
+        // Check if activity is still valid before showing dialog
+        if (isFinishing() || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed())) {
+            Log.w(
+                    "TAG_Soccer",
+                    getClass().getSimpleName() + ".showMissedInviteDialog: Activity finishing or destroyed, skipping dialog"
+            );
+            return;
+        }
+
         new AlertDialog.Builder(this)
                 .setTitle(R.string.missed_invite_title)
                 .setMessage(R.string.missed_invite_message)
