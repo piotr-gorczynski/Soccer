@@ -89,7 +89,7 @@ public class MenuActivity extends BaseActivity {
     private static final int RUNNING_PLAYER_FRAME_COUNT = 22;
     private static final int RUNNING_PLAYER_FRAME_WIDTH = 128;
     private static final int RUNNING_PLAYER_FRAME_HEIGHT = 128;
-    private static final long RUNNING_PLAYER_FRAME_DURATION_MS = 250L;
+    private static final long RUNNING_PLAYER_FRAME_DURATION_MS = 125L;
 
     private boolean isBackendAvailable = true; // Track backend availability
     // Track whether we've already shown the offline toast while the
