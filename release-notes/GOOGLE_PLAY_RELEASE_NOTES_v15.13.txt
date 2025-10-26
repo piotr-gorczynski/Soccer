@@ -1,7 +1,10 @@
 <en-GB>
-🎮 Fix: Refresh match statistics when returning from completed game
 🔔 Add pagination with "Load More" buttons to InvitationsActivity
 🔔 Handle optional running player spritesheet
+🔔 Separate field margins into horizontal and vertical
+🔔 Prevent leaving tournaments after registration closes
+🎮 Fix: Refresh match statistics when returning from completed game
+🎮 Fix WindowLeaked crash in MenuActivity.showMissedInviteDialog
 🎮 ...
 </en-GB>
 
