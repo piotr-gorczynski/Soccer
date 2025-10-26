@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <fraction name="flFieldMargin">15%</fraction>
+    <fraction name="flFieldMarginX">5%</fraction>
+    <fraction name="flFieldMarginY">15%</fraction>
     <fraction name="flDots">1%</fraction>
     <fraction name="flText">3%</fraction>
     <fraction name="flLinesWidth">0.5%</fraction>
