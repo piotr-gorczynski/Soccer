@@ -32,6 +32,15 @@ exports.leaveTournament = functions.https.onCall(async (data, context) => {
       throw new functions.https.HttpsError('failed-precondition', 'Tournament already started.');
     }
 
+    const regDeadline = t.registrationDeadline &&
+      typeof t.registrationDeadline.toDate === 'function'
+        ? t.registrationDeadline.toDate()
+        : null;
+
+    if (regDeadline && regDeadline.getTime() <= Date.now()) {
+      throw new functions.https.HttpsError('failed-precondition', 'Registration already closed.');
+    }
+
     tx.delete(pRef);
     tx.update(tRef, {
       participantsCount: admin.firestore.FieldValue.increment(-1)
