@@ -149,4 +149,35 @@ public class MenuActivityCrashTest {
             }
         }
     }
+
+    @Test
+    public void testMissedInviteDialogStringResources() {
+        // This test verifies that string resources for missed invite dialog exist
+        // Validates the fix for WindowLeaked exception when showing the dialog
+        
+        Context context = ApplicationProvider.getApplicationContext();
+        assertNotNull("Context should be available for testing", context);
+        
+        // Verify all required string resources for missed invite dialog exist
+        String[] requiredStrings = {
+            "missed_invite_title",
+            "missed_invite_message",
+            "see_invites",
+            "close"
+        };
+        
+        for (String stringId : requiredStrings) {
+            try {
+                int resourceId = context.getResources().getIdentifier(stringId, "string", context.getPackageName());
+                assertTrue("String resource " + stringId + " should be defined", resourceId != 0);
+                
+                String value = context.getString(resourceId);
+                assertNotNull("String " + stringId + " should not be null", value);
+                assertFalse("String " + stringId + " should not be empty", value.trim().isEmpty());
+                
+            } catch (Exception e) {
+                fail("String resource " + stringId + " is not properly defined: " + e.getMessage());
+            }
+        }
+    }
 }

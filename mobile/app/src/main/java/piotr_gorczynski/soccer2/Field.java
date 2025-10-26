@@ -22,7 +22,8 @@ public class Field {
 
     private final int intFieldWidth;
     private final int intFieldHeight;//,intBallX, intBallY;
-    private final float flFieldMargin;
+    private final float flFieldMarginX;
+    private final float flFieldMarginY;
     private final float flDots;
     private final float flText;
     private final float flLinesWidth;
@@ -98,7 +99,8 @@ public class Field {
 
         Resources res = current.getResources();
         try {
-            flFieldMargin = res.getFraction(R.fraction.flFieldMargin,1,1);
+            flFieldMarginX = res.getFraction(R.fraction.flFieldMarginX,1,1);
+            flFieldMarginY = res.getFraction(R.fraction.flFieldMarginY,1,1);
             flLinesWidth = res.getFraction(R.fraction.flLinesWidth,1,1);
             flDots= res.getFraction(R.fraction.flDots,1,1);
             flText = res.getFraction(R.fraction.flText,1,1);
@@ -215,10 +217,10 @@ public class Field {
 
     public void set(int x, int y, int width, int height) {
         int xMin, xMax, yMin, yMax;
-        xMin = x+(int)(width*flFieldMargin);
-        xMax = x + width -(int)(width*flFieldMargin)- 1;
-        yMin = y+(int)(height*flFieldMargin);
-        yMax = y + height - (int)(height*flFieldMargin)- 1;
+        xMin = x+(int)(width*flFieldMarginX);
+        xMax = x + width -(int)(width*flFieldMarginX)- 1;
+        yMin = y+(int)(height*flFieldMarginY);
+        yMax = y + height - (int)(height*flFieldMarginY)- 1;
         // The box's rField do not change unless the view's size changes
         rField.set(xMin, yMin, xMax, yMax);
     }

@@ -41,6 +41,7 @@
     <string name="hello">Hello!</string>
     <string name="welcome_to_soccer">Welcome to Soccer!</string>
     <string name="hello_nickname">Hello, %1$s!</string>
+    <string name="menu_running_player_content_description">Running soccer player animation</string>
     <string name="log_in">Log in</string>
     <string name="register_new_account">Register new account</string>
     <string name="reset_password">Reset password</string>
