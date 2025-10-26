@@ -9,6 +9,7 @@ import android.graphics.Rect;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.RectF;
+import android.os.SystemClock;
 import androidx.core.content.ContextCompat;
 
 import android.text.TextPaint;
@@ -27,6 +28,7 @@ public class Field {
     private final float flDots;
     private final float flText;
     private final float flLinesWidth;
+    private final float flSpriteSize;
     private final Paint pField;
     private final Paint pFieldBorder;
     private final Paint pDots;
@@ -36,6 +38,7 @@ public class Field {
     private final Rect rField;
     private final Rect rText;
     private final Bitmap ballBitmap;
+    private final Bitmap[] runningPlayerFrames;
     private final String sPlayer0;
     private final String sPlayer1;
     private final int gameType;
@@ -47,6 +50,9 @@ public class Field {
     private long remainingTime0, remainingTime1;
 
     private Long turnStartTime;
+    private final boolean showRunningPlayerSprite;
+    private int runningPlayerFrameIndex = 0;
+    private long runningPlayerLastFrameTime = 0L;
 
     public Field(Context current, ArrayList<MoveTo> argMoves, ArrayList<MoveTo> argPossibleMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex) {
 
@@ -104,11 +110,20 @@ public class Field {
             flLinesWidth = res.getFraction(R.fraction.flLinesWidth,1,1);
             flDots= res.getFraction(R.fraction.flDots,1,1);
             flText = res.getFraction(R.fraction.flText,1,1);
+            flSpriteSize = res.getFraction(R.fraction.flSpriteSize,1,1);
             intFieldWidth = res.getInteger(R.integer.intFieldHalfWidth)*2;
             intFieldHeight = res.getInteger(R.integer.intFieldHalfHeight)*2;
         } catch (Exception e) {
             Log.e("TAG_Soccer", getClass().getSimpleName() + ".<init>: Failed to load field resources", e);
             throw new RuntimeException("Failed to load field configuration resources", e);
+        }
+
+        showRunningPlayerSprite = gameType == 1 || gameType == 2;
+        if (showRunningPlayerSprite) {
+            runningPlayerFrames = RunningPlayerSprite.getFrames(current);
+            runningPlayerLastFrameTime = SystemClock.uptimeMillis();
+        } else {
+            runningPlayerFrames = new Bitmap[0];
         }
 
         pPlayer0=new Paint();
@@ -401,6 +416,39 @@ public class Field {
 
         RectF dst = new RectF(cx - radius, cy - radius, cx + radius, cy + radius);
         canvas.drawBitmap(ballBitmap, null, dst, null);
+
+        if (showRunningPlayerSprite && runningPlayerFrames.length > 0 && flSpriteSize > 0f) {
+            long now = SystemClock.uptimeMillis();
+            if (runningPlayerLastFrameTime == 0L) {
+                runningPlayerLastFrameTime = now;
+            }
+            long elapsed = now - runningPlayerLastFrameTime;
+            if (elapsed >= RunningPlayerSprite.FRAME_DURATION_MS) {
+                long framesToAdvance = elapsed / RunningPlayerSprite.FRAME_DURATION_MS;
+                runningPlayerFrameIndex = (int) ((runningPlayerFrameIndex + framesToAdvance) % runningPlayerFrames.length);
+                long remainder = elapsed % RunningPlayerSprite.FRAME_DURATION_MS;
+                runningPlayerLastFrameTime = now - remainder;
+            }
+
+            Bitmap spriteFrame = runningPlayerFrames[runningPlayerFrameIndex];
+            if (spriteFrame != null && !spriteFrame.isRecycled()) {
+                float spriteHeight = canvas.getHeight() * flSpriteSize;
+                if (spriteHeight > 0f) {
+                    float spriteWidth = spriteHeight * spriteFrame.getWidth() / (float) spriteFrame.getHeight();
+                    float spriteTop = cy + radius + dotSize;
+                    float spriteBottom = spriteTop + spriteHeight;
+                    if (spriteBottom > canvas.getHeight()) {
+                        float overflow = spriteBottom - canvas.getHeight();
+                        spriteTop -= overflow;
+                        spriteBottom = canvas.getHeight();
+                    }
+                    float spriteLeft = cx - spriteWidth / 2f;
+                    float spriteRight = cx + spriteWidth / 2f;
+                    RectF spriteDst = new RectF(spriteLeft, spriteTop, spriteRight, spriteBottom);
+                    canvas.drawBitmap(spriteFrame, null, spriteDst, null);
+                }
+            }
+        }
 
 
         // Turn indicator
