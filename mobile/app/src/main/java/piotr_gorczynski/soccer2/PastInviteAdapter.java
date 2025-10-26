@@ -291,16 +291,16 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
         }
     }
 
-    void setData(List<DocumentSnapshot> invites) {
+    void setData(@NonNull List<DocumentSnapshot> invites) {
         docs.clear();
         docs.addAll(invites);
         notifyDataSetChanged();
-    }
 
-    void appendData(@NonNull List<DocumentSnapshot> invites) {
-        int startPosition = docs.size();
-        docs.addAll(invites);
-        notifyItemRangeInserted(startPosition, invites.size());
+        // Log what's actually in the adapter after setData
+        android.util.Log.d("TAG_Soccer", "PastInviteAdapter.setData: Adapter now contains " + docs.size() + " items");
+        for (int i = 0; i < docs.size(); i++) {
+            android.util.Log.d("TAG_Soccer", "PastInviteAdapter.setData: [" + i + "] ID: " + docs.get(i).getId());
+        }
     }
 
     void setFriendUids(@NonNull Set<String> friendUids) {

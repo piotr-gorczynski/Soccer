@@ -5,15 +5,16 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.ConcatAdapter;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -35,21 +36,16 @@ import android.content.SharedPreferences;
 
 public class InvitationsActivity extends BaseActivity {
 
-    private static final int PENDING_INVITES_PAGE_SIZE = 10;
-    private static final int PAST_INVITES_PAGE_SIZE = 10;
-
-    RecyclerView invitesList;
-    TextView emptyText;
+    RecyclerView invitationsRecyclerView;
     PendingInviteAdapter pendingAdapter;
     RecyclerView.AdapterDataObserver pendingInvitesObserver;
-    Button loadMorePendingButton;
-
-    RecyclerView pastInvitesList;
-    TextView pastInvitesLabel;
-    TextView emptyPastInvites;
     PastInviteAdapter pastAdapter;
     RecyclerView.AdapterDataObserver pastInvitesObserver;
-    Button loadMorePastButton;
+    SectionHeaderAdapter pendingHeaderAdapter;
+    SectionHeaderAdapter pastHeaderAdapter;
+    EmptyStateAdapter pendingEmptyAdapter;
+    EmptyStateAdapter pastEmptyAdapter;
+    ConcatAdapter concatAdapter;
 
     FirebaseFirestore db;
     FirebaseAuth auth;
@@ -57,11 +53,6 @@ public class InvitationsActivity extends BaseActivity {
 
     private ListenerRegistration invitesSub;   // keep handle so we can remove it later
     private ListenerRegistration pastInvitesSub;
-    
-    private DocumentSnapshot lastPendingDoc = null;
-    private DocumentSnapshot lastPastDoc = null;
-    private boolean hasMorePendingInvites = true;
-    private boolean hasMorePastInvites = true;
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -87,59 +78,67 @@ public class InvitationsActivity extends BaseActivity {
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(R.string.pending_game_invitations);
 
-        invitesList = findViewById(R.id.invitesList);
-        emptyText = findViewById(R.id.emptyInvites);
-        loadMorePendingButton = findViewById(R.id.loadMorePendingButton);
-        invitesList.setLayoutManager(new LinearLayoutManager(this));
+        invitationsRecyclerView = findViewById(R.id.invitationsRecyclerView);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        invitationsRecyclerView.setLayoutManager(layoutManager);
+        disableChangeAnimations(invitationsRecyclerView);
+
         pendingAdapter = new PendingInviteAdapter(this, this::acceptInvite);
-        invitesList.setAdapter(pendingAdapter);
+        pastAdapter = new PastInviteAdapter(this, this::sendInviteViaCF, this::addFriend);
+        pastAdapter.setFriendUids(friendUids);
+
+        pendingHeaderAdapter = new SectionHeaderAdapter(getString(R.string.pending_invites));
+        pastHeaderAdapter = new SectionHeaderAdapter(getString(R.string.past_invites));
+        pendingEmptyAdapter = new EmptyStateAdapter(getString(R.string.no_pending_invites));
+        pastEmptyAdapter = new EmptyStateAdapter(getString(R.string.no_past_invites));
+        pendingEmptyAdapter.setVisible(false);
+        pastEmptyAdapter.setVisible(false);
+
+        concatAdapter = new ConcatAdapter(
+                pendingHeaderAdapter,
+                pendingEmptyAdapter,
+                pendingAdapter,
+                pastHeaderAdapter,
+                pastEmptyAdapter,
+                pastAdapter
+        );
+        invitationsRecyclerView.setAdapter(concatAdapter);
+
         pendingInvitesObserver = new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
-                updatePendingInvitesEmptyState();
+                onPendingInvitesChanged();
             }
 
             @Override
             public void onItemRangeInserted(int positionStart, int itemCount) {
-                updatePendingInvitesEmptyState();
+                onPendingInvitesChanged();
             }
 
             @Override
             public void onItemRangeRemoved(int positionStart, int itemCount) {
-                updatePendingInvitesEmptyState();
+                onPendingInvitesChanged();
             }
         };
         pendingAdapter.registerAdapterDataObserver(pendingInvitesObserver);
-        
-        loadMorePendingButton.setOnClickListener(v -> loadMorePendingInvites());
 
-        pastInvitesList = findViewById(R.id.pastInvitesList);
-        pastInvitesLabel = findViewById(R.id.pastInvitesLabel);
-        emptyPastInvites = findViewById(R.id.emptyPastInvites);
-        loadMorePastButton = findViewById(R.id.loadMorePastButton);
-        pastInvitesList.setLayoutManager(new LinearLayoutManager(this));
-        pastAdapter = new PastInviteAdapter(this, this::sendInviteViaCF, this::addFriend);
-        pastAdapter.setFriendUids(friendUids);
-        pastInvitesList.setAdapter(pastAdapter);
         pastInvitesObserver = new RecyclerView.AdapterDataObserver() {
             @Override
             public void onChanged() {
-                updatePastInvitesEmptyState();
+                onPastInvitesChanged();
             }
 
             @Override
             public void onItemRangeInserted(int positionStart, int itemCount) {
-                updatePastInvitesEmptyState();
+                onPastInvitesChanged();
             }
 
             @Override
             public void onItemRangeRemoved(int positionStart, int itemCount) {
-                updatePastInvitesEmptyState();
+                onPastInvitesChanged();
             }
         };
         pastAdapter.registerAdapterDataObserver(pastInvitesObserver);
-        
-        loadMorePastButton.setOnClickListener(v -> loadMorePastInvites());
 
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
@@ -148,6 +147,21 @@ public class InvitationsActivity extends BaseActivity {
         listenForPastInvites();
         loadFriends();
 
+    }
+
+    private void disableChangeAnimations(@NonNull RecyclerView recyclerView) {
+        RecyclerView.ItemAnimator animator = recyclerView.getItemAnimator();
+        if (animator instanceof SimpleItemAnimator) {
+            ((SimpleItemAnimator) animator).setSupportsChangeAnimations(false);
+        }
+
+        // Recent RecyclerView versions can crash when animations are running while the
+        // adapter dataset is invalidated and the view is being remeasured (see
+        // DefaultItemAnimator#runPendingAnimations). Because InvitationsActivity updates the
+        // lists by calling notifyDataSetChanged() followed by requestLayout(), it is safer to
+        // disable the animator entirely so that RecyclerView never tries to operate on a null
+        // ViewHolder during those layout passes.
+        recyclerView.setItemAnimator(null);
     }
 
     // At the top of the class — keeps logcat tidy
@@ -267,16 +281,15 @@ public class InvitationsActivity extends BaseActivity {
         Query query = db.collection("invitations")
                 .whereEqualTo("to", currentUserId)
                 .whereEqualTo("status", "pending")
-                .orderBy("expireAt")
-                .limit(PENDING_INVITES_PAGE_SIZE);
+                .orderBy("expireAt");
 
         invitesSub = query.addSnapshotListener((querySnapshot, e) -> {
                     if (e != null) {
                         if (pendingAdapter != null) {
                             pendingAdapter.clear();
                         }
-                        emptyText.setVisibility(View.VISIBLE);
-                        updatePendingInvitesEmptyState();
+                        pendingEmptyAdapter.setVisible(true);
+                        logUiSnapshot("listenForInvites_error");
                         Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                                 + ": Listen failed", e);
                         return;
@@ -306,94 +319,35 @@ public class InvitationsActivity extends BaseActivity {
 
                             return Long.compare(leftMillis, rightMillis);
                         });
+
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".listenForInvites: Showing " + pendingInvites.size() + " pending invites");
+                        for (DocumentSnapshot invite : pendingInvites) {
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + ".listenForInvites: Pending invite ID: " + invite.getId());
+                        }
+
                         pendingAdapter.setData(pendingInvites);
                     }
 
-                    // Update pagination state
-                    if (!pendingInvites.isEmpty()) {
-                        lastPendingDoc = pendingInvites.get(pendingInvites.size() - 1);
-                        hasMorePendingInvites = pendingInvites.size() >= PENDING_INVITES_PAGE_SIZE;
-                    } else {
-                        lastPendingDoc = null;
-                        hasMorePendingInvites = false;
-                    }
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".listenForInvites: After setData, adapter reports " + pendingAdapter.getItemCount() + " items");
 
                     updatePendingInvitesEmptyState();
-                    updateLoadMorePendingButtonVisibility();
+                    logUiSnapshot("listenForInvites_afterSetData");
                 });
     }
 
-    private void loadMorePendingInvites() {
-        if (!hasMorePendingInvites || lastPendingDoc == null) {
-            return;
-        }
-
-        String currentUserId = Objects.requireNonNull(auth.getCurrentUser()).getUid();
-
-        loadMorePendingButton.setEnabled(false);
-
-        db.collection("invitations")
-                .whereEqualTo("to", currentUserId)
-                .whereEqualTo("status", "pending")
-                .orderBy("expireAt")
-                .startAfter(lastPendingDoc)
-                .limit(PENDING_INVITES_PAGE_SIZE)
-                .get()
-                .addOnSuccessListener(querySnapshot -> {
-                    List<DocumentSnapshot> pendingInvites = new ArrayList<>();
-
-                    long nowMillis = System.currentTimeMillis();
-                    for (DocumentSnapshot doc : querySnapshot) {
-                        Timestamp exp = doc.getTimestamp("expireAt");
-                        if (exp != null && exp.toDate().getTime() <= nowMillis) {
-                            continue;
-                        }
-                        pendingInvites.add(doc);
-                    }
-
-                    if (!pendingInvites.isEmpty()) {
-                        pendingInvites.sort((left, right) -> {
-                            Timestamp leftCreatedAt = left.getTimestamp("createdAt");
-                            Timestamp rightCreatedAt = right.getTimestamp("createdAt");
-
-                            long leftMillis = leftCreatedAt != null ? leftCreatedAt.toDate().getTime() : Long.MAX_VALUE;
-                            long rightMillis = rightCreatedAt != null ? rightCreatedAt.toDate().getTime() : Long.MAX_VALUE;
-
-                            return Long.compare(leftMillis, rightMillis);
-                        });
-                        pendingAdapter.appendData(pendingInvites);
-                        lastPendingDoc = pendingInvites.get(pendingInvites.size() - 1);
-                        hasMorePendingInvites = pendingInvites.size() >= PENDING_INVITES_PAGE_SIZE;
-                    } else {
-                        hasMorePendingInvites = false;
-                    }
-
-                    loadMorePendingButton.setEnabled(true);
-                    updateLoadMorePendingButtonVisibility();
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".loadMorePendingInvites: Failed", e);
-                    Toast.makeText(this, R.string.failed_to_load_more_invites, Toast.LENGTH_SHORT).show();
-                    loadMorePendingButton.setEnabled(true);
-                });
-    }
-
-    private void updateLoadMorePendingButtonVisibility() {
-        if (loadMorePendingButton != null) {
-            loadMorePendingButton.setVisibility(hasMorePendingInvites ? View.VISIBLE : View.GONE);
-        }
+    private void onPendingInvitesChanged() {
+        updatePendingInvitesEmptyState();
+        logUiSnapshot("pendingAdapterDataChanged");
     }
 
     private void updatePendingInvitesEmptyState() {
-        if (emptyText == null || pendingAdapter == null) {
+        if (pendingEmptyAdapter == null || pendingAdapter == null) {
             return;
         }
 
-        if (pendingAdapter.getItemCount() == 0) {
-            emptyText.setVisibility(View.VISIBLE);
-        } else {
-            emptyText.setVisibility(View.GONE);
-        }
+        boolean isEmpty = pendingAdapter.getItemCount() == 0;
+        pendingEmptyAdapter.setVisible(isEmpty);
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".updatePendingInvitesEmptyState: Empty message visible = " + isEmpty);
     }
 
     private void listenForPastInvites() {
@@ -407,13 +361,14 @@ public class InvitationsActivity extends BaseActivity {
         Query query = db.collection("invitations")
                 .whereEqualTo("to", currentUserId)
                 .whereIn("status", java.util.Arrays.asList("accepted", "cancelled", "expired"))
-                .orderBy("createdAt", Query.Direction.DESCENDING)
-                .limit(PAST_INVITES_PAGE_SIZE);
+                .orderBy("createdAt", Query.Direction.DESCENDING);
 
         pastInvitesSub = query.addSnapshotListener((querySnapshot, e) -> {
                     if (e != null) {
                         Log.e("TAG_Soccer", getClass().getSimpleName() + ".listenForPastInvites: Listen failed", e);
-                        emptyPastInvites.setVisibility(View.VISIBLE);
+                        pastAdapter.setData(Collections.emptyList());
+                        pastEmptyAdapter.setVisible(true);
+                        logUiSnapshot("listenForPastInvites_error");
                         return;
                     }
 
@@ -422,66 +377,18 @@ public class InvitationsActivity extends BaseActivity {
                         pastInvitesList.add(doc);
                     }
 
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".listenForPastInvites: Showing " + pastInvitesList.size() + " past invites");
+                    for (DocumentSnapshot invite : pastInvitesList) {
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".listenForPastInvites: Past invite ID: " + invite.getId());
+                    }
+
                     pastAdapter.setData(pastInvitesList);
 
-                    // Update pagination state
-                    if (!pastInvitesList.isEmpty()) {
-                        lastPastDoc = pastInvitesList.get(pastInvitesList.size() - 1);
-                        hasMorePastInvites = pastInvitesList.size() >= PAST_INVITES_PAGE_SIZE;
-                    } else {
-                        lastPastDoc = null;
-                        hasMorePastInvites = false;
-                    }
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".listenForPastInvites: After setData, adapter reports " + pastAdapter.getItemCount() + " items");
 
                     updatePastInvitesEmptyState();
-                    updateLoadMorePastButtonVisibility();
+                    logUiSnapshot("listenForPastInvites_afterSetData");
                 });
-    }
-
-    private void loadMorePastInvites() {
-        if (!hasMorePastInvites || lastPastDoc == null) {
-            return;
-        }
-
-        String currentUserId = Objects.requireNonNull(auth.getCurrentUser()).getUid();
-
-        loadMorePastButton.setEnabled(false);
-
-        db.collection("invitations")
-                .whereEqualTo("to", currentUserId)
-                .whereIn("status", java.util.Arrays.asList("accepted", "cancelled", "expired"))
-                .orderBy("createdAt", Query.Direction.DESCENDING)
-                .startAfter(lastPastDoc)
-                .limit(PAST_INVITES_PAGE_SIZE)
-                .get()
-                .addOnSuccessListener(querySnapshot -> {
-                    List<DocumentSnapshot> pastInvitesList = new ArrayList<>();
-                    for (DocumentSnapshot doc : querySnapshot) {
-                        pastInvitesList.add(doc);
-                    }
-
-                    if (!pastInvitesList.isEmpty()) {
-                        pastAdapter.appendData(pastInvitesList);
-                        lastPastDoc = pastInvitesList.get(pastInvitesList.size() - 1);
-                        hasMorePastInvites = pastInvitesList.size() >= PAST_INVITES_PAGE_SIZE;
-                    } else {
-                        hasMorePastInvites = false;
-                    }
-
-                    loadMorePastButton.setEnabled(true);
-                    updateLoadMorePastButtonVisibility();
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".loadMorePastInvites: Failed", e);
-                    Toast.makeText(this, R.string.failed_to_load_more_invites, Toast.LENGTH_SHORT).show();
-                    loadMorePastButton.setEnabled(true);
-                });
-    }
-
-    private void updateLoadMorePastButtonVisibility() {
-        if (loadMorePastButton != null) {
-            loadMorePastButton.setVisibility(hasMorePastInvites ? View.VISIBLE : View.GONE);
-        }
     }
 
     private void loadFriends() {
@@ -510,16 +417,69 @@ public class InvitationsActivity extends BaseActivity {
                 });
     }
 
+    private void onPastInvitesChanged() {
+        updatePastInvitesEmptyState();
+        logUiSnapshot("pastAdapterDataChanged");
+    }
+
     private void updatePastInvitesEmptyState() {
-        if (emptyPastInvites == null || pastAdapter == null) {
+        if (pastEmptyAdapter == null || pastAdapter == null) {
             return;
         }
 
-        if (pastAdapter.getItemCount() == 0) {
-            emptyPastInvites.setVisibility(View.VISIBLE);
-        } else {
-            emptyPastInvites.setVisibility(View.GONE);
+        boolean isEmpty = pastAdapter.getItemCount() == 0;
+        pastEmptyAdapter.setVisible(isEmpty);
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".updatePastInvitesEmptyState: Empty message visible = " + isEmpty);
+    }
+
+    private void logUiSnapshot(@NonNull String source) {
+        if (invitationsRecyclerView == null) {
+            return;
         }
+
+        invitationsRecyclerView.post(() -> {
+            RecyclerView.LayoutManager layoutManager = invitationsRecyclerView.getLayoutManager();
+            int childCount = invitationsRecyclerView.getChildCount();
+            int totalItems = concatAdapter != null ? concatAdapter.getItemCount() : -1;
+
+            int firstVisible = -1;
+            int lastVisible = -1;
+            if (layoutManager instanceof LinearLayoutManager linearLayoutManager) {
+                firstVisible = linearLayoutManager.findFirstVisibleItemPosition();
+                lastVisible = linearLayoutManager.findLastVisibleItemPosition();
+            }
+
+            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + source
+                    + ": RecyclerView childCount=" + childCount
+                    + ", totalAdapterItems=" + totalItems
+                    + ", firstVisible=" + firstVisible
+                    + ", lastVisible=" + lastVisible);
+
+            for (int i = 0; i < childCount; i++) {
+                View child = invitationsRecyclerView.getChildAt(i);
+                int adapterPosition = invitationsRecyclerView.getChildAdapterPosition(child);
+                CharSequence summary = null;
+
+                TextView header = child.findViewById(R.id.sectionTitle);
+                if (header != null) {
+                    summary = header.getText();
+                } else {
+                    TextView inviteTitle = child.findViewById(R.id.inviteReceivedAndStatus);
+                    if (inviteTitle != null) {
+                        summary = inviteTitle.getText();
+                    } else {
+                        TextView emptyMessage = child.findViewById(R.id.emptyMessage);
+                        if (emptyMessage != null) {
+                            summary = emptyMessage.getText();
+                        }
+                    }
+                }
+
+                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + source
+                        + ": child[" + i + "] adapterPos=" + adapterPosition
+                        + (summary != null ? ", text=" + summary : ""));
+            }
+        });
     }
 
     @Override
