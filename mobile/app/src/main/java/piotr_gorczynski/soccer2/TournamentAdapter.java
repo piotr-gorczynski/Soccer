@@ -157,7 +157,7 @@ public class TournamentAdapter
                             boolean joinedAlready = p.exists();
                             if (joinedAlready) {
                                 h.joinBtn.setEnabled(false);
-                                h.leaveBtn.setEnabled(true);
+                                h.leaveBtn.setEnabled(!closed);
                             } else {
                                 h.joinBtn.setEnabled(!full && !closed);
                                 h.leaveBtn.setEnabled(false);
