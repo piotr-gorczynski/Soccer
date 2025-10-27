@@ -15,6 +15,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.functions.FirebaseFunctions;
@@ -130,6 +131,18 @@ public class TournamentsActivity extends BaseActivity {
                     endedDocs.add(doc);
                 }
             }
+
+            // Sort ended tournaments by their matches deadline so the most recently
+            // finished tournaments appear first in the list shown to the user.
+            endedDocs.sort((left, right) -> {
+                Timestamp leftDeadline = left.getTimestamp("matchesDeadline");
+                Timestamp rightDeadline = right.getTimestamp("matchesDeadline");
+
+                long leftMillis = leftDeadline != null ? leftDeadline.toDate().getTime() : Long.MIN_VALUE;
+                long rightMillis = rightDeadline != null ? rightDeadline.toDate().getTime() : Long.MIN_VALUE;
+
+                return Long.compare(rightMillis, leftMillis);
+            });
 
             registeringAdapter.notifyDataSetChanged();
             runningAdapter.notifyDataSetChanged();
