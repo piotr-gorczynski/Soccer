@@ -3,6 +3,9 @@
 🔔 Handle optional running player spritesheet
 🔔 Separate field margins into horizontal and vertical
 🔔 Prevent leaving tournaments after registration closes
+🔔 Filter tournament invitations from friend invite statistics
+🔔 Add user-configurable animations toggle in Settings
+🔔 Add tournament-filtered invitation and match statistics to match items
 🎮 Fix: Refresh match statistics when returning from completed game
 🎮 Fix WindowLeaked crash in MenuActivity.showMissedInviteDialog
 🎮 ...
