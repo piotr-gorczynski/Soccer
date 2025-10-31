@@ -43,6 +43,8 @@
     <string name="pref_title_language">زبان</string>
     <string name="pref_summary_language">زبان مورد نظر خود را انتخاب کنید</string>
     <string name="current_language">فعلی: %1$s</string>
+    <string name="pref_title_animations">انیمیشن‌ها</string>
+    <string name="pref_summary_animations">فعال یا غیرفعال کردن انیمیشن‌های بازیکن</string>
     <string name="pref_title_facebook">جامعه فیس‌بوک</string>
     <string name="pref_summary_facebook">صفحه جامعه ما را در فیس‌بوک باز کنید</string>
     <string-array name="pref_level_titles">

@@ -54,6 +54,8 @@
     <string name="pref_title_language">Fiteny</string>
     <string name="pref_summary_language">Safidio ny fiteny tianao</string>
     <string name="current_language">Ankehitriny: %1$s</string>
+    <string name="pref_title_animations">Sary mihetsika</string>
+    <string name="pref_summary_animations">Alefaso na ajanona ny sary mihetsika mpilalao</string>
     <string name="pref_title_facebook">Vondron`olona Facebook</string>
     <string name="pref_summary_facebook">Sokafy ny pejy vondrona anay ao amin`ny Facebook</string>
     
