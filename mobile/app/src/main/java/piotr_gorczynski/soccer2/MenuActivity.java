@@ -1193,6 +1193,7 @@ public class MenuActivity extends BaseActivity {
         isRunningPlayerAnimationStarted = true;
         runningPlayerFrameIndex = 0;
         runningPlayerRowIndex = Math.max(0, Math.min(runningPlayerRowIndex, runningPlayerFrames.length - 1));
+        runningPlayerView.setVisibility(View.VISIBLE);
         runningPlayerView.setImageBitmap(currentRowFrames[0]);
         configureRunningPlayerClickListener();
         runningPlayerAnimator.run();
