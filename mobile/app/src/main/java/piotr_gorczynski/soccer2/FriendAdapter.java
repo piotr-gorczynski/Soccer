@@ -285,13 +285,16 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
                     
                     for (DocumentSnapshot doc : sentSnapshot) {
                         // Only count invites that are not part of a tournament
+                        // Tournament invites have a non-null, non-empty tournamentId
                         String tournamentId = doc.getString("tournamentId");
-                        if (tournamentId == null) {
-                            totalSent++;
-                            String status = doc.getString("status");
-                            if ("accepted".equals(status)) {
-                                totalSentAccepted++;
-                            }
+                        if (isTournamentInvite(tournamentId)) {
+                            continue;  // Skip tournament invites
+                        }
+                        
+                        totalSent++;
+                        String status = doc.getString("status");
+                        if ("accepted".equals(status)) {
+                            totalSentAccepted++;
                         }
                     }
                     
@@ -303,13 +306,16 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
                     
                     for (DocumentSnapshot doc : receivedSnapshot) {
                         // Only count invites that are not part of a tournament
+                        // Tournament invites have a non-null, non-empty tournamentId
                         String tournamentId = doc.getString("tournamentId");
-                        if (tournamentId == null) {
-                            totalReceived++;
-                            String status = doc.getString("status");
-                            if ("accepted".equals(status)) {
-                                totalReceivedAccepted++;
-                            }
+                        if (isTournamentInvite(tournamentId)) {
+                            continue;  // Skip tournament invites
+                        }
+                        
+                        totalReceived++;
+                        String status = doc.getString("status");
+                        if ("accepted".equals(status)) {
+                            totalReceivedAccepted++;
                         }
                     }
                     
@@ -491,6 +497,18 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
                         notifyItemChanged(idx, "matchStats");
                     }
                 });
+    }
+    
+    /**
+     * Check if an invitation is a tournament invitation.
+     * Tournament invitations have a non-null, non-empty tournamentId.
+     * Friend invitations have null or empty tournamentId.
+     * 
+     * @param tournamentId The tournamentId field from the invitation document
+     * @return true if this is a tournament invitation, false if it's a friend invitation
+     */
+    private static boolean isTournamentInvite(@Nullable String tournamentId) {
+        return tournamentId != null && !tournamentId.isEmpty();
     }
 
     @Override
