@@ -280,26 +280,36 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
                     // Process sent invites
                     com.google.firebase.firestore.QuerySnapshot sentSnapshot = 
                             (com.google.firebase.firestore.QuerySnapshot) results.get(0);
-                    int totalSent = sentSnapshot.size();
+                    int totalSent = 0;
                     int totalSentAccepted = 0;
                     
                     for (DocumentSnapshot doc : sentSnapshot) {
-                        String status = doc.getString("status");
-                        if ("accepted".equals(status)) {
-                            totalSentAccepted++;
+                        // Only count invites that are not part of a tournament
+                        String tournamentId = doc.getString("tournamentId");
+                        if (tournamentId == null) {
+                            totalSent++;
+                            String status = doc.getString("status");
+                            if ("accepted".equals(status)) {
+                                totalSentAccepted++;
+                            }
                         }
                     }
                     
                     // Process received invites
                     com.google.firebase.firestore.QuerySnapshot receivedSnapshot = 
                             (com.google.firebase.firestore.QuerySnapshot) results.get(1);
-                    int totalReceived = receivedSnapshot.size();
+                    int totalReceived = 0;
                     int totalReceivedAccepted = 0;
                     
                     for (DocumentSnapshot doc : receivedSnapshot) {
-                        String status = doc.getString("status");
-                        if ("accepted".equals(status)) {
-                            totalReceivedAccepted++;
+                        // Only count invites that are not part of a tournament
+                        String tournamentId = doc.getString("tournamentId");
+                        if (tournamentId == null) {
+                            totalReceived++;
+                            String status = doc.getString("status");
+                            if ("accepted".equals(status)) {
+                                totalReceivedAccepted++;
+                            }
                         }
                     }
                     
