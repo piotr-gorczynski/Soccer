@@ -69,10 +69,6 @@ public class AnimationSettingsTest {
             Class<?> menuActivityClass = Class.forName("piotr_gorczynski.soccer2.MenuActivity");
             assertNotNull("MenuActivity class should exist", menuActivityClass);
             
-            // MenuActivity should have setupRunningPlayerAnimation and startRunningPlayerAnimation methods
-            // These are private methods, but we can verify the class structure
-            assertTrue("MenuActivity should be a valid class that handles animations", menuActivityClass != null);
-            
         } catch (ClassNotFoundException e) {
             fail("MenuActivity class not found: " + e.getMessage());
         }

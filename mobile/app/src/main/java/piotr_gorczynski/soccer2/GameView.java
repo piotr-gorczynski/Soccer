@@ -66,6 +66,16 @@ public class GameView extends View {
         this.inputEnabled = enabled;
     }
 
+    /**
+     * Helper method to check if animations are enabled in preferences
+     * @param context The context to read preferences from
+     * @return true if animations are enabled, false otherwise
+     */
+    private static boolean areAnimationsEnabled(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getBoolean("animations_enabled", true);
+    }
+
     @SuppressWarnings("unused")
     public interface MoveCallback {
         void onLocalMove(int x, int y, int p);
@@ -179,13 +189,9 @@ public class GameView extends View {
         // Persist the provided turn start time (or initialize if missing)
         this.turnStartsTime = (turnStartTime != null) ? turnStartTime : System.currentTimeMillis();
 
-        // Check if animations are enabled in preferences
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean animationsEnabled = prefs.getBoolean("animations_enabled", true);
-
         // construct Field with custom nicknames
         try {
-            field = new Field(context, realMoves, possibleMovesForDrawing, GameType, player0Name, player1Name, localPlayerIndex, animationsEnabled);
+            field = new Field(context, realMoves, possibleMovesForDrawing, GameType, player0Name, player1Name, localPlayerIndex, areAnimationsEnabled(context));
         } catch (Exception e) {
             Log.e("TAG_Soccer", getClass().getSimpleName() + ".<init>: Failed to create Field", e);
             throw new RuntimeException("Failed to initialize game field", e);
@@ -255,12 +261,8 @@ public class GameView extends View {
         possibleMoves.add(new MoveTo(4,3,0));
         */
 
-        // Check if animations are enabled in preferences
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean animationsEnabled = prefs.getBoolean("animations_enabled", true);
-
         try {
-            field = new Field(context, realMoves, possibleMovesForDrawing, GameType, "Player 1", "Player 2", 0, animationsEnabled);
+            field = new Field(context, realMoves, possibleMovesForDrawing, GameType, "Player 1", "Player 2", 0, areAnimationsEnabled(context));
         } catch (Exception e) {
             Log.e("TAG_Soccer", getClass().getSimpleName() + ".<init>: Failed to create Field", e);
             throw new RuntimeException("Failed to initialize game field", e);
