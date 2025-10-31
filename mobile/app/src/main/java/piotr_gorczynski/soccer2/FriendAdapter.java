@@ -285,13 +285,16 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
                     
                     for (DocumentSnapshot doc : sentSnapshot) {
                         // Only count invites that are not part of a tournament
+                        // Tournament invites have a non-null, non-empty tournamentId
                         String tournamentId = doc.getString("tournamentId");
-                        if (tournamentId == null) {
-                            totalSent++;
-                            String status = doc.getString("status");
-                            if ("accepted".equals(status)) {
-                                totalSentAccepted++;
-                            }
+                        if (tournamentId != null && !tournamentId.isEmpty()) {
+                            continue;  // Skip tournament invites
+                        }
+                        
+                        totalSent++;
+                        String status = doc.getString("status");
+                        if ("accepted".equals(status)) {
+                            totalSentAccepted++;
                         }
                     }
                     
@@ -303,13 +306,16 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
                     
                     for (DocumentSnapshot doc : receivedSnapshot) {
                         // Only count invites that are not part of a tournament
+                        // Tournament invites have a non-null, non-empty tournamentId
                         String tournamentId = doc.getString("tournamentId");
-                        if (tournamentId == null) {
-                            totalReceived++;
-                            String status = doc.getString("status");
-                            if ("accepted".equals(status)) {
-                                totalReceivedAccepted++;
-                            }
+                        if (tournamentId != null && !tournamentId.isEmpty()) {
+                            continue;  // Skip tournament invites
+                        }
+                        
+                        totalReceived++;
+                        String status = doc.getString("status");
+                        if ("accepted".equals(status)) {
+                            totalReceivedAccepted++;
                         }
                     }
                     
