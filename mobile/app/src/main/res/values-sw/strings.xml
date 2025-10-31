@@ -54,6 +54,8 @@
     <string name="pref_title_language">Lugha</string>
     <string name="pref_summary_language">Chagua lugha unayopendelea</string>
     <string name="current_language">Ya sasa: %1$s</string>
+    <string name="pref_title_animations">Uhuisho</string>
+    <string name="pref_summary_animations">Washa au lemaza uhuisho wa mchezaji</string>
     <string name="pref_title_facebook">Jumuiya ya Facebook</string>
     <string name="pref_summary_facebook">Fungua ukurasa wa jumuiya yetu kwenye Facebook</string>
     

@@ -10,6 +10,8 @@
     <string name="pref_title_language">Język</string>
     <string name="pref_summary_language">Wybierz preferowany język</string>
     <string name="current_language">Aktualny: %1$s</string>
+    <string name="pref_title_animations">Animacje</string>
+    <string name="pref_summary_animations">Włącz lub wyłącz animacje gracza</string>
     <string name="select_language">Wybierz język</string>
     
     <!-- Language names in Polish -->

@@ -920,6 +920,15 @@ public class MenuActivity extends BaseActivity {
                 });
     }
 
+    /**
+     * Helper method to check if animations are enabled in preferences
+     * @return true if animations are enabled, false otherwise
+     */
+    private boolean areAnimationsEnabled() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        return prefs.getBoolean("animations_enabled", true);
+    }
+
     private void setupRunningPlayerAnimation() {
         runningPlayerView = findViewById(R.id.menu_running_player);
         if (runningPlayerView == null) {
@@ -927,6 +936,15 @@ public class MenuActivity extends BaseActivity {
                     "TAG_Soccer",
                     getClass().getSimpleName() + ".setupRunningPlayerAnimation: runningPlayerView is null"
             );
+            return;
+        }
+
+        if (!areAnimationsEnabled()) {
+            Log.d(
+                    "TAG_Soccer",
+                    getClass().getSimpleName() + ".setupRunningPlayerAnimation: Animations disabled in settings"
+            );
+            runningPlayerView.setVisibility(View.GONE);
             return;
         }
 
@@ -1147,6 +1165,17 @@ public class MenuActivity extends BaseActivity {
     }
 
     private void startRunningPlayerAnimation() {
+        if (!areAnimationsEnabled()) {
+            Log.d(
+                    "TAG_Soccer",
+                    getClass().getSimpleName() + ".startRunningPlayerAnimation: Animations disabled in settings"
+            );
+            if (runningPlayerView != null) {
+                runningPlayerView.setVisibility(View.GONE);
+            }
+            return;
+        }
+
         if (runningPlayerView == null || runningPlayerFrames == null
                 || getCurrentRunningPlayerRowFrames() == null) {
             setupRunningPlayerAnimation();

@@ -54,6 +54,8 @@
     <string name="pref_title_language">ພາສາ</string>
     <string name="pref_summary_language">ເລືອກພາສາທີ່ເຈົ້າມັກ</string>
     <string name="current_language">ປັດຈຸບັນ: %1$s</string>
+    <string name="pref_title_animations">ແອນິເມຊັນ</string>
+    <string name="pref_summary_animations">ເປີດ ຫຼື ປິດແອນິເມຊັນຂອງຜູ້ຫຼິ້ນ</string>
     <string name="pref_title_facebook">ຊຸມຊົນ Facebook</string>
     <string name="pref_summary_facebook">ເປີດໜ້າຊຸມຊົນຂອງພວກເຮົາໃນ Facebook</string>
     
