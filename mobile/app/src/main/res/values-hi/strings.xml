@@ -14,6 +14,8 @@
     <string name="pref_title_language">भाषा</string>
     <string name="pref_summary_language">अपनी पसंदीदा भाषा चुनें</string>
     <string name="current_language">वर्तमान: %1$s</string>
+    <string name="pref_title_animations">एनिमेशन</string>
+    <string name="pref_summary_animations">खिलाड़ी एनिमेशन सक्षम या अक्षम करें</string>
     <string name="select_language">भाषा चुनें</string>
     
     <!-- Settings preferences -->

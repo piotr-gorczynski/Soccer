@@ -10,6 +10,8 @@
     <string name="pref_title_language">Idioma</string>
     <string name="pref_summary_language">Elige tu idioma preferido</string>
     <string name="current_language">Actual: %1$s</string>
+    <string name="pref_title_animations">Animaciones</string>
+    <string name="pref_summary_animations">Habilitar o deshabilitar animaciones del jugador</string>
     <string name="select_language">Seleccionar idioma</string>
     
     <!-- Language names in Spanish -->
