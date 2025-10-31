@@ -464,27 +464,12 @@ public class MatchAdapter
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         
         // Query for invites sent FROM current user TO opponent in this tournament
-        com.google.android.gms.tasks.Task<com.google.firebase.firestore.QuerySnapshot> sentTask = 
-                db.collection("invitations")
+        db.collection("invitations")
                 .whereEqualTo("from", myUid)
                 .whereEqualTo("to", targetUid)
                 .whereEqualTo("tournamentId", tournamentId)
-                .get();
-        
-        // Query for invites received FROM opponent TO current user in this tournament
-        com.google.android.gms.tasks.Task<com.google.firebase.firestore.QuerySnapshot> receivedTask = 
-                db.collection("invitations")
-                .whereEqualTo("from", targetUid)
-                .whereEqualTo("to", myUid)
-                .whereEqualTo("tournamentId", tournamentId)
-                .get();
-        
-        // Wait for both queries to complete
-        com.google.android.gms.tasks.Tasks.whenAllSuccess(sentTask, receivedTask)
-                .addOnSuccessListener(results -> {
-                    // Process sent invites
-                    com.google.firebase.firestore.QuerySnapshot sentSnapshot = 
-                            (com.google.firebase.firestore.QuerySnapshot) results.get(0);
+                .get()
+                .addOnSuccessListener(sentSnapshot -> {
                     int totalSent = sentSnapshot.size();
                     int totalSentAccepted = 0;
                     
@@ -495,28 +480,48 @@ public class MatchAdapter
                         }
                     }
                     
-                    // Process received invites
-                    com.google.firebase.firestore.QuerySnapshot receivedSnapshot = 
-                            (com.google.firebase.firestore.QuerySnapshot) results.get(1);
-                    int totalReceived = receivedSnapshot.size();
-                    int totalReceivedAccepted = 0;
+                    // Now query for received invites
+                    final int finalTotalSent = totalSent;
+                    final int finalTotalSentAccepted = totalSentAccepted;
                     
-                    for (DocumentSnapshot doc : receivedSnapshot) {
-                        String status = doc.getString("status");
-                        if ("accepted".equals(status)) {
-                            totalReceivedAccepted++;
-                        }
-                    }
-                    
-                    // Format: Sent: X (accepted: Y) | Received: Z (accepted: W)
-                    String statsText = SafeStringFormatter.safeGetString(context, R.string.invite_stats_format, 
-                            totalSent, totalSentAccepted, totalReceived, totalReceivedAccepted);
-                    inviteStatsCache.put(targetUid, statsText);
-                    
-                    int idx = indexForUid(targetUid);
-                    if (idx != RecyclerView.NO_POSITION) {
-                        notifyItemChanged(idx, "inviteStats");
-                    }
+                    db.collection("invitations")
+                            .whereEqualTo("from", targetUid)
+                            .whereEqualTo("to", myUid)
+                            .whereEqualTo("tournamentId", tournamentId)
+                            .get()
+                            .addOnSuccessListener(receivedSnapshot -> {
+                                int totalReceived = receivedSnapshot.size();
+                                int totalReceivedAccepted = 0;
+                                
+                                for (DocumentSnapshot doc : receivedSnapshot) {
+                                    String status = doc.getString("status");
+                                    if ("accepted".equals(status)) {
+                                        totalReceivedAccepted++;
+                                    }
+                                }
+                                
+                                // Format: Sent: X (accepted: Y) | Received: Z (accepted: W)
+                                String statsText = SafeStringFormatter.safeGetString(context, R.string.invite_stats_format, 
+                                        finalTotalSent, finalTotalSentAccepted, totalReceived, totalReceivedAccepted);
+                                inviteStatsCache.put(targetUid, statsText);
+                                
+                                int idx = indexForUid(targetUid);
+                                if (idx != RecyclerView.NO_POSITION) {
+                                    notifyItemChanged(idx, "inviteStats");
+                                }
+                            })
+                            .addOnFailureListener(e -> {
+                                // Fallback: show sent stats only
+                                String statsText = SafeStringFormatter.safeGetString(context, R.string.invite_stats_format, 
+                                        finalTotalSent, finalTotalSentAccepted, 0, 0);
+                                inviteStatsCache.put(targetUid, statsText);
+                                
+                                int idx = indexForUid(targetUid);
+                                if (idx != RecyclerView.NO_POSITION) {
+                                    notifyItemChanged(idx, "inviteStats");
+                                }
+                                Log.e("TAG_Soccer", getClass().getSimpleName() + ".fetchInviteStats: Failed to fetch received invites", e);
+                            });
                 })
                 .addOnFailureListener(e -> {
                     String errorText = SafeStringFormatter.safeGetString(context, R.string.invite_stats_format, 0, 0, 0, 0);
@@ -526,7 +531,7 @@ public class MatchAdapter
                     if (idx != RecyclerView.NO_POSITION) {
                         notifyItemChanged(idx, "inviteStats");
                     }
-                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".fetchInviteStats: Failed to fetch invite stats", e);
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".fetchInviteStats: Failed to fetch sent invites", e);
                 });
     }
 
