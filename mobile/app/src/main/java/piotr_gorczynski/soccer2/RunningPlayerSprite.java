@@ -16,7 +16,7 @@ final class RunningPlayerSprite {
 
     private static final String TAG = "TAG_Soccer";
 
-    private static final int FRAME_COUNT = 22;
+    private static final int FRAME_COUNT = 35;
     private static final int FRAME_WIDTH = 128;
     private static final int FRAME_HEIGHT = 128;
     static final long FRAME_DURATION_MS = 250L;
@@ -39,12 +39,12 @@ final class RunningPlayerSprite {
         }
 
         int spriteSheetResId = context.getResources().getIdentifier(
-                "spritesheet",
+                "spritesheet_idle",
                 "drawable",
                 context.getPackageName()
         );
         if (spriteSheetResId == 0) {
-            Log.w(TAG, RunningPlayerSprite.class.getSimpleName() + ".getFrames: spritesheet resource missing");
+            Log.w(TAG, RunningPlayerSprite.class.getSimpleName() + ".getFrames: spritesheet_idle resource missing");
             cachedFrames = new Bitmap[0];
             return cachedFrames;
         }
