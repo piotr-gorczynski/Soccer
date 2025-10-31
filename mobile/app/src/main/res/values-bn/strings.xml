@@ -14,6 +14,8 @@
     <string name="pref_title_language">ভাষা</string>
     <string name="pref_summary_language">আপনার পছন্দের ভাষা নির্বাচন করুন</string>
     <string name="current_language">বর্তমান: %1$s</string>
+    <string name="pref_title_animations">অ্যানিমেশনগুলি</string>
+    <string name="pref_summary_animations">প্লেয়ার অ্যানিমেশন সক্ষম বা অক্ষম করুন</string>
     <string name="select_language">ভাষা নির্বাচন করুন</string>
     
     <!-- Settings preferences -->

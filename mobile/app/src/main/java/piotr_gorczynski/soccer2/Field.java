@@ -54,7 +54,7 @@ public class Field {
     private int runningPlayerFrameIndex = 0;
     private long runningPlayerLastFrameTime = 0L;
 
-    public Field(Context current, ArrayList<MoveTo> argMoves, ArrayList<MoveTo> argPossibleMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex) {
+    public Field(Context current, ArrayList<MoveTo> argMoves, ArrayList<MoveTo> argPossibleMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex, boolean animationsEnabled) {
 
         // simpler log—no reflection, no nulls
         Log.d("TAG_Soccer", getClass().getSimpleName()
@@ -63,7 +63,8 @@ public class Field {
                 + ", argGameType=" + argGameType
                 + ", player0Name=" + player0Name
                 + ", player1Name=" + player1Name
-                + ", localPlayerIndex=" + localPlayerIndex);
+                + ", localPlayerIndex=" + localPlayerIndex
+                + ", animationsEnabled=" + animationsEnabled);
 
         this.gameType = argGameType;  // ✅ Save GameType for later use
         this.context = current;
@@ -118,7 +119,7 @@ public class Field {
             throw new RuntimeException("Failed to load field configuration resources", e);
         }
 
-        showRunningPlayerSprite = gameType == 1 || gameType == 2;
+        showRunningPlayerSprite = animationsEnabled && (gameType == 1 || gameType == 2);
         if (showRunningPlayerSprite) {
             runningPlayerFrames = RunningPlayerSprite.getFrames(current);
             runningPlayerLastFrameTime = SystemClock.uptimeMillis();
