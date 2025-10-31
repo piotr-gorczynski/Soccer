@@ -920,6 +920,15 @@ public class MenuActivity extends BaseActivity {
                 });
     }
 
+    /**
+     * Helper method to check if animations are enabled in preferences
+     * @return true if animations are enabled, false otherwise
+     */
+    private boolean areAnimationsEnabled() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        return prefs.getBoolean("animations_enabled", true);
+    }
+
     private void setupRunningPlayerAnimation() {
         runningPlayerView = findViewById(R.id.menu_running_player);
         if (runningPlayerView == null) {
@@ -930,11 +939,7 @@ public class MenuActivity extends BaseActivity {
             return;
         }
 
-        // Check if animations are enabled in preferences
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean animationsEnabled = prefs.getBoolean("animations_enabled", true);
-        
-        if (!animationsEnabled) {
+        if (!areAnimationsEnabled()) {
             Log.d(
                     "TAG_Soccer",
                     getClass().getSimpleName() + ".setupRunningPlayerAnimation: Animations disabled in settings"
@@ -1160,11 +1165,7 @@ public class MenuActivity extends BaseActivity {
     }
 
     private void startRunningPlayerAnimation() {
-        // Check if animations are enabled in preferences
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean animationsEnabled = prefs.getBoolean("animations_enabled", true);
-        
-        if (!animationsEnabled) {
+        if (!areAnimationsEnabled()) {
             Log.d(
                     "TAG_Soccer",
                     getClass().getSimpleName() + ".startRunningPlayerAnimation: Animations disabled in settings"
