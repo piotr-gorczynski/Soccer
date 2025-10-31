@@ -216,7 +216,7 @@ public class InviteStatsFilteringTest {
 
     @Test
     public void testTournamentIdEmptyString() {
-        // Test that empty string tournament ID is treated as null (no tournament)
+        // Test that empty string tournament ID is treated as a tournament invitation (filtered out)
         // This is a defensive test - in practice, tournamentId should be null or a non-empty string
         String currentUserId = "user1";
         String friendUid = "user2";
@@ -227,10 +227,12 @@ public class InviteStatsFilteringTest {
         invites.add(new MockInvitation(currentUserId, friendUid, "accepted", ""));
 
         // Calculate stats - note: in the actual implementation, we check tournamentId == null
-        // So an empty string would NOT be filtered out. This test documents current behavior.
+        // So an empty string (which is NOT null) will be treated as a tournament invitation
+        // and will be filtered out. This test documents current behavior.
         InviteStats stats = calculateStats(invites, currentUserId, friendUid);
 
-        // With current implementation (tournamentId == null check), empty string is NOT filtered
+        // With current implementation (tournamentId == null check), empty string is NOT null,
+        // so it's treated as a tournament invitation and filtered out
         // This is acceptable since the backend should set tournamentId to null, not empty string
         assertEquals("Empty string tournamentId is not null, so it's filtered out", 0, stats.totalSent);
     }
