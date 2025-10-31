@@ -287,7 +287,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
                         // Only count invites that are not part of a tournament
                         // Tournament invites have a non-null, non-empty tournamentId
                         String tournamentId = doc.getString("tournamentId");
-                        if (tournamentId != null && !tournamentId.isEmpty()) {
+                        if (isTournamentInvite(tournamentId)) {
                             continue;  // Skip tournament invites
                         }
                         
@@ -308,7 +308,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
                         // Only count invites that are not part of a tournament
                         // Tournament invites have a non-null, non-empty tournamentId
                         String tournamentId = doc.getString("tournamentId");
-                        if (tournamentId != null && !tournamentId.isEmpty()) {
+                        if (isTournamentInvite(tournamentId)) {
                             continue;  // Skip tournament invites
                         }
                         
@@ -497,6 +497,18 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
                         notifyItemChanged(idx, "matchStats");
                     }
                 });
+    }
+    
+    /**
+     * Check if an invitation is a tournament invitation.
+     * Tournament invitations have a non-null, non-empty tournamentId.
+     * Friend invitations have null or empty tournamentId.
+     * 
+     * @param tournamentId The tournamentId field from the invitation document
+     * @return true if this is a tournament invitation, false if it's a friend invitation
+     */
+    private static boolean isTournamentInvite(@Nullable String tournamentId) {
+        return tournamentId != null && !tournamentId.isEmpty();
     }
 
     @Override
