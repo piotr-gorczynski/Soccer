@@ -85,6 +85,19 @@ public class SpriteSheetMetadataTest {
     }
 
     @Test
+    public void testBuilder_ZeroFrameDuration() {
+        // Zero duration should be allowed (though not recommended)
+        SpriteSheetMetadata metadata = new SpriteSheetMetadata.Builder(123)
+                .frameWidth(64)
+                .frameHeight(64)
+                .frameCount(10)
+                .frameDurationMs(0L)
+                .build();
+        
+        assertEquals(0L, metadata.getFrameDurationMs());
+    }
+
+    @Test
     public void testBuilder_IdleSpriteConfiguration() {
         // Test realistic configuration for idle sprite (from RunningPlayerSprite)
         SpriteSheetMetadata metadata = new SpriteSheetMetadata.Builder(456)
