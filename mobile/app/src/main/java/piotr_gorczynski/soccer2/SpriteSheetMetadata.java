@@ -128,8 +128,8 @@ public class SpriteSheetMetadata {
             if (frameCount <= 0) {
                 throw new IllegalArgumentException("Frame count must be positive");
             }
-            if (frameDurationMs <= 0) {
-                throw new IllegalArgumentException("Frame duration must be positive");
+            if (frameDurationMs < 0) {
+                throw new IllegalArgumentException("Frame duration must not be negative");
             }
             return new SpriteSheetMetadata(this);
         }
