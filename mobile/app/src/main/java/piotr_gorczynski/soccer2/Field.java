@@ -250,7 +250,7 @@ public class Field {
     }
 
     public void draw(Canvas canvas) {
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started");
+        //Log.d("TAG_Soccer", "Field.draw: Started");
 
         int oldx, oldy;
 
@@ -465,10 +465,9 @@ public class Field {
         float bottomHintY = h2y(intFieldHeight+1)+(canvas.getHeight()-h2y(intFieldHeight+1))*2/3;
         float topHintY = h2y(-1) *2 / 3;
 
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                + ": remainingTime0="+remainingTime0
+        /*Log.d("TAG_Soccer", "Field.draw: remainingTime0="+remainingTime0
                 + " remainingTime1="+remainingTime1
-                + " turnStartTime="+((turnStartTime == null) ? "null" : String.valueOf(turnStartTime)));
+                + " turnStartTime="+((turnStartTime == null) ? "null" : String.valueOf(turnStartTime)));*/
 
         if (isLocalTurn) {
             if (gameType != 3) {
@@ -495,7 +494,7 @@ public class Field {
                     w2x(flipX(intFieldWidth / 2)),
                     bottomHintY - (float) rText.height() / 2,
                     pHintText);
-            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": textBottom: " + textBottom);
+            //Log.d("TAG_Soccer", "Field.draw: textBottom: " + textBottom);
 
         } else {
             if (gameType == 1) {

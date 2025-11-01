@@ -295,7 +295,6 @@
     <!-- Past invites -->
     <string name="past_invites">الدعوات السابقة</string>
     <string name="no_past_invites">لا توجد دعوات سابقة</string>
-    <string name="invite_and_add_to_friend">دعوة وإضافة كصديق</string>
     <string name="invite_received_format">تم الاستلام %1$s</string>
     <string name="invite_status_accepted">الحالة: مقبولة</string>
     <string name="invite_status_cancelled">الحالة: ملغاة</string>

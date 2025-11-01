@@ -314,7 +314,6 @@
     <!-- Past invites -->
     <string name="past_invites">ያለፉ ግብዣዎች</string>
     <string name="no_past_invites">ያለፉ ግብዣዎች የሉም</string>
-    <string name="invite_and_add_to_friend">ግብዣ ላክ እና ጓደኛ አክል</string>
     <string name="invite_received_format">ተቀብሏል %1$s</string>
     <string name="invite_status_accepted">ሁኔታ: ተቀባይነት አግኝቷል</string>
     <string name="invite_status_cancelled">ሁኔታ: ተሰርዟል</string>

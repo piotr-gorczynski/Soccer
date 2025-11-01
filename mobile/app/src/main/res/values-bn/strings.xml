@@ -341,7 +341,6 @@
     <!-- Past invites -->
     <string name="past_invites">পূর্বের আমন্ত্রণ</string>
     <string name="no_past_invites">কোনো পূর্বের আমন্ত্রণ নেই</string>
-    <string name="invite_and_add_to_friend">আমন্ত্রণ জানান এবং বন্ধু হিসাবে যোগ করুন</string>
     <string name="invite_received_format">গৃহীত %1$s</string>
     <string name="invite_status_accepted">অবস্থা: গৃহীত</string>
     <string name="invite_status_cancelled">অবস্থা: বাতিল</string>

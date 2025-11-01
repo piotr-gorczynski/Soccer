@@ -313,7 +313,6 @@
     <!-- Past invites -->
     <string name="past_invites">පසුගිය ආරාධනා</string>
     <string name="no_past_invites">පසුගිය ආරාධනා නැත</string>
-    <string name="invite_and_add_to_friend">ආරාධනය කර මිතුරෙකු ලෙස එකතු කරන්න</string>
     <string name="invite_received_format">ලැබුණි %1$s</string>
     <string name="invite_status_accepted">තත්ත්වය: පිළිගත්තා</string>
     <string name="invite_status_cancelled">තත්ත්වය: අවලංගු කළා</string>

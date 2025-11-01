@@ -313,7 +313,6 @@
     <!-- Past invites -->
     <string name="past_invites">Mialiko Iliyopita</string>
     <string name="no_past_invites">Hakuna mialiko iliyopita</string>
-    <string name="invite_and_add_to_friend">Alika na uongeze kama rafiki</string>
     <string name="invite_received_format">Imepokelewa %1$s</string>
     <string name="invite_status_accepted">Hali: Imekubaliwa</string>
     <string name="invite_status_cancelled">Hali: Imefutwa</string>

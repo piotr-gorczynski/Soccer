@@ -6,9 +6,12 @@
 🔔 Filter tournament invitations from friend invite statistics
 🔔 Add user-configurable animations toggle in Settings
 🔔 Add tournament-filtered invitation and match statistics to match items
+🔔 Add missing translations for friend invite status messages
 🎮 Fix: Refresh match statistics when returning from completed game
 🎮 Fix WindowLeaked crash in MenuActivity.showMissedInviteDialog
-🎮 ...
+🎮 Refresh invite statistics when returning to tournament lobby
+
+...
 </en-GB>
 
 <pl-PL>

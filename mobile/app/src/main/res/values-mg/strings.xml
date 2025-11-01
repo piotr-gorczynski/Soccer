@@ -314,7 +314,6 @@
     <!-- Past invites -->
     <string name="past_invites">Fanasana Taloha</string>
     <string name="no_past_invites">Tsy misy fanasana taloha</string>
-    <string name="invite_and_add_to_friend">Manasa sy Manampy ho Namana</string>
     <string name="invite_received_format">Noraisina %1$s</string>
     <string name="invite_status_accepted">Toe-javatra: Nekena</string>
     <string name="invite_status_cancelled">Toe-javatra: Nofoanana</string>
