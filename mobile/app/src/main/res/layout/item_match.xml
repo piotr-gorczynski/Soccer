@@ -40,12 +40,4 @@
         android:layout_marginTop="4dp"
         android:text="" />
 
-    <TextView
-        android:id="@+id/matchStats"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="12sp"
-        android:textColor="@color/colorGrey"
-        android:layout_marginTop="2dp"
-        android:text="" />
 </LinearLayout>
