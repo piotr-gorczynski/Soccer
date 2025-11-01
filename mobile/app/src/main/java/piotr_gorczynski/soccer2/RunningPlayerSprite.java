@@ -9,8 +9,8 @@ import androidx.annotation.Nullable;
 
 /**
  * Lazily loads and caches the running player sprite sheet that is also used on the menu screen.
- * Only the first row of frames is required for the in-game animation, which matches the default
- * menu animation.
+ * Only the second row of frames is required for the in-game animation, which matches the default
+ * menu animation facing forward.
  */
 final class RunningPlayerSprite {
 
@@ -19,6 +19,7 @@ final class RunningPlayerSprite {
     private static final int FRAME_COUNT = 35;
     private static final int FRAME_WIDTH = 128;
     private static final int FRAME_HEIGHT = 128;
+    private static final int FRAME_START_Y = 129;
     static final long FRAME_DURATION_MS = 250L;
 
     private static Bitmap[] cachedFrames;
@@ -83,7 +84,7 @@ final class RunningPlayerSprite {
             return cachedFrames;
         }
 
-        int usableHeight = Math.min(FRAME_HEIGHT, sheetHeight);
+        int usableHeight = Math.min(FRAME_HEIGHT, Math.max(0, sheetHeight - FRAME_START_Y));
         Bitmap[] frames = new Bitmap[framesAvailable];
         for (int i = 0; i < framesAvailable; i++) {
             int sourceX = i * FRAME_WIDTH;
@@ -95,7 +96,7 @@ final class RunningPlayerSprite {
                 frames[i] = Bitmap.createBitmap(
                         spriteSheet,
                         sourceX,
-                        0,
+                        FRAME_START_Y,
                         frameWidth,
                         usableHeight
                 );
