@@ -8,6 +8,22 @@ import android.util.Log;
  * Lazily loads and caches the running player sprite sheet that is also used on the menu screen.
  * Only the second row of frames is required for the in-game animation, which matches the default
  * menu animation facing forward.
+ * 
+ * <p>The metadata-based system makes it easy to switch between different sprite sheets.
+ * For example, to use the running sprite sheet instead:
+ * <pre>
+ * // spritesheet_run.png is 2816x2048 with 11 columns and 16 rows of 128x128 frames
+ * metadata = new SpriteSheetMetadata.Builder(runSpriteSheetResId)
+ *     .frameWidth(128)
+ *     .frameHeight(128)
+ *     .frameCount(22)  // Number of frames to use
+ *     .startX(0)
+ *     .startY(0)       // First row
+ *     .columns(11)
+ *     .rows(2)         // Use first two rows
+ *     .frameDurationMs(150L)  // Faster animation
+ *     .build();
+ * </pre>
  */
 final class RunningPlayerSprite {
 
