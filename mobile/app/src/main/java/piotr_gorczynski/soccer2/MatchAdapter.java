@@ -151,6 +151,8 @@ public class MatchAdapter
             data.put("tournamentId", tournamentId);
             data.put("matchPath",    matchPath);
 
+            String finalOppUid = oppUidNow;
+
             FirebaseFunctions.getInstance("us-central1")
                     .getHttpsCallable("createInvite")
                     .call(data)
@@ -160,6 +162,8 @@ public class MatchAdapter
                                 (String) ((Map<String,Object>) Objects.requireNonNull(res.getData())).get("inviteId");
 
                         Toast.makeText(context, R.string.invitation_sent, Toast.LENGTH_SHORT).show();
+
+                        invalidateInviteStatsFor(finalOppUid);
 
                         Intent i = new Intent(context, WaitingActivity.class)
                                 .putExtra("inviteId", inviteId);
@@ -432,6 +436,25 @@ public class MatchAdapter
     void move(int o,int n,DocumentSnapshot d){
         matches.remove(o); matches.add(n,d); notifyItemMoved(o,n); }
     void remove(int idx){ matches.remove(idx); notifyItemRemoved(idx); }
+
+    /**
+     * Drop the cached invite stats for a specific opponent and force a full rebind of the row.
+     * This ensures fresh data is fetched from Firestore the next time it is bound.
+     */
+    void invalidateInviteStatsFor(@NonNull String oppUid) {
+        inviteStatsCache.remove(oppUid);
+        int idx = indexForUid(oppUid);
+        if (idx != RecyclerView.NO_POSITION) {
+            notifyItemChanged(idx);
+        }
+    }
+
+    /** Clear all cached invite statistics so they will be refreshed on the next bind. */
+    void invalidateAllInviteStats() {
+        if (inviteStatsCache.isEmpty()) return;
+        inviteStatsCache.clear();
+        notifyDataSetChanged();
+    }
 
     /* tidy-up to avoid leaks */
     @Override public void onDetachedFromRecyclerView(@NonNull RecyclerView rv) {
