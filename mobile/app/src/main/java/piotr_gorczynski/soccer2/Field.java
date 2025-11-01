@@ -38,7 +38,8 @@ public class Field {
     private final Rect rField;
     private final Rect rText;
     private final Bitmap ballBitmap;
-    private final Bitmap[] runningPlayerFrames;
+    private final Bitmap[] idleRedPlayerFrames;
+    private final Bitmap[] idleBluePlayerFrames;
     private final String sPlayer0;
     private final String sPlayer1;
     private final int gameType;
@@ -50,9 +51,9 @@ public class Field {
     private long remainingTime0, remainingTime1;
 
     private Long turnStartTime;
-    private final boolean showRunningPlayerSprite;
-    private int runningPlayerFrameIndex = 0;
-    private long runningPlayerLastFrameTime = 0L;
+    private final boolean showIdlePlayerSprite;
+    private int idlePlayerFrameIndex = 0;
+    private long idlePlayerLastFrameTime = 0L;
 
     public Field(Context current, ArrayList<MoveTo> argMoves, ArrayList<MoveTo> argPossibleMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex, boolean animationsEnabled) {
 
@@ -119,12 +120,14 @@ public class Field {
             throw new RuntimeException("Failed to load field configuration resources", e);
         }
 
-        showRunningPlayerSprite = animationsEnabled && (gameType == 1 || gameType == 2);
-        if (showRunningPlayerSprite) {
-            runningPlayerFrames = RunningPlayerSprite.getFrames(current);
-            runningPlayerLastFrameTime = SystemClock.uptimeMillis();
+        showIdlePlayerSprite = animationsEnabled && (gameType == 1 || gameType == 2);
+        if (showIdlePlayerSprite) {
+            idleRedPlayerFrames = IdleRedPlayerSprite.getFrames(current);
+            idleBluePlayerFrames = IdleBluePlayerSprite.getFrames(current);
+            idlePlayerLastFrameTime = SystemClock.uptimeMillis();
         } else {
-            runningPlayerFrames = new Bitmap[0];
+            idleRedPlayerFrames = new Bitmap[0];
+            idleBluePlayerFrames = new Bitmap[0];
         }
 
         pPlayer0=new Paint();
@@ -418,35 +421,40 @@ public class Field {
         RectF dst = new RectF(cx - radius, cy - radius, cx + radius, cy + radius);
         canvas.drawBitmap(ballBitmap, null, dst, null);
 
-        if (showRunningPlayerSprite && runningPlayerFrames.length > 0 && flSpriteSize > 0f) {
-            long now = SystemClock.uptimeMillis();
-            if (runningPlayerLastFrameTime == 0L) {
-                runningPlayerLastFrameTime = now;
-            }
-            long elapsed = now - runningPlayerLastFrameTime;
-            if (elapsed >= RunningPlayerSprite.FRAME_DURATION_MS) {
-                long framesToAdvance = elapsed / RunningPlayerSprite.FRAME_DURATION_MS;
-                runningPlayerFrameIndex = (int) ((runningPlayerFrameIndex + framesToAdvance) % runningPlayerFrames.length);
-                long remainder = elapsed % RunningPlayerSprite.FRAME_DURATION_MS;
-                runningPlayerLastFrameTime = now - remainder;
-            }
+        if (showIdlePlayerSprite && flSpriteSize > 0f) {
+            Bitmap[] currentFrames = currentTurn == 0 ? idleRedPlayerFrames : idleBluePlayerFrames;
+            if (currentFrames.length > 0) {
+                long now = SystemClock.uptimeMillis();
+                if (idlePlayerLastFrameTime == 0L) {
+                    idlePlayerLastFrameTime = now;
+                }
+                long elapsed = now - idlePlayerLastFrameTime;
+                if (elapsed >= IdlePlayerSprite.FRAME_DURATION_MS && IdlePlayerSprite.FRAME_DURATION_MS > 0) {
+                    long framesToAdvance = elapsed / IdlePlayerSprite.FRAME_DURATION_MS;
+                    idlePlayerFrameIndex = (int) ((idlePlayerFrameIndex + framesToAdvance) % currentFrames.length);
+                    long remainder = elapsed % IdlePlayerSprite.FRAME_DURATION_MS;
+                    idlePlayerLastFrameTime = now - remainder;
+                }
 
-            Bitmap spriteFrame = runningPlayerFrames[runningPlayerFrameIndex];
-            if (spriteFrame != null && !spriteFrame.isRecycled()) {
-                float spriteHeight = canvas.getHeight() * flSpriteSize;
-                if (spriteHeight > 0f) {
-                    float spriteWidth = spriteHeight * spriteFrame.getWidth() / (float) spriteFrame.getHeight();
-                    float spriteTop = cy + radius;
-                    float spriteBottom = spriteTop + spriteHeight;
-                    if (spriteBottom > canvas.getHeight()) {
-                        float overflow = spriteBottom - canvas.getHeight();
-                        spriteTop -= overflow;
-                        spriteBottom = canvas.getHeight();
+                int frameIndex = idlePlayerFrameIndex % currentFrames.length;
+                Bitmap spriteFrame = currentFrames[frameIndex];
+                if (spriteFrame != null && !spriteFrame.isRecycled()) {
+                    float spriteHeight = canvas.getHeight() * flSpriteSize;
+                    if (spriteHeight > 0f) {
+                        float spriteBottom = cy - radius;
+                        float spriteTop = spriteBottom - spriteHeight;
+                        if (spriteTop < 0f) {
+                            spriteTop = 0f;
+                        }
+                        float actualSpriteHeight = spriteBottom - spriteTop;
+                        if (actualSpriteHeight > 0f) {
+                            float spriteWidth = actualSpriteHeight * spriteFrame.getWidth() / (float) spriteFrame.getHeight();
+                            float spriteLeft = cx - spriteWidth / 2f;
+                            float spriteRight = cx + spriteWidth / 2f;
+                            RectF spriteDst = new RectF(spriteLeft, spriteTop, spriteRight, spriteBottom);
+                            canvas.drawBitmap(spriteFrame, null, spriteDst, null);
+                        }
                     }
-                    float spriteLeft = cx - spriteWidth / 2f;
-                    float spriteRight = cx + spriteWidth / 2f;
-                    RectF spriteDst = new RectF(spriteLeft, spriteTop, spriteRight, spriteBottom);
-                    canvas.drawBitmap(spriteFrame, null, spriteDst, null);
                 }
             }
         }
