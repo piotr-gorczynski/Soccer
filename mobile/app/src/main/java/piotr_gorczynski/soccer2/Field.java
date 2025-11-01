@@ -422,37 +422,62 @@ public class Field {
         canvas.drawBitmap(ballBitmap, null, dst, null);
 
         if (showIdlePlayerSprite && flSpriteSize > 0f) {
-            Bitmap[] currentFrames = currentTurn == 0 ? idleRedPlayerFrames : idleBluePlayerFrames;
-            if (currentFrames.length > 0) {
+            int redFrameCount = idleRedPlayerFrames.length;
+            int blueFrameCount = idleBluePlayerFrames.length;
+            int maxFrameCount = Math.max(redFrameCount, blueFrameCount);
+
+            if (maxFrameCount > 0) {
                 long now = SystemClock.uptimeMillis();
                 if (idlePlayerLastFrameTime == 0L) {
                     idlePlayerLastFrameTime = now;
                 }
                 long elapsed = now - idlePlayerLastFrameTime;
-                if (elapsed >= IdlePlayerSprite.FRAME_DURATION_MS && IdlePlayerSprite.FRAME_DURATION_MS > 0) {
+                if (IdlePlayerSprite.FRAME_DURATION_MS > 0 && elapsed >= IdlePlayerSprite.FRAME_DURATION_MS) {
                     long framesToAdvance = elapsed / IdlePlayerSprite.FRAME_DURATION_MS;
-                    idlePlayerFrameIndex = (int) ((idlePlayerFrameIndex + framesToAdvance) % currentFrames.length);
+                    idlePlayerFrameIndex = (int) ((idlePlayerFrameIndex + framesToAdvance) % maxFrameCount);
                     long remainder = elapsed % IdlePlayerSprite.FRAME_DURATION_MS;
                     idlePlayerLastFrameTime = now - remainder;
                 }
 
-                int frameIndex = idlePlayerFrameIndex % currentFrames.length;
-                Bitmap spriteFrame = currentFrames[frameIndex];
-                if (spriteFrame != null && !spriteFrame.isRecycled()) {
-                    float spriteHeight = canvas.getHeight() * flSpriteSize;
-                    if (spriteHeight > 0f) {
-                        float spriteBottom = cy - radius;
-                        float spriteTop = spriteBottom - spriteHeight;
-                        if (spriteTop < 0f) {
-                            spriteTop = 0f;
+                float spriteHeight = canvas.getHeight() * flSpriteSize;
+                if (spriteHeight > 0f) {
+                    // Blue player above the ball, bottom touching the ball's top edge
+                    if (blueFrameCount > 0) {
+                        Bitmap spriteFrame = idleBluePlayerFrames[idlePlayerFrameIndex % blueFrameCount];
+                        if (spriteFrame != null && !spriteFrame.isRecycled()) {
+                            float spriteBottom = cy - radius;
+                            float spriteTop = spriteBottom - spriteHeight;
+                            if (spriteTop < 0f) {
+                                spriteTop = 0f;
+                            }
+                            float actualSpriteHeight = spriteBottom - spriteTop;
+                            if (actualSpriteHeight > 0f) {
+                                float spriteWidth = actualSpriteHeight * spriteFrame.getWidth() / (float) spriteFrame.getHeight();
+                                float spriteLeft = cx - spriteWidth / 2f;
+                                float spriteRight = cx + spriteWidth / 2f;
+                                RectF spriteDst = new RectF(spriteLeft, spriteTop, spriteRight, spriteBottom);
+                                canvas.drawBitmap(spriteFrame, null, spriteDst, null);
+                            }
                         }
-                        float actualSpriteHeight = spriteBottom - spriteTop;
-                        if (actualSpriteHeight > 0f) {
-                            float spriteWidth = actualSpriteHeight * spriteFrame.getWidth() / (float) spriteFrame.getHeight();
-                            float spriteLeft = cx - spriteWidth / 2f;
-                            float spriteRight = cx + spriteWidth / 2f;
-                            RectF spriteDst = new RectF(spriteLeft, spriteTop, spriteRight, spriteBottom);
-                            canvas.drawBitmap(spriteFrame, null, spriteDst, null);
+                    }
+
+                    // Red player below the ball, top touching the ball's bottom edge
+                    if (redFrameCount > 0) {
+                        Bitmap spriteFrame = idleRedPlayerFrames[idlePlayerFrameIndex % redFrameCount];
+                        if (spriteFrame != null && !spriteFrame.isRecycled()) {
+                            float spriteTop = cy + radius;
+                            float spriteBottom = spriteTop + spriteHeight;
+                            if (spriteBottom > canvas.getHeight()) {
+                                spriteBottom = canvas.getHeight();
+                            }
+                            float actualSpriteHeight = spriteBottom - spriteTop;
+                            if (actualSpriteHeight > 0f) {
+                                float spriteWidth = actualSpriteHeight * spriteFrame.getWidth() / (float) spriteFrame.getHeight();
+                                float spriteLeft = cx - spriteWidth / 2f;
+                                float spriteRight = cx + spriteWidth / 2f;
+                                RectF spriteDst = new RectF(spriteLeft, spriteTop, spriteRight, spriteBottom);
+                                canvas.drawBitmap(spriteFrame, null, spriteDst, null);
+                            }
                         }
                     }
                 }
