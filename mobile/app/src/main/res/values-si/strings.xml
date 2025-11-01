@@ -328,5 +328,10 @@
     <string name="presence_user_online">%1$s තත්ත්වය: සබැඳිව</string>
     <string name="presence_user_last_seen">%1$s තත්ත්වය: අවසන් වරට දුටු %2$s</string>
     <string name="presence_user_offline">%1$s තත්ත්වය: අසම්බන්ධිත</string>
+    <string name="error_checking_friend_status">මිතුරන්ගේ තත්වය පරීක්ෂා කිරීමේ දෝෂයක්</string>
+    <string name="friend_added">මිතුරා සාර්ථකව එකතු කළා</string>
+    <string name="active_invitation_exists">ක්‍රියාත්මක ආරාධනයක් දැනටමත් ඇත</string>
+    <string name="user_blocked_invites">පරිශීලකයා ආරාධනා අවහිර කර ඇත</string>
+    <string name="cannot_invite_this_user">මෙම පරිශීලකයාට ආරාධනා කළ නොහැක</string>
 
 </resources>

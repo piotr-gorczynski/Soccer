@@ -362,5 +362,10 @@
     <string name="presence_user_online">%1$s स्थिति: ऑनलाइन</string>
     <string name="presence_user_last_seen">%1$s स्थिति: अंतिम बार देखा गया %2$s</string>
     <string name="presence_user_offline">%1$s स्थिति: ऑफ़लाइन</string>
+    <string name="error_checking_friend_status">मित्र की स्थिति जांचने में त्रुटि</string>
+    <string name="friend_added">मित्र सफलतापूर्वक जोड़ा गया</string>
+    <string name="active_invitation_exists">एक सक्रिय निमंत्रण पहले से मौजूद है</string>
+    <string name="user_blocked_invites">उपयोगकर्ता ने निमंत्रण अवरुद्ध कर दिए हैं</string>
+    <string name="cannot_invite_this_user">इस उपयोगकर्ता को आमंत्रित नहीं कर सकते</string>
 
 </resources>

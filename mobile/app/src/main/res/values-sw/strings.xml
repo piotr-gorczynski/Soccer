@@ -328,5 +328,10 @@
     <string name="presence_user_online">%1$s hali: Mtandaoni</string>
     <string name="presence_user_last_seen">%1$s hali: Alionekana mwisho %2$s</string>
     <string name="presence_user_offline">%1$s hali: Nje ya mtandao</string>
+    <string name="error_checking_friend_status">Hitilafu katika kuangalia hali ya rafiki</string>
+    <string name="friend_added">Rafiki ameongezwa kwa mafanikio</string>
+    <string name="active_invitation_exists">Mwaliko unaoendelea tayari upo</string>
+    <string name="user_blocked_invites">Mtumiaji amezuia mialiko</string>
+    <string name="cannot_invite_this_user">Haiwezekani kumwalika mtumiaji huyu</string>
 
 </resources>
