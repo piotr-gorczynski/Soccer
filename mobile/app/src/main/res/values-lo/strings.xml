@@ -328,5 +328,10 @@
     <string name="presence_user_online">%1$s ສະຖານະ: ອອນໄລນ໌</string>
     <string name="presence_user_last_seen">%1$s ສະຖານະ: ເຫັນຄັ້ງສຸດທ້າຍ %2$s</string>
     <string name="presence_user_offline">%1$s ສະຖານະ: ອອບໄລນ໌</string>
+    <string name="error_checking_friend_status">ຂໍ້ຜິດພາດໃນການກວດສອບສະຖານະໝູ່</string>
+    <string name="friend_added">ເພີ່ມໝູ່ສຳເລັດແລ້ວ</string>
+    <string name="active_invitation_exists">ມີຄຳເຊີນທີ່ກຳລັງໃຊ້ຢູ່ແລ້ວ</string>
+    <string name="user_blocked_invites">ຜູ້ໃຊ້ໄດ້ບລັອກຄຳເຊີນ</string>
+    <string name="cannot_invite_this_user">ບໍ່ສາມາດເຊີນຜູ້ໃຊ້ນີ້ໄດ້</string>
 
 </resources>

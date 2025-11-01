@@ -328,5 +328,10 @@
     <string name="presence_user_online">%1$s төлөв: Онлайн</string>
     <string name="presence_user_last_seen">%1$s төлөв: Сүүлд харагдсан %2$s</string>
     <string name="presence_user_offline">%1$s төлөв: Оффлайн</string>
+    <string name="error_checking_friend_status">Найзын төлөв шалгахад алдаа гарлаа</string>
+    <string name="friend_added">Найзыг амжилттай нэмлээ</string>
+    <string name="active_invitation_exists">Идэвхтэй урилга аль хэдийн байна</string>
+    <string name="user_blocked_invites">Хэрэглэгч урилга хаасан байна</string>
+    <string name="cannot_invite_this_user">Энэ хэрэглэгчийг урих боломжгүй</string>
 
 </resources>
