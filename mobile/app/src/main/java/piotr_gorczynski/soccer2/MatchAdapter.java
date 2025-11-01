@@ -41,7 +41,6 @@ public class MatchAdapter
          final TextView opponent, presence, status;
          final Button inviteBtn;
          final TextView inviteStats;
-         final TextView matchStats;
 
         // Cached for click handling
         DocumentSnapshot snap;
@@ -54,7 +53,6 @@ public class MatchAdapter
             status   = v.findViewById(R.id.status);
             inviteBtn = v.findViewById(R.id.inviteBtn);
             inviteStats = v.findViewById(R.id.inviteStats);
-            matchStats = v.findViewById(R.id.matchStats);
          }
     }
 
@@ -64,7 +62,6 @@ public class MatchAdapter
 
     private final Map<String, Long> hbCache = new HashMap<>();   // heartbeat cache
     private final Map<String,String> inviteStatsCache = new HashMap<>();
-    private final Map<String,String> matchStatsCache = new HashMap<>();
     @SuppressWarnings("ClassCanBeRecord")
     private static final class RtdbSub {
         final DatabaseReference ref;
@@ -314,15 +311,6 @@ public class MatchAdapter
             h.inviteStats.setText(cachedStats);
         }
         
-        /* ----------- match statistics ----------- */
-        String cachedMatchStats = matchStatsCache.get(oppUid);
-        if (cachedMatchStats == null) {
-            h.matchStats.setText("");
-            fetchMatchStats(oppUid, h);
-        } else {
-            h.matchStats.setText(cachedMatchStats);
-        }
-
 
         // Determine button visibility
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
@@ -407,13 +395,6 @@ public class MatchAdapter
             if ("inviteStats".equals(tag)) {
                 String stats = inviteStatsCache.get(h.oppUid);
                 if (stats != null) h.inviteStats.setText(stats);
-                return;
-            }
-
-            // --- matchStats only ---
-            if ("matchStats".equals(tag)) {
-                String stats = matchStatsCache.get(h.oppUid);
-                if (stats != null) h.matchStats.setText(stats);
                 return;
             }
         }
@@ -534,58 +515,6 @@ public class MatchAdapter
                     Log.e("TAG_Soccer", getClass().getSimpleName() + ".fetchInviteStats: Failed to fetch sent invites", e);
                 });
     }
-
-    private void fetchMatchStats(@NonNull String targetUid, @NonNull VH h) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        
-        // Query for completed matches in this tournament where current user played with opponent
-        db.collection("tournaments").document(tournamentId)
-                .collection("matches")
-                .whereIn("status", java.util.Arrays.asList("completed", "done"))
-                .get()
-                .addOnSuccessListener(snapshot -> {
-                    int wins = 0;
-                    int losses = 0;
-                    
-                    for (DocumentSnapshot doc : snapshot) {
-                        String player0 = doc.getString("player0");
-                        String player1 = doc.getString("player1");
-                        String winner = doc.getString("winner");
-                        
-                        // Check if this match involves both current user and opponent
-                        boolean isRelevantMatch = 
-                            (myUid.equals(player0) && targetUid.equals(player1)) ||
-                            (myUid.equals(player1) && targetUid.equals(player0));
-                        
-                        if (isRelevantMatch && winner != null) {
-                            if (winner.equals(myUid)) {
-                                wins++;
-                            } else if (winner.equals(targetUid)) {
-                                losses++;
-                            }
-                        }
-                    }
-                    
-                    String statsText = SafeStringFormatter.safeGetString(context, R.string.match_stats_format, wins, losses);
-                    matchStatsCache.put(targetUid, statsText);
-                    
-                    int idx = indexForUid(targetUid);
-                    if (idx != RecyclerView.NO_POSITION) {
-                        notifyItemChanged(idx, "matchStats");
-                    }
-                })
-                .addOnFailureListener(e -> {
-                    String errorText = SafeStringFormatter.safeGetString(context, R.string.match_stats_format, 0, 0);
-                    matchStatsCache.put(targetUid, errorText);
-                    
-                    int idx = indexForUid(targetUid);
-                    if (idx != RecyclerView.NO_POSITION) {
-                        notifyItemChanged(idx, "matchStats");
-                    }
-                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".fetchMatchStats: Failed to fetch match stats", e);
-                });
-    }
-
 
     /** English relative time: "just now", "4 mins ago", "2 h ago", "yesterday", "5 days ago". */
     static String englishRelative(long eventTimeMillis) {
