@@ -436,7 +436,7 @@ public class Field {
                 float spriteHeight = canvas.getHeight() * flSpriteSize;
                 if (spriteHeight > 0f) {
                     float spriteWidth = spriteHeight * spriteFrame.getWidth() / (float) spriteFrame.getHeight();
-                    float spriteTop = cy + radius + dotSize;
+                    float spriteTop = cy + radius;
                     float spriteBottom = spriteTop + spriteHeight;
                     if (spriteBottom > canvas.getHeight()) {
                         float overflow = spriteBottom - canvas.getHeight();
