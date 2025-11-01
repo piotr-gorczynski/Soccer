@@ -357,5 +357,10 @@
     <string name="presence_user_online">%1$s statut: En ligne</string>
     <string name="presence_user_last_seen">%1$s statut: Vu pour la dernière fois %2$s</string>
     <string name="presence_user_offline">%1$s statut: Hors ligne</string>
+    <string name="error_checking_friend_status">Erreur lors de la vérification du statut de l’ami</string>
+    <string name="friend_added">Ami ajouté avec succès</string>
+    <string name="active_invitation_exists">Une invitation active existe déjà</string>
+    <string name="user_blocked_invites">L’utilisateur a bloqué les invitations</string>
+    <string name="cannot_invite_this_user">Impossible d’inviter cet utilisateur</string>
 
 </resources>
