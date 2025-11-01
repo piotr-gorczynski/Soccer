@@ -353,7 +353,11 @@
     <string name="invite_from_loading">Cargando…</string>
     <string name="menu_loading_message">Cargando…</string>
     <string name="invite_from_format">Invitación de: %1$s</string>
+    <string name="invite_received_format">Recibido %1$s</string>
     <string name="invite_received_and_status">Recibido: %1$s | %2$s</string>
+    <string name="invite_status_accepted">Estado: Aceptada</string>
+    <string name="invite_status_cancelled">Estado: Cancelada</string>
+    <string name="invite_status_expired">Estado: Caducada</string>
     <string name="presence_online">En línea</string>
     <string name="presence_last_seen">Visto por última vez %1$s</string>
     <string name="presence_offline">Desconectado</string>
