@@ -12,15 +12,15 @@ import android.util.Log;
  * <p>The metadata-based system makes it easy to switch between different sprite sheets.
  * For example, to use the running sprite sheet instead:
  * <pre>
- * // spritesheet_run.png is 2816x2048 with 11 columns and 16 rows of 128x128 frames
+ * // spritesheet_run.png is 2816x2048 with 22 columns and 16 rows of 128x128 frames
  * metadata = new SpriteSheetMetadata.Builder(runSpriteSheetResId)
  *     .frameWidth(128)
  *     .frameHeight(128)
  *     .frameCount(22)  // Number of frames to use
  *     .startX(0)
  *     .startY(0)       // First row
- *     .columns(11)
- *     .rows(2)         // Use first two rows
+ *     .columns(22)
+ *     .rows(1)         // Use first row
  *     .frameDurationMs(150L)  // Faster animation
  *     .build();
  * </pre>

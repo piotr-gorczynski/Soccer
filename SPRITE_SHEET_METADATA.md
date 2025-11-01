@@ -140,8 +140,8 @@ SpriteSheetMetadata runMetadata = new SpriteSheetMetadata.Builder(R.drawable.spr
     .frameCount(22)
     .startX(0)
     .startY(0)
-    .columns(11)
-    .rows(2)
+    .columns(22)
+    .rows(1)
     .frameDurationMs(150L)  // Faster animation
     .build();
 ```
