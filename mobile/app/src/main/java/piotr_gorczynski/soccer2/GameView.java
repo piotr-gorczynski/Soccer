@@ -320,8 +320,9 @@ public class GameView extends View {
     }
 
     private boolean shouldPulse() {
-        // Pulse if there are possible moves to show
-        return possibleMovesForDrawing != null && !possibleMovesForDrawing.isEmpty();
+        boolean hasPossibleMoves = possibleMovesForDrawing != null && !possibleMovesForDrawing.isEmpty();
+        boolean runAnimationActive = field != null && field.isRunAnimationActive();
+        return hasPossibleMoves || runAnimationActive;
     }
 
 
@@ -440,10 +441,17 @@ public class GameView extends View {
         ArrayList<MoveTo> possibleMoves= new ArrayList<>();
         boolean bouncing=isBouncing(x,y,Moves);
 
+        MoveTo previousMove = Moves.get(Moves.size() - 1);
+        MoveTo newMove;
+
         if(bouncing)
-            Moves.add(new MoveTo(x,y,Moves.get(Moves.size()-1).P));
+            newMove = new MoveTo(x,y,previousMove.P);
         else
-            Moves.add(new MoveTo(x,y,pOpponent(Moves.get(Moves.size()-1).P)));
+            newMove = new MoveTo(x,y,pOpponent(previousMove.P));
+
+        Moves.add(newMove);
+        field.startRunAnimation(previousMove, newMove);
+        startPulseIfNeeded();
 
         if (GameType == 3) {
 

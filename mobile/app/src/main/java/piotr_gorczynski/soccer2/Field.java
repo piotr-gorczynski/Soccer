@@ -39,6 +39,7 @@ public class Field {
     private final Rect rText;
     private final Bitmap ballBitmap;
     private final Bitmap[] idleRedPlayerFrames;
+    private final Bitmap[] runRedPlayerFrames;
     private final Bitmap[] idleBluePlayerFrames;
     private final String sPlayer0;
     private final String sPlayer1;
@@ -54,6 +55,15 @@ public class Field {
     private final boolean showIdlePlayerSprite;
     private int idlePlayerFrameIndex = 0;
     private long idlePlayerLastFrameTime = 0L;
+    private boolean runAnimationActive = false;
+    private int runPlayerFrameIndex = 0;
+    private long runPlayerLastFrameTime = 0L;
+    private float runStartGridX = 0f;
+    private float runStartGridY = 0f;
+    private float runDeltaGridX = 0f;
+    private float runDeltaGridY = 0f;
+
+    private static final int RUN_FRAME_COUNT = RunPlayerSprite.FRAME_COUNT;
 
     public Field(Context current, ArrayList<MoveTo> argMoves, ArrayList<MoveTo> argPossibleMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex, boolean animationsEnabled) {
 
@@ -124,10 +134,12 @@ public class Field {
         if (showIdlePlayerSprite) {
             idleRedPlayerFrames = IdleRedPlayerSprite.getFrames(current);
             idleBluePlayerFrames = IdleBluePlayerSprite.getFrames(current);
+            runRedPlayerFrames = RunRedPlayerSprite.getFrames(current);
             idlePlayerLastFrameTime = SystemClock.uptimeMillis();
         } else {
             idleRedPlayerFrames = new Bitmap[0];
             idleBluePlayerFrames = new Bitmap[0];
+            runRedPlayerFrames = new Bitmap[0];
         }
 
         pPlayer0=new Paint();
@@ -221,6 +233,14 @@ public class Field {
 
     }
 
+    private float w2x(float w) {
+        if (rField.height() > rField.width()) {
+            return rField.left + (w * rField.width()) / intFieldWidth;
+        } else {
+            return rField.left + (w * rField.width()) / intFieldHeight;
+        }
+    }
+
     private float h2y(int h) {
         if(rField.height()>rField.width() ) {
             //portrait
@@ -230,6 +250,14 @@ public class Field {
             return rField.bottom- (float) (h * rField.height()) /intFieldWidth;
         }
 
+    }
+
+    private float h2y(float h) {
+        if (rField.height() > rField.width()) {
+            return rField.top + (h * rField.height()) / intFieldHeight;
+        } else {
+            return rField.bottom - (h * rField.height()) / intFieldWidth;
+        }
     }
 
 
@@ -242,6 +270,122 @@ public class Field {
         yMax = y + height - (int)(height*flFieldMarginY)- 1;
         // The box's rField do not change unless the view's size changes
         rField.set(xMin, yMin, xMax, yMax);
+    }
+
+    public void startRunAnimation(MoveTo previous, MoveTo next) {
+        if (!showIdlePlayerSprite) {
+            return;
+        }
+        if (previous == null || next == null) {
+            return;
+        }
+        if (runRedPlayerFrames.length == 0 || RUN_FRAME_COUNT <= 0) {
+            return;
+        }
+        if ((previous.X == next.X && previous.Y == next.Y)
+                || (previous.X == -1 && previous.Y == -1)
+                || (next.X == -1 && next.Y == -1)) {
+            return;
+        }
+
+        float flippedStartX = flipX(previous.X);
+        float flippedStartY = flipY(previous.Y);
+        float flippedTargetX = flipX(next.X);
+        float flippedTargetY = flipY(next.Y);
+
+        runStartGridX = flippedStartX;
+        runStartGridY = flippedStartY;
+        runDeltaGridX = (flippedTargetX - flippedStartX) / RUN_FRAME_COUNT;
+        runDeltaGridY = (flippedTargetY - flippedStartY) / RUN_FRAME_COUNT;
+        runPlayerFrameIndex = 0;
+        runPlayerLastFrameTime = SystemClock.uptimeMillis();
+        runAnimationActive = true;
+    }
+
+    public boolean isRunAnimationActive() {
+        return runAnimationActive;
+    }
+
+    private void stopRunAnimation(long referenceTime) {
+        runAnimationActive = false;
+        runPlayerFrameIndex = 0;
+        runPlayerLastFrameTime = 0L;
+        idlePlayerLastFrameTime = referenceTime;
+    }
+
+    private void drawRunAnimation(Canvas canvas, float ballRadius) {
+        if (!runAnimationActive) {
+            return;
+        }
+        int frameCount = runRedPlayerFrames.length;
+        if (frameCount == 0 || RUN_FRAME_COUNT <= 0) {
+            stopRunAnimation(SystemClock.uptimeMillis());
+            return;
+        }
+
+        long now = SystemClock.uptimeMillis();
+        if (runPlayerLastFrameTime == 0L) {
+            runPlayerLastFrameTime = now;
+        }
+
+        long elapsed = now - runPlayerLastFrameTime;
+        if (RunPlayerSprite.FRAME_DURATION_MS > 0 && elapsed >= RunPlayerSprite.FRAME_DURATION_MS) {
+            long framesToAdvance = elapsed / RunPlayerSprite.FRAME_DURATION_MS;
+            runPlayerFrameIndex += (int) framesToAdvance;
+            if (runPlayerFrameIndex >= frameCount) {
+                stopRunAnimation(now);
+                return;
+            }
+            long remainder = elapsed % RunPlayerSprite.FRAME_DURATION_MS;
+            runPlayerLastFrameTime = now - remainder;
+        }
+
+        if (!runAnimationActive) {
+            return;
+        }
+
+        Bitmap spriteFrame = runRedPlayerFrames[Math.min(runPlayerFrameIndex, frameCount - 1)];
+        if (spriteFrame == null || spriteFrame.isRecycled()) {
+            stopRunAnimation(now);
+            return;
+        }
+
+        float spriteHeight = canvas.getHeight() * flSpriteSize;
+        if (spriteHeight <= 0f) {
+            stopRunAnimation(now);
+            return;
+        }
+
+        float stepIndex = Math.min(runPlayerFrameIndex + 1, RUN_FRAME_COUNT);
+        float currentGridX = runStartGridX + runDeltaGridX * stepIndex;
+        float currentGridY = runStartGridY + runDeltaGridY * stepIndex;
+
+        float spriteTop = h2y(currentGridY) + ballRadius;
+        float spriteBottom = spriteTop + spriteHeight;
+        if (spriteBottom > canvas.getHeight()) {
+            spriteBottom = canvas.getHeight();
+        }
+        if (spriteTop < 0f) {
+            spriteTop = 0f;
+        }
+
+        float actualSpriteHeight = spriteBottom - spriteTop;
+        if (actualSpriteHeight <= 0f) {
+            stopRunAnimation(now);
+            return;
+        }
+
+        float spriteWidth = actualSpriteHeight * spriteFrame.getWidth() / (float) spriteFrame.getHeight();
+        float spriteCenterX = w2x(currentGridX);
+        float spriteLeft = spriteCenterX - spriteWidth / 2f;
+        float spriteRight = spriteCenterX + spriteWidth / 2f;
+
+        RectF spriteDst = new RectF(spriteLeft, spriteTop, spriteRight, spriteBottom);
+        canvas.drawBitmap(spriteFrame, null, spriteDst, null);
+
+        if (runPlayerFrameIndex >= frameCount - 1) {
+            stopRunAnimation(now);
+        }
     }
 
     private int flipX(int x) {
@@ -421,6 +565,8 @@ public class Field {
         RectF dst = new RectF(cx - radius, cy - radius, cx + radius, cy + radius);
         canvas.drawBitmap(ballBitmap, null, dst, null);
 
+        drawRunAnimation(canvas, radius);
+
         if (showIdlePlayerSprite && flSpriteSize > 0f) {
             int redFrameCount = idleRedPlayerFrames.length;
             int blueFrameCount = idleBluePlayerFrames.length;
@@ -431,12 +577,16 @@ public class Field {
                 if (idlePlayerLastFrameTime == 0L) {
                     idlePlayerLastFrameTime = now;
                 }
-                long elapsed = now - idlePlayerLastFrameTime;
-                if (IdlePlayerSprite.FRAME_DURATION_MS > 0 && elapsed >= IdlePlayerSprite.FRAME_DURATION_MS) {
-                    long framesToAdvance = elapsed / IdlePlayerSprite.FRAME_DURATION_MS;
-                    idlePlayerFrameIndex = (int) ((idlePlayerFrameIndex + framesToAdvance) % maxFrameCount);
-                    long remainder = elapsed % IdlePlayerSprite.FRAME_DURATION_MS;
-                    idlePlayerLastFrameTime = now - remainder;
+                if (runAnimationActive) {
+                    idlePlayerLastFrameTime = now;
+                } else {
+                    long elapsed = now - idlePlayerLastFrameTime;
+                    if (IdlePlayerSprite.FRAME_DURATION_MS > 0 && elapsed >= IdlePlayerSprite.FRAME_DURATION_MS) {
+                        long framesToAdvance = elapsed / IdlePlayerSprite.FRAME_DURATION_MS;
+                        idlePlayerFrameIndex = (int) ((idlePlayerFrameIndex + framesToAdvance) % maxFrameCount);
+                        long remainder = elapsed % IdlePlayerSprite.FRAME_DURATION_MS;
+                        idlePlayerLastFrameTime = now - remainder;
+                    }
                 }
 
                 float spriteHeight = canvas.getHeight() * flSpriteSize;
@@ -462,7 +612,7 @@ public class Field {
                     }
 
                     // Red player below the ball, top touching the ball's bottom edge
-                    if (redFrameCount > 0) {
+                    if (redFrameCount > 0 && !runAnimationActive) {
                         Bitmap spriteFrame = idleRedPlayerFrames[idlePlayerFrameIndex % redFrameCount];
                         if (spriteFrame != null && !spriteFrame.isRecycled()) {
                             float spriteTop = cy + radius;
