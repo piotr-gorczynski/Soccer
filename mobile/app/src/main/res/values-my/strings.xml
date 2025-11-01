@@ -328,5 +328,10 @@
     <string name="presence_user_online">%1$s အခြေအနေ: အွန်လိုင်း</string>
     <string name="presence_user_last_seen">%1$s အခြေအနေ: နောက်ဆုံးမြင်တွေ့ %2$s</string>
     <string name="presence_user_offline">%1$s အခြေအနေ: အော့ဖ်လိုင်း</string>
+    <string name="error_checking_friend_status">သူငယ်ချင်းအခြေအနေကို စစ်ဆေးရာတွင် အမှားဖြစ်ပေါ်ခဲ့သည်</string>
+    <string name="friend_added">သူငယ်ချင်းကို အောင်မြင်စွာ ထည့်ပြီးပြီ</string>
+    <string name="active_invitation_exists">လက်ရှိ ဖိတ်ကြားစာတစ်စောင် ရှိနေပြီးသားဖြစ်သည်</string>
+    <string name="user_blocked_invites">အသုံးပြုသူက ဖိတ်ကြားစာများကို တားမြစ်ထားသည်</string>
+    <string name="cannot_invite_this_user">ဤအသုံးပြုသူကို ဖိတ်ခေါ်၍ မရပါ</string>
 
 </resources>

@@ -360,5 +360,10 @@
     <string name="presence_user_online">%1$s estado: En línea</string>
     <string name="presence_user_last_seen">%1$s estado: Visto por última vez %2$s</string>
     <string name="presence_user_offline">%1$s estado: Desconectado</string>
+    <string name="error_checking_friend_status">Error al comprobar el estado del amigo</string>
+    <string name="friend_added">Amigo agregado correctamente</string>
+    <string name="active_invitation_exists">Ya existe una invitación activa</string>
+    <string name="user_blocked_invites">El usuario ha bloqueado las invitaciones</string>
+    <string name="cannot_invite_this_user">No se puede invitar a este usuario</string>
 
 </resources>

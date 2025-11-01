@@ -309,5 +309,10 @@
     <string name="presence_user_online">%1$s وضعیت: آنلاین</string>
     <string name="presence_user_last_seen">%1$s وضعیت: آخرین بار دیده شد %2$s</string>
     <string name="presence_user_offline">%1$s وضعیت: آفلاین</string>
+    <string name="error_checking_friend_status">خطا در بررسی وضعیت دوست</string>
+    <string name="friend_added">دوست با موفقیت اضافه شد</string>
+    <string name="active_invitation_exists">دعوت فعال از قبل وجود دارد</string>
+    <string name="user_blocked_invites">کاربر دعوت‌ها را مسدود کرده است</string>
+    <string name="cannot_invite_this_user">نمی‌توان این کاربر را دعوت کرد</string>
 
 </resources>

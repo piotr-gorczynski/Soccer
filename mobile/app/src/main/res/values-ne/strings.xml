@@ -362,5 +362,10 @@
     <string name="presence_user_online">%1$s स्थिति: अनलाइन</string>
     <string name="presence_user_last_seen">%1$s स्थिति: अन्तिम पटक देखिएको %2$s</string>
     <string name="presence_user_offline">%1$s स्थिति: अफलाइन</string>
+    <string name="error_checking_friend_status">साथीको स्थिति जाँच्दा त्रुटि</string>
+    <string name="friend_added">साथी सफलतापूर्वक थपियो</string>
+    <string name="active_invitation_exists">सक्रिय निमन्त्रणा पहिले नै अवस्थित छ</string>
+    <string name="user_blocked_invites">प्रयोगकर्ताले निमन्त्रणा रोक्का गरेको छ</string>
+    <string name="cannot_invite_this_user">यस प्रयोगकर्तालाई निमन्त्रणा गर्न सकिँदैन</string>
 
 </resources>
