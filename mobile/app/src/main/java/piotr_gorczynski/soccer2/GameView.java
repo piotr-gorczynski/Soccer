@@ -14,7 +14,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.GestureDetector;
 import java.util.ArrayList;
-import java.util.Objects;
 
 import android.util.AttributeSet;
 import android.os.Looper;
@@ -49,7 +48,7 @@ public class GameView extends View {
 
     private long remTime0, remTime1;
 
-    private Long turnStartsTime=null;
+    private Long turnStartsTime;
 
     private final Handler pulseHandler = new Handler(Looper.getMainLooper());
     private final Runnable pulseRunnable = new Runnable() {
@@ -126,7 +125,7 @@ public class GameView extends View {
     /** Detects swipe gestures and forwards them to {@link #handleInputAt(float, float)} */
     private class SwipeListener extends GestureDetector.SimpleOnGestureListener {
         @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        public boolean onFling(MotionEvent e1, @NonNull MotionEvent e2, float velocityX, float velocityY) {
             if (!inputEnabled) return true;
             if ((GameType == 2) && (realMoves.get(realMoves.size() - 1).P == 1))
                 return true;
@@ -297,7 +296,7 @@ public class GameView extends View {
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
-        Log.d("TAG_Soccer", getClass().getSimpleName() + ".onDraw: Started");
+        //Log.d("TAG_Soccer", "GameView.onDraw: Started");
 
         if (realMoves.isEmpty()) {
             Log.w("TAG_Soccer", getClass().getSimpleName() + ".onDraw: Skipped: realMoves is empty");

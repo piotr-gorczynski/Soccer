@@ -342,7 +342,6 @@
     <!-- Past invites -->
     <string name="past_invites">Poprzednie Zaproszenia</string>
     <string name="no_past_invites">Brak poprzednich zaproszeń</string>
-    <string name="invite_and_add_to_friend">Zaproś i Dodaj do Znajomych</string>
     <string name="invite_received_format">Otrzymano %1$s</string>
     <string name="invite_status_accepted">Status: Zaakceptowane</string>
     <string name="invite_status_cancelled">Status: Anulowane</string>

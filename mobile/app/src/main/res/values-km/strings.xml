@@ -314,7 +314,6 @@
     <!-- Past invites -->
     <string name="past_invites">ការអញ្ជើញពីមុន</string>
     <string name="no_past_invites">មិនមានការអញ្ជើញពីមុន</string>
-    <string name="invite_and_add_to_friend">អញ្ជើញនិងបន្ថែមជាមិត្ត</string>
     <string name="invite_received_format">បានទទួល %1$s</string>
     <string name="invite_status_accepted">ស្ថានភាព: បានទទួលយក</string>
     <string name="invite_status_cancelled">ស្ថានភាព: បានលុបចោល</string>

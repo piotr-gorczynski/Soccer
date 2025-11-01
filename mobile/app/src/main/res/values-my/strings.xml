@@ -313,7 +313,6 @@
     <!-- Past invites -->
     <string name="past_invites">ယခင်ဖိတ်စာများ</string>
     <string name="no_past_invites">ယခင်ဖိတ်စာများမရှိပါ</string>
-    <string name="invite_and_add_to_friend">ဖိတ်ခေါ်ပြီး သူငယ်ချင်းအဖြစ် ထည့်ရန်</string>
     <string name="invite_received_format">လက်ခံရရှိသည် %1$s</string>
     <string name="invite_status_accepted">အခြေအနေ: လက်ခံပြီး</string>
     <string name="invite_status_cancelled">အခြေအနေ: ပယ်ဖျက်ပြီး</string>

@@ -313,7 +313,6 @@
     <!-- Past invites -->
     <string name="past_invites">ການເຊື້ອເຊີນທີ່ຜ່ານມາ</string>
     <string name="no_past_invites">ບໍ່ມີການເຊື້ອເຊີນທີ່ຜ່ານມາ</string>
-    <string name="invite_and_add_to_friend">ເຊື້ອເຊີນ ແລະ ເພີ່ມເປັນເພື່ອນ</string>
     <string name="invite_received_format">ໄດ້ຮັບ %1$s</string>
     <string name="invite_status_accepted">ສະຖານະ: ຍອມຮັບແລ້ວ</string>
     <string name="invite_status_cancelled">ສະຖານະ: ຍົກເລີກແລ້ວ</string>
