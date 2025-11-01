@@ -76,7 +76,9 @@ public final class SpriteSheetLoader {
         // Calculate how many frames we can actually extract
         int maxFramesInRow = (sheetWidth - startX) / frameWidth;
         int maxFramesInCol = (sheetHeight - startY) / frameHeight;
-        int maxFrames = Math.min(frameCount, maxFramesInRow * maxFramesInCol);
+        // Respect the metadata's column layout and frame count
+        int effectiveColumns = Math.min(columns, maxFramesInRow);
+        int maxFrames = Math.min(frameCount, effectiveColumns * maxFramesInCol);
 
         if (maxFrames <= 0) {
             Log.w(TAG, "SpriteSheetLoader.loadFrames: no frames available in sheet");
@@ -89,7 +91,7 @@ public final class SpriteSheetLoader {
 
         // Extract frames row by row, left to right
         for (int row = 0; row < maxFramesInCol && frameIndex < maxFrames; row++) {
-            for (int col = 0; col < columns && frameIndex < maxFrames; col++) {
+            for (int col = 0; col < effectiveColumns && frameIndex < maxFrames; col++) {
                 int sourceX = startX + col * frameWidth;
                 int sourceY = startY + row * frameHeight;
 
