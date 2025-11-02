@@ -807,7 +807,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         // Shutdown the ads executor to prevent resource leaks
         // Note: onTerminate() is not called in production, only in emulated environments
         // but it's good practice to include proper cleanup
-        if (adsExecutor != null && !adsExecutor.isShutdown()) {
+        if (!adsExecutor.isShutdown()) {
             adsExecutor.shutdown();
             try {
                 if (!adsExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
