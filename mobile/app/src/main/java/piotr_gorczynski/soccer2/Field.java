@@ -821,7 +821,7 @@ public class Field {
                     if (blueFrameCount > 0 && !runAnimationActive) {
                         Bitmap spriteFrame = idleBluePlayerFrames[idlePlayerFrameIndex % blueFrameCount];
                         if (spriteFrame != null && !spriteFrame.isRecycled()) {
-                            float spriteBottom = cy - radius;
+                            float spriteBottom = cy -1;
                             float spriteTop = spriteBottom - spriteHeight;
                             if (spriteTop < 0f) {
                                 spriteTop = 0f;
@@ -841,7 +841,7 @@ public class Field {
                     if (redFrameCount > 0 && !runAnimationActive) {
                         Bitmap spriteFrame = idleRedPlayerFrames[idlePlayerFrameIndex % redFrameCount];
                         if (spriteFrame != null && !spriteFrame.isRecycled()) {
-                            float spriteTop = cy + radius;
+                            float spriteTop = cy + +1;
                             float spriteBottom = spriteTop + spriteHeight;
                             if (spriteBottom > canvas.getHeight()) {
                                 spriteBottom = canvas.getHeight();
@@ -896,7 +896,7 @@ public class Field {
                         topHintY - (float) rText.height() / 2,
                         pHintText);
 
-                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": textTop: " + textTop);
+                //Log.d("TAG_Soccer", "Field.draw: textTop: " + textTop);
             }
             pHintText.getTextBounds(textBottom, 0, textBottom.length(), rText);
             canvas.drawText(textBottom,
@@ -944,7 +944,7 @@ public class Field {
                     topHintY - (float) rText.height() / 2,
                     pHintText);
 
-            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": textTop: " + textTop);
+            //Log.d("TAG_Soccer", "Field.draw: textTop: " + textTop);
         }
     }
     private String formatClockSeconds(long seconds) {
