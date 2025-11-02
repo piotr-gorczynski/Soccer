@@ -758,7 +758,9 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         try {
             // Create a WebView instance to trigger the WebView provider initialization
             // This must be done on the main thread before any ads are loaded
-            new WebView(this);
+            WebView webView = new WebView(this);
+            // Immediately destroy it to prevent memory leaks
+            webView.destroy();
             Log.d("TAG_Soccer", getClass().getSimpleName() + ".initializeWebViewSafely: WebView pre-initialized successfully");
         } catch (Exception e) {
             // If WebView initialization fails, log the error but don't crash the app
