@@ -367,4 +367,5 @@
         <item>10</item>
         <item>30</item>
     </string-array>
+    <string name="failed_to_load_terms">شرائط و ضوابط لوڈ کرنے میں ناکام</string>
 </resources>

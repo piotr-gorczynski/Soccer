@@ -368,4 +368,5 @@
         <item>10</item>
         <item>30</item>
     </string-array>
+    <string name="failed_to_load_terms">Nie udało się załadować regulaminu</string>
 </resources>

@@ -333,4 +333,5 @@
     <string name="active_invitation_exists">ការអញ្ជើញសកម្មមានរួចហើយ</string>
     <string name="user_blocked_invites">អ្នកប្រើបានទប់ស្កាត់ការអញ្ជើញ</string>
     <string name="cannot_invite_this_user">មិនអាចអញ្ជើញអ្នកប្រើនេះបានទេ</string>
+    <string name="failed_to_load_terms">បរាជ័យក្នុងការផ្ទុកលក្ខខណ្ឌ</string>
 </resources>

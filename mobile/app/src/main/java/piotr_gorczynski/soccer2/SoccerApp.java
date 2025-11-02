@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import android.webkit.WebView;
+
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.ads.MobileAds;
@@ -217,6 +219,11 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
             startPresence(auth.getCurrentUser().getUid());
             enableFcmAutoInit();
         }
+
+        // Pre-initialize WebView to prevent ANR crashes in Google Ads SDK
+        // This fixes Crashlytics issue: __dl_elf32_sym const* soinfo_do_lookup_impl
+        // The issue occurs when WebView is first initialized by ads on certain devices
+        initializeWebViewSafely();
 
         MobileAds.initialize(this, initializationStatus -> {});
         
@@ -737,6 +744,29 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
             Log.d("TAG_Soccer", getClass().getSimpleName() + ".loadFacebookClientTokenFromAssets: facebook_client_token asset not found", e);
         }
         return null;
+    }
+    
+    /**
+     * Pre-initialize WebView to prevent ANR crashes during ad loading.
+     * This fixes the crash: __dl_elf32_sym const* soinfo_do_lookup_impl
+     * 
+     * The issue occurs on certain Android devices when WebView is first initialized
+     * by the Google Ads SDK, causing a linker-level ANR. By initializing WebView
+     * early on the main thread, we avoid this problem.
+     */
+    private void initializeWebViewSafely() {
+        try {
+            // Create a WebView instance to trigger the WebView provider initialization
+            // This must be done on the main thread before any ads are loaded
+            WebView webView = new WebView(this);
+            // Immediately destroy it to prevent memory leaks
+            webView.destroy();
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".initializeWebViewSafely: WebView pre-initialized successfully");
+        } catch (Exception e) {
+            // If WebView initialization fails, log the error but don't crash the app
+            // Some devices may have WebView disabled or missing
+            Log.w("TAG_Soccer", getClass().getSimpleName() + ".initializeWebViewSafely: Failed to pre-initialize WebView", e);
+        }
     }
     
     /**
