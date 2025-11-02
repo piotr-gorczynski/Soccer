@@ -367,5 +367,5 @@
     <string name="user_blocked_invites">उपयोगकर्ता ने निमंत्रण अवरुद्ध कर दिए हैं</string>
     <string name="cannot_invite_this_user">इस उपयोगकर्ता को आमंत्रित नहीं कर सकते</string>
 
-    <string name="failed_to_load_terms">Failed to load terms and conditions</string>
+    <string name="failed_to_load_terms">नियम और शर्तें लोड करने में विफल</string>
 </resources>
