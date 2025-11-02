@@ -1,0 +1,15 @@
+{
+  "rules": [
+    "Ny lalao dia atao amin'ny grid 6×8. Ny baolina dia manomboka eo afovoany (3,4).",
+    "Ny mpilalao dia mamindra ny baolina mankany amin'ny teboka valo mifanakaiky. Ny tsipika dia tsy azo hiampitana na averina.",
+    "Ny fipohana ny sisintany na teboka efa notsidihina dia isaina ho bounce ary manome fihetsiketsehana fanampiny ho an'ny mpilalao mitovy.",
+    "Baolina dia voatendry rehefa miditra ao amin'ny baolina kitra ny mpifanandrina eo amin'ny sisiny ambony na ambany. Raha tsy misy fihetsiketsehana ara-dalàna sisa tavela, ny mpilalao izay namindra farany dia mandresy.",
+    "Ny mpilalao tsirairay dia manana famantaranandro echecs 5 minitra. Ny fotoana dia mihazakazaka amin'ny filaharanao ihany. Ny fahataperan'ny fotoana dia mitarika faharesena.",
+    "Raha tapaka ny telefaonin'ny mpilalao alohan'ny hanombohan'ny filaharany, dia hanomboka ho azy ny famantaranandro rehefa afaka iray minitra ny backend.",
+    "Ny fandaozana ny lalao aloha dia manome faharesena ho an'ny mpifanandrina.",
+    "Ny fifaninanana dia tanterahina amin'ny endrika faribolana. Ny fampifandraisana dia noforonina ho azy rehefa mihidy ny fisoratana anarana.",
+    "Ny lalao tsy misy hetsika mihoatra ny dimy minitra dia tapahina ho azy araka ny fotoana.",
+    "Ny fifaninanana dia mifarana rehefa tonga ny fe-potoana."
+  ],
+  "updatedAt": "2025-07-21T00:00:00Z"
+}
