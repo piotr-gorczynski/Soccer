@@ -64,6 +64,9 @@ import androidx.lifecycle.LifecycleOwner;
 
 public class SoccerApp extends Application implements DefaultLifecycleObserver {
 
+    private static final String TAG = "TAG_Soccer";
+    private static final android.os.Handler MAIN_HANDLER = new android.os.Handler(android.os.Looper.getMainLooper());
+    
     private DatabaseReference userStatusDbRef;
     private DatabaseReference connectedRef;
     private ValueEventListener connectedListener;
@@ -234,8 +237,8 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         adsExecutor.execute(() -> {
             MobileAds.initialize(this, initializationStatus -> {
                 // Post callback to main thread for potential UI updates
-                new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".onCreate: MobileAds initialized successfully");
+                MAIN_HANDLER.post(() -> {
+                    Log.d(TAG, getClass().getSimpleName() + ".onCreate: MobileAds initialized successfully");
                 });
             });
         });
@@ -796,6 +799,25 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
      */
     public RemoteConfigHelper getRemoteConfigHelper() {
         return remoteConfigHelper;
+    }
+
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        // Shutdown the ads executor to prevent resource leaks
+        // Note: onTerminate() is not called in production, only in emulated environments
+        // but it's good practice to include proper cleanup
+        if (adsExecutor != null && !adsExecutor.isShutdown()) {
+            adsExecutor.shutdown();
+            try {
+                if (!adsExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
+                    adsExecutor.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                adsExecutor.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 
 
