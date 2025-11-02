@@ -333,5 +333,5 @@
     <string name="user_blocked_invites">පරිශීලකයා ආරාධනා අවහිර කර ඇත</string>
     <string name="cannot_invite_this_user">මෙම පරිශීලකයාට ආරාධනා කළ නොහැක</string>
 
-    <string name="failed_to_load_terms">Failed to load terms and conditions</string>
+    <string name="failed_to_load_terms">නියමයන් සහ කොන්දේසි පූරණය කළ නොහැකි විය</string>
 </resources>

@@ -368,5 +368,5 @@
         <item>10</item>
         <item>30</item>
     </string-array>
-    <string name="failed_to_load_terms">Failed to load terms and conditions</string>
+    <string name="failed_to_load_terms">Allgemeine Geschäftsbedingungen konnten nicht geladen werden</string>
 </resources>
