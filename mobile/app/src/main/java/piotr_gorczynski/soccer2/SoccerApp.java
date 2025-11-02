@@ -56,6 +56,8 @@ import androidx.core.os.LocaleListCompat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import androidx.lifecycle.LifecycleOwner;
@@ -70,6 +72,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     private AnalyticsManager analyticsManager;
     private RemoteConfigHelper remoteConfigHelper;
     private boolean appInForeground;
+    private static final ExecutorService adsExecutor = Executors.newSingleThreadExecutor();
 
     /* Creates {state:"online", last_heartbeat:TS} */
     private static Map<String,Object> buildOnline() {
@@ -228,11 +231,14 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         // Initialize MobileAds on background thread to prevent ANR
         // This fixes Crashlytics issue: com.google.android.gms.internal.ads.zzhwo.zzbE
         // The issue occurs when MobileAds initialization blocks the main thread
-        new Thread(() -> {
+        adsExecutor.execute(() -> {
             MobileAds.initialize(this, initializationStatus -> {
-                Log.d("TAG_Soccer", getClass().getSimpleName() + ".onCreate: MobileAds initialized successfully");
+                // Post callback to main thread for potential UI updates
+                new android.os.Handler(android.os.Looper.getMainLooper()).post(() -> {
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".onCreate: MobileAds initialized successfully");
+                });
             });
-        }).start();
+        });
         
         // Set Firebase Analytics consent to DENIED by default for privacy compliance
         // This ensures no data is collected until explicit consent is given (EEA and US regulations)
