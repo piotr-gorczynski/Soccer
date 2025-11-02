@@ -973,195 +973,235 @@ public class MenuActivity extends BaseActivity {
             return;
         }
 
-        Bitmap spriteSheet;
-        try {
-            BitmapFactory.Options decodeOptions = new BitmapFactory.Options();
-            decodeOptions.inScaled = false;
-            spriteSheet = BitmapFactory.decodeResource(getResources(), spriteSheetResId, decodeOptions);
-        } catch (Exception e) {
-            Log.e(
-                    "TAG_Soccer",
-                    getClass().getSimpleName() + ".setupRunningPlayerAnimation: Failed to decode sprite sheet",
-                    e
-            );
-            return;
-        }
-
-        if (spriteSheet == null) {
-            Log.w(
-                    "TAG_Soccer",
-                    getClass().getSimpleName() + ".setupRunningPlayerAnimation: spritesheet_idle resource missing"
-            );
-            runningPlayerView.setVisibility(View.GONE);
-            return;
-        }
-
-        int sheetWidth = spriteSheet.getWidth();
-        int sheetHeight = spriteSheet.getHeight();
-        if (sheetWidth <= 0 || sheetHeight <= 0) {
-            Log.w(
-                    "TAG_Soccer",
-                    getClass().getSimpleName() + ".setupRunningPlayerAnimation: spritesheet has invalid dimensions"
-            );
-            spriteSheet.recycle();
-            runningPlayerView.setVisibility(View.GONE);
-            runningPlayerFrames = null;
-            return;
-        }
-
-        int framesAvailable = Math.min(RUNNING_PLAYER_FRAME_COUNT, sheetWidth / RUNNING_PLAYER_FRAME_WIDTH);
-        if (framesAvailable <= 0) {
-            Log.w(
-                    "TAG_Soccer",
-                    getClass().getSimpleName() + ".setupRunningPlayerAnimation: No frames available in spritesheet"
-            );
-            spriteSheet.recycle();
-            runningPlayerView.setVisibility(View.GONE);
-            runningPlayerFrames = null;
-            return;
-        }
-
-        int rowsAvailable = sheetHeight / RUNNING_PLAYER_FRAME_HEIGHT;
-        if (rowsAvailable <= 0) {
-            Log.w(
-                    "TAG_Soccer",
-                    getClass().getSimpleName() + ".setupRunningPlayerAnimation: No rows available in spritesheet"
-            );
-            spriteSheet.recycle();
-            runningPlayerView.setVisibility(View.GONE);
-            runningPlayerFrames = null;
-            return;
-        }
-
-        int targetWidthPx = RUNNING_PLAYER_FRAME_WIDTH;
-        int targetHeightPx = RUNNING_PLAYER_FRAME_HEIGHT;
-        ViewGroup.LayoutParams layoutParams = runningPlayerView.getLayoutParams();
-        if (layoutParams != null) {
-            if (layoutParams.width > 0) {
-                targetWidthPx = layoutParams.width;
-            }
-            if (layoutParams.height > 0) {
-                targetHeightPx = layoutParams.height;
-            }
-        }
-
-        if (targetWidthPx <= 0) {
-            targetWidthPx = RUNNING_PLAYER_FRAME_WIDTH;
-        }
-        if (targetHeightPx <= 0) {
-            targetHeightPx = RUNNING_PLAYER_FRAME_HEIGHT;
-        }
-
-        ArrayList<Bitmap[]> frameRows = new ArrayList<>();
-        for (int row = 0; row < rowsAvailable; row++) {
-            ArrayList<Bitmap> rowFrames = new ArrayList<>();
-            for (int col = 0; col < framesAvailable; col++) {
-                int sourceX = col * RUNNING_PLAYER_FRAME_WIDTH;
-                if (sourceX >= sheetWidth) {
-                    break;
-                }
-                int frameWidth = Math.min(RUNNING_PLAYER_FRAME_WIDTH, sheetWidth - sourceX);
-                if (frameWidth <= 0) {
-                    Log.w(
+        // Move heavy bitmap operations to background thread to prevent ANR
+        // See: docs/PROFILEINSTALLER_ANR_FIX.md for ANR prevention patterns
+        new Thread(() -> {
+            try {
+                Bitmap spriteSheet;
+                try {
+                    BitmapFactory.Options decodeOptions = new BitmapFactory.Options();
+                    decodeOptions.inScaled = false;
+                    spriteSheet = BitmapFactory.decodeResource(getResources(), spriteSheetResId, decodeOptions);
+                } catch (Exception e) {
+                    Log.e(
                             "TAG_Soccer",
-                            getClass().getSimpleName()
-                                    + ".setupRunningPlayerAnimation: Frame width invalid at row "
-                                    + row
-                                    + ", index "
-                                    + col
+                            getClass().getSimpleName() + ".setupRunningPlayerAnimation: Failed to decode sprite sheet",
+                            e
                     );
-                    recycleBitmapRows(frameRows);
-                    recycleBitmapList(rowFrames);
-                    spriteSheet.recycle();
-                    runningPlayerFrames = null;
-                    runningPlayerView.setVisibility(View.GONE);
                     return;
                 }
 
-                int sourceY = row * RUNNING_PLAYER_FRAME_HEIGHT;
-                if (sourceY >= sheetHeight) {
-                    break;
-                }
-                int frameHeight = Math.min(RUNNING_PLAYER_FRAME_HEIGHT, sheetHeight - sourceY);
-                if (frameHeight <= 0) {
-                    break;
-                }
-
-                try {
-                    Bitmap frame = Bitmap.createBitmap(
-                            spriteSheet,
-                            sourceX,
-                            sourceY,
-                            frameWidth,
-                            frameHeight
+                if (spriteSheet == null) {
+                    Log.w(
+                            "TAG_Soccer",
+                            getClass().getSimpleName() + ".setupRunningPlayerAnimation: spritesheet_idle resource missing"
                     );
-                    if (frame == null) {
-                        continue;
-                    }
+                    runOnUiThread(() -> {
+                        if (runningPlayerView != null) {
+                            runningPlayerView.setVisibility(View.GONE);
+                        }
+                    });
+                    return;
+                }
 
-                    if (frame.getWidth() != targetWidthPx || frame.getHeight() != targetHeightPx) {
+                int sheetWidth = spriteSheet.getWidth();
+                int sheetHeight = spriteSheet.getHeight();
+                if (sheetWidth <= 0 || sheetHeight <= 0) {
+                    Log.w(
+                            "TAG_Soccer",
+                            getClass().getSimpleName() + ".setupRunningPlayerAnimation: spritesheet has invalid dimensions"
+                    );
+                    spriteSheet.recycle();
+                    runOnUiThread(() -> {
+                        if (runningPlayerView != null) {
+                            runningPlayerView.setVisibility(View.GONE);
+                        }
+                        runningPlayerFrames = null;
+                    });
+                    return;
+                }
+
+                int framesAvailable = Math.min(RUNNING_PLAYER_FRAME_COUNT, sheetWidth / RUNNING_PLAYER_FRAME_WIDTH);
+                if (framesAvailable <= 0) {
+                    Log.w(
+                            "TAG_Soccer",
+                            getClass().getSimpleName() + ".setupRunningPlayerAnimation: No frames available in spritesheet"
+                    );
+                    spriteSheet.recycle();
+                    runOnUiThread(() -> {
+                        if (runningPlayerView != null) {
+                            runningPlayerView.setVisibility(View.GONE);
+                        }
+                        runningPlayerFrames = null;
+                    });
+                    return;
+                }
+
+                int rowsAvailable = sheetHeight / RUNNING_PLAYER_FRAME_HEIGHT;
+                if (rowsAvailable <= 0) {
+                    Log.w(
+                            "TAG_Soccer",
+                            getClass().getSimpleName() + ".setupRunningPlayerAnimation: No rows available in spritesheet"
+                    );
+                    spriteSheet.recycle();
+                    runOnUiThread(() -> {
+                        if (runningPlayerView != null) {
+                            runningPlayerView.setVisibility(View.GONE);
+                        }
+                        runningPlayerFrames = null;
+                    });
+                    return;
+                }
+
+                // Use default frame dimensions for bitmap processing
+                // Layout-specific sizing can be handled by ImageView's scaleType
+                int targetWidthPx = RUNNING_PLAYER_FRAME_WIDTH;
+                int targetHeightPx = RUNNING_PLAYER_FRAME_HEIGHT;
+
+                ArrayList<Bitmap[]> frameRows = new ArrayList<>();
+                for (int row = 0; row < rowsAvailable; row++) {
+                    ArrayList<Bitmap> rowFrames = new ArrayList<>();
+                    for (int col = 0; col < framesAvailable; col++) {
+                        int sourceX = col * RUNNING_PLAYER_FRAME_WIDTH;
+                        if (sourceX >= sheetWidth) {
+                            break;
+                        }
+                        int frameWidth = Math.min(RUNNING_PLAYER_FRAME_WIDTH, sheetWidth - sourceX);
+                        if (frameWidth <= 0) {
+                            Log.w(
+                                    "TAG_Soccer",
+                                    getClass().getSimpleName()
+                                            + ".setupRunningPlayerAnimation: Frame width invalid at row "
+                                            + row
+                                            + ", index "
+                                            + col
+                            );
+                            recycleBitmapRows(frameRows);
+                            recycleBitmapList(rowFrames);
+                            spriteSheet.recycle();
+                            runOnUiThread(() -> {
+                                runningPlayerFrames = null;
+                                if (runningPlayerView != null) {
+                                    runningPlayerView.setVisibility(View.GONE);
+                                }
+                            });
+                            return;
+                        }
+
+                        int sourceY = row * RUNNING_PLAYER_FRAME_HEIGHT;
+                        if (sourceY >= sheetHeight) {
+                            break;
+                        }
+                        int frameHeight = Math.min(RUNNING_PLAYER_FRAME_HEIGHT, sheetHeight - sourceY);
+                        if (frameHeight <= 0) {
+                            break;
+                        }
+
                         try {
-                            Bitmap scaledFrame = Bitmap.createScaledBitmap(frame, targetWidthPx, targetHeightPx, true);
-                            if (scaledFrame != frame) {
-                                frame.recycle();
+                            Bitmap frame = Bitmap.createBitmap(
+                                    spriteSheet,
+                                    sourceX,
+                                    sourceY,
+                                    frameWidth,
+                                    frameHeight
+                            );
+                            if (frame == null) {
+                                continue;
                             }
-                            frame = scaledFrame;
-                        } catch (IllegalArgumentException scaleException) {
+
+                            if (frame.getWidth() != targetWidthPx || frame.getHeight() != targetHeightPx) {
+                                try {
+                                    Bitmap scaledFrame = Bitmap.createScaledBitmap(frame, targetWidthPx, targetHeightPx, true);
+                                    if (scaledFrame != frame) {
+                                        frame.recycle();
+                                    }
+                                    frame = scaledFrame;
+                                } catch (IllegalArgumentException scaleException) {
+                                    Log.e(
+                                            "TAG_Soccer",
+                                            getClass().getSimpleName()
+                                                    + ".setupRunningPlayerAnimation: Failed to scale frame at row "
+                                                    + row
+                                                    + ", index "
+                                                    + col,
+                                            scaleException
+                                    );
+                                }
+                            }
+
+                            rowFrames.add(frame);
+                        } catch (IllegalArgumentException e) {
                             Log.e(
                                     "TAG_Soccer",
                                     getClass().getSimpleName()
-                                            + ".setupRunningPlayerAnimation: Failed to scale frame at row "
+                                            + ".setupRunningPlayerAnimation: Failed to create frame at row "
                                             + row
                                             + ", index "
                                             + col,
-                                    scaleException
+                                    e
                             );
+                            recycleBitmapRows(frameRows);
+                            recycleBitmapList(rowFrames);
+                            spriteSheet.recycle();
+                            runOnUiThread(() -> {
+                                runningPlayerFrames = null;
+                                if (runningPlayerView != null) {
+                                    runningPlayerView.setVisibility(View.GONE);
+                                }
+                            });
+                            return;
                         }
                     }
 
-                    rowFrames.add(frame);
-                } catch (IllegalArgumentException e) {
-                    Log.e(
-                            "TAG_Soccer",
-                            getClass().getSimpleName()
-                                    + ".setupRunningPlayerAnimation: Failed to create frame at row "
-                                    + row
-                                    + ", index "
-                                    + col,
-                            e
-                    );
-                    recycleBitmapRows(frameRows);
-                    recycleBitmapList(rowFrames);
-                    spriteSheet.recycle();
-                    runningPlayerFrames = null;
-                    runningPlayerView.setVisibility(View.GONE);
+                    if (!rowFrames.isEmpty()) {
+                        frameRows.add(rowFrames.toArray(new Bitmap[0]));
+                    }
+                }
+
+                spriteSheet.recycle();
+
+                if (frameRows.isEmpty()) {
+                    runOnUiThread(() -> {
+                        runningPlayerFrames = null;
+                        if (runningPlayerView != null) {
+                            runningPlayerView.setVisibility(View.GONE);
+                        }
+                    });
                     return;
                 }
+
+                // Update UI on main thread
+                final Bitmap[][] loadedFrames = frameRows.toArray(new Bitmap[0][]);
+                runOnUiThread(() -> {
+                    if (isFinishing() || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed())) {
+                        // Activity is finishing, recycle bitmaps
+                        for (Bitmap[] row : loadedFrames) {
+                            recycleBitmapArray(row);
+                        }
+                        return;
+                    }
+                    
+                    runningPlayerFrames = loadedFrames;
+                    runningPlayerRowIndex = 0;
+                    runningPlayerFrameIndex = 0;
+                    
+                    if (runningPlayerView != null) {
+                        runningPlayerView.setVisibility(View.VISIBLE);
+                        Bitmap[] initialRow = getCurrentRunningPlayerRowFrames();
+                        if (initialRow != null && initialRow.length > 0) {
+                            runningPlayerView.setImageBitmap(initialRow[0]);
+                        }
+                        configureRunningPlayerClickListener();
+                    }
+                });
+            } catch (Exception e) {
+                Log.e(
+                        "TAG_Soccer",
+                        getClass().getSimpleName() + ".setupRunningPlayerAnimation: Unexpected error in background thread",
+                        e
+                );
             }
-
-            if (!rowFrames.isEmpty()) {
-                frameRows.add(rowFrames.toArray(new Bitmap[0]));
-            }
-        }
-
-        spriteSheet.recycle();
-
-        if (frameRows.isEmpty()) {
-            runningPlayerFrames = null;
-            runningPlayerView.setVisibility(View.GONE);
-            return;
-        }
-
-        runningPlayerFrames = frameRows.toArray(new Bitmap[0][]);
-        runningPlayerRowIndex = 0;
-        runningPlayerFrameIndex = 0;
-        runningPlayerView.setVisibility(View.VISIBLE);
-
-        Bitmap[] initialRow = getCurrentRunningPlayerRowFrames();
-        if (initialRow != null && initialRow.length > 0) {
-            runningPlayerView.setImageBitmap(initialRow[0]);
-        }
-        configureRunningPlayerClickListener();
+        }).start();
     }
 
     private void startRunningPlayerAnimation() {
