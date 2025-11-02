@@ -72,8 +72,12 @@ public class Field {
     private float runStartGridY = 0f;
     private float runDeltaGridX = 0f;
     private float runDeltaGridY = 0f;
+    private int runFrameLimit = RunPlayerSprite.FRAME_COUNT;
 
     private static final int RUN_FRAME_COUNT = RunPlayerSprite.FRAME_COUNT;
+    private static final float RUN_FRAME_STEP_DISTANCE = RUN_FRAME_COUNT > 0
+            ? (float) (Math.sqrt(2.0) / RUN_FRAME_COUNT)
+            : 0f;
 
     public Field(Context current, ArrayList<MoveTo> argMoves, ArrayList<MoveTo> argPossibleMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex, boolean animationsEnabled) {
 
@@ -328,10 +332,23 @@ public class Field {
         }
 
         activeRunRedPlayerFrames = selectedFrames;
+        int availableFrames = Math.min(RUN_FRAME_COUNT, selectedFrames.length);
+        if (availableFrames <= 0) {
+            return;
+        }
+
+        float totalDistance = (float) Math.hypot(totalDeltaX, totalDeltaY);
+        int frameLimit = availableFrames;
+        if (totalDistance > 0f && RUN_FRAME_STEP_DISTANCE > 0f) {
+            float framesForDistance = totalDistance / RUN_FRAME_STEP_DISTANCE;
+            frameLimit = Math.max(1, Math.min(availableFrames, Math.round(framesForDistance)));
+        }
+
+        runFrameLimit = frameLimit;
         runStartGridX = flippedStartX;
         runStartGridY = flippedStartY;
-        runDeltaGridX = totalDeltaX / RUN_FRAME_COUNT;
-        runDeltaGridY = totalDeltaY / RUN_FRAME_COUNT;
+        runDeltaGridX = frameLimit > 0 ? totalDeltaX / frameLimit : 0f;
+        runDeltaGridY = frameLimit > 0 ? totalDeltaY / frameLimit : 0f;
         runPlayerFrameIndex = 0;
         runPlayerLastFrameTime = SystemClock.uptimeMillis();
         runAnimationActive = true;
@@ -346,6 +363,7 @@ public class Field {
         runPlayerFrameIndex = 0;
         runPlayerLastFrameTime = 0L;
         idlePlayerLastFrameTime = referenceTime;
+        runFrameLimit = RUN_FRAME_COUNT;
     }
 
     private void drawRunAnimation(Canvas canvas, float ballRadius) {
@@ -354,7 +372,8 @@ public class Field {
         }
         Bitmap[] frames = activeRunRedPlayerFrames != null ? activeRunRedPlayerFrames : EMPTY_BITMAP_ARRAY;
         int frameCount = frames.length;
-        if (frameCount == 0 || RUN_FRAME_COUNT <= 0) {
+        int frameLimit = Math.min(runFrameLimit, frameCount);
+        if (frameLimit <= 0) {
             stopRunAnimation(SystemClock.uptimeMillis());
             return;
         }
@@ -368,7 +387,7 @@ public class Field {
         if (RunPlayerSprite.FRAME_DURATION_MS > 0 && elapsed >= RunPlayerSprite.FRAME_DURATION_MS) {
             long framesToAdvance = elapsed / RunPlayerSprite.FRAME_DURATION_MS;
             runPlayerFrameIndex += (int) framesToAdvance;
-            if (runPlayerFrameIndex >= frameCount) {
+            if (runPlayerFrameIndex >= frameLimit) {
                 stopRunAnimation(now);
                 return;
             }
@@ -392,7 +411,7 @@ public class Field {
             return;
         }
 
-        float stepIndex = Math.min(runPlayerFrameIndex + 1, RUN_FRAME_COUNT);
+        float stepIndex = Math.min(runPlayerFrameIndex + 1, frameLimit);
         float currentGridX = runStartGridX + runDeltaGridX * stepIndex;
         float currentGridY = runStartGridY + runDeltaGridY * stepIndex;
 
@@ -419,7 +438,7 @@ public class Field {
         RectF spriteDst = new RectF(spriteLeft, spriteTop, spriteRight, spriteBottom);
         canvas.drawBitmap(spriteFrame, null, spriteDst, null);
 
-        if (runPlayerFrameIndex >= frameCount - 1) {
+        if (runPlayerFrameIndex >= frameLimit - 1) {
             stopRunAnimation(now);
         }
     }
