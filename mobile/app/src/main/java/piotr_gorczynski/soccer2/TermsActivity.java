@@ -30,7 +30,7 @@ public class TermsActivity extends BaseActivity {
             webView.loadUrl(url);
         } catch (Exception e) {
             Log.e("TAG_Soccer", "Failed to load terms URL in WebView", e);
-            Toast.makeText(this, "Failed to load terms and conditions", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.failed_to_load_terms, Toast.LENGTH_LONG).show();
         }
 
         Button acceptBtn = findViewById(R.id.acceptTerms);
