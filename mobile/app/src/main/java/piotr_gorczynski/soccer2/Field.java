@@ -70,8 +70,11 @@ public class Field {
     private long runPlayerLastFrameTime = 0L;
     private float runStartGridX = 0f;
     private float runStartGridY = 0f;
-    private float runDeltaGridX = 0f;
-    private float runDeltaGridY = 0f;
+    private float runDirectionX = 0f;
+    private float runDirectionY = 0f;
+    private float runTargetGridX = 0f;
+    private float runTargetGridY = 0f;
+    private float runTotalDistance = 0f;
     private int runFrameLimit = RunPlayerSprite.FRAME_COUNT;
 
     private static final int RUN_FRAME_COUNT = RunPlayerSprite.FRAME_COUNT;
@@ -341,14 +344,22 @@ public class Field {
         int frameLimit = availableFrames;
         if (totalDistance > 0f && RUN_FRAME_STEP_DISTANCE > 0f) {
             float framesForDistance = totalDistance / RUN_FRAME_STEP_DISTANCE;
-            frameLimit = Math.max(1, Math.min(availableFrames, Math.round(framesForDistance)));
+            frameLimit = Math.max(1, Math.min(availableFrames, (int) Math.ceil(framesForDistance)));
         }
 
         runFrameLimit = frameLimit;
         runStartGridX = flippedStartX;
         runStartGridY = flippedStartY;
-        runDeltaGridX = frameLimit > 0 ? totalDeltaX / frameLimit : 0f;
-        runDeltaGridY = frameLimit > 0 ? totalDeltaY / frameLimit : 0f;
+        runTargetGridX = flippedTargetX;
+        runTargetGridY = flippedTargetY;
+        runTotalDistance = totalDistance;
+        if (totalDistance > 0f) {
+            runDirectionX = totalDeltaX / totalDistance;
+            runDirectionY = totalDeltaY / totalDistance;
+        } else {
+            runDirectionX = 0f;
+            runDirectionY = 0f;
+        }
         runPlayerFrameIndex = 0;
         runPlayerLastFrameTime = SystemClock.uptimeMillis();
         runAnimationActive = true;
@@ -364,6 +375,9 @@ public class Field {
         runPlayerLastFrameTime = 0L;
         idlePlayerLastFrameTime = referenceTime;
         runFrameLimit = RUN_FRAME_COUNT;
+        runDirectionX = 0f;
+        runDirectionY = 0f;
+        runTotalDistance = 0f;
     }
 
     private void drawRunAnimation(Canvas canvas, float ballRadius) {
@@ -412,8 +426,25 @@ public class Field {
         }
 
         float stepIndex = Math.min(runPlayerFrameIndex + 1, frameLimit);
-        float currentGridX = runStartGridX + runDeltaGridX * stepIndex;
-        float currentGridY = runStartGridY + runDeltaGridY * stepIndex;
+        float distanceTraveled = RUN_FRAME_STEP_DISTANCE * stepIndex;
+        if (runTotalDistance > 0f && distanceTraveled > runTotalDistance) {
+            distanceTraveled = runTotalDistance;
+        }
+
+        float currentGridX = runStartGridX + runDirectionX * distanceTraveled;
+        float currentGridY = runStartGridY + runDirectionY * distanceTraveled;
+
+        if (runDirectionX > 0f) {
+            currentGridX = Math.min(currentGridX, runTargetGridX);
+        } else if (runDirectionX < 0f) {
+            currentGridX = Math.max(currentGridX, runTargetGridX);
+        }
+
+        if (runDirectionY > 0f) {
+            currentGridY = Math.min(currentGridY, runTargetGridY);
+        } else if (runDirectionY < 0f) {
+            currentGridY = Math.max(currentGridY, runTargetGridY);
+        }
 
         float spriteTop = h2y(currentGridY) + ballRadius;
         float spriteBottom = spriteTop + spriteHeight;
