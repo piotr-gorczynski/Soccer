@@ -333,4 +333,5 @@
     <string name="active_invitation_exists">ንቁ ግብዣ አስቀድሞ አለ</string>
     <string name="user_blocked_invites">ተጠቃሚ ግብዣዎችን አግዷል</string>
     <string name="cannot_invite_this_user">ይህን ተጠቃሚ ግብዣ ልላክ አልችልም</string>
+    <string name="failed_to_load_terms">ውሎችና ሁኔታዎችን ማጫን አልተሳካም</string>
 </resources>

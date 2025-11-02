@@ -333,4 +333,5 @@
     <string name="active_invitation_exists">Casumo firfircoon ayaa jira</string>
     <string name="user_blocked_invites">Isticmaaluhu wuu xannibay casumadaha</string>
     <string name="cannot_invite_this_user">Lama casumi karo isticmaalahaas</string>
+    <string name="failed_to_load_terms">Way ku guuldaraysatay in la soo raro xeerarka iyo shuruudaha</string>
 </resources>
