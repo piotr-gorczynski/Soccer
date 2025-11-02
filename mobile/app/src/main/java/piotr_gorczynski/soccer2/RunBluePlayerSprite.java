@@ -6,7 +6,14 @@ import android.graphics.Bitmap;
 final class RunBluePlayerSprite {
 
     private static final int ROW_HEIGHT = 128;
-    private static final int FIRST_ROW_START_Y = 1 + ROW_HEIGHT * 8;
+    // The blue sprites occupy the lower half of the shared run sheet. The first
+    // blue row starts immediately after the red rows (8 * ROW_HEIGHT pixels). We
+    // intentionally avoid adding an extra offset here because doing so would
+    // push the final south-west row one pixel beyond the sheet's height (2048px),
+    // causing BitmapFactory to return an empty frame array. By using exactly
+    // ROW_HEIGHT * 8 we keep every blue frame—especially the south-west sequence
+    // used when moving (-1, -1)—within bounds so the animation never disappears.
+    private static final int FIRST_ROW_START_Y = ROW_HEIGHT * 8;
 
     private RunBluePlayerSprite() {
         // no instances
