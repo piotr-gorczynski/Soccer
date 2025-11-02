@@ -846,8 +846,8 @@ public class MenuActivity extends BaseActivity {
 
         runHousekeeping();          // ← always executed, even on cold resume
 
-        Log.d("TAG_Soccer", "onCreate: Calling MobileAds");
-        MobileAds.initialize(this, initializationStatus -> {});
+        // MobileAds initialization is now done in SoccerApp.onCreate() on background thread
+        // to prevent ANR crashes. No need to initialize again here.
         Log.d("TAG_Soccer", "onCreate: loadInterstitialAd");
         loadInterstitialAd();
 
