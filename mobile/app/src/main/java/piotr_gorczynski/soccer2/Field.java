@@ -38,9 +38,19 @@ public class Field {
     private final Rect rField;
     private final Rect rText;
     private final Bitmap ballBitmap;
+    private static final Bitmap[] EMPTY_BITMAP_ARRAY = new Bitmap[0];
+
     private final Bitmap[] idleRedPlayerFrames;
-    private final Bitmap[] runRedPlayerFrames;
+    private final Bitmap[] runRedPlayerWestFrames;
+    private final Bitmap[] runRedPlayerWestNorthFrames;
+    private final Bitmap[] runRedPlayerNorthFrames;
+    private final Bitmap[] runRedPlayerEastNorthFrames;
+    private final Bitmap[] runRedPlayerEastFrames;
+    private final Bitmap[] runRedPlayerEastSouthFrames;
+    private final Bitmap[] runRedPlayerSouthFrames;
+    private final Bitmap[] runRedPlayerSouthWestFrames;
     private final Bitmap[] idleBluePlayerFrames;
+    private Bitmap[] activeRunRedPlayerFrames;
     private final String sPlayer0;
     private final String sPlayer1;
     private final int gameType;
@@ -134,12 +144,28 @@ public class Field {
         if (showIdlePlayerSprite) {
             idleRedPlayerFrames = IdleRedPlayerSprite.getFrames(current);
             idleBluePlayerFrames = IdleBluePlayerSprite.getFrames(current);
-            runRedPlayerFrames = RunRedPlayerSprite.getFrames(current);
+            runRedPlayerWestFrames = RunRedPlayerSprite.getWestFrames(current);
+            runRedPlayerWestNorthFrames = RunRedPlayerSprite.getWestNorthFrames(current);
+            runRedPlayerNorthFrames = RunRedPlayerSprite.getNorthFrames(current);
+            runRedPlayerEastNorthFrames = RunRedPlayerSprite.getEastNorthFrames(current);
+            runRedPlayerEastFrames = RunRedPlayerSprite.getEastFrames(current);
+            runRedPlayerEastSouthFrames = RunRedPlayerSprite.getEastSouthFrames(current);
+            runRedPlayerSouthFrames = RunRedPlayerSprite.getSouthFrames(current);
+            runRedPlayerSouthWestFrames = RunRedPlayerSprite.getSouthWestFrames(current);
+            activeRunRedPlayerFrames = runRedPlayerNorthFrames;
             idlePlayerLastFrameTime = SystemClock.uptimeMillis();
         } else {
-            idleRedPlayerFrames = new Bitmap[0];
-            idleBluePlayerFrames = new Bitmap[0];
-            runRedPlayerFrames = new Bitmap[0];
+            idleRedPlayerFrames = EMPTY_BITMAP_ARRAY;
+            idleBluePlayerFrames = EMPTY_BITMAP_ARRAY;
+            runRedPlayerWestFrames = EMPTY_BITMAP_ARRAY;
+            runRedPlayerWestNorthFrames = EMPTY_BITMAP_ARRAY;
+            runRedPlayerNorthFrames = EMPTY_BITMAP_ARRAY;
+            runRedPlayerEastNorthFrames = EMPTY_BITMAP_ARRAY;
+            runRedPlayerEastFrames = EMPTY_BITMAP_ARRAY;
+            runRedPlayerEastSouthFrames = EMPTY_BITMAP_ARRAY;
+            runRedPlayerSouthFrames = EMPTY_BITMAP_ARRAY;
+            runRedPlayerSouthWestFrames = EMPTY_BITMAP_ARRAY;
+            activeRunRedPlayerFrames = EMPTY_BITMAP_ARRAY;
         }
 
         pPlayer0=new Paint();
@@ -279,7 +305,7 @@ public class Field {
         if (previous == null || next == null) {
             return;
         }
-        if (runRedPlayerFrames.length == 0 || RUN_FRAME_COUNT <= 0) {
+        if (RUN_FRAME_COUNT <= 0) {
             return;
         }
         if ((previous.X == next.X && previous.Y == next.Y)
@@ -293,10 +319,19 @@ public class Field {
         float flippedTargetX = flipX(next.X);
         float flippedTargetY = flipY(next.Y);
 
+        float totalDeltaX = flippedTargetX - flippedStartX;
+        float totalDeltaY = flippedTargetY - flippedStartY;
+
+        Bitmap[] selectedFrames = selectRunAnimationFrames(totalDeltaX, totalDeltaY);
+        if (selectedFrames.length == 0) {
+            return;
+        }
+
+        activeRunRedPlayerFrames = selectedFrames;
         runStartGridX = flippedStartX;
         runStartGridY = flippedStartY;
-        runDeltaGridX = (flippedTargetX - flippedStartX) / RUN_FRAME_COUNT;
-        runDeltaGridY = (flippedTargetY - flippedStartY) / RUN_FRAME_COUNT;
+        runDeltaGridX = totalDeltaX / RUN_FRAME_COUNT;
+        runDeltaGridY = totalDeltaY / RUN_FRAME_COUNT;
         runPlayerFrameIndex = 0;
         runPlayerLastFrameTime = SystemClock.uptimeMillis();
         runAnimationActive = true;
@@ -317,7 +352,8 @@ public class Field {
         if (!runAnimationActive) {
             return;
         }
-        int frameCount = runRedPlayerFrames.length;
+        Bitmap[] frames = activeRunRedPlayerFrames != null ? activeRunRedPlayerFrames : EMPTY_BITMAP_ARRAY;
+        int frameCount = frames.length;
         if (frameCount == 0 || RUN_FRAME_COUNT <= 0) {
             stopRunAnimation(SystemClock.uptimeMillis());
             return;
@@ -344,7 +380,7 @@ public class Field {
             return;
         }
 
-        Bitmap spriteFrame = runRedPlayerFrames[Math.min(runPlayerFrameIndex, frameCount - 1)];
+        Bitmap spriteFrame = frames[Math.min(runPlayerFrameIndex, frameCount - 1)];
         if (spriteFrame == null || spriteFrame.isRecycled()) {
             stopRunAnimation(now);
             return;
@@ -386,6 +422,43 @@ public class Field {
         if (runPlayerFrameIndex >= frameCount - 1) {
             stopRunAnimation(now);
         }
+    }
+
+    private Bitmap[] selectRunAnimationFrames(float deltaX, float deltaY) {
+        if (deltaX == 0f && deltaY == 0f) {
+            return EMPTY_BITMAP_ARRAY;
+        }
+
+        double angle = Math.atan2(-deltaY, deltaX);
+        double degrees = Math.toDegrees(angle);
+        if (degrees < 0) {
+            degrees += 360.0;
+        }
+
+        Bitmap[] frames;
+        if (degrees >= 157.5 && degrees < 202.5) {
+            frames = runRedPlayerWestFrames;
+        } else if (degrees >= 112.5 && degrees < 157.5) {
+            frames = runRedPlayerWestNorthFrames;
+        } else if (degrees >= 67.5 && degrees < 112.5) {
+            frames = runRedPlayerNorthFrames;
+        } else if (degrees >= 22.5 && degrees < 67.5) {
+            frames = runRedPlayerEastNorthFrames;
+        } else if (degrees >= 337.5 || degrees < 22.5) {
+            frames = runRedPlayerEastFrames;
+        } else if (degrees >= 292.5 && degrees < 337.5) {
+            frames = runRedPlayerEastSouthFrames;
+        } else if (degrees >= 247.5 && degrees < 292.5) {
+            frames = runRedPlayerSouthFrames;
+        } else {
+            frames = runRedPlayerSouthWestFrames;
+        }
+
+        if (frames == null || frames.length == 0) {
+            return EMPTY_BITMAP_ARRAY;
+        }
+
+        return frames;
     }
 
     private int flipX(int x) {
