@@ -974,7 +974,7 @@ public class MenuActivity extends BaseActivity {
         }
 
         // Move heavy bitmap operations to background thread to prevent ANR
-        // See: docs/PROFILEINSTALLER_ANR_FIX.md for ANR prevention patterns
+        // See: docs/MENUACTIVITY_ANR_FIX.md for ANR prevention patterns
         new Thread(() -> {
             try {
                 Bitmap spriteSheet;
@@ -1055,6 +1055,7 @@ public class MenuActivity extends BaseActivity {
 
                 // Use default frame dimensions for bitmap processing
                 // Layout-specific sizing can be handled by ImageView's scaleType
+                // This avoids the complexity of synchronizing layout param reads from UI thread
                 int targetWidthPx = RUNNING_PLAYER_FRAME_WIDTH;
                 int targetHeightPx = RUNNING_PLAYER_FRAME_HEIGHT;
 
