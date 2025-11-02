@@ -225,7 +225,14 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         // The issue occurs when WebView is first initialized by ads on certain devices
         initializeWebViewSafely();
 
-        MobileAds.initialize(this, initializationStatus -> {});
+        // Initialize MobileAds on background thread to prevent ANR
+        // This fixes Crashlytics issue: com.google.android.gms.internal.ads.zzhwo.zzbE
+        // The issue occurs when MobileAds initialization blocks the main thread
+        new Thread(() -> {
+            MobileAds.initialize(this, initializationStatus -> {
+                Log.d("TAG_Soccer", getClass().getSimpleName() + ".onCreate: MobileAds initialized successfully");
+            });
+        }).start();
         
         // Set Firebase Analytics consent to DENIED by default for privacy compliance
         // This ensures no data is collected until explicit consent is given (EEA and US regulations)
