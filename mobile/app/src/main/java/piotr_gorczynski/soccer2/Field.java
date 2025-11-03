@@ -91,7 +91,7 @@ public class Field {
     private static final float RUN_FRAME_STEP_DISTANCE = RUN_FRAME_COUNT > 0
             ? (float) (Math.sqrt(2.0) / RUN_FRAME_COUNT)
             : 0f;
-    private static final float ACTIVE_SPRITE_PROXIMITY_RATIO = 0.8f;
+    private static final float ACTIVE_SPRITE_PROXIMITY_RATIO = 0.7f;
 
     public Field(Context current, ArrayList<MoveTo> argMoves, ArrayList<MoveTo> argPossibleMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex, boolean animationsEnabled) {
 
@@ -488,13 +488,14 @@ public class Field {
 
         float spriteCenterX = w2x(currentGridX);
         float ballCenterY = h2y(currentGridY);
+        float ballTop = ballCenterY - ballRadius;
         boolean drewFrame = false;
 
         if (blueFrame != null && !blueFrame.isRecycled()) {
             boolean blueShouldBeCloser = runActivePlayer == 1;
             float blueBottom = blueShouldBeCloser
-                    ? ballCenterY - spriteHeight * ACTIVE_SPRITE_PROXIMITY_RATIO
-                    : ballCenterY - ballRadius;
+                    ? ballTop - spriteHeight * ACTIVE_SPRITE_PROXIMITY_RATIO
+                    : ballTop;
             float blueTop = blueBottom - spriteHeight;
             if (blueTop < 0f) {
                 blueTop = 0f;
@@ -830,12 +831,13 @@ public class Field {
                 if (spriteHeight > 0f) {
                     // Blue player above the ball, bottom touching the ball's top edge
                     boolean blueShouldBeCloser = currentTurn == 1;
+                    float ballTop = cy - radius;
                     if (blueFrameCount > 0 && !runAnimationActive) {
                         Bitmap spriteFrame = idleBluePlayerFrames[idlePlayerFrameIndex % blueFrameCount];
                         if (spriteFrame != null && !spriteFrame.isRecycled()) {
                             float spriteBottom = blueShouldBeCloser
-                                    ? cy - spriteHeight * ACTIVE_SPRITE_PROXIMITY_RATIO
-                                    : cy - 1f;
+                                    ? ballTop - spriteHeight * ACTIVE_SPRITE_PROXIMITY_RATIO
+                                    : ballTop - 1f;
                             float spriteTop = spriteBottom - spriteHeight;
                             if (spriteTop < 0f) {
                                 spriteTop = 0f;
