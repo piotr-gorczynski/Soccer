@@ -53,12 +53,13 @@ public class MenuActivitySpriteSheetTest {
     public void testRunSpriteSheetConfiguration() {
         // Test realistic configuration for run sprite (used in MenuActivity)
         // spritesheet_run.png: 2816 x 2048 pixels = 22 frames x 16 rows
-        SpriteSheetMetadata metadata = new SpriteSheetMetadata.Builder(123)
+        int mockResourceId = 123;  // Mock resource ID for testing metadata configuration
+        SpriteSheetMetadata metadata = new SpriteSheetMetadata.Builder(mockResourceId)
                 .frameWidth(128)
                 .frameHeight(128)
-                .frameCount(22)  // Changed from 35 (idle) to 22 (run)
+                .frameCount(22)  // 22 frames per row in spritesheet_run
                 .columns(22)
-                .rows(16)        // Changed from 1 to 16
+                .rows(16)        // 16 rows in spritesheet_run
                 .frameDurationMs(125L)
                 .build();
 
