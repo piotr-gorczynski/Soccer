@@ -475,17 +475,15 @@ public class Field {
             return;
         }
 
-        int redFrameIndex = runPlayerFrameIndex;
-        int blueFrameIndex = runPlayerFrameIndex;
-        if (runRedDelayFrames > 0) {
-            redFrameIndex = Math.max(runPlayerFrameIndex - runRedDelayFrames, 0);
-        }
-        if (runBlueDelayFrames > 0) {
-            blueFrameIndex = Math.max(runPlayerFrameIndex - runBlueDelayFrames, 0);
-        }
+        int redFrameIndex = runPlayerFrameIndex - runRedDelayFrames;
+        int blueFrameIndex = runPlayerFrameIndex - runBlueDelayFrames;
 
-        Bitmap redFrame = getRunFrame(redFrames, redFrameIndex, frameCount);
-        Bitmap blueFrame = getRunFrame(blueFrames, blueFrameIndex, frameCount);
+        Bitmap redFrame = redFrameIndex >= 0
+                ? getRunFrame(redFrames, redFrameIndex, frameCount)
+                : null;
+        Bitmap blueFrame = blueFrameIndex >= 0
+                ? getRunFrame(blueFrames, blueFrameIndex, frameCount)
+                : null;
 
         if ((redFrame == null || redFrame.isRecycled())
                 && (blueFrame == null || blueFrame.isRecycled())) {
