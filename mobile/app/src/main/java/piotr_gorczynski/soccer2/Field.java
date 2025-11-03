@@ -486,7 +486,7 @@ public class Field {
             currentGridY = Math.max(currentGridY, runTargetGridY);
         }
 
-        float spriteCenterX = w2x(currentGridX);
+        float ballCenterX = w2x(currentGridX);
         float ballCenterY = h2y(currentGridY);
         float ballTop = ballCenterY - ballRadius;
         boolean drewFrame = false;
@@ -507,8 +507,8 @@ public class Field {
             float actualBlueHeight = blueBottom - blueTop;
             if (actualBlueHeight > 0f) {
                 float blueWidth = actualBlueHeight * blueFrame.getWidth() / (float) blueFrame.getHeight();
-                float blueLeft = spriteCenterX - blueWidth / 2f;
-                float blueRight = spriteCenterX + blueWidth / 2f;
+                float blueLeft = ballCenterX - blueWidth / 2f;
+                float blueRight = ballCenterX + blueWidth / 2f;
                 RectF blueDst = new RectF(blueLeft, blueTop, blueRight, blueBottom);
                 canvas.drawBitmap(blueFrame, null, blueDst, null);
                 drewFrame = true;
@@ -531,8 +531,8 @@ public class Field {
             float actualRedHeight = redBottom - redTop;
             if (actualRedHeight > 0f) {
                 float redWidth = actualRedHeight * redFrame.getWidth() / (float) redFrame.getHeight();
-                float redLeft = spriteCenterX - redWidth / 2f;
-                float redRight = spriteCenterX + redWidth / 2f;
+                float redLeft = ballCenterX - redWidth / 2f;
+                float redRight = ballCenterX + redWidth / 2f;
                 RectF redDst = new RectF(redLeft, redTop, redRight, redBottom);
                 canvas.drawBitmap(redFrame, null, redDst, null);
                 drewFrame = true;
@@ -793,14 +793,14 @@ public class Field {
         if (last.X == -1 && last.Y == -1) {
             last = Moves.get(Moves.size() - 2);
         }
-        float cx = w2x(flipX(last.X));
-        float cy = h2y(flipY(last.Y));
+        float ballCenterX = w2x(flipX(last.X));
+        float ballCenterY = h2y(flipY(last.Y));
         float radius = dotSize * 4;
         // Background circle behind the ball
         float radiusBackground = (float) (radius  * 0.8);
-        canvas.drawCircle(cx, cy, radiusBackground, movePaint);
+        canvas.drawCircle(ballCenterX, ballCenterY, radiusBackground, movePaint);
 
-        RectF dst = new RectF(cx - radius, cy - radius, cx + radius, cy + radius);
+        RectF dst = new RectF(ballCenterX - radius, ballCenterY - radius, ballCenterX + radius, ballCenterY + radius);
         canvas.drawBitmap(ballBitmap, null, dst, null);
 
         drawRunAnimation(canvas, radius);
@@ -831,13 +831,13 @@ public class Field {
                 if (spriteHeight > 0f) {
                     // Blue player above the ball, bottom touching the ball's top edge
                     boolean blueShouldBeCloser = currentTurn == 1;
-                    float ballTop = cy - radius;
+                    float ballTop = ballCenterY - radius;
                     if (blueFrameCount > 0 && !runAnimationActive) {
                         Bitmap spriteFrame = idleBluePlayerFrames[idlePlayerFrameIndex % blueFrameCount];
                         if (spriteFrame != null && !spriteFrame.isRecycled()) {
                             float spriteBottom = blueShouldBeCloser
-                                    ? cy + spriteHeight * (1-ACTIVE_SPRITE_PROXIMITY_RATIO)
-                                    : cy + 1f;
+                                    ? ballCenterY + spriteHeight * (1-ACTIVE_SPRITE_PROXIMITY_RATIO)
+                                    : ballCenterY + 1f;
                             float spriteTop = spriteBottom - spriteHeight;
                             if (spriteTop < 0f) {
                                 spriteTop = 0f;
@@ -845,8 +845,8 @@ public class Field {
                             float actualSpriteHeight = spriteBottom - spriteTop;
                             if (actualSpriteHeight > 0f) {
                                 float spriteWidth = actualSpriteHeight * spriteFrame.getWidth() / (float) spriteFrame.getHeight();
-                                float spriteLeft = cx - spriteWidth / 2f;
-                                float spriteRight = cx + spriteWidth / 2f;
+                                float spriteLeft = ballCenterX - spriteWidth / 2f;
+                                float spriteRight = ballCenterX + spriteWidth / 2f;
                                 RectF spriteDst = new RectF(spriteLeft, spriteTop, spriteRight, spriteBottom);
                                 canvas.drawBitmap(spriteFrame, null, spriteDst, null);
                             }
@@ -859,8 +859,8 @@ public class Field {
                         Bitmap spriteFrame = idleRedPlayerFrames[idlePlayerFrameIndex % redFrameCount];
                         if (spriteFrame != null && !spriteFrame.isRecycled()) {
                             float spriteTop = redShouldBeCloser
-                                    ? cy - spriteHeight * ACTIVE_SPRITE_PROXIMITY_RATIO
-                                    : cy + 1f;
+                                    ? ballCenterY - spriteHeight * ACTIVE_SPRITE_PROXIMITY_RATIO
+                                    : ballCenterY + 1f;
                             float spriteBottom = spriteTop + spriteHeight;
                             if (spriteBottom > canvas.getHeight()) {
                                 spriteBottom = canvas.getHeight();
@@ -868,8 +868,8 @@ public class Field {
                             float actualSpriteHeight = spriteBottom - spriteTop;
                             if (actualSpriteHeight > 0f) {
                                 float spriteWidth = actualSpriteHeight * spriteFrame.getWidth() / (float) spriteFrame.getHeight();
-                                float spriteLeft = cx - spriteWidth / 2f;
-                                float spriteRight = cx + spriteWidth / 2f;
+                                float spriteLeft = ballCenterX - spriteWidth / 2f;
+                                float spriteRight = ballCenterX + spriteWidth / 2f;
                                 RectF spriteDst = new RectF(spriteLeft, spriteTop, spriteRight, spriteBottom);
                                 canvas.drawBitmap(spriteFrame, null, spriteDst, null);
                             }
