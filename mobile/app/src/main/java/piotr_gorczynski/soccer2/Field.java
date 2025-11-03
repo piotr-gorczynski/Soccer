@@ -85,7 +85,10 @@ public class Field {
     private float runTargetGridY = 0f;
     private float runTotalDistance = 0f;
     private int runFrameLimit = RunPlayerSprite.FRAME_COUNT;
-    private int runActivePlayer = -1;
+    private boolean runStartRedCloser = false;
+    private boolean runTargetRedCloser = false;
+    private boolean runStartBlueCloser = false;
+    private boolean runTargetBlueCloser = false;
 
     private static final int RUN_FRAME_COUNT = RunPlayerSprite.FRAME_COUNT;
     private static final float RUN_FRAME_STEP_DISTANCE = RUN_FRAME_COUNT > 0
@@ -380,7 +383,10 @@ public class Field {
         }
 
         runFrameLimit = frameLimit;
-        runActivePlayer = next.P;
+        runStartRedCloser = previous.P == 0;
+        runTargetRedCloser = next.P == 0;
+        runStartBlueCloser = previous.P == 1;
+        runTargetBlueCloser = next.P == 1;
         runStartGridX = flippedStartX;
         runStartGridY = flippedStartY;
         runTargetGridX = flippedTargetX;
@@ -411,7 +417,10 @@ public class Field {
         runDirectionX = 0f;
         runDirectionY = 0f;
         runTotalDistance = 0f;
-        runActivePlayer = -1;
+        runStartRedCloser = false;
+        runTargetRedCloser = false;
+        runStartBlueCloser = false;
+        runTargetBlueCloser = false;
         activeRunRedPlayerFrames = EMPTY_BITMAP_ARRAY;
         activeRunBluePlayerFrames = EMPTY_BITMAP_ARRAY;
     }
@@ -491,11 +500,28 @@ public class Field {
         float ballTop = ballCenterY - ballRadius;
         boolean drewFrame = false;
 
+        float animationProgress;
+        if (runTotalDistance > 0f) {
+            animationProgress = distanceTraveled / runTotalDistance;
+        } else if (runFrameLimit > 1) {
+            animationProgress = (float) runPlayerFrameIndex / (float) (runFrameLimit - 1);
+        } else {
+            animationProgress = 1f;
+        }
+        animationProgress = clamp(animationProgress, 0f, 1f);
+
+        float blueStartProximity = runStartBlueCloser ? 1f : 0f;
+        float blueEndProximity = runTargetBlueCloser ? 1f : 0f;
+        float blueProximity = clamp(lerp(blueStartProximity, blueEndProximity, animationProgress), 0f, 1f);
+
+        float redStartProximity = runStartRedCloser ? 1f : 0f;
+        float redEndProximity = runTargetRedCloser ? 1f : 0f;
+        float redProximity = clamp(lerp(redStartProximity, redEndProximity, animationProgress), 0f, 1f);
+
         if (blueFrame != null && !blueFrame.isRecycled()) {
-            boolean blueShouldBeCloser = runActivePlayer == 1;
-            float blueBottom = blueShouldBeCloser
-                    ? ballCenterY + spriteHeight * (1-ACTIVE_SPRITE_PROXIMITY_RATIO)
-                    : ballCenterY - ballRadius;
+            float blueFarBottom = ballCenterY - ballRadius;
+            float blueCloseBottom = ballCenterY + spriteHeight * (1f - ACTIVE_SPRITE_PROXIMITY_RATIO);
+            float blueBottom = lerp(blueFarBottom, blueCloseBottom, blueProximity);
             float blueTop = blueBottom - spriteHeight;
             if (blueTop < 0f) {
                 blueTop = 0f;
@@ -516,10 +542,9 @@ public class Field {
         }
 
         if (redFrame != null && !redFrame.isRecycled()) {
-            boolean redShouldBeCloser = runActivePlayer == 0;
-            float redTop = redShouldBeCloser
-                    ? ballCenterY - spriteHeight * ACTIVE_SPRITE_PROXIMITY_RATIO
-                    : ballCenterY + ballRadius;
+            float redFarTop = ballCenterY + ballRadius;
+            float redCloseTop = ballCenterY - spriteHeight * ACTIVE_SPRITE_PROXIMITY_RATIO;
+            float redTop = lerp(redFarTop, redCloseTop, redProximity);
             float redBottom = redTop + spriteHeight;
             if (redBottom > canvas.getHeight()) {
                 redBottom = canvas.getHeight();
@@ -547,6 +572,14 @@ public class Field {
         if (runPlayerFrameIndex >= frameLimit - 1) {
             stopRunAnimation(now);
         }
+    }
+
+    private static float lerp(float start, float end, float t) {
+        return start + (end - start) * t;
+    }
+
+    private static float clamp(float value, float min, float max) {
+        return Math.max(min, Math.min(max, value));
     }
 
     private RunAnimationFrameSet selectRunAnimationFrames(float deltaX, float deltaY) {
