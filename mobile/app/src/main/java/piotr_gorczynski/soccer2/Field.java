@@ -89,12 +89,16 @@ public class Field {
     private boolean runTargetRedCloser = false;
     private boolean runStartBlueCloser = false;
     private boolean runTargetBlueCloser = false;
+    private int runMovingPlayer = -1;
+    private int runRedDelayFrames = 0;
+    private int runBlueDelayFrames = 0;
 
     private static final int RUN_FRAME_COUNT = RunPlayerSprite.FRAME_COUNT;
     private static final float RUN_FRAME_STEP_DISTANCE = RUN_FRAME_COUNT > 0
             ? (float) (Math.sqrt(2.0) / RUN_FRAME_COUNT)
             : 0f;
     private static final float ACTIVE_SPRITE_PROXIMITY_RATIO = 0.6f;
+    private static final int RUN_DELAY_CYCLES = 2;
 
     public Field(Context current, ArrayList<MoveTo> argMoves, ArrayList<MoveTo> argPossibleMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex, boolean animationsEnabled) {
 
@@ -382,7 +386,15 @@ public class Field {
             frameLimit = Math.max(1, Math.min(availableFrames, (int) Math.ceil(framesForDistance)));
         }
 
-        runFrameLimit = frameLimit;
+        runMovingPlayer = (previous.P == 0 || previous.P == 1) ? previous.P : -1;
+        runRedDelayFrames = frameSet.redFrames.length > 0 && runMovingPlayer == 1
+                ? RUN_DELAY_CYCLES
+                : 0;
+        runBlueDelayFrames = frameSet.blueFrames.length > 0 && runMovingPlayer == 0
+                ? RUN_DELAY_CYCLES
+                : 0;
+
+        runFrameLimit = frameLimit + Math.max(runRedDelayFrames, runBlueDelayFrames);
         runStartRedCloser = previous.P == 0;
         runTargetRedCloser = next.P == 0;
         runStartBlueCloser = previous.P == 1;
@@ -423,6 +435,9 @@ public class Field {
         runTargetBlueCloser = false;
         activeRunRedPlayerFrames = EMPTY_BITMAP_ARRAY;
         activeRunBluePlayerFrames = EMPTY_BITMAP_ARRAY;
+        runMovingPlayer = -1;
+        runRedDelayFrames = 0;
+        runBlueDelayFrames = 0;
     }
 
     private void drawRunAnimation(Canvas canvas, float ballRadius) {
@@ -432,7 +447,8 @@ public class Field {
         Bitmap[] redFrames = activeRunRedPlayerFrames != null ? activeRunRedPlayerFrames : EMPTY_BITMAP_ARRAY;
         Bitmap[] blueFrames = activeRunBluePlayerFrames != null ? activeRunBluePlayerFrames : EMPTY_BITMAP_ARRAY;
         int frameCount = Math.max(redFrames.length, blueFrames.length);
-        int frameLimit = Math.min(runFrameLimit, frameCount);
+        int maxDelay = Math.max(runRedDelayFrames, runBlueDelayFrames);
+        int frameLimit = Math.min(runFrameLimit, frameCount + maxDelay);
         if (frameLimit <= 0) {
             stopRunAnimation(SystemClock.uptimeMillis());
             return;
@@ -459,8 +475,17 @@ public class Field {
             return;
         }
 
-        Bitmap redFrame = getRunFrame(redFrames, runPlayerFrameIndex, frameCount);
-        Bitmap blueFrame = getRunFrame(blueFrames, runPlayerFrameIndex, frameCount);
+        int redFrameIndex = runPlayerFrameIndex;
+        int blueFrameIndex = runPlayerFrameIndex;
+        if (runRedDelayFrames > 0) {
+            redFrameIndex = Math.max(runPlayerFrameIndex - runRedDelayFrames, 0);
+        }
+        if (runBlueDelayFrames > 0) {
+            blueFrameIndex = Math.max(runPlayerFrameIndex - runBlueDelayFrames, 0);
+        }
+
+        Bitmap redFrame = getRunFrame(redFrames, redFrameIndex, frameCount);
+        Bitmap blueFrame = getRunFrame(blueFrames, blueFrameIndex, frameCount);
 
         if ((redFrame == null || redFrame.isRecycled())
                 && (blueFrame == null || blueFrame.isRecycled())) {
