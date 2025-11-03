@@ -11,6 +11,12 @@ public class LanguageSelectionActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
+        // Switch from splash theme to normal theme
+        setTheme(R.style.AppTheme);
+        
+        // Set the loading screen content view
+        setContentView(R.layout.activity_language_selection);
+        
         // Check if language is already set
         if (LanguageManager.isLanguageSet(this)) {
             // Language is already set, proceed to main activity
