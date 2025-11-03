@@ -56,12 +56,17 @@ import androidx.core.os.LocaleListCompat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import androidx.lifecycle.LifecycleOwner;
 
 public class SoccerApp extends Application implements DefaultLifecycleObserver {
 
+    private static final String TAG = "TAG_Soccer";
+    private static final android.os.Handler MAIN_HANDLER = new android.os.Handler(android.os.Looper.getMainLooper());
+    
     private DatabaseReference userStatusDbRef;
     private DatabaseReference connectedRef;
     private ValueEventListener connectedListener;
@@ -70,6 +75,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     private AnalyticsManager analyticsManager;
     private RemoteConfigHelper remoteConfigHelper;
     private boolean appInForeground;
+    private static final ExecutorService adsExecutor = Executors.newSingleThreadExecutor();
 
     /* Creates {state:"online", last_heartbeat:TS} */
     private static Map<String,Object> buildOnline() {
@@ -225,7 +231,17 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         // The issue occurs when WebView is first initialized by ads on certain devices
         initializeWebViewSafely();
 
-        MobileAds.initialize(this, initializationStatus -> {});
+        // Initialize MobileAds on background thread to prevent ANR
+        // This fixes Crashlytics issue: com.google.android.gms.internal.ads.zzhwo.zzbE
+        // The issue occurs when MobileAds initialization blocks the main thread
+        adsExecutor.execute(() -> {
+            MobileAds.initialize(this, initializationStatus -> {
+                // Post callback to main thread for potential UI updates
+                MAIN_HANDLER.post(() -> {
+                    Log.d(TAG, getClass().getSimpleName() + ".onCreate: MobileAds initialized successfully");
+                });
+            });
+        });
         
         // Set Firebase Analytics consent to DENIED by default for privacy compliance
         // This ensures no data is collected until explicit consent is given (EEA and US regulations)
@@ -783,6 +799,25 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
      */
     public RemoteConfigHelper getRemoteConfigHelper() {
         return remoteConfigHelper;
+    }
+
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        // Shutdown the ads executor to prevent resource leaks
+        // Note: onTerminate() is not called in production, only in emulated environments
+        // but it's good practice to include proper cleanup
+        if (!adsExecutor.isShutdown()) {
+            adsExecutor.shutdown();
+            try {
+                if (!adsExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
+                    adsExecutor.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                adsExecutor.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 
 
