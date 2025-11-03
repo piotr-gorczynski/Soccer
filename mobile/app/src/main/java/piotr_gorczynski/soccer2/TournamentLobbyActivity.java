@@ -158,6 +158,13 @@ public class TournamentLobbyActivity extends BaseActivity {
         super.onDestroy();
     }
 
+    @Override protected void onResume() {
+        super.onResume();
+        if (mAdapter != null) {
+            mAdapter.invalidateAllInviteStats();
+        }
+    }
+
     @Override
     public boolean onSupportNavigateUp() {
         finish();

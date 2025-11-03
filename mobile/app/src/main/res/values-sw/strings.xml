@@ -54,6 +54,8 @@
     <string name="pref_title_language">Lugha</string>
     <string name="pref_summary_language">Chagua lugha unayopendelea</string>
     <string name="current_language">Ya sasa: %1$s</string>
+    <string name="pref_title_animations">Uhuisho</string>
+    <string name="pref_summary_animations">Washa au lemaza uhuisho wa mchezaji</string>
     <string name="pref_title_facebook">Jumuiya ya Facebook</string>
     <string name="pref_summary_facebook">Fungua ukurasa wa jumuiya yetu kwenye Facebook</string>
     
@@ -311,7 +313,6 @@
     <!-- Past invites -->
     <string name="past_invites">Mialiko Iliyopita</string>
     <string name="no_past_invites">Hakuna mialiko iliyopita</string>
-    <string name="invite_and_add_to_friend">Alika na uongeze kama rafiki</string>
     <string name="invite_received_format">Imepokelewa %1$s</string>
     <string name="invite_status_accepted">Hali: Imekubaliwa</string>
     <string name="invite_status_cancelled">Hali: Imefutwa</string>
@@ -326,5 +327,11 @@
     <string name="presence_user_online">%1$s hali: Mtandaoni</string>
     <string name="presence_user_last_seen">%1$s hali: Alionekana mwisho %2$s</string>
     <string name="presence_user_offline">%1$s hali: Nje ya mtandao</string>
+    <string name="error_checking_friend_status">Hitilafu katika kuangalia hali ya rafiki</string>
+    <string name="friend_added">Rafiki ameongezwa kwa mafanikio</string>
+    <string name="active_invitation_exists">Mwaliko unaoendelea tayari upo</string>
+    <string name="user_blocked_invites">Mtumiaji amezuia mialiko</string>
+    <string name="cannot_invite_this_user">Haiwezekani kumwalika mtumiaji huyu</string>
 
+    <string name="failed_to_load_terms">Imeshindwa kupakia masharti na hali</string>
 </resources>

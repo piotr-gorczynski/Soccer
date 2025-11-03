@@ -10,6 +10,8 @@
     <string name="pref_title_language">Idioma</string>
     <string name="pref_summary_language">Elige tu idioma preferido</string>
     <string name="current_language">Actual: %1$s</string>
+    <string name="pref_title_animations">Animaciones</string>
+    <string name="pref_summary_animations">Habilitar o deshabilitar animaciones del jugador</string>
     <string name="select_language">Seleccionar idioma</string>
     
     <!-- Language names in Spanish -->
@@ -351,12 +353,22 @@
     <string name="invite_from_loading">Cargando…</string>
     <string name="menu_loading_message">Cargando…</string>
     <string name="invite_from_format">Invitación de: %1$s</string>
+    <string name="invite_received_format">Recibido %1$s</string>
     <string name="invite_received_and_status">Recibido: %1$s | %2$s</string>
+    <string name="invite_status_accepted">Estado: Aceptada</string>
+    <string name="invite_status_cancelled">Estado: Cancelada</string>
+    <string name="invite_status_expired">Estado: Caducada</string>
     <string name="presence_online">En línea</string>
     <string name="presence_last_seen">Visto por última vez %1$s</string>
     <string name="presence_offline">Desconectado</string>
     <string name="presence_user_online">%1$s estado: En línea</string>
     <string name="presence_user_last_seen">%1$s estado: Visto por última vez %2$s</string>
     <string name="presence_user_offline">%1$s estado: Desconectado</string>
+    <string name="error_checking_friend_status">Error al comprobar el estado del amigo</string>
+    <string name="friend_added">Amigo agregado correctamente</string>
+    <string name="active_invitation_exists">Ya existe una invitación activa</string>
+    <string name="user_blocked_invites">El usuario ha bloqueado las invitaciones</string>
+    <string name="cannot_invite_this_user">No se puede invitar a este usuario</string>
 
+    <string name="failed_to_load_terms">No se pudieron cargar los términos y condiciones</string>
 </resources>

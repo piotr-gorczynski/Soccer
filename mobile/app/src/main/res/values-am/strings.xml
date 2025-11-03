@@ -54,6 +54,8 @@
     <string name="pref_title_language">ቋንቋ</string>
     <string name="pref_summary_language">የእርስዎ ተመራጭ ቋንቋ ይምረጡ</string>
     <string name="current_language">አሁን: %1$s</string>
+    <string name="pref_title_animations">እንቅስቃሴዎች</string>
+    <string name="pref_summary_animations">የተጫዋች እንቅስቃሴዎችን አንቃ ወይም አሰናክል</string>
     <string name="pref_title_facebook">የፌስቡክ ማህበረሰብ</string>
     <string name="pref_summary_facebook">የእኛን የማህበረሰብ ገጽ በፌስቡክ ይክፈቱ</string>
     
@@ -312,7 +314,6 @@
     <!-- Past invites -->
     <string name="past_invites">ያለፉ ግብዣዎች</string>
     <string name="no_past_invites">ያለፉ ግብዣዎች የሉም</string>
-    <string name="invite_and_add_to_friend">ግብዣ ላክ እና ጓደኛ አክል</string>
     <string name="invite_received_format">ተቀብሏል %1$s</string>
     <string name="invite_status_accepted">ሁኔታ: ተቀባይነት አግኝቷል</string>
     <string name="invite_status_cancelled">ሁኔታ: ተሰርዟል</string>
@@ -332,4 +333,5 @@
     <string name="active_invitation_exists">ንቁ ግብዣ አስቀድሞ አለ</string>
     <string name="user_blocked_invites">ተጠቃሚ ግብዣዎችን አግዷል</string>
     <string name="cannot_invite_this_user">ይህን ተጠቃሚ ግብዣ ልላክ አልችልም</string>
+    <string name="failed_to_load_terms">ውሎችና ሁኔታዎችን ማጫን አልተሳካም</string>
 </resources>

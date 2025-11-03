@@ -15,6 +15,8 @@
     <string name="pref_title_language">Language</string>
     <string name="pref_summary_language">Choose your preferred language</string>
     <string name="current_language">Current: %1$s</string>
+    <string name="pref_title_animations">Animations</string>
+    <string name="pref_summary_animations">Enable or disable player animations</string>
     <string-array name="pref_level_titles">
         <item>Easy</item>
         <item>Medium</item>
@@ -41,7 +43,7 @@
     <string name="hello">Hello!</string>
     <string name="welcome_to_soccer">Welcome to Soccer!</string>
     <string name="hello_nickname">Hello, %1$s!</string>
-    <string name="menu_running_player_content_description">Running soccer player animation</string>
+    <string name="menu_running_player_content_description" translatable="false">Running soccer player animation</string>
     <string name="log_in">Log in</string>
     <string name="register_new_account">Register new account</string>
     <string name="reset_password">Reset password</string>
@@ -337,7 +339,6 @@
     <!-- Past invites -->
     <string name="past_invites">Past Invites</string>
     <string name="no_past_invites">No past invites</string>
-    <string name="invite_and_add_to_friend">Invite and Add to Friend</string>
     <string name="invite_received_format">Received %1$s</string>
     <string name="invite_status_accepted">Status: Accepted</string>
     <string name="invite_status_cancelled">Status: Cancelled</string>
@@ -357,4 +358,5 @@
     <string name="active_invitation_exists">Active invitation already exists</string>
     <string name="user_blocked_invites">User has blocked invites</string>
     <string name="cannot_invite_this_user">Cannot invite this user</string>
+    <string name="failed_to_load_terms">Failed to load terms and conditions</string>
 </resources>

@@ -54,6 +54,8 @@
     <string name="pref_title_language">Luqadda</string>
     <string name="pref_summary_language">Dooro luqadda aad jeceshahay</string>
     <string name="current_language">Hadda: %1$s</string>
+    <string name="pref_title_animations">Dhaqdhaqaaqa</string>
+    <string name="pref_summary_animations">Fur ama dami dhaqdhaqaaqa ciyaartoyga</string>
     <string name="pref_title_facebook">Bulshada Facebook</string>
     <string name="pref_summary_facebook">Fur bogga bulshadeenna Facebook</string>
 
@@ -312,7 +314,6 @@
     <!-- Past invites -->
     <string name="past_invites">Casumadihii Hore</string>
     <string name="no_past_invites">Ma jiraan casumado hore</string>
-    <string name="invite_and_add_to_friend">Casumo U Dir oo Saaxiib Ku Dar</string>
     <string name="invite_received_format">La helay %1$s</string>
     <string name="invite_status_accepted">Xaalad: La aqbalay</string>
     <string name="invite_status_cancelled">Xaalad: La joojiyay</string>
@@ -332,4 +333,5 @@
     <string name="active_invitation_exists">Casumo firfircoon ayaa jira</string>
     <string name="user_blocked_invites">Isticmaaluhu wuu xannibay casumadaha</string>
     <string name="cannot_invite_this_user">Lama casumi karo isticmaalahaas</string>
+    <string name="failed_to_load_terms">Way ku guuldaraysatay in la soo raro xeerarka iyo shuruudaha</string>
 </resources>

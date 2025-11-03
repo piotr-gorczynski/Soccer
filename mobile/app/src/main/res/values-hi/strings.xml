@@ -14,6 +14,8 @@
     <string name="pref_title_language">भाषा</string>
     <string name="pref_summary_language">अपनी पसंदीदा भाषा चुनें</string>
     <string name="current_language">वर्तमान: %1$s</string>
+    <string name="pref_title_animations">एनिमेशन</string>
+    <string name="pref_summary_animations">खिलाड़ी एनिमेशन सक्षम या अक्षम करें</string>
     <string name="select_language">भाषा चुनें</string>
     
     <!-- Settings preferences -->
@@ -345,7 +347,6 @@
     <!-- Past invites -->
     <string name="past_invites">पिछले आमंत्रण</string>
     <string name="no_past_invites">कोई पिछले आमंत्रण नहीं</string>
-    <string name="invite_and_add_to_friend">आमंत्रण भेजें और मित्र जोड़ें</string>
     <string name="invite_received_format">प्राप्त हुआ %1$s</string>
     <string name="invite_status_accepted">स्थिति: स्वीकृत</string>
     <string name="invite_status_cancelled">स्थिति: रद्द किया गया</string>
@@ -360,5 +361,11 @@
     <string name="presence_user_online">%1$s स्थिति: ऑनलाइन</string>
     <string name="presence_user_last_seen">%1$s स्थिति: अंतिम बार देखा गया %2$s</string>
     <string name="presence_user_offline">%1$s स्थिति: ऑफ़लाइन</string>
+    <string name="error_checking_friend_status">मित्र की स्थिति जांचने में त्रुटि</string>
+    <string name="friend_added">मित्र सफलतापूर्वक जोड़ा गया</string>
+    <string name="active_invitation_exists">एक सक्रिय निमंत्रण पहले से मौजूद है</string>
+    <string name="user_blocked_invites">उपयोगकर्ता ने निमंत्रण अवरुद्ध कर दिए हैं</string>
+    <string name="cannot_invite_this_user">इस उपयोगकर्ता को आमंत्रित नहीं कर सकते</string>
 
+    <string name="failed_to_load_terms">नियम और शर्तें लोड करने में विफल</string>
 </resources>

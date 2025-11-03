@@ -54,6 +54,8 @@
     <string name="pref_title_language">ဘာသာစကား</string>
     <string name="pref_summary_language">သင်နှစ်သက်သော ဘာသာစကားကို ရွေးချယ်ပါ</string>
     <string name="current_language">လက်ရှိ: %1$s</string>
+    <string name="pref_title_animations">လှုပ်ရှားမှုများ</string>
+    <string name="pref_summary_animations">ကစားသမား လှုပ်ရှားမှုများကို ဖွင့် သို့မဟုတ် ပိတ်ပါ</string>
     <string name="pref_title_facebook">Facebook အသိုင်းအဝိုင်း</string>
     <string name="pref_summary_facebook">Facebook တွင် ကျွန်ုပ်တို့၏အသိုင်းအဝိုင်းစာမျက်နှာကို ဖွင့်ပါ</string>
     
@@ -311,7 +313,6 @@
     <!-- Past invites -->
     <string name="past_invites">ယခင်ဖိတ်စာများ</string>
     <string name="no_past_invites">ယခင်ဖိတ်စာများမရှိပါ</string>
-    <string name="invite_and_add_to_friend">ဖိတ်ခေါ်ပြီး သူငယ်ချင်းအဖြစ် ထည့်ရန်</string>
     <string name="invite_received_format">လက်ခံရရှိသည် %1$s</string>
     <string name="invite_status_accepted">အခြေအနေ: လက်ခံပြီး</string>
     <string name="invite_status_cancelled">အခြေအနေ: ပယ်ဖျက်ပြီး</string>
@@ -326,5 +327,11 @@
     <string name="presence_user_online">%1$s အခြေအနေ: အွန်လိုင်း</string>
     <string name="presence_user_last_seen">%1$s အခြေအနေ: နောက်ဆုံးမြင်တွေ့ %2$s</string>
     <string name="presence_user_offline">%1$s အခြေအနေ: အော့ဖ်လိုင်း</string>
+    <string name="error_checking_friend_status">သူငယ်ချင်းအခြေအနေကို စစ်ဆေးရာတွင် အမှားဖြစ်ပေါ်ခဲ့သည်</string>
+    <string name="friend_added">သူငယ်ချင်းကို အောင်မြင်စွာ ထည့်ပြီးပြီ</string>
+    <string name="active_invitation_exists">လက်ရှိ ဖိတ်ကြားစာတစ်စောင် ရှိနေပြီးသားဖြစ်သည်</string>
+    <string name="user_blocked_invites">အသုံးပြုသူက ဖိတ်ကြားစာများကို တားမြစ်ထားသည်</string>
+    <string name="cannot_invite_this_user">ဤအသုံးပြုသူကို ဖိတ်ခေါ်၍ မရပါ</string>
 
+    <string name="failed_to_load_terms">စည်းကမ်းချက်များနှင့် အခြေအနေများကို ရယူ၍မရပါ</string>
 </resources>

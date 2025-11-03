@@ -54,6 +54,8 @@
     <string name="pref_title_language">භාෂාව</string>
     <string name="pref_summary_language">ඔබ කැමති භාෂාව තෝරන්න</string>
     <string name="current_language">වර්තමාන: %1$s</string>
+    <string name="pref_title_animations">සජීවී කිරීම්</string>
+    <string name="pref_summary_animations">ක්‍රීඩක සජීවී කිරීම් සක්‍රීය හෝ අක්‍රීය කරන්න</string>
     <string name="pref_title_facebook">Facebook ප්‍රජාව</string>
     <string name="pref_summary_facebook">Facebook හි අපගේ ප්‍රජා පිටුව විවෘත කරන්න</string>
     
@@ -311,7 +313,6 @@
     <!-- Past invites -->
     <string name="past_invites">පසුගිය ආරාධනා</string>
     <string name="no_past_invites">පසුගිය ආරාධනා නැත</string>
-    <string name="invite_and_add_to_friend">ආරාධනය කර මිතුරෙකු ලෙස එකතු කරන්න</string>
     <string name="invite_received_format">ලැබුණි %1$s</string>
     <string name="invite_status_accepted">තත්ත්වය: පිළිගත්තා</string>
     <string name="invite_status_cancelled">තත්ත්වය: අවලංගු කළා</string>
@@ -326,5 +327,11 @@
     <string name="presence_user_online">%1$s තත්ත්වය: සබැඳිව</string>
     <string name="presence_user_last_seen">%1$s තත්ත්වය: අවසන් වරට දුටු %2$s</string>
     <string name="presence_user_offline">%1$s තත්ත්වය: අසම්බන්ධිත</string>
+    <string name="error_checking_friend_status">මිතුරන්ගේ තත්වය පරීක්ෂා කිරීමේ දෝෂයක්</string>
+    <string name="friend_added">මිතුරා සාර්ථකව එකතු කළා</string>
+    <string name="active_invitation_exists">ක්‍රියාත්මක ආරාධනයක් දැනටමත් ඇත</string>
+    <string name="user_blocked_invites">පරිශීලකයා ආරාධනා අවහිර කර ඇත</string>
+    <string name="cannot_invite_this_user">මෙම පරිශීලකයාට ආරාධනා කළ නොහැක</string>
 
+    <string name="failed_to_load_terms">නියමයන් සහ කොන්දේසි පූරණය කළ නොහැකි විය</string>
 </resources>

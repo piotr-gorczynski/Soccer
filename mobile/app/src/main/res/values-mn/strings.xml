@@ -54,6 +54,8 @@
     <string name="pref_title_language">Хэл</string>
     <string name="pref_summary_language">Өөрийн илүүд үздэг хэлийг сонгоно уу</string>
     <string name="current_language">Одоогийн: %1$s</string>
+    <string name="pref_title_animations">Хөдөлгөөнт зураг</string>
+    <string name="pref_summary_animations">Тоглогчийн хөдөлгөөнт зургийг идэвхжүүлэх эсвэл идэвхгүй болгох</string>
     <string name="pref_title_facebook">Facebook нийгэмлэг</string>
     <string name="pref_summary_facebook">Facebook дээр манай нийгэмлэгийн хуудсыг нээнэ үү</string>
     
@@ -311,7 +313,6 @@
     <!-- Past invites -->
     <string name="past_invites">Өнгөрсөн урилгууд</string>
     <string name="no_past_invites">Өнгөрсөн урилга байхгүй</string>
-    <string name="invite_and_add_to_friend">Урих ба найз нэмэх</string>
     <string name="invite_received_format">Хүлээн авсан %1$s</string>
     <string name="invite_status_accepted">Төлөв: Зөвшөөрсөн</string>
     <string name="invite_status_cancelled">Төлөв: Цуцалсан</string>
@@ -326,5 +327,11 @@
     <string name="presence_user_online">%1$s төлөв: Онлайн</string>
     <string name="presence_user_last_seen">%1$s төлөв: Сүүлд харагдсан %2$s</string>
     <string name="presence_user_offline">%1$s төлөв: Оффлайн</string>
+    <string name="error_checking_friend_status">Найзын төлөв шалгахад алдаа гарлаа</string>
+    <string name="friend_added">Найзыг амжилттай нэмлээ</string>
+    <string name="active_invitation_exists">Идэвхтэй урилга аль хэдийн байна</string>
+    <string name="user_blocked_invites">Хэрэглэгч урилга хаасан байна</string>
+    <string name="cannot_invite_this_user">Энэ хэрэглэгчийг урих боломжгүй</string>
 
+    <string name="failed_to_load_terms">Нөхцөл, болзлыг ачаалж чадсангүй</string>
 </resources>

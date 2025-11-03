@@ -9,6 +9,7 @@ import android.graphics.Rect;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.RectF;
+import android.os.SystemClock;
 import androidx.core.content.ContextCompat;
 
 import android.text.TextPaint;
@@ -27,6 +28,7 @@ public class Field {
     private final float flDots;
     private final float flText;
     private final float flLinesWidth;
+    private final float flSpriteSize;
     private final Paint pField;
     private final Paint pFieldBorder;
     private final Paint pDots;
@@ -36,6 +38,28 @@ public class Field {
     private final Rect rField;
     private final Rect rText;
     private final Bitmap ballBitmap;
+    private static final Bitmap[] EMPTY_BITMAP_ARRAY = new Bitmap[0];
+
+    private final Bitmap[] idleRedPlayerFrames;
+    private final Bitmap[] runRedPlayerWestFrames;
+    private final Bitmap[] runRedPlayerWestNorthFrames;
+    private final Bitmap[] runRedPlayerNorthFrames;
+    private final Bitmap[] runRedPlayerEastNorthFrames;
+    private final Bitmap[] runRedPlayerEastFrames;
+    private final Bitmap[] runRedPlayerEastSouthFrames;
+    private final Bitmap[] runRedPlayerSouthFrames;
+    private final Bitmap[] runRedPlayerSouthWestFrames;
+    private final Bitmap[] runBluePlayerWestFrames;
+    private final Bitmap[] runBluePlayerWestNorthFrames;
+    private final Bitmap[] runBluePlayerNorthFrames;
+    private final Bitmap[] runBluePlayerEastNorthFrames;
+    private final Bitmap[] runBluePlayerEastFrames;
+    private final Bitmap[] runBluePlayerEastSouthFrames;
+    private final Bitmap[] runBluePlayerSouthFrames;
+    private final Bitmap[] runBluePlayerSouthWestFrames;
+    private final Bitmap[] idleBluePlayerFrames;
+    private Bitmap[] activeRunRedPlayerFrames;
+    private Bitmap[] activeRunBluePlayerFrames;
     private final String sPlayer0;
     private final String sPlayer1;
     private final int gameType;
@@ -47,8 +71,36 @@ public class Field {
     private long remainingTime0, remainingTime1;
 
     private Long turnStartTime;
+    private final boolean showIdlePlayerSprite;
+    private int idlePlayerFrameIndex = 0;
+    private long idlePlayerLastFrameTime = 0L;
+    private boolean runAnimationActive = false;
+    private int runPlayerFrameIndex = 0;
+    private long runPlayerLastFrameTime = 0L;
+    private float runStartGridX = 0f;
+    private float runStartGridY = 0f;
+    private float runDirectionX = 0f;
+    private float runDirectionY = 0f;
+    private float runTargetGridX = 0f;
+    private float runTargetGridY = 0f;
+    private float runTotalDistance = 0f;
+    private int runFrameLimit = RunPlayerSprite.FRAME_COUNT;
+    private boolean runStartRedCloser = false;
+    private boolean runTargetRedCloser = false;
+    private boolean runStartBlueCloser = false;
+    private boolean runTargetBlueCloser = false;
+    private int runMovingPlayer = -1;
+    private int runRedDelayFrames = 0;
+    private int runBlueDelayFrames = 0;
 
-    public Field(Context current, ArrayList<MoveTo> argMoves, ArrayList<MoveTo> argPossibleMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex) {
+    private static final int RUN_FRAME_COUNT = RunPlayerSprite.FRAME_COUNT;
+    private static final float RUN_FRAME_STEP_DISTANCE = RUN_FRAME_COUNT > 0
+            ? (float) (Math.sqrt(2.0) / RUN_FRAME_COUNT)
+            : 0f;
+    private static final float ACTIVE_SPRITE_PROXIMITY_RATIO = 0.6f;
+    private static final int RUN_DELAY_CYCLES = 2;
+
+    public Field(Context current, ArrayList<MoveTo> argMoves, ArrayList<MoveTo> argPossibleMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex, boolean animationsEnabled) {
 
         // simpler log—no reflection, no nulls
         Log.d("TAG_Soccer", getClass().getSimpleName()
@@ -57,7 +109,8 @@ public class Field {
                 + ", argGameType=" + argGameType
                 + ", player0Name=" + player0Name
                 + ", player1Name=" + player1Name
-                + ", localPlayerIndex=" + localPlayerIndex);
+                + ", localPlayerIndex=" + localPlayerIndex
+                + ", animationsEnabled=" + animationsEnabled);
 
         this.gameType = argGameType;  // ✅ Save GameType for later use
         this.context = current;
@@ -104,11 +157,58 @@ public class Field {
             flLinesWidth = res.getFraction(R.fraction.flLinesWidth,1,1);
             flDots= res.getFraction(R.fraction.flDots,1,1);
             flText = res.getFraction(R.fraction.flText,1,1);
+            flSpriteSize = res.getFraction(R.fraction.flSpriteSize,1,1);
             intFieldWidth = res.getInteger(R.integer.intFieldHalfWidth)*2;
             intFieldHeight = res.getInteger(R.integer.intFieldHalfHeight)*2;
         } catch (Exception e) {
             Log.e("TAG_Soccer", getClass().getSimpleName() + ".<init>: Failed to load field resources", e);
             throw new RuntimeException("Failed to load field configuration resources", e);
+        }
+
+        showIdlePlayerSprite = animationsEnabled && (gameType == 1 || gameType == 2);
+        if (showIdlePlayerSprite) {
+            idleRedPlayerFrames = IdleRedPlayerSprite.getFrames(current);
+            idleBluePlayerFrames = IdleBluePlayerSprite.getFrames(current);
+            runRedPlayerWestFrames = RunRedPlayerSprite.getWestFrames(current);
+            runRedPlayerWestNorthFrames = RunRedPlayerSprite.getWestNorthFrames(current);
+            runRedPlayerNorthFrames = RunRedPlayerSprite.getNorthFrames(current);
+            runRedPlayerEastNorthFrames = RunRedPlayerSprite.getEastNorthFrames(current);
+            runRedPlayerEastFrames = RunRedPlayerSprite.getEastFrames(current);
+            runRedPlayerEastSouthFrames = RunRedPlayerSprite.getEastSouthFrames(current);
+            runRedPlayerSouthFrames = RunRedPlayerSprite.getSouthFrames(current);
+            runRedPlayerSouthWestFrames = RunRedPlayerSprite.getSouthWestFrames(current);
+            runBluePlayerWestFrames = RunBluePlayerSprite.getWestFrames(current);
+            runBluePlayerWestNorthFrames = RunBluePlayerSprite.getWestNorthFrames(current);
+            runBluePlayerNorthFrames = RunBluePlayerSprite.getNorthFrames(current);
+            runBluePlayerEastNorthFrames = RunBluePlayerSprite.getEastNorthFrames(current);
+            runBluePlayerEastFrames = RunBluePlayerSprite.getEastFrames(current);
+            runBluePlayerEastSouthFrames = RunBluePlayerSprite.getEastSouthFrames(current);
+            runBluePlayerSouthFrames = RunBluePlayerSprite.getSouthFrames(current);
+            runBluePlayerSouthWestFrames = RunBluePlayerSprite.getSouthWestFrames(current);
+            activeRunRedPlayerFrames = runRedPlayerNorthFrames;
+            activeRunBluePlayerFrames = runBluePlayerNorthFrames;
+            idlePlayerLastFrameTime = SystemClock.uptimeMillis();
+        } else {
+            idleRedPlayerFrames = EMPTY_BITMAP_ARRAY;
+            idleBluePlayerFrames = EMPTY_BITMAP_ARRAY;
+            runRedPlayerWestFrames = EMPTY_BITMAP_ARRAY;
+            runRedPlayerWestNorthFrames = EMPTY_BITMAP_ARRAY;
+            runRedPlayerNorthFrames = EMPTY_BITMAP_ARRAY;
+            runRedPlayerEastNorthFrames = EMPTY_BITMAP_ARRAY;
+            runRedPlayerEastFrames = EMPTY_BITMAP_ARRAY;
+            runRedPlayerEastSouthFrames = EMPTY_BITMAP_ARRAY;
+            runRedPlayerSouthFrames = EMPTY_BITMAP_ARRAY;
+            runRedPlayerSouthWestFrames = EMPTY_BITMAP_ARRAY;
+            activeRunRedPlayerFrames = EMPTY_BITMAP_ARRAY;
+            runBluePlayerWestFrames = EMPTY_BITMAP_ARRAY;
+            runBluePlayerWestNorthFrames = EMPTY_BITMAP_ARRAY;
+            runBluePlayerNorthFrames = EMPTY_BITMAP_ARRAY;
+            runBluePlayerEastNorthFrames = EMPTY_BITMAP_ARRAY;
+            runBluePlayerEastFrames = EMPTY_BITMAP_ARRAY;
+            runBluePlayerEastSouthFrames = EMPTY_BITMAP_ARRAY;
+            runBluePlayerSouthFrames = EMPTY_BITMAP_ARRAY;
+            runBluePlayerSouthWestFrames = EMPTY_BITMAP_ARRAY;
+            activeRunBluePlayerFrames = EMPTY_BITMAP_ARRAY;
         }
 
         pPlayer0=new Paint();
@@ -202,6 +302,14 @@ public class Field {
 
     }
 
+    private float w2x(float w) {
+        if (rField.height() > rField.width()) {
+            return rField.left + (w * rField.width()) / intFieldWidth;
+        } else {
+            return rField.left + (w * rField.width()) / intFieldHeight;
+        }
+    }
+
     private float h2y(int h) {
         if(rField.height()>rField.width() ) {
             //portrait
@@ -211,6 +319,14 @@ public class Field {
             return rField.bottom- (float) (h * rField.height()) /intFieldWidth;
         }
 
+    }
+
+    private float h2y(float h) {
+        if (rField.height() > rField.width()) {
+            return rField.top + (h * rField.height()) / intFieldHeight;
+        } else {
+            return rField.bottom - (h * rField.height()) / intFieldWidth;
+        }
     }
 
 
@@ -225,6 +341,347 @@ public class Field {
         rField.set(xMin, yMin, xMax, yMax);
     }
 
+    public void startRunAnimation(MoveTo previous, MoveTo next) {
+        if (!showIdlePlayerSprite) {
+            return;
+        }
+        if (previous == null || next == null) {
+            return;
+        }
+        if (RUN_FRAME_COUNT <= 0) {
+            return;
+        }
+        if ((previous.X == next.X && previous.Y == next.Y)
+                || (previous.X == -1 && previous.Y == -1)
+                || (next.X == -1 && next.Y == -1)) {
+            return;
+        }
+
+        float flippedStartX = flipX(previous.X);
+        float flippedStartY = flipY(previous.Y);
+        float flippedTargetX = flipX(next.X);
+        float flippedTargetY = flipY(next.Y);
+
+        float totalDeltaX = flippedTargetX - flippedStartX;
+        float totalDeltaY = flippedTargetY - flippedStartY;
+
+        RunAnimationFrameSet frameSet = selectRunAnimationFrames(totalDeltaX, totalDeltaY);
+        if (frameSet.isEmpty()) {
+            return;
+        }
+
+        activeRunRedPlayerFrames = frameSet.redFrames;
+        activeRunBluePlayerFrames = frameSet.blueFrames;
+        int availableRedFrames = Math.min(RUN_FRAME_COUNT, frameSet.redFrames.length);
+        int availableBlueFrames = Math.min(RUN_FRAME_COUNT, frameSet.blueFrames.length);
+        int availableFrames = Math.max(availableRedFrames, availableBlueFrames);
+        if (availableFrames <= 0) {
+            return;
+        }
+
+        float totalDistance = (float) Math.hypot(totalDeltaX, totalDeltaY);
+        int frameLimit = availableFrames;
+        if (totalDistance > 0f && RUN_FRAME_STEP_DISTANCE > 0f) {
+            float framesForDistance = totalDistance / RUN_FRAME_STEP_DISTANCE;
+            frameLimit = Math.max(1, Math.min(availableFrames, (int) Math.ceil(framesForDistance)));
+        }
+
+        runMovingPlayer = (previous.P == 0 || previous.P == 1) ? previous.P : -1;
+        runRedDelayFrames = frameSet.redFrames.length > 0 && runMovingPlayer == 1
+                ? RUN_DELAY_CYCLES
+                : 0;
+        runBlueDelayFrames = frameSet.blueFrames.length > 0 && runMovingPlayer == 0
+                ? RUN_DELAY_CYCLES
+                : 0;
+
+        runFrameLimit = frameLimit + Math.max(runRedDelayFrames, runBlueDelayFrames);
+        runStartRedCloser = previous.P == 0;
+        runTargetRedCloser = next.P == 0;
+        runStartBlueCloser = previous.P == 1;
+        runTargetBlueCloser = next.P == 1;
+        runStartGridX = flippedStartX;
+        runStartGridY = flippedStartY;
+        runTargetGridX = flippedTargetX;
+        runTargetGridY = flippedTargetY;
+        runTotalDistance = totalDistance;
+        if (totalDistance > 0f) {
+            runDirectionX = totalDeltaX / totalDistance;
+            runDirectionY = totalDeltaY / totalDistance;
+        } else {
+            runDirectionX = 0f;
+            runDirectionY = 0f;
+        }
+        runPlayerFrameIndex = 0;
+        runPlayerLastFrameTime = SystemClock.uptimeMillis();
+        runAnimationActive = true;
+    }
+
+    public boolean isRunAnimationActive() {
+        return runAnimationActive;
+    }
+
+    private void stopRunAnimation(long referenceTime) {
+        runAnimationActive = false;
+        runPlayerFrameIndex = 0;
+        runPlayerLastFrameTime = 0L;
+        idlePlayerLastFrameTime = referenceTime;
+        runFrameLimit = RUN_FRAME_COUNT;
+        runDirectionX = 0f;
+        runDirectionY = 0f;
+        runTotalDistance = 0f;
+        runStartRedCloser = false;
+        runTargetRedCloser = false;
+        runStartBlueCloser = false;
+        runTargetBlueCloser = false;
+        activeRunRedPlayerFrames = EMPTY_BITMAP_ARRAY;
+        activeRunBluePlayerFrames = EMPTY_BITMAP_ARRAY;
+        runMovingPlayer = -1;
+        runRedDelayFrames = 0;
+        runBlueDelayFrames = 0;
+    }
+
+    private void drawRunAnimation(Canvas canvas, float ballRadius) {
+        if (!runAnimationActive) {
+            return;
+        }
+        Bitmap[] redFrames = activeRunRedPlayerFrames != null ? activeRunRedPlayerFrames : EMPTY_BITMAP_ARRAY;
+        Bitmap[] blueFrames = activeRunBluePlayerFrames != null ? activeRunBluePlayerFrames : EMPTY_BITMAP_ARRAY;
+        int frameCount = Math.max(redFrames.length, blueFrames.length);
+        int maxDelay = Math.max(runRedDelayFrames, runBlueDelayFrames);
+        int frameLimit = Math.min(runFrameLimit, frameCount + maxDelay);
+        if (frameLimit <= 0) {
+            stopRunAnimation(SystemClock.uptimeMillis());
+            return;
+        }
+
+        long now = SystemClock.uptimeMillis();
+        if (runPlayerLastFrameTime == 0L) {
+            runPlayerLastFrameTime = now;
+        }
+
+        long elapsed = now - runPlayerLastFrameTime;
+        if (RunPlayerSprite.FRAME_DURATION_MS > 0 && elapsed >= RunPlayerSprite.FRAME_DURATION_MS) {
+            long framesToAdvance = elapsed / RunPlayerSprite.FRAME_DURATION_MS;
+            runPlayerFrameIndex += (int) framesToAdvance;
+            if (runPlayerFrameIndex >= frameLimit) {
+                stopRunAnimation(now);
+                return;
+            }
+            long remainder = elapsed % RunPlayerSprite.FRAME_DURATION_MS;
+            runPlayerLastFrameTime = now - remainder;
+        }
+
+        if (!runAnimationActive) {
+            return;
+        }
+
+        int redFrameIndex = runPlayerFrameIndex - runRedDelayFrames;
+        int blueFrameIndex = runPlayerFrameIndex - runBlueDelayFrames;
+
+        Bitmap redFrame = redFrameIndex >= 0
+                ? getRunFrame(redFrames, redFrameIndex, frameCount)
+                : null;
+        Bitmap blueFrame = blueFrameIndex >= 0
+                ? getRunFrame(blueFrames, blueFrameIndex, frameCount)
+                : null;
+
+        if ((redFrame == null || redFrame.isRecycled())
+                && (blueFrame == null || blueFrame.isRecycled())) {
+            stopRunAnimation(now);
+            return;
+        }
+
+        float spriteHeight = canvas.getHeight() * flSpriteSize;
+        if (spriteHeight <= 0f) {
+            stopRunAnimation(now);
+            return;
+        }
+
+        float stepIndex = Math.min(runPlayerFrameIndex + 1, frameLimit);
+        float distanceTraveled = RUN_FRAME_STEP_DISTANCE * stepIndex;
+        if (runTotalDistance > 0f && distanceTraveled > runTotalDistance) {
+            distanceTraveled = runTotalDistance;
+        }
+
+        float currentGridX = runStartGridX + runDirectionX * distanceTraveled;
+        float currentGridY = runStartGridY + runDirectionY * distanceTraveled;
+
+        if (runDirectionX > 0f) {
+            currentGridX = Math.min(currentGridX, runTargetGridX);
+        } else if (runDirectionX < 0f) {
+            currentGridX = Math.max(currentGridX, runTargetGridX);
+        }
+
+        if (runDirectionY > 0f) {
+            currentGridY = Math.min(currentGridY, runTargetGridY);
+        } else if (runDirectionY < 0f) {
+            currentGridY = Math.max(currentGridY, runTargetGridY);
+        }
+
+        float ballCenterX = w2x(currentGridX);
+        float ballCenterY = h2y(currentGridY);
+        float ballTop = ballCenterY - ballRadius;
+        boolean drewFrame = false;
+
+        float animationProgress;
+        if (runTotalDistance > 0f) {
+            animationProgress = distanceTraveled / runTotalDistance;
+        } else if (runFrameLimit > 1) {
+            animationProgress = (float) runPlayerFrameIndex / (float) (runFrameLimit - 1);
+        } else {
+            animationProgress = 1f;
+        }
+        animationProgress = clamp(animationProgress, 0f, 1f);
+
+        float blueStartProximity = runStartBlueCloser ? 1f : 0f;
+        float blueEndProximity = runTargetBlueCloser ? 1f : 0f;
+        float blueProximity = clamp(lerp(blueStartProximity, blueEndProximity, animationProgress), 0f, 1f);
+
+        float redStartProximity = runStartRedCloser ? 1f : 0f;
+        float redEndProximity = runTargetRedCloser ? 1f : 0f;
+        float redProximity = clamp(lerp(redStartProximity, redEndProximity, animationProgress), 0f, 1f);
+
+        if (blueFrame != null && !blueFrame.isRecycled()) {
+            float blueFarBottom = ballCenterY - ballRadius;
+            float blueCloseBottom = ballCenterY + spriteHeight * (1f - ACTIVE_SPRITE_PROXIMITY_RATIO);
+            float blueBottom = lerp(blueFarBottom, blueCloseBottom, blueProximity);
+            float blueTop = blueBottom - spriteHeight;
+            if (blueTop < 0f) {
+                blueTop = 0f;
+            }
+            if (blueBottom > canvas.getHeight()) {
+                blueBottom = canvas.getHeight();
+            }
+
+            float actualBlueHeight = blueBottom - blueTop;
+            if (actualBlueHeight > 0f) {
+                float blueWidth = actualBlueHeight * blueFrame.getWidth() / (float) blueFrame.getHeight();
+                float blueLeft = ballCenterX - blueWidth / 2f;
+                float blueRight = ballCenterX + blueWidth / 2f;
+                RectF blueDst = new RectF(blueLeft, blueTop, blueRight, blueBottom);
+                canvas.drawBitmap(blueFrame, null, blueDst, null);
+                drewFrame = true;
+            }
+        }
+
+        if (redFrame != null && !redFrame.isRecycled()) {
+            float redFarTop = ballCenterY + ballRadius;
+            float redCloseTop = ballCenterY - spriteHeight * ACTIVE_SPRITE_PROXIMITY_RATIO;
+            float redTop = lerp(redFarTop, redCloseTop, redProximity);
+            float redBottom = redTop + spriteHeight;
+            if (redBottom > canvas.getHeight()) {
+                redBottom = canvas.getHeight();
+            }
+            if (redTop < 0f) {
+                redTop = 0f;
+            }
+
+            float actualRedHeight = redBottom - redTop;
+            if (actualRedHeight > 0f) {
+                float redWidth = actualRedHeight * redFrame.getWidth() / (float) redFrame.getHeight();
+                float redLeft = ballCenterX - redWidth / 2f;
+                float redRight = ballCenterX + redWidth / 2f;
+                RectF redDst = new RectF(redLeft, redTop, redRight, redBottom);
+                canvas.drawBitmap(redFrame, null, redDst, null);
+                drewFrame = true;
+            }
+        }
+
+        if (!drewFrame) {
+            stopRunAnimation(now);
+            return;
+        }
+
+        if (runPlayerFrameIndex >= frameLimit - 1) {
+            stopRunAnimation(now);
+        }
+    }
+
+    private static float lerp(float start, float end, float t) {
+        return start + (end - start) * t;
+    }
+
+    private static float clamp(float value, float min, float max) {
+        return Math.max(min, Math.min(max, value));
+    }
+
+    private RunAnimationFrameSet selectRunAnimationFrames(float deltaX, float deltaY) {
+        if (deltaX == 0f && deltaY == 0f) {
+            return RunAnimationFrameSet.EMPTY;
+        }
+
+        double angle = Math.atan2(-deltaY, deltaX);
+        double degrees = Math.toDegrees(angle);
+        if (degrees < 0) {
+            degrees += 360.0;
+        }
+
+        Bitmap[] redFrames;
+        Bitmap[] blueFrames;
+        if (degrees >= 157.5 && degrees < 202.5) {
+            redFrames = runRedPlayerWestFrames;
+            blueFrames = runBluePlayerWestFrames;
+        } else if (degrees >= 112.5 && degrees < 157.5) {
+            redFrames = runRedPlayerWestNorthFrames;
+            blueFrames = runBluePlayerWestNorthFrames;
+        } else if (degrees >= 67.5 && degrees < 112.5) {
+            redFrames = runRedPlayerNorthFrames;
+            blueFrames = runBluePlayerNorthFrames;
+        } else if (degrees >= 22.5 && degrees < 67.5) {
+            redFrames = runRedPlayerEastNorthFrames;
+            blueFrames = runBluePlayerEastNorthFrames;
+        } else if (degrees >= 337.5 || degrees < 22.5) {
+            redFrames = runRedPlayerEastFrames;
+            blueFrames = runBluePlayerEastFrames;
+        } else if (degrees >= 292.5 && degrees < 337.5) {
+            redFrames = runRedPlayerEastSouthFrames;
+            blueFrames = runBluePlayerEastSouthFrames;
+        } else if (degrees >= 247.5 && degrees < 292.5) {
+            redFrames = runRedPlayerSouthFrames;
+            blueFrames = runBluePlayerSouthFrames;
+        } else {
+            redFrames = runRedPlayerSouthWestFrames;
+            blueFrames = runBluePlayerSouthWestFrames;
+        }
+
+        if ((redFrames == null || redFrames.length == 0)
+                && (blueFrames == null || blueFrames.length == 0)) {
+            return RunAnimationFrameSet.EMPTY;
+        }
+
+        return new RunAnimationFrameSet(redFrames, blueFrames);
+    }
+
+    private Bitmap getRunFrame(Bitmap[] frames, int frameIndex, int frameCount) {
+        if (frames == null || frames.length == 0 || frameCount <= 0) {
+            return null;
+        }
+
+        int maxIndex = Math.min(frameCount - 1, frames.length - 1);
+        int safeIndex = Math.min(frameIndex, maxIndex);
+        if (safeIndex < 0 || safeIndex >= frames.length) {
+            return null;
+        }
+
+        return frames[safeIndex];
+    }
+
+    private static final class RunAnimationFrameSet {
+        static final RunAnimationFrameSet EMPTY = new RunAnimationFrameSet(EMPTY_BITMAP_ARRAY, EMPTY_BITMAP_ARRAY);
+
+        final Bitmap[] redFrames;
+        final Bitmap[] blueFrames;
+
+        RunAnimationFrameSet(Bitmap[] redFrames, Bitmap[] blueFrames) {
+            this.redFrames = redFrames != null ? redFrames : EMPTY_BITMAP_ARRAY;
+            this.blueFrames = blueFrames != null ? blueFrames : EMPTY_BITMAP_ARRAY;
+        }
+
+        boolean isEmpty() {
+            return redFrames.length == 0 && blueFrames.length == 0;
+        }
+    }
+
     private int flipX(int x) {
         return isFlipped ? intFieldWidth - x : x;
     }
@@ -234,7 +691,7 @@ public class Field {
     }
 
     public void draw(Canvas canvas) {
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started");
+        //Log.d("TAG_Soccer", "Field.draw: Started");
 
         int oldx, oldy;
 
@@ -392,15 +849,101 @@ public class Field {
         if (last.X == -1 && last.Y == -1) {
             last = Moves.get(Moves.size() - 2);
         }
-        float cx = w2x(flipX(last.X));
-        float cy = h2y(flipY(last.Y));
+        float ballCenterX = w2x(flipX(last.X));
+        float ballCenterY = h2y(flipY(last.Y));
         float radius = dotSize * 4;
         // Background circle behind the ball
         float radiusBackground = (float) (radius  * 0.8);
-        canvas.drawCircle(cx, cy, radiusBackground, movePaint);
+        canvas.drawCircle(ballCenterX, ballCenterY, radiusBackground, movePaint);
 
-        RectF dst = new RectF(cx - radius, cy - radius, cx + radius, cy + radius);
+        RectF dst = new RectF(ballCenterX - radius, ballCenterY - radius, ballCenterX + radius, ballCenterY + radius);
         canvas.drawBitmap(ballBitmap, null, dst, null);
+
+        drawRunAnimation(canvas, radius);
+
+        if (showIdlePlayerSprite && flSpriteSize > 0f) {
+            int redFrameCount = idleRedPlayerFrames.length;
+            int blueFrameCount = idleBluePlayerFrames.length;
+            int maxFrameCount = Math.max(redFrameCount, blueFrameCount);
+
+            if (maxFrameCount > 0) {
+                long now = SystemClock.uptimeMillis();
+                if (idlePlayerLastFrameTime == 0L) {
+                    idlePlayerLastFrameTime = now;
+                }
+
+                boolean runActive = runAnimationActive;
+                boolean blueDelayActive = runActive && runBlueDelayFrames > 0
+                        && runPlayerFrameIndex < runBlueDelayFrames;
+                boolean redDelayActive = runActive && runRedDelayFrames > 0
+                        && runPlayerFrameIndex < runRedDelayFrames;
+
+                boolean shouldDrawIdleBlue = !runActive || blueDelayActive;
+                boolean shouldDrawIdleRed = !runActive || redDelayActive;
+                boolean shouldAdvanceIdle = shouldDrawIdleBlue || shouldDrawIdleRed;
+
+                if (shouldAdvanceIdle) {
+                    long elapsed = now - idlePlayerLastFrameTime;
+                    if (IdlePlayerSprite.FRAME_DURATION_MS > 0 && elapsed >= IdlePlayerSprite.FRAME_DURATION_MS) {
+                        long framesToAdvance = elapsed / IdlePlayerSprite.FRAME_DURATION_MS;
+                        idlePlayerFrameIndex = (int) ((idlePlayerFrameIndex + framesToAdvance) % maxFrameCount);
+                        long remainder = elapsed % IdlePlayerSprite.FRAME_DURATION_MS;
+                        idlePlayerLastFrameTime = now - remainder;
+                    }
+                } else {
+                    idlePlayerLastFrameTime = now;
+                }
+
+                float spriteHeight = canvas.getHeight() * flSpriteSize;
+                if (spriteHeight > 0f) {
+                    // Blue player above the ball, bottom touching the ball's top edge
+                    boolean blueShouldBeCloser = currentTurn == 1;
+                    if (blueFrameCount > 0 && shouldDrawIdleBlue) {
+                        Bitmap spriteFrame = idleBluePlayerFrames[idlePlayerFrameIndex % blueFrameCount];
+                        if (spriteFrame != null && !spriteFrame.isRecycled()) {
+                            float spriteBottom = blueShouldBeCloser
+                                    ? ballCenterY + spriteHeight * (1-ACTIVE_SPRITE_PROXIMITY_RATIO)
+                                    : ballCenterY + 1f;
+                            float spriteTop = spriteBottom - spriteHeight;
+                            if (spriteTop < 0f) {
+                                spriteTop = 0f;
+                            }
+                            float actualSpriteHeight = spriteBottom - spriteTop;
+                            if (actualSpriteHeight > 0f) {
+                                float spriteWidth = actualSpriteHeight * spriteFrame.getWidth() / (float) spriteFrame.getHeight();
+                                float spriteLeft = ballCenterX - spriteWidth / 2f;
+                                float spriteRight = ballCenterX + spriteWidth / 2f;
+                                RectF spriteDst = new RectF(spriteLeft, spriteTop, spriteRight, spriteBottom);
+                                canvas.drawBitmap(spriteFrame, null, spriteDst, null);
+                            }
+                        }
+                    }
+
+                    // Red player below the ball, top touching the ball's bottom edge
+                    boolean redShouldBeCloser = currentTurn == 0;
+                    if (redFrameCount > 0 && shouldDrawIdleRed) {
+                        Bitmap spriteFrame = idleRedPlayerFrames[idlePlayerFrameIndex % redFrameCount];
+                        if (spriteFrame != null && !spriteFrame.isRecycled()) {
+                            float spriteTop = redShouldBeCloser
+                                    ? ballCenterY - spriteHeight * ACTIVE_SPRITE_PROXIMITY_RATIO
+                                    : ballCenterY + 1f;
+                            float spriteBottom = spriteTop + spriteHeight;
+                            if (spriteBottom > canvas.getHeight()) {
+                                spriteBottom = canvas.getHeight();
+                            }
+                            float actualSpriteHeight = spriteBottom - spriteTop;
+                            if (actualSpriteHeight > 0f) {
+                                float spriteWidth = actualSpriteHeight * spriteFrame.getWidth() / (float) spriteFrame.getHeight();
+                                float spriteLeft = ballCenterX - spriteWidth / 2f;
+                                float spriteRight = ballCenterX + spriteWidth / 2f;
+                                RectF spriteDst = new RectF(spriteLeft, spriteTop, spriteRight, spriteBottom);
+                                canvas.drawBitmap(spriteFrame, null, spriteDst, null);
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
 
         // Turn indicator
@@ -416,10 +959,9 @@ public class Field {
         float bottomHintY = h2y(intFieldHeight+1)+(canvas.getHeight()-h2y(intFieldHeight+1))*2/3;
         float topHintY = h2y(-1) *2 / 3;
 
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                + ": remainingTime0="+remainingTime0
+        /*Log.d("TAG_Soccer", "Field.draw: remainingTime0="+remainingTime0
                 + " remainingTime1="+remainingTime1
-                + " turnStartTime="+((turnStartTime == null) ? "null" : String.valueOf(turnStartTime)));
+                + " turnStartTime="+((turnStartTime == null) ? "null" : String.valueOf(turnStartTime)));*/
 
         if (isLocalTurn) {
             if (gameType != 3) {
@@ -439,14 +981,14 @@ public class Field {
                         topHintY - (float) rText.height() / 2,
                         pHintText);
 
-                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": textTop: " + textTop);
+                //Log.d("TAG_Soccer", "Field.draw: textTop: " + textTop);
             }
             pHintText.getTextBounds(textBottom, 0, textBottom.length(), rText);
             canvas.drawText(textBottom,
                     w2x(flipX(intFieldWidth / 2)),
                     bottomHintY - (float) rText.height() / 2,
                     pHintText);
-            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": textBottom: " + textBottom);
+            //Log.d("TAG_Soccer", "Field.draw: textBottom: " + textBottom);
 
         } else {
             if (gameType == 1) {
@@ -487,7 +1029,7 @@ public class Field {
                     topHintY - (float) rText.height() / 2,
                     pHintText);
 
-            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": textTop: " + textTop);
+            //Log.d("TAG_Soccer", "Field.draw: textTop: " + textTop);
         }
     }
     private String formatClockSeconds(long seconds) {

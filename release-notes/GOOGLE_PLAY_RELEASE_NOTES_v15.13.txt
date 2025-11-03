@@ -3,9 +3,21 @@
 🔔 Handle optional running player spritesheet
 🔔 Separate field margins into horizontal and vertical
 🔔 Prevent leaving tournaments after registration closes
+🔔 Filter tournament invitations from friend invite statistics
+🔔 Add user-configurable animations toggle in Settings
+🔔 Add tournament-filtered invitation and match statistics to match items
+🔔 Add missing translations for friend invite status messages
+🔔 Add tournament rules translations for 11 missing languages
 🎮 Fix: Refresh match statistics when returning from completed game
 🎮 Fix WindowLeaked crash in MenuActivity.showMissedInviteDialog
-🎮 ...
+🎮 Refresh invite statistics when returning to tournament lobby
+🎮 Fix ANR in MenuActivity by offloading sprite sheet processing to background thread
+🎮 Fix WebView ANR in Google Ads SDK initialization
+🎮 Fix ANR crash from MobileAds initialization blocking main thread
+
+
+
+...
 </en-GB>
 
 <pl-PL>

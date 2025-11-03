@@ -17,6 +17,8 @@
     <string name="pref_title_language">Langue</string>
     <string name="pref_summary_language">Choisissez votre langue préférée</string>
     <string name="current_language">Actuel : %1$s</string>
+    <string name="pref_title_animations">Animations</string>
+    <string name="pref_summary_animations">Activer ou désactiver les animations du joueur</string>
 
     <string-array name="pref_level_titles">
         <item>Facile</item>
@@ -340,7 +342,6 @@
     <!-- Past invites -->
     <string name="past_invites">Invitations Passées</string>
     <string name="no_past_invites">Aucune invitation passée</string>
-    <string name="invite_and_add_to_friend">Inviter et ajouter comme ami</string>
     <string name="invite_received_format">Reçu %1$s</string>
     <string name="invite_status_accepted">Statut: Accepté</string>
     <string name="invite_status_cancelled">Statut: Annulé</string>
@@ -355,5 +356,11 @@
     <string name="presence_user_online">%1$s statut: En ligne</string>
     <string name="presence_user_last_seen">%1$s statut: Vu pour la dernière fois %2$s</string>
     <string name="presence_user_offline">%1$s statut: Hors ligne</string>
+    <string name="error_checking_friend_status">Erreur lors de la vérification du statut de l’ami</string>
+    <string name="friend_added">Ami ajouté avec succès</string>
+    <string name="active_invitation_exists">Une invitation active existe déjà</string>
+    <string name="user_blocked_invites">L’utilisateur a bloqué les invitations</string>
+    <string name="cannot_invite_this_user">Impossible d’inviter cet utilisateur</string>
 
+    <string name="failed_to_load_terms">Impossible de charger les conditions générales</string>
 </resources>

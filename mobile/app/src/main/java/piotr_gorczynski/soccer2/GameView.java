@@ -1,18 +1,19 @@
 package piotr_gorczynski.soccer2;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.GestureDetector;
 import java.util.ArrayList;
-import java.util.Objects;
 
 import android.util.AttributeSet;
 import android.os.Looper;
@@ -47,7 +48,7 @@ public class GameView extends View {
 
     private long remTime0, remTime1;
 
-    private Long turnStartsTime=null;
+    private Long turnStartsTime;
 
     private final Handler pulseHandler = new Handler(Looper.getMainLooper());
     private final Runnable pulseRunnable = new Runnable() {
@@ -62,6 +63,16 @@ public class GameView extends View {
     /** Disable or re-enable all touches on the board */
     public void setInputEnabled(boolean enabled) {
         this.inputEnabled = enabled;
+    }
+
+    /**
+     * Helper method to check if animations are enabled in preferences
+     * @param context The context to read preferences from
+     * @return true if animations are enabled, false otherwise
+     */
+    private static boolean areAnimationsEnabled(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getBoolean("animations_enabled", true);
     }
 
     @SuppressWarnings("unused")
@@ -114,7 +125,7 @@ public class GameView extends View {
     /** Detects swipe gestures and forwards them to {@link #handleInputAt(float, float)} */
     private class SwipeListener extends GestureDetector.SimpleOnGestureListener {
         @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        public boolean onFling(MotionEvent e1, @NonNull MotionEvent e2, float velocityX, float velocityY) {
             if (!inputEnabled) return true;
             if ((GameType == 2) && (realMoves.get(realMoves.size() - 1).P == 1))
                 return true;
@@ -179,7 +190,7 @@ public class GameView extends View {
 
         // construct Field with custom nicknames
         try {
-            field = new Field(context, realMoves, possibleMovesForDrawing, GameType, player0Name, player1Name, localPlayerIndex);
+            field = new Field(context, realMoves, possibleMovesForDrawing, GameType, player0Name, player1Name, localPlayerIndex, areAnimationsEnabled(context));
         } catch (Exception e) {
             Log.e("TAG_Soccer", getClass().getSimpleName() + ".<init>: Failed to create Field", e);
             throw new RuntimeException("Failed to initialize game field", e);
@@ -250,7 +261,7 @@ public class GameView extends View {
         */
 
         try {
-            field = new Field(context, realMoves, possibleMovesForDrawing, GameType, "Player 1", "Player 2",0);
+            field = new Field(context, realMoves, possibleMovesForDrawing, GameType, "Player 1", "Player 2", 0, areAnimationsEnabled(context));
         } catch (Exception e) {
             Log.e("TAG_Soccer", getClass().getSimpleName() + ".<init>: Failed to create Field", e);
             throw new RuntimeException("Failed to initialize game field", e);
@@ -285,7 +296,7 @@ public class GameView extends View {
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
-        Log.d("TAG_Soccer", getClass().getSimpleName() + ".onDraw: Started");
+        //Log.d("TAG_Soccer", "GameView.onDraw: Started");
 
         if (realMoves.isEmpty()) {
             Log.w("TAG_Soccer", getClass().getSimpleName() + ".onDraw: Skipped: realMoves is empty");
@@ -309,8 +320,9 @@ public class GameView extends View {
     }
 
     private boolean shouldPulse() {
-        // Pulse if there are possible moves to show
-        return possibleMovesForDrawing != null && !possibleMovesForDrawing.isEmpty();
+        boolean hasPossibleMoves = possibleMovesForDrawing != null && !possibleMovesForDrawing.isEmpty();
+        boolean runAnimationActive = field != null && field.isRunAnimationActive();
+        return hasPossibleMoves || runAnimationActive;
     }
 
 
@@ -429,10 +441,17 @@ public class GameView extends View {
         ArrayList<MoveTo> possibleMoves= new ArrayList<>();
         boolean bouncing=isBouncing(x,y,Moves);
 
+        MoveTo previousMove = Moves.get(Moves.size() - 1);
+        MoveTo newMove;
+
         if(bouncing)
-            Moves.add(new MoveTo(x,y,Moves.get(Moves.size()-1).P));
+            newMove = new MoveTo(x,y,previousMove.P);
         else
-            Moves.add(new MoveTo(x,y,pOpponent(Moves.get(Moves.size()-1).P)));
+            newMove = new MoveTo(x,y,pOpponent(previousMove.P));
+
+        Moves.add(newMove);
+        field.startRunAnimation(previousMove, newMove);
+        startPulseIfNeeded();
 
         if (GameType == 3) {
 
