@@ -43,6 +43,8 @@
     <string name="pref_title_language">اللغة</string>
     <string name="pref_summary_language">اختر لغتك المفضلة</string>
     <string name="current_language">الحالية: %1$s</string>
+    <string name="pref_title_animations">الرسوم المتحركة</string>
+    <string name="pref_summary_animations">تمكين أو تعطيل رسوم اللاعب المتحركة</string>
     <string name="pref_title_facebook">مجتمع فيسبوك</string>
     <string name="pref_summary_facebook">افتح صفحة مجتمعنا على فيسبوك</string>
     <string-array name="pref_level_titles">
@@ -293,7 +295,6 @@
     <!-- Past invites -->
     <string name="past_invites">الدعوات السابقة</string>
     <string name="no_past_invites">لا توجد دعوات سابقة</string>
-    <string name="invite_and_add_to_friend">دعوة وإضافة كصديق</string>
     <string name="invite_received_format">تم الاستلام %1$s</string>
     <string name="invite_status_accepted">الحالة: مقبولة</string>
     <string name="invite_status_cancelled">الحالة: ملغاة</string>
@@ -313,4 +314,5 @@
     <string name="active_invitation_exists">الدعوة النشطة موجودة بالفعل</string>
     <string name="user_blocked_invites">المستخدم قد حظر الدعوات</string>
     <string name="cannot_invite_this_user">لا يمكن دعوة هذا المستخدم</string>
+    <string name="failed_to_load_terms">فشل تحميل الشروط والأحكام</string>
 </resources>

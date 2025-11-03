@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import android.webkit.WebView;
+
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.ads.MobileAds;
@@ -54,12 +56,17 @@ import androidx.core.os.LocaleListCompat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import androidx.lifecycle.LifecycleOwner;
 
 public class SoccerApp extends Application implements DefaultLifecycleObserver {
 
+    private static final String TAG = "TAG_Soccer";
+    private static final android.os.Handler MAIN_HANDLER = new android.os.Handler(android.os.Looper.getMainLooper());
+    
     private DatabaseReference userStatusDbRef;
     private DatabaseReference connectedRef;
     private ValueEventListener connectedListener;
@@ -68,6 +75,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     private AnalyticsManager analyticsManager;
     private RemoteConfigHelper remoteConfigHelper;
     private boolean appInForeground;
+    private static final ExecutorService adsExecutor = Executors.newSingleThreadExecutor();
 
     /* Creates {state:"online", last_heartbeat:TS} */
     private static Map<String,Object> buildOnline() {
@@ -218,7 +226,22 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
             enableFcmAutoInit();
         }
 
-        MobileAds.initialize(this, initializationStatus -> {});
+        // Pre-initialize WebView to prevent ANR crashes in Google Ads SDK
+        // This fixes Crashlytics issue: __dl_elf32_sym const* soinfo_do_lookup_impl
+        // The issue occurs when WebView is first initialized by ads on certain devices
+        initializeWebViewSafely();
+
+        // Initialize MobileAds on background thread to prevent ANR
+        // This fixes Crashlytics issue: com.google.android.gms.internal.ads.zzhwo.zzbE
+        // The issue occurs when MobileAds initialization blocks the main thread
+        adsExecutor.execute(() -> {
+            MobileAds.initialize(this, initializationStatus -> {
+                // Post callback to main thread for potential UI updates
+                MAIN_HANDLER.post(() -> {
+                    Log.d(TAG, getClass().getSimpleName() + ".onCreate: MobileAds initialized successfully");
+                });
+            });
+        });
         
         // Set Firebase Analytics consent to DENIED by default for privacy compliance
         // This ensures no data is collected until explicit consent is given (EEA and US regulations)
@@ -740,6 +763,29 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     }
     
     /**
+     * Pre-initialize WebView to prevent ANR crashes during ad loading.
+     * This fixes the crash: __dl_elf32_sym const* soinfo_do_lookup_impl
+     * 
+     * The issue occurs on certain Android devices when WebView is first initialized
+     * by the Google Ads SDK, causing a linker-level ANR. By initializing WebView
+     * early on the main thread, we avoid this problem.
+     */
+    private void initializeWebViewSafely() {
+        try {
+            // Create a WebView instance to trigger the WebView provider initialization
+            // This must be done on the main thread before any ads are loaded
+            WebView webView = new WebView(this);
+            // Immediately destroy it to prevent memory leaks
+            webView.destroy();
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".initializeWebViewSafely: WebView pre-initialized successfully");
+        } catch (Exception e) {
+            // If WebView initialization fails, log the error but don't crash the app
+            // Some devices may have WebView disabled or missing
+            Log.w("TAG_Soccer", getClass().getSimpleName() + ".initializeWebViewSafely: Failed to pre-initialize WebView", e);
+        }
+    }
+    
+    /**
      * Get the analytics manager instance for tracking user research events
      * @return AnalyticsManager instance
      */
@@ -753,6 +799,25 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
      */
     public RemoteConfigHelper getRemoteConfigHelper() {
         return remoteConfigHelper;
+    }
+
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        // Shutdown the ads executor to prevent resource leaks
+        // Note: onTerminate() is not called in production, only in emulated environments
+        // but it's good practice to include proper cleanup
+        if (!adsExecutor.isShutdown()) {
+            adsExecutor.shutdown();
+            try {
+                if (!adsExecutor.awaitTermination(5, TimeUnit.SECONDS)) {
+                    adsExecutor.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                adsExecutor.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 
 

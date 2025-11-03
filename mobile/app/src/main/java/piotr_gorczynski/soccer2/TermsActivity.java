@@ -25,7 +25,13 @@ public class TermsActivity extends BaseActivity {
         String langCode = LanguageManager.getCurrentLanguageCode(this);
         String url = "https://piotr-gorczynski.com/terms-" + langCode + ".html";
         Log.d("TAG_Soccer", "Loading terms from URL: " + url);
-        webView.loadUrl(url);
+        
+        try {
+            webView.loadUrl(url);
+        } catch (Exception e) {
+            Log.e("TAG_Soccer", "Failed to load terms URL in WebView", e);
+            Toast.makeText(this, R.string.failed_to_load_terms, Toast.LENGTH_LONG).show();
+        }
 
         Button acceptBtn = findViewById(R.id.acceptTerms);
         Button declineBtn = findViewById(R.id.declineTerms);

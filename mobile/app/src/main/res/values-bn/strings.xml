@@ -14,6 +14,8 @@
     <string name="pref_title_language">ভাষা</string>
     <string name="pref_summary_language">আপনার পছন্দের ভাষা নির্বাচন করুন</string>
     <string name="current_language">বর্তমান: %1$s</string>
+    <string name="pref_title_animations">অ্যানিমেশনগুলি</string>
+    <string name="pref_summary_animations">প্লেয়ার অ্যানিমেশন সক্ষম বা অক্ষম করুন</string>
     <string name="select_language">ভাষা নির্বাচন করুন</string>
     
     <!-- Settings preferences -->
@@ -339,7 +341,6 @@
     <!-- Past invites -->
     <string name="past_invites">পূর্বের আমন্ত্রণ</string>
     <string name="no_past_invites">কোনো পূর্বের আমন্ত্রণ নেই</string>
-    <string name="invite_and_add_to_friend">আমন্ত্রণ জানান এবং বন্ধু হিসাবে যোগ করুন</string>
     <string name="invite_received_format">গৃহীত %1$s</string>
     <string name="invite_status_accepted">অবস্থা: গৃহীত</string>
     <string name="invite_status_cancelled">অবস্থা: বাতিল</string>
@@ -366,4 +367,5 @@
         <item>10</item>
         <item>30</item>
     </string-array>
+    <string name="failed_to_load_terms">শর্তাবলী লোড করতে ব্যর্থ</string>
 </resources>

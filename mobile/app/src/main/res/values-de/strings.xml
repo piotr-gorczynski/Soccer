@@ -10,6 +10,8 @@
     <string name="pref_title_language">Sprache</string>
     <string name="pref_summary_language">Wählen Sie Ihre bevorzugte Sprache</string>
     <string name="current_language">Aktuell: %1$s</string>
+    <string name="pref_title_animations">Animationen</string>
+    <string name="pref_summary_animations">Spieleranimationen aktivieren oder deaktivieren</string>
     <string name="select_language">Sprache auswählen</string>
     
     <!-- Language names in German -->
@@ -340,7 +342,6 @@
     <!-- Past invites -->
     <string name="past_invites">Frühere Einladungen</string>
     <string name="no_past_invites">Keine früheren Einladungen</string>
-    <string name="invite_and_add_to_friend">Einladen und als Freund hinzufügen</string>
     <string name="invite_received_format">Erhalten %1$s</string>
     <string name="invite_status_accepted">Status: Akzeptiert</string>
     <string name="invite_status_cancelled">Status: Abgebrochen</string>
@@ -367,4 +368,5 @@
         <item>10</item>
         <item>30</item>
     </string-array>
+    <string name="failed_to_load_terms">Allgemeine Geschäftsbedingungen konnten nicht geladen werden</string>
 </resources>

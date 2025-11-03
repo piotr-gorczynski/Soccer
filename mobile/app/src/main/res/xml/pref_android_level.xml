@@ -23,6 +23,13 @@
             android:defaultValue="false"
             android:icon="@android:drawable/ic_dialog_info" />
 
+        <CheckBoxPreference
+            android:key="animations_enabled"
+            android:title="@string/pref_title_animations"
+            android:summary="@string/pref_summary_animations"
+            android:defaultValue="true"
+            android:icon="@android:drawable/ic_media_play" />
+
         <Preference
             android:key="language_preference"
             android:title="@string/pref_title_language"

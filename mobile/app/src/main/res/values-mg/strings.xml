@@ -54,6 +54,8 @@
     <string name="pref_title_language">Fiteny</string>
     <string name="pref_summary_language">Safidio ny fiteny tianao</string>
     <string name="current_language">Ankehitriny: %1$s</string>
+    <string name="pref_title_animations">Sary mihetsika</string>
+    <string name="pref_summary_animations">Alefaso na ajanona ny sary mihetsika mpilalao</string>
     <string name="pref_title_facebook">Vondron`olona Facebook</string>
     <string name="pref_summary_facebook">Sokafy ny pejy vondrona anay ao amin`ny Facebook</string>
     
@@ -312,7 +314,6 @@
     <!-- Past invites -->
     <string name="past_invites">Fanasana Taloha</string>
     <string name="no_past_invites">Tsy misy fanasana taloha</string>
-    <string name="invite_and_add_to_friend">Manasa sy Manampy ho Namana</string>
     <string name="invite_received_format">Noraisina %1$s</string>
     <string name="invite_status_accepted">Toe-javatra: Nekena</string>
     <string name="invite_status_cancelled">Toe-javatra: Nofoanana</string>
@@ -332,4 +333,5 @@
     <string name="active_invitation_exists">Fanasana mavitrika efa misy</string>
     <string name="user_blocked_invites">Ny mpampiasa dia nanakana ny fanasana</string>
     <string name="cannot_invite_this_user">Tsy afaka manasa io mpampiasa io</string>
+    <string name="failed_to_load_terms">Tsy afaka nampiditra ny fepetra sy ny fetrany</string>
 </resources>
