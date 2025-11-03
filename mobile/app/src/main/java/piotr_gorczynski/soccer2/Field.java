@@ -97,6 +97,7 @@ public class Field {
     private static final float RUN_FRAME_STEP_DISTANCE = RUN_FRAME_COUNT > 0
             ? (float) (Math.sqrt(2.0) / RUN_FRAME_COUNT)
             : 0f;
+    private static final float RUN_DESTINATION_EPSILON = 0.001f;
     private static final float ACTIVE_SPRITE_PROXIMITY_RATIO = 0.6f;
     private static final int RUN_DELAY_CYCLES = 2;
 
@@ -516,6 +517,16 @@ public class Field {
             currentGridY = Math.min(currentGridY, runTargetGridY);
         } else if (runDirectionY < 0f) {
             currentGridY = Math.max(currentGridY, runTargetGridY);
+        }
+
+        boolean reachedDestination = Math.abs(currentGridX - runTargetGridX) <= RUN_DESTINATION_EPSILON
+                && Math.abs(currentGridY - runTargetGridY) <= RUN_DESTINATION_EPSILON;
+        if (!reachedDestination && runTotalDistance <= 0f) {
+            reachedDestination = true;
+        }
+        if (reachedDestination) {
+            stopRunAnimation(now);
+            return;
         }
 
         float ballCenterX = w2x(currentGridX);
