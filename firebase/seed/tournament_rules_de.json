@@ -1,9 +1,10 @@
 {
   "rules": [
     "Spiele werden auf einem 6×8‑Raster gespielt. Der Ball startet in der Mitte (3,4).",
-    "Die Spieler bewegen den Ball zu einem der acht benachbarten Punkte. Linien dürfen weder gekreuzt noch wiederholt werden.",
+    "Die Spieler bewegen den Ball zu einem der acht benachbarten Punkte. Linien dürfen nicht wiederholt werden.",
     "Ein Treffer an einer Begrenzung oder an einem bereits besuchten Punkt gilt als Abpraller und gewährt demselben Spieler einen weiteren Zug.",
-    "Ein Tor fällt, wenn der Ball an der oberen oder unteren Kante ins gegnerische Tor gelangt. Gibt es keine legalen Züge mehr, gewinnt der Spieler, der zuletzt gezogen hat.",
+    "Ein Tor fällt, wenn der Ball an der oberen oder unteren Kante ins gegnerische Tor gelangt.",
+    "Wenn ein Spieler den Ball zu einem Punkt bewegt, von dem aus es keine möglichen Züge mehr gibt, verliert dieser Spieler sofort.",
     "Jeder Spieler hat eine 5‑Minuten‑Schachuhr. Die Zeit läuft nur während der eigenen Zugphase. Zeitüberschreitung bedeutet eine Niederlage.",
     "Wenn sich das Telefon eines Spielers vor Beginn seines Zuges trennt, startet das Backend seine Uhr nach einer Minute automatisch.",
     "Wer das Match vorzeitig verlässt, verliert kampflos; der Sieg geht an den Gegner.",
@@ -11,5 +12,5 @@
     "Partien ohne Aktivität von mehr als fünf Minuten werden automatisch wegen Zeit entschieden.",
     "Das Turnier endet, wenn die Frist erreicht ist."
   ],
-  "updatedAt": "2025-07-21T00:00:00Z"
+  "updatedAt": "2025-11-03T00:00:00Z"
 }

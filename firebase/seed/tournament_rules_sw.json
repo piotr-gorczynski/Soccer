@@ -1,9 +1,10 @@
 {
   "rules": [
     "Mechi zinachezwa kwenye gridi ya 6×8. Mpira unaanza katikati (3,4).",
-    "Wachezaji huhamisha mpira hadi moja ya pointi nane zilizo karibu. Mistari haiwezi kuvukwa au kurudiwa.",
+    "Wachezaji huhamisha mpira hadi moja ya pointi nane zilizo karibu. Mistari haiwezi kurudiwa.",
     "Kugonga mpaka au sehemu iliyotembelewa zamani huhesabiwa kama bounce na kumpatia mchezaji huyo huyo mwendo mwingine.",
-    "Goli linafungwa wakati mpira unaingia kwenye goli la mpinzani kwenye ukingo wa juu au chini. Ikiwa hakuna mwendo halali uliosalia, mchezaji aliyehamisha mwisho anashinda.",
+    "Goli linafungwa wakati mpira unaingia kwenye goli la mpinzani kwenye ukingo wa juu au chini.",
+    "Ikiwa mchezaji anahamisha mpira hadi sehemu ambapo hakuna mihamio inayowezekana, mchezaji huyo anashindwa mara moja.",
     "Kila mchezaji ana saa ya chess ya dakika 5. Muda unakimbia wakati wa zamu yako tu. Muda kuisha kunasababisha kushindwa.",
     "Ikiwa simu ya mchezaji itakatika kabla ya zamu yake kuanza, backend itaanza saa yake kiotomatiki baada ya dakika moja.",
     "Kuondoka kwenye mchezo mapema kunasababisha kushindwa kwa mpinzani.",
@@ -11,5 +12,5 @@
     "Mechi za kustaafu zisizo na shughuli zaidi ya dakika tano huamuliwa kiotomatiki kwa muda.",
     "Mashindano yanaisha wakati muda unapofika."
   ],
-  "updatedAt": "2025-07-21T00:00:00Z"
+  "updatedAt": "2025-11-03T00:00:00Z"
 }
