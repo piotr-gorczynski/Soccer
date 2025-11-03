@@ -86,7 +86,7 @@ public class MenuActivity extends BaseActivity {
     static final String PREF_LAST_INVITES_SEEN_TIMESTAMP = "lastInvitesSeenTimestamp";
     private static final String PREF_LAST_ACTIVE_TIMESTAMP = "lastActiveTimestamp";
 
-    private static final int RUNNING_PLAYER_FRAME_COUNT = 35;
+    private static final int RUNNING_PLAYER_FRAME_COUNT = 22;
     private static final int RUNNING_PLAYER_FRAME_WIDTH = 128;
     private static final int RUNNING_PLAYER_FRAME_HEIGHT = 128;
     private static final long RUNNING_PLAYER_FRAME_DURATION_MS = 125L;
@@ -960,14 +960,14 @@ public class MenuActivity extends BaseActivity {
         }
 
         int spriteSheetResId = getResources().getIdentifier(
-                "spritesheet_idle",
+                "spritesheet_run",
                 "drawable",
                 getPackageName()
         );
         if (spriteSheetResId == 0) {
             Log.w(
                     "TAG_Soccer",
-                    getClass().getSimpleName() + ".setupRunningPlayerAnimation: spritesheet_idle resource missing"
+                    getClass().getSimpleName() + ".setupRunningPlayerAnimation: spritesheet_run resource missing"
             );
             runningPlayerView.setVisibility(View.GONE);
             return;
@@ -994,7 +994,7 @@ public class MenuActivity extends BaseActivity {
                 if (spriteSheet == null) {
                     Log.w(
                             "TAG_Soccer",
-                            getClass().getSimpleName() + ".setupRunningPlayerAnimation: spritesheet_idle resource missing"
+                            getClass().getSimpleName() + ".setupRunningPlayerAnimation: spritesheet_run resource missing"
                     );
                     runOnUiThread(() -> {
                         if (runningPlayerView != null) {
