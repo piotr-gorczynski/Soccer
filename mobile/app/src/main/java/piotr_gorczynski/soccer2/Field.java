@@ -85,11 +85,13 @@ public class Field {
     private float runTargetGridY = 0f;
     private float runTotalDistance = 0f;
     private int runFrameLimit = RunPlayerSprite.FRAME_COUNT;
+    private int runActivePlayer = -1;
 
     private static final int RUN_FRAME_COUNT = RunPlayerSprite.FRAME_COUNT;
     private static final float RUN_FRAME_STEP_DISTANCE = RUN_FRAME_COUNT > 0
             ? (float) (Math.sqrt(2.0) / RUN_FRAME_COUNT)
             : 0f;
+    private static final float ACTIVE_SPRITE_PROXIMITY_RATIO = 0.8f;
 
     public Field(Context current, ArrayList<MoveTo> argMoves, ArrayList<MoveTo> argPossibleMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex, boolean animationsEnabled) {
 
@@ -378,6 +380,7 @@ public class Field {
         }
 
         runFrameLimit = frameLimit;
+        runActivePlayer = next.P;
         runStartGridX = flippedStartX;
         runStartGridY = flippedStartY;
         runTargetGridX = flippedTargetX;
@@ -408,6 +411,7 @@ public class Field {
         runDirectionX = 0f;
         runDirectionY = 0f;
         runTotalDistance = 0f;
+        runActivePlayer = -1;
         activeRunRedPlayerFrames = EMPTY_BITMAP_ARRAY;
         activeRunBluePlayerFrames = EMPTY_BITMAP_ARRAY;
     }
@@ -483,10 +487,14 @@ public class Field {
         }
 
         float spriteCenterX = w2x(currentGridX);
+        float ballCenterY = h2y(currentGridY);
         boolean drewFrame = false;
 
         if (blueFrame != null && !blueFrame.isRecycled()) {
-            float blueBottom = h2y(currentGridY) - ballRadius;
+            boolean blueShouldBeCloser = runActivePlayer == 1;
+            float blueBottom = blueShouldBeCloser
+                    ? ballCenterY - spriteHeight * ACTIVE_SPRITE_PROXIMITY_RATIO
+                    : ballCenterY - ballRadius;
             float blueTop = blueBottom - spriteHeight;
             if (blueTop < 0f) {
                 blueTop = 0f;
@@ -507,7 +515,10 @@ public class Field {
         }
 
         if (redFrame != null && !redFrame.isRecycled()) {
-            float redTop = h2y(currentGridY) + ballRadius;
+            boolean redShouldBeCloser = runActivePlayer == 0;
+            float redTop = redShouldBeCloser
+                    ? ballCenterY - spriteHeight * ACTIVE_SPRITE_PROXIMITY_RATIO
+                    : ballCenterY + ballRadius;
             float redBottom = redTop + spriteHeight;
             if (redBottom > canvas.getHeight()) {
                 redBottom = canvas.getHeight();
@@ -818,10 +829,13 @@ public class Field {
                 float spriteHeight = canvas.getHeight() * flSpriteSize;
                 if (spriteHeight > 0f) {
                     // Blue player above the ball, bottom touching the ball's top edge
+                    boolean blueShouldBeCloser = currentTurn == 1;
                     if (blueFrameCount > 0 && !runAnimationActive) {
                         Bitmap spriteFrame = idleBluePlayerFrames[idlePlayerFrameIndex % blueFrameCount];
                         if (spriteFrame != null && !spriteFrame.isRecycled()) {
-                            float spriteBottom = cy -1;
+                            float spriteBottom = blueShouldBeCloser
+                                    ? cy - spriteHeight * ACTIVE_SPRITE_PROXIMITY_RATIO
+                                    : cy - 1f;
                             float spriteTop = spriteBottom - spriteHeight;
                             if (spriteTop < 0f) {
                                 spriteTop = 0f;
@@ -838,10 +852,13 @@ public class Field {
                     }
 
                     // Red player below the ball, top touching the ball's bottom edge
+                    boolean redShouldBeCloser = currentTurn == 0;
                     if (redFrameCount > 0 && !runAnimationActive) {
                         Bitmap spriteFrame = idleRedPlayerFrames[idlePlayerFrameIndex % redFrameCount];
                         if (spriteFrame != null && !spriteFrame.isRecycled()) {
-                            float spriteTop = cy + +1;
+                            float spriteTop = redShouldBeCloser
+                                    ? cy - spriteHeight * ACTIVE_SPRITE_PROXIMITY_RATIO
+                                    : cy + 1f;
                             float spriteBottom = spriteTop + spriteHeight;
                             if (spriteBottom > canvas.getHeight()) {
                                 spriteBottom = canvas.getHeight();
