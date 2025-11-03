@@ -871,9 +871,18 @@ public class Field {
                 if (idlePlayerLastFrameTime == 0L) {
                     idlePlayerLastFrameTime = now;
                 }
-                if (runAnimationActive) {
-                    idlePlayerLastFrameTime = now;
-                } else {
+
+                boolean runActive = runAnimationActive;
+                boolean blueDelayActive = runActive && runBlueDelayFrames > 0
+                        && runPlayerFrameIndex < runBlueDelayFrames;
+                boolean redDelayActive = runActive && runRedDelayFrames > 0
+                        && runPlayerFrameIndex < runRedDelayFrames;
+
+                boolean shouldDrawIdleBlue = !runActive || blueDelayActive;
+                boolean shouldDrawIdleRed = !runActive || redDelayActive;
+                boolean shouldAdvanceIdle = shouldDrawIdleBlue || shouldDrawIdleRed;
+
+                if (shouldAdvanceIdle) {
                     long elapsed = now - idlePlayerLastFrameTime;
                     if (IdlePlayerSprite.FRAME_DURATION_MS > 0 && elapsed >= IdlePlayerSprite.FRAME_DURATION_MS) {
                         long framesToAdvance = elapsed / IdlePlayerSprite.FRAME_DURATION_MS;
@@ -881,14 +890,15 @@ public class Field {
                         long remainder = elapsed % IdlePlayerSprite.FRAME_DURATION_MS;
                         idlePlayerLastFrameTime = now - remainder;
                     }
+                } else {
+                    idlePlayerLastFrameTime = now;
                 }
 
                 float spriteHeight = canvas.getHeight() * flSpriteSize;
                 if (spriteHeight > 0f) {
                     // Blue player above the ball, bottom touching the ball's top edge
                     boolean blueShouldBeCloser = currentTurn == 1;
-                    float ballTop = ballCenterY - radius;
-                    if (blueFrameCount > 0 && !runAnimationActive) {
+                    if (blueFrameCount > 0 && shouldDrawIdleBlue) {
                         Bitmap spriteFrame = idleBluePlayerFrames[idlePlayerFrameIndex % blueFrameCount];
                         if (spriteFrame != null && !spriteFrame.isRecycled()) {
                             float spriteBottom = blueShouldBeCloser
@@ -911,7 +921,7 @@ public class Field {
 
                     // Red player below the ball, top touching the ball's bottom edge
                     boolean redShouldBeCloser = currentTurn == 0;
-                    if (redFrameCount > 0 && !runAnimationActive) {
+                    if (redFrameCount > 0 && shouldDrawIdleRed) {
                         Bitmap spriteFrame = idleRedPlayerFrames[idlePlayerFrameIndex % redFrameCount];
                         if (spriteFrame != null && !spriteFrame.isRecycled()) {
                             float spriteTop = redShouldBeCloser
