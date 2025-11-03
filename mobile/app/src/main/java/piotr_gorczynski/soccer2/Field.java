@@ -91,7 +91,7 @@ public class Field {
     private static final float RUN_FRAME_STEP_DISTANCE = RUN_FRAME_COUNT > 0
             ? (float) (Math.sqrt(2.0) / RUN_FRAME_COUNT)
             : 0f;
-    private static final float ACTIVE_SPRITE_PROXIMITY_RATIO = 0.7f;
+    private static final float ACTIVE_SPRITE_PROXIMITY_RATIO = 0.6f;
 
     public Field(Context current, ArrayList<MoveTo> argMoves, ArrayList<MoveTo> argPossibleMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex, boolean animationsEnabled) {
 
@@ -494,8 +494,8 @@ public class Field {
         if (blueFrame != null && !blueFrame.isRecycled()) {
             boolean blueShouldBeCloser = runActivePlayer == 1;
             float blueBottom = blueShouldBeCloser
-                    ? ballTop - spriteHeight * ACTIVE_SPRITE_PROXIMITY_RATIO
-                    : ballTop;
+                    ? ballCenterY + spriteHeight * (1-ACTIVE_SPRITE_PROXIMITY_RATIO)
+                    : ballCenterY - ballRadius;
             float blueTop = blueBottom - spriteHeight;
             if (blueTop < 0f) {
                 blueTop = 0f;
@@ -836,8 +836,8 @@ public class Field {
                         Bitmap spriteFrame = idleBluePlayerFrames[idlePlayerFrameIndex % blueFrameCount];
                         if (spriteFrame != null && !spriteFrame.isRecycled()) {
                             float spriteBottom = blueShouldBeCloser
-                                    ? ballTop - spriteHeight * ACTIVE_SPRITE_PROXIMITY_RATIO
-                                    : ballTop - 1f;
+                                    ? cy + spriteHeight * (1-ACTIVE_SPRITE_PROXIMITY_RATIO)
+                                    : cy + 1f;
                             float spriteTop = spriteBottom - spriteHeight;
                             if (spriteTop < 0f) {
                                 spriteTop = 0f;
