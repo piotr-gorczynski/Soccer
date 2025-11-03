@@ -8,4 +8,12 @@
         <item name="android:windowBackground">@android:color/transparent</item>
      </style>
 
+    <!-- Splash screen theme with loading background -->
+    <style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorGreenDark</item>
+        <item name="colorPrimaryDark">@color/colorGreenDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@drawable/splash_background</item>
+    </style>
+
 </resources>
