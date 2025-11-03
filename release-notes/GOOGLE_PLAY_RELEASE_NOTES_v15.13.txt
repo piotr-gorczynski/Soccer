@@ -13,6 +13,7 @@
 🎮 Refresh invite statistics when returning to tournament lobby
 🎮 Fix ANR in MenuActivity by offloading sprite sheet processing to background thread
 🎮 Fix WebView ANR in Google Ads SDK initialization
+🎮 Fix ANR crash from MobileAds initialization blocking main thread
 
 
 
