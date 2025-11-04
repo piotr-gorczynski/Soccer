@@ -950,6 +950,9 @@ public class Field {
                 if (spriteHeight > 0f) {
                     // Blue player above the ball, bottom touching the ball's top edge
                     boolean blueShouldBeCloser = currentTurn == 1;
+                    if (runActive && runMovingPlayer == 0 && blueDelayActive) {
+                        blueShouldBeCloser = false;
+                    }
                     float idleBlueCenterX = ballCenterX;
                     float idleBlueCenterY = ballCenterY;
                     if (runActive && runMovingPlayer == 0 && blueDelayActive) {
@@ -979,6 +982,9 @@ public class Field {
 
                     // Red player below the ball, top touching the ball's bottom edge
                     boolean redShouldBeCloser = currentTurn == 0;
+                    if (runActive && runMovingPlayer == 1 && redDelayActive) {
+                        redShouldBeCloser = false;
+                    }
                     float idleRedCenterX = ballCenterX;
                     float idleRedCenterY = ballCenterY;
                     if (runActive && runMovingPlayer == 1 && redDelayActive) {
