@@ -893,9 +893,11 @@ public class Field {
                 boolean isBlueMoving = runActive && runMovingPlayer == 1;
 
                 boolean shouldDrawIdleBlue = !runActive
-                        || (!isRedMoving && blueDelayActive);
+                        || (isRedMoving && blueDelayActive)
+                        || (!isRedMoving && !isBlueMoving);
                 boolean shouldDrawIdleRed = !runActive
-                        || (!isBlueMoving && redDelayActive);
+                        || (isBlueMoving && redDelayActive)
+                        || (!isBlueMoving && !isRedMoving);
                 boolean shouldAdvanceIdle = shouldDrawIdleBlue || shouldDrawIdleRed;
 
                 if (shouldAdvanceIdle) {
