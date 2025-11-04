@@ -354,7 +354,8 @@ public class GameView extends View {
         boolean hasPossibleMoves = possibleMovesForDrawing != null && !possibleMovesForDrawing.isEmpty();
         boolean runAnimationActive = field != null && field.isRunAnimationActive();
         boolean ballAnimationActive = field != null && field.isBallAnimationActive();
-        return hasPossibleMoves || runAnimationActive || ballAnimationActive;
+        boolean handTutorialActive = field != null && field.isHandTutorialActive();
+        return hasPossibleMoves || runAnimationActive || ballAnimationActive || handTutorialActive;
     }
 
 
