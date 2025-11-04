@@ -1,9 +1,10 @@
 {
   "rules": [
     "Los partidos se juegan en una cuadrícula de 6×8. La pelota empieza en el centro (3,4).",
-    "Los jugadores mueven la pelota a cualquiera de los ocho puntos adyacentes. No se permite cruzar ni repetir líneas.",
+    "Los jugadores mueven la pelota a cualquiera de los ocho puntos adyacentes. No se pueden repetir líneas.",
     "Golpear un borde o un punto ya visitado cuenta como rebote y concede otro turno al mismo jugador.",
-    "Se marca gol cuando la pelota entra en la portería del oponente en el borde superior o inferior. Si no quedan jugadas legales, gana el jugador que realizó el último movimiento.",
+    "Se marca gol cuando la pelota entra en la portería del oponente en el borde superior o inferior.",
+    "Si un jugador mueve la pelota a un punto desde el cual no hay movimientos posibles, ese jugador pierde inmediatamente.",
     "Cada jugador dispone de un reloj de ajedrez de 5 minutos. El tiempo solo corre durante su propio turno. Agotar el tiempo implica derrota.",
     "Si el teléfono de un jugador se desconecta antes de que empiece su turno, el backend iniciará automáticamente su reloj al cabo de un minuto.",
     "Abandonar el partido antes de que termine supone perder por incomparecencia a favor del oponente.",
@@ -11,5 +12,5 @@
     "Los partidos sin actividad durante más de cinco minutos se deciden automáticamente por tiempo.",
     "El torneo finaliza al alcanzarse la fecha límite."
   ],
-  "updatedAt": "2025-07-21T00:00:00Z"
+  "updatedAt": "2025-11-03T00:00:00Z"
 }
