@@ -1,9 +1,10 @@
 {
   "rules": [
     "Mecze są rozgrywane na siatce 6x8. Piłka startuje ze środka (3,4).",
-    "Gracze przesuwają piłkę do jednego z ośmiu sąsiednich punktów. Nie wolno przecinać ani powtarzać linii.",
+    "Gracze przesuwają piłkę do jednego z ośmiu sąsiednich punktów. Linie nie mogą być powtarzane.",
     "Uderzenie w granicę lub wcześniej odwiedzony punkt liczy się jako odbicie i zapewnia kolejny ruch dla tego samego gracza.",
-    "Gol pada, gdy piłka wejdzie do bramki przeciwnika na górnej lub dolnej krawędzi. Jeśli nie ma już legalnych ruchów, wygrywa gracz, który wykonał ostatni ruch.",
+    "Gol pada, gdy piłka wejdzie do bramki przeciwnika na górnej lub dolnej krawędzi.",
+    "Jeśli gracz przesunie piłkę do punktu, z którego nie ma możliwych ruchów, ten gracz natychmiast przegrywa.",
     "Każdy gracz ma 5-minutowy zegar szachowy. Czas biegnie tylko w trakcie tury gracza. Przekroczenie czasu oznacza przegraną.",
     "Jeśli telefon gracza odłączy się przed rozpoczęciem jego tury, backend automatycznie uruchomi jego zegar po minucie.",
     "Opuszczenie meczu przed jego zakończeniem oznacza walkower na rzecz przeciwnika.",
@@ -11,5 +12,5 @@
     "Mecze bez aktywności przez ponad pięć minut są automatycznie rozstrzygane na czas.",
     "Turniej kończy się po upływie terminu."
   ],
-  "updatedAt": "2025-08-1600:00:00Z"
+  "updatedAt": "2025-11-03T00:00:00Z"
 }
