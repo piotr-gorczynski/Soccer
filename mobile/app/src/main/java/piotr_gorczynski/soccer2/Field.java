@@ -522,8 +522,6 @@ public class Field {
         runPlayerFrameIndex = 0;
         runPlayerLastFrameTime = 0L;
         idlePlayerLastFrameTime = referenceTime;
-        runRedFrameVisible = false;
-        runBlueFrameVisible = false;
         runFrameLimit = RUN_FRAME_COUNT;
         runDirectionX = 0f;
         runDirectionY = 0f;
@@ -1268,6 +1266,8 @@ public class Field {
         BallState ballState = drawBall(canvas, dotSize, movePaint);
 
         // 4-5) Sprites
+        runRedFrameVisible = false;
+        runBlueFrameVisible = false;
         drawRunAnimation(canvas, ballState.radius);
         drawIdlePlayers(canvas, ballState, currentTurn);
 
