@@ -1197,7 +1197,10 @@ public class MenuActivity extends BaseActivity {
                         // If activity is already started, begin animation immediately
                         // This handles the case where onCreate->setupRunningPlayerAnimation starts
                         // the background thread, then onStart is called before frames are loaded
-                        if (!isRunningPlayerAnimationStarted && areAnimationsEnabled()) {
+                        // Only start if animation isn't already running and the activity is still active
+                        if (!isRunningPlayerAnimationStarted && areAnimationsEnabled() 
+                                && !isFinishing() 
+                                && !(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed())) {
                             startRunningPlayerAnimation();
                         }
                     }
