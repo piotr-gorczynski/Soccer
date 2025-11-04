@@ -1193,6 +1193,13 @@ public class MenuActivity extends BaseActivity {
                             runningPlayerView.setImageBitmap(initialRow[0]);
                         }
                         configureRunningPlayerClickListener();
+                        
+                        // If activity is already started, begin animation immediately
+                        // This handles the case where onCreate->setupRunningPlayerAnimation starts
+                        // the background thread, then onStart is called before frames are loaded
+                        if (!isRunningPlayerAnimationStarted && areAnimationsEnabled()) {
+                            startRunningPlayerAnimation();
+                        }
                     }
                 });
             } catch (Exception e) {
