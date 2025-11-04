@@ -369,4 +369,7 @@
         <item>30</item>
     </string-array>
     <string name="failed_to_load_terms">Allgemeine Geschäftsbedingungen konnten nicht geladen werden</string>
+    
+    <!-- Animation info dialog -->
+    <string name="animation_info_message">Diese Version bringt Animationen von Fußballspielern! Sie können in den Einstellungen ein- und ausgeschaltet werden.</string>
 </resources>

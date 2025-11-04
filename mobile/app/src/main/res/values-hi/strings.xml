@@ -368,4 +368,7 @@
     <string name="cannot_invite_this_user">इस उपयोगकर्ता को आमंत्रित नहीं कर सकते</string>
 
     <string name="failed_to_load_terms">नियम और शर्तें लोड करने में विफल</string>
+    
+    <!-- Animation info dialog -->
+    <string name="animation_info_message">यह संस्करण फुटबॉल खिलाड़ियों के एनिमेशन लाता है! इन्हें सेटिंग्स में चालू और बंद किया जा सकता है।</string>
 </resources>

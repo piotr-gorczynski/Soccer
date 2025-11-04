@@ -315,4 +315,7 @@
     <string name="user_blocked_invites">المستخدم قد حظر الدعوات</string>
     <string name="cannot_invite_this_user">لا يمكن دعوة هذا المستخدم</string>
     <string name="failed_to_load_terms">فشل تحميل الشروط والأحكام</string>
+    
+    <!-- Animation info dialog -->
+    <string name="animation_info_message">يجلب هذا الإصدار رسوم متحركة للاعبي كرة القدم! يمكن تشغيلها وإيقافها في الإعدادات.</string>
 </resources>

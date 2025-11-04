@@ -371,4 +371,7 @@
     <string name="cannot_invite_this_user">No se puede invitar a este usuario</string>
 
     <string name="failed_to_load_terms">No se pudieron cargar los términos y condiciones</string>
+    
+    <!-- Animation info dialog -->
+    <string name="animation_info_message">¡Esta versión trae animaciones de jugadores de fútbol! Se pueden activar y desactivar en Configuración.</string>
 </resources>

@@ -334,4 +334,7 @@
     <string name="cannot_invite_this_user">මෙම පරිශීලකයාට ආරාධනා කළ නොහැක</string>
 
     <string name="failed_to_load_terms">නියමයන් සහ කොන්දේසි පූරණය කළ නොහැකි විය</string>
+    
+    <!-- Animation info dialog -->
+    <string name="animation_info_message">මෙම අනුවාදය පාපන්දු ක්‍රීඩකයන්ගේ සජීවීකරණ ගෙන එයි! සැකසීම්වල ඒවා සක්‍රිය සහ අක්‍රිය කළ හැකිය.</string>
 </resources>

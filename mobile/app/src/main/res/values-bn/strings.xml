@@ -368,4 +368,7 @@
         <item>30</item>
     </string-array>
     <string name="failed_to_load_terms">শর্তাবলী লোড করতে ব্যর্থ</string>
+    
+    <!-- Animation info dialog -->
+    <string name="animation_info_message">এই সংস্করণ ফুটবল খেলোয়াড়দের অ্যানিমেশন নিয়ে আসে! সেটিংসে এগুলি চালু এবং বন্ধ করা যায়।</string>
 </resources>
