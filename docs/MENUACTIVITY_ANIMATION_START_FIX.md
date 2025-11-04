@@ -108,8 +108,8 @@ Manual verification scenarios:
 
 ## Related Issues
 
-- Issue #713 - Original work to set up the sprite animation
-- This fix addresses the regression where animation didn't start on first launch
+- Issue #713 - Original work to set up the sprite animation system for MenuActivity
+- This fix addresses the regression where animation didn't start on first launch after the sprite system was implemented
 
 ## Related Documentation
 
