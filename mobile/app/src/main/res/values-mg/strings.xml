@@ -334,4 +334,7 @@
     <string name="user_blocked_invites">Ny mpampiasa dia nanakana ny fanasana</string>
     <string name="cannot_invite_this_user">Tsy afaka manasa io mpampiasa io</string>
     <string name="failed_to_load_terms">Tsy afaka nampiditra ny fepetra sy ny fetrany</string>
+    
+    <!-- Animation info dialog -->
+    <string name="animation_info_message">Ity dikan-teny ity dia mitondra fihetsehana momba ny mpilalao baolina kitra! Azo atao ny manokatra sy manidy ao amin\'ny Fandrindrana.</string>
 </resources>

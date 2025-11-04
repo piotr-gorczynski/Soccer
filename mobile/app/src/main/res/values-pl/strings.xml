@@ -369,4 +369,7 @@
         <item>30</item>
     </string-array>
     <string name="failed_to_load_terms">Nie udało się załadować regulaminu</string>
+    
+    <!-- Animation info dialog -->
+    <string name="animation_info_message">Ta wersja wprowadza animacje piłkarzy! Można je włączać i wyłączać w Ustawieniach.</string>
 </resources>

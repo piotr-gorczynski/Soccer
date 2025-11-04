@@ -368,4 +368,7 @@
         <item>30</item>
     </string-array>
     <string name="failed_to_load_terms">شرائط و ضوابط لوڈ کرنے میں ناکام</string>
+    
+    <!-- Animation info dialog -->
+    <string name="animation_info_message">یہ ورژن فٹبال کھلاڑیوں کی حرکت پذیری لاتا ہے! انہیں ترتیبات میں آن اور آف کیا جا سکتا ہے۔</string>
 </resources>
