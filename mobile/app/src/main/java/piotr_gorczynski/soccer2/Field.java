@@ -97,6 +97,8 @@ public class Field {
     private boolean runBlueCompleted = false;
     private float lastRunSpriteHeight = 0f;
     private float lastRunBallRadius = 0f;
+    private boolean runRedFrameVisible = false;
+    private boolean runBlueFrameVisible = false;
 
     private boolean ballAnimationActive = false;
     private long ballAnimationStartTime = 0L;
@@ -520,6 +522,8 @@ public class Field {
         runPlayerFrameIndex = 0;
         runPlayerLastFrameTime = 0L;
         idlePlayerLastFrameTime = referenceTime;
+        runRedFrameVisible = false;
+        runBlueFrameVisible = false;
         runFrameLimit = RUN_FRAME_COUNT;
         runDirectionX = 0f;
         runDirectionY = 0f;
@@ -726,6 +730,9 @@ public class Field {
         float blueCenterX = w2x(blueGridX);
         float blueCenterY = h2y(blueGridY);
 
+        runBlueFrameVisible = false;
+        runRedFrameVisible = false;
+
         if (blueFrame != null && !blueFrame.isRecycled()) {
             float blueFarBottom = blueCenterY - ballRadius;
             float blueCloseBottom = blueCenterY + spriteHeight * (1f - ACTIVE_SPRITE_PROXIMITY_RATIO);
@@ -746,6 +753,7 @@ public class Field {
                 RectF blueDst = new RectF(blueLeft, blueTop, blueRight, blueBottom);
                 canvas.drawBitmap(blueFrame, null, blueDst, null);
                 drewFrame = true;
+                runBlueFrameVisible = true;
             }
         }
 
@@ -769,6 +777,7 @@ public class Field {
                 RectF redDst = new RectF(redLeft, redTop, redRight, redBottom);
                 canvas.drawBitmap(redFrame, null, redDst, null);
                 drewFrame = true;
+                runRedFrameVisible = true;
             }
         }
 
@@ -1101,14 +1110,14 @@ public class Field {
         boolean isBlueMoving = runActive && hasBlueRunFrames && !runBlueCompleted
                 && runPlayerFrameIndex >= runBlueDelayFrames;
 
-        boolean shouldDrawIdleBlue = !runActive
+        boolean shouldDrawIdleBlue = !runBlueFrameVisible && (!runActive
                 || runBlueCompleted
                 || (isRedMoving && blueDelayActive)
-                || (!isRedMoving && !isBlueMoving);
-        boolean shouldDrawIdleRed = !runActive
+                || (!isRedMoving && !isBlueMoving));
+        boolean shouldDrawIdleRed = !runRedFrameVisible && (!runActive
                 || runRedCompleted
                 || (isBlueMoving && redDelayActive)
-                || (!isBlueMoving && !isRedMoving);
+                || (!isBlueMoving && !isRedMoving));
         boolean shouldAdvanceIdle = shouldDrawIdleBlue || shouldDrawIdleRed;
 
         if (shouldAdvanceIdle) {
