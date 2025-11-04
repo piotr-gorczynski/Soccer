@@ -94,6 +94,8 @@ public class Field {
     private int runBlueDelayFrames = 0;
     private boolean runRedCompleted = false;
     private boolean runBlueCompleted = false;
+    private float lastRunSpriteHeight = 0f;
+    private float lastRunBallRadius = 0f;
 
     private static final int RUN_FRAME_COUNT = RunPlayerSprite.FRAME_COUNT;
     private static final float RUN_FRAME_STEP_DISTANCE = RUN_FRAME_COUNT > 0
@@ -102,6 +104,7 @@ public class Field {
     private static final float RUN_DESTINATION_EPSILON = 0.001f;
     private static final float ACTIVE_SPRITE_PROXIMITY_RATIO = 0.6f;
     private static final int RUN_DELAY_CYCLES = 10;
+    private static final float SPRITE_DIRECTION_EPSILON = 0.0001f;
 
     public Field(Context current, ArrayList<MoveTo> argMoves, ArrayList<MoveTo> argPossibleMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex, boolean animationsEnabled) {
 
@@ -368,7 +371,54 @@ public class Field {
         float totalDeltaX = flippedTargetX - flippedStartX;
         float totalDeltaY = flippedTargetY - flippedStartY;
 
-        RunAnimationFrameSet frameSet = selectRunAnimationFrames(totalDeltaX, totalDeltaY);
+        int movingPlayer = (previous.P == 0 || previous.P == 1) ? previous.P : -1;
+
+        float spriteDeltaX = totalDeltaX;
+        float spriteDeltaY = totalDeltaY;
+        if (movingPlayer == 0 || movingPlayer == 1) {
+            float spriteHeight = lastRunSpriteHeight;
+            if (spriteHeight > 0f) {
+                float startCenterX = w2x(flippedStartX);
+                float startCenterY = h2y(flippedStartY);
+                float endCenterX = w2x(flippedTargetX);
+                float endCenterY = h2y(flippedTargetY);
+                float ballRadius = lastRunBallRadius;
+
+                if (movingPlayer == 0) {
+                    float startProximity = previous.P == 0 ? 1f : 0f;
+                    float endProximity = next.P == 0 ? 1f : 0f;
+
+                    float startFarTop = startCenterY + ballRadius;
+                    float startCloseTop = startCenterY - spriteHeight * ACTIVE_SPRITE_PROXIMITY_RATIO;
+                    float startTop = lerp(startFarTop, startCloseTop, startProximity);
+                    float startBottom = startTop + spriteHeight;
+
+                    float endFarTop = endCenterY + ballRadius;
+                    float endCloseTop = endCenterY - spriteHeight * ACTIVE_SPRITE_PROXIMITY_RATIO;
+                    float endTop = lerp(endFarTop, endCloseTop, endProximity);
+                    float endBottom = endTop + spriteHeight;
+
+                    spriteDeltaX = endCenterX - startCenterX;
+                    spriteDeltaY = endBottom - startBottom;
+                } else {
+                    float startProximity = previous.P == 1 ? 1f : 0f;
+                    float endProximity = next.P == 1 ? 1f : 0f;
+
+                    float startFarBottom = startCenterY - ballRadius;
+                    float startCloseBottom = startCenterY + spriteHeight * (1f - ACTIVE_SPRITE_PROXIMITY_RATIO);
+                    float startBottom = lerp(startFarBottom, startCloseBottom, startProximity);
+
+                    float endFarBottom = endCenterY - ballRadius;
+                    float endCloseBottom = endCenterY + spriteHeight * (1f - ACTIVE_SPRITE_PROXIMITY_RATIO);
+                    float endBottom = lerp(endFarBottom, endCloseBottom, endProximity);
+
+                    spriteDeltaX = endCenterX - startCenterX;
+                    spriteDeltaY = endBottom - startBottom;
+                }
+            }
+        }
+
+        RunAnimationFrameSet frameSet = selectRunAnimationFrames(totalDeltaX, totalDeltaY, spriteDeltaX, spriteDeltaY);
         if (frameSet.isEmpty()) {
             return;
         }
@@ -389,7 +439,7 @@ public class Field {
             frameLimit = Math.max(1, Math.min(availableFrames, (int) Math.ceil(framesForDistance)));
         }
 
-        runMovingPlayer = (previous.P == 0 || previous.P == 1) ? previous.P : -1;
+        runMovingPlayer = movingPlayer;
         runRedDelayFrames = frameSet.redFrames.length > 0 && runMovingPlayer == 1
                 ? RUN_DELAY_CYCLES
                 : 0;
@@ -499,6 +549,7 @@ public class Field {
             stopRunAnimation(now);
             return;
         }
+        lastRunSpriteHeight = spriteHeight;
 
         float redDistanceTraveled = computeDistanceForFrameIndex(redFrameIndex, redFrameCount, runTotalDistance, true);
         float blueDistanceTraveled = computeDistanceForFrameIndex(blueFrameIndex, blueFrameCount, runTotalDistance, false);
@@ -658,12 +709,21 @@ public class Field {
         return 1f;
     }
 
-    private RunAnimationFrameSet selectRunAnimationFrames(float deltaX, float deltaY) {
+    private RunAnimationFrameSet selectRunAnimationFrames(float deltaX, float deltaY, float spriteDeltaX, float spriteDeltaY) {
         if (deltaX == 0f && deltaY == 0f) {
             return RunAnimationFrameSet.EMPTY;
         }
 
-        double angle = Math.atan2(-deltaY, deltaX);
+        float orientationX = spriteDeltaX;
+        float orientationY = spriteDeltaY;
+
+        double orientationMagnitude = Math.hypot(orientationX, orientationY);
+        if (orientationMagnitude < SPRITE_DIRECTION_EPSILON) {
+            orientationX = deltaX;
+            orientationY = deltaY;
+        }
+
+        double angle = Math.atan2(-orientationY, orientationX);
         double degrees = Math.toDegrees(angle);
         if (degrees < 0) {
             degrees += 360.0;
@@ -855,6 +915,8 @@ public class Field {
         float radius = dotSize * 4;
         float radiusBackground = (float) (radius * 0.8f);
 
+        lastRunBallRadius = radius;
+
         canvas.drawCircle(ballCenterX, ballCenterY, radiusBackground, movePaint);
 
         RectF dst = new RectF(ballCenterX - radius, ballCenterY - radius, ballCenterX + radius, ballCenterY + radius);
@@ -923,6 +985,8 @@ public class Field {
         if (spriteHeight <= 0f) {
             return;
         }
+
+        lastRunSpriteHeight = spriteHeight;
 
         float ballCenterX = ballState.centerX;
         float ballCenterY = ballState.centerY;
