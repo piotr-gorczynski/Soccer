@@ -353,7 +353,8 @@ public class GameView extends View {
     private boolean shouldPulse() {
         boolean hasPossibleMoves = possibleMovesForDrawing != null && !possibleMovesForDrawing.isEmpty();
         boolean runAnimationActive = field != null && field.isRunAnimationActive();
-        return hasPossibleMoves || runAnimationActive;
+        boolean ballAnimationActive = field != null && field.isBallAnimationActive();
+        return hasPossibleMoves || runAnimationActive || ballAnimationActive;
     }
 
 

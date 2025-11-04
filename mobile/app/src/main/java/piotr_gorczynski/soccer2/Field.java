@@ -97,6 +97,17 @@ public class Field {
     private float lastRunSpriteHeight = 0f;
     private float lastRunBallRadius = 0f;
 
+    private boolean ballAnimationActive = false;
+    private long ballAnimationStartTime = 0L;
+    private float ballStartGridX = 0f;
+    private float ballStartGridY = 0f;
+    private float ballTargetGridX = 0f;
+    private float ballTargetGridY = 0f;
+    private float ballDirectionX = 0f;
+    private float ballDirectionY = 0f;
+    private float ballTotalDistance = 0f;
+    private long ballAnimationDurationMs = 0L;
+
     private static final int RUN_FRAME_COUNT = RunPlayerSprite.FRAME_COUNT;
     private static final float RUN_FRAME_STEP_DISTANCE = RUN_FRAME_COUNT > 0
             ? (float) (Math.sqrt(2.0) / RUN_FRAME_COUNT)
@@ -105,6 +116,8 @@ public class Field {
     private static final float ACTIVE_SPRITE_PROXIMITY_RATIO = 0.7f;
     private static final int RUN_DELAY_CYCLES = 10;
     private static final float SPRITE_DIRECTION_EPSILON = 0.0001f;
+    private static final long BALL_DEFAULT_DURATION_MS = Math.max(1, RunPlayerSprite.FRAME_COUNT)
+            * (long) RunPlayerSprite.FRAME_DURATION_MS;
 
     public Field(Context current, ArrayList<MoveTo> argMoves, ArrayList<MoveTo> argPossibleMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex, boolean animationsEnabled) {
 
@@ -348,13 +361,7 @@ public class Field {
     }
 
     public void startRunAnimation(MoveTo previous, MoveTo next) {
-        if (!showIdlePlayerSprite) {
-            return;
-        }
         if (previous == null || next == null) {
-            return;
-        }
-        if (RUN_FRAME_COUNT <= 0) {
             return;
         }
         if ((previous.X == next.X && previous.Y == next.Y)
@@ -370,6 +377,7 @@ public class Field {
 
         float totalDeltaX = flippedTargetX - flippedStartX;
         float totalDeltaY = flippedTargetY - flippedStartY;
+        float totalDistance = (float) Math.hypot(totalDeltaX, totalDeltaY);
 
         int movingPlayer = (previous.P == 0 || previous.P == 1) ? previous.P : -1;
 
@@ -418,61 +426,91 @@ public class Field {
             }
         }
 
-        RunAnimationFrameSet frameSet = selectRunAnimationFrames(totalDeltaX, totalDeltaY, spriteDeltaX, spriteDeltaY);
-        if (frameSet.isEmpty()) {
-            return;
+        int movementFrameCount = RunPlayerSprite.FRAME_COUNT;
+        boolean canStartRun = showIdlePlayerSprite && RUN_FRAME_COUNT > 0;
+
+        if (canStartRun) {
+            RunAnimationFrameSet frameSet = selectRunAnimationFrames(totalDeltaX, totalDeltaY, spriteDeltaX, spriteDeltaY);
+            if (!frameSet.isEmpty()) {
+                activeRunRedPlayerFrames = frameSet.redFrames;
+                activeRunBluePlayerFrames = frameSet.blueFrames;
+                int availableRedFrames = Math.min(RUN_FRAME_COUNT, frameSet.redFrames.length);
+                int availableBlueFrames = Math.min(RUN_FRAME_COUNT, frameSet.blueFrames.length);
+                int availableFrames = Math.max(availableRedFrames, availableBlueFrames);
+                if (availableFrames > 0) {
+                    int frameLimit = availableFrames;
+                    if (totalDistance > 0f && RUN_FRAME_STEP_DISTANCE > 0f) {
+                        float framesForDistance = totalDistance / RUN_FRAME_STEP_DISTANCE;
+                        frameLimit = Math.max(1, Math.min(availableFrames, (int) Math.ceil(framesForDistance)));
+                    }
+
+                    movementFrameCount = frameLimit;
+
+                    runMovingPlayer = movingPlayer;
+                    runRedDelayFrames = frameSet.redFrames.length > 0 && runMovingPlayer == 1
+                            ? RUN_DELAY_CYCLES
+                            : 0;
+                    runBlueDelayFrames = frameSet.blueFrames.length > 0 && runMovingPlayer == 0
+                            ? RUN_DELAY_CYCLES
+                            : 0;
+
+                    runFrameLimit = frameLimit + Math.max(runRedDelayFrames, runBlueDelayFrames);
+                    runStartRedCloser = previous.P == 0;
+                    runTargetRedCloser = next.P == 0;
+                    runStartBlueCloser = previous.P == 1;
+                    runTargetBlueCloser = next.P == 1;
+                    runStartGridX = flippedStartX;
+                    runStartGridY = flippedStartY;
+                    runTargetGridX = flippedTargetX;
+                    runTargetGridY = flippedTargetY;
+                    runTotalDistance = totalDistance;
+                    if (totalDistance > 0f) {
+                        runDirectionX = totalDeltaX / totalDistance;
+                        runDirectionY = totalDeltaY / totalDistance;
+                    } else {
+                        runDirectionX = 0f;
+                        runDirectionY = 0f;
+                    }
+                    runPlayerFrameIndex = 0;
+                    runPlayerLastFrameTime = SystemClock.uptimeMillis();
+                    runAnimationActive = true;
+                    runRedCompleted = false;
+                    runBlueCompleted = false;
+                } else {
+                    canStartRun = false;
+                }
+            } else {
+                canStartRun = false;
+            }
         }
 
-        activeRunRedPlayerFrames = frameSet.redFrames;
-        activeRunBluePlayerFrames = frameSet.blueFrames;
-        int availableRedFrames = Math.min(RUN_FRAME_COUNT, frameSet.redFrames.length);
-        int availableBlueFrames = Math.min(RUN_FRAME_COUNT, frameSet.blueFrames.length);
-        int availableFrames = Math.max(availableRedFrames, availableBlueFrames);
-        if (availableFrames <= 0) {
-            return;
-        }
-
-        float totalDistance = (float) Math.hypot(totalDeltaX, totalDeltaY);
-        int frameLimit = availableFrames;
-        if (totalDistance > 0f && RUN_FRAME_STEP_DISTANCE > 0f) {
-            float framesForDistance = totalDistance / RUN_FRAME_STEP_DISTANCE;
-            frameLimit = Math.max(1, Math.min(availableFrames, (int) Math.ceil(framesForDistance)));
-        }
-
-        runMovingPlayer = movingPlayer;
-        runRedDelayFrames = frameSet.redFrames.length > 0 && runMovingPlayer == 1
-                ? RUN_DELAY_CYCLES
-                : 0;
-        runBlueDelayFrames = frameSet.blueFrames.length > 0 && runMovingPlayer == 0
-                ? RUN_DELAY_CYCLES
-                : 0;
-
-        runFrameLimit = frameLimit + Math.max(runRedDelayFrames, runBlueDelayFrames);
-        runStartRedCloser = previous.P == 0;
-        runTargetRedCloser = next.P == 0;
-        runStartBlueCloser = previous.P == 1;
-        runTargetBlueCloser = next.P == 1;
-        runStartGridX = flippedStartX;
-        runStartGridY = flippedStartY;
-        runTargetGridX = flippedTargetX;
-        runTargetGridY = flippedTargetY;
-        runTotalDistance = totalDistance;
-        if (totalDistance > 0f) {
-            runDirectionX = totalDeltaX / totalDistance;
-            runDirectionY = totalDeltaY / totalDistance;
-        } else {
+        if (!canStartRun) {
+            runAnimationActive = false;
+            runPlayerFrameIndex = 0;
+            runPlayerLastFrameTime = 0L;
+            runRedDelayFrames = 0;
+            runBlueDelayFrames = 0;
+            runRedCompleted = false;
+            runBlueCompleted = false;
+            runFrameLimit = RUN_FRAME_COUNT;
+            runStartRedCloser = false;
+            runTargetRedCloser = false;
+            runStartBlueCloser = false;
+            runTargetBlueCloser = false;
             runDirectionX = 0f;
             runDirectionY = 0f;
+            runTotalDistance = 0f;
         }
-        runPlayerFrameIndex = 0;
-        runPlayerLastFrameTime = SystemClock.uptimeMillis();
-        runAnimationActive = true;
-        runRedCompleted = false;
-        runBlueCompleted = false;
+
+        startBallAnimation(flippedStartX, flippedStartY, flippedTargetX, flippedTargetY, totalDistance, movementFrameCount);
     }
 
     public boolean isRunAnimationActive() {
         return runAnimationActive;
+    }
+
+    public boolean isBallAnimationActive() {
+        return ballAnimationActive;
     }
 
     private void stopRunAnimation(long referenceTime) {
@@ -495,6 +533,69 @@ public class Field {
         runBlueDelayFrames = 0;
         runRedCompleted = false;
         runBlueCompleted = false;
+        completeBallAnimation();
+    }
+
+    private void completeBallAnimation() {
+        ballAnimationActive = false;
+        ballAnimationStartTime = 0L;
+        ballStartGridX = ballTargetGridX;
+        ballStartGridY = ballTargetGridY;
+        ballDirectionX = 0f;
+        ballDirectionY = 0f;
+        ballTotalDistance = 0f;
+        ballAnimationDurationMs = 0L;
+    }
+
+    private void startBallAnimation(float startGridX, float startGridY,
+                                    float targetGridX, float targetGridY,
+                                    float totalDistance, int frameCount) {
+        ballTargetGridX = targetGridX;
+        ballTargetGridY = targetGridY;
+
+        if (totalDistance <= 0f) {
+            ballStartGridX = targetGridX;
+            ballStartGridY = targetGridY;
+            completeBallAnimation();
+            return;
+        }
+
+        ballStartGridX = startGridX;
+        ballStartGridY = startGridY;
+        ballTotalDistance = totalDistance;
+
+        float deltaX = targetGridX - startGridX;
+        float deltaY = targetGridY - startGridY;
+        if (totalDistance > 0f) {
+            ballDirectionX = deltaX / totalDistance;
+            ballDirectionY = deltaY / totalDistance;
+        } else {
+            ballDirectionX = 0f;
+            ballDirectionY = 0f;
+        }
+
+        long durationMs = frameCount > 0
+                ? frameCount * (long) RunPlayerSprite.FRAME_DURATION_MS
+                : BALL_DEFAULT_DURATION_MS;
+        if (durationMs <= 0L) {
+            durationMs = BALL_DEFAULT_DURATION_MS;
+        }
+
+        ballAnimationDurationMs = durationMs;
+        ballAnimationStartTime = SystemClock.uptimeMillis();
+        ballAnimationActive = true;
+    }
+
+    private float computeBallDistance(long elapsedMs, long durationMs, float totalDistance) {
+        if (durationMs <= 0L) {
+            return totalDistance;
+        }
+
+        long clampedElapsed = Math.max(0L, Math.min(elapsedMs, durationMs));
+        float normalized = (float) clampedElapsed / (float) durationMs;
+        float progress = (2f * normalized) - (normalized * normalized);
+        float distance = totalDistance * progress;
+        return clamp(distance, 0f, totalDistance);
     }
 
     private void drawRunAnimation(Canvas canvas, float ballRadius) {
@@ -910,8 +1011,35 @@ public class Field {
             last = Moves.get(Moves.size() - 2);
         }
 
-        float ballCenterX = w2x(flipX(last.X));
-        float ballCenterY = h2y(flipY(last.Y));
+        float targetGridX = flipX(last.X);
+        float targetGridY = flipY(last.Y);
+
+        float ballGridX = targetGridX;
+        float ballGridY = targetGridY;
+
+        if (ballAnimationActive) {
+            long now = SystemClock.uptimeMillis();
+            long elapsed = now - ballAnimationStartTime;
+            long duration = ballAnimationDurationMs > 0L ? ballAnimationDurationMs : BALL_DEFAULT_DURATION_MS;
+
+            if (elapsed >= duration || ballTotalDistance <= 0f) {
+                ballGridX = ballTargetGridX;
+                ballGridY = ballTargetGridY;
+                completeBallAnimation();
+            } else {
+                float traveled = computeBallDistance(elapsed, duration, ballTotalDistance);
+                ballGridX = ballStartGridX + ballDirectionX * traveled;
+                ballGridY = ballStartGridY + ballDirectionY * traveled;
+            }
+        } else {
+            ballStartGridX = targetGridX;
+            ballStartGridY = targetGridY;
+            ballTargetGridX = targetGridX;
+            ballTargetGridY = targetGridY;
+        }
+
+        float ballCenterX = w2x(ballGridX);
+        float ballCenterY = h2y(ballGridY);
         float radius = dotSize * 4;
         float radiusBackground = (float) (radius * 0.8f);
 
