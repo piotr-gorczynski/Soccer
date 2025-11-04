@@ -14,7 +14,7 @@ final class RunPlayerSprite {
 
     private static final String TAG = "TAG_Soccer";
 
-    static final long FRAME_DURATION_MS = 35L;
+    static final long FRAME_DURATION_MS = 350L;
     static final int FRAME_COUNT = 22;
 
     private static final int FRAME_WIDTH = 128;
