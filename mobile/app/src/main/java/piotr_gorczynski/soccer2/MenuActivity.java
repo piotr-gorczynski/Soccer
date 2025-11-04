@@ -1227,6 +1227,7 @@ public class MenuActivity extends BaseActivity {
         if (runningPlayerView == null || runningPlayerFrames == null
                 || getCurrentRunningPlayerRowFrames() == null) {
             setupRunningPlayerAnimation();
+            return; // Exit early, animation will start when frames are loaded
         }
 
         Bitmap[] currentRowFrames = getCurrentRunningPlayerRowFrames();
