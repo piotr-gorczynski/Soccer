@@ -1,15 +1,16 @@
 {
   "rules": [
     "Les matchs se jouent sur une grille 6×8. Le ballon démarre au centre (3,4).",
-    "Les joueurs déplacent le ballon vers l’un des huit points adjacents. Il est interdit de croiser ou de réutiliser une ligne.",
+    "Les joueurs déplacent le ballon vers l'un des huit points adjacents. Les lignes ne peuvent pas être répétées.",
     "Heurter une bordure ou un point déjà visité compte comme un rebond et accorde un nouveau coup au même joueur.",
-    "Un but est marqué lorsque le ballon entre dans la cage adverse sur le bord supérieur ou inférieur. S’il n’existe plus de coups légaux, le joueur qui a joué en dernier gagne.",
-    "Chaque joueur dispose d’une pendule d’échecs de 5 minutes. Le temps ne s’écoule que pendant son propre tour. Le dépassement du temps entraîne la défaite.",
-    "Si le téléphone d’un joueur se déconnecte avant le début de son tour, le backend démarrera automatiquement sa pendule au bout d’une minute.",
-    "Quitter la partie avant la fin entraîne une défaite par forfait au profit de l’adversaire.",
+    "Un but est marqué lorsque le ballon entre dans la cage adverse sur le bord supérieur ou inférieur.",
+    "Si un joueur déplace le ballon vers un point d'où il n'y a plus de coups possibles, ce joueur perd immédiatement.",
+    "Chaque joueur dispose d'une pendule d'échecs de 5 minutes. Le temps ne s'écoule que pendant son propre tour. Le dépassement du temps entraîne la défaite.",
+    "Si le téléphone d'un joueur se déconnecte avant le début de son tour, le backend démarrera automatiquement sa pendule au bout d'une minute.",
+    "Quitter la partie avant la fin entraîne une défaite par forfait au profit de l'adversaire.",
     "Les tournois se jouent en système toutes rondes (round‑robin). Les appariements sont générés automatiquement à la fermeture des inscriptions.",
     "Les matchs sans activité pendant plus de cinq minutes sont automatiquement décidés au temps.",
-    "Le tournoi se termine lorsque l’échéance est atteinte."
+    "Le tournoi se termine lorsque l'échéance est atteinte."
   ],
-  "updatedAt": "2025-07-21T00:00:00Z"
+  "updatedAt": "2025-11-03T00:00:00Z"
 }

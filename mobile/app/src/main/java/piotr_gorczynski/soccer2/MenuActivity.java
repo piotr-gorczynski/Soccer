@@ -86,7 +86,7 @@ public class MenuActivity extends BaseActivity {
     static final String PREF_LAST_INVITES_SEEN_TIMESTAMP = "lastInvitesSeenTimestamp";
     private static final String PREF_LAST_ACTIVE_TIMESTAMP = "lastActiveTimestamp";
 
-    private static final int RUNNING_PLAYER_FRAME_COUNT = 35;
+    private static final int RUNNING_PLAYER_FRAME_COUNT = 22;
     private static final int RUNNING_PLAYER_FRAME_WIDTH = 128;
     private static final int RUNNING_PLAYER_FRAME_HEIGHT = 128;
     private static final long RUNNING_PLAYER_FRAME_DURATION_MS = 125L;
@@ -929,6 +929,34 @@ public class MenuActivity extends BaseActivity {
         return prefs.getBoolean("animations_enabled", true);
     }
 
+    /**
+     * Helper method to check if the running player animation should start
+     * @return true if all conditions are met to start the animation, false otherwise
+     */
+    private boolean shouldStartRunningPlayerAnimation() {
+        // Don't start if animation is already running
+        if (isRunningPlayerAnimationStarted) {
+            return false;
+        }
+        
+        // Don't start if animations are disabled in settings
+        if (!areAnimationsEnabled()) {
+            return false;
+        }
+        
+        // Don't start if activity is finishing
+        if (isFinishing()) {
+            return false;
+        }
+        
+        // Don't start if activity is destroyed (API 17+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed()) {
+            return false;
+        }
+        
+        return true;
+    }
+
     private void setupRunningPlayerAnimation() {
         runningPlayerView = findViewById(R.id.menu_running_player);
         if (runningPlayerView == null) {
@@ -960,14 +988,14 @@ public class MenuActivity extends BaseActivity {
         }
 
         int spriteSheetResId = getResources().getIdentifier(
-                "spritesheet_idle",
+                "spritesheet_run",
                 "drawable",
                 getPackageName()
         );
         if (spriteSheetResId == 0) {
             Log.w(
                     "TAG_Soccer",
-                    getClass().getSimpleName() + ".setupRunningPlayerAnimation: spritesheet_idle resource missing"
+                    getClass().getSimpleName() + ".setupRunningPlayerAnimation: spritesheet_run resource missing"
             );
             runningPlayerView.setVisibility(View.GONE);
             return;
@@ -994,7 +1022,7 @@ public class MenuActivity extends BaseActivity {
                 if (spriteSheet == null) {
                     Log.w(
                             "TAG_Soccer",
-                            getClass().getSimpleName() + ".setupRunningPlayerAnimation: spritesheet_idle resource missing"
+                            getClass().getSimpleName() + ".setupRunningPlayerAnimation: spritesheet_run resource missing"
                     );
                     runOnUiThread(() -> {
                         if (runningPlayerView != null) {
@@ -1193,6 +1221,13 @@ public class MenuActivity extends BaseActivity {
                             runningPlayerView.setImageBitmap(initialRow[0]);
                         }
                         configureRunningPlayerClickListener();
+                        
+                        // If activity is already started, begin animation immediately
+                        // This handles the case where onCreate->setupRunningPlayerAnimation starts
+                        // the background thread, then onStart is called before frames are loaded
+                        if (shouldStartRunningPlayerAnimation()) {
+                            startRunningPlayerAnimation();
+                        }
                     }
                 });
             } catch (Exception e) {
@@ -1220,6 +1255,7 @@ public class MenuActivity extends BaseActivity {
         if (runningPlayerView == null || runningPlayerFrames == null
                 || getCurrentRunningPlayerRowFrames() == null) {
             setupRunningPlayerAnimation();
+            return; // Exit early, animation will start when frames are loaded
         }
 
         Bitmap[] currentRowFrames = getCurrentRunningPlayerRowFrames();
