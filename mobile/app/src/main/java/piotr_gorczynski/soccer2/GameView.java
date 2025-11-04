@@ -31,6 +31,8 @@ public class GameView extends View {
     private boolean inputEnabled = true;
 
     private final MyHandler mHandler;
+    private final Handler androidMoveDelayHandler = new Handler(Looper.getMainLooper());
+    private boolean androidMovePending = false;
     private final Field field;
     private final GameActivity gameActivity;
     private final int intFieldWidth;
@@ -106,6 +108,36 @@ public class GameView extends View {
             Log.d("TAG_Soccer", getClass().getSimpleName() + ".handleMessage: Started");
             gameView.androidMove();
         }
+    }
+
+    private final Runnable androidMoveAfterAnimationRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (!androidMovePending) {
+                return;
+            }
+
+            boolean animationActive = field != null && field.isRunAnimationActive();
+            if (!animationActive) {
+                androidMovePending = false;
+                mHandler.sendEmptyMessage(1);
+            } else {
+                androidMoveDelayHandler.postDelayed(this, 16L);
+            }
+        }
+    };
+
+    private void requestAndroidMoveAfterAnimations() {
+        if (GameType != 2) {
+            return;
+        }
+
+        if (androidMovePending) {
+            return;
+        }
+
+        androidMovePending = true;
+        androidMoveDelayHandler.post(androidMoveAfterAnimationRunnable);
     }
 
     public static class NextMoveFound {
@@ -278,8 +310,7 @@ public class GameView extends View {
 
         //if plays with Android and it is Android move and there are possible MOves
         if ((GameType == 2) && (realMoves.get(realMoves.size() - 1).P == 1))
-            //Send message for Android to move
-            mHandler.sendEmptyMessage(1);
+            requestAndroidMoveAfterAnimations();
         startPulseIfNeeded();
     }
 
@@ -678,6 +709,9 @@ public class GameView extends View {
 
     public void androidMove() {
 
+        androidMoveDelayHandler.removeCallbacks(androidMoveAfterAnimationRunnable);
+        androidMovePending = false;
+
         if (GameType != 2)
             return; //throw error to be added
         if (realMoves.get(realMoves.size() - 1).P != 1)
@@ -695,8 +729,8 @@ public class GameView extends View {
             Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidMove: <?xml version=\"1.0\" encoding=\"UTF-8\"?>");
             androidNextMove_v2(androidMoves, minMoveTo,0,nextMoveFound, 0, System.currentTimeMillis());
             if ( nextMoveFound.found ) {
-                Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidMove: Sending message for androidMove 1-st time");
-                mHandler.sendEmptyMessage(1);
+                Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidMove: Scheduling androidMove 1-st time after animations");
+                requestAndroidMoveAfterAnimations();
             }
             else {
                 gameActivity.showWinner(0);
@@ -709,8 +743,8 @@ public class GameView extends View {
             invalidate();
             if (nextMovePossible)
                 if (realMoves.get(realMoves.size() - 1).P == 1) {
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidMove: Sending message for androidMove n-th time");
-                    mHandler.sendEmptyMessage(1);
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidMove: Scheduling androidMove n-th time after animations");
+                    requestAndroidMoveAfterAnimations();
                 }
                 else
                     androidMoves.clear();
@@ -761,7 +795,7 @@ public class GameView extends View {
                 MakeMove(x, y, realMoves);
                 invalidate();
                 if ((GameType == 2) && (realMoves.get(realMoves.size() - 1).P == 1) && (!possibleMoves.isEmpty())) {
-                    mHandler.sendEmptyMessage(1);
+                    requestAndroidMoveAfterAnimations();
                 }
             }
             performClick();
@@ -784,5 +818,12 @@ public class GameView extends View {
             handleInputAt(event.getX(), event.getY());
         }
         return true;  // Event handled
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        androidMoveDelayHandler.removeCallbacks(androidMoveAfterAnimationRunnable);
+        androidMovePending = false;
     }
 }
