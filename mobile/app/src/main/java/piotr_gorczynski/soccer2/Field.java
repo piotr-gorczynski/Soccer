@@ -102,7 +102,7 @@ public class Field {
             ? (float) (Math.sqrt(2.0) / RUN_FRAME_COUNT)
             : 0f;
     private static final float RUN_DESTINATION_EPSILON = 0.001f;
-    private static final float ACTIVE_SPRITE_PROXIMITY_RATIO = 0.6f;
+    private static final float ACTIVE_SPRITE_PROXIMITY_RATIO = 0.7f;
     private static final int RUN_DELAY_CYCLES = 10;
     private static final float SPRITE_DIRECTION_EPSILON = 0.0001f;
 
