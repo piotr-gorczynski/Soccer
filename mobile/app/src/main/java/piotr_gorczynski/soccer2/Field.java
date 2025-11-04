@@ -1,6 +1,7 @@
 package piotr_gorczynski.soccer2;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -64,6 +65,7 @@ public class Field {
     private final String sPlayer1;
     private final int gameType;
     private final Context context;
+    private final int localPlayerIndex;
     final ArrayList<MoveTo> possibleMoves;//= new ArrayList<MoveTo>();
     final ArrayList<MoveTo> Moves;//= new ArrayList<MoveTo>();
     private boolean isFlipped=false;
@@ -122,6 +124,18 @@ public class Field {
     private static final long BALL_DEFAULT_DURATION_MS = Math.max(1, RunPlayerSprite.FRAME_COUNT)
             * (long) RunPlayerSprite.FRAME_DURATION_MS;
 
+    // Hand tutorial constants
+    private static final int DURATION_SHOWING_HAND = 100; // milliseconds
+    private static final int NUMBER_OF_TIMES_TO_SHOW_HAND = 3;
+    private static final String PREF_HAND_TUTORIAL_SHOWN = "hand_tutorial_shown";
+    
+    // Hand tutorial state
+    private final Bitmap handBitmap;
+    private boolean showHandTutorial = false;
+    private int handTutorialCycle = 0;
+    private int handTutorialPositionIndex = 0;
+    private long handTutorialLastUpdateTime = 0L;
+
     public Field(Context current, ArrayList<MoveTo> argMoves, ArrayList<MoveTo> argPossibleMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex, boolean animationsEnabled) {
 
         // simpler log—no reflection, no nulls
@@ -136,6 +150,7 @@ public class Field {
 
         this.gameType = argGameType;  // ✅ Save GameType for later use
         this.context = current;
+        this.localPlayerIndex = localPlayerIndex;  // ✅ Save local player index
 
         switch (argGameType) {
             case 1 -> {
@@ -265,7 +280,32 @@ public class Field {
             throw new RuntimeException("Failed to load ball bitmap resource", e);
         }
 
+        // Load hand bitmap for tutorial
+        Bitmap tempHandBitmap;
+        try {
+            tempHandBitmap = BitmapFactory.decodeResource(current.getResources(), R.drawable.hand);
+            if (tempHandBitmap == null) {
+                throw new RuntimeException("Hand bitmap resource returned null");
+            }
+        } catch (Exception e) {
+            Log.e("TAG_Soccer", getClass().getSimpleName() + ".<init>: Failed to load hand bitmap", e);
+            throw new RuntimeException("Failed to load hand bitmap resource", e);
+        }
+        handBitmap = tempHandBitmap;
 
+        // Check if this is first time user and should show hand tutorial
+        SharedPreferences prefs = current.getSharedPreferences("SoccerPrefs", Context.MODE_PRIVATE);
+        boolean tutorialShown = prefs.getBoolean(PREF_HAND_TUTORIAL_SHOWN, false);
+        
+        // Show tutorial only for first-time users in game type 1 or 2
+        if (!tutorialShown && (argGameType == 1 || argGameType == 2)) {
+            showHandTutorial = true;
+            handTutorialLastUpdateTime = SystemClock.uptimeMillis();
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".<init>: Hand tutorial will be shown for first-time user");
+            
+            // Mark tutorial as shown
+            prefs.edit().putBoolean(PREF_HAND_TUTORIAL_SHOWN, true).apply();
+        }
 
 
         Moves=argMoves;
@@ -515,6 +555,10 @@ public class Field {
 
     public boolean isBallAnimationActive() {
         return ballAnimationActive;
+    }
+
+    public boolean isHandTutorialActive() {
+        return showHandTutorial;
     }
 
     private void stopRunAnimation(long referenceTime) {
@@ -1357,7 +1401,78 @@ public class Field {
 
             //Log.d("TAG_Soccer", "Field.draw: textTop: " + textTop);
         }
+
+        // 6) Hand tutorial - show only for player turns (not Android turn)
+        drawHandTutorial(canvas, dotSize, currentTurn);
     }
+
+    private void drawHandTutorial(Canvas canvas, float dotSize, int currentTurn) {
+        // Only show tutorial if enabled
+        if (!showHandTutorial) {
+            return;
+        }
+
+        // Don't show during Android's turn (gameType 2, currentTurn 1)
+        if (gameType == 2 && currentTurn == 1) {
+            return;
+        }
+
+        // Don't show if there are no possible moves
+        if (possibleMoves == null || possibleMoves.isEmpty()) {
+            showHandTutorial = false;
+            return;
+        }
+
+        long currentTime = SystemClock.uptimeMillis();
+        long elapsed = currentTime - handTutorialLastUpdateTime;
+
+        // Check if it's time to move to the next position
+        if (elapsed >= DURATION_SHOWING_HAND) {
+            handTutorialLastUpdateTime = currentTime;
+            handTutorialPositionIndex++;
+
+            // Check if we've shown all positions
+            if (handTutorialPositionIndex >= possibleMoves.size()) {
+                handTutorialPositionIndex = 0;
+                handTutorialCycle++;
+
+                // Check if we've completed all cycles
+                if (handTutorialCycle >= NUMBER_OF_TIMES_TO_SHOW_HAND) {
+                    showHandTutorial = false;
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawHandTutorial: Tutorial completed");
+                    return;
+                }
+            }
+        }
+
+        // Draw the hand at the current position
+        if (handTutorialPositionIndex < possibleMoves.size()) {
+            MoveTo currentMove = possibleMoves.get(handTutorialPositionIndex);
+            
+            // Calculate hand position - top of hand should touch the center of the possible move circle
+            float circleCenterX = w2x(flipX(currentMove.X));
+            float circleCenterY = h2y(flipY(currentMove.Y));
+            
+            // Hand size should match sprite size
+            float handHeight = canvas.getHeight() * flSpriteSize;
+            float handWidth = handHeight * handBitmap.getWidth() / (float) handBitmap.getHeight();
+            
+            // Position hand so its top touches the center of the circle
+            float handLeft = circleCenterX - handWidth / 2f;
+            float handTop = circleCenterY;
+            float handRight = handLeft + handWidth;
+            float handBottom = handTop + handHeight;
+            
+            // Draw the hand
+            RectF handDst = new RectF(handLeft, handTop, handRight, handBottom);
+            canvas.drawBitmap(handBitmap, null, handDst, null);
+            
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawHandTutorial: Drawing hand at position " 
+                + handTutorialPositionIndex + "/" + possibleMoves.size() 
+                + ", cycle " + (handTutorialCycle + 1) + "/" + NUMBER_OF_TIMES_TO_SHOW_HAND);
+        }
+    }
+
     private String formatClockSeconds(long seconds) {
         if (seconds < 0) seconds = 0;
         long min = seconds / 60;
