@@ -65,6 +65,7 @@ public class Field {
     private final String sPlayer1;
     private final int gameType;
     private final Context context;
+    private final int localPlayerIndex;
     final ArrayList<MoveTo> possibleMoves;//= new ArrayList<MoveTo>();
     final ArrayList<MoveTo> Moves;//= new ArrayList<MoveTo>();
     private boolean isFlipped=false;
@@ -132,7 +133,6 @@ public class Field {
     private int handTutorialCycle = 0;
     private int handTutorialPositionIndex = 0;
     private long handTutorialLastUpdateTime = 0L;
-    private int localPlayerIndex = 0;
 
     public Field(Context current, ArrayList<MoveTo> argMoves, ArrayList<MoveTo> argPossibleMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex, boolean animationsEnabled) {
 
@@ -148,6 +148,7 @@ public class Field {
 
         this.gameType = argGameType;  // ✅ Save GameType for later use
         this.context = current;
+        this.localPlayerIndex = localPlayerIndex;  // ✅ Save local player index
 
         switch (argGameType) {
             case 1 -> {
@@ -288,9 +289,6 @@ public class Field {
             Log.e("TAG_Soccer", getClass().getSimpleName() + ".<init>: Failed to load hand bitmap", e);
             throw new RuntimeException("Failed to load hand bitmap resource", e);
         }
-
-        // Store local player index
-        this.localPlayerIndex = localPlayerIndex;
 
         // Check if this is first time user and should show hand tutorial
         SharedPreferences prefs = current.getSharedPreferences("SoccerPrefs", Context.MODE_PRIVATE);
