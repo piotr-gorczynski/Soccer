@@ -5,7 +5,12 @@
         <item name="colorPrimary">@color/colorGreenDark</item>
         <item name="colorPrimaryDark">@color/colorGreenDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:windowBackground">@android:color/transparent</item>
+        <!-- 
+            Important: windowBackground must NOT be transparent when using AppCompat themes.
+            Transparent backgrounds cause "Window couldn't find content container view" error.
+            Use colorWhite to match the activity_menu.xml background.
+        -->
+        <item name="android:windowBackground">@color/colorWhite</item>
      </style>
 
     <!-- Splash screen theme with loading background -->
