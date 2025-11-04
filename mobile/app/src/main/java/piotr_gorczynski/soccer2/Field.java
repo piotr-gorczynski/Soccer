@@ -735,12 +735,259 @@ public class Field {
         }
     }
 
+    private static final class BallState {
+        final float centerX;
+        final float centerY;
+        final float radius;
+
+        BallState(float centerX, float centerY, float radius) {
+            this.centerX = centerX;
+            this.centerY = centerY;
+            this.radius = radius;
+        }
+    }
+
     private int flipX(int x) {
         return isFlipped ? intFieldWidth - x : x;
     }
 
     private int flipY(int y) {
         return isFlipped ? intFieldHeight - y : y;
+    }
+
+    private void drawFieldAndGates(Canvas canvas, float dotSize) {
+        canvas.drawRect(rField, pField);
+        canvas.drawRect(rField, pFieldBorder);
+
+        canvas.drawRect(
+                w2x(flipX((intFieldWidth / 2) - 1)),
+                h2y(flipY(-1)),
+                w2x(flipX((intFieldWidth / 2) + 1)),
+                h2y(flipY(0)),
+                pField
+        );
+        canvas.drawRect(
+                w2x(flipX((intFieldWidth / 2) - 1)),
+                h2y(flipY(-1)),
+                w2x(flipX((intFieldWidth / 2) + 1)),
+                h2y(flipY(0)),
+                pFieldBorder
+        );
+
+        canvas.drawRect(
+                w2x(flipX((intFieldWidth / 2) - 1)),
+                h2y(flipY(intFieldHeight)),
+                w2x(flipX((intFieldWidth / 2) + 1)),
+                h2y(flipY(intFieldHeight + 1)),
+                pField
+        );
+        canvas.drawRect(
+                w2x(flipX((intFieldWidth / 2) - 1)),
+                h2y(flipY(intFieldHeight)),
+                w2x(flipX((intFieldWidth / 2) + 1)),
+                h2y(flipY(intFieldHeight + 1)),
+                pFieldBorder
+        );
+
+        for (int x = (intFieldWidth / 2) - 1; x <= (intFieldWidth / 2) + 1; x++) {
+            canvas.drawCircle(w2x(flipX(x)), h2y(flipY(-1)), dotSize, pDots);
+            canvas.drawCircle(w2x(flipX(x)), h2y(flipY(intFieldHeight + 1)), dotSize, pDots);
+        }
+
+        float left = w2x(flipX(intFieldWidth / 2 - 1));
+        float right = w2x(flipX(intFieldWidth / 2 + 1));
+        float gateWidthPx = Math.abs(right - left) * 0.9f;
+
+        String fitP1 = fitName(sPlayer1, pPlayer1, gateWidthPx);
+        String fitP0 = fitName(sPlayer0, pPlayer0, gateWidthPx);
+
+        canvas.drawText(fitP1,
+                w2x(flipX(intFieldWidth / 2)),
+                h2y(flipY(-1)) + (h2y(flipY(0)) - h2y(flipY(-1))) / 2 + pPlayer1.getTextSize() / 2,
+                pPlayer1);
+
+        canvas.drawText(fitP0,
+                w2x(flipX(intFieldWidth / 2)),
+                h2y(flipY(intFieldHeight)) + (h2y(flipY(intFieldHeight + 1)) - h2y(flipY(intFieldHeight))) / 2 + pPlayer0.getTextSize() / 2,
+                pPlayer0);
+    }
+
+    private float computePulseDotSize(float dotSize, int currentTurn) {
+        final float animationDuration = 2000f;
+        final float animationSizeIncreasePercent = 2.0f;
+
+        float pulseDotSize = dotSize;
+        boolean shouldPulse = false;
+
+        if (gameType == 1) {
+            shouldPulse = true;
+        } else if (gameType == 2) {
+            shouldPulse = (currentTurn == 0);
+        } else if (gameType == 3) {
+            shouldPulse = (currentTurn == (isFlipped ? 1 : 0));
+        }
+
+        if (shouldPulse && turnStartTime != null) {
+            long now = System.currentTimeMillis();
+            long elapsed = (now - turnStartTime) % (long) animationDuration;
+            float progress = (float) elapsed / animationDuration;
+
+            float ease01 = (1f - (float) Math.cos(progress * 2f * (float) Math.PI)) / 2f;
+
+            float minSize = dotSize;
+            float maxSize = dotSize * animationSizeIncreasePercent;
+            pulseDotSize = minSize + (maxSize - minSize) * ease01;
+
+            if (pulseDotSize < dotSize) pulseDotSize = dotSize;
+        }
+
+        return pulseDotSize;
+    }
+
+    private BallState drawBall(Canvas canvas, float dotSize, Paint movePaint) {
+        MoveTo last = Moves.get(Moves.size() - 1);
+        if (last.X == -1 && last.Y == -1) {
+            last = Moves.get(Moves.size() - 2);
+        }
+
+        float ballCenterX = w2x(flipX(last.X));
+        float ballCenterY = h2y(flipY(last.Y));
+        float radius = dotSize * 4;
+        float radiusBackground = (float) (radius * 0.8f);
+
+        canvas.drawCircle(ballCenterX, ballCenterY, radiusBackground, movePaint);
+
+        RectF dst = new RectF(ballCenterX - radius, ballCenterY - radius, ballCenterX + radius, ballCenterY + radius);
+        canvas.drawBitmap(ballBitmap, null, dst, null);
+
+        return new BallState(ballCenterX, ballCenterY, radius);
+    }
+
+    private void drawIdlePlayers(Canvas canvas, BallState ballState, int currentTurn) {
+        if (!showIdlePlayerSprite || flSpriteSize <= 0f) {
+            return;
+        }
+
+        int redFrameCount = idleRedPlayerFrames.length;
+        int blueFrameCount = idleBluePlayerFrames.length;
+        int maxFrameCount = Math.max(redFrameCount, blueFrameCount);
+
+        if (maxFrameCount <= 0) {
+            return;
+        }
+
+        long now = SystemClock.uptimeMillis();
+        if (idlePlayerLastFrameTime == 0L) {
+            idlePlayerLastFrameTime = now;
+        }
+
+        boolean runActive = runAnimationActive;
+        boolean blueDelayActive = runActive && runBlueDelayFrames > 0
+                && runPlayerFrameIndex < runBlueDelayFrames;
+        boolean redDelayActive = runActive && runRedDelayFrames > 0
+                && runPlayerFrameIndex < runRedDelayFrames;
+
+        boolean hasRedRunFrames = activeRunRedPlayerFrames != null
+                && activeRunRedPlayerFrames.length > 0;
+        boolean hasBlueRunFrames = activeRunBluePlayerFrames != null
+                && activeRunBluePlayerFrames.length > 0;
+
+        boolean isRedMoving = runActive && hasRedRunFrames && !runRedCompleted
+                && runPlayerFrameIndex >= runRedDelayFrames;
+        boolean isBlueMoving = runActive && hasBlueRunFrames && !runBlueCompleted
+                && runPlayerFrameIndex >= runBlueDelayFrames;
+
+        boolean shouldDrawIdleBlue = !runActive
+                || runBlueCompleted
+                || (isRedMoving && blueDelayActive)
+                || (!isRedMoving && !isBlueMoving);
+        boolean shouldDrawIdleRed = !runActive
+                || runRedCompleted
+                || (isBlueMoving && redDelayActive)
+                || (!isBlueMoving && !isRedMoving);
+        boolean shouldAdvanceIdle = shouldDrawIdleBlue || shouldDrawIdleRed;
+
+        if (shouldAdvanceIdle) {
+            long elapsed = now - idlePlayerLastFrameTime;
+            if (IdlePlayerSprite.FRAME_DURATION_MS > 0 && elapsed >= IdlePlayerSprite.FRAME_DURATION_MS) {
+                long framesToAdvance = elapsed / IdlePlayerSprite.FRAME_DURATION_MS;
+                idlePlayerFrameIndex = (int) ((idlePlayerFrameIndex + framesToAdvance) % maxFrameCount);
+                long remainder = elapsed % IdlePlayerSprite.FRAME_DURATION_MS;
+                idlePlayerLastFrameTime = now - remainder;
+            }
+        } else {
+            idlePlayerLastFrameTime = now;
+        }
+
+        float spriteHeight = canvas.getHeight() * flSpriteSize;
+        if (spriteHeight <= 0f) {
+            return;
+        }
+
+        float ballCenterX = ballState.centerX;
+        float ballCenterY = ballState.centerY;
+
+        boolean blueShouldBeCloser = currentTurn == 1;
+        if (runActive && runMovingPlayer == 0 && blueDelayActive) {
+            blueShouldBeCloser = false;
+        }
+        float idleBlueCenterX = ballCenterX;
+        float idleBlueCenterY = ballCenterY;
+        if (runActive && runMovingPlayer == 0 && blueDelayActive) {
+            idleBlueCenterX = w2x(runStartGridX);
+            idleBlueCenterY = h2y(runStartGridY);
+        }
+        if (blueFrameCount > 0 && shouldDrawIdleBlue) {
+            Bitmap spriteFrame = idleBluePlayerFrames[idlePlayerFrameIndex % blueFrameCount];
+            if (spriteFrame != null && !spriteFrame.isRecycled()) {
+                float spriteBottom = blueShouldBeCloser
+                        ? idleBlueCenterY + spriteHeight * (1 - ACTIVE_SPRITE_PROXIMITY_RATIO)
+                        : idleBlueCenterY + 1f;
+                float spriteTop = spriteBottom - spriteHeight;
+                if (spriteTop < 0f) {
+                    spriteTop = 0f;
+                }
+                float actualSpriteHeight = spriteBottom - spriteTop;
+                if (actualSpriteHeight > 0f) {
+                    float spriteWidth = actualSpriteHeight * spriteFrame.getWidth() / (float) spriteFrame.getHeight();
+                    float spriteLeft = idleBlueCenterX - spriteWidth / 2f;
+                    float spriteRight = idleBlueCenterX + spriteWidth / 2f;
+                    RectF spriteDst = new RectF(spriteLeft, spriteTop, spriteRight, spriteBottom);
+                    canvas.drawBitmap(spriteFrame, null, spriteDst, null);
+                }
+            }
+        }
+
+        boolean redShouldBeCloser = currentTurn == 0;
+        if (runActive && runMovingPlayer == 1 && redDelayActive) {
+            redShouldBeCloser = false;
+        }
+        float idleRedCenterX = ballCenterX;
+        float idleRedCenterY = ballCenterY;
+        if (runActive && runMovingPlayer == 1 && redDelayActive) {
+            idleRedCenterX = w2x(runStartGridX);
+            idleRedCenterY = h2y(runStartGridY);
+        }
+        if (redFrameCount > 0 && shouldDrawIdleRed) {
+            Bitmap spriteFrame = idleRedPlayerFrames[idlePlayerFrameIndex % redFrameCount];
+            if (spriteFrame != null && !spriteFrame.isRecycled()) {
+                float spriteTop = redShouldBeCloser
+                        ? idleRedCenterY - spriteHeight * ACTIVE_SPRITE_PROXIMITY_RATIO
+                        : idleRedCenterY + 1f;
+                float spriteBottom = spriteTop + spriteHeight;
+                if (spriteBottom > canvas.getHeight()) {
+                    spriteBottom = canvas.getHeight();
+                }
+                float actualSpriteHeight = spriteBottom - spriteTop;
+                if (actualSpriteHeight > 0f) {
+                    float spriteWidth = actualSpriteHeight * spriteFrame.getWidth() / (float) spriteFrame.getHeight();
+                    float spriteLeft = idleRedCenterX - spriteWidth / 2f;
+                    float spriteRight = idleRedCenterX + spriteWidth / 2f;
+                    RectF spriteDst = new RectF(spriteLeft, spriteTop, spriteRight, spriteBottom);
+                    canvas.drawBitmap(spriteFrame, null, spriteDst, null);
+                }
+            }
+        }
     }
 
     public void draw(Canvas canvas) {
@@ -766,75 +1013,16 @@ public class Field {
         //PG: now:
         float bannerWidthPx = canvas.getWidth() * 0.95f;
 
-        // Draw field
-        canvas.drawRect(rField, pField);
-        canvas.drawRect(rField, pFieldBorder);
+        // 1) Field
+        drawFieldAndGates(canvas, dotSize);
 
-        // Gates and labels
-        // Top gate (above Y = 0)
-        canvas.drawRect(
-                w2x(flipX((intFieldWidth / 2) - 1)),
-                h2y(flipY(-1)),
-                w2x(flipX((intFieldWidth / 2) + 1)),
-                h2y(flipY(0)),
-                pField
-        );
-        canvas.drawRect(
-                w2x(flipX((intFieldWidth / 2) - 1)),
-                h2y(flipY(-1)),
-                w2x(flipX((intFieldWidth / 2) + 1)),
-                h2y(flipY(0)),
-                pFieldBorder
-        );
-
-        // Bottom gate (below Y = intFieldHeight)
-        canvas.drawRect(
-                w2x(flipX((intFieldWidth / 2) - 1)),
-                h2y(flipY(intFieldHeight)),
-                w2x(flipX((intFieldWidth / 2) + 1)),
-                h2y(flipY(intFieldHeight + 1)),
-                pField
-        );
-        canvas.drawRect(
-                w2x(flipX((intFieldWidth / 2) - 1)),
-                h2y(flipY(intFieldHeight)),
-                w2x(flipX((intFieldWidth / 2) + 1)),
-                h2y(flipY(intFieldHeight + 1)),
-                pFieldBorder
-        );
-
-        // Dots on gates
-        for (int x = (intFieldWidth / 2) - 1; x <= (intFieldWidth / 2) + 1; x++) {
-            canvas.drawCircle(w2x(flipX(x)), h2y(flipY(-1)), dotSize, pDots);
-            canvas.drawCircle(w2x(flipX(x)), h2y(flipY(intFieldHeight + 1)), dotSize, pDots);
-        }
-
-        // after you’ve calculated textSize and set it on pPlayer0 / pPlayer1 …
-        float left  = w2x(flipX(intFieldWidth/2 - 1));
-        float right = w2x(flipX(intFieldWidth/2 + 1));
-        float gateWidthPx = Math.abs(right - left) * 0.9f;   // 10 % side padding
-
-        String fitP1 = fitName(sPlayer1, pPlayer1, gateWidthPx);
-        String fitP0 = fitName(sPlayer0, pPlayer0, gateWidthPx);
-
-        canvas.drawText(fitP1,
-                w2x(flipX(intFieldWidth / 2)),
-                h2y(flipY(-1)) + (h2y(flipY(0)) - h2y(flipY(-1))) / 2 + pPlayer1.getTextSize() / 2,
-                pPlayer1);
-
-        canvas.drawText(fitP0,
-                w2x(flipX(intFieldWidth / 2)),
-                h2y(flipY(intFieldHeight)) + (h2y(flipY(intFieldHeight + 1)) - h2y(flipY(intFieldHeight))) / 2 + pPlayer0.getTextSize() / 2,
-                pPlayer0);
-
-        // Dots
+        // 2) Dots and lines
         for (int x = 0; x <= intFieldWidth; x++) {
             for (int y = 0; y <= intFieldHeight; y++) {
                 canvas.drawCircle(w2x(flipX(x)), h2y(flipY(y)), dotSize, pDots);
             }
         }
 
-        // Moves
         oldx = Moves.get(0).X;
         oldy = Moves.get(0).Y;
         for (int i = 1; i < Moves.size(); i++) {
@@ -854,183 +1042,19 @@ public class Field {
             oldy = newY;
         }
 
-        // Possible moves
         int currentTurn = Moves.get(Moves.size() - 1).P;
         Paint movePaint = currentTurn == 0 ? pPlayer0 : pPlayer1;
-        // Pulsing animation for possible moves
-        final float animationDuration = 2000f; // ms for a full grow+shrink cycle
-        final float animationSizeIncreasePercent = 2.0f; // target: dotSize -> dotSize * percent -> dotSize
-        float pulseDotSize = dotSize; // default when not animating
-        boolean shouldPulse = false;
-        // Game type logic (corrected)
-        if (gameType == 1) {
-            // Player vs Player: pulse for both players
-            shouldPulse = true;
-        } else if (gameType == 2) {
-            // Player vs Android: pulse only for player
-            shouldPulse = (currentTurn == 0);
-        } else if (gameType == 3) {
-            // Multiplayer: pulse only for current player and only on their screen
-            shouldPulse = (currentTurn == (isFlipped ? 1 : 0));
-        }
-
-        if (shouldPulse && turnStartTime != null) {
-            long now = System.currentTimeMillis();
-            long elapsed = (now - turnStartTime) % (long) animationDuration;
-            float progress = (float) elapsed / animationDuration; // [0..1)
-
-            // Ease from 0 -> 1 -> 0 using a cosine wave mapped to [0,1]
-            // This guarantees we always start at the base size on a new turn.
-            float ease01 = (1f - (float) Math.cos(progress * 2f * (float) Math.PI)) / 2f; // [0..1]
-
-            float minSize = dotSize;
-            float maxSize = dotSize * animationSizeIncreasePercent;
-            pulseDotSize = minSize + (maxSize - minSize) * ease01;
-
-            // Safety: never shrink below base dot size
-            if (pulseDotSize < dotSize) pulseDotSize = dotSize;
-        }
-
+        float pulseDotSize = computePulseDotSize(dotSize, currentTurn);
         for (MoveTo pm : possibleMoves) {
             canvas.drawCircle(w2x(flipX(pm.X)), h2y(flipY(pm.Y)), pulseDotSize, movePaint);
         }
 
-        // Ball
-        MoveTo last = Moves.get(Moves.size() - 1);
+        // 3) Ball
+        BallState ballState = drawBall(canvas, dotSize, movePaint);
 
-        // Skip artificial moves, eg. in case of forefeit
-        if (last.X == -1 && last.Y == -1) {
-            last = Moves.get(Moves.size() - 2);
-        }
-        float ballCenterX = w2x(flipX(last.X));
-        float ballCenterY = h2y(flipY(last.Y));
-        float radius = dotSize * 4;
-        // Background circle behind the ball
-        float radiusBackground = (float) (radius  * 0.8);
-        canvas.drawCircle(ballCenterX, ballCenterY, radiusBackground, movePaint);
-
-        RectF dst = new RectF(ballCenterX - radius, ballCenterY - radius, ballCenterX + radius, ballCenterY + radius);
-        canvas.drawBitmap(ballBitmap, null, dst, null);
-
-        drawRunAnimation(canvas, radius);
-
-        if (showIdlePlayerSprite && flSpriteSize > 0f) {
-            int redFrameCount = idleRedPlayerFrames.length;
-            int blueFrameCount = idleBluePlayerFrames.length;
-            int maxFrameCount = Math.max(redFrameCount, blueFrameCount);
-
-            if (maxFrameCount > 0) {
-                long now = SystemClock.uptimeMillis();
-                if (idlePlayerLastFrameTime == 0L) {
-                    idlePlayerLastFrameTime = now;
-                }
-
-                boolean runActive = runAnimationActive;
-                boolean blueDelayActive = runActive && runBlueDelayFrames > 0
-                        && runPlayerFrameIndex < runBlueDelayFrames;
-                boolean redDelayActive = runActive && runRedDelayFrames > 0
-                        && runPlayerFrameIndex < runRedDelayFrames;
-
-                boolean hasRedRunFrames = activeRunRedPlayerFrames != null
-                        && activeRunRedPlayerFrames.length > 0;
-                boolean hasBlueRunFrames = activeRunBluePlayerFrames != null
-                        && activeRunBluePlayerFrames.length > 0;
-
-                boolean isRedMoving = runActive && hasRedRunFrames && !runRedCompleted
-                        && runPlayerFrameIndex >= runRedDelayFrames;
-                boolean isBlueMoving = runActive && hasBlueRunFrames && !runBlueCompleted
-                        && runPlayerFrameIndex >= runBlueDelayFrames;
-
-                boolean shouldDrawIdleBlue = !runActive
-                        || runBlueCompleted
-                        || (isRedMoving && blueDelayActive)
-                        || (!isRedMoving && !isBlueMoving);
-                boolean shouldDrawIdleRed = !runActive
-                        || runRedCompleted
-                        || (isBlueMoving && redDelayActive)
-                        || (!isBlueMoving && !isRedMoving);
-                boolean shouldAdvanceIdle = shouldDrawIdleBlue || shouldDrawIdleRed;
-
-                if (shouldAdvanceIdle) {
-                    long elapsed = now - idlePlayerLastFrameTime;
-                    if (IdlePlayerSprite.FRAME_DURATION_MS > 0 && elapsed >= IdlePlayerSprite.FRAME_DURATION_MS) {
-                        long framesToAdvance = elapsed / IdlePlayerSprite.FRAME_DURATION_MS;
-                        idlePlayerFrameIndex = (int) ((idlePlayerFrameIndex + framesToAdvance) % maxFrameCount);
-                        long remainder = elapsed % IdlePlayerSprite.FRAME_DURATION_MS;
-                        idlePlayerLastFrameTime = now - remainder;
-                    }
-                } else {
-                    idlePlayerLastFrameTime = now;
-                }
-
-                float spriteHeight = canvas.getHeight() * flSpriteSize;
-                if (spriteHeight > 0f) {
-                    // Blue player above the ball, bottom touching the ball's top edge
-                    boolean blueShouldBeCloser = currentTurn == 1;
-                    if (runActive && runMovingPlayer == 0 && blueDelayActive) {
-                        blueShouldBeCloser = false;
-                    }
-                    float idleBlueCenterX = ballCenterX;
-                    float idleBlueCenterY = ballCenterY;
-                    if (runActive && runMovingPlayer == 0 && blueDelayActive) {
-                        idleBlueCenterX = w2x(runStartGridX);
-                        idleBlueCenterY = h2y(runStartGridY);
-                    }
-                    if (blueFrameCount > 0 && shouldDrawIdleBlue) {
-                        Bitmap spriteFrame = idleBluePlayerFrames[idlePlayerFrameIndex % blueFrameCount];
-                        if (spriteFrame != null && !spriteFrame.isRecycled()) {
-                            float spriteBottom = blueShouldBeCloser
-                                    ? idleBlueCenterY + spriteHeight * (1-ACTIVE_SPRITE_PROXIMITY_RATIO)
-                                    : idleBlueCenterY + 1f;
-                            float spriteTop = spriteBottom - spriteHeight;
-                            if (spriteTop < 0f) {
-                                spriteTop = 0f;
-                            }
-                            float actualSpriteHeight = spriteBottom - spriteTop;
-                            if (actualSpriteHeight > 0f) {
-                                float spriteWidth = actualSpriteHeight * spriteFrame.getWidth() / (float) spriteFrame.getHeight();
-                                float spriteLeft = idleBlueCenterX - spriteWidth / 2f;
-                                float spriteRight = idleBlueCenterX + spriteWidth / 2f;
-                                RectF spriteDst = new RectF(spriteLeft, spriteTop, spriteRight, spriteBottom);
-                                canvas.drawBitmap(spriteFrame, null, spriteDst, null);
-                            }
-                        }
-                    }
-
-                    // Red player below the ball, top touching the ball's bottom edge
-                    boolean redShouldBeCloser = currentTurn == 0;
-                    if (runActive && runMovingPlayer == 1 && redDelayActive) {
-                        redShouldBeCloser = false;
-                    }
-                    float idleRedCenterX = ballCenterX;
-                    float idleRedCenterY = ballCenterY;
-                    if (runActive && runMovingPlayer == 1 && redDelayActive) {
-                        idleRedCenterX = w2x(runStartGridX);
-                        idleRedCenterY = h2y(runStartGridY);
-                    }
-                    if (redFrameCount > 0 && shouldDrawIdleRed) {
-                        Bitmap spriteFrame = idleRedPlayerFrames[idlePlayerFrameIndex % redFrameCount];
-                        if (spriteFrame != null && !spriteFrame.isRecycled()) {
-                            float spriteTop = redShouldBeCloser
-                                    ? idleRedCenterY - spriteHeight * ACTIVE_SPRITE_PROXIMITY_RATIO
-                                    : idleRedCenterY + 1f;
-                            float spriteBottom = spriteTop + spriteHeight;
-                            if (spriteBottom > canvas.getHeight()) {
-                                spriteBottom = canvas.getHeight();
-                            }
-                            float actualSpriteHeight = spriteBottom - spriteTop;
-                            if (actualSpriteHeight > 0f) {
-                                float spriteWidth = actualSpriteHeight * spriteFrame.getWidth() / (float) spriteFrame.getHeight();
-                                float spriteLeft = idleRedCenterX - spriteWidth / 2f;
-                                float spriteRight = idleRedCenterX + spriteWidth / 2f;
-                                RectF spriteDst = new RectF(spriteLeft, spriteTop, spriteRight, spriteBottom);
-                                canvas.drawBitmap(spriteFrame, null, spriteDst, null);
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        // 4-5) Sprites
+        drawRunAnimation(canvas, ballState.radius);
+        drawIdlePlayers(canvas, ballState, currentTurn);
 
 
         // Turn indicator
