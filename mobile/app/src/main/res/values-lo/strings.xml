@@ -334,4 +334,7 @@
     <string name="cannot_invite_this_user">ບໍ່ສາມາດເຊີນຜູ້ໃຊ້ນີ້ໄດ້</string>
 
     <string name="failed_to_load_terms">ໂຫຼດຂໍ້ກຳນົດແລະເງື່ອນໄຂບໍ່ສຳເລັດ</string>
+    
+    <!-- Animation info dialog -->
+    <string name="animation_info_message">ເວີຊັນນີ້ນຳເອົາການເຄື່ອນໄຫວຂອງນັກເຕະບານ! ມັນສາມາດເປີດ ແລະ ປິດໃນການຕັ້ງຄ່າໄດ້.</string>
 </resources>

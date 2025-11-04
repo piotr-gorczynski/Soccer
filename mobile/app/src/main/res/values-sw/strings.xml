@@ -334,4 +334,7 @@
     <string name="cannot_invite_this_user">Haiwezekani kumwalika mtumiaji huyu</string>
 
     <string name="failed_to_load_terms">Imeshindwa kupakia masharti na hali</string>
+    
+    <!-- Animation info dialog -->
+    <string name="animation_info_message">Toleo hili linaleta uhuishaji wa wachezaji wa mpira wa miguu! Zinaweza kuwashwa na kuzimwa katika Mipangilio.</string>
 </resources>
