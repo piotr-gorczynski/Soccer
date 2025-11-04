@@ -16,6 +16,18 @@ Fixed an issue where Facebook users saw silhouette/blank profile photos instead 
 
 **Technical details**: Uses `GET https://graph.facebook.com/v20.0/{facebookId}/picture?type=large&redirect=0&access_token={token}` to get the real CDN URL and stores that in Firestore.
 
+## Translation Completeness Check
+
+A validation script is available to ensure all languages in the mobile app have corresponding translations in the Firebase seed data:
+
+```bash
+python3 tools/check-translation-completeness.py
+```
+
+This check runs automatically on pull requests that modify translation files. The script verifies that:
+- All language directories in `mobile/app/src/main/res/values-*/` have matching `tournament_rules_*.json` files in `firebase/seed/`
+- The base language (English) in `mobile/app/src/main/res/values/` has a corresponding `tournament_rules_en.json`
+
 ## Creating tournaments
 
 A helper script is available in `tools/create-tournament/create-tournament.js` for quickly adding tournaments to Firestore. **Run it from the project root** so the relative path is resolved correctly:
