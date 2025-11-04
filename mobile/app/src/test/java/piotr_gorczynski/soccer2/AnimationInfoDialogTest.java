@@ -39,9 +39,9 @@ public class AnimationInfoDialogTest {
     }
     
     @Test
-    public void testAnimationInfoMessageNotTranslatable() {
+    public void testAnimationInfoMessageTranslated() {
         // This test verifies that we have the animation_info_message resource
-        // The actual translatability is handled by the translatable attribute in XML
+        // The message is translated to all supported languages
         Context context = ApplicationProvider.getApplicationContext();
         
         try {
