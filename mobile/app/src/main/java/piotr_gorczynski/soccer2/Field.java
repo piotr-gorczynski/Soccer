@@ -279,16 +279,17 @@ public class Field {
         }
 
         // Load hand bitmap for tutorial
+        Bitmap tempHandBitmap;
         try {
-            handBitmap = BitmapFactory.decodeResource(current.getResources(), R.drawable.hand);
-            if (handBitmap == null) {
-                Log.w("TAG_Soccer", getClass().getSimpleName() + ".<init>: Hand bitmap could not be loaded from resources");
-                throw new RuntimeException("Failed to load hand bitmap resource");
+            tempHandBitmap = BitmapFactory.decodeResource(current.getResources(), R.drawable.hand);
+            if (tempHandBitmap == null) {
+                throw new RuntimeException("Hand bitmap resource returned null");
             }
         } catch (Exception e) {
             Log.e("TAG_Soccer", getClass().getSimpleName() + ".<init>: Failed to load hand bitmap", e);
             throw new RuntimeException("Failed to load hand bitmap resource", e);
         }
+        handBitmap = tempHandBitmap;
 
         // Check if this is first time user and should show hand tutorial
         SharedPreferences prefs = current.getSharedPreferences("SoccerPrefs", Context.MODE_PRIVATE);
