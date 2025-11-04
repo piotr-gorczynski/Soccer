@@ -85,6 +85,7 @@ public class MenuActivity extends BaseActivity {
     private static final String PREF_FCM_TOKEN = "fcmToken";
     static final String PREF_LAST_INVITES_SEEN_TIMESTAMP = "lastInvitesSeenTimestamp";
     private static final String PREF_LAST_ACTIVE_TIMESTAMP = "lastActiveTimestamp";
+    private static final String PREF_ANIMATION_INFO_SHOWN = "animationInfoDialogShown";
 
     private static final int RUNNING_PLAYER_FRAME_COUNT = 22;
     private static final int RUNNING_PLAYER_FRAME_WIDTH = 128;
@@ -1274,6 +1275,9 @@ public class MenuActivity extends BaseActivity {
         runningPlayerView.setImageBitmap(currentRowFrames[0]);
         configureRunningPlayerClickListener();
         runningPlayerAnimator.run();
+        
+        // Show animation info dialog after a short delay to ensure UI is fully loaded
+        new Handler(Looper.getMainLooper()).postDelayed(this::showAnimationInfoDialog, 500);
     }
 
     private void stopRunningPlayerAnimation() {
@@ -2266,6 +2270,33 @@ public class MenuActivity extends BaseActivity {
     private void updateLastActiveTimestamp() {
         SharedPreferences prefs = getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
         prefs.edit().putLong(PREF_LAST_ACTIVE_TIMESTAMP, System.currentTimeMillis()).apply();
+    }
+
+    /**
+     * Show one-time information dialog about animation feature
+     */
+    private void showAnimationInfoDialog() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean dialogShown = prefs.getBoolean(PREF_ANIMATION_INFO_SHOWN, false);
+        
+        // Only show dialog if it hasn't been shown before and animations are enabled
+        if (dialogShown || !areAnimationsEnabled()) {
+            return;
+        }
+        
+        // Check if activity is still valid before showing dialog
+        if (isFinishing() || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed())) {
+            return;
+        }
+        
+        new AlertDialog.Builder(this)
+                .setMessage(R.string.animation_info_message)
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                    // Mark dialog as shown
+                    prefs.edit().putBoolean(PREF_ANIMATION_INFO_SHOWN, true).apply();
+                })
+                .setCancelable(false)
+                .show();
     }
 
 }

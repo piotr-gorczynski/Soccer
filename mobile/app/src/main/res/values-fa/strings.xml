@@ -315,4 +315,7 @@
     <string name="cannot_invite_this_user">نمی‌توان این کاربر را دعوت کرد</string>
 
     <string name="failed_to_load_terms">بارگیری شرایط و ضوابط انجام نشد</string>
+    
+    <!-- Animation info dialog -->
+    <string name="animation_info_message">این نسخه انیمیشن بازیکنان فوتبال را به ارمغان می‌آورد! می‌توانید آن‌ها را در تنظیمات فعال یا غیرفعال کنید.</string>
 </resources>

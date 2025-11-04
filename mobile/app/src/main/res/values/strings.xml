@@ -359,4 +359,7 @@
     <string name="user_blocked_invites">User has blocked invites</string>
     <string name="cannot_invite_this_user">Cannot invite this user</string>
     <string name="failed_to_load_terms">Failed to load terms and conditions</string>
+    
+    <!-- Animation info dialog -->
+    <string name="animation_info_message">This version brings animations of soccer players! They can be turned on and off in Settings.</string>
 </resources>
