@@ -92,6 +92,8 @@ public class Field {
     private int runMovingPlayer = -1;
     private int runRedDelayFrames = 0;
     private int runBlueDelayFrames = 0;
+    private boolean runRedCompleted = false;
+    private boolean runBlueCompleted = false;
 
     private static final int RUN_FRAME_COUNT = RunPlayerSprite.FRAME_COUNT;
     private static final float RUN_FRAME_STEP_DISTANCE = RUN_FRAME_COUNT > 0
@@ -415,6 +417,8 @@ public class Field {
         runPlayerFrameIndex = 0;
         runPlayerLastFrameTime = SystemClock.uptimeMillis();
         runAnimationActive = true;
+        runRedCompleted = false;
+        runBlueCompleted = false;
     }
 
     public boolean isRunAnimationActive() {
@@ -439,6 +443,8 @@ public class Field {
         runMovingPlayer = -1;
         runRedDelayFrames = 0;
         runBlueDelayFrames = 0;
+        runRedCompleted = false;
+        runBlueCompleted = false;
     }
 
     private void drawRunAnimation(Canvas canvas, float ballRadius) {
@@ -488,55 +494,50 @@ public class Field {
                 ? getRunFrame(blueFrames, blueFrameIndex, blueFrameCount)
                 : null;
 
-        if ((redFrame == null || redFrame.isRecycled())
-                && (blueFrame == null || blueFrame.isRecycled())) {
-            stopRunAnimation(now);
-            return;
-        }
-
         float spriteHeight = canvas.getHeight() * flSpriteSize;
         if (spriteHeight <= 0f) {
             stopRunAnimation(now);
             return;
         }
 
-        float stepIndex = Math.min(runPlayerFrameIndex + 1, frameLimit);
-        float distanceTraveled = RUN_FRAME_STEP_DISTANCE * stepIndex;
-        if (runTotalDistance > 0f && distanceTraveled > runTotalDistance) {
-            distanceTraveled = runTotalDistance;
-        }
-
-        float currentGridX = runStartGridX + runDirectionX * distanceTraveled;
-        float currentGridY = runStartGridY + runDirectionY * distanceTraveled;
-
-        if (runDirectionX > 0f) {
-            currentGridX = Math.min(currentGridX, runTargetGridX);
-        } else if (runDirectionX < 0f) {
-            currentGridX = Math.max(currentGridX, runTargetGridX);
-        }
-
-        if (runDirectionY > 0f) {
-            currentGridY = Math.min(currentGridY, runTargetGridY);
-        } else if (runDirectionY < 0f) {
-            currentGridY = Math.max(currentGridY, runTargetGridY);
-        }
-
-        boolean reachedDestination = Math.abs(currentGridX - runTargetGridX) <= RUN_DESTINATION_EPSILON
-                && Math.abs(currentGridY - runTargetGridY) <= RUN_DESTINATION_EPSILON;
-        if (!reachedDestination && runTotalDistance <= 0f) {
-            reachedDestination = true;
-        }
-        if (reachedDestination) {
-            stopRunAnimation(now);
-            return;
-        }
-
-        float ballCenterX = w2x(currentGridX);
-        float ballCenterY = h2y(currentGridY);
-        boolean drewFrame = false;
-
         float redDistanceTraveled = computeDistanceForFrameIndex(redFrameIndex, redFrameCount, runTotalDistance, true);
         float blueDistanceTraveled = computeDistanceForFrameIndex(blueFrameIndex, blueFrameCount, runTotalDistance, false);
+
+        boolean redHasFrames = redFrameCount > 0;
+        boolean blueHasFrames = blueFrameCount > 0;
+
+        if (!redHasFrames) {
+            runRedCompleted = true;
+        }
+        if (!blueHasFrames) {
+            runBlueCompleted = true;
+        }
+
+        if (redHasFrames && !runRedCompleted) {
+            boolean redReached = runTotalDistance > 0f
+                    ? redDistanceTraveled >= runTotalDistance - RUN_DESTINATION_EPSILON
+                    : redFrameIndex >= redFrameCount - 1;
+            if (redReached) {
+                runRedCompleted = true;
+                redFrame = null;
+            }
+        } else if (runRedCompleted) {
+            redFrame = null;
+        }
+
+        if (blueHasFrames && !runBlueCompleted) {
+            boolean blueReached = runTotalDistance > 0f
+                    ? blueDistanceTraveled >= runTotalDistance - RUN_DESTINATION_EPSILON
+                    : blueFrameIndex >= blueFrameCount - 1;
+            if (blueReached) {
+                runBlueCompleted = true;
+                blueFrame = null;
+            }
+        } else if (runBlueCompleted) {
+            blueFrame = null;
+        }
+
+        boolean drewFrame = false;
 
         float redAnimationProgress = computeAnimationProgress(redFrameIndex, redFrameCount, redDistanceTraveled);
         float blueAnimationProgress = computeAnimationProgress(blueFrameIndex, blueFrameCount, blueDistanceTraveled);
@@ -605,7 +606,14 @@ public class Field {
             }
         }
 
-        if (!drewFrame) {
+        if ((!redHasFrames || runRedCompleted) && (!blueHasFrames || runBlueCompleted)) {
+            stopRunAnimation(now);
+            return;
+        }
+
+        boolean redPending = redHasFrames && !runRedCompleted;
+        boolean bluePending = blueHasFrames && !runBlueCompleted;
+        if (!drewFrame && !redPending && !bluePending) {
             stopRunAnimation(now);
             return;
         }
@@ -923,13 +931,22 @@ public class Field {
                 boolean redDelayActive = runActive && runRedDelayFrames > 0
                         && runPlayerFrameIndex < runRedDelayFrames;
 
-                boolean isRedMoving = runActive && runMovingPlayer == 0;
-                boolean isBlueMoving = runActive && runMovingPlayer == 1;
+                boolean hasRedRunFrames = activeRunRedPlayerFrames != null
+                        && activeRunRedPlayerFrames.length > 0;
+                boolean hasBlueRunFrames = activeRunBluePlayerFrames != null
+                        && activeRunBluePlayerFrames.length > 0;
+
+                boolean isRedMoving = runActive && hasRedRunFrames && !runRedCompleted
+                        && runPlayerFrameIndex >= runRedDelayFrames;
+                boolean isBlueMoving = runActive && hasBlueRunFrames && !runBlueCompleted
+                        && runPlayerFrameIndex >= runBlueDelayFrames;
 
                 boolean shouldDrawIdleBlue = !runActive
+                        || runBlueCompleted
                         || (isRedMoving && blueDelayActive)
                         || (!isRedMoving && !isBlueMoving);
                 boolean shouldDrawIdleRed = !runActive
+                        || runRedCompleted
                         || (isBlueMoving && redDelayActive)
                         || (!isBlueMoving && !isRedMoving);
                 boolean shouldAdvanceIdle = shouldDrawIdleBlue || shouldDrawIdleRed;
