@@ -71,6 +71,7 @@ public class Field {
     private long remainingTime0, remainingTime1;
 
     private Long turnStartTime;
+    private final boolean animationsEnabled;
     private final boolean showIdlePlayerSprite;
     private int idlePlayerFrameIndex = 0;
     private long idlePlayerLastFrameTime = 0L;
@@ -184,6 +185,7 @@ public class Field {
             throw new RuntimeException("Failed to load field configuration resources", e);
         }
 
+        this.animationsEnabled = animationsEnabled;
         showIdlePlayerSprite = animationsEnabled && (gameType == 1 || gameType == 2);
         if (showIdlePlayerSprite) {
             idleRedPlayerFrames = IdleRedPlayerSprite.getFrames(current);
@@ -552,6 +554,18 @@ public class Field {
                                     float totalDistance, int frameCount) {
         ballTargetGridX = targetGridX;
         ballTargetGridY = targetGridY;
+
+        if (!animationsEnabled) {
+            ballStartGridX = targetGridX;
+            ballStartGridY = targetGridY;
+            ballDirectionX = 0f;
+            ballDirectionY = 0f;
+            ballTotalDistance = 0f;
+            ballAnimationDurationMs = 0L;
+            ballAnimationStartTime = 0L;
+            ballAnimationActive = false;
+            return;
+        }
 
         if (totalDistance <= 0f) {
             ballStartGridX = targetGridX;
