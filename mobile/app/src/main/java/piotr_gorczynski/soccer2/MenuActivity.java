@@ -929,6 +929,34 @@ public class MenuActivity extends BaseActivity {
         return prefs.getBoolean("animations_enabled", true);
     }
 
+    /**
+     * Helper method to check if the running player animation should start
+     * @return true if all conditions are met to start the animation, false otherwise
+     */
+    private boolean shouldStartRunningPlayerAnimation() {
+        // Don't start if animation is already running
+        if (isRunningPlayerAnimationStarted) {
+            return false;
+        }
+        
+        // Don't start if animations are disabled in settings
+        if (!areAnimationsEnabled()) {
+            return false;
+        }
+        
+        // Don't start if activity is finishing
+        if (isFinishing()) {
+            return false;
+        }
+        
+        // Don't start if activity is destroyed (API 17+)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed()) {
+            return false;
+        }
+        
+        return true;
+    }
+
     private void setupRunningPlayerAnimation() {
         runningPlayerView = findViewById(R.id.menu_running_player);
         if (runningPlayerView == null) {
@@ -1197,10 +1225,7 @@ public class MenuActivity extends BaseActivity {
                         // If activity is already started, begin animation immediately
                         // This handles the case where onCreate->setupRunningPlayerAnimation starts
                         // the background thread, then onStart is called before frames are loaded
-                        // Only start if animation isn't already running and the activity is still active
-                        if (!isRunningPlayerAnimationStarted && areAnimationsEnabled() 
-                                && !isFinishing() 
-                                && !(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed())) {
+                        if (shouldStartRunningPlayerAnimation()) {
                             startRunningPlayerAnimation();
                         }
                     }
