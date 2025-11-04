@@ -447,7 +447,9 @@ public class Field {
         }
         Bitmap[] redFrames = activeRunRedPlayerFrames != null ? activeRunRedPlayerFrames : EMPTY_BITMAP_ARRAY;
         Bitmap[] blueFrames = activeRunBluePlayerFrames != null ? activeRunBluePlayerFrames : EMPTY_BITMAP_ARRAY;
-        int frameCount = Math.max(redFrames.length, blueFrames.length);
+        int redFrameCount = redFrames.length;
+        int blueFrameCount = blueFrames.length;
+        int frameCount = Math.max(redFrameCount, blueFrameCount);
         int maxDelay = Math.max(runRedDelayFrames, runBlueDelayFrames);
         int frameLimit = Math.min(runFrameLimit, frameCount + maxDelay);
         if (frameLimit <= 0) {
@@ -480,10 +482,10 @@ public class Field {
         int blueFrameIndex = runPlayerFrameIndex - runBlueDelayFrames;
 
         Bitmap redFrame = redFrameIndex >= 0
-                ? getRunFrame(redFrames, redFrameIndex, frameCount)
+                ? getRunFrame(redFrames, redFrameIndex, redFrameCount)
                 : null;
         Bitmap blueFrame = blueFrameIndex >= 0
-                ? getRunFrame(blueFrames, blueFrameIndex, frameCount)
+                ? getRunFrame(blueFrames, blueFrameIndex, blueFrameCount)
                 : null;
 
         if ((redFrame == null || redFrame.isRecycled())
@@ -531,30 +533,35 @@ public class Field {
 
         float ballCenterX = w2x(currentGridX);
         float ballCenterY = h2y(currentGridY);
-        float ballTop = ballCenterY - ballRadius;
         boolean drewFrame = false;
 
-        float animationProgress;
-        if (runTotalDistance > 0f) {
-            animationProgress = distanceTraveled / runTotalDistance;
-        } else if (runFrameLimit > 1) {
-            animationProgress = (float) runPlayerFrameIndex / (float) (runFrameLimit - 1);
-        } else {
-            animationProgress = 1f;
-        }
-        animationProgress = clamp(animationProgress, 0f, 1f);
+        float redDistanceTraveled = computeDistanceForFrameIndex(redFrameIndex, redFrameCount, runTotalDistance, true);
+        float blueDistanceTraveled = computeDistanceForFrameIndex(blueFrameIndex, blueFrameCount, runTotalDistance, false);
+
+        float redAnimationProgress = computeAnimationProgress(redFrameIndex, redFrameCount, redDistanceTraveled);
+        float blueAnimationProgress = computeAnimationProgress(blueFrameIndex, blueFrameCount, blueDistanceTraveled);
 
         float blueStartProximity = runStartBlueCloser ? 1f : 0f;
         float blueEndProximity = runTargetBlueCloser ? 1f : 0f;
-        float blueProximity = clamp(lerp(blueStartProximity, blueEndProximity, animationProgress), 0f, 1f);
+        float blueProximity = clamp(lerp(blueStartProximity, blueEndProximity, blueAnimationProgress), 0f, 1f);
 
         float redStartProximity = runStartRedCloser ? 1f : 0f;
         float redEndProximity = runTargetRedCloser ? 1f : 0f;
-        float redProximity = clamp(lerp(redStartProximity, redEndProximity, animationProgress), 0f, 1f);
+        float redProximity = clamp(lerp(redStartProximity, redEndProximity, redAnimationProgress), 0f, 1f);
+
+        float redGridX = runStartGridX + runDirectionX * redDistanceTraveled;
+        float redGridY = runStartGridY + runDirectionY * redDistanceTraveled;
+        float redCenterX = w2x(redGridX);
+        float redCenterY = h2y(redGridY);
+
+        float blueGridX = runStartGridX + runDirectionX * blueDistanceTraveled;
+        float blueGridY = runStartGridY + runDirectionY * blueDistanceTraveled;
+        float blueCenterX = w2x(blueGridX);
+        float blueCenterY = h2y(blueGridY);
 
         if (blueFrame != null && !blueFrame.isRecycled()) {
-            float blueFarBottom = ballCenterY - ballRadius;
-            float blueCloseBottom = ballCenterY + spriteHeight * (1f - ACTIVE_SPRITE_PROXIMITY_RATIO);
+            float blueFarBottom = blueCenterY - ballRadius;
+            float blueCloseBottom = blueCenterY + spriteHeight * (1f - ACTIVE_SPRITE_PROXIMITY_RATIO);
             float blueBottom = lerp(blueFarBottom, blueCloseBottom, blueProximity);
             float blueTop = blueBottom - spriteHeight;
             if (blueTop < 0f) {
@@ -567,8 +574,8 @@ public class Field {
             float actualBlueHeight = blueBottom - blueTop;
             if (actualBlueHeight > 0f) {
                 float blueWidth = actualBlueHeight * blueFrame.getWidth() / (float) blueFrame.getHeight();
-                float blueLeft = ballCenterX - blueWidth / 2f;
-                float blueRight = ballCenterX + blueWidth / 2f;
+                float blueLeft = blueCenterX - blueWidth / 2f;
+                float blueRight = blueCenterX + blueWidth / 2f;
                 RectF blueDst = new RectF(blueLeft, blueTop, blueRight, blueBottom);
                 canvas.drawBitmap(blueFrame, null, blueDst, null);
                 drewFrame = true;
@@ -576,8 +583,8 @@ public class Field {
         }
 
         if (redFrame != null && !redFrame.isRecycled()) {
-            float redFarTop = ballCenterY + ballRadius;
-            float redCloseTop = ballCenterY - spriteHeight * ACTIVE_SPRITE_PROXIMITY_RATIO;
+            float redFarTop = redCenterY + ballRadius;
+            float redCloseTop = redCenterY - spriteHeight * ACTIVE_SPRITE_PROXIMITY_RATIO;
             float redTop = lerp(redFarTop, redCloseTop, redProximity);
             float redBottom = redTop + spriteHeight;
             if (redBottom > canvas.getHeight()) {
@@ -590,8 +597,8 @@ public class Field {
             float actualRedHeight = redBottom - redTop;
             if (actualRedHeight > 0f) {
                 float redWidth = actualRedHeight * redFrame.getWidth() / (float) redFrame.getHeight();
-                float redLeft = ballCenterX - redWidth / 2f;
-                float redRight = ballCenterX + redWidth / 2f;
+                float redLeft = redCenterX - redWidth / 2f;
+                float redRight = redCenterX + redWidth / 2f;
                 RectF redDst = new RectF(redLeft, redTop, redRight, redBottom);
                 canvas.drawBitmap(redFrame, null, redDst, null);
                 drewFrame = true;
@@ -614,6 +621,33 @@ public class Field {
 
     private static float clamp(float value, float min, float max) {
         return Math.max(min, Math.min(max, value));
+    }
+
+    private float computeDistanceForFrameIndex(int frameIndex, int frameCount, float totalDistance, boolean advanceImmediately) {
+        if (frameIndex < 0 || frameCount <= 0) {
+            return 0f;
+        }
+        int stepOffset = advanceImmediately ? 1 : 0;
+        int clampedStep = Math.min(frameIndex + stepOffset, frameCount);
+        float distance = RUN_FRAME_STEP_DISTANCE * clampedStep;
+        if (totalDistance > 0f && distance > totalDistance) {
+            distance = totalDistance;
+        }
+        return distance;
+    }
+
+    private float computeAnimationProgress(int frameIndex, int frameCount, float distanceTraveled) {
+        if (frameIndex < 0) {
+            return 0f;
+        }
+        if (runTotalDistance > 0f) {
+            return clamp(distanceTraveled / runTotalDistance, 0f, 1f);
+        }
+        if (frameCount > 1) {
+            int clampedIndex = Math.min(frameIndex, frameCount - 1);
+            return clamp((float) clampedIndex / (float) (frameCount - 1), 0f, 1f);
+        }
+        return 1f;
     }
 
     private RunAnimationFrameSet selectRunAnimationFrames(float deltaX, float deltaY) {
@@ -916,12 +950,18 @@ public class Field {
                 if (spriteHeight > 0f) {
                     // Blue player above the ball, bottom touching the ball's top edge
                     boolean blueShouldBeCloser = currentTurn == 1;
+                    float idleBlueCenterX = ballCenterX;
+                    float idleBlueCenterY = ballCenterY;
+                    if (runActive && runMovingPlayer == 0 && blueDelayActive) {
+                        idleBlueCenterX = w2x(runStartGridX);
+                        idleBlueCenterY = h2y(runStartGridY);
+                    }
                     if (blueFrameCount > 0 && shouldDrawIdleBlue) {
                         Bitmap spriteFrame = idleBluePlayerFrames[idlePlayerFrameIndex % blueFrameCount];
                         if (spriteFrame != null && !spriteFrame.isRecycled()) {
                             float spriteBottom = blueShouldBeCloser
-                                    ? ballCenterY + spriteHeight * (1-ACTIVE_SPRITE_PROXIMITY_RATIO)
-                                    : ballCenterY + 1f;
+                                    ? idleBlueCenterY + spriteHeight * (1-ACTIVE_SPRITE_PROXIMITY_RATIO)
+                                    : idleBlueCenterY + 1f;
                             float spriteTop = spriteBottom - spriteHeight;
                             if (spriteTop < 0f) {
                                 spriteTop = 0f;
@@ -929,8 +969,8 @@ public class Field {
                             float actualSpriteHeight = spriteBottom - spriteTop;
                             if (actualSpriteHeight > 0f) {
                                 float spriteWidth = actualSpriteHeight * spriteFrame.getWidth() / (float) spriteFrame.getHeight();
-                                float spriteLeft = ballCenterX - spriteWidth / 2f;
-                                float spriteRight = ballCenterX + spriteWidth / 2f;
+                                float spriteLeft = idleBlueCenterX - spriteWidth / 2f;
+                                float spriteRight = idleBlueCenterX + spriteWidth / 2f;
                                 RectF spriteDst = new RectF(spriteLeft, spriteTop, spriteRight, spriteBottom);
                                 canvas.drawBitmap(spriteFrame, null, spriteDst, null);
                             }
@@ -939,12 +979,18 @@ public class Field {
 
                     // Red player below the ball, top touching the ball's bottom edge
                     boolean redShouldBeCloser = currentTurn == 0;
+                    float idleRedCenterX = ballCenterX;
+                    float idleRedCenterY = ballCenterY;
+                    if (runActive && runMovingPlayer == 1 && redDelayActive) {
+                        idleRedCenterX = w2x(runStartGridX);
+                        idleRedCenterY = h2y(runStartGridY);
+                    }
                     if (redFrameCount > 0 && shouldDrawIdleRed) {
                         Bitmap spriteFrame = idleRedPlayerFrames[idlePlayerFrameIndex % redFrameCount];
                         if (spriteFrame != null && !spriteFrame.isRecycled()) {
                             float spriteTop = redShouldBeCloser
-                                    ? ballCenterY - spriteHeight * ACTIVE_SPRITE_PROXIMITY_RATIO
-                                    : ballCenterY + 1f;
+                                    ? idleRedCenterY - spriteHeight * ACTIVE_SPRITE_PROXIMITY_RATIO
+                                    : idleRedCenterY + 1f;
                             float spriteBottom = spriteTop + spriteHeight;
                             if (spriteBottom > canvas.getHeight()) {
                                 spriteBottom = canvas.getHeight();
@@ -952,8 +998,8 @@ public class Field {
                             float actualSpriteHeight = spriteBottom - spriteTop;
                             if (actualSpriteHeight > 0f) {
                                 float spriteWidth = actualSpriteHeight * spriteFrame.getWidth() / (float) spriteFrame.getHeight();
-                                float spriteLeft = ballCenterX - spriteWidth / 2f;
-                                float spriteRight = ballCenterX + spriteWidth / 2f;
+                                float spriteLeft = idleRedCenterX - spriteWidth / 2f;
+                                float spriteRight = idleRedCenterX + spriteWidth / 2f;
                                 RectF spriteDst = new RectF(spriteLeft, spriteTop, spriteRight, spriteBottom);
                                 canvas.drawBitmap(spriteFrame, null, spriteDst, null);
                             }
