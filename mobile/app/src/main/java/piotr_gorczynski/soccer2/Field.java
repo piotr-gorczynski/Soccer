@@ -99,7 +99,7 @@ public class Field {
             : 0f;
     private static final float RUN_DESTINATION_EPSILON = 0.001f;
     private static final float ACTIVE_SPRITE_PROXIMITY_RATIO = 0.6f;
-    private static final int RUN_DELAY_CYCLES = 2;
+    private static final int RUN_DELAY_CYCLES = 10;
 
     public Field(Context current, ArrayList<MoveTo> argMoves, ArrayList<MoveTo> argPossibleMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex, boolean animationsEnabled) {
 
