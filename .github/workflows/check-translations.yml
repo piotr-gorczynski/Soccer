@@ -20,6 +20,8 @@ on:
 jobs:
   check-translations:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     
     steps:
       - name: Checkout repository
