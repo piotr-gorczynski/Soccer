@@ -376,7 +376,7 @@
     <!-- Hand tutorial feature -->
     <string name="pref_title_show_hand_tutorial">Pokaż możliwe ruchy</string>
     <string name="pref_summary_show_hand_tutorial">Wyświetla rękę wskazującą możliwe ruchy, aby pomóc w nauce</string>
-    <string name="hand_tutorial_dialog_title">Samouczek ręki</string>
+    <string name="hand_tutorial_dialog_title">Samouczek</string>
     <string name="hand_tutorial_dialog_message">Czy nadal chcesz, abym pokazywał Ci możliwe ruchy? Zawsze możesz to wyłączyć i włączyć w Ustawieniach.</string>
     <string name="hand_tutorial_dialog_yes">Tak, kontynuuj</string>
     <string name="hand_tutorial_dialog_no">Nie, wyłącz</string>

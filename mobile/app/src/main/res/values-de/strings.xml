@@ -376,7 +376,7 @@
     <!-- Hand tutorial feature -->
     <string name="pref_title_show_hand_tutorial">Mögliche Züge anzeigen</string>
     <string name="pref_summary_show_hand_tutorial">Zeigt eine Hand, die auf mögliche Züge zeigt, um Ihnen beim Lernen zu helfen</string>
-    <string name="hand_tutorial_dialog_title">Hand-Tutorial</string>
+    <string name="hand_tutorial_dialog_title">Tutorial</string>
     <string name="hand_tutorial_dialog_message">Soll ich Ihnen weiterhin mögliche Züge zeigen? Sie können dies jederzeit in den Einstellungen ein- und ausschalten.</string>
     <string name="hand_tutorial_dialog_yes">Ja, fortfahren</string>
     <string name="hand_tutorial_dialog_no">Nein, ausschalten</string>
