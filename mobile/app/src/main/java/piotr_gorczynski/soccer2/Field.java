@@ -124,6 +124,7 @@ public class Field {
     // Hand tutorial constants
     private static final int DURATION_SHOWING_HAND = 1000; // milliseconds
     private static final int NUMBER_OF_TIMES_TO_SHOW_HAND = 3;
+    private static final int INITIAL_MOVE_COUNT = -1; // Sentinel value for first tutorial display
     private static final String PREF_HAND_TUTORIAL_SHOWN = "hand_tutorial_shown";
     
     // Hand tutorial state
@@ -132,7 +133,7 @@ public class Field {
     private int handTutorialCycle = 0;
     private int handTutorialPositionIndex = 0;
     private long handTutorialLastUpdateTime = 0L;
-    private int handTutorialLastMoveCount = -1; // Track the number of moves when tutorial was last shown
+    private int handTutorialLastMoveCount = INITIAL_MOVE_COUNT; // Track the number of moves when tutorial was last shown
 
     public Field(Context current, ArrayList<MoveTo> argMoves, ArrayList<MoveTo> argPossibleMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex, boolean animationsEnabled) {
 
@@ -1423,7 +1424,7 @@ public class Field {
         // Check if a new move has been made - if so, start a new cycle
         if (handTutorialLastMoveCount != currentMoveCount) {
             // New move detected - check if we should continue or stop
-            if (handTutorialLastMoveCount != -1) {
+            if (handTutorialLastMoveCount != INITIAL_MOVE_COUNT) {
                 // Not the first move - increment cycle counter
                 handTutorialCycle++;
                 
@@ -1455,9 +1456,8 @@ public class Field {
 
             // Check if we've shown all positions in this cycle
             if (handTutorialPositionIndex >= possibleMoves.size()) {
-                // Cycle complete, stop showing until next move
-                // We don't increment handTutorialCycle here - that happens on move change
-                handTutorialPositionIndex = possibleMoves.size(); // Keep at end to stop drawing
+                // Cycle complete, wait for next move to start new cycle
+                // Keep position at max to prevent drawing until move count changes
                 Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawHandTutorial: Cycle " 
                     + (handTutorialCycle + 1) + "/" + NUMBER_OF_TIMES_TO_SHOW_HAND 
                     + " completed, waiting for next move");
