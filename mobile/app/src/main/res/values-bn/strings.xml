@@ -375,7 +375,7 @@
     <!-- Hand tutorial feature -->
     <string name="pref_title_show_hand_tutorial">সম্ভাব্য চাল দেখান</string>
     <string name="pref_summary_show_hand_tutorial">আপনাকে শিখতে সাহায্য করার জন্য সম্ভাব্য চালের দিকে নির্দেশ করে একটি হাত প্রদর্শন করে</string>
-    <string name="hand_tutorial_dialog_title">হাত টিউটোরিয়াল</string>
+    <string name="hand_tutorial_dialog_title">টিউটোরিয়াল</string>
     <string name="hand_tutorial_dialog_message">আপনি কি এখনও চান যে আমি আপনাকে সম্ভাব্য চাল দেখাই? আপনি সর্বদা সেটিংসে এটি চালু এবং বন্ধ করতে পারেন।</string>
     <string name="hand_tutorial_dialog_yes">হ্যাঁ, চালিয়ে যান</string>
     <string name="hand_tutorial_dialog_no">না, বন্ধ করুন</string>

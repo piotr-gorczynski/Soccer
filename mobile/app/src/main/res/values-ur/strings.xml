@@ -375,7 +375,7 @@
     <!-- Hand tutorial feature -->
     <string name="pref_title_show_hand_tutorial">ممکنہ چالیں دکھائیں</string>
     <string name="pref_summary_show_hand_tutorial">آپ کو سیکھنے میں مدد کرنے کے لیے ممکنہ چالوں کی طرف اشارہ کرتے ہوئے ایک ہاتھ دکھاتا ہے</string>
-    <string name="hand_tutorial_dialog_title">ہاتھ ٹیوٹوریل</string>
+    <string name="hand_tutorial_dialog_title">ٹیوٹوریل</string>
     <string name="hand_tutorial_dialog_message">کیا آپ اب بھی چاہتے ہیں کہ میں آپ کو ممکنہ چالیں دکھاؤں؟ آپ اسے ہمیشہ ترتیبات میں آن اور آف کر سکتے ہیں۔</string>
     <string name="hand_tutorial_dialog_yes">جی ہاں، جاری رکھیں</string>
     <string name="hand_tutorial_dialog_no">نہیں، بند کریں</string>

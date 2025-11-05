@@ -370,7 +370,7 @@
     <!-- Hand tutorial feature -->
     <string name="pref_title_show_hand_tutorial">Afficher les mouvements possibles</string>
     <string name="pref_summary_show_hand_tutorial">Affiche une main pointant vers les mouvements possibles pour vous aider à apprendre</string>
-    <string name="hand_tutorial_dialog_title">Tutoriel de la main</string>
+    <string name="hand_tutorial_dialog_title">Tutoriel</string>
     <string name="hand_tutorial_dialog_message">Voulez-vous toujours que je vous montre les mouvements possibles ? Vous pouvez toujours l\'activer et le désactiver dans Paramètres.</string>
     <string name="hand_tutorial_dialog_yes">Oui, continuer</string>
     <string name="hand_tutorial_dialog_no">Non, désactiver</string>
