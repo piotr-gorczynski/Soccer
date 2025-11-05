@@ -384,8 +384,9 @@ public class InvitationsActivity extends BaseActivity {
                         Timestamp leftCreatedAt = left.getTimestamp("createdAt");
                         Timestamp rightCreatedAt = right.getTimestamp("createdAt");
 
-                        long leftMillis = leftCreatedAt != null ? leftCreatedAt.toDate().getTime() : 0;
-                        long rightMillis = rightCreatedAt != null ? rightCreatedAt.toDate().getTime() : 0;
+                        // Use Long.MAX_VALUE for null timestamps to sort them at the end
+                        long leftMillis = leftCreatedAt != null ? leftCreatedAt.toDate().getTime() : Long.MAX_VALUE;
+                        long rightMillis = rightCreatedAt != null ? rightCreatedAt.toDate().getTime() : Long.MAX_VALUE;
 
                         // Descending order (newest first)
                         return Long.compare(rightMillis, leftMillis);
