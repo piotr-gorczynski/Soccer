@@ -1457,7 +1457,8 @@ public class Field {
             // Check if we've shown all positions in this cycle
             if (handTutorialPositionIndex >= possibleMoves.size()) {
                 // Cycle complete, wait for next move to start new cycle
-                // Keep position at max to prevent drawing until move count changes
+                // Position index will remain >= size, so the drawing check below (line 1469) will skip rendering
+                // until handTutorialPositionIndex is reset to 0 when a new move is detected
                 Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawHandTutorial: Cycle " 
                     + (handTutorialCycle + 1) + "/" + NUMBER_OF_TIMES_TO_SHOW_HAND 
                     + " completed, waiting for next move");
