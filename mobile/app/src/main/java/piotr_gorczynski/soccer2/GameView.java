@@ -821,6 +821,14 @@ public class GameView extends View {
         }
         return true;  // Event handled
     }
+    
+    /**
+     * Get the Field instance for accessing hand tutorial functionality
+     * @return The Field instance
+     */
+    public Field getField() {
+        return field;
+    }
 
     @Override
     protected void onDetachedFromWindow() {

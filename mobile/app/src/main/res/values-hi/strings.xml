@@ -371,4 +371,12 @@
     
     <!-- Animation info dialog -->
     <string name="animation_info_message">यह संस्करण फुटबॉल खिलाड़ियों के एनिमेशन लाता है! इन्हें सेटिंग्स में चालू और बंद किया जा सकता है।</string>
+    
+    <!-- Hand tutorial feature -->
+    <string name="pref_title_show_hand_tutorial">संभावित चालों के लिए हाथ दिखाएं</string>
+    <string name="pref_summary_show_hand_tutorial">आपको सीखने में मदद करने के लिए संभावित चालों की ओर इशारा करते हुए एक हाथ प्रदर्शित करता है</string>
+    <string name="hand_tutorial_dialog_title">हाथ ट्यूटोरियल</string>
+    <string name="hand_tutorial_dialog_message">क्या आप अभी भी चाहते हैं कि मैं आपको संभावित चालें दिखाऊं? आप इसे हमेशा सेटिंग्स में चालू और बंद कर सकते हैं।</string>
+    <string name="hand_tutorial_dialog_yes">हां, जारी रखें</string>
+    <string name="hand_tutorial_dialog_no">नहीं, बंद करें</string>
 </resources>
