@@ -374,4 +374,12 @@
     
     <!-- Animation info dialog -->
     <string name="animation_info_message">¡Esta versión trae animaciones de jugadores de fútbol! Se pueden activar y desactivar en Configuración.</string>
+    
+    <!-- Hand tutorial feature -->
+    <string name="pref_title_show_hand_tutorial">Mostrar mano para movimientos posibles</string>
+    <string name="pref_summary_show_hand_tutorial">Muestra una mano señalando los movimientos posibles para ayudarte a aprender</string>
+    <string name="hand_tutorial_dialog_title">Tutorial de mano</string>
+    <string name="hand_tutorial_dialog_message">¿Todavía quieres que te muestre los movimientos posibles? Siempre puedes activarlo y desactivarlo en Configuración.</string>
+    <string name="hand_tutorial_dialog_yes">Sí, continuar</string>
+    <string name="hand_tutorial_dialog_no">No, desactivar</string>
 </resources>

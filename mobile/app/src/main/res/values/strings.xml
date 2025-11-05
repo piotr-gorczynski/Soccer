@@ -362,4 +362,12 @@
     
     <!-- Animation info dialog -->
     <string name="animation_info_message">This version brings animations of soccer players! They can be turned on and off in Settings.</string>
+    
+    <!-- Hand tutorial feature -->
+    <string name="pref_title_show_hand_tutorial">Show hand for possible moves</string>
+    <string name="pref_summary_show_hand_tutorial">Display a hand pointing to possible moves to help you learn</string>
+    <string name="hand_tutorial_dialog_title">Hand Tutorial</string>
+    <string name="hand_tutorial_dialog_message">Do you still want me to show you possible moves? You can always turn it off and on in Settings.</string>
+    <string name="hand_tutorial_dialog_yes">Yes, continue</string>
+    <string name="hand_tutorial_dialog_no">No, turn it off</string>
 </resources>

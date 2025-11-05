@@ -337,4 +337,12 @@
     
     <!-- Animation info dialog -->
     <string name="animation_info_message">ເວີຊັນນີ້ນຳເອົາການເຄື່ອນໄຫວຂອງນັກເຕະບານ! ມັນສາມາດເປີດ ແລະ ປິດໃນການຕັ້ງຄ່າໄດ້.</string>
+    
+    <!-- Hand tutorial feature -->
+    <string name="pref_title_show_hand_tutorial">ສະແດງມືສຳລັບການເຄື່ອນທີ່ທີ່ເປັນໄປໄດ້</string>
+    <string name="pref_summary_show_hand_tutorial">ສະແດງມືທີ່ຊີ້ໄປຫາການເຄື່ອນທີ່ທີ່ເປັນໄປໄດ້ເພື່ອຊ່ວຍທ່ານຮຽນຮູ້</string>
+    <string name="hand_tutorial_dialog_title">ການສອນມື</string>
+    <string name="hand_tutorial_dialog_message">ທ່ານຍັງຕ້ອງການໃຫ້ຂ້ອຍສະແດງການເຄື່ອນທີ່ທີ່ເປັນໄປໄດ້ບໍ? ທ່ານສາມາດເປີດ ແລະ ປິດມັນໃນການຕັ້ງຄ່າໄດ້ຕະຫຼອດເວລາ.</string>
+    <string name="hand_tutorial_dialog_yes">ແມ່ນແລ້ວ, ສືບຕໍ່</string>
+    <string name="hand_tutorial_dialog_no">ບໍ່, ປິດ</string>
 </resources>
