@@ -125,8 +125,9 @@ public class Field {
             * (long) RunPlayerSprite.FRAME_DURATION_MS;
 
     // Hand tutorial constants
-    private static final int DURATION_SHOWING_HAND = 100; // milliseconds
+    private static final int DURATION_SHOWING_HAND = 500; // milliseconds
     private static final int NUMBER_OF_TIMES_TO_SHOW_HAND = 3;
+    private static final int DURATION_PAUSE_BETWEEN_CYCLES = 500; // milliseconds - pause after showing all positions
     private static final String PREF_HAND_TUTORIAL_SHOWN = "hand_tutorial_shown";
     
     // Hand tutorial state
@@ -135,6 +136,7 @@ public class Field {
     private int handTutorialCycle = 0;
     private int handTutorialPositionIndex = 0;
     private long handTutorialLastUpdateTime = 0L;
+    private boolean handTutorialInPause = false;
 
     public Field(Context current, ArrayList<MoveTo> argMoves, ArrayList<MoveTo> argPossibleMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex, boolean animationsEnabled) {
 
@@ -1426,14 +1428,27 @@ public class Field {
         long currentTime = SystemClock.uptimeMillis();
         long elapsed = currentTime - handTutorialLastUpdateTime;
 
+        // Handle pause between cycles
+        if (handTutorialInPause) {
+            if (elapsed >= DURATION_PAUSE_BETWEEN_CYCLES) {
+                // Pause is over, start next cycle
+                handTutorialInPause = false;
+                handTutorialPositionIndex = 0;
+                handTutorialLastUpdateTime = currentTime;
+                Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawHandTutorial: Pause ended, starting cycle " 
+                    + (handTutorialCycle + 1) + "/" + NUMBER_OF_TIMES_TO_SHOW_HAND);
+            }
+            // Don't draw hand during pause
+            return;
+        }
+
         // Check if it's time to move to the next position
         if (elapsed >= DURATION_SHOWING_HAND) {
             handTutorialLastUpdateTime = currentTime;
             handTutorialPositionIndex++;
 
-            // Check if we've shown all positions
+            // Check if we've shown all positions in this cycle
             if (handTutorialPositionIndex >= possibleMoves.size()) {
-                handTutorialPositionIndex = 0;
                 handTutorialCycle++;
 
                 // Check if we've completed all cycles
@@ -1442,6 +1457,14 @@ public class Field {
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawHandTutorial: Tutorial completed");
                     return;
                 }
+
+                // Start pause between cycles
+                handTutorialInPause = true;
+                handTutorialLastUpdateTime = currentTime;
+                Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawHandTutorial: Cycle " 
+                    + handTutorialCycle + "/" + NUMBER_OF_TIMES_TO_SHOW_HAND 
+                    + " completed, starting pause");
+                return;
             }
         }
 
