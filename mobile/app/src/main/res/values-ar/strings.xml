@@ -320,7 +320,7 @@
     <string name="animation_info_message">يجلب هذا الإصدار رسوم متحركة للاعبي كرة القدم! يمكن تشغيلها وإيقافها في الإعدادات.</string>
     
     <!-- Hand tutorial feature -->
-    <string name="pref_title_show_hand_tutorial">إظهار اليد للحركات الممكنة</string>
+    <string name="pref_title_show_hand_tutorial">إظهار الحركات الممكنة</string>
     <string name="pref_summary_show_hand_tutorial">يعرض يدًا تشير إلى الحركات الممكنة لمساعدتك على التعلم</string>
     <string name="hand_tutorial_dialog_title">دليل اليد</string>
     <string name="hand_tutorial_dialog_message">هل ما زلت تريد مني أن أريك الحركات الممكنة؟ يمكنك دائمًا تشغيله وإيقافه في الإعدادات.</string>
