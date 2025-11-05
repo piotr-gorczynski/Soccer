@@ -616,7 +616,9 @@ public class Field {
         ballTargetGridX = targetGridX;
         ballTargetGridY = targetGridY;
 
-        if (!animationsEnabled) {
+        boolean shouldAnimateBall = animationsEnabled && gameType != 3;
+
+        if (!shouldAnimateBall) {
             ballStartGridX = targetGridX;
             ballStartGridY = targetGridY;
             ballDirectionX = 0f;
