@@ -337,4 +337,12 @@
     
     <!-- Animation info dialog -->
     <string name="animation_info_message">Noocaan cusub wuxuu keenayaa dhaqdhaqaaqa ciyaartoyda kubbadda cagta! Waxaa lagu furi karaa oo lagu xidhi karaa Goobaha.</string>
+    
+    <!-- Hand tutorial feature -->
+    <string name="pref_title_show_hand_tutorial">Muuji gacan dhaqdhaqaaqyada suurtogalka ah</string>
+    <string name="pref_summary_show_hand_tutorial">Waxay muujisaa gacan tilmaamaysa dhaqdhaqaaqyada suurtogalka ah si ay kaaga caawiso barashada</string>
+    <string name="hand_tutorial_dialog_title">Tababarka Gacanta</string>
+    <string name="hand_tutorial_dialog_message">Miyaad weli rabtaa inaan ku tuso dhaqdhaqaaqyada suurtogalka ah? Weligaaba waxaad ku furi kartaa oo ku xidhi kartaa Goobaha.</string>
+    <string name="hand_tutorial_dialog_yes">Haa, sii wad</string>
+    <string name="hand_tutorial_dialog_no">Maya, xidh</string>
 </resources>

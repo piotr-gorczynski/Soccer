@@ -12,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.RectF;
 import android.os.SystemClock;
 import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 
 import android.text.TextPaint;
 import android.text.TextUtils;
@@ -123,17 +124,32 @@ public class Field {
 
     // Hand tutorial constants
     private static final int DURATION_SHOWING_HAND = 1000; // milliseconds
-    private static final int NUMBER_OF_TIMES_TO_SHOW_HAND = 3;
     private static final int INITIAL_MOVE_COUNT = -1; // Sentinel value for first tutorial display
-    private static final String PREF_HAND_TUTORIAL_SHOWN = "hand_tutorial_shown";
+    private static final String PREF_HAND_TUTORIAL_ENABLED = "show_hand_tutorial";
+    private static final String PREF_HAND_TUTORIAL_CYCLE_COUNT = "hand_tutorial_cycle_count";
+    private static final String PREF_HAND_TUTORIAL_NEXT_THRESHOLD = "hand_tutorial_next_threshold";
+    private static final int THRESHOLD_FIRST = 3;
+    private static final int THRESHOLD_SECOND = 10;
+    private static final int THRESHOLD_THIRD = 20;
     
     // Hand tutorial state
     private final Bitmap handBitmap;
+    private final SharedPreferences prefs;
     private boolean showHandTutorial = false;
     private int handTutorialCycle = 0;
     private int handTutorialPositionIndex = 0;
     private long handTutorialLastUpdateTime = 0L;
     private int handTutorialLastMoveCount = INITIAL_MOVE_COUNT; // Track the number of moves when tutorial was last shown
+    private HandTutorialDialogCallback dialogCallback = null;
+    
+    // Callback interface for requesting dialog
+    public interface HandTutorialDialogCallback {
+        void onRequestHandTutorialDialog();
+    }
+    
+    public void setHandTutorialDialogCallback(HandTutorialDialogCallback callback) {
+        this.dialogCallback = callback;
+    }
 
     public Field(Context current, ArrayList<MoveTo> argMoves, ArrayList<MoveTo> argPossibleMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex, boolean animationsEnabled) {
 
@@ -291,18 +307,21 @@ public class Field {
         }
         handBitmap = tempHandBitmap;
 
-        // Check if this is first time user and should show hand tutorial
-        SharedPreferences prefs = current.getSharedPreferences("SoccerPrefs", Context.MODE_PRIVATE);
-        boolean tutorialShown = prefs.getBoolean(PREF_HAND_TUTORIAL_SHOWN, false);
+        // Initialize preferences
+        prefs = PreferenceManager.getDefaultSharedPreferences(current);
         
-        // Show tutorial only for first-time users in game type 1 or 2
-        if (!tutorialShown && (argGameType == 1 || argGameType == 2)) {
+        // Check if hand tutorial is enabled in settings (default is true)
+        boolean handTutorialEnabled = prefs.getBoolean(PREF_HAND_TUTORIAL_ENABLED, true);
+        
+        // Show tutorial if enabled and in appropriate game type (1 or 2)
+        if (handTutorialEnabled && (argGameType == 1 || argGameType == 2)) {
             showHandTutorial = true;
             handTutorialLastUpdateTime = SystemClock.uptimeMillis();
-            Log.d("TAG_Soccer", getClass().getSimpleName() + ".<init>: Hand tutorial will be shown for first-time user");
-            
-            // Mark tutorial as shown
-            prefs.edit().putBoolean(PREF_HAND_TUTORIAL_SHOWN, true).apply();
+            // Load the current cycle count from preferences
+            handTutorialCycle = prefs.getInt(PREF_HAND_TUTORIAL_CYCLE_COUNT, 0);
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".<init>: Hand tutorial enabled, current cycle count: " + handTutorialCycle);
+        } else {
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".<init>: Hand tutorial disabled or wrong game type");
         }
 
 
@@ -1411,11 +1430,24 @@ public class Field {
                 // Not the first move - increment cycle counter
                 handTutorialCycle++;
                 
-                // Check if we've completed all cycles
-                if (handTutorialCycle >= NUMBER_OF_TIMES_TO_SHOW_HAND) {
+                // Save the updated cycle count to preferences
+                prefs.edit().putInt(PREF_HAND_TUTORIAL_CYCLE_COUNT, handTutorialCycle).apply();
+                
+                // Get the next threshold to check
+                int nextThreshold = prefs.getInt(PREF_HAND_TUTORIAL_NEXT_THRESHOLD, THRESHOLD_FIRST);
+                
+                // Check if we've reached a threshold where we should ask the user
+                if (handTutorialCycle >= nextThreshold) {
+                    // Stop showing tutorial temporarily and request dialog
                     showHandTutorial = false;
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawHandTutorial: Tutorial completed after " 
-                        + NUMBER_OF_TIMES_TO_SHOW_HAND + " cycles");
+                    
+                    // Request dialog from GameActivity
+                    if (dialogCallback != null) {
+                        dialogCallback.onRequestHandTutorialDialog();
+                    }
+                    
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawHandTutorial: Reached threshold " 
+                        + nextThreshold + " cycles, requesting dialog");
                     return;
                 }
             }
@@ -1425,7 +1457,7 @@ public class Field {
             handTutorialPositionIndex = 0;
             handTutorialLastUpdateTime = SystemClock.uptimeMillis();
             Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawHandTutorial: Starting cycle " 
-                + (handTutorialCycle + 1) + "/" + NUMBER_OF_TIMES_TO_SHOW_HAND + " for move " + currentMoveCount 
+                + (handTutorialCycle + 1) + " for move " + currentMoveCount 
                 + " (player " + currentTurn + ")");
         }
 
@@ -1440,11 +1472,10 @@ public class Field {
             // Check if we've shown all positions in this cycle
             if (handTutorialPositionIndex >= possibleMoves.size()) {
                 // Cycle complete, wait for next move to start new cycle
-                // Position index will remain >= size, so the drawing check below (line 1469) will skip rendering
-                // until handTutorialPositionIndex is reset to 0 when a new move is detected
+                // Position index will remain >= size, so the conditional check at the end of this method
+                // will skip rendering until handTutorialPositionIndex is reset to 0 when a new move is detected
                 Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawHandTutorial: Cycle " 
-                    + (handTutorialCycle + 1) + "/" + NUMBER_OF_TIMES_TO_SHOW_HAND 
-                    + " completed, waiting for next move");
+                    + (handTutorialCycle + 1) + " completed, waiting for next move");
                 return;
             }
         }
@@ -1472,7 +1503,37 @@ public class Field {
             
             Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawHandTutorial: Drawing hand at position " 
                 + handTutorialPositionIndex + "/" + possibleMoves.size() 
-                + ", cycle " + (handTutorialCycle + 1) + "/" + NUMBER_OF_TIMES_TO_SHOW_HAND);
+                + ", cycle " + (handTutorialCycle + 1));
+        }
+    }
+    
+    // Method to be called when user responds to dialog
+    public void onHandTutorialDialogResponse(boolean continueShowing) {
+        if (continueShowing) {
+            // User wants to continue - update threshold and re-enable tutorial
+            int currentThreshold = prefs.getInt(PREF_HAND_TUTORIAL_NEXT_THRESHOLD, THRESHOLD_FIRST);
+            int newThreshold;
+            
+            if (currentThreshold == THRESHOLD_FIRST) {
+                newThreshold = THRESHOLD_SECOND;
+            } else if (currentThreshold == THRESHOLD_SECOND) {
+                newThreshold = THRESHOLD_THIRD;
+            } else {
+                // After third threshold, set a very high value (effectively infinite)
+                newThreshold = Integer.MAX_VALUE;
+            }
+            
+            prefs.edit().putInt(PREF_HAND_TUTORIAL_NEXT_THRESHOLD, newThreshold).apply();
+            showHandTutorial = true;
+            handTutorialLastUpdateTime = SystemClock.uptimeMillis();
+            
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".onHandTutorialDialogResponse: User chose to continue, next threshold: " + newThreshold);
+        } else {
+            // User wants to turn it off - disable in settings
+            prefs.edit().putBoolean(PREF_HAND_TUTORIAL_ENABLED, false).apply();
+            showHandTutorial = false;
+            
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".onHandTutorialDialogResponse: User chose to disable hand tutorial");
         }
     }
 

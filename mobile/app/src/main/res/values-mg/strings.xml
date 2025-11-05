@@ -337,4 +337,12 @@
     
     <!-- Animation info dialog -->
     <string name="animation_info_message">Ity dikan-teny ity dia mitondra fihetsehana momba ny mpilalao baolina kitra! Azo atao ny manokatra sy manidy ao amin\'ny Fandrindrana.</string>
+    
+    <!-- Hand tutorial feature -->
+    <string name="pref_title_show_hand_tutorial">Asehoy ny tanana ho an\'ny fihetsika azo atao</string>
+    <string name="pref_summary_show_hand_tutorial">Mampiseho tanana manondro ny fihetsika azo atao mba hanampy anao hianarana</string>
+    <string name="hand_tutorial_dialog_title">Fampianarana Tanana</string>
+    <string name="hand_tutorial_dialog_message">Mbola tianao ve ny hasehoko aminao ny fihetsika azo atao? Azonao atao mandrakariva ny manokatra sy manidy azy ao amin\'ny Fandrindrana.</string>
+    <string name="hand_tutorial_dialog_yes">Eny, tohizana</string>
+    <string name="hand_tutorial_dialog_no">Tsia, hidio</string>
 </resources>

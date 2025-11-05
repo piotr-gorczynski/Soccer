@@ -337,4 +337,12 @@
     
     <!-- Animation info dialog -->
     <string name="animation_info_message">ဒီဗားရှင်းက ဘောလုံးကစားသမားများ၏ လှုပ်ရှားမှုပုံများ ပါဝင်ပါတယ်။ ဆက်တင်များတွင် ၎င်းတို့ကို ဖွင့်နှင့် ပိတ်နိုင်ပါသည်။</string>
+    
+    <!-- Hand tutorial feature -->
+    <string name="pref_title_show_hand_tutorial">ဖြစ်နိုင်သော ရွှေ့လျားမှုများအတွက် လက်ပြပါ</string>
+    <string name="pref_summary_show_hand_tutorial">သင့်ကို သင်ယူရာတွင် ကူညီရန် ဖြစ်နိုင်သော ရွှေ့လျားမှုများကို ညွှန်ပြသော လက်ကို ပြသပါသည်</string>
+    <string name="hand_tutorial_dialog_title">လက် ကျူတိုရီရယ်</string>
+    <string name="hand_tutorial_dialog_message">သင့်ကို ဖြစ်နိုင်သော ရွှေ့လျားမှုများ ပြသဖို့ သင် လိုချင်သေးလား? ဆက်တင်များတွင် ၎င်းကို အမြဲတမ်း ဖွင့်နှင့် ပိတ်နိုင်ပါသည်။</string>
+    <string name="hand_tutorial_dialog_yes">ဟုတ်ကဲ့၊ ဆက်လုပ်ပါ</string>
+    <string name="hand_tutorial_dialog_no">မဟုတ်ပါ၊ ပိတ်ပါ</string>
 </resources>
