@@ -118,8 +118,8 @@ public class Field {
     private static final float ACTIVE_SPRITE_PROXIMITY_RATIO = 0.7f;
     private static final int RUN_DELAY_CYCLES = 1;
     private static final float SPRITE_DIRECTION_EPSILON = 0.0001f;
-    private static final long BALL_DEFAULT_DURATION_MS = Math.max(1, RunPlayerSprite.FRAME_COUNT)
-            * (long) RunPlayerSprite.FRAME_DURATION_MS;
+    private static final long BALL_DEFAULT_DURATION_MS = 10
+            * RunPlayerSprite.FRAME_DURATION_MS;
 
     // Hand tutorial constants
     private static final int DURATION_SHOWING_HAND = 1000; // milliseconds
@@ -435,7 +435,7 @@ public class Field {
                 float ballRadius = lastRunBallRadius;
 
                 if (movingPlayer == 0) {
-                    float startProximity = previous.P == 0 ? 1f : 0f;
+                    float startProximity = 1f;
                     float endProximity = next.P == 0 ? 1f : 0f;
 
                     float startFarTop = startCenterY + ballRadius;
@@ -451,7 +451,7 @@ public class Field {
                     spriteDeltaX = endCenterX - startCenterX;
                     spriteDeltaY = endBottom - startBottom;
                 } else {
-                    float startProximity = previous.P == 1 ? 1f : 0f;
+                    float startProximity = 1f;
                     float endProximity = next.P == 1 ? 1f : 0f;
 
                     float startFarBottom = startCenterY - ballRadius;
@@ -630,14 +630,9 @@ public class Field {
             ballDirectionY = 0f;
         }
 
-        long durationMs = frameCount > 0
-                ? frameCount * (long) RunPlayerSprite.FRAME_DURATION_MS
+        ballAnimationDurationMs = frameCount > 0
+                ? frameCount * RunPlayerSprite.FRAME_DURATION_MS
                 : BALL_DEFAULT_DURATION_MS;
-        if (durationMs <= 0L) {
-            durationMs = BALL_DEFAULT_DURATION_MS;
-        }
-
-        ballAnimationDurationMs = durationMs;
         ballAnimationStartTime = SystemClock.uptimeMillis();
         ballAnimationActive = true;
     }
@@ -651,7 +646,7 @@ public class Field {
         float normalized = (float) clampedElapsed / (float) durationMs;
         float progress = (2f * normalized) - (normalized * normalized);
         float distance = totalDistance * progress;
-        return clamp(distance, 0f, totalDistance);
+        return clamp(distance, totalDistance);
     }
 
     private void drawRunAnimation(Canvas canvas, float ballRadius) {
@@ -729,7 +724,7 @@ public class Field {
                 runRedCompleted = true;
                 redFrame = null;
             }
-        } else if (runRedCompleted) {
+        } else {
             redFrame = null;
         }
 
@@ -741,22 +736,20 @@ public class Field {
                 runBlueCompleted = true;
                 blueFrame = null;
             }
-        } else if (runBlueCompleted) {
+        } else {
             blueFrame = null;
         }
-
-        boolean drewFrame = false;
 
         float redAnimationProgress = computeAnimationProgress(redFrameIndex, redFrameCount, redDistanceTraveled);
         float blueAnimationProgress = computeAnimationProgress(blueFrameIndex, blueFrameCount, blueDistanceTraveled);
 
         float blueStartProximity = runStartBlueCloser ? 1f : 0f;
         float blueEndProximity = runTargetBlueCloser ? 1f : 0f;
-        float blueProximity = clamp(lerp(blueStartProximity, blueEndProximity, blueAnimationProgress), 0f, 1f);
+        float blueProximity = clamp(lerp(blueStartProximity, blueEndProximity, blueAnimationProgress), 1f);
 
         float redStartProximity = runStartRedCloser ? 1f : 0f;
         float redEndProximity = runTargetRedCloser ? 1f : 0f;
-        float redProximity = clamp(lerp(redStartProximity, redEndProximity, redAnimationProgress), 0f, 1f);
+        float redProximity = clamp(lerp(redStartProximity, redEndProximity, redAnimationProgress), 1f);
 
         float redGridX = runStartGridX + runDirectionX * redDistanceTraveled;
         float redGridY = runStartGridY + runDirectionY * redDistanceTraveled;
@@ -790,7 +783,6 @@ public class Field {
                 float blueRight = blueCenterX + blueWidth / 2f;
                 RectF blueDst = new RectF(blueLeft, blueTop, blueRight, blueBottom);
                 canvas.drawBitmap(blueFrame, null, blueDst, null);
-                drewFrame = true;
                 runBlueFrameVisible = true;
             }
         }
@@ -814,19 +806,11 @@ public class Field {
                 float redRight = redCenterX + redWidth / 2f;
                 RectF redDst = new RectF(redLeft, redTop, redRight, redBottom);
                 canvas.drawBitmap(redFrame, null, redDst, null);
-                drewFrame = true;
                 runRedFrameVisible = true;
             }
         }
 
         if ((!redHasFrames || runRedCompleted) && (!blueHasFrames || runBlueCompleted)) {
-            stopRunAnimation(now);
-            return;
-        }
-
-        boolean redPending = redHasFrames && !runRedCompleted;
-        boolean bluePending = blueHasFrames && !runBlueCompleted;
-        if (!drewFrame && !redPending && !bluePending) {
             stopRunAnimation(now);
             return;
         }
@@ -840,8 +824,8 @@ public class Field {
         return start + (end - start) * t;
     }
 
-    private static float clamp(float value, float min, float max) {
-        return Math.max(min, Math.min(max, value));
+    private static float clamp(float value, float max) {
+        return Math.max((float) 0.0, Math.min(max, value));
     }
 
     private float computeDistanceForFrameIndex(int frameIndex, int frameCount, float totalDistance, boolean advanceImmediately) {
@@ -862,11 +846,11 @@ public class Field {
             return 0f;
         }
         if (runTotalDistance > 0f) {
-            return clamp(distanceTraveled / runTotalDistance, 0f, 1f);
+            return clamp(distanceTraveled / runTotalDistance, 1f);
         }
         if (frameCount > 1) {
             int clampedIndex = Math.min(frameIndex, frameCount - 1);
-            return clamp((float) clampedIndex / (float) (frameCount - 1), 0f, 1f);
+            return clamp((float) clampedIndex / (float) (frameCount - 1), 1f);
         }
         return 1f;
     }
@@ -1056,9 +1040,8 @@ public class Field {
 
             float ease01 = (1f - (float) Math.cos(progress * 2f * (float) Math.PI)) / 2f;
 
-            float minSize = dotSize;
             float maxSize = dotSize * animationSizeIncreasePercent;
-            pulseDotSize = minSize + (maxSize - minSize) * ease01;
+            pulseDotSize = dotSize + (maxSize - dotSize) * ease01;
 
             if (pulseDotSize < dotSize) pulseDotSize = dotSize;
         }
@@ -1102,7 +1085,7 @@ public class Field {
         float ballCenterX = w2x(ballGridX);
         float ballCenterY = h2y(ballGridY);
         float radius = dotSize * 4;
-        float radiusBackground = (float) (radius * 0.8f);
+        float radiusBackground = radius * 0.8f;
 
         lastRunBallRadius = radius;
 
@@ -1123,7 +1106,7 @@ public class Field {
         int blueFrameCount = idleBluePlayerFrames.length;
         int maxFrameCount = Math.max(redFrameCount, blueFrameCount);
 
-        if (maxFrameCount <= 0) {
+        if (maxFrameCount == 0) {
             return;
         }
 
@@ -1399,11 +1382,11 @@ public class Field {
         }
 
         // 6) Hand tutorial - show only for player turns (not Android turn)
-        drawHandTutorial(canvas, dotSize, currentTurn);
+        drawHandTutorial(canvas, currentTurn);
     }
 
-    private void drawHandTutorial(Canvas canvas, float dotSize, int currentTurn) {
-        // Only show tutorial if enabled
+    private void drawHandTutorial(Canvas canvas, int currentTurn) {
+        /* Only show tutorial if enabled */
         if (!showHandTutorial) {
             return;
         }
@@ -1480,12 +1463,11 @@ public class Field {
             
             // Position hand so its top touches the center of the circle
             float handLeft = circleCenterX - handWidth / 2f;
-            float handTop = circleCenterY;
             float handRight = handLeft + handWidth;
-            float handBottom = handTop + handHeight;
+            float handBottom = circleCenterY + handHeight;
             
             // Draw the hand
-            RectF handDst = new RectF(handLeft, handTop, handRight, handBottom);
+            RectF handDst = new RectF(handLeft, circleCenterY, handRight, handBottom);
             canvas.drawBitmap(handBitmap, null, handDst, null);
             
             Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawHandTutorial: Drawing hand at position " 
