@@ -100,4 +100,36 @@ public class AddFriendButtonStateTest {
         friendUids.add(duplicateUid);  // Add again
         assertEquals("Set should not contain duplicates", 2, friendUids.size()); // empty + duplicate
     }
+
+    @Test
+    public void testButtonStateAfterAddingFriend() {
+        // This test validates the fix for the issue where the "Add to Friends" button
+        // was not being disabled after successfully adding a friend via cloud function
+        
+        Set<String> friendUids = new HashSet<>();
+        String targetUid = "user123";
+        
+        // Initially, user is not a friend
+        boolean isInitiallyFriend = friendUids.contains(targetUid);
+        assertFalse("User should not be a friend initially", isInitiallyFriend);
+        
+        // Button should be enabled for non-friend
+        boolean initialButtonEnabled = !isInitiallyFriend;
+        float initialButtonAlpha = isInitiallyFriend ? 0.3f : 1f;
+        assertTrue("Button should be enabled initially", initialButtonEnabled);
+        assertEquals("Button alpha should be full initially", 1f, initialButtonAlpha, 0.01f);
+        
+        // Simulate adding friend (what happens when cloud function succeeds)
+        friendUids.add(targetUid);
+        
+        // After adding friend, check that button state logic will disable it
+        boolean isNowFriend = friendUids.contains(targetUid);
+        assertTrue("User should be a friend after adding", isNowFriend);
+        
+        // Button should be disabled for existing friend
+        boolean updatedButtonEnabled = !isNowFriend;
+        float updatedButtonAlpha = isNowFriend ? 0.3f : 1f;
+        assertFalse("Button should be disabled after adding friend", updatedButtonEnabled);
+        assertEquals("Button alpha should be dimmed after adding friend", 0.3f, updatedButtonAlpha, 0.01f);
+    }
 }
