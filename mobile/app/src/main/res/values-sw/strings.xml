@@ -339,7 +339,7 @@
     <string name="animation_info_message">Toleo hili linaleta uhuishaji wa wachezaji wa mpira wa miguu! Zinaweza kuwashwa na kuzimwa katika Mipangilio.</string>
     
     <!-- Hand tutorial feature -->
-    <string name="pref_title_show_hand_tutorial">Onyesha mkono kwa harakati zinazowezekana</string>
+    <string name="pref_title_show_hand_tutorial">Onyesha harakati zinazowezekana</string>
     <string name="pref_summary_show_hand_tutorial">Huonyesha mkono unaoonyesha harakati zinazowezekana kukusaidia kujifunza</string>
     <string name="hand_tutorial_dialog_title">Mafunzo ya Mkono</string>
     <string name="hand_tutorial_dialog_message">Je, bado unataka nikuonyeshe harakati zinazowezekana? Unaweza kuizima na kuiwasha wakati wowote katika Mipangilio.</string>

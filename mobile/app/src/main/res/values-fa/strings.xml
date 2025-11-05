@@ -320,7 +320,7 @@
     <string name="animation_info_message">این نسخه انیمیشن بازیکنان فوتبال را به ارمغان می‌آورد! می‌توانید آن‌ها را در تنظیمات فعال یا غیرفعال کنید.</string>
     
     <!-- Hand tutorial feature -->
-    <string name="pref_title_show_hand_tutorial">نمایش دست برای حرکات ممکن</string>
+    <string name="pref_title_show_hand_tutorial">نمایش حرکات ممکن</string>
     <string name="pref_summary_show_hand_tutorial">دستی را نمایش می‌دهد که به حرکات ممکن اشاره می‌کند تا به شما در یادگیری کمک کند</string>
     <string name="hand_tutorial_dialog_title">آموزش دست</string>
     <string name="hand_tutorial_dialog_message">آیا همچنان می‌خواهید حرکات ممکن را به شما نشان دهم؟ همیشه می‌توانید آن را در تنظیمات فعال یا غیرفعال کنید.</string>
