@@ -132,7 +132,7 @@ public class Field {
     private int handTutorialCycle = 0;
     private int handTutorialPositionIndex = 0;
     private long handTutorialLastUpdateTime = 0L;
-    private int handTutorialLastTurn = -1; // Track the turn when tutorial was last shown
+    private int handTutorialLastMoveCount = -1; // Track the number of moves when tutorial was last shown
 
     public Field(Context current, ArrayList<MoveTo> argMoves, ArrayList<MoveTo> argPossibleMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex, boolean animationsEnabled) {
 
@@ -1418,11 +1418,13 @@ public class Field {
             return;
         }
 
-        // Check if the turn has changed - if so, start a new cycle
-        if (handTutorialLastTurn != currentTurn) {
-            // Turn has changed - check if we should continue or stop
-            if (handTutorialLastTurn != -1) {
-                // Not the first turn - increment cycle counter
+        int currentMoveCount = Moves.size();
+        
+        // Check if a new move has been made - if so, start a new cycle
+        if (handTutorialLastMoveCount != currentMoveCount) {
+            // New move detected - check if we should continue or stop
+            if (handTutorialLastMoveCount != -1) {
+                // Not the first move - increment cycle counter
                 handTutorialCycle++;
                 
                 // Check if we've completed all cycles
@@ -1434,12 +1436,13 @@ public class Field {
                 }
             }
             
-            // Reset for the new turn/cycle
-            handTutorialLastTurn = currentTurn;
+            // Reset for the new move/cycle
+            handTutorialLastMoveCount = currentMoveCount;
             handTutorialPositionIndex = 0;
             handTutorialLastUpdateTime = SystemClock.uptimeMillis();
             Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawHandTutorial: Starting cycle " 
-                + (handTutorialCycle + 1) + "/" + NUMBER_OF_TIMES_TO_SHOW_HAND + " on turn change to player " + currentTurn);
+                + (handTutorialCycle + 1) + "/" + NUMBER_OF_TIMES_TO_SHOW_HAND + " for move " + currentMoveCount 
+                + " (player " + currentTurn + ")");
         }
 
         long currentTime = SystemClock.uptimeMillis();
@@ -1452,12 +1455,12 @@ public class Field {
 
             // Check if we've shown all positions in this cycle
             if (handTutorialPositionIndex >= possibleMoves.size()) {
-                // Cycle complete, stop showing until next turn change
-                // We don't increment handTutorialCycle here - that happens on turn change
+                // Cycle complete, stop showing until next move
+                // We don't increment handTutorialCycle here - that happens on move change
                 handTutorialPositionIndex = possibleMoves.size(); // Keep at end to stop drawing
                 Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawHandTutorial: Cycle " 
                     + (handTutorialCycle + 1) + "/" + NUMBER_OF_TIMES_TO_SHOW_HAND 
-                    + " completed, waiting for next turn");
+                    + " completed, waiting for next move");
                 return;
             }
         }
