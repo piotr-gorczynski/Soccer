@@ -11,7 +11,7 @@
     <string name="pref_title_block_invite_friend">Block `Invite a Friend` requests</string>
     <string name="pref_summary_block_invite_friend">Other players cannot invite you via `Invite a Friend` (tournaments not affected)</string>
     <string name="pref_title_ads_consent">Personalized ads consent</string>
-    <string name="pref_summary_ads_consent">Review or change your consent for displaying personlized ads</string>
+    <string name="pref_summary_ads_consent">Review or change your consent for displaying personalized ads</string>
     <string name="pref_title_language">Language</string>
     <string name="pref_summary_language">Choose your preferred language</string>
     <string name="current_language">Current: %1$s</string>
