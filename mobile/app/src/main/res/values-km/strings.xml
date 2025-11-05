@@ -334,4 +334,15 @@
     <string name="user_blocked_invites">អ្នកប្រើបានទប់ស្កាត់ការអញ្ជើញ</string>
     <string name="cannot_invite_this_user">មិនអាចអញ្ជើញអ្នកប្រើនេះបានទេ</string>
     <string name="failed_to_load_terms">បរាជ័យក្នុងការផ្ទុកលក្ខខណ្ឌ</string>
+    
+    <!-- Animation info dialog -->
+    <string name="animation_info_message">កំណែនេះនាំមកនូវចលនាគំនូរនៃកីឡាករបាល់ទាត់! ពួកវាអាចបើក និងបិទក្នុងការកំណត់។</string>
+    
+    <!-- Hand tutorial feature -->
+    <string name="pref_title_show_hand_tutorial">បង្ហាញចលនាដែលអាចធ្វើបាន</string>
+    <string name="pref_summary_show_hand_tutorial">បង្ហាញដៃដែលចង្អុលទៅកាន់ចលនាដែលអាចធ្វើបានដើម្បីជួយអ្នកក្នុងការរៀន</string>
+    <string name="hand_tutorial_dialog_title">ការបង្រៀន</string>
+    <string name="hand_tutorial_dialog_message">តើអ្នកនៅតែចង់ឱ្យខ្ញុំបង្ហាញចលនាដែលអាចធ្វើបានទៀតទេ? អ្នកអាចបើក និងបិទវានៅក្នុងការកំណត់បានគ្រប់ពេល។</string>
+    <string name="hand_tutorial_dialog_yes">បាទ/ចាស បន្ត</string>
+    <string name="hand_tutorial_dialog_no">ទេ បិទ</string>
 </resources>

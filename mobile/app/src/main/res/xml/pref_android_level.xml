@@ -30,6 +30,13 @@
             android:defaultValue="true"
             android:icon="@android:drawable/ic_media_play" />
 
+        <CheckBoxPreference
+            android:key="show_hand_tutorial"
+            android:title="@string/pref_title_show_hand_tutorial"
+            android:summary="@string/pref_summary_show_hand_tutorial"
+            android:defaultValue="true"
+            android:icon="@android:drawable/ic_menu_help" />
+
         <Preference
             android:key="language_preference"
             android:title="@string/pref_title_language"

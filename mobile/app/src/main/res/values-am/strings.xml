@@ -334,4 +334,15 @@
     <string name="user_blocked_invites">ተጠቃሚ ግብዣዎችን አግዷል</string>
     <string name="cannot_invite_this_user">ይህን ተጠቃሚ ግብዣ ልላክ አልችልም</string>
     <string name="failed_to_load_terms">ውሎችና ሁኔታዎችን ማጫን አልተሳካም</string>
+    
+    <!-- Animation info dialog -->
+    <string name="animation_info_message">ይህ ስሪት የእግር ኳስ ተጫዋቾችን አኒሜሽን ያመጣል! በቅንብሮች ውስጥ ማብራት እና ማጥፋት ይቻላል።</string>
+    
+    <!-- Hand tutorial feature -->
+    <string name="pref_title_show_hand_tutorial">ሊሆኑ የሚችሉ እንቅስቃሴዎች አሳይ</string>
+    <string name="pref_summary_show_hand_tutorial">ለመማር እንዲረዳዎት ሊሆኑ የሚችሉ እንቅስቃሴዎችን የሚያሳይ እጅ ያሳያል</string>
+    <string name="hand_tutorial_dialog_title">ስልጠና</string>
+    <string name="hand_tutorial_dialog_message">አሁንም ሊሆኑ የሚችሉ እንቅስቃሴዎችን እንድሳይዎት ይፈልጋሉ? ሁልጊዜ በቅንብሮች ውስጥ ማብራት እና ማጥፋት ይችላሉ።</string>
+    <string name="hand_tutorial_dialog_yes">አዎ፣ ቀጥል</string>
+    <string name="hand_tutorial_dialog_no">አይ፣ አጥፋ</string>
 </resources>

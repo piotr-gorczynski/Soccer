@@ -334,4 +334,15 @@
     <string name="cannot_invite_this_user">Haiwezekani kumwalika mtumiaji huyu</string>
 
     <string name="failed_to_load_terms">Imeshindwa kupakia masharti na hali</string>
+    
+    <!-- Animation info dialog -->
+    <string name="animation_info_message">Toleo hili linaleta uhuishaji wa wachezaji wa mpira wa miguu! Zinaweza kuwashwa na kuzimwa katika Mipangilio.</string>
+    
+    <!-- Hand tutorial feature -->
+    <string name="pref_title_show_hand_tutorial">Onyesha harakati zinazowezekana</string>
+    <string name="pref_summary_show_hand_tutorial">Huonyesha mkono unaoonyesha harakati zinazowezekana kukusaidia kujifunza</string>
+    <string name="hand_tutorial_dialog_title">Mafunzo</string>
+    <string name="hand_tutorial_dialog_message">Je, bado unataka nikuonyeshe harakati zinazowezekana? Unaweza kuizima na kuiwasha wakati wowote katika Mipangilio.</string>
+    <string name="hand_tutorial_dialog_yes">Ndiyo, endelea</string>
+    <string name="hand_tutorial_dialog_no">Hapana, zima</string>
 </resources>

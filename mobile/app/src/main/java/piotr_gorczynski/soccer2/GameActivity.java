@@ -486,6 +486,11 @@ public class GameActivity extends BaseActivity {
                 finish();
                 return;
             }
+            
+            // Set up hand tutorial dialog callback for GameType 1 and 2
+            if (gameView != null && gameView.getField() != null) {
+                gameView.getField().setHandTutorialDialogCallback(this::showHandTutorialDialog);
+            }
 
         }
 
@@ -919,7 +924,36 @@ public class GameActivity extends BaseActivity {
                         .show();
             }
         });
+        
+        // Set up hand tutorial dialog callback
+        if (gameView != null && gameView.getField() != null) {
+            gameView.getField().setHandTutorialDialogCallback(this::showHandTutorialDialog);
+        }
 
+    }
+    
+    /**
+     * Show dialog asking user if they want to continue showing hand tutorial
+     */
+    private void showHandTutorialDialog() {
+        runOnUiThread(() -> {
+            AlertDialog dialog = new AlertDialog.Builder(this)
+                    .setTitle(R.string.hand_tutorial_dialog_title)
+                    .setMessage(R.string.hand_tutorial_dialog_message)
+                    .setPositiveButton(R.string.hand_tutorial_dialog_yes, (d, which) -> {
+                        if (gameView != null && gameView.getField() != null) {
+                            gameView.getField().onHandTutorialDialogResponse(true);
+                        }
+                    })
+                    .setNegativeButton(R.string.hand_tutorial_dialog_no, (d, which) -> {
+                        if (gameView != null && gameView.getField() != null) {
+                            gameView.getField().onHandTutorialDialogResponse(false);
+                        }
+                    })
+                    .setCancelable(false)
+                    .create();
+            dialog.show();
+        });
     }
 
     private void onMovesUpdate(QuerySnapshot snapshot, FirebaseFirestoreException e) {

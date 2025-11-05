@@ -358,10 +358,11 @@ public class InvitationsActivity extends BaseActivity {
             pastInvitesSub.remove();
         }
 
+        // Query without orderBy to avoid requiring complex composite index with whereIn
+        // We'll sort the results client-side instead
         Query query = db.collection("invitations")
                 .whereEqualTo("to", currentUserId)
-                .whereIn("status", java.util.Arrays.asList("accepted", "cancelled", "expired"))
-                .orderBy("createdAt", Query.Direction.DESCENDING);
+                .whereIn("status", java.util.Arrays.asList("accepted", "cancelled", "expired"));
 
         pastInvitesSub = query.addSnapshotListener((querySnapshot, e) -> {
                     if (e != null) {
@@ -376,6 +377,20 @@ public class InvitationsActivity extends BaseActivity {
                     for (DocumentSnapshot doc : Objects.requireNonNull(querySnapshot)) {
                         pastInvitesList.add(doc);
                     }
+
+                    // Sort by createdAt descending (newest first) - done client-side to avoid
+                    // needing a complex composite index when using whereIn with orderBy
+                    pastInvitesList.sort((left, right) -> {
+                        Timestamp leftCreatedAt = left.getTimestamp("createdAt");
+                        Timestamp rightCreatedAt = right.getTimestamp("createdAt");
+
+                        // Use Long.MAX_VALUE for null timestamps to sort them at the end
+                        long leftMillis = leftCreatedAt != null ? leftCreatedAt.toDate().getTime() : Long.MAX_VALUE;
+                        long rightMillis = rightCreatedAt != null ? rightCreatedAt.toDate().getTime() : Long.MAX_VALUE;
+
+                        // Descending order (newest first)
+                        return Long.compare(rightMillis, leftMillis);
+                    });
 
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".listenForPastInvites: Showing " + pastInvitesList.size() + " past invites");
                     for (DocumentSnapshot invite : pastInvitesList) {
