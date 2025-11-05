@@ -334,4 +334,15 @@
     <string name="cannot_invite_this_user">Энэ хэрэглэгчийг урих боломжгүй</string>
 
     <string name="failed_to_load_terms">Нөхцөл, болзлыг ачаалж чадсангүй</string>
+    
+    <!-- Animation info dialog -->
+    <string name="animation_info_message">Энэ хувилбар нь хөлбөмбөгчдийн хөдөлгөөнт дүрсийг авчирна! Тэдгээрийг Тохиргоонд асааж унтрааж болно.</string>
+    
+    <!-- Hand tutorial feature -->
+    <string name="pref_title_show_hand_tutorial">Боломжит нүүдлүүд харуулах</string>
+    <string name="pref_summary_show_hand_tutorial">Танд суралцахад туслахын тулд боломжит нүүдлүүд рүү заасан гар харуулна</string>
+    <string name="hand_tutorial_dialog_title">Заавар</string>
+    <string name="hand_tutorial_dialog_message">Та надад боломжит нүүдлүүдийг үзүүлэхийг хүсч байна уу? Та үүнийг Тохиргоонд үргэлж асааж унтрааж болно.</string>
+    <string name="hand_tutorial_dialog_yes">Тийм, үргэлжлүүлэх</string>
+    <string name="hand_tutorial_dialog_no">Үгүй, унтраах</string>
 </resources>

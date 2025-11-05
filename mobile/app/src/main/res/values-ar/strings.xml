@@ -315,4 +315,15 @@
     <string name="user_blocked_invites">المستخدم قد حظر الدعوات</string>
     <string name="cannot_invite_this_user">لا يمكن دعوة هذا المستخدم</string>
     <string name="failed_to_load_terms">فشل تحميل الشروط والأحكام</string>
+    
+    <!-- Animation info dialog -->
+    <string name="animation_info_message">يجلب هذا الإصدار رسوم متحركة للاعبي كرة القدم! يمكن تشغيلها وإيقافها في الإعدادات.</string>
+    
+    <!-- Hand tutorial feature -->
+    <string name="pref_title_show_hand_tutorial">إظهار الحركات الممكنة</string>
+    <string name="pref_summary_show_hand_tutorial">يعرض يدًا تشير إلى الحركات الممكنة لمساعدتك على التعلم</string>
+    <string name="hand_tutorial_dialog_title">دليل</string>
+    <string name="hand_tutorial_dialog_message">هل ما زلت تريد مني أن أريك الحركات الممكنة؟ يمكنك دائمًا تشغيله وإيقافه في الإعدادات.</string>
+    <string name="hand_tutorial_dialog_yes">نعم، تابع</string>
+    <string name="hand_tutorial_dialog_no">لا، أوقف التشغيل</string>
 </resources>

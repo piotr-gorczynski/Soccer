@@ -363,4 +363,15 @@
     <string name="cannot_invite_this_user">Impossible d’inviter cet utilisateur</string>
 
     <string name="failed_to_load_terms">Impossible de charger les conditions générales</string>
+    
+    <!-- Animation info dialog -->
+    <string name="animation_info_message">Cette version apporte des animations de joueurs de football ! Elles peuvent être activées et désactivées dans Paramètres.</string>
+    
+    <!-- Hand tutorial feature -->
+    <string name="pref_title_show_hand_tutorial">Afficher les mouvements possibles</string>
+    <string name="pref_summary_show_hand_tutorial">Affiche une main pointant vers les mouvements possibles pour vous aider à apprendre</string>
+    <string name="hand_tutorial_dialog_title">Tutoriel</string>
+    <string name="hand_tutorial_dialog_message">Voulez-vous toujours que je vous montre les mouvements possibles ? Vous pouvez toujours l\'activer et le désactiver dans Paramètres.</string>
+    <string name="hand_tutorial_dialog_yes">Oui, continuer</string>
+    <string name="hand_tutorial_dialog_no">Non, désactiver</string>
 </resources>

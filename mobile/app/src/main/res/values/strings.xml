@@ -11,7 +11,7 @@
     <string name="pref_title_block_invite_friend">Block `Invite a Friend` requests</string>
     <string name="pref_summary_block_invite_friend">Other players cannot invite you via `Invite a Friend` (tournaments not affected)</string>
     <string name="pref_title_ads_consent">Personalized ads consent</string>
-    <string name="pref_summary_ads_consent">Review or change your consent for displaying personlized ads</string>
+    <string name="pref_summary_ads_consent">Review or change your consent for displaying personalized ads</string>
     <string name="pref_title_language">Language</string>
     <string name="pref_summary_language">Choose your preferred language</string>
     <string name="current_language">Current: %1$s</string>
@@ -359,4 +359,15 @@
     <string name="user_blocked_invites">User has blocked invites</string>
     <string name="cannot_invite_this_user">Cannot invite this user</string>
     <string name="failed_to_load_terms">Failed to load terms and conditions</string>
+    
+    <!-- Animation info dialog -->
+    <string name="animation_info_message">This version brings animations of soccer players! They can be turned on and off in Settings.</string>
+    
+    <!-- Hand tutorial feature -->
+    <string name="pref_title_show_hand_tutorial">Show possible moves</string>
+    <string name="pref_summary_show_hand_tutorial">Display a hand pointing to possible moves to help you learn</string>
+    <string name="hand_tutorial_dialog_title">Tutorial</string>
+    <string name="hand_tutorial_dialog_message">Do you still want me to show you possible moves? You can always turn it off and on in Settings.</string>
+    <string name="hand_tutorial_dialog_yes">Yes, continue</string>
+    <string name="hand_tutorial_dialog_no">No, turn it off</string>
 </resources>

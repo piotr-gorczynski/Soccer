@@ -1,6 +1,7 @@
 package piotr_gorczynski.soccer2;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -11,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.RectF;
 import android.os.SystemClock;
 import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 
 import android.text.TextPaint;
 import android.text.TextUtils;
@@ -71,6 +73,7 @@ public class Field {
     private long remainingTime0, remainingTime1;
 
     private Long turnStartTime;
+    private final boolean animationsEnabled;
     private final boolean showIdlePlayerSprite;
     private int idlePlayerFrameIndex = 0;
     private long idlePlayerLastFrameTime = 0L;
@@ -81,8 +84,6 @@ public class Field {
     private float runStartGridY = 0f;
     private float runDirectionX = 0f;
     private float runDirectionY = 0f;
-    private float runTargetGridX = 0f;
-    private float runTargetGridY = 0f;
     private float runTotalDistance = 0f;
     private int runFrameLimit = RunPlayerSprite.FRAME_COUNT;
     private boolean runStartRedCloser = false;
@@ -96,6 +97,19 @@ public class Field {
     private boolean runBlueCompleted = false;
     private float lastRunSpriteHeight = 0f;
     private float lastRunBallRadius = 0f;
+    private boolean runRedFrameVisible = false;
+    private boolean runBlueFrameVisible = false;
+
+    private boolean ballAnimationActive = false;
+    private long ballAnimationStartTime = 0L;
+    private float ballStartGridX = 0f;
+    private float ballStartGridY = 0f;
+    private float ballTargetGridX = 0f;
+    private float ballTargetGridY = 0f;
+    private float ballDirectionX = 0f;
+    private float ballDirectionY = 0f;
+    private float ballTotalDistance = 0f;
+    private long ballAnimationDurationMs = 0L;
 
     private static final int RUN_FRAME_COUNT = RunPlayerSprite.FRAME_COUNT;
     private static final float RUN_FRAME_STEP_DISTANCE = RUN_FRAME_COUNT > 0
@@ -103,8 +117,39 @@ public class Field {
             : 0f;
     private static final float RUN_DESTINATION_EPSILON = 0.001f;
     private static final float ACTIVE_SPRITE_PROXIMITY_RATIO = 0.7f;
-    private static final int RUN_DELAY_CYCLES = 10;
+    private static final int RUN_DELAY_CYCLES = 1;
     private static final float SPRITE_DIRECTION_EPSILON = 0.0001f;
+    private static final long BALL_DEFAULT_DURATION_MS = 10
+            * RunPlayerSprite.FRAME_DURATION_MS;
+
+    // Hand tutorial constants
+    private static final int DURATION_SHOWING_HAND = 1000; // milliseconds
+    private static final int INITIAL_MOVE_COUNT = -1; // Sentinel value for first tutorial display
+    private static final String PREF_HAND_TUTORIAL_ENABLED = "show_hand_tutorial";
+    private static final String PREF_HAND_TUTORIAL_CYCLE_COUNT = "hand_tutorial_cycle_count";
+    private static final String PREF_HAND_TUTORIAL_NEXT_THRESHOLD = "hand_tutorial_next_threshold";
+    private static final int THRESHOLD_FIRST = 3;
+    private static final int THRESHOLD_SECOND = 10;
+    private static final int THRESHOLD_THIRD = 20;
+    
+    // Hand tutorial state
+    private final Bitmap handBitmap;
+    private final SharedPreferences prefs;
+    private boolean showHandTutorial = false;
+    private int handTutorialCycle = 0;
+    private int handTutorialPositionIndex = 0;
+    private long handTutorialLastUpdateTime = 0L;
+    private int handTutorialLastMoveCount = INITIAL_MOVE_COUNT; // Track the number of moves when tutorial was last shown
+    private HandTutorialDialogCallback dialogCallback = null;
+    
+    // Callback interface for requesting dialog
+    public interface HandTutorialDialogCallback {
+        void onRequestHandTutorialDialog();
+    }
+    
+    public void setHandTutorialDialogCallback(HandTutorialDialogCallback callback) {
+        this.dialogCallback = callback;
+    }
 
     public Field(Context current, ArrayList<MoveTo> argMoves, ArrayList<MoveTo> argPossibleMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex, boolean animationsEnabled) {
 
@@ -171,6 +216,7 @@ public class Field {
             throw new RuntimeException("Failed to load field configuration resources", e);
         }
 
+        this.animationsEnabled = animationsEnabled;
         showIdlePlayerSprite = animationsEnabled && (gameType == 1 || gameType == 2);
         if (showIdlePlayerSprite) {
             idleRedPlayerFrames = IdleRedPlayerSprite.getFrames(current);
@@ -248,7 +294,35 @@ public class Field {
             throw new RuntimeException("Failed to load ball bitmap resource", e);
         }
 
+        // Load hand bitmap for tutorial
+        Bitmap tempHandBitmap;
+        try {
+            tempHandBitmap = BitmapFactory.decodeResource(current.getResources(), R.drawable.hand);
+            if (tempHandBitmap == null) {
+                throw new RuntimeException("Hand bitmap resource returned null");
+            }
+        } catch (Exception e) {
+            Log.e("TAG_Soccer", getClass().getSimpleName() + ".<init>: Failed to load hand bitmap", e);
+            throw new RuntimeException("Failed to load hand bitmap resource", e);
+        }
+        handBitmap = tempHandBitmap;
 
+        // Initialize preferences
+        prefs = PreferenceManager.getDefaultSharedPreferences(current);
+        
+        // Check if hand tutorial is enabled in settings (default is true)
+        boolean handTutorialEnabled = prefs.getBoolean(PREF_HAND_TUTORIAL_ENABLED, true);
+        
+        // Show tutorial if enabled and in appropriate game type (1 or 2)
+        if (handTutorialEnabled && (argGameType == 1 || argGameType == 2)) {
+            showHandTutorial = true;
+            handTutorialLastUpdateTime = SystemClock.uptimeMillis();
+            // Load the current cycle count from preferences
+            handTutorialCycle = prefs.getInt(PREF_HAND_TUTORIAL_CYCLE_COUNT, 0);
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".<init>: Hand tutorial enabled, current cycle count: " + handTutorialCycle);
+        } else {
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".<init>: Hand tutorial disabled or wrong game type");
+        }
 
 
         Moves=argMoves;
@@ -348,13 +422,7 @@ public class Field {
     }
 
     public void startRunAnimation(MoveTo previous, MoveTo next) {
-        if (!showIdlePlayerSprite) {
-            return;
-        }
         if (previous == null || next == null) {
-            return;
-        }
-        if (RUN_FRAME_COUNT <= 0) {
             return;
         }
         if ((previous.X == next.X && previous.Y == next.Y)
@@ -370,6 +438,7 @@ public class Field {
 
         float totalDeltaX = flippedTargetX - flippedStartX;
         float totalDeltaY = flippedTargetY - flippedStartY;
+        float totalDistance = (float) Math.hypot(totalDeltaX, totalDeltaY);
 
         int movingPlayer = (previous.P == 0 || previous.P == 1) ? previous.P : -1;
 
@@ -385,7 +454,7 @@ public class Field {
                 float ballRadius = lastRunBallRadius;
 
                 if (movingPlayer == 0) {
-                    float startProximity = previous.P == 0 ? 1f : 0f;
+                    float startProximity = 1f;
                     float endProximity = next.P == 0 ? 1f : 0f;
 
                     float startFarTop = startCenterY + ballRadius;
@@ -401,7 +470,7 @@ public class Field {
                     spriteDeltaX = endCenterX - startCenterX;
                     spriteDeltaY = endBottom - startBottom;
                 } else {
-                    float startProximity = previous.P == 1 ? 1f : 0f;
+                    float startProximity = 1f;
                     float endProximity = next.P == 1 ? 1f : 0f;
 
                     float startFarBottom = startCenterY - ballRadius;
@@ -418,61 +487,93 @@ public class Field {
             }
         }
 
-        RunAnimationFrameSet frameSet = selectRunAnimationFrames(totalDeltaX, totalDeltaY, spriteDeltaX, spriteDeltaY);
-        if (frameSet.isEmpty()) {
-            return;
+        int movementFrameCount = RunPlayerSprite.FRAME_COUNT;
+        boolean canStartRun = showIdlePlayerSprite && RUN_FRAME_COUNT > 0;
+
+        if (canStartRun) {
+            RunAnimationFrameSet frameSet = selectRunAnimationFrames(totalDeltaX, totalDeltaY, spriteDeltaX, spriteDeltaY);
+            if (!frameSet.isEmpty()) {
+                activeRunRedPlayerFrames = frameSet.redFrames;
+                activeRunBluePlayerFrames = frameSet.blueFrames;
+                int availableRedFrames = Math.min(RUN_FRAME_COUNT, frameSet.redFrames.length);
+                int availableBlueFrames = Math.min(RUN_FRAME_COUNT, frameSet.blueFrames.length);
+                int availableFrames = Math.max(availableRedFrames, availableBlueFrames);
+                if (availableFrames > 0) {
+                    int frameLimit = availableFrames;
+                    if (totalDistance > 0f && RUN_FRAME_STEP_DISTANCE > 0f) {
+                        float framesForDistance = totalDistance / RUN_FRAME_STEP_DISTANCE;
+                        frameLimit = Math.max(1, Math.min(availableFrames, (int) Math.ceil(framesForDistance)));
+                    }
+
+                    movementFrameCount = frameLimit;
+
+                    runMovingPlayer = movingPlayer;
+                    runRedDelayFrames = frameSet.redFrames.length > 0 && runMovingPlayer == 1
+                            ? RUN_DELAY_CYCLES
+                            : 0;
+                    runBlueDelayFrames = frameSet.blueFrames.length > 0 && runMovingPlayer == 0
+                            ? RUN_DELAY_CYCLES
+                            : 0;
+
+                    runFrameLimit = frameLimit + Math.max(runRedDelayFrames, runBlueDelayFrames);
+                    runStartRedCloser = previous.P == 0;
+                    runTargetRedCloser = next.P == 0;
+                    runStartBlueCloser = previous.P == 1;
+                    runTargetBlueCloser = next.P == 1;
+                    runStartGridX = flippedStartX;
+                    runStartGridY = flippedStartY;
+                    runTotalDistance = totalDistance;
+                    if (totalDistance > 0f) {
+                        runDirectionX = totalDeltaX / totalDistance;
+                        runDirectionY = totalDeltaY / totalDistance;
+                    } else {
+                        runDirectionX = 0f;
+                        runDirectionY = 0f;
+                    }
+                    runPlayerFrameIndex = 0;
+                    runPlayerLastFrameTime = SystemClock.uptimeMillis();
+                    runAnimationActive = true;
+                    runRedCompleted = false;
+                    runBlueCompleted = false;
+                } else {
+                    canStartRun = false;
+                }
+            } else {
+                canStartRun = false;
+            }
         }
 
-        activeRunRedPlayerFrames = frameSet.redFrames;
-        activeRunBluePlayerFrames = frameSet.blueFrames;
-        int availableRedFrames = Math.min(RUN_FRAME_COUNT, frameSet.redFrames.length);
-        int availableBlueFrames = Math.min(RUN_FRAME_COUNT, frameSet.blueFrames.length);
-        int availableFrames = Math.max(availableRedFrames, availableBlueFrames);
-        if (availableFrames <= 0) {
-            return;
-        }
-
-        float totalDistance = (float) Math.hypot(totalDeltaX, totalDeltaY);
-        int frameLimit = availableFrames;
-        if (totalDistance > 0f && RUN_FRAME_STEP_DISTANCE > 0f) {
-            float framesForDistance = totalDistance / RUN_FRAME_STEP_DISTANCE;
-            frameLimit = Math.max(1, Math.min(availableFrames, (int) Math.ceil(framesForDistance)));
-        }
-
-        runMovingPlayer = movingPlayer;
-        runRedDelayFrames = frameSet.redFrames.length > 0 && runMovingPlayer == 1
-                ? RUN_DELAY_CYCLES
-                : 0;
-        runBlueDelayFrames = frameSet.blueFrames.length > 0 && runMovingPlayer == 0
-                ? RUN_DELAY_CYCLES
-                : 0;
-
-        runFrameLimit = frameLimit + Math.max(runRedDelayFrames, runBlueDelayFrames);
-        runStartRedCloser = previous.P == 0;
-        runTargetRedCloser = next.P == 0;
-        runStartBlueCloser = previous.P == 1;
-        runTargetBlueCloser = next.P == 1;
-        runStartGridX = flippedStartX;
-        runStartGridY = flippedStartY;
-        runTargetGridX = flippedTargetX;
-        runTargetGridY = flippedTargetY;
-        runTotalDistance = totalDistance;
-        if (totalDistance > 0f) {
-            runDirectionX = totalDeltaX / totalDistance;
-            runDirectionY = totalDeltaY / totalDistance;
-        } else {
+        if (!canStartRun) {
+            runAnimationActive = false;
+            runPlayerFrameIndex = 0;
+            runPlayerLastFrameTime = 0L;
+            runRedDelayFrames = 0;
+            runBlueDelayFrames = 0;
+            runRedCompleted = false;
+            runBlueCompleted = false;
+            runFrameLimit = RUN_FRAME_COUNT;
+            runStartRedCloser = false;
+            runTargetRedCloser = false;
+            runStartBlueCloser = false;
+            runTargetBlueCloser = false;
             runDirectionX = 0f;
             runDirectionY = 0f;
+            runTotalDistance = 0f;
         }
-        runPlayerFrameIndex = 0;
-        runPlayerLastFrameTime = SystemClock.uptimeMillis();
-        runAnimationActive = true;
-        runRedCompleted = false;
-        runBlueCompleted = false;
+
+        startBallAnimation(flippedStartX, flippedStartY, flippedTargetX, flippedTargetY, totalDistance, movementFrameCount);
     }
 
     public boolean isRunAnimationActive() {
         return runAnimationActive;
+    }
+
+    public boolean isBallAnimationActive() {
+        return ballAnimationActive;
+    }
+
+    public boolean isHandTutorialActive() {
+        return showHandTutorial;
     }
 
     private void stopRunAnimation(long referenceTime) {
@@ -495,6 +596,76 @@ public class Field {
         runBlueDelayFrames = 0;
         runRedCompleted = false;
         runBlueCompleted = false;
+        completeBallAnimation();
+    }
+
+    private void completeBallAnimation() {
+        ballAnimationActive = false;
+        ballAnimationStartTime = 0L;
+        ballStartGridX = ballTargetGridX;
+        ballStartGridY = ballTargetGridY;
+        ballDirectionX = 0f;
+        ballDirectionY = 0f;
+        ballTotalDistance = 0f;
+        ballAnimationDurationMs = 0L;
+    }
+
+    private void startBallAnimation(float startGridX, float startGridY,
+                                    float targetGridX, float targetGridY,
+                                    float totalDistance, int frameCount) {
+        ballTargetGridX = targetGridX;
+        ballTargetGridY = targetGridY;
+
+        if (!animationsEnabled) {
+            ballStartGridX = targetGridX;
+            ballStartGridY = targetGridY;
+            ballDirectionX = 0f;
+            ballDirectionY = 0f;
+            ballTotalDistance = 0f;
+            ballAnimationDurationMs = 0L;
+            ballAnimationStartTime = 0L;
+            ballAnimationActive = false;
+            return;
+        }
+
+        if (totalDistance <= 0f) {
+            ballStartGridX = targetGridX;
+            ballStartGridY = targetGridY;
+            completeBallAnimation();
+            return;
+        }
+
+        ballStartGridX = startGridX;
+        ballStartGridY = startGridY;
+        ballTotalDistance = totalDistance;
+
+        float deltaX = targetGridX - startGridX;
+        float deltaY = targetGridY - startGridY;
+        if (totalDistance > 0f) {
+            ballDirectionX = deltaX / totalDistance;
+            ballDirectionY = deltaY / totalDistance;
+        } else {
+            ballDirectionX = 0f;
+            ballDirectionY = 0f;
+        }
+
+        ballAnimationDurationMs = frameCount > 0
+                ? frameCount * RunPlayerSprite.FRAME_DURATION_MS
+                : BALL_DEFAULT_DURATION_MS;
+        ballAnimationStartTime = SystemClock.uptimeMillis();
+        ballAnimationActive = true;
+    }
+
+    private float computeBallDistance(long elapsedMs, long durationMs, float totalDistance) {
+        if (durationMs <= 0L) {
+            return totalDistance;
+        }
+
+        long clampedElapsed = Math.max(0L, Math.min(elapsedMs, durationMs));
+        float normalized = (float) clampedElapsed / (float) durationMs;
+        float progress = (2f * normalized) - (normalized * normalized);
+        float distance = totalDistance * progress;
+        return clamp(distance, totalDistance);
     }
 
     private void drawRunAnimation(Canvas canvas, float ballRadius) {
@@ -572,7 +743,7 @@ public class Field {
                 runRedCompleted = true;
                 redFrame = null;
             }
-        } else if (runRedCompleted) {
+        } else {
             redFrame = null;
         }
 
@@ -584,22 +755,20 @@ public class Field {
                 runBlueCompleted = true;
                 blueFrame = null;
             }
-        } else if (runBlueCompleted) {
+        } else {
             blueFrame = null;
         }
-
-        boolean drewFrame = false;
 
         float redAnimationProgress = computeAnimationProgress(redFrameIndex, redFrameCount, redDistanceTraveled);
         float blueAnimationProgress = computeAnimationProgress(blueFrameIndex, blueFrameCount, blueDistanceTraveled);
 
         float blueStartProximity = runStartBlueCloser ? 1f : 0f;
         float blueEndProximity = runTargetBlueCloser ? 1f : 0f;
-        float blueProximity = clamp(lerp(blueStartProximity, blueEndProximity, blueAnimationProgress), 0f, 1f);
+        float blueProximity = clamp(lerp(blueStartProximity, blueEndProximity, blueAnimationProgress), 1f);
 
         float redStartProximity = runStartRedCloser ? 1f : 0f;
         float redEndProximity = runTargetRedCloser ? 1f : 0f;
-        float redProximity = clamp(lerp(redStartProximity, redEndProximity, redAnimationProgress), 0f, 1f);
+        float redProximity = clamp(lerp(redStartProximity, redEndProximity, redAnimationProgress), 1f);
 
         float redGridX = runStartGridX + runDirectionX * redDistanceTraveled;
         float redGridY = runStartGridY + runDirectionY * redDistanceTraveled;
@@ -610,6 +779,9 @@ public class Field {
         float blueGridY = runStartGridY + runDirectionY * blueDistanceTraveled;
         float blueCenterX = w2x(blueGridX);
         float blueCenterY = h2y(blueGridY);
+
+        runBlueFrameVisible = false;
+        runRedFrameVisible = false;
 
         if (blueFrame != null && !blueFrame.isRecycled()) {
             float blueFarBottom = blueCenterY - ballRadius;
@@ -630,7 +802,7 @@ public class Field {
                 float blueRight = blueCenterX + blueWidth / 2f;
                 RectF blueDst = new RectF(blueLeft, blueTop, blueRight, blueBottom);
                 canvas.drawBitmap(blueFrame, null, blueDst, null);
-                drewFrame = true;
+                runBlueFrameVisible = true;
             }
         }
 
@@ -653,18 +825,11 @@ public class Field {
                 float redRight = redCenterX + redWidth / 2f;
                 RectF redDst = new RectF(redLeft, redTop, redRight, redBottom);
                 canvas.drawBitmap(redFrame, null, redDst, null);
-                drewFrame = true;
+                runRedFrameVisible = true;
             }
         }
 
         if ((!redHasFrames || runRedCompleted) && (!blueHasFrames || runBlueCompleted)) {
-            stopRunAnimation(now);
-            return;
-        }
-
-        boolean redPending = redHasFrames && !runRedCompleted;
-        boolean bluePending = blueHasFrames && !runBlueCompleted;
-        if (!drewFrame && !redPending && !bluePending) {
             stopRunAnimation(now);
             return;
         }
@@ -678,8 +843,8 @@ public class Field {
         return start + (end - start) * t;
     }
 
-    private static float clamp(float value, float min, float max) {
-        return Math.max(min, Math.min(max, value));
+    private static float clamp(float value, float max) {
+        return Math.max((float) 0.0, Math.min(max, value));
     }
 
     private float computeDistanceForFrameIndex(int frameIndex, int frameCount, float totalDistance, boolean advanceImmediately) {
@@ -700,11 +865,11 @@ public class Field {
             return 0f;
         }
         if (runTotalDistance > 0f) {
-            return clamp(distanceTraveled / runTotalDistance, 0f, 1f);
+            return clamp(distanceTraveled / runTotalDistance, 1f);
         }
         if (frameCount > 1) {
             int clampedIndex = Math.min(frameIndex, frameCount - 1);
-            return clamp((float) clampedIndex / (float) (frameCount - 1), 0f, 1f);
+            return clamp((float) clampedIndex / (float) (frameCount - 1), 1f);
         }
         return 1f;
     }
@@ -894,9 +1059,8 @@ public class Field {
 
             float ease01 = (1f - (float) Math.cos(progress * 2f * (float) Math.PI)) / 2f;
 
-            float minSize = dotSize;
             float maxSize = dotSize * animationSizeIncreasePercent;
-            pulseDotSize = minSize + (maxSize - minSize) * ease01;
+            pulseDotSize = dotSize + (maxSize - dotSize) * ease01;
 
             if (pulseDotSize < dotSize) pulseDotSize = dotSize;
         }
@@ -910,10 +1074,37 @@ public class Field {
             last = Moves.get(Moves.size() - 2);
         }
 
-        float ballCenterX = w2x(flipX(last.X));
-        float ballCenterY = h2y(flipY(last.Y));
+        float targetGridX = flipX(last.X);
+        float targetGridY = flipY(last.Y);
+
+        float ballGridX = targetGridX;
+        float ballGridY = targetGridY;
+
+        if (ballAnimationActive) {
+            long now = SystemClock.uptimeMillis();
+            long elapsed = now - ballAnimationStartTime;
+            long duration = ballAnimationDurationMs > 0L ? ballAnimationDurationMs : BALL_DEFAULT_DURATION_MS;
+
+            if (elapsed >= duration || ballTotalDistance <= 0f) {
+                ballGridX = ballTargetGridX;
+                ballGridY = ballTargetGridY;
+                completeBallAnimation();
+            } else {
+                float traveled = computeBallDistance(elapsed, duration, ballTotalDistance);
+                ballGridX = ballStartGridX + ballDirectionX * traveled;
+                ballGridY = ballStartGridY + ballDirectionY * traveled;
+            }
+        } else {
+            ballStartGridX = targetGridX;
+            ballStartGridY = targetGridY;
+            ballTargetGridX = targetGridX;
+            ballTargetGridY = targetGridY;
+        }
+
+        float ballCenterX = w2x(ballGridX);
+        float ballCenterY = h2y(ballGridY);
         float radius = dotSize * 4;
-        float radiusBackground = (float) (radius * 0.8f);
+        float radiusBackground = radius * 0.8f;
 
         lastRunBallRadius = radius;
 
@@ -934,7 +1125,7 @@ public class Field {
         int blueFrameCount = idleBluePlayerFrames.length;
         int maxFrameCount = Math.max(redFrameCount, blueFrameCount);
 
-        if (maxFrameCount <= 0) {
+        if (maxFrameCount == 0) {
             return;
         }
 
@@ -959,14 +1150,14 @@ public class Field {
         boolean isBlueMoving = runActive && hasBlueRunFrames && !runBlueCompleted
                 && runPlayerFrameIndex >= runBlueDelayFrames;
 
-        boolean shouldDrawIdleBlue = !runActive
+        boolean shouldDrawIdleBlue = !runBlueFrameVisible && (!runActive
                 || runBlueCompleted
                 || (isRedMoving && blueDelayActive)
-                || (!isRedMoving && !isBlueMoving);
-        boolean shouldDrawIdleRed = !runActive
+                || (!isRedMoving && !isBlueMoving));
+        boolean shouldDrawIdleRed = !runRedFrameVisible && (!runActive
                 || runRedCompleted
                 || (isBlueMoving && redDelayActive)
-                || (!isBlueMoving && !isRedMoving);
+                || (!isBlueMoving && !isRedMoving));
         boolean shouldAdvanceIdle = shouldDrawIdleBlue || shouldDrawIdleRed;
 
         if (shouldAdvanceIdle) {
@@ -1117,6 +1308,8 @@ public class Field {
         BallState ballState = drawBall(canvas, dotSize, movePaint);
 
         // 4-5) Sprites
+        runRedFrameVisible = false;
+        runBlueFrameVisible = false;
         drawRunAnimation(canvas, ballState.radius);
         drawIdlePlayers(canvas, ballState, currentTurn);
 
@@ -1206,7 +1399,144 @@ public class Field {
 
             //Log.d("TAG_Soccer", "Field.draw: textTop: " + textTop);
         }
+
+        // 6) Hand tutorial - show only for player turns (not Android turn)
+        drawHandTutorial(canvas, currentTurn);
     }
+
+    private void drawHandTutorial(Canvas canvas, int currentTurn) {
+        /* Only show tutorial if enabled */
+        if (!showHandTutorial) {
+            return;
+        }
+
+        // Don't show during Android's turn (gameType 2, currentTurn 1)
+        if (gameType == 2 && currentTurn == 1) {
+            return;
+        }
+
+        // Don't show if there are no possible moves
+        if (possibleMoves == null || possibleMoves.isEmpty()) {
+            showHandTutorial = false;
+            return;
+        }
+
+        int currentMoveCount = Moves.size();
+        
+        // Check if a new move has been made - if so, start a new cycle
+        if (handTutorialLastMoveCount != currentMoveCount) {
+            // New move detected - check if we should continue or stop
+            if (handTutorialLastMoveCount != INITIAL_MOVE_COUNT) {
+                // Not the first move - increment cycle counter
+                handTutorialCycle++;
+                
+                // Save the updated cycle count to preferences
+                prefs.edit().putInt(PREF_HAND_TUTORIAL_CYCLE_COUNT, handTutorialCycle).apply();
+                
+                // Get the next threshold to check
+                int nextThreshold = prefs.getInt(PREF_HAND_TUTORIAL_NEXT_THRESHOLD, THRESHOLD_FIRST);
+                
+                // Check if we've reached a threshold where we should ask the user
+                if (handTutorialCycle >= nextThreshold) {
+                    // Stop showing tutorial temporarily and request dialog
+                    showHandTutorial = false;
+                    
+                    // Request dialog from GameActivity
+                    if (dialogCallback != null) {
+                        dialogCallback.onRequestHandTutorialDialog();
+                    }
+                    
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawHandTutorial: Reached threshold " 
+                        + nextThreshold + " cycles, requesting dialog");
+                    return;
+                }
+            }
+            
+            // Reset for the new move/cycle
+            handTutorialLastMoveCount = currentMoveCount;
+            handTutorialPositionIndex = 0;
+            handTutorialLastUpdateTime = SystemClock.uptimeMillis();
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawHandTutorial: Starting cycle " 
+                + (handTutorialCycle + 1) + " for move " + currentMoveCount 
+                + " (player " + currentTurn + ")");
+        }
+
+        long currentTime = SystemClock.uptimeMillis();
+        long elapsed = currentTime - handTutorialLastUpdateTime;
+
+        // Check if it's time to move to the next position
+        if (elapsed >= DURATION_SHOWING_HAND) {
+            handTutorialLastUpdateTime = currentTime;
+            handTutorialPositionIndex++;
+
+            // Check if we've shown all positions in this cycle
+            if (handTutorialPositionIndex >= possibleMoves.size()) {
+                // Cycle complete, wait for next move to start new cycle
+                // Position index will remain >= size, so the conditional check at the end of this method
+                // will skip rendering until handTutorialPositionIndex is reset to 0 when a new move is detected
+                Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawHandTutorial: Cycle " 
+                    + (handTutorialCycle + 1) + " completed, waiting for next move");
+                return;
+            }
+        }
+
+        // Draw the hand at the current position
+        if (handTutorialPositionIndex < possibleMoves.size()) {
+            MoveTo currentMove = possibleMoves.get(handTutorialPositionIndex);
+            
+            // Calculate hand position - top of hand should touch the center of the possible move circle
+            float circleCenterX = w2x(flipX(currentMove.X));
+            float circleCenterY = h2y(flipY(currentMove.Y));
+            
+            // Hand size should match sprite size
+            float handHeight = canvas.getHeight() * flSpriteSize;
+            float handWidth = handHeight * handBitmap.getWidth() / (float) handBitmap.getHeight();
+            
+            // Position hand so its top touches the center of the circle
+            float handLeft = circleCenterX - handWidth / 2f;
+            float handRight = handLeft + handWidth;
+            float handBottom = circleCenterY + handHeight;
+            
+            // Draw the hand
+            RectF handDst = new RectF(handLeft, circleCenterY, handRight, handBottom);
+            canvas.drawBitmap(handBitmap, null, handDst, null);
+            
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawHandTutorial: Drawing hand at position " 
+                + handTutorialPositionIndex + "/" + possibleMoves.size() 
+                + ", cycle " + (handTutorialCycle + 1));
+        }
+    }
+    
+    // Method to be called when user responds to dialog
+    public void onHandTutorialDialogResponse(boolean continueShowing) {
+        if (continueShowing) {
+            // User wants to continue - update threshold and re-enable tutorial
+            int currentThreshold = prefs.getInt(PREF_HAND_TUTORIAL_NEXT_THRESHOLD, THRESHOLD_FIRST);
+            int newThreshold;
+            
+            if (currentThreshold == THRESHOLD_FIRST) {
+                newThreshold = THRESHOLD_SECOND;
+            } else if (currentThreshold == THRESHOLD_SECOND) {
+                newThreshold = THRESHOLD_THIRD;
+            } else {
+                // After third threshold, set a very high value (effectively infinite)
+                newThreshold = Integer.MAX_VALUE;
+            }
+            
+            prefs.edit().putInt(PREF_HAND_TUTORIAL_NEXT_THRESHOLD, newThreshold).apply();
+            showHandTutorial = true;
+            handTutorialLastUpdateTime = SystemClock.uptimeMillis();
+            
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".onHandTutorialDialogResponse: User chose to continue, next threshold: " + newThreshold);
+        } else {
+            // User wants to turn it off - disable in settings
+            prefs.edit().putBoolean(PREF_HAND_TUTORIAL_ENABLED, false).apply();
+            showHandTutorial = false;
+            
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".onHandTutorialDialogResponse: User chose to disable hand tutorial");
+        }
+    }
+
     private String formatClockSeconds(long seconds) {
         if (seconds < 0) seconds = 0;
         long min = seconds / 60;

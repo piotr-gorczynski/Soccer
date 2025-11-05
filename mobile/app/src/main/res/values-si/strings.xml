@@ -334,4 +334,15 @@
     <string name="cannot_invite_this_user">මෙම පරිශීලකයාට ආරාධනා කළ නොහැක</string>
 
     <string name="failed_to_load_terms">නියමයන් සහ කොන්දේසි පූරණය කළ නොහැකි විය</string>
+    
+    <!-- Animation info dialog -->
+    <string name="animation_info_message">මෙම අනුවාදය පාපන්දු ක්‍රීඩකයන්ගේ සජීවීකරණ ගෙන එයි! සැකසීම්වල ඒවා සක්‍රිය සහ අක්‍රිය කළ හැකිය.</string>
+    
+    <!-- Hand tutorial feature -->
+    <string name="pref_title_show_hand_tutorial">හැකි චලනයන් පෙන්වන්න</string>
+    <string name="pref_summary_show_hand_tutorial">ඔබට ඉගෙන ගැනීමට උපකාර කිරීමට හැකි චලනයන් පෙන්වන අතක් පෙන්වයි</string>
+    <string name="hand_tutorial_dialog_title">නිබන්ධනය</string>
+    <string name="hand_tutorial_dialog_message">ඔබට තවමත් හැකි චලනයන් පෙන්වීමට මා අවශ්‍යද? ඔබට සැකසීම්වල එය සෑම විටම සක්‍රිය සහ අක්‍රිය කළ හැකිය.</string>
+    <string name="hand_tutorial_dialog_yes">ඔව්, දිගටම කරගෙන යන්න</string>
+    <string name="hand_tutorial_dialog_no">නැත, අක්‍රිය කරන්න</string>
 </resources>

@@ -371,4 +371,15 @@
     <string name="cannot_invite_this_user">No se puede invitar a este usuario</string>
 
     <string name="failed_to_load_terms">No se pudieron cargar los términos y condiciones</string>
+    
+    <!-- Animation info dialog -->
+    <string name="animation_info_message">¡Esta versión trae animaciones de jugadores de fútbol! Se pueden activar y desactivar en Configuración.</string>
+    
+    <!-- Hand tutorial feature -->
+    <string name="pref_title_show_hand_tutorial">Mostrar movimientos posibles</string>
+    <string name="pref_summary_show_hand_tutorial">Muestra una mano señalando los movimientos posibles para ayudarte a aprender</string>
+    <string name="hand_tutorial_dialog_title">Tutorial</string>
+    <string name="hand_tutorial_dialog_message">¿Todavía quieres que te muestre los movimientos posibles? Siempre puedes activarlo y desactivarlo en Configuración.</string>
+    <string name="hand_tutorial_dialog_yes">Sí, continuar</string>
+    <string name="hand_tutorial_dialog_no">No, desactivar</string>
 </resources>
