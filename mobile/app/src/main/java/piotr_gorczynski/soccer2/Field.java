@@ -65,7 +65,6 @@ public class Field {
     private final String sPlayer1;
     private final int gameType;
     private final Context context;
-    private final int localPlayerIndex;
     final ArrayList<MoveTo> possibleMoves;//= new ArrayList<MoveTo>();
     final ArrayList<MoveTo> Moves;//= new ArrayList<MoveTo>();
     private boolean isFlipped=false;
@@ -84,8 +83,6 @@ public class Field {
     private float runStartGridY = 0f;
     private float runDirectionX = 0f;
     private float runDirectionY = 0f;
-    private float runTargetGridX = 0f;
-    private float runTargetGridY = 0f;
     private float runTotalDistance = 0f;
     private int runFrameLimit = RunPlayerSprite.FRAME_COUNT;
     private boolean runStartRedCloser = false;
@@ -152,7 +149,6 @@ public class Field {
 
         this.gameType = argGameType;  // ✅ Save GameType for later use
         this.context = current;
-        this.localPlayerIndex = localPlayerIndex;  // ✅ Save local player index
 
         switch (argGameType) {
             case 1 -> {
@@ -507,8 +503,6 @@ public class Field {
                     runTargetBlueCloser = next.P == 1;
                     runStartGridX = flippedStartX;
                     runStartGridY = flippedStartY;
-                    runTargetGridX = flippedTargetX;
-                    runTargetGridY = flippedTargetY;
                     runTotalDistance = totalDistance;
                     if (totalDistance > 0f) {
                         runDirectionX = totalDeltaX / totalDistance;
