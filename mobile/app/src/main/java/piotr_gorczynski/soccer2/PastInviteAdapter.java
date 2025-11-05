@@ -205,6 +205,11 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
         String pState = presCache.get(uid);
         if (pState == null) {
             h.presence.setText("…");
+            // Update button state even before presence data is loaded
+            boolean alreadyFriend = friendUids.contains(uid);
+            h.addFriendBtn.setEnabled(!alreadyFriend);
+            h.addFriendBtn.setAlpha(alreadyFriend ? 0.3f : 1f);
+            
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("status").child(uid);
             ValueEventListener l = new ValueEventListener() {
                 @Override public void onDataChange(@NonNull DataSnapshot snap) {
