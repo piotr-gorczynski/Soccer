@@ -339,7 +339,7 @@
     <string name="animation_info_message">ይህ ስሪት የእግር ኳስ ተጫዋቾችን አኒሜሽን ያመጣል! በቅንብሮች ውስጥ ማብራት እና ማጥፋት ይቻላል።</string>
     
     <!-- Hand tutorial feature -->
-    <string name="pref_title_show_hand_tutorial">ለሊሆኑ እንቅስቃሴዎች እጅ አሳይ</string>
+    <string name="pref_title_show_hand_tutorial">ሊሆኑ የሚችሉ እንቅስቃሴዎች አሳይ</string>
     <string name="pref_summary_show_hand_tutorial">ለመማር እንዲረዳዎት ሊሆኑ የሚችሉ እንቅስቃሴዎችን የሚያሳይ እጅ ያሳያል</string>
     <string name="hand_tutorial_dialog_title">የእጅ ስልጠና</string>
     <string name="hand_tutorial_dialog_message">አሁንም ሊሆኑ የሚችሉ እንቅስቃሴዎችን እንድሳይዎት ይፈልጋሉ? ሁልጊዜ በቅንብሮች ውስጥ ማብራት እና ማጥፋት ይችላሉ።</string>
