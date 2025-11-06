@@ -1,0 +1,179 @@
+<en-GB>
+🎉 Added “Load More” in invites  
+🎮 New tutorial with hand gestures  
+🎮 Option to turn animations on/off  
+🎮 Tournaments lock after registration  
+🎮 Improved stats, filters, and layout  
+🎮 Fixed crashes and slowdowns  
+⚽ Faster, smoother Soccer!
+</en-GB>
+
+<pl-PL>
+🎉 Dodano „Więcej” w zaproszeniach  
+🎮 Nowy samouczek z gestami  
+🎮 Animacje można włączyć/wyłączyć  
+🎮 Turnieje blokowane po rejestracji  
+🎮 Lepsze statystyki i wygląd  
+🎮 Usunięto błędy i spowolnienia  
+⚽ Szybszy, płynniejszy Soccer!
+</pl-PL>
+
+<de-DE>
+🎉 „Mehr laden“ bei Einladungen  
+🎮 Neues Tutorial mit Gesten  
+🎮 Animationen ein-/ausschaltbar  
+🎮 Turniere nach Anmeldung gesperrt  
+🎮 Bessere Statistiken & Layout  
+🎮 Abstürze behoben  
+⚽ Schnelleres, flüssigeres Soccer!
+</de-DE>
+
+<fr-FR>
+🎉 Boutons « Plus » dans les invitations  
+🎮 Nouveau tutoriel avec gestes  
+🎮 Animations activables/désactivables  
+🎮 Tournois verrouillés après inscription  
+🎮 Stats et interface améliorées  
+🎮 Moins de bugs  
+⚽ Soccer plus fluide !
+</fr-FR>
+
+<es-ES>
+🎉 Botones « Ver más » en invitaciones  
+🎮 Nuevo tutorial con gestos  
+🎮 Animaciones on/off  
+🎮 Torneos bloqueados tras registro  
+🎮 Stats y diseño mejorados  
+🎮 Fallos corregidos  
+⚽ Soccer más rápido !
+</es-ES>
+
+<ur>
+🎉 دعوتوں میں “مزید دیکھیں” شامل  
+🎮 نیا ہینڈ جیسچر ٹیوٹوریل  
+🎮 اینیمیشن آن/آف آپشن  
+🎮 رجسٹریشن کے بعد لاک  
+🎮 بہتر شماریات و ڈیزائن  
+🎮 کریشز درست  
+⚽ تیز اور بہتر Soccer!
+</ur>
+
+<bn-BD>
+🎉 “আরও দেখুন” বাটন যোগ  
+🎮 হ্যান্ড জেসচার টিউটোরিয়াল  
+🎮 অ্যানিমেশন অন/অফ  
+🎮 রেজিস্ট্রেশনের পর লক  
+🎮 ভালো স্ট্যাট ও ডিজাইন  
+🎮 ক্র্যাশ ঠিক  
+⚽ দ্রুত ও মসৃণ Soccer!
+</bn-BD>
+
+<ne-NP>
+🎉 “Load More” बटन थपियो  
+🎮 नयाँ ट्युटोरियल  
+🎮 एनिमेसन अन/अफ  
+🎮 प्रतियोगिता लक  
+🎮 तथ्यांक सुधार  
+🎮 क्र्यास ठीक  
+⚽ छिटो Soccer!
+</ne-NP>
+
+<hi-IN>
+🎉 “लोड मोर” जोड़ा गया  
+🎮 नया ट्यूटोरियल  
+🎮 एनिमेशन ऑन/ऑफ  
+🎮 टूर्नामेंट लॉक  
+🎮 बेहतर आँकड़े  
+🎮 क्रैश ठीक  
+⚽ तेज़ Soccer!
+</hi-IN>
+
+<am>
+🎉 “Load More” ተጨምሯል  
+🎮 አዲስ አስተማሪ  
+🎮 አኒሜሽን ክፈት/ዝጋ  
+🎮 ተመዝጋቢ ተዘግቷል  
+🎮 ስታቲስቲክስ ተሻሻለ  
+🎮 መቃኘት ተፈታ  
+⚽ ፈጣን Soccer!
+</am>
+
+<ar>
+🎉 أزرار «المزيد» في الدعوات  
+🎮 دليل جديد  
+🎮 تشغيل/إيقاف الرسوم  
+🎮 قفل البطولات بعد التسجيل  
+🎮 تحسين الإحصاءات والتصميم  
+🎮 إصلاح الأعطال  
+⚽ Soccer أسرع!
+</ar>
+
+<my-MM>
+🎉 “Load More” ခလုတ် ထည့်  
+🎮 လက်ညှိ သင်ခန်းစာ  
+🎮 အနိမ့်/အမြင့် ပြောင်းနိုင်  
+🎮 မှတ်ပုံတင်ပြီး လော့ခ်  
+🎮 စာရင်းအင်း မြှင့်တင်  
+🎮 ချိုးခြင်း ဖြေရှင်း  
+⚽ ပိုမြန် Soccer!
+</my-MM>
+
+<km-KH>
+🎉 បន្ថែម “Load More”  
+🎮 មគ្គុទ្ទេសក៍ថ្មី  
+🎮 បិទ/បើកអានីមេសិន  
+🎮 បិទបន្ទាប់ពីចុះឈ្មោះ  
+🎮 ស្ថិតិប្រសើរឡើង  
+🎮 កំហុសត្រូវបានកែ  
+⚽ Soccer លឿនជាងមុន!
+</km-KH>
+
+<lo-LA>
+🎉 ເພີ່ມ “Load More”  
+🎮 ຄູ່ມືໃໝ່  
+🎮 ປິດ/ເປີດການເຄື່ອນໄຫວ  
+🎮 ລັອກຫຼັງລົງທະບຽນ  
+🎮 ສະຖິຕິດີຂຶ້ນ  
+🎮 ບັນຫາແກ້ໄຂ  
+⚽ Soccer ໄວຂຶ້ນ!
+</lo-LA>
+
+<mn-MN>
+🎉 “Load More” нэмсэн  
+🎮 Шинэ гарын дохио  
+🎮 Animation асаах/унтраах  
+🎮 Тэмцээн бүртгэлийн дараа түгжээтэй  
+🎮 Статистик сайжирсан  
+🎮 Алдаа зассан  
+⚽ Хурдан Soccer!
+</mn-MN>
+
+<fa-IR>
+🎉 دکمه «بیشتر» افزوده شد  
+🎮 آموزش حرکات دست  
+🎮 روشن/خاموش انیمیشن‌ها  
+🎮 قفل مسابقات پس از ثبت‌نام  
+🎮 آمار و طراحی بهتر  
+🎮 خطاها رفع شد  
+⚽ Soccer سریع‌تر!
+</fa-IR>
+
+<si-LK>
+🎉 “Load More” බොත්තම එක් කළා  
+🎮 අලුත් පාඩම  
+🎮 Animations on/off  
+🎮 තරග වසා දැමූවා  
+🎮 තොරතුරු වැඩි කළා  
+🎮 බිඳවැටීම් විසඳා  
+⚽ වේගවත් Soccer!
+</si-LK>
+
+<sw>
+🎉 “Load More” imeongezwa  
+🎮 Mafunzo mapya  
+🎮 Michoro on/off  
+🎮 Mashindano kufungwa  
+🎮 Takwimu bora  
+🎮 Hitilafu zimetatuliwa  
+⚽ Soccer haraka!
+</sw>
