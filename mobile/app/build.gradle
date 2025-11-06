@@ -39,8 +39,8 @@ android {
         applicationId = "piotr_gorczynski.soccer2"
         minSdk = 24
         targetSdk = 36
-        versionCode = 29
-        versionName = '16.0'
+        versionCode = 30
+        versionName = '16.1'
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         
@@ -146,6 +146,7 @@ dependencies {
     //GPT fixes
     implementation platform('com.google.firebase:firebase-bom:34.5.0')
     implementation 'com.google.firebase:firebase-auth:24.0.1'
+    implementation 'com.google.android.gms:play-services-auth:21.3.0' // Required for Google Sign-In
     //GPT fixes
     implementation 'androidx.appcompat:appcompat:1.7.1'
     implementation 'androidx.core:core:1.17.0'
