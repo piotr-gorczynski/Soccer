@@ -89,6 +89,12 @@
     {
       "source": "functions/cleanup-inactive-users",
       "codebase": "cleanup-inactive-users"
+    },
+    {
+      "source": "functions/check-nickname",
+      "codebase": "check-nickname",
+      "runtime": "nodejs18",
+      "region": "us-central1"
     }
   ],
   "firestore": {
