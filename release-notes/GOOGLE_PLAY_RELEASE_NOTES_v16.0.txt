@@ -1,323 +1,179 @@
 <en-GB>
-🎉 **What’s New**
-
-🔔 Added handy “Load More” buttons for easier browsing  
-🔔 New tutorial with hand gestures for beginners  
-🔔 Option to turn animations on or off  
-🔔 Tournaments now lock after registration closes  
-🔔 Smarter stats and filters for matches and invites  
-🔔 Added missing translations for 11 languages  
-🔔 Cleaner field design and spacing  
-
-🎮 **Fixes & Improvements**  
-🎮 Stats now refresh correctly after each match  
-🎮 Fixed random freezes and crashes  
-🎮 Faster and smoother overall performance  
-⚽ Enjoy a sharper, quicker Soccer experience!
+🎉 Added “Load More” in invites  
+🎮 New tutorial with hand gestures  
+🎮 Option to turn animations on/off  
+🎮 Tournaments lock after registration  
+🎮 Improved stats, filters, and layout  
+🎮 Fixed crashes and slowdowns  
+⚽ Faster, smoother Soccer!
 </en-GB>
 
 <pl-PL>
-🎉 **Nowości**
-
-🔔 Dodano przyciski „Więcej”, by łatwiej przeglądać  
-🔔 Nowy samouczek z gestami dla początkujących  
-🔔 Możliwość włączenia lub wyłączenia animacji  
-🔔 Turnieje blokowane po zakończeniu rejestracji  
-🔔 Lepsze statystyki i filtrowanie zaproszeń  
-🔔 Uzupełniono brakujące tłumaczenia w 11 językach  
-🔔 Czystszy wygląd boiska  
-
-🎮 **Poprawki i ulepszenia**  
-🎮 Statystyki odświeżają się po meczu  
-🎮 Usunięto losowe zawieszki i błędy  
-🎮 Aplikacja działa szybciej i płynniej  
-⚽ Ciesz się lepszym Soccerem!
+🎉 Dodano „Więcej” w zaproszeniach  
+🎮 Nowy samouczek z gestami  
+🎮 Animacje można włączyć/wyłączyć  
+🎮 Turnieje blokowane po rejestracji  
+🎮 Lepsze statystyki i wygląd  
+🎮 Usunięto błędy i spowolnienia  
+⚽ Szybszy, płynniejszy Soccer!
 </pl-PL>
 
 <de-DE>
-🎉 **Neuigkeiten**
-
-🔔 „Mehr laden“-Buttons für einfacheres Blättern  
-🔔 Neues Tutorial mit Handgesten für Einsteiger  
-🔔 Animationen ein- oder ausschaltbar  
-🔔 Turniere gesperrt nach Anmeldeschluss  
-🔔 Verbesserte Statistiken und Filter  
-🔔 Fehlende Übersetzungen für 11 Sprachen ergänzt  
-🔔 Saubereres Spielfeld-Layout  
-
-🎮 **Fehlerbehebungen & Verbesserungen**  
-🎮 Statistiken aktualisieren sich nach Spielen  
-🎮 Zufällige Abstürze behoben  
-🎮 Schnellere, flüssigere Leistung  
-⚽ Genieße ein reibungsloseres Soccer-Erlebnis!
+🎉 „Mehr laden“ bei Einladungen  
+🎮 Neues Tutorial mit Gesten  
+🎮 Animationen ein-/ausschaltbar  
+🎮 Turniere nach Anmeldung gesperrt  
+🎮 Bessere Statistiken & Layout  
+🎮 Abstürze behoben  
+⚽ Schnelleres, flüssigeres Soccer!
 </de-DE>
 
 <fr-FR>
-🎉 **Nouveautés**
-
-🔔 Boutons « Voir plus » pour naviguer plus facilement  
-🔔 Nouveau didacticiel avec gestes pour débutants  
-🔔 Option pour activer/désactiver les animations  
-🔔 Tournois verrouillés après l’inscription  
-🔔 Statistiques et filtres plus précis  
-🔔 Ajout de 11 traductions manquantes  
-🔔 Terrain plus clair et mieux espacé  
-
-🎮 **Corrections & Améliorations**  
-🎮 Statistiques mises à jour après chaque match  
-🎮 Correction de gels et plantages  
-🎮 Application plus rapide et fluide  
-⚽ Profite d’une expérience Soccer améliorée !
+🎉 Boutons « Plus » dans les invitations  
+🎮 Nouveau tutoriel avec gestes  
+🎮 Animations activables/désactivables  
+🎮 Tournois verrouillés après inscription  
+🎮 Stats et interface améliorées  
+🎮 Moins de bugs  
+⚽ Soccer plus fluide !
 </fr-FR>
 
 <es-ES>
-🎉 **Novedades**
-
-🔔 Botones « Cargar más » para navegar fácilmente  
-🔔 Nuevo tutorial con gestos para principiantes  
-🔔 Opción para activar o desactivar animaciones  
-🔔 Torneos bloqueados tras el cierre de registro  
-🔔 Estadísticas y filtros más útiles  
-🔔 11 traducciones añadidas  
-🔔 Campo más limpio y ordenado  
-
-🎮 **Correcciones y Mejoras**  
-🎮 Las estadísticas se actualizan tras cada partido  
-🎮 Arreglados bloqueos y cierres inesperados  
-🎮 App más rápida y fluida  
-⚽ ¡Disfruta una experiencia Soccer mejorada!
+🎉 Botones « Ver más » en invitaciones  
+🎮 Nuevo tutorial con gestos  
+🎮 Animaciones on/off  
+🎮 Torneos bloqueados tras registro  
+🎮 Stats y diseño mejorados  
+🎮 Fallos corregidos  
+⚽ Soccer más rápido !
 </es-ES>
 
 <ur>
-🎉 **نیا کیا ہے**
-
-🔔 دعوتوں میں “مزید دیکھیں” بٹن شامل  
-🔔 نئے کھلاڑیوں کے لیے ہاتھ کے اشاروں والا ٹیوٹوریل  
-🔔 سیٹنگز میں اینیمیشن آن/آف آپشن  
-🔔 رجسٹریشن کے بعد ٹورنامنٹ لاک  
-🔔 بہتر شماریات اور فلٹرز  
-🔔 11 زبانوں میں نئی تراجم شامل  
-🔔 صاف ستھرا فیلڈ ڈیزائن  
-
-🎮 **اصلاحات اور بہتریاں**  
-🎮 میچ کے بعد اعدادوشمار درست اپڈیٹ  
-🎮 کریش اور فریز مسئلے حل  
-🎮 تیز تر اور ہموار کارکردگی  
-⚽ بہتر Soccer تجربہ حاصل کریں!
+🎉 دعوتوں میں “مزید دیکھیں” شامل  
+🎮 نیا ہینڈ جیسچر ٹیوٹوریل  
+🎮 اینیمیشن آن/آف آپشن  
+🎮 رجسٹریشن کے بعد لاک  
+🎮 بہتر شماریات و ڈیزائن  
+🎮 کریشز درست  
+⚽ تیز اور بہتر Soccer!
 </ur>
 
 <bn-BD>
-🎉 **নতুন কী আছে**
-
-🔔 সহজ ব্রাউজিংয়ের জন্য “আরও দেখুন” বাটন  
-🔔 নতুন খেলোয়াড়দের জন্য হ্যান্ড-জেসচার টিউটোরিয়াল  
-🔔 সেটিংসে অ্যানিমেশন চালু/বন্ধ অপশন  
-🔔 রেজিস্ট্রেশনের পর টুর্নামেন্ট লক  
-🔔 উন্নত পরিসংখ্যান ও ফিল্টার  
-🔔 ১১ টি ভাষায় অনুবাদ যোগ  
-🔔 আরও পরিষ্কার মাঠ ডিজাইন  
-
-🎮 **ফিক্স ও উন্নতি**  
-🎮 ম্যাচ শেষে পরিসংখ্যান আপডেট হয়  
-🎮 ক্র্যাশ ও ফ্রিজ সমস্যা ঠিক  
-🎮 পারফরম্যান্স দ্রুত ও মসৃণ  
-⚽ আরও ভালো Soccer অভিজ্ঞতা নিন!
+🎉 “আরও দেখুন” বাটন যোগ  
+🎮 হ্যান্ড জেসচার টিউটোরিয়াল  
+🎮 অ্যানিমেশন অন/অফ  
+🎮 রেজিস্ট্রেশনের পর লক  
+🎮 ভালো স্ট্যাট ও ডিজাইন  
+🎮 ক্র্যাশ ঠিক  
+⚽ দ্রুত ও মসৃণ Soccer!
 </bn-BD>
 
 <ne-NP>
-🎉 **नयाँ अपडेट**
-
-🔔 “Load More” बटन थपियो  
-🔔 नयाँ खेलाडीका लागि ह्यान्ड-जेस्चर ट्युटोरियल  
-🔔 एनिमेसन अन/अफ विकल्प  
-🔔 दर्ता सकिएपछि प्रतियोगिता लक  
-🔔 सुधारिएको तथ्यांक र फिल्टर  
-🔔 ११ भाषाका अनुवाद थपिए  
-🔔 सफा मैदान डिजाइन  
-
-🎮 **सुधारहरू**  
-🎮 खेलपछि तथ्यांक ताजा हुन्छ  
-🎮 क्र्यास समस्या समाधान  
-🎮 छिटो र मृदु प्रदर्शन  
-⚽ अझ सहज Soccer अनुभव लिनुहोस्!
+🎉 “Load More” बटन थपियो  
+🎮 नयाँ ट्युटोरियल  
+🎮 एनिमेसन अन/अफ  
+🎮 प्रतियोगिता लक  
+🎮 तथ्यांक सुधार  
+🎮 क्र्यास ठीक  
+⚽ छिटो Soccer!
 </ne-NP>
 
 <hi-IN>
-🎉 **नया क्या है**
-
-🔔 “लोड मोर” बटन से आसान ब्राउज़िंग  
-🔔 नए खिलाड़ियों के लिए हैंड-जेस्चर ट्यूटोरियल  
-🔔 सेटिंग्स में एनिमेशन ऑन/ऑफ विकल्प  
-🔔 रजिस्ट्रेशन के बाद टूर्नामेंट लॉक  
-🔔 बेहतर आँकड़े और फ़िल्टर  
-🔔 11 भाषाओं में अनुवाद जोड़े गए  
-🔔 साफ-सुथरा मैदान डिज़ाइन  
-
-🎮 **सुधार व बेहतरियाँ**  
-🎮 मैच के बाद आँकड़े सही अपडेट होते हैं  
-🎮 क्रैश और फ़्रीज़ ठीक किए गए  
-🎮 ऐप तेज़ और स्मूद  
-⚽ बेहतर Soccer अनुभव का आनंद लें!
+🎉 “लोड मोर” जोड़ा गया  
+🎮 नया ट्यूटोरियल  
+🎮 एनिमेशन ऑन/ऑफ  
+🎮 टूर्नामेंट लॉक  
+🎮 बेहतर आँकड़े  
+🎮 क्रैश ठीक  
+⚽ तेज़ Soccer!
 </hi-IN>
 
 <am>
-🎉 **አዲስ ዝማኔ**
-
-🔔 “Load More” ቁልፎች ተጨምሯል  
-🔔 ለአዲስ ተጫዋቾች የእጅ መልክ አስተማሪ  
-🔔 አኒሜሽኖችን መክፈት/መዝጋት ተችሏል  
-🔔 ተመዝጋቢ ከተዘጋ ቡድን አይቀርም  
-🔔 የተሻሻለ ስታቲስቲክስ እና ፊልተር  
-🔔 ትርጉሞች በ11 ቋንቋ ታክሏል  
-🔔 ጫማ እና መውጫ ተሻሻለ  
-
-🎮 **ማሻሻያዎች**  
-🎮 ስታቲስቲክስ ከጨዋታ በኋላ ይታደሳሉ  
-🎮 መቃኘቶች ተቀናበሩ  
-🎮 ፈጣን እና የተሻለ አፈፃፀም  
-⚽ የተሻሻለ Soccer ተውኔት ይደሰቱ!
+🎉 “Load More” ተጨምሯል  
+🎮 አዲስ አስተማሪ  
+🎮 አኒሜሽን ክፈት/ዝጋ  
+🎮 ተመዝጋቢ ተዘግቷል  
+🎮 ስታቲስቲክስ ተሻሻለ  
+🎮 መቃኘት ተፈታ  
+⚽ ፈጣን Soccer!
 </am>
 
 <ar>
-🎉 **ما الجديد**
-
-🔔 أزرار «عرض المزيد» لتصفح أسهل  
-🔔 دليل جديد بإيماءات اليد للمبتدئين  
-🔔 خيار تشغيل أو إيقاف الرسوم المتحركة  
-🔔 البطولات تُغلق بعد انتهاء التسجيل  
-🔔 إحصاءات وفلاتر أدق  
-🔔 إضافة ترجمات لـ 11 لغة  
-🔔 تصميم ملعب أوضح  
-
-🎮 **إصلاحات وتحسينات**  
-🎮 تحديث الإحصاءات بعد كل مباراة  
-🎮 إصلاح التجمّد والأعطال  
-🎮 أداء أسرع وأكثر سلاسة  
-⚽ استمتع بتجربة Soccer أفضل!
+🎉 أزرار «المزيد» في الدعوات  
+🎮 دليل جديد  
+🎮 تشغيل/إيقاف الرسوم  
+🎮 قفل البطولات بعد التسجيل  
+🎮 تحسين الإحصاءات والتصميم  
+🎮 إصلاح الأعطال  
+⚽ Soccer أسرع!
 </ar>
 
 <my-MM>
-🎉 **အသစ်များ**
-
-🔔 “Load More” ခလုတ်များ ဖြင့် လွယ်ကူသော ကြည့်ရှုမှု  
-🔔 အသစ်ဝင်သော ကစားသူများအတွက် လက်အထောက် သင်ခန်းစာ  
-🔔 Settings တွင် animation on/off ရွေးချယ်နိုင်  
-🔔 မှတ်ပုံတင်ပြီးနောက် တန်းစီပြိုင်ပွဲ လော့ခ်  
-🔔 စာရင်းအင်း နှင့် filter များ မြှင့်တင်  
-🔔 ဘာသာစကား 11 ခု ထပ်တိုး  
-🔔 ကွင်းပုံစံ ပိုသန့်  
-
-🎮 **ပြုပြင်မွမ်းမံမှုများ**  
-🎮 ပွဲပြီးနောက် စာရင်းအင်း ပြန်အပ်ဒိတ်  
-🎮 ချိုးခြင်းနှင့် တိတ်ခြင်း ပြဿနာ ဖြေရှင်း  
-🎮 ပိုမြန်ပြီးချောမွေ့  
-⚽ Soccer အတွေ့အကြုံ ပိုမိုကောင်းမွန်!
+🎉 “Load More” ခလုတ် ထည့်  
+🎮 လက်ညှိ သင်ခန်းစာ  
+🎮 အနိမ့်/အမြင့် ပြောင်းနိုင်  
+🎮 မှတ်ပုံတင်ပြီး လော့ခ်  
+🎮 စာရင်းအင်း မြှင့်တင်  
+🎮 ချိုးခြင်း ဖြေရှင်း  
+⚽ ပိုမြန် Soccer!
 </my-MM>
 
 <km-KH>
-🎉 **អាប់ដេតថ្មី**
-
-🔔 បន្ថែមប៊ូតុង “Load More” សម្រាប់រកមើលងាយ  
-🔔 មគ្គុទ្ទេសក៍ថ្មីជាមួយចលនាដៃ  
-🔔 ជម្រើសបិទ/បើកអានីមេសិន  
-🔔 ប្រកួតត្រូវបានបិទបន្ទាប់ពីចុះឈ្មោះ  
-🔔 ស្ថិតិ និងតម្រងប្រសើរឡើង  
-🔔 បន្ថែមការបកប្រែ 11 ភាសា  
-🔔 តំបន់ប្រកួតស្អាតជាងមុន  
-
-🎮 **កែលម្អ**  
-🎮 ស្ថិតិត្រូវបានអាប់ដេតក្រោយការលេង  
-🎮 កំហុស និងការតាំងស្ទះត្រូវបានកែ  
-🎮 ល្បឿនលឿន និងរលូនជាងមុន  
-⚽ រីករាយជាមួយ Soccer ប្រសើរឡើង!
+🎉 បន្ថែម “Load More”  
+🎮 មគ្គុទ្ទេសក៍ថ្មី  
+🎮 បិទ/បើកអានីមេសិន  
+🎮 បិទបន្ទាប់ពីចុះឈ្មោះ  
+🎮 ស្ថិតិប្រសើរឡើង  
+🎮 កំហុសត្រូវបានកែ  
+⚽ Soccer លឿនជាងមុន!
 </km-KH>
 
 <lo-LA>
-🎉 **ສິ່ງໃໝ່**
-
-🔔 ປຸ່ມ “Load More” ເພື່ອເບິ່ງໄດ້ງ່າຍ  
-🔔 ຄູ່ມືໃໝ່ມີທ່າທາງມື  
-🔔 ເລືອກເປີດ/ປິດການເຄື່ອນໄຫວ  
-🔔 ລັອກການແຂ່ງຂັນຫຼັງລົງທະບຽນ  
-🔔 ສະຖິຕິແລະການກັ່ນຕອງດີຂຶ້ນ  
-🔔 ເພີ່ມການແປ 11 ພາສາ  
-🔔 ພາບເກມສະອາດຕາ  
-
-🎮 **ປັບປຸງ**  
-🎮 ສະຖິຕິອັບເດດຫຼັງເກມ  
-🎮 ແກ້ບັນຫາຄ້າງ  
-🎮 ແອັບໄວແລະນຸ່ມນວນ  
-⚽ ສະໜອງປະສົບການ Soccer ທີ່ດີກວ່າ!
+🎉 ເພີ່ມ “Load More”  
+🎮 ຄູ່ມືໃໝ່  
+🎮 ປິດ/ເປີດການເຄື່ອນໄຫວ  
+🎮 ລັອກຫຼັງລົງທະບຽນ  
+🎮 ສະຖິຕິດີຂຶ້ນ  
+🎮 ບັນຫາແກ້ໄຂ  
+⚽ Soccer ໄວຂຶ້ນ!
 </lo-LA>
 
 <mn-MN>
-🎉 **Шинэчлэлт**
-
-🔔 “Load More” товч нэмэгдсэн  
-🔔 Шинэ тоглогчдод зориулсан гарын дохионы хичээл  
-🔔 Animation асаах/унтраах тохиргоо  
-🔔 Бүртгэл хаагдсаны дараа тэмцээн түгжээтэй  
-🔔 Статистик ба шүүлтүүр сайжирсан  
-🔔 11 хэл дээр орчуулга нэмсэн  
-🔔 Талбай илүү цэвэр болсон  
-
-🎮 **Сайжруулалт**  
-🎮 Тоглоомын дараа статистик шинэчлэгдэнэ  
-🎮 Алдаа, гацалт засагдсан  
-🎮 Илүү хурдан, тогтвортой  
-⚽ Илүү сайхан Soccer туршлага аваарай!
+🎉 “Load More” нэмсэн  
+🎮 Шинэ гарын дохио  
+🎮 Animation асаах/унтраах  
+🎮 Тэмцээн бүртгэлийн дараа түгжээтэй  
+🎮 Статистик сайжирсан  
+🎮 Алдаа зассан  
+⚽ Хурдан Soccer!
 </mn-MN>
 
 <fa-IR>
-🎉 **تازه‌ها**
-
-🔔 دکمه‌های «نمایش بیشتر» برای مرور آسان‌تر  
-🔔 آموزش جدید با حرکات دست برای تازه‌کاران  
-🔔 گزینه روشن/خاموش کردن انیمیشن‌ها  
-🔔 قفل شدن مسابقات پس از ثبت‌نام  
-🔔 آمار و فیلترهای هوشمندتر  
-🔔 افزودن ترجمه در ۱۱ زبان  
-🔔 طراحی زمین تمیزتر  
-
-🎮 **اصلاحات و بهبودها**  
-🎮 به‌روزرسانی آمار پس از هر بازی  
-🎮 رفع خطاها و کندی‌ها  
-🎮 اجرای سریع‌تر و روان‌تر  
-⚽ از تجربه بهتر Soccer لذت ببرید!
+🎉 دکمه «بیشتر» افزوده شد  
+🎮 آموزش حرکات دست  
+🎮 روشن/خاموش انیمیشن‌ها  
+🎮 قفل مسابقات پس از ثبت‌نام  
+🎮 آمار و طراحی بهتر  
+🎮 خطاها رفع شد  
+⚽ Soccer سریع‌تر!
 </fa-IR>
 
 <si-LK>
-🎉 **අලුත් දේවල්**
-
-🔔 “Load More” බොත්තම් එක් කළා  
-🔔 අලුත් ක්‍රීඩකයන්ට හස්ත චලන පාඩම  
-🔔 Animations on/off විකල්පය  
-🔔 ලියාපදිංචියෙන් පසු තරග වසා දැමීම  
-🔔 වැඩි දියුණු කළ සංඛ්‍යාත්මක දත්ත හා පෙරහන්  
-🔔 11 භාෂාවල පරිවර්තන එක් කළා  
-🔔 ක්‍රීඩා භූමිය වඩා පැහැදිලි  
-
-🎮 **ආපසු සැකසුම්**  
-🎮 තරගයකින් පසු දත්ත යාවත්කාලීන  
-🎮 අවසාන වශයෙන් ක්‍රැෂ් හා ස්ථිති ගැටළු විසඳා  
-🎮 වැඩි වේගයෙන් හා මෘදු ලෙස ක්‍රියා  
-⚽ වඩා හොඳ Soccer අත්දැකීමක්!
+🎉 “Load More” බොත්තම එක් කළා  
+🎮 අලුත් පාඩම  
+🎮 Animations on/off  
+🎮 තරග වසා දැමූවා  
+🎮 තොරතුරු වැඩි කළා  
+🎮 බිඳවැටීම් විසඳා  
+⚽ වේගවත් Soccer!
 </si-LK>
 
 <sw>
-🎉 **Kipya**
-
-🔔 Vitufe vya “Load More” kwa urahisi zaidi  
-🔔 Mafunzo mapya ya mikono kwa wanaoanza  
-🔔 Chaguo la kuwasha/kuzima michoro  
-🔔 Mashindano hufungwa baada ya usajili  
-🔔 Takwimu na vichujio bora zaidi  
-🔔 Tafsiri mpya kwa lugha 11  
-🔔 Muonekano wa uwanja ulioboreshwa  
-
-🎮 **Marekebisho & Uboreshaji**  
-🎮 Takwimu husasishwa baada ya mechi  
-🎮 Hitilafu na kufungia zimeondolewa  
-🎮 Kasi na utulivu bora zaidi  
-⚽ Furahia mchezo wa Soccer ulioimarishwa!
+🎉 “Load More” imeongezwa  
+🎮 Mafunzo mapya  
+🎮 Michoro on/off  
+🎮 Mashindano kufungwa  
+🎮 Takwimu bora  
+🎮 Hitilafu zimetatuliwa  
+⚽ Soccer haraka!
 </sw>
