@@ -66,6 +66,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
 
     private static final String TAG = "TAG_Soccer";
     private static final android.os.Handler MAIN_HANDLER = new android.os.Handler(android.os.Looper.getMainLooper());
+    private static final long WEBVIEW_INIT_TIMEOUT_SECONDS = 5;
     
     private DatabaseReference userStatusDbRef;
     private DatabaseReference connectedRef;
@@ -775,7 +776,6 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         try {
             // Post WebView initialization to main thread since WebView requires main thread access
             // but we're already on a background thread, so we use a CountDownLatch to wait
-            final boolean[] success = {false};
             final java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);
             
             MAIN_HANDLER.post(() -> {
@@ -784,7 +784,6 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                     WebView webView = new WebView(this);
                     // Immediately destroy it to prevent memory leaks
                     webView.destroy();
-                    success[0] = true;
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".initializeWebViewSafely: WebView pre-initialized successfully");
                 } catch (Exception e) {
                     // If WebView initialization fails, log the error but don't crash the app
@@ -796,7 +795,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
             });
             
             // Wait for WebView initialization to complete (with timeout to prevent indefinite blocking)
-            if (!latch.await(5, TimeUnit.SECONDS)) {
+            if (!latch.await(WEBVIEW_INIT_TIMEOUT_SECONDS, TimeUnit.SECONDS)) {
                 Log.w("TAG_Soccer", getClass().getSimpleName() + ".initializeWebViewSafely: WebView initialization timed out");
             }
         } catch (InterruptedException e) {
