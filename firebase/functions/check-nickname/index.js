@@ -2,7 +2,7 @@ import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { VertexAI } from "@google-cloud/vertexai";
 
 const vertex = new VertexAI({ project: process.env.GCLOUD_PROJECT, location: "us-central1" });
-const modelInstance = vertex.getGenerativeModel({ model: "publishers/google/models/text-moderation" });
+const modelInstance = vertex.getGenerativeModel({ model: "publishers/google/models/text-moderation@001" });
 
 export const checkNickname = onCall({ region: "us-central1" }, async (request) => {
   const nickname = (request.data?.nickname ?? "").trim();
