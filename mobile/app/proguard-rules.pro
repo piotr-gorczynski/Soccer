@@ -25,6 +25,11 @@
 # The comprehensive rule below covers all Firebase Auth classes including internal ones
 -keep class com.google.firebase.auth.** { *; }
 
+# Google Play Services Auth - Keep SignInHubActivity and related classes
+# to prevent crashes during Google Sign-In flow
+-keep class com.google.android.gms.auth.** { *; }
+-keep class com.google.android.gms.common.** { *; }
+
 # Facebook SDK - Keep all classes to ensure proper OAuth flow
 -keep class com.facebook.** { *; }
 
