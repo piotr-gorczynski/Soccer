@@ -226,15 +226,14 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
             enableFcmAutoInit();
         }
 
-        // Pre-initialize WebView to prevent ANR crashes in Google Ads SDK
-        // This fixes Crashlytics issue: __dl_elf32_sym const* soinfo_do_lookup_impl
-        // The issue occurs when WebView is first initialized by ads on certain devices
-        initializeWebViewSafely();
-
-        // Initialize MobileAds on background thread to prevent ANR
-        // This fixes Crashlytics issue: com.google.android.gms.internal.ads.zzhwo.zzbE
-        // The issue occurs when MobileAds initialization blocks the main thread
+        // Pre-initialize WebView and MobileAds on background thread to prevent ANR crashes
+        // This fixes Crashlytics issue: WV.xv.execute ANR
+        // The issue occurs when WebView is first initialized by Google Ads SDK, blocking the main thread
         adsExecutor.execute(() -> {
+            // Initialize WebView first to ensure provider is loaded
+            initializeWebViewSafely();
+            
+            // Then initialize MobileAds
             MobileAds.initialize(this, initializationStatus -> {
                 // Post callback to main thread for potential UI updates
                 MAIN_HANDLER.post(() -> {
@@ -764,24 +763,47 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     
     /**
      * Pre-initialize WebView to prevent ANR crashes during ad loading.
-     * This fixes the crash: __dl_elf32_sym const* soinfo_do_lookup_impl
+     * This fixes the crash: WV.xv.execute ANR
      * 
      * The issue occurs on certain Android devices when WebView is first initialized
      * by the Google Ads SDK, causing a linker-level ANR. By initializing WebView
-     * early on the main thread, we avoid this problem.
+     * early on a background thread, we avoid blocking the main thread.
+     * 
+     * Note: This method should be called from a background thread to avoid ANR.
      */
     private void initializeWebViewSafely() {
         try {
-            // Create a WebView instance to trigger the WebView provider initialization
-            // This must be done on the main thread before any ads are loaded
-            WebView webView = new WebView(this);
-            // Immediately destroy it to prevent memory leaks
-            webView.destroy();
-            Log.d("TAG_Soccer", getClass().getSimpleName() + ".initializeWebViewSafely: WebView pre-initialized successfully");
+            // Post WebView initialization to main thread since WebView requires main thread access
+            // but we're already on a background thread, so we use a CountDownLatch to wait
+            final boolean[] success = {false};
+            final java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);
+            
+            MAIN_HANDLER.post(() -> {
+                try {
+                    // Create a WebView instance to trigger the WebView provider initialization
+                    WebView webView = new WebView(this);
+                    // Immediately destroy it to prevent memory leaks
+                    webView.destroy();
+                    success[0] = true;
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".initializeWebViewSafely: WebView pre-initialized successfully");
+                } catch (Exception e) {
+                    // If WebView initialization fails, log the error but don't crash the app
+                    // Some devices may have WebView disabled or missing
+                    Log.w("TAG_Soccer", getClass().getSimpleName() + ".initializeWebViewSafely: Failed to pre-initialize WebView", e);
+                } finally {
+                    latch.countDown();
+                }
+            });
+            
+            // Wait for WebView initialization to complete (with timeout to prevent indefinite blocking)
+            if (!latch.await(5, TimeUnit.SECONDS)) {
+                Log.w("TAG_Soccer", getClass().getSimpleName() + ".initializeWebViewSafely: WebView initialization timed out");
+            }
+        } catch (InterruptedException e) {
+            Log.w("TAG_Soccer", getClass().getSimpleName() + ".initializeWebViewSafely: WebView initialization interrupted", e);
+            Thread.currentThread().interrupt();
         } catch (Exception e) {
-            // If WebView initialization fails, log the error but don't crash the app
-            // Some devices may have WebView disabled or missing
-            Log.w("TAG_Soccer", getClass().getSimpleName() + ".initializeWebViewSafely: Failed to pre-initialize WebView", e);
+            Log.w("TAG_Soccer", getClass().getSimpleName() + ".initializeWebViewSafely: Unexpected error during WebView initialization", e);
         }
     }
     
