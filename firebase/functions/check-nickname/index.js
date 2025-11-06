@@ -1,8 +1,17 @@
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { VertexAI } from "@google-cloud/vertexai";
 
-const vertex = new VertexAI({ project: process.env.GCLOUD_PROJECT, location: "us-central1" });
-const modelInstance = vertex.getGenerativeModel({ model: "publishers/google/models/text-moderation@001" });
+const projectId = process.env.GCLOUD_PROJECT ?? process.env.GOOGLE_CLOUD_PROJECT;
+const location = "us-central1";
+
+if (!projectId) {
+  throw new Error("Project ID is not set in GCLOUD_PROJECT or GOOGLE_CLOUD_PROJECT environment variables.");
+}
+
+const vertex = new VertexAI({ project: projectId, location });
+const modelInstance = vertex.getGenerativeModel({
+  model: `projects/${projectId}/locations/${location}/publishers/google/models/text-moderation`,
+});
 
 export const checkNickname = onCall({ region: "us-central1" }, async (request) => {
   const nickname = (request.data?.nickname ?? "").trim();
