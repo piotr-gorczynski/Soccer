@@ -53,6 +53,7 @@ steps:
         enable_api "identitytoolkit.googleapis.com"
         enable_api "apikeys.googleapis.com"
         enable_api "firebasedatabase.googleapis.com"
+        enable_api "aiplatform.googleapis.com"
 
 
         echo "🎉 All required Firebase APIs are enabled."
