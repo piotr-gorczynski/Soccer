@@ -56,6 +56,7 @@ import androidx.core.os.LocaleListCompat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -776,7 +777,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         try {
             // Post WebView initialization to main thread since WebView requires main thread access
             // but we're already on a background thread, so we use a CountDownLatch to wait
-            final java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);
+            final CountDownLatch latch = new CountDownLatch(1);
             
             MAIN_HANDLER.post(() -> {
                 try {
