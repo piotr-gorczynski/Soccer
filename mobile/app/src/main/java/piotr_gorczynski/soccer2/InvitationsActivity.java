@@ -271,7 +271,13 @@ public class InvitationsActivity extends BaseActivity {
 
 
     private void listenForInvites() {
-        String currentUserId = Objects.requireNonNull(auth.getCurrentUser()).getUid();
+        FirebaseUser currentUser = auth.getCurrentUser();
+        if (currentUser == null) {
+            Log.e("TAG_Soccer", getClass().getSimpleName() + ".listenForInvites: User not authenticated");
+            finish();
+            return;
+        }
+        String currentUserId = currentUser.getUid();
 
         // Remove previous subscription if exists
         if (invitesSub != null) {
@@ -351,7 +357,13 @@ public class InvitationsActivity extends BaseActivity {
     }
 
     private void listenForPastInvites() {
-        String currentUserId = Objects.requireNonNull(auth.getCurrentUser()).getUid();
+        FirebaseUser currentUser = auth.getCurrentUser();
+        if (currentUser == null) {
+            Log.e("TAG_Soccer", getClass().getSimpleName() + ".listenForPastInvites: User not authenticated");
+            finish();
+            return;
+        }
+        String currentUserId = currentUser.getUid();
 
         // Remove previous subscription if exists
         if (pastInvitesSub != null) {
