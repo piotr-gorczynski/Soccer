@@ -96,7 +96,12 @@ public class AddFriendActivity extends BaseActivity {
     }
     
     private void loadFriends() {
-        String uid = Objects.requireNonNull(auth.getCurrentUser()).getUid();
+        if (auth.getCurrentUser() == null) {
+            Log.e("TAG_Soccer", getClass().getSimpleName() + ".loadFriends: User not authenticated");
+            finish();
+            return;
+        }
+        String uid = auth.getCurrentUser().getUid();
         db.collection("users").document(uid).collection("friends").get()
                 .addOnSuccessListener(snap -> {
                     Set<String> newFriendUids = new HashSet<>();
