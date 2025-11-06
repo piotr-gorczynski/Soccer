@@ -19,7 +19,7 @@
     {
       "source": "functions/change-player-turn",
       "codebase": "change-player-turn",
-      "runtime": "nodejs18",
+      "runtime": "nodejs20",
       "region": "us-central1"
     },
     {
@@ -93,7 +93,7 @@
     {
       "source": "functions/check-nickname",
       "codebase": "check-nickname",
-      "runtime": "nodejs18",
+      "runtime": "nodejs20",
       "region": "us-central1"
     }
   ],
