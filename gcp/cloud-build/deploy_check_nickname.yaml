@@ -1,0 +1,116 @@
+substitutions:
+  _ENVIRONMENT: 'dev'
+  _FOLDER_NAME: 'soccer'
+
+steps:
+  # Step 1: Get Firebase project ID
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'get-project-id'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "🔎 Finding project for ${_FOLDER_NAME}-${_ENVIRONMENT}..."
+        gcloud projects list \
+          --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
+          --format="value(projectId)" \
+          | head -n 1 > /workspace/FIREBASE_PROJECT_ID.txt
+
+        if [ ! -s /workspace/FIREBASE_PROJECT_ID.txt ]; then
+          echo "❌ Project ID not found!"
+          exit 1
+        fi
+
+  # Step 2: Install Firebase CLI
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'install-firebase-cli'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "⬇️ Installing Firebase CLI..."
+        curl -sL https://firebase.tools | bash
+        mkdir -p /workspace/firebase
+        cp /usr/local/bin/firebase /workspace/firebase/
+        chmod +x /workspace/firebase/firebase
+        echo "✅ Firebase CLI installed."
+
+  # Step 3: Clone source code
+  - name: 'gcr.io/cloud-builders/git'
+    id: 'pull-files'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -ex
+        echo "📦 Cloning from the ${_ENVIRONMENT} branch..."
+        git clone -b ${_ENVIRONMENT} --single-branch https://github.com/piotr-gorczynski/Soccer.git /workspace/soccer
+
+        echo "📁 Copying Firebase config & check-nickname function..."
+        cp /workspace/soccer/firebase/firebase.json /workspace/firebase/firebase.json
+        cp /workspace/soccer/firebase/firestore.rules /workspace/firebase/firestore.rules
+
+        mkdir -p /workspace/firebase/functions/check-nickname
+        cp /workspace/soccer/firebase/functions/check-nickname/index.js /workspace/firebase/functions/check-nickname/
+        cp /workspace/soccer/firebase/functions/check-nickname/package.json /workspace/firebase/functions/check-nickname/
+        if [ -f /workspace/soccer/firebase/functions/check-nickname/package-lock.json ]; then
+          cp /workspace/soccer/firebase/functions/check-nickname/package-lock.json /workspace/firebase/functions/check-nickname/
+        fi
+
+  # Step 4: Install dependencies
+  - name: 'node:18-slim'
+    id: 'install-deps-check-nickname'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -ex
+        cd /workspace/firebase/functions/check-nickname
+        if [ -f package-lock.json ]; then
+          npm ci
+        else
+          npm install
+        fi
+        echo "📦 Dependencies installed."
+
+  # Step 5: Deploy function
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'deploy-check-nickname'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -e
+        cd /workspace/firebase
+        project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
+
+        ./firebase deploy \
+          --only functions:check-nickname \
+          --project="$project_id" \
+          --force
+
+        echo "✅ Function 'checkNickname' deployed successfully."
+
+  # Step 6: Add IAM policy binding to allow allUsers to invoke
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'bind-invoker-role'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -e
+        project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
+
+        echo "🔐 Granting invoker role to allUsers for 'checkNickname'..."
+        gcloud functions add-iam-policy-binding checkNickname \
+          --region=us-central1 \
+          --project="$project_id" \
+          --member="allUsers" \
+          --role="roles/cloudfunctions.invoker"
+
+        echo "✅ IAM policy binding applied."
+
+options:
+  logging: CLOUD_LOGGING_ONLY
