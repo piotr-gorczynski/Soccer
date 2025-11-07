@@ -207,6 +207,7 @@
     <string name="register_dialog_message">لاستخدام هذه الوظيفة عليك التسجيل. يمكنك التسجيل حتى بشكل مجهول. هل تريد المتابعة؟</string>
     <string name="proceed">متابعة</string>
     <string name="network_error_checking_nickname">خطأ في الشبكة أثناء التحقق من الاسم المستعار</string>
+    <string name="checking_nickname">جارٍ التحقق من الاسم المستعار…</string>
     <string name="nickname_taken">الاسم المستعار مستخدم بالفعل — اختر آخر</string>
     <string name="nickname_saved">تم حفظ الاسم المستعار</string>
     <string name="nickname_save_failed">فشل حفظ الاسم المستعار</string>

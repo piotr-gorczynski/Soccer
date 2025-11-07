@@ -23,4 +23,27 @@
         android:text="@string/confirm"
         android:textAllCaps="false"
         android:textColor="@color/colorWhite" />
+
+    <LinearLayout
+        android:id="@+id/nicknameCheckProgress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:visibility="gone">
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true" />
+
+        <TextView
+            android:id="@+id/textCheckingNickname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/checking_nickname" />
+    </LinearLayout>
 </LinearLayout>

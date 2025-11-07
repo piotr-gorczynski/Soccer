@@ -226,6 +226,7 @@
     <string name="register_dialog_message">Ili kutumia kipengele hiki unapaswa kujisajili. Unaweza hata kujisajili bila utambulisho. Unataka kuendelea?</string>
     <string name="proceed">Endelea</string>
     <string name="network_error_checking_nickname">Hitilafu ya mtandao wakati wa kukagua jina la utani</string>
+    <string name="checking_nickname">Inakagua jina la utani…</string>
     <string name="nickname_taken">Jina la utani tayari limetumika — chagua jingine</string>
     <string name="nickname_saved">Jina la utani limehifadhiwa</string>
     <string name="nickname_save_failed">Imeshindwa kuhifadhi jina la utani</string>

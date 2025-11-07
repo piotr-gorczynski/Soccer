@@ -226,6 +226,7 @@
     <string name="register_dialog_message">මෙම ක්‍රියාව භාවිතා කිරීමට ඔබ ලියාපදිංචි විය යුතුයි. ඔබට අනන්‍ය ලෙසවත් ලියාපදිංචි විය හැක. ඔබ ඉදිරියට යාමට කැමතිද?</string>
     <string name="proceed">ඉදිරියට යන්න</string>
     <string name="network_error_checking_nickname">අතුරු නාමය පරීක්ෂා කිරීමේදී ජාල දෝෂයක්</string>
+    <string name="checking_nickname">අතුරු නාමය පරීක්ෂා කරමින්…</string>
     <string name="nickname_taken">අතුරු නාමය දැනටමත් භාවිතයේ ඇත — වෙනත් එකක් තෝරන්න</string>
     <string name="nickname_saved">අතුරු නාමය සුරකින ලදී</string>
     <string name="nickname_save_failed">අතුරු නාමය සුරැකීමට අසමත් විය</string>
