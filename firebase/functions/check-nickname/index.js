@@ -10,7 +10,7 @@ if (!projectId) {
 
 const vertex = new VertexAI({ project: projectId, location });
 const modelInstance = vertex.getGenerativeModel({
-  model: "text-moderation-007",
+  model: "gemini-1.5-flash",
 });
 
 export const checkNickname = onCall({ region: "us-central1" }, async (request) => {
