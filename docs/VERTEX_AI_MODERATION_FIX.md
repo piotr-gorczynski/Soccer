@@ -6,13 +6,18 @@ The backend logs showed that the `checkNickname` function was failing with Verte
 
 ## Root Cause
 
-The `check-nickname` Cloud Function uses the `@google-cloud/vertexai` package to call Google's Gemini 1.5 Flash model for content moderation. However, this requires the **Vertex AI API** to be enabled in the Google Cloud project. Without this API enabled, the function would fail with permission or authentication errors.
+The `check-nickname` Cloud Function uses the `@google-cloud/vertexai` package to call Google's Gemini 1.5 Flash model for content moderation. However, this requires two things:
+
+1. **Vertex AI API** must be enabled in the Google Cloud project (`aiplatform.googleapis.com`)
+2. **IAM Permissions**: The Cloud Functions service account needs the `roles/aiplatform.user` role to call Vertex AI endpoints
+
+Without both of these, the function would fail with permission or authentication errors.
 
 The function already had graceful error handling that allowed nicknames by default when errors occurred (fail-open approach), which prevented users from being blocked but also meant moderation wasn't working.
 
 ## Solution
 
-This fix provides three key components:
+This fix provides four key components:
 
 ### 1. Standalone API Enablement Script
 
@@ -32,7 +37,24 @@ This script:
 - Provides clear error messages if permissions are insufficient
 - Requires `Service Usage Admin` or `Service Usage Consumer` role
 
-### 2. Updated Deployment Script
+### 2. IAM Role Grant Script
+
+**File**: `gcp/cloud-build/grant_vertex_ai_user_to_appengine_sa.yaml`
+
+A Cloud Build script to grant the Vertex AI User role to the Cloud Functions service account:
+
+```bash
+gcloud builds submit \
+  --config=gcp/cloud-build/grant_vertex_ai_user_to_appengine_sa.yaml \
+  --substitutions=_ENVIRONMENT=dev
+```
+
+This script:
+- Finds the project for the specified environment
+- Grants `roles/aiplatform.user` to the App Engine default service account (`PROJECT_ID@appspot.gserviceaccount.com`)
+- This role includes the `aiplatform.endpoints.predict` permission required for Vertex AI operations
+
+### 3. Updated Deployment Script
 
 **File**: `gcp/cloud-build/deploy_check_nickname.yaml`
 
@@ -43,13 +65,16 @@ Key improvements:
 - Provides clear success/skip messages
 - Maintains the existing deployment flow
 
-### 3. Comprehensive Documentation
+**Note**: The deployment script only enables the API. You must separately grant the IAM role using the script above.
+
+### 4. Comprehensive Documentation
 
 **File**: `firebase/functions/check-nickname/README.md`
 
 A complete guide covering:
-- Prerequisites (Vertex AI API requirement)
+- Prerequisites (Vertex AI API and IAM role requirements)
 - How to enable the API (both automated and manual methods)
+- How to grant the IAM role (both automated and manual methods)
 - Deployment process
 - Function behavior (normal operation and error handling)
 - Troubleshooting common issues
@@ -66,7 +91,14 @@ A complete guide covering:
      --substitutions=_ENVIRONMENT=dev
    ```
 
-2. **Deploy the function**:
+2. **Grant the Vertex AI User role** (one-time setup):
+   ```bash
+   gcloud builds submit \
+     --config=gcp/cloud-build/grant_vertex_ai_user_to_appengine_sa.yaml \
+     --substitutions=_ENVIRONMENT=dev
+   ```
+
+3. **Deploy the function**:
    ```bash
    gcloud builds submit \
      --config=gcp/cloud-build/deploy_check_nickname.yaml \
@@ -82,6 +114,8 @@ gcloud builds submit \
   --substitutions=_ENVIRONMENT=dev
 ```
 
+The IAM role only needs to be granted once per environment.
+
 ### Manual Verification
 
 To verify the API is enabled:
@@ -90,29 +124,36 @@ gcloud services list --enabled --project=YOUR_PROJECT_ID | grep aiplatform
 ```
 
 Expected output:
-```
-aiplatform.googleapis.com       Vertex AI API
+To verify the IAM role is granted:
+```bash
+gcloud projects get-iam-policy YOUR_PROJECT_ID \
+  --flatten="bindings[].members" \
+  --filter="bindings.role:roles/aiplatform.user AND bindings.members:YOUR_PROJECT_ID@appspot.gserviceaccount.com"
 ```
 
 ## Files Changed
 
 1. **New**: `gcp/cloud-build/enable_vertex_ai.yaml` - Standalone API enablement script
-2. **Modified**: `gcp/cloud-build/deploy_check_nickname.yaml` - Added Vertex AI API enablement step
-3. **New**: `firebase/functions/check-nickname/README.md` - Complete documentation
+2. **New**: `gcp/cloud-build/grant_vertex_ai_user_to_appengine_sa.yaml` - IAM role grant script
+3. **Modified**: `gcp/cloud-build/deploy_check_nickname.yaml` - Added Vertex AI API enablement step
+4. **New**: `firebase/functions/check-nickname/README.md` - Complete documentation
 
 ## Security Considerations
 
 - The function code (`index.js`) was not modified - it already has robust error handling
 - The graceful degradation (fail-open) behavior is intentional to avoid blocking users during temporary API issues
 - Error logs still capture all failures for debugging
-- The API enablement requires appropriate IAM permissions to prevent unauthorized changes
+- The API enablement and IAM role granting require appropriate permissions to prevent unauthorized changes
+- The `roles/aiplatform.user` role grants minimal permissions needed for Vertex AI operations
 
 ## Next Steps
 
 After merging this PR:
 
-1. **For existing deployments**: Run the `enable_vertex_ai.yaml` script once for each environment (dev/staging/prod)
-2. **For new deployments**: The API will be automatically enabled during deployment
+1. **For existing deployments**: 
+   - Run the `enable_vertex_ai.yaml` script once for each environment (dev/staging/prod)
+   - Run the `grant_vertex_ai_user_to_appengine_sa.yaml` script once for each environment
+2. **For new deployments**: The API will be automatically enabled during deployment, but you must still grant the IAM role separately
 3. **Monitor logs**: Check that nickname moderation is working and errors have stopped
 
 ## Testing
@@ -120,10 +161,11 @@ After merging this PR:
 To test the fix:
 
 1. Enable the API in your dev environment
-2. Deploy the function
-3. Try setting a nickname in the app
-4. Check the logs - you should see moderation checks succeeding instead of failing
-5. Try a potentially inappropriate nickname to verify moderation is working
+2. Grant the IAM role to the service account
+3. Deploy the function
+4. Try setting a nickname in the app
+5. Check the logs - you should see moderation checks succeeding instead of failing
+6. Try a potentially inappropriate nickname to verify moderation is working
 
 ## References
 
