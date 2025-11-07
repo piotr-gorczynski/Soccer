@@ -236,6 +236,7 @@
     <string name="register_dialog_message">Para usar esta función necesitas registrarte. Puedes registrarte incluso de forma anónima. ¿Quieres continuar?</string>
     <string name="proceed">Continuar</string>
     <string name="network_error_checking_nickname">Error de red al verificar el apodo</string>
+    <string name="checking_nickname">Comprobando apodo…</string>
     <string name="nickname_taken">Apodo ya tomado - Elija otro</string>
     <string name="nickname_saved">Apodo guardado</string>
     <string name="nickname_save_failed">No se pudo salvar el apodo</string>
