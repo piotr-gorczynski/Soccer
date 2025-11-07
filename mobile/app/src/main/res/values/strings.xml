@@ -234,6 +234,7 @@
     <string name="register_dialog_message">In order to use this function you need to register yourself. You can register even anonymously. Do you want to proceed?</string>
     <string name="proceed">Proceed</string>
     <string name="network_error_checking_nickname">Network error while checking nickname</string>
+    <string name="checking_nickname">Checking nickname…</string>
     <string name="nickname_taken">Nickname already taken — choose another</string>
     <string name="nickname_saved">Nickname saved</string>
     <string name="nickname_save_failed">Failed to save nickname</string>

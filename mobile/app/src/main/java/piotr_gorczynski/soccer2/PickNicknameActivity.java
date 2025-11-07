@@ -6,6 +6,7 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -16,7 +17,9 @@ import androidx.activity.OnBackPressedCallback;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.functions.FirebaseFunctions;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +30,8 @@ public class PickNicknameActivity extends BaseActivity {
     private Toast nickToast;
     private static final int NICK_MAX = 20;
     private AnalyticsManager analyticsManager;
+    private View nicknameCheckProgress;
+    private FirebaseFunctions functions;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,6 +44,8 @@ public class PickNicknameActivity extends BaseActivity {
 
         editNickname = findViewById(R.id.editNickname);
         btnConfirm = findViewById(R.id.btnConfirmNickname);
+        nicknameCheckProgress = findViewById(R.id.nicknameCheckProgress);
+        functions = FirebaseFunctions.getInstance();
 
         editNickname.setFilters(new InputFilter[]{
                 new InputFilter.LengthFilter(NICK_MAX),
@@ -73,7 +80,7 @@ public class PickNicknameActivity extends BaseActivity {
     }
 
     private void saveNickname() {
-        String nickname = editNickname.getText().toString().trim();
+        final String nickname = editNickname.getText().toString().trim();
         if (nickname.isEmpty()) {
             Toast.makeText(this, R.string.nickname_required, Toast.LENGTH_SHORT).show();
             return;
@@ -83,13 +90,37 @@ public class PickNicknameActivity extends BaseActivity {
             return;
         }
 
-        String uid = FirebaseAuth.getInstance().getUid();
+        final String uid = FirebaseAuth.getInstance().getUid();
         if (uid == null) {
             Toast.makeText(this, R.string.not_logged_in, Toast.LENGTH_SHORT).show();
             return;
         }
 
         btnConfirm.setEnabled(false);
+        showNicknameCheckProgress(true);
+        checkNickname(nickname, (allowed, hadError) -> {
+            showNicknameCheckProgress(false);
+            if (hadError) {
+                btnConfirm.setEnabled(true);
+                Toast.makeText(PickNicknameActivity.this,
+                        R.string.network_error_checking_nickname,
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (!allowed) {
+                btnConfirm.setEnabled(true);
+                Toast.makeText(PickNicknameActivity.this,
+                        R.string.nickname_taken,
+                        Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            proceedWithSavingNickname(uid, nickname);
+        });
+    }
+
+
+    private void proceedWithSavingNickname(String uid, String nickname) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         db.collection("users")
@@ -99,17 +130,17 @@ public class PickNicknameActivity extends BaseActivity {
                     if (!task.isSuccessful()) {
                         btnConfirm.setEnabled(true);
                         Log.e("TAG_Soccer", "Nickname check failed", task.getException());
-                          Toast.makeText(PickNicknameActivity.this,
-                                  R.string.network_error_checking_nickname,
-                                  Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PickNicknameActivity.this,
+                                R.string.network_error_checking_nickname,
+                                Toast.LENGTH_SHORT).show();
                         return;
                     }
                     if (!task.getResult().isEmpty()) {
                         btnConfirm.setEnabled(true);
                         Log.e("TAG_Soccer", "Nickname already exists: " + nickname);
-                          Toast.makeText(PickNicknameActivity.this,
-                                  R.string.nickname_taken,
-                                  Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PickNicknameActivity.this,
+                                R.string.nickname_taken,
+                                Toast.LENGTH_SHORT).show();
                         return;
                     }
 
@@ -123,10 +154,10 @@ public class PickNicknameActivity extends BaseActivity {
                                         .edit()
                                         .putString("nickname", nickname)
                                         .apply();
-                                  Toast.makeText(PickNicknameActivity.this,
-                                          R.string.nickname_saved,
-                                          Toast.LENGTH_SHORT).show();
-                                
+                                Toast.makeText(PickNicknameActivity.this,
+                                        R.string.nickname_saved,
+                                        Toast.LENGTH_SHORT).show();
+
                                 // Update user properties now that nickname is set
                                 FirebaseAuth auth = FirebaseAuth.getInstance();
                                 if (auth.getCurrentUser() != null) {
@@ -134,16 +165,16 @@ public class PickNicknameActivity extends BaseActivity {
                                     String language = LanguageManager.getCurrentLanguageCode(PickNicknameActivity.this);
                                     analyticsManager.setUserProperties(authMethod, "9.0", language, true);
                                 }
-                                
-                                // Show anonymous linking prompt if user is anonymous  
+
+                                // Show anonymous linking prompt if user is anonymous
                                 if (AnonymousLinkPromptHelper.shouldShowPrompt("pick_nickname")) {
                                     AnonymousLinkPromptHelper.showSaveProgressPrompt(
-                                        PickNicknameActivity.this, 
-                                        "pick_nickname", 
-                                        analyticsManager
+                                            PickNicknameActivity.this,
+                                            "pick_nickname",
+                                            analyticsManager
                                     );
                                 }
-                                          
+
                                 if (isTaskRoot()) {
                                     startActivity(new Intent(
                                             PickNicknameActivity.this,
@@ -153,11 +184,43 @@ public class PickNicknameActivity extends BaseActivity {
                             })
                             .addOnFailureListener(e -> {
                                 btnConfirm.setEnabled(true);
-                                  Toast.makeText(PickNicknameActivity.this,
-                                          R.string.nickname_save_failed,
-                                          Toast.LENGTH_SHORT).show();
+                                Toast.makeText(PickNicknameActivity.this,
+                                        R.string.nickname_save_failed,
+                                        Toast.LENGTH_SHORT).show();
                             });
                 });
+    }
+
+    private void showNicknameCheckProgress(boolean show) {
+        if (nicknameCheckProgress != null) {
+            nicknameCheckProgress.setVisibility(show ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    private void checkNickname(String nickname, NicknameCheckCallback callback) {
+        functions
+                .getHttpsCallable("checkNickname")
+                .call(Collections.singletonMap("nickname", nickname))
+                .addOnSuccessListener(this, result -> {
+                    Object data = result.getData();
+                    if (data instanceof Map) {
+                        Object allowedValue = ((Map<?, ?>) data).get("allowed");
+                        if (allowedValue instanceof Boolean) {
+                            callback.onComplete((Boolean) allowedValue, false);
+                            return;
+                        }
+                    }
+                    Log.e("TAG_Soccer", "Invalid response from checkNickname function: " + data);
+                    callback.onComplete(false, true);
+                })
+                .addOnFailureListener(this, e -> {
+                    Log.e("TAG_Soccer", "checkNickname callable failed", e);
+                    callback.onComplete(false, true);
+                });
+    }
+
+    private interface NicknameCheckCallback {
+        void onComplete(boolean allowed, boolean hadError);
     }
 
 
