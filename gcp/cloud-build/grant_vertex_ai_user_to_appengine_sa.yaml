@@ -56,5 +56,40 @@ steps:
         echo "✅ The service account $service_account now has the Vertex AI User role."
         echo "This grants the aiplatform.endpoints.predict permission required for Vertex AI operations."
 
+  # Step 3: Grant Service Usage Consumer role to the service account
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        project_id=$(cat /workspace/project_name.txt)
+
+        echo "Retrieving the service account used by the checkNickname Cloud Run service..."
+
+        # Get the service account from the deployed Cloud Run service
+        service_account=$(gcloud run services describe checknickname \
+          --region us-central1 \
+          --project="$project_id" \
+          --format='value(spec.template.spec.serviceAccountName)' 2>/dev/null || echo "")
+
+        # If the service is not deployed yet, fall back to the default Compute Engine service account
+        if [ -z "$service_account" ]; then
+          echo "⚠️  checkNickname service not found. Retrieving default Compute Engine service account..."
+          project_number=$(gcloud projects describe "$project_id" --format='value(projectNumber)')
+          service_account="${project_number}-compute@developer.gserviceaccount.com"
+          echo "Using default Compute Engine service account: $service_account"
+        else
+          echo "Found service account from Cloud Run service: $service_account"
+        fi
+
+        echo "Granting Service Usage Consumer role to the service account..."
+        gcloud projects add-iam-policy-binding "$project_id" \
+          --member="serviceAccount:$service_account" \
+          --role="roles/serviceusage.serviceUsageConsumer"
+
+        echo "✅ The service account $service_account now has the Service Usage Consumer role."
+        echo "This grants permissions to view and use enabled services."
+
 options:
   logging: CLOUD_LOGGING_ONLY
