@@ -124,8 +124,9 @@ The function:
 
 ## Dependencies
 
-- `@google-cloud/vertexai`: ^1.4.0 - Vertex AI SDK for Node.js
-- `firebase-functions`: ^4.5.0 - Firebase Functions SDK
+See [`package.json`](package.json) for the complete list of dependencies. Key packages:
+- `@google-cloud/vertexai` - Vertex AI SDK for Node.js
+- `firebase-functions` - Firebase Functions SDK
 
 ## Troubleshooting
 

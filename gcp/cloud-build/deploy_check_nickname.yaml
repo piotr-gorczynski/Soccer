@@ -32,8 +32,15 @@ steps:
         set -e
         project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
         echo "🔧 Enabling Vertex AI API for project: $project_id..."
-        gcloud services enable aiplatform.googleapis.com --project="$project_id" || true
-        echo "✅ Vertex AI API enabled."
+        
+        # Check if API is already enabled
+        if gcloud services list --enabled --project="$project_id" | grep -q aiplatform.googleapis.com; then
+          echo "ℹ️  Vertex AI API is already enabled."
+        else
+          echo "📡 Enabling Vertex AI API..."
+          gcloud services enable aiplatform.googleapis.com --project="$project_id"
+          echo "✅ Vertex AI API enabled successfully."
+        fi
 
   # Step 3: Install Firebase CLI
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
