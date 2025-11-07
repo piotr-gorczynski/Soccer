@@ -4,6 +4,10 @@ import { VertexAI } from "@google-cloud/vertexai";
 const projectId = process.env.GCLOUD_PROJECT ?? process.env.GOOGLE_CLOUD_PROJECT;
 const location = "us-central1";
 
+// gRPC error codes
+const GRPC_PERMISSION_DENIED = 7;
+const GRPC_UNAVAILABLE = 14;
+
 if (!projectId) {
   throw new Error("Project ID is not set in GCLOUD_PROJECT or GOOGLE_CLOUD_PROJECT environment variables.");
 }
@@ -36,7 +40,7 @@ export const checkNickname = onCall({ region: "us-central1" }, async (request) =
   } catch (error) {
     // Log detailed error information for debugging
     console.error("Vertex AI moderation failed for nickname check:", {
-      nickname: nickname,
+      nickname,
       error: error.message,
       code: error.code,
       details: error.details,
@@ -44,17 +48,22 @@ export const checkNickname = onCall({ region: "us-central1" }, async (request) =
     });
 
     // Check for specific error types and provide appropriate fallback
-    if (error.code === 7 || error.message?.includes("PERMISSION_DENIED")) {
+    // Permission denied - API not enabled or insufficient permissions
+    if (error.code === GRPC_PERMISSION_DENIED || error.message?.toUpperCase().includes("PERMISSION_DENIED")) {
       console.warn("Vertex AI permission denied - allowing nickname by default");
       return { allowed: true };
     }
 
-    if (error.code === 14 || error.message?.includes("UNAVAILABLE")) {
+    // Service unavailable - temporary outage or network issues
+    if (error.code === GRPC_UNAVAILABLE || error.message?.toUpperCase().includes("UNAVAILABLE")) {
       console.warn("Vertex AI service unavailable - allowing nickname by default");
       return { allowed: true };
     }
 
-    if (error.message?.includes("API key") || error.message?.includes("authentication")) {
+    // Authentication issues - API key or credentials problems
+    if (error.message?.toUpperCase().includes("API KEY") || 
+        error.message?.toUpperCase().includes("AUTHENTICATION") ||
+        error.message?.toUpperCase().includes("UNAUTHENTICATED")) {
       console.error("Vertex AI authentication error - allowing nickname by default");
       return { allowed: true };
     }
