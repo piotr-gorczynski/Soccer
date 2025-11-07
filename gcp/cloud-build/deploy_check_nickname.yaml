@@ -22,7 +22,20 @@ steps:
           exit 1
         fi
 
-  # Step 2: Install Firebase CLI
+  # Step 2: Enable Vertex AI API
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'enable-vertex-ai'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -e
+        project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
+        echo "🔧 Enabling Vertex AI API for project: $project_id..."
+        gcloud services enable aiplatform.googleapis.com --project="$project_id" || true
+        echo "✅ Vertex AI API enabled."
+
+  # Step 3: Install Firebase CLI
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: 'install-firebase-cli'
     entrypoint: bash
@@ -37,7 +50,7 @@ steps:
         chmod +x /workspace/firebase/firebase
         echo "✅ Firebase CLI installed."
 
-  # Step 3: Clone source code
+  # Step 4: Clone source code
   - name: 'gcr.io/cloud-builders/git'
     id: 'pull-files'
     entrypoint: bash
@@ -59,7 +72,7 @@ steps:
           cp /workspace/soccer/firebase/functions/check-nickname/package-lock.json /workspace/firebase/functions/check-nickname/
         fi
 
-  # Step 4: Install dependencies
+  # Step 5: Install dependencies
   - name: 'node:20-slim'
     id: 'install-deps-check-nickname'
     entrypoint: bash
@@ -75,7 +88,7 @@ steps:
         fi
         echo "📦 Dependencies installed."
 
-  # Step 5: Deploy function
+  # Step 6: Deploy function
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: 'deploy-check-nickname'
     entrypoint: bash
@@ -93,7 +106,7 @@ steps:
 
         echo "✅ Function 'checkNickname' deployed successfully."
 
-  # Step 6: Add IAM policy binding to allow allUsers to invoke
+  # Step 7: Add IAM policy binding to allow allUsers to invoke
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: 'bind-invoker-role'
     entrypoint: bash
