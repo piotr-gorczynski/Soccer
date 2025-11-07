@@ -4,6 +4,10 @@ import { VertexAI } from "@google-cloud/vertexai";
 const projectId = process.env.GCLOUD_PROJECT ?? process.env.GOOGLE_CLOUD_PROJECT;
 const location = "us-central1";
 
+// gRPC error codes
+const GRPC_PERMISSION_DENIED = 7;
+const GRPC_UNAVAILABLE = 14;
+
 if (!projectId) {
   throw new Error("Project ID is not set in GCLOUD_PROJECT or GOOGLE_CLOUD_PROJECT environment variables.");
 }
@@ -34,7 +38,38 @@ export const checkNickname = onCall({ region: "us-central1" }, async (request) =
 
     return { allowed: true };
   } catch (error) {
-    console.error("Vertex moderation failed", error);
-    throw new HttpsError("internal", "Failed to verify nickname.");
+    // Log detailed error information for debugging
+    console.error("Vertex AI moderation failed for nickname check:", {
+      nickname,
+      error: error.message,
+      code: error.code,
+      details: error.details,
+      stack: error.stack,
+    });
+
+    // Check for specific error types and provide appropriate fallback
+    // Permission denied - API not enabled or insufficient permissions
+    if (error.code === GRPC_PERMISSION_DENIED || error.message?.toUpperCase().includes("PERMISSION_DENIED")) {
+      console.warn("Vertex AI permission denied - allowing nickname by default");
+      return { allowed: true };
+    }
+
+    // Service unavailable - temporary outage or network issues
+    if (error.code === GRPC_UNAVAILABLE || error.message?.toUpperCase().includes("UNAVAILABLE")) {
+      console.warn("Vertex AI service unavailable - allowing nickname by default");
+      return { allowed: true };
+    }
+
+    // Authentication issues - API key or credentials problems
+    if (error.message?.toUpperCase().includes("API KEY") || 
+        error.message?.toUpperCase().includes("AUTHENTICATION") ||
+        error.message?.toUpperCase().includes("UNAUTHENTICATED")) {
+      console.error("Vertex AI authentication error - allowing nickname by default");
+      return { allowed: true };
+    }
+
+    // For unknown errors, log and allow the nickname to avoid blocking users
+    console.warn("Unknown Vertex AI error - allowing nickname by default as fallback");
+    return { allowed: true };
   }
 });
