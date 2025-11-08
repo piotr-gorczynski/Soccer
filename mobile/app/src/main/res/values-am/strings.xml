@@ -228,6 +228,7 @@
     <string name="network_error_checking_nickname">ቅጽል ስም ሲረጋገጥ የአውታረ መረብ ስህተት ተፈጥሯል</string>
     <string name="checking_nickname">ቅጽል ስም በመረጋገጥ ላይ…</string>
     <string name="nickname_taken">ቅጽል ስም ቀድሞ ተጠቅመዋል — ሌላ ይምረጡ</string>
+    <string name="nickname_inappropriate">የማይስማማ ቋንቋ የያዘ አማራጭ ስም - ሌላውን ይምረጡ</string>
     <string name="nickname_saved">ቅጽል ስም ተቀምጧል</string>
     <string name="nickname_save_failed">ቅጽል ስም ማቀመጥ አልተሳካም</string>
     <string name="game_launch_failed">ጨዋታውን ማስጀመር አልተሳካም።</string>

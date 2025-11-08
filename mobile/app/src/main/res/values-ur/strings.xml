@@ -238,6 +238,7 @@
     <string name="network_error_checking_nickname">عرفی نام کی جانچ پڑتال کے دوران نیٹ ورک کی خرابی</string>
     <string name="checking_nickname">عرفی نام کی جانچ جاری ہے…</string>
     <string name="nickname_taken">پہلے سے لیا گیا عرفی نام - ایک اور کا انتخاب کریں</string>
+    <string name="nickname_inappropriate">عرفیت میں نامناسب زبان ہے - دوسرا منتخب کریں</string>
     <string name="nickname_saved">عرفی نام بچ گیا</string>
     <string name="nickname_save_failed">عرفیت کو بچانے میں ناکام</string>
 

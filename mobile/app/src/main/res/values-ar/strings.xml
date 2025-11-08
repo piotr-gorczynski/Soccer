@@ -209,6 +209,7 @@
     <string name="network_error_checking_nickname">خطأ في الشبكة أثناء التحقق من الاسم المستعار</string>
     <string name="checking_nickname">جارٍ التحقق من الاسم المستعار…</string>
     <string name="nickname_taken">الاسم المستعار مستخدم بالفعل — اختر آخر</string>
+    <string name="nickname_inappropriate">يحتوي الاسم المستعار على لغة غير لائقة — اختر آخر</string>
     <string name="nickname_saved">تم حفظ الاسم المستعار</string>
     <string name="nickname_save_failed">فشل حفظ الاسم المستعار</string>
     <string name="game_launch_failed">فشل تشغيل اللعبة.</string>
