@@ -14,7 +14,7 @@ if (!projectId) {
 
 const vertex = new VertexAI({ project: projectId, location });
 const modelInstance = vertex.getGenerativeModel({
-  model: "gemini-1.5-flash",
+  model: "gemini-2.5-flash",
 });
 
 export const checkNickname = onCall({ region: "us-central1" }, async (request) => {

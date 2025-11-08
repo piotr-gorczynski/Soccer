@@ -1,11 +1,8 @@
 <en-GB>
-🎉 Added “Load More” in invites  
-🎮 New tutorial with hand gestures  
-🎮 Option to turn animations on/off  
-🎮 Tournaments lock after registration  
-🎮 Improved stats, filters, and layout  
-🎮 Fixed crashes and slowdowns  
-⚽ Faster, smoother Soccer!
+🎮 Fix WebView ANR during app startup (WV.xv.execute)
+🎮 Fix NullPointerException in AddFriendActivity when user not authenticated
+🎮 Fix SignInHubActivity crash by adding missing play-services-auth dependency
+🎮 Fix NullPointerException in InvitationsActivity when user is unauthenticated
 </en-GB>
 
 <pl-PL>
