@@ -238,6 +238,7 @@
     <string name="network_error_checking_nickname">Netzwerkfehler beim Überprüfen des Spitznamens</string>
     <string name="checking_nickname">Spitzname wird überprüft…</string>
     <string name="nickname_taken">Spitzname bereits genommen - wählen Sie einen anderen</string>
+    <string name="nickname_inappropriate">Spitzname enthält unangemessene Sprache - wählen Sie einen anderen</string>
     <string name="nickname_saved">Spitzname gerettet</string>
     <string name="nickname_save_failed">Spitzname nicht speichern</string>
 
