@@ -1,5 +1,6 @@
 import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { VertexAI } from "@google-cloud/vertexai";
+import { containsProfanity, getDetectedProfanity } from "./profanity-filter.js";
 
 const projectId = process.env.GCLOUD_PROJECT ?? process.env.GOOGLE_CLOUD_PROJECT;
 const location = "us-central1";
@@ -26,6 +27,15 @@ export const checkNickname = onCall({ region: "us-central1" }, async (request) =
   if (!nickname) {
     console.error("checkNickname: Nickname is empty");
     throw new HttpsError("invalid-argument", "Nickname is empty.");
+  }
+
+  // First check with text-based profanity filter
+  if (containsProfanity(nickname)) {
+    const detectedWord = getDetectedProfanity(nickname);
+    console.warn("checkNickname: Nickname BLOCKED by profanity filter:", nickname, {
+      detectedPattern: detectedWord,
+    });
+    return { allowed: false, reason: "Nickname contains inappropriate language." };
   }
 
   try {
