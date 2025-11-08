@@ -7,6 +7,9 @@
   "engines": {
     "node": "20"
   },
+  "scripts": {
+    "test": "node --test"
+  },
   "dependencies": {
     "@google-cloud/vertexai": "^1.4.0",
     "firebase-functions": "^4.5.0"
