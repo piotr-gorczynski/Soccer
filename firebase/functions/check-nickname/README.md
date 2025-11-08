@@ -154,17 +154,51 @@ If the Vertex AI API encounters errors, the function:
 
 This ensures users can still set nicknames even if the moderation service has issues.
 
+### Debug Logging
+
+The function now includes comprehensive logging at each stage:
+- **Request received**: Logs the incoming nickname being checked
+- **Vertex AI call**: Logs when the API is called for moderation
+- **Response received**: Logs when Vertex AI responds
+- **Safety ratings**: Logs detailed safety ratings for each category with probability levels
+- **Decision made**: Logs whether nickname is ALLOWED or BLOCKED with reasons
+- **Fallback activated**: Logs clearly when error fallback occurs and which type of error triggered it
+
+All log messages are prefixed with `checkNickname:` for easy filtering in Cloud Logging. When a fallback is activated, the log will include `FALLBACK ACTIVATED` to make it immediately obvious that the nickname was allowed due to an error rather than passing moderation.
+
 ## Error Logs
 
+The function now includes comprehensive logging to help diagnose issues. Look for these log patterns:
+
+### Normal Operation Logs
+```
+checkNickname called with nickname: <nickname>
+checkNickname: Calling Vertex AI for nickname moderation: <nickname>
+checkNickname: Vertex AI response received for nickname: <nickname>
+checkNickname: Safety ratings for nickname: <nickname> { safetyRatings: [...] }
+checkNickname: Nickname ALLOWED: <nickname>
+```
+
+### Blocked Nickname Logs
+```
+checkNickname: Nickname BLOCKED due to content violations: <nickname> { flaggedRatings: [...] }
+```
+
+### Fallback Logs (Error Occurred)
 If you see errors like:
 ```
-Vertex AI moderation failed for nickname check
+checkNickname: Vertex AI moderation FAILED for nickname: <nickname>
+checkNickname: FALLBACK ACTIVATED - <error type> - allowing nickname by default: <nickname>
 ```
+
+This indicates the nickname was allowed due to an error, not because it passed moderation.
 
 Check:
 1. **Is the Vertex AI API enabled?** Run: `gcloud services list --enabled --project=YOUR_PROJECT_ID | grep aiplatform`
-2. **Does the service account have the Vertex AI User role?** The Cloud Functions service account (`YOUR_PROJECT_ID@appspot.gserviceaccount.com`) needs the `roles/aiplatform.user` role. Run the grant script: `gcp/cloud-build/grant_vertex_ai_user_to_appengine_sa.yaml`
+2. **Does the service account have the Vertex AI User role?** The Cloud Functions service account needs the `roles/aiplatform.user` role. Run the grant script: `gcp/cloud-build/grant_vertex_ai_user_to_appengine_sa.yaml`
 3. **Is there a quota issue?** Check your Vertex AI quotas in the GCP Console
+
+**Important**: If you consistently see `FALLBACK ACTIVATED` logs, inappropriate nicknames are being allowed through! Fix the Vertex AI configuration immediately.
 
 ## Local Testing
 
