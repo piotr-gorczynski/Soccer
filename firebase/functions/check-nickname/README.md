@@ -48,6 +48,8 @@ gcloud services enable aiplatform.googleapis.com
 
 The Cloud Functions service account needs the `roles/aiplatform.user` role to call Vertex AI endpoints.
 
+**Note**: Firebase Functions v2 deployed to Cloud Run uses the default Compute Engine service account (`<PROJECT_NUMBER>-compute@developer.gserviceaccount.com`), not the App Engine service account.
+
 #### Option 1: Using Cloud Build (Recommended)
 
 Run the Cloud Build trigger to grant the IAM role:
@@ -60,6 +62,10 @@ gcloud builds submit \
 
 Replace `dev` with your target environment (`dev`, `staging`, or `prod`).
 
+This script will:
+1. Automatically detect the service account used by the deployed `checkNickname` Cloud Run service
+2. Grant the Vertex AI User role to that service account
+
 #### Option 2: Using gcloud CLI
 
 Manually grant the role using the gcloud command:
@@ -68,9 +74,14 @@ Manually grant the role using the gcloud command:
 # Set your project
 gcloud config set project YOUR_PROJECT_ID
 
-# Grant Vertex AI User role to the App Engine service account
+# Get the service account used by the checkNickname Cloud Run service
+SERVICE_ACCOUNT=$(gcloud run services describe checknickname \
+  --region us-central1 \
+  --format='value(spec.template.spec.serviceAccountName)')
+
+# Grant Vertex AI User role to the service account
 gcloud projects add-iam-policy-binding YOUR_PROJECT_ID \
-  --member="serviceAccount:YOUR_PROJECT_ID@appspot.gserviceaccount.com" \
+  --member="serviceAccount:$SERVICE_ACCOUNT" \
   --role="roles/aiplatform.user"
 ```
 
@@ -90,9 +101,15 @@ aiplatform.googleapis.com       Vertex AI API
 Check if the IAM role is granted:
 
 ```bash
+# First, get the service account used by the Cloud Run service
+SERVICE_ACCOUNT=$(gcloud run services describe checknickname \
+  --region us-central1 \
+  --format='value(spec.template.spec.serviceAccountName)')
+
+# Then check if it has the Vertex AI User role
 gcloud projects get-iam-policy YOUR_PROJECT_ID \
   --flatten="bindings[].members" \
-  --filter="bindings.role:roles/aiplatform.user AND bindings.members:YOUR_PROJECT_ID@appspot.gserviceaccount.com"
+  --filter="bindings.role:roles/aiplatform.user AND bindings.members:serviceAccount:$SERVICE_ACCOUNT"
 ```
 
 ## Deployment
@@ -182,13 +199,15 @@ See [`package.json`](package.json) for the complete list of dependencies. Key pa
 1. Enable the API: Run `gcp/cloud-build/enable_vertex_ai.yaml`
 2. Grant IAM role: Run `gcp/cloud-build/grant_vertex_ai_user_to_appengine_sa.yaml`
 
+**Note**: The script automatically detects the correct service account used by the Cloud Run service.
+
 ### "API key not valid" errors
 **Cause**: Authentication issues
 **Solution**: Check service account permissions and ensure both the API is enabled and the IAM role is granted
 
 ### "aiplatform.endpoints.predict" permission denied
 **Cause**: Service account lacks the Vertex AI User role
-**Solution**: Run `gcp/cloud-build/grant_vertex_ai_user_to_appengine_sa.yaml` to grant the role
+**Solution**: Run `gcp/cloud-build/grant_vertex_ai_user_to_appengine_sa.yaml` to grant the role to the correct service account
 
 ### Function allows all nicknames
 **Cause**: This is the expected fallback behavior when errors occur
