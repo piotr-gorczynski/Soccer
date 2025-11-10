@@ -1,0 +1,14 @@
+{
+  "name": "check-nickname",
+  "description": "Callable function to check nickname moderation",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.js",
+  "engines": {
+    "node": "20"
+  },
+  "dependencies": {
+    "@google-cloud/vertexai": "^1.4.0",
+    "firebase-functions": "^4.5.0"
+  }
+}

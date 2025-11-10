@@ -207,7 +207,9 @@
     <string name="register_dialog_message">برای استفاده از این قابلیت باید ثبت‌نام کنید. می‌توانید حتی به صورت ناشناس ثبت‌نام کنید. آیا می‌خواهید ادامه دهید؟</string>
     <string name="proceed">ادامه</string>
     <string name="network_error_checking_nickname">خطای شبکه هنگام بررسی نام مستعار</string>
+    <string name="checking_nickname">در حال بررسی نام مستعار…</string>
     <string name="nickname_taken">این نام مستعار قبلاً استفاده شده است — نام دیگری انتخاب کنید</string>
+    <string name="nickname_inappropriate">نام مستعار شامل زبان نامناسب است - دیگری را انتخاب کنید</string>
     <string name="nickname_saved">نام مستعار ذخیره شد</string>
     <string name="nickname_save_failed">ذخیره نام مستعار ناموفق بود</string>
     <string name="game_launch_failed">راه‌اندازی بازی ناموفق بود.</string>

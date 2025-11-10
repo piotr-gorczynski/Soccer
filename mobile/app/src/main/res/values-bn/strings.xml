@@ -236,7 +236,9 @@
     <string name="register_dialog_message">এই ফাংশনটি ব্যবহার করার জন্য আপনাকে নিজেকে নিবন্ধন করতে হবে। আপনি এমনকি বেনামেও নিবন্ধন করতে পারেন। আপনি কি এগিয়ে যেতে চান?</string>
     <string name="proceed">এগিয়ে যান</string>
     <string name="network_error_checking_nickname">ডাকনাম পরীক্ষা করার সময় নেটওয়ার্ক ত্রুটি</string>
+    <string name="checking_nickname">ডাকনাম যাচাই করা হচ্ছে…</string>
     <string name="nickname_taken">ডাকনাম ইতিমধ্যে নেওয়া হয়েছে - অন্যটি বেছে নিন</string>
+    <string name="nickname_inappropriate">ডাকনামে অনুপযুক্ত ভাষা রয়েছে - অন্য একটি চয়ন করুন</string>
     <string name="nickname_saved">ডাকনাম সংরক্ষণ</string>
     <string name="nickname_save_failed">ডাকনাম সংরক্ষণ করতে ব্যর্থ</string>
 

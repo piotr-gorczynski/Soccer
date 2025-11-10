@@ -226,7 +226,9 @@
     <string name="register_dialog_message">ဤလုပ်ဆောင်ချက်ကို သုံးရန် သင်သည် စာရင်းသွင်းရပါမည်။ အမည်မပါ အကောင့်ဖြင့်တောင် စာရင်းသွင်းနိုင်ပါသည်။ ဆက်လက်လုပ်ဆောင်လိုပါသလား?</string>
     <string name="proceed">ရှေ့ဆက်ပါ</string>
     <string name="network_error_checking_nickname">အမည်ပြောင်စစ်ဆေးနေစဉ် ကွန်ယက်ချိုးယွင်းသည်</string>
+    <string name="checking_nickname">အမည်ပြောင်ကို စစ်ဆေးနေသည်…</string>
     <string name="nickname_taken">အမည်ပြောင်ကို တစ်စုံတယောက် အသုံးပြုနေပြီး — တစ်ခုသစ်ရွေးချယ်ပါ</string>
+    <string name="nickname_inappropriate">အမည်ပြောင်တွင် မသင့်လျော်သော ဘာသာစကား ပါဝင်သည် - အခြားတစ်ခု ရွေးပါ</string>
     <string name="nickname_saved">အမည်ပြောင်ကို သိမ်းဆည်းထားပါသည်</string>
     <string name="nickname_save_failed">အမည်ပြောင်ကို သိမ်းဆည်းရန် မအောင်မြင်ပါ။</string>
     <string name="game_launch_failed">ဂိမ်းစတင်ရန် မအောင်မြင်ပါ။</string>
