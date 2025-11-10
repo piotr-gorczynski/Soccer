@@ -98,96 +98,117 @@ public class PickNicknameActivity extends BaseActivity {
 
         btnConfirm.setEnabled(false);
         showNicknameCheckProgress(true);
-        checkNickname(nickname, (allowed, hadError) -> {
-            showNicknameCheckProgress(false);
+        
+        Log.d("TAG_Soccer", "PickNicknameActivity.saveNickname: Checking uniqueness for nickname: " + nickname);
+        
+        // Step 1: Check uniqueness first
+        checkNicknameUniqueness(nickname, (isUnique, hadError) -> {
             if (hadError) {
+                showNicknameCheckProgress(false);
                 btnConfirm.setEnabled(true);
                 Toast.makeText(PickNicknameActivity.this,
                         R.string.network_error_checking_nickname,
                         Toast.LENGTH_SHORT).show();
                 return;
             }
-            if (!allowed) {
+            if (!isUnique) {
+                showNicknameCheckProgress(false);
                 btnConfirm.setEnabled(true);
+                Log.d("TAG_Soccer", "PickNicknameActivity.saveNickname: Nickname already taken: " + nickname);
                 Toast.makeText(PickNicknameActivity.this,
                         R.string.nickname_taken,
                         Toast.LENGTH_SHORT).show();
                 return;
             }
-
-            proceedWithSavingNickname(uid, nickname);
+            
+            // Step 2: Check content appropriateness via AI
+            Log.d("TAG_Soccer", "PickNicknameActivity.saveNickname: Nickname is unique, checking content appropriateness via AI for: " + nickname);
+            checkNicknameContent(nickname, (allowed, reason, hadContentError) -> {
+                showNicknameCheckProgress(false);
+                if (hadContentError) {
+                    btnConfirm.setEnabled(true);
+                    Toast.makeText(PickNicknameActivity.this,
+                            R.string.network_error_checking_nickname,
+                            Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (!allowed) {
+                    btnConfirm.setEnabled(true);
+                    Log.d("TAG_Soccer", "PickNicknameActivity.saveNickname: Nickname flagged as inappropriate: " + nickname + ", reason: " + reason);
+                    Toast.makeText(PickNicknameActivity.this,
+                            R.string.nickname_inappropriate,
+                            Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                
+                Log.d("TAG_Soccer", "PickNicknameActivity.saveNickname: Nickname passed all checks, proceeding to save: " + nickname);
+                proceedWithSavingNickname(uid, nickname);
+            });
         });
     }
 
 
-    private void proceedWithSavingNickname(String uid, String nickname) {
+    private void checkNicknameUniqueness(String nickname, UniquenessCheckCallback callback) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-
         db.collection("users")
                 .whereEqualTo("nicknameLowercase", nickname.toLowerCase())
                 .get()
                 .addOnCompleteListener(this, task -> {
                     if (!task.isSuccessful()) {
-                        btnConfirm.setEnabled(true);
-                        Log.e("TAG_Soccer", "Nickname check failed", task.getException());
-                        Toast.makeText(PickNicknameActivity.this,
-                                R.string.network_error_checking_nickname,
-                                Toast.LENGTH_SHORT).show();
+                        Log.e("TAG_Soccer", "PickNicknameActivity.checkNicknameUniqueness: Uniqueness check failed", task.getException());
+                        callback.onComplete(false, true);
                         return;
                     }
-                    if (!task.getResult().isEmpty()) {
-                        btnConfirm.setEnabled(true);
-                        Log.e("TAG_Soccer", "Nickname already exists: " + nickname);
-                        Toast.makeText(PickNicknameActivity.this,
-                                R.string.nickname_taken,
-                                Toast.LENGTH_SHORT).show();
-                        return;
+                    boolean isUnique = task.getResult().isEmpty();
+                    callback.onComplete(isUnique, false);
+                });
+    }
+
+    private void proceedWithSavingNickname(String uid, String nickname) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Map<String, Object> data = new HashMap<>();
+        data.put("nickname", nickname);
+        data.put("nicknameLowercase", nickname.toLowerCase());
+        db.collection("users").document(uid)
+                .set(data, SetOptions.merge())
+                .addOnSuccessListener(v -> {
+                    getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
+                            .edit()
+                            .putString("nickname", nickname)
+                            .apply();
+                    Toast.makeText(PickNicknameActivity.this,
+                            R.string.nickname_saved,
+                            Toast.LENGTH_SHORT).show();
+
+                    // Update user properties now that nickname is set
+                    FirebaseAuth auth = FirebaseAuth.getInstance();
+                    if (auth.getCurrentUser() != null) {
+                        String authMethod = auth.getCurrentUser().isAnonymous() ? "anonymous" : "registered";
+                        String language = LanguageManager.getCurrentLanguageCode(PickNicknameActivity.this);
+                        analyticsManager.setUserProperties(authMethod, "9.0", language, true);
                     }
 
-                    Map<String, Object> data = new HashMap<>();
-                    data.put("nickname", nickname);
-                    data.put("nicknameLowercase", nickname.toLowerCase());
-                    db.collection("users").document(uid)
-                            .set(data, SetOptions.merge())
-                            .addOnSuccessListener(v -> {
-                                getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
-                                        .edit()
-                                        .putString("nickname", nickname)
-                                        .apply();
-                                Toast.makeText(PickNicknameActivity.this,
-                                        R.string.nickname_saved,
-                                        Toast.LENGTH_SHORT).show();
+                    // Show anonymous linking prompt if user is anonymous
+                    if (AnonymousLinkPromptHelper.shouldShowPrompt("pick_nickname")) {
+                        AnonymousLinkPromptHelper.showSaveProgressPrompt(
+                                PickNicknameActivity.this,
+                                "pick_nickname",
+                                analyticsManager
+                        );
+                    }
 
-                                // Update user properties now that nickname is set
-                                FirebaseAuth auth = FirebaseAuth.getInstance();
-                                if (auth.getCurrentUser() != null) {
-                                    String authMethod = auth.getCurrentUser().isAnonymous() ? "anonymous" : "registered";
-                                    String language = LanguageManager.getCurrentLanguageCode(PickNicknameActivity.this);
-                                    analyticsManager.setUserProperties(authMethod, "9.0", language, true);
-                                }
-
-                                // Show anonymous linking prompt if user is anonymous
-                                if (AnonymousLinkPromptHelper.shouldShowPrompt("pick_nickname")) {
-                                    AnonymousLinkPromptHelper.showSaveProgressPrompt(
-                                            PickNicknameActivity.this,
-                                            "pick_nickname",
-                                            analyticsManager
-                                    );
-                                }
-
-                                if (isTaskRoot()) {
-                                    startActivity(new Intent(
-                                            PickNicknameActivity.this,
-                                            MenuActivity.class));
-                                }
-                                finish();
-                            })
-                            .addOnFailureListener(e -> {
-                                btnConfirm.setEnabled(true);
-                                Toast.makeText(PickNicknameActivity.this,
-                                        R.string.nickname_save_failed,
-                                        Toast.LENGTH_SHORT).show();
-                            });
+                    if (isTaskRoot()) {
+                        startActivity(new Intent(
+                                PickNicknameActivity.this,
+                                MenuActivity.class));
+                    }
+                    finish();
+                })
+                .addOnFailureListener(e -> {
+                    btnConfirm.setEnabled(true);
+                    Toast.makeText(PickNicknameActivity.this,
+                            R.string.nickname_save_failed,
+                            Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -197,30 +218,39 @@ public class PickNicknameActivity extends BaseActivity {
         }
     }
 
-    private void checkNickname(String nickname, NicknameCheckCallback callback) {
+    private void checkNicknameContent(String nickname, ContentCheckCallback callback) {
+        Log.d("TAG_Soccer", "PickNicknameActivity.checkNicknameContent: Calling cloud function for: " + nickname);
         functions
                 .getHttpsCallable("checkNickname")
                 .call(Collections.singletonMap("nickname", nickname))
                 .addOnSuccessListener(this, result -> {
                     Object data = result.getData();
                     if (data instanceof Map) {
-                        Object allowedValue = ((Map<?, ?>) data).get("allowed");
+                        Map<?, ?> dataMap = (Map<?, ?>) data;
+                        Object allowedValue = dataMap.get("allowed");
+                        Object reasonValue = dataMap.get("reason");
                         if (allowedValue instanceof Boolean) {
-                            callback.onComplete((Boolean) allowedValue, false);
+                            String reason = reasonValue != null ? reasonValue.toString() : "";
+                            Log.d("TAG_Soccer", "PickNicknameActivity.checkNicknameContent: Response - allowed=" + allowedValue + ", reason=" + reason);
+                            callback.onComplete((Boolean) allowedValue, reason, false);
                             return;
                         }
                     }
-                    Log.e("TAG_Soccer", "Invalid response from checkNickname function: " + data);
-                    callback.onComplete(false, true);
+                    Log.e("TAG_Soccer", "PickNicknameActivity.checkNicknameContent: Invalid response from checkNickname function: " + data);
+                    callback.onComplete(false, "", true);
                 })
                 .addOnFailureListener(this, e -> {
-                    Log.e("TAG_Soccer", "checkNickname callable failed", e);
-                    callback.onComplete(false, true);
+                    Log.e("TAG_Soccer", "PickNicknameActivity.checkNicknameContent: checkNickname callable failed", e);
+                    callback.onComplete(false, "", true);
                 });
     }
 
-    private interface NicknameCheckCallback {
-        void onComplete(boolean allowed, boolean hadError);
+    private interface UniquenessCheckCallback {
+        void onComplete(boolean isUnique, boolean hadError);
+    }
+
+    private interface ContentCheckCallback {
+        void onComplete(boolean allowed, String reason, boolean hadError);
     }
 
 

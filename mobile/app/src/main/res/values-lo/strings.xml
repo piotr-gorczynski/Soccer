@@ -228,6 +228,7 @@
     <string name="network_error_checking_nickname">ເກີດຂໍ້ຜິດພາດເນື່ອງຈາກເຄືອຂ່າຍໃນຂະນະກວດຊື່ເລັ່ນ</string>
     <string name="checking_nickname">ກຳລັງກວດສອບຊື່ເລັ່ນ…</string>
     <string name="nickname_taken">ຊື່ເລັ່ນນີ້ຖືກໃຊ້ແລ້ວ — ກະລຸນາເລືອກຊື່ໃໝ່</string>
+    <string name="nickname_inappropriate">ຊື່ຫຼີ້ນມີພາສາທີ່ບໍ່ເໝາະສົມ - ເລືອກອັນອື່ນ</string>
     <string name="nickname_saved">ບັນທຶກຊື່ເລັ່ນແລ້ວ</string>
     <string name="nickname_save_failed">ບັນທຶກຊື່ເລັ່ນບໍ່ສໍາເລັດ</string>
     <string name="game_launch_failed">ເປີດເກມບໍ່ສໍາເລັດ.</string>
