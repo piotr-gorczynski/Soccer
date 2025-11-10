@@ -236,6 +236,7 @@
     <string name="network_error_checking_nickname">Network error while checking nickname</string>
     <string name="checking_nickname">Checking nickname…</string>
     <string name="nickname_taken">Nickname already taken — choose another</string>
+    <string name="nickname_inappropriate">Nickname contains inappropriate language — choose another</string>
     <string name="nickname_saved">Nickname saved</string>
     <string name="nickname_save_failed">Failed to save nickname</string>
 
