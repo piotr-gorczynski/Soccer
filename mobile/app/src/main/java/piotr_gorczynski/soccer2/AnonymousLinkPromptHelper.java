@@ -15,15 +15,27 @@ public class AnonymousLinkPromptHelper {
     private static final String TAG = "TAG_Soccer";
     
     /**
+     * Callback interface for when the dialog is dismissed
+     */
+    public interface DialogDismissCallback {
+        void onDialogDismissed();
+    }
+    
+    /**
      * Show prompt to anonymous user to save their progress by linking account
      * @param context Activity context
      * @param trigger What triggered this prompt (tournament_join, win_match, pick_nickname)
      * @param analyticsManager Analytics manager for tracking
+     * @param callback Callback invoked when dialog is dismissed (user makes a choice)
      */
-    public static void showSaveProgressPrompt(Context context, String trigger, AnalyticsManager analyticsManager) {
+    public static void showSaveProgressPrompt(Context context, String trigger, AnalyticsManager analyticsManager, DialogDismissCallback callback) {
         // Only show for anonymous users
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() == null || !auth.getCurrentUser().isAnonymous()) {
+            // Not anonymous, invoke callback immediately
+            if (callback != null) {
+                callback.onDialogDismissed();
+            }
             return;
         }
         
@@ -40,16 +52,32 @@ public class AnonymousLinkPromptHelper {
                     // Open the link account activity
                     Intent intent = new Intent(context, LinkAccountActivity.class);
                     context.startActivity(intent);
+                    
+                    // Notify caller that dialog was dismissed
+                    if (callback != null) {
+                        callback.onDialogDismissed();
+                    }
                 })
                 .setNegativeButton(R.string.maybe_later, (dialog, which) -> {
                     analyticsManager.trackAnonymousLinkDecision("later", trigger);
                     analyticsManager.addAuthBreadcrumb("anonymous_link_decision", "later, trigger=" + trigger);
                     dialog.dismiss();
+                    
+                    // Notify caller that dialog was dismissed
+                    if (callback != null) {
+                        callback.onDialogDismissed();
+                    }
                 })
                 .setOnCancelListener(dialog -> {
                     analyticsManager.trackAnonymousLinkDecision("dismiss", trigger);
                     analyticsManager.addAuthBreadcrumb("anonymous_link_decision", "dismiss, trigger=" + trigger);
+                    
+                    // Notify caller that dialog was dismissed
+                    if (callback != null) {
+                        callback.onDialogDismissed();
+                    }
                 })
+                .setCancelable(true)
                 .show();
         
         Log.d(TAG, "Showed save progress prompt with trigger: " + trigger);
