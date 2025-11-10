@@ -193,16 +193,26 @@ public class PickNicknameActivity extends BaseActivity {
                         AnonymousLinkPromptHelper.showSaveProgressPrompt(
                                 PickNicknameActivity.this,
                                 "pick_nickname",
-                                analyticsManager
+                                analyticsManager,
+                                () -> {
+                                    // Only navigate to MenuActivity after user responds to the dialog
+                                    if (isTaskRoot()) {
+                                        startActivity(new Intent(
+                                                PickNicknameActivity.this,
+                                                MenuActivity.class));
+                                    }
+                                    finish();
+                                }
                         );
+                    } else {
+                        // User is not anonymous, navigate immediately
+                        if (isTaskRoot()) {
+                            startActivity(new Intent(
+                                    PickNicknameActivity.this,
+                                    MenuActivity.class));
+                        }
+                        finish();
                     }
-
-                    if (isTaskRoot()) {
-                        startActivity(new Intent(
-                                PickNicknameActivity.this,
-                                MenuActivity.class));
-                    }
-                    finish();
                 })
                 .addOnFailureListener(e -> {
                     btnConfirm.setEnabled(true);
