@@ -226,7 +226,9 @@
     <string name="register_dialog_message">Si aad u isticmaasho shaqadan waa inaad isdiiwaangelisaa. Xitaa qarsoodi ayaad isku diiwaangelin kartaa. Ma rabtaa inaad sii waddo?</string>
     <string name="proceed">Sii wad</string>
     <string name="network_error_checking_nickname">Khalad shabakad ayaa dhacay marka la hubinayo naanayska</string>
+    <string name="checking_nickname">Naanayska ayaa la hubinayaa…</string>
     <string name="nickname_taken">Naanayskan hore ayaa loo qaatay — dooro mid kale</string>
+    <string name="nickname_inappropriate">Naanayska wuxuu ku jiraa luuqad aan habboonayn - mid kale dooro</string>
     <string name="nickname_saved">Naanays waa la kaydiyay</string>
     <string name="nickname_save_failed">Ku guuldarraystay kaydinta naanayska</string>
     <string name="game_launch_failed">Furitaanka ciyaarta wuu fashilmay.</string>

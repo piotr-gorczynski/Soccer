@@ -226,7 +226,9 @@
     <string name="register_dialog_message">ដើម្បីប្រើមុខងារនេះ អ្នកត្រូវតែចុះឈ្មោះ។ អ្នកអាចចុះឈ្មោះជាអនាមិកក៏បាន។ តើអ្នកចង់បន្តទេ?</string>
     <string name="proceed">បន្ត</string>
     <string name="network_error_checking_nickname">កំហុសបណ្តាញពេលពិនិត្យឈ្មោះហៅក្រៅ</string>
+    <string name="checking_nickname">កំពុងពិនិត្យឈ្មោះហៅក្រៅ…</string>
     <string name="nickname_taken">ឈ្មោះហៅក្រៅនេះត្រូវបានប្រើរួចហើយ — សូមជ្រើសឈ្មោះផ្សេង</string>
+    <string name="nickname_inappropriate">ឈ្មោះហៅក្រៅមានភាសាមិនសមរម្យ - ជ្រើសរើសមួយផ្សេងទៀត</string>
     <string name="nickname_saved">រក្សាទុកឈ្មោះហៅក្រៅរួច</string>
     <string name="nickname_save_failed">រក្សាទុកឈ្មោះហៅក្រៅមិនបានសម្រេច</string>
     <string name="game_launch_failed">ចាប់ផ្តើមល្បែងបរាជ័យ។</string>

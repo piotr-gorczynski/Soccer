@@ -226,7 +226,9 @@
     <string name="register_dialog_message">Энэ боломжийг ашиглахын тулд бүртгүүлэх шаардлагатай. Хүсвэл нэргүйгээр ч бүртгүүлж болно. Үргэлжлүүлэх үү?</string>
     <string name="proceed">Үргэлжлүүлэх</string>
     <string name="network_error_checking_nickname">Хоч нэр шалгах явцад сүлжээний алдаа гарлаа</string>
+    <string name="checking_nickname">Хоч нэрийг шалгаж байна…</string>
     <string name="nickname_taken">Энэ хоч нэрийг аль хэдийн авсан байна — өөр нэр сонгоно уу</string>
+    <string name="nickname_inappropriate">Хоч нэр нь тохиромжгүй үг агуулж байна - өөр нэг сонгоно уу</string>
     <string name="nickname_saved">Хоч нэр хадгалагдлаа</string>
     <string name="nickname_save_failed">Хоч нэр хадгалж чадсангүй</string>
     <string name="game_launch_failed">Тоглоом эхлээгүй.</string>
