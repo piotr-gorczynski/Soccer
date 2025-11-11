@@ -25,22 +25,31 @@ exports.cleanupInactiveUsers = functions
       const listUsersResult = await auth.listUsers(1000, nextPageToken);
       
       for (const user of listUsersResult.users) {
-        // Check if user has been inactive for more than 1 month
-        const lastSignInTime = user.metadata.lastSignInTime 
-          ? new Date(user.metadata.lastSignInTime).getTime()
-          : new Date(user.metadata.creationTime).getTime(); // Fallback to creation time if never signed in
-        
-        const daysSinceLastActivity = Math.floor((now - lastSignInTime) / (24 * 60 * 60 * 1000));
-        
-        if (now - lastSignInTime > oneMonthMillis) {
-          try {
-            // Check if user has accepted terms in Firestore
-            const userDoc = await db.collection("users").doc(user.uid).get();
-            
+        try {
+          // First, check if user has accepted terms in Firestore and get method
+          const userDoc = await db.collection("users").doc(user.uid).get();
+          let method = null;
+          
+          if (userDoc.exists) {
+            method = userDoc.data().method;
+          }
+          
+          // For anonymous users, use creationTime since their lastSignInTime 
+          // is automatically updated by Firebase Auth token refresh
+          // For other users, use lastSignInTime or fallback to creationTime
+          const isAnonymous = method === "anonymous";
+          const lastSignInTime = isAnonymous
+            ? new Date(user.metadata.creationTime).getTime()
+            : (user.metadata.lastSignInTime 
+                ? new Date(user.metadata.lastSignInTime).getTime()
+                : new Date(user.metadata.creationTime).getTime());
+          
+          const daysSinceLastActivity = Math.floor((now - lastSignInTime) / (24 * 60 * 60 * 1000));
+          
+          if (now - lastSignInTime > oneMonthMillis) {
             if (userDoc.exists) {
               const userData = userDoc.data();
               const termsAccepted = userData.termsAccepted;
-              const method = userData.method; // Also check login method for additional context
               
               // Only delete if terms are not accepted (missing or false)
               if (termsAccepted !== true) {
@@ -53,18 +62,20 @@ exports.cleanupInactiveUsers = functions
                   deletedUsers.push({
                     uid: user.uid,
                     email: user.email,
-                    lastSignInTime: user.metadata.lastSignInTime || user.metadata.creationTime,
+                    creationTime: user.metadata.creationTime,
+                    lastSignInTime: user.metadata.lastSignInTime,
                     daysSinceLastActivity: daysSinceLastActivity,
                     termsAccepted: termsAccepted,
                     method: method
                   });
                   
-                  console.log(`🧹 Deleted inactive user: ${user.email} (UID: ${user.uid}, inactive for ${daysSinceLastActivity} days)`);
+                  const activityNote = isAnonymous ? " (anonymous user - using creation time)" : "";
+                  console.log(`🧹 Deleted inactive user: ${user.email || 'anonymous'} (UID: ${user.uid}, inactive for ${daysSinceLastActivity} days${activityNote})`);
                 } else {
-                  console.log(`⏭️ Skipping user with active involvement: ${user.email} (UID: ${user.uid}, inactive for ${daysSinceLastActivity} days)`);
+                  console.log(`⏭️ Skipping user with active involvement: ${user.email || 'anonymous'} (UID: ${user.uid}, inactive for ${daysSinceLastActivity} days)`);
                 }
               } else {
-                console.log(`⏭️ Skipping user with accepted terms: ${user.email} (UID: ${user.uid}, inactive for ${daysSinceLastActivity} days)`);
+                console.log(`⏭️ Skipping user with accepted terms: ${user.email || 'anonymous'} (UID: ${user.uid}, inactive for ${daysSinceLastActivity} days)`);
               }
             } else {
               // User document doesn't exist in Firestore, but exists in Auth
@@ -77,20 +88,21 @@ exports.cleanupInactiveUsers = functions
                 deletedUsers.push({
                   uid: user.uid,
                   email: user.email,
-                  lastSignInTime: user.metadata.lastSignInTime || user.metadata.creationTime,
+                  creationTime: user.metadata.creationTime,
+                  lastSignInTime: user.metadata.lastSignInTime,
                   daysSinceLastActivity: daysSinceLastActivity,
                   termsAccepted: null,
                   method: null
                 });
                 
-                console.log(`🧹 Deleted orphaned user (no Firestore doc): ${user.email} (UID: ${user.uid}, inactive for ${daysSinceLastActivity} days)`);
+                console.log(`🧹 Deleted orphaned user (no Firestore doc): ${user.email || 'anonymous'} (UID: ${user.uid}, inactive for ${daysSinceLastActivity} days)`);
               } else {
-                console.log(`⏭️ Skipping orphaned user with active involvement: ${user.email} (UID: ${user.uid}, inactive for ${daysSinceLastActivity} days)`);
+                console.log(`⏭️ Skipping orphaned user with active involvement: ${user.email || 'anonymous'} (UID: ${user.uid}, inactive for ${daysSinceLastActivity} days)`);
               }
             }
-          } catch (err) {
-            console.error(`❌ Failed to process user ${user.uid} (${user.email}): ${err.message}`);
           }
+        } catch (err) {
+          console.error(`❌ Failed to process user ${user.uid}: ${err.message}`);
         }
       }
       
@@ -103,7 +115,8 @@ exports.cleanupInactiveUsers = functions
     if (deletedUsers.length > 0) {
       console.log(`📋 Deleted users summary:`);
       deletedUsers.forEach(user => {
-        console.log(`   - ${user.email} (UID: ${user.uid}, inactive: ${user.daysSinceLastActivity} days, terms: ${user.termsAccepted}, method: ${user.method})`);
+        const timeUsed = user.method === 'anonymous' ? 'creation' : 'lastSignIn';
+        console.log(`   - ${user.email || 'anonymous'} (UID: ${user.uid}, inactive: ${user.daysSinceLastActivity} days, terms: ${user.termsAccepted}, method: ${user.method}, time used: ${timeUsed})`);
       });
     }
 
