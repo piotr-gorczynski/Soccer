@@ -76,13 +76,6 @@ public class AnalyticsTestActivity extends BaseActivity {
             Log.e(TAG, "❌ trackTournamentJoinError: NullPointerException with null parameters: " + e.getMessage());
         }
         
-        try {
-            analyticsManager.trackAnonymousLinkPrompt(null);
-            analyticsManager.trackAnonymousLinkDecision(null, null);
-            Log.d(TAG, "✅ Anonymous link methods: Null parameters handled successfully");
-        } catch (NullPointerException e) {
-            Log.e(TAG, "❌ Anonymous link methods: NullPointerException with null parameters: " + e.getMessage());
-        }
         
         try {
             analyticsManager.addAuthBreadcrumb(null, null);
@@ -104,10 +97,6 @@ public class AnalyticsTestActivity extends BaseActivity {
         analyticsManager.trackTournamentJoinStart("test_tournament", true);
         analyticsManager.trackTournamentJoinSuccess("test_tournament");
         analyticsManager.trackTournamentJoinError("test_tournament", "test_error", "Test error");
-        
-        // Test anonymous events
-        analyticsManager.trackAnonymousLinkPrompt("test_trigger");
-        analyticsManager.trackAnonymousLinkDecision("link", "test_trigger");
         
         // Test breadcrumbs
         analyticsManager.addAuthBreadcrumb("test_step", "test details");

@@ -188,31 +188,13 @@ public class PickNicknameActivity extends BaseActivity {
                         analyticsManager.setUserProperties(authMethod, "9.0", language, true);
                     }
 
-                    // Show anonymous linking prompt if user is anonymous
-                    if (AnonymousLinkPromptHelper.shouldShowPrompt("pick_nickname")) {
-                        AnonymousLinkPromptHelper.showSaveProgressPrompt(
+                    // Navigate to MenuActivity
+                    if (isTaskRoot()) {
+                        startActivity(new Intent(
                                 PickNicknameActivity.this,
-                                "pick_nickname",
-                                analyticsManager,
-                                () -> {
-                                    // Only navigate to MenuActivity after user responds to the dialog
-                                    if (isTaskRoot()) {
-                                        startActivity(new Intent(
-                                                PickNicknameActivity.this,
-                                                MenuActivity.class));
-                                    }
-                                    finish();
-                                }
-                        );
-                    } else {
-                        // User is not anonymous, navigate immediately
-                        if (isTaskRoot()) {
-                            startActivity(new Intent(
-                                    PickNicknameActivity.this,
-                                    MenuActivity.class));
-                        }
-                        finish();
+                                MenuActivity.class));
                     }
+                    finish();
                 })
                 .addOnFailureListener(e -> {
                     btnConfirm.setEnabled(true);

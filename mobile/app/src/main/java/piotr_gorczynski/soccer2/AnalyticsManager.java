@@ -288,67 +288,6 @@ public class AnalyticsManager {
     // ANONYMOUS USER FLOW EVENTS
     // ═══════════════════════════════════════════════════════════════════
     
-    /**
-     * Track when anonymous user is prompted to link account
-     * @param trigger What triggered the prompt (e.g. "tournament_join", "win_match", "pick_nickname")
-     */
-    public void trackAnonymousLinkPrompt(String trigger) {
-        // Null-safe parameter handling
-        String safeTrigger = trigger != null ? trigger : "unknown_trigger";
-        
-        Log.d(TAG, "Tracked: anonymous link prompt - trigger=" + safeTrigger);
-        
-        if (crashlytics != null) {
-            try {
-                crashlytics.log("Anonymous link prompt shown: " + safeTrigger);
-            } catch (Exception e) {
-                Log.e(TAG, "Failed to log to Crashlytics", e);
-            }
-        }
-        
-        if (firebaseAnalytics != null) {
-            try {
-                Bundle params = new Bundle();
-                params.putString("trigger", safeTrigger);
-                firebaseAnalytics.logEvent("anonymous_link_prompt", params);
-            } catch (Exception e) {
-                Log.e(TAG, "Failed to log to Firebase Analytics", e);
-            }
-        }
-    }
-    
-    /**
-     * Track anonymous user decision on linking
-     * @param decision User's decision ("link", "dismiss", "later")
-     * @param trigger What triggered the original prompt
-     */
-    public void trackAnonymousLinkDecision(String decision, String trigger) {
-        // Null-safe parameter handling
-        String safeDecision = decision != null ? decision : "unknown_decision";
-        String safeTrigger = trigger != null ? trigger : "unknown_trigger";
-        
-        Log.d(TAG, "Tracked: anonymous link decision=" + safeDecision + " trigger=" + safeTrigger);
-        
-        if (crashlytics != null) {
-            try {
-                crashlytics.log("Anonymous link decision: " + safeDecision + " (trigger: " + safeTrigger + ")");
-            } catch (Exception e) {
-                Log.e(TAG, "Failed to log to Crashlytics", e);
-            }
-        }
-        
-        if (firebaseAnalytics != null) {
-            try {
-                Bundle params = new Bundle();
-                params.putString("decision", safeDecision);
-                params.putString("trigger", safeTrigger);
-                firebaseAnalytics.logEvent("anonymous_link_decision", params);
-            } catch (Exception e) {
-                Log.e(TAG, "Failed to log to Firebase Analytics", e);
-            }
-        }
-    }
-    
     // ═══════════════════════════════════════════════════════════════════
     // USER ATTRIBUTES FOR SEGMENTATION
     // ═══════════════════════════════════════════════════════════════════
