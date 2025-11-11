@@ -127,6 +127,8 @@ public class PickNicknameActivity extends BaseActivity {
                 showNicknameCheckProgress(false);
                 if (hadContentError) {
                     btnConfirm.setEnabled(true);
+                    // Report error to Crashlytics
+                    analyticsManager.trackNicknameCheckError(nickname, "AI content check failed");
                     Toast.makeText(PickNicknameActivity.this,
                             R.string.network_error_checking_nickname,
                             Toast.LENGTH_SHORT).show();
