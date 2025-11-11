@@ -228,7 +228,7 @@
     <string name="network_error_checking_nickname">Hitilafu ya mtandao wakati wa kukagua jina la utani</string>
     <string name="checking_nickname">Inakagua jina la utani…</string>
     <string name="nickname_taken">Jina la utani tayari limetumika — chagua jingine</string>
-    <string name="nickname_inappropriate">Jina la utani lina lugha isiyofaa - chagua lingine</string>
+    <string name="nickname_inappropriate">AI inafikiri, kwamba jina la utani lina lugha isiyofaa - chagua lingine</string>
     <string name="nickname_saved">Jina la utani limehifadhiwa</string>
     <string name="nickname_save_failed">Imeshindwa kuhifadhi jina la utani</string>
     <string name="game_launch_failed">Uzinduzi wa mchezo umeshindikana.</string>

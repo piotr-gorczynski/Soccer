@@ -238,7 +238,7 @@
     <string name="network_error_checking_nickname">उपनाम की जाँच करते समय नेटवर्क त्रुटि</string>
     <string name="checking_nickname">उपनाम की जाँच हो रही है…</string>
     <string name="nickname_taken">उपनाम पहले से ही लिया गया - एक और चुनें</string>
-    <string name="nickname_inappropriate">उपनाम में अनुचित भाषा है - एक और चुनें</string>
+    <string name="nickname_inappropriate">AI सोचता है, कि उपनाम में अनुचित भाषा है - एक और चुनें</string>
     <string name="nickname_saved">उपनाम बचाया</string>
     <string name="nickname_save_failed">उपनाम बचाने में विफल रहा</string>
 
