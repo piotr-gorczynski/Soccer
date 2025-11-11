@@ -14,7 +14,9 @@
     },
     {
       "source": "functions/send-invite-notification",
-      "codebase": "send-invite-notification"
+      "codebase": "send-invite-notification",
+      "runtime": "nodejs20",
+      "region": "us-central1"
     },
     {
       "source": "functions/change-player-turn",
