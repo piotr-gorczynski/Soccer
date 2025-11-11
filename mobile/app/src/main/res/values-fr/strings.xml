@@ -319,7 +319,6 @@
     <!-- Anonymous user prompts -->
     <string name="save_progress_title">Sauvegardez votre progression &amp; pseudonyme</string>
     <string name="save_progress_message">Liez votre compte pour sauvegarder vos statistiques et rejoindre des tournois !</string>
-    <string name="save_progress_button">Sauvegarder la progression</string>
     <string name="maybe_later">Peut-être plus tard</string>
     
     <!-- In-app messaging for v7/v8 users -->

@@ -300,7 +300,6 @@
     <string name="decline_reason_other">Бусад шалтгаан</string>
     <string name="save_progress_title">Ахиц болон хоч нэрээ хадгалах</string>
     <string name="save_progress_message">Статистикаа хадгалж, тэмцээнд оролцохын тулд аккаунтаа холбоно уу!</string>
-    <string name="save_progress_button">Ахиц хадгалах</string>
     <string name="maybe_later">Дараа бол</string>
     <string name="register_benefits_title">Тэмцээнд нэгдэж дэлхий дахинаа өрсөлд!</string>
     <string name="register_benefits_message">Дэлхийн тоглогчидтой тэмцээнд оролцож, үнэлгээгээ хадгалахын тулд бүртгүүлнэ үү.</string>

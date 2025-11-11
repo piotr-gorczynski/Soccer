@@ -300,7 +300,6 @@
     <string name="decline_reason_other">အခြားအကြောင်းရင်း</string>
     <string name="save_progress_title">သင့်တိုးတက်မှုနှင့် အမည်ပြောင်ကို သိမ်းဆည်းပါ</string>
     <string name="save_progress_message">သင့်အကောင့်ကို ချိတ်ဆက်ပြီး သင့်စာရင်းအချက်အလက်များကို သိမ်းဆည်းကာ ပြိုင်ပွဲများတွင် ပါဝင်ပါ!</string>
-    <string name="save_progress_button">တိုးတက်မှု သိမ်းပါ</string>
     <string name="maybe_later">နောက်မှ</string>
     <string name="register_benefits_title">ပြိုင်ပွဲများတွင် ပါဝင်ပြီး ကမ္ဘာအနှံ့ယှဉ်ပြိုင်ပါ!</string>
     <string name="register_benefits_message">သင့်အဆင့်သတ်မှတ်ချက်ကို သိမ်းဆည်းကာ ကမ္ဘာအနှံ့ရှိ ကစားသူများနှင့် ပြိုင်ပွဲများတွင် ပါဝင်ရန် စာရင်းသွင်းပါ။</string>

@@ -317,7 +317,6 @@
     <!-- Anonymous user prompts -->
     <string name="save_progress_title">अपनी प्रगति &amp; उपनाम सेव करें</string>
     <string name="save_progress_message">अपनी आंकड़े सेव करने और टूर्नामेंट में शामिल होने के लिए अपना खाता लिंक करें!</string>
-    <string name="save_progress_button">प्रगति सेव करें</string>
     <string name="maybe_later">शायद बाद में</string>
     
     <!-- In-app messaging for v7/v8 users -->
