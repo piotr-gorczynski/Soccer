@@ -281,7 +281,6 @@
     <string name="decline_reason_other">سبب آخر</string>
     <string name="save_progress_title">احفظ تقدمك واسمك المستعار</string>
     <string name="save_progress_message">اربط حسابك لحفظ إحصائياتك والانضمام إلى البطولات!</string>
-    <string name="save_progress_button">حفظ التقدم</string>
     <string name="maybe_later">ربما لاحقاً</string>
     <string name="register_benefits_title">انضم إلى البطولات وتنافس عالمياً!</string>
     <string name="register_benefits_message">سجّل لحفظ ترتيبك والمشاركة في بطولات مع لاعبين حول العالم.</string>

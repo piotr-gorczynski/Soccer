@@ -317,7 +317,6 @@
     <!-- Anonymous user prompts -->
     <string name="save_progress_title">اپنی پیش قدمی &amp; نام محفوظ کریں</string>
     <string name="save_progress_message">اپنے اعداد و شمار محفوظ کرنے اور ٹورنامنٹ میں شامل ہونے کے لیے اپنا اکاؤنٹ منسلک کریں!</string>
-    <string name="save_progress_button">پیش قدمی محفوظ کریں</string>
     <string name="maybe_later">شاید بعد میں</string>
     
     <!-- In-app messaging for v7/v8 users -->

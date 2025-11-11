@@ -318,7 +318,6 @@
     <!-- Anonymous user prompts -->
     <string name="save_progress_title">Speichern Sie Ihren Fortschritt &amp; Spitznamen</string>
     <string name="save_progress_message">Verknüpfen Sie Ihr Konto, um Ihre Statistiken zu speichern und an Turnieren teilzunehmen!</string>
-    <string name="save_progress_button">Fortschritt speichern</string>
     <string name="maybe_later">Vielleicht später</string>
     
     <!-- In-app messaging for v7/v8 users -->
