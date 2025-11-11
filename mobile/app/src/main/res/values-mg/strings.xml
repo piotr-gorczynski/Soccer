@@ -228,7 +228,7 @@
     <string name="network_error_checking_nickname">Nisy olana amin`ny tambajotra rehefa nizaha anaram-bositra</string>
     <string name="checking_nickname">Manamarina anaram-bositra…</string>
     <string name="nickname_taken">Efa misy naka io anaram-bositra io — mifidiana iray hafa</string>
-    <string name="nickname_inappropriate">Misy teny tsy mendrika ao amin ny anarana - misafidiana hafa</string>
+    <string name="nickname_inappropriate">AI mihevitra, fa misy teny tsy mendrika ao amin ny anarana - misafidiana hafa</string>
     <string name="nickname_saved">Voatahiry ny anaram-bositra</string>
     <string name="nickname_save_failed">Tsy nahomby ny fitahirizana anaram-bositra</string>
     <string name="game_launch_failed">Tsy nahomby ny fanombohana ny lalao.</string>

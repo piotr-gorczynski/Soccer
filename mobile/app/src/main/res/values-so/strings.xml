@@ -228,7 +228,7 @@
     <string name="network_error_checking_nickname">Khalad shabakad ayaa dhacay marka la hubinayo naanayska</string>
     <string name="checking_nickname">Naanayska ayaa la hubinayaa…</string>
     <string name="nickname_taken">Naanayskan hore ayaa loo qaatay — dooro mid kale</string>
-    <string name="nickname_inappropriate">Naanayska wuxuu ku jiraa luuqad aan habboonayn - mid kale dooro</string>
+    <string name="nickname_inappropriate">AI wuxuu u maleynayaa, in naanayska wuxuu ku jiraa luuqad aan habboonayn - mid kale dooro</string>
     <string name="nickname_saved">Naanays waa la kaydiyay</string>
     <string name="nickname_save_failed">Ku guuldarraystay kaydinta naanayska</string>
     <string name="game_launch_failed">Furitaanka ciyaarta wuu fashilmay.</string>
