@@ -285,22 +285,24 @@ public class AnalyticsManager {
     }
     
     // ═══════════════════════════════════════════════════════════════════
-    // ANONYMOUS USER FLOW EVENTS
+    // NICKNAME CHECK EVENTS
     // ═══════════════════════════════════════════════════════════════════
     
     /**
-     * Track when anonymous user is prompted to link account
-     * @param trigger What triggered the prompt (e.g. "tournament_join", "win_match", "pick_nickname")
+     * Track nickname content check error (AI check failure)
+     * @param nickname The nickname that was being checked
+     * @param errorMessage Error message from the check
      */
-    public void trackAnonymousLinkPrompt(String trigger) {
+    public void trackNicknameCheckError(String nickname, String errorMessage) {
         // Null-safe parameter handling
-        String safeTrigger = trigger != null ? trigger : "unknown_trigger";
+        String safeNickname = nickname != null ? nickname : "unknown_nickname";
+        String safeErrorMessage = errorMessage != null ? errorMessage : "Unknown error occurred";
         
-        Log.d(TAG, "Tracked: anonymous link prompt - trigger=" + safeTrigger);
+        Log.d(TAG, "Tracked: nickname check error for " + safeNickname + ": " + safeErrorMessage);
         
         if (crashlytics != null) {
             try {
-                crashlytics.log("Anonymous link prompt shown: " + safeTrigger);
+                crashlytics.log("Nickname AI check error: " + safeNickname + " - " + safeErrorMessage);
             } catch (Exception e) {
                 Log.e(TAG, "Failed to log to Crashlytics", e);
             }
@@ -309,45 +311,18 @@ public class AnalyticsManager {
         if (firebaseAnalytics != null) {
             try {
                 Bundle params = new Bundle();
-                params.putString("trigger", safeTrigger);
-                firebaseAnalytics.logEvent("anonymous_link_prompt", params);
+                params.putString("nickname", safeNickname);
+                params.putString("error_message", safeErrorMessage);
+                firebaseAnalytics.logEvent("nickname_check_error", params);
             } catch (Exception e) {
                 Log.e(TAG, "Failed to log to Firebase Analytics", e);
             }
         }
     }
     
-    /**
-     * Track anonymous user decision on linking
-     * @param decision User's decision ("link", "dismiss", "later")
-     * @param trigger What triggered the original prompt
-     */
-    public void trackAnonymousLinkDecision(String decision, String trigger) {
-        // Null-safe parameter handling
-        String safeDecision = decision != null ? decision : "unknown_decision";
-        String safeTrigger = trigger != null ? trigger : "unknown_trigger";
-        
-        Log.d(TAG, "Tracked: anonymous link decision=" + safeDecision + " trigger=" + safeTrigger);
-        
-        if (crashlytics != null) {
-            try {
-                crashlytics.log("Anonymous link decision: " + safeDecision + " (trigger: " + safeTrigger + ")");
-            } catch (Exception e) {
-                Log.e(TAG, "Failed to log to Crashlytics", e);
-            }
-        }
-        
-        if (firebaseAnalytics != null) {
-            try {
-                Bundle params = new Bundle();
-                params.putString("decision", safeDecision);
-                params.putString("trigger", safeTrigger);
-                firebaseAnalytics.logEvent("anonymous_link_decision", params);
-            } catch (Exception e) {
-                Log.e(TAG, "Failed to log to Firebase Analytics", e);
-            }
-        }
-    }
+    // ═══════════════════════════════════════════════════════════════════
+    // ANONYMOUS USER FLOW EVENTS
+    // ═══════════════════════════════════════════════════════════════════
     
     // ═══════════════════════════════════════════════════════════════════
     // USER ATTRIBUTES FOR SEGMENTATION

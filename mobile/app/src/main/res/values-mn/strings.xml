@@ -228,7 +228,7 @@
     <string name="network_error_checking_nickname">Хоч нэр шалгах явцад сүлжээний алдаа гарлаа</string>
     <string name="checking_nickname">Хоч нэрийг шалгаж байна…</string>
     <string name="nickname_taken">Энэ хоч нэрийг аль хэдийн авсан байна — өөр нэр сонгоно уу</string>
-    <string name="nickname_inappropriate">Хоч нэр нь тохиромжгүй үг агуулж байна - өөр нэг сонгоно уу</string>
+    <string name="nickname_inappropriate">AI бодож байна, хоч нэр нь тохиромжгүй үг агуулж байна - өөр нэг сонгоно уу</string>
     <string name="nickname_saved">Хоч нэр хадгалагдлаа</string>
     <string name="nickname_save_failed">Хоч нэр хадгалж чадсангүй</string>
     <string name="game_launch_failed">Тоглоом эхлээгүй.</string>
@@ -300,7 +300,6 @@
     <string name="decline_reason_other">Бусад шалтгаан</string>
     <string name="save_progress_title">Ахиц болон хоч нэрээ хадгалах</string>
     <string name="save_progress_message">Статистикаа хадгалж, тэмцээнд оролцохын тулд аккаунтаа холбоно уу!</string>
-    <string name="save_progress_button">Ахиц хадгалах</string>
     <string name="maybe_later">Дараа бол</string>
     <string name="register_benefits_title">Тэмцээнд нэгдэж дэлхий дахинаа өрсөлд!</string>
     <string name="register_benefits_message">Дэлхийн тоглогчидтой тэмцээнд оролцож, үнэлгээгээ хадгалахын тулд бүртгүүлнэ үү.</string>

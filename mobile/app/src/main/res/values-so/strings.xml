@@ -228,7 +228,7 @@
     <string name="network_error_checking_nickname">Khalad shabakad ayaa dhacay marka la hubinayo naanayska</string>
     <string name="checking_nickname">Naanayska ayaa la hubinayaa…</string>
     <string name="nickname_taken">Naanayskan hore ayaa loo qaatay — dooro mid kale</string>
-    <string name="nickname_inappropriate">Naanayska wuxuu ku jiraa luuqad aan habboonayn - mid kale dooro</string>
+    <string name="nickname_inappropriate">AI wuxuu u maleynayaa, in naanayska wuxuu ku jiraa luuqad aan habboonayn - mid kale dooro</string>
     <string name="nickname_saved">Naanays waa la kaydiyay</string>
     <string name="nickname_save_failed">Ku guuldarraystay kaydinta naanayska</string>
     <string name="game_launch_failed">Furitaanka ciyaarta wuu fashilmay.</string>
@@ -300,7 +300,6 @@
     <string name="decline_reason_other">Sabab kale</string>
     <string name="save_progress_title">Kaydi horumarkaaga &amp; naanayska</string>
     <string name="save_progress_message">Ku xidh akoonkaaga si aad u kaydiso tirakoobka oo aad ugu biirto tartamada!</string>
-    <string name="save_progress_button">Kaydi horumarka</string>
     <string name="maybe_later">Malaha goor dambe</string>
     <string name="register_benefits_title">Ku biir tartamada &amp; si caalami ah u tartan!</string>
     <string name="register_benefits_message">Isdiiwaangeli si aad u kaydiso darajadaada oo aad uga qaybqaadato tartamada ciyaartoyda caalamka.</string>

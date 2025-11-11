@@ -228,7 +228,7 @@
     <string name="network_error_checking_nickname">අතුරු නාමය පරීක්ෂා කිරීමේදී ජාල දෝෂයක්</string>
     <string name="checking_nickname">අතුරු නාමය පරීක්ෂා කරමින්…</string>
     <string name="nickname_taken">අතුරු නාමය දැනටමත් භාවිතයේ ඇත — වෙනත් එකක් තෝරන්න</string>
-    <string name="nickname_inappropriate">විටප්‍රයෝජන නාමයේ නුසුදුසු භාෂාවක් අඩංගුයි - වෙනත් එකක් තෝරන්න</string>
+    <string name="nickname_inappropriate">AI සිතයි, විටප්‍රයෝජන නාමයේ නුසුදුසු භාෂාවක් අඩංගුයි - වෙනත් එකක් තෝරන්න</string>
     <string name="nickname_saved">අතුරු නාමය සුරකින ලදී</string>
     <string name="nickname_save_failed">අතුරු නාමය සුරැකීමට අසමත් විය</string>
     <string name="game_launch_failed">ක්‍රීඩාව ආරම්භ කිරීමට අසමත් විය.</string>
@@ -300,7 +300,6 @@
     <string name="decline_reason_other">වෙනත් හේතුවක්</string>
     <string name="save_progress_title">ඔබේ ප්‍රගතිය හා අතුරු නාමය සුරකින්න</string>
     <string name="save_progress_message">ඔබේ ගිණුම සම්බන්ධ කර ඔබේ සංඛ්‍යාත සුරකින්න සහ තරඟාවලිවලට එක්වන්න!</string>
-    <string name="save_progress_button">ප්‍රගතිය සුරකින්න</string>
     <string name="maybe_later">පසුව විය හැක</string>
     <string name="register_benefits_title">තරඟාවලියට එක් වී ගෝලීය වශයෙන් තරඟ කරන්න!</string>
     <string name="register_benefits_message">ඔබේ ශ්‍රේණිගත වීම සුරකින්න සහ ලොව පුරා ක්‍රීඩකයින් සමඟ තරඟ කිරීමට ලියාපදිංචි වන්න.</string>

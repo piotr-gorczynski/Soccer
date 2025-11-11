@@ -228,7 +228,7 @@
     <string name="network_error_checking_nickname">Hitilafu ya mtandao wakati wa kukagua jina la utani</string>
     <string name="checking_nickname">Inakagua jina la utani…</string>
     <string name="nickname_taken">Jina la utani tayari limetumika — chagua jingine</string>
-    <string name="nickname_inappropriate">Jina la utani lina lugha isiyofaa - chagua lingine</string>
+    <string name="nickname_inappropriate">AI inafikiri, kwamba jina la utani lina lugha isiyofaa - chagua lingine</string>
     <string name="nickname_saved">Jina la utani limehifadhiwa</string>
     <string name="nickname_save_failed">Imeshindwa kuhifadhi jina la utani</string>
     <string name="game_launch_failed">Uzinduzi wa mchezo umeshindikana.</string>
@@ -300,7 +300,6 @@
     <string name="decline_reason_other">Sababu nyingine</string>
     <string name="save_progress_title">Hifadhi maendeleo yako na jina la utani</string>
     <string name="save_progress_message">Unganisha akaunti yako ili kuhifadhi takwimu zako na kujiunga na mashindano!</string>
-    <string name="save_progress_button">Hifadhi Maendeleo</string>
     <string name="maybe_later">Labda Baadaye</string>
     <string name="register_benefits_title">Jiunge na mashindano na ushindane kimataifa!</string>
     <string name="register_benefits_message">Jisajili ili kuhifadhi msimamo wako na kushiriki katika mashindano na wachezaji duniani kote.</string>

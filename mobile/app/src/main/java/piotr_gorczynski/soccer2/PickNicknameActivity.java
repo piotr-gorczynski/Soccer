@@ -127,6 +127,8 @@ public class PickNicknameActivity extends BaseActivity {
                 showNicknameCheckProgress(false);
                 if (hadContentError) {
                     btnConfirm.setEnabled(true);
+                    // Report error to Crashlytics
+                    analyticsManager.trackNicknameCheckError(nickname, "AI content check failed");
                     Toast.makeText(PickNicknameActivity.this,
                             R.string.network_error_checking_nickname,
                             Toast.LENGTH_SHORT).show();
@@ -188,15 +190,7 @@ public class PickNicknameActivity extends BaseActivity {
                         analyticsManager.setUserProperties(authMethod, "9.0", language, true);
                     }
 
-                    // Show anonymous linking prompt if user is anonymous
-                    if (AnonymousLinkPromptHelper.shouldShowPrompt("pick_nickname")) {
-                        AnonymousLinkPromptHelper.showSaveProgressPrompt(
-                                PickNicknameActivity.this,
-                                "pick_nickname",
-                                analyticsManager
-                        );
-                    }
-
+                    // Navigate to MenuActivity
                     if (isTaskRoot()) {
                         startActivity(new Intent(
                                 PickNicknameActivity.this,

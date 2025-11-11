@@ -228,7 +228,7 @@
     <string name="network_error_checking_nickname">အမည်ပြောင်စစ်ဆေးနေစဉ် ကွန်ယက်ချိုးယွင်းသည်</string>
     <string name="checking_nickname">အမည်ပြောင်ကို စစ်ဆေးနေသည်…</string>
     <string name="nickname_taken">အမည်ပြောင်ကို တစ်စုံတယောက် အသုံးပြုနေပြီး — တစ်ခုသစ်ရွေးချယ်ပါ</string>
-    <string name="nickname_inappropriate">အမည်ပြောင်တွင် မသင့်လျော်သော ဘာသာစကား ပါဝင်သည် - အခြားတစ်ခု ရွေးပါ</string>
+    <string name="nickname_inappropriate">AI က အမည်ပြောင်တွင် မသင့်လျော်သော ဘာသာစကား ပါဝင်သည် ဟု ထင်သည် - အခြားတစ်ခု ရွေးပါ</string>
     <string name="nickname_saved">အမည်ပြောင်ကို သိမ်းဆည်းထားပါသည်</string>
     <string name="nickname_save_failed">အမည်ပြောင်ကို သိမ်းဆည်းရန် မအောင်မြင်ပါ။</string>
     <string name="game_launch_failed">ဂိမ်းစတင်ရန် မအောင်မြင်ပါ။</string>
@@ -300,7 +300,6 @@
     <string name="decline_reason_other">အခြားအကြောင်းရင်း</string>
     <string name="save_progress_title">သင့်တိုးတက်မှုနှင့် အမည်ပြောင်ကို သိမ်းဆည်းပါ</string>
     <string name="save_progress_message">သင့်အကောင့်ကို ချိတ်ဆက်ပြီး သင့်စာရင်းအချက်အလက်များကို သိမ်းဆည်းကာ ပြိုင်ပွဲများတွင် ပါဝင်ပါ!</string>
-    <string name="save_progress_button">တိုးတက်မှု သိမ်းပါ</string>
     <string name="maybe_later">နောက်မှ</string>
     <string name="register_benefits_title">ပြိုင်ပွဲများတွင် ပါဝင်ပြီး ကမ္ဘာအနှံ့ယှဉ်ပြိုင်ပါ!</string>
     <string name="register_benefits_message">သင့်အဆင့်သတ်မှတ်ချက်ကို သိမ်းဆည်းကာ ကမ္ဘာအနှံ့ရှိ ကစားသူများနှင့် ပြိုင်ပွဲများတွင် ပါဝင်ရန် စာရင်းသွင်းပါ။</string>

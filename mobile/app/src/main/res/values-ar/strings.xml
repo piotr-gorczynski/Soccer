@@ -209,7 +209,7 @@
     <string name="network_error_checking_nickname">خطأ في الشبكة أثناء التحقق من الاسم المستعار</string>
     <string name="checking_nickname">جارٍ التحقق من الاسم المستعار…</string>
     <string name="nickname_taken">الاسم المستعار مستخدم بالفعل — اختر آخر</string>
-    <string name="nickname_inappropriate">يحتوي الاسم المستعار على لغة غير لائقة — اختر آخر</string>
+    <string name="nickname_inappropriate">يعتقد الذكاء الاصطناعي، أن الاسم المستعار يحتوي على لغة غير لائقة — اختر آخر</string>
     <string name="nickname_saved">تم حفظ الاسم المستعار</string>
     <string name="nickname_save_failed">فشل حفظ الاسم المستعار</string>
     <string name="game_launch_failed">فشل تشغيل اللعبة.</string>
@@ -281,7 +281,6 @@
     <string name="decline_reason_other">سبب آخر</string>
     <string name="save_progress_title">احفظ تقدمك واسمك المستعار</string>
     <string name="save_progress_message">اربط حسابك لحفظ إحصائياتك والانضمام إلى البطولات!</string>
-    <string name="save_progress_button">حفظ التقدم</string>
     <string name="maybe_later">ربما لاحقاً</string>
     <string name="register_benefits_title">انضم إلى البطولات وتنافس عالمياً!</string>
     <string name="register_benefits_message">سجّل لحفظ ترتيبك والمشاركة في بطولات مع لاعبين حول العالم.</string>

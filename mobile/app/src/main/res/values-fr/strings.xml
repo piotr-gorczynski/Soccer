@@ -241,7 +241,7 @@
     <string name="network_error_checking_nickname">Erreur réseau lors de la vérification du pseudonyme</string>
     <string name="checking_nickname">Vérification du pseudonyme…</string>
     <string name="nickname_taken">Pseudonyme déjà pris — choisissez-en un autre</string>
-    <string name="nickname_inappropriate">Le pseudonyme contient un langage inapproprié — choisissez-en un autre</string>
+    <string name="nickname_inappropriate">AI pense, que le pseudonyme contient un langage inapproprié — choisissez-en un autre</string>
     <string name="nickname_saved">Pseudonyme enregistré</string>
     <string name="nickname_save_failed">Échec de l’enregistrement du pseudonyme</string>
 
@@ -319,7 +319,6 @@
     <!-- Anonymous user prompts -->
     <string name="save_progress_title">Sauvegardez votre progression &amp; pseudonyme</string>
     <string name="save_progress_message">Liez votre compte pour sauvegarder vos statistiques et rejoindre des tournois !</string>
-    <string name="save_progress_button">Sauvegarder la progression</string>
     <string name="maybe_later">Peut-être plus tard</string>
     
     <!-- In-app messaging for v7/v8 users -->
