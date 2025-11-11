@@ -209,7 +209,7 @@
     <string name="network_error_checking_nickname">خطای شبکه هنگام بررسی نام مستعار</string>
     <string name="checking_nickname">در حال بررسی نام مستعار…</string>
     <string name="nickname_taken">این نام مستعار قبلاً استفاده شده است — نام دیگری انتخاب کنید</string>
-    <string name="nickname_inappropriate">نام مستعار شامل زبان نامناسب است - دیگری را انتخاب کنید</string>
+    <string name="nickname_inappropriate">هوش مصنوعی فکر می‌کند، که نام مستعار شامل زبان نامناسب است - دیگری را انتخاب کنید</string>
     <string name="nickname_saved">نام مستعار ذخیره شد</string>
     <string name="nickname_save_failed">ذخیره نام مستعار ناموفق بود</string>
     <string name="game_launch_failed">راه‌اندازی بازی ناموفق بود.</string>
@@ -281,7 +281,6 @@
     <string name="decline_reason_other">دلیل دیگر</string>
     <string name="save_progress_title">پیشرفت و نام مستعار خود را ذخیره کنید</string>
     <string name="save_progress_message">حساب خود را پیوند دهید تا آمار شما ذخیره شود و به تورنمنت‌ها بپیوندید!</string>
-    <string name="save_progress_button">ذخیره پیشرفت</string>
     <string name="maybe_later">بعداً شاید</string>
     <string name="register_benefits_title">به تورنمنت‌ها بپیوندید و جهانی رقابت کنید!</string>
     <string name="register_benefits_message">ثبت‌نام کنید تا رتبه خود را حفظ کنید و در تورنمنت‌های بازیکنان سراسر جهان شرکت کنید.</string>

@@ -1,176 +1,143 @@
 <en-GB>
-🎮 Fix WebView ANR during app startup (WV.xv.execute)
-🎮 Fix NullPointerException in AddFriendActivity when user not authenticated
-🎮 Fix SignInHubActivity crash by adding missing play-services-auth dependency
-🎮 Fix NullPointerException in InvitationsActivity when user is unauthenticated
+🎉 Added smart nickname filter with Vertex AI  
+🎮 Fixed sign-in and friend-adding issues  
+🎮 Improved app start-up stability  
+🎮 Fixed invite errors for signed-out users  
+⚽ Smoother, safer Soccer!
 </en-GB>
 
 <pl-PL>
-🎉 Dodano „Więcej” w zaproszeniach  
-🎮 Nowy samouczek z gestami  
-🎮 Animacje można włączyć/wyłączyć  
-🎮 Turnieje blokowane po rejestracji  
-🎮 Lepsze statystyki i wygląd  
-🎮 Usunięto błędy i spowolnienia  
-⚽ Szybszy, płynniejszy Soccer!
+🎉 Dodano inteligentny filtr pseudonimów (Vertex AI)  
+🎮 Naprawiono logowanie i dodawanie znajomych  
+🎮 Lepsza stabilność uruchamiania  
+🎮 Poprawiono zaproszenia dla niezalogowanych  
+⚽ Płynniejszy i bezpieczniejszy Soccer!
 </pl-PL>
 
 <de-DE>
-🎉 „Mehr laden“ bei Einladungen  
-🎮 Neues Tutorial mit Gesten  
-🎮 Animationen ein-/ausschaltbar  
-🎮 Turniere nach Anmeldung gesperrt  
-🎮 Bessere Statistiken & Layout  
-🎮 Abstürze behoben  
-⚽ Schnelleres, flüssigeres Soccer!
+🎉 Neuer KI-Filter für unpassende Namen  
+🎮 Login- und Freunde-Fehler behoben  
+🎮 Stabilerer App-Start  
+🎮 Einladungen für abgemeldete Nutzer repariert  
+⚽ Glatteres, sichereres Soccer!
 </de-DE>
 
 <fr-FR>
-🎉 Boutons « Plus » dans les invitations  
-🎮 Nouveau tutoriel avec gestes  
-🎮 Animations activables/désactivables  
-🎮 Tournois verrouillés après inscription  
-🎮 Stats et interface améliorées  
-🎮 Moins de bugs  
-⚽ Soccer plus fluide !
+🎉 Filtre IA ajouté pour noms inappropriés  
+🎮 Correction des erreurs de connexion et d’amis  
+🎮 Démarrage de l’app plus stable  
+🎮 Invitations corrigées pour utilisateurs déconnectés  
+⚽ Soccer plus fluide et sûr !
 </fr-FR>
 
 <es-ES>
-🎉 Botones « Ver más » en invitaciones  
-🎮 Nuevo tutorial con gestos  
-🎮 Animaciones on/off  
-🎮 Torneos bloqueados tras registro  
-🎮 Stats y diseño mejorados  
-🎮 Fallos corregidos  
-⚽ Soccer más rápido !
+🎉 Filtro IA añadido para nombres inapropiados  
+🎮 Arreglos en inicio de sesión y amigos  
+🎮 Inicio más estable  
+🎮 Invitaciones corregidas para usuarios sin sesión  
+⚽ Soccer más fluido y seguro!
 </es-ES>
 
 <ur>
-🎉 دعوتوں میں “مزید دیکھیں” شامل  
-🎮 نیا ہینڈ جیسچر ٹیوٹوریل  
-🎮 اینیمیشن آن/آف آپشن  
-🎮 رجسٹریشن کے بعد لاک  
-🎮 بہتر شماریات و ڈیزائن  
-🎮 کریشز درست  
-⚽ تیز اور بہتر Soccer!
+🎉 ناموں کے لیے Vertex AI فلٹر شامل  
+🎮 سائن ان اور دوست شامل کرنے کے مسائل درست  
+🎮 ایپ آغاز مزید مستحکم  
+🎮 غیر لاگ ان صارفین کے لیے دعوت درست  
+⚽ بہتر اور محفوظ Soccer!
 </ur>
 
 <bn-BD>
-🎉 “আরও দেখুন” বাটন যোগ  
-🎮 হ্যান্ড জেসচার টিউটোরিয়াল  
-🎮 অ্যানিমেশন অন/অফ  
-🎮 রেজিস্ট্রেশনের পর লক  
-🎮 ভালো স্ট্যাট ও ডিজাইন  
-🎮 ক্র্যাশ ঠিক  
-⚽ দ্রুত ও মসৃণ Soccer!
+🎉 নাম যাচাইয়ের জন্য Vertex AI ফিল্টার যোগ  
+🎮 সাইন-ইন ও বন্ধু যোগের সমস্যা ঠিক  
+🎮 অ্যাপ আরও স্থিতিশীল  
+🎮 লগ-আউট ব্যবহারকারীর আমন্ত্রণ ঠিক  
+⚽ আরও মসৃণ ও নিরাপদ Soccer!
 </bn-BD>
 
 <ne-NP>
-🎉 “Load More” बटन थपियो  
-🎮 नयाँ ट्युटोरियल  
-🎮 एनिमेसन अन/अफ  
-🎮 प्रतियोगिता लक  
-🎮 तथ्यांक सुधार  
-🎮 क्र्यास ठीक  
-⚽ छिटो Soccer!
+🎉 Vertex AI नाम फिल्टर थपियो  
+🎮 लगइन र साथी थप्ने त्रुटि समाधान  
+🎮 सुरु स्थिरता सुधारियो  
+🎮 नलगइन प्रयोगकर्ताका निमन्त्रण ठीक  
+⚽ सहज र सुरक्षित Soccer!
 </ne-NP>
 
 <hi-IN>
-🎉 “लोड मोर” जोड़ा गया  
-🎮 नया ट्यूटोरियल  
-🎮 एनिमेशन ऑन/ऑफ  
-🎮 टूर्नामेंट लॉक  
-🎮 बेहतर आँकड़े  
-🎮 क्रैश ठीक  
-⚽ तेज़ Soccer!
+🎉 Vertex AI नाम फ़िल्टर जोड़ा गया  
+🎮 लॉगिन और दोस्तों से जुड़ी दिक्कतें ठीक  
+🎮 ऐप स्टार्ट अब स्थिर  
+🎮 बिना लॉगिन वाले आमंत्रण सुधारे  
+⚽ बेहतर और सुरक्षित Soccer!
 </hi-IN>
 
 <am>
-🎉 “Load More” ተጨምሯል  
-🎮 አዲስ አስተማሪ  
-🎮 አኒሜሽን ክፈት/ዝጋ  
-🎮 ተመዝጋቢ ተዘግቷል  
-🎮 ስታቲስቲክስ ተሻሻለ  
-🎮 መቃኘት ተፈታ  
-⚽ ፈጣን Soccer!
+🎉 የVertex AI ስም ማጣሪያ ተጨምሯል  
+🎮 የመግቢያና ጓደኛ ችግኝ ተፈታ  
+🎮 የመነሻ እንቅስቃሴ ተሻሻለ  
+🎮 ለማይግቡ ተጠቃሚዎች ግብዣ ተቀናበረ  
+⚽ የተሻሻለ እና የተረጋጋ Soccer!
 </am>
 
 <ar>
-🎉 أزرار «المزيد» في الدعوات  
-🎮 دليل جديد  
-🎮 تشغيل/إيقاف الرسوم  
-🎮 قفل البطولات بعد التسجيل  
-🎮 تحسين الإحصاءات والتصميم  
-🎮 إصلاح الأعطال  
-⚽ Soccer أسرع!
+🎉 تمت إضافة فلتر Vertex AI للأسماء غير المناسبة  
+🎮 تم إصلاح مشاكل تسجيل الدخول والأصدقاء  
+🎮 تشغيل التطبيق أصبح أكثر استقرارًا  
+🎮 إصلاح الدعوات لغير المسجلين  
+⚽ Soccer أسرع وأكثر أمانًا!
 </ar>
 
 <my-MM>
-🎉 “Load More” ခလုတ် ထည့်  
-🎮 လက်ညှိ သင်ခန်းစာ  
-🎮 အနိမ့်/အမြင့် ပြောင်းနိုင်  
-🎮 မှတ်ပုံတင်ပြီး လော့ခ်  
-🎮 စာရင်းအင်း မြှင့်တင်  
-🎮 ချိုးခြင်း ဖြေရှင်း  
-⚽ ပိုမြန် Soccer!
+🎉 Vertex AI နဲ့ နာမည် စစ်ထုတ်မှု ထည့်  
+🎮 လော့ဂ်အင် နှင့် မိတ်ဆွေ ချိတ်ဆက် ပြဿနာ ဖြေရှင်း  
+🎮 အက်ပ် စတင်မှု ပိုမို တည်ငြိမ်  
+🎮 မဝင်သည့် အသုံးပြုသူများအတွက် ဖိတ်ကြားမှု ပြင်  
+⚽ ပိုမြန်ပြီး ပိုလုံခြုံသော Soccer!
 </my-MM>
 
 <km-KH>
-🎉 បន្ថែម “Load More”  
-🎮 មគ្គុទ្ទេសក៍ថ្មី  
-🎮 បិទ/បើកអានីមេសិន  
-🎮 បិទបន្ទាប់ពីចុះឈ្មោះ  
-🎮 ស្ថិតិប្រសើរឡើង  
-🎮 កំហុសត្រូវបានកែ  
-⚽ Soccer លឿនជាងមុន!
+🎉 បន្ថែមតម្រង Vertex AI សម្រាប់ឈ្មោះមិនសម  
+🎮 កែបញ្ហា ចូល និងបន្ថែមមិត្ត  
+🎮 ការចាប់ផ្តើមប្រសើរឡើង  
+🎮 កែការអញ្ជើញសម្រាប់អ្នកមិនបានចូល  
+⚽ Soccer លឿន និងសុវត្ថិភាព!
 </km-KH>
 
 <lo-LA>
-🎉 ເພີ່ມ “Load More”  
-🎮 ຄູ່ມືໃໝ່  
-🎮 ປິດ/ເປີດການເຄື່ອນໄຫວ  
-🎮 ລັອກຫຼັງລົງທະບຽນ  
-🎮 ສະຖິຕິດີຂຶ້ນ  
-🎮 ບັນຫາແກ້ໄຂ  
-⚽ Soccer ໄວຂຶ້ນ!
+🎉 ເພີ່ມຕົວກັ່ນຊື່ Vertex AI  
+🎮 ແກ້ບັນຫາເຂົ້າລະບົບ ແລະ ເພື່ອນ  
+🎮 ແອັບເລີ່ມດີຂຶ້ນ  
+🎮 ປັບປຸງການເຊີນສໍາລັບຜູ້ບໍ່ເຂົ້າ  
+⚽ Soccer ລື່ນແລະປອດໄພ!
 </lo-LA>
 
 <mn-MN>
-🎉 “Load More” нэмсэн  
-🎮 Шинэ гарын дохио  
-🎮 Animation асаах/унтраах  
-🎮 Тэмцээн бүртгэлийн дараа түгжээтэй  
-🎮 Статистик сайжирсан  
-🎮 Алдаа зассан  
-⚽ Хурдан Soccer!
+🎉 Vertex AI нэрний шүүлтүүр нэмэв  
+🎮 Нэвтрэх ба найз нэмэх алдаа зассан  
+🎮 Апп илүү тогтвортой эхэлнэ  
+🎮 Нэвтрээгүй хэрэглэгчийн урилга зассан  
+⚽ Илүү хурдан, найдвартай Soccer!
 </mn-MN>
 
 <fa-IR>
-🎉 دکمه «بیشتر» افزوده شد  
-🎮 آموزش حرکات دست  
-🎮 روشن/خاموش انیمیشن‌ها  
-🎮 قفل مسابقات پس از ثبت‌نام  
-🎮 آمار و طراحی بهتر  
-🎮 خطاها رفع شد  
-⚽ Soccer سریع‌تر!
+🎉 فیلتر ‎Vertex AI‎ برای نام‌های نامناسب افزوده شد  
+🎮 رفع مشکلات ورود و افزودن دوستان  
+🎮 شروع برنامه پایدارتر شد  
+🎮 رفع خطا در دعوت کاربران خارج از حساب  
+⚽ ‎Soccer‎ روان‌تر و ایمن‌تر!
 </fa-IR>
 
 <si-LK>
-🎉 “Load More” බොත්තම එක් කළා  
-🎮 අලුත් පාඩම  
-🎮 Animations on/off  
-🎮 තරග වසා දැමූවා  
-🎮 තොරතුරු වැඩි කළා  
-🎮 බිඳවැටීම් විසඳා  
-⚽ වේගවත් Soccer!
+🎉 Vertex AI නම පෙරහන එකතු කළා  
+🎮 ලොග් ඉන් සහ මිතුරු දෝෂ සකසා ඇත  
+🎮 යෙදුම වඩා ස්ථාවරයි  
+🎮 නොලොග් වූ පරිශීලකයන්ට ආරාධනා නිවැරදි  
+⚽ වඩා මෘදු සහ ආරක්ෂිත Soccer!
 </si-LK>
 
 <sw>
-🎉 “Load More” imeongezwa  
-🎮 Mafunzo mapya  
-🎮 Michoro on/off  
-🎮 Mashindano kufungwa  
-🎮 Takwimu bora  
-🎮 Hitilafu zimetatuliwa  
-⚽ Soccer haraka!
+🎉 Kichujio cha majina cha Vertex AI kimeongezwa  
+🎮 Tatizo la kuingia na marafiki limeboreshwa  
+🎮 Programu inaanza kwa uthabiti zaidi  
+🎮 Mialiko ya watumiaji wasioingia imerekebishwa  
+⚽ Soccer laini na salama zaidi!
 </sw>

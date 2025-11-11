@@ -238,7 +238,7 @@
     <string name="network_error_checking_nickname">Netzwerkfehler beim Überprüfen des Spitznamens</string>
     <string name="checking_nickname">Spitzname wird überprüft…</string>
     <string name="nickname_taken">Spitzname bereits genommen - wählen Sie einen anderen</string>
-    <string name="nickname_inappropriate">Spitzname enthält unangemessene Sprache - wählen Sie einen anderen</string>
+    <string name="nickname_inappropriate">AI denkt, dass Spitzname unangemessene Sprache enthält - wählen Sie einen anderen</string>
     <string name="nickname_saved">Spitzname gerettet</string>
     <string name="nickname_save_failed">Spitzname nicht speichern</string>
 
@@ -318,7 +318,6 @@
     <!-- Anonymous user prompts -->
     <string name="save_progress_title">Speichern Sie Ihren Fortschritt &amp; Spitznamen</string>
     <string name="save_progress_message">Verknüpfen Sie Ihr Konto, um Ihre Statistiken zu speichern und an Turnieren teilzunehmen!</string>
-    <string name="save_progress_button">Fortschritt speichern</string>
     <string name="maybe_later">Vielleicht später</string>
     
     <!-- In-app messaging for v7/v8 users -->

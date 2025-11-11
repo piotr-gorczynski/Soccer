@@ -228,7 +228,7 @@
     <string name="network_error_checking_nickname">ቅጽል ስም ሲረጋገጥ የአውታረ መረብ ስህተት ተፈጥሯል</string>
     <string name="checking_nickname">ቅጽል ስም በመረጋገጥ ላይ…</string>
     <string name="nickname_taken">ቅጽል ስም ቀድሞ ተጠቅመዋል — ሌላ ይምረጡ</string>
-    <string name="nickname_inappropriate">የማይስማማ ቋንቋ የያዘ አማራጭ ስም - ሌላውን ይምረጡ</string>
+    <string name="nickname_inappropriate">AI አስባለው, የማይስማማ ቋንቋ የያዘ አማራጭ ስም - ሌላውን ይምረጡ</string>
     <string name="nickname_saved">ቅጽል ስም ተቀምጧል</string>
     <string name="nickname_save_failed">ቅጽል ስም ማቀመጥ አልተሳካም</string>
     <string name="game_launch_failed">ጨዋታውን ማስጀመር አልተሳካም።</string>
@@ -300,7 +300,6 @@
     <string name="decline_reason_other">ሌላ ምክንያት</string>
     <string name="save_progress_title">እድገትዎን እና ቅጽል ስምዎን ያስቀምጡ</string>
     <string name="save_progress_message">ተሞክሮዎን ለማስቀመጥ እና ውድድሮችን ለመቀላቀል መለያዎን ያገናኙ!</string>
-    <string name="save_progress_button">እድገት አስቀምጥ</string>
     <string name="maybe_later">ከዚያ በኋላ ላይ ምናልባት</string>
     <string name="register_benefits_title">ውድድሮችን ተቀላቀልና በዓለም አቀፍ ውድድር ተወዳድር!</string>
     <string name="register_benefits_message">ደረጃዎን ለማስቀመጥ እና በዓለም ዙሪያ ካሉ ተጫዋቾች ጋር በውድድር ለመሳተፍ ይመዝገቡ።</string>

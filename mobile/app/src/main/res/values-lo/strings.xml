@@ -228,7 +228,7 @@
     <string name="network_error_checking_nickname">ເກີດຂໍ້ຜິດພາດເນື່ອງຈາກເຄືອຂ່າຍໃນຂະນະກວດຊື່ເລັ່ນ</string>
     <string name="checking_nickname">ກຳລັງກວດສອບຊື່ເລັ່ນ…</string>
     <string name="nickname_taken">ຊື່ເລັ່ນນີ້ຖືກໃຊ້ແລ້ວ — ກະລຸນາເລືອກຊື່ໃໝ່</string>
-    <string name="nickname_inappropriate">ຊື່ຫຼີ້ນມີພາສາທີ່ບໍ່ເໝາະສົມ - ເລືອກອັນອື່ນ</string>
+    <string name="nickname_inappropriate">AI ຄິດວ່າ, ຊື່ຫຼີ້ນມີພາສາທີ່ບໍ່ເໝາະສົມ - ເລືອກອັນອື່ນ</string>
     <string name="nickname_saved">ບັນທຶກຊື່ເລັ່ນແລ້ວ</string>
     <string name="nickname_save_failed">ບັນທຶກຊື່ເລັ່ນບໍ່ສໍາເລັດ</string>
     <string name="game_launch_failed">ເປີດເກມບໍ່ສໍາເລັດ.</string>
@@ -300,7 +300,6 @@
     <string name="decline_reason_other">ເຫດຜົນອື່ນ</string>
     <string name="save_progress_title">ບັນທຶກຄວາມຄືບໜ້າແລະຊື່ເລັ່ນຂອງທ່ານ</string>
     <string name="save_progress_message">ເຊື່ອມບັນຊີຂອງທ່ານເພື່ອບັນທຶກສະຖິຕິແລະເຂົ້າຮ່ວມການແຂ່ງຂັນ!</string>
-    <string name="save_progress_button">ບັນທຶກຄວາມຄືບໜ້າ</string>
     <string name="maybe_later">ໄວ້ຄ່ອຍວ່າກັນ</string>
     <string name="register_benefits_title">ເຂົ້າຮ່ວມການແຂ່ງຂັນແລະແຂ່ງຂັນກັບທົ່ວໂລກ!</string>
     <string name="register_benefits_message">ລົງທະບຽນເພື່ອບັນທຶກອັນດັບຂອງທ່ານ ແລະຮ່ວມແຂ່ງກັບນັກຫຼິ້ນຈາກທົ່ວໂລກ.</string>
