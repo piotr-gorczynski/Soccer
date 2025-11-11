@@ -300,7 +300,6 @@
     <string name="decline_reason_other">ሌላ ምክንያት</string>
     <string name="save_progress_title">እድገትዎን እና ቅጽል ስምዎን ያስቀምጡ</string>
     <string name="save_progress_message">ተሞክሮዎን ለማስቀመጥ እና ውድድሮችን ለመቀላቀል መለያዎን ያገናኙ!</string>
-    <string name="save_progress_button">እድገት አስቀምጥ</string>
     <string name="maybe_later">ከዚያ በኋላ ላይ ምናልባት</string>
     <string name="register_benefits_title">ውድድሮችን ተቀላቀልና በዓለም አቀፍ ውድድር ተወዳድር!</string>
     <string name="register_benefits_message">ደረጃዎን ለማስቀመጥ እና በዓለም ዙሪያ ካሉ ተጫዋቾች ጋር በውድድር ለመሳተፍ ይመዝገቡ።</string>

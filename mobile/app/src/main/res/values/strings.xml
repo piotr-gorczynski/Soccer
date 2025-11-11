@@ -318,7 +318,6 @@
     <!-- Anonymous user prompts -->
     <string name="save_progress_title">Save your progress &amp; nickname</string>
     <string name="save_progress_message">Link your account to save your stats and join tournaments!</string>
-    <string name="save_progress_button">Save Progress</string>
     <string name="maybe_later">Maybe Later</string>
     
     <!-- In-app messaging for v7/v8 users -->
