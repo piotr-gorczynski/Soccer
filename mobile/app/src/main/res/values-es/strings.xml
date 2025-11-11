@@ -238,7 +238,7 @@
     <string name="network_error_checking_nickname">Error de red al verificar el apodo</string>
     <string name="checking_nickname">Comprobando apodo…</string>
     <string name="nickname_taken">Apodo ya tomado - Elija otro</string>
-    <string name="nickname_inappropriate">El apodo contiene lenguaje inapropiado - Elija otro</string>
+    <string name="nickname_inappropriate">AI piensa, que el apodo contiene lenguaje inapropiado - Elija otro</string>
     <string name="nickname_saved">Apodo guardado</string>
     <string name="nickname_save_failed">No se pudo salvar el apodo</string>
 
