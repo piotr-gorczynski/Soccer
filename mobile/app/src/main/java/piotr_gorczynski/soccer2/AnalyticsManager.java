@@ -285,6 +285,42 @@ public class AnalyticsManager {
     }
     
     // ═══════════════════════════════════════════════════════════════════
+    // NICKNAME CHECK EVENTS
+    // ═══════════════════════════════════════════════════════════════════
+    
+    /**
+     * Track nickname content check error (AI check failure)
+     * @param nickname The nickname that was being checked
+     * @param errorMessage Error message from the check
+     */
+    public void trackNicknameCheckError(String nickname, String errorMessage) {
+        // Null-safe parameter handling
+        String safeNickname = nickname != null ? nickname : "unknown_nickname";
+        String safeErrorMessage = errorMessage != null ? errorMessage : "Unknown error occurred";
+        
+        Log.d(TAG, "Tracked: nickname check error for " + safeNickname + ": " + safeErrorMessage);
+        
+        if (crashlytics != null) {
+            try {
+                crashlytics.log("Nickname AI check error: " + safeNickname + " - " + safeErrorMessage);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log to Crashlytics", e);
+            }
+        }
+        
+        if (firebaseAnalytics != null) {
+            try {
+                Bundle params = new Bundle();
+                params.putString("nickname", safeNickname);
+                params.putString("error_message", safeErrorMessage);
+                firebaseAnalytics.logEvent("nickname_check_error", params);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log to Firebase Analytics", e);
+            }
+        }
+    }
+    
+    // ═══════════════════════════════════════════════════════════════════
     // ANONYMOUS USER FLOW EVENTS
     // ═══════════════════════════════════════════════════════════════════
     
