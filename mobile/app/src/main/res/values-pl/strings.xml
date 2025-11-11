@@ -239,7 +239,7 @@
     <string name="network_error_checking_nickname">Błąd sieci podczas sprawdzania pseudonimu</string>
     <string name="checking_nickname">Sprawdzanie pseudonimu…</string>
     <string name="nickname_taken">Pseudonim już zabrany - wybierz inny</string>
-    <string name="nickname_inappropriate">Pseudonim zawiera nieodpowiedni język - wybierz inny</string>
+    <string name="nickname_inappropriate">AI myśli, że pseudonim zawiera nieodpowiedni język - wybierz inny</string>
     <string name="nickname_saved">Zapisany pseudonim</string>
     <string name="nickname_save_failed">Nie udało się zapisać pseudonim</string>
 

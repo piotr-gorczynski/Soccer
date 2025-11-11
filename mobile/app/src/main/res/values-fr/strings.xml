@@ -241,7 +241,7 @@
     <string name="network_error_checking_nickname">Erreur réseau lors de la vérification du pseudonyme</string>
     <string name="checking_nickname">Vérification du pseudonyme…</string>
     <string name="nickname_taken">Pseudonyme déjà pris — choisissez-en un autre</string>
-    <string name="nickname_inappropriate">Le pseudonyme contient un langage inapproprié — choisissez-en un autre</string>
+    <string name="nickname_inappropriate">AI pense, que le pseudonyme contient un langage inapproprié — choisissez-en un autre</string>
     <string name="nickname_saved">Pseudonyme enregistré</string>
     <string name="nickname_save_failed">Échec de l’enregistrement du pseudonyme</string>
 
