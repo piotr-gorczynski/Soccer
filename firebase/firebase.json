@@ -90,7 +90,9 @@
     },
     {
       "source": "functions/cleanup-inactive-users",
-      "codebase": "cleanup-inactive-users"
+      "codebase": "cleanup-inactive-users",
+      "runtime": "nodejs20",
+      "region": "us-central1"
     },
     {
       "source": "functions/check-nickname",
