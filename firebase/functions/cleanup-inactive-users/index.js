@@ -89,7 +89,7 @@ exports.cleanupInactiveUsers = functions
               }
             }
           } catch (err) {
-            console.error(`❌ Failed to process user ${user.uid} (${user.email || 'no email'}): ${err.message}`);
+            console.error(`❌ Failed to process user ${user.uid} (${user.email || 'no email'}): ${err.message}`, err);
           }
         }
       }
@@ -191,8 +191,7 @@ async function checkUserCanBeDeleted(db, uid, email) {
     return true;
     
   } catch (err) {
-    console.error(`   ❌ ERROR checking user involvement for ${displayName} (UID: ${uid}): ${err.message}`);
-    console.error(`   ❌ Stack trace: ${err.stack}`);
+    console.error(`   ❌ ERROR checking user involvement for ${displayName} (UID: ${uid}): ${err.message}`, err);
     // In case of error, err on the side of caution and don't delete
     return false;
   }
@@ -207,7 +206,7 @@ async function deleteUserCompletely(auth, db, rtdb, uid, email) {
     await auth.deleteUser(uid);
     console.log(`   🔐 Deleted from Auth: ${email}`);
   } catch (err) {
-    console.error(`   ❌ Failed to delete from Auth: ${uid}: ${err.message}`);
+    console.error(`   ❌ Failed to delete from Auth: ${uid}: ${err.message}`, err);
     throw err; // Re-throw to prevent partial cleanup
   }
 
@@ -216,7 +215,7 @@ async function deleteUserCompletely(auth, db, rtdb, uid, email) {
     await db.collection("users").doc(uid).delete();
     console.log(`   📄 Deleted from Firestore users: ${uid}`);
   } catch (err) {
-    console.error(`   ❌ Failed to delete from Firestore users: ${uid}: ${err.message}`);
+    console.error(`   ❌ Failed to delete from Firestore users: ${uid}: ${err.message}`, err);
     // Don't throw - user is already deleted from Auth, continue cleanup
   }
 
@@ -225,7 +224,7 @@ async function deleteUserCompletely(auth, db, rtdb, uid, email) {
     await rtdb.ref('status').child(uid).remove();
     console.log(`   🔄 Deleted from realtime database status: ${uid}`);
   } catch (err) {
-    console.error(`   ❌ Failed to delete from realtime database status: ${uid}: ${err.message}`);
+    console.error(`   ❌ Failed to delete from realtime database status: ${uid}: ${err.message}`, err);
     // Don't throw - continue with friends cleanup
   }
 
@@ -234,7 +233,7 @@ async function deleteUserCompletely(auth, db, rtdb, uid, email) {
     await removeFromAllFriendsCollections(db, uid);
     console.log(`   👥 Removed from all friends collections: ${uid}`);
   } catch (err) {
-    console.error(`   ❌ Failed to cleanup friends collections: ${uid}: ${err.message}`);
+    console.error(`   ❌ Failed to cleanup friends collections: ${uid}: ${err.message}`, err);
     // Don't throw - main deletion is complete
   }
 }
@@ -243,26 +242,26 @@ async function deleteUserCompletely(auth, db, rtdb, uid, email) {
  * Remove a user ID from all other users' friends subcollections
  */
 async function removeFromAllFriendsCollections(db, uidToRemove) {
-  // Use collectionGroup query to find all friend documents with this UID
-  // This is more efficient than querying all users individually
-  const friendsQuery = db.collectionGroup('friends').where(admin.firestore.FieldPath.documentId(), '==', uidToRemove);
-  const friendsSnapshot = await friendsQuery.get();
+  // Query all users and check their friends subcollections for this UID
+  // We can't use collectionGroup with FieldPath.documentId() and a simple UID
+  // because Firestore requires full document paths, not just document IDs
+  const usersSnapshot = await db.collection('users').get();
   
-  if (friendsSnapshot.empty) {
-    console.log(`   👥 No friend relationships found for ${uidToRemove}`);
-    return;
-  }
-
   const batch = db.batch();
   let friendsRemovalCount = 0;
 
-  friendsSnapshot.forEach(doc => {
-    batch.delete(doc.ref);
-    friendsRemovalCount++;
-  });
+  for (const userDoc of usersSnapshot.docs) {
+    const friendDoc = await userDoc.ref.collection('friends').doc(uidToRemove).get();
+    if (friendDoc.exists) {
+      batch.delete(friendDoc.ref);
+      friendsRemovalCount++;
+    }
+  }
   
   if (friendsRemovalCount > 0) {
     await batch.commit();
     console.log(`   👥 Removed ${uidToRemove} from ${friendsRemovalCount} friends collections`);
+  } else {
+    console.log(`   👥 No friend relationships found for ${uidToRemove}`);
   }
 }
