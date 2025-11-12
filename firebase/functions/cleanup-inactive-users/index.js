@@ -59,12 +59,12 @@ exports.cleanupInactiveUsers = functions
                     method: method
                   });
                   
-                  console.log(`🧹 Deleted inactive user: ${user.email} (UID: ${user.uid}, inactive for ${daysSinceLastActivity} days)`);
+                  console.log(`🧹 Deleted inactive user: ${user.email || user.uid} (UID: ${user.uid}, inactive for ${daysSinceLastActivity} days)`);
                 } else {
-                  console.log(`⏭️ Skipping user with active involvement: ${user.email} (UID: ${user.uid}, inactive for ${daysSinceLastActivity} days)`);
+                  console.log(`⏭️ SKIPPED - Active involvement detected for: ${user.email || user.uid} (UID: ${user.uid}, inactive for ${daysSinceLastActivity} days) - See detailed checks above`);
                 }
               } else {
-                console.log(`⏭️ Skipping user with accepted terms: ${user.email} (UID: ${user.uid}, inactive for ${daysSinceLastActivity} days)`);
+                console.log(`⏭️ Skipping user with accepted terms: ${user.email || user.uid} (UID: ${user.uid}, inactive for ${daysSinceLastActivity} days)`);
               }
             } else {
               // User document doesn't exist in Firestore, but exists in Auth
@@ -83,13 +83,13 @@ exports.cleanupInactiveUsers = functions
                   method: null
                 });
                 
-                console.log(`🧹 Deleted orphaned user (no Firestore doc): ${user.email} (UID: ${user.uid}, inactive for ${daysSinceLastActivity} days)`);
+                console.log(`🧹 Deleted orphaned user (no Firestore doc): ${user.email || user.uid} (UID: ${user.uid}, inactive for ${daysSinceLastActivity} days)`);
               } else {
-                console.log(`⏭️ Skipping orphaned user with active involvement: ${user.email} (UID: ${user.uid}, inactive for ${daysSinceLastActivity} days)`);
+                console.log(`⏭️ SKIPPED - Active involvement detected for orphaned user: ${user.email || user.uid} (UID: ${user.uid}, inactive for ${daysSinceLastActivity} days) - See detailed checks above`);
               }
             }
           } catch (err) {
-            console.error(`❌ Failed to process user ${user.uid} (${user.email}): ${err.message}`);
+            console.error(`❌ Failed to process user ${user.uid} (${user.email || 'no email'}): ${err.message}`);
           }
         }
       }
@@ -115,21 +115,25 @@ exports.cleanupInactiveUsers = functions
  * in invitations, matches, tournaments, or tournament participation
  */
 async function checkUserCanBeDeleted(db, uid, email) {
-  console.log(`   🔍 Checking if user ${email} (${uid}) can be safely deleted...`);
+  const displayName = email || uid;
+  console.log(`   🔍 Checking if user ${displayName} (UID: ${uid}) can be safely deleted...`);
   
   try {
     // 1. Check for invitations sent by this user
+    console.log(`   📨 Checking invitations for ${displayName}...`);
     const invitationsQuery = db.collection('invitations')
       .where('from', '==', uid)
       .where('status', '==', 'pending');
     
     const invitationsSnapshot = await invitationsQuery.get();
     if (!invitationsSnapshot.empty) {
-      console.log(`   ⚠️ User ${email} cannot be deleted: has ${invitationsSnapshot.size} pending invitation(s) sent`);
+      console.log(`   ⚠️ BLOCKED: User ${displayName} has ${invitationsSnapshot.size} pending invitation(s) sent`);
       return false;
     }
+    console.log(`   ✓ No pending invitations found`);
     
     // 2. Check for matches where user is player0 or player1
+    console.log(`   ⚽ Checking matches for ${displayName}...`);
     const matchesQuery1 = db.collection('matches').where('player0', '==', uid);
     const matchesQuery2 = db.collection('matches').where('player1', '==', uid);
     
@@ -140,11 +144,13 @@ async function checkUserCanBeDeleted(db, uid, email) {
     
     if (!matchesSnapshot1.empty || !matchesSnapshot2.empty) {
       const totalMatches = matchesSnapshot1.size + matchesSnapshot2.size;
-      console.log(`   ⚠️ User ${email} cannot be deleted: involved in ${totalMatches} match(es)`);
+      console.log(`   ⚠️ BLOCKED: User ${displayName} is involved in ${totalMatches} match(es)`);
       return false;
     }
+    console.log(`   ✓ No matches found`);
     
     // 3. Check for tournament matches where user is player0 or player1
+    console.log(`   🏆 Checking tournament matches for ${displayName}...`);
     const tournamentMatchesQuery1 = db.collectionGroup('matches').where('player0', '==', uid);
     const tournamentMatchesQuery2 = db.collectionGroup('matches').where('player1', '==', uid);
     
@@ -155,24 +161,38 @@ async function checkUserCanBeDeleted(db, uid, email) {
     
     if (!tournamentMatchesSnapshot1.empty || !tournamentMatchesSnapshot2.empty) {
       const totalTournamentMatches = tournamentMatchesSnapshot1.size + tournamentMatchesSnapshot2.size;
-      console.log(`   ⚠️ User ${email} cannot be deleted: involved in ${totalTournamentMatches} tournament match(es)`);
+      console.log(`   ⚠️ BLOCKED: User ${displayName} is involved in ${totalTournamentMatches} tournament match(es)`);
       return false;
     }
+    console.log(`   ✓ No tournament matches found`);
     
     // 4. Check for tournament participation
-    const participantsQuery = db.collectionGroup('participants').where(admin.firestore.FieldPath.documentId(), '==', uid);
-    const participantsSnapshot = await participantsQuery.get();
+    console.log(`   🎖️ Checking tournament participation for ${displayName}...`);
+    // Note: We can't use collectionGroup with FieldPath.documentId() and a simple UID
+    // because Firestore requires a full document path (odd number of segments error).
+    // Instead, we query all tournaments and check if user is a participant.
+    const tournamentsSnapshot = await db.collection('tournaments').get();
+    let participantCount = 0;
     
-    if (!participantsSnapshot.empty) {
-      console.log(`   ⚠️ User ${email} cannot be deleted: participating in ${participantsSnapshot.size} tournament(s)`);
-      return false;
+    for (const tournamentDoc of tournamentsSnapshot.docs) {
+      const participantDoc = await tournamentDoc.ref.collection('participants').doc(uid).get();
+      if (participantDoc.exists) {
+        participantCount++;
+      }
     }
     
-    console.log(`   ✅ User ${email} can be safely deleted - no active involvement found`);
+    if (participantCount > 0) {
+      console.log(`   ⚠️ BLOCKED: User ${displayName} is participating in ${participantCount} tournament(s)`);
+      return false;
+    }
+    console.log(`   ✓ No tournament participation found`);
+    
+    console.log(`   ✅ User ${displayName} CAN be safely deleted - no active involvement found`);
     return true;
     
   } catch (err) {
-    console.error(`   ❌ Error checking user involvement for ${email} (${uid}): ${err.message}`);
+    console.error(`   ❌ ERROR checking user involvement for ${displayName} (UID: ${uid}): ${err.message}`);
+    console.error(`   ❌ Stack trace: ${err.stack}`);
     // In case of error, err on the side of caution and don't delete
     return false;
   }
