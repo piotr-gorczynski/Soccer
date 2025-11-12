@@ -3,8 +3,6 @@
 ## Purpose
 Scheduled function that runs every 24 hours to delete users who:
 - Have been inactive (no sign-in) for more than 1 month
-  - For **anonymous users**: uses account creation time (since their lastSignInTime is auto-updated by Firebase Auth token refresh)
-  - For **other users**: uses lastSignInTime or falls back to creation time if never signed in
 - Have not accepted terms (termsAccepted field missing or not true)
 - Have no active involvement in the system (see safeguards below)
 
@@ -41,12 +39,6 @@ When a user meets deletion criteria AND passes all safeguards, the function:
 | Orphaned Auth | 2 months ago | N/A (no Firestore doc) | None | DELETE | Auth-only account |
 
 ## Edge Cases Handled
-
-### Anonymous User Handling
-- **Critical Fix**: For anonymous users, uses `creationTime` instead of `lastSignInTime`
-- Firebase Authentication automatically updates `lastSignInTime` for anonymous users during token refresh
-- This means anonymous users would never appear "inactive" if we used `lastSignInTime`
-- By using `creationTime` for anonymous users, we ensure they are properly cleaned up after 30 days if they haven't accepted terms
 
 ### Safeguard Checks
 - Uses proper Firestore queries to check all relevant collections
