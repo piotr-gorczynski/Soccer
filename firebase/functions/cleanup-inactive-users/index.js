@@ -168,11 +168,21 @@ async function checkUserCanBeDeleted(db, uid, email) {
     
     // 4. Check for tournament participation
     console.log(`   🎖️ Checking tournament participation for ${displayName}...`);
-    const participantsQuery = db.collectionGroup('participants').where(admin.firestore.FieldPath.documentId(), '==', uid);
-    const participantsSnapshot = await participantsQuery.get();
+    // Note: We can't use collectionGroup with FieldPath.documentId() and a simple UID
+    // because Firestore requires a full document path (odd number of segments error).
+    // Instead, we query all tournaments and check if user is a participant.
+    const tournamentsSnapshot = await db.collection('tournaments').get();
+    let participantCount = 0;
     
-    if (!participantsSnapshot.empty) {
-      console.log(`   ⚠️ BLOCKED: User ${displayName} is participating in ${participantsSnapshot.size} tournament(s)`);
+    for (const tournamentDoc of tournamentsSnapshot.docs) {
+      const participantDoc = await tournamentDoc.ref.collection('participants').doc(uid).get();
+      if (participantDoc.exists) {
+        participantCount++;
+      }
+    }
+    
+    if (participantCount > 0) {
+      console.log(`   ⚠️ BLOCKED: User ${displayName} is participating in ${participantCount} tournament(s)`);
       return false;
     }
     console.log(`   ✓ No tournament participation found`);
