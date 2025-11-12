@@ -28,6 +28,29 @@ This check runs automatically on pull requests that modify translation files. Th
 - All language directories in `mobile/app/src/main/res/values-*/` have matching `tournament_rules_*.json` files in `firebase/seed/`
 - The base language (English) in `mobile/app/src/main/res/values/` has a corresponding `tournament_rules_en.json`
 
+## Checking Cloud Function Logs
+
+You can analyze logs from Cloud Functions (like `checkNickname`) to verify they're working correctly:
+
+```bash
+# Download logs from Firebase Console or using gcloud CLI
+gcloud logging read 'resource.type="cloud_run_revision" AND resource.labels.service_name="checknickname"' \
+  --limit=1000 \
+  --format=json \
+  --freshness=24h > downloaded-logs.json
+
+# Analyze the logs
+python3 tools/analyze-function-logs.py downloaded-logs.json
+```
+
+The analyzer detects:
+- Fallback activations (indicating Vertex AI errors)
+- Permission denied or authentication errors
+- Inappropriate nicknames that were blocked
+- Overall function health status
+
+See [`firebase/functions/check-nickname/README.md`](firebase/functions/check-nickname/README.md) for more details.
+
 ## Creating tournaments
 
 A helper script is available in `tools/create-tournament/create-tournament.js` for quickly adding tournaments to Firestore. **Run it from the project root** so the relative path is resolved correctly:

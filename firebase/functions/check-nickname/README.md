@@ -222,6 +222,75 @@ See [`package.json`](package.json) for the complete list of dependencies. Key pa
 - `@google-cloud/vertexai` - Vertex AI SDK for Node.js
 - `firebase-functions` - Firebase Functions SDK
 
+## Log Analysis
+
+To verify if the `checkNickname` function is working correctly, you can analyze its logs using the provided log analysis tool.
+
+### Downloading Logs
+
+Download logs from Firebase Console or using gcloud CLI:
+
+**Option 1: Firebase Console**
+1. Go to Firebase Console > Functions > checkNickname
+2. Click on "Logs" tab
+3. Click "Download logs" to export as JSON
+
+**Option 2: gcloud CLI**
+```bash
+# Download logs from the last 24 hours
+gcloud logging read 'resource.type="cloud_run_revision" AND resource.labels.service_name="checknickname"' \
+  --limit=1000 \
+  --format=json \
+  --freshness=24h > downloaded-logs.json
+```
+
+### Analyzing Logs
+
+Run the log analyzer script:
+
+```bash
+python3 tools/analyze-function-logs.py downloaded-logs.json
+```
+
+The analyzer will:
+- Count total requests, allowed nicknames, and blocked nicknames
+- Detect fallback activations (indicating errors with Vertex AI)
+- Identify permission denied, unavailable, or authentication errors
+- Provide recommendations for fixing issues
+- Show a health status: ✅ Healthy or ⚠️ Needs Attention
+
+### Example Output
+
+```
+checkNickname Function Log Analysis Report
+================================================================================
+
+SUMMARY STATISTICS
+--------------------------------------------------------------------------------
+Total Requests:           150
+Nicknames Allowed:        145
+Nicknames Blocked:        3
+Fallback Activations:     2
+Errors Detected:          2
+
+HEALTH STATUS
+--------------------------------------------------------------------------------
+⚠️  WARNING: Function triggered fallback mode 2 times.
+   This means errors occurred and nicknames were allowed by default!
+   Inappropriate nicknames may have passed through.
+
+FALLBACK REASONS
+--------------------------------------------------------------------------------
+  Permission Denied: 2 occurrences
+
+RECOMMENDED ACTIONS:
+  1. Enable Vertex AI API:
+     gcloud services enable aiplatform.googleapis.com
+  
+  2. Grant Vertex AI User role to the service account:
+     Run: gcp/cloud-build/grant_vertex_ai_user_to_appengine_sa.yaml
+```
+
 ## Troubleshooting
 
 ### "Permission Denied" errors
@@ -245,4 +314,4 @@ See [`package.json`](package.json) for the complete list of dependencies. Key pa
 
 ### Function allows all nicknames
 **Cause**: This is the expected fallback behavior when errors occur
-**Action**: Check logs for specific error messages. Ensure both the API is enabled AND the IAM role is granted
+**Action**: Check logs for specific error messages. Ensure both the API is enabled AND the IAM role is granted. Use the log analyzer tool to get a detailed report.
