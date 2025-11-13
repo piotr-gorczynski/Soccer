@@ -73,11 +73,11 @@ public class LanguageManager {
      * Set the language preference and apply it
      */
     public static void setLanguage(Context context, String languageCode) {
-        // Save to SharedPreferences
+        // Save to SharedPreferences asynchronously to prevent fsync ANR
         context.getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE)
                 .edit()
                 .putString(PREF_LANGUAGE_CODE, languageCode)
-                .commit();
+                .apply();
         
         // Save to Firestore if user is logged in
         String uid = FirebaseAuth.getInstance().getUid();
