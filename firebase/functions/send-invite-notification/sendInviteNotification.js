@@ -83,7 +83,28 @@ exports.sendInviteNotification = functions.firestore
           errorCode: error.code,
           errorMessage: error.message
         });
-        // Optionally, you could clear the invalid token from the user document here
+        
+        // Store error information in user document
+        try {
+          const fcmErrorType = error.code === 'messaging/registration-token-not-registered' 
+            ? 'NotRegistered' 
+            : 'InvalidRegistration';
+          
+          await admin.firestore().doc(`users/${to}`).update({
+            fcmErrorType: fcmErrorType,
+            fcmErrorDate: admin.firestore.FieldValue.serverTimestamp()
+          });
+          
+          console.log(`[sendInviteNotification] Stored FCM error info for user ${to}`, {
+            fcmErrorType: fcmErrorType
+          });
+        } catch (updateError) {
+          console.error(`[sendInviteNotification] Failed to update user document with FCM error for user ${to}`, {
+            errorCode: updateError.code,
+            errorMessage: updateError.message
+          });
+        }
+        
         return null;
       }
 
