@@ -614,7 +614,8 @@ public class MenuActivity extends BaseActivity {
               .remove("facebookName")
               .remove("facebookPhotoUrl")
               .remove("fcmToken");
-            ed.commit();
+            // Use apply() instead of commit() to prevent fsync ANR
+            ed.apply();
 
             FirebaseMessaging.getInstance().deleteToken();
             FirebaseMessaging.getInstance().setAutoInitEnabled(false);
