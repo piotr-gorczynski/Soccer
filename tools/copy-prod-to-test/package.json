@@ -1,0 +1,12 @@
+{
+  "name": "copy-prod-to-test",
+  "version": "1.0.0",
+  "description": "Script to copy data from PROD to TEST Firebase databases",
+  "main": "copy-prod-to-test.js",
+  "scripts": {
+    "start": "node copy-prod-to-test.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.4.0"
+  }
+}
