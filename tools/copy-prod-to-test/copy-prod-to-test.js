@@ -35,7 +35,7 @@ async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
     let successCount = 0;
     let failedCount = 0;
     
-    const batch = targetDb.batch();
+    let batch = targetDb.batch();
     let batchCount = 0;
     const MAX_BATCH_SIZE = 500; // Firestore limit
     
@@ -50,6 +50,7 @@ async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
           await batch.commit();
           successCount += batchCount;
           console.log(`   ✅ Committed batch of ${batchCount} documents`);
+          batch = targetDb.batch(); // Create new batch
           batchCount = 0;
         }
       } catch (error) {
@@ -92,7 +93,7 @@ async function copyRtdbPath(sourceRtdb, targetRtdb, pathName) {
     }
     
     const data = sourceSnapshot.val();
-    const keysCount = Object.keys(data).length;
+    const keysCount = typeof data === 'object' && data !== null ? Object.keys(data).length : 1;
     console.log(`   📊 Found ${keysCount} key(s) in PROD`);
     
     await targetRtdb.ref(pathName).set(data);
