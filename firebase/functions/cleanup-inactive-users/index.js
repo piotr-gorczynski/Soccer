@@ -145,7 +145,7 @@ exports.cleanupInactiveUsers = functions
   });
 
 /**
- * Force a user to logoff by setting their state to "offline" in realtime database
+ * Force a user to logoff by setting their state to "offline" and last_heartbeat to 0 in realtime database
  */
 async function forceUserLogoff(rtdb, uid, email) {
   const displayName = email || uid;
@@ -153,9 +153,10 @@ async function forceUserLogoff(rtdb, uid, email) {
   
   try {
     await rtdb.ref('status').child(uid).update({
-      state: "offline"
+      state: "offline",
+      last_heartbeat: 0
     });
-    console.log(`   ✅ Successfully set state to "offline" for ${displayName}`);
+    console.log(`   ✅ Successfully set state to "offline" and last_heartbeat to 0 for ${displayName}`);
   } catch (err) {
     console.error(`   ❌ Failed to force logoff for ${displayName} (UID: ${uid}): ${err.message}`, err);
     throw err;
