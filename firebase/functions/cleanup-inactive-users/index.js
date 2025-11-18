@@ -71,7 +71,7 @@ exports.cleanupInactiveUsers = functions
                   console.log(`🔍 User with accepted terms has fcmErrorType="NotRegistered": ${user.email || user.uid} (UID: ${user.uid}, method: ${method})`);
                   
                   if (method === "anonymous") {
-                    // For anonymous users, check if they can be deleted
+                    // For anonymous users, try to delete first
                     const canDelete = await checkUserCanBeDeleted(db, user.uid, user.email);
                     
                     if (canDelete) {
@@ -89,7 +89,9 @@ exports.cleanupInactiveUsers = functions
                       
                       console.log(`🧹 Deleted anonymous user with fcmErrorType="NotRegistered": ${user.email || user.uid} (UID: ${user.uid}, inactive for ${daysSinceLastActivity} days)`);
                     } else {
-                      console.log(`⏭️ SKIPPED - Active involvement detected for anonymous user with fcmErrorType="NotRegistered": ${user.email || user.uid} (UID: ${user.uid}, inactive for ${daysSinceLastActivity} days) - See detailed checks above`);
+                      // If deletion not possible, force logoff instead
+                      await forceUserLogoff(rtdb, user.uid, user.email);
+                      console.log(`🔓 Forced logoff for anonymous user with fcmErrorType="NotRegistered" (active involvement detected): ${user.email || user.uid} (UID: ${user.uid}, method: ${method})`);
                     }
                   } else {
                     // For non-anonymous users, force logoff by setting state to "offline" in RTDB
