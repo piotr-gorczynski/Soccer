@@ -6,37 +6,55 @@ Scheduled function that runs every 24 hours to delete users who:
 - Have not accepted terms (termsAccepted field missing or not true)
 - Have no active involvement in the system (see safeguards below)
 
+For users who have accepted terms, the function also checks for `fcmErrorType="NotRegistered"` and:
+- If the user logged in with method "anonymous": Applies the same deletion checks as users without terms accepted
+- If the user logged in with a non-anonymous method: Forces logoff by setting state to "offline" in RTDB
+
 ## Safeguards
 Before deletion, the function checks that the user has NO active involvement in:
 1. **Invitations**: No pending invitations sent by the user
 2. **Matches**: Not involved as player0 or player1 in any matches
 3. **Tournament Matches**: Not involved as player0 or player1 in tournament matches
 4. **Tournament Participation**: Not a participant in any tournaments
+5. **Friends Collections**: User does not exist in any other user's friends collection
 
 If ANY of these conditions are found, the user is preserved and the reason is logged.
 
 ## Cleanup Actions
+
+### Full Deletion
 When a user meets deletion criteria AND passes all safeguards, the function:
 1. Deletes from Firebase Authentication
 2. Deletes from Firestore `users` collection
 3. Deletes from Realtime Database `status` collection
 4. Removes user ID from all other users' `friends` subcollections
 
+### Force Logoff (for users with accepted terms and fcmErrorType="NotRegistered")
+For non-anonymous users with accepted terms and fcmErrorType="NotRegistered":
+1. Sets state to "offline" in Realtime Database `status` collection
+2. Does NOT delete the user from any system
+
 ## Test Cases to Validate
 
-| User Profile | Last Sign In | Terms Accepted | Active Involvement | Expected Result | Notes |
-|--------------|-------------|----------------|-------------------|----------------|--------|
-| Active user | 1 week ago | true | None | KEEP | Recent activity |
-| Active user | 1 week ago | false | None | KEEP | Recent activity overrides terms |
-| Inactive user | 2 months ago | true | None | KEEP | Terms accepted |
-| Inactive user | 2 months ago | false | None | DELETE | Meets all criteria |
-| Inactive user | 2 months ago | false | Has pending invites | KEEP | Safeguard: active invitations |
-| Inactive user | 2 months ago | false | In matches | KEEP | Safeguard: active matches |
-| Inactive user | 2 months ago | false | In tournament matches | KEEP | Safeguard: tournament matches |
-| Inactive user | 2 months ago | false | Tournament participant | KEEP | Safeguard: tournament participation |
-| Inactive user | 2 months ago | missing | None | DELETE | No terms field |
-| New user | Never signed in, 2 months old | false | None | DELETE | Uses creation time |
-| Orphaned Auth | 2 months ago | N/A (no Firestore doc) | None | DELETE | Auth-only account |
+| User Profile | Last Sign In | Terms Accepted | fcmErrorType | Method | Active Involvement | Expected Result | Notes |
+|--------------|-------------|----------------|--------------|--------|-------------------|----------------|--------|
+| Active user | 1 week ago | true | - | any | None | KEEP | Recent activity |
+| Active user | 1 week ago | false | - | any | None | KEEP | Recent activity overrides terms |
+| Inactive user | 2 months ago | true | - | any | None | KEEP | Terms accepted, no fcmErrorType |
+| Inactive user | 2 months ago | true | NotRegistered | anonymous | None | DELETE | Terms accepted + fcmErrorType + anonymous + safe to delete |
+| Inactive user | 2 months ago | true | NotRegistered | anonymous | Has pending invites | KEEP | Terms accepted + fcmErrorType + anonymous + safeguard |
+| Inactive user | 2 months ago | true | NotRegistered | facebook.com | None | FORCE LOGOFF | Terms accepted + fcmErrorType + non-anonymous |
+| Inactive user | 2 months ago | true | NotRegistered | facebook.com | Has pending invites | FORCE LOGOFF | Terms accepted + fcmErrorType + non-anonymous (no deletion checks) |
+| Inactive user | 2 months ago | true | InvalidRegistration | any | None | KEEP | Terms accepted, different fcmErrorType |
+| Inactive user | 2 months ago | false | - | any | None | DELETE | Meets all criteria |
+| Inactive user | 2 months ago | false | - | any | Has pending invites | KEEP | Safeguard: active invitations |
+| Inactive user | 2 months ago | false | - | any | In matches | KEEP | Safeguard: active matches |
+| Inactive user | 2 months ago | false | - | any | In tournament matches | KEEP | Safeguard: tournament matches |
+| Inactive user | 2 months ago | false | - | any | Tournament participant | KEEP | Safeguard: tournament participation |
+| Inactive user | 2 months ago | false | - | any | In friends collection | KEEP | Safeguard: exists in friends collection |
+| Inactive user | 2 months ago | missing | - | any | None | DELETE | No terms field |
+| New user | Never signed in, 2 months old | false | - | any | None | DELETE | Uses creation time |
+| Orphaned Auth | 2 months ago | N/A (no Firestore doc) | - | any | None | DELETE | Auth-only account |
 
 ## Edge Cases Handled
 
@@ -69,7 +87,9 @@ The function logs:
 
 ## Safety Features
 - Only deletes users meeting ALL criteria (inactive AND no terms AND no active involvement)
-- Preserves users with accepted terms regardless of activity
+- Preserves users with accepted terms unless they have fcmErrorType="NotRegistered"
+  - For anonymous users with fcmErrorType="NotRegistered": Applies safeguard checks before deletion
+  - For non-anonymous users with fcmErrorType="NotRegistered": Forces logoff by setting state to "offline" in RTDB
 - Preserves recently active users regardless of terms status
 - Preserves users with any active system involvement
 - Graceful error handling prevents partial deletions

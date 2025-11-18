@@ -64,7 +64,41 @@ exports.cleanupInactiveUsers = functions
                   console.log(`⏭️ SKIPPED - Active involvement detected for: ${user.email || user.uid} (UID: ${user.uid}, inactive for ${daysSinceLastActivity} days) - See detailed checks above`);
                 }
               } else {
-                console.log(`⏭️ Skipping user with accepted terms: ${user.email || user.uid} (UID: ${user.uid}, inactive for ${daysSinceLastActivity} days)`);
+                // Terms accepted - check for fcmErrorType="NotRegistered"
+                const fcmErrorType = userData.fcmErrorType;
+                
+                if (fcmErrorType === "NotRegistered") {
+                  console.log(`🔍 User with accepted terms has fcmErrorType="NotRegistered": ${user.email || user.uid} (UID: ${user.uid}, method: ${method})`);
+                  
+                  if (method === "anonymous") {
+                    // For anonymous users, check if they can be deleted
+                    const canDelete = await checkUserCanBeDeleted(db, user.uid, user.email);
+                    
+                    if (canDelete) {
+                      await deleteUserCompletely(auth, db, rtdb, user.uid, user.email);
+                      deletedCount++;
+                      deletedUsers.push({
+                        uid: user.uid,
+                        email: user.email,
+                        lastSignInTime: user.metadata.lastSignInTime || user.metadata.creationTime,
+                        daysSinceLastActivity: daysSinceLastActivity,
+                        termsAccepted: termsAccepted,
+                        method: method,
+                        fcmErrorType: fcmErrorType
+                      });
+                      
+                      console.log(`🧹 Deleted anonymous user with fcmErrorType="NotRegistered": ${user.email || user.uid} (UID: ${user.uid}, inactive for ${daysSinceLastActivity} days)`);
+                    } else {
+                      console.log(`⏭️ SKIPPED - Active involvement detected for anonymous user with fcmErrorType="NotRegistered": ${user.email || user.uid} (UID: ${user.uid}, inactive for ${daysSinceLastActivity} days) - See detailed checks above`);
+                    }
+                  } else {
+                    // For non-anonymous users, force logoff by setting state to "offline" in RTDB
+                    await forceUserLogoff(rtdb, user.uid, user.email);
+                    console.log(`🔓 Forced logoff for user with fcmErrorType="NotRegistered": ${user.email || user.uid} (UID: ${user.uid}, method: ${method})`);
+                  }
+                } else {
+                  console.log(`⏭️ Skipping user with accepted terms (no fcmErrorType="NotRegistered"): ${user.email || user.uid} (UID: ${user.uid}, inactive for ${daysSinceLastActivity} days)`);
+                }
               }
             } else {
               // User document doesn't exist in Firestore, but exists in Auth
@@ -109,6 +143,24 @@ exports.cleanupInactiveUsers = functions
 
     return null;
   });
+
+/**
+ * Force a user to logoff by setting their state to "offline" in realtime database
+ */
+async function forceUserLogoff(rtdb, uid, email) {
+  const displayName = email || uid;
+  console.log(`   🔓 Forcing logoff for user ${displayName} (UID: ${uid})...`);
+  
+  try {
+    await rtdb.ref('status').child(uid).update({
+      state: "offline"
+    });
+    console.log(`   ✅ Successfully set state to "offline" for ${displayName}`);
+  } catch (err) {
+    console.error(`   ❌ Failed to force logoff for ${displayName} (UID: ${uid}): ${err.message}`, err);
+    throw err;
+  }
+}
 
 /**
  * Check if a user can be safely deleted by verifying they don't have active involvement
@@ -187,6 +239,24 @@ async function checkUserCanBeDeleted(db, uid, email) {
     }
     console.log(`   ✓ No tournament participation found`);
     
+    // 5. Check if user exists in any friends collections
+    console.log(`   👥 Checking if user exists in friends collections...`);
+    const usersSnapshot = await db.collection('users').get();
+    const friendsOfUsers = [];
+    
+    for (const userDoc of usersSnapshot.docs) {
+      const friendDoc = await userDoc.ref.collection('friends').doc(uid).get();
+      if (friendDoc.exists) {
+        friendsOfUsers.push(userDoc.id);
+      }
+    }
+    
+    if (friendsOfUsers.length > 0) {
+      console.log(`   ⚠️ BLOCKED: User ${displayName} exists in friend collection of user(s): ${friendsOfUsers.join(', ')}`);
+      return false;
+    }
+    console.log(`   ✓ User not found in any friends collections`);
+    
     console.log(`   ✅ User ${displayName} CAN be safely deleted - no active involvement found`);
     return true;
     
@@ -204,7 +274,7 @@ async function deleteUserCompletely(auth, db, rtdb, uid, email) {
   // 1. Delete from Firebase Authentication
   try {
     await auth.deleteUser(uid);
-    console.log(`   🔐 Deleted from Auth: ${email}`);
+    console.log(`   🔐 Deleted from Auth: ${email || uid}`);
   } catch (err) {
     console.error(`   ❌ Failed to delete from Auth: ${uid}: ${err.message}`, err);
     throw err; // Re-throw to prevent partial cleanup
