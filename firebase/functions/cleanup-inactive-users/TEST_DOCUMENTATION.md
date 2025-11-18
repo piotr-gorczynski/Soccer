@@ -32,7 +32,8 @@ When a user meets deletion criteria AND passes all safeguards, the function:
 ### Force Logoff (for users with accepted terms and fcmErrorType="NotRegistered")
 For non-anonymous users with accepted terms and fcmErrorType="NotRegistered":
 1. Sets state to "offline" in Realtime Database `status` collection
-2. Does NOT delete the user from any system
+2. Sets last_heartbeat to 0 (sentinel value indicating explicit logoff)
+3. Does NOT delete the user from any system
 
 ## Test Cases to Validate
 
