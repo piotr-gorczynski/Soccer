@@ -70,32 +70,9 @@ exports.cleanupInactiveUsers = functions
                 if (fcmErrorType === "NotRegistered") {
                   console.log(`🔍 User with accepted terms has fcmErrorType="NotRegistered": ${user.email || user.uid} (UID: ${user.uid}, method: ${method})`);
                   
-                  if (method === "anonymous") {
-                    // For anonymous users, check if they can be deleted
-                    const canDelete = await checkUserCanBeDeleted(db, user.uid, user.email);
-                    
-                    if (canDelete) {
-                      await deleteUserCompletely(auth, db, rtdb, user.uid, user.email);
-                      deletedCount++;
-                      deletedUsers.push({
-                        uid: user.uid,
-                        email: user.email,
-                        lastSignInTime: user.metadata.lastSignInTime || user.metadata.creationTime,
-                        daysSinceLastActivity: daysSinceLastActivity,
-                        termsAccepted: termsAccepted,
-                        method: method,
-                        fcmErrorType: fcmErrorType
-                      });
-                      
-                      console.log(`🧹 Deleted anonymous user with fcmErrorType="NotRegistered": ${user.email || user.uid} (UID: ${user.uid}, inactive for ${daysSinceLastActivity} days)`);
-                    } else {
-                      console.log(`⏭️ SKIPPED - Active involvement detected for anonymous user with fcmErrorType="NotRegistered": ${user.email || user.uid} (UID: ${user.uid}, inactive for ${daysSinceLastActivity} days) - See detailed checks above`);
-                    }
-                  } else {
-                    // For non-anonymous users, force logoff by setting state to "offline" in RTDB
-                    await forceUserLogoff(rtdb, user.uid, user.email);
-                    console.log(`🔓 Forced logoff for user with fcmErrorType="NotRegistered": ${user.email || user.uid} (UID: ${user.uid}, method: ${method})`);
-                  }
+                  // Force logoff for all users (anonymous and non-anonymous) with fcmErrorType="NotRegistered"
+                  await forceUserLogoff(rtdb, user.uid, user.email);
+                  console.log(`🔓 Forced logoff for user with fcmErrorType="NotRegistered": ${user.email || user.uid} (UID: ${user.uid}, method: ${method})`)
                 } else {
                   console.log(`⏭️ Skipping user with accepted terms (no fcmErrorType="NotRegistered"): ${user.email || user.uid} (UID: ${user.uid}, inactive for ${daysSinceLastActivity} days)`);
                 }
