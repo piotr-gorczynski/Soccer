@@ -16,6 +16,7 @@ Before deletion, the function checks that the user has NO active involvement in:
 2. **Matches**: Not involved as player0 or player1 in any matches
 3. **Tournament Matches**: Not involved as player0 or player1 in tournament matches
 4. **Tournament Participation**: Not a participant in any tournaments
+5. **Friends Collections**: User does not exist in any other user's friends collection
 
 If ANY of these conditions are found, the user is preserved and the reason is logged.
 
@@ -50,6 +51,7 @@ For non-anonymous users with accepted terms and fcmErrorType="NotRegistered":
 | Inactive user | 2 months ago | false | - | any | In matches | KEEP | Safeguard: active matches |
 | Inactive user | 2 months ago | false | - | any | In tournament matches | KEEP | Safeguard: tournament matches |
 | Inactive user | 2 months ago | false | - | any | Tournament participant | KEEP | Safeguard: tournament participation |
+| Inactive user | 2 months ago | false | - | any | In friends collection | KEEP | Safeguard: exists in friends collection |
 | Inactive user | 2 months ago | missing | - | any | None | DELETE | No terms field |
 | New user | Never signed in, 2 months old | false | - | any | None | DELETE | Uses creation time |
 | Orphaned Auth | 2 months ago | N/A (no Firestore doc) | - | any | None | DELETE | Auth-only account |

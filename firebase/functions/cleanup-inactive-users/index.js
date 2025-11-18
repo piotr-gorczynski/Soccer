@@ -239,6 +239,24 @@ async function checkUserCanBeDeleted(db, uid, email) {
     }
     console.log(`   ✓ No tournament participation found`);
     
+    // 5. Check if user exists in any friends collections
+    console.log(`   👥 Checking if user exists in friends collections...`);
+    const usersSnapshot = await db.collection('users').get();
+    const friendsOfUsers = [];
+    
+    for (const userDoc of usersSnapshot.docs) {
+      const friendDoc = await userDoc.ref.collection('friends').doc(uid).get();
+      if (friendDoc.exists) {
+        friendsOfUsers.push(userDoc.id);
+      }
+    }
+    
+    if (friendsOfUsers.length > 0) {
+      console.log(`   ⚠️ BLOCKED: User ${displayName} exists in friend collection of user(s): ${friendsOfUsers.join(', ')}`);
+      return false;
+    }
+    console.log(`   ✓ User not found in any friends collections`);
+    
     console.log(`   ✅ User ${displayName} CAN be safely deleted - no active involvement found`);
     return true;
     
@@ -256,7 +274,7 @@ async function deleteUserCompletely(auth, db, rtdb, uid, email) {
   // 1. Delete from Firebase Authentication
   try {
     await auth.deleteUser(uid);
-    console.log(`   🔐 Deleted from Auth: ${email}`);
+    console.log(`   🔐 Deleted from Auth: ${email || uid}`);
   } catch (err) {
     console.error(`   ❌ Failed to delete from Auth: ${uid}: ${err.message}`, err);
     throw err; // Re-throw to prevent partial cleanup
