@@ -1,0 +1,12 @@
+{
+  "name": "find-orphaned-invitations",
+  "version": "1.0.0",
+  "description": "Script to find orphaned invitations in Firestore where both sender and receiver users no longer exist",
+  "main": "find-orphaned-invitations.js",
+  "scripts": {
+    "start": "node find-orphaned-invitations.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.4.0"
+  }
+}
