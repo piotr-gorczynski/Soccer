@@ -17,6 +17,17 @@ The script copies data from the following sources:
 **Realtime Database:**
 - `status`
 
+**Authentication:**
+- All user accounts with their:
+  - Email, displayName, photoURL
+  - Email verification status
+  - Disabled/enabled status
+  - Password hashes (when available)
+  - Custom claims
+  - Provider data
+  - Phone numbers
+  - Account metadata (creation and last sign-in times)
+
 ## Prerequisites
 
 1. **Service Account Keys**: You need service account keys for both PROD and TEST environments in the `secrets/` directory:
@@ -90,13 +101,25 @@ node tools/copy-prod-to-test/copy-prod-to-test.js --dry-run --clear-target
 3. **Copy Realtime Database**: 
    - Reads the entire `status` path from PROD RTDB
    - Writes it to TEST RTDB (replaces existing data at that path)
-4. **Summary**: Shows a summary of what was copied
+4. **Copy Authentication Users**:
+   - Lists all users from PROD Authentication
+   - Exports user data including credentials, metadata, and custom claims
+   - Imports users to TEST Authentication in batches (1000 users per batch)
+   - Preserves password hashes when available
+   - Updates existing users if they already exist in TEST
+5. **Summary**: Shows a summary of what was copied
 
 ## Notes
 
 - **Batch Operations**: The script uses Firestore batch writes (max 500 operations per batch) for efficiency
 - **Merge Mode**: By default, existing documents in TEST are merged with PROD data (not replaced)
 - **RTDB Behavior**: The RTDB `status` path is completely replaced (not merged)
+- **Authentication Import**: Uses Firebase Admin SDK's `importUsers` API which:
+  - Preserves user UIDs
+  - Preserves password hashes (users can log in with same passwords)
+  - Updates existing users if they already exist in TEST
+  - Processes up to 1000 users per batch
+  - Does NOT delete users that exist in TEST but not in PROD
 - **Large Collections**: The script handles large collections by processing them in batches
 - **Error Handling**: Errors are logged but the script continues processing other collections
 
@@ -139,6 +162,16 @@ REALTIME DATABASE
    ✅ Successfully copied 23 key(s)
 
 ============================================================
+AUTHENTICATION
+============================================================
+
+📦 Copying Authentication users
+   📊 Counting users in PROD...
+   📊 Found 127 user(s) in PROD
+   ✅ Imported batch of 127 user(s)
+   ✅ Successfully copied 127 user(s)
+
+============================================================
 SUMMARY
 ============================================================
 
@@ -152,6 +185,9 @@ Firestore Collections:
 
 Realtime Database:
   ✅ status: 23 key(s) copied
+
+Authentication:
+  ✅ users: 127 user(s) copied
 
 ✨ Done!
 ```
@@ -169,6 +205,7 @@ Make sure you have the service account JSON files in the `secrets/` directory:
 Ensure the service accounts have the following permissions:
 - **Firestore**: Read access on PROD, Write access on TEST
 - **Realtime Database**: Read access on PROD, Write access on TEST
+- **Authentication**: Read access on PROD, Write/Import access on TEST
 
 ### Connection timeouts
 
