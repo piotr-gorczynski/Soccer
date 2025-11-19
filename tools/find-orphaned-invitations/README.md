@@ -16,8 +16,11 @@ The script uses a two-tier approach:
 - This helps identify any invitation with missing user references
 
 **Deletion (when using --delete flag):**
-- Only deletes invitations where BOTH the `from` AND `to` users don't exist
-- This is safer as it won't delete invitations where one user still exists and might need the invitation
+- Deletes invitations where BOTH the `from` AND `to` users don't exist, OR
+- Deletes invitations from admin (UID: `0RL31dQEyabk3lsL2JXKMq5Vg6y1`) where the `to` user doesn't exist
+- This is safe because:
+  - When both users are gone, the invitation serves no purpose
+  - When admin sent an invitation to a non-existent user, it's safe to clean up
 
 ## Prerequisites
 
@@ -94,7 +97,7 @@ The script provides detailed output including:
    📊 Total invitations: 150
    📊 Total user IDs: 1000
    📊 Invitations with missing user(s): 3
-   📊 Invitations with both users missing: 1
+   📊 Invitations safe to delete: 1
 
 ============================================================
 RESULTS
@@ -115,10 +118,11 @@ RESULTS
 📝 These 3 invitation(s) exist in Firestore but
    the sender (from) and/or receiver (to) users no longer exist.
 
-🗑️  1 of these invitation(s) have BOTH users missing
-   and are safe to delete.
+🗑️  1 of these invitation(s) are safe to delete:
+   - Invitations where BOTH users are missing, OR
+   - Invitations from admin (0RL31dQEyabk3lsL2JXKMq5Vg6y1) where recipient is missing
 
-💡 To delete invitations with both users missing, run the script with --delete flag:
+💡 To delete these orphaned invitations, run the script with --delete flag:
    node find-orphaned-invitations.js PROD --delete
 
 ✨ Done!
