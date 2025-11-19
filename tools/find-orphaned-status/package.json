@@ -1,0 +1,12 @@
+{
+  "name": "find-orphaned-status",
+  "version": "1.0.0",
+  "description": "Script to find orphaned status keys in RTDB that don't have corresponding user documents",
+  "main": "find-orphaned-status.js",
+  "scripts": {
+    "start": "node find-orphaned-status.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.4.0"
+  }
+}
