@@ -60,12 +60,13 @@ async function fetchUserIds(db) {
  * Find orphaned invitations (where 'from' or 'to' users don't exist)
  * Returns object with:
  * - reported: invitations where EITHER from or to user doesn't exist (for reporting)
- * - toDelete: invitations where BOTH from and to users don't exist (safe to delete)
+ * - toDelete: invitations that are safe to delete
  */
 function findOrphanedInvitations(invitations, userIds) {
   console.log('\n🔍 Analyzing data...');
   
   const userIdSet = new Set(userIds);
+  const ADMIN_UID = '0RL31dQEyabk3lsL2JXKMq5Vg6y1'; // piotr.gorczynski@gmail.com
   
   // Find all invitations where EITHER user doesn't exist (for reporting)
   const reportedInvitations = invitations.filter(invitation => {
@@ -82,15 +83,26 @@ function findOrphanedInvitations(invitations, userIds) {
     };
   });
   
-  // Find invitations where BOTH users don't exist (safe to delete)
+  // Find invitations that are safe to delete:
+  // 1. BOTH users don't exist, OR
+  // 2. From user is admin AND to user doesn't exist
   const toDeleteInvitations = reportedInvitations.filter(invitation => {
-    return !invitation.fromExists && !invitation.toExists;
+    // Case 1: Both users don't exist
+    const bothMissing = !invitation.fromExists && !invitation.toExists;
+    
+    // Case 2: From user is admin and to user doesn't exist
+    const adminInviteWithMissingRecipient = 
+      invitation.from === ADMIN_UID && 
+      invitation.fromExists && 
+      !invitation.toExists;
+    
+    return bothMissing || adminInviteWithMissingRecipient;
   });
   
   console.log(`   📊 Total invitations: ${invitations.length}`);
   console.log(`   📊 Total user IDs: ${userIds.length}`);
   console.log(`   📊 Invitations with missing user(s): ${reportedInvitations.length}`);
-  console.log(`   📊 Invitations with both users missing: ${toDeleteInvitations.length}`);
+  console.log(`   📊 Invitations safe to delete: ${toDeleteInvitations.length}`);
   
   return {
     reported: reportedInvitations,
@@ -207,8 +219,9 @@ async function main() {
       
       // Show deletion info
       if (toDeleteInvitations.length > 0) {
-        console.log(`\n🗑️  ${toDeleteInvitations.length} of these invitation(s) have BOTH users missing`);
-        console.log('   and are safe to delete.');
+        console.log(`\n🗑️  ${toDeleteInvitations.length} of these invitation(s) are safe to delete:`);
+        console.log('   - Invitations where BOTH users are missing, OR');
+        console.log('   - Invitations from admin (0RL31dQEyabk3lsL2JXKMq5Vg6y1) where recipient is missing');
       }
       
       // Delete orphaned invitations if --delete flag is provided
@@ -220,11 +233,11 @@ async function main() {
           
           await deleteOrphanedInvitations(db, toDeleteInvitations);
         } else {
-          console.log('\n   ℹ️  No invitations to delete (none have both users missing).');
+          console.log('\n   ℹ️  No invitations to delete (criteria not met).');
         }
       } else {
         if (toDeleteInvitations.length > 0) {
-          console.log('\n💡 To delete invitations with both users missing, run the script with --delete flag:');
+          console.log('\n💡 To delete these orphaned invitations, run the script with --delete flag:');
           console.log(`   node find-orphaned-invitations.js ${env.toUpperCase()} --delete`);
         }
       }
