@@ -57,7 +57,7 @@ async function fetchUserIds(db) {
 }
 
 /**
- * Find orphaned invitations (where both 'from' and 'to' users don't exist)
+ * Find orphaned invitations (where 'from' or 'to' users don't exist)
  */
 function findOrphanedInvitations(invitations, userIds) {
   console.log('\n🔍 Analyzing data...');
@@ -66,8 +66,16 @@ function findOrphanedInvitations(invitations, userIds) {
   const orphanedInvitations = invitations.filter(invitation => {
     const fromExists = userIdSet.has(invitation.from);
     const toExists = userIdSet.has(invitation.to);
-    // Only orphaned if BOTH from and to users don't exist
-    return !fromExists && !toExists;
+    // Orphaned if EITHER from or to user doesn't exist
+    return !fromExists || !toExists;
+  }).map(invitation => {
+    const fromExists = userIdSet.has(invitation.from);
+    const toExists = userIdSet.has(invitation.to);
+    return {
+      ...invitation,
+      fromExists,
+      toExists
+    };
   });
   
   console.log(`   📊 Total invitations: ${invitations.length}`);
@@ -175,12 +183,12 @@ async function main() {
       console.log(`\n⚠️  Found ${orphanedInvitations.length} orphaned invitation(s):\n`);
       orphanedInvitations.forEach((invitation, index) => {
         console.log(`   ${index + 1}. ID: ${invitation.id}`);
-        console.log(`      from: ${invitation.from} (user does not exist)`);
-        console.log(`      to: ${invitation.to} (user does not exist)`);
+        console.log(`      from: ${invitation.from} ${!invitation.fromExists ? '(user does not exist)' : '(user exists)'}`);
+        console.log(`      to: ${invitation.to} ${!invitation.toExists ? '(user does not exist)' : '(user exists)'}`);
       });
       
-      console.log(`\n📝 These ${orphanedInvitations.length} invitation(s) exist in Firestore but both`);
-      console.log('   the sender (from) and receiver (to) users no longer exist.');
+      console.log(`\n📝 These ${orphanedInvitations.length} invitation(s) exist in Firestore but`);
+      console.log('   the sender (from) and/or receiver (to) users no longer exist.');
       
       // Delete orphaned invitations if --delete flag is provided
       if (deleteMode) {
