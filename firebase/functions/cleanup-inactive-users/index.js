@@ -174,18 +174,24 @@ async function checkUserCanBeDeleted(db, uid, email) {
   console.log(`   🔍 Checking if user ${displayName} (UID: ${uid}) can be safely deleted...`);
   
   try {
-    // 1. Check for invitations sent by this user
+    // 1. Check for invitations involving this user (both sent and received)
     console.log(`   📨 Checking invitations for ${displayName}...`);
-    const invitationsQuery = db.collection('invitations')
-      .where('from', '==', uid)
-      .where('status', '==', 'pending');
+    const invitationsFromQuery = db.collection('invitations')
+      .where('from', '==', uid);
+    const invitationsToQuery = db.collection('invitations')
+      .where('to', '==', uid);
     
-    const invitationsSnapshot = await invitationsQuery.get();
-    if (!invitationsSnapshot.empty) {
-      console.log(`   ⚠️ BLOCKED: User ${displayName} has ${invitationsSnapshot.size} pending invitation(s) sent`);
+    const [invitationsFromSnapshot, invitationsToSnapshot] = await Promise.all([
+      invitationsFromQuery.get(),
+      invitationsToQuery.get()
+    ]);
+    
+    const totalInvitations = invitationsFromSnapshot.size + invitationsToSnapshot.size;
+    if (totalInvitations > 0) {
+      console.log(`   ⚠️ BLOCKED: User ${displayName} has ${invitationsFromSnapshot.size} invitation(s) sent and ${invitationsToSnapshot.size} invitation(s) received`);
       return false;
     }
-    console.log(`   ✓ No pending invitations found`);
+    console.log(`   ✓ No invitations found`);
     
     // 2. Check for matches where user is player0 or player1
     console.log(`   ⚽ Checking matches for ${displayName}...`);
