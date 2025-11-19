@@ -16,6 +16,9 @@ const FIRESTORE_COLLECTIONS = [
 // RTDB paths to copy
 const RTDB_PATHS = ['status'];
 
+// Batch size for authentication user operations
+const AUTH_BATCH_SIZE = 1000; // Firebase Admin SDK limit for listUsers
+
 /**
  * Copy all documents from a Firestore collection
  */
@@ -74,6 +77,110 @@ async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
     return { success: successCount, failed: failedCount };
   } catch (error) {
     console.error(`   ❌ Error copying collection '${collectionName}':`, error.message);
+    return { success: 0, failed: 0, error: error.message };
+  }
+}
+
+/**
+ * Copy authentication users from PROD to TEST
+ */
+async function copyAuthenticationUsers(sourceAuth, targetAuth) {
+  console.log('\n📦 Copying Authentication users');
+  
+  try {
+    let successCount = 0;
+    let failedCount = 0;
+    let pageToken;
+    let totalUsers = 0;
+    
+    // First pass: Count total users
+    console.log('   📊 Counting users in PROD...');
+    let countPageToken;
+    do {
+      const listResult = await sourceAuth.listUsers(AUTH_BATCH_SIZE, countPageToken);
+      totalUsers += listResult.users.length;
+      countPageToken = listResult.pageToken;
+    } while (countPageToken);
+    
+    console.log(`   📊 Found ${totalUsers} user(s) in PROD`);
+    
+    if (totalUsers === 0) {
+      console.log('   ℹ️  No users to copy');
+      return { success: 0, failed: 0 };
+    }
+    
+    // Second pass: Copy users
+    do {
+      const listResult = await sourceAuth.listUsers(AUTH_BATCH_SIZE, pageToken);
+      const users = listResult.users;
+      
+      if (users.length > 0) {
+        const usersToImport = users.map(user => {
+          const importUser = {
+            uid: user.uid,
+            email: user.email,
+            emailVerified: user.emailVerified,
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+            disabled: user.disabled,
+            metadata: {
+              creationTime: user.metadata.creationTime,
+              lastSignInTime: user.metadata.lastSignInTime,
+            },
+            providerData: user.providerData,
+          };
+          
+          // Include password hash if available
+          if (user.passwordHash) {
+            importUser.passwordHash = user.passwordHash;
+          }
+          if (user.passwordSalt) {
+            importUser.passwordSalt = user.passwordSalt;
+          }
+          
+          // Include custom claims if present
+          if (user.customClaims && Object.keys(user.customClaims).length > 0) {
+            importUser.customClaims = user.customClaims;
+          }
+          
+          // Include phone number if present
+          if (user.phoneNumber) {
+            importUser.phoneNumber = user.phoneNumber;
+          }
+          
+          return importUser;
+        });
+        
+        try {
+          const importResult = await targetAuth.importUsers(usersToImport);
+          successCount += importResult.successCount;
+          failedCount += importResult.failureCount;
+          
+          if (importResult.failureCount > 0) {
+            console.log(`   ⚠️  Batch: ${importResult.successCount} succeeded, ${importResult.failureCount} failed`);
+            importResult.errors.forEach((error, idx) => {
+              console.log(`      ❌ User ${usersToImport[idx].uid}: ${error.error.message}`);
+            });
+          } else {
+            console.log(`   ✅ Imported batch of ${importResult.successCount} user(s)`);
+          }
+        } catch (error) {
+          console.error(`   ❌ Error importing batch:`, error.message);
+          failedCount += users.length;
+        }
+      }
+      
+      pageToken = listResult.pageToken;
+    } while (pageToken);
+    
+    console.log(`   ✅ Successfully copied ${successCount} user(s)`);
+    if (failedCount > 0) {
+      console.log(`   ⚠️  Failed to copy ${failedCount} user(s)`);
+    }
+    
+    return { success: successCount, failed: failedCount };
+  } catch (error) {
+    console.error(`   ❌ Error copying authentication users:`, error.message);
     return { success: 0, failed: 0, error: error.message };
   }
 }
@@ -159,6 +266,8 @@ async function main() {
   const testDb = testApp.firestore();
   const prodRtdb = prodApp.database();
   const testRtdb = testApp.database();
+  const prodAuth = prodApp.auth();
+  const testAuth = testApp.auth();
   
   console.log('🔥 Firebase apps initialized');
   console.log(`   PROD project: ${prodServiceAccount.project_id}`);
@@ -166,7 +275,8 @@ async function main() {
   
   const results = {
     firestore: {},
-    rtdb: {}
+    rtdb: {},
+    authentication: {}
   };
   
   // Copy Firestore collections
@@ -244,6 +354,37 @@ async function main() {
     }
   }
   
+  // Copy Authentication users
+  console.log('\n' + '='.repeat(60));
+  console.log('AUTHENTICATION');
+  console.log('='.repeat(60));
+  
+  if (dryRun) {
+    console.log('\n📦 [DRY RUN] Would copy Authentication users');
+    try {
+      const listResult = await prodAuth.listUsers(1);
+      let totalUsers = 0;
+      let pageToken;
+      do {
+        const result = await prodAuth.listUsers(AUTH_BATCH_SIZE, pageToken);
+        totalUsers += result.users.length;
+        pageToken = result.pageToken;
+      } while (pageToken);
+      console.log(`   📊 Found ${totalUsers} user(s) in PROD`);
+      results.authentication.users = { success: totalUsers, dryRun: true };
+    } catch (error) {
+      console.error(`   ❌ Error reading authentication users:`, error.message);
+      results.authentication.users = { error: error.message };
+    }
+  } else {
+    if (clearTarget) {
+      console.log('\n⚠️  Warning: Clearing authentication users is not supported');
+      console.log('   Users will be imported/updated but existing users won\'t be deleted');
+    }
+    
+    results.authentication.users = await copyAuthenticationUsers(prodAuth, testAuth);
+  }
+  
   // Summary
   console.log('\n' + '='.repeat(60));
   console.log('SUMMARY');
@@ -271,6 +412,20 @@ async function main() {
       console.log(`  🔍 ${path}: ${result.success} key(s) [DRY RUN]`);
     } else {
       console.log(`  ✅ ${path}: ${result.success} key(s) copied`);
+    }
+  }
+  
+  console.log('\nAuthentication:');
+  for (const [type, result] of Object.entries(results.authentication)) {
+    if (result.error) {
+      console.log(`  ❌ ${type}: Error - ${result.error}`);
+    } else if (result.dryRun) {
+      console.log(`  🔍 ${type}: ${result.success} user(s) [DRY RUN]`);
+    } else {
+      console.log(`  ✅ ${type}: ${result.success} user(s) copied`);
+      if (result.failed > 0) {
+        console.log(`     ⚠️  ${result.failed} user(s) failed`);
+      }
     }
   }
   
