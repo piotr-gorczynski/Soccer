@@ -6,11 +6,18 @@ This script identifies and optionally deletes orphaned invitations from the Fire
 
 Orphaned invitations are invitation documents in the `invitations` collection where the sender (`from` field) and/or receiver (`to` field) users no longer exist in the `users` collection.
 
-The script specifically looks for invitations where:
-- The `from` user ID does not exist in the users collection, OR
-- The `to` user ID does not exist in the users collection
+### Detection and Deletion Logic
 
-An invitation is considered orphaned if either or both users no longer exist.
+The script uses a two-tier approach:
+
+**Reporting (always shown):**
+- Reports ALL invitations where the `from` user ID does not exist in the users collection, OR
+- The `to` user ID does not exist in the users collection
+- This helps identify any invitation with missing user references
+
+**Deletion (when using --delete flag):**
+- Only deletes invitations where BOTH the `from` AND `to` users don't exist
+- This is safer as it won't delete invitations where one user still exists and might need the invitation
 
 ## Prerequisites
 
@@ -86,13 +93,14 @@ The script provides detailed output including:
 🔍 Analyzing data...
    📊 Total invitations: 150
    📊 Total user IDs: 1000
-   📊 Orphaned invitations: 3
+   📊 Invitations with missing user(s): 3
+   📊 Invitations with both users missing: 1
 
 ============================================================
 RESULTS
 ============================================================
 
-⚠️  Found 3 orphaned invitation(s):
+⚠️  Found 3 invitation(s) with missing user(s):
 
    1. ID: abc123
       from: user999 (user does not exist)
@@ -107,7 +115,10 @@ RESULTS
 📝 These 3 invitation(s) exist in Firestore but
    the sender (from) and/or receiver (to) users no longer exist.
 
-💡 To delete these orphaned invitations, run the script with --delete flag:
+🗑️  1 of these invitation(s) have BOTH users missing
+   and are safe to delete.
+
+💡 To delete invitations with both users missing, run the script with --delete flag:
    node find-orphaned-invitations.js PROD --delete
 
 ✨ Done!
