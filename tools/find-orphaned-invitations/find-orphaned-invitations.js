@@ -57,24 +57,45 @@ async function fetchUserIds(db) {
 }
 
 /**
- * Find orphaned invitations (where both 'from' and 'to' users don't exist)
+ * Find orphaned invitations (where 'from' or 'to' users don't exist)
+ * Returns object with:
+ * - reported: invitations where EITHER from or to user doesn't exist (for reporting)
+ * - toDelete: invitations where BOTH from and to users don't exist (safe to delete)
  */
 function findOrphanedInvitations(invitations, userIds) {
   console.log('\n🔍 Analyzing data...');
   
   const userIdSet = new Set(userIds);
-  const orphanedInvitations = invitations.filter(invitation => {
+  
+  // Find all invitations where EITHER user doesn't exist (for reporting)
+  const reportedInvitations = invitations.filter(invitation => {
     const fromExists = userIdSet.has(invitation.from);
     const toExists = userIdSet.has(invitation.to);
-    // Only orphaned if BOTH from and to users don't exist
-    return !fromExists && !toExists;
+    return !fromExists || !toExists;
+  }).map(invitation => {
+    const fromExists = userIdSet.has(invitation.from);
+    const toExists = userIdSet.has(invitation.to);
+    return {
+      ...invitation,
+      fromExists,
+      toExists
+    };
+  });
+  
+  // Find invitations where BOTH users don't exist (safe to delete)
+  const toDeleteInvitations = reportedInvitations.filter(invitation => {
+    return !invitation.fromExists && !invitation.toExists;
   });
   
   console.log(`   📊 Total invitations: ${invitations.length}`);
   console.log(`   📊 Total user IDs: ${userIds.length}`);
-  console.log(`   📊 Orphaned invitations: ${orphanedInvitations.length}`);
+  console.log(`   📊 Invitations with missing user(s): ${reportedInvitations.length}`);
+  console.log(`   📊 Invitations with both users missing: ${toDeleteInvitations.length}`);
   
-  return orphanedInvitations;
+  return {
+    reported: reportedInvitations,
+    toDelete: toDeleteInvitations
+  };
 }
 
 /**
@@ -161,37 +182,51 @@ async function main() {
     const userIds = await fetchUserIds(db);
     
     // Find orphaned invitations
-    const orphanedInvitations = findOrphanedInvitations(invitations, userIds);
+    const result = findOrphanedInvitations(invitations, userIds);
+    const reportedInvitations = result.reported;
+    const toDeleteInvitations = result.toDelete;
     
     // Display results
     console.log('\n' + '='.repeat(60));
     console.log('RESULTS');
     console.log('='.repeat(60));
     
-    if (orphanedInvitations.length === 0) {
+    if (reportedInvitations.length === 0) {
       console.log('\n✅ No orphaned invitations found!');
       console.log('   All invitations reference existing users.');
     } else {
-      console.log(`\n⚠️  Found ${orphanedInvitations.length} orphaned invitation(s):\n`);
-      orphanedInvitations.forEach((invitation, index) => {
+      console.log(`\n⚠️  Found ${reportedInvitations.length} invitation(s) with missing user(s):\n`);
+      reportedInvitations.forEach((invitation, index) => {
         console.log(`   ${index + 1}. ID: ${invitation.id}`);
-        console.log(`      from: ${invitation.from} (user does not exist)`);
-        console.log(`      to: ${invitation.to} (user does not exist)`);
+        console.log(`      from: ${invitation.from} ${!invitation.fromExists ? '(user does not exist)' : '(user exists)'}`);
+        console.log(`      to: ${invitation.to} ${!invitation.toExists ? '(user does not exist)' : '(user exists)'}`);
       });
       
-      console.log(`\n📝 These ${orphanedInvitations.length} invitation(s) exist in Firestore but both`);
-      console.log('   the sender (from) and receiver (to) users no longer exist.');
+      console.log(`\n📝 These ${reportedInvitations.length} invitation(s) exist in Firestore but`);
+      console.log('   the sender (from) and/or receiver (to) users no longer exist.');
+      
+      // Show deletion info
+      if (toDeleteInvitations.length > 0) {
+        console.log(`\n🗑️  ${toDeleteInvitations.length} of these invitation(s) have BOTH users missing`);
+        console.log('   and are safe to delete.');
+      }
       
       // Delete orphaned invitations if --delete flag is provided
       if (deleteMode) {
-        console.log('\n' + '='.repeat(60));
-        console.log('DELETION');
-        console.log('='.repeat(60));
-        
-        await deleteOrphanedInvitations(db, orphanedInvitations);
+        if (toDeleteInvitations.length > 0) {
+          console.log('\n' + '='.repeat(60));
+          console.log('DELETION');
+          console.log('='.repeat(60));
+          
+          await deleteOrphanedInvitations(db, toDeleteInvitations);
+        } else {
+          console.log('\n   ℹ️  No invitations to delete (none have both users missing).');
+        }
       } else {
-        console.log('\n💡 To delete these orphaned invitations, run the script with --delete flag:');
-        console.log(`   node find-orphaned-invitations.js ${env.toUpperCase()} --delete`);
+        if (toDeleteInvitations.length > 0) {
+          console.log('\n💡 To delete invitations with both users missing, run the script with --delete flag:');
+          console.log(`   node find-orphaned-invitations.js ${env.toUpperCase()} --delete`);
+        }
       }
     }
     
