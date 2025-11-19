@@ -81,7 +81,10 @@ Delete existing data in TEST before copying from PROD:
 node tools/copy-prod-to-test/copy-prod-to-test.js --clear-target
 ```
 
-⚠️ **Warning**: This will delete all existing data in the TEST collections before copying!
+⚠️ **Warning**: This will delete all existing data in the TEST database before copying, including:
+- All Firestore collections
+- All Realtime Database paths
+- All Authentication users
 
 ### Combine Options
 
@@ -119,7 +122,7 @@ node tools/copy-prod-to-test/copy-prod-to-test.js --dry-run --clear-target
   - Preserves password hashes (users can log in with same passwords)
   - Updates existing users if they already exist in TEST
   - Processes up to 1000 users per batch
-  - Does NOT delete users that exist in TEST but not in PROD
+  - When `--clear-target` is used, all existing users in TEST are deleted before importing from PROD
 - **Large Collections**: The script handles large collections by processing them in batches
 - **Error Handling**: Errors are logged but the script continues processing other collections
 

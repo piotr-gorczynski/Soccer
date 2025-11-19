@@ -82,6 +82,72 @@ async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
 }
 
 /**
+ * Clear all authentication users from TEST
+ */
+async function clearAuthenticationUsers(targetAuth) {
+  console.log('\n🗑️  Clearing TEST Authentication users');
+  
+  try {
+    let deletedCount = 0;
+    let failedCount = 0;
+    let pageToken;
+    
+    // First pass: Count total users
+    console.log('   📊 Counting users in TEST...');
+    let totalUsers = 0;
+    let countPageToken;
+    do {
+      const listResult = await targetAuth.listUsers(AUTH_BATCH_SIZE, countPageToken);
+      totalUsers += listResult.users.length;
+      countPageToken = listResult.pageToken;
+    } while (countPageToken);
+    
+    console.log(`   📊 Found ${totalUsers} user(s) in TEST`);
+    
+    if (totalUsers === 0) {
+      console.log('   ℹ️  No users to delete');
+      return { deleted: 0, failed: 0 };
+    }
+    
+    // Second pass: Delete users
+    // Keep deleting users until none remain
+    while (deletedCount + failedCount < totalUsers) {
+      const listResult = await targetAuth.listUsers(AUTH_BATCH_SIZE);
+      const users = listResult.users;
+      
+      if (users.length === 0) {
+        break; // No more users to delete
+      }
+      
+      for (const user of users) {
+        try {
+          await targetAuth.deleteUser(user.uid);
+          deletedCount++;
+          
+          // Log progress every 100 users
+          if (deletedCount % 100 === 0) {
+            console.log(`   🗑️  Deleted ${deletedCount}/${totalUsers} user(s)...`);
+          }
+        } catch (error) {
+          console.error(`   ❌ Failed to delete user ${user.uid}:`, error.message);
+          failedCount++;
+        }
+      }
+    }
+    
+    console.log(`   ✅ Successfully deleted ${deletedCount} user(s)`);
+    if (failedCount > 0) {
+      console.log(`   ⚠️  Failed to delete ${failedCount} user(s)`);
+    }
+    
+    return { deleted: deletedCount, failed: failedCount };
+  } catch (error) {
+    console.error(`   ❌ Error clearing authentication users:`, error.message);
+    return { deleted: 0, failed: 0, error: error.message };
+  }
+}
+
+/**
  * Copy authentication users from PROD to TEST
  */
 async function copyAuthenticationUsers(sourceAuth, targetAuth) {
@@ -378,8 +444,7 @@ async function main() {
     }
   } else {
     if (clearTarget) {
-      console.log('\n⚠️  Warning: Clearing authentication users is not supported');
-      console.log('   Users will be imported/updated but existing users won\'t be deleted');
+      results.authentication.cleared = await clearAuthenticationUsers(testAuth);
     }
     
     results.authentication.users = await copyAuthenticationUsers(prodAuth, testAuth);
@@ -421,6 +486,11 @@ async function main() {
       console.log(`  ❌ ${type}: Error - ${result.error}`);
     } else if (result.dryRun) {
       console.log(`  🔍 ${type}: ${result.success} user(s) [DRY RUN]`);
+    } else if (type === 'cleared') {
+      console.log(`  🗑️  ${type}: ${result.deleted} user(s) deleted`);
+      if (result.failed > 0) {
+        console.log(`     ⚠️  ${result.failed} user(s) failed to delete`);
+      }
     } else {
       console.log(`  ✅ ${type}: ${result.success} user(s) copied`);
       if (result.failed > 0) {
