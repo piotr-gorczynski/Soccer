@@ -4,13 +4,13 @@ This script identifies and optionally deletes orphaned invitations from the Fire
 
 ## What are Orphaned Invitations?
 
-Orphaned invitations are invitation documents in the `invitations` collection where **BOTH** the sender (`from` field) and receiver (`to` field) users no longer exist in the `users` collection.
+Orphaned invitations are invitation documents in the `invitations` collection where the sender (`from` field) and/or receiver (`to` field) users no longer exist in the `users` collection.
 
 The script specifically looks for invitations where:
-- The `from` user ID does not exist in the users collection, AND
+- The `from` user ID does not exist in the users collection, OR
 - The `to` user ID does not exist in the users collection
 
-If either user still exists, the invitation is NOT considered orphaned.
+An invitation is considered orphaned if either or both users no longer exist.
 
 ## Prerequisites
 
@@ -98,14 +98,14 @@ RESULTS
       from: user999 (user does not exist)
       to: user888 (user does not exist)
    2. ID: def456
-      from: user777 (user does not exist)
+      from: user777 (user exists)
       to: user666 (user does not exist)
    3. ID: ghi789
       from: user555 (user does not exist)
-      to: user444 (user does not exist)
+      to: user444 (user exists)
 
-📝 These 3 invitation(s) exist in Firestore but both
-   the sender (from) and receiver (to) users no longer exist.
+📝 These 3 invitation(s) exist in Firestore but
+   the sender (from) and/or receiver (to) users no longer exist.
 
 💡 To delete these orphaned invitations, run the script with --delete flag:
    node find-orphaned-invitations.js PROD --delete
