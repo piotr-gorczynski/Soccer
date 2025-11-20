@@ -245,7 +245,7 @@ public class Field {
         if (showIdlePlayerSprite) {
             // Move heavy bitmap operations to background thread to prevent ANR
             // This follows the same pattern as MenuActivity ANR fix (MENUACTIVITY_ANR_FIX.md)
-            new Thread(() -> {
+            Thread spriteLoaderThread = new Thread(() -> {
                 try {
                     // Load all sprite sheets in background
                     Bitmap[] loadedIdleRedPlayerFrames = IdleRedPlayerSprite.getFrames(current);
@@ -269,8 +269,8 @@ public class Field {
                     
                     // Update sprite arrays on main thread
                     // Check if activity is still valid before updating UI
-                    if (current instanceof android.app.Activity) {
-                        android.app.Activity activity = (android.app.Activity) current;
+                    if (current instanceof Activity) {
+                        Activity activity = (Activity) current;
                         if (!activity.isFinishing() && !activity.isDestroyed()) {
                             activity.runOnUiThread(() -> {
                                 idleRedPlayerFrames = loadedIdleRedPlayerFrames;
@@ -304,7 +304,8 @@ public class Field {
                 } catch (Exception e) {
                     Log.e("TAG_Soccer", getClass().getSimpleName() + ": Error loading sprites in background thread", e);
                 }
-            }).start();
+            }, "Field-SpriteLoader");
+            spriteLoaderThread.start();
         }
 
         pPlayer0=new Paint();
