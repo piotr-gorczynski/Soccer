@@ -1700,13 +1700,10 @@ public class Field {
         kickRedFrameVisible = false;
         kickBlueFrameVisible = false;
         
-        // Draw kick animation first if active (for moving player only)
+        // Draw kick animation if active, otherwise draw run animation
         if (kickAnimationActive) {
             drawKickAnimation(canvas, ballState.radius);
-        }
-        
-        // Draw run animation if kick is not active
-        if (!kickAnimationActive) {
+        } else {
             drawRunAnimation(canvas, ballState.radius);
         }
         
