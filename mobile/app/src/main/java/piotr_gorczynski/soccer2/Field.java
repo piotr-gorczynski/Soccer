@@ -742,45 +742,46 @@ public class Field {
             return;
         }
         
-        // Determine if we're in kick phase or run phase
-        boolean inKickPhase = kickPhaseActive && runPlayerFrameIndex < kickFrameLimit;
-        
-        // Select appropriate frames based on phase and which player is moving
+        // Determine which frames to use for each player
+        // For the moving player: kick frames (0-15) then run frames (16+)
+        // For the non-moving player: run frames throughout
         Bitmap[] redFrames;
         Bitmap[] blueFrames;
         int redFrameCount;
         int blueFrameCount;
-        int redFrameOffset = 0;
-        int blueFrameOffset = 0;
         
-        if (inKickPhase) {
-            // During kick phase, use kick frames for moving player, run frames for other player
-            if (runMovingPlayer == 0) {
-                redFrames = activeKickRedPlayerFrames != null ? activeKickRedPlayerFrames : EMPTY_BITMAP_ARRAY;
-                blueFrames = activeRunBluePlayerFrames != null ? activeRunBluePlayerFrames : EMPTY_BITMAP_ARRAY;
-            } else if (runMovingPlayer == 1) {
-                redFrames = activeRunRedPlayerFrames != null ? activeRunRedPlayerFrames : EMPTY_BITMAP_ARRAY;
-                blueFrames = activeKickBluePlayerFrames != null ? activeKickBluePlayerFrames : EMPTY_BITMAP_ARRAY;
+        // Determine if we're in kick phase (first 16 frames if kickPhaseActive)
+        boolean inKickPhase = kickPhaseActive && runPlayerFrameIndex < kickFrameLimit;
+        
+        if (kickPhaseActive) {
+            if (inKickPhase) {
+                // During kick phase: moving player uses kick frames, other player uses run frames
+                if (runMovingPlayer == 0) {
+                    redFrames = activeKickRedPlayerFrames != null ? activeKickRedPlayerFrames : EMPTY_BITMAP_ARRAY;
+                    blueFrames = activeRunBluePlayerFrames != null ? activeRunBluePlayerFrames : EMPTY_BITMAP_ARRAY;
+                } else if (runMovingPlayer == 1) {
+                    redFrames = activeRunRedPlayerFrames != null ? activeRunRedPlayerFrames : EMPTY_BITMAP_ARRAY;
+                    blueFrames = activeKickBluePlayerFrames != null ? activeKickBluePlayerFrames : EMPTY_BITMAP_ARRAY;
+                } else {
+                    redFrames = activeRunRedPlayerFrames != null ? activeRunRedPlayerFrames : EMPTY_BITMAP_ARRAY;
+                    blueFrames = activeRunBluePlayerFrames != null ? activeRunBluePlayerFrames : EMPTY_BITMAP_ARRAY;
+                }
             } else {
+                // After kick phase: both players use run frames
                 redFrames = activeRunRedPlayerFrames != null ? activeRunRedPlayerFrames : EMPTY_BITMAP_ARRAY;
                 blueFrames = activeRunBluePlayerFrames != null ? activeRunBluePlayerFrames : EMPTY_BITMAP_ARRAY;
             }
-            redFrameCount = redFrames.length;
-            blueFrameCount = blueFrames.length;
         } else {
-            // After kick phase, use run frames for both players
+            // No kick phase active: use run frames for both
             redFrames = activeRunRedPlayerFrames != null ? activeRunRedPlayerFrames : EMPTY_BITMAP_ARRAY;
             blueFrames = activeRunBluePlayerFrames != null ? activeRunBluePlayerFrames : EMPTY_BITMAP_ARRAY;
-            redFrameCount = redFrames.length;
-            blueFrameCount = blueFrames.length;
-            // Adjust frame index to account for kick phase that already completed
-            redFrameOffset = kickPhaseActive ? kickFrameLimit : 0;
-            blueFrameOffset = kickPhaseActive ? kickFrameLimit : 0;
         }
         
+        redFrameCount = redFrames.length;
+        blueFrameCount = blueFrames.length;
         int frameCount = Math.max(redFrameCount, blueFrameCount);
         int maxDelay = Math.max(runRedDelayFrames, runBlueDelayFrames);
-        int frameLimit = Math.min(runFrameLimit, frameCount + maxDelay + (kickPhaseActive ? kickFrameLimit : 0));
+        int frameLimit = Math.min(runFrameLimit, frameCount + maxDelay);
         if (frameLimit <= 0) {
             stopRunAnimation(SystemClock.uptimeMillis());
             return;
@@ -807,8 +808,33 @@ public class Field {
             return;
         }
 
-        int redFrameIndex = runPlayerFrameIndex - runRedDelayFrames - redFrameOffset;
-        int blueFrameIndex = runPlayerFrameIndex - runBlueDelayFrames - blueFrameOffset;
+        // Calculate frame indices for each player
+        // During kick phase, moving player uses frames 0-15 from kick animation
+        // After kick phase, moving player starts at frame 0 of run animation
+        int redFrameIndex;
+        int blueFrameIndex;
+        
+        if (kickPhaseActive && inKickPhase) {
+            // In kick phase
+            redFrameIndex = runPlayerFrameIndex - runRedDelayFrames;
+            blueFrameIndex = runPlayerFrameIndex - runBlueDelayFrames;
+        } else if (kickPhaseActive && !inKickPhase) {
+            // After kick phase, adjust frame index by subtracting kick frames for moving player
+            if (runMovingPlayer == 0) {
+                redFrameIndex = runPlayerFrameIndex - runRedDelayFrames - kickFrameLimit;
+                blueFrameIndex = runPlayerFrameIndex - runBlueDelayFrames;
+            } else if (runMovingPlayer == 1) {
+                redFrameIndex = runPlayerFrameIndex - runRedDelayFrames;
+                blueFrameIndex = runPlayerFrameIndex - runBlueDelayFrames - kickFrameLimit;
+            } else {
+                redFrameIndex = runPlayerFrameIndex - runRedDelayFrames;
+                blueFrameIndex = runPlayerFrameIndex - runBlueDelayFrames;
+            }
+        } else {
+            // No kick phase
+            redFrameIndex = runPlayerFrameIndex - runRedDelayFrames;
+            blueFrameIndex = runPlayerFrameIndex - runBlueDelayFrames;
+        }
 
         Bitmap redFrame = redFrameIndex >= 0
                 ? getRunFrame(redFrames, redFrameIndex, redFrameCount)
