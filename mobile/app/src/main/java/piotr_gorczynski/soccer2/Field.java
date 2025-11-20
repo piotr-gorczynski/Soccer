@@ -663,8 +663,7 @@ public class Field {
                         runDirectionY = 0f;
                     }
                     runPlayerFrameIndex = 0;
-                    runPlayerLastFrameTime = SystemClock.uptimeMillis();
-                    runAnimationActive = true;
+                    runPlayerLastFrameTime = 0L;  // Don't start time yet if we have kick animation
                     runRedCompleted = false;
                     runBlueCompleted = false;
                     
@@ -676,6 +675,8 @@ public class Field {
                         kickFrameLimit = movingPlayer == 0 ? availableKickRedFrames : availableKickBlueFrames;
                         kickRedCompleted = movingPlayer != 0;
                         kickBlueCompleted = movingPlayer != 1;
+                        // Run animation will be activated after kick completes
+                        runAnimationActive = false;
                     } else {
                         kickAnimationActive = false;
                         kickPlayerFrameIndex = 0;
@@ -683,6 +684,9 @@ public class Field {
                         kickFrameLimit = KickPlayerSprite.FRAME_COUNT;
                         kickRedCompleted = false;
                         kickBlueCompleted = false;
+                        // No kick animation, start run immediately
+                        runAnimationActive = true;
+                        runPlayerLastFrameTime = SystemClock.uptimeMillis();
                     }
                 } else {
                     canStartRun = false;
@@ -970,6 +974,13 @@ public class Field {
         kickBlueCompleted = false;
         activeKickRedPlayerFrames = EMPTY_BITMAP_ARRAY;
         activeKickBluePlayerFrames = EMPTY_BITMAP_ARRAY;
+        
+        // Start run animation after kick completes
+        if (!runAnimationActive) {
+            runAnimationActive = true;
+            runPlayerFrameIndex = 0;
+            runPlayerLastFrameTime = referenceTime;
+        }
     }
 
     private void drawRunAnimation(Canvas canvas, float ballRadius) {
