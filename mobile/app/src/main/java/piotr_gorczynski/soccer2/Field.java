@@ -1,5 +1,6 @@
 package piotr_gorczynski.soccer2;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -42,24 +43,24 @@ public class Field {
     private final Bitmap ballBitmap;
     private static final Bitmap[] EMPTY_BITMAP_ARRAY = new Bitmap[0];
 
-    private final Bitmap[] idleRedPlayerFrames;
-    private final Bitmap[] runRedPlayerWestFrames;
-    private final Bitmap[] runRedPlayerWestNorthFrames;
-    private final Bitmap[] runRedPlayerNorthFrames;
-    private final Bitmap[] runRedPlayerEastNorthFrames;
-    private final Bitmap[] runRedPlayerEastFrames;
-    private final Bitmap[] runRedPlayerEastSouthFrames;
-    private final Bitmap[] runRedPlayerSouthFrames;
-    private final Bitmap[] runRedPlayerSouthWestFrames;
-    private final Bitmap[] runBluePlayerWestFrames;
-    private final Bitmap[] runBluePlayerWestNorthFrames;
-    private final Bitmap[] runBluePlayerNorthFrames;
-    private final Bitmap[] runBluePlayerEastNorthFrames;
-    private final Bitmap[] runBluePlayerEastFrames;
-    private final Bitmap[] runBluePlayerEastSouthFrames;
-    private final Bitmap[] runBluePlayerSouthFrames;
-    private final Bitmap[] runBluePlayerSouthWestFrames;
-    private final Bitmap[] idleBluePlayerFrames;
+    private Bitmap[] idleRedPlayerFrames;
+    private Bitmap[] runRedPlayerWestFrames;
+    private Bitmap[] runRedPlayerWestNorthFrames;
+    private Bitmap[] runRedPlayerNorthFrames;
+    private Bitmap[] runRedPlayerEastNorthFrames;
+    private Bitmap[] runRedPlayerEastFrames;
+    private Bitmap[] runRedPlayerEastSouthFrames;
+    private Bitmap[] runRedPlayerSouthFrames;
+    private Bitmap[] runRedPlayerSouthWestFrames;
+    private Bitmap[] runBluePlayerWestFrames;
+    private Bitmap[] runBluePlayerWestNorthFrames;
+    private Bitmap[] runBluePlayerNorthFrames;
+    private Bitmap[] runBluePlayerEastNorthFrames;
+    private Bitmap[] runBluePlayerEastFrames;
+    private Bitmap[] runBluePlayerEastSouthFrames;
+    private Bitmap[] runBluePlayerSouthFrames;
+    private Bitmap[] runBluePlayerSouthWestFrames;
+    private Bitmap[] idleBluePlayerFrames;
     private Bitmap[] activeRunRedPlayerFrames;
     private Bitmap[] activeRunBluePlayerFrames;
     private final String sPlayer0;
@@ -218,49 +219,92 @@ public class Field {
 
         this.animationsEnabled = animationsEnabled;
         showIdlePlayerSprite = animationsEnabled && (gameType == 1 || gameType == 2);
+        
+        // Initialize all sprite arrays with empty bitmaps to avoid null pointer exceptions
+        idleRedPlayerFrames = EMPTY_BITMAP_ARRAY;
+        idleBluePlayerFrames = EMPTY_BITMAP_ARRAY;
+        runRedPlayerWestFrames = EMPTY_BITMAP_ARRAY;
+        runRedPlayerWestNorthFrames = EMPTY_BITMAP_ARRAY;
+        runRedPlayerNorthFrames = EMPTY_BITMAP_ARRAY;
+        runRedPlayerEastNorthFrames = EMPTY_BITMAP_ARRAY;
+        runRedPlayerEastFrames = EMPTY_BITMAP_ARRAY;
+        runRedPlayerEastSouthFrames = EMPTY_BITMAP_ARRAY;
+        runRedPlayerSouthFrames = EMPTY_BITMAP_ARRAY;
+        runRedPlayerSouthWestFrames = EMPTY_BITMAP_ARRAY;
+        runBluePlayerWestFrames = EMPTY_BITMAP_ARRAY;
+        runBluePlayerWestNorthFrames = EMPTY_BITMAP_ARRAY;
+        runBluePlayerNorthFrames = EMPTY_BITMAP_ARRAY;
+        runBluePlayerEastNorthFrames = EMPTY_BITMAP_ARRAY;
+        runBluePlayerEastFrames = EMPTY_BITMAP_ARRAY;
+        runBluePlayerEastSouthFrames = EMPTY_BITMAP_ARRAY;
+        runBluePlayerSouthFrames = EMPTY_BITMAP_ARRAY;
+        runBluePlayerSouthWestFrames = EMPTY_BITMAP_ARRAY;
+        activeRunRedPlayerFrames = EMPTY_BITMAP_ARRAY;
+        activeRunBluePlayerFrames = EMPTY_BITMAP_ARRAY;
+        
         if (showIdlePlayerSprite) {
-            idleRedPlayerFrames = IdleRedPlayerSprite.getFrames(current);
-            idleBluePlayerFrames = IdleBluePlayerSprite.getFrames(current);
-            runRedPlayerWestFrames = RunRedPlayerSprite.getWestFrames(current);
-            runRedPlayerWestNorthFrames = RunRedPlayerSprite.getWestNorthFrames(current);
-            runRedPlayerNorthFrames = RunRedPlayerSprite.getNorthFrames(current);
-            runRedPlayerEastNorthFrames = RunRedPlayerSprite.getEastNorthFrames(current);
-            runRedPlayerEastFrames = RunRedPlayerSprite.getEastFrames(current);
-            runRedPlayerEastSouthFrames = RunRedPlayerSprite.getEastSouthFrames(current);
-            runRedPlayerSouthFrames = RunRedPlayerSprite.getSouthFrames(current);
-            runRedPlayerSouthWestFrames = RunRedPlayerSprite.getSouthWestFrames(current);
-            runBluePlayerWestFrames = RunBluePlayerSprite.getWestFrames(current);
-            runBluePlayerWestNorthFrames = RunBluePlayerSprite.getWestNorthFrames(current);
-            runBluePlayerNorthFrames = RunBluePlayerSprite.getNorthFrames(current);
-            runBluePlayerEastNorthFrames = RunBluePlayerSprite.getEastNorthFrames(current);
-            runBluePlayerEastFrames = RunBluePlayerSprite.getEastFrames(current);
-            runBluePlayerEastSouthFrames = RunBluePlayerSprite.getEastSouthFrames(current);
-            runBluePlayerSouthFrames = RunBluePlayerSprite.getSouthFrames(current);
-            runBluePlayerSouthWestFrames = RunBluePlayerSprite.getSouthWestFrames(current);
-            activeRunRedPlayerFrames = runRedPlayerNorthFrames;
-            activeRunBluePlayerFrames = runBluePlayerNorthFrames;
-            idlePlayerLastFrameTime = SystemClock.uptimeMillis();
-        } else {
-            idleRedPlayerFrames = EMPTY_BITMAP_ARRAY;
-            idleBluePlayerFrames = EMPTY_BITMAP_ARRAY;
-            runRedPlayerWestFrames = EMPTY_BITMAP_ARRAY;
-            runRedPlayerWestNorthFrames = EMPTY_BITMAP_ARRAY;
-            runRedPlayerNorthFrames = EMPTY_BITMAP_ARRAY;
-            runRedPlayerEastNorthFrames = EMPTY_BITMAP_ARRAY;
-            runRedPlayerEastFrames = EMPTY_BITMAP_ARRAY;
-            runRedPlayerEastSouthFrames = EMPTY_BITMAP_ARRAY;
-            runRedPlayerSouthFrames = EMPTY_BITMAP_ARRAY;
-            runRedPlayerSouthWestFrames = EMPTY_BITMAP_ARRAY;
-            activeRunRedPlayerFrames = EMPTY_BITMAP_ARRAY;
-            runBluePlayerWestFrames = EMPTY_BITMAP_ARRAY;
-            runBluePlayerWestNorthFrames = EMPTY_BITMAP_ARRAY;
-            runBluePlayerNorthFrames = EMPTY_BITMAP_ARRAY;
-            runBluePlayerEastNorthFrames = EMPTY_BITMAP_ARRAY;
-            runBluePlayerEastFrames = EMPTY_BITMAP_ARRAY;
-            runBluePlayerEastSouthFrames = EMPTY_BITMAP_ARRAY;
-            runBluePlayerSouthFrames = EMPTY_BITMAP_ARRAY;
-            runBluePlayerSouthWestFrames = EMPTY_BITMAP_ARRAY;
-            activeRunBluePlayerFrames = EMPTY_BITMAP_ARRAY;
+            // Move heavy bitmap operations to background thread to prevent ANR
+            // This follows the same pattern as MenuActivity ANR fix (MENUACTIVITY_ANR_FIX.md)
+            new Thread(() -> {
+                try {
+                    // Load all sprite sheets in background
+                    Bitmap[] loadedIdleRedPlayerFrames = IdleRedPlayerSprite.getFrames(current);
+                    Bitmap[] loadedIdleBluePlayerFrames = IdleBluePlayerSprite.getFrames(current);
+                    Bitmap[] loadedRunRedPlayerWestFrames = RunRedPlayerSprite.getWestFrames(current);
+                    Bitmap[] loadedRunRedPlayerWestNorthFrames = RunRedPlayerSprite.getWestNorthFrames(current);
+                    Bitmap[] loadedRunRedPlayerNorthFrames = RunRedPlayerSprite.getNorthFrames(current);
+                    Bitmap[] loadedRunRedPlayerEastNorthFrames = RunRedPlayerSprite.getEastNorthFrames(current);
+                    Bitmap[] loadedRunRedPlayerEastFrames = RunRedPlayerSprite.getEastFrames(current);
+                    Bitmap[] loadedRunRedPlayerEastSouthFrames = RunRedPlayerSprite.getEastSouthFrames(current);
+                    Bitmap[] loadedRunRedPlayerSouthFrames = RunRedPlayerSprite.getSouthFrames(current);
+                    Bitmap[] loadedRunRedPlayerSouthWestFrames = RunRedPlayerSprite.getSouthWestFrames(current);
+                    Bitmap[] loadedRunBluePlayerWestFrames = RunBluePlayerSprite.getWestFrames(current);
+                    Bitmap[] loadedRunBluePlayerWestNorthFrames = RunBluePlayerSprite.getWestNorthFrames(current);
+                    Bitmap[] loadedRunBluePlayerNorthFrames = RunBluePlayerSprite.getNorthFrames(current);
+                    Bitmap[] loadedRunBluePlayerEastNorthFrames = RunBluePlayerSprite.getEastNorthFrames(current);
+                    Bitmap[] loadedRunBluePlayerEastFrames = RunBluePlayerSprite.getEastFrames(current);
+                    Bitmap[] loadedRunBluePlayerEastSouthFrames = RunBluePlayerSprite.getEastSouthFrames(current);
+                    Bitmap[] loadedRunBluePlayerSouthFrames = RunBluePlayerSprite.getSouthFrames(current);
+                    Bitmap[] loadedRunBluePlayerSouthWestFrames = RunBluePlayerSprite.getSouthWestFrames(current);
+                    
+                    // Update sprite arrays on main thread
+                    // Check if activity is still valid before updating UI
+                    if (current instanceof android.app.Activity) {
+                        android.app.Activity activity = (android.app.Activity) current;
+                        if (!activity.isFinishing() && !activity.isDestroyed()) {
+                            activity.runOnUiThread(() -> {
+                                idleRedPlayerFrames = loadedIdleRedPlayerFrames;
+                                idleBluePlayerFrames = loadedIdleBluePlayerFrames;
+                                runRedPlayerWestFrames = loadedRunRedPlayerWestFrames;
+                                runRedPlayerWestNorthFrames = loadedRunRedPlayerWestNorthFrames;
+                                runRedPlayerNorthFrames = loadedRunRedPlayerNorthFrames;
+                                runRedPlayerEastNorthFrames = loadedRunRedPlayerEastNorthFrames;
+                                runRedPlayerEastFrames = loadedRunRedPlayerEastFrames;
+                                runRedPlayerEastSouthFrames = loadedRunRedPlayerEastSouthFrames;
+                                runRedPlayerSouthFrames = loadedRunRedPlayerSouthFrames;
+                                runRedPlayerSouthWestFrames = loadedRunRedPlayerSouthWestFrames;
+                                runBluePlayerWestFrames = loadedRunBluePlayerWestFrames;
+                                runBluePlayerWestNorthFrames = loadedRunBluePlayerWestNorthFrames;
+                                runBluePlayerNorthFrames = loadedRunBluePlayerNorthFrames;
+                                runBluePlayerEastNorthFrames = loadedRunBluePlayerEastNorthFrames;
+                                runBluePlayerEastFrames = loadedRunBluePlayerEastFrames;
+                                runBluePlayerEastSouthFrames = loadedRunBluePlayerEastSouthFrames;
+                                runBluePlayerSouthFrames = loadedRunBluePlayerSouthFrames;
+                                runBluePlayerSouthWestFrames = loadedRunBluePlayerSouthWestFrames;
+                                activeRunRedPlayerFrames = loadedRunRedPlayerNorthFrames;
+                                activeRunBluePlayerFrames = loadedRunBluePlayerNorthFrames;
+                                idlePlayerLastFrameTime = SystemClock.uptimeMillis();
+                                
+                                Log.d("TAG_Soccer", getClass().getSimpleName() + ": Sprite sheets loaded successfully in background");
+                            });
+                        } else {
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + ": Activity finishing/destroyed, skipping sprite update");
+                        }
+                    }
+                } catch (Exception e) {
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + ": Error loading sprites in background thread", e);
+                }
+            }).start();
         }
 
         pPlayer0=new Paint();
