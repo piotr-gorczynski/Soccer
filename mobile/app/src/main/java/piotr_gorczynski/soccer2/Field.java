@@ -51,6 +51,14 @@ public class Field {
     private final Bitmap[] runRedPlayerEastSouthFrames;
     private final Bitmap[] runRedPlayerSouthFrames;
     private final Bitmap[] runRedPlayerSouthWestFrames;
+    private final Bitmap[] kickRedPlayerWestFrames;
+    private final Bitmap[] kickRedPlayerWestNorthFrames;
+    private final Bitmap[] kickRedPlayerNorthFrames;
+    private final Bitmap[] kickRedPlayerEastNorthFrames;
+    private final Bitmap[] kickRedPlayerEastFrames;
+    private final Bitmap[] kickRedPlayerEastSouthFrames;
+    private final Bitmap[] kickRedPlayerSouthFrames;
+    private final Bitmap[] kickRedPlayerSouthWestFrames;
     private final Bitmap[] runBluePlayerWestFrames;
     private final Bitmap[] runBluePlayerWestNorthFrames;
     private final Bitmap[] runBluePlayerNorthFrames;
@@ -59,9 +67,19 @@ public class Field {
     private final Bitmap[] runBluePlayerEastSouthFrames;
     private final Bitmap[] runBluePlayerSouthFrames;
     private final Bitmap[] runBluePlayerSouthWestFrames;
+    private final Bitmap[] kickBluePlayerWestFrames;
+    private final Bitmap[] kickBluePlayerWestNorthFrames;
+    private final Bitmap[] kickBluePlayerNorthFrames;
+    private final Bitmap[] kickBluePlayerEastNorthFrames;
+    private final Bitmap[] kickBluePlayerEastFrames;
+    private final Bitmap[] kickBluePlayerEastSouthFrames;
+    private final Bitmap[] kickBluePlayerSouthFrames;
+    private final Bitmap[] kickBluePlayerSouthWestFrames;
     private final Bitmap[] idleBluePlayerFrames;
     private Bitmap[] activeRunRedPlayerFrames;
     private Bitmap[] activeRunBluePlayerFrames;
+    private Bitmap[] activeKickRedPlayerFrames;
+    private Bitmap[] activeKickBluePlayerFrames;
     private final String sPlayer0;
     private final String sPlayer1;
     private final int gameType;
@@ -99,6 +117,8 @@ public class Field {
     private float lastRunBallRadius = 0f;
     private boolean runRedFrameVisible = false;
     private boolean runBlueFrameVisible = false;
+    private boolean kickPhaseActive = false;
+    private int kickFrameLimit = KickPlayerSprite.FRAME_COUNT;
 
     private boolean ballAnimationActive = false;
     private long ballAnimationStartTime = 0L;
@@ -229,6 +249,14 @@ public class Field {
             runRedPlayerEastSouthFrames = RunRedPlayerSprite.getEastSouthFrames(current);
             runRedPlayerSouthFrames = RunRedPlayerSprite.getSouthFrames(current);
             runRedPlayerSouthWestFrames = RunRedPlayerSprite.getSouthWestFrames(current);
+            kickRedPlayerWestFrames = KickRedPlayerSprite.getWestFrames(current);
+            kickRedPlayerWestNorthFrames = KickRedPlayerSprite.getWestNorthFrames(current);
+            kickRedPlayerNorthFrames = KickRedPlayerSprite.getNorthFrames(current);
+            kickRedPlayerEastNorthFrames = KickRedPlayerSprite.getEastNorthFrames(current);
+            kickRedPlayerEastFrames = KickRedPlayerSprite.getEastFrames(current);
+            kickRedPlayerEastSouthFrames = KickRedPlayerSprite.getEastSouthFrames(current);
+            kickRedPlayerSouthFrames = KickRedPlayerSprite.getSouthFrames(current);
+            kickRedPlayerSouthWestFrames = KickRedPlayerSprite.getSouthWestFrames(current);
             runBluePlayerWestFrames = RunBluePlayerSprite.getWestFrames(current);
             runBluePlayerWestNorthFrames = RunBluePlayerSprite.getWestNorthFrames(current);
             runBluePlayerNorthFrames = RunBluePlayerSprite.getNorthFrames(current);
@@ -237,8 +265,18 @@ public class Field {
             runBluePlayerEastSouthFrames = RunBluePlayerSprite.getEastSouthFrames(current);
             runBluePlayerSouthFrames = RunBluePlayerSprite.getSouthFrames(current);
             runBluePlayerSouthWestFrames = RunBluePlayerSprite.getSouthWestFrames(current);
+            kickBluePlayerWestFrames = KickBluePlayerSprite.getWestFrames(current);
+            kickBluePlayerWestNorthFrames = KickBluePlayerSprite.getWestNorthFrames(current);
+            kickBluePlayerNorthFrames = KickBluePlayerSprite.getNorthFrames(current);
+            kickBluePlayerEastNorthFrames = KickBluePlayerSprite.getEastNorthFrames(current);
+            kickBluePlayerEastFrames = KickBluePlayerSprite.getEastFrames(current);
+            kickBluePlayerEastSouthFrames = KickBluePlayerSprite.getEastSouthFrames(current);
+            kickBluePlayerSouthFrames = KickBluePlayerSprite.getSouthFrames(current);
+            kickBluePlayerSouthWestFrames = KickBluePlayerSprite.getSouthWestFrames(current);
             activeRunRedPlayerFrames = runRedPlayerNorthFrames;
             activeRunBluePlayerFrames = runBluePlayerNorthFrames;
+            activeKickRedPlayerFrames = kickRedPlayerNorthFrames;
+            activeKickBluePlayerFrames = kickBluePlayerNorthFrames;
             idlePlayerLastFrameTime = SystemClock.uptimeMillis();
         } else {
             idleRedPlayerFrames = EMPTY_BITMAP_ARRAY;
@@ -251,7 +289,16 @@ public class Field {
             runRedPlayerEastSouthFrames = EMPTY_BITMAP_ARRAY;
             runRedPlayerSouthFrames = EMPTY_BITMAP_ARRAY;
             runRedPlayerSouthWestFrames = EMPTY_BITMAP_ARRAY;
+            kickRedPlayerWestFrames = EMPTY_BITMAP_ARRAY;
+            kickRedPlayerWestNorthFrames = EMPTY_BITMAP_ARRAY;
+            kickRedPlayerNorthFrames = EMPTY_BITMAP_ARRAY;
+            kickRedPlayerEastNorthFrames = EMPTY_BITMAP_ARRAY;
+            kickRedPlayerEastFrames = EMPTY_BITMAP_ARRAY;
+            kickRedPlayerEastSouthFrames = EMPTY_BITMAP_ARRAY;
+            kickRedPlayerSouthFrames = EMPTY_BITMAP_ARRAY;
+            kickRedPlayerSouthWestFrames = EMPTY_BITMAP_ARRAY;
             activeRunRedPlayerFrames = EMPTY_BITMAP_ARRAY;
+            activeKickRedPlayerFrames = EMPTY_BITMAP_ARRAY;
             runBluePlayerWestFrames = EMPTY_BITMAP_ARRAY;
             runBluePlayerWestNorthFrames = EMPTY_BITMAP_ARRAY;
             runBluePlayerNorthFrames = EMPTY_BITMAP_ARRAY;
@@ -260,7 +307,16 @@ public class Field {
             runBluePlayerEastSouthFrames = EMPTY_BITMAP_ARRAY;
             runBluePlayerSouthFrames = EMPTY_BITMAP_ARRAY;
             runBluePlayerSouthWestFrames = EMPTY_BITMAP_ARRAY;
+            kickBluePlayerWestFrames = EMPTY_BITMAP_ARRAY;
+            kickBluePlayerWestNorthFrames = EMPTY_BITMAP_ARRAY;
+            kickBluePlayerNorthFrames = EMPTY_BITMAP_ARRAY;
+            kickBluePlayerEastNorthFrames = EMPTY_BITMAP_ARRAY;
+            kickBluePlayerEastFrames = EMPTY_BITMAP_ARRAY;
+            kickBluePlayerEastSouthFrames = EMPTY_BITMAP_ARRAY;
+            kickBluePlayerSouthFrames = EMPTY_BITMAP_ARRAY;
+            kickBluePlayerSouthWestFrames = EMPTY_BITMAP_ARRAY;
             activeRunBluePlayerFrames = EMPTY_BITMAP_ARRAY;
+            activeKickBluePlayerFrames = EMPTY_BITMAP_ARRAY;
         }
 
         pPlayer0=new Paint();
@@ -492,9 +548,12 @@ public class Field {
 
         if (canStartRun) {
             RunAnimationFrameSet frameSet = selectRunAnimationFrames(totalDeltaX, totalDeltaY, spriteDeltaX, spriteDeltaY);
+            RunAnimationFrameSet kickFrameSet = selectKickAnimationFrames(totalDeltaX, totalDeltaY, spriteDeltaX, spriteDeltaY);
             if (!frameSet.isEmpty()) {
                 activeRunRedPlayerFrames = frameSet.redFrames;
                 activeRunBluePlayerFrames = frameSet.blueFrames;
+                activeKickRedPlayerFrames = kickFrameSet.redFrames;
+                activeKickBluePlayerFrames = kickFrameSet.blueFrames;
                 int availableRedFrames = Math.min(RUN_FRAME_COUNT, frameSet.redFrames.length);
                 int availableBlueFrames = Math.min(RUN_FRAME_COUNT, frameSet.blueFrames.length);
                 int availableFrames = Math.max(availableRedFrames, availableBlueFrames);
@@ -508,6 +567,8 @@ public class Field {
                     movementFrameCount = frameLimit;
 
                     runMovingPlayer = movingPlayer;
+                    // Enable kick phase if the moving player is player0 or player1
+                    kickPhaseActive = (movingPlayer == 0 || movingPlayer == 1);
                     runRedDelayFrames = frameSet.redFrames.length > 0 && runMovingPlayer == 1
                             ? RUN_DELAY_CYCLES
                             : 0;
@@ -515,7 +576,9 @@ public class Field {
                             ? RUN_DELAY_CYCLES
                             : 0;
 
-                    runFrameLimit = frameLimit + Math.max(runRedDelayFrames, runBlueDelayFrames);
+                    // Add kick frames to the total frame limit if kick phase is active
+                    int totalKickFrames = kickPhaseActive ? kickFrameLimit : 0;
+                    runFrameLimit = frameLimit + Math.max(runRedDelayFrames, runBlueDelayFrames) + totalKickFrames;
                     runStartRedCloser = previous.P == 0;
                     runTargetRedCloser = next.P == 0;
                     runStartBlueCloser = previous.P == 1;
@@ -559,6 +622,7 @@ public class Field {
             runDirectionX = 0f;
             runDirectionY = 0f;
             runTotalDistance = 0f;
+            kickPhaseActive = false;
         }
 
         startBallAnimation(flippedStartX, flippedStartY, flippedTargetX, flippedTargetY, totalDistance, movementFrameCount);
@@ -591,11 +655,14 @@ public class Field {
         runTargetBlueCloser = false;
         activeRunRedPlayerFrames = EMPTY_BITMAP_ARRAY;
         activeRunBluePlayerFrames = EMPTY_BITMAP_ARRAY;
+        activeKickRedPlayerFrames = EMPTY_BITMAP_ARRAY;
+        activeKickBluePlayerFrames = EMPTY_BITMAP_ARRAY;
         runMovingPlayer = -1;
         runRedDelayFrames = 0;
         runBlueDelayFrames = 0;
         runRedCompleted = false;
         runBlueCompleted = false;
+        kickPhaseActive = false;
         completeBallAnimation();
     }
 
@@ -674,13 +741,46 @@ public class Field {
         if (!runAnimationActive) {
             return;
         }
-        Bitmap[] redFrames = activeRunRedPlayerFrames != null ? activeRunRedPlayerFrames : EMPTY_BITMAP_ARRAY;
-        Bitmap[] blueFrames = activeRunBluePlayerFrames != null ? activeRunBluePlayerFrames : EMPTY_BITMAP_ARRAY;
-        int redFrameCount = redFrames.length;
-        int blueFrameCount = blueFrames.length;
+        
+        // Determine if we're in kick phase or run phase
+        boolean inKickPhase = kickPhaseActive && runPlayerFrameIndex < kickFrameLimit;
+        
+        // Select appropriate frames based on phase and which player is moving
+        Bitmap[] redFrames;
+        Bitmap[] blueFrames;
+        int redFrameCount;
+        int blueFrameCount;
+        int redFrameOffset = 0;
+        int blueFrameOffset = 0;
+        
+        if (inKickPhase) {
+            // During kick phase, use kick frames for moving player, run frames for other player
+            if (runMovingPlayer == 0) {
+                redFrames = activeKickRedPlayerFrames != null ? activeKickRedPlayerFrames : EMPTY_BITMAP_ARRAY;
+                blueFrames = activeRunBluePlayerFrames != null ? activeRunBluePlayerFrames : EMPTY_BITMAP_ARRAY;
+            } else if (runMovingPlayer == 1) {
+                redFrames = activeRunRedPlayerFrames != null ? activeRunRedPlayerFrames : EMPTY_BITMAP_ARRAY;
+                blueFrames = activeKickBluePlayerFrames != null ? activeKickBluePlayerFrames : EMPTY_BITMAP_ARRAY;
+            } else {
+                redFrames = activeRunRedPlayerFrames != null ? activeRunRedPlayerFrames : EMPTY_BITMAP_ARRAY;
+                blueFrames = activeRunBluePlayerFrames != null ? activeRunBluePlayerFrames : EMPTY_BITMAP_ARRAY;
+            }
+            redFrameCount = redFrames.length;
+            blueFrameCount = blueFrames.length;
+        } else {
+            // After kick phase, use run frames for both players
+            redFrames = activeRunRedPlayerFrames != null ? activeRunRedPlayerFrames : EMPTY_BITMAP_ARRAY;
+            blueFrames = activeRunBluePlayerFrames != null ? activeRunBluePlayerFrames : EMPTY_BITMAP_ARRAY;
+            redFrameCount = redFrames.length;
+            blueFrameCount = blueFrames.length;
+            // Adjust frame index to account for kick phase that already completed
+            redFrameOffset = kickPhaseActive ? kickFrameLimit : 0;
+            blueFrameOffset = kickPhaseActive ? kickFrameLimit : 0;
+        }
+        
         int frameCount = Math.max(redFrameCount, blueFrameCount);
         int maxDelay = Math.max(runRedDelayFrames, runBlueDelayFrames);
-        int frameLimit = Math.min(runFrameLimit, frameCount + maxDelay);
+        int frameLimit = Math.min(runFrameLimit, frameCount + maxDelay + (kickPhaseActive ? kickFrameLimit : 0));
         if (frameLimit <= 0) {
             stopRunAnimation(SystemClock.uptimeMillis());
             return;
@@ -707,8 +807,8 @@ public class Field {
             return;
         }
 
-        int redFrameIndex = runPlayerFrameIndex - runRedDelayFrames;
-        int blueFrameIndex = runPlayerFrameIndex - runBlueDelayFrames;
+        int redFrameIndex = runPlayerFrameIndex - runRedDelayFrames - redFrameOffset;
+        int blueFrameIndex = runPlayerFrameIndex - runBlueDelayFrames - blueFrameOffset;
 
         Bitmap redFrame = redFrameIndex >= 0
                 ? getRunFrame(redFrames, redFrameIndex, redFrameCount)
@@ -922,6 +1022,62 @@ public class Field {
         } else {
             redFrames = runRedPlayerSouthWestFrames;
             blueFrames = runBluePlayerSouthWestFrames;
+        }
+
+        if ((redFrames == null || redFrames.length == 0)
+                && (blueFrames == null || blueFrames.length == 0)) {
+            return RunAnimationFrameSet.EMPTY;
+        }
+
+        return new RunAnimationFrameSet(redFrames, blueFrames);
+    }
+
+    private RunAnimationFrameSet selectKickAnimationFrames(float deltaX, float deltaY, float spriteDeltaX, float spriteDeltaY) {
+        if (deltaX == 0f && deltaY == 0f) {
+            return RunAnimationFrameSet.EMPTY;
+        }
+
+        float orientationX = spriteDeltaX;
+        float orientationY = spriteDeltaY;
+
+        double orientationMagnitude = Math.hypot(orientationX, orientationY);
+        if (orientationMagnitude < SPRITE_DIRECTION_EPSILON) {
+            orientationX = deltaX;
+            orientationY = deltaY;
+        }
+
+        double angle = Math.atan2(-orientationY, orientationX);
+        double degrees = Math.toDegrees(angle);
+        if (degrees < 0) {
+            degrees += 360.0;
+        }
+
+        Bitmap[] redFrames;
+        Bitmap[] blueFrames;
+        if (degrees >= 157.5 && degrees < 202.5) {
+            redFrames = kickRedPlayerWestFrames;
+            blueFrames = kickBluePlayerWestFrames;
+        } else if (degrees >= 112.5 && degrees < 157.5) {
+            redFrames = kickRedPlayerWestNorthFrames;
+            blueFrames = kickBluePlayerWestNorthFrames;
+        } else if (degrees >= 67.5 && degrees < 112.5) {
+            redFrames = kickRedPlayerNorthFrames;
+            blueFrames = kickBluePlayerNorthFrames;
+        } else if (degrees >= 22.5 && degrees < 67.5) {
+            redFrames = kickRedPlayerEastNorthFrames;
+            blueFrames = kickBluePlayerEastNorthFrames;
+        } else if (degrees >= 337.5 || degrees < 22.5) {
+            redFrames = kickRedPlayerEastFrames;
+            blueFrames = kickBluePlayerEastFrames;
+        } else if (degrees >= 292.5 && degrees < 337.5) {
+            redFrames = kickRedPlayerEastSouthFrames;
+            blueFrames = kickBluePlayerEastSouthFrames;
+        } else if (degrees >= 247.5 && degrees < 292.5) {
+            redFrames = kickRedPlayerSouthFrames;
+            blueFrames = kickBluePlayerSouthFrames;
+        } else {
+            redFrames = kickRedPlayerSouthWestFrames;
+            blueFrames = kickBluePlayerSouthWestFrames;
         }
 
         if ((redFrames == null || redFrames.length == 0)
