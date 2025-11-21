@@ -1575,9 +1575,14 @@ public class Field {
         }
         float idleBlueCenterX = ballCenterX;
         float idleBlueCenterY = ballCenterY;
-        // During kick animation or run delay, the non-kicking player should stay at starting position
-        if ((runActive && runMovingPlayer == 0 && blueDelayActive && !kickAnimationActive)
-                || (kickAnimationActive && runMovingPlayer == 0)) {
+        // During kick animation, the non-kicking player should stay at starting position
+        // When player 0 (red) is kicking, player 1 (blue) should not move
+        if (kickAnimationActive && runMovingPlayer == 0) {
+            idleBlueCenterX = w2x(runStartGridX);
+            idleBlueCenterY = h2y(runStartGridY);
+        }
+        // During run delay (before run animation starts), the non-moving player should stay at starting position
+        else if (runActive && runMovingPlayer == 0 && blueDelayActive) {
             idleBlueCenterX = w2x(runStartGridX);
             idleBlueCenterY = h2y(runStartGridY);
         }
@@ -1608,9 +1613,14 @@ public class Field {
         }
         float idleRedCenterX = ballCenterX;
         float idleRedCenterY = ballCenterY;
-        // During kick animation or run delay, the non-kicking player should stay at starting position
-        if ((runActive && runMovingPlayer == 1 && redDelayActive && !kickAnimationActive)
-                || (kickAnimationActive && runMovingPlayer == 1)) {
+        // During kick animation, the non-kicking player should stay at starting position
+        // When player 1 (blue) is kicking, player 0 (red) should not move
+        if (kickAnimationActive && runMovingPlayer == 1) {
+            idleRedCenterX = w2x(runStartGridX);
+            idleRedCenterY = h2y(runStartGridY);
+        }
+        // During run delay (before run animation starts), the non-moving player should stay at starting position
+        else if (runActive && runMovingPlayer == 1 && redDelayActive) {
             idleRedCenterX = w2x(runStartGridX);
             idleRedCenterY = h2y(runStartGridY);
         }
