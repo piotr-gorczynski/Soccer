@@ -1581,8 +1581,9 @@ public class Field {
             idleBlueCenterX = w2x(runStartGridX);
             idleBlueCenterY = h2y(runStartGridY);
         }
-        // During run delay (before run animation starts), the non-moving player should stay at starting position
-        else if (runActive && runMovingPlayer == 0 && blueDelayActive) {
+        // During run animation (including delay), the non-moving player should stay at starting position
+        // When player 0 (red) is moving, player 1 (blue) should not move
+        else if (runActive && runMovingPlayer == 0) {
             idleBlueCenterX = w2x(runStartGridX);
             idleBlueCenterY = h2y(runStartGridY);
         }
@@ -1619,8 +1620,9 @@ public class Field {
             idleRedCenterX = w2x(runStartGridX);
             idleRedCenterY = h2y(runStartGridY);
         }
-        // During run delay (before run animation starts), the non-moving player should stay at starting position
-        else if (runActive && runMovingPlayer == 1 && redDelayActive) {
+        // During run animation (including delay), the non-moving player should stay at starting position
+        // When player 1 (blue) is moving, player 0 (red) should not move
+        else if (runActive && runMovingPlayer == 1) {
             idleRedCenterX = w2x(runStartGridX);
             idleRedCenterY = h2y(runStartGridY);
         }
