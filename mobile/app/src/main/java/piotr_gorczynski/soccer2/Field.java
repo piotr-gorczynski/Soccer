@@ -1575,7 +1575,7 @@ public class Field {
         }
         float idleBlueCenterX = ballCenterX;
         float idleBlueCenterY = ballCenterY;
-        if (runActive && runMovingPlayer == 0 && blueDelayActive) {
+        if (runActive && runMovingPlayer == 0 && blueDelayActive && !kickAnimationActive) {
             idleBlueCenterX = w2x(runStartGridX);
             idleBlueCenterY = h2y(runStartGridY);
         }
@@ -1606,7 +1606,7 @@ public class Field {
         }
         float idleRedCenterX = ballCenterX;
         float idleRedCenterY = ballCenterY;
-        if (runActive && runMovingPlayer == 1 && redDelayActive) {
+        if (runActive && runMovingPlayer == 1 && redDelayActive && !kickAnimationActive) {
             idleRedCenterX = w2x(runStartGridX);
             idleRedCenterY = h2y(runStartGridY);
         }
