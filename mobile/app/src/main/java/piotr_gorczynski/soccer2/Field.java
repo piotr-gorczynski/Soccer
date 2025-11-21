@@ -1503,10 +1503,31 @@ public class Field {
         return new BallState(ballCenterX, ballCenterY, radius);
     }
 
+    private MoveTo findLastMoveByPlayer(int playerIndex) {
+        if (Moves == null || Moves.isEmpty()) {
+            return null;
+        }
+
+        int turnAfterPlayerMove = playerIndex == 0 ? 1 : 0;
+        for (int i = Moves.size() - 1; i >= 0; i--) {
+            MoveTo move = Moves.get(i);
+            if (move.X == -1 && move.Y == -1) {
+                continue; // Skip artificial moves (e.g., forfeits)
+            }
+            if (move.P == turnAfterPlayerMove) {
+                return move;
+            }
+        }
+        return null;
+    }
+
     private void drawIdlePlayers(Canvas canvas, BallState ballState, int currentTurn) {
         if (!showIdlePlayerSprite || flSpriteSize <= 0f) {
             return;
         }
+
+        MoveTo lastRedMove = findLastMoveByPlayer(0);
+        MoveTo lastBlueMove = findLastMoveByPlayer(1);
 
         int redFrameCount = idleRedPlayerFrames.length;
         int blueFrameCount = idleBluePlayerFrames.length;
@@ -1573,20 +1594,12 @@ public class Field {
         if (runActive && runMovingPlayer == 0 && blueDelayActive) {
             blueShouldBeCloser = false;
         }
-        float idleBlueCenterX = ballCenterX;
-        float idleBlueCenterY = ballCenterY;
-        // During kick animation, the non-kicking player should stay at starting position
-        // When player 0 (red) is kicking, player 1 (blue) should not move
-        if (kickAnimationActive && runMovingPlayer == 0) {
-            idleBlueCenterX = w2x(runStartGridX);
-            idleBlueCenterY = h2y(runStartGridY);
-        }
-        // During run animation (including delay), the non-moving player should stay at starting position
-        // When player 0 (red) is moving, player 1 (blue) should not move
-        else if (runActive && runMovingPlayer == 0) {
-            idleBlueCenterX = w2x(runStartGridX);
-            idleBlueCenterY = h2y(runStartGridY);
-        }
+        float idleBlueCenterX = lastBlueMove != null
+                ? w2x(flipX(lastBlueMove.X))
+                : ballCenterX;
+        float idleBlueCenterY = lastBlueMove != null
+                ? h2y(flipY(lastBlueMove.Y))
+                : ballCenterY;
         if (blueFrameCount > 0 && shouldDrawIdleBlue) {
             Bitmap spriteFrame = idleBluePlayerFrames[idlePlayerFrameIndex % blueFrameCount];
             if (spriteFrame != null && !spriteFrame.isRecycled()) {
@@ -1612,20 +1625,12 @@ public class Field {
         if (runActive && runMovingPlayer == 1 && redDelayActive) {
             redShouldBeCloser = false;
         }
-        float idleRedCenterX = ballCenterX;
-        float idleRedCenterY = ballCenterY;
-        // During kick animation, the non-kicking player should stay at starting position
-        // When player 1 (blue) is kicking, player 0 (red) should not move
-        if (kickAnimationActive && runMovingPlayer == 1) {
-            idleRedCenterX = w2x(runStartGridX);
-            idleRedCenterY = h2y(runStartGridY);
-        }
-        // During run animation (including delay), the non-moving player should stay at starting position
-        // When player 1 (blue) is moving, player 0 (red) should not move
-        else if (runActive && runMovingPlayer == 1) {
-            idleRedCenterX = w2x(runStartGridX);
-            idleRedCenterY = h2y(runStartGridY);
-        }
+        float idleRedCenterX = lastRedMove != null
+                ? w2x(flipX(lastRedMove.X))
+                : ballCenterX;
+        float idleRedCenterY = lastRedMove != null
+                ? h2y(flipY(lastRedMove.Y))
+                : ballCenterY;
         if (redFrameCount > 0 && shouldDrawIdleRed) {
             Bitmap spriteFrame = idleRedPlayerFrames[idlePlayerFrameIndex % redFrameCount];
             if (spriteFrame != null && !spriteFrame.isRecycled()) {
