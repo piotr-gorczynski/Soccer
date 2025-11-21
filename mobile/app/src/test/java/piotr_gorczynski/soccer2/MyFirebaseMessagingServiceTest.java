@@ -24,6 +24,8 @@ public class MyFirebaseMessagingServiceTest {
 
     /**
      * Helper method to create a RemoteMessage from a data map
+     * Note: RemoteMessage.Builder doesn't accept null values, so null entries are skipped.
+     * This simulates the actual behavior where getData().get() returns null for missing keys.
      */
     private RemoteMessage createRemoteMessage(Map<String, String> data) {
         RemoteMessage.Builder builder = new RemoteMessage.Builder("test");
@@ -42,10 +44,11 @@ public class MyFirebaseMessagingServiceTest {
     public void testOnMessageReceived_withNullTitle_shouldNotCrash() {
         MyFirebaseMessagingService service = new MyFirebaseMessagingService();
         
-        // Create a RemoteMessage with null title
+        // Create a RemoteMessage with null title (simulated by not adding the key)
+        // getData().get("title") will return null for missing keys
         Map<String, String> data = new HashMap<>();
         data.put("type", "invite");
-        data.put("title", null);
+        data.put("title", null);  // Will be skipped, resulting in getData().get("title") == null
         data.put("body", "Test body");
         data.put("inviteId", "test123");
         data.put("fromNickname", "TestUser");
@@ -70,11 +73,12 @@ public class MyFirebaseMessagingServiceTest {
     public void testOnMessageReceived_withNullBody_shouldNotCrash() {
         MyFirebaseMessagingService service = new MyFirebaseMessagingService();
         
-        // Create a RemoteMessage with null body
+        // Create a RemoteMessage with null body (simulated by not adding the key)
+        // getData().get("body") will return null for missing keys
         Map<String, String> data = new HashMap<>();
         data.put("type", "invite");
         data.put("title", "Test title");
-        data.put("body", null);
+        data.put("body", null);  // Will be skipped, resulting in getData().get("body") == null
         data.put("inviteId", "test123");
         data.put("fromNickname", "TestUser");
         
@@ -126,7 +130,8 @@ public class MyFirebaseMessagingServiceTest {
     public void testOnMessageReceived_withBothNullTitleAndBody_shouldNotCrash() {
         MyFirebaseMessagingService service = new MyFirebaseMessagingService();
         
-        // Create a RemoteMessage with both null title and body
+        // Create a RemoteMessage with both null title and body (by not adding those keys)
+        // getData().get("title") and getData().get("body") will both return null
         Map<String, String> data = new HashMap<>();
         data.put("type", "invite");
         data.put("inviteId", "test123");
