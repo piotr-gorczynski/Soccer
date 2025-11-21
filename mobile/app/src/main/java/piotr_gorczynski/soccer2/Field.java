@@ -1575,12 +1575,9 @@ public class Field {
         }
         float idleBlueCenterX = ballCenterX;
         float idleBlueCenterY = ballCenterY;
-        if (runActive && runMovingPlayer == 0 && blueDelayActive && !kickAnimationActive) {
-            idleBlueCenterX = w2x(runStartGridX);
-            idleBlueCenterY = h2y(runStartGridY);
-        }
-        // During kick animation, the non-kicking player should stay at starting position
-        if (kickAnimationActive && runMovingPlayer == 0) {
+        // During kick animation or run delay, the non-kicking player should stay at starting position
+        if ((runActive && runMovingPlayer == 0 && blueDelayActive && !kickAnimationActive)
+                || (kickAnimationActive && runMovingPlayer == 0)) {
             idleBlueCenterX = w2x(runStartGridX);
             idleBlueCenterY = h2y(runStartGridY);
         }
@@ -1611,12 +1608,9 @@ public class Field {
         }
         float idleRedCenterX = ballCenterX;
         float idleRedCenterY = ballCenterY;
-        if (runActive && runMovingPlayer == 1 && redDelayActive && !kickAnimationActive) {
-            idleRedCenterX = w2x(runStartGridX);
-            idleRedCenterY = h2y(runStartGridY);
-        }
-        // During kick animation, the non-kicking player should stay at starting position
-        if (kickAnimationActive && runMovingPlayer == 1) {
+        // During kick animation or run delay, the non-kicking player should stay at starting position
+        if ((runActive && runMovingPlayer == 1 && redDelayActive && !kickAnimationActive)
+                || (kickAnimationActive && runMovingPlayer == 1)) {
             idleRedCenterX = w2x(runStartGridX);
             idleRedCenterY = h2y(runStartGridY);
         }
