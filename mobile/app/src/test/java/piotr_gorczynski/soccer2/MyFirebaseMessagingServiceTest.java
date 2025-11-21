@@ -23,6 +23,19 @@ import static org.junit.Assert.*;
 public class MyFirebaseMessagingServiceTest {
 
     /**
+     * Helper method to create a RemoteMessage from a data map
+     */
+    private RemoteMessage createRemoteMessage(Map<String, String> data) {
+        RemoteMessage.Builder builder = new RemoteMessage.Builder("test");
+        for (Map.Entry<String, String> entry : data.entrySet()) {
+            if (entry.getValue() != null) {
+                builder.addData(entry.getKey(), entry.getValue());
+            }
+        }
+        return builder.build();
+    }
+
+    /**
      * Test that the service handles null title gracefully without crashing
      */
     @Test
@@ -39,19 +52,12 @@ public class MyFirebaseMessagingServiceTest {
         
         // This should not throw an exception
         try {
-            RemoteMessage.Builder builder = new RemoteMessage.Builder("test");
-            for (Map.Entry<String, String> entry : data.entrySet()) {
-                if (entry.getValue() != null) {
-                    builder.addData(entry.getKey(), entry.getValue());
-                }
-            }
-            RemoteMessage message = builder.build();
+            RemoteMessage message = createRemoteMessage(data);
             
             // The service should handle this gracefully
             service.onMessageReceived(message);
             
-            // If we reach here without exception, test passes
-            assertTrue("Service handled null title without crashing", true);
+            // Test passes if we reach this point without exception
         } catch (Exception e) {
             fail("Service should not crash with null title: " + e.getMessage());
         }
@@ -74,19 +80,12 @@ public class MyFirebaseMessagingServiceTest {
         
         // This should not throw an exception
         try {
-            RemoteMessage.Builder builder = new RemoteMessage.Builder("test");
-            for (Map.Entry<String, String> entry : data.entrySet()) {
-                if (entry.getValue() != null) {
-                    builder.addData(entry.getKey(), entry.getValue());
-                }
-            }
-            RemoteMessage message = builder.build();
+            RemoteMessage message = createRemoteMessage(data);
             
             // The service should handle this gracefully
             service.onMessageReceived(message);
             
-            // If we reach here without exception, test passes
-            assertTrue("Service handled null body without crashing", true);
+            // Test passes if we reach this point without exception
         } catch (Exception e) {
             fail("Service should not crash with null body: " + e.getMessage());
         }
@@ -109,17 +108,12 @@ public class MyFirebaseMessagingServiceTest {
         
         // This should not throw an exception
         try {
-            RemoteMessage.Builder builder = new RemoteMessage.Builder("test");
-            for (Map.Entry<String, String> entry : data.entrySet()) {
-                builder.addData(entry.getKey(), entry.getValue());
-            }
-            RemoteMessage message = builder.build();
+            RemoteMessage message = createRemoteMessage(data);
             
             // The service should handle this gracefully
             service.onMessageReceived(message);
             
-            // If we reach here without exception, test passes
-            assertTrue("Service handled empty title without crashing", true);
+            // Test passes if we reach this point without exception
         } catch (Exception e) {
             fail("Service should not crash with empty title: " + e.getMessage());
         }
@@ -140,19 +134,12 @@ public class MyFirebaseMessagingServiceTest {
         
         // This should not throw an exception
         try {
-            RemoteMessage.Builder builder = new RemoteMessage.Builder("test");
-            for (Map.Entry<String, String> entry : data.entrySet()) {
-                if (entry.getValue() != null) {
-                    builder.addData(entry.getKey(), entry.getValue());
-                }
-            }
-            RemoteMessage message = builder.build();
+            RemoteMessage message = createRemoteMessage(data);
             
             // The service should handle this gracefully
             service.onMessageReceived(message);
             
-            // If we reach here without exception, test passes
-            assertTrue("Service handled both null title and body without crashing", true);
+            // Test passes if we reach this point without exception
         } catch (Exception e) {
             fail("Service should not crash with null title and body: " + e.getMessage());
         }
@@ -173,17 +160,12 @@ public class MyFirebaseMessagingServiceTest {
         
         // This should not throw an exception and should be silently ignored
         try {
-            RemoteMessage.Builder builder = new RemoteMessage.Builder("test");
-            for (Map.Entry<String, String> entry : data.entrySet()) {
-                builder.addData(entry.getKey(), entry.getValue());
-            }
-            RemoteMessage message = builder.build();
+            RemoteMessage message = createRemoteMessage(data);
             
             // The service should ignore this message
             service.onMessageReceived(message);
             
-            // If we reach here without exception, test passes
-            assertTrue("Service correctly ignored start message", true);
+            // Test passes if we reach this point without exception
         } catch (Exception e) {
             fail("Service should handle start messages without crashing: " + e.getMessage());
         }

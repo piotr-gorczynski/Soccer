@@ -72,13 +72,21 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             String fromNickname = remoteMessage.getData().get("fromNickname");
             
             // Provide fallback values for null title/body to prevent RemoteServiceException
-            if (title == null || title.trim().isEmpty()) {
+            // Trim once and reuse to avoid redundant operations
+            String trimmedTitle = title != null ? title.trim() : "";
+            if (trimmedTitle.isEmpty()) {
                 title = "Game Invite";
                 Log.w("TAG_Soccer", getClass().getSimpleName() + ".onMessageReceived: title was null or empty, using fallback");
+            } else {
+                title = trimmedTitle;
             }
-            if (body == null || body.trim().isEmpty()) {
+            
+            String trimmedBody = body != null ? body.trim() : "";
+            if (trimmedBody.isEmpty()) {
                 body = "You have a new game invitation";
                 Log.w("TAG_Soccer", getClass().getSimpleName() + ".onMessageReceived: body was null or empty, using fallback");
+            } else {
+                body = trimmedBody;
             }
             
             // Safely generate a notification ID
