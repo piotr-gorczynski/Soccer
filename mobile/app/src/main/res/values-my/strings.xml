@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Basic app strings in Burmese -->
-    <string name="app_name">Soccer 2</string>
+    <string name="app_name">Gridline Soccer</string>
     <string name="select_language">ဘာသာစကားရွေးချယ်ပါ</string>
     
     <!-- Language names in Burmese -->
