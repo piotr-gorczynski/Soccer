@@ -955,13 +955,11 @@ public class Field {
             }
         }
 
-        if (Log.isLoggable("TAG_Soccer", Log.DEBUG)) {
-            Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawKickAnimation: "
-                    + "redSprite x=" + redSpriteCenterX + " y=" + redSpriteCenterY + ", "
-                    + "blueSprite x=" + blueSpriteCenterX + " y=" + blueSpriteCenterY + ", "
-                    + "ball x=" + ballCenterX + " y=" + ballCenterY + ", "
-                    + "frameIndex=" + kickPlayerFrameIndex);
-        }
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawKickAnimation: "
+                + "redSprite x=" + redSpriteCenterX + " y=" + redSpriteCenterY + ", "
+                + "blueSprite x=" + blueSpriteCenterX + " y=" + blueSpriteCenterY + ", "
+                + "ball x=" + ballCenterX + " y=" + ballCenterY + ", "
+                + "frameIndex=" + kickPlayerFrameIndex);
 
         // Check if kick animation is complete
         if ((runMovingPlayer == 0 && kickRedCompleted) || (runMovingPlayer == 1 && kickBlueCompleted)) {
@@ -1131,13 +1129,11 @@ public class Field {
         float ballCenterX = w2x(ballGridX);
         float ballCenterY = h2y(ballGridY);
 
-        if (Log.isLoggable("TAG_Soccer", Log.DEBUG)) {
-            Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawRunAnimation: "
-                    + "redSprite x=" + redCenterX + " y=" + redCenterY + ", "
-                    + "blueSprite x=" + blueCenterX + " y=" + blueCenterY + ", "
-                    + "ball x=" + ballCenterX + " y=" + ballCenterY + ", "
-                    + "frameIndex=" + runPlayerFrameIndex);
-        }
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawRunAnimation: "
+                + "redSprite x=" + redCenterX + " y=" + redCenterY + ", "
+                + "blueSprite x=" + blueCenterX + " y=" + blueCenterY + ", "
+                + "ball x=" + ballCenterX + " y=" + ballCenterY + ", "
+                + "frameIndex=" + runPlayerFrameIndex);
 
         runBlueFrameVisible = false;
         runRedFrameVisible = false;
@@ -1695,6 +1691,12 @@ public class Field {
                 }
             }
         }
+
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawIdlePlayers: "
+                + "redSprite x=" + idleRedCenterX + " y=" + idleRedCenterY + ", "
+                + "blueSprite x=" + idleBlueCenterX + " y=" + idleBlueCenterY + ", "
+                + "ball x=" + ballCenterX + " y=" + ballCenterY + ", "
+                + "frameIndex=" + idlePlayerFrameIndex);
     }
 
     public void draw(Canvas canvas) {
