@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Soccer 2</string>
+    <string name="app_name">Gridline Soccer</string>
     <string name="select_language">زبان را انتخاب کنید</string>
     <string name="language_amharic">آمهری</string>
     <string name="language_arabic">عربی</string>

@@ -2,7 +2,7 @@
 <resources>
     <string name="facebook_id_label">Facebook ID: %1$s</string>
     <!-- Basic app strings in Nepali -->
-    <string name="app_name">Soccer 2</string>
+    <string name="app_name">Gridline Soccer</string>
     <string name="menu_Settings">सेटिङहरू</string>
     <string name="title_activity_settings">सेटिङहरू</string>
     
