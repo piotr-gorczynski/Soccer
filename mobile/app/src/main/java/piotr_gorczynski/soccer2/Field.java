@@ -126,10 +126,10 @@ public class Field {
     private boolean kickBlueCompleted = false;
     private boolean kickRedFrameVisible = false;
     private boolean kickBlueFrameVisible = false;
-    private float runFinalRedGridX = -1f;
-    private float runFinalRedGridY = -1f;
-    private float runFinalBlueGridX = -1f;
-    private float runFinalBlueGridY = -1f;
+    private float runFinalRedGridX = Float.NaN;
+    private float runFinalRedGridY = Float.NaN;
+    private float runFinalBlueGridX = Float.NaN;
+    private float runFinalBlueGridY = Float.NaN;
 
     private boolean ballAnimationActive = false;
     private long ballAnimationStartTime = 0L;
@@ -672,10 +672,7 @@ public class Field {
                     runBlueCompleted = false;
                     
                     // Reset final positions when starting new animation
-                    runFinalRedGridX = -1f;
-                    runFinalRedGridY = -1f;
-                    runFinalBlueGridX = -1f;
-                    runFinalBlueGridY = -1f;
+                    resetRunFinalPositions();
                     
                     // Initialize kick animation for the moving player
                     if (canStartKick && !kickFrameSet.isEmpty() && (movingPlayer == 0 || movingPlayer == 1)) {
@@ -722,10 +719,7 @@ public class Field {
             runDirectionX = 0f;
             runDirectionY = 0f;
             runTotalDistance = 0f;
-            runFinalRedGridX = -1f;
-            runFinalRedGridY = -1f;
-            runFinalBlueGridX = -1f;
-            runFinalBlueGridY = -1f;
+            resetRunFinalPositions();
             
             kickAnimationActive = false;
             kickPlayerFrameIndex = 0;
@@ -748,6 +742,13 @@ public class Field {
 
     public boolean isHandTutorialActive() {
         return showHandTutorial;
+    }
+
+    private void resetRunFinalPositions() {
+        runFinalRedGridX = Float.NaN;
+        runFinalRedGridY = Float.NaN;
+        runFinalBlueGridX = Float.NaN;
+        runFinalBlueGridY = Float.NaN;
     }
 
     private void stopRunAnimation(long referenceTime) {
@@ -1653,7 +1654,7 @@ public class Field {
         }
         float idleBlueCenterX;
         float idleBlueCenterY;
-        if (runFinalBlueGridX >= 0f && runFinalBlueGridY >= 0f) {
+        if (!Float.isNaN(runFinalBlueGridX) && !Float.isNaN(runFinalBlueGridY)) {
             // Use the final position from the last run animation
             idleBlueCenterX = w2x(runFinalBlueGridX);
             idleBlueCenterY = h2y(runFinalBlueGridY);
@@ -1699,7 +1700,7 @@ public class Field {
         }
         float idleRedCenterX;
         float idleRedCenterY;
-        if (runFinalRedGridX >= 0f && runFinalRedGridY >= 0f) {
+        if (!Float.isNaN(runFinalRedGridX) && !Float.isNaN(runFinalRedGridY)) {
             // Use the final position from the last run animation
             idleRedCenterX = w2x(runFinalRedGridX);
             idleRedCenterY = h2y(runFinalRedGridY);
