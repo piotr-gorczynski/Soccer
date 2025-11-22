@@ -894,20 +894,14 @@ public class Field {
         float ballCenterX = w2x(runStartGridX);
         float ballCenterY = h2y(runStartGridY);
 
-        // Calculate red and blue sprite positions (both at ball position during kick)
-        float redCenterX = ballCenterX;
-        float redCenterY = ballCenterY;
-        float blueCenterX = ballCenterX;
-        float blueCenterY = ballCenterY;
-
-        Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawKickAnimation: "
-                + "redSprite x=" + redCenterX + " y=" + redCenterY + ", "
-                + "blueSprite x=" + blueCenterX + " y=" + blueCenterY + ", "
-                + "ball x=" + ballCenterX + " y=" + ballCenterY + ", "
-                + "frameIndex=" + kickPlayerFrameIndex);
-
         kickRedFrameVisible = false;
         kickBlueFrameVisible = false;
+
+        // Track sprite center positions for logging
+        float redSpriteCenterX = ballCenterX;
+        float redSpriteCenterY = ballCenterY;
+        float blueSpriteCenterX = ballCenterX;
+        float blueSpriteCenterY = ballCenterY;
 
         if (blueFrame != null && !blueFrame.isRecycled()) {
             float blueProximity = runStartBlueCloser ? 1f : 0f;
@@ -930,6 +924,8 @@ public class Field {
                 RectF blueDst = new RectF(blueLeft, blueTop, blueRight, blueBottom);
                 canvas.drawBitmap(blueFrame, null, blueDst, null);
                 kickBlueFrameVisible = true;
+                blueSpriteCenterX = (blueLeft + blueRight) / 2f;
+                blueSpriteCenterY = (blueTop + blueBottom) / 2f;
             }
         }
 
@@ -954,7 +950,17 @@ public class Field {
                 RectF redDst = new RectF(redLeft, redTop, redRight, redBottom);
                 canvas.drawBitmap(redFrame, null, redDst, null);
                 kickRedFrameVisible = true;
+                redSpriteCenterX = (redLeft + redRight) / 2f;
+                redSpriteCenterY = (redTop + redBottom) / 2f;
             }
+        }
+
+        if (Log.isLoggable("TAG_Soccer", Log.DEBUG)) {
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawKickAnimation: "
+                    + "redSprite x=" + redSpriteCenterX + " y=" + redSpriteCenterY + ", "
+                    + "blueSprite x=" + blueSpriteCenterX + " y=" + blueSpriteCenterY + ", "
+                    + "ball x=" + ballCenterX + " y=" + ballCenterY + ", "
+                    + "frameIndex=" + kickPlayerFrameIndex);
         }
 
         // Check if kick animation is complete
@@ -1125,11 +1131,13 @@ public class Field {
         float ballCenterX = w2x(ballGridX);
         float ballCenterY = h2y(ballGridY);
 
-        Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawRunAnimation: "
-                + "redSprite x=" + redCenterX + " y=" + redCenterY + ", "
-                + "blueSprite x=" + blueCenterX + " y=" + blueCenterY + ", "
-                + "ball x=" + ballCenterX + " y=" + ballCenterY + ", "
-                + "frameIndex=" + runPlayerFrameIndex);
+        if (Log.isLoggable("TAG_Soccer", Log.DEBUG)) {
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawRunAnimation: "
+                    + "redSprite x=" + redCenterX + " y=" + redCenterY + ", "
+                    + "blueSprite x=" + blueCenterX + " y=" + blueCenterY + ", "
+                    + "ball x=" + ballCenterX + " y=" + ballCenterY + ", "
+                    + "frameIndex=" + runPlayerFrameIndex);
+        }
 
         runBlueFrameVisible = false;
         runRedFrameVisible = false;
