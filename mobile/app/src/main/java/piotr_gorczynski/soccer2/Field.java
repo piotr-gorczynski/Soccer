@@ -1666,6 +1666,11 @@ public class Field {
             idleBlueCenterY = ballCenterY;
         }
 
+        // Align the idle sprite horizontally with the ball so its center matches the ball's
+        if (blueShouldBeCloser) {
+            idleBlueCenterX = ballCenterX;
+        }
+
         if (blueFrameCount > 0 && shouldDrawIdleBlue) {
             Bitmap spriteFrame = idleBluePlayerFrames[idlePlayerFrameIndex % blueFrameCount];
             if (spriteFrame != null && !spriteFrame.isRecycled()) {
@@ -1710,6 +1715,11 @@ public class Field {
         } else {
             idleRedCenterX = ballCenterX;
             idleRedCenterY = ballCenterY;
+        }
+
+        // Align the idle sprite horizontally with the ball so its center matches the ball's
+        if (redShouldBeCloser) {
+            idleRedCenterX = ballCenterX;
         }
 
         if (redFrameCount > 0 && shouldDrawIdleRed) {
