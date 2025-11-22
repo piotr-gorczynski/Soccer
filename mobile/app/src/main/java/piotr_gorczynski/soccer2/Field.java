@@ -897,7 +897,7 @@ public class Field {
         kickRedFrameVisible = false;
         kickBlueFrameVisible = false;
 
-        // Track sprite bounds for logging
+        // Track sprite bounds for logging - initialize to ball center (sprites kick from ball position)
         float redSpriteLeft = ballCenterX;
         float redSpriteTop = ballCenterY;
         float redSpriteRight = ballCenterX;
@@ -1145,7 +1145,7 @@ public class Field {
         runBlueFrameVisible = false;
         runRedFrameVisible = false;
 
-        // Track sprite bounds for logging
+        // Track sprite bounds for logging - initialize to center positions
         float redSpriteLeft = redCenterX;
         float redSpriteTop = redCenterY;
         float redSpriteRight = redCenterX;
@@ -1677,7 +1677,7 @@ public class Field {
                 ? h2y(flipY(lastBlueMove.Y))
                 : ballCenterY;
 
-        // Track sprite bounds for logging
+        // Track sprite bounds for logging - initialize to idle center position
         float blueSpriteLeft = idleBlueCenterX;
         float blueSpriteTop = idleBlueCenterY;
         float blueSpriteRight = idleBlueCenterX;
@@ -1719,7 +1719,7 @@ public class Field {
                 ? h2y(flipY(lastRedMove.Y))
                 : ballCenterY;
 
-        // Track sprite bounds for logging
+        // Track sprite bounds for logging - initialize to idle center position
         float redSpriteLeft = idleRedCenterX;
         float redSpriteTop = idleRedCenterY;
         float redSpriteRight = idleRedCenterX;
