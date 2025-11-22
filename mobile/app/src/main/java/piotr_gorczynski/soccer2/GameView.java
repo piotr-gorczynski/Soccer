@@ -58,7 +58,7 @@ public class GameView extends View {
         public void run() {
             if (shouldPulse()) {
                 invalidate();
-                pulseHandler.postDelayed(this, 16); // ~60 FPS
+                pulseHandler.postDelayed(this, 1000); // ~60 FPS
             }
         }
     };
