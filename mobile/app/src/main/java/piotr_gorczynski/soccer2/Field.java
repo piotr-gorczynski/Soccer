@@ -897,6 +897,12 @@ public class Field {
         kickRedFrameVisible = false;
         kickBlueFrameVisible = false;
 
+        // Track sprite center positions for logging
+        float redSpriteCenterX = ballCenterX;
+        float redSpriteCenterY = ballCenterY;
+        float blueSpriteCenterX = ballCenterX;
+        float blueSpriteCenterY = ballCenterY;
+
         if (blueFrame != null && !blueFrame.isRecycled()) {
             float blueProximity = runStartBlueCloser ? 1f : 0f;
             float blueFarBottom = ballCenterY - ballRadius;
@@ -918,6 +924,8 @@ public class Field {
                 RectF blueDst = new RectF(blueLeft, blueTop, blueRight, blueBottom);
                 canvas.drawBitmap(blueFrame, null, blueDst, null);
                 kickBlueFrameVisible = true;
+                blueSpriteCenterX = (blueLeft + blueRight) / 2f;
+                blueSpriteCenterY = (blueTop + blueBottom) / 2f;
             }
         }
 
@@ -942,7 +950,17 @@ public class Field {
                 RectF redDst = new RectF(redLeft, redTop, redRight, redBottom);
                 canvas.drawBitmap(redFrame, null, redDst, null);
                 kickRedFrameVisible = true;
+                redSpriteCenterX = (redLeft + redRight) / 2f;
+                redSpriteCenterY = (redTop + redBottom) / 2f;
             }
+        }
+
+        if (Log.isLoggable("TAG_Soccer", Log.DEBUG)) {
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawKickAnimation: "
+                    + "redSprite x=" + redSpriteCenterX + " y=" + redSpriteCenterY + ", "
+                    + "blueSprite x=" + blueSpriteCenterX + " y=" + blueSpriteCenterY + ", "
+                    + "ball x=" + ballCenterX + " y=" + ballCenterY + ", "
+                    + "frameIndex=" + kickPlayerFrameIndex);
         }
 
         // Check if kick animation is complete
@@ -1094,6 +1112,32 @@ public class Field {
         float blueGridY = runStartGridY + runDirectionY * blueDistanceTraveled;
         float blueCenterX = w2x(blueGridX);
         float blueCenterY = h2y(blueGridY);
+
+        // Calculate ball position
+        float ballGridX = runStartGridX;
+        float ballGridY = runStartGridY;
+        if (ballAnimationActive) {
+            long ballElapsed = now - ballAnimationStartTime;
+            long duration = ballAnimationDurationMs > 0L ? ballAnimationDurationMs : BALL_DEFAULT_DURATION_MS;
+            if (ballElapsed < duration && ballTotalDistance > 0f) {
+                float traveled = computeBallDistance(ballElapsed, duration, ballTotalDistance);
+                ballGridX = ballStartGridX + ballDirectionX * traveled;
+                ballGridY = ballStartGridY + ballDirectionY * traveled;
+            } else {
+                ballGridX = ballTargetGridX;
+                ballGridY = ballTargetGridY;
+            }
+        }
+        float ballCenterX = w2x(ballGridX);
+        float ballCenterY = h2y(ballGridY);
+
+        if (Log.isLoggable("TAG_Soccer", Log.DEBUG)) {
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawRunAnimation: "
+                    + "redSprite x=" + redCenterX + " y=" + redCenterY + ", "
+                    + "blueSprite x=" + blueCenterX + " y=" + blueCenterY + ", "
+                    + "ball x=" + ballCenterX + " y=" + ballCenterY + ", "
+                    + "frameIndex=" + runPlayerFrameIndex);
+        }
 
         runBlueFrameVisible = false;
         runRedFrameVisible = false;
