@@ -1628,6 +1628,9 @@ public class Field {
         if (runActive && runMovingPlayer == 0 && blueDelayActive) {
             blueShouldBeCloser = false;
         }
+        if (kickAnimationActive && runMovingPlayer == 0) {
+            blueShouldBeCloser = false;
+        }
         float idleBlueCenterX = lastBlueMove != null
                 ? w2x(flipX(lastBlueMove.X))
                 : ballCenterX;
@@ -1662,6 +1665,9 @@ public class Field {
 
         boolean redShouldBeCloser = currentTurn == 0;
         if (runActive && runMovingPlayer == 1 && redDelayActive) {
+            redShouldBeCloser = false;
+        }
+        if (kickAnimationActive && runMovingPlayer == 1) {
             redShouldBeCloser = false;
         }
         float idleRedCenterX = lastRedMove != null
