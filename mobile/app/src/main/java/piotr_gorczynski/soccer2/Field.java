@@ -897,15 +897,15 @@ public class Field {
         kickRedFrameVisible = false;
         kickBlueFrameVisible = false;
 
-        // Track sprite bounds for logging - initialize to ball center (sprites kick from ball position)
-        float redSpriteLeft = ballCenterX;
-        float redSpriteTop = ballCenterY;
-        float redSpriteRight = ballCenterX;
-        float redSpriteBottom = ballCenterY;
-        float blueSpriteLeft = ballCenterX;
-        float blueSpriteTop = ballCenterY;
-        float blueSpriteRight = ballCenterX;
-        float blueSpriteBottom = ballCenterY;
+        // Track sprite bounds for logging - only set when sprites are actually drawn
+        float redSpriteLeft = 0;
+        float redSpriteTop = 0;
+        float redSpriteRight = 0;
+        float redSpriteBottom = 0;
+        float blueSpriteLeft = 0;
+        float blueSpriteTop = 0;
+        float blueSpriteRight = 0;
+        float blueSpriteBottom = 0;
 
         if (blueFrame != null && !blueFrame.isRecycled()) {
             float blueProximity = runStartBlueCloser ? 1f : 0f;
@@ -963,15 +963,10 @@ public class Field {
             }
         }
 
-        float ballLeft = ballCenterX - ballRadius;
-        float ballTop = ballCenterY - ballRadius;
-        float ballRight = ballCenterX + ballRadius;
-        float ballBottom = ballCenterY + ballRadius;
-
         Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawKickAnimation: "
                 + "redSprite left=" + redSpriteLeft + " top=" + redSpriteTop + " right=" + redSpriteRight + " bottom=" + redSpriteBottom + ", "
                 + "blueSprite left=" + blueSpriteLeft + " top=" + blueSpriteTop + " right=" + blueSpriteRight + " bottom=" + blueSpriteBottom + ", "
-                + "ball left=" + ballLeft + " top=" + ballTop + " right=" + ballRight + " bottom=" + ballBottom + ", "
+                + "ball x=" + ballCenterX + " y=" + ballCenterY + ", "
                 + "frameIndex=" + kickPlayerFrameIndex);
 
         // Check if kick animation is complete
@@ -1145,15 +1140,15 @@ public class Field {
         runBlueFrameVisible = false;
         runRedFrameVisible = false;
 
-        // Track sprite bounds for logging - initialize to center positions
-        float redSpriteLeft = redCenterX;
-        float redSpriteTop = redCenterY;
-        float redSpriteRight = redCenterX;
-        float redSpriteBottom = redCenterY;
-        float blueSpriteLeft = blueCenterX;
-        float blueSpriteTop = blueCenterY;
-        float blueSpriteRight = blueCenterX;
-        float blueSpriteBottom = blueCenterY;
+        // Track sprite bounds for logging - only set when sprites are actually drawn
+        float redSpriteLeft = 0;
+        float redSpriteTop = 0;
+        float redSpriteRight = 0;
+        float redSpriteBottom = 0;
+        float blueSpriteLeft = 0;
+        float blueSpriteTop = 0;
+        float blueSpriteRight = 0;
+        float blueSpriteBottom = 0;
 
         if (blueFrame != null && !blueFrame.isRecycled()) {
             float blueFarBottom = blueCenterY - ballRadius;
@@ -1209,15 +1204,10 @@ public class Field {
             }
         }
 
-        float ballLeft = ballCenterX - ballRadius;
-        float ballTop = ballCenterY - ballRadius;
-        float ballRight = ballCenterX + ballRadius;
-        float ballBottom = ballCenterY + ballRadius;
-
         Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawRunAnimation: "
                 + "redSprite left=" + redSpriteLeft + " top=" + redSpriteTop + " right=" + redSpriteRight + " bottom=" + redSpriteBottom + ", "
                 + "blueSprite left=" + blueSpriteLeft + " top=" + blueSpriteTop + " right=" + blueSpriteRight + " bottom=" + blueSpriteBottom + ", "
-                + "ball left=" + ballLeft + " top=" + ballTop + " right=" + ballRight + " bottom=" + ballBottom + ", "
+                + "ball x=" + ballCenterX + " y=" + ballCenterY + ", "
                 + "frameIndex=" + runPlayerFrameIndex);
 
         if ((!redHasFrames || runRedCompleted) && (!blueHasFrames || runBlueCompleted)) {
@@ -1677,11 +1667,11 @@ public class Field {
                 ? h2y(flipY(lastBlueMove.Y))
                 : ballCenterY;
 
-        // Track sprite bounds for logging - initialize to idle center position
-        float blueSpriteLeft = idleBlueCenterX;
-        float blueSpriteTop = idleBlueCenterY;
-        float blueSpriteRight = idleBlueCenterX;
-        float blueSpriteBottom = idleBlueCenterY;
+        // Track sprite bounds for logging - only set when sprites are actually drawn
+        float blueSpriteLeft = 0;
+        float blueSpriteTop = 0;
+        float blueSpriteRight = 0;
+        float blueSpriteBottom = 0;
 
         if (blueFrameCount > 0 && shouldDrawIdleBlue) {
             Bitmap spriteFrame = idleBluePlayerFrames[idlePlayerFrameIndex % blueFrameCount];
@@ -1719,11 +1709,11 @@ public class Field {
                 ? h2y(flipY(lastRedMove.Y))
                 : ballCenterY;
 
-        // Track sprite bounds for logging - initialize to idle center position
-        float redSpriteLeft = idleRedCenterX;
-        float redSpriteTop = idleRedCenterY;
-        float redSpriteRight = idleRedCenterX;
-        float redSpriteBottom = idleRedCenterY;
+        // Track sprite bounds for logging - only set when sprites are actually drawn
+        float redSpriteLeft = 0;
+        float redSpriteTop = 0;
+        float redSpriteRight = 0;
+        float redSpriteBottom = 0;
 
         if (redFrameCount > 0 && shouldDrawIdleRed) {
             Bitmap spriteFrame = idleRedPlayerFrames[idlePlayerFrameIndex % redFrameCount];
@@ -1750,15 +1740,10 @@ public class Field {
             }
         }
 
-        float ballLeft = ballCenterX - ballState.radius;
-        float ballTop = ballCenterY - ballState.radius;
-        float ballRight = ballCenterX + ballState.radius;
-        float ballBottom = ballCenterY + ballState.radius;
-
         Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawIdlePlayers: "
                 + "redSprite left=" + redSpriteLeft + " top=" + redSpriteTop + " right=" + redSpriteRight + " bottom=" + redSpriteBottom + ", "
                 + "blueSprite left=" + blueSpriteLeft + " top=" + blueSpriteTop + " right=" + blueSpriteRight + " bottom=" + blueSpriteBottom + ", "
-                + "ball left=" + ballLeft + " top=" + ballTop + " right=" + ballRight + " bottom=" + ballBottom + ", "
+                + "ball x=" + ballCenterX + " y=" + ballCenterY + ", "
                 + "frameIndex=" + idlePlayerFrameIndex);
     }
 
