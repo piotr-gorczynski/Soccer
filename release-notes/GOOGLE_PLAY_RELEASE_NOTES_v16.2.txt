@@ -1,6 +1,7 @@
 <en-GB>
 🎮 Fix fsync ANR by replacing SharedPreferences commit() with apply() 
 🎮 Fix ANR during Field initialization by moving sprite loading off main thread
+🎮 Fix RemoteServiceException crash from null notification data
 </en-GB>
 
 <pl-PL>
