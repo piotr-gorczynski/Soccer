@@ -53,12 +53,15 @@ public class GameView extends View {
     private Long turnStartsTime;
 
     private final Handler pulseHandler = new Handler(Looper.getMainLooper());
+    private boolean pulseScheduled = false;
     private final Runnable pulseRunnable = new Runnable() {
         @Override
         public void run() {
             if (shouldPulse()) {
                 invalidate();
                 pulseHandler.postDelayed(this, 1000); // set 16 to get  ~60 FPS
+            } else {
+                pulseScheduled = false;
             }
         }
     };
@@ -342,11 +345,13 @@ public class GameView extends View {
     }
 
     private void startPulseIfNeeded() {
-        if (shouldPulse()) {
-            pulseHandler.removeCallbacks(pulseRunnable);
+        boolean shouldPulse = shouldPulse();
+        if (shouldPulse && !pulseScheduled) {
+            pulseScheduled = true;
             pulseHandler.post(pulseRunnable);
-        } else {
+        } else if (!shouldPulse && pulseScheduled) {
             pulseHandler.removeCallbacks(pulseRunnable);
+            pulseScheduled = false;
         }
     }
 
