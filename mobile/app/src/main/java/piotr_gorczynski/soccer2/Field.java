@@ -126,6 +126,10 @@ public class Field {
     private boolean kickBlueCompleted = false;
     private boolean kickRedFrameVisible = false;
     private boolean kickBlueFrameVisible = false;
+    private float runFinalRedGridX = Float.NaN;
+    private float runFinalRedGridY = Float.NaN;
+    private float runFinalBlueGridX = Float.NaN;
+    private float runFinalBlueGridY = Float.NaN;
 
     private boolean ballAnimationActive = false;
     private long ballAnimationStartTime = 0L;
@@ -667,6 +671,9 @@ public class Field {
                     runRedCompleted = false;
                     runBlueCompleted = false;
                     
+                    // Reset final positions when starting new animation
+                    resetRunFinalPositions();
+                    
                     // Initialize kick animation for the moving player
                     if (canStartKick && !kickFrameSet.isEmpty() && (movingPlayer == 0 || movingPlayer == 1)) {
                         kickAnimationActive = true;
@@ -712,6 +719,7 @@ public class Field {
             runDirectionX = 0f;
             runDirectionY = 0f;
             runTotalDistance = 0f;
+            resetRunFinalPositions();
             
             kickAnimationActive = false;
             kickPlayerFrameIndex = 0;
@@ -734,6 +742,13 @@ public class Field {
 
     public boolean isHandTutorialActive() {
         return showHandTutorial;
+    }
+
+    private void resetRunFinalPositions() {
+        runFinalRedGridX = Float.NaN;
+        runFinalRedGridY = Float.NaN;
+        runFinalBlueGridX = Float.NaN;
+        runFinalBlueGridY = Float.NaN;
     }
 
     private void stopRunAnimation(long referenceTime) {
@@ -1102,6 +1117,12 @@ public class Field {
         float blueGridY = runStartGridY + runDirectionY * blueDistanceTraveled;
         float blueCenterX = w2x(blueGridX);
         float blueCenterY = h2y(blueGridY);
+
+        // Save current sprite positions for use in idle animation
+        runFinalRedGridX = redGridX;
+        runFinalRedGridY = redGridY;
+        runFinalBlueGridX = blueGridX;
+        runFinalBlueGridY = blueGridY;
 
         // Calculate ball position
         float ballGridX = runStartGridX;
@@ -1631,12 +1652,19 @@ public class Field {
         if (kickAnimationActive && runMovingPlayer == 0) {
             blueShouldBeCloser = false;
         }
-        float idleBlueCenterX = lastBlueMove != null
-                ? w2x(flipX(lastBlueMove.X))
-                : ballCenterX;
-        float idleBlueCenterY = lastBlueMove != null
-                ? h2y(flipY(lastBlueMove.Y))
-                : ballCenterY;
+        float idleBlueCenterX;
+        float idleBlueCenterY;
+        if (!Float.isNaN(runFinalBlueGridX) && !Float.isNaN(runFinalBlueGridY)) {
+            // Use the final position from the last run animation
+            idleBlueCenterX = w2x(runFinalBlueGridX);
+            idleBlueCenterY = h2y(runFinalBlueGridY);
+        } else if (lastBlueMove != null) {
+            idleBlueCenterX = w2x(flipX(lastBlueMove.X));
+            idleBlueCenterY = h2y(flipY(lastBlueMove.Y));
+        } else {
+            idleBlueCenterX = ballCenterX;
+            idleBlueCenterY = ballCenterY;
+        }
 
         if (blueFrameCount > 0 && shouldDrawIdleBlue) {
             Bitmap spriteFrame = idleBluePlayerFrames[idlePlayerFrameIndex % blueFrameCount];
@@ -1670,12 +1698,19 @@ public class Field {
         if (kickAnimationActive && runMovingPlayer == 1) {
             redShouldBeCloser = false;
         }
-        float idleRedCenterX = lastRedMove != null
-                ? w2x(flipX(lastRedMove.X))
-                : ballCenterX;
-        float idleRedCenterY = lastRedMove != null
-                ? h2y(flipY(lastRedMove.Y))
-                : ballCenterY;
+        float idleRedCenterX;
+        float idleRedCenterY;
+        if (!Float.isNaN(runFinalRedGridX) && !Float.isNaN(runFinalRedGridY)) {
+            // Use the final position from the last run animation
+            idleRedCenterX = w2x(runFinalRedGridX);
+            idleRedCenterY = h2y(runFinalRedGridY);
+        } else if (lastRedMove != null) {
+            idleRedCenterX = w2x(flipX(lastRedMove.X));
+            idleRedCenterY = h2y(flipY(lastRedMove.Y));
+        } else {
+            idleRedCenterX = ballCenterX;
+            idleRedCenterY = ballCenterY;
+        }
 
         if (redFrameCount > 0 && shouldDrawIdleRed) {
             Bitmap spriteFrame = idleRedPlayerFrames[idlePlayerFrameIndex % redFrameCount];
