@@ -894,6 +894,18 @@ public class Field {
         float ballCenterX = w2x(runStartGridX);
         float ballCenterY = h2y(runStartGridY);
 
+        // Calculate red and blue sprite positions (both at ball position during kick)
+        float redCenterX = ballCenterX;
+        float redCenterY = ballCenterY;
+        float blueCenterX = ballCenterX;
+        float blueCenterY = ballCenterY;
+
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawKickAnimation: "
+                + "redSprite x=" + redCenterX + " y=" + redCenterY + ", "
+                + "blueSprite x=" + blueCenterX + " y=" + blueCenterY + ", "
+                + "ball x=" + ballCenterX + " y=" + ballCenterY + ", "
+                + "frameIndex=" + kickPlayerFrameIndex);
+
         kickRedFrameVisible = false;
         kickBlueFrameVisible = false;
 
@@ -1094,6 +1106,30 @@ public class Field {
         float blueGridY = runStartGridY + runDirectionY * blueDistanceTraveled;
         float blueCenterX = w2x(blueGridX);
         float blueCenterY = h2y(blueGridY);
+
+        // Calculate ball position
+        float ballGridX = runStartGridX;
+        float ballGridY = runStartGridY;
+        if (ballAnimationActive) {
+            long ballElapsed = now - ballAnimationStartTime;
+            long duration = ballAnimationDurationMs > 0L ? ballAnimationDurationMs : BALL_DEFAULT_DURATION_MS;
+            if (ballElapsed < duration && ballTotalDistance > 0f) {
+                float traveled = computeBallDistance(ballElapsed, duration, ballTotalDistance);
+                ballGridX = ballStartGridX + ballDirectionX * traveled;
+                ballGridY = ballStartGridY + ballDirectionY * traveled;
+            } else {
+                ballGridX = ballTargetGridX;
+                ballGridY = ballTargetGridY;
+            }
+        }
+        float ballCenterX = w2x(ballGridX);
+        float ballCenterY = h2y(ballGridY);
+
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawRunAnimation: "
+                + "redSprite x=" + redCenterX + " y=" + redCenterY + ", "
+                + "blueSprite x=" + blueCenterX + " y=" + blueCenterY + ", "
+                + "ball x=" + ballCenterX + " y=" + ballCenterY + ", "
+                + "frameIndex=" + runPlayerFrameIndex);
 
         runBlueFrameVisible = false;
         runRedFrameVisible = false;
