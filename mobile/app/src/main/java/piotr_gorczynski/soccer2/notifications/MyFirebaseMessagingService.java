@@ -63,62 +63,91 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             return;  // ignore legacy start push
         }
 
-        Context context = getApplicationContext();
+        try {
+            Context context = getApplicationContext();
 
-        // 1. Extract everything from the data payload
-        String title        = remoteMessage.getData().get("title");
-        String body         = remoteMessage.getData().get("body");
-        String fromNickname = remoteMessage.getData().get("fromNickname");
-        // Safely generate a notification ID
-        String inviteIdRaw   = remoteMessage.getData().get("inviteId");
-        String inviteId      = (inviteIdRaw != null
-                ? inviteIdRaw
-                : String.valueOf(System.currentTimeMillis()));
-        int notificationId   = inviteId.hashCode();
+            // 1. Extract everything from the data payload with null safety
+            String title        = remoteMessage.getData().get("title");
+            String body         = remoteMessage.getData().get("body");
+            String fromNickname = remoteMessage.getData().get("fromNickname");
+            
+            // Provide fallback values for null title/body to prevent RemoteServiceException
+            // Trim once and reuse to avoid redundant operations
+            String trimmedTitle = title != null ? title.trim() : "";
+            if (trimmedTitle.isEmpty()) {
+                title = "Game Invite";
+                Log.w("TAG_Soccer", getClass().getSimpleName() + ".onMessageReceived: title was null or empty, using fallback");
+            } else {
+                title = trimmedTitle;
+            }
+            
+            String trimmedBody = body != null ? body.trim() : "";
+            if (trimmedBody.isEmpty()) {
+                body = "You have a new game invitation";
+                Log.w("TAG_Soccer", getClass().getSimpleName() + ".onMessageReceived: body was null or empty, using fallback");
+            } else {
+                body = trimmedBody;
+            }
+            
+            // Safely generate a notification ID
+            String inviteIdRaw   = remoteMessage.getData().get("inviteId");
+            String inviteId      = (inviteIdRaw != null
+                    ? inviteIdRaw
+                    : String.valueOf(System.currentTimeMillis()));
+            int notificationId   = inviteId.hashCode();
 
-        // 2. Build an Intent to open InvitationsActivity
-        Intent inviteIntent = new Intent(context, InvitationsActivity.class)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        inviteIntent.putExtra("fromNickname", fromNickname);
-        inviteIntent.putExtra("inviteId", inviteId);
+            // 2. Build an Intent to open InvitationsActivity
+            Intent inviteIntent = new Intent(context, InvitationsActivity.class)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            inviteIntent.putExtra("fromNickname", fromNickname);
+            inviteIntent.putExtra("inviteId", inviteId);
 
-        // 3. Create a direct PendingIntent (no TaskStackBuilder here)
-        PendingIntent pendingIntent = PendingIntent.getActivity(
-                context,
-                0,
-                inviteIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-        );
-
-        // 4. Ensure the notification channel exists (Oreo+)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(
-                    "invite_channel",
-                    "Game Invites",
-                    NotificationManager.IMPORTANCE_HIGH
+            // 3. Create a direct PendingIntent (no TaskStackBuilder here)
+            PendingIntent pendingIntent = PendingIntent.getActivity(
+                    context,
+                    0,
+                    inviteIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
             );
-            NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            nm.createNotificationChannel(channel);
-        }
 
-        // 5. Build and show the notification
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "invite_channel")
-                .setSmallIcon(R.drawable.ic_notifications)
-                .setContentTitle(title)
-                .setContentText(body)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setAutoCancel(true)
-                .setContentIntent(pendingIntent);
+            // 4. Ensure the notification channel exists (Oreo+)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                if (nm != null) {
+                    NotificationChannel channel = new NotificationChannel(
+                            "invite_channel",
+                            "Game Invites",
+                            NotificationManager.IMPORTANCE_HIGH
+                    );
+                    nm.createNotificationChannel(channel);
+                } else {
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".onMessageReceived: NotificationManager is null, cannot create channel");
+                    return;
+                }
+            }
 
-        // 6. Show it—but only if POST_NOTIFICATIONS permission is granted on Android 13+
-        // Permission‐guarded notify() (Android 13+)
-        NotificationManagerCompat nm = NotificationManagerCompat.from(context);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU
-                || ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
-                == PackageManager.PERMISSION_GRANTED) {
-            nm.notify(notificationId, builder.build());
-        } else {
-            Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Missing POST_NOTIFICATIONS permission");
+            // 5. Build and show the notification
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "invite_channel")
+                    .setSmallIcon(R.drawable.ic_notifications)
+                    .setContentTitle(title)
+                    .setContentText(body)
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setAutoCancel(true)
+                    .setContentIntent(pendingIntent);
+
+            // 6. Show it—but only if POST_NOTIFICATIONS permission is granted on Android 13+
+            // Permission‐guarded notify() (Android 13+)
+            NotificationManagerCompat nm = NotificationManagerCompat.from(context);
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU
+                    || ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
+                    == PackageManager.PERMISSION_GRANTED) {
+                nm.notify(notificationId, builder.build());
+            } else {
+                Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Missing POST_NOTIFICATIONS permission");
+            }
+        } catch (Exception e) {
+            // Catch any RemoteServiceException or other exceptions to prevent crash
+            Log.e("TAG_Soccer", getClass().getSimpleName() + ".onMessageReceived: Failed to show notification", e);
         }
 
     }
