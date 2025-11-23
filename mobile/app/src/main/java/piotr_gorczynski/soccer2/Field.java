@@ -141,6 +141,7 @@ public class Field {
     private float ballDirectionY = 0f;
     private float ballTotalDistance = 0f;
     private long ballAnimationDurationMs = 0L;
+    private int ballKickDelayFrames = 0;
 
     private static final int RUN_FRAME_COUNT = RunPlayerSprite.FRAME_COUNT;
     private static final float RUN_FRAME_STEP_DISTANCE = RUN_FRAME_COUNT > 0
@@ -152,6 +153,7 @@ public class Field {
     private static final float SPRITE_DIRECTION_EPSILON = 0.0001f;
     private static final long BALL_DEFAULT_DURATION_MS = 10
             * RunPlayerSprite.FRAME_DURATION_MS;
+    private static final int BALL_DELAY_FROM_KICK_START = 7;
 
     // Hand tutorial constants
     private static final int DURATION_SHOWING_HAND = 1000; // milliseconds
@@ -780,6 +782,7 @@ public class Field {
         ballDirectionY = 0f;
         ballTotalDistance = 0f;
         ballAnimationDurationMs = 0L;
+        ballKickDelayFrames = 0;
     }
 
     private void startBallAnimation(float startGridX, float startGridY,
@@ -799,6 +802,7 @@ public class Field {
             ballAnimationDurationMs = 0L;
             ballAnimationStartTime = 0L;
             ballAnimationActive = false;
+            ballKickDelayFrames = 0;
             return;
         }
 
@@ -826,7 +830,9 @@ public class Field {
         ballAnimationDurationMs = frameCount > 0
                 ? frameCount * RunPlayerSprite.FRAME_DURATION_MS
                 : BALL_DEFAULT_DURATION_MS;
-        ballAnimationStartTime = SystemClock.uptimeMillis();
+        boolean kickDelayNeeded = kickAnimationActive;
+        ballKickDelayFrames = kickDelayNeeded ? BALL_DELAY_FROM_KICK_START : 0;
+        ballAnimationStartTime = kickDelayNeeded ? 0L : SystemClock.uptimeMillis();
         ballAnimationActive = true;
     }
 
@@ -1517,17 +1523,31 @@ public class Field {
 
         if (ballAnimationActive) {
             long now = SystemClock.uptimeMillis();
-            long elapsed = now - ballAnimationStartTime;
-            long duration = ballAnimationDurationMs > 0L ? ballAnimationDurationMs : BALL_DEFAULT_DURATION_MS;
+            boolean kickDelayActive = ballKickDelayFrames > 0
+                    && kickAnimationActive
+                    && kickPlayerFrameIndex < ballKickDelayFrames;
 
-            if (elapsed >= duration || ballTotalDistance <= 0f) {
-                ballGridX = ballTargetGridX;
-                ballGridY = ballTargetGridY;
-                completeBallAnimation();
+            if (kickDelayActive) {
+                ballGridX = ballStartGridX;
+                ballGridY = ballStartGridY;
             } else {
-                float traveled = computeBallDistance(elapsed, duration, ballTotalDistance);
-                ballGridX = ballStartGridX + ballDirectionX * traveled;
-                ballGridY = ballStartGridY + ballDirectionY * traveled;
+                if (ballKickDelayFrames > 0 && ballAnimationStartTime == 0L) {
+                    ballAnimationStartTime = now;
+                }
+                ballKickDelayFrames = 0;
+
+                long elapsed = ballAnimationStartTime == 0L ? 0L : now - ballAnimationStartTime;
+                long duration = ballAnimationDurationMs > 0L ? ballAnimationDurationMs : BALL_DEFAULT_DURATION_MS;
+
+                if (elapsed >= duration || ballTotalDistance <= 0f) {
+                    ballGridX = ballTargetGridX;
+                    ballGridY = ballTargetGridY;
+                    completeBallAnimation();
+                } else {
+                    float traveled = computeBallDistance(elapsed, duration, ballTotalDistance);
+                    ballGridX = ballStartGridX + ballDirectionX * traveled;
+                    ballGridY = ballStartGridY + ballDirectionY * traveled;
+                }
             }
         } else {
             ballStartGridX = targetGridX;
