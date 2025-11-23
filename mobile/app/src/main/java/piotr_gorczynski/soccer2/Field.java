@@ -935,7 +935,6 @@ public class Field {
                 kickBlueFrameVisible = true;
                 Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawKickAnimation: "
                         + "blueSprite left=" + blueLeft + " top=" + blueTop + " right=" + blueRight + " bottom=" + blueBottom + ", "
-                        + "ball x=" + ballCenterX + " y=" + ballCenterY + ", "
                         + "frameIndex=" + kickPlayerFrameIndex);
             }
         }
@@ -963,7 +962,6 @@ public class Field {
                 kickRedFrameVisible = true;
                 Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawKickAnimation: "
                         + "redSprite left=" + redLeft + " top=" + redTop + " right=" + redRight + " bottom=" + redBottom + ", "
-                        + "ball x=" + ballCenterX + " y=" + ballCenterY + ", "
                         + "frameIndex=" + kickPlayerFrameIndex);
             }
         }
@@ -1167,7 +1165,6 @@ public class Field {
                 runBlueFrameVisible = true;
                 Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawRunAnimation: "
                         + "blueSprite left=" + blueLeft + " top=" + blueTop + " right=" + blueRight + " bottom=" + blueBottom + ", "
-                        + "ball x=" + ballCenterX + " y=" + ballCenterY + ", "
                         + "frameIndex=" + runPlayerFrameIndex);
             }
         }
@@ -1194,7 +1191,6 @@ public class Field {
                 runRedFrameVisible = true;
                 Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawRunAnimation: "
                         + "redSprite left=" + redLeft + " top=" + redTop + " right=" + redRight + " bottom=" + redBottom + ", "
-                        + "ball x=" + ballCenterX + " y=" + ballCenterY + ", "
                         + "frameIndex=" + runPlayerFrameIndex);
             }
         }
@@ -1555,6 +1551,9 @@ public class Field {
         RectF dst = new RectF(ballCenterX - radius, ballCenterY - radius, ballCenterX + radius, ballCenterY + radius);
         canvas.drawBitmap(ballBitmap, null, dst, null);
 
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawBall: "
+                + "ballCenterX=" + ballCenterX + " ballCenterY=" + ballCenterY);
+
         return new BallState(ballCenterX, ballCenterY, radius);
     }
 
@@ -1690,7 +1689,6 @@ public class Field {
                     canvas.drawBitmap(spriteFrame, null, spriteDst, null);
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawIdlePlayers: "
                             + "blueSprite left=" + spriteLeft + " top=" + spriteTop + " right=" + spriteRight + " bottom=" + spriteBottom + ", "
-                            + "ball x=" + ballCenterX + " y=" + ballCenterY + ", "
                             + "frameIndex=" + idlePlayerFrameIndex);
                 }
             }
@@ -1741,7 +1739,6 @@ public class Field {
                     canvas.drawBitmap(spriteFrame, null, spriteDst, null);
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawIdlePlayers: "
                             + "redSprite left=" + spriteLeft + " top=" + spriteTop + " right=" + spriteRight + " bottom=" + spriteBottom + ", "
-                            + "ball x=" + ballCenterX + " y=" + ballCenterY + ", "
                             + "frameIndex=" + idlePlayerFrameIndex);
                 }
             }
