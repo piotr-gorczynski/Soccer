@@ -671,9 +671,6 @@ public class Field {
                     runRedCompleted = false;
                     runBlueCompleted = false;
                     
-                    // Reset final positions when starting new animation
-                    resetRunFinalPositions();
-                    
                     // Initialize kick animation for the moving player
                     if (canStartKick && !kickFrameSet.isEmpty() && (movingPlayer == 0 || movingPlayer == 1)) {
                         kickAnimationActive = true;
