@@ -1199,13 +1199,6 @@ public class Field {
             runPlayerLastFrameTime = now;
         }
 
-        // Pause run frame progression while the kick animation is active so that
-        // the running animation restarts from the first frame once the kick ends.
-        if (kickAnimationActive) {
-            runPlayerLastFrameTime = now;
-            return;
-        }
-
         long elapsed = now - runPlayerLastFrameTime;
         if (RunPlayerSprite.FRAME_DURATION_MS > 0 && elapsed >= RunPlayerSprite.FRAME_DURATION_MS) {
             long framesToAdvance = elapsed / RunPlayerSprite.FRAME_DURATION_MS;
