@@ -135,6 +135,7 @@ public class Field {
     private boolean kickBlueCompleted = false;
     private boolean kickRedFrameVisible = false;
     private boolean kickBlueFrameVisible = false;
+    private boolean kickCompletedThisFrame = false;
     private float runFinalRedGridX = Float.NaN;
     private float runFinalRedGridY = Float.NaN;
     private float runFinalBlueGridX = Float.NaN;
@@ -1170,11 +1171,11 @@ public class Field {
             runPlayerLastFrameTime = referenceTime;
         } else {
             // Kick and run were started together; ensure run timing begins after kick
-            runPlayerFrameIndex = 0;
             runPlayerLastFrameTime = referenceTime;
         }
 
         kickAnimationStartTime = 0L;
+        kickCompletedThisFrame = true;
     }
 
     private void drawRunAnimation(Canvas canvas, float ballRadius) {
@@ -1232,8 +1233,9 @@ public class Field {
                 ? getRunFrame(blueFrames, blueFrameIndex, blueFrameCount)
                 : null;
 
-        // Avoid drawing the kicking player's run frames while the kick animation is active.
-        if (kickAnimationActive) {
+        // Avoid drawing the kicking player's run frames while the kick animation is active
+        // or on the same frame when the kick finishes.
+        if (kickAnimationActive || kickCompletedThisFrame) {
             if (runMovingPlayer == 0) {
                 redFrame = null;
             } else if (runMovingPlayer == 1) {
@@ -1951,6 +1953,8 @@ public class Field {
 
     public void draw(Canvas canvas) {
         //Log.d("TAG_Soccer", "Field.draw: Started");
+
+        kickCompletedThisFrame = false;
 
         int oldx, oldy;
 
