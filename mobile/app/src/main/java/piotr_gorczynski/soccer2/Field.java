@@ -104,6 +104,7 @@ public class Field {
     private int idlePlayerFrameIndex = 0;
     private long idlePlayerLastFrameTime = 0L;
     private boolean runAnimationActive = false;
+    private boolean runAnimationStarting = false;
     private int runPlayerFrameIndex = 0;
     private long runPlayerLastFrameTime = 0L;
     private float runStartGridX = 0f;
@@ -740,6 +741,7 @@ public class Field {
                 }
                 runPlayerFrameIndex = 0;
                 runPlayerLastFrameTime = 0L;  // Don't start time yet if we have kick animation
+                idlePlayerFrameIndex = 0;
                 runRedCompleted = false;
                 runBlueCompleted = false;
                 runKickPausedFrames = 0;
@@ -753,9 +755,11 @@ public class Field {
                         kickFrameLimit = movingPlayer == 0 ? availableKickRedFrames : availableKickBlueFrames;
                         kickRedCompleted = movingPlayer != 0;
                         kickBlueCompleted = movingPlayer != 1;
+                        idlePlayerFrameIndex = 0;
 
                         // Start counting run delay from the kick start
                         runAnimationActive = true;
+                        runAnimationStarting = true;
                         runPlayerFrameIndex = 0;
                         runPlayerLastFrameTime = kickAnimationStartTime;
                     } else {
@@ -768,6 +772,7 @@ public class Field {
                         kickBlueCompleted = false;
                         // No kick animation, start run immediately
                         runAnimationActive = true;
+                        runAnimationStarting = true;
                         runPlayerLastFrameTime = SystemClock.uptimeMillis();
                     }
                 } else {
@@ -866,9 +871,11 @@ public class Field {
 
     private void stopRunAnimation(long referenceTime) {
         runAnimationActive = false;
+        runAnimationStarting = false;
         runPlayerFrameIndex = 0;
         runPlayerLastFrameTime = 0L;
         idlePlayerLastFrameTime = referenceTime;
+        idlePlayerFrameIndex = 0;
         runBaseFrameLimit = RUN_FRAME_COUNT;
         runFrameLimit = RUN_FRAME_COUNT;
         runDirectionX = 0f;
@@ -1171,15 +1178,20 @@ public class Field {
             int updatedDelay = Math.max(runRedDelayFrames, runBlueDelayFrames);
             runFrameLimit = runBaseFrameLimit + updatedDelay;
             runAnimationActive = true;
+            runAnimationStarting = true;
             runPlayerFrameIndex = 0;
             runPlayerLastFrameTime = referenceTime;
+            runKickPausedFrames = 0;
+            idlePlayerFrameIndex = 0;
         } else {
             // Kick and run were started together; ensure run timing begins after kick
             // but avoid resetting an already running timer, which can stall frame
             // advancement if the kick finishes mid-run.
-            if (runPlayerLastFrameTime == 0L) {
-                runPlayerLastFrameTime = referenceTime;
-            }
+            runPlayerFrameIndex = 0;
+            runPlayerLastFrameTime = referenceTime;
+            runKickPausedFrames = 0;
+            runAnimationStarting = true;
+            idlePlayerFrameIndex = 0;
         }
 
         kickAnimationStartTime = 0L;
@@ -1205,6 +1217,12 @@ public class Field {
         long now = SystemClock.uptimeMillis();
         if (runPlayerLastFrameTime == 0L) {
             runPlayerLastFrameTime = now;
+        }
+
+        if (runAnimationStarting) {
+            runPlayerFrameIndex = 0;
+            runPlayerLastFrameTime = now;
+            runAnimationStarting = false;
         }
 
         long elapsed = now - runPlayerLastFrameTime;
