@@ -1013,6 +1013,8 @@ public class Field {
 
         long now = SystemClock.uptimeMillis();
         if (kickPlayerLastFrameTime == 0L) {
+            // First time drawing kick animation - reset frame index to start from 0
+            kickPlayerFrameIndex = 0;
             kickPlayerLastFrameTime = now;
         }
 
@@ -1214,11 +1216,10 @@ public class Field {
         }
 
         long now = SystemClock.uptimeMillis();
-        if (runPlayerLastFrameTime == 0L) {
-            runPlayerLastFrameTime = now;
-        }
-
-        if (runAnimationStarting) {
+        
+        // Reset frame index to start from 0 when animation starts (runAnimationStarting)
+        // or on first draw after initialization (runPlayerLastFrameTime == 0L)
+        if (runAnimationStarting || runPlayerLastFrameTime == 0L) {
             runPlayerFrameIndex = 0;
             runPlayerLastFrameTime = now;
             runAnimationStarting = false;
@@ -1845,6 +1846,8 @@ public class Field {
 
         long now = SystemClock.uptimeMillis();
         if (idlePlayerLastFrameTime == 0L) {
+            // First time drawing idle animation - reset frame index to start from 0
+            idlePlayerFrameIndex = 0;
             idlePlayerLastFrameTime = now;
         }
 
