@@ -1232,6 +1232,15 @@ public class Field {
                 ? getRunFrame(blueFrames, blueFrameIndex, blueFrameCount)
                 : null;
 
+        // Avoid drawing the kicking player's run frames while the kick animation is active.
+        if (kickAnimationActive) {
+            if (runMovingPlayer == 0) {
+                redFrame = null;
+            } else if (runMovingPlayer == 1) {
+                blueFrame = null;
+            }
+        }
+
         float spriteHeight = canvas.getHeight() * flSpriteSize;
         if (spriteHeight <= 0f) {
             stopRunAnimation(now);
@@ -2008,9 +2017,11 @@ public class Field {
         kickRedFrameVisible = false;
         kickBlueFrameVisible = false;
         
-        // Draw kick animation if active, otherwise draw run animation
+        // Draw kick animation if active, but continue advancing/drawing run animation
+        // so opponent movement can start mid-kick after the configured delay.
         if (kickAnimationActive) {
             drawKickAnimation(canvas, ballState.radius);
+            drawRunAnimation(canvas, ballState.radius);
         } else {
             drawRunAnimation(canvas, ballState.radius);
         }
