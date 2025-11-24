@@ -1846,6 +1846,8 @@ public class Field {
 
         long now = SystemClock.uptimeMillis();
         if (idlePlayerLastFrameTime == 0L) {
+            // First time drawing idle animation - reset frame index to start from 0
+            idlePlayerFrameIndex = 0;
             idlePlayerLastFrameTime = now;
         }
 
