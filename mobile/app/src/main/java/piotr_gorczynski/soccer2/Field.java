@@ -740,6 +740,7 @@ public class Field {
                 }
                 runPlayerFrameIndex = 0;
                 runPlayerLastFrameTime = 0L;  // Don't start time yet if we have kick animation
+                idlePlayerFrameIndex = 0;
                 runRedCompleted = false;
                 runBlueCompleted = false;
                 runKickPausedFrames = 0;
@@ -753,6 +754,7 @@ public class Field {
                         kickFrameLimit = movingPlayer == 0 ? availableKickRedFrames : availableKickBlueFrames;
                         kickRedCompleted = movingPlayer != 0;
                         kickBlueCompleted = movingPlayer != 1;
+                        idlePlayerFrameIndex = 0;
 
                         // Start counting run delay from the kick start
                         runAnimationActive = true;
@@ -869,6 +871,7 @@ public class Field {
         runPlayerFrameIndex = 0;
         runPlayerLastFrameTime = 0L;
         idlePlayerLastFrameTime = referenceTime;
+        idlePlayerFrameIndex = 0;
         runBaseFrameLimit = RUN_FRAME_COUNT;
         runFrameLimit = RUN_FRAME_COUNT;
         runDirectionX = 0f;
@@ -1173,13 +1176,16 @@ public class Field {
             runAnimationActive = true;
             runPlayerFrameIndex = 0;
             runPlayerLastFrameTime = referenceTime;
+            runKickPausedFrames = 0;
+            idlePlayerFrameIndex = 0;
         } else {
             // Kick and run were started together; ensure run timing begins after kick
             // but avoid resetting an already running timer, which can stall frame
             // advancement if the kick finishes mid-run.
-            if (runPlayerLastFrameTime == 0L) {
-                runPlayerLastFrameTime = referenceTime;
-            }
+            runPlayerFrameIndex = 0;
+            runPlayerLastFrameTime = referenceTime;
+            runKickPausedFrames = 0;
+            idlePlayerFrameIndex = 0;
         }
 
         kickAnimationStartTime = 0L;
