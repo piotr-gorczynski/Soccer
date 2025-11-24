@@ -1171,7 +1171,11 @@ public class Field {
             runPlayerLastFrameTime = referenceTime;
         } else {
             // Kick and run were started together; ensure run timing begins after kick
-            runPlayerLastFrameTime = referenceTime;
+            // but avoid resetting an already running timer, which can stall frame
+            // advancement if the kick finishes mid-run.
+            if (runPlayerLastFrameTime == 0L) {
+                runPlayerLastFrameTime = referenceTime;
+            }
         }
 
         kickAnimationStartTime = 0L;
