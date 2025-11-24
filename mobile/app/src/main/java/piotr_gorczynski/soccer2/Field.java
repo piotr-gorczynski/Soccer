@@ -158,11 +158,11 @@ public class Field {
             : 0f;
     private static final float RUN_DESTINATION_EPSILON = 0.001f;
     private static final float ACTIVE_SPRITE_PROXIMITY_RATIO = 0.7f;
-    private static final int RUN_DELAY_CYCLES = 1;
+    private static final int RUN_DELAY_CYCLES = 8;
     private static final float SPRITE_DIRECTION_EPSILON = 0.0001f;
     private static final long BALL_DEFAULT_DURATION_MS = 10
             * RunPlayerSprite.FRAME_DURATION_MS;
-    private static final int BALL_DELAY_FROM_KICK_START = 5;
+    private static final int BALL_DELAY_FROM_KICK_START = 4;
 
     // Hand tutorial constants
     private static final int DURATION_SHOWING_HAND = 1000; // milliseconds
