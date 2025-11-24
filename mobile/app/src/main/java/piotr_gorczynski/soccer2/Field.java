@@ -1190,7 +1190,6 @@ public class Field {
             runPlayerFrameIndex = 0;
             runPlayerLastFrameTime = referenceTime;
             runKickPausedFrames = 0;
-            runAnimationStarting = true;
             idlePlayerFrameIndex = 0;
         }
 
