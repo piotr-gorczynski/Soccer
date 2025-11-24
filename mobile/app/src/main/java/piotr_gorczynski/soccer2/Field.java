@@ -1013,7 +1013,7 @@ public class Field {
 
         long now = SystemClock.uptimeMillis();
         if (kickPlayerLastFrameTime == 0L) {
-            // First time drawing kick animation - reset frame index and time
+            // First time drawing kick animation - reset frame index to start from 0
             kickPlayerFrameIndex = 0;
             kickPlayerLastFrameTime = now;
         }
@@ -1217,7 +1217,8 @@ public class Field {
 
         long now = SystemClock.uptimeMillis();
         
-        // Reset frame index when animation starts or restarts
+        // Reset frame index to start from 0 when animation starts (runAnimationStarting)
+        // or on first draw after initialization (runPlayerLastFrameTime == 0L)
         if (runAnimationStarting || runPlayerLastFrameTime == 0L) {
             runPlayerFrameIndex = 0;
             runPlayerLastFrameTime = now;
