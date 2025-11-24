@@ -1312,11 +1312,17 @@ public class Field {
         float blueCenterX = w2x(blueGridX);
         float blueCenterY = h2y(blueGridY);
 
-        // Save current sprite positions for use in idle animation
-        runFinalRedGridX = redGridX;
-        runFinalRedGridY = redGridY;
-        runFinalBlueGridX = blueGridX;
-        runFinalBlueGridY = blueGridY;
+        // Save current sprite positions for use in idle animation.
+        // Only update the player that is actually moving so the idle animation for
+        // the stationary opponent keeps using their previous position.
+        if (runMovingPlayer == 0) {
+            runFinalRedGridX = redGridX;
+            runFinalRedGridY = redGridY;
+        }
+        if (runMovingPlayer == 1) {
+            runFinalBlueGridX = blueGridX;
+            runFinalBlueGridY = blueGridY;
+        }
 
         // Calculate ball position
         float ballGridX = runStartGridX;
