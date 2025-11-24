@@ -231,6 +231,8 @@ public class GameView extends View {
             throw new RuntimeException("Failed to initialize game field", e);
         }
 
+        field.setSpriteLoadListener(gameActivity::onFieldSpritesLoaded);
+
         this.setFocusable(true);
         this.requestFocus();
         this.setFocusableInTouchMode(true);
@@ -301,6 +303,8 @@ public class GameView extends View {
             Log.e("TAG_Soccer", getClass().getSimpleName() + ".<init>: Failed to create Field", e);
             throw new RuntimeException("Failed to initialize game field", e);
         }
+
+        field.setSpriteLoadListener(gameActivity::onFieldSpritesLoaded);
 
         // Initialize turn start time so pulsing animations have a time origin
         this.turnStartsTime = System.currentTimeMillis();

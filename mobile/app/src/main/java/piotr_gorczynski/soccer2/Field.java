@@ -43,6 +43,10 @@ public class Field {
     private final Bitmap ballBitmap;
     private static final Bitmap[] EMPTY_BITMAP_ARRAY = new Bitmap[0];
 
+    private volatile boolean spritesLoaded;
+    private MoveTo pendingRunPrevious;
+    private MoveTo pendingRunNext;
+
     private volatile Bitmap[] idleRedPlayerFrames;
     private volatile Bitmap[] runRedPlayerWestFrames;
     private volatile Bitmap[] runRedPlayerWestNorthFrames;
@@ -94,6 +98,9 @@ public class Field {
     private Long turnStartTime;
     private final boolean animationsEnabled;
     private final boolean showIdlePlayerSprite;
+    private final boolean handTutorialAllowed;
+    private boolean handTutorialPending = false;
+    private SpriteLoadListener spriteLoadListener;
     private int idlePlayerFrameIndex = 0;
     private long idlePlayerLastFrameTime = 0L;
     private boolean runAnimationActive = false;
@@ -181,6 +188,10 @@ public class Field {
     public interface HandTutorialDialogCallback {
         void onRequestHandTutorialDialog();
     }
+
+    public interface SpriteLoadListener {
+        void onSpritesLoaded();
+    }
     
     public void setHandTutorialDialogCallback(HandTutorialDialogCallback callback) {
         this.dialogCallback = callback;
@@ -253,6 +264,7 @@ public class Field {
 
         this.animationsEnabled = animationsEnabled;
         showIdlePlayerSprite = animationsEnabled && (gameType == 1 || gameType == 2);
+        spritesLoaded = !showIdlePlayerSprite;
         
         // Initialize all sprite arrays with empty bitmaps to avoid null pointer exceptions
         idleRedPlayerFrames = EMPTY_BITMAP_ARRAY;
@@ -380,7 +392,12 @@ public class Field {
                                 activeKickRedPlayerFrames = loadedKickRedPlayerNorthFrames;
                                 activeKickBluePlayerFrames = loadedKickBluePlayerNorthFrames;
                                 idlePlayerLastFrameTime = SystemClock.uptimeMillis();
-                                
+
+                                spritesLoaded = true;
+                                notifySpriteLoadComplete();
+                                startPendingRunAnimationIfReady();
+                                enableHandTutorialIfReady();
+
                                 Log.d("TAG_Soccer", getClass().getSimpleName() + ": Sprite sheets loaded successfully in background");
                             });
                         } else {
@@ -389,6 +406,8 @@ public class Field {
                     }
                 } catch (Exception e) {
                     Log.e("TAG_Soccer", getClass().getSimpleName() + ": Error loading sprites in background thread", e);
+                    spritesLoaded = true; // prevent UI from getting stuck behind overlay if loading fails
+                    notifySpriteLoadComplete();
                 }
             }, "Field-SpriteLoader");
             spriteLoaderThread.start();
@@ -440,16 +459,15 @@ public class Field {
 
         // Initialize preferences
         prefs = PreferenceManager.getDefaultSharedPreferences(current);
-        
+
         // Check if hand tutorial is enabled in settings (default is true)
         boolean handTutorialEnabled = prefs.getBoolean(PREF_HAND_TUTORIAL_ENABLED, true);
-        
-        // Show tutorial if enabled and in appropriate game type (1 or 2)
-        if (handTutorialEnabled && (argGameType == 1 || argGameType == 2)) {
-            showHandTutorial = true;
-            handTutorialLastUpdateTime = SystemClock.uptimeMillis();
+        handTutorialAllowed = handTutorialEnabled && (argGameType == 1 || argGameType == 2);
+        if (handTutorialAllowed) {
             // Load the current cycle count from preferences
             handTutorialCycle = prefs.getInt(PREF_HAND_TUTORIAL_CYCLE_COUNT, 0);
+            handTutorialPending = true;
+            enableHandTutorialIfReady();
             Log.d("TAG_Soccer", getClass().getSimpleName() + ".<init>: Hand tutorial enabled, current cycle count: " + handTutorialCycle);
         } else {
             Log.d("TAG_Soccer", getClass().getSimpleName() + ".<init>: Hand tutorial disabled or wrong game type");
@@ -553,6 +571,30 @@ public class Field {
     }
 
     public void startRunAnimation(MoveTo previous, MoveTo next) {
+        if (!areSpritesReadyForAnimations()) {
+            pendingRunPrevious = previous;
+            pendingRunNext = next;
+            return;
+        }
+
+        startRunAnimationInternal(previous, next);
+    }
+
+    private void startPendingRunAnimationIfReady() {
+        if (pendingRunPrevious == null || pendingRunNext == null) {
+            return;
+        }
+
+        if (!areSpritesReadyForAnimations()) {
+            return;
+        }
+
+        startRunAnimationInternal(pendingRunPrevious, pendingRunNext);
+        pendingRunPrevious = null;
+        pendingRunNext = null;
+    }
+
+    private void startRunAnimationInternal(MoveTo previous, MoveTo next) {
         if (previous == null || next == null) {
             return;
         }
@@ -630,14 +672,14 @@ public class Field {
                 activeRunBluePlayerFrames = frameSet.blueFrames;
                 activeKickRedPlayerFrames = kickFrameSet.redFrames;
                 activeKickBluePlayerFrames = kickFrameSet.blueFrames;
-                
+
                 int availableRedFrames = Math.min(RUN_FRAME_COUNT, frameSet.redFrames.length);
                 int availableBlueFrames = Math.min(RUN_FRAME_COUNT, frameSet.blueFrames.length);
                 int availableFrames = Math.max(availableRedFrames, availableBlueFrames);
-                
+
                 int availableKickRedFrames = !kickFrameSet.isEmpty() ? Math.min(KickPlayerSprite.FRAME_COUNT, kickFrameSet.redFrames.length) : 0;
                 int availableKickBlueFrames = !kickFrameSet.isEmpty() ? Math.min(KickPlayerSprite.FRAME_COUNT, kickFrameSet.blueFrames.length) : 0;
-                
+
                 if (availableFrames > 0) {
                     int frameLimit = availableFrames;
                     if (totalDistance > 0f && RUN_FRAME_STEP_DISTANCE > 0f) {
@@ -675,7 +717,7 @@ public class Field {
                     runPlayerLastFrameTime = 0L;  // Don't start time yet if we have kick animation
                     runRedCompleted = false;
                     runBlueCompleted = false;
-                    
+
                     // Initialize kick animation for the moving player
                     if (canStartKick && !kickFrameSet.isEmpty() && (movingPlayer == 0 || movingPlayer == 1)) {
                         kickAnimationActive = true;
@@ -728,7 +770,7 @@ public class Field {
             runDirectionY = 0f;
             runTotalDistance = 0f;
             resetRunFinalPositions();
-            
+
             kickAnimationActive = false;
             kickPlayerFrameIndex = 0;
             kickPlayerLastFrameTime = 0L;
@@ -741,6 +783,39 @@ public class Field {
         startBallAnimation(flippedStartX, flippedStartY, flippedTargetX, flippedTargetY, totalDistance, movementFrameCount);
     }
 
+    private boolean areSpritesReadyForAnimations() {
+        return !showIdlePlayerSprite || spritesLoaded;
+    }
+
+    public boolean areSpritesLoaded() {
+        return spritesLoaded;
+    }
+
+    public void setSpriteLoadListener(SpriteLoadListener listener) {
+        spriteLoadListener = listener;
+        notifySpriteLoadComplete();
+    }
+
+    private void notifySpriteLoadComplete() {
+        if (spriteLoadListener != null && spritesLoaded) {
+            spriteLoadListener.onSpritesLoaded();
+        }
+    }
+
+    private void enableHandTutorialIfReady() {
+        if (!handTutorialPending) {
+            return;
+        }
+
+        if (!spritesLoaded) {
+            return;
+        }
+
+        showHandTutorial = handTutorialAllowed;
+        handTutorialPending = false;
+        handTutorialLastUpdateTime = SystemClock.uptimeMillis();
+    }
+
     public boolean isRunAnimationActive() {
         return runAnimationActive;
     }
@@ -750,7 +825,7 @@ public class Field {
     }
 
     public boolean isHandTutorialActive() {
-        return showHandTutorial;
+        return showHandTutorial && spritesLoaded;
     }
 
     private void resetRunFinalPositions() {
