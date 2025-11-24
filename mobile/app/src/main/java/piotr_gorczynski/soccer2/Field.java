@@ -1838,6 +1838,26 @@ public class Field {
                 || (!isBlueMoving && !isRedMoving));
         boolean shouldAdvanceIdle = shouldDrawIdleBlue || shouldDrawIdleRed;
 
+        if (!shouldDrawIdleBlue && !runBlueFrameVisible && !kickBlueFrameVisible) {
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawIdlePlayers: "
+                    + "Skipping idle blue; runActive=" + runActive
+                    + ", isRedMoving=" + isRedMoving
+                    + ", isBlueMoving=" + isBlueMoving
+                    + ", blueDelayActive=" + blueDelayActive
+                    + ", runPlayerFrameIndex=" + runPlayerFrameIndex
+                    + ", runFrameLimit=" + runFrameLimit);
+        }
+
+        if (!shouldDrawIdleRed && !runRedFrameVisible && !kickRedFrameVisible) {
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawIdlePlayers: "
+                    + "Skipping idle red; runActive=" + runActive
+                    + ", isRedMoving=" + isRedMoving
+                    + ", isBlueMoving=" + isBlueMoving
+                    + ", redDelayActive=" + redDelayActive
+                    + ", runPlayerFrameIndex=" + runPlayerFrameIndex
+                    + ", runFrameLimit=" + runFrameLimit);
+        }
+
         if (shouldAdvanceIdle) {
             long elapsed = now - idlePlayerLastFrameTime;
             if (IdlePlayerSprite.FRAME_DURATION_MS > 0 && elapsed >= IdlePlayerSprite.FRAME_DURATION_MS) {
