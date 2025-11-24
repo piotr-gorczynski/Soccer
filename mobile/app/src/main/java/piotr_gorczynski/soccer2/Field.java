@@ -967,7 +967,7 @@ public class Field {
             return;
         }
 
-        if (kickPlayerFrameIndex < RUN_DELAY_CYCLES_FROM_KICK) {
+        if (kickPlayerFrameIndex <= RUN_DELAY_CYCLES_FROM_KICK) {
             return;
         }
 
@@ -1724,7 +1724,7 @@ public class Field {
             long now = SystemClock.uptimeMillis();
             boolean kickDelayActive = ballKickDelayFrames > 0
                     && kickAnimationActive
-                    && kickPlayerFrameIndex < ballKickDelayFrames;
+                    && kickPlayerFrameIndex <= ballKickDelayFrames;
 
             if (kickDelayActive) {
                 ballGridX = ballStartGridX;
