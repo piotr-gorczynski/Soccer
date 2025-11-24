@@ -152,6 +152,9 @@ public class Field {
     private long ballAnimationDurationMs = 0L;
     private int ballKickDelayFrames = 0;
 
+    private boolean waitForKickToStartOpponentRun = false;
+    private int delayedOpponentPlayer = -1;
+
     private static final int RUN_FRAME_COUNT = RunPlayerSprite.FRAME_COUNT;
     private static final float RUN_FRAME_STEP_DISTANCE = RUN_FRAME_COUNT > 0
             ? (float) (Math.sqrt(2.0) / RUN_FRAME_COUNT)
@@ -159,6 +162,7 @@ public class Field {
     private static final float RUN_DESTINATION_EPSILON = 0.001f;
     private static final float ACTIVE_SPRITE_PROXIMITY_RATIO = 0.7f;
     private static final int RUN_DELAY_CYCLES = 1;
+    private static final int RUN_DELAY_CYCLES_FROM_RUN = 1;
     private static final float SPRITE_DIRECTION_EPSILON = 0.0001f;
     private static final long BALL_DEFAULT_DURATION_MS = 10
             * RunPlayerSprite.FRAME_DURATION_MS;
@@ -690,12 +694,31 @@ public class Field {
                     movementFrameCount = frameLimit;
 
                     runMovingPlayer = movingPlayer;
-                    runRedDelayFrames = frameSet.redFrames.length > 0 && runMovingPlayer == 1
-                            ? RUN_DELAY_CYCLES
-                            : 0;
-                    runBlueDelayFrames = frameSet.blueFrames.length > 0 && runMovingPlayer == 0
-                            ? RUN_DELAY_CYCLES
-                            : 0;
+                    boolean nextMoveSamePlayer = next.P == movingPlayer;
+                    runRedDelayFrames = 0;
+                    runBlueDelayFrames = 0;
+                    delayedOpponentPlayer = -1;
+                    waitForKickToStartOpponentRun = false;
+
+                    if (runMovingPlayer == 1 && frameSet.redFrames.length > 0) {
+                        if (!nextMoveSamePlayer) {
+                            runRedDelayFrames = RUN_DELAY_CYCLES;
+                            delayedOpponentPlayer = 0;
+                            waitForKickToStartOpponentRun = true;
+                        } else {
+                            runRedDelayFrames = RUN_DELAY_CYCLES_FROM_RUN;
+                        }
+                    }
+
+                    if (runMovingPlayer == 0 && frameSet.blueFrames.length > 0) {
+                        if (!nextMoveSamePlayer) {
+                            runBlueDelayFrames = RUN_DELAY_CYCLES;
+                            delayedOpponentPlayer = 1;
+                            waitForKickToStartOpponentRun = true;
+                        } else {
+                            runBlueDelayFrames = RUN_DELAY_CYCLES_FROM_RUN;
+                        }
+                    }
 
                     runBaseFrameLimit = frameLimit;
                     runFrameLimit = frameLimit + Math.max(runRedDelayFrames, runBlueDelayFrames);
@@ -769,6 +792,8 @@ public class Field {
             runDirectionX = 0f;
             runDirectionY = 0f;
             runTotalDistance = 0f;
+            waitForKickToStartOpponentRun = false;
+            delayedOpponentPlayer = -1;
             resetRunFinalPositions();
 
             kickAnimationActive = false;
@@ -856,6 +881,8 @@ public class Field {
         runBlueDelayFrames = 0;
         runRedCompleted = false;
         runBlueCompleted = false;
+        waitForKickToStartOpponentRun = false;
+        delayedOpponentPlayer = -1;
         completeBallAnimation();
     }
 
@@ -934,6 +961,29 @@ public class Field {
         return clamp(distance, totalDistance);
     }
 
+    private void releaseOpponentRunAfterKickFrame() {
+        if (!waitForKickToStartOpponentRun) {
+            return;
+        }
+
+        if (kickPlayerFrameIndex < RUN_DELAY_CYCLES) {
+            return;
+        }
+
+        int currentRunFrame = Math.max(0, runPlayerFrameIndex);
+        if (delayedOpponentPlayer == 0) {
+            runRedDelayFrames = currentRunFrame;
+        } else if (delayedOpponentPlayer == 1) {
+            runBlueDelayFrames = currentRunFrame;
+        } else {
+            waitForKickToStartOpponentRun = false;
+            return;
+        }
+
+        runFrameLimit = runBaseFrameLimit + Math.max(runRedDelayFrames, runBlueDelayFrames);
+        waitForKickToStartOpponentRun = false;
+    }
+
     private void drawKickAnimation(Canvas canvas, float ballRadius) {
         if (!kickAnimationActive) {
             return;
@@ -965,6 +1015,8 @@ public class Field {
             long remainder = elapsed % KickPlayerSprite.FRAME_DURATION_MS;
             kickPlayerLastFrameTime = now - remainder;
         }
+
+        releaseOpponentRunAfterKickFrame();
 
         if (!kickAnimationActive) {
             return;
@@ -1089,6 +1141,20 @@ public class Field {
         activeKickRedPlayerFrames = EMPTY_BITMAP_ARRAY;
         activeKickBluePlayerFrames = EMPTY_BITMAP_ARRAY;
 
+        if (waitForKickToStartOpponentRun) {
+            releaseOpponentRunAfterKickFrame();
+            if (waitForKickToStartOpponentRun) {
+                int currentRunFrame = Math.max(0, runPlayerFrameIndex);
+                if (delayedOpponentPlayer == 0) {
+                    runRedDelayFrames = currentRunFrame;
+                } else if (delayedOpponentPlayer == 1) {
+                    runBlueDelayFrames = currentRunFrame;
+                }
+                runFrameLimit = runBaseFrameLimit + Math.max(runRedDelayFrames, runBlueDelayFrames);
+                waitForKickToStartOpponentRun = false;
+            }
+        }
+
         // Start (or resync) run animation after the kick completes
         if (!runAnimationActive) {
             if (RunPlayerSprite.FRAME_DURATION_MS > 0 && elapsedSinceKickStart > 0L) {
@@ -1150,6 +1216,14 @@ public class Field {
 
         int redFrameIndex = runPlayerFrameIndex - runRedDelayFrames;
         int blueFrameIndex = runPlayerFrameIndex - runBlueDelayFrames;
+
+        if (waitForKickToStartOpponentRun) {
+            if (delayedOpponentPlayer == 1) {
+                blueFrameIndex = -1;
+            } else if (delayedOpponentPlayer == 0) {
+                redFrameIndex = -1;
+            }
+        }
 
         Bitmap redFrame = redFrameIndex >= 0
                 ? getRunFrame(redFrames, redFrameIndex, redFrameCount)
