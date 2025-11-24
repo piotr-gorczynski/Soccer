@@ -1089,7 +1089,7 @@ public class Field {
         activeKickRedPlayerFrames = EMPTY_BITMAP_ARRAY;
         activeKickBluePlayerFrames = EMPTY_BITMAP_ARRAY;
 
-        // Start run animation after kick completes if it hasn't started already
+        // Start (or resync) run animation after the kick completes
         if (!runAnimationActive) {
             if (RunPlayerSprite.FRAME_DURATION_MS > 0 && elapsedSinceKickStart > 0L) {
                 int elapsedRunFrames = (int) (elapsedSinceKickStart / RunPlayerSprite.FRAME_DURATION_MS);
@@ -1100,6 +1100,10 @@ public class Field {
             int updatedDelay = Math.max(runRedDelayFrames, runBlueDelayFrames);
             runFrameLimit = runBaseFrameLimit + updatedDelay;
             runAnimationActive = true;
+            runPlayerFrameIndex = 0;
+            runPlayerLastFrameTime = referenceTime;
+        } else {
+            // Kick and run were started together; ensure run timing begins after kick
             runPlayerFrameIndex = 0;
             runPlayerLastFrameTime = referenceTime;
         }
