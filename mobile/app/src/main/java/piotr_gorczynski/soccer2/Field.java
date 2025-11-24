@@ -126,6 +126,7 @@ public class Field {
     private float lastRunBallRadius = 0f;
     private boolean runRedFrameVisible = false;
     private boolean runBlueFrameVisible = false;
+    private int runKickPausedFrames = 0;
     private boolean kickAnimationActive = false;
     private int kickPlayerFrameIndex = 0;
     private long kickPlayerLastFrameTime = 0L;
@@ -731,16 +732,17 @@ public class Field {
                     runStartGridY = flippedStartY;
                     runTotalDistance = totalDistance;
                     if (totalDistance > 0f) {
-                        runDirectionX = totalDeltaX / totalDistance;
-                        runDirectionY = totalDeltaY / totalDistance;
-                    } else {
-                        runDirectionX = 0f;
-                        runDirectionY = 0f;
-                    }
-                    runPlayerFrameIndex = 0;
-                    runPlayerLastFrameTime = 0L;  // Don't start time yet if we have kick animation
-                    runRedCompleted = false;
-                    runBlueCompleted = false;
+                    runDirectionX = totalDeltaX / totalDistance;
+                    runDirectionY = totalDeltaY / totalDistance;
+                } else {
+                    runDirectionX = 0f;
+                    runDirectionY = 0f;
+                }
+                runPlayerFrameIndex = 0;
+                runPlayerLastFrameTime = 0L;  // Don't start time yet if we have kick animation
+                runRedCompleted = false;
+                runBlueCompleted = false;
+                runKickPausedFrames = 0;
 
                     // Initialize kick animation for the moving player
                     if (canStartKick && !kickFrameSet.isEmpty() && (movingPlayer == 0 || movingPlayer == 1)) {
@@ -793,6 +795,7 @@ public class Field {
             runDirectionX = 0f;
             runDirectionY = 0f;
             runTotalDistance = 0f;
+            runKickPausedFrames = 0;
             waitForKickToStartOpponentRun = false;
             delayedOpponentPlayer = -1;
             resetRunFinalPositions();
@@ -882,6 +885,7 @@ public class Field {
         runBlueDelayFrames = 0;
         runRedCompleted = false;
         runBlueCompleted = false;
+        runKickPausedFrames = 0;
         waitForKickToStartOpponentRun = false;
         delayedOpponentPlayer = -1;
         completeBallAnimation();
@@ -1207,7 +1211,12 @@ public class Field {
         if (RunPlayerSprite.FRAME_DURATION_MS > 0 && elapsed >= RunPlayerSprite.FRAME_DURATION_MS) {
             long framesToAdvance = elapsed / RunPlayerSprite.FRAME_DURATION_MS;
             runPlayerFrameIndex += (int) framesToAdvance;
-            if (runPlayerFrameIndex >= frameLimit) {
+            if (kickAnimationActive && runMovingPlayer >= 0) {
+                runKickPausedFrames += (int) framesToAdvance;
+            }
+
+            int adjustedFrameLimit = frameLimit + runKickPausedFrames;
+            if (runPlayerFrameIndex >= adjustedFrameLimit) {
                 stopRunAnimation(now);
                 return;
             }
@@ -1219,8 +1228,18 @@ public class Field {
             return;
         }
 
+        int adjustedFrameLimit = frameLimit + runKickPausedFrames;
+
         int redFrameIndex = runPlayerFrameIndex - runRedDelayFrames;
         int blueFrameIndex = runPlayerFrameIndex - runBlueDelayFrames;
+
+        if (runKickPausedFrames > 0) {
+            if (runMovingPlayer == 0) {
+                redFrameIndex -= runKickPausedFrames;
+            } else if (runMovingPlayer == 1) {
+                blueFrameIndex -= runKickPausedFrames;
+            }
+        }
 
         if (waitForKickToStartOpponentRun) {
             if (delayedOpponentPlayer == 1) {
@@ -1402,7 +1421,7 @@ public class Field {
             return;
         }
 
-        if (runPlayerFrameIndex >= frameLimit - 1) {
+        if (runPlayerFrameIndex >= adjustedFrameLimit - 1) {
             stopRunAnimation(now);
         }
     }
