@@ -161,7 +161,7 @@ public class Field {
             : 0f;
     private static final float RUN_DESTINATION_EPSILON = 0.001f;
     private static final float ACTIVE_SPRITE_PROXIMITY_RATIO = 0.7f;
-    private static final int RUN_DELAY_CYCLES = 1;
+    private static final int RUN_DELAY_CYCLES_FROM_KICK = 1;
     private static final int RUN_DELAY_CYCLES_FROM_RUN = 1;
     private static final float SPRITE_DIRECTION_EPSILON = 0.0001f;
     private static final long BALL_DEFAULT_DURATION_MS = 10
@@ -702,7 +702,7 @@ public class Field {
 
                     if (runMovingPlayer == 1 && frameSet.redFrames.length > 0) {
                         if (!nextMoveSamePlayer) {
-                            runRedDelayFrames = RUN_DELAY_CYCLES;
+                            runRedDelayFrames = RUN_DELAY_CYCLES_FROM_KICK;
                             delayedOpponentPlayer = 0;
                             waitForKickToStartOpponentRun = true;
                         } else {
@@ -712,7 +712,7 @@ public class Field {
 
                     if (runMovingPlayer == 0 && frameSet.blueFrames.length > 0) {
                         if (!nextMoveSamePlayer) {
-                            runBlueDelayFrames = RUN_DELAY_CYCLES;
+                            runBlueDelayFrames = RUN_DELAY_CYCLES_FROM_KICK;
                             delayedOpponentPlayer = 1;
                             waitForKickToStartOpponentRun = true;
                         } else {
@@ -966,7 +966,7 @@ public class Field {
             return;
         }
 
-        if (kickPlayerFrameIndex < RUN_DELAY_CYCLES) {
+        if (kickPlayerFrameIndex < RUN_DELAY_CYCLES_FROM_KICK) {
             return;
         }
 
