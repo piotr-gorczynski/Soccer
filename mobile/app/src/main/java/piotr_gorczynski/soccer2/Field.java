@@ -1318,6 +1318,10 @@ public class Field {
                     ? redDistanceTraveled >= runTotalDistance - RUN_DESTINATION_EPSILON
                     : redFrameIndex >= redFrameCount - 1;
             if (redReached) {
+                if (runTotalDistance > 0f) {
+                    runFinalRedGridX = runStartGridX + runDirectionX * runTotalDistance;
+                    runFinalRedGridY = runStartGridY + runDirectionY * runTotalDistance;
+                }
                 runRedCompleted = true;
                 redFrame = null;
             }
@@ -1330,6 +1334,10 @@ public class Field {
                     ? blueDistanceTraveled >= runTotalDistance - RUN_DESTINATION_EPSILON
                     : blueFrameIndex >= blueFrameCount - 1;
             if (blueReached) {
+                if (runTotalDistance > 0f) {
+                    runFinalBlueGridX = runStartGridX + runDirectionX * runTotalDistance;
+                    runFinalBlueGridY = runStartGridY + runDirectionY * runTotalDistance;
+                }
                 runBlueCompleted = true;
                 blueFrame = null;
             }
