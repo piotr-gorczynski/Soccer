@@ -703,6 +703,18 @@ public class Field {
                     delayedOpponentPlayer = -1;
                     waitForKickToStartOpponentRun = false;
 
+                    // Reset opponent's position to the start (ball) position when starting a new animation.
+                    // This handles the case when user makes a move before the previous animation finishes.
+                    if (movingPlayer == 0) {
+                        // Red is kicking, reset blue's position to the ball position
+                        runFinalBlueGridX = flippedStartX;
+                        runFinalBlueGridY = flippedStartY;
+                    } else if (movingPlayer == 1) {
+                        // Blue is kicking, reset red's position to the ball position
+                        runFinalRedGridX = flippedStartX;
+                        runFinalRedGridY = flippedStartY;
+                    }
+
                     if (runMovingPlayer == 1 && frameSet.redFrames.length > 0) {
                         if (!nextMoveSamePlayer) {
                             runRedDelayFrames = RUN_DELAY_CYCLES_FROM_KICK;
