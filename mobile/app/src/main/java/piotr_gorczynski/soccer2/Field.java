@@ -1195,11 +1195,17 @@ public class Field {
             runKickPausedFrames = 0;
             idlePlayerFrameIndex = 0;
         } else {
-            // Kick and run were started together; ensure run timing begins after kick
-            // but avoid resetting an already running timer, which can stall frame
-            // advancement if the kick finishes mid-run.
-            runPlayerFrameIndex = 0;
-            runPlayerLastFrameTime = referenceTime;
+            // Kick and run were started together. The opponent has been running during
+            // the kick, so we must NOT reset runPlayerFrameIndex or we'll lose their
+            // progress. Instead, adjust the kicking player's delay so they start from
+            // frame 0 while the opponent continues from their current frame.
+            int currentRunFrame = Math.max(0, runPlayerFrameIndex);
+            if (runMovingPlayer == 0) {
+                runRedDelayFrames = currentRunFrame;
+            } else if (runMovingPlayer == 1) {
+                runBlueDelayFrames = currentRunFrame;
+            }
+            runFrameLimit = runBaseFrameLimit + Math.max(runRedDelayFrames, runBlueDelayFrames);
             runKickPausedFrames = 0;
             idlePlayerFrameIndex = 0;
         }
