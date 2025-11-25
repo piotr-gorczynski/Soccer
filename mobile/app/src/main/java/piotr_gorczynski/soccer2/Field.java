@@ -870,6 +870,15 @@ public class Field {
     }
 
     private void stopRunAnimation(long referenceTime) {
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".stopRunAnimation: stopping run"
+                + ", runMovingPlayer=" + runMovingPlayer
+                + ", runPlayerFrameIndex=" + runPlayerFrameIndex
+                + ", runRedCompleted=" + runRedCompleted
+                + ", runBlueCompleted=" + runBlueCompleted
+                + ", runFinalRedGridX=" + runFinalRedGridX
+                + ", runFinalRedGridY=" + runFinalRedGridY
+                + ", runFinalBlueGridX=" + runFinalBlueGridX
+                + ", runFinalBlueGridY=" + runFinalBlueGridY);
         runAnimationActive = false;
         runAnimationStarting = false;
         runPlayerFrameIndex = 0;
@@ -1359,6 +1368,12 @@ public class Field {
         if (runMovingPlayer == 1) {
             runFinalBlueGridX = blueGridX;
             runFinalBlueGridY = blueGridY;
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawRunAnimation: "
+                    + "updated runFinalBlueGridX=" + runFinalBlueGridX
+                    + ", runFinalBlueGridY=" + runFinalBlueGridY
+                    + ", blueFrameIndex=" + blueFrameIndex
+                    + ", blueDistanceTraveled=" + blueDistanceTraveled
+                    + ", runTotalDistance=" + runTotalDistance);
         }
 
         // Calculate ball position
@@ -1967,6 +1982,14 @@ public class Field {
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawIdlePlayers: "
                             + "blueSprite left=" + spriteLeft + " top=" + spriteTop + " right=" + spriteRight + " bottom=" + spriteBottom + ", "
                             + "frameIndex=" + idlePlayerFrameIndex);
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawIdlePlayers: "
+                            + "idleBlueCenterX=" + idleBlueCenterX
+                            + ", idleBlueCenterY=" + idleBlueCenterY
+                            + ", runFinalBlueGridX=" + runFinalBlueGridX
+                            + ", runFinalBlueGridY=" + runFinalBlueGridY
+                            + ", blueShouldBeCloser=" + blueShouldBeCloser
+                            + ", runAnimationActive=" + runAnimationActive
+                            + ", runMovingPlayer=" + runMovingPlayer);
                 }
             }
         }
