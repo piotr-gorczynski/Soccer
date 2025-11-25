@@ -706,21 +706,21 @@ public class Field {
                     if (runMovingPlayer == 1 && frameSet.redFrames.length > 0) {
                         if (!nextMoveSamePlayer) {
                             runRedDelayFrames = RUN_DELAY_CYCLES_FROM_KICK;
-                            delayedOpponentPlayer = 0;
-                            waitForKickToStartOpponentRun = true;
                         } else {
                             runRedDelayFrames = RUN_DELAY_CYCLES_FROM_RUN;
                         }
+                        delayedOpponentPlayer = 0;
+                        waitForKickToStartOpponentRun = true;
                     }
 
                     if (runMovingPlayer == 0 && frameSet.blueFrames.length > 0) {
                         if (!nextMoveSamePlayer) {
                             runBlueDelayFrames = RUN_DELAY_CYCLES_FROM_KICK;
-                            delayedOpponentPlayer = 1;
-                            waitForKickToStartOpponentRun = true;
                         } else {
                             runBlueDelayFrames = RUN_DELAY_CYCLES_FROM_RUN;
                         }
+                        delayedOpponentPlayer = 1;
+                        waitForKickToStartOpponentRun = true;
                     }
 
                     runBaseFrameLimit = frameLimit;
@@ -991,6 +991,15 @@ public class Field {
             return;
         }
 
+        // When nextMoveSamePlayer == true, the opponent's delay is RUN_DELAY_CYCLES_FROM_RUN.
+        // In this case, don't release during kick - wait for the kick to end and let
+        // stopKickAnimation handle the delay so it's counted from the kicking player's
+        // run animation start.
+        int opponentDelay = delayedOpponentPlayer == 0 ? runRedDelayFrames : runBlueDelayFrames;
+        if (opponentDelay == RUN_DELAY_CYCLES_FROM_RUN) {
+            return;
+        }
+
         int currentRunFrame = Math.max(0, runPlayerFrameIndex);
         if (delayedOpponentPlayer == 0) {
             runRedDelayFrames = currentRunFrame;
@@ -1167,11 +1176,16 @@ public class Field {
         if (waitForKickToStartOpponentRun) {
             releaseOpponentRunAfterKickFrame();
             if (waitForKickToStartOpponentRun) {
+                // nextMoveSamePlayer == true: opponent should start RUN_DELAY_CYCLES_FROM_RUN
+                // frames after the kicking player's run animation starts. Since we're about to
+                // reset the kicking player to start at frame 0, set the opponent's delay to
+                // currentRunFrame + RUN_DELAY_CYCLES_FROM_RUN so they start at the right time.
                 int currentRunFrame = Math.max(0, runPlayerFrameIndex);
+                int opponentDelay = currentRunFrame + RUN_DELAY_CYCLES_FROM_RUN;
                 if (delayedOpponentPlayer == 0) {
-                    runRedDelayFrames = currentRunFrame;
+                    runRedDelayFrames = opponentDelay;
                 } else if (delayedOpponentPlayer == 1) {
-                    runBlueDelayFrames = currentRunFrame;
+                    runBlueDelayFrames = opponentDelay;
                 }
                 runFrameLimit = runBaseFrameLimit + Math.max(runRedDelayFrames, runBlueDelayFrames);
                 waitForKickToStartOpponentRun = false;
