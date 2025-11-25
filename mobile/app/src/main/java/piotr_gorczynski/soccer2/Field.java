@@ -1459,11 +1459,6 @@ public class Field {
 
         if ((!redHasFrames || runRedCompleted) && (!blueHasFrames || runBlueCompleted)) {
             stopRunAnimation(now);
-            return;
-        }
-
-        if (runPlayerFrameIndex >= adjustedFrameLimit - 1) {
-            stopRunAnimation(now);
         }
     }
 
