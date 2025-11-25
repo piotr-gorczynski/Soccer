@@ -1404,7 +1404,7 @@ public class Field {
                 runBlueFrameVisible = true;
                 Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawRunAnimation: "
                         + "blueSprite left=" + blueLeft + " top=" + blueTop + " right=" + blueRight + " bottom=" + blueBottom + ", "
-                        + "frameIndex=" + runPlayerFrameIndex);
+                        + "frameIndex=" + blueFrameIndex);
             }
         }
 
@@ -1430,7 +1430,7 @@ public class Field {
                 runRedFrameVisible = true;
                 Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawRunAnimation: "
                         + "redSprite left=" + redLeft + " top=" + redTop + " right=" + redRight + " bottom=" + redBottom + ", "
-                        + "frameIndex=" + runPlayerFrameIndex);
+                        + "frameIndex=" + redFrameIndex);
             }
         }
 
