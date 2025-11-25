@@ -691,7 +691,7 @@ public class Field {
                     int frameLimit = availableFrames;
                     if (totalDistance > 0f && RUN_FRAME_STEP_DISTANCE > 0f) {
                         float framesForDistance = totalDistance / RUN_FRAME_STEP_DISTANCE;
-                        frameLimit = Math.max(1, Math.min(availableFrames, (int) Math.ceil(framesForDistance)));
+                        frameLimit = Math.max(1, (int) Math.ceil(framesForDistance));
                     }
 
                     movementFrameCount = frameLimit;
@@ -1218,7 +1218,7 @@ public class Field {
         int blueFrameCount = blueFrames.length;
         int frameCount = Math.max(redFrameCount, blueFrameCount);
         int maxDelay = Math.max(runRedDelayFrames, runBlueDelayFrames);
-        int frameLimit = Math.min(runFrameLimit, frameCount + maxDelay);
+        int frameLimit = Math.max(runFrameLimit, frameCount + maxDelay);
         if (frameLimit <= 0) {
             stopRunAnimation(SystemClock.uptimeMillis());
             return;
@@ -1480,8 +1480,8 @@ public class Field {
             return 0f;
         }
         int stepOffset = advanceImmediately ? 1 : 0;
-        int clampedStep = Math.min(frameIndex + stepOffset, frameCount);
-        float distance = RUN_FRAME_STEP_DISTANCE * clampedStep;
+        int steps = Math.max(0, frameIndex + stepOffset);
+        float distance = RUN_FRAME_STEP_DISTANCE * steps;
         if (totalDistance > 0f && distance > totalDistance) {
             distance = totalDistance;
         }
@@ -1563,8 +1563,8 @@ public class Field {
             return null;
         }
 
-        int maxIndex = Math.min(frameCount - 1, frames.length - 1);
-        int safeIndex = Math.min(frameIndex, maxIndex);
+        int cycleLength = Math.min(frameCount, frames.length);
+        int safeIndex = ((frameIndex % cycleLength) + cycleLength) % cycleLength;
         if (safeIndex < 0 || safeIndex >= frames.length) {
             return null;
         }
