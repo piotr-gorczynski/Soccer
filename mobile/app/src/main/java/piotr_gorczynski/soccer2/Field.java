@@ -1361,11 +1361,11 @@ public class Field {
         // Save current sprite positions for use in idle animation.
         // Only update the player that is actually moving so the idle animation for
         // the stationary opponent keeps using their previous position.
-        if (runMovingPlayer == 0) {
+        if (redFrameIndex >= 0) {
             runFinalRedGridX = redGridX;
             runFinalRedGridY = redGridY;
         }
-        if (runMovingPlayer == 1) {
+        if (blueFrameIndex >= 0) {
             runFinalBlueGridX = blueGridX;
             runFinalBlueGridY = blueGridY;
             Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawRunAnimation: "
