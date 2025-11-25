@@ -158,6 +158,13 @@ public class Field {
     private boolean waitForKickToStartOpponentRun = false;
     private int delayedOpponentPlayer = -1;
 
+    // Parabolic trajectory state variables for Case 1
+    // (north move where current and next move are for the same player)
+    private boolean useParabolicTrajectory = false;
+    private float runTargetGridX = 0f;
+    private float runTargetGridY = 0f;
+    private float parabolicSpikeGridX = 0f;
+
     private static final int RUN_FRAME_COUNT = RunPlayerSprite.FRAME_COUNT;
     private static final float RUN_FRAME_STEP_DISTANCE = RUN_FRAME_COUNT > 0
             ? (float) (Math.sqrt(2.0) / RUN_FRAME_COUNT)
@@ -751,6 +758,45 @@ public class Field {
                     runDirectionX = 0f;
                     runDirectionY = 0f;
                 }
+
+                // Detect Case 1: north move (y decreasing, x unchanged) where current and next move
+                // are for the same player. In this case, use a parabolic trajectory.
+                // The condition: previous.X == next.X (x unchanged) AND next.Y < previous.Y (moving north)
+                // AND previous.P == next.P (same player continues)
+                int originalStartX = previous.X;
+                int originalStartY = previous.Y;
+                int originalTargetX = next.X;
+                int originalTargetY = next.Y;
+                boolean isNorthMove = (originalTargetX == originalStartX) && (originalTargetY < originalStartY);
+                boolean samePlayerContinues = (previous.P == next.P);
+
+                if (isNorthMove && samePlayerContinues) {
+                    useParabolicTrajectory = true;
+                    // Store target grid positions for parabolic trajectory calculation
+                    runTargetGridX = flippedTargetX;
+                    runTargetGridY = flippedTargetY;
+                    // Calculate x_s (spike x position in grid coordinates)
+                    // x_s = 1 if x0 < half of intFieldWidth, or -1 if x0 >= half of intFieldWidth
+                    float halfFieldWidth = intFieldWidth / 2.0f;
+                    if (originalStartX < halfFieldWidth) {
+                        parabolicSpikeGridX = 1.0f;
+                    } else {
+                        parabolicSpikeGridX = -1.0f;
+                    }
+                    // Apply flipping if needed
+                    if (isFlipped) {
+                        parabolicSpikeGridX = intFieldWidth - parabolicSpikeGridX;
+                    }
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".startRunAnimationInternal: "
+                            + "Parabolic trajectory enabled for north move, spikeGridX=" + parabolicSpikeGridX
+                            + ", startX=" + originalStartX + ", startY=" + originalStartY
+                            + ", targetX=" + originalTargetX + ", targetY=" + originalTargetY);
+                } else {
+                    useParabolicTrajectory = false;
+                    runTargetGridX = 0f;
+                    runTargetGridY = 0f;
+                    parabolicSpikeGridX = 0f;
+                }
                 runPlayerFrameIndex = 0;
                 runPlayerLastFrameTime = 0L;  // Don't start time yet if we have kick animation
                 idlePlayerFrameIndex = 0;
@@ -815,6 +861,10 @@ public class Field {
             runKickPausedFrames = 0;
             waitForKickToStartOpponentRun = false;
             delayedOpponentPlayer = -1;
+            useParabolicTrajectory = false;
+            runTargetGridX = 0f;
+            runTargetGridY = 0f;
+            parabolicSpikeGridX = 0f;
             resetRunFinalPositions();
 
             kickAnimationActive = false;
@@ -916,6 +966,10 @@ public class Field {
         runKickPausedFrames = 0;
         waitForKickToStartOpponentRun = false;
         delayedOpponentPlayer = -1;
+        useParabolicTrajectory = false;
+        runTargetGridX = 0f;
+        runTargetGridY = 0f;
+        parabolicSpikeGridX = 0f;
         completeBallAnimation();
     }
 
@@ -1351,8 +1405,14 @@ public class Field {
                     : redFrameIndex >= redFrameCount - 1;
             if (redReached) {
                 if (runTotalDistance > 0f) {
-                    runFinalRedGridX = runStartGridX + runDirectionX * runTotalDistance;
-                    runFinalRedGridY = runStartGridY + runDirectionY * runTotalDistance;
+                    if (useParabolicTrajectory) {
+                        // For parabolic trajectory, endpoint is (x_0, y_1)
+                        runFinalRedGridX = runStartGridX;
+                        runFinalRedGridY = runTargetGridY;
+                    } else {
+                        runFinalRedGridX = runStartGridX + runDirectionX * runTotalDistance;
+                        runFinalRedGridY = runStartGridY + runDirectionY * runTotalDistance;
+                    }
                 }
                 runRedCompleted = true;
                 redFrame = null;
@@ -1367,8 +1427,14 @@ public class Field {
                     : blueFrameIndex >= blueFrameCount - 1;
             if (blueReached) {
                 if (runTotalDistance > 0f) {
-                    runFinalBlueGridX = runStartGridX + runDirectionX * runTotalDistance;
-                    runFinalBlueGridY = runStartGridY + runDirectionY * runTotalDistance;
+                    if (useParabolicTrajectory) {
+                        // For parabolic trajectory, endpoint is (x_0, y_1)
+                        runFinalBlueGridX = runStartGridX;
+                        runFinalBlueGridY = runTargetGridY;
+                    } else {
+                        runFinalBlueGridX = runStartGridX + runDirectionX * runTotalDistance;
+                        runFinalBlueGridY = runStartGridY + runDirectionY * runTotalDistance;
+                    }
                 }
                 runBlueCompleted = true;
                 blueFrame = null;
@@ -1388,13 +1454,52 @@ public class Field {
         float redEndProximity = runTargetRedCloser ? 1f : 0f;
         float redProximity = clamp(lerp(redStartProximity, redEndProximity, redAnimationProgress), 1f);
 
-        float redGridX = runStartGridX + runDirectionX * redDistanceTraveled;
-        float redGridY = runStartGridY + runDirectionY * redDistanceTraveled;
+        float redGridX;
+        float redGridY;
+        float blueGridX;
+        float blueGridY;
+
+        if (useParabolicTrajectory) {
+            // Parabolic trajectory for north move where same player continues
+            // Formula: x(y) = x_s + 4*(x_0 - x_s)/((y_1 - y_0)^2) * (y - (y_0 + y_1)/2)^2
+            // This creates a sideways parabola passing through (x_0, y_0) and (x_0, y_1)
+            // with its spike at (x_s, (y_0 + y_1)/2)
+
+            float y0 = runStartGridY;
+            float y1 = runTargetGridY;
+            float x0 = runStartGridX;
+            float xs = parabolicSpikeGridX;
+            float yDelta = y1 - y0;
+            float yMid = (y0 + y1) / 2.0f;
+
+            // Red sprite position - use redAnimationProgress to interpolate Y
+            redGridY = lerp(y0, y1, redAnimationProgress);
+            if (Math.abs(yDelta) > RUN_DESTINATION_EPSILON) {
+                float yOffset = redGridY - yMid;
+                redGridX = xs + 4.0f * (x0 - xs) / (yDelta * yDelta) * (yOffset * yOffset);
+            } else {
+                redGridX = x0;
+            }
+
+            // Blue sprite position - use blueAnimationProgress to interpolate Y
+            blueGridY = lerp(y0, y1, blueAnimationProgress);
+            if (Math.abs(yDelta) > RUN_DESTINATION_EPSILON) {
+                float yOffset = blueGridY - yMid;
+                blueGridX = xs + 4.0f * (x0 - xs) / (yDelta * yDelta) * (yOffset * yOffset);
+            } else {
+                blueGridX = x0;
+            }
+        } else {
+            // Linear trajectory (original behavior)
+            redGridX = runStartGridX + runDirectionX * redDistanceTraveled;
+            redGridY = runStartGridY + runDirectionY * redDistanceTraveled;
+
+            blueGridX = runStartGridX + runDirectionX * blueDistanceTraveled;
+            blueGridY = runStartGridY + runDirectionY * blueDistanceTraveled;
+        }
+
         float redCenterX = w2x(redGridX);
         float redCenterY = h2y(redGridY);
-
-        float blueGridX = runStartGridX + runDirectionX * blueDistanceTraveled;
-        float blueGridY = runStartGridY + runDirectionY * blueDistanceTraveled;
         float blueCenterX = w2x(blueGridX);
         float blueCenterY = h2y(blueGridY);
 
