@@ -750,8 +750,6 @@ public class Field {
                     runTargetBlueCloser = next.P == 1;
                     runStartGridX = flippedStartX;
                     runStartGridY = flippedStartY;
-                    runTargetGridX = flippedTargetX;
-                    runTargetGridY = flippedTargetY;
                     runTotalDistance = totalDistance;
                     if (totalDistance > 0f) {
                     runDirectionX = totalDeltaX / totalDistance;
@@ -774,6 +772,9 @@ public class Field {
 
                 if (isNorthMove && samePlayerContinues) {
                     useParabolicTrajectory = true;
+                    // Store target grid positions for parabolic trajectory calculation
+                    runTargetGridX = flippedTargetX;
+                    runTargetGridY = flippedTargetY;
                     // Calculate x_s (spike x position in grid coordinates)
                     // x_s = 1 if x0 < half of intFieldWidth, or -1 if x0 >= half of intFieldWidth
                     float halfFieldWidth = intFieldWidth / 2.0f;
@@ -792,6 +793,8 @@ public class Field {
                             + ", targetX=" + originalTargetX + ", targetY=" + originalTargetY);
                 } else {
                     useParabolicTrajectory = false;
+                    runTargetGridX = 0f;
+                    runTargetGridY = 0f;
                     parabolicSpikeGridX = 0f;
                 }
                 runPlayerFrameIndex = 0;
@@ -859,6 +862,8 @@ public class Field {
             waitForKickToStartOpponentRun = false;
             delayedOpponentPlayer = -1;
             useParabolicTrajectory = false;
+            runTargetGridX = 0f;
+            runTargetGridY = 0f;
             parabolicSpikeGridX = 0f;
             resetRunFinalPositions();
 
@@ -962,6 +967,8 @@ public class Field {
         waitForKickToStartOpponentRun = false;
         delayedOpponentPlayer = -1;
         useParabolicTrajectory = false;
+        runTargetGridX = 0f;
+        runTargetGridY = 0f;
         parabolicSpikeGridX = 0f;
         completeBallAnimation();
     }
@@ -1398,8 +1405,14 @@ public class Field {
                     : redFrameIndex >= redFrameCount - 1;
             if (redReached) {
                 if (runTotalDistance > 0f) {
-                    runFinalRedGridX = runStartGridX + runDirectionX * runTotalDistance;
-                    runFinalRedGridY = runStartGridY + runDirectionY * runTotalDistance;
+                    if (useParabolicTrajectory) {
+                        // For parabolic trajectory, endpoint is (x_0, y_1)
+                        runFinalRedGridX = runStartGridX;
+                        runFinalRedGridY = runTargetGridY;
+                    } else {
+                        runFinalRedGridX = runStartGridX + runDirectionX * runTotalDistance;
+                        runFinalRedGridY = runStartGridY + runDirectionY * runTotalDistance;
+                    }
                 }
                 runRedCompleted = true;
                 redFrame = null;
@@ -1414,8 +1427,14 @@ public class Field {
                     : blueFrameIndex >= blueFrameCount - 1;
             if (blueReached) {
                 if (runTotalDistance > 0f) {
-                    runFinalBlueGridX = runStartGridX + runDirectionX * runTotalDistance;
-                    runFinalBlueGridY = runStartGridY + runDirectionY * runTotalDistance;
+                    if (useParabolicTrajectory) {
+                        // For parabolic trajectory, endpoint is (x_0, y_1)
+                        runFinalBlueGridX = runStartGridX;
+                        runFinalBlueGridY = runTargetGridY;
+                    } else {
+                        runFinalBlueGridX = runStartGridX + runDirectionX * runTotalDistance;
+                        runFinalBlueGridY = runStartGridY + runDirectionY * runTotalDistance;
+                    }
                 }
                 runBlueCompleted = true;
                 blueFrame = null;
