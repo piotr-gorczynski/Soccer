@@ -2227,6 +2227,10 @@ public class Field {
         if (kickAnimationActive && runMovingPlayer == 0) {
             blueShouldBeCloser = false;
         }
+        // When blue is the moving player (kicker) and run animation is active, blue should stay closer
+        if (runActive && runMovingPlayer == 1) {
+            blueShouldBeCloser = true;
+        }
         float idleBlueCenterX;
         float idleBlueCenterY;
         if (!Float.isNaN(runFinalBlueGridX) && !Float.isNaN(runFinalBlueGridY)) {
@@ -2251,6 +2255,10 @@ public class Field {
         }
         if (kickAnimationActive && runMovingPlayer == 1) {
             redShouldBeCloser = false;
+        }
+        // When red is the moving player (kicker) and run animation is active, red should stay closer
+        if (runActive && runMovingPlayer == 0) {
+            redShouldBeCloser = true;
         }
         float idleRedCenterX;
         float idleRedCenterY;
