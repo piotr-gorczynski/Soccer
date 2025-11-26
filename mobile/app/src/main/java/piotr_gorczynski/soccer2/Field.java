@@ -780,8 +780,9 @@ public class Field {
                     // Calculate x_s (spike x position in grid coordinates)
                     // x_s = x0 - 1 if on left side of field (curve left), x0 + 1 if on right side (curve right)
                     // This keeps the parabolic arc within the field bounds
+                    // Use flippedStartX for the comparison to ensure consistent visual behavior after flipping
                     float halfFieldWidth = intFieldWidth / 2.0f;
-                    if (originalStartX < halfFieldWidth) {
+                    if (flippedStartX < halfFieldWidth) {
                         // Left side of field: curve left by 1 grid unit
                         parabolicSpikeGridX = flippedStartX - 1.0f;
                     } else {
