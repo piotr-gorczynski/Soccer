@@ -763,16 +763,19 @@ public class Field {
                     runDirectionY = 0f;
                 }
 
-                // Detect Case 1: north move (y decreasing, x unchanged).
-                // In this case, use a parabolic trajectory.
-                // The condition: previous.X == next.X (x unchanged) AND next.Y < previous.Y (moving north)
+                // Detect conditions for parabolic trajectory:
+                // 1. North move (y decreasing, x unchanged) AND next move is for player 0
+                // 2. South move (y increasing, x unchanged) AND next move is for player 1
                 int originalStartX = previous.X;
                 int originalStartY = previous.Y;
                 int originalTargetX = next.X;
                 int originalTargetY = next.Y;
                 boolean isNorthMove = (originalTargetX == originalStartX) && (originalTargetY < originalStartY);
+                boolean isSouthMove = (originalTargetX == originalStartX) && (originalTargetY > originalStartY);
+                boolean useParabolicForNorth = isNorthMove && (next.P == 0);
+                boolean useParabolicForSouth = isSouthMove && (next.P == 1);
 
-                if (isNorthMove) {
+                if (useParabolicForNorth || useParabolicForSouth) {
                     useParabolicTrajectory = true;
                     // Store target grid positions for parabolic trajectory calculation
                     runTargetGridX = flippedTargetX;
@@ -790,7 +793,9 @@ public class Field {
                         parabolicSpikeGridX = flippedStartX + 0.5f;
                     }
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".startRunAnimationInternal: "
-                            + "Parabolic trajectory enabled for north move, spikeGridX=" + parabolicSpikeGridX
+                            + "Parabolic trajectory enabled: isNorthMove=" + isNorthMove
+                            + ", isSouthMove=" + isSouthMove + ", nextPlayer=" + next.P
+                            + ", spikeGridX=" + parabolicSpikeGridX
                             + ", startX=" + originalStartX + ", startY=" + originalStartY
                             + ", targetX=" + originalTargetX + ", targetY=" + originalTargetY);
                 } else {
@@ -800,6 +805,7 @@ public class Field {
                     parabolicSpikeGridX = 0f;
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".startRunAnimationInternal: "
                             + "Parabolic trajectory NOT enabled: isNorthMove=" + isNorthMove
+                            + ", isSouthMove=" + isSouthMove + ", nextPlayer=" + next.P
                             + ", startX=" + originalStartX + ", startY=" + originalStartY
                             + ", targetX=" + originalTargetX + ", targetY=" + originalTargetY);
                 }
