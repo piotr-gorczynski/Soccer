@@ -618,6 +618,10 @@ public class Field {
             return;
         }
 
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".startRunAnimationInternal: "
+                + "previous.X=" + previous.X + ", previous.Y=" + previous.Y + ", previous.P=" + previous.P
+                + ", next.X=" + next.X + ", next.Y=" + next.Y + ", next.P=" + next.P);
+
         float flippedStartX = flipX(previous.X);
         float flippedStartY = flipY(previous.Y);
         float flippedTargetX = flipX(next.X);
@@ -796,6 +800,12 @@ public class Field {
                     runTargetGridX = 0f;
                     runTargetGridY = 0f;
                     parabolicSpikeGridX = 0f;
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".startRunAnimationInternal: "
+                            + "Parabolic trajectory NOT enabled: isNorthMove=" + isNorthMove
+                            + ", samePlayerContinues=" + samePlayerContinues
+                            + ", startX=" + originalStartX + ", startY=" + originalStartY
+                            + ", targetX=" + originalTargetX + ", targetY=" + originalTargetY
+                            + ", previous.P=" + previous.P + ", next.P=" + next.P);
                 }
                 runPlayerFrameIndex = 0;
                 runPlayerLastFrameTime = 0L;  // Don't start time yet if we have kick animation
@@ -1459,6 +1469,11 @@ public class Field {
         float blueGridX;
         float blueGridY;
 
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawRunAnimation: "
+                + "useParabolicTrajectory=" + useParabolicTrajectory
+                + ", runStartGridX=" + runStartGridX + ", runStartGridY=" + runStartGridY
+                + ", runTargetGridX=" + runTargetGridX + ", runTargetGridY=" + runTargetGridY);
+
         if (useParabolicTrajectory) {
             // Parabolic trajectory for north move where same player continues
             // Formula: x(y) = x_s + 4*(x_0 - x_s)/((y_1 - y_0)^2) * (y - (y_0 + y_1)/2)^2
@@ -1489,6 +1504,11 @@ public class Field {
             } else {
                 blueGridX = x0;
             }
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawRunAnimation: "
+                    + "PARABOLIC trajectory active: y0=" + y0 + ", y1=" + y1 + ", x0=" + x0 + ", xs=" + xs
+                    + ", redProgress=" + redAnimationProgress + ", blueProgress=" + blueAnimationProgress
+                    + ", redGridX=" + redGridX + ", redGridY=" + redGridY
+                    + ", blueGridX=" + blueGridX + ", blueGridY=" + blueGridY);
         } else {
             // Linear trajectory (original behavior)
             redGridX = runStartGridX + runDirectionX * redDistanceTraveled;
