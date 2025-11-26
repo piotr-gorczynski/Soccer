@@ -1620,26 +1620,20 @@ public class Field {
 
             // For parabolic trajectory, dynamically select animation frames based on
             // the instantaneous direction of movement at each epsilon step
-            if (redFrameIndex >= 0 && !Float.isNaN(parabolicPrevRedGridX) && !Float.isNaN(parabolicPrevRedGridY)) {
-                float redDeltaX = redGridX - parabolicPrevRedGridX;
-                float redDeltaY = redGridY - parabolicPrevRedGridY;
-                if (Math.abs(redDeltaX) > SPRITE_DIRECTION_EPSILON || Math.abs(redDeltaY) > SPRITE_DIRECTION_EPSILON) {
-                    RunAnimationFrameSet redFrameSet = selectRunAnimationFrames(redDeltaX, redDeltaY, redDeltaX, redDeltaY);
-                    if (!redFrameSet.isEmpty() && redFrameSet.redFrames.length > 0) {
-                        redFrame = getRunFrame(redFrameSet.redFrames, redFrameIndex, redFrameSet.redFrames.length);
-                    }
-                }
+            Bitmap redParabolicFrame = getParabolicDirectionFrame(
+                    redGridX, redGridY, parabolicPrevRedGridX, parabolicPrevRedGridY,
+                    redFrameIndex, true);
+            if (redParabolicFrame != null) {
+                redFrame = redParabolicFrame;
             }
-            if (blueFrameIndex >= 0 && !Float.isNaN(parabolicPrevBlueGridX) && !Float.isNaN(parabolicPrevBlueGridY)) {
-                float blueDeltaX = blueGridX - parabolicPrevBlueGridX;
-                float blueDeltaY = blueGridY - parabolicPrevBlueGridY;
-                if (Math.abs(blueDeltaX) > SPRITE_DIRECTION_EPSILON || Math.abs(blueDeltaY) > SPRITE_DIRECTION_EPSILON) {
-                    RunAnimationFrameSet blueFrameSet = selectRunAnimationFrames(blueDeltaX, blueDeltaY, blueDeltaX, blueDeltaY);
-                    if (!blueFrameSet.isEmpty() && blueFrameSet.blueFrames.length > 0) {
-                        blueFrame = getRunFrame(blueFrameSet.blueFrames, blueFrameIndex, blueFrameSet.blueFrames.length);
-                    }
-                }
+
+            Bitmap blueParabolicFrame = getParabolicDirectionFrame(
+                    blueGridX, blueGridY, parabolicPrevBlueGridX, parabolicPrevBlueGridY,
+                    blueFrameIndex, false);
+            if (blueParabolicFrame != null) {
+                blueFrame = blueParabolicFrame;
             }
+
             // Update previous positions for next frame's direction calculation
             parabolicPrevRedGridX = redGridX;
             parabolicPrevRedGridY = redGridY;
@@ -1887,6 +1881,42 @@ public class Field {
         }
 
         return frames[safeIndex];
+    }
+
+    /**
+     * Gets the appropriate run animation frame for a player during parabolic trajectory,
+     * based on the instantaneous direction of movement.
+     *
+     * @param currentX current grid X position
+     * @param currentY current grid Y position
+     * @param prevX previous grid X position
+     * @param prevY previous grid Y position
+     * @param frameIndex current animation frame index
+     * @param isRedPlayer true for red player, false for blue player
+     * @return the appropriate Bitmap frame, or null if no frame should be displayed
+     */
+    private Bitmap getParabolicDirectionFrame(float currentX, float currentY,
+                                               float prevX, float prevY,
+                                               int frameIndex, boolean isRedPlayer) {
+        if (frameIndex < 0 || Float.isNaN(prevX) || Float.isNaN(prevY)) {
+            return null;
+        }
+
+        float deltaX = currentX - prevX;
+        float deltaY = currentY - prevY;
+
+        if (Math.abs(deltaX) <= SPRITE_DIRECTION_EPSILON && Math.abs(deltaY) <= SPRITE_DIRECTION_EPSILON) {
+            return null;
+        }
+
+        RunAnimationFrameSet frameSet = selectRunAnimationFrames(deltaX, deltaY, deltaX, deltaY);
+        Bitmap[] frames = isRedPlayer ? frameSet.redFrames : frameSet.blueFrames;
+
+        if (frameSet.isEmpty() || frames.length == 0) {
+            return null;
+        }
+
+        return getRunFrame(frames, frameIndex, frames.length);
     }
 
     private static final class RunAnimationFrameSet {
