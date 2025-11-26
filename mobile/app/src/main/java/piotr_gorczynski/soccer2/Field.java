@@ -778,16 +778,15 @@ public class Field {
                     runTargetGridX = flippedTargetX;
                     runTargetGridY = flippedTargetY;
                     // Calculate x_s (spike x position in grid coordinates)
-                    // x_s = 1 if x0 < half of intFieldWidth, or -1 if x0 >= half of intFieldWidth
+                    // x_s = x0 - 1 if on left side of field (curve left), x0 + 1 if on right side (curve right)
+                    // This keeps the parabolic arc within the field bounds
                     float halfFieldWidth = intFieldWidth / 2.0f;
                     if (originalStartX < halfFieldWidth) {
-                        parabolicSpikeGridX = 1.0f;
+                        // Left side of field: curve left by 1 grid unit
+                        parabolicSpikeGridX = flippedStartX - 1.0f;
                     } else {
-                        parabolicSpikeGridX = -1.0f;
-                    }
-                    // Apply flipping if needed
-                    if (isFlipped) {
-                        parabolicSpikeGridX = intFieldWidth - parabolicSpikeGridX;
+                        // Right side of field: curve right by 1 grid unit
+                        parabolicSpikeGridX = flippedStartX + 1.0f;
                     }
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".startRunAnimationInternal: "
                             + "Parabolic trajectory enabled for north move, spikeGridX=" + parabolicSpikeGridX
