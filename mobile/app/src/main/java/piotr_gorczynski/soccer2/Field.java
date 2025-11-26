@@ -1457,9 +1457,11 @@ public class Field {
                 ? getRunFrame(blueFrames, blueFrameIndex, blueFrameCount)
                 : null;
 
-        // Avoid drawing the kicking player's run frames while the kick animation is active
-        // or on the same frame when the kick finishes.
-        if (kickAnimationActive || kickCompletedThisFrame) {
+        // Avoid drawing the kicking player's run frames while the kick animation is active.
+        // When kickCompletedThisFrame is true, the kick animation has ended and we should
+        // start showing the run animation immediately (handled by setting runXxxFrameVisible
+        // flags below to prevent idle animation from showing).
+        if (kickAnimationActive) {
             if (runMovingPlayer == 0) {
                 redFrame = null;
             } else if (runMovingPlayer == 1) {
