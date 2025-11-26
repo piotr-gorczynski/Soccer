@@ -763,18 +763,16 @@ public class Field {
                     runDirectionY = 0f;
                 }
 
-                // Detect Case 1: north move (y decreasing, x unchanged) where current and next move
-                // are for the same player. In this case, use a parabolic trajectory.
+                // Detect Case 1: north move (y decreasing, x unchanged).
+                // In this case, use a parabolic trajectory.
                 // The condition: previous.X == next.X (x unchanged) AND next.Y < previous.Y (moving north)
-                // AND previous.P == next.P (same player continues)
                 int originalStartX = previous.X;
                 int originalStartY = previous.Y;
                 int originalTargetX = next.X;
                 int originalTargetY = next.Y;
                 boolean isNorthMove = (originalTargetX == originalStartX) && (originalTargetY < originalStartY);
-                boolean samePlayerContinues = (previous.P == next.P);
 
-                if (isNorthMove && samePlayerContinues) {
+                if (isNorthMove) {
                     useParabolicTrajectory = true;
                     // Store target grid positions for parabolic trajectory calculation
                     runTargetGridX = flippedTargetX;
@@ -802,10 +800,8 @@ public class Field {
                     parabolicSpikeGridX = 0f;
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".startRunAnimationInternal: "
                             + "Parabolic trajectory NOT enabled: isNorthMove=" + isNorthMove
-                            + ", samePlayerContinues=" + samePlayerContinues
                             + ", startX=" + originalStartX + ", startY=" + originalStartY
-                            + ", targetX=" + originalTargetX + ", targetY=" + originalTargetY
-                            + ", previous.P=" + previous.P + ", next.P=" + next.P);
+                            + ", targetX=" + originalTargetX + ", targetY=" + originalTargetY);
                 }
                 runPlayerFrameIndex = 0;
                 runPlayerLastFrameTime = 0L;  // Don't start time yet if we have kick animation
