@@ -13,6 +13,11 @@ import static org.junit.Assert.*;
  * Test cases for the drawing order logic.
  * The drawing order should be determined by the bottom value of each element.
  * Elements with lower bottom values should be drawn first (appear behind).
+ * 
+ * Note: This test uses a local copy of the DrawableElement class to keep tests
+ * self-contained and independent of Field.java's internal implementation.
+ * This is intentional to ensure tests are stable and don't break due to
+ * unrelated changes in Field.java.
  */
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
