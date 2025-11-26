@@ -789,6 +789,7 @@ public class GameView extends View {
             x = field.getFieldWidth() - x;
             y = field.getFieldHeight() - y;
         }
+        Log.d("TAG_Soccer", "GameView.handleInputAt x="+x+" y="+y);
 
         ArrayList<MoveTo> possibleMoves = new ArrayList<>();
         createPossibleMoves(possibleMoves, realMoves);

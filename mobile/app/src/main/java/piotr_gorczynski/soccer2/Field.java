@@ -783,11 +783,11 @@ public class Field {
                     // Use flippedStartX for the comparison to ensure consistent visual behavior after flipping
                     float halfFieldWidth = intFieldWidth / 2.0f;
                     if (flippedStartX < halfFieldWidth) {
-                        // Left side of field: curve left by 1 grid unit
-                        parabolicSpikeGridX = flippedStartX - 1.0f;
+                        // Left side of field: curve left by grid unit
+                        parabolicSpikeGridX = flippedStartX - 0.5f;
                     } else {
-                        // Right side of field: curve right by 1 grid unit
-                        parabolicSpikeGridX = flippedStartX + 1.0f;
+                        // Right side of field: curve right by grid unit
+                        parabolicSpikeGridX = flippedStartX + 0.5f;
                     }
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".startRunAnimationInternal: "
                             + "Parabolic trajectory enabled for north move, spikeGridX=" + parabolicSpikeGridX
