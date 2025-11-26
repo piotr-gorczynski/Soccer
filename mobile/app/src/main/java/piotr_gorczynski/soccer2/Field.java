@@ -19,6 +19,7 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.Log;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -1925,6 +1926,173 @@ public class Field {
         }
     }
 
+    /**
+     * Represents a drawable element with its bottom position for sorting.
+     * Elements are sorted by bottom value - lower values are drawn first (appear behind).
+     */
+    private static final class DrawableElement implements Comparable<DrawableElement> {
+        static final int TYPE_BALL = 0;
+        static final int TYPE_BLUE = 1;
+        static final int TYPE_RED = 2;
+
+        final int type;
+        final float bottom;
+
+        DrawableElement(int type, float bottom) {
+            this.type = type;
+            this.bottom = bottom;
+        }
+
+        @Override
+        public int compareTo(DrawableElement other) {
+            return Float.compare(this.bottom, other.bottom);
+        }
+    }
+
+    /**
+     * Computes the bottom value for the blue sprite based on the current animation state.
+     * @param canvas The canvas being drawn to
+     * @param ballRadius The ball radius
+     * @return The bottom coordinate of the blue sprite, or Float.MIN_VALUE if not visible
+     */
+    private float computeBlueBottom(Canvas canvas, float ballRadius) {
+        float spriteHeight = canvas.getHeight() * flSpriteSize;
+        if (spriteHeight <= 0f) {
+            return Float.MIN_VALUE;
+        }
+
+        // Check kick animation first
+        if (kickAnimationActive && runMovingPlayer == 1 && !kickBlueCompleted) {
+            Bitmap[] blueFrames = activeKickBluePlayerFrames != null ? activeKickBluePlayerFrames : EMPTY_BITMAP_ARRAY;
+            if (blueFrames.length > 0 && kickFrameLimit > 0) {
+                Bitmap blueFrame = getKickFrame(blueFrames, kickPlayerFrameIndex, blueFrames.length);
+                if (blueFrame != null && !blueFrame.isRecycled()) {
+                    float ballCenterY = h2y(runStartGridY);
+                    float blueProximity = runStartBlueCloser ? 1f : 0f;
+                    float blueFarBottom = ballCenterY - ballRadius;
+                    float blueCloseBottom = ballCenterY + spriteHeight * (1f - ACTIVE_SPRITE_PROXIMITY_RATIO);
+                    float blueBottom = lerp(blueFarBottom, blueCloseBottom, blueProximity);
+                    if (blueBottom > canvas.getHeight()) {
+                        blueBottom = canvas.getHeight();
+                    }
+                    return blueBottom;
+                }
+            }
+        }
+
+        // Check run animation
+        if (runAnimationActive && cachedRunBlueFrame != null && !cachedRunBlueFrame.isRecycled()) {
+            float blueCenterY = cachedBlueCenterY;
+            float blueProximity = cachedBlueProximity;
+            float blueFarBottom = blueCenterY - ballRadius;
+            float blueCloseBottom = blueCenterY + spriteHeight * (1f - ACTIVE_SPRITE_PROXIMITY_RATIO);
+            float blueBottom = lerp(blueFarBottom, blueCloseBottom, blueProximity);
+            if (blueBottom > canvas.getHeight()) {
+                blueBottom = canvas.getHeight();
+            }
+            return blueBottom;
+        }
+
+        // Check idle animation
+        if (cachedShouldDrawIdleBlue && idleBluePlayerFrames.length > 0) {
+            Bitmap spriteFrame = idleBluePlayerFrames[idlePlayerFrameIndex % idleBluePlayerFrames.length];
+            if (spriteFrame != null && !spriteFrame.isRecycled()) {
+                float idleBlueCenterY = cachedIdleBlueCenterY;
+                boolean blueShouldBeCloser = cachedBlueShouldBeCloser;
+                float spriteBottom = blueShouldBeCloser
+                        ? idleBlueCenterY + spriteHeight * (1 - ACTIVE_SPRITE_PROXIMITY_RATIO)
+                        : idleBlueCenterY + 1f;
+                return spriteBottom;
+            }
+        }
+
+        return Float.MIN_VALUE;
+    }
+
+    /**
+     * Computes the bottom value for the red sprite based on the current animation state.
+     * @param canvas The canvas being drawn to
+     * @param ballRadius The ball radius
+     * @return The bottom coordinate of the red sprite, or Float.MIN_VALUE if not visible
+     */
+    private float computeRedBottom(Canvas canvas, float ballRadius) {
+        float spriteHeight = canvas.getHeight() * flSpriteSize;
+        if (spriteHeight <= 0f) {
+            return Float.MIN_VALUE;
+        }
+
+        // Check kick animation first
+        if (kickAnimationActive && runMovingPlayer == 0 && !kickRedCompleted) {
+            Bitmap[] redFrames = activeKickRedPlayerFrames != null ? activeKickRedPlayerFrames : EMPTY_BITMAP_ARRAY;
+            if (redFrames.length > 0 && kickFrameLimit > 0) {
+                Bitmap redFrame = getKickFrame(redFrames, kickPlayerFrameIndex, redFrames.length);
+                if (redFrame != null && !redFrame.isRecycled()) {
+                    float ballCenterY = h2y(runStartGridY);
+                    float redProximity = runStartRedCloser ? 1f : 0f;
+                    float redFarTop = ballCenterY + ballRadius;
+                    float redCloseTop = ballCenterY - spriteHeight * ACTIVE_SPRITE_PROXIMITY_RATIO;
+                    float redTop = lerp(redFarTop, redCloseTop, redProximity);
+                    float redBottom = redTop + spriteHeight;
+                    if (redBottom > canvas.getHeight()) {
+                        redBottom = canvas.getHeight();
+                    }
+                    return redBottom;
+                }
+            }
+        }
+
+        // Check run animation
+        if (runAnimationActive && cachedRunRedFrame != null && !cachedRunRedFrame.isRecycled()) {
+            float redCenterY = cachedRedCenterY;
+            float redProximity = cachedRedProximity;
+            float redFarTop = redCenterY + ballRadius;
+            float redCloseTop = redCenterY - spriteHeight * ACTIVE_SPRITE_PROXIMITY_RATIO;
+            float redTop = lerp(redFarTop, redCloseTop, redProximity);
+            float redBottom = redTop + spriteHeight;
+            if (redBottom > canvas.getHeight()) {
+                redBottom = canvas.getHeight();
+            }
+            return redBottom;
+        }
+
+        // Check idle animation
+        if (cachedShouldDrawIdleRed && idleRedPlayerFrames.length > 0) {
+            Bitmap spriteFrame = idleRedPlayerFrames[idlePlayerFrameIndex % idleRedPlayerFrames.length];
+            if (spriteFrame != null && !spriteFrame.isRecycled()) {
+                float idleRedCenterY = cachedIdleRedCenterY;
+                boolean redShouldBeCloser = cachedRedShouldBeCloser;
+                float spriteTop = redShouldBeCloser
+                        ? idleRedCenterY - spriteHeight * ACTIVE_SPRITE_PROXIMITY_RATIO
+                        : idleRedCenterY + 1f;
+                float spriteBottom = spriteTop + spriteHeight;
+                if (spriteBottom > canvas.getHeight()) {
+                    spriteBottom = canvas.getHeight();
+                }
+                return spriteBottom;
+            }
+        }
+
+        return Float.MIN_VALUE;
+    }
+
+    /**
+     * Draws the blue sprite (kick, run, or idle animation based on current state).
+     */
+    private void drawBlueSprite(Canvas canvas, float ballRadius) {
+        drawKickAnimationBlue(canvas, ballRadius);
+        drawRunAnimationBlue(canvas, ballRadius);
+        drawIdleBluePlayer(canvas);
+    }
+
+    /**
+     * Draws the red sprite (kick, run, or idle animation based on current state).
+     */
+    private void drawRedSprite(Canvas canvas, float ballRadius) {
+        drawKickAnimationRed(canvas, ballRadius);
+        drawRunAnimationRed(canvas, ballRadius);
+        drawIdleRedPlayer(canvas);
+    }
+
     private int flipX(int x) {
         return isFlipped ? intFieldWidth - x : x;
     }
@@ -2120,6 +2288,10 @@ public class Field {
     private boolean cachedBlueShouldBeCloser = false;
     private boolean cachedRedShouldBeCloser = false;
     private float cachedIdleSpriteHeight = 0f;
+
+    // Cached bottom values for drawing order calculation
+    private float cachedBlueBottom = 0f;
+    private float cachedRedBottom = 0f;
 
     private void updateIdlePlayersState(Canvas canvas, BallState ballState, int currentTurn) {
         // Reset cached state
@@ -2456,18 +2628,37 @@ public class Field {
         updateRunAnimationState(canvas, ballState.radius);
         updateIdlePlayersState(canvas, ballState, currentTurn);
         
-        // 1) Draw BLUE sprites first (behind the ball)
-        drawKickAnimationBlue(canvas, ballState.radius);
-        drawRunAnimationBlue(canvas, ballState.radius);
-        drawIdleBluePlayer(canvas);
-
-        // 2) Draw Ball
-        renderBall(canvas, ballState, movePaint);
+        // Compute bottom values for all drawable elements
+        float ballBottom = ballState.centerY + ballState.radius;
+        float blueBottom = computeBlueBottom(canvas, ballState.radius);
+        float redBottom = computeRedBottom(canvas, ballState.radius);
         
-        // 3) Draw RED sprites last (in front of the ball)
-        drawKickAnimationRed(canvas, ballState.radius);
-        drawRunAnimationRed(canvas, ballState.radius);
-        drawIdleRedPlayer(canvas);
+        // Cache bottom values for external access if needed
+        cachedBlueBottom = blueBottom;
+        cachedRedBottom = redBottom;
+        
+        // Create array of drawable elements and sort by bottom value
+        // Elements with lower bottom values are drawn first (appear behind)
+        DrawableElement[] elements = new DrawableElement[3];
+        elements[0] = new DrawableElement(DrawableElement.TYPE_BALL, ballBottom);
+        elements[1] = new DrawableElement(DrawableElement.TYPE_BLUE, blueBottom);
+        elements[2] = new DrawableElement(DrawableElement.TYPE_RED, redBottom);
+        Arrays.sort(elements);
+        
+        // Draw elements in sorted order (lower bottom values first)
+        for (DrawableElement element : elements) {
+            switch (element.type) {
+                case DrawableElement.TYPE_BALL:
+                    renderBall(canvas, ballState, movePaint);
+                    break;
+                case DrawableElement.TYPE_BLUE:
+                    drawBlueSprite(canvas, ballState.radius);
+                    break;
+                case DrawableElement.TYPE_RED:
+                    drawRedSprite(canvas, ballState.radius);
+                    break;
+            }
+        }
 
 
         // Turn indicator
