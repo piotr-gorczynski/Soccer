@@ -2077,6 +2077,8 @@ public class Field {
 
     /**
      * Draws the blue sprite (kick, run, or idle animation based on current state).
+     * Note: Each individual draw method has early-return checks, so calling all three
+     * is efficient and only the appropriate animation will actually render.
      */
     private void drawBlueSprite(Canvas canvas, float ballRadius) {
         drawKickAnimationBlue(canvas, ballRadius);
@@ -2086,6 +2088,8 @@ public class Field {
 
     /**
      * Draws the red sprite (kick, run, or idle animation based on current state).
+     * Note: Each individual draw method has early-return checks, so calling all three
+     * is efficient and only the appropriate animation will actually render.
      */
     private void drawRedSprite(Canvas canvas, float ballRadius) {
         drawKickAnimationRed(canvas, ballRadius);
