@@ -45,3 +45,4 @@ firebase/functions/*/node_modules/
 tools/*/package-lock.json
 tools/*/node_modules/
 secrets/
+*.args
