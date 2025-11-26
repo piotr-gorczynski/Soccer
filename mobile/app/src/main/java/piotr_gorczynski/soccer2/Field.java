@@ -178,6 +178,11 @@ public class Field {
     private float runTargetGridX = 0f;
     private float runTargetGridY = 0f;
     private float parabolicSpikeGridX = 0f;
+    // Previous grid positions for direction tracking during parabolic trajectory
+    private float parabolicPrevRedGridX = Float.NaN;
+    private float parabolicPrevRedGridY = Float.NaN;
+    private float parabolicPrevBlueGridX = Float.NaN;
+    private float parabolicPrevBlueGridY = Float.NaN;
 
     private static final int RUN_FRAME_COUNT = RunPlayerSprite.FRAME_COUNT;
     private static final float RUN_FRAME_STEP_DISTANCE = RUN_FRAME_COUNT > 0
@@ -806,6 +811,11 @@ public class Field {
                         // Right side of field: curve right by grid unit
                         parabolicSpikeGridX = flippedStartX + 0.5f;
                     }
+                    // Initialize previous position tracking for direction-based frame selection
+                    parabolicPrevRedGridX = flippedStartX;
+                    parabolicPrevRedGridY = flippedStartY;
+                    parabolicPrevBlueGridX = flippedStartX;
+                    parabolicPrevBlueGridY = flippedStartY;
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".startRunAnimationInternal: "
                             + "Parabolic trajectory enabled: isNorthMove=" + isNorthMove
                             + ", isSouthMove=" + isSouthMove + ", nextPlayer=" + next.P
@@ -817,6 +827,10 @@ public class Field {
                     runTargetGridX = 0f;
                     runTargetGridY = 0f;
                     parabolicSpikeGridX = 0f;
+                    parabolicPrevRedGridX = Float.NaN;
+                    parabolicPrevRedGridY = Float.NaN;
+                    parabolicPrevBlueGridX = Float.NaN;
+                    parabolicPrevBlueGridY = Float.NaN;
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".startRunAnimationInternal: "
                             + "Parabolic trajectory NOT enabled: isNorthMove=" + isNorthMove
                             + ", isSouthMove=" + isSouthMove + ", nextPlayer=" + next.P
@@ -891,6 +905,10 @@ public class Field {
             runTargetGridX = 0f;
             runTargetGridY = 0f;
             parabolicSpikeGridX = 0f;
+            parabolicPrevRedGridX = Float.NaN;
+            parabolicPrevRedGridY = Float.NaN;
+            parabolicPrevBlueGridX = Float.NaN;
+            parabolicPrevBlueGridY = Float.NaN;
             resetRunFinalPositions();
 
             kickAnimationActive = false;
@@ -996,6 +1014,10 @@ public class Field {
         runTargetGridX = 0f;
         runTargetGridY = 0f;
         parabolicSpikeGridX = 0f;
+        parabolicPrevRedGridX = Float.NaN;
+        parabolicPrevRedGridY = Float.NaN;
+        parabolicPrevBlueGridX = Float.NaN;
+        parabolicPrevBlueGridY = Float.NaN;
         completeBallAnimation();
     }
 
@@ -1595,6 +1617,34 @@ public class Field {
                     + ", redProgress=" + redAnimationProgress + ", blueProgress=" + blueAnimationProgress
                     + ", redGridX=" + redGridX + ", redGridY=" + redGridY
                     + ", blueGridX=" + blueGridX + ", blueGridY=" + blueGridY);
+
+            // For parabolic trajectory, dynamically select animation frames based on
+            // the instantaneous direction of movement at each epsilon step
+            if (redFrameIndex >= 0 && !Float.isNaN(parabolicPrevRedGridX) && !Float.isNaN(parabolicPrevRedGridY)) {
+                float redDeltaX = redGridX - parabolicPrevRedGridX;
+                float redDeltaY = redGridY - parabolicPrevRedGridY;
+                if (Math.abs(redDeltaX) > SPRITE_DIRECTION_EPSILON || Math.abs(redDeltaY) > SPRITE_DIRECTION_EPSILON) {
+                    RunAnimationFrameSet redFrameSet = selectRunAnimationFrames(redDeltaX, redDeltaY, redDeltaX, redDeltaY);
+                    if (!redFrameSet.isEmpty() && redFrameSet.redFrames.length > 0) {
+                        redFrame = getRunFrame(redFrameSet.redFrames, redFrameIndex, redFrameSet.redFrames.length);
+                    }
+                }
+            }
+            if (blueFrameIndex >= 0 && !Float.isNaN(parabolicPrevBlueGridX) && !Float.isNaN(parabolicPrevBlueGridY)) {
+                float blueDeltaX = blueGridX - parabolicPrevBlueGridX;
+                float blueDeltaY = blueGridY - parabolicPrevBlueGridY;
+                if (Math.abs(blueDeltaX) > SPRITE_DIRECTION_EPSILON || Math.abs(blueDeltaY) > SPRITE_DIRECTION_EPSILON) {
+                    RunAnimationFrameSet blueFrameSet = selectRunAnimationFrames(blueDeltaX, blueDeltaY, blueDeltaX, blueDeltaY);
+                    if (!blueFrameSet.isEmpty() && blueFrameSet.blueFrames.length > 0) {
+                        blueFrame = getRunFrame(blueFrameSet.blueFrames, blueFrameIndex, blueFrameSet.blueFrames.length);
+                    }
+                }
+            }
+            // Update previous positions for next frame's direction calculation
+            parabolicPrevRedGridX = redGridX;
+            parabolicPrevRedGridY = redGridY;
+            parabolicPrevBlueGridX = blueGridX;
+            parabolicPrevBlueGridY = blueGridY;
         } else {
             // Linear trajectory (original behavior)
             redGridX = runStartGridX + runDirectionX * redDistanceTraveled;
