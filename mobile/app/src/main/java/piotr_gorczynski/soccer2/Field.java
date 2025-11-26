@@ -2613,8 +2613,8 @@ public class Field {
             canvas.drawCircle(w2x(flipX(pm.X)), h2y(flipY(pm.Y)), pulseDotSize, movePaint);
         }
 
-        // Drawing order must be: 1) Blue sprite, 2) Ball, 3) Red sprite
-        // This ensures proper depth layering (blue is at top of field, red at bottom)
+        // Drawing order is now dynamic based on bottom values.
+        // Elements with lower bottom values are drawn first (appear behind).
         
         // Reset visibility flags
         runRedFrameVisible = false;
