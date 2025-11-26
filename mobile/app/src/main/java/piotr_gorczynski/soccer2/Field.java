@@ -806,10 +806,10 @@ public class Field {
                     float halfFieldWidth = intFieldWidth / 2.0f;
                     if (flippedStartX < halfFieldWidth) {
                         // Left side of field: curve left by grid unit
-                        parabolicSpikeGridX = flippedStartX - 0.5f;
+                        parabolicSpikeGridX = flippedStartX - 0.4f;
                     } else {
                         // Right side of field: curve right by grid unit
-                        parabolicSpikeGridX = flippedStartX + 0.5f;
+                        parabolicSpikeGridX = flippedStartX + 0.4f;
                     }
                     // Initialize previous position tracking for direction-based frame selection
                     parabolicPrevRedGridX = flippedStartX;
