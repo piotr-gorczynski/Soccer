@@ -1273,6 +1273,21 @@ public class Field {
         }
         lastRunSpriteHeight = spriteHeight;
 
+        // Set visibility flags based on whether frames will be drawn
+        // This must be done before updateIdlePlayersState checks these flags
+        if (runMovingPlayer == 1 && blueFrameCount > 0 && !kickBlueCompleted) {
+            Bitmap blueFrame = getKickFrame(blueFrames, kickPlayerFrameIndex, blueFrameCount);
+            if (blueFrame != null && !blueFrame.isRecycled()) {
+                kickBlueFrameVisible = true;
+            }
+        }
+        if (runMovingPlayer == 0 && redFrameCount > 0 && !kickRedCompleted) {
+            Bitmap redFrame = getKickFrame(redFrames, kickPlayerFrameIndex, redFrameCount);
+            if (redFrame != null && !redFrame.isRecycled()) {
+                kickRedFrameVisible = true;
+            }
+        }
+
         // Check if kick animation is complete
         if ((runMovingPlayer == 0 && kickRedCompleted) || (runMovingPlayer == 1 && kickBlueCompleted)) {
             stopKickAnimation(now);
@@ -1598,6 +1613,15 @@ public class Field {
         cachedBlueCenterY = blueCenterY;
         cachedRunRedFrame = redFrame;
         cachedRunBlueFrame = blueFrame;
+
+        // Set visibility flags based on whether frames will be drawn
+        // This must be done before updateIdlePlayersState checks these flags
+        if (blueFrame != null && !blueFrame.isRecycled()) {
+            runBlueFrameVisible = true;
+        }
+        if (redFrame != null && !redFrame.isRecycled()) {
+            runRedFrameVisible = true;
+        }
 
         // Save current sprite positions for use in idle animation.
         // Only update the player that is actually moving so the idle animation for
