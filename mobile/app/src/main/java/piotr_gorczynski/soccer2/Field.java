@@ -1623,6 +1623,17 @@ public class Field {
         if (redFrame != null && !redFrame.isRecycled()) {
             runRedFrameVisible = true;
         }
+        // When kick just completed, the kicking player's run frame was nullified to avoid
+        // visual overlap, but we should still mark the run as visible to prevent showing
+        // the idle animation. The kicking player should start running immediately.
+        if (kickCompletedThisFrame) {
+            if (runMovingPlayer == 1 && blueHasFrames && !runBlueCompleted) {
+                runBlueFrameVisible = true;
+            }
+            if (runMovingPlayer == 0 && redHasFrames && !runRedCompleted) {
+                runRedFrameVisible = true;
+            }
+        }
 
         // Save current sprite positions for use in idle animation.
         // Only update the player that is actually moving so the idle animation for
