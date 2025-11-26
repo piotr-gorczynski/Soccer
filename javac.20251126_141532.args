@@ -1,7 +1,0 @@
--d
-/tmp
--sourcepath
-mobile/app/src/main/java
--classpath
-/dev/null
-mobile/app/src/main/java/piotr_gorczynski/soccer2/Field.java
