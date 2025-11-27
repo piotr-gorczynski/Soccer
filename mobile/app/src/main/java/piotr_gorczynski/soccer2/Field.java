@@ -190,6 +190,7 @@ public class Field {
             : 0f;
     private static final float RUN_DESTINATION_EPSILON = 0.001f;
     private static final float ACTIVE_SPRITE_PROXIMITY_RATIO = 0.7f;
+    private static final float PASSIVE_SPRITE_PROXIMITY_RATIO = 0.1f;
     private static final int RUN_DELAY_CYCLES_FROM_KICK = 6;
     private static final int RUN_DELAY_CYCLES_FROM_RUN = 2;
     private static final float SPRITE_DIRECTION_EPSILON = 0.0001f;
@@ -2094,7 +2095,7 @@ public class Field {
                 boolean blueShouldBeCloser = cachedBlueShouldBeCloser;
                 float spriteBottom = blueShouldBeCloser
                         ? idleBlueCenterY + spriteHeight * (1 - ACTIVE_SPRITE_PROXIMITY_RATIO)
-                        : idleBlueCenterY - cachedIdleBallRadius;
+                        : idleBlueCenterY + PASSIVE_SPRITE_PROXIMITY_RATIO * spriteHeight - cachedIdleBallRadius;
                 return spriteBottom;
             }
         }
@@ -2581,7 +2582,7 @@ public class Field {
 
         float spriteBottom = blueShouldBeCloser
                 ? idleBlueCenterY + spriteHeight * (1 - ACTIVE_SPRITE_PROXIMITY_RATIO)
-                : idleBlueCenterY - cachedIdleBallRadius;
+                : idleBlueCenterY + PASSIVE_SPRITE_PROXIMITY_RATIO * spriteHeight - cachedIdleBallRadius;
         float spriteTop = spriteBottom - spriteHeight;
         if (spriteTop < 0f) {
             spriteTop = 0f;
