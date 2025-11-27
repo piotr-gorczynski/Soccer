@@ -2094,7 +2094,7 @@ public class Field {
                 boolean blueShouldBeCloser = cachedBlueShouldBeCloser;
                 float spriteBottom = blueShouldBeCloser
                         ? idleBlueCenterY + spriteHeight * (1 - ACTIVE_SPRITE_PROXIMITY_RATIO)
-                        : idleBlueCenterY + 1f;
+                        : idleBlueCenterY - cachedIdleBallRadius;
                 return spriteBottom;
             }
         }
@@ -2156,7 +2156,7 @@ public class Field {
                 boolean redShouldBeCloser = cachedRedShouldBeCloser;
                 float spriteTop = redShouldBeCloser
                         ? idleRedCenterY - spriteHeight * ACTIVE_SPRITE_PROXIMITY_RATIO
-                        : idleRedCenterY + 1f;
+                        : idleRedCenterY + cachedIdleBallRadius;
                 float spriteBottom = spriteTop + spriteHeight;
                 if (spriteBottom > canvas.getHeight()) {
                     spriteBottom = canvas.getHeight();
@@ -2385,6 +2385,7 @@ public class Field {
     private boolean cachedBlueShouldBeCloser = false;
     private boolean cachedRedShouldBeCloser = false;
     private float cachedIdleSpriteHeight = 0f;
+    private float cachedIdleBallRadius = 0f;
 
     // Cached bottom values for drawing order calculation
     private float cachedBlueBottom = 0f;
@@ -2484,6 +2485,7 @@ public class Field {
 
         lastRunSpriteHeight = spriteHeight;
         cachedIdleSpriteHeight = spriteHeight;
+        cachedIdleBallRadius = ballState.radius;
 
         float ballCenterX = ballState.centerX;
         float ballCenterY = ballState.centerY;
@@ -2579,7 +2581,7 @@ public class Field {
 
         float spriteBottom = blueShouldBeCloser
                 ? idleBlueCenterY + spriteHeight * (1 - ACTIVE_SPRITE_PROXIMITY_RATIO)
-                : idleBlueCenterY + 1f;
+                : idleBlueCenterY - cachedIdleBallRadius;
         float spriteTop = spriteBottom - spriteHeight;
         if (spriteTop < 0f) {
             spriteTop = 0f;
@@ -2627,7 +2629,7 @@ public class Field {
 
         float spriteTop = redShouldBeCloser
                 ? idleRedCenterY - spriteHeight * ACTIVE_SPRITE_PROXIMITY_RATIO
-                : idleRedCenterY + 1f;
+                : idleRedCenterY + cachedIdleBallRadius;
         float spriteBottom = spriteTop + spriteHeight;
         if (spriteBottom > canvas.getHeight()) {
             spriteBottom = canvas.getHeight();
