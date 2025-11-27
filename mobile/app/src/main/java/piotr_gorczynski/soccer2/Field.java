@@ -1753,7 +1753,7 @@ public class Field {
         float redProximity = cachedRedProximity;
 
         if (redFrame != null && !redFrame.isRecycled()) {
-            float redFarTop = redCenterY + ballRadius;
+            float redFarTop = redCenterY;
             float redCloseTop = redCenterY - spriteHeight * ACTIVE_SPRITE_PROXIMITY_RATIO;
             float redTop = lerp(redFarTop, redCloseTop, redProximity);
             float redBottom = redTop + spriteHeight;
@@ -2138,7 +2138,7 @@ public class Field {
         if (runAnimationActive && cachedRunRedFrame != null && !cachedRunRedFrame.isRecycled()) {
             float redCenterY = cachedRedCenterY;
             float redProximity = cachedRedProximity;
-            float redFarTop = redCenterY + ballRadius;
+            float redFarTop = redCenterY;
             float redCloseTop = redCenterY - spriteHeight * ACTIVE_SPRITE_PROXIMITY_RATIO;
             float redTop = lerp(redFarTop, redCloseTop, redProximity);
             float redBottom = redTop + spriteHeight;
