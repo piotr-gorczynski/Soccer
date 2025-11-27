@@ -1705,7 +1705,7 @@ public class Field {
     }
 
     private void drawRunAnimationBlue(Canvas canvas, float ballRadius) {
-        if (!runAnimationActive) {
+        if (!runAnimationActive || runBlueCompleted) {
             return;
         }
 
@@ -1742,7 +1742,7 @@ public class Field {
     }
 
     private void drawRunAnimationRed(Canvas canvas, float ballRadius) {
-        if (!runAnimationActive) {
+        if (!runAnimationActive || runRedCompleted) {
             return;
         }
 
