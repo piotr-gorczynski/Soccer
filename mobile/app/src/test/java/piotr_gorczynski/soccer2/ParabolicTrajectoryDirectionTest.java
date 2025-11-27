@@ -130,23 +130,33 @@ public class ParabolicTrajectoryDirectionTest {
         int prevFrameIndex = -1;  // NEW: track previous frame index
         int currentFrameIndex = 1;
         
-        // First draw: correct direction
+        // First draw: correct direction calculated from prevX/prevY (3.0, 4.0) to current (3.096, 4.064)
         String direction1 = calculateDirection(currentX, currentY, prevX, prevY);
         assertEquals("First draw should get correct direction", "EAST_SOUTH", direction1);
         
         // NEW BEHAVIOR: Only update previous position if frame index changed
+        // The key insight is that prevX/prevY stay unchanged until the frame advances.
+        // In Field.java, the update happens inside a conditional: 
+        //   if (blueFrameIndex != parabolicPrevBlueFrameIndex) {
+        //       parabolicPrevBlueGridX = blueGridX;
+        //       ...
+        //       parabolicPrevBlueFrameIndex = blueFrameIndex;
+        //   }
+        // Since currentFrameIndex == 1 and prevFrameIndex == -1, they differ on first draw,
+        // so we update prevFrameIndex. But prevX/prevY keep the old values for direction calc.
         if (currentFrameIndex != prevFrameIndex) {
             prevFrameIndex = currentFrameIndex;
-            // Note: In the real code, prevX/prevY would be updated here
-            // But for this draw, we already used the correct prevX/prevY
+            // In Field.java, prevGridX/Y are updated HERE after direction calculation.
+            // For this test, we leave prevX/prevY unchanged to show the same frame
+            // always uses the same previous position for direction calculation.
         }
         
-        // Second draw: same frame index, so prevX/prevY are NOT updated yet
-        // (In real code, prevX/prevY are only updated after the frame advances)
+        // Second draw: same frame index (1 == 1), so the conditional block is skipped.
+        // prevX/prevY remain as (3.0, 4.0), giving consistent EAST_SOUTH direction.
         String direction2 = calculateDirection(currentX, currentY, prevX, prevY);
         assertEquals("Second draw with NEW behavior gets SAME correct direction", "EAST_SOUTH", direction2);
         
-        // Third draw: still same frame index
+        // Third draw: still same frame index, direction still consistent
         String direction3 = calculateDirection(currentX, currentY, prevX, prevY);
         assertEquals("Third draw with NEW behavior gets SAME correct direction", "EAST_SOUTH", direction3);
     }
@@ -218,25 +228,26 @@ public class ParabolicTrajectoryDirectionTest {
 
     /**
      * Test that very small deltas (below epsilon) result in empty direction.
+     * 
+     * Note: We skip testing exactly at SPRITE_DIRECTION_EPSILON because:
+     * 1. Floating point comparison at exact boundaries is unreliable
+     * 2. The boundary case is not critical for the main use case (consistent direction)
+     * 3. In practice, sprite movements are always larger than epsilon
      */
     @Test
     public void testDirectionCalculation_SmallDelta() {
         float x = 3.0f;
         float y = 4.0f;
         
-        // Delta of 0
+        // Delta of 0: clearly below threshold, should return empty
         String dir1 = calculateDirection(x, y, x, y);
         assertEquals("Zero delta should return empty", "", dir1);
         
-        // Delta below epsilon
+        // Delta significantly below epsilon (0.00001 < 0.0001): should return empty
         String dir2 = calculateDirection(x + 0.00001f, y + 0.00001f, x, y);
         assertEquals("Delta below epsilon should return empty", "", dir2);
         
-        // Delta at epsilon - due to <= comparison, exactly at epsilon returns empty
-        // However, due to floating point precision, exactly at epsilon may not be detected
-        // So we just test that delta significantly above epsilon returns a valid direction
-        
-        // Delta above epsilon
+        // Delta significantly above epsilon (0.001 > 0.0001): should return valid direction
         String dir4 = calculateDirection(x + 0.001f, y + 0.001f, x, y);
         assertNotEquals("Delta above epsilon should return a direction", "", dir4);
     }
