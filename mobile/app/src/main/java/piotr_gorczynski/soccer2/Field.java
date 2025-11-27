@@ -156,6 +156,11 @@ public class Field {
     private float cachedRunSpriteHeight = 0f;
     private boolean cachedRedHasFrames = false;
     private boolean cachedBlueHasFrames = false;
+    private String activeRunDirectionLabel = "";
+    private String cachedRedDirectionLabel = "";
+    private String cachedBlueDirectionLabel = "";
+    private int cachedRedFrameIndex = -1;
+    private int cachedBlueFrameIndex = -1;
 
     private boolean ballAnimationActive = false;
     private long ballAnimationStartTime = 0L;
@@ -710,6 +715,7 @@ public class Field {
                 activeRunBluePlayerFrames = frameSet.blueFrames;
                 activeKickRedPlayerFrames = kickFrameSet.redFrames;
                 activeKickBluePlayerFrames = kickFrameSet.blueFrames;
+                activeRunDirectionLabel = frameSet.directionLabel;
 
                 int availableRedFrames = Math.min(RUN_FRAME_COUNT, frameSet.redFrames.length);
                 int availableBlueFrames = Math.min(RUN_FRAME_COUNT, frameSet.blueFrames.length);
@@ -1407,6 +1413,10 @@ public class Field {
         cachedRunBlueFrame = null;
         cachedRedHasFrames = false;
         cachedBlueHasFrames = false;
+        cachedRedDirectionLabel = "";
+        cachedBlueDirectionLabel = "";
+        cachedRedFrameIndex = -1;
+        cachedBlueFrameIndex = -1;
 
         if (!runAnimationActive) {
             return;
@@ -1479,6 +1489,8 @@ public class Field {
         Bitmap blueFrame = blueFrameIndex >= 0
                 ? getRunFrame(blueFrames, blueFrameIndex, blueFrameCount)
                 : null;
+        String redDirectionLabel = redFrame != null ? activeRunDirectionLabel : "";
+        String blueDirectionLabel = blueFrame != null ? activeRunDirectionLabel : "";
 
         // Avoid drawing the kicking player's run frames while the kick animation is active.
         // When kickCompletedThisFrame is true, the kick animation has ended and we should
@@ -1621,18 +1633,20 @@ public class Field {
 
             // For parabolic trajectory, dynamically select animation frames based on
             // the instantaneous direction of movement at each epsilon step
-            Bitmap redParabolicFrame = getParabolicDirectionFrame(
+            RunFrameSelection redParabolicFrame = getParabolicDirectionFrame(
                     redGridX, redGridY, parabolicPrevRedGridX, parabolicPrevRedGridY,
                     redFrameIndex, true);
-            if (redParabolicFrame != null) {
-                redFrame = redParabolicFrame;
+            if (redParabolicFrame.frame != null) {
+                redFrame = redParabolicFrame.frame;
+                redDirectionLabel = redParabolicFrame.directionLabel;
             }
 
-            Bitmap blueParabolicFrame = getParabolicDirectionFrame(
+            RunFrameSelection blueParabolicFrame = getParabolicDirectionFrame(
                     blueGridX, blueGridY, parabolicPrevBlueGridX, parabolicPrevBlueGridY,
                     blueFrameIndex, false);
-            if (blueParabolicFrame != null) {
-                blueFrame = blueParabolicFrame;
+            if (blueParabolicFrame.frame != null) {
+                blueFrame = blueParabolicFrame.frame;
+                blueDirectionLabel = blueParabolicFrame.directionLabel;
             }
 
             // Update previous positions for next frame's direction calculation
@@ -1649,6 +1663,20 @@ public class Field {
             blueGridY = runStartGridY + runDirectionY * blueDistanceTraveled;
         }
 
+        if (redFrame == null) {
+            redDirectionLabel = "";
+            cachedRedFrameIndex = -1;
+        } else {
+            cachedRedFrameIndex = redFrameIndex;
+        }
+
+        if (blueFrame == null) {
+            blueDirectionLabel = "";
+            cachedBlueFrameIndex = -1;
+        } else {
+            cachedBlueFrameIndex = blueFrameIndex;
+        }
+
         float redCenterX = w2x(redGridX);
         float redCenterY = h2y(redGridY);
         float blueCenterX = w2x(blueGridX);
@@ -1661,6 +1689,8 @@ public class Field {
         cachedBlueCenterY = blueCenterY;
         cachedRunRedFrame = redFrame;
         cachedRunBlueFrame = blueFrame;
+        cachedRedDirectionLabel = redDirectionLabel;
+        cachedBlueDirectionLabel = blueDirectionLabel;
 
         // Set visibility flags based on whether frames will be drawn
         // This must be done before updateIdlePlayersState checks these flags
@@ -1737,7 +1767,9 @@ public class Field {
                 canvas.drawBitmap(blueFrame, null, blueDst, null);
                 runBlueFrameVisible = true;
                 Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawRunAnimationBlue: "
-                        + "blueSprite left=" + blueLeft + " top=" + blueTop + " right=" + blueRight + " bottom=" + blueBottom);
+                        + "blueSprite left=" + blueLeft + " top=" + blueTop + " right=" + blueRight + " bottom=" + blueBottom
+                        + ", frameIndex=" + cachedBlueFrameIndex
+                        + ", direction=" + cachedBlueDirectionLabel);
             }
         }
     }
@@ -1774,7 +1806,9 @@ public class Field {
                 canvas.drawBitmap(redFrame, null, redDst, null);
                 runRedFrameVisible = true;
                 Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawRunAnimationRed: "
-                        + "redSprite left=" + redLeft + " top=" + redTop + " right=" + redRight + " bottom=" + redBottom);
+                        + "redSprite left=" + redLeft + " top=" + redTop + " right=" + redRight + " bottom=" + redBottom
+                        + ", frameIndex=" + cachedRedFrameIndex
+                        + ", direction=" + cachedRedDirectionLabel);
             }
         }
     }
@@ -1836,30 +1870,39 @@ public class Field {
 
         Bitmap[] redFrames;
         Bitmap[] blueFrames;
+        String directionLabel;
         if (degrees >= 157.5 && degrees < 202.5) {
             redFrames = runRedPlayerWestFrames;
             blueFrames = runBluePlayerWestFrames;
+            directionLabel = "WEST";
         } else if (degrees >= 112.5 && degrees < 157.5) {
             redFrames = runRedPlayerWestNorthFrames;
             blueFrames = runBluePlayerWestNorthFrames;
+            directionLabel = "WEST_NORTH";
         } else if (degrees >= 67.5 && degrees < 112.5) {
             redFrames = runRedPlayerNorthFrames;
             blueFrames = runBluePlayerNorthFrames;
+            directionLabel = "NORTH";
         } else if (degrees >= 22.5 && degrees < 67.5) {
             redFrames = runRedPlayerEastNorthFrames;
             blueFrames = runBluePlayerEastNorthFrames;
+            directionLabel = "EAST_NORTH";
         } else if (degrees >= 337.5 || degrees < 22.5) {
             redFrames = runRedPlayerEastFrames;
             blueFrames = runBluePlayerEastFrames;
+            directionLabel = "EAST";
         } else if (degrees >= 292.5 && degrees < 337.5) {
             redFrames = runRedPlayerEastSouthFrames;
             blueFrames = runBluePlayerEastSouthFrames;
+            directionLabel = "EAST_SOUTH";
         } else if (degrees >= 247.5 && degrees < 292.5) {
             redFrames = runRedPlayerSouthFrames;
             blueFrames = runBluePlayerSouthFrames;
+            directionLabel = "SOUTH";
         } else {
             redFrames = runRedPlayerSouthWestFrames;
             blueFrames = runBluePlayerSouthWestFrames;
+            directionLabel = "SOUTH_WEST";
         }
 
         if ((redFrames == null || redFrames.length == 0)
@@ -1867,7 +1910,7 @@ public class Field {
             return RunAnimationFrameSet.EMPTY;
         }
 
-        return new RunAnimationFrameSet(redFrames, blueFrames);
+        return new RunAnimationFrameSet(redFrames, blueFrames, directionLabel);
     }
 
     private Bitmap getRunFrame(Bitmap[] frames, int frameIndex, int frameCount) {
@@ -1894,45 +1937,64 @@ public class Field {
      * @param prevY previous grid Y position
      * @param frameIndex current animation frame index
      * @param isRedPlayer true for red player, false for blue player
-     * @return the appropriate Bitmap frame, or null if no frame should be displayed
+     * @return the appropriate frame selection, or {@link RunFrameSelection#EMPTY} if no frame should be displayed
      */
-    private Bitmap getParabolicDirectionFrame(float currentX, float currentY,
-                                               float prevX, float prevY,
-                                               int frameIndex, boolean isRedPlayer) {
+    private RunFrameSelection getParabolicDirectionFrame(float currentX, float currentY,
+                                                         float prevX, float prevY,
+                                                         int frameIndex, boolean isRedPlayer) {
         if (frameIndex < 0 || Float.isNaN(prevX) || Float.isNaN(prevY)) {
-            return null;
+            return RunFrameSelection.EMPTY;
         }
 
         float deltaX = currentX - prevX;
         float deltaY = currentY - prevY;
 
         if (Math.abs(deltaX) <= SPRITE_DIRECTION_EPSILON && Math.abs(deltaY) <= SPRITE_DIRECTION_EPSILON) {
-            return null;
+            return RunFrameSelection.EMPTY;
         }
 
         RunAnimationFrameSet frameSet = selectRunAnimationFrames(deltaX, deltaY, deltaX, deltaY);
         Bitmap[] frames = isRedPlayer ? frameSet.redFrames : frameSet.blueFrames;
 
         if (frameSet.isEmpty() || frames.length == 0) {
-            return null;
+            return RunFrameSelection.EMPTY;
         }
 
-        return getRunFrame(frames, frameIndex, frames.length);
+        Bitmap frame = getRunFrame(frames, frameIndex, frames.length);
+        if (frame == null) {
+            return RunFrameSelection.EMPTY;
+        }
+
+        return new RunFrameSelection(frame, frameSet.directionLabel);
     }
 
     private static final class RunAnimationFrameSet {
-        static final RunAnimationFrameSet EMPTY = new RunAnimationFrameSet(EMPTY_BITMAP_ARRAY, EMPTY_BITMAP_ARRAY);
+        static final RunAnimationFrameSet EMPTY = new RunAnimationFrameSet(EMPTY_BITMAP_ARRAY, EMPTY_BITMAP_ARRAY, "");
 
         final Bitmap[] redFrames;
         final Bitmap[] blueFrames;
+        final String directionLabel;
 
-        RunAnimationFrameSet(Bitmap[] redFrames, Bitmap[] blueFrames) {
+        RunAnimationFrameSet(Bitmap[] redFrames, Bitmap[] blueFrames, String directionLabel) {
             this.redFrames = redFrames != null ? redFrames : EMPTY_BITMAP_ARRAY;
             this.blueFrames = blueFrames != null ? blueFrames : EMPTY_BITMAP_ARRAY;
+            this.directionLabel = directionLabel != null ? directionLabel : "";
         }
 
         boolean isEmpty() {
             return redFrames.length == 0 && blueFrames.length == 0;
+        }
+    }
+
+    private static final class RunFrameSelection {
+        static final RunFrameSelection EMPTY = new RunFrameSelection(null, "");
+
+        final Bitmap frame;
+        final String directionLabel;
+
+        RunFrameSelection(Bitmap frame, String directionLabel) {
+            this.frame = frame;
+            this.directionLabel = directionLabel != null ? directionLabel : "";
         }
     }
 
