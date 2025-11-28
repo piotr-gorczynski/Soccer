@@ -191,6 +191,11 @@ public class Field {
     // Track previous frame indices to only update parabolic positions when frame advances
     private int parabolicPrevRedFrameIndex = -1;
     private int parabolicPrevBlueFrameIndex = -1;
+    // Cached parabolic direction frame selections to prevent oscillation between redraws
+    private Bitmap parabolicCachedRedFrame = null;
+    private String parabolicCachedRedDirectionLabel = "";
+    private Bitmap parabolicCachedBlueFrame = null;
+    private String parabolicCachedBlueDirectionLabel = "";
 
     private static final int RUN_FRAME_COUNT = RunPlayerSprite.FRAME_COUNT;
     private static final float RUN_FRAME_STEP_DISTANCE = RUN_FRAME_COUNT > 0
@@ -829,6 +834,11 @@ public class Field {
                     // Initialize previous frame indices for parabolic tracking
                     parabolicPrevRedFrameIndex = -1;
                     parabolicPrevBlueFrameIndex = -1;
+                    // Reset cached parabolic frames
+                    parabolicCachedRedFrame = null;
+                    parabolicCachedRedDirectionLabel = "";
+                    parabolicCachedBlueFrame = null;
+                    parabolicCachedBlueDirectionLabel = "";
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".startRunAnimationInternal: "
                             + "Parabolic trajectory enabled: isNorthMove=" + isNorthMove
                             + ", isSouthMove=" + isSouthMove + ", nextPlayer=" + next.P
@@ -846,6 +856,11 @@ public class Field {
                     parabolicPrevBlueGridY = Float.NaN;
                     parabolicPrevRedFrameIndex = -1;
                     parabolicPrevBlueFrameIndex = -1;
+                    // Reset cached parabolic frames
+                    parabolicCachedRedFrame = null;
+                    parabolicCachedRedDirectionLabel = "";
+                    parabolicCachedBlueFrame = null;
+                    parabolicCachedBlueDirectionLabel = "";
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".startRunAnimationInternal: "
                             + "Parabolic trajectory NOT enabled: isNorthMove=" + isNorthMove
                             + ", isSouthMove=" + isSouthMove + ", nextPlayer=" + next.P
@@ -926,6 +941,11 @@ public class Field {
             parabolicPrevBlueGridY = Float.NaN;
             parabolicPrevRedFrameIndex = -1;
             parabolicPrevBlueFrameIndex = -1;
+            // Reset cached parabolic frames
+            parabolicCachedRedFrame = null;
+            parabolicCachedRedDirectionLabel = "";
+            parabolicCachedBlueFrame = null;
+            parabolicCachedBlueDirectionLabel = "";
             resetRunFinalPositions();
 
             kickAnimationActive = false;
@@ -1037,6 +1057,11 @@ public class Field {
         parabolicPrevBlueGridY = Float.NaN;
         parabolicPrevRedFrameIndex = -1;
         parabolicPrevBlueFrameIndex = -1;
+        // Reset cached parabolic frames
+        parabolicCachedRedFrame = null;
+        parabolicCachedRedDirectionLabel = "";
+        parabolicCachedBlueFrame = null;
+        parabolicCachedBlueDirectionLabel = "";
         completeBallAnimation();
     }
 
@@ -1644,35 +1669,43 @@ public class Field {
                     + ", blueGridX=" + blueGridX + ", blueGridY=" + blueGridY);
 
             // For parabolic trajectory, dynamically select animation frames based on
-            // the instantaneous direction of movement at each epsilon step
-            RunFrameSelection redParabolicFrame = getParabolicDirectionFrame(
-                    redGridX, redGridY, parabolicPrevRedGridX, parabolicPrevRedGridY,
-                    redFrameIndex, true);
-            if (redParabolicFrame.frame != null) {
-                redFrame = redParabolicFrame.frame;
-                redDirectionLabel = redParabolicFrame.directionLabel;
-            }
-
-            RunFrameSelection blueParabolicFrame = getParabolicDirectionFrame(
-                    blueGridX, blueGridY, parabolicPrevBlueGridX, parabolicPrevBlueGridY,
-                    blueFrameIndex, false);
-            if (blueParabolicFrame.frame != null) {
-                blueFrame = blueParabolicFrame.frame;
-                blueDirectionLabel = blueParabolicFrame.directionLabel;
-            }
-
-            // Only update previous positions when the frame index actually advances.
-            // This ensures consistent direction is used when the same frame is drawn
-            // multiple times (screen refresh rate is faster than animation frame rate).
+            // the instantaneous direction of movement at each epsilon step.
+            // Only recompute when the frame index advances to prevent oscillation
+            // between redraws (screen refresh rate is faster than animation frame rate).
             if (redFrameIndex != parabolicPrevRedFrameIndex) {
+                RunFrameSelection redParabolicFrame = getParabolicDirectionFrame(
+                        redGridX, redGridY, parabolicPrevRedGridX, parabolicPrevRedGridY,
+                        redFrameIndex, true);
+                if (redParabolicFrame.frame != null) {
+                    parabolicCachedRedFrame = redParabolicFrame.frame;
+                    parabolicCachedRedDirectionLabel = redParabolicFrame.directionLabel;
+                }
                 parabolicPrevRedGridX = redGridX;
                 parabolicPrevRedGridY = redGridY;
                 parabolicPrevRedFrameIndex = redFrameIndex;
             }
+            // Use cached values (only update redFrame/redDirectionLabel if we have valid cached data)
+            if (parabolicCachedRedFrame != null) {
+                redFrame = parabolicCachedRedFrame;
+                redDirectionLabel = parabolicCachedRedDirectionLabel;
+            }
+
             if (blueFrameIndex != parabolicPrevBlueFrameIndex) {
+                RunFrameSelection blueParabolicFrame = getParabolicDirectionFrame(
+                        blueGridX, blueGridY, parabolicPrevBlueGridX, parabolicPrevBlueGridY,
+                        blueFrameIndex, false);
+                if (blueParabolicFrame.frame != null) {
+                    parabolicCachedBlueFrame = blueParabolicFrame.frame;
+                    parabolicCachedBlueDirectionLabel = blueParabolicFrame.directionLabel;
+                }
                 parabolicPrevBlueGridX = blueGridX;
                 parabolicPrevBlueGridY = blueGridY;
                 parabolicPrevBlueFrameIndex = blueFrameIndex;
+            }
+            // Use cached values (only update blueFrame/blueDirectionLabel if we have valid cached data)
+            if (parabolicCachedBlueFrame != null) {
+                blueFrame = parabolicCachedBlueFrame;
+                blueDirectionLabel = parabolicCachedBlueDirectionLabel;
             }
         } else {
             // Linear trajectory (original behavior)
