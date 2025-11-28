@@ -12,6 +12,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.RectF;
 import android.os.SystemClock;
+
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
@@ -48,7 +50,7 @@ public class Field {
     private MoveTo pendingRunPrevious;
     private MoveTo pendingRunNext;
 
-    private static final boolean SHOW_ANIMATION_LOG = true;
+    private static final boolean SHOW_ANIMATION_LOG = false;
 
     private volatile Bitmap[] idleRedPlayerFrames;
     private volatile Bitmap[] runRedPlayerWestFrames;
@@ -156,8 +158,6 @@ public class Field {
     private float cachedRedProximity = 0f;
     private float cachedBlueProximity = 0f;
     private float cachedRunSpriteHeight = 0f;
-    private boolean cachedRedHasFrames = false;
-    private boolean cachedBlueHasFrames = false;
     private String activeRunDirectionLabel = "";
     private String cachedRedDirectionLabel = "";
     private String cachedBlueDirectionLabel = "";
@@ -404,8 +404,7 @@ public class Field {
                     
                     // Update sprite arrays on main thread
                     // Check if activity is still valid before updating UI
-                    if (current instanceof Activity) {
-                        Activity activity = (Activity) current;
+                    if (current instanceof Activity activity) {
                         if (!activity.isFinishing() && !activity.isDestroyed()) {
                             activity.runOnUiThread(() -> {
                                 idleRedPlayerFrames = loadedIdleRedPlayerFrames;
@@ -626,7 +625,7 @@ public class Field {
     }
 
     public void startRunAnimation(MoveTo previous, MoveTo next) {
-        if (!areSpritesReadyForAnimations()) {
+        if (spritesNotReadyForAnimations()) {
             pendingRunPrevious = previous;
             pendingRunNext = next;
             return;
@@ -640,7 +639,7 @@ public class Field {
             return;
         }
 
-        if (!areSpritesReadyForAnimations()) {
+        if (spritesNotReadyForAnimations()) {
             return;
         }
 
@@ -737,8 +736,8 @@ public class Field {
                 int availableBlueFrames = Math.min(RUN_FRAME_COUNT, frameSet.blueFrames.length);
                 int availableFrames = Math.max(availableRedFrames, availableBlueFrames);
 
-                int availableKickRedFrames = !kickFrameSet.isEmpty() ? Math.min(KickPlayerSprite.FRAME_COUNT, kickFrameSet.redFrames.length) : 0;
-                int availableKickBlueFrames = !kickFrameSet.isEmpty() ? Math.min(KickPlayerSprite.FRAME_COUNT, kickFrameSet.blueFrames.length) : 0;
+                int availableKickRedFrames = kickFrameSet.isNotEmpty() ? Math.min(KickPlayerSprite.FRAME_COUNT, kickFrameSet.redFrames.length) : 0;
+                int availableKickBlueFrames = kickFrameSet.isNotEmpty() ? Math.min(KickPlayerSprite.FRAME_COUNT, kickFrameSet.blueFrames.length) : 0;
 
                 if (availableFrames > 0) {
                     int frameLimit = availableFrames;
@@ -883,7 +882,7 @@ public class Field {
                 runKickPausedFrames = 0;
 
                     // Initialize kick animation for the moving player
-                    if (canStartKick && !kickFrameSet.isEmpty() && (movingPlayer == 0 || movingPlayer == 1)) {
+                    if (canStartKick && kickFrameSet.isNotEmpty() && (movingPlayer == 0 || movingPlayer == 1)) {
                         kickAnimationActive = true;
                         kickPlayerFrameIndex = 0;
                         kickAnimationStartTime = SystemClock.uptimeMillis();
@@ -968,8 +967,8 @@ public class Field {
         startBallAnimation(flippedStartX, flippedStartY, flippedTargetX, flippedTargetY, totalDistance, movementFrameCount);
     }
 
-    private boolean areSpritesReadyForAnimations() {
-        return !showIdlePlayerSprite || spritesLoaded;
+    private boolean spritesNotReadyForAnimations() {
+        return showIdlePlayerSprite && !spritesLoaded;
     }
 
     public boolean areSpritesLoaded() {
@@ -1430,8 +1429,6 @@ public class Field {
             runAnimationStarting = true;
             runPlayerFrameIndex = 0;
             runPlayerLastFrameTime = referenceTime;
-            runKickPausedFrames = 0;
-            idlePlayerFrameIndex = 0;
         } else {
             // Kick and run were started together. The opponent has been running during
             // the kick, so we must NOT reset runPlayerFrameIndex or we'll lose their
@@ -1444,20 +1441,18 @@ public class Field {
                 runBlueDelayFrames = currentRunFrame;
             }
             runFrameLimit = runBaseFrameLimit + Math.max(runRedDelayFrames, runBlueDelayFrames);
-            runKickPausedFrames = 0;
-            idlePlayerFrameIndex = 0;
         }
+        runKickPausedFrames = 0;
+        idlePlayerFrameIndex = 0;
 
         kickAnimationStartTime = 0L;
         kickCompletedThisFrame = true;
     }
 
-    private void updateRunAnimationState(Canvas canvas, float ballRadius) {
+    private void updateRunAnimationState(Canvas canvas) {
         // Reset cached state
         cachedRunRedFrame = null;
         cachedRunBlueFrame = null;
-        cachedRedHasFrames = false;
-        cachedBlueHasFrames = false;
         cachedRedDirectionLabel = "";
         cachedBlueDirectionLabel = "";
         cachedRedFrameIndex = -1;
@@ -1562,8 +1557,6 @@ public class Field {
 
         boolean redHasFrames = redFrameCount > 0;
         boolean blueHasFrames = blueFrameCount > 0;
-        cachedRedHasFrames = redHasFrames;
-        cachedBlueHasFrames = blueHasFrames;
 
         if (!redHasFrames) {
             runRedCompleted = true;
@@ -1625,9 +1618,8 @@ public class Field {
 
         float redStartProximity = runStartRedCloser ? 1f : 0f;
         float redEndProximity = runTargetRedCloser ? 1f : 0f;
-        float redProximity = clamp(lerp(redStartProximity, redEndProximity, redAnimationProgress), 1f);
 
-        cachedRedProximity = redProximity;
+        cachedRedProximity = clamp(lerp(redStartProximity, redEndProximity, redAnimationProgress), 1f);
         cachedBlueProximity = blueProximity;
 
         float redGridX;
@@ -1655,9 +1647,10 @@ public class Field {
 
             // Red sprite position - use redAnimationProgress to interpolate Y
             redGridY = lerp(y0, y1, redAnimationProgress);
+            float v = 4.0f * (x0 - xs) / (yDelta * yDelta);
             if (Math.abs(yDelta) > RUN_DESTINATION_EPSILON) {
                 float yOffset = redGridY - yMid;
-                redGridX = xs + 4.0f * (x0 - xs) / (yDelta * yDelta) * (yOffset * yOffset);
+                redGridX = xs + v * (yOffset * yOffset);
             } else {
                 redGridX = x0;
             }
@@ -1666,7 +1659,7 @@ public class Field {
             blueGridY = lerp(y0, y1, blueAnimationProgress);
             if (Math.abs(yDelta) > RUN_DESTINATION_EPSILON) {
                 float yOffset = blueGridY - yMid;
-                blueGridX = xs + 4.0f * (x0 - xs) / (yDelta * yDelta) * (yOffset * yOffset);
+                blueGridX = xs + v * (yOffset * yOffset);
             } else {
                 blueGridX = x0;
             }
@@ -1837,7 +1830,7 @@ public class Field {
         }
     }
 
-    private void drawRunAnimationRed(Canvas canvas, float ballRadius) {
+    private void drawRunAnimationRed(Canvas canvas) {
         if (!runAnimationActive || runRedCompleted) {
             return;
         }
@@ -2031,35 +2024,29 @@ public class Field {
         return new RunFrameSelection(frame, frameSet.directionLabel);
     }
 
-    private static final class RunAnimationFrameSet {
-        static final RunAnimationFrameSet EMPTY = new RunAnimationFrameSet(EMPTY_BITMAP_ARRAY, EMPTY_BITMAP_ARRAY, "");
+    private record RunAnimationFrameSet(Bitmap[] redFrames, Bitmap[] blueFrames,
+                                        String directionLabel) {
+            static final RunAnimationFrameSet EMPTY = new RunAnimationFrameSet(EMPTY_BITMAP_ARRAY, EMPTY_BITMAP_ARRAY, "");
 
-        final Bitmap[] redFrames;
-        final Bitmap[] blueFrames;
-        final String directionLabel;
+            private RunAnimationFrameSet(Bitmap[] redFrames, Bitmap[] blueFrames, String directionLabel) {
+                this.redFrames = redFrames != null ? redFrames : EMPTY_BITMAP_ARRAY;
+                this.blueFrames = blueFrames != null ? blueFrames : EMPTY_BITMAP_ARRAY;
+                this.directionLabel = directionLabel != null ? directionLabel : "";
+            }
 
-        RunAnimationFrameSet(Bitmap[] redFrames, Bitmap[] blueFrames, String directionLabel) {
-            this.redFrames = redFrames != null ? redFrames : EMPTY_BITMAP_ARRAY;
-            this.blueFrames = blueFrames != null ? blueFrames : EMPTY_BITMAP_ARRAY;
-            this.directionLabel = directionLabel != null ? directionLabel : "";
+            boolean isEmpty() {
+                return redFrames.length == 0 && blueFrames.length == 0;
+            }
         }
 
-        boolean isEmpty() {
-            return redFrames.length == 0 && blueFrames.length == 0;
+    private record RunFrameSelection(Bitmap frame, String directionLabel) {
+            static final RunFrameSelection EMPTY = new RunFrameSelection(null, "");
+
+            private RunFrameSelection(Bitmap frame, String directionLabel) {
+                this.frame = frame;
+                this.directionLabel = directionLabel != null ? directionLabel : "";
+            }
         }
-    }
-
-    private static final class RunFrameSelection {
-        static final RunFrameSelection EMPTY = new RunFrameSelection(null, "");
-
-        final Bitmap frame;
-        final String directionLabel;
-
-        RunFrameSelection(Bitmap frame, String directionLabel) {
-            this.frame = frame;
-            this.directionLabel = directionLabel != null ? directionLabel : "";
-        }
-    }
 
     private KickAnimationFrameSet selectKickAnimationFrames(float deltaX, float deltaY, float spriteDeltaX, float spriteDeltaY) {
         if (deltaX == 0f && deltaY == 0f) {
@@ -2117,56 +2104,36 @@ public class Field {
         return new KickAnimationFrameSet(redFrames, blueFrames);
     }
 
-    private static final class KickAnimationFrameSet {
-        static final KickAnimationFrameSet EMPTY = new KickAnimationFrameSet(EMPTY_BITMAP_ARRAY, EMPTY_BITMAP_ARRAY);
+    private record KickAnimationFrameSet(Bitmap[] redFrames, Bitmap[] blueFrames) {
+            static final KickAnimationFrameSet EMPTY = new KickAnimationFrameSet(EMPTY_BITMAP_ARRAY, EMPTY_BITMAP_ARRAY);
 
-        final Bitmap[] redFrames;
-        final Bitmap[] blueFrames;
+            private KickAnimationFrameSet(Bitmap[] redFrames, Bitmap[] blueFrames) {
+                this.redFrames = redFrames != null ? redFrames : EMPTY_BITMAP_ARRAY;
+                this.blueFrames = blueFrames != null ? blueFrames : EMPTY_BITMAP_ARRAY;
+            }
 
-        KickAnimationFrameSet(Bitmap[] redFrames, Bitmap[] blueFrames) {
-            this.redFrames = redFrames != null ? redFrames : EMPTY_BITMAP_ARRAY;
-            this.blueFrames = blueFrames != null ? blueFrames : EMPTY_BITMAP_ARRAY;
+            boolean isNotEmpty() {
+                return redFrames.length != 0 || blueFrames.length != 0;
+            }
         }
 
-        boolean isEmpty() {
-            return redFrames.length == 0 && blueFrames.length == 0;
-        }
-    }
-
-    private static final class BallState {
-        final float centerX;
-        final float centerY;
-        final float radius;
-
-        BallState(float centerX, float centerY, float radius) {
-            this.centerX = centerX;
-            this.centerY = centerY;
-            this.radius = radius;
-        }
+    private record BallState(float centerX, float centerY, float radius) {
     }
 
     /**
-     * Represents a drawable element with its bottom position for sorting.
-     * Elements are sorted by bottom value - lower values are drawn first (appear behind).
-     */
-    private static final class DrawableElement implements Comparable<DrawableElement> {
-        static final int TYPE_BALL = 0;
-        static final int TYPE_BLUE = 1;
-        static final int TYPE_RED = 2;
-
-        final int type;
-        final float bottom;
-
-        DrawableElement(int type, float bottom) {
-            this.type = type;
-            this.bottom = bottom;
-        }
+         * Represents a drawable element with its bottom position for sorting.
+         * Elements are sorted by bottom value - lower values are drawn first (appear behind).
+         */
+        private record DrawableElement(int type, float bottom) implements Comparable<DrawableElement> {
+            static final int TYPE_BALL = 0;
+            static final int TYPE_BLUE = 1;
+            static final int TYPE_RED = 2;
 
         @Override
-        public int compareTo(DrawableElement other) {
-            return Float.compare(this.bottom, other.bottom);
+            public int compareTo(DrawableElement other) {
+                return Float.compare(this.bottom, other.bottom);
+            }
         }
-    }
 
     /**
      * Computes the bottom value for the blue sprite based on the current animation state.
@@ -2218,10 +2185,9 @@ public class Field {
             if (spriteFrame != null && !spriteFrame.isRecycled()) {
                 float idleBlueCenterY = cachedIdleBlueCenterY;
                 boolean blueShouldBeCloser = cachedBlueShouldBeCloser;
-                float spriteBottom = blueShouldBeCloser
+                return blueShouldBeCloser
                         ? idleBlueCenterY + spriteHeight * (1 - ACTIVE_SPRITE_PROXIMITY_RATIO)
                         : idleBlueCenterY + PASSIVE_SPRITE_PROXIMITY_RATIO * spriteHeight - cachedIdleBallRadius;
-                return spriteBottom;
             }
         }
 
@@ -2262,10 +2228,9 @@ public class Field {
 
         // Check run animation
         if (runAnimationActive && cachedRunRedFrame != null && !cachedRunRedFrame.isRecycled()) {
-            float redCenterY = cachedRedCenterY;
+            float redFarTop = cachedRedCenterY;
             float redProximity = cachedRedProximity;
-            float redFarTop = redCenterY;
-            float redCloseTop = redCenterY - spriteHeight * ACTIVE_SPRITE_PROXIMITY_RATIO;
+            float redCloseTop = redFarTop - spriteHeight * ACTIVE_SPRITE_PROXIMITY_RATIO;
             float redTop = lerp(redFarTop, redCloseTop, redProximity);
             float redBottom = redTop + spriteHeight;
             if (redBottom > canvas.getHeight()) {
@@ -2312,7 +2277,7 @@ public class Field {
      */
     private void drawRedSprite(Canvas canvas, float ballRadius) {
         drawKickAnimationRed(canvas, ballRadius);
-        drawRunAnimationRed(canvas, ballRadius);
+        drawRunAnimationRed(canvas);
         drawIdleRedPlayer(canvas);
     }
 
@@ -2412,7 +2377,7 @@ public class Field {
         return pulseDotSize;
     }
 
-    private BallState computeBallState(Canvas canvas, float dotSize) {
+    private BallState computeBallState(float dotSize) {
         MoveTo last = Moves.get(Moves.size() - 1);
         if (last.X == -1 && last.Y == -1) {
             last = Moves.get(Moves.size() - 2);
@@ -2512,10 +2477,6 @@ public class Field {
     private boolean cachedRedShouldBeCloser = false;
     private float cachedIdleSpriteHeight = 0f;
     private float cachedIdleBallRadius = 0f;
-
-    // Cached bottom values for drawing order calculation
-    private float cachedBlueBottom = 0f;
-    private float cachedRedBottom = 0f;
 
     private void updateIdlePlayersState(Canvas canvas, BallState ballState, int currentTurn) {
         // Reset cached state
@@ -2844,13 +2805,13 @@ public class Field {
         kickBlueFrameVisible = false;
         
         // First, compute ball state (needed for sprite positioning)
-        BallState ballState = computeBallState(canvas, dotSize);
+        BallState ballState = computeBallState(dotSize);
         
         // Update all animation states with correct ball position
         if (kickAnimationActive) {
             updateKickAnimationState(canvas);
         }
-        updateRunAnimationState(canvas, ballState.radius);
+        updateRunAnimationState(canvas);
         updateIdlePlayersState(canvas, ballState, currentTurn);
         
         // Compute bottom values for all drawable elements
@@ -2859,9 +2820,8 @@ public class Field {
         float redBottom = computeRedBottom(canvas, ballState.radius);
         
         // Cache bottom values for external access if needed
-        cachedBlueBottom = blueBottom;
-        cachedRedBottom = redBottom;
-        
+        // Cached bottom values for drawing order calculation
+
         // Create array of drawable elements and sort by bottom value
         // Elements with lower bottom values are drawn first (appear behind)
         DrawableElement[] elements = new DrawableElement[3];
@@ -3061,16 +3021,7 @@ public class Field {
             float circleCenterY = h2y(flipY(currentMove.Y));
             
             // Hand size should match sprite size
-            float handHeight = canvas.getHeight() * flSpriteSize;
-            float handWidth = handHeight * handBitmap.getWidth() / (float) handBitmap.getHeight();
-            
-            // Position hand so its top touches the center of the circle
-            float handLeft = circleCenterX - handWidth / 2f;
-            float handRight = handLeft + handWidth;
-            float handBottom = circleCenterY + handHeight;
-            
-            // Draw the hand
-            RectF handDst = new RectF(handLeft, circleCenterY, handRight, handBottom);
+            RectF handDst = getRectF(canvas, circleCenterX, circleCenterY);
             canvas.drawBitmap(handBitmap, null, handDst, null);
             
             /*Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawHandTutorial: Drawing hand at position "
@@ -3078,7 +3029,21 @@ public class Field {
                 + ", cycle " + (handTutorialCycle + 1));*/
         }
     }
-    
+
+    @NonNull
+    private RectF getRectF(Canvas canvas, float circleCenterX, float circleCenterY) {
+        float handHeight = canvas.getHeight() * flSpriteSize;
+        float handWidth = handHeight * handBitmap.getWidth() / (float) handBitmap.getHeight();
+
+        // Position hand so its top touches the center of the circle
+        float handLeft = circleCenterX - handWidth / 2f;
+        float handRight = handLeft + handWidth;
+        float handBottom = circleCenterY + handHeight;
+
+        // Draw the hand
+        return new RectF(handLeft, circleCenterY, handRight, handBottom);
+    }
+
     // Method to be called when user responds to dialog
     public void onHandTutorialDialogResponse(boolean continueShowing) {
         if (continueShowing) {
