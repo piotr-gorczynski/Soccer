@@ -720,11 +720,10 @@ public class Field {
 
         int movementFrameCount = RunPlayerSprite.FRAME_COUNT;
         boolean canStartRun = showIdlePlayerSprite && RUN_FRAME_COUNT > 0;
-        boolean canStartKick = showIdlePlayerSprite && KickPlayerSprite.FRAME_COUNT > 0;
 
         if (canStartRun) {
             RunAnimationFrameSet frameSet = selectRunAnimationFrames(totalDeltaX, totalDeltaY, spriteDeltaX, spriteDeltaY);
-            KickAnimationFrameSet kickFrameSet = canStartKick ? selectKickAnimationFrames(totalDeltaX, totalDeltaY, spriteDeltaX, spriteDeltaY) : KickAnimationFrameSet.EMPTY;
+            KickAnimationFrameSet kickFrameSet = selectKickAnimationFrames(totalDeltaX, totalDeltaY, spriteDeltaX, spriteDeltaY);
             if (!frameSet.isEmpty()) {
                 activeRunRedPlayerFrames = frameSet.redFrames;
                 activeRunBluePlayerFrames = frameSet.blueFrames;
@@ -882,7 +881,7 @@ public class Field {
                 runKickPausedFrames = 0;
 
                     // Initialize kick animation for the moving player
-                    if (canStartKick && kickFrameSet.isNotEmpty() && (movingPlayer == 0 || movingPlayer == 1)) {
+                    if (kickFrameSet.isNotEmpty() && (movingPlayer == 0 || movingPlayer == 1)) {
                         kickAnimationActive = true;
                         kickPlayerFrameIndex = 0;
                         kickAnimationStartTime = SystemClock.uptimeMillis();
