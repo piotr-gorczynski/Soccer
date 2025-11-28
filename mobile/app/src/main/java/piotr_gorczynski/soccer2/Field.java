@@ -48,6 +48,8 @@ public class Field {
     private MoveTo pendingRunPrevious;
     private MoveTo pendingRunNext;
 
+    private static final boolean SHOW_ANIMATION_LOG = true;
+
     private volatile Bitmap[] idleRedPlayerFrames;
     private volatile Bitmap[] runRedPlayerWestFrames;
     private volatile Bitmap[] runRedPlayerWestNorthFrames;
@@ -242,6 +244,12 @@ public class Field {
     
     public void setHandTutorialDialogCallback(HandTutorialDialogCallback callback) {
         this.dialogCallback = callback;
+    }
+
+    private void logAnimation(String message) {
+        if (SHOW_ANIMATION_LOG) {
+            Log.d("TAG_Soccer", message);
+        }
     }
 
     public Field(Context current, ArrayList<MoveTo> argMoves, ArrayList<MoveTo> argPossibleMoves, int argGameType, String player0Name, String player1Name, int localPlayerIndex, boolean animationsEnabled) {
@@ -1219,7 +1227,7 @@ public class Field {
                 RectF blueDst = new RectF(blueLeft, blueTop, blueRight, blueBottom);
                 canvas.drawBitmap(blueFrame, null, blueDst, null);
                 kickBlueFrameVisible = true;
-                Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawKickAnimationBlue: "
+                logAnimation(getClass().getSimpleName() + ".drawKickAnimationBlue: "
                         + "blueSprite left=" + blueLeft + " top=" + blueTop + " right=" + blueRight + " bottom=" + blueBottom + ", "
                         + "frameIndex=" + kickPlayerFrameIndex);
             }
@@ -1273,7 +1281,7 @@ public class Field {
                 RectF redDst = new RectF(redLeft, redTop, redRight, redBottom);
                 canvas.drawBitmap(redFrame, null, redDst, null);
                 kickRedFrameVisible = true;
-                Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawKickAnimationRed: "
+                logAnimation(getClass().getSimpleName() + ".drawKickAnimationRed: "
                         + "redSprite left=" + redLeft + " top=" + redTop + " right=" + redRight + " bottom=" + redBottom + ", "
                         + "frameIndex=" + kickPlayerFrameIndex);
             }
@@ -1821,7 +1829,7 @@ public class Field {
                 RectF blueDst = new RectF(blueLeft, blueTop, blueRight, blueBottom);
                 canvas.drawBitmap(blueFrame, null, blueDst, null);
                 runBlueFrameVisible = true;
-                Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawRunAnimationBlue: "
+                logAnimation(getClass().getSimpleName() + ".drawRunAnimationBlue: "
                         + "blueSprite left=" + blueLeft + " top=" + blueTop + " right=" + blueRight + " bottom=" + blueBottom
                         + ", frameIndex=" + cachedBlueFrameIndex
                         + ", direction=" + cachedBlueDirectionLabel);
@@ -1860,7 +1868,7 @@ public class Field {
                 RectF redDst = new RectF(redLeft, redTop, redRight, redBottom);
                 canvas.drawBitmap(redFrame, null, redDst, null);
                 runRedFrameVisible = true;
-                Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawRunAnimationRed: "
+                logAnimation(getClass().getSimpleName() + ".drawRunAnimationRed: "
                         + "redSprite left=" + redLeft + " top=" + redTop + " right=" + redRight + " bottom=" + redBottom
                         + ", frameIndex=" + cachedRedFrameIndex
                         + ", direction=" + cachedRedDirectionLabel);
@@ -2471,7 +2479,7 @@ public class Field {
         RectF dst = new RectF(ballCenterX - radius, ballCenterY - radius, ballCenterX + radius, ballCenterY + radius);
         canvas.drawBitmap(ballBitmap, null, dst, null);
 
-        Log.d("TAG_Soccer", getClass().getSimpleName() + ".renderBall: "
+        logAnimation(getClass().getSimpleName() + ".renderBall: "
                 + "ballCenterX=" + ballCenterX + " ballCenterY=" + ballCenterY);
     }
 
@@ -2711,10 +2719,10 @@ public class Field {
             float spriteRight = idleBlueCenterX + spriteWidth / 2f;
             RectF spriteDst = new RectF(spriteLeft, spriteTop, spriteRight, spriteBottom);
             canvas.drawBitmap(spriteFrame, null, spriteDst, null);
-            Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawIdleBluePlayer: "
+            logAnimation(getClass().getSimpleName() + ".drawIdleBluePlayer: "
                     + "blueSprite left=" + spriteLeft + " top=" + spriteTop + " right=" + spriteRight + " bottom=" + spriteBottom + ", "
                     + "frameIndex=" + idlePlayerFrameIndex);
-            Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawIdleBluePlayer: "
+            logAnimation(getClass().getSimpleName() + ".drawIdleBluePlayer: "
                     + "idleBlueCenterX=" + idleBlueCenterX
                     + ", idleBlueCenterY=" + idleBlueCenterY
                     + ", runFinalBlueGridX=" + runFinalBlueGridX
@@ -2759,7 +2767,7 @@ public class Field {
             float spriteRight = idleRedCenterX + spriteWidth / 2f;
             RectF spriteDst = new RectF(spriteLeft, spriteTop, spriteRight, spriteBottom);
             canvas.drawBitmap(spriteFrame, null, spriteDst, null);
-            Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawIdleRedPlayer: "
+            logAnimation(getClass().getSimpleName() + ".drawIdleRedPlayer: "
                     + "redSprite left=" + spriteLeft + " top=" + spriteTop + " right=" + spriteRight + " bottom=" + spriteBottom + ", "
                     + "frameIndex=" + idlePlayerFrameIndex);
         }
@@ -2950,7 +2958,7 @@ public class Field {
                         bottomHintY - (float) rText.height()/2,
                         pHintText);
 
-                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": textBottom: " + textBottom);
+                logAnimation(getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": textBottom: " + textBottom);
 
             }
 
@@ -3004,13 +3012,13 @@ public class Field {
                 if (handTutorialCycle >= nextThreshold) {
                     // Stop showing tutorial temporarily and request dialog
                     showHandTutorial = false;
-                    
+
                     // Request dialog from GameActivity
                     if (dialogCallback != null) {
                         dialogCallback.onRequestHandTutorialDialog();
                     }
-                    
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawHandTutorial: Reached threshold " 
+
+                    logAnimation(getClass().getSimpleName() + ".drawHandTutorial: Reached threshold "
                         + nextThreshold + " cycles, requesting dialog");
                     return;
                 }
@@ -3020,8 +3028,8 @@ public class Field {
             handTutorialLastMoveCount = currentMoveCount;
             handTutorialPositionIndex = 0;
             handTutorialLastUpdateTime = SystemClock.uptimeMillis();
-            Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawHandTutorial: Starting cycle " 
-                + (handTutorialCycle + 1) + " for move " + currentMoveCount 
+            logAnimation(getClass().getSimpleName() + ".drawHandTutorial: Starting cycle "
+                + (handTutorialCycle + 1) + " for move " + currentMoveCount
                 + " (player " + currentTurn + ")");
         }
 
