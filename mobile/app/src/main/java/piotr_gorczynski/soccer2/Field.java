@@ -1685,7 +1685,8 @@ public class Field {
                 parabolicPrevRedFrameIndex = redFrameIndex;
             }
             // Use cached values (only update redFrame/redDirectionLabel if we have valid cached data)
-            if (parabolicCachedRedFrame != null) {
+            // But respect the kick animation check that may have nullified redFrame earlier
+            if (parabolicCachedRedFrame != null && redFrame != null) {
                 redFrame = parabolicCachedRedFrame;
                 redDirectionLabel = parabolicCachedRedDirectionLabel;
             }
@@ -1703,7 +1704,8 @@ public class Field {
                 parabolicPrevBlueFrameIndex = blueFrameIndex;
             }
             // Use cached values (only update blueFrame/blueDirectionLabel if we have valid cached data)
-            if (parabolicCachedBlueFrame != null) {
+            // But respect the kick animation check that may have nullified blueFrame earlier
+            if (parabolicCachedBlueFrame != null && blueFrame != null) {
                 blueFrame = parabolicCachedBlueFrame;
                 blueDirectionLabel = parabolicCachedBlueDirectionLabel;
             }
