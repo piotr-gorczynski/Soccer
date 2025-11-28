@@ -188,6 +188,9 @@ public class Field {
     private float parabolicPrevRedGridY = Float.NaN;
     private float parabolicPrevBlueGridX = Float.NaN;
     private float parabolicPrevBlueGridY = Float.NaN;
+    // Track previous frame indices to only update parabolic positions when frame advances
+    private int parabolicPrevRedFrameIndex = -1;
+    private int parabolicPrevBlueFrameIndex = -1;
 
     private static final int RUN_FRAME_COUNT = RunPlayerSprite.FRAME_COUNT;
     private static final float RUN_FRAME_STEP_DISTANCE = RUN_FRAME_COUNT > 0
@@ -823,6 +826,9 @@ public class Field {
                     parabolicPrevRedGridY = flippedStartY;
                     parabolicPrevBlueGridX = flippedStartX;
                     parabolicPrevBlueGridY = flippedStartY;
+                    // Initialize previous frame indices for parabolic tracking
+                    parabolicPrevRedFrameIndex = -1;
+                    parabolicPrevBlueFrameIndex = -1;
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".startRunAnimationInternal: "
                             + "Parabolic trajectory enabled: isNorthMove=" + isNorthMove
                             + ", isSouthMove=" + isSouthMove + ", nextPlayer=" + next.P
@@ -838,6 +844,8 @@ public class Field {
                     parabolicPrevRedGridY = Float.NaN;
                     parabolicPrevBlueGridX = Float.NaN;
                     parabolicPrevBlueGridY = Float.NaN;
+                    parabolicPrevRedFrameIndex = -1;
+                    parabolicPrevBlueFrameIndex = -1;
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".startRunAnimationInternal: "
                             + "Parabolic trajectory NOT enabled: isNorthMove=" + isNorthMove
                             + ", isSouthMove=" + isSouthMove + ", nextPlayer=" + next.P
@@ -916,6 +924,8 @@ public class Field {
             parabolicPrevRedGridY = Float.NaN;
             parabolicPrevBlueGridX = Float.NaN;
             parabolicPrevBlueGridY = Float.NaN;
+            parabolicPrevRedFrameIndex = -1;
+            parabolicPrevBlueFrameIndex = -1;
             resetRunFinalPositions();
 
             kickAnimationActive = false;
@@ -1025,6 +1035,8 @@ public class Field {
         parabolicPrevRedGridY = Float.NaN;
         parabolicPrevBlueGridX = Float.NaN;
         parabolicPrevBlueGridY = Float.NaN;
+        parabolicPrevRedFrameIndex = -1;
+        parabolicPrevBlueFrameIndex = -1;
         completeBallAnimation();
     }
 
@@ -1649,11 +1661,19 @@ public class Field {
                 blueDirectionLabel = blueParabolicFrame.directionLabel;
             }
 
-            // Update previous positions for next frame's direction calculation
-            parabolicPrevRedGridX = redGridX;
-            parabolicPrevRedGridY = redGridY;
-            parabolicPrevBlueGridX = blueGridX;
-            parabolicPrevBlueGridY = blueGridY;
+            // Only update previous positions when the frame index actually advances.
+            // This ensures consistent direction is used when the same frame is drawn
+            // multiple times (screen refresh rate is faster than animation frame rate).
+            if (redFrameIndex != parabolicPrevRedFrameIndex) {
+                parabolicPrevRedGridX = redGridX;
+                parabolicPrevRedGridY = redGridY;
+                parabolicPrevRedFrameIndex = redFrameIndex;
+            }
+            if (blueFrameIndex != parabolicPrevBlueFrameIndex) {
+                parabolicPrevBlueGridX = blueGridX;
+                parabolicPrevBlueGridY = blueGridY;
+                parabolicPrevBlueFrameIndex = blueFrameIndex;
+            }
         } else {
             // Linear trajectory (original behavior)
             redGridX = runStartGridX + runDirectionX * redDistanceTraveled;
