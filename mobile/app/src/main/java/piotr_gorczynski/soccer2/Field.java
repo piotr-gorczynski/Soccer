@@ -1841,9 +1841,8 @@ public class Field {
         float redProximity = cachedRedProximity;
 
         if (redFrame != null && !redFrame.isRecycled()) {
-            float redFarTop = redCenterY;
             float redCloseTop = redCenterY - spriteHeight * ACTIVE_SPRITE_PROXIMITY_RATIO;
-            float redTop = lerp(redFarTop, redCloseTop, redProximity);
+            float redTop = lerp(redCenterY, redCloseTop, redProximity);
             float redBottom = redTop + spriteHeight;
             if (redBottom > canvas.getHeight()) {
                 redBottom = canvas.getHeight();
@@ -2534,10 +2533,7 @@ public class Field {
 
         if (!shouldDrawIdleBlue && !runBlueFrameVisible && !kickBlueFrameVisible) {
             Log.d("TAG_Soccer", getClass().getSimpleName() + ".updateIdlePlayersState: "
-                    + "Skipping idle blue; runActive=" + runActive
-                    + ", isRedMoving=" + isRedMoving
-                    + ", isBlueMoving=" + isBlueMoving
-                    + ", blueDelayActive=" + blueDelayActive
+                    + "Skipping idle blue; "
                     + ", runPlayerFrameIndex=" + runPlayerFrameIndex
                     + ", runFrameLimit=" + runFrameLimit);
         }
