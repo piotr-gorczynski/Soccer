@@ -1,141 +1,161 @@
 <en-GB>
-🎮 Fix fsync ANR by replacing SharedPreferences commit() with apply() 
-🎮 Fix ANR during Field initialization by moving sprite loading off main thread
-🎮 Fix RemoteServiceException crash from null notification data
+🎉 Added new player animations  
+🎉 Game renamed to “Gridline Soccer”  
+🎮 Improved app stability and loading speed  
+🎮 Fixed screen freeze during field setup  
+🎮 Fixed rare crash when showing notifications  
+⚽ Enjoy a smoother, faster Soccer!
 </en-GB>
 
 <pl-PL>
-🎉 Dodano inteligentny filtr pseudonimów (Vertex AI)  
-🎮 Naprawiono logowanie i dodawanie znajomych  
-🎮 Lepsza stabilność uruchamiania  
-🎮 Poprawiono zaproszenia dla niezalogowanych  
-⚽ Płynniejszy i bezpieczniejszy Soccer!
+🎉 Dodano nowe animacje graczy  
+🎉 Gra zmieniła nazwę na „Gridline Soccer”  
+🎮 Poprawiono stabilność i szybkość działania  
+🎮 Naprawiono zawieszanie ekranu przy starcie  
+🎮 Usunięto rzadkie błędy powiadomień  
+⚽ Szybszy i płynniejszy Soccer!
 </pl-PL>
 
 <de-DE>
-🎉 Neuer KI-Filter für unpassende Namen  
-🎮 Login- und Freunde-Fehler behoben  
-🎮 Stabilerer App-Start  
-🎮 Einladungen für abgemeldete Nutzer repariert  
-⚽ Glatteres, sichereres Soccer!
+🎉 Neue Spieleranimationen hinzugefügt  
+🎉 Spiel heißt jetzt „Gridline Soccer“  
+🎮 Stabilität und Ladezeit verbessert  
+🎮 Bildschirm-Freeze beim Start behoben  
+🎮 Seltene Abstürze bei Benachrichtigungen behoben  
+⚽ Schnelleres, flüssigeres Soccer!
 </de-DE>
 
 <fr-FR>
-🎉 Filtre IA ajouté pour noms inappropriés  
-🎮 Correction des erreurs de connexion et d’amis  
-🎮 Démarrage de l’app plus stable  
-🎮 Invitations corrigées pour utilisateurs déconnectés  
-⚽ Soccer plus fluide et sûr !
+🎉 Nouvelles animations des joueurs  
+🎉 Le jeu s’appelle désormais « Gridline Soccer »  
+🎮 Application plus stable et plus rapide  
+🎮 Correction d’un blocage à l’ouverture du terrain  
+🎮 Correction de crashs rares  
+⚽ Soccer plus fluide !
 </fr-FR>
 
 <es-ES>
-🎉 Filtro IA añadido para nombres inapropiados  
-🎮 Arreglos en inicio de sesión y amigos  
-🎮 Inicio más estable  
-🎮 Invitaciones corregidas para usuarios sin sesión  
-⚽ Soccer más fluido y seguro!
+🎉 Nuevas animaciones de jugadores  
+🎉 El juego ahora se llama « Gridline Soccer »  
+🎮 Mejor estabilidad y carga más rápida  
+🎮 Corregido bloqueo al iniciar el campo  
+🎮 Fallos raros solucionados  
+⚽ Soccer más rápido y fluido!
 </es-ES>
 
 <ur>
-🎉 ناموں کے لیے Vertex AI فلٹر شامل  
-🎮 سائن ان اور دوست شامل کرنے کے مسائل درست  
-🎮 ایپ آغاز مزید مستحکم  
-🎮 غیر لاگ ان صارفین کے لیے دعوت درست  
-⚽ بہتر اور محفوظ Soccer!
+🎉 کھلاڑیوں کے لیے نئی حرکات شامل  
+🎉 گیم کا نیا نام “Gridline Soccer”  
+🎮 ایپ مزید مستحکم اور تیز  
+🎮 فیلڈ لوڈ کرتے وقت اسکرین فریز درست  
+🎮 نایاب کریش ٹھیک  
+⚽ مزید ہموار Soccer!
 </ur>
 
 <bn-BD>
-🎉 নাম যাচাইয়ের জন্য Vertex AI ফিল্টার যোগ  
-🎮 সাইন-ইন ও বন্ধু যোগের সমস্যা ঠিক  
-🎮 অ্যাপ আরও স্থিতিশীল  
-🎮 লগ-আউট ব্যবহারকারীর আমন্ত্রণ ঠিক  
-⚽ আরও মসৃণ ও নিরাপদ Soccer!
+🎉 নতুন প্লেয়ার অ্যানিমেশন যোগ হয়েছে  
+🎉 গেমের নাম এখন “Gridline Soccer”  
+🎮 অ্যাপ আরও স্থিতিশীল ও দ্রুত  
+🎮 ফিল্ড লোডে ফ্রিজ সমস্যা ঠিক  
+🎮 ক্র্যাশ ঠিক করা হয়েছে  
+⚽ আরও মসৃণ Soccer উপভোগ করুন!
 </bn-BD>
 
 <ne-NP>
-🎉 Vertex AI नाम फिल्टर थपियो  
-🎮 लगइन र साथी थप्ने त्रुटि समाधान  
-🎮 सुरु स्थिरता सुधारियो  
-🎮 नलगइन प्रयोगकर्ताका निमन्त्रण ठीक  
-⚽ सहज र सुरक्षित Soccer!
+🎉 नयाँ खेलाडी एनिमेसन थपियो  
+🎉 खेलको नाम अब “Gridline Soccer”  
+🎮 एप अझ स्थिर र छिटो  
+🎮 मैदान सुरु गर्दा फ्रीज ठीक  
+🎮 दुर्लभ क्र्यास समाधान  
+⚽ छिटो र सहज Soccer!
 </ne-NP>
 
 <hi-IN>
-🎉 Vertex AI नाम फ़िल्टर जोड़ा गया  
-🎮 लॉगिन और दोस्तों से जुड़ी दिक्कतें ठीक  
-🎮 ऐप स्टार्ट अब स्थिर  
-🎮 बिना लॉगिन वाले आमंत्रण सुधारे  
-⚽ बेहतर और सुरक्षित Soccer!
+🎉 नए खिलाड़ी एनीमेशन जोड़े गए  
+🎉 खेल का नाम अब “Gridline Soccer”  
+🎮 ऐप अब तेज़ और स्थिर  
+🎮 फील्ड लोड पर फ्रीज़ ठीक  
+🎮 क्रैश की समस्या हल  
+⚽ बेहतर और तेज़ Soccer!
 </hi-IN>
 
 <am>
-🎉 የVertex AI ስም ማጣሪያ ተጨምሯል  
-🎮 የመግቢያና ጓደኛ ችግኝ ተፈታ  
-🎮 የመነሻ እንቅስቃሴ ተሻሻለ  
-🎮 ለማይግቡ ተጠቃሚዎች ግብዣ ተቀናበረ  
-⚽ የተሻሻለ እና የተረጋጋ Soccer!
+🎉 አዲስ የተጫዋች አኒሜሽኖች ተጨምሯል  
+🎉 ጨዋታው አሁን “Gridline Soccer” ተብሎ ይጠራል  
+🎮 አፕ የተሻሻለ ፍጥነትና መረጋጋት  
+🎮 በመጀመሪያ መሬት ላይ የመቆም ችግኝ ተፈታ  
+🎮 አልፎ አልፎ መቃኘት ተወግዷል  
+⚽ ፈጣን እና የተሻሻለ Soccer!
 </am>
 
 <ar>
-🎉 تمت إضافة فلتر Vertex AI للأسماء غير المناسبة  
-🎮 تم إصلاح مشاكل تسجيل الدخول والأصدقاء  
-🎮 تشغيل التطبيق أصبح أكثر استقرارًا  
-🎮 إصلاح الدعوات لغير المسجلين  
-⚽ Soccer أسرع وأكثر أمانًا!
+🎉 تمت إضافة حركات جديدة للاعبين  
+🎉 تم تغيير الاسم إلى « Gridline Soccer »  
+🎮 أداء واستقرار أفضل  
+🎮 إصلاح تجمّد الشاشة عند بدء اللعب  
+🎮 إصلاح أعطال نادرة  
+⚽ تجربة Soccer أسرع!
 </ar>
 
 <my-MM>
-🎉 Vertex AI နဲ့ နာမည် စစ်ထုတ်မှု ထည့်  
-🎮 လော့ဂ်အင် နှင့် မိတ်ဆွေ ချိတ်ဆက် ပြဿနာ ဖြေရှင်း  
-🎮 အက်ပ် စတင်မှု ပိုမို တည်ငြိမ်  
-🎮 မဝင်သည့် အသုံးပြုသူများအတွက် ဖိတ်ကြားမှု ပြင်  
-⚽ ပိုမြန်ပြီး ပိုလုံခြုံသော Soccer!
+🎉 ကစားသူ အနုပညာ အသစ်များ ထည့်ခဲ့သည်  
+🎉 ဂိမ်းနာမည်ကို “Gridline Soccer” ဟု ပြောင်းခဲ့သည်  
+🎮 အက်ပ် ပိုမို တည်ငြိမ်ပြီး မြန်  
+🎮 Field စတင်စဉ် အတားအဆီး ဖြေရှင်း  
+🎮 နည်းနည်းဖြစ်သော ချိုးခြင်း ပြင်ဆင်  
+⚽ ပိုမြန် Soccer!
 </my-MM>
 
 <km-KH>
-🎉 បន្ថែមតម្រង Vertex AI សម្រាប់ឈ្មោះមិនសម  
-🎮 កែបញ្ហា ចូល និងបន្ថែមមិត្ត  
-🎮 ការចាប់ផ្តើមប្រសើរឡើង  
-🎮 កែការអញ្ជើញសម្រាប់អ្នកមិនបានចូល  
-⚽ Soccer លឿន និងសុវត្ថិភាព!
+🎉 បន្ថែមចលនា pemain ថ្មីៗ  
+🎉 ប្តូរឈ្មោះទៅជា “Gridline Soccer”  
+🎮 កម្មវិធីមានល្បឿនលឿន និងស្ថិរភាព  
+🎮 កែបញ្ហាការតាំងស្ទះពេលចាប់ផ្តើម  
+🎮 កំហុសតូចៗត្រូវបានកែ  
+⚽ Soccer លឿនជាងមុន!
 </km-KH>
 
 <lo-LA>
-🎉 ເພີ່ມຕົວກັ່ນຊື່ Vertex AI  
-🎮 ແກ້ບັນຫາເຂົ້າລະບົບ ແລະ ເພື່ອນ  
-🎮 ແອັບເລີ່ມດີຂຶ້ນ  
-🎮 ປັບປຸງການເຊີນສໍາລັບຜູ້ບໍ່ເຂົ້າ  
-⚽ Soccer ລື່ນແລະປອດໄພ!
+🎉 ເພີ່ມການເຄື່ອນໄຫວໃໝ່ໃຫ້ນັກຫຼິ້ນ  
+🎉 ເກມຊື່ໃໝ່ “Gridline Soccer”  
+🎮 ແອັບໄວຂຶ້ນ ແລະ ສະເຫຼີມສົມບູນ  
+🎮 ແກ້ບັນຫາຈໍຄ້າງເວລາເປີດເກມ  
+🎮 ແກ້ບັນຫາລົບນ້ອຍໆ  
+⚽ Soccer ດີກວ່າເກົ່າ!
 </lo-LA>
 
 <mn-MN>
-🎉 Vertex AI нэрний шүүлтүүр нэмэв  
-🎮 Нэвтрэх ба найз нэмэх алдаа зассан  
-🎮 Апп илүү тогтвортой эхэлнэ  
-🎮 Нэвтрээгүй хэрэглэгчийн урилга зассан  
-⚽ Илүү хурдан, найдвартай Soccer!
+🎉 Тоглогчдын шинэ хөдөлгөөн нэмсэн  
+🎉 Тоглоомын нэрийг “Gridline Soccer” болгосон  
+🎮 Апп илүү хурдан, тогтвортой  
+🎮 Талбай ачаалах үеийн гацалт зассан  
+🎮 Ховор алдаа зассан  
+⚽ Илүү хурдан Soccer!
 </mn-MN>
 
 <fa-IR>
-🎉 فیلتر ‎Vertex AI‎ برای نام‌های نامناسب افزوده شد  
-🎮 رفع مشکلات ورود و افزودن دوستان  
-🎮 شروع برنامه پایدارتر شد  
-🎮 رفع خطا در دعوت کاربران خارج از حساب  
-⚽ ‎Soccer‎ روان‌تر و ایمن‌تر!
+🎉 انیمیشن‌های جدید برای بازیکنان افزوده شد  
+🎉 نام بازی به « Gridline Soccer » تغییر یافت  
+🎮 اجرای پایدارتر و سریع‌تر  
+🎮 رفع گیر هنگام بارگذاری زمین  
+🎮 رفع خطاهای نادر  
+⚽ ‎Soccer‎ سریع‌تر و روان‌تر!
 </fa-IR>
 
 <si-LK>
-🎉 Vertex AI නම පෙරහන එකතු කළා  
-🎮 ලොග් ඉන් සහ මිතුරු දෝෂ සකසා ඇත  
-🎮 යෙදුම වඩා ස්ථාවරයි  
-🎮 නොලොග් වූ පරිශීලකයන්ට ආරාධනා නිවැරදි  
-⚽ වඩා මෘදු සහ ආරක්ෂිත Soccer!
+🎉 ක්‍රීඩකයන්ට නව අනිමේෂන් එක් කළා  
+🎉 ක්‍රීඩාවේ නම “Gridline Soccer” යැයි වෙනස් කළා  
+🎮 වැඩි ස්ථාවරතාව හා වේගය  
+🎮 ක්‍රීඩා භූමිය ආරම්භයේදී ෆ්‍රීස් එක නිවැරදි  
+🎮 දුර්ලභ බිඳවැටීම් විසඳා ඇත  
+⚽ වේගවත් Soccer!
 </si-LK>
 
 <sw>
-🎉 Kichujio cha majina cha Vertex AI kimeongezwa  
-🎮 Tatizo la kuingia na marafiki limeboreshwa  
-🎮 Programu inaanza kwa uthabiti zaidi  
-🎮 Mialiko ya watumiaji wasioingia imerekebishwa  
-⚽ Soccer laini na salama zaidi!
+🎉 Uhuishaji mpya kwa wachezaji  
+🎉 Jina la mchezo limekuwa “Gridline Soccer”  
+🎮 Utendaji na kasi imeboreshwa  
+🎮 Hitilafu ya kuganda imeondolewa  
+🎮 Migongano midogo imesuluhishwa  
+⚽ Soccer bora zaidi!
 </sw>
