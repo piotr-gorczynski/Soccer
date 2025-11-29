@@ -53,12 +53,15 @@ public class GameView extends View {
     private Long turnStartsTime;
 
     private final Handler pulseHandler = new Handler(Looper.getMainLooper());
+    private boolean pulseScheduled = false;
     private final Runnable pulseRunnable = new Runnable() {
         @Override
         public void run() {
             if (shouldPulse()) {
                 invalidate();
-                pulseHandler.postDelayed(this, 16); // ~60 FPS
+                pulseHandler.postDelayed(this, 32); // set 16 to get  ~60 FPS
+            } else {
+                pulseScheduled = false;
             }
         }
     };
@@ -228,6 +231,8 @@ public class GameView extends View {
             throw new RuntimeException("Failed to initialize game field", e);
         }
 
+        field.setSpriteLoadListener(gameActivity::onFieldSpritesLoaded);
+
         this.setFocusable(true);
         this.requestFocus();
         this.setFocusableInTouchMode(true);
@@ -299,6 +304,8 @@ public class GameView extends View {
             throw new RuntimeException("Failed to initialize game field", e);
         }
 
+        field.setSpriteLoadListener(gameActivity::onFieldSpritesLoaded);
+
         // Initialize turn start time so pulsing animations have a time origin
         this.turnStartsTime = System.currentTimeMillis();
 
@@ -342,11 +349,13 @@ public class GameView extends View {
     }
 
     private void startPulseIfNeeded() {
-        if (shouldPulse()) {
-            pulseHandler.removeCallbacks(pulseRunnable);
+        boolean shouldPulse = shouldPulse();
+        if (shouldPulse && !pulseScheduled) {
+            pulseScheduled = true;
             pulseHandler.post(pulseRunnable);
-        } else {
+        } else if (!shouldPulse && pulseScheduled) {
             pulseHandler.removeCallbacks(pulseRunnable);
+            pulseScheduled = false;
         }
     }
 
@@ -780,6 +789,7 @@ public class GameView extends View {
             x = field.getFieldWidth() - x;
             y = field.getFieldHeight() - y;
         }
+        Log.d("TAG_Soccer", "GameView.handleInputAt x="+x+" y="+y);
 
         ArrayList<MoveTo> possibleMoves = new ArrayList<>();
         createPossibleMoves(possibleMoves, realMoves);

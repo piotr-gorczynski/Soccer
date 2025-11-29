@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Basic app strings in Somali -->
-    <string name="app_name">Soccer 2</string>
+    <string name="app_name">Gridline Soccer</string>
     <string name="select_language">Luqadda dooro</string>
 
     <!-- Language names in Somali -->
@@ -321,6 +321,7 @@
     <string name="invite_status_expired">Xaalad: Waqtigii dhammaaday</string>
     <string name="invite_from_loading">Waa la rarayo…</string>
     <string name="menu_loading_message">Waa la rarayo…</string>
+    <string name="game_loading_message">Garoonka ayaa la diyaarinayaa…</string>
     <string name="invite_from_format">Casumo ka: %1$s</string>
     <string name="invite_received_and_status">La helay: %1$s | %2$s</string>
     <string name="presence_online">Khadka</string>

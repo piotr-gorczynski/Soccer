@@ -17,6 +17,10 @@ import androidx.appcompat.app.AlertDialog;
 
 import android.os.CountDownTimer;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.Timestamp;
@@ -46,6 +50,9 @@ public class GameActivity extends BaseActivity {
     int GameType=-1;
     GameView gameView;
     int androidLevel = 1;
+    private FrameLayout gameRootContainer;
+    private View loadingOverlay;
+    private TextView loadingMessageView;
 
     //Real-time Move Sync
     private String matchPath;
@@ -94,6 +101,53 @@ public class GameActivity extends BaseActivity {
         if (turnStartMs == null) return storedSecs;          // clock not started
         long elapsed = (System.currentTimeMillis() - turnStartMs) / 1000;  // s
         return Math.max(storedSecs - elapsed, 0);
+    }
+
+    private void attachGameViewWithOverlay(GameView view) {
+        FrameLayout.LayoutParams matchParams = new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT
+        );
+
+        gameRootContainer = new FrameLayout(this);
+        gameRootContainer.setLayoutParams(matchParams);
+        gameRootContainer.addView(view, matchParams);
+
+        LayoutInflater inflater = LayoutInflater.from(this);
+        loadingOverlay = inflater.inflate(R.layout.view_game_loading_overlay, gameRootContainer, false);
+        if (loadingOverlay != null) {
+            loadingMessageView = loadingOverlay.findViewById(R.id.game_loading_message);
+            gameRootContainer.addView(loadingOverlay);
+        }
+
+        setContentView(gameRootContainer);
+        updateLoadingOverlayVisibility();
+    }
+
+    private void updateLoadingOverlayVisibility() {
+        if (loadingOverlay == null) {
+            return;
+        }
+
+        boolean spritesReady = gameView != null
+                && gameView.getField() != null
+                && gameView.getField().areSpritesLoaded();
+
+        loadingOverlay.setVisibility(spritesReady ? View.GONE : View.VISIBLE);
+
+        if (!spritesReady && loadingMessageView != null) {
+            loadingMessageView.setText(R.string.game_loading_message);
+        }
+    }
+
+    private void hideLoadingOverlay() {
+        if (loadingOverlay != null) {
+            loadingOverlay.setVisibility(View.GONE);
+        }
+    }
+
+    public void onFieldSpritesLoaded() {
+        runOnUiThread(this::hideLoadingOverlay);
     }
 
     @SuppressLint("RedundantSuppression")
@@ -465,9 +519,9 @@ public class GameActivity extends BaseActivity {
                 return;
             }
             
-            try {
-                gameView = new GameView(this, Moves, GameType, androidLevel);
-                setContentView(gameView);
+                try {
+                    gameView = new GameView(this, Moves, GameType, androidLevel);
+                    attachGameViewWithOverlay(gameView);
 
                 getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
                     @Override
@@ -879,7 +933,7 @@ public class GameActivity extends BaseActivity {
                 turnStartTime
         );
         gameView.setMoveCallback(this::sendMoveToFirestore);
-        setContentView(gameView);
+        attachGameViewWithOverlay(gameView);
 
         // optional: back‐press handler, etc. as you had it
 

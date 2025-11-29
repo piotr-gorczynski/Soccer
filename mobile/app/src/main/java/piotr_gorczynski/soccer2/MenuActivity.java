@@ -19,6 +19,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.content.SharedPreferences;
@@ -50,6 +51,7 @@ import android.os.Build;
 import android.widget.Toast;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import androidx.appcompat.app.AlertDialog;
 
@@ -481,7 +483,9 @@ public class MenuActivity extends BaseActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel("invite_channel", "Game Invites", NotificationManager.IMPORTANCE_HIGH);
             NotificationManager manager = getSystemService(NotificationManager.class);
-            manager.createNotificationChannel(channel);
+            if (manager != null) {
+                manager.createNotificationChannel(channel);
+            }
         }
 
         FirebaseFirestore.getInstance()
@@ -784,7 +788,14 @@ public class MenuActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        
+
+        // Ensure we are using a non-translucent AppCompat theme before inflating the layout.
+        // Some OEM skins may override the window background to be transparent, which causes
+        // PhoneWindow.generateLayout() to miss the content container and throw
+        // "Window couldn't find content container view". Force the safe app theme when we
+        // detect a missing/transparent window background.
+        enforceSafeTheme();
+
         // Request consent early for EEA compliance - ensures GA4 doesn't collect data before consent
         if (!hasAdsConsent()) {
             ((SoccerApp) getApplication()).requestConsent(this);
@@ -854,6 +865,41 @@ public class MenuActivity extends BaseActivity {
         loadInterstitialAd();
 
     }
+
+    /**
+     * Ensure the activity theme provides a real content container. Some OEM-customized themes
+     * replace the window background with a transparent color, which breaks AppCompat's
+     * PhoneWindow layout generation and leads to "Window couldn't find content container view".
+     * This method verifies the background and re-applies the app theme if necessary.
+     */
+    private void enforceSafeTheme() {
+        try {
+            TypedValue background = new TypedValue();
+            boolean hasBackground = getTheme().resolveAttribute(android.R.attr.windowBackground, background, true);
+
+            boolean isTransparentColor = background.type == TypedValue.TYPE_INT_COLOR_ARGB8
+                    && Color.alpha(background.data) == 0;
+            boolean missingBackground = !hasBackground || background.resourceId == 0;
+
+            if (missingBackground || isTransparentColor) {
+                Log.w(
+                        "TAG_Soccer",
+                        getClass().getSimpleName()
+                                + ".enforceSafeTheme: Missing or transparent window background detected, applying AppTheme"
+                );
+                setTheme(R.style.AppTheme);
+            }
+        } catch (Exception e) {
+            Log.w(
+                    "TAG_Soccer",
+                    getClass().getSimpleName()
+                            + ".enforceSafeTheme: Failed to verify theme, applying AppTheme defensively",
+                    e
+            );
+            setTheme(R.style.AppTheme);
+        }
+    }
+
     private void loadInterstitialAd() {
         adRetryHandler.removeCallbacks(adRetryRunnable);
 

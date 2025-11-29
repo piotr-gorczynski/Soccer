@@ -69,17 +69,54 @@ function findOrphanedKeys(statusKeys, userIds) {
 }
 
 /**
+ * Delete orphaned status keys from RTDB
+ */
+async function deleteOrphanedKeys(rtdb, orphanedKeys) {
+  console.log('\n🗑️  Deleting orphaned status keys...');
+  
+  if (orphanedKeys.length === 0) {
+    console.log('   ℹ️  No keys to delete');
+    return;
+  }
+  
+  let successCount = 0;
+  let errorCount = 0;
+  
+  for (const key of orphanedKeys) {
+    try {
+      await rtdb.ref(`status/${key}`).remove();
+      successCount++;
+      console.log(`   ✅ Deleted: ${key} (${successCount}/${orphanedKeys.length})`);
+    } catch (error) {
+      errorCount++;
+      console.error(`   ❌ Failed to delete ${key}: ${error.message}`);
+    }
+  }
+  
+  console.log(`\n   📊 Deletion complete:`);
+  console.log(`      ✅ Successfully deleted: ${successCount}`);
+  if (errorCount > 0) {
+    console.log(`      ❌ Failed: ${errorCount}`);
+  }
+}
+
+/**
  * Main function
  */
 async function main() {
   const args = process.argv.slice(2);
   
+  // Check for --delete flag
+  const deleteMode = args.includes('--delete');
+  const argsWithoutFlags = args.filter(arg => !arg.startsWith('--'));
+  
   // Get environment from arguments
-  const env = args[0];
+  const env = argsWithoutFlags[0];
   if (!env || !['dev', 'test', 'prod'].includes(env.toLowerCase())) {
     console.error('❌ Error: Environment parameter is required');
-    console.error('   Usage: node find-orphaned-status.js <PROD|TEST|DEV>');
+    console.error('   Usage: node find-orphaned-status.js <PROD|TEST|DEV> [--delete]');
     console.error('   Example: node find-orphaned-status.js PROD');
+    console.error('   Example: node find-orphaned-status.js PROD --delete');
     process.exit(1);
   }
   
@@ -108,6 +145,7 @@ async function main() {
   console.log('🔥 Firebase app initialized');
   console.log(`   Environment: ${env.toUpperCase()}`);
   console.log(`   Project: ${serviceAccount.project_id}`);
+  console.log(`   Mode: ${deleteMode ? '🗑️  DELETE' : '👀 READ-ONLY'}`);
   
   try {
     // Fetch data
@@ -133,6 +171,18 @@ async function main() {
       
       console.log(`\n📝 These ${orphanedKeys.length} status key(s) exist in RTDB but have no`);
       console.log('   corresponding user document in Firestore.');
+      
+      // Delete orphaned keys if --delete flag is provided
+      if (deleteMode) {
+        console.log('\n' + '='.repeat(60));
+        console.log('DELETION');
+        console.log('='.repeat(60));
+        
+        await deleteOrphanedKeys(rtdb, orphanedKeys);
+      } else {
+        console.log('\n💡 To delete these orphaned keys, run the script with --delete flag:');
+        console.log(`   node find-orphaned-status.js ${env.toUpperCase()} --delete`);
+      }
     }
     
     console.log('\n✨ Done!\n');
