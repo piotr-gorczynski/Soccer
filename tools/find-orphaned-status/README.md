@@ -1,6 +1,6 @@
-# Find Orphaned Status Keys
+# Find and Delete Orphaned Status Keys
 
-This script identifies orphaned status keys in the Realtime Database (RTDB) that don't have corresponding user documents in Firestore.
+This script identifies and optionally deletes orphaned status keys in the Realtime Database (RTDB) that don't have corresponding user documents in Firestore.
 
 ## Background
 
@@ -16,6 +16,7 @@ The script performs the following operations:
 2. **Fetches user IDs**: Reads all document IDs from the `users` collection in Firestore
 3. **Compares data**: Identifies status keys that don't have a matching user document
 4. **Reports findings**: Displays a list of orphaned status keys
+5. **Deletes orphaned keys** (optional): When `--delete` flag is provided, removes orphaned status keys from RTDB
 
 ## Prerequisites
 
@@ -36,30 +37,43 @@ The script performs the following operations:
 
 ### Run from project root
 
+**Read-only mode (list orphaned keys):**
 ```bash
 node tools/find-orphaned-status/find-orphaned-status.js <PROD|TEST|DEV>
 ```
 
+**Delete mode (remove orphaned keys):**
+```bash
+node tools/find-orphaned-status/find-orphaned-status.js <PROD|TEST|DEV> --delete
+```
+
 ### Run from the script directory
 
+**Read-only mode:**
 ```bash
 cd tools/find-orphaned-status
 node find-orphaned-status.js <PROD|TEST|DEV>
 ```
 
+**Delete mode:**
+```bash
+cd tools/find-orphaned-status
+node find-orphaned-status.js <PROD|TEST|DEV> --delete
+```
+
 ### Examples
 
-Check PROD environment:
+**List orphaned keys** in PROD environment (read-only):
 ```bash
 node tools/find-orphaned-status/find-orphaned-status.js PROD
 ```
 
-Check TEST environment:
+**Delete orphaned keys** in TEST environment:
 ```bash
-node tools/find-orphaned-status/find-orphaned-status.js TEST
+node tools/find-orphaned-status/find-orphaned-status.js TEST --delete
 ```
 
-Check DEV environment:
+**List orphaned keys** in DEV environment:
 ```bash
 node tools/find-orphaned-status/find-orphaned-status.js DEV
 ```
@@ -106,6 +120,55 @@ RESULTS
 ✨ Done!
 ```
 
+### When deleting orphaned keys
+
+```
+🔥 Firebase app initialized
+   Environment: TEST
+   Project: soccer-test-789012
+   Mode: 🗑️  DELETE
+
+📦 Fetching status keys from RTDB...
+   📊 Found 52 status key(s) in RTDB
+
+📦 Fetching user IDs from Firestore...
+   📊 Found 48 user(s) in Firestore
+
+🔍 Analyzing data...
+   📊 Total status keys: 52
+   📊 Total user IDs: 48
+   📊 Orphaned keys: 4
+
+============================================================
+RESULTS
+============================================================
+
+⚠️  Found 4 orphaned status key(s):
+
+   1. user_abc123
+   2. user_def456
+   3. user_ghi789
+   4. user_jkl012
+
+📝 These 4 status key(s) exist in RTDB but have no
+   corresponding user document in Firestore.
+
+============================================================
+DELETION
+============================================================
+
+🗑️  Deleting orphaned status keys...
+   ✅ Deleted: user_abc123 (1/4)
+   ✅ Deleted: user_def456 (2/4)
+   ✅ Deleted: user_ghi789 (3/4)
+   ✅ Deleted: user_jkl012 (4/4)
+
+   📊 Deletion complete:
+      ✅ Successfully deleted: 4
+
+✨ Done!
+```
+
 ### When no orphaned keys are found
 
 ```
@@ -144,16 +207,20 @@ RESULTS
 
 ## Safety Features
 
-- **Read-only**: This script only reads data, it doesn't modify anything
+- **Read-only by default**: Without the `--delete` flag, the script only reads data and doesn't modify anything
+- **Explicit opt-in for deletion**: Deletion only happens when the `--delete` flag is explicitly provided
 - **Environment validation**: Requires a valid environment parameter (PROD, TEST, or DEV)
 - **Key validation**: Checks that the service account key exists before attempting to connect
 - **Error handling**: Gracefully handles errors and provides clear error messages
+- **Detailed logging**: Shows progress for each deletion operation with success/failure status
 
 ## Notes
 
-- This is a **read-only diagnostic tool** - it doesn't delete or modify any data
-- The script is safe to run on production environments
-- Use the output to decide whether orphaned keys should be cleaned up manually
+- By default, this is a **read-only diagnostic tool** - it doesn't delete or modify any data
+- With the `--delete` flag, the script will permanently remove orphaned status keys from RTDB
+- **Always run in read-only mode first** to review what will be deleted
+- The script is safe to run on production environments in read-only mode
+- **Use caution with `--delete` in production** - ensure you've reviewed the list of orphaned keys first
 - Orphaned keys might indicate:
   - Users that were deleted but their status wasn't cleaned up
   - Data migration issues
@@ -172,7 +239,9 @@ Make sure you have the service account JSON file in the `secrets/` directory wit
 
 Ensure the service account has the following permissions:
 - **Firestore**: Read access to the `users` collection
-- **Realtime Database**: Read access to the `status` path
+- **Realtime Database**: 
+  - Read access to the `status` path
+  - Write/delete access to the `status` path (only needed when using `--delete` flag)
 
 ### Connection timeouts
 

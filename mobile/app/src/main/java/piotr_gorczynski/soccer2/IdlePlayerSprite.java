@@ -17,7 +17,7 @@ final class IdlePlayerSprite {
 
     private static final String TAG = "TAG_Soccer";
 
-    static final long FRAME_DURATION_MS = 250L;
+    static final long FRAME_DURATION_MS = 100L;
 
     private static final int FRAME_WIDTH = 128;
     private static final int FRAME_HEIGHT = 128;
