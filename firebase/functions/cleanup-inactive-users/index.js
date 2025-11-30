@@ -123,9 +123,9 @@ exports.cleanupInactiveUsers = functions
                   method: null
                 });
                 
-                console.log(`🧹 Deleted orphaned user (no Firestore doc): ${user.email || user.uid} (UID: ${user.uid}, nickname: N/A, inactive for ${daysSinceLastActivity} days)`);
+                console.log(`🧹 Deleted orphaned user (no Firestore doc): ${user.email || user.uid} (UID: ${user.uid}, nickname: ${'N/A'}, inactive for ${daysSinceLastActivity} days)`);
               } else {
-                console.log(`⏭️ SKIPPED - Active involvement detected for orphaned user: ${user.email || user.uid} (UID: ${user.uid}, nickname: N/A, inactive for ${daysSinceLastActivity} days) - See detailed checks above`);
+                console.log(`⏭️ SKIPPED - Active involvement detected for orphaned user: ${user.email || user.uid} (UID: ${user.uid}, nickname: ${'N/A'}, inactive for ${daysSinceLastActivity} days) - See detailed checks above`);
               }
             }
           } catch (err) {
