@@ -176,6 +176,9 @@ class PendingInviteAdapter extends RecyclerView.Adapter<PendingInviteAdapter.VH>
                                     notifyTournamentChanged(tournamentId);
                                 }
                             }
+                        })
+                        .addOnFailureListener(e -> {
+                            android.util.Log.w("TAG_Soccer", "Failed to load tournament name for " + tournamentId, e);
                         });
             }
         } else {
