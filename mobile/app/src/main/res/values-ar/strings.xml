@@ -304,6 +304,7 @@
     <string name="menu_loading_message">جارٍ التحميل…</string>
     <string name="game_loading_message">جاري تجهيز الملعب…</string>
     <string name="invite_from_format">دعوة من: %1$s</string>
+    <string name="tournament_name_format">البطولة: %1$s</string>
     <string name="invite_received_and_status">تم الاستلام: %1$s | %2$s</string>
     <string name="presence_online">متصل</string>
     <string name="presence_last_seen">آخر ظهور %1$s</string>
