@@ -574,17 +574,17 @@ public class InvitationsActivity extends BaseActivity {
     }
 
     private void sendInviteViaCF(@NonNull String targetUid, String tournamentId, String matchPath) {
-        Map<String,Object> data = new HashMap<>();
-        data.put("toUid", targetUid);
+        Map<String,Object> inviteParams = new HashMap<>();
+        inviteParams.put("toUid", targetUid);
         if (tournamentId != null && !tournamentId.isEmpty()) {
-            data.put("tournamentId", tournamentId);
+            inviteParams.put("tournamentId", tournamentId);
         }
         if (matchPath != null && !matchPath.isEmpty()) {
-            data.put("matchPath", matchPath);
+            inviteParams.put("matchPath", matchPath);
         }
         FirebaseFunctions.getInstance("us-central1")
                 .getHttpsCallable("createInvite")
-                .call(data)
+                .call(inviteParams)
                 .addOnSuccessListener(res -> {
                     @SuppressWarnings("unchecked")
                     String inviteId = (String)((Map<String,Object>)Objects.requireNonNull(res.getData())).get("inviteId");
