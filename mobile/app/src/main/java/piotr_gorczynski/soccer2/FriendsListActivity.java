@@ -354,6 +354,20 @@ public class FriendsListActivity extends BaseActivity {
             return;
         }
 
+        // Build a lookup for display names to enrich logs with human-readable nicknames
+        final Map<String, String> displayNameMap = new HashMap<>();
+        for (DocumentSnapshot doc : mutableDocs) {
+            String uid = doc.getId();
+            String nickname = doc.getString("nickname");
+            if (nickname == null && adapter != null) {
+                nickname = adapter.getCachedNicknameFor(uid);
+            }
+            if (nickname == null) {
+                nickname = uid.length() > 6 ? uid.substring(0, 6) : uid;
+            }
+            displayNameMap.put(uid, nickname);
+        }
+
         // Fetch heartbeat data for each friend individually to respect database rules
         // Note: Firebase callbacks run on the main thread in Android, so we use simple
         // collections without additional synchronization. The heartbeatMap and counter
@@ -378,8 +392,10 @@ public class FriendsListActivity extends BaseActivity {
                     
                     // Fill in missing friends with 0 heartbeat
                     for (String uid : friendUids) {
+                        String displayName = displayNameMap.getOrDefault(uid, uid);
                         if (!heartbeatMap.containsKey(uid)) {
-                            Log.d(TAG, "sortByLastSeen: Adding default heartbeat (0) for friend " + uid + " due to timeout");
+                            Log.d(TAG, "sortByLastSeen: Adding default heartbeat (0) for friend " + displayName
+                                    + " (UID: " + uid + ") due to timeout");
                             heartbeatMap.put(uid, 0L);
                         }
                     }
@@ -398,7 +414,7 @@ public class FriendsListActivity extends BaseActivity {
             DatabaseReference friendStatusRef = FirebaseDatabase.getInstance()
                     .getReference("status")
                     .child(capturedUid);
-            
+
             friendStatusRef.get()
                     .addOnSuccessListener(snapshot -> {
                         if (timeoutTriggered[0]) {
@@ -406,23 +422,27 @@ public class FriendsListActivity extends BaseActivity {
                                   " (timeout already triggered)");
                             return;
                         }
-                        
+
                         Long lastHb = 0L;
+                        String displayName = displayNameMap.getOrDefault(capturedUid, capturedUid);
 
                         // Try to read the heartbeat as Long first. Firebase Database doesn't support
                         // deserializing to Number.class, so we must use concrete types.
                         Long hbLong = snapshot.child("last_heartbeat").getValue(Long.class);
                         if (hbLong != null) {
                             lastHb = hbLong;
-                            Log.d(TAG, "sortByLastSeen: Friend " + capturedUid + " has heartbeat from RTDB: " + lastHb);
+                            Log.d(TAG, "sortByLastSeen: Friend " + displayName + " (UID: " + capturedUid
+                                    + ") has heartbeat from RTDB: " + lastHb);
                         } else {
                             // Try Double as fallback in case data was stored as floating point
                             Double hbDouble = snapshot.child("last_heartbeat").getValue(Double.class);
                             if (hbDouble != null) {
                                 lastHb = hbDouble.longValue();
-                                Log.d(TAG, "sortByLastSeen: Friend " + capturedUid + " has heartbeat from RTDB (Double): " + lastHb);
+                                Log.d(TAG, "sortByLastSeen: Friend " + displayName + " (UID: " + capturedUid
+                                        + ") has heartbeat from RTDB (Double): " + lastHb);
                             } else {
-                                Log.d(TAG, "sortByLastSeen: Friend " + capturedUid + " has no heartbeat in RTDB");
+                                Log.d(TAG, "sortByLastSeen: Friend " + displayName + " (UID: " + capturedUid
+                                        + ") has no heartbeat in RTDB");
                             }
                         }
 
@@ -434,7 +454,8 @@ public class FriendsListActivity extends BaseActivity {
                             Long cachedHb = adapter.getCachedHeartbeatFor(capturedUid);
                             if (cachedHb != null) {
                                 lastHb = cachedHb;
-                                Log.d(TAG, "sortByLastSeen: Friend " + capturedUid + " using cached heartbeat: " + lastHb);
+                                Log.d(TAG, "sortByLastSeen: Friend " + displayName + " (UID: " + capturedUid
+                                        + ") using cached heartbeat: " + lastHb);
                             }
                         }
 
