@@ -17,6 +17,8 @@ exports.cleanupInactiveUsers = functions
     const now = Date.now();
     const oneMonthMillis = 30 * 24 * 60 * 60 * 1000; // 30 days in milliseconds
     let deletedCount = 0;
+    let forcedLogoffCount = 0;
+    let skippedWithTermsCount = 0;
     const deletedUsers = [];
 
     console.log(`🧹 Starting cleanup of inactive users without terms acceptance...`);
@@ -91,15 +93,18 @@ exports.cleanupInactiveUsers = functions
                     } else {
                       // If deletion not possible, force logoff instead
                       await forceUserLogoff(rtdb, user.uid, user.email);
+                      forcedLogoffCount++;
                       console.log(`🔓 Forced logoff for anonymous user with fcmErrorType="NotRegistered" (active involvement detected): ${user.email || user.uid} (UID: ${user.uid}, method: ${method})`);
                     }
                   } else {
                     // For non-anonymous users, force logoff by setting state to "offline" in RTDB
                     await forceUserLogoff(rtdb, user.uid, user.email);
+                    forcedLogoffCount++;
                     console.log(`🔓 Forced logoff for user with fcmErrorType="NotRegistered": ${user.email || user.uid} (UID: ${user.uid}, method: ${method})`);
                   }
                 } else {
-                  console.log(`⏭️ Skipping user with accepted terms (no fcmErrorType="NotRegistered"): ${user.email || user.uid} (UID: ${user.uid}, inactive for ${daysSinceLastActivity} days)`);
+                  // User has accepted terms and no fcmErrorType="NotRegistered" - skip silently
+                  skippedWithTermsCount++;
                 }
               }
             } else {
@@ -134,7 +139,8 @@ exports.cleanupInactiveUsers = functions
     } while (nextPageToken);
 
     // Log summary
-    console.log(`✅ Cleanup complete. Deleted ${deletedCount} inactive users without terms acceptance.`);
+    console.log(`✅ Cleanup complete.`);
+    console.log(`   📊 Summary: ${deletedCount} deleted, ${forcedLogoffCount} forced logoff, ${skippedWithTermsCount} skipped (terms accepted)`);
     
     if (deletedUsers.length > 0) {
       console.log(`📋 Deleted users summary:`);
