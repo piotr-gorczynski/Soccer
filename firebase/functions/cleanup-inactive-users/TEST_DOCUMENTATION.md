@@ -79,12 +79,15 @@ For non-anonymous users with accepted terms and fcmErrorType="NotRegistered":
 
 ## Logging Output
 The function logs:
-- Safeguard check results for each user
+- Safeguard check results for each user being considered for deletion
 - Specific reasons when users cannot be deleted (invitations, matches, tournaments)
 - Each user deletion with email, UID, last sign-in time, and terms status
-- Summary count of deleted users
+- Each forced logoff operation for users with fcmErrorType="NotRegistered"
+- Summary statistics at the end: deleted count, forced logoff count, and skipped count (users with accepted terms)
 - Detailed list of all deleted users at the end
 - Error details for any failed operations
+
+Note: Users with accepted terms (and no fcmErrorType="NotRegistered") are skipped silently to reduce log verbosity.
 
 ## Safety Features
 - Only deletes users meeting ALL criteria (inactive AND no terms AND no active involvement)
