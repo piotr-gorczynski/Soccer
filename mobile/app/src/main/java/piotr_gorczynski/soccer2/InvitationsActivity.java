@@ -84,7 +84,7 @@ public class InvitationsActivity extends BaseActivity {
         disableChangeAnimations(invitationsRecyclerView);
 
         pendingAdapter = new PendingInviteAdapter(this, this::acceptInvite);
-        pastAdapter = new PastInviteAdapter(this, this::sendInviteViaCF, this::addFriend);
+        pastAdapter = new PastInviteAdapter(this, (uid, tournamentId, matchPath) -> sendInviteViaCF(uid, tournamentId, matchPath), this::addFriend);
         pastAdapter.setFriendUids(friendUids);
 
         pendingHeaderAdapter = new SectionHeaderAdapter(getString(R.string.pending_invites));
@@ -573,8 +573,15 @@ public class InvitationsActivity extends BaseActivity {
                 });
     }
 
-    private void sendInviteViaCF(@NonNull String targetUid) {
-        Map<String,Object> data = Collections.singletonMap("toUid", targetUid);
+    private void sendInviteViaCF(@NonNull String targetUid, String tournamentId, String matchPath) {
+        Map<String,Object> data = new HashMap<>();
+        data.put("toUid", targetUid);
+        if (tournamentId != null && !tournamentId.isEmpty()) {
+            data.put("tournamentId", tournamentId);
+        }
+        if (matchPath != null && !matchPath.isEmpty()) {
+            data.put("matchPath", matchPath);
+        }
         FirebaseFunctions.getInstance("us-central1")
                 .getHttpsCallable("createInvite")
                 .call(data)
