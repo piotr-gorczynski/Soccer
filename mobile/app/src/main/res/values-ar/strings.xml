@@ -329,4 +329,7 @@
     <string name="hand_tutorial_dialog_message">هل ما زلت تريد مني أن أريك الحركات الممكنة؟ يمكنك دائمًا تشغيله وإيقافه في الإعدادات.</string>
     <string name="hand_tutorial_dialog_yes">نعم، تابع</string>
     <string name="hand_tutorial_dialog_no">لا، أوقف التشغيل</string>
+    
+    <!-- Tournament invite errors -->
+    <string name="tournament_not_running">البطولة %1$s لم تعد قيد التشغيل</string>
 </resources>

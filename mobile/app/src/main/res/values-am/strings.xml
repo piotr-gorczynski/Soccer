@@ -348,4 +348,7 @@
     <string name="hand_tutorial_dialog_message">አሁንም ሊሆኑ የሚችሉ እንቅስቃሴዎችን እንድሳይዎት ይፈልጋሉ? ሁልጊዜ በቅንብሮች ውስጥ ማብራት እና ማጥፋት ይችላሉ።</string>
     <string name="hand_tutorial_dialog_yes">አዎ፣ ቀጥል</string>
     <string name="hand_tutorial_dialog_no">አይ፣ አጥፋ</string>
+    
+    <!-- Tournament invite errors -->
+    <string name="tournament_not_running">ውድድር %1$s ከአሁን በኋላ እየሄደ አይደለም</string>
 </resources>

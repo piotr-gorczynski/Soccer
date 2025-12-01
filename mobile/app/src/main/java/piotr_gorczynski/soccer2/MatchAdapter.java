@@ -170,10 +170,18 @@ public class MatchAdapter
                         context.startActivity(i);
                     })
                     .addOnFailureListener(e -> {
-                        String msg = (e instanceof FirebaseFunctionsException ffe &&
-                                ffe.getCode() == FirebaseFunctionsException.Code.FAILED_PRECONDITION)
-                                ? "You already have an active invite"
-                                : "Failed to send invite";
+                        String msg = context.getString(R.string.failed_to_send_invite);
+                        if (e instanceof FirebaseFunctionsException ffe) {
+                            if (ffe.getCode() == FirebaseFunctionsException.Code.FAILED_PRECONDITION) {
+                                String reason = String.valueOf(ffe.getMessage());
+                                if (reason.startsWith("tournament_not_running:")) {
+                                    String tournamentTitle = reason.substring("tournament_not_running:".length());
+                                    msg = SafeStringFormatter.safeGetString(context, R.string.tournament_not_running, tournamentTitle);
+                                } else {
+                                    msg = context.getString(R.string.invite_already_sent);
+                                }
+                            }
+                        }
                         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
                         Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                                 + ": createInvite failed", e);

@@ -329,4 +329,7 @@
     <string name="hand_tutorial_dialog_message">آیا همچنان می‌خواهید حرکات ممکن را به شما نشان دهم؟ همیشه می‌توانید آن را در تنظیمات فعال یا غیرفعال کنید.</string>
     <string name="hand_tutorial_dialog_yes">بله، ادامه دهید</string>
     <string name="hand_tutorial_dialog_no">خیر، غیرفعال کنید</string>
+    
+    <!-- Tournament invite errors -->
+    <string name="tournament_not_running">مسابقه %1$s دیگر در حال اجرا نیست</string>
 </resources>

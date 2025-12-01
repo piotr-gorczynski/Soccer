@@ -377,4 +377,7 @@
     <string name="hand_tutorial_dialog_message">Voulez-vous toujours que je vous montre les mouvements possibles ? Vous pouvez toujours l\'activer et le désactiver dans Paramètres.</string>
     <string name="hand_tutorial_dialog_yes">Oui, continuer</string>
     <string name="hand_tutorial_dialog_no">Non, désactiver</string>
+    
+    <!-- Tournament invite errors -->
+    <string name="tournament_not_running">Le tournoi %1$s n\'est plus en cours</string>
 </resources>

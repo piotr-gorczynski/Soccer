@@ -348,4 +348,7 @@
     <string name="hand_tutorial_dialog_message">Та надад боломжит нүүдлүүдийг үзүүлэхийг хүсч байна уу? Та үүнийг Тохиргоонд үргэлж асааж унтрааж болно.</string>
     <string name="hand_tutorial_dialog_yes">Тийм, үргэлжлүүлэх</string>
     <string name="hand_tutorial_dialog_no">Үгүй, унтраах</string>
+    
+    <!-- Tournament invite errors -->
+    <string name="tournament_not_running">%1$s тэмцээн цаашид үргэлжлэхгүй байна</string>
 </resources>
