@@ -382,4 +382,7 @@
     <string name="hand_tutorial_dialog_message">के तपाईं अझै पनि मलाई सम्भावित चालहरू देखाउन चाहनुहुन्छ? तपाईं यसलाई सेटिङहरूमा सधैं सक्रिय र निष्क्रिय गर्न सक्नुहुन्छ।</string>
     <string name="hand_tutorial_dialog_yes">हो, जारी राख्नुहोस्</string>
     <string name="hand_tutorial_dialog_no">होइन, निष्क्रिय गर्नुहोस्</string>
+    
+    <!-- Tournament invite errors -->
+    <string name="tournament_not_running">प्रतियोगिता %1$s अब चलिरहेको छैन</string>
 </resources>

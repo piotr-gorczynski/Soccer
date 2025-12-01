@@ -24,6 +24,32 @@ exports.createInvite = functions
     const matchPath    = data?.matchPath    || null;
     const invitesCol   = admin.firestore().collection('invitations');
 
+    /* ── check tournament status if tournamentId is provided ─ */
+    if (tournamentId) {
+      const tournamentDoc = await admin.firestore()
+        .collection('tournaments')
+        .doc(tournamentId)
+        .get();
+
+      if (!tournamentDoc.exists) {
+        throw new functions.https.HttpsError(
+          'not-found',
+          'tournament_not_found'
+        );
+      }
+
+      const tournamentData = tournamentDoc.data();
+      const tournamentStatus = tournamentData?.status;
+      const tournamentTitle = tournamentData?.title || 'Tournament';
+
+      if (tournamentStatus !== 'running') {
+        throw new functions.https.HttpsError(
+          'failed-precondition',
+          `tournament_not_running:${tournamentTitle}`
+        );
+      }
+    }
+
     /* ── transaction guarantees one active invite per sender ─ */
     const result = await admin.firestore().runTransaction(async tx => {
 

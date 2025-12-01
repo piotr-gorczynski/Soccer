@@ -348,4 +348,7 @@
     <string name="hand_tutorial_dialog_message">Je, bado unataka nikuonyeshe harakati zinazowezekana? Unaweza kuizima na kuiwasha wakati wowote katika Mipangilio.</string>
     <string name="hand_tutorial_dialog_yes">Ndiyo, endelea</string>
     <string name="hand_tutorial_dialog_no">Hapana, zima</string>
+    
+    <!-- Tournament invite errors -->
+    <string name="tournament_not_running">Mashindano %1$s hayaendelei tena</string>
 </resources>

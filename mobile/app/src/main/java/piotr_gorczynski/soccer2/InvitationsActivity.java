@@ -603,7 +603,10 @@ public class InvitationsActivity extends BaseActivity {
                             /* Cloud Function puts a short reason in getMessage() */
                             String reason = String.valueOf(ffe.getMessage()); // never null
 
-                            if (reason.contains("blocked invites")) {
+                            if (reason.startsWith("tournament_not_running:")) {
+                                String tournamentTitle = reason.substring("tournament_not_running:".length());
+                                customMessage = SafeStringFormatter.safeGetString(this, R.string.tournament_not_running, tournamentTitle);
+                            } else if (reason.contains("blocked invites")) {
                                 customMessage = reason; // Use the full message from the server
                             } else {
                                 msgId = switch (reason) {
