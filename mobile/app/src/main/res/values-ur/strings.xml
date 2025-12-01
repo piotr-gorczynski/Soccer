@@ -382,4 +382,7 @@
     <string name="hand_tutorial_dialog_message">کیا آپ اب بھی چاہتے ہیں کہ میں آپ کو ممکنہ چالیں دکھاؤں؟ آپ اسے ہمیشہ ترتیبات میں آن اور آف کر سکتے ہیں۔</string>
     <string name="hand_tutorial_dialog_yes">جی ہاں، جاری رکھیں</string>
     <string name="hand_tutorial_dialog_no">نہیں، بند کریں</string>
+    
+    <!-- Tournament invite errors -->
+    <string name="tournament_not_running">ٹورنامنٹ %1$s اب نہیں چل رہا</string>
 </resources>

@@ -373,4 +373,7 @@
     <string name="hand_tutorial_dialog_message">Do you still want me to show you possible moves? You can always turn it off and on in Settings.</string>
     <string name="hand_tutorial_dialog_yes">Yes, continue</string>
     <string name="hand_tutorial_dialog_no">No, turn it off</string>
+    
+    <!-- Tournament invite errors -->
+    <string name="tournament_not_running">Tournament %1$s is no longer running</string>
 </resources>
