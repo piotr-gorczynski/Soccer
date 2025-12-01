@@ -29,12 +29,13 @@ import java.util.Set;
 
 public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH> {
 
-    public interface OnInviteClick { void onInvite(String uid); }
+    public interface OnInviteClick { void onInvite(String uid, String tournamentId, String matchPath); }
     public interface OnAddFriendClick { void onAddFriend(String uid); }
 
     static class VH extends RecyclerView.ViewHolder {
         final TextView inviteReceivedAndStatus;
         final TextView nickname;
+        final TextView tournamentName;
         final TextView presence;
         final Button sendInviteBtn;
         final Button addFriendBtn;
@@ -45,6 +46,7 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
             super(v);
             inviteReceivedAndStatus = v.findViewById(R.id.inviteReceivedAndStatus);
             nickname = v.findViewById(R.id.nickname);
+            tournamentName = v.findViewById(R.id.tournamentName);
             presence = v.findViewById(R.id.presence);
             sendInviteBtn = v.findViewById(R.id.sendInviteBtn);
             addFriendBtn = v.findViewById(R.id.addFriendBtn);
@@ -59,6 +61,7 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
     private final Map<String,String> presCache = new HashMap<>();
     private final Map<String,Long> hbCache = new HashMap<>();
     private final Map<String,Boolean> userDeletedCache = new HashMap<>();
+    private final Map<String,String> tournamentNameCache = new HashMap<>();
     private static final class RtdbSub { final DatabaseReference ref; final ValueEventListener l; RtdbSub(DatabaseReference r, ValueEventListener l){this.ref=r;this.l=l;}}
     private final Map<String,RtdbSub> presSubs = new HashMap<>();
     private Set<String> friendUids = new HashSet<>();
@@ -76,7 +79,11 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_past_invite, parent, false);
         VH h = new VH(v);
         h.sendInviteBtn.setOnClickListener(btn -> {
-            if (h.uid != null) inviteListener.onInvite(h.uid);
+            if (h.uid != null && h.doc != null) {
+                String tournamentId = h.doc.getString("tournamentId");
+                String matchPath = h.doc.getString("matchPath");
+                inviteListener.onInvite(h.uid, tournamentId, matchPath);
+            }
         });
         h.addFriendBtn.setOnClickListener(btn -> {
             if (h.uid == null) {
@@ -113,6 +120,18 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
                 } else if ("presence".equals(payload)) {
                     String pState = presCache.get(uid);
                     if (pState != null) bindPresence(h, uid, pState);
+                } else if ("tournament".equals(payload)) {
+                    DocumentSnapshot doc = h.doc;
+                    if (doc != null) {
+                        String tournamentId = doc.getString("tournamentId");
+                        if (tournamentId != null) {
+                            String name = tournamentNameCache.get(tournamentId);
+                            if (name != null) {
+                                h.tournamentName.setText(SafeStringFormatter.safeGetString(context, R.string.tournament_name_format, name));
+                                h.tournamentName.setVisibility(View.VISIBLE);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -130,12 +149,40 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
         if (uid == null) {
             h.inviteReceivedAndStatus.setText("");
             h.nickname.setText(context.getString(R.string.invite_from_loading));
+            h.tournamentName.setVisibility(View.GONE);
             h.presence.setText("");
             h.sendInviteBtn.setEnabled(false);
             h.addFriendBtn.setEnabled(false);
             h.addFriendBtn.setAlpha(0.3f);
             h.addFriendBtn.setText(R.string.add_friend_label);
             return;
+        }
+
+        // Handle tournament name display
+        String tournamentId = d.getString("tournamentId");
+        if (tournamentId != null && !tournamentId.isEmpty()) {
+            String cachedTournamentName = tournamentNameCache.get(tournamentId);
+            if (cachedTournamentName != null) {
+                h.tournamentName.setText(SafeStringFormatter.safeGetString(context, R.string.tournament_name_format, cachedTournamentName));
+                h.tournamentName.setVisibility(View.VISIBLE);
+            } else {
+                h.tournamentName.setVisibility(View.GONE);
+                FirebaseFirestore.getInstance().collection("tournaments").document(tournamentId).get()
+                        .addOnSuccessListener(doc -> {
+                            if (doc.exists()) {
+                                String name = doc.getString("name");
+                                if (name != null) {
+                                    tournamentNameCache.put(tournamentId, name);
+                                    notifyTournamentChanged(tournamentId);
+                                }
+                            }
+                        })
+                        .addOnFailureListener(e -> {
+                            android.util.Log.w("TAG_Soccer", "Failed to load tournament name for " + tournamentId, e);
+                        });
+            }
+        } else {
+            h.tournamentName.setVisibility(View.GONE);
         }
         
         // Display when the invite was received (createdAt timestamp) and status combined
@@ -292,6 +339,15 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
             String fromUid = docs.get(i).getString("from");
             if (uid.equals(fromUid)) {
                 notifyItemChanged(i, payload);
+            }
+        }
+    }
+
+    private void notifyTournamentChanged(@NonNull String tournamentId) {
+        for (int i = 0; i < docs.size(); i++) {
+            String docTournamentId = docs.get(i).getString("tournamentId");
+            if (tournamentId.equals(docTournamentId)) {
+                notifyItemChanged(i, "tournament");
             }
         }
     }
