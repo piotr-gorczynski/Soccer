@@ -348,4 +348,7 @@
     <string name="hand_tutorial_dialog_message">သင့်ကို ဖြစ်နိုင်သော ရွှေ့လျားမှုများ ပြသဖို့ သင် လိုချင်သေးလား? ဆက်တင်များတွင် ၎င်းကို အမြဲတမ်း ဖွင့်နှင့် ပိတ်နိုင်ပါသည်။</string>
     <string name="hand_tutorial_dialog_yes">ဟုတ်ကဲ့၊ ဆက်လုပ်ပါ</string>
     <string name="hand_tutorial_dialog_no">မဟုတ်ပါ၊ ပိတ်ပါ</string>
+    
+    <!-- Tournament invite errors -->
+    <string name="tournament_not_running">ပြိုင်ပွဲ %1$s သည် ယခု မလည်ပတ်တော့ပါ</string>
 </resources>
