@@ -760,6 +760,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         // WebView initialization must happen on the main thread
         // We use MAIN_HANDLER.post() to ensure we don't block Application.onCreate()
         MAIN_HANDLER.post(() -> {
+            // Pre-initialize WebView to prevent ANR when ads SDK first loads WebView
             try {
                 // Create a WebView instance to trigger the WebView provider initialization
                 WebView webView = new WebView(this);
@@ -769,10 +770,12 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
             } catch (Exception e) {
                 // If WebView initialization fails, log the error but don't crash the app
                 // Some devices may have WebView disabled or missing
+                // We still proceed with MobileAds initialization as it may work without pre-warming
                 Log.w(TAG, getClass().getSimpleName() + ".initializeWebViewAndAds: Failed to pre-initialize WebView", e);
             }
             
-            // Initialize MobileAds after WebView is ready (still on main thread which is required by MobileAds)
+            // Initialize MobileAds regardless of WebView pre-initialization result
+            // MobileAds initialization must happen on the main thread
             MobileAds.initialize(this, initializationStatus -> {
                 Log.d(TAG, getClass().getSimpleName() + ".initializeWebViewAndAds: MobileAds initialized successfully");
             });
