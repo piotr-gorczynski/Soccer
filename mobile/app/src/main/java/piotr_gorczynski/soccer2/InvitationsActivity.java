@@ -599,14 +599,15 @@ public class InvitationsActivity extends BaseActivity {
 
                     if (e instanceof FirebaseFunctionsException ffe) {
                         FirebaseFunctionsException.Code code = ffe.getCode();
-                        if (code == FirebaseFunctionsException.Code.FAILED_PRECONDITION) {
-                            /* Cloud Function puts a short reason in getMessage() */
-                            String reason = String.valueOf(ffe.getMessage()); // never null
+                        String reason = String.valueOf(ffe.getMessage()); // never null
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".sendInviteViaCF: code=" + code + ", reason=" + reason);
 
-                            if (reason.startsWith("tournament_not_running:")) {
-                                String tournamentTitle = reason.substring("tournament_not_running:".length());
-                                customMessage = SafeStringFormatter.safeGetString(this, R.string.tournament_not_running, tournamentTitle);
-                            } else if (reason.contains("blocked invites")) {
+                        /* Check for tournament_not_running error across all error codes */
+                        if (reason.startsWith("tournament_not_running:")) {
+                            String tournamentTitle = reason.substring("tournament_not_running:".length());
+                            customMessage = SafeStringFormatter.safeGetString(this, R.string.tournament_not_running, tournamentTitle);
+                        } else if (code == FirebaseFunctionsException.Code.FAILED_PRECONDITION) {
+                            if (reason.contains("blocked invites")) {
                                 customMessage = reason; // Use the full message from the server
                             } else {
                                 msgId = switch (reason) {
