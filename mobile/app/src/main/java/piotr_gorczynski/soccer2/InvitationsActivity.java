@@ -605,7 +605,9 @@ public class InvitationsActivity extends BaseActivity {
                         /* Check for tournament_not_running error across all error codes */
                         if (reason.startsWith("tournament_not_running:")) {
                             String tournamentTitle = reason.substring("tournament_not_running:".length());
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + ".sendInviteViaCF: extracted tournamentTitle=" + tournamentTitle);
                             customMessage = SafeStringFormatter.safeGetString(this, R.string.tournament_not_running, tournamentTitle);
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + ".sendInviteViaCF: customMessage=" + customMessage);
                         } else if (code == FirebaseFunctionsException.Code.FAILED_PRECONDITION) {
                             if (reason.contains("blocked invites")) {
                                 customMessage = reason; // Use the full message from the server
