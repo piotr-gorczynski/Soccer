@@ -178,7 +178,9 @@ public class MatchAdapter
                             /* Check for tournament_not_running error across all error codes */
                             if (reason.startsWith("tournament_not_running:")) {
                                 String tournamentTitle = reason.substring("tournament_not_running:".length());
+                                Log.d("TAG_Soccer", getClass().getSimpleName() + ".createInvite: extracted tournamentTitle=" + tournamentTitle);
                                 msg = SafeStringFormatter.safeGetString(context, R.string.tournament_not_running, tournamentTitle);
+                                Log.d("TAG_Soccer", getClass().getSimpleName() + ".createInvite: msg=" + msg);
                             } else if (ffe.getCode() == FirebaseFunctionsException.Code.FAILED_PRECONDITION) {
                                 msg = context.getString(R.string.invite_already_sent);
                             }
