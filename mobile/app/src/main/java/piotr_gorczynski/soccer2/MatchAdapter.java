@@ -172,14 +172,15 @@ public class MatchAdapter
                     .addOnFailureListener(e -> {
                         String msg = context.getString(R.string.failed_to_send_invite);
                         if (e instanceof FirebaseFunctionsException ffe) {
-                            if (ffe.getCode() == FirebaseFunctionsException.Code.FAILED_PRECONDITION) {
-                                String reason = String.valueOf(ffe.getMessage());
-                                if (reason.startsWith("tournament_not_running:")) {
-                                    String tournamentTitle = reason.substring("tournament_not_running:".length());
-                                    msg = SafeStringFormatter.safeGetString(context, R.string.tournament_not_running, tournamentTitle);
-                                } else {
-                                    msg = context.getString(R.string.invite_already_sent);
-                                }
+                            String reason = String.valueOf(ffe.getMessage());
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + ".createInvite: code=" + ffe.getCode() + ", reason=" + reason);
+
+                            /* Check for tournament_not_running error across all error codes */
+                            if (reason.startsWith("tournament_not_running:")) {
+                                String tournamentTitle = reason.substring("tournament_not_running:".length());
+                                msg = SafeStringFormatter.safeGetString(context, R.string.tournament_not_running, tournamentTitle);
+                            } else if (ffe.getCode() == FirebaseFunctionsException.Code.FAILED_PRECONDITION) {
+                                msg = context.getString(R.string.invite_already_sent);
                             }
                         }
                         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
