@@ -76,6 +76,7 @@ public class MatchAdapter
     private final String myUid;
 
     private final String tournamentId;
+    private String tournamentName;
     private boolean showOutcome = false;
 
     /** return position of the doc that already has this ID, or -1 if none */
@@ -98,6 +99,10 @@ public class MatchAdapter
 
     void setShowOutcome(boolean value) {
         this.showOutcome = value;
+    }
+
+    void setTournamentName(String name) {
+        this.tournamentName = name;
     }
 
     @Override
@@ -177,9 +182,12 @@ public class MatchAdapter
 
                             /* Check for tournament_not_running error across all error codes */
                             if (reason.startsWith("tournament_not_running:")) {
-                                String tournamentTitle = reason.substring("tournament_not_running:".length());
-                                Log.d("TAG_Soccer", getClass().getSimpleName() + ".createInvite: extracted tournamentTitle=" + tournamentTitle);
-                                msg = SafeStringFormatter.safeGetString(context, R.string.tournament_not_running, tournamentTitle);
+                                // Use the locally known tournament name if available, otherwise fall back to server response
+                                String displayName = (tournamentName != null && !tournamentName.isEmpty()) 
+                                        ? tournamentName 
+                                        : reason.substring("tournament_not_running:".length());
+                                Log.d("TAG_Soccer", getClass().getSimpleName() + ".createInvite: displayName=" + displayName + " (from local=" + (tournamentName != null) + ")");
+                                msg = SafeStringFormatter.safeGetString(context, R.string.tournament_not_running, displayName);
                                 Log.d("TAG_Soccer", getClass().getSimpleName() + ".createInvite: msg=" + msg);
                             } else if (ffe.getCode() == FirebaseFunctionsException.Code.FAILED_PRECONDITION) {
                                 msg = context.getString(R.string.invite_already_sent);
