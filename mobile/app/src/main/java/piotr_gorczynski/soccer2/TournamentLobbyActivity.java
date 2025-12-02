@@ -100,7 +100,12 @@ public class TournamentLobbyActivity extends BaseActivity {
             db.collection("tournaments").document(tid).get()
                     .addOnSuccessListener(doc -> {
                         String n = doc.getString("name");
-                        if (n != null) getSupportActionBar().setTitle(n);
+                        if (n != null) {
+                            getSupportActionBar().setTitle(n);
+                            if (mAdapter != null) {
+                                mAdapter.setTournamentName(n);
+                            }
+                        }
                     });
         }
 
@@ -112,6 +117,9 @@ public class TournamentLobbyActivity extends BaseActivity {
                 requireNonNull(tid)
         );
         mAdapter.setShowOutcome(true);
+        if (nameExtra != null) {
+            mAdapter.setTournamentName(nameExtra);
+        }
         rv.setAdapter(mAdapter);
 
         /* one common handler so we don’t repeat the diff logic */
