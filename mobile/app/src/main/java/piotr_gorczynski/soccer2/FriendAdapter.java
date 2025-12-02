@@ -227,6 +227,11 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
         return hbCache.get(uid);
     }
 
+    @Nullable
+    String getCachedNicknameFor(@NonNull String uid) {
+        return nickCache.get(uid);
+    }
+
     void setData(List<DocumentSnapshot> friends) {
         android.util.Log.d("TAG_Soccer", "setData: Updating adapter with " + friends.size() + " friends");
         
