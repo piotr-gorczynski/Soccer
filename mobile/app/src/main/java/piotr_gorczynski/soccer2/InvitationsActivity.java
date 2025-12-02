@@ -84,7 +84,7 @@ public class InvitationsActivity extends BaseActivity {
         disableChangeAnimations(invitationsRecyclerView);
 
         pendingAdapter = new PendingInviteAdapter(this, this::acceptInvite);
-        pastAdapter = new PastInviteAdapter(this, (uid, tournamentId, matchPath) -> sendInviteViaCF(uid, tournamentId, matchPath), this::addFriend);
+        pastAdapter = new PastInviteAdapter(this, (uid, tournamentId, matchPath, tournamentName) -> sendInviteViaCF(uid, tournamentId, matchPath, tournamentName), this::addFriend);
         pastAdapter.setFriendUids(friendUids);
 
         pendingHeaderAdapter = new SectionHeaderAdapter(getString(R.string.pending_invites));
@@ -573,7 +573,7 @@ public class InvitationsActivity extends BaseActivity {
                 });
     }
 
-    private void sendInviteViaCF(@NonNull String targetUid, String tournamentId, String matchPath) {
+    private void sendInviteViaCF(@NonNull String targetUid, String tournamentId, String matchPath, String tournamentName) {
         Map<String,Object> inviteParams = new HashMap<>();
         inviteParams.put("toUid", targetUid);
         if (tournamentId != null && !tournamentId.isEmpty()) {
@@ -582,6 +582,7 @@ public class InvitationsActivity extends BaseActivity {
         if (matchPath != null && !matchPath.isEmpty()) {
             inviteParams.put("matchPath", matchPath);
         }
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".sendInviteViaCF: tournamentId=" + tournamentId + ", tournamentName=" + tournamentName);
         FirebaseFunctions.getInstance("us-central1")
                 .getHttpsCallable("createInvite")
                 .call(inviteParams)
@@ -604,9 +605,12 @@ public class InvitationsActivity extends BaseActivity {
 
                         /* Check for tournament_not_running error across all error codes */
                         if (reason.startsWith("tournament_not_running:")) {
-                            String tournamentTitle = reason.substring("tournament_not_running:".length());
-                            Log.d("TAG_Soccer", getClass().getSimpleName() + ".sendInviteViaCF: extracted tournamentTitle=" + tournamentTitle);
-                            customMessage = SafeStringFormatter.safeGetString(this, R.string.tournament_not_running, tournamentTitle);
+                            // Use the locally known tournament name if available, otherwise fall back to server response
+                            String displayName = (tournamentName != null && !tournamentName.isEmpty()) 
+                                    ? tournamentName 
+                                    : reason.substring("tournament_not_running:".length());
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + ".sendInviteViaCF: displayName=" + displayName + " (from local=" + (tournamentName != null) + ")");
+                            customMessage = SafeStringFormatter.safeGetString(this, R.string.tournament_not_running, displayName);
                             Log.d("TAG_Soccer", getClass().getSimpleName() + ".sendInviteViaCF: customMessage=" + customMessage);
                         } else if (code == FirebaseFunctionsException.Code.FAILED_PRECONDITION) {
                             if (reason.contains("blocked invites")) {

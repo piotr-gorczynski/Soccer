@@ -29,7 +29,7 @@ import java.util.Set;
 
 public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH> {
 
-    public interface OnInviteClick { void onInvite(String uid, String tournamentId, String matchPath); }
+    public interface OnInviteClick { void onInvite(String uid, String tournamentId, String matchPath, String tournamentName); }
     public interface OnAddFriendClick { void onAddFriend(String uid); }
 
     static class VH extends RecyclerView.ViewHolder {
@@ -82,7 +82,8 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
             if (h.uid != null && h.doc != null) {
                 String tournamentId = h.doc.getString("tournamentId");
                 String matchPath = h.doc.getString("matchPath");
-                inviteListener.onInvite(h.uid, tournamentId, matchPath);
+                String tournamentName = tournamentId != null ? tournamentNameCache.get(tournamentId) : null;
+                inviteListener.onInvite(h.uid, tournamentId, matchPath, tournamentName);
             }
         });
         h.addFriendBtn.setOnClickListener(btn -> {
