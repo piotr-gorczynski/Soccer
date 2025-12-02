@@ -102,7 +102,9 @@ public class TournamentLobbyActivity extends BaseActivity {
                         String n = doc.getString("name");
                         if (n != null) {
                             getSupportActionBar().setTitle(n);
-                            mAdapter.setTournamentName(n);
+                            if (mAdapter != null) {
+                                mAdapter.setTournamentName(n);
+                            }
                         }
                     });
         }
