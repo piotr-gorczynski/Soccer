@@ -23,17 +23,30 @@ import piotr_gorczynski.soccer2.R;
 import android.app.PendingIntent;
 import android.content.Intent;
 
+import java.util.Map;
 import java.util.Objects;
 
 import piotr_gorczynski.soccer2.InvitationsActivity;
 
+/**
+ * Firebase Cloud Messaging service for handling push notifications.
+ * 
+ * This service handles FCM messages and displays notifications to the user.
+ * Special care is taken to handle Android 14+ (API 34) CannotDeliverBroadcastException
+ * which occurs when the app process is frozen or killed during broadcast delivery.
+ */
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
+    private static final String TAG = "TAG_Soccer";
+    private static final String CHANNEL_ID = "invite_channel";
+    private static final String CHANNEL_NAME = "Game Invites";
+    private static final String DEFAULT_TITLE = "Game Invite";
+    private static final String DEFAULT_BODY = "You have a new game invitation";
 
     @Override
     public void onNewToken(@NonNull String token) {
         super.onNewToken(token);
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": 🔐 New FCM token: " + token);
+        Log.d(TAG, getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": 🔐 New FCM token: " + token);
 
         String uid = FirebaseAuth.getInstance().getCurrentUser() != null
                 ? FirebaseAuth.getInstance().getCurrentUser().getUid()
@@ -44,111 +57,178 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     .collection("users")
                     .document(uid)
                     .update("fcmToken", token)
-                    .addOnSuccessListener(aVoid -> Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ✅ Token saved"))
-                    .addOnFailureListener(e -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ❌ Failed to save token", e));
+                    .addOnSuccessListener(aVoid -> Log.d(TAG, getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ✅ Token saved"))
+                    .addOnFailureListener(e -> Log.e(TAG, getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ❌ Failed to save token", e));
         } else {
-            Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ⚠️ No user logged in; token not saved");
+            Log.w(TAG, getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ⚠️ No user logged in; token not saved");
         }
     }
 
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                + ": 📨 Message received: " + remoteMessage.getData());
-        if ("start".equals(remoteMessage.getData().get("type"))) {
-            Log.d(
-                "TAG_Soccer",
-                getClass().getSimpleName() + ".onMessageReceived: start message ignored (no auto-launch)"
-            );
+        // Wrap entire method in try-catch to handle Android 14+ CannotDeliverBroadcastException
+        // and any other system-level exceptions that may occur during broadcast delivery
+        try {
+            handleMessageReceived(remoteMessage);
+        } catch (Throwable t) {
+            // Catch Throwable to handle all possible exceptions including system-level ones
+            // like RemoteServiceException$CannotDeliverBroadcastException on Android 14+
+            Log.e(TAG, getClass().getSimpleName() + ".onMessageReceived: Critical error handling FCM message", t);
+        }
+    }
+
+    /**
+     * Internal method to handle the FCM message processing.
+     * Separated from onMessageReceived to ensure proper exception handling.
+     */
+    private void handleMessageReceived(@NonNull RemoteMessage remoteMessage) {
+        // Get data early to minimize processing time and reduce risk of CannotDeliverBroadcastException
+        Map<String, String> data = remoteMessage.getData();
+        
+        Log.d(TAG, getClass().getSimpleName() + ".handleMessageReceived: 📨 Message received: " + data);
+        
+        if ("start".equals(data.get("type"))) {
+            Log.d(TAG, getClass().getSimpleName() + ".handleMessageReceived: start message ignored (no auto-launch)");
             return;  // ignore legacy start push
         }
 
         try {
-            Context context = getApplicationContext();
+            showNotification(data);
+        } catch (Exception e) {
+            // Catch any exceptions during notification display to prevent crash
+            Log.e(TAG, getClass().getSimpleName() + ".handleMessageReceived: Failed to show notification", e);
+        }
+    }
 
-            // 1. Extract everything from the data payload with null safety
-            String title        = remoteMessage.getData().get("title");
-            String body         = remoteMessage.getData().get("body");
-            String fromNickname = remoteMessage.getData().get("fromNickname");
-            
-            // Provide fallback values for null title/body to prevent RemoteServiceException
-            // Trim once and reuse to avoid redundant operations
-            String trimmedTitle = title != null ? title.trim() : "";
-            if (trimmedTitle.isEmpty()) {
-                title = "Game Invite";
-                Log.w("TAG_Soccer", getClass().getSimpleName() + ".onMessageReceived: title was null or empty, using fallback");
-            } else {
-                title = trimmedTitle;
-            }
-            
-            String trimmedBody = body != null ? body.trim() : "";
-            if (trimmedBody.isEmpty()) {
-                body = "You have a new game invitation";
-                Log.w("TAG_Soccer", getClass().getSimpleName() + ".onMessageReceived: body was null or empty, using fallback");
-            } else {
-                body = trimmedBody;
-            }
-            
-            // Safely generate a notification ID
-            String inviteIdRaw   = remoteMessage.getData().get("inviteId");
-            String inviteId      = (inviteIdRaw != null
-                    ? inviteIdRaw
-                    : String.valueOf(System.currentTimeMillis()));
-            int notificationId   = inviteId.hashCode();
+    /**
+     * Displays a notification based on the FCM message data.
+     * This method is optimized for quick execution to avoid Android 14+ broadcast timeout issues.
+     */
+    private void showNotification(@NonNull Map<String, String> data) {
+        Context context = getApplicationContext();
+        if (context == null) {
+            Log.e(TAG, getClass().getSimpleName() + ".showNotification: Context is null");
+            return;
+        }
 
-            // 2. Build an Intent to open InvitationsActivity
-            Intent inviteIntent = new Intent(context, InvitationsActivity.class)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            inviteIntent.putExtra("fromNickname", fromNickname);
-            inviteIntent.putExtra("inviteId", inviteId);
+        // 1. Extract everything from the data payload with null safety
+        String title = extractTitle(data);
+        String body = extractBody(data);
+        String fromNickname = data.get("fromNickname");
+        String inviteId = extractInviteId(data);
+        int notificationId = inviteId.hashCode();
 
-            // 3. Create a direct PendingIntent (no TaskStackBuilder here)
-            PendingIntent pendingIntent = PendingIntent.getActivity(
-                    context,
-                    0,
-                    inviteIntent,
-                    PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-            );
+        // 2. Ensure the notification channel exists (Oreo+) - do this early
+        if (!ensureNotificationChannel(context)) {
+            return; // Cannot proceed without notification channel on Oreo+
+        }
 
-            // 4. Ensure the notification channel exists (Oreo+)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        // 3. Build an Intent to open InvitationsActivity
+        Intent inviteIntent = new Intent(context, InvitationsActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        inviteIntent.putExtra("fromNickname", fromNickname);
+        inviteIntent.putExtra("inviteId", inviteId);
+
+        // 4. Create a direct PendingIntent (no TaskStackBuilder here)
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                context,
+                0,
+                inviteIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+        // 5. Build and show the notification
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notifications)
+                .setContentTitle(title)
+                .setContentText(body)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent);
+
+        // 6. Show it—but only if POST_NOTIFICATIONS permission is granted on Android 13+
+        displayNotification(context, notificationId, builder);
+    }
+
+    /**
+     * Extracts and validates the title from FCM data.
+     */
+    private String extractTitle(@NonNull Map<String, String> data) {
+        String title = data.get("title");
+        String trimmedTitle = title != null ? title.trim() : "";
+        if (trimmedTitle.isEmpty()) {
+            Log.w(TAG, getClass().getSimpleName() + ".extractTitle: title was null or empty, using fallback");
+            return DEFAULT_TITLE;
+        }
+        return trimmedTitle;
+    }
+
+    /**
+     * Extracts and validates the body from FCM data.
+     */
+    private String extractBody(@NonNull Map<String, String> data) {
+        String body = data.get("body");
+        String trimmedBody = body != null ? body.trim() : "";
+        if (trimmedBody.isEmpty()) {
+            Log.w(TAG, getClass().getSimpleName() + ".extractBody: body was null or empty, using fallback");
+            return DEFAULT_BODY;
+        }
+        return trimmedBody;
+    }
+
+    /**
+     * Extracts and validates the invite ID from FCM data.
+     */
+    private String extractInviteId(@NonNull Map<String, String> data) {
+        String inviteIdRaw = data.get("inviteId");
+        return inviteIdRaw != null ? inviteIdRaw : String.valueOf(System.currentTimeMillis());
+    }
+
+    /**
+     * Ensures the notification channel exists on Android Oreo and above.
+     * @return true if channel is ready (or not needed), false if channel creation failed
+     */
+    private boolean ensureNotificationChannel(@NonNull Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            try {
                 NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                 if (nm != null) {
                     NotificationChannel channel = new NotificationChannel(
-                            "invite_channel",
-                            "Game Invites",
+                            CHANNEL_ID,
+                            CHANNEL_NAME,
                             NotificationManager.IMPORTANCE_HIGH
                     );
                     nm.createNotificationChannel(channel);
+                    return true;
                 } else {
-                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".onMessageReceived: NotificationManager is null, cannot create channel");
-                    return;
+                    Log.e(TAG, getClass().getSimpleName() + ".ensureNotificationChannel: NotificationManager is null");
+                    return false;
                 }
+            } catch (Exception e) {
+                Log.e(TAG, getClass().getSimpleName() + ".ensureNotificationChannel: Failed to create channel", e);
+                return false;
             }
+        }
+        return true; // Channel not needed for pre-Oreo
+    }
 
-            // 5. Build and show the notification
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "invite_channel")
-                    .setSmallIcon(R.drawable.ic_notifications)
-                    .setContentTitle(title)
-                    .setContentText(body)
-                    .setPriority(NotificationCompat.PRIORITY_HIGH)
-                    .setAutoCancel(true)
-                    .setContentIntent(pendingIntent);
-
-            // 6. Show it—but only if POST_NOTIFICATIONS permission is granted on Android 13+
-            // Permission‐guarded notify() (Android 13+)
+    /**
+     * Displays the notification with proper permission checks.
+     */
+    private void displayNotification(@NonNull Context context, int notificationId, 
+                                     @NonNull NotificationCompat.Builder builder) {
+        try {
             NotificationManagerCompat nm = NotificationManagerCompat.from(context);
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU
                     || ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS)
                     == PackageManager.PERMISSION_GRANTED) {
                 nm.notify(notificationId, builder.build());
             } else {
-                Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Missing POST_NOTIFICATIONS permission");
+                Log.w(TAG, getClass().getSimpleName() + ".displayNotification: Missing POST_NOTIFICATIONS permission");
             }
         } catch (Exception e) {
-            // Catch any RemoteServiceException or other exceptions to prevent crash
-            Log.e("TAG_Soccer", getClass().getSimpleName() + ".onMessageReceived: Failed to show notification", e);
+            // Catch any exception during notification display (e.g., SecurityException, RemoteException)
+            Log.e(TAG, getClass().getSimpleName() + ".displayNotification: Failed to display notification", e);
         }
-
     }
 }
