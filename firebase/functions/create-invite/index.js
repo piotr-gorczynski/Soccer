@@ -40,7 +40,7 @@ exports.createInvite = functions
 
       const tournamentData = tournamentDoc.data();
       const tournamentStatus = tournamentData?.status;
-      const tournamentTitle = tournamentData?.title || 'Tournament';
+      const tournamentTitle = tournamentData?.name || 'Tournament';
 
       if (tournamentStatus !== 'running') {
         throw new functions.https.HttpsError(
