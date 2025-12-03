@@ -562,10 +562,17 @@ public class FriendsListActivity extends BaseActivity {
 
                     if (e instanceof com.google.firebase.functions.FirebaseFunctionsException ffe) {
                         com.google.firebase.functions.FirebaseFunctionsException.Code code = ffe.getCode();
-                        if (code == com.google.firebase.functions.FirebaseFunctionsException.Code.FAILED_PRECONDITION) {
-                            /* Cloud Function puts a short reason in getMessage() */
-                            String reason = String.valueOf(ffe.getMessage()); // never null
+                        /* Cloud Function puts a short reason in getMessage() */
+                        String reason = String.valueOf(ffe.getMessage()); // never null
+                        android.util.Log.d("TAG_Soccer", getClass().getSimpleName() + ".sendInviteViaCF: code=" + code + ", reason=" + reason);
 
+                        /* Check for tournament_not_running error across all error codes */
+                        if (reason.startsWith("tournament_not_running:")) {
+                            String tournamentTitle = reason.substring("tournament_not_running:".length());
+                            android.util.Log.d("TAG_Soccer", getClass().getSimpleName() + ".sendInviteViaCF: extracted tournamentTitle=" + tournamentTitle);
+                            customMessage = SafeStringFormatter.safeGetString(this, R.string.tournament_not_running, tournamentTitle);
+                            android.util.Log.d("TAG_Soccer", getClass().getSimpleName() + ".sendInviteViaCF: customMessage=" + customMessage);
+                        } else if (code == com.google.firebase.functions.FirebaseFunctionsException.Code.FAILED_PRECONDITION) {
                             if (reason.contains("blocked invites")) {
                                 customMessage = reason; // Use the full message from the server
                             } else {

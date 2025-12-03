@@ -348,6 +348,7 @@
     <string name="menu_loading_message">Loading…</string>
     <string name="game_loading_message">Preparing the pitch…</string>
     <string name="invite_from_format">Invite from: %1$s</string>
+    <string name="tournament_name_format">Tournament: %1$s</string>
     <string name="invite_received_and_status">Received: %1$s | %2$s</string>
     <string name="presence_online">Online</string>
     <string name="presence_last_seen">Last seen %1$s</string>
@@ -372,4 +373,7 @@
     <string name="hand_tutorial_dialog_message">Do you still want me to show you possible moves? You can always turn it off and on in Settings.</string>
     <string name="hand_tutorial_dialog_yes">Yes, continue</string>
     <string name="hand_tutorial_dialog_no">No, turn it off</string>
+    
+    <!-- Tournament invite errors -->
+    <string name="tournament_not_running">Tournament %1$s is no longer running</string>
 </resources>

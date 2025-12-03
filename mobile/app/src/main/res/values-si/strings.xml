@@ -322,6 +322,7 @@
     <string name="menu_loading_message">පූරණය වෙමින්…</string>
     <string name="game_loading_message">පිච් සකස් කරමින්…</string>
     <string name="invite_from_format">ආරාධනාව: %1$s ගෙන්</string>
+    <string name="tournament_name_format">තරඟාවලිය: %1$s</string>
     <string name="invite_received_and_status">ලැබුණි: %1$s | %2$s</string>
     <string name="presence_online">සබැඳිව</string>
     <string name="presence_last_seen">අවසන් වරට දුටු %1$s</string>
@@ -347,4 +348,7 @@
     <string name="hand_tutorial_dialog_message">ඔබට තවමත් හැකි චලනයන් පෙන්වීමට මා අවශ්‍යද? ඔබට සැකසීම්වල එය සෑම විටම සක්‍රිය සහ අක්‍රිය කළ හැකිය.</string>
     <string name="hand_tutorial_dialog_yes">ඔව්, දිගටම කරගෙන යන්න</string>
     <string name="hand_tutorial_dialog_no">නැත, අක්‍රිය කරන්න</string>
+    
+    <!-- Tournament invite errors -->
+    <string name="tournament_not_running">තරගාවලිය %1$s තවදුරටත් ක්‍රියාත්මක නොවේ</string>
 </resources>

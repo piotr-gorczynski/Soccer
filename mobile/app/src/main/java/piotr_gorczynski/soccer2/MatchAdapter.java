@@ -76,6 +76,7 @@ public class MatchAdapter
     private final String myUid;
 
     private final String tournamentId;
+    private String tournamentName;
     private boolean showOutcome = false;
 
     /** return position of the doc that already has this ID, or -1 if none */
@@ -98,6 +99,10 @@ public class MatchAdapter
 
     void setShowOutcome(boolean value) {
         this.showOutcome = value;
+    }
+
+    void setTournamentName(String name) {
+        this.tournamentName = name;
     }
 
     @Override
@@ -170,10 +175,24 @@ public class MatchAdapter
                         context.startActivity(i);
                     })
                     .addOnFailureListener(e -> {
-                        String msg = (e instanceof FirebaseFunctionsException ffe &&
-                                ffe.getCode() == FirebaseFunctionsException.Code.FAILED_PRECONDITION)
-                                ? "You already have an active invite"
-                                : "Failed to send invite";
+                        String msg = context.getString(R.string.failed_to_send_invite);
+                        if (e instanceof FirebaseFunctionsException ffe) {
+                            String reason = String.valueOf(ffe.getMessage());
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + ".createInvite: code=" + ffe.getCode() + ", reason=" + reason);
+
+                            /* Check for tournament_not_running error across all error codes */
+                            if (reason.startsWith("tournament_not_running:")) {
+                                // Use the locally known tournament name if available, otherwise fall back to server response
+                                String displayName = (tournamentName != null && !tournamentName.isEmpty()) 
+                                        ? tournamentName 
+                                        : reason.substring("tournament_not_running:".length());
+                                Log.d("TAG_Soccer", getClass().getSimpleName() + ".createInvite: displayName=" + displayName + " (from local=" + (tournamentName != null) + ")");
+                                msg = SafeStringFormatter.safeGetString(context, R.string.tournament_not_running, displayName);
+                                Log.d("TAG_Soccer", getClass().getSimpleName() + ".createInvite: msg=" + msg);
+                            } else if (ffe.getCode() == FirebaseFunctionsException.Code.FAILED_PRECONDITION) {
+                                msg = context.getString(R.string.invite_already_sent);
+                            }
+                        }
                         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
                         Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                                 + ": createInvite failed", e);

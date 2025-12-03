@@ -351,6 +351,7 @@
     <string name="menu_loading_message">Ładowanie…</string>
     <string name="game_loading_message">Przygotowujemy boisko…</string>
     <string name="invite_from_format">Zaproszenie od: %1$s</string>
+    <string name="tournament_name_format">Turniej: %1$s</string>
     <string name="invite_received_and_status">Otrzymano: %1$s | %2$s</string>
     <string name="presence_online">Online</string>
     <string name="presence_last_seen">Ostatnio widziany %1$s</string>
@@ -382,4 +383,7 @@
     <string name="hand_tutorial_dialog_message">Czy nadal chcesz, abym pokazywał Ci możliwe ruchy? Zawsze możesz to wyłączyć i włączyć w Ustawieniach.</string>
     <string name="hand_tutorial_dialog_yes">Tak, kontynuuj</string>
     <string name="hand_tutorial_dialog_no">Nie, wyłącz</string>
+    
+    <!-- Tournament invite errors -->
+    <string name="tournament_not_running">Turniej %1$s już się nie toczy</string>
 </resources>

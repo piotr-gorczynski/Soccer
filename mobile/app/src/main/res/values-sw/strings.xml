@@ -322,6 +322,7 @@
     <string name="menu_loading_message">Inapakia…</string>
     <string name="game_loading_message">Uwanja unaandaliwa…</string>
     <string name="invite_from_format">Mwaliko kutoka: %1$s</string>
+    <string name="tournament_name_format">Mashindano: %1$s</string>
     <string name="invite_received_and_status">Imepokelewa: %1$s | %2$s</string>
     <string name="presence_online">Mtandaoni</string>
     <string name="presence_last_seen">Alionekana mwisho %1$s</string>
@@ -347,4 +348,7 @@
     <string name="hand_tutorial_dialog_message">Je, bado unataka nikuonyeshe harakati zinazowezekana? Unaweza kuizima na kuiwasha wakati wowote katika Mipangilio.</string>
     <string name="hand_tutorial_dialog_yes">Ndiyo, endelea</string>
     <string name="hand_tutorial_dialog_no">Hapana, zima</string>
+    
+    <!-- Tournament invite errors -->
+    <string name="tournament_not_running">Mashindano %1$s hayaendelei tena</string>
 </resources>

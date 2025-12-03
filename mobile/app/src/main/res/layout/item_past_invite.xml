@@ -15,6 +15,14 @@
         android:textColor="@color/colorBlack" />
 
     <TextView
+        android:id="@+id/tournamentName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textColor="@color/colorBlack"
+        android:visibility="gone" />
+
+    <TextView
         android:id="@+id/inviteReceivedAndStatus"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

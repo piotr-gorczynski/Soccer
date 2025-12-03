@@ -323,6 +323,7 @@
     <string name="menu_loading_message">កំពុងផ្ទុក…</string>
     <string name="game_loading_message">កំពុងរៀបចំទីលាន…</string>
     <string name="invite_from_format">ការអញ្ជើញពី: %1$s</string>
+    <string name="tournament_name_format">ការប្រកួត: %1$s</string>
     <string name="invite_received_and_status">បានទទួល: %1$s | %2$s</string>
     <string name="presence_online">លើបណ្តាញ</string>
     <string name="presence_last_seen">បានឃើញចុងក្រោយ %1$s</string>
@@ -347,4 +348,7 @@
     <string name="hand_tutorial_dialog_message">តើអ្នកនៅតែចង់ឱ្យខ្ញុំបង្ហាញចលនាដែលអាចធ្វើបានទៀតទេ? អ្នកអាចបើក និងបិទវានៅក្នុងការកំណត់បានគ្រប់ពេល។</string>
     <string name="hand_tutorial_dialog_yes">បាទ/ចាស បន្ត</string>
     <string name="hand_tutorial_dialog_no">ទេ បិទ</string>
+    
+    <!-- Tournament invite errors -->
+    <string name="tournament_not_running">ការប្រកួត %1$s មិនកំពុងដំណើរការទៀតទេ</string>
 </resources>
