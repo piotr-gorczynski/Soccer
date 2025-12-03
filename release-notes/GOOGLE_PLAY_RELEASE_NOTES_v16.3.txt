@@ -2,6 +2,7 @@
 🎉 Show tournament name in pending and past invite adapters
 🎮 Fix ANR in initializeWebViewSafely by removing blocking CountDownLatch
 🎮 Add tournament status safeguard to createInvite function
+🎮 Fix CannotDeliverBroadcastException in MyFirebaseMessagingService for Android 14+
 </en-GB>
 
 <pl-PL>
