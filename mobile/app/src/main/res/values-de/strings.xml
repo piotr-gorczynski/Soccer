@@ -351,6 +351,7 @@
     <string name="menu_loading_message">Lädt…</string>
     <string name="game_loading_message">Spielfeld wird vorbereitet…</string>
     <string name="invite_from_format">Einladung von: %1$s</string>
+    <string name="tournament_name_format">Turnier: %1$s</string>
     <string name="invite_received_and_status">Erhalten: %1$s | %2$s</string>
     <string name="presence_online">Online</string>
     <string name="presence_last_seen">Zuletzt gesehen %1$s</string>
@@ -382,4 +383,7 @@
     <string name="hand_tutorial_dialog_message">Soll ich Ihnen weiterhin mögliche Züge zeigen? Sie können dies jederzeit in den Einstellungen ein- und ausschalten.</string>
     <string name="hand_tutorial_dialog_yes">Ja, fortfahren</string>
     <string name="hand_tutorial_dialog_no">Nein, ausschalten</string>
+    
+    <!-- Tournament invite errors -->
+    <string name="tournament_not_running">Turnier %1$s läuft nicht mehr</string>
 </resources>

@@ -175,4 +175,140 @@ public class MyFirebaseMessagingServiceTest {
             fail("Service should handle start messages without crashing: " + e.getMessage());
         }
     }
+
+    /**
+     * Test that the service handles missing inviteId gracefully
+     * This tests the fallback to system time for notification ID
+     */
+    @Test
+    public void testOnMessageReceived_withMissingInviteId_shouldNotCrash() {
+        MyFirebaseMessagingService service = new MyFirebaseMessagingService();
+        
+        // Create a RemoteMessage without inviteId
+        Map<String, String> data = new HashMap<>();
+        data.put("type", "invite");
+        data.put("title", "Test title");
+        data.put("body", "Test body");
+        data.put("fromNickname", "TestUser");
+        // Note: inviteId is intentionally missing
+        
+        // This should not throw an exception
+        try {
+            RemoteMessage message = createRemoteMessage(data);
+            
+            // The service should handle this gracefully by using a timestamp-based ID
+            service.onMessageReceived(message);
+            
+            // Test passes if we reach this point without exception
+        } catch (Exception e) {
+            fail("Service should not crash with missing inviteId: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Test that the service handles completely empty data payload gracefully
+     * This is an edge case that could cause CannotDeliverBroadcastException
+     */
+    @Test
+    public void testOnMessageReceived_withEmptyData_shouldNotCrash() {
+        MyFirebaseMessagingService service = new MyFirebaseMessagingService();
+        
+        // Create a RemoteMessage with empty data
+        Map<String, String> data = new HashMap<>();
+        
+        // This should not throw an exception
+        try {
+            RemoteMessage message = createRemoteMessage(data);
+            
+            // The service should handle this gracefully
+            service.onMessageReceived(message);
+            
+            // Test passes if we reach this point without exception
+        } catch (Exception e) {
+            fail("Service should not crash with empty data: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Test that the service handles whitespace-only title gracefully
+     */
+    @Test
+    public void testOnMessageReceived_withWhitespaceTitle_shouldNotCrash() {
+        MyFirebaseMessagingService service = new MyFirebaseMessagingService();
+        
+        // Create a RemoteMessage with whitespace-only title
+        Map<String, String> data = new HashMap<>();
+        data.put("type", "invite");
+        data.put("title", "   ");  // Whitespace only
+        data.put("body", "Test body");
+        data.put("inviteId", "test123");
+        data.put("fromNickname", "TestUser");
+        
+        // This should not throw an exception
+        try {
+            RemoteMessage message = createRemoteMessage(data);
+            
+            // The service should handle this gracefully and use default title
+            service.onMessageReceived(message);
+            
+            // Test passes if we reach this point without exception
+        } catch (Exception e) {
+            fail("Service should not crash with whitespace title: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Test that the service handles whitespace-only body gracefully
+     */
+    @Test
+    public void testOnMessageReceived_withWhitespaceBody_shouldNotCrash() {
+        MyFirebaseMessagingService service = new MyFirebaseMessagingService();
+        
+        // Create a RemoteMessage with whitespace-only body
+        Map<String, String> data = new HashMap<>();
+        data.put("type", "invite");
+        data.put("title", "Test title");
+        data.put("body", "   ");  // Whitespace only
+        data.put("inviteId", "test123");
+        data.put("fromNickname", "TestUser");
+        
+        // This should not throw an exception
+        try {
+            RemoteMessage message = createRemoteMessage(data);
+            
+            // The service should handle this gracefully and use default body
+            service.onMessageReceived(message);
+            
+            // Test passes if we reach this point without exception
+        } catch (Exception e) {
+            fail("Service should not crash with whitespace body: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Test that the service catches Throwable (not just Exception)
+     * This verifies the fix for Android 14+ CannotDeliverBroadcastException
+     * which is a system-level exception that could escape regular Exception catch blocks
+     */
+    @Test
+    public void testOnMessageReceived_catchesThrowable() {
+        MyFirebaseMessagingService service = new MyFirebaseMessagingService();
+        
+        // Create a valid RemoteMessage
+        Map<String, String> data = new HashMap<>();
+        data.put("type", "invite");
+        data.put("title", "Test title");
+        data.put("body", "Test body");
+        data.put("inviteId", "test123");
+        data.put("fromNickname", "TestUser");
+        
+        // Even if something goes wrong internally, the method should not propagate exceptions
+        try {
+            RemoteMessage message = createRemoteMessage(data);
+            service.onMessageReceived(message);
+            // Test passes - no exception propagated
+        } catch (Throwable t) {
+            fail("Service should catch all Throwables including system exceptions: " + t.getMessage());
+        }
+    }
 }

@@ -323,6 +323,7 @@
     <string name="menu_loading_message">Mampiditra…</string>
     <string name="game_loading_message">Amboarina ny kianja…</string>
     <string name="invite_from_format">Fanasana avy amin\'ny: %1$s</string>
+    <string name="tournament_name_format">Fifaninanana: %1$s</string>
     <string name="invite_received_and_status">Voaray: %1$s | %2$s</string>
     <string name="presence_online">An-tserasera</string>
     <string name="presence_last_seen">Hita farany %1$s</string>
@@ -347,4 +348,7 @@
     <string name="hand_tutorial_dialog_message">Mbola tianao ve ny hasehoko aminao ny fihetsika azo atao? Azonao atao mandrakariva ny manokatra sy manidy azy ao amin\'ny Fandrindrana.</string>
     <string name="hand_tutorial_dialog_yes">Eny, tohizana</string>
     <string name="hand_tutorial_dialog_no">Tsia, hidio</string>
+    
+    <!-- Tournament invite errors -->
+    <string name="tournament_not_running">Ny fifanintsanana %1$s tsy mandeha intsony</string>
 </resources>

@@ -356,6 +356,7 @@
     <string name="menu_loading_message">लोड गर्दै…</string>
     <string name="game_loading_message">मैदान तयार गरिँदैछ…</string>
     <string name="invite_from_format">निमन्त्रणा: %1$s बाट</string>
+    <string name="tournament_name_format">प्रतियोगिता: %1$s</string>
     <string name="invite_received_and_status">प्राप्त भयो: %1$s | %2$s</string>
     <string name="presence_online">अनलाइन</string>
     <string name="presence_last_seen">अन्तिम पटक देखिएको %1$s</string>
@@ -381,4 +382,7 @@
     <string name="hand_tutorial_dialog_message">के तपाईं अझै पनि मलाई सम्भावित चालहरू देखाउन चाहनुहुन्छ? तपाईं यसलाई सेटिङहरूमा सधैं सक्रिय र निष्क्रिय गर्न सक्नुहुन्छ।</string>
     <string name="hand_tutorial_dialog_yes">हो, जारी राख्नुहोस्</string>
     <string name="hand_tutorial_dialog_no">होइन, निष्क्रिय गर्नुहोस्</string>
+    
+    <!-- Tournament invite errors -->
+    <string name="tournament_not_running">प्रतियोगिता %1$s अब चलिरहेको छैन</string>
 </resources>

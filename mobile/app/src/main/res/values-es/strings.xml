@@ -355,6 +355,7 @@
     <string name="menu_loading_message">Cargando…</string>
     <string name="game_loading_message">Preparando el campo…</string>
     <string name="invite_from_format">Invitación de: %1$s</string>
+    <string name="tournament_name_format">Torneo: %1$s</string>
     <string name="invite_received_format">Recibido %1$s</string>
     <string name="invite_received_and_status">Recibido: %1$s | %2$s</string>
     <string name="invite_status_accepted">Estado: Aceptada</string>
@@ -384,4 +385,7 @@
     <string name="hand_tutorial_dialog_message">¿Todavía quieres que te muestre los movimientos posibles? Siempre puedes activarlo y desactivarlo en Configuración.</string>
     <string name="hand_tutorial_dialog_yes">Sí, continuar</string>
     <string name="hand_tutorial_dialog_no">No, desactivar</string>
+    
+    <!-- Tournament invite errors -->
+    <string name="tournament_not_running">El torneo %1$s ya no está en curso</string>
 </resources>
