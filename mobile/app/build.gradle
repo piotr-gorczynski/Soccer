@@ -144,7 +144,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
 
     //GPT fixes
-    implementation platform('com.google.firebase:firebase-bom:34.5.0')
+    implementation platform('com.google.firebase:firebase-bom:34.6.0')
     implementation 'com.google.firebase:firebase-auth:24.0.1'
     implementation 'com.google.android.gms:play-services-auth:21.4.0' // Required for Google Sign-In
     //GPT fixes
@@ -178,16 +178,16 @@ dependencies {
 
     implementation "com.google.guava:guava:33.5.0-android"
 
-    implementation "androidx.lifecycle:lifecycle-process:2.9.4"
-    implementation "androidx.lifecycle:lifecycle-common-java8:2.9.4"
+    implementation "androidx.lifecycle:lifecycle-process:2.10.0"
+    implementation "androidx.lifecycle:lifecycle-common-java8:2.10.0"
     
     // HTTP client for backend service checks
-    implementation 'com.squareup.okhttp3:okhttp:5.3.0'
+    implementation 'com.squareup.okhttp3:okhttp:5.3.2'
 
     // User Messaging Platform SDK
     implementation 'com.google.android.ump:user-messaging-platform:4.0.0'
 
-    implementation 'com.google.android.gms:play-services-ads:24.7.0' // or latest
+    implementation 'com.google.android.gms:play-services-ads:24.8.0' // or latest
     
     // Image loading for Facebook profile photos
     implementation 'com.github.bumptech.glide:glide:5.0.5'
