@@ -30,7 +30,13 @@ public class LanguageManager {
     /** Handler for posting to the main thread. */
     private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
     
-    /** Delay before applying language changes to avoid ANR during lifecycle transitions. */
+    /**
+     * Delay before applying language changes to avoid ANR during lifecycle transitions.
+     * A 100ms delay allows the main thread to complete critical operations (like finishing
+     * onCreate/onStart) before triggering activity recreation via setApplicationLocales().
+     * This value is a balance between responsiveness and avoiding ANR: too short risks ANR,
+     * too long causes noticeable delay in applying the language change.
+     */
     private static final long LANGUAGE_APPLY_DELAY_MS = 100;
     
     // Language code to display name resource mapping
@@ -216,13 +222,12 @@ public class LanguageManager {
                                 // Defer the expensive UI operations to avoid ANR during
                                 // lifecycle transitions. AppCompatDelegate.setApplicationLocales()
                                 // can trigger activity recreation which is expensive.
-                                final String langCode = languageCode;
                                 MAIN_HANDLER.postDelayed(() -> {
                                     try {
                                         AppCompatDelegate.setApplicationLocales(
-                                                LocaleListCompat.forLanguageTags(langCode));
-                                        applyLanguage(context, langCode);
-                                        Log.d(TAG, "loadLanguageFromFirestore: applied language=" + langCode);
+                                                LocaleListCompat.forLanguageTags(languageCode));
+                                        applyLanguage(context, languageCode);
+                                        Log.d(TAG, "loadLanguageFromFirestore: applied language=" + languageCode);
                                     } catch (Exception e) {
                                         Log.e(TAG, "loadLanguageFromFirestore: failed to apply language", e);
                                     }
