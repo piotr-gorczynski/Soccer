@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.appcompat.app.AppCompatDelegate;
@@ -24,6 +26,12 @@ public class LanguageManager {
 
     private static final String TAG = "TAG_Soccer";
     public static final String PREF_LANGUAGE_CODE = "language_code";
+    
+    /** Handler for posting to the main thread. */
+    private static final Handler MAIN_HANDLER = new Handler(Looper.getMainLooper());
+    
+    /** Delay before applying language changes to avoid ANR during lifecycle transitions. */
+    private static final long LANGUAGE_APPLY_DELAY_MS = 100;
     
     // Language code to display name resource mapping
     private static final Map<String, Integer> LANGUAGE_NAME_RES_IDS = new HashMap<>();
@@ -175,7 +183,8 @@ public class LanguageManager {
     }
     
     /**
-     * Load language preference from Firestore for logged-in users
+     * Load language preference from Firestore for logged-in users.
+     * Uses a deferred execution pattern to avoid ANR during app lifecycle transitions.
      */
     public static void loadLanguageFromFirestore(Context context) {
         String uid = FirebaseAuth.getInstance().getUid();
@@ -198,13 +207,26 @@ public class LanguageManager {
                             // Only apply the Firestore value if the language hasn't been
                             // changed locally since the request was initiated.
                             if (currentCode.equals(initialCode) && !currentCode.equals(languageCode)) {
+                                // Save preference asynchronously
                                 context.getSharedPreferences(PREFS_FILE, Context.MODE_PRIVATE)
                                         .edit()
                                         .putString(PREF_LANGUAGE_CODE, languageCode)
                                         .apply();
-                                AppCompatDelegate.setApplicationLocales(
-                                        LocaleListCompat.forLanguageTags(languageCode));
-                                applyLanguage(context, languageCode);
+                                
+                                // Defer the expensive UI operations to avoid ANR during
+                                // lifecycle transitions. AppCompatDelegate.setApplicationLocales()
+                                // can trigger activity recreation which is expensive.
+                                final String langCode = languageCode;
+                                MAIN_HANDLER.postDelayed(() -> {
+                                    try {
+                                        AppCompatDelegate.setApplicationLocales(
+                                                LocaleListCompat.forLanguageTags(langCode));
+                                        applyLanguage(context, langCode);
+                                        Log.d(TAG, "loadLanguageFromFirestore: applied language=" + langCode);
+                                    } catch (Exception e) {
+                                        Log.e(TAG, "loadLanguageFromFirestore: failed to apply language", e);
+                                    }
+                                }, LANGUAGE_APPLY_DELAY_MS);
                             }
                         }
                     }
