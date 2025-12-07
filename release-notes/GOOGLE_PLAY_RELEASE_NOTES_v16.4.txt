@@ -2,6 +2,7 @@
 🎉 Add presence status to user search results
 🐜 Fix ANR in LanguageManager.loadLanguageFromFirestore
 🐜 Fix ANR in SoccerApp by removing blocking WebView pre-initialization
+🐜 Fix ANR crash from WebView initialization blocking main thread during app startup
 </en-GB>
 
 <pl-PL>
