@@ -1,52 +1,53 @@
 <en-GB>
-🎉 Add presence status to user search results
-🐜 Fix ANR in LanguageManager.loadLanguageFromFirestore
-🐜 Fix ANR in SoccerApp by removing blocking WebView pre-initialization
-🐜 Fix ANR crash from WebView initialization blocking main thread during app startup
+🎉 Added online status in player search  
+🎮 Improved app stability and startup  
+🎮 Better tournament invite handling  
+🎮 Fixed rare app freeze and startup issues  
+⚽ Soccer now smoother and faster!
 </en-GB>
 
 <pl-PL>
-🎉 Nazwy turniejów widoczne w zaproszeniach  
+🎉 Dodano status aktywności w wyszukiwarce graczy  
 🎮 Poprawiono stabilność i uruchamianie  
 🎮 Ulepszono obsługę zaproszeń turniejowych  
-🎮 Naprawiono rzadkie błędy powiadomień  
-⚽ Płynniejszy Soccer!
+🎮 Naprawiono rzadkie zawieszanie aplikacji  
+⚽ Płynniejszy i szybszy Soccer!
 </pl-PL>
 
 <de-DE>
-🎉 Turniernamen jetzt in Einladungen sichtbar  
+🎉 Online-Status in Spielersuche hinzugefügt  
 🎮 Stabilität und Start verbessert  
-🎮 Einladungen zu Turnieren optimiert  
-🎮 Seltene Benachrichtigungsfehler behoben  
-⚽ Flüssigeres Soccer!
+🎮 Turniereinladungen optimiert  
+🎮 Seltene App-Freezes behoben  
+⚽ Schnelleres, flüssigeres Soccer!
 </de-DE>
 
 <fr-FR>
-🎉 Les noms des tournois s’affichent dans les invitations  
+🎉 Statut en ligne ajouté à la recherche de joueurs  
 🎮 Application plus stable et rapide  
-🎮 Meilleure gestion des invitations de tournoi  
-🎮 Correction de bugs rares  
+🎮 Meilleure gestion des invitations  
+🎮 Correction de blocages rares  
 ⚽ Soccer plus fluide !
 </fr-FR>
 
 <es-ES>
-🎉 Nombres de torneos visibles en invitaciones  
-🎮 Más estabilidad y carga mejorada  
-🎮 Mejor gestión de invitaciones  
+🎉 Estado en línea añadido a la búsqueda de jugadores  
+🎮 Mayor estabilidad y arranque más rápido  
+🎮 Invitaciones mejor gestionadas  
 🎮 Fallos raros corregidos  
-⚽ Soccer más fluido !
+⚽ Soccer más fluido!
 </es-ES>
 
 <ur>
-🎉 دعوتوں میں اب ٹورنامنٹ نام دکھائی دیتے ہیں  
+🎉 کھلاڑی تلاش میں آن لائن اسٹیٹس شامل  
 🎮 ایپ مزید مستحکم اور تیز  
-🎮 ٹورنامنٹ دعوتیں بہتر بنائی گئیں  
+🎮 ٹورنامنٹ دعوتیں بہتر ہوئیں  
 🎮 نایاب کریش درست  
 ⚽ مزید ہموار Soccer!
 </ur>
 
 <bn-BD>
-🎉 আমন্ত্রণে এখন টুর্নামেন্ট নাম দেখা যাবে  
+🎉 প্লেয়ার সার্চে অনলাইন স্ট্যাটাস যোগ  
 🎮 অ্যাপ আরও স্থিতিশীল ও দ্রুত  
 🎮 টুর্নামেন্ট আমন্ত্রণ উন্নত  
 🎮 বিরল ক্র্যাশ ঠিক করা হয়েছে  
@@ -54,7 +55,7 @@
 </bn-BD>
 
 <ne-NP>
-🎉 निमन्त्रणामा अब प्रतियोगिता नाम देखिन्छ  
+🎉 खेलाडी खोजमा अनलाइन स्थिति थपियो  
 🎮 एप अझ स्थिर र छिटो  
 🎮 निमन्त्रणाको प्रक्रिया सुधारियो  
 🎮 दुर्लभ त्रुटिहरू समाधान  
@@ -62,63 +63,63 @@
 </ne-NP>
 
 <hi-IN>
-🎉 अब निमंत्रणों में टूर्नामेंट नाम दिखते हैं  
+🎉 खिलाड़ी खोज में ऑनलाइन स्थिति जोड़ी गई  
 🎮 ऐप अब ज़्यादा स्थिर और तेज़  
-🎮 टूर्नामेंट निमंत्रण बेहतर किए गए  
-🎮 दुर्लभ त्रुटियाँ ठीक  
+🎮 टूर्नामेंट निमंत्रण बेहतर हुए  
+🎮 दुर्लभ फ्रीज़ ठीक  
 ⚽ और भी स्मूद Soccer!
 </hi-IN>
 
 <am>
-🎉 በግብዣዎች ውስጥ የቱርናማ ስሞች ይታያሉ  
-🎮 አፕ የተሻሻለ መረጋጋትና ፍጥነት  
-🎮 የቱርናማ ግብዣዎች ተሻሻሉ  
-🎮 አልፎ አልፎ ስህተቶች ተፈቱ  
-⚽ ተሻሻለ Soccer!
+🎉 በተጫዋች ፍለጋ ውስጥ የመስመር ላይ ሁኔታ ተጨምሯል  
+🎮 አፕ ተሻሻሎ ፈጣንና የተረጋጋ  
+🎮 የግብዣ አስተዳደር ተሻሻለ  
+🎮 አልፎ አልፎ መቃኘት ተፈታ  
+⚽ የተሻሻለ Soccer!
 </am>
 
 <ar>
-🎉 تظهر أسماء البطولات في الدعوات  
+🎉 تمت إضافة حالة الاتصال في بحث اللاعبين  
 🎮 أداء واستقرار أفضل  
-🎮 تحسين نظام دعوات البطولات  
+🎮 تحسين إدارة الدعوات  
 🎮 إصلاح الأعطال النادرة  
 ⚽ Soccer أسرع وأكثر سلاسة!
 </ar>
 
 <my-MM>
-🎉 ဖိတ်ကြားမှုတွင် ပြိုင်ပွဲအမည် ပြနေပြီ  
+🎉 ကစားသမား ရှာဖွေရေးတွင် အွန်လိုင်းအခြေအနေ ထည့်  
 🎮 အက်ပ် ပိုမို တည်ငြိမ်ပြီး မြန်  
 🎮 ပြိုင်ပွဲ ဖိတ်ကြားမှု မြှင့်တင်  
 🎮 ချို့တဲ့မှုများ ပြင်ဆင်  
-⚽ ပိုမိုချောမွေ့သော Soccer!
+⚽ ပိုမိုချောမွေ့ Soccer!
 </my-MM>
 
 <km-KH>
-🎉 ឈ្មោះតួណាម៉ង់បង្ហាញក្នុងការអញ្ជើញ  
+🎉 បន្ថែមស្ថានភាពលើបណ្ដាញក្នុងការស្វែងរកអ្នកលេង  
 🎮 ការស្ថិរភាពប្រសើរឡើង  
-🎮 ការអញ្ជើញតួណាម៉ង់កែច្នៃ  
+🎮 ការអញ្ជើញត្រូវបានកែលម្អ  
 🎮 កំហុសតិចតួចត្រូវបានកែ  
-⚽ Soccer ល្អប្រសើរជាងមុន!
+⚽ Soccer លឿនជាងមុន!
 </km-KH>
 
 <lo-LA>
-🎉 ຊື່ທວຣນາເມັນປາກົດໃນການເຊີນ  
+🎉 ເພີ່ມສະຖານະອອນໄລນ໌ໃນການຄົ້ນຫານັກຫຼິ້ນ  
 🎮 ແອັບໄວຂຶ້ນ ແລະ ມັ່ນຄົງຂຶ້ນ  
-🎮 ການເຊີນທວຣນາເມັນດີຂຶ້ນ  
+🎮 ການເຊີນດີຂຶ້ນ  
 🎮 ແກ້ບັນຫານ້ອຍໆ  
 ⚽ Soccer ລື່ນຂຶ້ນ!
 </lo-LA>
 
 <mn-MN>
-🎉 Урилгын дэлгэц дээр тэмцээний нэр гарч ирнэ  
+🎉 Тоглогч хайлтанд онлайн төлөв нэмсэн  
 🎮 Апп илүү хурдан, тогтвортой  
-🎮 Тэмцээний урилгыг сайжруулсан  
+🎮 Урилга илгээх систем сайжирсан  
 🎮 Ховор алдаа зассан  
 ⚽ Илүү сайхан Soccer!
 </mn-MN>
 
 <fa-IR>
-🎉 نام تورنمنت‌ها در دعوت‌ها نمایش داده می‌شود  
+🎉 وضعیت آنلاین به جستجوی بازیکنان افزوده شد  
 🎮 اجرای پایدارتر و سریع‌تر  
 🎮 بهبود دعوت‌های تورنمنت  
 🎮 رفع خطاهای نادر  
@@ -126,9 +127,9 @@
 </fa-IR>
 
 <si-LK>
-🎉 ආරාධනා වලට දැන් තරග නාම පෙන්වයි  
+🎉 ක්‍රීඩක සෙවීමේදී මාර්ගගත තත්ත්වය එකතු කළා  
 🎮 වැඩි ස්ථාවරතාව හා වේගය  
-🎮 තරග ආරාධනා වැඩිදියුණු කළා  
-🎮 අල්ප බිඳවැටීම් විසඳා ඇත  
+🎮 ආරාධනා වැඩිදියුණු කළා  
+🎮 දුර්ලභ බිඳවැටීම් විසඳා ඇත  
 ⚽ වැඩි මෘදු Soccer!
 </si-LK>
