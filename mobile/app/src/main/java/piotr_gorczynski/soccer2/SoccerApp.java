@@ -751,18 +751,23 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
      * Initialize MobileAds SDK in a non-blocking way.
      * 
      * This method delays MobileAds initialization to prevent ANR during app startup.
-     * The issue: MobileAds.initialize() internally triggers WebView initialization,
-     * which can block the main thread for 5+ seconds on first launch (Chromium provider).
+     * The issue: MobileAds.initialize() internally triggers WebView initialization and
+     * DynamiteModule loading, which can block the main thread for 5+ seconds on first launch
+     * (Chromium provider + ContentProvider access).
      * 
-     * Solution: Delay initialization by 2 seconds to allow the first activity to display
+     * Solution: Delay initialization by 5 seconds to allow the first activity to display
      * and the app to become responsive before starting heavy initialization.
      * 
      * MobileAds.initialize() MUST be called on the main thread (SDK requirement),
      * but we use postDelayed() to ensure it happens AFTER the app is fully started.
+     * 
+     * The 5-second delay was chosen based on ANR analysis showing that DynamiteModule
+     * ContentProvider access can take longer than 2 seconds on slower devices.
      */
     private void initializeWebViewAndAds() {
-        // Delay MobileAds initialization by 2 seconds to avoid blocking app startup
+        // Delay MobileAds initialization by 5 seconds to avoid blocking app startup
         // This gives time for the splash screen and first activity to render
+        // and for the system to settle before heavy SDK initialization
         MAIN_HANDLER.postDelayed(() -> {
             try {
                 MobileAds.initialize(this, initializationStatus -> {
@@ -772,7 +777,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                 // Catch any exceptions during initialization to prevent crashes
                 Log.e(TAG, getClass().getSimpleName() + ".initializeWebViewAndAds: Failed to initialize MobileAds", e);
             }
-        }, 2000); // 2 second delay
+        }, 5000); // 5 second delay
     }
     
     /**
