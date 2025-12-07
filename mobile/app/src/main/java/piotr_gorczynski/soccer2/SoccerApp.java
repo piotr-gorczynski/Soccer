@@ -26,8 +26,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import android.webkit.WebView;
-
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.ads.MobileAds;
@@ -750,36 +748,31 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     }
     
     /**
-     * Initialize WebView and then MobileAds in a non-blocking way.
-     * This fixes the ANR crash by avoiding blocking any thread.
+     * Initialize MobileAds SDK in a non-blocking way.
      * 
-     * WebView must be initialized on the main thread, and we chain
-     * MobileAds initialization after WebView is ready.
+     * This method delays MobileAds initialization to prevent ANR during app startup.
+     * The issue: MobileAds.initialize() internally triggers WebView initialization,
+     * which can block the main thread for 5+ seconds on first launch (Chromium provider).
+     * 
+     * Solution: Delay initialization by 2 seconds to allow the first activity to display
+     * and the app to become responsive before starting heavy initialization.
+     * 
+     * MobileAds.initialize() MUST be called on the main thread (SDK requirement),
+     * but we use postDelayed() to ensure it happens AFTER the app is fully started.
      */
     private void initializeWebViewAndAds() {
-        // WebView initialization must happen on the main thread
-        // We use MAIN_HANDLER.post() to ensure we don't block Application.onCreate()
-        MAIN_HANDLER.post(() -> {
-            // Pre-initialize WebView to prevent ANR when ads SDK first loads WebView
+        // Delay MobileAds initialization by 2 seconds to avoid blocking app startup
+        // This gives time for the splash screen and first activity to render
+        MAIN_HANDLER.postDelayed(() -> {
             try {
-                // Create a WebView instance to trigger the WebView provider initialization
-                WebView webView = new WebView(this);
-                // Immediately destroy it to prevent memory leaks
-                webView.destroy();
-                Log.d(TAG, getClass().getSimpleName() + ".initializeWebViewAndAds: WebView pre-initialized successfully");
+                MobileAds.initialize(this, initializationStatus -> {
+                    Log.d(TAG, getClass().getSimpleName() + ".initializeWebViewAndAds: MobileAds initialized successfully");
+                });
             } catch (Exception e) {
-                // If WebView initialization fails, log the error but don't crash the app
-                // Some devices may have WebView disabled or missing
-                // We still proceed with MobileAds initialization as it may work without pre-warming
-                Log.w(TAG, getClass().getSimpleName() + ".initializeWebViewAndAds: Failed to pre-initialize WebView", e);
+                // Catch any exceptions during initialization to prevent crashes
+                Log.e(TAG, getClass().getSimpleName() + ".initializeWebViewAndAds: Failed to initialize MobileAds", e);
             }
-            
-            // Initialize MobileAds regardless of WebView pre-initialization result
-            // MobileAds initialization must happen on the main thread
-            MobileAds.initialize(this, initializationStatus -> {
-                Log.d(TAG, getClass().getSimpleName() + ".initializeWebViewAndAds: MobileAds initialized successfully");
-            });
-        });
+        }, 2000); // 2 second delay
     }
     
     /**
