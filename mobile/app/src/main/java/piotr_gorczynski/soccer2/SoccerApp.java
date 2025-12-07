@@ -750,22 +750,29 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     /**
      * Initialize MobileAds SDK in a non-blocking way.
      * 
-     * Note: We intentionally DO NOT pre-initialize WebView here.
-     * Previous versions tried to pre-warm WebView to prevent ANR when ads load,
-     * but this caused ANR because WebView initialization on the main thread 
-     * can block for 5+ seconds on first launch (Chromium provider initialization).
+     * This method delays MobileAds initialization to prevent ANR during app startup.
+     * The issue: MobileAds.initialize() internally triggers WebView initialization,
+     * which can block the main thread for 5+ seconds on first launch (Chromium provider).
      * 
-     * The MobileAds SDK handles WebView initialization internally in a more
-     * optimized way, initializing it lazily when the first ad is loaded.
+     * Solution: Delay initialization by 2 seconds to allow the first activity to display
+     * and the app to become responsive before starting heavy initialization.
+     * 
+     * MobileAds.initialize() MUST be called on the main thread (SDK requirement),
+     * but we use postDelayed() to ensure it happens AFTER the app is fully started.
      */
     private void initializeWebViewAndAds() {
-        // Initialize MobileAds on the main thread, but defer it using post()
-        // to avoid blocking Application.onCreate()
-        MAIN_HANDLER.post(() -> {
-            MobileAds.initialize(this, initializationStatus -> {
-                Log.d(TAG, getClass().getSimpleName() + ".initializeWebViewAndAds: MobileAds initialized successfully");
-            });
-        });
+        // Delay MobileAds initialization by 2 seconds to avoid blocking app startup
+        // This gives time for the splash screen and first activity to render
+        MAIN_HANDLER.postDelayed(() -> {
+            try {
+                MobileAds.initialize(this, initializationStatus -> {
+                    Log.d(TAG, getClass().getSimpleName() + ".initializeWebViewAndAds: MobileAds initialized successfully");
+                });
+            } catch (Exception e) {
+                // Catch any exceptions during initialization to prevent crashes
+                Log.e(TAG, getClass().getSimpleName() + ".initializeWebViewAndAds: Failed to initialize MobileAds", e);
+            }
+        }, 2000); // 2 second delay
     }
     
     /**
