@@ -275,7 +275,7 @@ Based on analysis of Firebase Analytics, AdMob, and DAU/MAU data from November 1
   - Explain benefits: "Win prizes and climb leaderboards!"
   - Add tutorial video link
 
-**Expected Impact**: 100% increase in tournament participation
+**Expected Impact**: Increase to 50+ daily tournament views (from current 11 total over analysis period), achieving 30-50% daily user participation rate
 
 **Metrics to Track**:
 - menu_button_click (event with button_id)
@@ -345,7 +345,7 @@ Based on analysis of Firebase Analytics, AdMob, and DAU/MAU data from November 1
   - One-time purchase: $9.99
   - Increases perceived value, captures different user segments
 
-**Expected Impact**: Increase ARPDAU by 200-300% while maintaining user satisfaction
+**Expected Impact**: Increase ARPDAU from current $0.0001-0.001 to $0.01+ while maintaining user satisfaction
 
 **Metrics to Track**:
 - ad_impression (existing - should increase strategically)
@@ -565,7 +565,7 @@ Based on analysis of Firebase Analytics, AdMob, and DAU/MAU data from November 1
 3. Add spectator mode
 4. Launch team/guild features
 
-**Target**: Achieve DAU/MAU of 10-12% (approaching peer median)
+**Target**: Achieve DAU/MAU of 10-12% (approaching peer median of 14-15%)
 
 ---
 
@@ -589,7 +589,7 @@ Track these metrics weekly:
 - Day 1 Retention: 15%+
 - Day 7 Retention: 25%+
 - Day 30 Retention: 10%+
-- DAU/MAU: 12-15% (peer median range)
+- DAU/MAU: 12-15% (matching peer median of 14-15%)
 - Daily Active Users: 50-100 (10x increase)
 - Average session length: 10+ minutes
 - Tournament participation: 50%+ of active users
