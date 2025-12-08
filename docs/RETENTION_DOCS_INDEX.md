@@ -4,25 +4,53 @@
 
 This folder contains a comprehensive user retention improvement strategy for Gridline Soccer, created in response to severe retention issues (98% churn by Day 14).
 
+## ⚠️ IMPORTANT UPDATE (2025-12-08)
+
+**Revenue Model Clarified:** AdMob ads are the **ONLY** revenue source (no in-app purchases).
+
+**Strategy Revised:** All features must be FREE. Original projections assuming IAP/premium features have been updated.
+
+**Action Required:** Analyze your Firebase and AdMob data before proceeding.
+
 ---
 
-## 🚀 START HERE
+## 🚀 START HERE (UPDATED)
+
+### 1. Analyze Your Data FIRST
+👉 **[DATA_ANALYSIS_GUIDE.md](./DATA_ANALYSIS_GUIDE.md)** ⭐ NEW
+- **Purpose:** Analyze your actual Firebase and AdMob CSV files
+- **Contents:** Templates to calculate baseline metrics (DAU, revenue, eCPM)
+- **Time:** 1-2 hours
+- **Output:** Real numbers for ROI calculations
+
+### 2. Review Revised Strategy
+👉 **[UPDATED_RECOMMENDATIONS.md](./UPDATED_RECOMMENDATIONS.md)** ⭐ NEW
+- **Purpose:** Updated action plan for AdMob-only revenue
+- **Contents:** Revised priorities, ROI, and implementation options
+- **Critical:** Addresses economic reality of ad-only monetization
+
+### 3. Understand Revised Economics
+👉 **[RETENTION_REVISED_ANALYSIS.md](./RETENTION_REVISED_ANALYSIS.md)** ⭐ NEW
+- **Purpose:** Complete revision for AdMob-only model
+- **Contents:** Honest ROI analysis, removed paid features, added rewarded ads
+- **Decision Framework:** When to proceed vs. focus on acquisition
+
+---
+
+## 📖 Original Documentation (Still Useful)
+
+**Note:** Original docs assume in-app purchases existed. Use revised docs above for strategy, but original docs are still valuable for **implementation details** of individual features.
 
 ### For Developers Ready to Implement
 👉 **[RETENTION_QUICK_START.md](./RETENTION_QUICK_START.md)**
 - **Purpose:** Get started in 2 weeks
 - **Contents:** Step-by-step guide for the 3 highest-impact features
-- **Time:** 2-week implementation plan
-- **Expected Impact:** 20-30% retention improvement
-
----
+- ⚠️ **Update:** Remove paid features, add rewarded video ads
 
 ### For Product/Engineering Leadership
 👉 **[RETENTION_STRATEGY_SUMMARY.md](./RETENTION_STRATEGY_SUMMARY.md)**
 - **Purpose:** Executive overview and decision framework
-- **Contents:** Problem statement, solution overview, ROI projections
-- **Use Case:** Strategic planning, stakeholder buy-in
-- **Reading Time:** 10 minutes
+- ⚠️ **Update:** ROI projections revised in RETENTION_REVISED_ANALYSIS.md
 
 ---
 
@@ -36,6 +64,7 @@ This folder contains a comprehensive user retention improvement strategy for Gri
 - Success metrics and A/B testing recommendations
 - **Size:** ~550 lines, ~17KB
 - **Best For:** Strategic planning, feature ideation
+- ⚠️ **Note:** Remove battle pass, VIP, paid features (see revised docs)
 
 **Key Sections:**
 - 🔴 High Priority Quick Wins (push notifications, daily rewards, rematch)
@@ -43,7 +72,7 @@ This folder contains a comprehensive user retention improvement strategy for Gri
 - 🟢 Long-Term Investments (ranked seasons, clans, customization)
 - 🔵 Retention Mechanics (re-engagement, personalization, FTUE)
 - 📊 Data-Driven Improvements (analytics, A/B testing)
-- 🎯 Monetization-Friendly (battle pass, VIP program)
+- ~~🎯 Monetization-Friendly (battle pass, VIP program)~~ ← Remove these
 
 ---
 
@@ -56,35 +85,35 @@ This folder contains a comprehensive user retention improvement strategy for Gri
 - Weekly KPIs and monitoring framework
 - **Size:** ~320 lines, ~9KB
 - **Best For:** Development planning, sprint scheduling
+- ⚠️ **Note:** Use revised costs from RETENTION_REVISED_ANALYSIS.md
 
 **Key Sections:**
-- 🔴 Immediate Actions (Week 1-2)
-- 🟡 High Priority (Week 3-6)
-- 🟢 Medium Priority (Week 7-12)
+- 🔴 Immediate Actions (Week 1-2) → Add rewarded video ads
+- 🟡 High Priority (Week 3-6) → All free features only
+- 🟢 Medium Priority (Week 7-12) → No paid content
 - 📊 Analytics Enhancement
 - Implementation Strategy with success criteria
 - Resource requirements and costs
 
 ---
 
-### 3. Impact Projections
+### 3. Impact Projections (OUTDATED - See Revised Analysis)
 **[RETENTION_IMPACT_VISUALIZATION.md](./RETENTION_IMPACT_VISUALIZATION.md)**
 - Visual retention curve comparisons
 - Feature impact timeline
-- Revenue projections and ROI analysis
+- ~~Revenue projections~~ ← Use RETENTION_REVISED_ANALYSIS.md instead
 - Industry benchmark comparisons
 - Risk-adjusted scenarios
 - **Size:** ~330 lines, ~13KB
-- **Best For:** Data-driven decision making, stakeholder presentations
+- ⚠️ **Status:** Revenue projections outdated (assumed IAP)
+- **Use Instead:** RETENTION_REVISED_ANALYSIS.md for ROI
 
 **Key Sections:**
-- Current vs. Projected retention curves (ASCII graphs)
-- Feature impact timeline with percentages
-- Retention funnel improvements (1000 users cohort)
-- User segment growth projections
-- Revenue impact analysis
-- Success metrics dashboard
-- Conservative/Base/Optimistic scenarios
+- Current vs. Projected retention curves (ASCII graphs) ✅
+- Feature impact timeline with percentages ✅
+- Retention funnel improvements (1000 users cohort) ✅
+- ~~Revenue impact analysis~~ ← See revised doc
+- ~~Conservative/Base/Optimistic scenarios~~ ← See revised doc
 
 ---
 
@@ -97,9 +126,10 @@ This folder contains a comprehensive user retention improvement strategy for Gri
 - Common pitfalls and solutions
 - **Size:** ~300 lines, ~8KB
 - **Best For:** Hands-on implementation, developer onboarding
+- ⚠️ **Update:** Add rewarded video ads as Week 1 priority
 
 **Key Sections:**
-- Week 1: Push Notifications implementation
+- Week 1: Push Notifications implementation ← Add rewarded ads here
 - Week 2: Daily Rewards + Rematch feature
 - Testing checklist for each feature
 - Day-by-day deployment schedule
