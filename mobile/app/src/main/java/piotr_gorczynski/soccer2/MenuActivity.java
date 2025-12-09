@@ -965,12 +965,12 @@ public class MenuActivity extends BaseActivity {
     }
 
     /**
-     * Helper method to check if animations are enabled in preferences
-     * @return true if animations are enabled, false otherwise
+     * Helper method to check if animations are disabled in preferences
+     * @return true if animations are disabled, false otherwise
      */
-    private boolean areAnimationsEnabled() {
+    private boolean areAnimationsDisabled() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        return prefs.getBoolean("animations_enabled", true);
+        return !prefs.getBoolean("animations_enabled", true);
     }
 
     /**
@@ -984,7 +984,7 @@ public class MenuActivity extends BaseActivity {
         }
         
         // Don't start if animations are disabled in settings
-        if (!areAnimationsEnabled()) {
+        if (areAnimationsDisabled()) {
             return false;
         }
         
@@ -1007,7 +1007,7 @@ public class MenuActivity extends BaseActivity {
             return;
         }
 
-        if (!areAnimationsEnabled()) {
+        if (areAnimationsDisabled()) {
             Log.d(
                     "TAG_Soccer",
                     getClass().getSimpleName() + ".setupRunningPlayerAnimation: Animations disabled in settings"
@@ -1255,7 +1255,7 @@ public class MenuActivity extends BaseActivity {
     }
 
     private void startRunningPlayerAnimation() {
-        if (!areAnimationsEnabled()) {
+        if (areAnimationsDisabled()) {
             Log.d(
                     "TAG_Soccer",
                     getClass().getSimpleName() + ".startRunningPlayerAnimation: Animations disabled in settings"
@@ -2201,7 +2201,7 @@ public class MenuActivity extends BaseActivity {
         boolean dialogShown = prefs.getBoolean(PREF_ANIMATION_INFO_SHOWN, false);
         
         // Only show dialog if it hasn't been shown before and animations are enabled
-        if (dialogShown || !areAnimationsEnabled()) {
+        if (dialogShown || areAnimationsDisabled()) {
             return;
         }
         
