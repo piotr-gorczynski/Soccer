@@ -1028,14 +1028,6 @@ public class MenuActivity extends BaseActivity {
         }
 
         int spriteSheetResId = R.drawable.spritesheet_run;
-        if (spriteSheetResId == 0) {
-            Log.w(
-                    "TAG_Soccer",
-                    getClass().getSimpleName() + ".setupRunningPlayerAnimation: spritesheet_run resource missing"
-            );
-            runningPlayerView.setVisibility(View.GONE);
-            return;
-        }
 
         // Move heavy bitmap operations to background thread to prevent ANR
         // See: docs/MENUACTIVITY_ANR_FIX.md for ANR prevention patterns
