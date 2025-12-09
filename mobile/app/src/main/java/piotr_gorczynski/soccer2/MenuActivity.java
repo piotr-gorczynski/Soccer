@@ -1027,11 +1027,7 @@ public class MenuActivity extends BaseActivity {
             }
         }
 
-        int spriteSheetResId = getResources().getIdentifier(
-                "spritesheet_run",
-                "drawable",
-                getPackageName()
-        );
+        int spriteSheetResId = R.drawable.spritesheet_run;
         if (spriteSheetResId == 0) {
             Log.w(
                     "TAG_Soccer",
