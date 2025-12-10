@@ -14,6 +14,7 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.preference.PreferenceManager;
 
 import android.os.CountDownTimer;
 import android.util.Log;
@@ -494,7 +495,7 @@ public class GameActivity extends BaseActivity {
 
 
         SharedPreferences sharedPreferences =
-                getSharedPreferences(LanguageManager.PREFS_FILE, Context.MODE_PRIVATE);
+                PreferenceManager.getDefaultSharedPreferences(this);
 
         if (sharedPreferences != null && sharedPreferences.contains("android_level")) {
             try {
