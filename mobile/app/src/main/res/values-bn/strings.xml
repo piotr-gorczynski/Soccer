@@ -364,12 +364,7 @@
     <string name="user_blocked_invites">ব্যবহারকারী আমন্ত্রণ ব্লক করেছেন</string>
     <string name="cannot_invite_this_user">এই ব্যবহারকারীকে আমন্ত্রণ জানানো যাবে না</string>
     
-    <!-- Preference level values -->
-    <string-array name="pref_level_values">
-        <item>0.1</item>
-        <item>3</item>
-        <item>10</item>
-    </string-array>
+
     <string name="failed_to_load_terms">শর্তাবলী লোড করতে ব্যর্থ</string>
     
     <!-- Animation info dialog -->

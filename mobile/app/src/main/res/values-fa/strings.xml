@@ -56,11 +56,6 @@
     <string name="game_ready_title">بازی برای %1$s آماده است!</string>
     <string name="game_ready_message">مسابقه شما آماده شروع است. برای پیوستن ضربه بزنید!</string>
     <string name="join_game_action">پیوستن به بازی</string>
-    <string-array name="pref_level_values">
-        <item>0.1</item>
-        <item>3</item>
-        <item>10</item>
-    </string-array>
     <string name="register">ثبت‌نام</string>
     <string name="confirm_password">تأیید رمز عبور</string>
     <string name="email">ایمیل</string>

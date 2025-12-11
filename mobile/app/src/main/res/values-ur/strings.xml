@@ -364,12 +364,7 @@
     <string name="user_blocked_invites">صارف نے دعوتیں بلاک کر دی ہیں</string>
     <string name="cannot_invite_this_user">اس صارف کو دعوت نہیں دی جا سکتی</string>
     
-    <!-- Preference level values -->
-    <string-array name="pref_level_values">
-        <item>0.1</item>
-        <item>3</item>
-        <item>10</item>
-    </string-array>
+
     <string name="failed_to_load_terms">شرائط و ضوابط لوڈ کرنے میں ناکام</string>
     
     <!-- Animation info dialog -->

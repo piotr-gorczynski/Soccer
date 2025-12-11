@@ -365,12 +365,7 @@
     <string name="user_blocked_invites">Użytkownik zablokował zaproszenia</string>
     <string name="cannot_invite_this_user">Nie można zaprosić tego użytkownika</string>
     
-    <!-- Preference level values -->
-    <string-array name="pref_level_values">
-        <item>0.1</item>
-        <item>3</item>
-        <item>10</item>
-    </string-array>
+
     <string name="failed_to_load_terms">Nie udało się załadować regulaminu</string>
     
     <!-- Animation info dialog -->

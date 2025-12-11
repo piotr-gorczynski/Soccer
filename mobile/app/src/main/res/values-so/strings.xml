@@ -75,11 +75,6 @@
     <string name="join_game_action">Ku Biir Ciyaarta</string>
 
     <!-- Additional translations -->
-    <string-array name="pref_level_values">
-        <item>0.1</item>
-        <item>3</item>
-        <item>10</item>
-    </string-array>
     <string name="register">Isdiiwaangeli</string>
     <string name="confirm_password">Xaqiiji erayga sirta ah</string>
     <string name="email">Iimayl</string>

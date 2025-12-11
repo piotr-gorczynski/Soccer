@@ -25,11 +25,6 @@
         <item>Moyen</item>
         <item>Difficile</item>
     </string-array>
-    <string-array name="pref_level_values">
-        <item>0.1</item>
-        <item>3</item>
-        <item>10</item>
-    </string-array>
 
     <!-- Language picker -->
     <string name="select_language">Sélectionner la langue</string>
