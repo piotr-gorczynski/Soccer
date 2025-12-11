@@ -75,11 +75,6 @@
     <string name="join_game_action">ක්‍රීඩාවට සම්බන්ධ වන්න</string>
 
     <!-- Additional translations needed -->
-    <string-array name="pref_level_values">
-        <item>0.1</item>
-        <item>3</item>
-        <item>10</item>
-    </string-array>
     <string name="register">ලියාපදිංචි වන්න</string>
     <string name="confirm_password">මුරපදය තහවුරු කරන්න</string>
     <string name="email">ඊමේල්</string>

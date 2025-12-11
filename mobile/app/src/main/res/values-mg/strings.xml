@@ -75,11 +75,6 @@
     <string name="join_game_action">Hiditra amin`ny Lalao</string>
 
     <!-- Additional translations needed -->
-    <string-array name="pref_level_values">
-        <item>0.1</item>
-        <item>3</item>
-        <item>10</item>
-    </string-array>
     <string name="register">Hisoratra anarana</string>
     <string name="confirm_password">Hamafiso ny tenimiafina</string>
     <string name="email">Mailaka</string>
