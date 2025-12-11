@@ -43,7 +43,7 @@ public class GameView extends View {
     ArrayList<MoveTo> androidMoves = new ArrayList<>();
     private final GestureDetector gestureDetector;
     private final int GameType;
-    private final int androidLevel;
+    private final double androidLevel;
     private MoveCallback moveCallback;
 
     private int localPlayerIndex=0;
@@ -255,7 +255,7 @@ public class GameView extends View {
     invalidate();
     }
 
-    public GameView(Context context, ArrayList<MoveTo> argMoves, int argGameType,int androidLevel) {
+    public GameView(Context context, ArrayList<MoveTo> argMoves, int argGameType,double androidLevel) {
         super(context);
 
         // Validate input parameters
