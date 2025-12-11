@@ -57,9 +57,9 @@
     <string name="game_ready_message">مباراتك جاهزة للبدء. اضغط للانضمام!</string>
     <string name="join_game_action">الانضمام للعبة</string>
     <string-array name="pref_level_values">
-        <item>1</item>
+        <item>0.1</item>
+        <item>3</item>
         <item>10</item>
-        <item>30</item>
     </string-array>
     <string name="register">سجّل</string>
     <string name="confirm_password">تأكيد كلمة المرور</string>

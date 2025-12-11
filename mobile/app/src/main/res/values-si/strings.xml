@@ -76,9 +76,9 @@
 
     <!-- Additional translations needed -->
     <string-array name="pref_level_values">
-        <item>1</item>
+        <item>0.1</item>
+        <item>3</item>
         <item>10</item>
-        <item>30</item>
     </string-array>
     <string name="register">ලියාපදිංචි වන්න</string>
     <string name="confirm_password">මුරපදය තහවුරු කරන්න</string>
