@@ -95,9 +95,9 @@ public class PreferenceMigrationHelperTest {
 
     @Test
     public void testNoMigrationForNewHardValue() {
-        // Set new Hard value (10) - should not be changed
-        // Note: 10 is both old Medium and new Hard, but since it's already a valid new value,
-        // it should be migrated to 3 (new Medium)
+        // Set value 10 - this is ambiguous (old Medium or new Hard)
+        // Migration treats it as old Medium and migrates to new Medium (3)
+        // This is correct because users upgrading will have old values
         prefs.edit().putString("android_level", "10").commit();
         
         // Run migration
