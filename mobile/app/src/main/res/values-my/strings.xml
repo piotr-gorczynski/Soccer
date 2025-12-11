@@ -75,11 +75,6 @@
     <string name="join_game_action">ဂိမ်းတွင်ပါဝင်ပါ</string>
 
     <!-- Additional translations needed -->
-    <string-array name="pref_level_values">
-        <item>0.1</item>
-        <item>3</item>
-        <item>10</item>
-    </string-array>
     <string name="register">စာရင်းသွင်းပါ</string>
     <string name="confirm_password">စကားဝှက်အတည်ပြုပါ</string>
     <string name="email">အီးမေးလ်</string>
