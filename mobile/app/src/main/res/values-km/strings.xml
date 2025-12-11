@@ -75,11 +75,6 @@
     <string name="join_game_action">ចូលរួមល្បែង</string>
 
     <!-- Additional translations needed -->
-    <string-array name="pref_level_values">
-        <item>0.1</item>
-        <item>3</item>
-        <item>10</item>
-    </string-array>
     <string name="register">ចុះឈ្មោះ</string>
     <string name="confirm_password">បញ្ជាក់ពាក្យសម្ងាត់</string>
     <string name="email">អ៊ីមែល</string>

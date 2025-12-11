@@ -340,12 +340,7 @@
     <!-- Friend match statistics -->
     <string name="match_stats_format">Victorias 🏆: %1$d | Derrotas 😞: %2$d</string>
     
-    <!-- Preference level values -->
-    <string-array name="pref_level_values">
-        <item>0.1</item>
-        <item>3</item>
-        <item>10</item>
-    </string-array>
+
     <!-- Past invites -->
     <string name="past_invites">Invitaciones Pasadas</string>
     <string name="no_past_invites">No hay invitaciones pasadas</string>
