@@ -577,7 +577,7 @@ public class GameView extends View {
         String stringMove=Moves.get(Moves.size()-1).toString();
         Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidNextMove_v2: <"+stringMove+" bouncinglevel='"+ bouncingLevel +"' treedepthlevel='"+ treeDepthLevel +"'>");
         logMoves(Moves);
-        long difference;
+        double difference;
         long startTime = System.currentTimeMillis();
         NextMoveFound nextMoveFound = new NextMoveFound(masterNextMoveFound.found, 0, false, false);
         NextMoveFound tempNextMoveFound = new NextMoveFound(false, 0, false, false);
@@ -605,7 +605,7 @@ public class GameView extends View {
                     break;
                 }
 
-                difference = (System.currentTimeMillis() - startThinkingTime)/1000;
+                difference = (System.currentTimeMillis() - startThinkingTime)/1000.0;
                 if((nextMoveFound.found) && (difference>androidLevel)) {
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidNextMove_v2: <timeLimitReached>" + difference + "</timeLimitReached>");
                     break;
