@@ -2,22 +2,22 @@
 
 ## Issue Summary
 
-This document analyzes how the Android level setting (Easy=1, Medium=10, Hard=30 seconds) impacts the MINMAX algorithm in the GameView.java `androidNextMove_v2` function.
+This document analyzes how the Android level setting (Easy=0.1, Medium=3, Hard=10 seconds) impacts the MINMAX algorithm in the GameView.java `androidNextMove_v2` function.
 
 ## Current Implementation
 
 ### Android Level Values
 The android level is configured in `mobile/app/src/main/res/xml/pref_android_level.xml` with three options:
-- **Easy**: 1 second
-- **Medium**: 10 seconds  
-- **Hard**: 30 seconds
+- **Easy**: 0.1 seconds
+- **Medium**: 3 seconds  
+- **Hard**: 10 seconds
 
 These values are defined in `mobile/app/src/main/res/values/strings.xml`:
 ```xml
 <string-array name="pref_level_values">
-    <item>1</item>
+    <item>0.1</item>
+    <item>3</item>
     <item>10</item>
-    <item>30</item>
 </string-array>
 ```
 
@@ -53,14 +53,14 @@ if((nextMoveFound.found) && (difference>androidLevel)) {
 1. **Complex game positions**: When there are many possible moves to evaluate
 2. **Deep recursion**: When the algorithm needs to explore many levels deep
 3. **Higher bouncing levels**: Positions with multiple bouncing moves increase computation time
-4. **Lower androidLevel settings**: Easy (1 second) is much more likely to trigger the timeout than Hard (30 seconds)
+4. **Lower androidLevel settings**: Easy (0.1 seconds) is much more likely to trigger the timeout than Hard (10 seconds)
 
 ### When the Condition WILL NOT Be Reached:
 
 1. **Simple positions**: Few possible moves or early game states
 2. **Fast hardware**: Modern devices may complete the search quickly
 3. **Terminal positions**: When the algorithm finds a winning/losing move early
-4. **Hard difficulty**: 30 seconds is a very generous time limit
+4. **Hard difficulty**: 10 seconds is a very generous time limit
 
 ### Evidence the Condition is Functional:
 
@@ -109,18 +109,18 @@ SharedPreferences sharedPreferences =
 
 ### Impact Before Fix
 
-**The android level setting was NEVER read correctly by GameActivity**. The app always used the default value (1 second) or a stale value from the wrong preferences file. This meant:
+**The android level setting was NEVER read correctly by GameActivity**. The app always used the default value (0.1 seconds) or a stale value from the wrong preferences file. This meant:
 
 - Changing the difficulty level in settings had NO EFFECT on the actual game AI behavior
-- The algorithm was timing out after 1 second on Easy difficulty instead of respecting the user's choice
-- Users selecting "Hard" (30 seconds) didn't actually get the intended behavior
+- The algorithm was timing out after 0.1 seconds on Easy difficulty instead of respecting the user's choice
+- Users selecting "Hard" (10 seconds) didn't actually get the intended behavior
 
 ### Impact After Fix
 
 Now the android level setting will be correctly read from the user's preference selection, allowing:
-- Easy (1 second): Quick AI moves with less thinking time
-- Medium (10 seconds): More thorough AI analysis
-- Hard (30 seconds): Extensive AI search for the best possible moves
+- Easy (0.1 seconds): Very quick AI moves with minimal thinking time for easier first-time user experience
+- Medium (3 seconds): Moderate AI analysis for balanced gameplay
+- Hard (10 seconds): Extensive AI search for the best possible moves
 
 ## How the Algorithm Actually Works
 
@@ -147,8 +147,8 @@ Despite the androidLevel not being read correctly due to the bug, here's how the
 
 The `androidLevel` parameter serves as a **time budget** for AI thinking, not a direct control of search depth. The condition `difference > androidLevel` CAN be reached in complex positions, making the algorithm behave differently based on difficulty:
 
-- **Easy (1s)**: Quick, possibly suboptimal moves
-- **Medium (10s)**: Better moves with more lookahead
-- **Hard (30s)**: Best possible moves with extensive search
+- **Easy (0.1s)**: Very quick, likely suboptimal moves for easier user experience
+- **Medium (3s)**: Better moves with moderate lookahead
+- **Hard (10s)**: Best possible moves with extensive search
 
 The **preference storage bug has been fixed**, and now these settings will be correctly applied. The algorithm will respect the user's selected difficulty level and use the appropriate time budget for AI thinking.
