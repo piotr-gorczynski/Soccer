@@ -30,54 +30,54 @@ public class AndroidLevelPreferenceTest {
 
     @Test
     public void testDefaultAndroidLevel() {
-        // When no preference is set, should default to "1"
-        String defaultLevel = prefs.getString("android_level", "1");
-        assertEquals("1", defaultLevel);
-        assertEquals(1, Integer.parseInt(defaultLevel));
+        // When no preference is set, should default to "0.1"
+        String defaultLevel = prefs.getString("android_level", "0.1");
+        assertEquals("0.1", defaultLevel);
+        assertEquals(0.1, Double.parseDouble(defaultLevel), 0.001);
     }
 
     @Test
     public void testSetAndroidLevelEasy() {
-        // Test setting Easy level (1 second)
-        prefs.edit().putString("android_level", "1").commit();
+        // Test setting Easy level (0.1 seconds)
+        prefs.edit().putString("android_level", "0.1").commit();
         
-        String level = prefs.getString("android_level", "1");
-        assertEquals("1", level);
-        assertEquals(1, Integer.parseInt(level));
+        String level = prefs.getString("android_level", "0.1");
+        assertEquals("0.1", level);
+        assertEquals(0.1, Double.parseDouble(level), 0.001);
     }
 
     @Test
     public void testSetAndroidLevelMedium() {
-        // Test setting Medium level (10 seconds)
+        // Test setting Medium level (3 seconds)
+        prefs.edit().putString("android_level", "3").commit();
+        
+        String level = prefs.getString("android_level", "0.1");
+        assertEquals("3", level);
+        assertEquals(3, Integer.parseInt(level));
+    }
+
+    @Test
+    public void testSetAndroidLevelHard() {
+        // Test setting Hard level (10 seconds)
         prefs.edit().putString("android_level", "10").commit();
         
-        String level = prefs.getString("android_level", "1");
+        String level = prefs.getString("android_level", "0.1");
         assertEquals("10", level);
         assertEquals(10, Integer.parseInt(level));
     }
 
     @Test
-    public void testSetAndroidLevelHard() {
-        // Test setting Hard level (30 seconds)
-        prefs.edit().putString("android_level", "30").commit();
-        
-        String level = prefs.getString("android_level", "1");
-        assertEquals("30", level);
-        assertEquals(30, Integer.parseInt(level));
-    }
-
-    @Test
     public void testAndroidLevelPersistence() {
         // Test that the preference persists across multiple reads
-        prefs.edit().putString("android_level", "10").commit();
+        prefs.edit().putString("android_level", "3").commit();
         
         // First read
-        String level1 = prefs.getString("android_level", "1");
-        assertEquals("10", level1);
+        String level1 = prefs.getString("android_level", "0.1");
+        assertEquals("3", level1);
         
         // Second read without modifying
-        String level2 = prefs.getString("android_level", "1");
-        assertEquals("10", level2);
+        String level2 = prefs.getString("android_level", "0.1");
+        assertEquals("3", level2);
         
         // Both should be the same
         assertEquals(level1, level2);
@@ -86,16 +86,16 @@ public class AndroidLevelPreferenceTest {
     @Test
     public void testAndroidLevelUpdate() {
         // Test updating from one level to another
-        prefs.edit().putString("android_level", "1").commit();
-        assertEquals("1", prefs.getString("android_level", "1"));
+        prefs.edit().putString("android_level", "0.1").commit();
+        assertEquals("0.1", prefs.getString("android_level", "0.1"));
         
         // Update to medium
-        prefs.edit().putString("android_level", "10").commit();
-        assertEquals("10", prefs.getString("android_level", "1"));
+        prefs.edit().putString("android_level", "3").commit();
+        assertEquals("3", prefs.getString("android_level", "0.1"));
         
         // Update to hard
-        prefs.edit().putString("android_level", "30").commit();
-        assertEquals("30", prefs.getString("android_level", "1"));
+        prefs.edit().putString("android_level", "10").commit();
+        assertEquals("10", prefs.getString("android_level", "0.1"));
     }
 
     @Test
@@ -103,12 +103,12 @@ public class AndroidLevelPreferenceTest {
         // Test that invalid values can be detected
         prefs.edit().putString("android_level", "invalid").commit();
         
-        String level = prefs.getString("android_level", "1");
+        String level = prefs.getString("android_level", "0.1");
         assertEquals("invalid", level);
         
-        // Verify that parseInt would throw an exception (as handled in GameActivity)
+        // Verify that parseDouble would throw an exception (as handled in GameActivity)
         try {
-            Integer.parseInt(level);
+            Double.parseDouble(level);
             fail("Expected NumberFormatException for invalid level");
         } catch (NumberFormatException e) {
             // Expected - this is what GameActivity catches
@@ -143,9 +143,9 @@ public class AndroidLevelPreferenceTest {
             String[] values = context.getResources().getStringArray(arrayId);
             assertNotNull("pref_level_values should not be null", values);
             assertEquals("Should have 3 level values", 3, values.length);
-            assertEquals("First level should be 1", "1", values[0]);
-            assertEquals("Second level should be 10", "10", values[1]);
-            assertEquals("Third level should be 30", "30", values[2]);
+            assertEquals("First level should be 0.1", "0.1", values[0]);
+            assertEquals("Second level should be 3", "3", values[1]);
+            assertEquals("Third level should be 10", "10", values[2]);
         } catch (Exception e) {
             fail("Android level values array is not properly defined: " + e.getMessage());
         }
