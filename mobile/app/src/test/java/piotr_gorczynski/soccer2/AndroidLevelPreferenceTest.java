@@ -53,7 +53,7 @@ public class AndroidLevelPreferenceTest {
         
         String level = prefs.getString("android_level", "0.1");
         assertEquals("3", level);
-        assertEquals(3, Integer.parseInt(level));
+        assertEquals(3.0, Double.parseDouble(level), 0.001);
     }
 
     @Test
@@ -63,7 +63,7 @@ public class AndroidLevelPreferenceTest {
         
         String level = prefs.getString("android_level", "0.1");
         assertEquals("10", level);
-        assertEquals(10, Integer.parseInt(level));
+        assertEquals(10.0, Double.parseDouble(level), 0.001);
     }
 
     @Test
