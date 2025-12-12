@@ -2,20 +2,20 @@
 
 ## Issue Summary
 
-This document analyzes how the Android level setting (Easy=0.1, Medium=3, Hard=10 seconds) impacts the MINMAX algorithm in the GameView.java `androidNextMove_v2` function.
+This document analyzes how the Android level setting (Easy=0, Medium=3, Hard=10 seconds) impacts the MINMAX algorithm in the GameView.java `androidNextMove_v2` function.
 
 ## Current Implementation
 
 ### Android Level Values
 The android level is configured in `mobile/app/src/main/res/xml/pref_android_level.xml` with three options:
-- **Easy**: 0.1 seconds
+- **Easy**: 0 seconds
 - **Medium**: 3 seconds  
 - **Hard**: 10 seconds
 
 These values are defined in `mobile/app/src/main/res/values/strings.xml`:
 ```xml
 <string-array name="pref_level_values">
-    <item>0.1</item>
+    <item>0</item>
     <item>3</item>
     <item>10</item>
 </string-array>
@@ -53,7 +53,7 @@ if((nextMoveFound.found) && (difference>androidLevel)) {
 1. **Complex game positions**: When there are many possible moves to evaluate
 2. **Deep recursion**: When the algorithm needs to explore many levels deep
 3. **Higher bouncing levels**: Positions with multiple bouncing moves increase computation time
-4. **Lower androidLevel settings**: Easy (0.1 seconds) is much more likely to trigger the timeout than Hard (10 seconds)
+4. **Lower androidLevel settings**: Easy (0 seconds) is much more likely to trigger the timeout than Hard (10 seconds)
 
 ### When the Condition WILL NOT Be Reached:
 
@@ -109,16 +109,16 @@ SharedPreferences sharedPreferences =
 
 ### Impact Before Fix
 
-**The android level setting was NEVER read correctly by GameActivity**. The app always used the default value (0.1 seconds) or a stale value from the wrong preferences file. This meant:
+**The android level setting was NEVER read correctly by GameActivity**. The app always used the default value (0 seconds) or a stale value from the wrong preferences file. This meant:
 
 - Changing the difficulty level in settings had NO EFFECT on the actual game AI behavior
-- The algorithm was timing out after 0.1 seconds on Easy difficulty instead of respecting the user's choice
+- The algorithm was timing out after 0 seconds on Easy difficulty instead of respecting the user's choice
 - Users selecting "Hard" (10 seconds) didn't actually get the intended behavior
 
 ### Impact After Fix
 
 Now the android level setting will be correctly read from the user's preference selection, allowing:
-- Easy (0.1 seconds): Very quick AI moves with minimal thinking time for easier first-time user experience
+- Easy (0 seconds): Very quick AI moves with minimal thinking time for easier first-time user experience
 - Medium (3 seconds): Moderate AI analysis for balanced gameplay
 - Hard (10 seconds): Extensive AI search for the best possible moves
 
@@ -147,7 +147,7 @@ Despite the androidLevel not being read correctly due to the bug, here's how the
 
 The `androidLevel` parameter serves as a **time budget** for AI thinking, not a direct control of search depth. The condition `difference > androidLevel` CAN be reached in complex positions, making the algorithm behave differently based on difficulty:
 
-- **Easy (0.1s)**: Very quick, likely suboptimal moves for easier user experience
+- **Easy (0s)**: Very quick, likely suboptimal moves for easier user experience
 - **Medium (3s)**: Better moves with moderate lookahead
 - **Hard (10s)**: Best possible moves with extensive search
 
