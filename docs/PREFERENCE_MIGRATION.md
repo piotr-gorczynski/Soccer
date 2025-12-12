@@ -7,12 +7,12 @@ Users upgrading from an older version of the app had difficulty level preference
 - Hard: 30 seconds
 
 The new version uses different values:
-- Easy: 0.1 seconds (100ms)
+- Easy: 0 seconds
 - Medium: 3 seconds
 - Hard: 10 seconds
 
 This caused two issues:
-1. **Settings UI**: No difficulty level appeared selected because the stored value (e.g., "1") didn't match any of the new values in the dropdown (0.1, 3, 10)
+1. **Settings UI**: No difficulty level appeared selected because the stored value (e.g., "1") didn't match any of the new values in the dropdown (0, 3, 10)
 2. **Game**: The game loaded the old timeout values, giving users the wrong difficulty experience
 
 ## Solution
@@ -36,7 +36,7 @@ The migration is called early in `SoccerApp.onCreate()` before any UI is shown, 
 ### Migration Logic
 ```
 Old Value → New Value
-1         → 0.1  (Easy: 1 second → 0.1 seconds)
+1         → 0    (Easy: 1 second → 0 seconds)
 10        → 3    (Medium: 10 seconds → 3 seconds) 
 30        → 10   (Hard: 30 seconds → 10 seconds)
 ```
