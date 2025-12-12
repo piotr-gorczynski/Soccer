@@ -12,7 +12,9 @@ import static org.junit.Assert.*;
 
 /**
  * Test cases for preference migration logic
- * Tests that old android_level values (1, 10, 30) are correctly migrated to new values (0.1, 3, 10)
+ * Tests that old android_level values are correctly migrated:
+ * - v0 to v1: (1, 10, 30) -> (0.1, 3, 10)
+ * - v1 to v2: 0.1 -> 0 (Easy level only)
  */
 @RunWith(AndroidJUnit4.class)
 public class PreferenceMigrationHelperTest {
@@ -36,9 +38,9 @@ public class PreferenceMigrationHelperTest {
         // Run migration
         PreferenceMigrationHelper.migratePreferences(context);
         
-        // Verify it was migrated to new Easy value (0.1)
+        // Verify it was migrated to new Easy value (0)
         String migratedValue = prefs.getString("android_level", null);
-        assertEquals("0.1", migratedValue);
+        assertEquals("0", migratedValue);
     }
 
     @Test
@@ -69,15 +71,15 @@ public class PreferenceMigrationHelperTest {
 
     @Test
     public void testNoMigrationForNewEasyValue() {
-        // Set new Easy value (0.1) - should not be changed
-        prefs.edit().putString("android_level", "0.1").commit();
+        // Set new Easy value (0) - should not be changed
+        prefs.edit().putString("android_level", "0").commit();
         
         // Run migration
         PreferenceMigrationHelper.migratePreferences(context);
         
         // Verify it remains unchanged
         String migratedValue = prefs.getString("android_level", null);
-        assertEquals("0.1", migratedValue);
+        assertEquals("0", migratedValue);
     }
 
     @Test
@@ -128,7 +130,7 @@ public class PreferenceMigrationHelperTest {
         PreferenceMigrationHelper.migratePreferences(context);
         
         // Verify it was migrated
-        assertEquals("0.1", prefs.getString("android_level", null));
+        assertEquals("0", prefs.getString("android_level", null));
         
         // Manually change to old value again (simulating manual edit or corruption)
         prefs.edit().putString("android_level", "1").commit();
@@ -156,7 +158,7 @@ public class PreferenceMigrationHelperTest {
         assertTrue("Migration version should exist after migration", 
                   prefs.contains("preference_migration_version"));
         int version = prefs.getInt("preference_migration_version", 0);
-        assertEquals("Migration version should be 1", 1, version);
+        assertEquals("Migration version should be 2", 2, version);
     }
 
     @Test
@@ -182,7 +184,7 @@ public class PreferenceMigrationHelperTest {
         
         // Should not crash and should mark migration as done
         int version = prefs.getInt("preference_migration_version", 0);
-        assertEquals(1, version);
+        assertEquals(2, version);
     }
 
     @Test
@@ -194,7 +196,7 @@ public class PreferenceMigrationHelperTest {
         
         // Verify migration version is set
         int version = prefs.getInt("preference_migration_version", 0);
-        assertEquals(1, version);
+        assertEquals(2, version);
         
         // Verify no android_level preference was created
         assertFalse("android_level should not exist for new user", 
@@ -209,7 +211,7 @@ public class PreferenceMigrationHelperTest {
         prefs.edit().clear().commit();
         prefs.edit().putString("android_level", "1").commit();
         PreferenceMigrationHelper.migratePreferences(context);
-        assertEquals("0.1", prefs.getString("android_level", null));
+        assertEquals("0", prefs.getString("android_level", null));
         
         // Reset for Medium test
         prefs.edit().clear().commit();
@@ -220,6 +222,43 @@ public class PreferenceMigrationHelperTest {
         // Reset for Hard test
         prefs.edit().clear().commit();
         prefs.edit().putString("android_level", "30").commit();
+        PreferenceMigrationHelper.migratePreferences(context);
+        assertEquals("10", prefs.getString("android_level", null));
+    }
+
+    @Test
+    public void testMigrateV1EasyToV2Easy() {
+        // Test migration from v1 Easy (0.1) to v2 Easy (0)
+        prefs.edit().putString("android_level", "0.1").commit();
+        prefs.edit().putInt("preference_migration_version", 1).commit();
+        
+        // Run migration
+        PreferenceMigrationHelper.migratePreferences(context);
+        
+        // Verify it was migrated to v2 Easy value (0)
+        String migratedValue = prefs.getString("android_level", null);
+        assertEquals("0", migratedValue);
+        
+        // Verify migration version is updated
+        int version = prefs.getInt("preference_migration_version", 0);
+        assertEquals(2, version);
+    }
+
+    @Test
+    public void testV2MigrationDoesNotAffectMediumAndHard() {
+        // Test that v2 migration only affects Easy level, not Medium or Hard
+        
+        // Test Medium remains unchanged
+        prefs.edit().clear().commit();
+        prefs.edit().putString("android_level", "3").commit();
+        prefs.edit().putInt("preference_migration_version", 1).commit();
+        PreferenceMigrationHelper.migratePreferences(context);
+        assertEquals("3", prefs.getString("android_level", null));
+        
+        // Test Hard remains unchanged
+        prefs.edit().clear().commit();
+        prefs.edit().putString("android_level", "10").commit();
+        prefs.edit().putInt("preference_migration_version", 1).commit();
         PreferenceMigrationHelper.migratePreferences(context);
         assertEquals("10", prefs.getString("android_level", null));
     }
