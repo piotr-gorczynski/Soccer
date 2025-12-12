@@ -381,4 +381,5 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">Turnier %1$s läuft nicht mehr</string>
+    <string name="field_hand_tutorial_message">Tippen Sie auf einen der Punkte, um den Ball zu bewegen</string>
 </resources>

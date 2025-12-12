@@ -346,4 +346,5 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">Mashindano %1$s hayaendelei tena</string>
+    <string name="field_hand_tutorial_message">Gusa kwenye moja ya pointi ili kuhamisha mpira</string>
 </resources>

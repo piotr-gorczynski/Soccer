@@ -327,4 +327,5 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">مسابقه %1$s دیگر در حال اجرا نیست</string>
+    <string name="field_hand_tutorial_message">برای حرکت توپ روی یکی از نقاط ضربه بزنید</string>
 </resources>

@@ -213,6 +213,7 @@
     <string name="field_move_ellipsis_tail">move… ⏳ %1$s</string>
     <string name="field_waiting_for">Waiting for %1$s</string>
     <string name="field_to_start_tail">to start… ⏳ %1$s</string>
+    <string name="field_hand_tutorial_message">Tap on one of the points to move the ball</string>
     <string name="enter_email_and_password">Please enter both email and password</string>
     <string name="login_success">Login successful!</string>
     <string name="login_failed">Login failed: %1$s</string>

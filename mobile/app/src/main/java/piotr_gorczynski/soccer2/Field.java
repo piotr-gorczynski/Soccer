@@ -41,6 +41,9 @@ public class Field {
     private final Paint pPlayer0;
     private final Paint pPlayer1;
     private final Paint pHintText;
+    private final Paint pTutorialBalloon;
+    private final Paint pTutorialBalloonBorder;
+    private final Paint pTutorialBalloonText;
     private final Rect rField;
     private final Rect rText;
     private final Bitmap ballBitmap;
@@ -482,6 +485,24 @@ public class Field {
         pHintText.setStyle(Paint.Style.FILL);
         pHintText.setColor(Color.WHITE);
         pHintText.setTextAlign(Paint.Align.CENTER);
+
+        // Tutorial balloon paints
+        pTutorialBalloon = new Paint();
+        pTutorialBalloon.setStyle(Paint.Style.FILL);
+        pTutorialBalloon.setColor(Color.WHITE);
+        pTutorialBalloon.setAntiAlias(true);
+
+        pTutorialBalloonBorder = new Paint();
+        pTutorialBalloonBorder.setStyle(Paint.Style.STROKE);
+        pTutorialBalloonBorder.setColor(Color.BLACK);
+        pTutorialBalloonBorder.setStrokeWidth(2f);
+        pTutorialBalloonBorder.setAntiAlias(true);
+
+        pTutorialBalloonText = new Paint();
+        pTutorialBalloonText.setStyle(Paint.Style.FILL);
+        pTutorialBalloonText.setColor(Color.BLACK);
+        pTutorialBalloonText.setTextAlign(Paint.Align.CENTER);
+        pTutorialBalloonText.setAntiAlias(true);
 
         // paint style and color
         Paint pHintBalloon = new Paint();
@@ -3023,6 +3044,9 @@ public class Field {
                 + handTutorialPositionIndex + "/" + possibleMoves.size() 
                 + ", cycle " + (handTutorialCycle + 1));*/
         }
+        
+        // Draw the tutorial balloon message
+        drawTutorialBalloon(canvas);
     }
 
     @NonNull
@@ -3037,6 +3061,142 @@ public class Field {
 
         // Draw the hand
         return new RectF(handLeft, circleCenterY, handRight, handBottom);
+    }
+
+    /**
+     * Draws a white balloon with tutorial message positioned to avoid covering possible moves
+     */
+    private void drawTutorialBalloon(Canvas canvas) {
+        if (possibleMoves == null || possibleMoves.isEmpty()) {
+            return;
+        }
+
+        // Get the tutorial message from resources
+        String message = context.getString(R.string.field_hand_tutorial_message);
+        
+        // Set text size based on canvas size
+        boolean isPortrait = rField.height() > rField.width();
+        float textSize = isPortrait ? rField.height() * flText * 0.8f : rField.width() * flText * 0.8f;
+        pTutorialBalloonText.setTextSize(textSize);
+        
+        // Measure text bounds
+        Rect textBounds = new Rect();
+        pTutorialBalloonText.getTextBounds(message, 0, message.length(), textBounds);
+        
+        // Calculate balloon dimensions with padding
+        float padding = textSize * 0.5f;
+        float balloonWidth = textBounds.width() + padding * 2;
+        float balloonHeight = textBounds.height() + padding * 2;
+        float cornerRadius = textSize * 0.3f;
+        
+        // Find the best position for the balloon that doesn't cover possible moves
+        RectF balloonRect = findBalloonPosition(canvas, balloonWidth, balloonHeight);
+        
+        // Draw the white balloon background with rounded corners
+        canvas.drawRoundRect(balloonRect, cornerRadius, cornerRadius, pTutorialBalloon);
+        
+        // Draw the balloon border
+        canvas.drawRoundRect(balloonRect, cornerRadius, cornerRadius, pTutorialBalloonBorder);
+        
+        // Draw the text centered in the balloon
+        float textX = balloonRect.centerX();
+        float textY = balloonRect.centerY() - textBounds.exactCenterY();
+        canvas.drawText(message, textX, textY, pTutorialBalloonText);
+    }
+
+    /**
+     * Finds the best position for the tutorial balloon that doesn't cover possible moves
+     */
+    private RectF findBalloonPosition(Canvas canvas, float balloonWidth, float balloonHeight) {
+        // Calculate field bounds in pixels
+        float fieldLeft = rField.left;
+        float fieldRight = rField.right;
+        float fieldTop = rField.top;
+        float fieldBottom = rField.bottom;
+        
+        // Try to position the balloon at the top center of the field
+        float balloonCenterX = (fieldLeft + fieldRight) / 2f;
+        float balloonTop = fieldTop + (fieldBottom - fieldTop) * 0.05f; // 5% from top
+        
+        RectF balloonRect = new RectF(
+            balloonCenterX - balloonWidth / 2f,
+            balloonTop,
+            balloonCenterX + balloonWidth / 2f,
+            balloonTop + balloonHeight
+        );
+        
+        // Check if this position overlaps with any possible moves
+        boolean overlaps = false;
+        float dotSize = canvas.getHeight() * flDots;
+        float pulseDotSize = dotSize * 2.5f; // Use a larger size to ensure clear separation
+        
+        for (MoveTo move : possibleMoves) {
+            float moveX = w2x(flipX(move.X));
+            float moveY = h2y(flipY(move.Y));
+            
+            // Check if the move point is within the balloon area (with some margin)
+            if (moveX >= balloonRect.left - pulseDotSize && 
+                moveX <= balloonRect.right + pulseDotSize &&
+                moveY >= balloonRect.top - pulseDotSize && 
+                moveY <= balloonRect.bottom + pulseDotSize) {
+                overlaps = true;
+                break;
+            }
+        }
+        
+        // If top position overlaps, try bottom of field
+        if (overlaps) {
+            balloonTop = fieldBottom - balloonHeight - (fieldBottom - fieldTop) * 0.05f; // 5% from bottom
+            balloonRect = new RectF(
+                balloonCenterX - balloonWidth / 2f,
+                balloonTop,
+                balloonCenterX + balloonWidth / 2f,
+                balloonTop + balloonHeight
+            );
+            
+            // Check again for overlaps at bottom position
+            overlaps = false;
+            for (MoveTo move : possibleMoves) {
+                float moveX = w2x(flipX(move.X));
+                float moveY = h2y(flipY(move.Y));
+                
+                if (moveX >= balloonRect.left - pulseDotSize && 
+                    moveX <= balloonRect.right + pulseDotSize &&
+                    moveY >= balloonRect.top - pulseDotSize && 
+                    moveY <= balloonRect.bottom + pulseDotSize) {
+                    overlaps = true;
+                    break;
+                }
+            }
+            
+            // If bottom also overlaps, try left side
+            if (overlaps) {
+                float balloonLeft = fieldLeft + (fieldRight - fieldLeft) * 0.05f;
+                float balloonCenterY = (fieldTop + fieldBottom) / 2f;
+                balloonRect = new RectF(
+                    balloonLeft,
+                    balloonCenterY - balloonHeight / 2f,
+                    balloonLeft + balloonWidth,
+                    balloonCenterY + balloonHeight / 2f
+                );
+            }
+        }
+        
+        // Ensure balloon stays within field bounds
+        if (balloonRect.left < fieldLeft) {
+            balloonRect.offset(fieldLeft - balloonRect.left, 0);
+        }
+        if (balloonRect.right > fieldRight) {
+            balloonRect.offset(fieldRight - balloonRect.right, 0);
+        }
+        if (balloonRect.top < fieldTop) {
+            balloonRect.offset(0, fieldTop - balloonRect.top);
+        }
+        if (balloonRect.bottom > fieldBottom) {
+            balloonRect.offset(0, fieldBottom - balloonRect.bottom);
+        }
+        
+        return balloonRect;
     }
 
     // Method to be called when user responds to dialog

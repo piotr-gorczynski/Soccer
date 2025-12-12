@@ -381,4 +381,5 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">Turniej %1$s już się nie toczy</string>
+    <string name="field_hand_tutorial_message">Dotknij jednego z punktów, aby przesunąć piłkę</string>
 </resources>

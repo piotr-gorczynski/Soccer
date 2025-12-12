@@ -380,4 +380,5 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">प्रतियोगिता %1$s अब चलिरहेको छैन</string>
+    <string name="field_hand_tutorial_message">बल सार्न बिन्दुहरू मध्ये एकमा ट्याप गर्नुहोस्</string>
 </resources>
