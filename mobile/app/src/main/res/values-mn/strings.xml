@@ -346,4 +346,5 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">%1$s тэмцээн цаашид үргэлжлэхгүй байна</string>
+    <string name="field_hand_tutorial_message">Бөмбөгийг хөдөлгөхийн тулд цэгүүдийн аль нэг дээр товшино уу</string>
 </resources>

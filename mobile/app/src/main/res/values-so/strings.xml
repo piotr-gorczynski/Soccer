@@ -346,4 +346,5 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">Tartanka %1$s hadda ma socdo</string>
+    <string name="field_hand_tutorial_message">Taabo mid ka mid ah dhibcaha si aad u dhaqaajiso kubbadda</string>
 </resources>

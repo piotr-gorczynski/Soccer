@@ -346,4 +346,5 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">ការប្រកួត %1$s មិនកំពុងដំណើរការទៀតទេ</string>
+    <string name="field_hand_tutorial_message">ប៉ះលើចំណុចណាមួយដើម្បីផ្លាស់ទីបាល់</string>
 </resources>

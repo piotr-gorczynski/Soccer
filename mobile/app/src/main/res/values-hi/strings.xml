@@ -380,4 +380,5 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">टूर्नामेंट %1$s अब नहीं चल रहा है</string>
+    <string name="field_hand_tutorial_message">गेंद को हिलाने के लिए किसी एक बिंदु पर टैप करें</string>
 </resources>
