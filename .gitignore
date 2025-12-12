@@ -46,4 +46,3 @@ tools/*/package-lock.json
 tools/*/node_modules/
 secrets/
 *.args
-secrets/
