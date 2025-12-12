@@ -103,6 +103,10 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     public void onCreate() {
         super.onCreate();
 
+        // Migrate old preference values to new ones (must run before any UI is shown)
+        // This handles migration from old android_level values (1, 10, 30) to new values (0.1, 3, 10)
+        PreferenceMigrationHelper.migratePreferences(this);
+
         try {
             // Try to load Facebook client token from assets first, then fall back to strings.xml
             String clientToken = loadFacebookClientTokenFromAssets();
