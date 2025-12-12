@@ -50,7 +50,7 @@ public class GameActivity extends BaseActivity {
     int Winner=-1;
     int GameType=-1;
     GameView gameView;
-    double androidLevel = 0.1;
+    double androidLevel = 0;
     private FrameLayout gameRootContainer;
     private View loadingOverlay;
     private TextView loadingMessageView;
@@ -499,14 +499,14 @@ public class GameActivity extends BaseActivity {
 
         if (sharedPreferences != null && sharedPreferences.contains("android_level")) {
             try {
-                String levelStr = sharedPreferences.getString("android_level", "0.1");
+                String levelStr = sharedPreferences.getString("android_level", "0");
                 if (levelStr != null) {
                     androidLevel = Double.parseDouble(levelStr);
                     Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Preference android_level=" + androidLevel);
                 }
             } catch (NumberFormatException e) {
                 Log.w("TAG_Soccer", getClass().getSimpleName() + ".onCreate: Invalid android_level preference, using default", e);
-                androidLevel = 0.1;
+                androidLevel = 0;
             }
         }
 
