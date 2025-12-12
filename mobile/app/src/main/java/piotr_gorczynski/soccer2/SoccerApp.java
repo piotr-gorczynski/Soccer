@@ -104,7 +104,8 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         super.onCreate();
 
         // Migrate old preference values to new ones (must run before any UI is shown)
-        // This handles migration from old android_level values (1, 10, 30) to new values (0.1, 3, 10)
+        // V1: Migration from old android_level values (1, 10, 30) to (0.1, 3, 10)
+        // V2: Migration from v1 Easy (0.1) to v2 Easy (0)
         PreferenceMigrationHelper.migratePreferences(this);
 
         try {
