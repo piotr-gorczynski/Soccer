@@ -198,7 +198,7 @@
     <string name="field_move_tail">ផ្លាស់ទី… ⏳ %1$s</string>
     <string name="field_hourglass_tail">⏳ %1$s</string>
     <string name="field_your_move_ellipsis">វេនអ្នក…</string>
-    <string name="field_thinking">កំពុងគិត… Moves analyzed: %1$d</string>
+    <string name="field_thinking">កំពុងគិត… ចលនាដែលវិភាគ: %1$d</string>
     <string name="field_move_ellipsis_tail">ផ្លាស់ទី… ⏳ %1$s</string>
     <string name="field_waiting_for">កំពុងរង់ចាំ %1$s</string>
     <string name="field_to_start_tail">ឱ្យចាប់ផ្តើម… ⏳ %1$s</string>
