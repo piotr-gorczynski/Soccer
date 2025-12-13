@@ -346,4 +346,5 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">ການແຂ່ງຂັນ %1$s ບໍ່ໄດ້ດຳເນີນການອີກແລ້ວ</string>
+    <string name="field_hand_tutorial_message">ແຕະໃສ່ຈຸດໃດໜຶ່ງເພື່ອເຄື່ອນຍ້າຍບານ</string>
 </resources>

@@ -380,4 +380,5 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">টুর্নামেন্ট %1$s আর চলছে না</string>
+    <string name="field_hand_tutorial_message">বল সরাতে একটি পয়েন্টে ট্যাপ করুন</string>
 </resources>

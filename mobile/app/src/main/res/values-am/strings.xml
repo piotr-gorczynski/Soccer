@@ -346,4 +346,5 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">ውድድር %1$s ከአሁን በኋላ እየሄደ አይደለም</string>
+    <string name="field_hand_tutorial_message">በአንዱ ነጥብ ላይ ተዳቅሎ ኳሱን ለማንቀሳቀስ</string>
 </resources>

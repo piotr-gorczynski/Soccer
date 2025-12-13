@@ -346,4 +346,5 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">ပြိုင်ပွဲ %1$s သည် ယခု မလည်ပတ်တော့ပါ</string>
+    <string name="field_hand_tutorial_message">ဘောလုံးကို ရွှေ့ရန် အမှတ်တစ်ခုပေါ်တွင် နှိပ်ပါ</string>
 </resources>
