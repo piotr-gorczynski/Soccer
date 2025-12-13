@@ -272,6 +272,8 @@ public class GameView extends View {
         mHandler = new MyHandler(this);
         GameType = argGameType;
         this.androidLevel=androidLevel;
+        Log.d("TAG_Soccer", "GameView.<init> androidLevel=" + this.androidLevel);
+
         gameActivity = (GameActivity) context;
         setBackgroundColor(ContextCompat.getColor(context, R.color.colorGreenDark));
         gestureDetector = new GestureDetector(context, new SwipeListener());

@@ -1,0 +1,133 @@
+<en-GB>
+🎮 Fix android_level preference not being read from correct SharedPreferences
+🎉 Reduce Android AI difficulty levels for improved first-time user experience
+🎉 Add tutorial balloon with localized instruction message
+</en-GB>
+
+<pl-PL>
+🎉 Dodano status aktywności w wyszukiwarce graczy  
+🎮 Poprawiono stabilność i uruchamianie  
+🎮 Ulepszono obsługę zaproszeń turniejowych  
+🎮 Naprawiono rzadkie zawieszanie aplikacji  
+⚽ Płynniejszy i szybszy Soccer!
+</pl-PL>
+
+<de-DE>
+🎉 Online-Status in Spielersuche hinzugefügt  
+🎮 Stabilität und Start verbessert  
+🎮 Turniereinladungen optimiert  
+🎮 Seltene App-Freezes behoben  
+⚽ Schnelleres, flüssigeres Soccer!
+</de-DE>
+
+<fr-FR>
+🎉 Statut en ligne ajouté à la recherche de joueurs  
+🎮 Application plus stable et rapide  
+🎮 Meilleure gestion des invitations  
+🎮 Correction de blocages rares  
+⚽ Soccer plus fluide !
+</fr-FR>
+
+<es-ES>
+🎉 Estado en línea añadido a la búsqueda de jugadores  
+🎮 Mayor estabilidad y arranque más rápido  
+🎮 Invitaciones mejor gestionadas  
+🎮 Fallos raros corregidos  
+⚽ Soccer más fluido!
+</es-ES>
+
+<ur>
+🎉 کھلاڑی تلاش میں آن لائن اسٹیٹس شامل  
+🎮 ایپ مزید مستحکم اور تیز  
+🎮 ٹورنامنٹ دعوتیں بہتر ہوئیں  
+🎮 نایاب کریش درست  
+⚽ مزید ہموار Soccer!
+</ur>
+
+<bn-BD>
+🎉 প্লেয়ার সার্চে অনলাইন স্ট্যাটাস যোগ  
+🎮 অ্যাপ আরও স্থিতিশীল ও দ্রুত  
+🎮 টুর্নামেন্ট আমন্ত্রণ উন্নত  
+🎮 বিরল ক্র্যাশ ঠিক করা হয়েছে  
+⚽ আরও মসৃণ Soccer!
+</bn-BD>
+
+<ne-NP>
+🎉 खेलाडी खोजमा अनलाइन स्थिति थपियो  
+🎮 एप अझ स्थिर र छिटो  
+🎮 निमन्त्रणाको प्रक्रिया सुधारियो  
+🎮 दुर्लभ त्रुटिहरू समाधान  
+⚽ सहज Soccer!
+</ne-NP>
+
+<hi-IN>
+🎉 खिलाड़ी खोज में ऑनलाइन स्थिति जोड़ी गई  
+🎮 ऐप अब ज़्यादा स्थिर और तेज़  
+🎮 टूर्नामेंट निमंत्रण बेहतर हुए  
+🎮 दुर्लभ फ्रीज़ ठीक  
+⚽ और भी स्मूद Soccer!
+</hi-IN>
+
+<am>
+🎉 በተጫዋች ፍለጋ ውስጥ የመስመር ላይ ሁኔታ ተጨምሯል  
+🎮 አፕ ተሻሻሎ ፈጣንና የተረጋጋ  
+🎮 የግብዣ አስተዳደር ተሻሻለ  
+🎮 አልፎ አልፎ መቃኘት ተፈታ  
+⚽ የተሻሻለ Soccer!
+</am>
+
+<ar>
+🎉 تمت إضافة حالة الاتصال في بحث اللاعبين  
+🎮 أداء واستقرار أفضل  
+🎮 تحسين إدارة الدعوات  
+🎮 إصلاح الأعطال النادرة  
+⚽ Soccer أسرع وأكثر سلاسة!
+</ar>
+
+<my-MM>
+🎉 ကစားသမား ရှာဖွေရေးတွင် အွန်လိုင်းအခြေအနေ ထည့်  
+🎮 အက်ပ် ပိုမို တည်ငြိမ်ပြီး မြန်  
+🎮 ပြိုင်ပွဲ ဖိတ်ကြားမှု မြှင့်တင်  
+🎮 ချို့တဲ့မှုများ ပြင်ဆင်  
+⚽ ပိုမိုချောမွေ့ Soccer!
+</my-MM>
+
+<km-KH>
+🎉 បន្ថែមស្ថានភាពលើបណ្ដាញក្នុងការស្វែងរកអ្នកលេង  
+🎮 ការស្ថិរភាពប្រសើរឡើង  
+🎮 ការអញ្ជើញត្រូវបានកែលម្អ  
+🎮 កំហុសតិចតួចត្រូវបានកែ  
+⚽ Soccer លឿនជាងមុន!
+</km-KH>
+
+<lo-LA>
+🎉 ເພີ່ມສະຖານະອອນໄລນ໌ໃນການຄົ້ນຫານັກຫຼິ້ນ  
+🎮 ແອັບໄວຂຶ້ນ ແລະ ມັ່ນຄົງຂຶ້ນ  
+🎮 ການເຊີນດີຂຶ້ນ  
+🎮 ແກ້ບັນຫານ້ອຍໆ  
+⚽ Soccer ລື່ນຂຶ້ນ!
+</lo-LA>
+
+<mn-MN>
+🎉 Тоглогч хайлтанд онлайн төлөв нэмсэн  
+🎮 Апп илүү хурдан, тогтвортой  
+🎮 Урилга илгээх систем сайжирсан  
+🎮 Ховор алдаа зассан  
+⚽ Илүү сайхан Soccer!
+</mn-MN>
+
+<fa-IR>
+🎉 وضعیت آنلاین به جستجوی بازیکنان افزوده شد  
+🎮 اجرای پایدارتر و سریع‌تر  
+🎮 بهبود دعوت‌های تورنمنت  
+🎮 رفع خطاهای نادر  
+⚽ ‎Soccer‎ روان‌تر و بهتر!
+</fa-IR>
+
+<si-LK>
+🎉 ක්‍රීඩක සෙවීමේදී මාර්ගගත තත්ත්වය එකතු කළා  
+🎮 වැඩි ස්ථාවරතාව හා වේගය  
+🎮 ආරාධනා වැඩිදියුණු කළා  
+🎮 දුර්ලභ බිඳවැටීම් විසඳා ඇත  
+⚽ වැඩි මෘදු Soccer!
+</si-LK>
