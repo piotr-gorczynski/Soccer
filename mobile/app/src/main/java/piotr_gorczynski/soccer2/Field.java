@@ -104,6 +104,7 @@ public class Field {
     private long remainingTime0, remainingTime1;
 
     private Long turnStartTime;
+    private int numberMovesAnalyzed = 0;
     private final boolean animationsEnabled;
     private final boolean showIdlePlayerSprite;
     private final boolean handTutorialAllowed;
@@ -565,6 +566,11 @@ public class Field {
         remainingTime0 = t0;
         remainingTime1 = t1;
         turnStartTime = ts;
+    }
+
+    // called from GameView
+    public void setNumberMovesAnalyzed(int count) {
+        numberMovesAnalyzed = count;
     }
 
     public int getFieldWidth() {
@@ -2917,7 +2923,7 @@ public class Field {
             if (gameType == 1) {
                 textTop = context.getString(R.string.field_your_move_ellipsis);  // could be improved, but likely shared screen
             } else if (gameType == 2) {
-                textTop = context.getString(R.string.field_thinking);
+                textTop = context.getString(R.string.field_thinking, numberMovesAnalyzed);
             } else  {
                 // Multiplayer: determine which name is the opponent
 

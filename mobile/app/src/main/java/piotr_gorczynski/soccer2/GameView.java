@@ -51,6 +51,8 @@ public class GameView extends View {
     private long remTime0, remTime1;
 
     private Long turnStartsTime;
+    
+    private int numberMovesAnalyzed = 0;
 
     private final Handler pulseHandler = new Handler(Looper.getMainLooper());
     private boolean pulseScheduled = false;
@@ -345,6 +347,7 @@ public class GameView extends View {
 
         createPossibleMoves(possibleMovesForDrawing, realMoves);
         field.setRemainingTimes(remTime0, remTime1,turnStartsTime);
+        field.setNumberMovesAnalyzed(numberMovesAnalyzed);
         field.draw(canvas);
         // Start or stop pulsing based on possible moves
         startPulseIfNeeded();
@@ -576,6 +579,7 @@ public class GameView extends View {
     }
 
     public boolean androidNextMove_v2(ArrayList<MoveTo> Moves,MoveTo masterMinMoveTo, int bouncingLevel, NextMoveFound masterNextMoveFound, int treeDepthLevel, long startThinkingTime) {
+        numberMovesAnalyzed++;
         String stringMove=Moves.get(Moves.size()-1).toString();
         Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidNextMove_v2: <"+stringMove+" bouncinglevel='"+ bouncingLevel +"' treedepthlevel='"+ treeDepthLevel +"'>");
         logMoves(Moves);
@@ -745,6 +749,7 @@ public class GameView extends View {
         //called 1-st time
         if (androidMoves.size() <= realMoves.size()) {
             Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidMove: In androidMove 1-st time");
+            numberMovesAnalyzed = 0;  // Reset counter when starting new thinking session
             androidMoves = new ArrayList<>(realMoves);
             //assigning first form the list as MIN
             MoveTo minMoveTo = new MoveTo(possibleMoves.get(0).X, possibleMoves.get(0).Y, 1);
@@ -769,8 +774,10 @@ public class GameView extends View {
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidMove: Scheduling androidMove n-th time after animations");
                     requestAndroidMoveAfterAnimations();
                 }
-                else
+                else {
                     androidMoves.clear();
+                    numberMovesAnalyzed = 0;  // Reset counter when Android completes its turn
+                }
         }
     }
 
