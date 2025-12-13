@@ -600,13 +600,19 @@ public class GameView extends View {
                 if(nextMoveFound.victory)
                     break;
 
-                //if too many bouncing levels
+                // Safety valve: Prevent excessive recursion on positions with many bounces
+                // This is a FIXED value, not tied to difficulty level
+                // See docs/MINMAX_DIFFICULTY_APPROACH_ANALYSIS.md for rationale
                 int gameBouncingLevel = 50;
                 if((nextMoveFound.found) && (nextMoveFound.bouncingLevel> gameBouncingLevel)) {
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidNextMove_v2: <gameBouncingLevelReached>" + gameBouncingLevel + "</gameBouncingLevelReached>");
                     break;
                 }
 
+                // PRIMARY DIFFICULTY CONTROL: Time budget based on androidLevel
+                // Easy=0s, Medium=3s, Hard=10s
+                // This ensures responsive UI and consistent difficulty across devices
+                // See docs/MINMAX_DIFFICULTY_APPROACH_ANALYSIS.md for analysis
                 difference = (System.currentTimeMillis() - startThinkingTime)/1000.0;
                 if((nextMoveFound.found) && (difference>androidLevel)) {
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidNextMove_v2: <timeLimitReached>" + difference + "</timeLimitReached>");
@@ -628,6 +634,10 @@ public class GameView extends View {
                     break;
                 }
 
+                // Safety valve: Limit opponent move simulation depth
+                // This is a FIXED value, not tied to difficulty level
+                // Prevents excessive recursion into opponent move trees
+                // See docs/MINMAX_DIFFICULTY_APPROACH_ANALYSIS.md for rationale
                 int gameTreeDepthLevel = 1;
                 if (!(isBouncing(i.X, i.Y, Moves) || treeDepthLevel< gameTreeDepthLevel))
                 {

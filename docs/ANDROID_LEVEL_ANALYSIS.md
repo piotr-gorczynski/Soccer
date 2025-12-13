@@ -138,7 +138,7 @@ Despite the androidLevel not being read correctly due to the bug, here's how the
 ## Recommendations
 
 1. ~~**Fix the preference storage bug**: Make SettingsFragment and GameActivity use the same SharedPreferences file~~ **FIXED** ✓
-2. **Make tree depth configurable**: Consider making `gameTreeDepthLevel` and `gameBouncingLevel` configurable based on androidLevel for true difficulty control
+2. ~~**Make tree depth configurable**: Consider making `gameTreeDepthLevel` and `gameBouncingLevel` configurable based on androidLevel for true difficulty control~~ **NOT RECOMMENDED** - See analysis below ✗
 3. **Add performance logging**: Log the actual time taken for AI moves to verify the timeout mechanism works
 4. **Consider iterative deepening**: Instead of fixed depth, use available time budget to search progressively deeper
 5. **Test the timeout**: Add test cases that verify the timeout condition can be triggered
@@ -152,3 +152,17 @@ The `androidLevel` parameter serves as a **time budget** for AI thinking, not a 
 - **Hard (10s)**: Best possible moves with extensive search
 
 The **preference storage bug has been fixed**, and now these settings will be correctly applied. The algorithm will respect the user's selected difficulty level and use the appropriate time budget for AI thinking.
+
+### Update: Difficulty Approach Analysis
+
+After thorough analysis (see [MINMAX_DIFFICULTY_APPROACH_ANALYSIS.md](./MINMAX_DIFFICULTY_APPROACH_ANALYSIS.md)), we have determined:
+
+**✓ Time-based approach (androidLevel) is CORRECT** - Continue using current implementation  
+**✗ Bouncing-level approach (gameBouncingLevel) is NOT RECOMMENDED** - Would cause unpredictable UI freezing
+
+The current implementation correctly uses:
+- **androidLevel** (time budget) as the primary difficulty control
+- **gameBouncingLevel** (fixed at 50) as a safety valve to prevent extreme recursion
+- **gameTreeDepthLevel** (fixed at 1) as a safety valve to limit opponent simulation
+
+These safety mechanisms should remain as fixed constants, not configurable difficulty parameters.
