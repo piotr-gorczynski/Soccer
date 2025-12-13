@@ -28,7 +28,7 @@ The game uses a MINMAX algorithm in `androidNextMove_v2()` to determine the AI o
 ### How It Works
 
 The algorithm uses `androidLevel` as a **time budget** in seconds:
-- **Easy**: 0 seconds (immediate)
+- **Easy**: 0 seconds (takes first valid move found, minimal thinking time)
 - **Medium**: 3 seconds
 - **Hard**: 10 seconds
 
@@ -104,10 +104,12 @@ if((nextMoveFound.found) && (nextMoveFound.bouncingLevel> gameBouncingLevel)) {
 }
 ```
 
-To implement difficulty, we could make this configurable:
+To implement difficulty, we could make this configurable (hypothetical example values):
 - **Easy**: gameBouncingLevel = 5
 - **Medium**: gameBouncingLevel = 15
 - **Hard**: gameBouncingLevel = 50
+
+*Note: These are arbitrary example values for illustration purposes, not researched optimal values.*
 
 ### Advantages
 
