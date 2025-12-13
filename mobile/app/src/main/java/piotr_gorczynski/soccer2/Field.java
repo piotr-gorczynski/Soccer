@@ -3050,10 +3050,10 @@ public class Field {
             /*Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawHandTutorial: Drawing hand at position "
                 + handTutorialPositionIndex + "/" + possibleMoves.size() 
                 + ", cycle " + (handTutorialCycle + 1));*/
+            
+            // Draw the tutorial balloon message
+            drawTutorialBalloon(canvas);
         }
-        
-        // Draw the tutorial balloon message
-        drawTutorialBalloon(canvas);
     }
 
     @NonNull
