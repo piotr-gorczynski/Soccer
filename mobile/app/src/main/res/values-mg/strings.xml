@@ -198,7 +198,7 @@
     <string name="field_move_tail">dingana … ⏳ %1$s</string>
     <string name="field_hourglass_tail">⏳ %1$s</string>
     <string name="field_your_move_ellipsis">Anjaranao izao…</string>
-    <string name="field_thinking">Mieritreritra… Moves analyzed: %1$d</string>
+    <string name="field_thinking">Mieritreritra… Hetsika nodinihina: %1$d</string>
     <string name="field_move_ellipsis_tail">dingana… ⏳ %1$s</string>
     <string name="field_waiting_for">Miandry an`i %1$s</string>
     <string name="field_to_start_tail">hanomboka… ⏳ %1$s</string>

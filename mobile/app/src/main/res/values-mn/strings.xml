@@ -198,7 +198,7 @@
     <string name="field_move_tail">нүүдэл … ⏳ %1$s</string>
     <string name="field_hourglass_tail">⏳ %1$s</string>
     <string name="field_your_move_ellipsis">Таны нүүдэл…</string>
-    <string name="field_thinking">Бодож байна… Moves analyzed: %1$d</string>
+    <string name="field_thinking">Бодож байна… Шинжилсэн нүүдэл: %1$d</string>
     <string name="field_move_ellipsis_tail">нүүдэл… ⏳ %1$s</string>
     <string name="field_waiting_for">%1$s-ийг хүлээж байна</string>
     <string name="field_to_start_tail">эхлэх хүртэл… ⏳ %1$s</string>
