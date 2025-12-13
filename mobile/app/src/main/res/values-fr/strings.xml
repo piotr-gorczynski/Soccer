@@ -375,5 +375,5 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">Le tournoi %1$s n\'est plus en cours</string>
-    <string name="field_hand_tutorial_message">Appuyez sur l'un des points pour déplacer le ballon</string>
+    <string name="field_hand_tutorial_message">Appuyez sur l’un des points pour déplacer le ballon</string>
 </resources>
