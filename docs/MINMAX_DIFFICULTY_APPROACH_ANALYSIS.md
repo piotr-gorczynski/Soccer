@@ -33,7 +33,7 @@ The algorithm uses `androidLevel` as a **time budget** in seconds:
 - **Hard**: 10 seconds
 
 ```java
-// Line 610-614 in GameView.java
+// Line 616-620 in GameView.java
 difference = (System.currentTimeMillis() - startThinkingTime)/1000.0;
 if((nextMoveFound.found) && (difference>androidLevel)) {
     Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidNextMove_v2: <timeLimitReached>" + difference + "</timeLimitReached>");
@@ -188,7 +188,7 @@ This is the best of both worlds:
 
 ## Similarly: Tree Depth Level
 
-The code also has `gameTreeDepthLevel = 1` (line 631), which limits opponent move simulation.
+The code also has `gameTreeDepthLevel = 1` (line 641), which limits opponent move simulation.
 
 This has similar trade-offs to gameBouncingLevel:
 - **Making it configurable**: Would create unpredictable performance
