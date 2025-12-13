@@ -346,4 +346,5 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">තරගාවලිය %1$s තවදුරටත් ක්‍රියාත්මක නොවේ</string>
+    <string name="field_hand_tutorial_message">බෝලය චලනය කිරීමට එක් ලක්ෂ්‍යයක් මත තට්ටු කරන්න</string>
 </resources>
