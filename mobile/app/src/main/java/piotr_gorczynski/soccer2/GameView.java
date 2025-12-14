@@ -53,6 +53,9 @@ public class GameView extends View {
     private Long turnStartsTime;
     
     private int numberMovesAnalyzed = 0;
+    
+    // Interval for refreshing AI thinking progress display (in milliseconds)
+    private static final int THINKING_PROGRESS_REFRESH_INTERVAL_MS = 500;
 
     private final Handler pulseHandler = new Handler(Looper.getMainLooper());
     private boolean pulseScheduled = false;
@@ -67,6 +70,20 @@ public class GameView extends View {
             }
         }
     };
+    
+    // Handler for refreshing AI thinking progress every 0.5 seconds
+    private final Handler thinkingProgressHandler = new Handler(Looper.getMainLooper());
+    private boolean thinkingProgressScheduled = false;
+    private final Runnable thinkingProgressRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (thinkingProgressScheduled) {
+                invalidate();  // Refresh UI to show updated numberMovesAnalyzed
+                thinkingProgressHandler.postDelayed(this, THINKING_PROGRESS_REFRESH_INTERVAL_MS);
+            }
+        }
+    };
+    
     /** Disable or re-enable all touches on the board */
     public void setInputEnabled(boolean enabled) {
         this.inputEnabled = enabled;
@@ -750,12 +767,23 @@ public class GameView extends View {
         if (androidMoves.size() <= realMoves.size()) {
             Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidMove: In androidMove 1-st time");
             numberMovesAnalyzed = 0;  // Reset counter when starting new thinking session
+            
+            // Start periodic UI updates during AI thinking
+            thinkingProgressScheduled = true;
+            thinkingProgressHandler.postDelayed(thinkingProgressRunnable, THINKING_PROGRESS_REFRESH_INTERVAL_MS);
+            
             androidMoves = new ArrayList<>(realMoves);
             //assigning first form the list as MIN
             MoveTo minMoveTo = new MoveTo(possibleMoves.get(0).X, possibleMoves.get(0).Y, 1);
             NextMoveFound nextMoveFound = new NextMoveFound(false, 0, false, false);
             Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidMove: <?xml version=\"1.0\" encoding=\"UTF-8\"?>");
             androidNextMove_v2(androidMoves, minMoveTo,0,nextMoveFound, 0, System.currentTimeMillis());
+            
+            // Stop periodic UI updates after AI thinking completes
+            thinkingProgressScheduled = false;
+            thinkingProgressHandler.removeCallbacks(thinkingProgressRunnable);
+            invalidate();  // Final update to show the last count
+            
             if ( nextMoveFound.found ) {
                 Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidMove: Scheduling androidMove 1-st time after animations");
                 requestAndroidMoveAfterAnimations();
@@ -864,5 +892,7 @@ public class GameView extends View {
         super.onDetachedFromWindow();
         androidMoveDelayHandler.removeCallbacks(androidMoveAfterAnimationRunnable);
         androidMovePending = false;
+        thinkingProgressScheduled = false;
+        thinkingProgressHandler.removeCallbacks(thinkingProgressRunnable);
     }
 }
