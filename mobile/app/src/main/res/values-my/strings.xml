@@ -198,7 +198,7 @@
     <string name="field_move_tail">အလှည့် … ⏳ %1$s</string>
     <string name="field_hourglass_tail">⏳ %1$s</string>
     <string name="field_your_move_ellipsis">သင့်အလှည့်…</string>
-    <string name="field_thinking">စဉ်းစားနေသည်…</string>
+    <string name="field_thinking">စဉ်းစားနေသည်… ခွဲခြမ်းစိတ်ဖြာထားသော အရွေ့များ: %1$d</string>
     <string name="field_move_ellipsis_tail">အလှည့်… ⏳ %1$s</string>
     <string name="field_waiting_for">%1$s ကို စောင့်ဆိုင်းနေသည်</string>
     <string name="field_to_start_tail">စတင်ရန်… ⏳ %1$s</string>
