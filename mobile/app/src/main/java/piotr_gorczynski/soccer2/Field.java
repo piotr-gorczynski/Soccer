@@ -2924,6 +2924,7 @@ public class Field {
                 textTop = context.getString(R.string.field_your_move_ellipsis);  // could be improved, but likely shared screen
             } else if (gameType == 2) {
                 textTop = context.getString(R.string.field_thinking, numberMovesAnalyzed);
+                Log.d("TAG_Soccer", "Field.draw: Updated thinking text with numberMovesAnalyzed=" + numberMovesAnalyzed);
             } else  {
                 // Multiplayer: determine which name is the opponent
 
