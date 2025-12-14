@@ -53,6 +53,9 @@ public class GameView extends View {
     private Long turnStartsTime;
     
     private int numberMovesAnalyzed = 0;
+    
+    // Interval for refreshing AI thinking progress display (in milliseconds)
+    private static final int THINKING_PROGRESS_REFRESH_INTERVAL_MS = 500;
 
     private final Handler pulseHandler = new Handler(Looper.getMainLooper());
     private boolean pulseScheduled = false;
@@ -76,7 +79,7 @@ public class GameView extends View {
         public void run() {
             if (thinkingProgressScheduled) {
                 invalidate();  // Refresh UI to show updated numberMovesAnalyzed
-                thinkingProgressHandler.postDelayed(this, 500);  // Refresh every 0.5 seconds
+                thinkingProgressHandler.postDelayed(this, THINKING_PROGRESS_REFRESH_INTERVAL_MS);
             }
         }
     };
@@ -767,7 +770,7 @@ public class GameView extends View {
             
             // Start periodic UI updates during AI thinking
             thinkingProgressScheduled = true;
-            thinkingProgressHandler.postDelayed(thinkingProgressRunnable, 500);
+            thinkingProgressHandler.postDelayed(thinkingProgressRunnable, THINKING_PROGRESS_REFRESH_INTERVAL_MS);
             
             androidMoves = new ArrayList<>(realMoves);
             //assigning first form the list as MIN
