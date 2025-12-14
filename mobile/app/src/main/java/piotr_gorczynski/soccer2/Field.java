@@ -3032,12 +3032,9 @@ public class Field {
 
             // Check if we've shown all positions in this cycle
             if (handTutorialPositionIndex >= possibleMoves.size()) {
-                // Cycle complete, wait for next move to start new cycle
-                // Position index will remain >= size, so the conditional check at the end of this method
-                // will skip rendering until handTutorialPositionIndex is reset to 0 when a new move is detected
+                // Animation cycle complete - hand stops drawing but balloon remains visible until user moves
                 /*Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawHandTutorial: Cycle "
-                    + (handTutorialCycle + 1) + " completed, waiting for next move");*/
-                return;
+                    + (handTutorialCycle + 1) + " completed, balloon continues to show");*/
             }
         }
 
