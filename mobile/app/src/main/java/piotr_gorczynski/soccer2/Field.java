@@ -3026,12 +3026,13 @@ public class Field {
 
             // Check if we've shown all positions in this cycle
             if (handTutorialPositionIndex >= possibleMoves.size()) {
-                // Cycle complete, wait for next move to start new cycle
-                // Position index will remain >= size, so the conditional check at the end of this method
-                // will skip rendering until handTutorialPositionIndex is reset to 0 when a new move is detected
+                // Cycle complete, hand will no longer be drawn but balloon continues to show
+                // Position index will remain >= size, so the hand conditional check below
+                // will skip hand rendering, but the balloon will continue to be shown
+                // until a new move is detected
                 /*Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawHandTutorial: Cycle "
-                    + (handTutorialCycle + 1) + " completed, waiting for next move");*/
-                return;
+                    + (handTutorialCycle + 1) + " completed, balloon continues to show");*/
+                // Don't return - let the balloon continue to be drawn
             }
         }
 
@@ -3050,10 +3051,10 @@ public class Field {
             /*Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawHandTutorial: Drawing hand at position "
                 + handTutorialPositionIndex + "/" + possibleMoves.size() 
                 + ", cycle " + (handTutorialCycle + 1));*/
-            
-            // Draw the tutorial balloon message
-            drawTutorialBalloon(canvas);
         }
+        
+        // Draw the tutorial balloon message
+        drawTutorialBalloon(canvas);
     }
 
     @NonNull
