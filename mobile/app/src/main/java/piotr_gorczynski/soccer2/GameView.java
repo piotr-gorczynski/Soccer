@@ -475,13 +475,7 @@ public class GameView extends View {
     }
 
     private boolean isBouncing(int x, int y,ArrayList<MoveTo> Moves) {
-        return ((x == 0) && (y >= 0) && (y <= intFieldHeight))
-                || ((x == intFieldWidth) && (y >= 0) && (y <= intFieldHeight))
-                || ((y == 0) && (x < intFieldWidth / 2) && (x > 0))
-                || ((y == 0) && (x > intFieldWidth / 2) && (x < intFieldWidth))
-                || ((y == intFieldHeight) && (x < intFieldWidth / 2) && (x > 0))
-                || ((y == intFieldHeight) && (x > intFieldWidth / 2) && (x < intFieldWidth))
-                || wasBallThere(x, y, Moves);
+        return isBouncingOnBorder(x, y) || wasBallThere(x, y, Moves);
     }
 
     private boolean isBouncingOnBorder(int x, int y) {
@@ -576,10 +570,11 @@ public class GameView extends View {
             return false;
         } else if (bouncing) {
             // Move resulted in a bounce - determine if border or visited point
-            if (isBouncingOnBorder(x, y)) {
-                field.setTutorialMessageType(Field.TutorialMessageType.BOUNCE_BORDER);
-            } else if (wasBallThere(x, y, Moves)) {
+            // Check visited point first since a point can be both on border and previously visited
+            if (wasBallThere(x, y, Moves)) {
                 field.setTutorialMessageType(Field.TutorialMessageType.BOUNCE_VISITED);
+            } else if (isBouncingOnBorder(x, y)) {
+                field.setTutorialMessageType(Field.TutorialMessageType.BOUNCE_BORDER);
             }
         } else {
             // Normal move - reset to initial message
