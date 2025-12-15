@@ -78,6 +78,7 @@ public class GameView extends View {
         @Override
         public void run() {
             if (thinkingProgressScheduled) {
+                Log.d("TAG_Soccer", getClass().getSimpleName() + ".thinkingProgressRunnable: Refreshing UI, numberMovesAnalyzed=" + numberMovesAnalyzed);
                 invalidate();  // Refresh UI to show updated numberMovesAnalyzed
                 thinkingProgressHandler.postDelayed(this, THINKING_PROGRESS_REFRESH_INTERVAL_MS);
             }
@@ -769,6 +770,7 @@ public class GameView extends View {
             numberMovesAnalyzed = 0;  // Reset counter when starting new thinking session
             
             // Start periodic UI updates during AI thinking
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidMove: Starting periodic UI refresh every " + THINKING_PROGRESS_REFRESH_INTERVAL_MS + "ms");
             thinkingProgressScheduled = true;
             thinkingProgressHandler.postDelayed(thinkingProgressRunnable, THINKING_PROGRESS_REFRESH_INTERVAL_MS);
             
@@ -780,6 +782,7 @@ public class GameView extends View {
             androidNextMove_v2(androidMoves, minMoveTo,0,nextMoveFound, 0, System.currentTimeMillis());
             
             // Stop periodic UI updates after AI thinking completes
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidMove: Stopping periodic UI refresh, final numberMovesAnalyzed=" + numberMovesAnalyzed);
             thinkingProgressScheduled = false;
             thinkingProgressHandler.removeCallbacks(thinkingProgressRunnable);
             invalidate();  // Final update to show the last count
