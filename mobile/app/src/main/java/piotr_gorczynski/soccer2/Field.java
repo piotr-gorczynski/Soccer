@@ -20,6 +20,7 @@ import androidx.preference.PreferenceManager;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.Log;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
@@ -2923,7 +2924,8 @@ public class Field {
             if (gameType == 1) {
                 textTop = context.getString(R.string.field_your_move_ellipsis);  // could be improved, but likely shared screen
             } else if (gameType == 2) {
-                textTop = context.getString(R.string.field_thinking, numberMovesAnalyzed);
+                String formattedNumber = NumberFormat.getInstance(Locale.getDefault()).format(numberMovesAnalyzed);
+                textTop = context.getString(R.string.field_thinking, formattedNumber);
                 Log.d("TAG_Soccer", "Field.draw: Updated thinking text with numberMovesAnalyzed=" + numberMovesAnalyzed);
             } else  {
                 // Multiplayer: determine which name is the opponent

@@ -198,7 +198,7 @@
     <string name="field_move_tail">dhaqdhaqaaq … ⏳ %1$s</string>
     <string name="field_hourglass_tail">⏳ %1$s</string>
     <string name="field_your_move_ellipsis">Adigaa dhaqdhaqaaqa leh…</string>
-    <string name="field_thinking">Waxay ka fekeraysaa… Dhaqdhaqaaqyo la falanqeeyey: %1$d</string>
+    <string name="field_thinking">Waxay ka fekeraysaa… Dhaqdhaqaaqyo la falanqeeyey: %1$s</string>
     <string name="field_move_ellipsis_tail">dhaqdhaqaaq… ⏳ %1$s</string>
     <string name="field_waiting_for">Waxaa la sugayaa %1$s</string>
     <string name="field_to_start_tail">inuu bilaabo… ⏳ %1$s</string>
