@@ -198,7 +198,7 @@
     <string name="field_move_tail">እንቅስቃሴ … ⏳ %1$s</string>
     <string name="field_hourglass_tail">⏳ %1$s</string>
     <string name="field_your_move_ellipsis">የእርስዎ እንቅስቃሴ…</string>
-    <string name="field_thinking">በማሰብ ላይ… የተተነተኑ እርምጃዎች: %1$d</string>
+    <string name="field_thinking">በማሰብ ላይ… የተተነተኑ እርምጃዎች: %1$s</string>
     <string name="field_move_ellipsis_tail">እንቅስቃሴ… ⏳ %1$s</string>
     <string name="field_waiting_for">%1$sን በመጠበቅ ላይ</string>
     <string name="field_to_start_tail">ለመጀመር… ⏳ %1$s</string>
