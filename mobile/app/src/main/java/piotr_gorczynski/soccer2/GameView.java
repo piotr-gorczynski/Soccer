@@ -787,8 +787,8 @@ public class GameView extends View {
             new Thread(() -> {
                 androidNextMove_v2(androidMoves, minMoveTo,0,nextMoveFound, 0, System.currentTimeMillis());
                 
-                // Post results back to UI thread
-                new Handler(Looper.getMainLooper()).post(() -> {
+                // Post results back to UI thread (reusing existing thinkingProgressHandler)
+                thinkingProgressHandler.post(() -> {
                     // Stop periodic UI updates after AI thinking completes
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidMove: Stopping periodic UI refresh, final numberMovesAnalyzed=" + numberMovesAnalyzed);
                     thinkingProgressScheduled = false;
