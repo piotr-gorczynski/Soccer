@@ -785,7 +785,7 @@ public class GameView extends View {
             // Move AI thinking to background thread so UI can be updated during computation
             // This allows thinkingProgressHandler to execute and refresh the UI every 500ms
             new Thread(() -> {
-                androidNextMove_v2(androidMoves, minMoveTo,0,nextMoveFound, 0, System.currentTimeMillis());
+                androidNextMove_v2(androidMoves, minMoveTo, 0, nextMoveFound, 0, System.currentTimeMillis());
                 
                 // Post results back to UI thread (reusing existing thinkingProgressHandler)
                 thinkingProgressHandler.post(() -> {
