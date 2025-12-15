@@ -165,10 +165,11 @@ public class GameView extends View {
     }
 
     public static class NextMoveFound {
-        public boolean found;
-        public boolean defeat;
-        public int bouncingLevel;
-        public boolean victory;
+        // Make volatile for thread-safe access when used across threads
+        public volatile boolean found;
+        public volatile boolean defeat;
+        public volatile int bouncingLevel;
+        public volatile boolean victory;
 
         public NextMoveFound(boolean found, int bouncingLevel, boolean defeat, boolean victory) {
             this.found = found;
@@ -802,7 +803,7 @@ public class GameView extends View {
                         gameActivity.showWinner(0);
                     }
                 });
-            }).start();
+            }, "AI-Computation-Thread").start();
         } else {
             //called n-th time
             Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidMove: In androidMove n-th time");
