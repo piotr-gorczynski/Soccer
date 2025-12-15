@@ -347,4 +347,9 @@
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">ການແຂ່ງຂັນ %1$s ບໍ່ໄດ້ດຳເນີນການອີກແລ້ວ</string>
     <string name="field_hand_tutorial_message">ແຕະໃສ່ຈຸດໃດໜຶ່ງເພື່ອເຄື່ອນຍ້າຍບານ</string>
+    <string name="field_hand_tutorial_bounce_border">ເມື່ອບານຕີຂອບເຂດ ມັນສະທ້ອນກັບຄືນ ແລະ ເຈົ້າສາມາດເຄື່ອນຍ້າຍບານອີກຄັ້ງ</string>
+    <string name="field_hand_tutorial_bounce_visited">ເມື່ອບານຕີຈຸດທີ່ເຄີຍໄປແລ້ວ ມັນສະທ້ອນກັບຄືນ ແລະ ເຈົ້າສາມາດເຄື່ອນຍ້າຍບານອີກຄັ້ງ</string>
+    <string name="field_hand_tutorial_no_moves">ເມື່ອບໍ່ມີການເຄື່ອນທີ່ທີ່ເປັນໄປໄດ້ ຜູ້ຫຼິ້ນຈະແພ້ທັນທີ.</string>
+    <string name="field_hand_tutorial_goal">ປະຕູ! ດີຫຼາຍ!</string>
+    <string name="field_hand_tutorial_own_goal">ປະຕູຕົນເອງ!</string>
 </resources>

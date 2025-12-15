@@ -381,4 +381,9 @@
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">ٹورنامنٹ %1$s اب نہیں چل رہا</string>
     <string name="field_hand_tutorial_message">گیند کو منتقل کرنے کے لیے کسی ایک نقطے پر تھپتھپائیں</string>
+    <string name="field_hand_tutorial_bounce_border">جب گیند سرحد سے ٹکراتی ہے، یہ اچھلتی ہے اور آپ دوبارہ گیند کو منتقل کر سکتے ہیں</string>
+    <string name="field_hand_tutorial_bounce_visited">جب گیند پہلے سے دیکھے گئے نقطے سے ٹکراتی ہے، یہ اچھلتی ہے اور آپ دوبارہ گیند کو منتقل کر سکتے ہیں</string>
+    <string name="field_hand_tutorial_no_moves">جب کوئی ممکنہ چالیں نہیں ہیں، کھلاڑی فوری طور پر ہار جاتا ہے۔</string>
+    <string name="field_hand_tutorial_goal">گول! شاباش!</string>
+    <string name="field_hand_tutorial_own_goal">اپنا گول!</string>
 </resources>

@@ -382,4 +382,9 @@
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">Turniej %1$s już się nie toczy</string>
     <string name="field_hand_tutorial_message">Dotknij jednego z punktów, aby przesunąć piłkę</string>
+    <string name="field_hand_tutorial_bounce_border">Gdy piłka uderza w granicę, odbija się i możesz ponownie przesunąć piłkę</string>
+    <string name="field_hand_tutorial_bounce_visited">Gdy piłka uderza w wcześniej odwiedzony punkt, odbija się i możesz ponownie przesunąć piłkę</string>
+    <string name="field_hand_tutorial_no_moves">Gdy nie ma możliwych ruchów, gracz natychmiast przegrywa.</string>
+    <string name="field_hand_tutorial_goal">Gol! Brawo!</string>
+    <string name="field_hand_tutorial_own_goal">Gol samobójczy!</string>
 </resources>
