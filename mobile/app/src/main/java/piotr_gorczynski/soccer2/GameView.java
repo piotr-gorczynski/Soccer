@@ -52,7 +52,8 @@ public class GameView extends View {
 
     private Long turnStartsTime;
     
-    private int numberMovesAnalyzed = 0;
+    // Make volatile for thread-safe access from background thread and UI thread
+    private volatile int numberMovesAnalyzed = 0;
     
     // Interval for refreshing AI thinking progress display (in milliseconds)
     private static final int THINKING_PROGRESS_REFRESH_INTERVAL_MS = 500;
@@ -164,10 +165,11 @@ public class GameView extends View {
     }
 
     public static class NextMoveFound {
-        public boolean found;
-        public boolean defeat;
-        public int bouncingLevel;
-        public boolean victory;
+        // Make volatile for thread-safe access when used across threads
+        public volatile boolean found;
+        public volatile boolean defeat;
+        public volatile int bouncingLevel;
+        public volatile boolean victory;
 
         public NextMoveFound(boolean found, int bouncingLevel, boolean defeat, boolean victory) {
             this.found = found;
@@ -779,21 +781,29 @@ public class GameView extends View {
             MoveTo minMoveTo = new MoveTo(possibleMoves.get(0).X, possibleMoves.get(0).Y, 1);
             NextMoveFound nextMoveFound = new NextMoveFound(false, 0, false, false);
             Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidMove: <?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-            androidNextMove_v2(androidMoves, minMoveTo,0,nextMoveFound, 0, System.currentTimeMillis());
             
-            // Stop periodic UI updates after AI thinking completes
-            Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidMove: Stopping periodic UI refresh, final numberMovesAnalyzed=" + numberMovesAnalyzed);
-            thinkingProgressScheduled = false;
-            thinkingProgressHandler.removeCallbacks(thinkingProgressRunnable);
-            invalidate();  // Final update to show the last count
-            
-            if ( nextMoveFound.found ) {
-                Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidMove: Scheduling androidMove 1-st time after animations");
-                requestAndroidMoveAfterAnimations();
-            }
-            else {
-                gameActivity.showWinner(0);
-            }
+            // Move AI thinking to background thread so UI can be updated during computation
+            // This allows thinkingProgressHandler to execute and refresh the UI every 500ms
+            new Thread(() -> {
+                androidNextMove_v2(androidMoves, minMoveTo, 0, nextMoveFound, 0, System.currentTimeMillis());
+                
+                // Post results back to UI thread (reusing existing thinkingProgressHandler)
+                thinkingProgressHandler.post(() -> {
+                    // Stop periodic UI updates after AI thinking completes
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidMove: Stopping periodic UI refresh, final numberMovesAnalyzed=" + numberMovesAnalyzed);
+                    thinkingProgressScheduled = false;
+                    thinkingProgressHandler.removeCallbacks(thinkingProgressRunnable);
+                    invalidate();  // Final update to show the last count
+                    
+                    if ( nextMoveFound.found ) {
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidMove: Scheduling androidMove 1-st time after animations");
+                        requestAndroidMoveAfterAnimations();
+                    }
+                    else {
+                        gameActivity.showWinner(0);
+                    }
+                });
+            }, "AI-Computation-Thread").start();
         } else {
             //called n-th time
             Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidMove: In androidMove n-th time");
