@@ -234,6 +234,16 @@ public class Field {
     private static final float BALLOON_MARGIN_RATIO = 0.05f; // Margin from field edge as ratio
     private static final float BALLOON_MOVE_CLEARANCE_RATIO = 2.5f; // Clearance around possible moves
     
+    // Tutorial message types
+    public enum TutorialMessageType {
+        INITIAL,              // Before first move
+        BOUNCE_BORDER,        // Ball bounced on border
+        BOUNCE_VISITED,       // Ball bounced on visited point
+        NO_MOVES,             // No possible moves (loss)
+        GOAL,                 // Scored in opponent's goal
+        OWN_GOAL              // Scored in own goal
+    }
+    
     // Hand tutorial state
     private final Bitmap handBitmap;
     private final SharedPreferences prefs;
@@ -243,6 +253,7 @@ public class Field {
     private long handTutorialLastUpdateTime = 0L;
     private int handTutorialLastMoveCount = INITIAL_MOVE_COUNT; // Track the number of moves when tutorial was last shown
     private HandTutorialDialogCallback dialogCallback = null;
+    private TutorialMessageType currentTutorialMessage = TutorialMessageType.INITIAL;
     
     // Callback interface for requesting dialog
     public interface HandTutorialDialogCallback {
@@ -3082,8 +3093,8 @@ public class Field {
             return;
         }
 
-        // Get the tutorial message from resources
-        String message = context.getString(R.string.field_hand_tutorial_message);
+        // Get the tutorial message from resources based on current message type
+        String message = getTutorialMessage();
         
         // Set text size based on canvas size
         boolean isPortrait = rField.height() > rField.width();
@@ -3117,6 +3128,34 @@ public class Field {
         float textX = balloonRect.centerX();
         float textY = balloonRect.centerY() - textBounds.exactCenterY();
         canvas.drawText(message, textX, textY, pTutorialBalloonText);
+    }
+
+    /**
+     * Gets the tutorial message string based on current tutorial message type
+     */
+    private String getTutorialMessage() {
+        switch (currentTutorialMessage) {
+            case BOUNCE_BORDER:
+                return context.getString(R.string.field_hand_tutorial_bounce_border);
+            case BOUNCE_VISITED:
+                return context.getString(R.string.field_hand_tutorial_bounce_visited);
+            case NO_MOVES:
+                return context.getString(R.string.field_hand_tutorial_no_moves);
+            case GOAL:
+                return context.getString(R.string.field_hand_tutorial_goal);
+            case OWN_GOAL:
+                return context.getString(R.string.field_hand_tutorial_own_goal);
+            case INITIAL:
+            default:
+                return context.getString(R.string.field_hand_tutorial_message);
+        }
+    }
+
+    /**
+     * Sets the tutorial message type to be displayed
+     */
+    public void setTutorialMessageType(TutorialMessageType messageType) {
+        this.currentTutorialMessage = messageType;
     }
 
     /**

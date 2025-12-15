@@ -347,4 +347,9 @@
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">Mashindano %1$s hayaendelei tena</string>
     <string name="field_hand_tutorial_message">Gusa kwenye moja ya pointi ili kuhamisha mpira</string>
+    <string name="field_hand_tutorial_bounce_border">Wakati mpira unagonga mpaka, hurudia na unaweza kuhama isha mpira tena</string>
+    <string name="field_hand_tutorial_bounce_visited">Wakati mpira unagonga hatua iliyotembelewa awali, hurudia na unaweza kuhamisha mpira tena</string>
+    <string name="field_hand_tutorial_no_moves">Wakati hakuna mwendo unaowezekana, mchezaji hupoteza mara moja.</string>
+    <string name="field_hand_tutorial_goal">Goli! Hongera!</string>
+    <string name="field_hand_tutorial_own_goal">Goli la binafsi!</string>
 </resources>
