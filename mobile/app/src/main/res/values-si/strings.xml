@@ -198,7 +198,7 @@
     <string name="field_move_tail">චලනය … ⏳ %1$s</string>
     <string name="field_hourglass_tail">⏳ %1$s</string>
     <string name="field_your_move_ellipsis">ඔබේ සැරිය…</string>
-    <string name="field_thinking">සිතමින්… විශ්ලේෂණය කළ චලන: %1$d</string>
+    <string name="field_thinking">සිතමින්… විශ්ලේෂණය කළ චලන: %1$s</string>
     <string name="field_move_ellipsis_tail">චලනය… ⏳ %1$s</string>
     <string name="field_waiting_for">%1$s සඳහා බලාසිටී</string>
     <string name="field_to_start_tail">ආරම්භ කිරීමට… ⏳ %1$s</string>
