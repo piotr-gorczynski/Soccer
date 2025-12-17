@@ -2,6 +2,7 @@
 🎮 Fix android_level preference not being read from correct SharedPreferences
 🎉 Reduce Android AI difficulty levels for improved first-time user experience
 🎉 Add tutorial balloon with localized instruction message
+🎉 Display AI move analysis progress counter during thinking
 </en-GB>
 
 <pl-PL>
