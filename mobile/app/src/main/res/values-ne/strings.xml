@@ -381,4 +381,9 @@
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">प्रतियोगिता %1$s अब चलिरहेको छैन</string>
     <string name="field_hand_tutorial_message">बल सार्न बिन्दुहरू मध्ये एकमा ट्याप गर्नुहोस्</string>
+    <string name="field_hand_tutorial_bounce_border">जब बल सीमामा ठोक्किन्छ, यो उफ्रन्छ र तपाईं फेरि बल सार्न सक्नुहुन्छ</string>
+    <string name="field_hand_tutorial_bounce_visited">जब बल पहिले नै भ्रमण गरिएको बिन्दुमा ठोक्किन्छ, यो उफ्रन्छ र तपाईं फेरि बल सार्न सक्नुहुन्छ</string>
+    <string name="field_hand_tutorial_no_moves">जब कुनै सम्भावित चालहरू छैनन्, खेलाडी तुरुन्त हराउँछ।</string>
+    <string name="field_hand_tutorial_goal">गोल! साधु!</string>
+    <string name="field_hand_tutorial_own_goal">आफ्नै गोल!</string>
 </resources>

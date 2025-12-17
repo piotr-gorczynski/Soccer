@@ -347,4 +347,9 @@
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">Ny fifanintsanana %1$s tsy mandeha intsony</string>
     <string name="field_hand_tutorial_message">Kitiho ny iray amin’ireo teboka mba hamindra ny baolina</string>
+    <string name="field_hand_tutorial_bounce_border">Rehefa mamely ny sisiny ny baolina dia mitsambikina ary afaka mamindra ny baolina indray ianao</string>
+    <string name="field_hand_tutorial_bounce_visited">Rehefa mamely teboka efa notsidihana ny baolina dia mitsambikina ary afaka mamindra ny baolina indray ianao</string>
+    <string name="field_hand_tutorial_no_moves">Rehefa tsy misy fihetsiketsehana azo atao dia resy avy hatrany ny mpilalao.</string>
+    <string name="field_hand_tutorial_goal">Baolina! Tsara be!</string>
+    <string name="field_hand_tutorial_own_goal">Baolina manokana!</string>
 </resources>
