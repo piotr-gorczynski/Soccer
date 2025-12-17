@@ -3103,14 +3103,38 @@ public class Field {
         float textSize = isPortrait ? rField.height() * flText * BALLOON_TEXT_SIZE_RATIO : rField.width() * flText * BALLOON_TEXT_SIZE_RATIO;
         pTutorialBalloonText.setTextSize(textSize);
         
-        // Measure text bounds
-        Rect textBounds = new Rect();
-        pTutorialBalloonText.getTextBounds(message, 0, message.length(), textBounds);
-        
-        // Calculate balloon dimensions with padding
+        // Calculate padding
         float padding = textSize * BALLOON_PADDING_RATIO;
-        float balloonWidth = textBounds.width() + padding * 2;
-        float balloonHeight = textBounds.height() + padding * 2;
+        
+        // Calculate maximum balloon width (90% of field width to ensure it fits on screen)
+        float fieldWidth = rField.width();
+        float maxBalloonWidth = fieldWidth * 0.9f;
+        
+        // Wrap text into multiple lines if needed
+        ArrayList<String> wrappedLines = wrapText(message, pTutorialBalloonText, maxBalloonWidth - padding * 2);
+        
+        // Calculate balloon dimensions based on wrapped text
+        float balloonWidth = 0;
+        float lineHeight = 0;
+        Rect textBounds = new Rect();
+        
+        for (String line : wrappedLines) {
+            pTutorialBalloonText.getTextBounds(line, 0, line.length(), textBounds);
+            float lineWidth = textBounds.width();
+            if (lineWidth > balloonWidth) {
+                balloonWidth = lineWidth;
+            }
+            if (lineHeight == 0) {
+                lineHeight = textBounds.height();
+            }
+        }
+        
+        // Add padding to balloon width
+        balloonWidth += padding * 2;
+        
+        // Calculate balloon height for multiple lines (add spacing between lines)
+        float lineSpacing = lineHeight * 0.2f; // 20% of line height as spacing
+        float balloonHeight = wrappedLines.size() * lineHeight + (wrappedLines.size() - 1) * lineSpacing + padding * 2;
         float cornerRadius = textSize * BALLOON_CORNER_RATIO;
         
         // Calculate dot size for collision detection
@@ -3126,10 +3150,62 @@ public class Field {
         // Draw the balloon border
         canvas.drawRoundRect(balloonRect, cornerRadius, cornerRadius, pTutorialBalloonBorder);
         
-        // Draw the text centered in the balloon
+        // Draw each line of text centered in the balloon
         float textX = balloonRect.centerX();
-        float textY = balloonRect.centerY() - textBounds.exactCenterY();
-        canvas.drawText(message, textX, textY, pTutorialBalloonText);
+        float totalTextHeight = wrappedLines.size() * lineHeight + (wrappedLines.size() - 1) * lineSpacing;
+        float startY = balloonRect.centerY() - totalTextHeight / 2f + lineHeight;
+        
+        for (int i = 0; i < wrappedLines.size(); i++) {
+            String line = wrappedLines.get(i);
+            float textY = startY + i * (lineHeight + lineSpacing);
+            canvas.drawText(line, textX, textY, pTutorialBalloonText);
+        }
+    }
+
+    /**
+     * Wraps text into multiple lines to fit within the specified width
+     */
+    private ArrayList<String> wrapText(String text, Paint paint, float maxWidth) {
+        ArrayList<String> lines = new ArrayList<>();
+        
+        // If the entire text fits in one line, return it as is
+        if (paint.measureText(text) <= maxWidth) {
+            lines.add(text);
+            return lines;
+        }
+        
+        // Split text into words
+        String[] words = text.split(" ");
+        StringBuilder currentLine = new StringBuilder();
+        
+        for (String word : words) {
+            String testLine = currentLine.length() == 0 ? word : currentLine + " " + word;
+            float testWidth = paint.measureText(testLine);
+            
+            if (testWidth <= maxWidth) {
+                // Word fits in current line
+                if (currentLine.length() > 0) {
+                    currentLine.append(" ");
+                }
+                currentLine.append(word);
+            } else {
+                // Word doesn't fit, start a new line
+                if (currentLine.length() > 0) {
+                    lines.add(currentLine.toString());
+                    currentLine = new StringBuilder(word);
+                } else {
+                    // Single word is too long, add it anyway
+                    lines.add(word);
+                }
+            }
+        }
+        
+        // Add the last line if there's any content
+        if (currentLine.length() > 0) {
+            lines.add(currentLine.toString());
+        }
+        
+        return lines;
     }
 
     /**
