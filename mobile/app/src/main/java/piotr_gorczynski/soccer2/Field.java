@@ -3117,6 +3117,7 @@ public class Field {
         
         // Calculate line height once (all lines use the same paint)
         // Use font metrics for consistent line height calculation across different fonts
+        // descent - ascent gives the recommended line height (total vertical space for text)
         Paint.FontMetrics fontMetrics = pTutorialBalloonText.getFontMetrics();
         float lineHeight = fontMetrics.descent - fontMetrics.ascent;
         
@@ -3155,6 +3156,7 @@ public class Field {
         // Draw each line of text centered in the balloon
         float textX = balloonRect.centerX();
         float totalTextHeight = wrappedLines.size() * lineHeight + (wrappedLines.size() - 1) * lineSpacing;
+        // Start from vertical center minus half total height, then add lineHeight to position baseline
         float startY = balloonRect.centerY() - totalTextHeight / 2f + lineHeight;
         
         for (int i = 0; i < wrappedLines.size(); i++) {
