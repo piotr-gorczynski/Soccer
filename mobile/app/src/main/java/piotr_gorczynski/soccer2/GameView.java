@@ -511,6 +511,11 @@ public class GameView extends View {
         ArrayList<MoveTo> possibleMoves= new ArrayList<>();
         boolean bouncing=isBouncing(x,y,Moves);
 
+        // Determine bounce type BEFORE adding the new move to the list
+        // This ensures we check if the point was previously visited, not including the current move
+        boolean wasPreviouslyVisited = bouncing && wasBallThere(x, y, Moves);
+        boolean isBorderBounce = bouncing && isBouncingOnBorder(x, y);
+
         MoveTo previousMove = Moves.get(Moves.size() - 1);
         MoveTo newMove;
 
@@ -571,9 +576,9 @@ public class GameView extends View {
         } else if (bouncing) {
             // Move resulted in a bounce - determine if border or visited point
             // Check visited point first since a point can be both on border and previously visited
-            if (wasBallThere(x, y, Moves)) {
+            if (wasPreviouslyVisited) {
                 field.setTutorialMessageType(Field.TutorialMessageType.BOUNCE_VISITED);
-            } else if (isBouncingOnBorder(x, y)) {
+            } else if (isBorderBounce) {
                 field.setTutorialMessageType(Field.TutorialMessageType.BOUNCE_BORDER);
             }
         } else {
