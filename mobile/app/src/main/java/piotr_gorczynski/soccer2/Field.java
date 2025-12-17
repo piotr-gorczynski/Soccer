@@ -234,6 +234,8 @@ public class Field {
     private static final float BALLOON_CORNER_RATIO = 0.3f; // Corner radius as ratio of text size
     private static final float BALLOON_MARGIN_RATIO = 0.05f; // Margin from field edge as ratio
     private static final float BALLOON_MOVE_CLEARANCE_RATIO = 2.5f; // Clearance around possible moves
+    private static final float BALLOON_MAX_WIDTH_RATIO = 0.9f; // Maximum balloon width as ratio of field width
+    private static final float BALLOON_LINE_SPACING_RATIO = 0.2f; // Line spacing as ratio of line height
     
     // Tutorial message types
     public enum TutorialMessageType {
@@ -3108,24 +3110,23 @@ public class Field {
         
         // Calculate maximum balloon width (90% of field width to ensure it fits on screen)
         float fieldWidth = rField.width();
-        float maxBalloonWidth = fieldWidth * 0.9f;
+        float maxBalloonWidth = fieldWidth * BALLOON_MAX_WIDTH_RATIO;
         
         // Wrap text into multiple lines if needed
         ArrayList<String> wrappedLines = wrapText(message, pTutorialBalloonText, maxBalloonWidth - padding * 2);
         
-        // Calculate balloon dimensions based on wrapped text
-        float balloonWidth = 0;
-        float lineHeight = 0;
+        // Calculate line height once (all lines use the same paint)
         Rect textBounds = new Rect();
+        pTutorialBalloonText.getTextBounds("M", 0, 1, textBounds);
+        float lineHeight = textBounds.height();
         
+        // Calculate balloon width based on the longest line
+        float balloonWidth = 0;
         for (String line : wrappedLines) {
             pTutorialBalloonText.getTextBounds(line, 0, line.length(), textBounds);
             float lineWidth = textBounds.width();
             if (lineWidth > balloonWidth) {
                 balloonWidth = lineWidth;
-            }
-            if (lineHeight == 0) {
-                lineHeight = textBounds.height();
             }
         }
         
@@ -3133,7 +3134,7 @@ public class Field {
         balloonWidth += padding * 2;
         
         // Calculate balloon height for multiple lines (add spacing between lines)
-        float lineSpacing = lineHeight * 0.2f; // 20% of line height as spacing
+        float lineSpacing = lineHeight * BALLOON_LINE_SPACING_RATIO;
         float balloonHeight = wrappedLines.size() * lineHeight + (wrappedLines.size() - 1) * lineSpacing + padding * 2;
         float cornerRadius = textSize * BALLOON_CORNER_RATIO;
         
