@@ -475,13 +475,16 @@ public class GameView extends View {
     }
 
     private boolean isBouncing(int x, int y,ArrayList<MoveTo> Moves) {
+        return isBouncingOnBorder(x, y) || wasBallThere(x, y, Moves);
+    }
+
+    private boolean isBouncingOnBorder(int x, int y) {
         return ((x == 0) && (y >= 0) && (y <= intFieldHeight))
                 || ((x == intFieldWidth) && (y >= 0) && (y <= intFieldHeight))
                 || ((y == 0) && (x < intFieldWidth / 2) && (x > 0))
                 || ((y == 0) && (x > intFieldWidth / 2) && (x < intFieldWidth))
                 || ((y == intFieldHeight) && (x < intFieldWidth / 2) && (x > 0))
-                || ((y == intFieldHeight) && (x > intFieldWidth / 2) && (x < intFieldWidth))
-                || wasBallThere(x, y, Moves);
+                || ((y == intFieldHeight) && (x > intFieldWidth / 2) && (x < intFieldWidth));
     }
 
     private boolean wasBallThere(int x, int y, ArrayList<MoveTo> Moves){
@@ -540,13 +543,23 @@ public class GameView extends View {
 
         createPossibleMoves(possibleMoves, Moves);
 
+        // Update tutorial message based on game state
         if(possibleMoves.isEmpty()) {
-            if(y==-1)
+            // Check if it's a goal or loss
+            if(y==-1) {
+                // Ball landed in top goal - player 0 scores
+                field.setTutorialMessageType(Field.TutorialMessageType.GOAL);
                 gameActivity.showWinner(0);
+            }
             else {
-                if(y==intFieldHeight+1)
+                if(y==intFieldHeight+1) {
+                    // Ball landed in bottom goal - player 1 scores (own goal for player 0 perspective)
+                    field.setTutorialMessageType(Field.TutorialMessageType.OWN_GOAL);
                     gameActivity.showWinner(1);
+                }
                 else {
+                    // No possible moves - player loses
+                    field.setTutorialMessageType(Field.TutorialMessageType.NO_MOVES);
                     if(bouncing){
                         gameActivity.showWinner(pOpponent(Moves.get(Moves.size()-1).P));
                     }
@@ -555,6 +568,17 @@ public class GameView extends View {
                 }
             }
             return false;
+        } else if (bouncing) {
+            // Move resulted in a bounce - determine if border or visited point
+            // Check visited point first since a point can be both on border and previously visited
+            if (wasBallThere(x, y, Moves)) {
+                field.setTutorialMessageType(Field.TutorialMessageType.BOUNCE_VISITED);
+            } else if (isBouncingOnBorder(x, y)) {
+                field.setTutorialMessageType(Field.TutorialMessageType.BOUNCE_BORDER);
+            }
+        } else {
+            // Normal move - reset to initial message
+            field.setTutorialMessageType(Field.TutorialMessageType.INITIAL);
         }
         return true;
     }

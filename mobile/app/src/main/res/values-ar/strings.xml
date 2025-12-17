@@ -328,4 +328,9 @@
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">البطولة %1$s لم تعد قيد التشغيل</string>
     <string name="field_hand_tutorial_message">اضغط على إحدى النقاط لتحريك الكرة</string>
+    <string name="field_hand_tutorial_bounce_border">عندما تصطدم الكرة بحد، ترتد ويمكنك تحريك الكرة مرة أخرى</string>
+    <string name="field_hand_tutorial_bounce_visited">عندما تصطدم الكرة بنقطة تمت زيارتها مسبقًا، ترتد ويمكنك تحريك الكرة مرة أخرى</string>
+    <string name="field_hand_tutorial_no_moves">عندما لا توجد حركات ممكنة، يخسر اللاعب على الفور.</string>
+    <string name="field_hand_tutorial_goal">هدف! برافو!</string>
+    <string name="field_hand_tutorial_own_goal">هدف في المرمى الخاص!</string>
 </resources>
