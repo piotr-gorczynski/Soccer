@@ -378,7 +378,7 @@
     <string name="field_hand_tutorial_message">Appuyez sur l’un des points pour déplacer le ballon</string>
     <string name="field_hand_tutorial_bounce_border">Lorsque le ballon touche un bord, il rebondit et vous pouvez à nouveau déplacer le ballon</string>
     <string name="field_hand_tutorial_bounce_visited">Lorsque le ballon touche un point déjà visité, il rebondit et vous pouvez à nouveau déplacer le ballon</string>
-    <string name="field_hand_tutorial_no_moves">Lorsqu'il n'y a plus de mouvements possibles, le joueur perd immédiatement.</string>
+    <string name="field_hand_tutorial_no_moves">Lorsqu’il n’y a plus de mouvements possibles, le joueur perd immédiatement.</string>
     <string name="field_hand_tutorial_goal">But ! Bravo !</string>
     <string name="field_hand_tutorial_own_goal">But contre son camp !</string>
 </resources>
