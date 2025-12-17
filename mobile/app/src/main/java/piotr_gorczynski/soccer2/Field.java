@@ -3116,12 +3116,13 @@ public class Field {
         ArrayList<String> wrappedLines = wrapText(message, pTutorialBalloonText, maxBalloonWidth - padding * 2);
         
         // Calculate line height once (all lines use the same paint)
-        Rect textBounds = new Rect();
-        pTutorialBalloonText.getTextBounds("M", 0, 1, textBounds);
-        float lineHeight = textBounds.height();
+        // Use font metrics for consistent line height calculation across different fonts
+        Paint.FontMetrics fontMetrics = pTutorialBalloonText.getFontMetrics();
+        float lineHeight = fontMetrics.descent - fontMetrics.ascent;
         
         // Calculate balloon width based on the longest line
         float balloonWidth = 0;
+        Rect textBounds = new Rect();
         for (String line : wrappedLines) {
             pTutorialBalloonText.getTextBounds(line, 0, line.length(), textBounds);
             float lineWidth = textBounds.width();
@@ -3175,8 +3176,8 @@ public class Field {
             return lines;
         }
         
-        // Split text into words
-        String[] words = text.split(" ");
+        // Split text into words (split on any whitespace sequence)
+        String[] words = text.split("\\s+");
         StringBuilder currentLine = new StringBuilder();
         
         for (String word : words) {
