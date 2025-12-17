@@ -3156,7 +3156,9 @@ public class Field {
         // Draw each line of text centered in the balloon
         float textX = balloonRect.centerX();
         float totalTextHeight = wrappedLines.size() * lineHeight + (wrappedLines.size() - 1) * lineSpacing;
-        // Start from vertical center minus half total height, then add lineHeight to position baseline
+        // Calculate Y position for the first line's baseline
+        // Start from vertical center minus half total height, then add lineHeight to move from top to baseline
+        // (drawText draws at the baseline, not the top of the text)
         float startY = balloonRect.centerY() - totalTextHeight / 2f + lineHeight;
         
         for (int i = 0; i < wrappedLines.size(); i++) {
