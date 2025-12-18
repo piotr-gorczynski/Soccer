@@ -43,7 +43,7 @@ public class GameView extends View {
     ArrayList<MoveTo> androidMoves = new ArrayList<>();
     private final GestureDetector gestureDetector;
     private final int GameType;
-    private final int androidLevel;
+    private final double androidLevel;
     private MoveCallback moveCallback;
 
     private int localPlayerIndex=0;
@@ -51,6 +51,12 @@ public class GameView extends View {
     private long remTime0, remTime1;
 
     private Long turnStartsTime;
+    
+    // Make volatile for thread-safe access from background thread and UI thread
+    private volatile int numberMovesAnalyzed = 0;
+    
+    // Interval for refreshing AI thinking progress display (in milliseconds)
+    private static final int THINKING_PROGRESS_REFRESH_INTERVAL_MS = 500;
 
     private final Handler pulseHandler = new Handler(Looper.getMainLooper());
     private boolean pulseScheduled = false;
@@ -65,6 +71,21 @@ public class GameView extends View {
             }
         }
     };
+    
+    // Handler for refreshing AI thinking progress every 0.5 seconds
+    private final Handler thinkingProgressHandler = new Handler(Looper.getMainLooper());
+    private boolean thinkingProgressScheduled = false;
+    private final Runnable thinkingProgressRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (thinkingProgressScheduled) {
+                Log.d("TAG_Soccer", getClass().getSimpleName() + ".thinkingProgressRunnable: Refreshing UI, numberMovesAnalyzed=" + numberMovesAnalyzed);
+                invalidate();  // Refresh UI to show updated numberMovesAnalyzed
+                thinkingProgressHandler.postDelayed(this, THINKING_PROGRESS_REFRESH_INTERVAL_MS);
+            }
+        }
+    };
+    
     /** Disable or re-enable all touches on the board */
     public void setInputEnabled(boolean enabled) {
         this.inputEnabled = enabled;
@@ -144,10 +165,11 @@ public class GameView extends View {
     }
 
     public static class NextMoveFound {
-        public boolean found;
-        public boolean defeat;
-        public int bouncingLevel;
-        public boolean victory;
+        // Make volatile for thread-safe access when used across threads
+        public volatile boolean found;
+        public volatile boolean defeat;
+        public volatile int bouncingLevel;
+        public volatile boolean victory;
 
         public NextMoveFound(boolean found, int bouncingLevel, boolean defeat, boolean victory) {
             this.found = found;
@@ -255,7 +277,7 @@ public class GameView extends View {
     invalidate();
     }
 
-    public GameView(Context context, ArrayList<MoveTo> argMoves, int argGameType,int androidLevel) {
+    public GameView(Context context, ArrayList<MoveTo> argMoves, int argGameType,double androidLevel) {
         super(context);
 
         // Validate input parameters
@@ -272,6 +294,8 @@ public class GameView extends View {
         mHandler = new MyHandler(this);
         GameType = argGameType;
         this.androidLevel=androidLevel;
+        Log.d("TAG_Soccer", "GameView.<init> androidLevel=" + this.androidLevel);
+
         gameActivity = (GameActivity) context;
         setBackgroundColor(ContextCompat.getColor(context, R.color.colorGreenDark));
         gestureDetector = new GestureDetector(context, new SwipeListener());
@@ -343,6 +367,7 @@ public class GameView extends View {
 
         createPossibleMoves(possibleMovesForDrawing, realMoves);
         field.setRemainingTimes(remTime0, remTime1,turnStartsTime);
+        field.setNumberMovesAnalyzed(numberMovesAnalyzed);
         field.draw(canvas);
         // Start or stop pulsing based on possible moves
         startPulseIfNeeded();
@@ -450,13 +475,16 @@ public class GameView extends View {
     }
 
     private boolean isBouncing(int x, int y,ArrayList<MoveTo> Moves) {
+        return isBouncingOnBorder(x, y) || wasBallThere(x, y, Moves);
+    }
+
+    private boolean isBouncingOnBorder(int x, int y) {
         return ((x == 0) && (y >= 0) && (y <= intFieldHeight))
                 || ((x == intFieldWidth) && (y >= 0) && (y <= intFieldHeight))
                 || ((y == 0) && (x < intFieldWidth / 2) && (x > 0))
                 || ((y == 0) && (x > intFieldWidth / 2) && (x < intFieldWidth))
                 || ((y == intFieldHeight) && (x < intFieldWidth / 2) && (x > 0))
-                || ((y == intFieldHeight) && (x > intFieldWidth / 2) && (x < intFieldWidth))
-                || wasBallThere(x, y, Moves);
+                || ((y == intFieldHeight) && (x > intFieldWidth / 2) && (x < intFieldWidth));
     }
 
     private boolean wasBallThere(int x, int y, ArrayList<MoveTo> Moves){
@@ -482,6 +510,11 @@ public class GameView extends View {
     public boolean MakeMove(int x, int y,ArrayList<MoveTo> Moves){
         ArrayList<MoveTo> possibleMoves= new ArrayList<>();
         boolean bouncing=isBouncing(x,y,Moves);
+
+        // Determine bounce type BEFORE adding the new move to the list
+        // This ensures we check if the point was previously visited, not including the current move
+        boolean wasPreviouslyVisited = bouncing && wasBallThere(x, y, Moves);
+        boolean isBorderBounce = bouncing && isBouncingOnBorder(x, y);
 
         MoveTo previousMove = Moves.get(Moves.size() - 1);
         MoveTo newMove;
@@ -515,13 +548,23 @@ public class GameView extends View {
 
         createPossibleMoves(possibleMoves, Moves);
 
+        // Update tutorial message based on game state
         if(possibleMoves.isEmpty()) {
-            if(y==-1)
+            // Check if it's a goal or loss
+            if(y==-1) {
+                // Ball landed in top goal - player 0 scores
+                field.setTutorialMessageType(Field.TutorialMessageType.GOAL);
                 gameActivity.showWinner(0);
+            }
             else {
-                if(y==intFieldHeight+1)
+                if(y==intFieldHeight+1) {
+                    // Ball landed in bottom goal - player 1 scores (own goal for player 0 perspective)
+                    field.setTutorialMessageType(Field.TutorialMessageType.OWN_GOAL);
                     gameActivity.showWinner(1);
+                }
                 else {
+                    // No possible moves - player loses
+                    field.setTutorialMessageType(Field.TutorialMessageType.NO_MOVES);
                     if(bouncing){
                         gameActivity.showWinner(pOpponent(Moves.get(Moves.size()-1).P));
                     }
@@ -530,12 +573,23 @@ public class GameView extends View {
                 }
             }
             return false;
+        } else if (bouncing) {
+            // Move resulted in a bounce - determine if border or visited point
+            // Check visited point first since a point can be both on border and previously visited
+            if (wasPreviouslyVisited) {
+                field.setTutorialMessageType(Field.TutorialMessageType.BOUNCE_VISITED);
+            } else if (isBorderBounce) {
+                field.setTutorialMessageType(Field.TutorialMessageType.BOUNCE_BORDER);
+            }
+        } else {
+            // Normal move - reset to initial message
+            field.setTutorialMessageType(Field.TutorialMessageType.INITIAL);
         }
         return true;
     }
 
     public int checkWinner(int x, int y,ArrayList<MoveTo> Moves){
-        Log.d("TAG_Soccer", getClass().getSimpleName() + ".checkWinner: Started");
+        //Log.d("TAG_Soccer", getClass().getSimpleName() + ".checkWinner: Started");
         boolean bouncing=isBouncing(x,y,Moves);
         ArrayList<MoveTo> nextMoves = new ArrayList<>(Moves);
         if(bouncing)
@@ -574,10 +628,11 @@ public class GameView extends View {
     }
 
     public boolean androidNextMove_v2(ArrayList<MoveTo> Moves,MoveTo masterMinMoveTo, int bouncingLevel, NextMoveFound masterNextMoveFound, int treeDepthLevel, long startThinkingTime) {
+        numberMovesAnalyzed++;
         String stringMove=Moves.get(Moves.size()-1).toString();
-        Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidNextMove_v2: <"+stringMove+" bouncinglevel='"+ bouncingLevel +"' treedepthlevel='"+ treeDepthLevel +"'>");
-        logMoves(Moves);
-        long difference;
+        //Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidNextMove_v2: <"+stringMove+" bouncinglevel='"+ bouncingLevel +"' treedepthlevel='"+ treeDepthLevel +"'>");
+        //logMoves(Moves);
+        double difference;
         long startTime = System.currentTimeMillis();
         NextMoveFound nextMoveFound = new NextMoveFound(masterNextMoveFound.found, 0, false, false);
         NextMoveFound tempNextMoveFound = new NextMoveFound(false, 0, false, false);
@@ -598,16 +653,22 @@ public class GameView extends View {
                 if(nextMoveFound.victory)
                     break;
 
-                //if too many bouncing levels
+                // Safety valve: Prevent excessive recursion on positions with many bounces
+                // This is a FIXED value, not tied to difficulty level
+                // See docs/MINMAX_DIFFICULTY_APPROACH_ANALYSIS.md for rationale
                 int gameBouncingLevel = 50;
                 if((nextMoveFound.found) && (nextMoveFound.bouncingLevel> gameBouncingLevel)) {
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidNextMove_v2: <gameBouncingLevelReached>" + gameBouncingLevel + "</gameBouncingLevelReached>");
+                    //Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidNextMove_v2: <gameBouncingLevelReached>" + gameBouncingLevel + "</gameBouncingLevelReached>");
                     break;
                 }
 
-                difference = (System.currentTimeMillis() - startThinkingTime)/1000;
+                // PRIMARY DIFFICULTY CONTROL: Time budget based on androidLevel
+                // Easy=0s, Medium=3s, Hard=10s
+                // This ensures responsive UI and consistent difficulty across devices
+                // See docs/MINMAX_DIFFICULTY_APPROACH_ANALYSIS.md for analysis
+                difference = (System.currentTimeMillis() - startThinkingTime)/1000.0;
                 if((nextMoveFound.found) && (difference>androidLevel)) {
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidNextMove_v2: <timeLimitReached>" + difference + "</timeLimitReached>");
+                    //Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidNextMove_v2: <timeLimitReached>" + difference + "</timeLimitReached>");
                     break;
                 }
 
@@ -618,7 +679,7 @@ public class GameView extends View {
                     while (bestMoves.size() > movesSize)
                         bestMoves.remove(bestMoves.size() - 1);
                     bestMoves.add(new MoveTo(minMoveTo.X, minMoveTo.Y, Moves.get(Moves.size() - 1).P));
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidNextMove_v2: <minimumfound1>" + minMoveTo + "</minimumfound1>");
+                    //Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidNextMove_v2: <minimumfound1>" + minMoveTo + "</minimumfound1>");
                     nextMoveFound.found = true;
                     nextMoveFound.bouncingLevel = bouncingLevel;
                     nextMoveFound.victory=true;
@@ -626,6 +687,10 @@ public class GameView extends View {
                     break;
                 }
 
+                // Safety valve: Limit opponent move simulation depth
+                // This is a FIXED value, not tied to difficulty level
+                // Prevents excessive recursion into opponent move trees
+                // See docs/MINMAX_DIFFICULTY_APPROACH_ANALYSIS.md for rationale
                 int gameTreeDepthLevel = 1;
                 if (!(isBouncing(i.X, i.Y, Moves) || treeDepthLevel< gameTreeDepthLevel))
                 {
@@ -635,7 +700,7 @@ public class GameView extends View {
                         while (bestMoves.size() > movesSize)
                             bestMoves.remove(bestMoves.size() - 1);
                         bestMoves.add(new MoveTo(minMoveTo.X, minMoveTo.Y, Moves.get(Moves.size() - 1).P));
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidNextMove_v2: <minimumfound player='"+ Moves.get(Moves.size() - 1).P +"' MINMAX='" + MINMAX(minMoveTo.X, minMoveTo.Y, Moves.get(Moves.size() - 1).P) +"'>" + minMoveTo + "</minimumfound>");
+                        //Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidNextMove_v2: <minimumfound player='"+ Moves.get(Moves.size() - 1).P +"' MINMAX='" + MINMAX(minMoveTo.X, minMoveTo.Y, Moves.get(Moves.size() - 1).P) +"'>" + minMoveTo + "</minimumfound>");
                         nextMoveFound.found = true;
                         nextMoveFound.bouncingLevel = bouncingLevel;
                         localNextMoveFound = true;
@@ -645,7 +710,7 @@ public class GameView extends View {
                             break;
                         }
                         if(checkWinner(i.X, i.Y, Moves) == 0) {
-                            Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidNextMove_v2: <defeat>" + stringMove + "</defeat>");
+                            //Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidNextMove_v2: <defeat>" + stringMove + "</defeat>");
                             nextMoveFound.defeat=true;
                             break;
                         }
@@ -680,7 +745,7 @@ public class GameView extends View {
                                 bestMoves.remove(bestMoves.size() - 1);
                             for (int j = bestMoves.size(); j < tempMoves.size(); j++)
                                 bestMoves.add(new MoveTo(tempMoves.get(j).X, tempMoves.get(j).Y, tempMoves.get(j).P));
-                            Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidNextMove_v2: <minimumfound player='"+ Moves.get(Moves.size() - 1).P +"' MINMAX='"+ MINMAX(minMoveTo.X, minMoveTo.Y, Moves.get(Moves.size() - 1).P) +"'>" + minMoveTo + "</minimumfound>");
+                            //Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidNextMove_v2: <minimumfound player='"+ Moves.get(Moves.size() - 1).P +"' MINMAX='"+ MINMAX(minMoveTo.X, minMoveTo.Y, Moves.get(Moves.size() - 1).P) +"'>" + minMoveTo + "</minimumfound>");
                             localNextMoveFound=true;
                             nextMoveFound.found = true;
                             nextMoveFound.bouncingLevel = tempNextMoveFound.bouncingLevel;
@@ -688,7 +753,7 @@ public class GameView extends View {
                         }
                     }
                     if(tempNextMoveFound.defeat && Moves.get(Moves.size() - 1).P==0) {
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidNextMove_v2: <defeat>" + stringMove + "</defeat>");
+                        //Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidNextMove_v2: <defeat>" + stringMove + "</defeat>");
                         nextMoveFound.defeat=true;
                         masterNextMoveFound.defeat= true;
                         break;
@@ -712,8 +777,8 @@ public class GameView extends View {
             }
         }
         difference = System.currentTimeMillis() - startTime;
-        Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidNextMove_v2: <secondselapsed>"+ difference / 1000 +"</secondselapsed>");
-        Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidNextMove_v2: </"+stringMove+">");
+        //Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidNextMove_v2: <secondselapsed>"+ difference / 1000 +"</secondselapsed>");
+        //Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidNextMove_v2: </"+stringMove+">");
         return localNextMoveFound;
     }
 
@@ -733,19 +798,41 @@ public class GameView extends View {
         //called 1-st time
         if (androidMoves.size() <= realMoves.size()) {
             Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidMove: In androidMove 1-st time");
+            numberMovesAnalyzed = 0;  // Reset counter when starting new thinking session
+            
+            // Start periodic UI updates during AI thinking
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidMove: Starting periodic UI refresh every " + THINKING_PROGRESS_REFRESH_INTERVAL_MS + "ms");
+            thinkingProgressScheduled = true;
+            thinkingProgressHandler.postDelayed(thinkingProgressRunnable, THINKING_PROGRESS_REFRESH_INTERVAL_MS);
+            
             androidMoves = new ArrayList<>(realMoves);
             //assigning first form the list as MIN
             MoveTo minMoveTo = new MoveTo(possibleMoves.get(0).X, possibleMoves.get(0).Y, 1);
             NextMoveFound nextMoveFound = new NextMoveFound(false, 0, false, false);
             Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidMove: <?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-            androidNextMove_v2(androidMoves, minMoveTo,0,nextMoveFound, 0, System.currentTimeMillis());
-            if ( nextMoveFound.found ) {
-                Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidMove: Scheduling androidMove 1-st time after animations");
-                requestAndroidMoveAfterAnimations();
-            }
-            else {
-                gameActivity.showWinner(0);
-            }
+            
+            // Move AI thinking to background thread so UI can be updated during computation
+            // This allows thinkingProgressHandler to execute and refresh the UI every 500ms
+            new Thread(() -> {
+                androidNextMove_v2(androidMoves, minMoveTo, 0, nextMoveFound, 0, System.currentTimeMillis());
+                
+                // Post results back to UI thread (reusing existing thinkingProgressHandler)
+                thinkingProgressHandler.post(() -> {
+                    // Stop periodic UI updates after AI thinking completes
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidMove: Stopping periodic UI refresh, final numberMovesAnalyzed=" + numberMovesAnalyzed);
+                    thinkingProgressScheduled = false;
+                    thinkingProgressHandler.removeCallbacks(thinkingProgressRunnable);
+                    invalidate();  // Final update to show the last count
+                    
+                    if ( nextMoveFound.found ) {
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidMove: Scheduling androidMove 1-st time after animations");
+                        requestAndroidMoveAfterAnimations();
+                    }
+                    else {
+                        gameActivity.showWinner(0);
+                    }
+                });
+            }, "AI-Computation-Thread").start();
         } else {
             //called n-th time
             Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidMove: In androidMove n-th time");
@@ -757,8 +844,10 @@ public class GameView extends View {
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".androidMove: Scheduling androidMove n-th time after animations");
                     requestAndroidMoveAfterAnimations();
                 }
-                else
+                else {
                     androidMoves.clear();
+                    numberMovesAnalyzed = 0;  // Reset counter when Android completes its turn
+                }
         }
     }
 
@@ -845,5 +934,7 @@ public class GameView extends View {
         super.onDetachedFromWindow();
         androidMoveDelayHandler.removeCallbacks(androidMoveAfterAnimationRunnable);
         androidMovePending = false;
+        thinkingProgressScheduled = false;
+        thinkingProgressHandler.removeCallbacks(thinkingProgressRunnable);
     }
 }

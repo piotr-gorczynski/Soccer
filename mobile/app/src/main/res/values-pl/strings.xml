@@ -212,7 +212,7 @@
     <string name="field_move_tail">rusza ... ⏳ %1$s</string>
     <string name="field_hourglass_tail">⏳ %1$s</string>
     <string name="field_your_move_ellipsis">Twój ruch...</string>
-    <string name="field_thinking">Myśli...</string>
+    <string name="field_thinking">Myśli... Przeanalizowane ruchy: %1$s</string>
     <string name="field_move_ellipsis_tail">rusza... ⏳ %1$s</string>
     <string name="field_waiting_for">Czekanie na %1$s</string>
     <string name="field_to_start_tail">aby rozpocząć... ⏳ %1$s</string>
@@ -365,12 +365,7 @@
     <string name="user_blocked_invites">Użytkownik zablokował zaproszenia</string>
     <string name="cannot_invite_this_user">Nie można zaprosić tego użytkownika</string>
     
-    <!-- Preference level values -->
-    <string-array name="pref_level_values">
-        <item>1</item>
-        <item>10</item>
-        <item>30</item>
-    </string-array>
+
     <string name="failed_to_load_terms">Nie udało się załadować regulaminu</string>
     
     <!-- Animation info dialog -->
@@ -386,4 +381,10 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">Turniej %1$s już się nie toczy</string>
+    <string name="field_hand_tutorial_message">Dotknij jednego z punktów, aby przesunąć piłkę</string>
+    <string name="field_hand_tutorial_bounce_border">Gdy piłka uderza w granicę, odbija się i możesz ponownie przesunąć piłkę</string>
+    <string name="field_hand_tutorial_bounce_visited">Gdy piłka uderza w wcześniej odwiedzony punkt, odbija się i możesz ponownie przesunąć piłkę</string>
+    <string name="field_hand_tutorial_no_moves">Gdy nie ma możliwych ruchów, gracz natychmiast przegrywa.</string>
+    <string name="field_hand_tutorial_goal">Gol! Brawo!</string>
+    <string name="field_hand_tutorial_own_goal">Gol samobójczy!</string>
 </resources>

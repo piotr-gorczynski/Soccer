@@ -75,11 +75,6 @@
     <string name="join_game_action">Ku Biir Ciyaarta</string>
 
     <!-- Additional translations -->
-    <string-array name="pref_level_values">
-        <item>1</item>
-        <item>10</item>
-        <item>30</item>
-    </string-array>
     <string name="register">Isdiiwaangeli</string>
     <string name="confirm_password">Xaqiiji erayga sirta ah</string>
     <string name="email">Iimayl</string>
@@ -203,7 +198,7 @@
     <string name="field_move_tail">dhaqdhaqaaq … ⏳ %1$s</string>
     <string name="field_hourglass_tail">⏳ %1$s</string>
     <string name="field_your_move_ellipsis">Adigaa dhaqdhaqaaqa leh…</string>
-    <string name="field_thinking">Waxay ka fekeraysaa…</string>
+    <string name="field_thinking">Waxay ka fekeraysaa… Dhaqdhaqaaqyo la falanqeeyey: %1$s</string>
     <string name="field_move_ellipsis_tail">dhaqdhaqaaq… ⏳ %1$s</string>
     <string name="field_waiting_for">Waxaa la sugayaa %1$s</string>
     <string name="field_to_start_tail">inuu bilaabo… ⏳ %1$s</string>
@@ -351,4 +346,10 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">Tartanka %1$s hadda ma socdo</string>
+    <string name="field_hand_tutorial_message">Taabo mid ka mid ah dhibcaha si aad u dhaqaajiso kubbadda</string>
+    <string name="field_hand_tutorial_bounce_border">Marka kubbadda ay ku dhacdo xadka, waxay soo noqotaa oo waxaad mar kale u dhaqaajin kartaa kubbadda</string>
+    <string name="field_hand_tutorial_bounce_visited">Marka kubbadda ay ku dhacdo meel hore loo booqday, waxay soo noqotaa oo waxaad mar kale u dhaqaajin kartaa kubbadda</string>
+    <string name="field_hand_tutorial_no_moves">Marka aysan jirin dhaqaaqyo suurtagal ah, ciyaartoygu markiiba wuu khasaaraa.</string>
+    <string name="field_hand_tutorial_goal">Goal! Fiican!</string>
+    <string name="field_hand_tutorial_own_goal">Goal shakhsi ah!</string>
 </resources>

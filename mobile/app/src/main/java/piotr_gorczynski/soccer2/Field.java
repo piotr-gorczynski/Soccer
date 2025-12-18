@@ -20,6 +20,7 @@ import androidx.preference.PreferenceManager;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.Log;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
@@ -41,6 +42,9 @@ public class Field {
     private final Paint pPlayer0;
     private final Paint pPlayer1;
     private final Paint pHintText;
+    private final Paint pTutorialBalloon;
+    private final Paint pTutorialBalloonBorder;
+    private final Paint pTutorialBalloonText;
     private final Rect rField;
     private final Rect rText;
     private final Bitmap ballBitmap;
@@ -101,6 +105,7 @@ public class Field {
     private long remainingTime0, remainingTime1;
 
     private Long turnStartTime;
+    private int numberMovesAnalyzed = 0;
     private final boolean animationsEnabled;
     private final boolean showIdlePlayerSprite;
     private final boolean handTutorialAllowed;
@@ -223,6 +228,25 @@ public class Field {
     private static final int THRESHOLD_SECOND = 10;
     private static final int THRESHOLD_THIRD = 20;
     
+    // Tutorial balloon constants
+    private static final float BALLOON_TEXT_SIZE_RATIO = 0.8f; // Ratio of field text size
+    private static final float BALLOON_PADDING_RATIO = 0.5f; // Padding as ratio of text size
+    private static final float BALLOON_CORNER_RATIO = 0.3f; // Corner radius as ratio of text size
+    private static final float BALLOON_MARGIN_RATIO = 0.05f; // Margin from field edge as ratio
+    private static final float BALLOON_MOVE_CLEARANCE_RATIO = 2.5f; // Clearance around possible moves
+    private static final float BALLOON_MAX_WIDTH_RATIO = 0.9f; // Maximum balloon width as ratio of field width
+    private static final float BALLOON_LINE_SPACING_RATIO = 0.2f; // Line spacing as ratio of line height
+    
+    // Tutorial message types
+    public enum TutorialMessageType {
+        INITIAL,              // Before first move
+        BOUNCE_BORDER,        // Ball bounced on border
+        BOUNCE_VISITED,       // Ball bounced on visited point
+        NO_MOVES,             // No possible moves (loss)
+        GOAL,                 // Scored in opponent's goal
+        OWN_GOAL              // Scored in own goal
+    }
+    
     // Hand tutorial state
     private final Bitmap handBitmap;
     private final SharedPreferences prefs;
@@ -232,6 +256,7 @@ public class Field {
     private long handTutorialLastUpdateTime = 0L;
     private int handTutorialLastMoveCount = INITIAL_MOVE_COUNT; // Track the number of moves when tutorial was last shown
     private HandTutorialDialogCallback dialogCallback = null;
+    private TutorialMessageType currentTutorialMessage = TutorialMessageType.INITIAL;
     
     // Callback interface for requesting dialog
     public interface HandTutorialDialogCallback {
@@ -483,6 +508,24 @@ public class Field {
         pHintText.setColor(Color.WHITE);
         pHintText.setTextAlign(Paint.Align.CENTER);
 
+        // Tutorial balloon paints
+        pTutorialBalloon = new Paint();
+        pTutorialBalloon.setStyle(Paint.Style.FILL);
+        pTutorialBalloon.setColor(Color.WHITE);
+        pTutorialBalloon.setAntiAlias(true);
+
+        pTutorialBalloonBorder = new Paint();
+        pTutorialBalloonBorder.setStyle(Paint.Style.STROKE);
+        pTutorialBalloonBorder.setColor(Color.BLACK);
+        pTutorialBalloonBorder.setStrokeWidth(2f);
+        pTutorialBalloonBorder.setAntiAlias(true);
+
+        pTutorialBalloonText = new Paint();
+        pTutorialBalloonText.setStyle(Paint.Style.FILL);
+        pTutorialBalloonText.setColor(Color.BLACK);
+        pTutorialBalloonText.setTextAlign(Paint.Align.CENTER);
+        pTutorialBalloonText.setAntiAlias(true);
+
         // paint style and color
         Paint pHintBalloon = new Paint();
         pHintBalloon.setStyle(Paint.Style.FILL);
@@ -537,6 +580,11 @@ public class Field {
         remainingTime0 = t0;
         remainingTime1 = t1;
         turnStartTime = ts;
+    }
+
+    // called from GameView
+    public void setNumberMovesAnalyzed(int count) {
+        numberMovesAnalyzed = count;
     }
 
     public int getFieldWidth() {
@@ -2889,7 +2937,9 @@ public class Field {
             if (gameType == 1) {
                 textTop = context.getString(R.string.field_your_move_ellipsis);  // could be improved, but likely shared screen
             } else if (gameType == 2) {
-                textTop = context.getString(R.string.field_thinking);
+                String formattedNumber = NumberFormat.getInstance(Locale.getDefault()).format(numberMovesAnalyzed);
+                textTop = context.getString(R.string.field_thinking, formattedNumber);
+                Log.d("TAG_Soccer", "Field.draw: Updated thinking text with numberMovesAnalyzed=" + numberMovesAnalyzed);
             } else  {
                 // Multiplayer: determine which name is the opponent
 
@@ -2998,12 +3048,9 @@ public class Field {
 
             // Check if we've shown all positions in this cycle
             if (handTutorialPositionIndex >= possibleMoves.size()) {
-                // Cycle complete, wait for next move to start new cycle
-                // Position index will remain >= size, so the conditional check at the end of this method
-                // will skip rendering until handTutorialPositionIndex is reset to 0 when a new move is detected
+                // Animation cycle complete - hand stops drawing but balloon remains visible until user moves
                 /*Log.d("TAG_Soccer", getClass().getSimpleName() + ".drawHandTutorial: Cycle "
-                    + (handTutorialCycle + 1) + " completed, waiting for next move");*/
-                return;
+                    + (handTutorialCycle + 1) + " completed, balloon continues to show");*/
             }
         }
 
@@ -3023,6 +3070,9 @@ public class Field {
                 + handTutorialPositionIndex + "/" + possibleMoves.size() 
                 + ", cycle " + (handTutorialCycle + 1));*/
         }
+        
+        // Draw the tutorial balloon message
+        drawTutorialBalloon(canvas);
     }
 
     @NonNull
@@ -3037,6 +3087,245 @@ public class Field {
 
         // Draw the hand
         return new RectF(handLeft, circleCenterY, handRight, handBottom);
+    }
+
+    /**
+     * Draws a white balloon with tutorial message positioned to avoid covering possible moves
+     */
+    private void drawTutorialBalloon(Canvas canvas) {
+        if (possibleMoves == null || possibleMoves.isEmpty()) {
+            return;
+        }
+
+        // Get the tutorial message from resources based on current message type
+        String message = getTutorialMessage();
+        
+        // Set text size based on canvas size
+        boolean isPortrait = rField.height() > rField.width();
+        float textSize = isPortrait ? rField.height() * flText * BALLOON_TEXT_SIZE_RATIO : rField.width() * flText * BALLOON_TEXT_SIZE_RATIO;
+        pTutorialBalloonText.setTextSize(textSize);
+        
+        // Calculate padding
+        float padding = textSize * BALLOON_PADDING_RATIO;
+        
+        // Calculate maximum balloon width (90% of field width to ensure it fits on screen)
+        float fieldWidth = rField.width();
+        float maxBalloonWidth = fieldWidth * BALLOON_MAX_WIDTH_RATIO;
+        
+        // Wrap text into multiple lines if needed
+        ArrayList<String> wrappedLines = wrapText(message, pTutorialBalloonText, maxBalloonWidth - padding * 2);
+        
+        // Calculate line height once (all lines use the same paint)
+        // Use font metrics for consistent line height calculation across different fonts
+        // descent - ascent gives the recommended line height (total vertical space for text)
+        Paint.FontMetrics fontMetrics = pTutorialBalloonText.getFontMetrics();
+        float lineHeight = fontMetrics.descent - fontMetrics.ascent;
+        
+        // Calculate balloon width based on the longest line
+        float balloonWidth = 0;
+        Rect textBounds = new Rect();
+        for (String line : wrappedLines) {
+            pTutorialBalloonText.getTextBounds(line, 0, line.length(), textBounds);
+            float lineWidth = textBounds.width();
+            if (lineWidth > balloonWidth) {
+                balloonWidth = lineWidth;
+            }
+        }
+        
+        // Add padding to balloon width
+        balloonWidth += padding * 2;
+        
+        // Calculate balloon height for multiple lines (add spacing between lines)
+        float lineSpacing = lineHeight * BALLOON_LINE_SPACING_RATIO;
+        float balloonHeight = wrappedLines.size() * lineHeight + (wrappedLines.size() - 1) * lineSpacing + padding * 2;
+        float cornerRadius = textSize * BALLOON_CORNER_RATIO;
+        
+        // Calculate dot size for collision detection
+        float dotSize = isPortrait ? rField.height() * flDots : rField.width() * flDots;
+        float pulseDotSize = dotSize * BALLOON_MOVE_CLEARANCE_RATIO;
+        
+        // Find the best position for the balloon that doesn't cover possible moves
+        RectF balloonRect = findBalloonPosition(canvas, balloonWidth, balloonHeight, pulseDotSize);
+        
+        // Draw the white balloon background with rounded corners
+        canvas.drawRoundRect(balloonRect, cornerRadius, cornerRadius, pTutorialBalloon);
+        
+        // Draw the balloon border
+        canvas.drawRoundRect(balloonRect, cornerRadius, cornerRadius, pTutorialBalloonBorder);
+        
+        // Draw each line of text centered in the balloon
+        float textX = balloonRect.centerX();
+        float totalTextHeight = wrappedLines.size() * lineHeight + (wrappedLines.size() - 1) * lineSpacing;
+        // Calculate Y position for the first line's baseline
+        // Start from vertical center minus half total height, then add lineHeight to move from top to baseline
+        // (drawText draws at the baseline, not the top of the text)
+        float startY = balloonRect.centerY() - totalTextHeight / 2f + lineHeight;
+        
+        for (int i = 0; i < wrappedLines.size(); i++) {
+            String line = wrappedLines.get(i);
+            float textY = startY + i * (lineHeight + lineSpacing);
+            canvas.drawText(line, textX, textY, pTutorialBalloonText);
+        }
+    }
+
+    /**
+     * Wraps text into multiple lines to fit within the specified width
+     */
+    private ArrayList<String> wrapText(String text, Paint paint, float maxWidth) {
+        ArrayList<String> lines = new ArrayList<>();
+        
+        // If the entire text fits in one line, return it as is
+        if (paint.measureText(text) <= maxWidth) {
+            lines.add(text);
+            return lines;
+        }
+        
+        // Split text into words (split on any whitespace sequence)
+        String[] words = text.split("\\s+");
+        StringBuilder currentLine = new StringBuilder();
+        
+        for (String word : words) {
+            String testLine = currentLine.length() == 0 ? word : currentLine + " " + word;
+            float testWidth = paint.measureText(testLine);
+            
+            if (testWidth <= maxWidth) {
+                // Word fits in current line
+                if (currentLine.length() > 0) {
+                    currentLine.append(" ");
+                }
+                currentLine.append(word);
+            } else {
+                // Word doesn't fit, start a new line
+                if (currentLine.length() > 0) {
+                    lines.add(currentLine.toString());
+                    currentLine = new StringBuilder(word);
+                } else {
+                    // Single word is too long, add it anyway
+                    lines.add(word);
+                }
+            }
+        }
+        
+        // Add the last line if there's any content
+        if (currentLine.length() > 0) {
+            lines.add(currentLine.toString());
+        }
+        
+        return lines;
+    }
+
+    /**
+     * Gets the tutorial message string based on current tutorial message type
+     */
+    private String getTutorialMessage() {
+        switch (currentTutorialMessage) {
+            case BOUNCE_BORDER:
+                return context.getString(R.string.field_hand_tutorial_bounce_border);
+            case BOUNCE_VISITED:
+                return context.getString(R.string.field_hand_tutorial_bounce_visited);
+            case NO_MOVES:
+                return context.getString(R.string.field_hand_tutorial_no_moves);
+            case GOAL:
+                return context.getString(R.string.field_hand_tutorial_goal);
+            case OWN_GOAL:
+                return context.getString(R.string.field_hand_tutorial_own_goal);
+            case INITIAL:
+            default:
+                return context.getString(R.string.field_hand_tutorial_message);
+        }
+    }
+
+    /**
+     * Sets the tutorial message type to be displayed
+     */
+    public void setTutorialMessageType(TutorialMessageType messageType) {
+        this.currentTutorialMessage = messageType;
+    }
+
+    /**
+     * Checks if the balloon rectangle overlaps with any possible move points
+     */
+    private boolean checkBalloonOverlap(RectF balloonRect, float pulseDotSize) {
+        for (MoveTo move : possibleMoves) {
+            float moveX = w2x(flipX(move.X));
+            float moveY = h2y(flipY(move.Y));
+            
+            // Check if the move point is within the balloon area (with some margin)
+            if (moveX >= balloonRect.left - pulseDotSize && 
+                moveX <= balloonRect.right + pulseDotSize &&
+                moveY >= balloonRect.top - pulseDotSize && 
+                moveY <= balloonRect.bottom + pulseDotSize) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Finds the best position for the tutorial balloon that doesn't cover possible moves
+     */
+    private RectF findBalloonPosition(Canvas canvas, float balloonWidth, float balloonHeight, float pulseDotSize) {
+        // Calculate field bounds in pixels
+        float fieldLeft = rField.left;
+        float fieldRight = rField.right;
+        float fieldTop = rField.top;
+        float fieldBottom = rField.bottom;
+        
+        // Try to position the balloon at the top center of the field
+        float balloonCenterX = (fieldLeft + fieldRight) / 2f;
+        float balloonTop = fieldTop + (fieldBottom - fieldTop) * BALLOON_MARGIN_RATIO;
+        
+        RectF balloonRect = new RectF(
+            balloonCenterX - balloonWidth / 2f,
+            balloonTop,
+            balloonCenterX + balloonWidth / 2f,
+            balloonTop + balloonHeight
+        );
+        
+        // Check if this position overlaps with any possible moves
+        boolean overlaps = checkBalloonOverlap(balloonRect, pulseDotSize);
+        
+        // If top position overlaps, try bottom of field
+        if (overlaps) {
+            balloonTop = fieldBottom - balloonHeight - (fieldBottom - fieldTop) * BALLOON_MARGIN_RATIO;
+            balloonRect = new RectF(
+                balloonCenterX - balloonWidth / 2f,
+                balloonTop,
+                balloonCenterX + balloonWidth / 2f,
+                balloonTop + balloonHeight
+            );
+            
+            // Check again for overlaps at bottom position
+            overlaps = checkBalloonOverlap(balloonRect, pulseDotSize);
+            
+            // If bottom also overlaps, try left side
+            if (overlaps) {
+                float balloonLeft = fieldLeft + (fieldRight - fieldLeft) * BALLOON_MARGIN_RATIO;
+                float balloonCenterY = (fieldTop + fieldBottom) / 2f;
+                balloonRect = new RectF(
+                    balloonLeft,
+                    balloonCenterY - balloonHeight / 2f,
+                    balloonLeft + balloonWidth,
+                    balloonCenterY + balloonHeight / 2f
+                );
+            }
+        }
+        
+        // Ensure balloon stays within field bounds
+        if (balloonRect.left < fieldLeft) {
+            balloonRect.offset(fieldLeft - balloonRect.left, 0);
+        }
+        if (balloonRect.right > fieldRight) {
+            balloonRect.offset(fieldRight - balloonRect.right, 0);
+        }
+        if (balloonRect.top < fieldTop) {
+            balloonRect.offset(0, fieldTop - balloonRect.top);
+        }
+        if (balloonRect.bottom > fieldBottom) {
+            balloonRect.offset(0, fieldBottom - balloonRect.bottom);
+        }
+        
+        return balloonRect;
     }
 
     // Method to be called when user responds to dialog

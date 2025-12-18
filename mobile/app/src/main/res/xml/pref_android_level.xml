@@ -4,7 +4,7 @@
         <ListPreference
             android:key="android_level"
             android:title="@string/pref_title_level"
-            android:defaultValue="1"
+            android:defaultValue="0.1"
             android:entries="@array/pref_level_titles"
             android:entryValues="@array/pref_level_values"
             android:icon="@drawable/ic_bullet" />

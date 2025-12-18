@@ -75,11 +75,6 @@
     <string name="join_game_action">ເຂົ້າຮ່ວມເກມ</string>
 
     <!-- Additional translations needed -->
-    <string-array name="pref_level_values">
-        <item>1</item>
-        <item>10</item>
-        <item>30</item>
-    </string-array>
     <string name="register">ລົງທະບຽນ</string>
     <string name="confirm_password">ຢືນຢັນລະຫັດຜ່ານ</string>
     <string name="email">ອີເມວ</string>
@@ -203,7 +198,7 @@
     <string name="field_move_tail">ກໍາລັງເຄື່ອນໄຫວ … ⏳ %1$s</string>
     <string name="field_hourglass_tail">⏳ %1$s</string>
     <string name="field_your_move_ellipsis">ເປັນຕາທ່ານ…</string>
-    <string name="field_thinking">ກໍາລັງຄິດ…</string>
+    <string name="field_thinking">ກໍາລັງຄິດ… ການເຄື່ອນໄຫວທີ່ວິເຄາະ: %1$s</string>
     <string name="field_move_ellipsis_tail">ກໍາລັງເຄື່ອນໄຫວ… ⏳ %1$s</string>
     <string name="field_waiting_for">ກໍາລັງລໍຖ້າ %1$s</string>
     <string name="field_to_start_tail">ໃຫ້ເລີ່ມ… ⏳ %1$s</string>
@@ -351,4 +346,10 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">ການແຂ່ງຂັນ %1$s ບໍ່ໄດ້ດຳເນີນການອີກແລ້ວ</string>
+    <string name="field_hand_tutorial_message">ແຕະໃສ່ຈຸດໃດໜຶ່ງເພື່ອເຄື່ອນຍ້າຍບານ</string>
+    <string name="field_hand_tutorial_bounce_border">ເມື່ອບານຕີຂອບເຂດ ມັນສະທ້ອນກັບຄືນ ແລະ ເຈົ້າສາມາດເຄື່ອນຍ້າຍບານອີກຄັ້ງ</string>
+    <string name="field_hand_tutorial_bounce_visited">ເມື່ອບານຕີຈຸດທີ່ເຄີຍໄປແລ້ວ ມັນສະທ້ອນກັບຄືນ ແລະ ເຈົ້າສາມາດເຄື່ອນຍ້າຍບານອີກຄັ້ງ</string>
+    <string name="field_hand_tutorial_no_moves">ເມື່ອບໍ່ມີການເຄື່ອນທີ່ທີ່ເປັນໄປໄດ້ ຜູ້ຫຼິ້ນຈະແພ້ທັນທີ.</string>
+    <string name="field_hand_tutorial_goal">ປະຕູ! ດີຫຼາຍ!</string>
+    <string name="field_hand_tutorial_own_goal">ປະຕູຕົນເອງ!</string>
 </resources>
