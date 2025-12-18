@@ -75,11 +75,6 @@
     <string name="join_game_action">Тоглоомд нэгдэх</string>
 
     <!-- Additional translations needed -->
-    <string-array name="pref_level_values">
-        <item>1</item>
-        <item>10</item>
-        <item>30</item>
-    </string-array>
     <string name="register">Бүртгүүлэх</string>
     <string name="confirm_password">Нууц үгийг баталгаажуулах</string>
     <string name="email">Имэйл</string>
@@ -203,7 +198,7 @@
     <string name="field_move_tail">нүүдэл … ⏳ %1$s</string>
     <string name="field_hourglass_tail">⏳ %1$s</string>
     <string name="field_your_move_ellipsis">Таны нүүдэл…</string>
-    <string name="field_thinking">Бодож байна…</string>
+    <string name="field_thinking">Бодож байна… Шинжилсэн нүүдэл: %1$s</string>
     <string name="field_move_ellipsis_tail">нүүдэл… ⏳ %1$s</string>
     <string name="field_waiting_for">%1$s-ийг хүлээж байна</string>
     <string name="field_to_start_tail">эхлэх хүртэл… ⏳ %1$s</string>
@@ -351,4 +346,10 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">%1$s тэмцээн цаашид үргэлжлэхгүй байна</string>
+    <string name="field_hand_tutorial_message">Бөмбөгийг хөдөлгөхийн тулд цэгүүдийн аль нэг дээр товшино уу</string>
+    <string name="field_hand_tutorial_bounce_border">Бөмбөг хил рүү цохих үед буцаж харин бөмбөгийг дахин хөдөлгөж болно</string>
+    <string name="field_hand_tutorial_bounce_visited">Бөмбөг өмнө нь очсон цэг рүү цохих үед буцаж харин бөмбөгийг дахин хөдөлгөж болно</string>
+    <string name="field_hand_tutorial_no_moves">Боломжит нүүдэл байхгүй үед тоглогч шууд ялагдана.</string>
+    <string name="field_hand_tutorial_goal">Гоол! Гайхалтай!</string>
+    <string name="field_hand_tutorial_own_goal">Өөрийн гоол!</string>
 </resources>

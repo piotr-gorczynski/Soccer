@@ -56,11 +56,6 @@
     <string name="game_ready_title">اللعبة جاهزة لـ %1$s!</string>
     <string name="game_ready_message">مباراتك جاهزة للبدء. اضغط للانضمام!</string>
     <string name="join_game_action">الانضمام للعبة</string>
-    <string-array name="pref_level_values">
-        <item>1</item>
-        <item>10</item>
-        <item>30</item>
-    </string-array>
     <string name="register">سجّل</string>
     <string name="confirm_password">تأكيد كلمة المرور</string>
     <string name="email">البريد الإلكتروني</string>
@@ -184,7 +179,7 @@
     <string name="field_move_tail">حركة… ⏳ %1$s</string>
     <string name="field_hourglass_tail">⏳ %1$s</string>
     <string name="field_your_move_ellipsis">دورك…</string>
-    <string name="field_thinking">يفكر…</string>
+    <string name="field_thinking">يفكر… الحركات المحللة: %1$s</string>
     <string name="field_move_ellipsis_tail">حركة… ⏳ %1$s</string>
     <string name="field_waiting_for">بانتظار %1$s</string>
     <string name="field_to_start_tail">ليبدأ… ⏳ %1$s</string>
@@ -332,4 +327,10 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">البطولة %1$s لم تعد قيد التشغيل</string>
+    <string name="field_hand_tutorial_message">اضغط على إحدى النقاط لتحريك الكرة</string>
+    <string name="field_hand_tutorial_bounce_border">عندما تصطدم الكرة بحد، ترتد ويمكنك تحريك الكرة مرة أخرى</string>
+    <string name="field_hand_tutorial_bounce_visited">عندما تصطدم الكرة بنقطة تمت زيارتها مسبقًا، ترتد ويمكنك تحريك الكرة مرة أخرى</string>
+    <string name="field_hand_tutorial_no_moves">عندما لا توجد حركات ممكنة، يخسر اللاعب على الفور.</string>
+    <string name="field_hand_tutorial_goal">هدف! برافو!</string>
+    <string name="field_hand_tutorial_own_goal">هدف في المرمى الخاص!</string>
 </resources>

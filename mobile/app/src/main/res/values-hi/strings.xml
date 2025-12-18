@@ -211,7 +211,7 @@
     <string name="field_move_tail">चाल ... ⏳ %1$s</string>
     <string name="field_hourglass_tail">⏳ %1$s</string>
     <string name="field_your_move_ellipsis">आपकी चाल...</string>
-    <string name="field_thinking">सोच रहा है...</string>
+    <string name="field_thinking">सोच रहा है... विश्लेषित चालें: %1$s</string>
     <string name="field_move_ellipsis_tail">चाल... ⏳ %1$s</string>
     <string name="field_waiting_for">%1$s की प्रतीक्षा</string>
     <string name="field_to_start_tail">शुरू करने के लिए... ⏳ %1$s</string>
@@ -339,12 +339,7 @@
     <!-- Friend match statistics -->
     <string name="match_stats_format">जीत 🏆: %1$d | हार 😞: %2$d</string>
     
-    <!-- Preference level values -->
-    <string-array name="pref_level_values">
-        <item>1</item>
-        <item>10</item>
-        <item>30</item>
-    </string-array>
+
     <!-- Past invites -->
     <string name="past_invites">पिछले आमंत्रण</string>
     <string name="no_past_invites">कोई पिछले आमंत्रण नहीं</string>
@@ -385,4 +380,10 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">टूर्नामेंट %1$s अब नहीं चल रहा है</string>
+    <string name="field_hand_tutorial_message">गेंद को हिलाने के लिए किसी एक बिंदु पर टैप करें</string>
+    <string name="field_hand_tutorial_bounce_border">जब गेंद किनारे से टकराती है, तो यह उछलती है और आप फिर से गेंद को हिला सकते हैं</string>
+    <string name="field_hand_tutorial_bounce_visited">जब गेंद पहले से देखे गए बिंदु से टकराती है, तो यह उछलती है और आप फिर से गेंद को हिला सकते हैं</string>
+    <string name="field_hand_tutorial_no_moves">जब कोई संभावित चाल नहीं होती है, तो खिलाड़ी तुरंत हार जाता है।</string>
+    <string name="field_hand_tutorial_goal">गोल! शाबाश!</string>
+    <string name="field_hand_tutorial_own_goal">अपना गोल!</string>
 </resources>

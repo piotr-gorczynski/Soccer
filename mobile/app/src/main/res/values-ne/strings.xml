@@ -211,7 +211,7 @@
     <string name="field_move_tail">चाल ... ⏳ %1$s</string>
     <string name="field_hourglass_tail">⏳ %1$s</string>
     <string name="field_your_move_ellipsis">तपाईंको चाल...</string>
-    <string name="field_thinking">सोच्दै...</string>
+    <string name="field_thinking">सोच्दै... विश्लेषण गरिएका चालहरू: %1$s</string>
     <string name="field_move_ellipsis_tail">चाल... ⏳ %1$s</string>
     <string name="field_waiting_for">%1$s को प्रतीक्षा</string>
     <string name="field_to_start_tail">सुरु गर्न... ⏳ %1$s</string>
@@ -339,12 +339,7 @@
     <!-- Friend match statistics -->
     <string name="match_stats_format">जित 🏆: %1$d | हार 😞: %2$d</string>
     
-    <!-- Preference level values -->
-    <string-array name="pref_level_values">
-        <item>1</item>
-        <item>10</item>
-        <item>30</item>
-    </string-array>
+
     <!-- Past invites -->
     <string name="past_invites">विगतका निमन्त्रणाहरू</string>
     <string name="no_past_invites">विगतका निमन्त्रणाहरू छैनन्</string>
@@ -385,4 +380,10 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">प्रतियोगिता %1$s अब चलिरहेको छैन</string>
+    <string name="field_hand_tutorial_message">बल सार्न बिन्दुहरू मध्ये एकमा ट्याप गर्नुहोस्</string>
+    <string name="field_hand_tutorial_bounce_border">जब बल सीमामा ठोक्किन्छ, यो उफ्रन्छ र तपाईं फेरि बल सार्न सक्नुहुन्छ</string>
+    <string name="field_hand_tutorial_bounce_visited">जब बल पहिले नै भ्रमण गरिएको बिन्दुमा ठोक्किन्छ, यो उफ्रन्छ र तपाईं फेरि बल सार्न सक्नुहुन्छ</string>
+    <string name="field_hand_tutorial_no_moves">जब कुनै सम्भावित चालहरू छैनन्, खेलाडी तुरुन्त हराउँछ।</string>
+    <string name="field_hand_tutorial_goal">गोल! साधु!</string>
+    <string name="field_hand_tutorial_own_goal">आफ्नै गोल!</string>
 </resources>

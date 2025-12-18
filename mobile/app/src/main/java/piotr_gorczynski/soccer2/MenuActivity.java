@@ -21,7 +21,6 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
-import android.view.ViewGroup;
 import android.content.SharedPreferences;
 import androidx.preference.PreferenceManager;
 import android.widget.Button;
@@ -64,7 +63,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.google.ads.mediation.admob.AdMobAdapter;
@@ -212,17 +210,15 @@ public class MenuActivity extends BaseActivity {
             Bitmap[] candidate = runningPlayerFrames[nextRowIndex];
             if (candidate != null && candidate.length > 0) {
                 runningPlayerRowIndex = nextRowIndex;
-                if (candidate.length > 0) {
-                    if (runningPlayerFrameIndex >= candidate.length) {
-                        runningPlayerFrameIndex = runningPlayerFrameIndex % candidate.length;
-                    }
-                    int displayIndex = runningPlayerFrameIndex - 1;
-                    if (displayIndex < 0) {
-                        displayIndex = candidate.length - 1;
-                    }
-                    if (displayIndex >= 0 && displayIndex < candidate.length) {
-                        runningPlayerView.setImageBitmap(candidate[displayIndex]);
-                    }
+                if (runningPlayerFrameIndex >= candidate.length) {
+                    runningPlayerFrameIndex = runningPlayerFrameIndex % candidate.length;
+                }
+                int displayIndex = runningPlayerFrameIndex - 1;
+                if (displayIndex < 0) {
+                    displayIndex = candidate.length - 1;
+                }
+                if (displayIndex < candidate.length) {
+                    runningPlayerView.setImageBitmap(candidate[displayIndex]);
                 }
                 return;
             }
@@ -809,7 +805,7 @@ public class MenuActivity extends BaseActivity {
             // Try to handle AppCompat theme/layout initialization failures
             try {
                 // Attempt recovery by recreating the activity with basic theme handling
-                handleContentViewFailure(e);
+                handleContentViewFailure();
                 return;
             } catch (Exception recoveryException) {
                 Log.e("TAG_Soccer", getClass().getSimpleName() + ".onCreate: Recovery failed", recoveryException);
@@ -903,7 +899,7 @@ public class MenuActivity extends BaseActivity {
     private void loadInterstitialAd() {
         adRetryHandler.removeCallbacks(adRetryRunnable);
 
-        if (isFinishing() || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed())) {
+        if (isFinishing() || isDestroyed()) {
             Log.d(
                     "TAG_Soccer",
                     getClass().getSimpleName() + ".loadInterstitialAd: Activity finishing, skipping load"
@@ -969,12 +965,12 @@ public class MenuActivity extends BaseActivity {
     }
 
     /**
-     * Helper method to check if animations are enabled in preferences
-     * @return true if animations are enabled, false otherwise
+     * Helper method to check if animations are disabled in preferences
+     * @return true if animations are disabled, false otherwise
      */
-    private boolean areAnimationsEnabled() {
+    private boolean areAnimationsDisabled() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        return prefs.getBoolean("animations_enabled", true);
+        return !prefs.getBoolean("animations_enabled", true);
     }
 
     /**
@@ -988,7 +984,7 @@ public class MenuActivity extends BaseActivity {
         }
         
         // Don't start if animations are disabled in settings
-        if (!areAnimationsEnabled()) {
+        if (areAnimationsDisabled()) {
             return false;
         }
         
@@ -998,11 +994,7 @@ public class MenuActivity extends BaseActivity {
         }
         
         // Don't start if activity is destroyed (API 17+)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed()) {
-            return false;
-        }
-        
-        return true;
+        return !isDestroyed();
     }
 
     private void setupRunningPlayerAnimation() {
@@ -1015,7 +1007,7 @@ public class MenuActivity extends BaseActivity {
             return;
         }
 
-        if (!areAnimationsEnabled()) {
+        if (areAnimationsDisabled()) {
             Log.d(
                     "TAG_Soccer",
                     getClass().getSimpleName() + ".setupRunningPlayerAnimation: Animations disabled in settings"
@@ -1035,19 +1027,7 @@ public class MenuActivity extends BaseActivity {
             }
         }
 
-        int spriteSheetResId = getResources().getIdentifier(
-                "spritesheet_run",
-                "drawable",
-                getPackageName()
-        );
-        if (spriteSheetResId == 0) {
-            Log.w(
-                    "TAG_Soccer",
-                    getClass().getSimpleName() + ".setupRunningPlayerAnimation: spritesheet_run resource missing"
-            );
-            runningPlayerView.setVisibility(View.GONE);
-            return;
-        }
+        int spriteSheetResId = R.drawable.spritesheet_run;
 
         // Move heavy bitmap operations to background thread to prevent ANR
         // See: docs/MENUACTIVITY_ANR_FIX.md for ANR prevention patterns
@@ -1098,7 +1078,7 @@ public class MenuActivity extends BaseActivity {
                 }
 
                 int framesAvailable = Math.min(RUNNING_PLAYER_FRAME_COUNT, sheetWidth / RUNNING_PLAYER_FRAME_WIDTH);
-                if (framesAvailable <= 0) {
+                if (framesAvailable == 0) {
                     Log.w(
                             "TAG_Soccer",
                             getClass().getSimpleName() + ".setupRunningPlayerAnimation: No frames available in spritesheet"
@@ -1114,7 +1094,7 @@ public class MenuActivity extends BaseActivity {
                 }
 
                 int rowsAvailable = sheetHeight / RUNNING_PLAYER_FRAME_HEIGHT;
-                if (rowsAvailable <= 0) {
+                if (rowsAvailable == 0) {
                     Log.w(
                             "TAG_Soccer",
                             getClass().getSimpleName() + ".setupRunningPlayerAnimation: No rows available in spritesheet"
@@ -1144,35 +1124,12 @@ public class MenuActivity extends BaseActivity {
                             break;
                         }
                         int frameWidth = Math.min(RUNNING_PLAYER_FRAME_WIDTH, sheetWidth - sourceX);
-                        if (frameWidth <= 0) {
-                            Log.w(
-                                    "TAG_Soccer",
-                                    getClass().getSimpleName()
-                                            + ".setupRunningPlayerAnimation: Frame width invalid at row "
-                                            + row
-                                            + ", index "
-                                            + col
-                            );
-                            recycleBitmapRows(frameRows);
-                            recycleBitmapList(rowFrames);
-                            spriteSheet.recycle();
-                            runOnUiThread(() -> {
-                                runningPlayerFrames = null;
-                                if (runningPlayerView != null) {
-                                    runningPlayerView.setVisibility(View.GONE);
-                                }
-                            });
-                            return;
-                        }
 
                         int sourceY = row * RUNNING_PLAYER_FRAME_HEIGHT;
                         if (sourceY >= sheetHeight) {
                             break;
                         }
                         int frameHeight = Math.min(RUNNING_PLAYER_FRAME_HEIGHT, sheetHeight - sourceY);
-                        if (frameHeight <= 0) {
-                            break;
-                        }
 
                         try {
                             Bitmap frame = Bitmap.createBitmap(
@@ -1182,9 +1139,6 @@ public class MenuActivity extends BaseActivity {
                                     frameWidth,
                                     frameHeight
                             );
-                            if (frame == null) {
-                                continue;
-                            }
 
                             if (frame.getWidth() != targetWidthPx || frame.getHeight() != targetHeightPx) {
                                 try {
@@ -1250,7 +1204,7 @@ public class MenuActivity extends BaseActivity {
                 // Update UI on main thread
                 final Bitmap[][] loadedFrames = frameRows.toArray(new Bitmap[0][]);
                 runOnUiThread(() -> {
-                    if (isFinishing() || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed())) {
+                    if (isFinishing() || isDestroyed()) {
                         // Activity is finishing, recycle bitmaps
                         for (Bitmap[] row : loadedFrames) {
                             recycleBitmapArray(row);
@@ -1289,7 +1243,7 @@ public class MenuActivity extends BaseActivity {
     }
 
     private void startRunningPlayerAnimation() {
-        if (!areAnimationsEnabled()) {
+        if (areAnimationsDisabled()) {
             Log.d(
                     "TAG_Soccer",
                     getClass().getSimpleName() + ".startRunningPlayerAnimation: Animations disabled in settings"
@@ -1408,9 +1362,7 @@ public class MenuActivity extends BaseActivity {
     private void showRegistrationDialog() {
         new AlertDialog.Builder(this)
                 .setMessage(R.string.register_dialog_message)
-                .setPositiveButton(R.string.proceed, (dialog, which) -> {
-                    startActivity(new Intent(this, UniversalLoginActivity.class));
-                })
+                .setPositiveButton(R.string.proceed, (dialog, which) -> startActivity(new Intent(this, UniversalLoginActivity.class)))
                 .setNegativeButton(R.string.cancel, (dialog, which) -> {
                     // Show signup decline reason dialog to understand why
                     SignupDeclineReasonDialog.show(this, "registration_dismiss", analyticsManager, reason -> {
@@ -1986,93 +1938,6 @@ public class MenuActivity extends BaseActivity {
     }
 
     /**
-     * Check backend service availability and update UI accordingly
-     */
-    private void checkBackendAvailability() {
-        if (serviceChecker == null) {
-            Log.w(
-                "TAG_Soccer",
-                getClass().getSimpleName() + ".checkBackendAvailability: Service checker not available, assuming backend is available"
-            );
-            isBackendAvailable = true;
-            updateUiForAuthState();
-            return;
-        }
-        
-        Log.d(
-            "TAG_Soccer",
-            getClass().getSimpleName() + ".checkBackendAvailability: Checking backend availability from MenuActivity"
-        );
-        
-        // Show a brief checking state (optional)
-        runOnUiThread(() -> {
-            // Could add a progress indicator here if desired
-            Log.d(
-                "TAG_Soccer",
-                getClass().getSimpleName() + ".checkBackendAvailability: Starting backend availability check..."
-            );
-        });
-        
-        serviceChecker.checkServiceAvailability(new BackendServiceChecker.ServiceCheckCallback() {
-            @Override
-            public void onServiceAvailable() {
-                Log.d(
-                    "TAG_Soccer",
-                    getClass().getSimpleName() + ".checkBackendAvailability: Backend is available - enabling UI"
-                );
-                runOnUiThread(() -> {
-                    isBackendAvailable = true;
-
-                    // Reset flag so next outage will display a toast again
-                    backendUnavailableToastShown = false;
-
-                    ((SoccerApp) getApplication()).setBackendAvailable(true);
-
-                    updateUiForAuthState();
-                    if (optionsMenu != null) {
-                        MenuItem offlineItem = optionsMenu.findItem(R.id.action_offline);
-                        if (offlineItem != null) {
-                            offlineItem.setVisible(false);
-                        }
-                        if (accountMenuItem != null && accountMenuItem.getIcon() != null) {
-                            accountMenuItem.getIcon().setAlpha(255);
-                        }
-                    }
-                });
-            }
-
-            @Override
-            public void onServiceUnavailable(String reason) {
-                Log.w(
-                    "TAG_Soccer",
-                    getClass().getSimpleName() + ".checkBackendAvailability: Backend is unavailable: " + reason
-                );
-                runOnUiThread(() -> {
-                    isBackendAvailable = false;
-                    ((SoccerApp) getApplication()).setBackendAvailable(false);
-                    updateUiForAuthState();
-                    if (optionsMenu != null) {
-                        MenuItem offlineItem = optionsMenu.findItem(R.id.action_offline);
-                        if (offlineItem != null) {
-                            offlineItem.setVisible(true);
-                        }
-                        if (accountMenuItem != null && accountMenuItem.getIcon() != null) {
-                            accountMenuItem.getIcon().setAlpha(130);
-                        }
-                    }
-                    // Show toast notification once when the backend becomes unavailable
-                    if (!backendUnavailableToastShown) {
-                        Toast.makeText(MenuActivity.this,
-                                R.string.server_unavailable_message,
-                                Toast.LENGTH_LONG).show();
-                        backendUnavailableToastShown = true;
-                    }
-                });
-            }
-        });
-    }
-
-    /**
      * Check if the current user has blocked invites and show/hide warning icon accordingly
      */
     private void checkAndUpdateBlockedInviteWarning() {
@@ -2120,7 +1985,7 @@ public class MenuActivity extends BaseActivity {
      * Handles failures during setContentView() by attempting recovery strategies
      * for AppCompat theme and layout initialization issues.
      */
-    private void handleContentViewFailure(Exception originalException) {
+    private void handleContentViewFailure() {
         Log.d("TAG_Soccer", getClass().getSimpleName() + ".handleContentViewFailure: Attempting recovery from setContentView failure");
         
         // Strategy 1: Try to reinitialize with a simple fallback layout
@@ -2224,16 +2089,15 @@ public class MenuActivity extends BaseActivity {
                         boolean shouldNotify = false;
                         if ("pending".equals(status)) {
                             com.google.firebase.Timestamp expireAtTs = doc.getTimestamp("expireAt");
-                            if (expireAtTs == null || expireAtTs.toDate().getTime() > nowMs) {
-                                shouldNotify = true;
-                            } else {
+                            // Still notify so user knows invite was missed
+                            if (expireAtTs != null && expireAtTs.toDate().getTime() <= nowMs) {
                                 Log.d(
                                         "TAG_Soccer",
                                         getClass().getSimpleName()
                                                 + ".checkForMissedInvitations: Pending invite expired before notification could be shown"
                                 );
-                                shouldNotify = true; // Still notify so user knows invite was missed
                             }
+                            shouldNotify = true;
                         } else if ("cancelled".equals(status) || "expired".equals(status)) {
                             shouldNotify = true;
                         }
@@ -2293,7 +2157,7 @@ public class MenuActivity extends BaseActivity {
      */
     private void showMissedInviteDialog() {
         // Check if activity is still valid before showing dialog
-        if (isFinishing() || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed())) {
+        if (isFinishing() || isDestroyed()) {
             Log.w(
                     "TAG_Soccer",
                     getClass().getSimpleName() + ".showMissedInviteDialog: Activity finishing or destroyed, skipping dialog"
@@ -2304,9 +2168,7 @@ public class MenuActivity extends BaseActivity {
         new AlertDialog.Builder(this)
                 .setTitle(R.string.missed_invite_title)
                 .setMessage(R.string.missed_invite_message)
-                .setPositiveButton(R.string.see_invites, (dialog, which) -> {
-                    startActivity(new Intent(this, InvitationsActivity.class));
-                })
+                .setPositiveButton(R.string.see_invites, (dialog, which) -> startActivity(new Intent(this, InvitationsActivity.class)))
                 .setNegativeButton(R.string.close, null)
                 .show();
     }
@@ -2327,12 +2189,12 @@ public class MenuActivity extends BaseActivity {
         boolean dialogShown = prefs.getBoolean(PREF_ANIMATION_INFO_SHOWN, false);
         
         // Only show dialog if it hasn't been shown before and animations are enabled
-        if (dialogShown || !areAnimationsEnabled()) {
+        if (dialogShown || areAnimationsDisabled()) {
             return;
         }
         
         // Check if activity is still valid before showing dialog
-        if (isFinishing() || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && isDestroyed())) {
+        if (isFinishing() || isDestroyed()) {
             return;
         }
         

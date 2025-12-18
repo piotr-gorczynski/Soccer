@@ -14,6 +14,7 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.preference.PreferenceManager;
 
 import android.os.CountDownTimer;
 import android.util.Log;
@@ -49,7 +50,7 @@ public class GameActivity extends BaseActivity {
     int Winner=-1;
     int GameType=-1;
     GameView gameView;
-    int androidLevel = 1;
+    double androidLevel = 0;
     private FrameLayout gameRootContainer;
     private View loadingOverlay;
     private TextView loadingMessageView;
@@ -494,18 +495,18 @@ public class GameActivity extends BaseActivity {
 
 
         SharedPreferences sharedPreferences =
-                getSharedPreferences(LanguageManager.PREFS_FILE, Context.MODE_PRIVATE);
+                PreferenceManager.getDefaultSharedPreferences(this);
 
         if (sharedPreferences != null && sharedPreferences.contains("android_level")) {
             try {
-                String levelStr = sharedPreferences.getString("android_level", "1");
+                String levelStr = sharedPreferences.getString("android_level", "0");
                 if (levelStr != null) {
-                    androidLevel = Integer.parseInt(levelStr);
+                    androidLevel = Double.parseDouble(levelStr);
                     Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Preference android_level=" + androidLevel);
                 }
             } catch (NumberFormatException e) {
                 Log.w("TAG_Soccer", getClass().getSimpleName() + ".onCreate: Invalid android_level preference, using default", e);
-                androidLevel = 1;
+                androidLevel = 0;
             }
         }
 

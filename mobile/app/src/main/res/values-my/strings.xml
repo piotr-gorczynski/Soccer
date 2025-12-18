@@ -75,11 +75,6 @@
     <string name="join_game_action">ဂိမ်းတွင်ပါဝင်ပါ</string>
 
     <!-- Additional translations needed -->
-    <string-array name="pref_level_values">
-        <item>1</item>
-        <item>10</item>
-        <item>30</item>
-    </string-array>
     <string name="register">စာရင်းသွင်းပါ</string>
     <string name="confirm_password">စကားဝှက်အတည်ပြုပါ</string>
     <string name="email">အီးမေးလ်</string>
@@ -203,7 +198,7 @@
     <string name="field_move_tail">အလှည့် … ⏳ %1$s</string>
     <string name="field_hourglass_tail">⏳ %1$s</string>
     <string name="field_your_move_ellipsis">သင့်အလှည့်…</string>
-    <string name="field_thinking">စဉ်းစားနေသည်…</string>
+    <string name="field_thinking">စဉ်းစားနေသည်… ခွဲခြမ်းစိတ်ဖြာထားသော အရွေ့များ: %1$s</string>
     <string name="field_move_ellipsis_tail">အလှည့်… ⏳ %1$s</string>
     <string name="field_waiting_for">%1$s ကို စောင့်ဆိုင်းနေသည်</string>
     <string name="field_to_start_tail">စတင်ရန်… ⏳ %1$s</string>
@@ -351,4 +346,10 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">ပြိုင်ပွဲ %1$s သည် ယခု မလည်ပတ်တော့ပါ</string>
+    <string name="field_hand_tutorial_message">ဘောလုံးကို ရွှေ့ရန် အမှတ်တစ်ခုပေါ်တွင် နှိပ်ပါ</string>
+    <string name="field_hand_tutorial_bounce_border">ဘောလုံးသည် နယ်နိမိတ်ကို ထိသောအခါ ပြန်လှည့်ပြီး ဘောလုံးကို ထပ်မံ ရွှေ့နိုင်သည်</string>
+    <string name="field_hand_tutorial_bounce_visited">ဘောလုံးသည် ယခင်က သွားခဲ့သော အမှတ်ကို ထိသောအခါ ပြန်လှည့်ပြီး ဘောလုံးကို ထပ်မံ ရွှေ့နိုင်သည်</string>
+    <string name="field_hand_tutorial_no_moves">ဖြစ်နိုင်သော အရွှေ့များ မရှိသောအခါ ကစားသမားသည် ချက်ချင်း ရှုံးသည်။</string>
+    <string name="field_hand_tutorial_goal">ဂိုး! အံ့သြဖွယ်!</string>
+    <string name="field_hand_tutorial_own_goal">ကိုယ့်ဂိုး!</string>
 </resources>

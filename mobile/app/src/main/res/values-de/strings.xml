@@ -211,7 +211,7 @@
     <string name="field_move_tail">ist am Zug ... ⏳ %1$s</string>
     <string name="field_hourglass_tail">⏳ %1$s</string>
     <string name="field_your_move_ellipsis">Du bist dran...</string>
-    <string name="field_thinking">Denkt nach...</string>
+    <string name="field_thinking">Denkt nach... Analysierte Züge: %1$s</string>
     <string name="field_move_ellipsis_tail">ist am Zug... ⏳ %1$s</string>
     <string name="field_waiting_for">Warte auf %1$s</string>
     <string name="field_to_start_tail">um zu starten... ⏳ %1$s</string>
@@ -365,12 +365,7 @@
     <string name="user_blocked_invites">Benutzer hat Einladungen blockiert</string>
     <string name="cannot_invite_this_user">Kann diesen Benutzer nicht einladen</string>
     
-    <!-- Preference level values -->
-    <string-array name="pref_level_values">
-        <item>1</item>
-        <item>10</item>
-        <item>30</item>
-    </string-array>
+
     <string name="failed_to_load_terms">Allgemeine Geschäftsbedingungen konnten nicht geladen werden</string>
     
     <!-- Animation info dialog -->
@@ -386,4 +381,10 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">Turnier %1$s läuft nicht mehr</string>
+    <string name="field_hand_tutorial_message">Tippen Sie auf einen der Punkte, um den Ball zu bewegen</string>
+    <string name="field_hand_tutorial_bounce_border">Wenn der Ball eine Grenze trifft, prallt er ab und Sie können den Ball erneut bewegen</string>
+    <string name="field_hand_tutorial_bounce_visited">Wenn der Ball einen zuvor besuchten Punkt trifft, prallt er ab und Sie können den Ball erneut bewegen</string>
+    <string name="field_hand_tutorial_no_moves">Wenn es keine möglichen Züge gibt, verliert der Spieler sofort.</string>
+    <string name="field_hand_tutorial_goal">Tor! Bravo!</string>
+    <string name="field_hand_tutorial_own_goal">Eigentor!</string>
 </resources>

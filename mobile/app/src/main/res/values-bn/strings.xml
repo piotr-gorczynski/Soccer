@@ -211,7 +211,7 @@
     <string name="field_move_tail">চাল ... ⏳ %1$s</string>
     <string name="field_hourglass_tail">⏳ %1$s</string>
     <string name="field_your_move_ellipsis">আপনার চাল...</string>
-    <string name="field_thinking">ভাবছে...</string>
+    <string name="field_thinking">ভাবছে... বিশ্লেষিত চালসমূহ: %1$s</string>
     <string name="field_move_ellipsis_tail">চাল... ⏳ %1$s</string>
     <string name="field_waiting_for">%1$s-এর জন্য অপেক্ষা</string>
     <string name="field_to_start_tail">শুরু করার জন্য... ⏳ %1$s</string>
@@ -364,12 +364,7 @@
     <string name="user_blocked_invites">ব্যবহারকারী আমন্ত্রণ ব্লক করেছেন</string>
     <string name="cannot_invite_this_user">এই ব্যবহারকারীকে আমন্ত্রণ জানানো যাবে না</string>
     
-    <!-- Preference level values -->
-    <string-array name="pref_level_values">
-        <item>1</item>
-        <item>10</item>
-        <item>30</item>
-    </string-array>
+
     <string name="failed_to_load_terms">শর্তাবলী লোড করতে ব্যর্থ</string>
     
     <!-- Animation info dialog -->
@@ -385,4 +380,10 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">টুর্নামেন্ট %1$s আর চলছে না</string>
+    <string name="field_hand_tutorial_message">বল সরাতে একটি পয়েন্টে ট্যাপ করুন</string>
+    <string name="field_hand_tutorial_bounce_border">যখন বল সীমানায় আঘাত করে, এটি বাউন্স করে এবং আপনি আবার বল সরাতে পারেন</string>
+    <string name="field_hand_tutorial_bounce_visited">যখন বল পূর্বে পরিদর্শন করা পয়েন্টে আঘাত করে, এটি বাউন্স করে এবং আপনি আবার বল সরাতে পারেন</string>
+    <string name="field_hand_tutorial_no_moves">যখন কোন সম্ভাব্য চাল নেই, খেলোয়াড় অবিলম্বে হেরে যায়।</string>
+    <string name="field_hand_tutorial_goal">গোল! ব্রাভো!</string>
+    <string name="field_hand_tutorial_own_goal">নিজস্ব গোল!</string>
 </resources>

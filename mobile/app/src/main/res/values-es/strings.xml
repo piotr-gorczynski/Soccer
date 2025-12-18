@@ -211,7 +211,7 @@
     <string name="field_move_tail">mueve ... ⏳ %1$s</string>
     <string name="field_hourglass_tail">⏳ %1$s</string>
     <string name="field_your_move_ellipsis">Tu turno...</string>
-    <string name="field_thinking">Pensando...</string>
+    <string name="field_thinking">Pensando... Jugadas analizadas: %1$s</string>
     <string name="field_move_ellipsis_tail">mueve... ⏳ %1$s</string>
     <string name="field_waiting_for">Esperando a %1$s</string>
     <string name="field_to_start_tail">para empezar... ⏳ %1$s</string>
@@ -340,12 +340,7 @@
     <!-- Friend match statistics -->
     <string name="match_stats_format">Victorias 🏆: %1$d | Derrotas 😞: %2$d</string>
     
-    <!-- Preference level values -->
-    <string-array name="pref_level_values">
-        <item>1</item>
-        <item>10</item>
-        <item>30</item>
-    </string-array>
+
     <!-- Past invites -->
     <string name="past_invites">Invitaciones Pasadas</string>
     <string name="no_past_invites">No hay invitaciones pasadas</string>
@@ -388,4 +383,10 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">El torneo %1$s ya no está en curso</string>
+    <string name="field_hand_tutorial_message">Toca uno de los puntos para mover la pelota</string>
+    <string name="field_hand_tutorial_bounce_border">Cuando la pelota golpea un borde, rebota y puedes mover la pelota nuevamente</string>
+    <string name="field_hand_tutorial_bounce_visited">Cuando la pelota golpea un punto previamente visitado, rebota y puedes mover la pelota nuevamente</string>
+    <string name="field_hand_tutorial_no_moves">Cuando no hay movimientos posibles, el jugador pierde inmediatamente.</string>
+    <string name="field_hand_tutorial_goal">¡Gol! ¡Bravo!</string>
+    <string name="field_hand_tutorial_own_goal">¡Autogol!</string>
 </resources>

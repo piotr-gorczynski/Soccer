@@ -75,11 +75,6 @@
     <string name="join_game_action">Jiunge na Mchezo</string>
 
     <!-- Additional translations needed -->
-    <string-array name="pref_level_values">
-        <item>1</item>
-        <item>10</item>
-        <item>30</item>
-    </string-array>
     <string name="register">Jisajili</string>
     <string name="confirm_password">Thibitisha Nenosiri</string>
     <string name="email">Barua pepe</string>
@@ -203,7 +198,7 @@
     <string name="field_move_tail">yuko kwenye zamu … ⏳ %1$s</string>
     <string name="field_hourglass_tail">⏳ %1$s</string>
     <string name="field_your_move_ellipsis">Ni zamu yako…</string>
-    <string name="field_thinking">Anafikiria…</string>
+    <string name="field_thinking">Anafikiria… Harakati zilizochambuliwa: %1$s</string>
     <string name="field_move_ellipsis_tail">yuko kwenye zamu… ⏳ %1$s</string>
     <string name="field_waiting_for">Inasubiri %1$s</string>
     <string name="field_to_start_tail">aanze… ⏳ %1$s</string>
@@ -351,4 +346,10 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">Mashindano %1$s hayaendelei tena</string>
+    <string name="field_hand_tutorial_message">Gusa kwenye moja ya pointi ili kuhamisha mpira</string>
+    <string name="field_hand_tutorial_bounce_border">Wakati mpira unagonga mpaka, hurudia na unaweza kuhama isha mpira tena</string>
+    <string name="field_hand_tutorial_bounce_visited">Wakati mpira unagonga hatua iliyotembelewa awali, hurudia na unaweza kuhamisha mpira tena</string>
+    <string name="field_hand_tutorial_no_moves">Wakati hakuna mwendo unaowezekana, mchezaji hupoteza mara moja.</string>
+    <string name="field_hand_tutorial_goal">Goli! Hongera!</string>
+    <string name="field_hand_tutorial_own_goal">Goli la binafsi!</string>
 </resources>

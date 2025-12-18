@@ -36,7 +36,7 @@ Modified the `runOnUiThread()` callback in `setupRunningPlayerAnimation()` to:
 2. Configure the view and click listeners
 3. **NEW**: Check if animation should start automatically:
    ```java
-   if (!isRunningPlayerAnimationStarted && areAnimationsEnabled()) {
+   if (!isRunningPlayerAnimationStarted && !areAnimationsDisabled()) {
        startRunningPlayerAnimation();
    }
    ```
@@ -63,7 +63,7 @@ runOnUiThread(() -> {
         // If activity is already started, begin animation immediately
         // This handles the case where onCreate->setupRunningPlayerAnimation starts
         // the background thread, then onStart is called before frames are loaded
-        if (!isRunningPlayerAnimationStarted && areAnimationsEnabled()) {
+        if (!isRunningPlayerAnimationStarted && !areAnimationsDisabled()) {
             startRunningPlayerAnimation();
         }
     }
@@ -88,7 +88,7 @@ runOnUiThread(() -> {
 
 1. **Consistent UX**: Animation always starts on first launch, matching user expectations
 2. **No Side Effects**: Doesn't interfere with normal operation when frames are already loaded
-3. **Respects Settings**: Still checks `areAnimationsEnabled()` before starting
+3. **Respects Settings**: Still checks the animation preference before starting
 4. **Minimal Code Change**: Single conditional check, surgical fix
 5. **Safe**: Uses existing animation start logic, no new bugs introduced
 

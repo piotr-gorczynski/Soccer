@@ -56,11 +56,6 @@
     <string name="game_ready_title">بازی برای %1$s آماده است!</string>
     <string name="game_ready_message">مسابقه شما آماده شروع است. برای پیوستن ضربه بزنید!</string>
     <string name="join_game_action">پیوستن به بازی</string>
-    <string-array name="pref_level_values">
-        <item>1</item>
-        <item>10</item>
-        <item>30</item>
-    </string-array>
     <string name="register">ثبت‌نام</string>
     <string name="confirm_password">تأیید رمز عبور</string>
     <string name="email">ایمیل</string>
@@ -184,7 +179,7 @@
     <string name="field_move_tail">حرکت… ⏳ %1$s</string>
     <string name="field_hourglass_tail">⏳ %1$s</string>
     <string name="field_your_move_ellipsis">نوبت شماست…</string>
-    <string name="field_thinking">در حال فکر…</string>
+    <string name="field_thinking">در حال فکر… حرکات تجزیه شده: %1$s</string>
     <string name="field_move_ellipsis_tail">حرکت… ⏳ %1$s</string>
     <string name="field_waiting_for">در انتظار %1$s</string>
     <string name="field_to_start_tail">برای شروع… ⏳ %1$s</string>
@@ -332,4 +327,10 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">مسابقه %1$s دیگر در حال اجرا نیست</string>
+    <string name="field_hand_tutorial_message">برای حرکت توپ روی یکی از نقاط ضربه بزنید</string>
+    <string name="field_hand_tutorial_bounce_border">وقتی توپ به مرز برخورد می‌کند، برمی‌گردد و می‌توانید دوباره توپ را حرکت دهید</string>
+    <string name="field_hand_tutorial_bounce_visited">وقتی توپ به نقطه قبلاً بازدید شده برخورد می‌کند، برمی‌گردد و می‌توانید دوباره توپ را حرکت دهید</string>
+    <string name="field_hand_tutorial_no_moves">وقتی حرکت ممکنی وجود ندارد، بازیکن بلافاصله بازنده می‌شود.</string>
+    <string name="field_hand_tutorial_goal">گل! آفرین!</string>
+    <string name="field_hand_tutorial_own_goal">گل به خودی!</string>
 </resources>
