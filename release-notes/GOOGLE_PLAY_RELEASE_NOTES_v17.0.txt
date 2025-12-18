@@ -1,134 +1,118 @@
 <en-GB>
-🎮 Fix android_level preference not being read from correct SharedPreferences
-🎉 Reduce Android AI difficulty levels for improved first-time user experience
-🎉 Add tutorial balloon with localized instruction message
-🎉 Display AI move analysis progress counter during thinking
+🎮 Fixed game settings not saving correctly  
+🎉 Easier AI levels for new players  
+🎉 New tutorial tips to help you get started  
+🎉 AI thinking progress is now visible
 </en-GB>
 
 <pl-PL>
-🎉 Dodano status aktywności w wyszukiwarce graczy  
-🎮 Poprawiono stabilność i uruchamianie  
-🎮 Ulepszono obsługę zaproszeń turniejowych  
-🎮 Naprawiono rzadkie zawieszanie aplikacji  
-⚽ Płynniejszy i szybszy Soccer!
+🎮 Naprawiono zapisywanie ustawień gry  
+🎉 Łatwiejszy poziom AI dla nowych graczy  
+🎉 Nowe podpowiedzi w samouczku  
+🎉 Widoczny postęp myślenia AI
 </pl-PL>
 
 <de-DE>
-🎉 Online-Status in Spielersuche hinzugefügt  
-🎮 Stabilität und Start verbessert  
-🎮 Turniereinladungen optimiert  
-🎮 Seltene App-Freezes behoben  
-⚽ Schnelleres, flüssigeres Soccer!
+🎮 Spieleinstellungen werden jetzt korrekt gespeichert  
+🎉 Leichtere KI für neue Spieler  
+🎉 Neue Tutorial-Hinweise zum Start  
+🎉 Denkfortschritt der KI sichtbar
 </de-DE>
 
 <fr-FR>
-🎉 Statut en ligne ajouté à la recherche de joueurs  
-🎮 Application plus stable et rapide  
-🎮 Meilleure gestion des invitations  
-🎮 Correction de blocages rares  
-⚽ Soccer plus fluide !
+🎮 Correction de l’enregistrement des paramètres  
+🎉 IA plus facile pour les nouveaux joueurs  
+🎉 Nouveaux conseils dans le tutoriel  
+🎉 Progression de l’IA visible
 </fr-FR>
 
 <es-ES>
-🎉 Estado en línea añadido a la búsqueda de jugadores  
-🎮 Mayor estabilidad y arranque más rápido  
-🎮 Invitaciones mejor gestionadas  
-🎮 Fallos raros corregidos  
-⚽ Soccer más fluido!
+🎮 Configuración del juego guardada correctamente  
+🎉 IA más fácil para nuevos jugadores  
+🎉 Nuevos consejos del tutorial  
+🎉 Progreso del pensamiento de la IA visible
 </es-ES>
 
 <ur>
-🎉 کھلاڑی تلاش میں آن لائن اسٹیٹس شامل  
-🎮 ایپ مزید مستحکم اور تیز  
-🎮 ٹورنامنٹ دعوتیں بہتر ہوئیں  
-🎮 نایاب کریش درست  
-⚽ مزید ہموار Soccer!
+🎮 گیم سیٹنگز اب درست محفوظ ہوتی ہیں  
+🎉 نئے کھلاڑیوں کے لیے آسان AI  
+🎉 نیا ٹیوٹوریل گائیڈ  
+🎉 AI کی سوچ کا عمل نظر آئے گا
 </ur>
 
 <bn-BD>
-🎉 প্লেয়ার সার্চে অনলাইন স্ট্যাটাস যোগ  
-🎮 অ্যাপ আরও স্থিতিশীল ও দ্রুত  
-🎮 টুর্নামেন্ট আমন্ত্রণ উন্নত  
-🎮 বিরল ক্র্যাশ ঠিক করা হয়েছে  
-⚽ আরও মসৃণ Soccer!
+🎮 গেম সেটিংস এখন সঠিকভাবে সংরক্ষিত  
+🎉 নতুন খেলোয়াড়দের জন্য সহজ AI  
+🎉 নতুন টিউটোরিয়াল টিপস  
+🎉 AI চিন্তার অগ্রগতি দেখা যাবে
 </bn-BD>
 
 <ne-NP>
-🎉 खेलाडी खोजमा अनलाइन स्थिति थपियो  
-🎮 एप अझ स्थिर र छिटो  
-🎮 निमन्त्रणाको प्रक्रिया सुधारियो  
-🎮 दुर्लभ त्रुटिहरू समाधान  
-⚽ सहज Soccer!
+🎮 खेल सेटिङ सही रूपमा सेभ हुन्छ  
+🎉 नयाँ खेलाडीका लागि सजिलो AI  
+🎉 नयाँ ट्युटोरियल सुझाव  
+🎉 AI सोच्ने प्रगति देखिन्छ
 </ne-NP>
 
 <hi-IN>
-🎉 खिलाड़ी खोज में ऑनलाइन स्थिति जोड़ी गई  
-🎮 ऐप अब ज़्यादा स्थिर और तेज़  
-🎮 टूर्नामेंट निमंत्रण बेहतर हुए  
-🎮 दुर्लभ फ्रीज़ ठीक  
-⚽ और भी स्मूद Soccer!
+🎮 गेम सेटिंग अब सही सेव होती है  
+🎉 नए खिलाड़ियों के लिए आसान AI  
+🎉 नए ट्यूटोरियल सुझाव  
+🎉 AI सोचने की प्रगति दिखाई देती है
 </hi-IN>
 
 <am>
-🎉 በተጫዋች ፍለጋ ውስጥ የመስመር ላይ ሁኔታ ተጨምሯል  
-🎮 አፕ ተሻሻሎ ፈጣንና የተረጋጋ  
-🎮 የግብዣ አስተዳደር ተሻሻለ  
-🎮 አልፎ አልፎ መቃኘት ተፈታ  
-⚽ የተሻሻለ Soccer!
+🎮 የጨዋታ ቅንብሮች አሁን በትክክል ይቀመጣሉ  
+🎉 ለአዲስ ተጫዋቾች ቀላል AI  
+🎉 አዲስ የመጀመሪያ መመሪያ  
+🎉 የAI ሂደት ይታያል
 </am>
 
 <ar>
-🎉 تمت إضافة حالة الاتصال في بحث اللاعبين  
-🎮 أداء واستقرار أفضل  
-🎮 تحسين إدارة الدعوات  
-🎮 إصلاح الأعطال النادرة  
-⚽ Soccer أسرع وأكثر سلاسة!
+🎮 تم إصلاح حفظ إعدادات اللعبة  
+🎉 ذكاء اصطناعي أسهل للمبتدئين  
+🎉 إرشادات تعليمية جديدة  
+🎉 عرض تقدم تفكير الذكاء الاصطناعي
 </ar>
 
 <my-MM>
-🎉 ကစားသမား ရှာဖွေရေးတွင် အွန်လိုင်းအခြေအနေ ထည့်  
-🎮 အက်ပ် ပိုမို တည်ငြိမ်ပြီး မြန်  
-🎮 ပြိုင်ပွဲ ဖိတ်ကြားမှု မြှင့်တင်  
-🎮 ချို့တဲ့မှုများ ပြင်ဆင်  
-⚽ ပိုမိုချောမွေ့ Soccer!
+🎮 ဂိမ်းဆက်တင်များ ယခုမှန်ကန်စွာ သိမ်းဆည်းသည်  
+🎉 ကစားသမားအသစ်များအတွက် AI ပိုလွယ်  
+🎉 သင်ခန်းစာ အကြံပြုချက်အသစ်များ  
+🎉 AI စဉ်းစားမှု တိုးတက်မှု ပြသ
 </my-MM>
 
 <km-KH>
-🎉 បន្ថែមស្ថានភាពលើបណ្ដាញក្នុងការស្វែងរកអ្នកលេង  
-🎮 ការស្ថិរភាពប្រសើរឡើង  
-🎮 ការអញ្ជើញត្រូវបានកែលម្អ  
-🎮 កំហុសតិចតួចត្រូវបានកែ  
-⚽ Soccer លឿនជាងមុន!
+🎮 ការកំណត់ហ្គេមត្រូវបានរក្សាទុកត្រឹមត្រូវ  
+🎉 AI ងាយស្រួលសម្រាប់អ្នកលេងថ្មី  
+🎉 គន្លឹះណែនាំថ្មី  
+🎉 បង្ហាញដំណើរការគិតរបស់ AI
 </km-KH>
 
 <lo-LA>
-🎉 ເພີ່ມສະຖານະອອນໄລນ໌ໃນການຄົ້ນຫານັກຫຼິ້ນ  
-🎮 ແອັບໄວຂຶ້ນ ແລະ ມັ່ນຄົງຂຶ້ນ  
-🎮 ການເຊີນດີຂຶ້ນ  
-🎮 ແກ້ບັນຫານ້ອຍໆ  
-⚽ Soccer ລື່ນຂຶ້ນ!
+🎮 ບັນທຶກການຕັ້ງຄ່າເກມໄດ້ຖືກຕ້ອງ  
+🎉 AI ງ່າຍສຳລັບຜູ້ຫຼິ້ນໃໝ່  
+🎉 ຄຳແນະນຳສອນເກມໃໝ່  
+🎉 ສະແດງການຄິດຂອງ AI
 </lo-LA>
 
 <mn-MN>
-🎉 Тоглогч хайлтанд онлайн төлөв нэмсэн  
-🎮 Апп илүү хурдан, тогтвортой  
-🎮 Урилга илгээх систем сайжирсан  
-🎮 Ховор алдаа зассан  
-⚽ Илүү сайхан Soccer!
+🎮 Тоглоомын тохиргоо зөв хадгалагдана  
+🎉 Шинэ тоглогчдод илүү хялбар AI  
+🎉 Шинэ заавар зөвлөмжүүд  
+🎉 AI-ийн бодолтын явц харагдана
 </mn-MN>
 
 <fa-IR>
-🎉 وضعیت آنلاین به جستجوی بازیکنان افزوده شد  
-🎮 اجرای پایدارتر و سریع‌تر  
-🎮 بهبود دعوت‌های تورنمنت  
-🎮 رفع خطاهای نادر  
-⚽ ‎Soccer‎ روان‌تر و بهتر!
+🎮 ذخیره تنظیمات بازی اصلاح شد  
+🎉 هوش مصنوعی ساده‌تر برای بازیکنان جدید  
+🎉 راهنمای آموزشی جدید  
+🎉 نمایش روند فکر کردن هوش مصنوعی
 </fa-IR>
 
 <si-LK>
-🎉 ක්‍රීඩක සෙවීමේදී මාර්ගගත තත්ත්වය එකතු කළා  
-🎮 වැඩි ස්ථාවරතාව හා වේගය  
-🎮 ආරාධනා වැඩිදියුණු කළා  
-🎮 දුර්ලභ බිඳවැටීම් විසඳා ඇත  
-⚽ වැඩි මෘදු Soccer!
+🎮 ක්‍රීඩා සැකසුම් දැන් නිවැරදිව සුරකිනවා  
+🎉 නව ක්‍රීඩකයින්ට පහසු AI  
+🎉 නව උපදෙස් සමඟ පාඩම්  
+🎉 AI සිතීමේ ප්‍රගතිය පෙන්වයි
 </si-LK>
