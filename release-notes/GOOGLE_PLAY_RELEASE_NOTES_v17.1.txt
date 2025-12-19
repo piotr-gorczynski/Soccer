@@ -1,0 +1,115 @@
+<en-GB>
+
+</en-GB>
+
+<pl-PL>
+🎮 Naprawiono zapisywanie ustawień gry  
+🎉 Łatwiejszy poziom AI dla nowych graczy  
+🎉 Nowe podpowiedzi w samouczku  
+🎉 Widoczny postęp myślenia AI
+</pl-PL>
+
+<de-DE>
+🎮 Spieleinstellungen werden jetzt korrekt gespeichert  
+🎉 Leichtere KI für neue Spieler  
+🎉 Neue Tutorial-Hinweise zum Start  
+🎉 Denkfortschritt der KI sichtbar
+</de-DE>
+
+<fr-FR>
+🎮 Correction de l’enregistrement des paramètres  
+🎉 IA plus facile pour les nouveaux joueurs  
+🎉 Nouveaux conseils dans le tutoriel  
+🎉 Progression de l’IA visible
+</fr-FR>
+
+<es-ES>
+🎮 Configuración del juego guardada correctamente  
+🎉 IA más fácil para nuevos jugadores  
+🎉 Nuevos consejos del tutorial  
+🎉 Progreso del pensamiento de la IA visible
+</es-ES>
+
+<ur>
+🎮 گیم سیٹنگز اب درست محفوظ ہوتی ہیں  
+🎉 نئے کھلاڑیوں کے لیے آسان AI  
+🎉 نیا ٹیوٹوریل گائیڈ  
+🎉 AI کی سوچ کا عمل نظر آئے گا
+</ur>
+
+<bn-BD>
+🎮 গেম সেটিংস এখন সঠিকভাবে সংরক্ষিত  
+🎉 নতুন খেলোয়াড়দের জন্য সহজ AI  
+🎉 নতুন টিউটোরিয়াল টিপস  
+🎉 AI চিন্তার অগ্রগতি দেখা যাবে
+</bn-BD>
+
+<ne-NP>
+🎮 खेल सेटिङ सही रूपमा सेभ हुन्छ  
+🎉 नयाँ खेलाडीका लागि सजिलो AI  
+🎉 नयाँ ट्युटोरियल सुझाव  
+🎉 AI सोच्ने प्रगति देखिन्छ
+</ne-NP>
+
+<hi-IN>
+🎮 गेम सेटिंग अब सही सेव होती है  
+🎉 नए खिलाड़ियों के लिए आसान AI  
+🎉 नए ट्यूटोरियल सुझाव  
+🎉 AI सोचने की प्रगति दिखाई देती है
+</hi-IN>
+
+<am>
+🎮 የጨዋታ ቅንብሮች አሁን በትክክል ይቀመጣሉ  
+🎉 ለአዲስ ተጫዋቾች ቀላል AI  
+🎉 አዲስ የመጀመሪያ መመሪያ  
+🎉 የAI ሂደት ይታያል
+</am>
+
+<ar>
+🎮 تم إصلاح حفظ إعدادات اللعبة  
+🎉 ذكاء اصطناعي أسهل للمبتدئين  
+🎉 إرشادات تعليمية جديدة  
+🎉 عرض تقدم تفكير الذكاء الاصطناعي
+</ar>
+
+<my-MM>
+🎮 ဂိမ်းဆက်တင်များ ယခုမှန်ကန်စွာ သိမ်းဆည်းသည်  
+🎉 ကစားသမားအသစ်များအတွက် AI ပိုလွယ်  
+🎉 သင်ခန်းစာ အကြံပြုချက်အသစ်များ  
+🎉 AI စဉ်းစားမှု တိုးတက်မှု ပြသ
+</my-MM>
+
+<km-KH>
+🎮 ការកំណត់ហ្គេមត្រូវបានរក្សាទុកត្រឹមត្រូវ  
+🎉 AI ងាយស្រួលសម្រាប់អ្នកលេងថ្មី  
+🎉 គន្លឹះណែនាំថ្មី  
+🎉 បង្ហាញដំណើរការគិតរបស់ AI
+</km-KH>
+
+<lo-LA>
+🎮 ບັນທຶກການຕັ້ງຄ່າເກມໄດ້ຖືກຕ້ອງ  
+🎉 AI ງ່າຍສຳລັບຜູ້ຫຼິ້ນໃໝ່  
+🎉 ຄຳແນະນຳສອນເກມໃໝ່  
+🎉 ສະແດງການຄິດຂອງ AI
+</lo-LA>
+
+<mn-MN>
+🎮 Тоглоомын тохиргоо зөв хадгалагдана  
+🎉 Шинэ тоглогчдод илүү хялбар AI  
+🎉 Шинэ заавар зөвлөмжүүд  
+🎉 AI-ийн бодолтын явц харагдана
+</mn-MN>
+
+<fa-IR>
+🎮 ذخیره تنظیمات بازی اصلاح شد  
+🎉 هوش مصنوعی ساده‌تر برای بازیکنان جدید  
+🎉 راهنمای آموزشی جدید  
+🎉 نمایش روند فکر کردن هوش مصنوعی
+</fa-IR>
+
+<si-LK>
+🎮 ක්‍රීඩා සැකසුම් දැන් නිවැරදිව සුරකිනවා  
+🎉 නව ක්‍රීඩකයින්ට පහසු AI  
+🎉 නව උපදෙස් සමඟ පාඩම්  
+🎉 AI සිතීමේ ප්‍රගතිය පෙන්වයි
+</si-LK>
