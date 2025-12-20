@@ -1189,6 +1189,22 @@ public class GameActivity extends BaseActivity {
         super.onSaveInstanceState(outState);
     }
 
+    /**
+     * Prepends tutorial message to winner message if hand tutorial is active and message type is appropriate
+     */
+    private String prependTutorialMessageIfNeeded(String winnerMessage) {
+        if (gameView != null && gameView.getField() != null && gameView.getField().isHandTutorialActive()) {
+            Field.TutorialMessageType msgType = gameView.getField().getTutorialMessageType();
+            if (msgType == Field.TutorialMessageType.GOAL || 
+                msgType == Field.TutorialMessageType.OWN_GOAL || 
+                msgType == Field.TutorialMessageType.NO_MOVES) {
+                String tutorialMsg = gameView.getField().getTutorialMessageString();
+                return tutorialMsg + "\n\n" + winnerMessage;
+            }
+        }
+        return winnerMessage;
+    }
+
     public void showWinner(int Winner) {
         if (alertShown) return;
         Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started. Winner = " + Winner);
@@ -1265,17 +1281,7 @@ public class GameActivity extends BaseActivity {
             // Show dialog immediately with default message to avoid ANR
             // This prevents blocking the main thread while waiting for Firestore data
             String defaultMsg = SafeStringFormatter.safeGetString(this, R.string.winner_is, sWinner);
-            
-            // If hand tutorial is active, prepend the tutorial message
-            if (gameView != null && gameView.getField() != null && gameView.getField().isHandTutorialActive()) {
-                Field.TutorialMessageType msgType = gameView.getField().getTutorialMessageType();
-                if (msgType == Field.TutorialMessageType.GOAL || 
-                    msgType == Field.TutorialMessageType.OWN_GOAL || 
-                    msgType == Field.TutorialMessageType.NO_MOVES) {
-                    String tutorialMsg = gameView.getField().getTutorialMessageString();
-                    defaultMsg = tutorialMsg + "\n\n" + defaultMsg;
-                }
-            }
+            defaultMsg = prependTutorialMessageIfNeeded(defaultMsg);
             
             builder.setMessage(defaultMsg);
             builder.setPositiveButton(R.string.close, (dialog, which) -> finish());
@@ -1325,17 +1331,7 @@ public class GameActivity extends BaseActivity {
 
         // GameType 1 or 2 fallback
         String defaultMsg = SafeStringFormatter.safeGetString(this, R.string.winner_is, (Winner == 0 ? sPlayer0 : sPlayer1));
-        
-        // If hand tutorial is active, prepend the tutorial message
-        if (gameView != null && gameView.getField() != null && gameView.getField().isHandTutorialActive()) {
-            Field.TutorialMessageType msgType = gameView.getField().getTutorialMessageType();
-            if (msgType == Field.TutorialMessageType.GOAL || 
-                msgType == Field.TutorialMessageType.OWN_GOAL || 
-                msgType == Field.TutorialMessageType.NO_MOVES) {
-                String tutorialMsg = gameView.getField().getTutorialMessageString();
-                defaultMsg = tutorialMsg + "\n\n" + defaultMsg;
-            }
-        }
+        defaultMsg = prependTutorialMessageIfNeeded(defaultMsg);
         
         builder.setMessage(defaultMsg);
         builder.setPositiveButton(R.string.close, (dialog, which) -> finish());
