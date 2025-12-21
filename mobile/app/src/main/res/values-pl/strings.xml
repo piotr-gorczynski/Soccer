@@ -387,4 +387,7 @@
     <string name="field_hand_tutorial_no_moves">Gdy nie ma możliwych ruchów, gracz natychmiast przegrywa.</string>
     <string name="field_hand_tutorial_goal">Gol! Brawo!</string>
     <string name="field_hand_tutorial_own_goal">Gol samobójczy!</string>
+    <string name="field_hand_tutorial_opponent_goal_1">Dobra gra! Następnym razem ich dostaniesz 💪</string>
+    <string name="field_hand_tutorial_opponent_goal_2">Dobra próba! Rewanż czeka 🔁</string>
+    <string name="field_hand_tutorial_opponent_goal_3">To było blisko! Graj dalej ⚽</string>
 </resources>

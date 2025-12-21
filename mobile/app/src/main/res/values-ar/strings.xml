@@ -333,4 +333,7 @@
     <string name="field_hand_tutorial_no_moves">عندما لا توجد حركات ممكنة، يخسر اللاعب على الفور.</string>
     <string name="field_hand_tutorial_goal">هدف! برافو!</string>
     <string name="field_hand_tutorial_own_goal">هدف في المرمى الخاص!</string>
+    <string name="field_hand_tutorial_opponent_goal_1">لعبة جيدة! ستحصل عليهم في المرة القادمة 💪</string>
+    <string name="field_hand_tutorial_opponent_goal_2">محاولة جيدة! المباراة الثانية تنتظرك 🔁</string>
+    <string name="field_hand_tutorial_opponent_goal_3">كان قريباً! استمر في اللعب ⚽</string>
 </resources>

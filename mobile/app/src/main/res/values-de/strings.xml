@@ -387,4 +387,7 @@
     <string name="field_hand_tutorial_no_moves">Wenn es keine möglichen Züge gibt, verliert der Spieler sofort.</string>
     <string name="field_hand_tutorial_goal">Tor! Bravo!</string>
     <string name="field_hand_tutorial_own_goal">Eigentor!</string>
+    <string name="field_hand_tutorial_opponent_goal_1">Gutes Spiel! Beim nächsten Mal erwischt du sie 💪</string>
+    <string name="field_hand_tutorial_opponent_goal_2">Guter Versuch! Das Rückspiel wartet 🔁</string>
+    <string name="field_hand_tutorial_opponent_goal_3">Das war knapp! Spiel weiter ⚽</string>
 </resources>

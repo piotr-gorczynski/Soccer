@@ -389,4 +389,7 @@
     <string name="field_hand_tutorial_no_moves">Cuando no hay movimientos posibles, el jugador pierde inmediatamente.</string>
     <string name="field_hand_tutorial_goal">¡Gol! ¡Bravo!</string>
     <string name="field_hand_tutorial_own_goal">¡Autogol!</string>
+    <string name="field_hand_tutorial_opponent_goal_1">¡Buen juego! Los atraparás la próxima vez 💪</string>
+    <string name="field_hand_tutorial_opponent_goal_2">¡Buen intento! La revancha te espera 🔁</string>
+    <string name="field_hand_tutorial_opponent_goal_3">¡Estuvo cerca! Sigue jugando ⚽</string>
 </resources>

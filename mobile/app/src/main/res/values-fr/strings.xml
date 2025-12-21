@@ -381,4 +381,7 @@
     <string name="field_hand_tutorial_no_moves">Lorsqu’il n’y a plus de mouvements possibles, le joueur perd immédiatement.</string>
     <string name="field_hand_tutorial_goal">But ! Bravo !</string>
     <string name="field_hand_tutorial_own_goal">But contre son camp !</string>
+    <string name="field_hand_tutorial_opponent_goal_1">Beau jeu ! Tu les auras la prochaine fois 💪</string>
+    <string name="field_hand_tutorial_opponent_goal_2">Belle tentative ! La revanche attend 🔁</string>
+    <string name="field_hand_tutorial_opponent_goal_3">C'était proche ! Continue à jouer ⚽</string>
 </resources>

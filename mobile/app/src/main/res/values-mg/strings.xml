@@ -352,4 +352,7 @@
     <string name="field_hand_tutorial_no_moves">Rehefa tsy misy fihetsiketsehana azo atao dia resy avy hatrany ny mpilalao.</string>
     <string name="field_hand_tutorial_goal">Baolina! Tsara be!</string>
     <string name="field_hand_tutorial_own_goal">Baolina manokana!</string>
+    <string name="field_hand_tutorial_opponent_goal_1">Lalao tsara! Hahazo azy ireo amin'ny manaraka ianao 💪</string>
+    <string name="field_hand_tutorial_opponent_goal_2">Fiezahana tsara! Miandry ny lalao famerenana 🔁</string>
+    <string name="field_hand_tutorial_opponent_goal_3">Akaiky izany! Tohizo ny lalao ⚽</string>
 </resources>
