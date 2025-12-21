@@ -3233,8 +3233,7 @@ public class Field {
                 return context.getString(R.string.field_hand_tutorial_own_goal);
             case OPPONENT_GOAL:
                 // Randomly select one of three encouraging messages
-                Random random = new Random();
-                int messageIndex = random.nextInt(3);
+                int messageIndex = new Random().nextInt(3);
                 switch (messageIndex) {
                     case 0:
                         return context.getString(R.string.field_hand_tutorial_opponent_goal_1);
