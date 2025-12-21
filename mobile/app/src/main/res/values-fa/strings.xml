@@ -333,4 +333,7 @@
     <string name="field_hand_tutorial_no_moves">وقتی حرکت ممکنی وجود ندارد، بازیکن بلافاصله بازنده می‌شود.</string>
     <string name="field_hand_tutorial_goal">گل! آفرین!</string>
     <string name="field_hand_tutorial_own_goal">گل به خودی!</string>
+    <string name="field_hand_tutorial_opponent_goal_1">بازی خوب! دفعه بعد آنها را می‌گیری 💪</string>
+    <string name="field_hand_tutorial_opponent_goal_2">تلاش خوب! بازی دوباره در انتظار است 🔁</string>
+    <string name="field_hand_tutorial_opponent_goal_3">خیلی نزدیک بود! به بازی ادامه بده ⚽</string>
 </resources>

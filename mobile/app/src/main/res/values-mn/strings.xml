@@ -352,4 +352,7 @@
     <string name="field_hand_tutorial_no_moves">Боломжит нүүдэл байхгүй үед тоглогч шууд ялагдана.</string>
     <string name="field_hand_tutorial_goal">Гоол! Гайхалтай!</string>
     <string name="field_hand_tutorial_own_goal">Өөрийн гоол!</string>
+    <string name="field_hand_tutorial_opponent_goal_1">Сайн тоглолт! Дараа нь та тэднийг авна 💪</string>
+    <string name="field_hand_tutorial_opponent_goal_2">Сайн оролдлого! Давтан тоглолт хүлээж байна 🔁</string>
+    <string name="field_hand_tutorial_opponent_goal_3">Ойрхон байлаа! Үргэлжлүүлэн тоглооё ⚽</string>
 </resources>

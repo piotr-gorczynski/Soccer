@@ -386,4 +386,7 @@
     <string name="field_hand_tutorial_no_moves">যখন কোন সম্ভাব্য চাল নেই, খেলোয়াড় অবিলম্বে হেরে যায়।</string>
     <string name="field_hand_tutorial_goal">গোল! ব্রাভো!</string>
     <string name="field_hand_tutorial_own_goal">নিজস্ব গোল!</string>
+    <string name="field_hand_tutorial_opponent_goal_1">ভালো খেলা! পরের বার তুমি তাদের হারাবে 💪</string>
+    <string name="field_hand_tutorial_opponent_goal_2">ভালো চেষ্টা! পুনর্ম্যাচ অপেক্ষা করছে 🔁</string>
+    <string name="field_hand_tutorial_opponent_goal_3">খুব কাছাকাছি ছিল! খেলা চালিয়ে যাও ⚽</string>
 </resources>

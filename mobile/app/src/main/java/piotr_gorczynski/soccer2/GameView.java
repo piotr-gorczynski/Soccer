@@ -552,14 +552,26 @@ public class GameView extends View {
         if(possibleMoves.isEmpty()) {
             // Check if it's a goal or loss
             if(y==-1) {
-                // Ball landed in top goal - player 0 scores
-                field.setTutorialMessageType(Field.TutorialMessageType.GOAL);
+                // Ball landed in top goal (player 1's goal) - player 0 wins
+                if ((GameType == 1 || GameType == 3) && localPlayerIndex == 1) {
+                    // From player 1's perspective: opponent (player 0) scored, show encouraging message
+                    field.setTutorialMessageType(Field.TutorialMessageType.OPPONENT_GOAL);
+                } else {
+                    // From player 0's perspective or GameType 2: celebrate the goal
+                    field.setTutorialMessageType(Field.TutorialMessageType.GOAL);
+                }
                 gameActivity.showWinner(0);
             }
             else {
                 if(y==intFieldHeight+1) {
-                    // Ball landed in bottom goal - player 1 scores
-                    field.setTutorialMessageType(Field.TutorialMessageType.GOAL);
+                    // Ball landed in bottom goal (player 0's goal) - player 1 wins
+                    if ((GameType == 1 || GameType == 3) && localPlayerIndex == 0) {
+                        // From player 0's perspective: opponent (player 1) scored, show encouraging message
+                        field.setTutorialMessageType(Field.TutorialMessageType.OPPONENT_GOAL);
+                    } else {
+                        // From player 1's perspective or GameType 2: celebrate the goal
+                        field.setTutorialMessageType(Field.TutorialMessageType.GOAL);
+                    }
                     gameActivity.showWinner(1);
                 }
                 else {

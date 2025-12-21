@@ -352,4 +352,7 @@
     <string name="field_hand_tutorial_no_moves">කිසිදු හැකි චලනයන් නොමැති විට, ක්‍රීඩකයා වහාම පරාජය වේ.</string>
     <string name="field_hand_tutorial_goal">ගෝලය! ශ්‍රේෂ්ඨයි!</string>
     <string name="field_hand_tutorial_own_goal">ස්වකීය ගෝලය!</string>
+    <string name="field_hand_tutorial_opponent_goal_1">හොඳ ක්‍රීඩාවක්! ඊළඟ වතාවේ ඔබ ඔවුන් දිනාගනු ඇත 💪</string>
+    <string name="field_hand_tutorial_opponent_goal_2">හොඳ උත්සාහයක්! නැවත තරගය බලාපොරොත්තුවෙන් සිටී 🔁</string>
+    <string name="field_hand_tutorial_opponent_goal_3">එය සමීපව සිදුවිය! ක්‍රීඩා කරන්න දිගටම ⚽</string>
 </resources>

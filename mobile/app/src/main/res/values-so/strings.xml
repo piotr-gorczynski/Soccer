@@ -352,4 +352,7 @@
     <string name="field_hand_tutorial_no_moves">Marka aysan jirin dhaqaaqyo suurtagal ah, ciyaartoygu markiiba wuu khasaaraa.</string>
     <string name="field_hand_tutorial_goal">Goal! Fiican!</string>
     <string name="field_hand_tutorial_own_goal">Goal shakhsi ah!</string>
+    <string name="field_hand_tutorial_opponent_goal_1">Ciyaar fiican! Mar dambe waad ka adkaan doontaa 💪</string>
+    <string name="field_hand_tutorial_opponent_goal_2">Isku day fiican! Dib u ciyaarid baa sugaya 🔁</string>
+    <string name="field_hand_tutorial_opponent_goal_3">Taasi waxay ahayd dhow! Sii wad ciyaarta ⚽</string>
 </resources>

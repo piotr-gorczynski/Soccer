@@ -352,4 +352,7 @@
     <string name="field_hand_tutorial_no_moves">ምንም ሊሆኑ የሚችሉ እንቅስቃሴዎች በሌሉበት ጊዜ ተጫዋቹ ወዲያውኑ ያጣል።</string>
     <string name="field_hand_tutorial_goal">ጎል! ጎበዝ!</string>
     <string name="field_hand_tutorial_own_goal">የራስ ጎል!</string>
+    <string name="field_hand_tutorial_opponent_goal_1">ጥሩ ጨዋታ! ቀጣዩ ጊዜ እነሱን ታገኛለህ 💪</string>
+    <string name="field_hand_tutorial_opponent_goal_2">ጥሩ ሙከራ! መልሶ መጫወቱ ይጠብቃል 🔁</string>
+    <string name="field_hand_tutorial_opponent_goal_3">በጣም ቅርብ ነበር! መጫወት ቀጥል ⚽</string>
 </resources>
