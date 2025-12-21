@@ -386,4 +386,7 @@
     <string name="field_hand_tutorial_no_moves">जब कोई संभावित चाल नहीं होती है, तो खिलाड़ी तुरंत हार जाता है।</string>
     <string name="field_hand_tutorial_goal">गोल! शाबाश!</string>
     <string name="field_hand_tutorial_own_goal">अपना गोल!</string>
+    <string name="field_hand_tutorial_opponent_goal_1">अच्छा खेल! अगली बार तुम उन्हें हरा दोगे 💪</string>
+    <string name="field_hand_tutorial_opponent_goal_2">अच्छी कोशिश! पुनर्मैच का इंतजार है 🔁</string>
+    <string name="field_hand_tutorial_opponent_goal_3">यह बहुत करीब था! खेलते रहो ⚽</string>
 </resources>
