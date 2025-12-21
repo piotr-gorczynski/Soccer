@@ -3243,6 +3243,20 @@ public class Field {
     }
 
     /**
+     * Gets the current tutorial message type
+     */
+    public TutorialMessageType getTutorialMessageType() {
+        return currentTutorialMessage;
+    }
+
+    /**
+     * Gets the current tutorial message string
+     */
+    public String getTutorialMessageString() {
+        return getTutorialMessage();
+    }
+
+    /**
      * Checks if the balloon rectangle overlaps with any possible move points
      */
     private boolean checkBalloonOverlap(RectF balloonRect, float pulseDotSize) {
