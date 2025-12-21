@@ -27,9 +27,12 @@ public class TournamentNotificationHelper {
     private static final String PREFS_NAME = "TournamentNotifications";
     private static final String KEY_SHOWN_TOURNAMENTS = "shown_tournaments";
     
+    // Maximum number of tournament IDs to keep in storage to prevent unbounded growth
+    private static final int MAX_STORED_TOURNAMENT_IDS = 100;
+    
     // Time window to check for recently started tournaments (in milliseconds)
-    // We check for tournaments that started within the last 7 days
-    private static final long RECENT_START_WINDOW_MS = TimeUnit.DAYS.toMillis(7);
+    // We check for tournaments that started within the last 24 hours
+    private static final long RECENT_START_WINDOW_MS = TimeUnit.HOURS.toMillis(24);
 
     /**
      * Check for recently started tournaments and show notification if applicable.
@@ -174,11 +177,28 @@ public class TournamentNotificationHelper {
 
     /**
      * Mark that we've shown a notification for this tournament.
+     * Implements a simple cleanup mechanism to prevent unbounded storage growth.
      */
     private static void markNotificationShown(Context context, String tournamentId) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         Set<String> shownTournaments = new HashSet<>(prefs.getStringSet(KEY_SHOWN_TOURNAMENTS, new HashSet<>()));
         shownTournaments.add(tournamentId);
+        
+        // If we exceed the maximum size, remove oldest entries (arbitrary removal since we don't track timestamps)
+        // This prevents unbounded growth of the storage
+        if (shownTournaments.size() > MAX_STORED_TOURNAMENT_IDS) {
+            Log.d(TAG, "TournamentNotificationHelper: Cleaning up old tournament IDs, current size: " + shownTournaments.size());
+            // Keep only the most recent MAX_STORED_TOURNAMENT_IDS entries
+            // Since we don't track timestamps, we just keep a subset
+            Set<String> trimmedSet = new HashSet<>();
+            int count = 0;
+            for (String id : shownTournaments) {
+                if (count++ >= MAX_STORED_TOURNAMENT_IDS) break;
+                trimmedSet.add(id);
+            }
+            shownTournaments = trimmedSet;
+        }
+        
         prefs.edit().putStringSet(KEY_SHOWN_TOURNAMENTS, shownTournaments).apply();
         Log.d(TAG, "TournamentNotificationHelper: Marked tournament " + tournamentId + " as shown");
     }

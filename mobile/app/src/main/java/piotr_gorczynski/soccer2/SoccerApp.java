@@ -392,7 +392,11 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
 
         tournamentNotificationChecked = true;
 
-        // Wait a bit to ensure an activity is available
+        // Delay to ensure an activity has been resumed and is available for showing the dialog.
+        // This delay gives the Android framework time to complete the activity lifecycle 
+        // transitions (onResume) before attempting to show a dialog.
+        final int ACTIVITY_RESUME_DELAY_MS = 500;
+        
         MAIN_HANDLER.postDelayed(() -> {
             if (currentActivity != null) {
                 Log.d(TAG, "SoccerApp.checkTournamentNotifications: Checking with activity: " + currentActivity.getClass().getSimpleName());
@@ -400,7 +404,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
             } else {
                 Log.d(TAG, "SoccerApp.checkTournamentNotifications: No current activity available");
             }
-        }, 500);  // 500ms delay to ensure activity is resumed
+        }, ACTIVITY_RESUME_DELAY_MS);
     }
 
     /* -------------- same heartbeat worker you already have ----- */
