@@ -384,4 +384,7 @@
     <string name="field_hand_tutorial_opponent_goal_1">Beau jeu ! Tu les auras la prochaine fois 💪</string>
     <string name="field_hand_tutorial_opponent_goal_2">Belle tentative ! La revanche attend 🔁</string>
     <string name="field_hand_tutorial_opponent_goal_3">C’était proche ! Continue à jouer ⚽</string>
+    
+    <!-- Tournament notification dialog -->
+    <string name="tournament_started_dialog_message">Le tournoi %1$s a commencé ! Voulez-vous ouvrir le lobby du tournoi ?</string>
 </resources>

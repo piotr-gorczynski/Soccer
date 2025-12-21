@@ -355,4 +355,7 @@
     <string name="field_hand_tutorial_opponent_goal_1">Mchezo mzuri! Utawashinda wakati ujao 💪</string>
     <string name="field_hand_tutorial_opponent_goal_2">Jaribio nzuri! Mchezo wa pili unasubiri 🔁</string>
     <string name="field_hand_tutorial_opponent_goal_3">Ilikuwa karibu! Endelea kucheza ⚽</string>
+    
+    <!-- Tournament notification dialog -->
+    <string name="tournament_started_dialog_message">Mashindano %1$s yameanza! Je, ungependa kufungua ukumbi wa mashindano?</string>
 </resources>
