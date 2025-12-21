@@ -311,4 +311,116 @@ public class MyFirebaseMessagingServiceTest {
             fail("Service should catch all Throwables including system exceptions: " + t.getMessage());
         }
     }
+
+    /**
+     * Test that the service handles tournament_started notification type without crashing
+     */
+    @Test
+    public void testOnMessageReceived_withTournamentStartedType_shouldNotCrash() {
+        MyFirebaseMessagingService service = new MyFirebaseMessagingService();
+        
+        // Create a RemoteMessage with tournament_started type
+        Map<String, String> data = new HashMap<>();
+        data.put("type", "tournament_started");
+        data.put("title", "Tournament started!");
+        data.put("body", "Test Tournament");
+        data.put("tournamentId", "tourney123");
+        data.put("tournamentName", "Test Tournament");
+        
+        // This should not throw an exception
+        try {
+            RemoteMessage message = createRemoteMessage(data);
+            
+            // The service should handle this gracefully
+            service.onMessageReceived(message);
+            
+            // Test passes if we reach this point without exception
+        } catch (Exception e) {
+            fail("Service should not crash with tournament_started notification: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Test that the service handles tournament notification with missing tournamentId gracefully
+     */
+    @Test
+    public void testOnMessageReceived_withTournamentStartedMissingId_shouldNotCrash() {
+        MyFirebaseMessagingService service = new MyFirebaseMessagingService();
+        
+        // Create a RemoteMessage with tournament_started type but missing tournamentId
+        Map<String, String> data = new HashMap<>();
+        data.put("type", "tournament_started");
+        data.put("title", "Tournament started!");
+        data.put("body", "Test Tournament");
+        data.put("tournamentName", "Test Tournament");
+        // Note: tournamentId is intentionally missing
+        
+        // This should not throw an exception
+        try {
+            RemoteMessage message = createRemoteMessage(data);
+            
+            // The service should handle this gracefully by not showing the notification
+            service.onMessageReceived(message);
+            
+            // Test passes if we reach this point without exception
+        } catch (Exception e) {
+            fail("Service should not crash with missing tournamentId: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Test that the service handles tournament notification with null title gracefully
+     */
+    @Test
+    public void testOnMessageReceived_withTournamentStartedNullTitle_shouldNotCrash() {
+        MyFirebaseMessagingService service = new MyFirebaseMessagingService();
+        
+        // Create a RemoteMessage with tournament_started type and null title
+        Map<String, String> data = new HashMap<>();
+        data.put("type", "tournament_started");
+        data.put("title", null);  // Will be skipped, resulting in getData().get("title") == null
+        data.put("body", "Test Tournament");
+        data.put("tournamentId", "tourney123");
+        data.put("tournamentName", "Test Tournament");
+        
+        // This should not throw an exception
+        try {
+            RemoteMessage message = createRemoteMessage(data);
+            
+            // The service should handle this gracefully and use default title
+            service.onMessageReceived(message);
+            
+            // Test passes if we reach this point without exception
+        } catch (Exception e) {
+            fail("Service should not crash with null tournament title: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Test that the service handles tournament notification with empty tournament name gracefully
+     */
+    @Test
+    public void testOnMessageReceived_withTournamentStartedEmptyName_shouldNotCrash() {
+        MyFirebaseMessagingService service = new MyFirebaseMessagingService();
+        
+        // Create a RemoteMessage with tournament_started type and empty tournament name
+        Map<String, String> data = new HashMap<>();
+        data.put("type", "tournament_started");
+        data.put("title", "Tournament started!");
+        data.put("body", "Test Tournament");
+        data.put("tournamentId", "tourney123");
+        data.put("tournamentName", "");
+        
+        // This should not throw an exception
+        try {
+            RemoteMessage message = createRemoteMessage(data);
+            
+            // The service should handle this gracefully
+            service.onMessageReceived(message);
+            
+            // Test passes if we reach this point without exception
+        } catch (Exception e) {
+            fail("Service should not crash with empty tournament name: " + e.getMessage());
+        }
+    }
 }
