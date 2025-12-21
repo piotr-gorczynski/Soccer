@@ -1373,7 +1373,7 @@ public class MenuActivity extends BaseActivity {
                 .show();
     }
 
-    private void showAdThenRun(Runnable action) {
+    public void showAdThenRun(Runnable action) {
         showLoadingOverlay();
         Runnable guardedAction = () -> {
             try {

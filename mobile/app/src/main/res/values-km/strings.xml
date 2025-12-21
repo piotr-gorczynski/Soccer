@@ -355,4 +355,7 @@
     <string name="field_hand_tutorial_opponent_goal_1">ល្អណាស់! ពេលក្រោយអ្នកនឹងឈ្នះពួកគេ 💪</string>
     <string name="field_hand_tutorial_opponent_goal_2">ការព្យាយាមល្អ! ការប្រកួតឡើងវិញកំពុងរង់ចាំ 🔁</string>
     <string name="field_hand_tutorial_opponent_goal_3">វាជិតណាស់! បន្តលេង ⚽</string>
+    
+    <!-- Tournament notification dialog -->
+    <string name="tournament_started_dialog_message">ការប្រកួត %1$s បានចាប់ផ្តើម! តើអ្នកចង់បើកសាលប្រជុំប្រកួតទេ?</string>
 </resources>

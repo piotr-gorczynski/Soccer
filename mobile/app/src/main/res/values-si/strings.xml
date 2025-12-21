@@ -355,4 +355,7 @@
     <string name="field_hand_tutorial_opponent_goal_1">හොඳ ක්‍රීඩාවක්! ඊළඟ වතාවේ ඔබ ඔවුන් දිනාගනු ඇත 💪</string>
     <string name="field_hand_tutorial_opponent_goal_2">හොඳ උත්සාහයක්! නැවත තරගය බලාපොරොත්තුවෙන් සිටී 🔁</string>
     <string name="field_hand_tutorial_opponent_goal_3">එය සමීපව සිදුවිය! ක්‍රීඩා කරන්න දිගටම ⚽</string>
+    
+    <!-- Tournament notification dialog -->
+    <string name="tournament_started_dialog_message">තරඟාවලිය %1$s ආරම්භ විය! ඔබට තරඟාවලි ලොබිය විවෘත කිරීමට අවශ්‍යද?</string>
 </resources>
