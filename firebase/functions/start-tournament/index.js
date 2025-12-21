@@ -74,7 +74,7 @@ exports.startTournament = functions.pubsub
     for (const doc of toStart) {
       const data = doc.data();
       const ref  = doc.ref;
-      const tournamentName = data.name || 'Tournament';
+      const tournamentName = data.name || '';
 
       switch (data.format) {
         case 'RoundRobin':
@@ -192,7 +192,7 @@ async function sendNotificationsToParticipants(tournamentRef, tournamentName) {
               fcmErrorDate: admin.firestore.FieldValue.serverTimestamp()
             });
           } catch (updateError) {
-            console.error(`[sendNotifications] Failed to update FCM error for user ${user.uid}`);
+            console.error(`[sendNotifications] Failed to update FCM error for user ${user.uid}: ${updateError.message}`);
           }
         } else {
           console.error(`[sendNotifications] Failed to send to user ${user.uid}: ${error.message}`);
