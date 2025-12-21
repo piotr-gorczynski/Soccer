@@ -352,4 +352,7 @@
     <string name="field_hand_tutorial_no_moves">ဖြစ်နိုင်သော အရွှေ့များ မရှိသောအခါ ကစားသမားသည် ချက်ချင်း ရှုံးသည်။</string>
     <string name="field_hand_tutorial_goal">ဂိုး! အံ့သြဖွယ်!</string>
     <string name="field_hand_tutorial_own_goal">ကိုယ့်ဂိုး!</string>
+    <string name="field_hand_tutorial_opponent_goal_1">ကောင်းသောဂိမ်း! နောက်တစ်ခေါက်မှာ သင်သူတို့ကို အနိုင်ရလိမ့်မယ် 💪</string>
+    <string name="field_hand_tutorial_opponent_goal_2">ကောင်းသော ကြိုးစားမှု! ပြန်စဉ်းစားပွဲ စောင့်နေသည် 🔁</string>
+    <string name="field_hand_tutorial_opponent_goal_3">အလွန်နီးခဲ့သည်! ဆက်လက်ကစားပါ ⚽</string>
 </resources>

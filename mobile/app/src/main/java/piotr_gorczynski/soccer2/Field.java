@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Random;
 
 public class Field {
 
@@ -244,7 +245,8 @@ public class Field {
         BOUNCE_VISITED,       // Ball bounced on visited point
         NO_MOVES,             // No possible moves (loss)
         GOAL,                 // Scored in opponent's goal
-        OWN_GOAL              // Scored in own goal
+        OWN_GOAL,             // Scored in own goal
+        OPPONENT_GOAL         // Opponent scored (encouraging message)
     }
     
     // Hand tutorial state
@@ -3229,6 +3231,19 @@ public class Field {
                 return context.getString(R.string.field_hand_tutorial_goal);
             case OWN_GOAL:
                 return context.getString(R.string.field_hand_tutorial_own_goal);
+            case OPPONENT_GOAL:
+                // Randomly select one of three encouraging messages
+                Random random = new Random();
+                int messageIndex = random.nextInt(3);
+                switch (messageIndex) {
+                    case 0:
+                        return context.getString(R.string.field_hand_tutorial_opponent_goal_1);
+                    case 1:
+                        return context.getString(R.string.field_hand_tutorial_opponent_goal_2);
+                    case 2:
+                    default:
+                        return context.getString(R.string.field_hand_tutorial_opponent_goal_3);
+                }
             case INITIAL:
             default:
                 return context.getString(R.string.field_hand_tutorial_message);

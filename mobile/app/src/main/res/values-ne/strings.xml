@@ -386,4 +386,7 @@
     <string name="field_hand_tutorial_no_moves">जब कुनै सम्भावित चालहरू छैनन्, खेलाडी तुरुन्त हराउँछ।</string>
     <string name="field_hand_tutorial_goal">गोल! साधु!</string>
     <string name="field_hand_tutorial_own_goal">आफ्नै गोल!</string>
+    <string name="field_hand_tutorial_opponent_goal_1">राम्रो खेल! अर्को पटक तपाईंले तिनीहरूलाई हराउनुहुनेछ 💪</string>
+    <string name="field_hand_tutorial_opponent_goal_2">राम्रो प्रयास! पुनः खेलको प्रतीक्षा छ 🔁</string>
+    <string name="field_hand_tutorial_opponent_goal_3">त्यो नजिक थियो! खेल्न जारी राख्नुहोस् ⚽</string>
 </resources>
