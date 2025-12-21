@@ -390,4 +390,7 @@
     <string name="field_hand_tutorial_opponent_goal_1">Gutes Spiel! Beim nächsten Mal erwischt du sie 💪</string>
     <string name="field_hand_tutorial_opponent_goal_2">Guter Versuch! Das Rückspiel wartet 🔁</string>
     <string name="field_hand_tutorial_opponent_goal_3">Das war knapp! Spiel weiter ⚽</string>
+    
+    <!-- Tournament notification dialog -->
+    <string name="tournament_started_dialog_message">Turnier %1$s hat begonnen! Möchten Sie die Turnier-Lobby öffnen?</string>
 </resources>

@@ -389,4 +389,7 @@
     <string name="field_hand_tutorial_opponent_goal_1">ভালো খেলা! পরের বার তুমি তাদের হারাবে 💪</string>
     <string name="field_hand_tutorial_opponent_goal_2">ভালো চেষ্টা! পুনর্ম্যাচ অপেক্ষা করছে 🔁</string>
     <string name="field_hand_tutorial_opponent_goal_3">খুব কাছাকাছি ছিল! খেলা চালিয়ে যাও ⚽</string>
+    
+    <!-- Tournament notification dialog -->
+    <string name="tournament_started_dialog_message">টুর্নামেন্ট %1$s শুরু হয়েছে! আপনি কি টুর্নামেন্ট লবি খুলতে চান?</string>
 </resources>

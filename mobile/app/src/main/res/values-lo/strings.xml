@@ -355,4 +355,7 @@
     <string name="field_hand_tutorial_opponent_goal_1">ເກມດີ! ເທື່ອໜ້າເຈົ້າຈະຊະນະພວກເຂົາ 💪</string>
     <string name="field_hand_tutorial_opponent_goal_2">ພະຍາຍາມດີ! ການແຂ່ງຂັນຄືນກຳລັງລໍຖ້າ 🔁</string>
     <string name="field_hand_tutorial_opponent_goal_3">ໃກ້ຫຼາຍ! ຫຼິ້ນຕໍ່ໄປ ⚽</string>
+    
+    <!-- Tournament notification dialog -->
+    <string name="tournament_started_dialog_message">ການແຂ່ງຂັນ %1$s ເລີ່ມແລ້ວ! ທ່ານຕ້ອງການເປີດຫ້ອງແຂ່ງຂັນບໍ?</string>
 </resources>
