@@ -1332,7 +1332,7 @@ public class GameActivity extends BaseActivity {
         // GameType 1 or 2 fallback
         String defaultMsg = SafeStringFormatter.safeGetString(this, R.string.winner_is, (Winner == 0 ? sPlayer0 : sPlayer1));
         defaultMsg = prependTutorialMessageIfNeeded(defaultMsg);
-        
+        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": dialogWinner defaultMsg="+defaultMsg);
         builder.setMessage(defaultMsg);
         builder.setPositiveButton(R.string.close, (dialog, which) -> finish());
         dialogWinner = builder.create();
