@@ -558,8 +558,8 @@ public class GameView extends View {
             }
             else {
                 if(y==intFieldHeight+1) {
-                    // Ball landed in bottom goal - player 1 scores (own goal for player 0 perspective)
-                    field.setTutorialMessageType(Field.TutorialMessageType.OWN_GOAL);
+                    // Ball landed in bottom goal - player 1 scores
+                    field.setTutorialMessageType(Field.TutorialMessageType.GOAL);
                     gameActivity.showWinner(1);
                 }
                 else {
