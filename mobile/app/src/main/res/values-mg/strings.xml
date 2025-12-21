@@ -355,4 +355,7 @@
     <string name="field_hand_tutorial_opponent_goal_1">Lalao tsara! Hahazo azy ireo amin’ny manaraka ianao 💪</string>
     <string name="field_hand_tutorial_opponent_goal_2">Fiezahana tsara! Miandry ny lalao famerenana 🔁</string>
     <string name="field_hand_tutorial_opponent_goal_3">Akaiky izany! Tohizo ny lalao ⚽</string>
+    
+    <!-- Tournament notification dialog -->
+    <string name="tournament_started_dialog_message">Nanomboka ny fifaninanana %1$s! Te hanokatra ny efitrano fifaninanana ve ianao?</string>
 </resources>

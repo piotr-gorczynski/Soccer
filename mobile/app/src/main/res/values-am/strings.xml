@@ -355,4 +355,7 @@
     <string name="field_hand_tutorial_opponent_goal_1">ጥሩ ጨዋታ! ቀጣዩ ጊዜ እነሱን ታገኛለህ 💪</string>
     <string name="field_hand_tutorial_opponent_goal_2">ጥሩ ሙከራ! መልሶ መጫወቱ ይጠብቃል 🔁</string>
     <string name="field_hand_tutorial_opponent_goal_3">በጣም ቅርብ ነበር! መጫወት ቀጥል ⚽</string>
+    
+    <!-- Tournament notification dialog -->
+    <string name="tournament_started_dialog_message">ውድድር %1$s ተጀምሯል! የውድድር አዳራሽ መክፈት ይፈልጋሉ?</string>
 </resources>

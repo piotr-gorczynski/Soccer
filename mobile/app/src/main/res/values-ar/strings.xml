@@ -336,4 +336,7 @@
     <string name="field_hand_tutorial_opponent_goal_1">لعبة جيدة! ستحصل عليهم في المرة القادمة 💪</string>
     <string name="field_hand_tutorial_opponent_goal_2">محاولة جيدة! المباراة الثانية تنتظرك 🔁</string>
     <string name="field_hand_tutorial_opponent_goal_3">كان قريباً! استمر في اللعب ⚽</string>
+    
+    <!-- Tournament notification dialog -->
+    <string name="tournament_started_dialog_message">بدأت البطولة %1$s! هل تريد فتح صالة البطولة؟</string>
 </resources>

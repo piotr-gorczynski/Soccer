@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
+import android.os.Bundle;
 import android.widget.Toast;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -71,6 +72,8 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     private AnalyticsManager analyticsManager;
     private RemoteConfigHelper remoteConfigHelper;
     private boolean appInForeground;
+    private Activity currentActivity;
+    private boolean tournamentNotificationChecked = false;
 
     /* Creates {state:"online", last_heartbeat:TS} */
     private static Map<String,Object> buildOnline() {
@@ -209,6 +212,40 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                 .getLifecycle()
                 .addObserver(this);
 
+        // Register activity lifecycle callbacks to track current activity
+        registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
+            @Override
+            public void onActivityCreated(@NonNull Activity activity, Bundle savedInstanceState) {}
+
+            @Override
+            public void onActivityStarted(@NonNull Activity activity) {}
+
+            @Override
+            public void onActivityResumed(@NonNull Activity activity) {
+                currentActivity = activity;
+            }
+
+            @Override
+            public void onActivityPaused(@NonNull Activity activity) {
+                if (currentActivity == activity) {
+                    currentActivity = null;
+                }
+            }
+
+            @Override
+            public void onActivityStopped(@NonNull Activity activity) {}
+
+            @Override
+            public void onActivitySaveInstanceState(@NonNull Activity activity, @NonNull Bundle outState) {}
+
+            @Override
+            public void onActivityDestroyed(@NonNull Activity activity) {
+                if (currentActivity == activity) {
+                    currentActivity = null;
+                }
+            }
+        });
+
         FirebaseAuth auth = FirebaseAuth.getInstance();
         auth.addAuthStateListener(a -> {
             if (a.getCurrentUser() != null) {
@@ -303,9 +340,13 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                 + ": APP RETURNS TO FOREGROUND");
 
         appInForeground = true;
+        tournamentNotificationChecked = false;  // Reset flag when app returns to foreground
 
         // Always apply the saved language when returning to the foreground
         checkLanguagePreference();
+
+        // Check for tournament notifications when app comes to foreground
+        checkTournamentNotifications();
 
         if (userStatusDbRef == null) return;             // ← ADD
         ensureConnectionListener();
@@ -337,6 +378,29 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                 .addOnFailureListener(e ->
                         Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                                 + ": ❌ seting value offline failed", e));
+    }
+
+    /**
+     * Check for tournament notifications when app returns to foreground.
+     * Only checks once per foreground session.
+     */
+    private void checkTournamentNotifications() {
+        if (tournamentNotificationChecked) {
+            Log.d(TAG, "SoccerApp.checkTournamentNotifications: Already checked this session");
+            return;
+        }
+
+        tournamentNotificationChecked = true;
+
+        // Wait a bit to ensure an activity is available
+        MAIN_HANDLER.postDelayed(() -> {
+            if (currentActivity != null) {
+                Log.d(TAG, "SoccerApp.checkTournamentNotifications: Checking with activity: " + currentActivity.getClass().getSimpleName());
+                TournamentNotificationHelper.checkForTournamentNotifications(currentActivity);
+            } else {
+                Log.d(TAG, "SoccerApp.checkTournamentNotifications: No current activity available");
+            }
+        }, 500);  // 500ms delay to ensure activity is resumed
     }
 
     /* -------------- same heartbeat worker you already have ----- */
