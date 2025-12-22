@@ -1190,10 +1190,10 @@ public class GameActivity extends BaseActivity {
     }
 
     /**
-     * Prepends tutorial message to winner message if hand tutorial is active and message type is appropriate
+     * Prepends tutorial message to winner message if tutorial messages are enabled and message type is appropriate
      */
     private String prependTutorialMessageIfNeeded(String winnerMessage) {
-        if (gameView != null && gameView.getField() != null && gameView.getField().isHandTutorialActive()) {
+        if (gameView != null && gameView.getField() != null && gameView.getField().isTutorialMessagesEnabled()) {
             Field.TutorialMessageType msgType = gameView.getField().getTutorialMessageType();
             if (msgType == Field.TutorialMessageType.GOAL || 
                 msgType == Field.TutorialMessageType.OWN_GOAL || 

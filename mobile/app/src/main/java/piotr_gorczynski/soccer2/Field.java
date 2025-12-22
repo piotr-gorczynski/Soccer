@@ -1068,6 +1068,10 @@ public class Field {
         return showHandTutorial && spritesLoaded;
     }
 
+    public boolean isTutorialMessagesEnabled() {
+        return tutorialMessagesEnabled;
+    }
+
     private void resetRunFinalPositions() {
         runFinalRedGridX = Float.NaN;
         runFinalRedGridY = Float.NaN;
