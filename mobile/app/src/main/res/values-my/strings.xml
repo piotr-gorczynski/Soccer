@@ -350,17 +350,17 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">ပြိုင်ပွဲ %1$s သည် ယခု မလည်ပတ်တော့ပါ</string>
-    <string name="field_hand_tutorial_message">ဘောလုံးကို ရွှေ့ရန် အမှတ်တစ်ခုပေါ်တွင် နှိပ်ပါ</string>
-    <string name="field_hand_tutorial_bounce_border">ဘောလုံးသည် နယ်နိမိတ်ကို ထိသောအခါ ပြန်လှည့်ပြီး ဘောလုံးကို ထပ်မံ ရွှေ့နိုင်သည်</string>
-    <string name="field_hand_tutorial_bounce_visited">ဘောလုံးသည် ယခင်က သွားခဲ့သော အမှတ်ကို ထိသောအခါ ပြန်လှည့်ပြီး ဘောလုံးကို ထပ်မံ ရွှေ့နိုင်သည်</string>
-    <string name="field_hand_tutorial_no_moves">ဖြစ်နိုင်သော အရွှေ့များ မရှိသောအခါ ကစားသမားသည် ချက်ချင်း ရှုံးသည်။</string>
-    <string name="field_hand_tutorial_goal_1">ဂိုး! ⚽🎉</string>
-    <string name="field_hand_tutorial_goal_2">ကောင်းမွန်သော ပစ်ချက်! 😄⚽</string>
-    <string name="field_hand_tutorial_goal_3">အံ့သြဖွယ် ဂိုး! 👏</string>
-    <string name="field_hand_tutorial_own_goal">ကိုယ့်ဂိုး!</string>
-    <string name="field_hand_tutorial_opponent_goal_1">ကောင်းသောဂိမ်း! နောက်တစ်ခေါက်မှာ သင်သူတို့ကို အနိုင်ရလိမ့်မယ် 💪</string>
-    <string name="field_hand_tutorial_opponent_goal_2">ကောင်းသော ကြိုးစားမှု! ပြန်စဉ်းစားပွဲ စောင့်နေသည် 🔁</string>
-    <string name="field_hand_tutorial_opponent_goal_3">အလွန်နီးခဲ့သည်! ဆက်လက်ကစားပါ ⚽</string>
+    <string name="field_tutorial_message">ဘောလုံးကို ရွှေ့ရန် အမှတ်တစ်ခုပေါ်တွင် နှိပ်ပါ</string>
+    <string name="field_tutorial_bounce_border">ဘောလုံးသည် နယ်နိမိတ်ကို ထိသောအခါ ပြန်လှည့်ပြီး ဘောလုံးကို ထပ်မံ ရွှေ့နိုင်သည်</string>
+    <string name="field_tutorial_bounce_visited">ဘောလုံးသည် ယခင်က သွားခဲ့သော အမှတ်ကို ထိသောအခါ ပြန်လှည့်ပြီး ဘောလုံးကို ထပ်မံ ရွှေ့နိုင်သည်</string>
+    <string name="field_tutorial_no_moves">ဖြစ်နိုင်သော အရွှေ့များ မရှိသောအခါ ကစားသမားသည် ချက်ချင်း ရှုံးသည်။</string>
+    <string name="field_tutorial_goal_1">ဂိုး! ⚽🎉</string>
+    <string name="field_tutorial_goal_2">ကောင်းမွန်သော ပစ်ချက်! 😄⚽</string>
+    <string name="field_tutorial_goal_3">အံ့သြဖွယ် ဂိုး! 👏</string>
+    <string name="field_tutorial_own_goal">ကိုယ့်ဂိုး!</string>
+    <string name="field_tutorial_opponent_goal_1">ကောင်းသောဂိမ်း! နောက်တစ်ခေါက်မှာ သင်သူတို့ကို အနိုင်ရလိမ့်မယ် 💪</string>
+    <string name="field_tutorial_opponent_goal_2">ကောင်းသော ကြိုးစားမှု! ပြန်စဉ်းစားပွဲ စောင့်နေသည် 🔁</string>
+    <string name="field_tutorial_opponent_goal_3">အလွန်နီးခဲ့သည်! ဆက်လက်ကစားပါ ⚽</string>
     
     <!-- Tournament notification dialog -->
     <string name="tournament_started_dialog_message">ပြိုင်ပွဲ %1$s စတင်ပြီ! သင်ပြိုင်ပွဲစည်းဝေးခန်းဖွင့်ချင်ပါသလား?</string>

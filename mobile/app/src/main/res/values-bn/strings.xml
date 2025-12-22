@@ -384,17 +384,17 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">টুর্নামেন্ট %1$s আর চলছে না</string>
-    <string name="field_hand_tutorial_message">বল সরাতে একটি পয়েন্টে ট্যাপ করুন</string>
-    <string name="field_hand_tutorial_bounce_border">যখন বল সীমানায় আঘাত করে, এটি বাউন্স করে এবং আপনি আবার বল সরাতে পারেন</string>
-    <string name="field_hand_tutorial_bounce_visited">যখন বল পূর্বে পরিদর্শন করা পয়েন্টে আঘাত করে, এটি বাউন্স করে এবং আপনি আবার বল সরাতে পারেন</string>
-    <string name="field_hand_tutorial_no_moves">যখন কোন সম্ভাব্য চাল নেই, খেলোয়াড় অবিলম্বে হেরে যায়।</string>
-    <string name="field_hand_tutorial_goal_1">গোল! ⚽🎉</string>
-    <string name="field_hand_tutorial_goal_2">সুন্দর শট! 😄⚽</string>
-    <string name="field_hand_tutorial_goal_3">দুর্দান্ত গোল! 👏</string>
-    <string name="field_hand_tutorial_own_goal">নিজস্ব গোল!</string>
-    <string name="field_hand_tutorial_opponent_goal_1">ভালো খেলা! পরের বার তুমি তাদের হারাবে 💪</string>
-    <string name="field_hand_tutorial_opponent_goal_2">ভালো চেষ্টা! পুনর্ম্যাচ অপেক্ষা করছে 🔁</string>
-    <string name="field_hand_tutorial_opponent_goal_3">খুব কাছাকাছি ছিল! খেলা চালিয়ে যাও ⚽</string>
+    <string name="field_tutorial_message">বল সরাতে একটি পয়েন্টে ট্যাপ করুন</string>
+    <string name="field_tutorial_bounce_border">যখন বল সীমানায় আঘাত করে, এটি বাউন্স করে এবং আপনি আবার বল সরাতে পারেন</string>
+    <string name="field_tutorial_bounce_visited">যখন বল পূর্বে পরিদর্শন করা পয়েন্টে আঘাত করে, এটি বাউন্স করে এবং আপনি আবার বল সরাতে পারেন</string>
+    <string name="field_tutorial_no_moves">যখন কোন সম্ভাব্য চাল নেই, খেলোয়াড় অবিলম্বে হেরে যায়।</string>
+    <string name="field_tutorial_goal_1">গোল! ⚽🎉</string>
+    <string name="field_tutorial_goal_2">সুন্দর শট! 😄⚽</string>
+    <string name="field_tutorial_goal_3">দুর্দান্ত গোল! 👏</string>
+    <string name="field_tutorial_own_goal">নিজস্ব গোল!</string>
+    <string name="field_tutorial_opponent_goal_1">ভালো খেলা! পরের বার তুমি তাদের হারাবে 💪</string>
+    <string name="field_tutorial_opponent_goal_2">ভালো চেষ্টা! পুনর্ম্যাচ অপেক্ষা করছে 🔁</string>
+    <string name="field_tutorial_opponent_goal_3">খুব কাছাকাছি ছিল! খেলা চালিয়ে যাও ⚽</string>
     
     <!-- Tournament notification dialog -->
     <string name="tournament_started_dialog_message">টুর্নামেন্ট %1$s শুরু হয়েছে! আপনি কি টুর্নামেন্ট লবি খুলতে চান?</string>
