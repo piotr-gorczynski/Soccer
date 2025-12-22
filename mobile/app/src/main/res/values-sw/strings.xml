@@ -349,10 +349,6 @@
     <string name="pref_summary_show_tutorial_messages">Huonyesha ujumbe muhimu unaoeleza sheria za mchezo wakati wa kucheza na katika matokeo</string>
     
     <!-- Tournament invite errors -->
-    <string name="hand_tutorial_dialog_yes">Ndiyo, endelea</string>
-    <string name="hand_tutorial_dialog_no">Hapana, zima</string>
-    
-    <!-- Tournament invite errors -->
     <string name="tournament_not_running">Mashindano %1$s hayaendelei tena</string>
     <string name="field_hand_tutorial_message">Gusa kwenye moja ya pointi ili kuhamisha mpira</string>
     <string name="field_hand_tutorial_bounce_border">Wakati mpira unagonga mpaka, hurudia na unaweza kuhama isha mpira tena</string>

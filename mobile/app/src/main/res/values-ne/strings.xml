@@ -383,10 +383,6 @@
     <string name="pref_summary_show_tutorial_messages">खेल र परिणामहरूमा खेल नियमहरू व्याख्या गर्ने उपयोगी सन्देशहरू प्रदर्शन गर्दछ</string>
     
     <!-- Tournament invite errors -->
-    <string name="hand_tutorial_dialog_yes">हो, जारी राख्नुहोस्</string>
-    <string name="hand_tutorial_dialog_no">होइन, निष्क्रिय गर्नुहोस्</string>
-    
-    <!-- Tournament invite errors -->
     <string name="tournament_not_running">प्रतियोगिता %1$s अब चलिरहेको छैन</string>
     <string name="field_hand_tutorial_message">बल सार्न बिन्दुहरू मध्ये एकमा ट्याप गर्नुहोस्</string>
     <string name="field_hand_tutorial_bounce_border">जब बल सीमामा ठोक्किन्छ, यो उफ्रन्छ र तपाईं फेरि बल सार्न सक्नुहुन्छ</string>

@@ -349,10 +349,6 @@
     <string name="pref_summary_show_tutorial_messages">ສະແດງຂໍ້ຄວາມທີ່ເປັນປະໂຫຍດທີ່ອະທິບາຍກົດລະບຽບເກມໃນລະຫວ່າງການຫຼິ້ນ ແລະ ໃນຜົນໄດ້ຮັບ</string>
     
     <!-- Tournament invite errors -->
-    <string name="hand_tutorial_dialog_yes">ແມ່ນແລ້ວ, ສືບຕໍ່</string>
-    <string name="hand_tutorial_dialog_no">ບໍ່, ປິດ</string>
-    
-    <!-- Tournament invite errors -->
     <string name="tournament_not_running">ການແຂ່ງຂັນ %1$s ບໍ່ໄດ້ດຳເນີນການອີກແລ້ວ</string>
     <string name="field_hand_tutorial_message">ແຕະໃສ່ຈຸດໃດໜຶ່ງເພື່ອເຄື່ອນຍ້າຍບານ</string>
     <string name="field_hand_tutorial_bounce_border">ເມື່ອບານຕີຂອບເຂດ ມັນສະທ້ອນກັບຄືນ ແລະ ເຈົ້າສາມາດເຄື່ອນຍ້າຍບານອີກຄັ້ງ</string>
