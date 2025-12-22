@@ -373,6 +373,14 @@
     <string name="hand_tutorial_dialog_yes">Oui, continuer</string>
     <string name="hand_tutorial_dialog_no">Non, désactiver</string>
     
+    <!-- Tutorial messages feature -->
+    <string name="pref_title_show_tutorial_messages">Afficher les conseils de jeu</string>
+    <string name="pref_summary_show_tutorial_messages">Affiche des messages utiles expliquant les règles du jeu pendant la partie et dans les résultats</string>
+    
+    <!-- Tournament invite errors -->
+    <string name="hand_tutorial_dialog_yes">Oui, continuer</string>
+    <string name="hand_tutorial_dialog_no">Non, désactiver</string>
+    
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">Le tournoi %1$s n\'est plus en cours</string>
     <string name="field_hand_tutorial_message">Appuyez sur l’un des points pour déplacer le ballon</string>
