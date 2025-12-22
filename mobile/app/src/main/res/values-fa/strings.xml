@@ -330,10 +330,6 @@
     <string name="pref_summary_show_tutorial_messages">پیام‌های مفیدی را نمایش می‌دهد که قوانین بازی را در طول بازی و در نتایج توضیح می‌دهند</string>
     
     <!-- Tournament invite errors -->
-    <string name="hand_tutorial_dialog_yes">بله، ادامه دهید</string>
-    <string name="hand_tutorial_dialog_no">خیر، غیرفعال کنید</string>
-    
-    <!-- Tournament invite errors -->
     <string name="tournament_not_running">مسابقه %1$s دیگر در حال اجرا نیست</string>
     <string name="field_hand_tutorial_message">برای حرکت توپ روی یکی از نقاط ضربه بزنید</string>
     <string name="field_hand_tutorial_bounce_border">وقتی توپ به مرز برخورد می‌کند، برمی‌گردد و می‌توانید دوباره توپ را حرکت دهید</string>
