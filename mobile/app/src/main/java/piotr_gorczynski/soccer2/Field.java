@@ -296,21 +296,21 @@ public class Field {
 
         switch (argGameType) {
             case 1 -> {
-                sPlayer0 = "Player 1";
-                sPlayer1 = "Player 2";
+                sPlayer0 = SafeStringFormatter.safeGetString(current, R.string.player_with_number, 1);
+                sPlayer1 = SafeStringFormatter.safeGetString(current, R.string.player_with_number, 2);
             }
             case 2 -> {
-                sPlayer0 = "Player";
-                sPlayer1 = "Android";
+                sPlayer0 = current.getString(R.string.player_label);
+                sPlayer1 = current.getString(R.string.android_label);
             }
             case 3 -> {
-                sPlayer0 = player0Name != null ? player0Name : "Player 0";
-                sPlayer1 = player1Name != null ? player1Name : "Player 1";
+                sPlayer0 = player0Name != null ? player0Name : SafeStringFormatter.safeGetString(current, R.string.player_with_number, 0);
+                sPlayer1 = player1Name != null ? player1Name : SafeStringFormatter.safeGetString(current, R.string.player_with_number, 1);
                 isFlipped = localPlayerIndex == 1;
             }
             default -> {
-                sPlayer0 = "Player 0";
-                sPlayer1 = "Player 1";
+                sPlayer0 = SafeStringFormatter.safeGetString(current, R.string.player_with_number, 0);
+                sPlayer1 = SafeStringFormatter.safeGetString(current, R.string.player_with_number, 1);
             }
         }
 
