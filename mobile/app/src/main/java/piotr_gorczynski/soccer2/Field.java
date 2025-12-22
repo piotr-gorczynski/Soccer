@@ -3228,7 +3228,17 @@ public class Field {
             case NO_MOVES:
                 return context.getString(R.string.field_hand_tutorial_no_moves);
             case GOAL:
-                return context.getString(R.string.field_hand_tutorial_goal);
+                // Randomly select one of three celebration messages
+                int goalMessageIndex = new Random().nextInt(3);
+                switch (goalMessageIndex) {
+                    case 0:
+                        return context.getString(R.string.field_hand_tutorial_goal_1);
+                    case 1:
+                        return context.getString(R.string.field_hand_tutorial_goal_2);
+                    case 2:
+                    default:
+                        return context.getString(R.string.field_hand_tutorial_goal_3);
+                }
             case OWN_GOAL:
                 return context.getString(R.string.field_hand_tutorial_own_goal);
             case OPPONENT_GOAL:

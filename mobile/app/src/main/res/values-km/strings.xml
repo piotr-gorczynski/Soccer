@@ -350,7 +350,9 @@
     <string name="field_hand_tutorial_bounce_border">នៅពេលបាល់ប៉ះព្រំដែន វាលោតត្រឡប់មកវិញ ហើយអ្នកអាចផ្លាស់ទីបាល់ម្តងទៀត</string>
     <string name="field_hand_tutorial_bounce_visited">នៅពេលបាល់ប៉ះចំណុចដែលបានទស្សនាពីមុន វាលោតត្រឡប់មកវិញ ហើយអ្នកអាចផ្លាស់ទីបាល់ម្តងទៀត</string>
     <string name="field_hand_tutorial_no_moves">នៅពេលមិនមានចលនាដែលអាចធ្វើបាន អ្នកលេងនឹងចាញ់ភ្លាមៗ។</string>
-    <string name="field_hand_tutorial_goal">គោល! ល្អណាស់!</string>
+    <string name="field_hand_tutorial_goal_1">គោល! ⚽🎉</string>
+    <string name="field_hand_tutorial_goal_2">ការបាញ់ល្អ! 😄⚽</string>
+    <string name="field_hand_tutorial_goal_3">គោលដ៏អស្ចារ្យ! 👏</string>
     <string name="field_hand_tutorial_own_goal">គោលផ្ទាល់ខ្លួន!</string>
     <string name="field_hand_tutorial_opponent_goal_1">ល្អណាស់! ពេលក្រោយអ្នកនឹងឈ្នះពួកគេ 💪</string>
     <string name="field_hand_tutorial_opponent_goal_2">ការព្យាយាមល្អ! ការប្រកួតឡើងវិញកំពុងរង់ចាំ 🔁</string>
