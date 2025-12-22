@@ -1197,7 +1197,8 @@ public class GameActivity extends BaseActivity {
             Field.TutorialMessageType msgType = gameView.getField().getTutorialMessageType();
             if (msgType == Field.TutorialMessageType.GOAL || 
                 msgType == Field.TutorialMessageType.OWN_GOAL || 
-                msgType == Field.TutorialMessageType.NO_MOVES) {
+                msgType == Field.TutorialMessageType.NO_MOVES || 
+                msgType == Field.TutorialMessageType.OPPONENT_GOAL) {
                 String tutorialMsg = gameView.getField().getTutorialMessageString();
                 return tutorialMsg + "\n\n" + winnerMessage;
             }
