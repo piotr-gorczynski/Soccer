@@ -2992,20 +2992,13 @@ public class Field {
 
     private void drawHandTutorial(Canvas canvas, int currentTurn) {
         // Don't show during Android's turn (gameType 2, currentTurn 1)
-        if (gameType == 2 && currentTurn == 1) {
+        boolean isAndroidTurn = (gameType == 2 && currentTurn == 1);
+        if (isAndroidTurn) {
             return;
         }
 
-        // Don't show if there are no possible moves
-        if (possibleMoves == null || possibleMoves.isEmpty()) {
-            showHandTutorial = false;
-            // Still allow tutorial balloon to be drawn even without hand tutorial
-            drawTutorialBalloon(canvas);
-            return;
-        }
-
-        // Only show hand tutorial if enabled
-        if (showHandTutorial) {
+        // Only show hand tutorial if enabled and there are possible moves
+        if (showHandTutorial && possibleMoves != null && !possibleMoves.isEmpty()) {
 
         int currentMoveCount = Moves.size();
         
@@ -3034,8 +3027,6 @@ public class Field {
 
                     logAnimation(getClass().getSimpleName() + ".drawHandTutorial: Reached threshold "
                         + nextThreshold + " cycles, requesting dialog");
-                    // Still allow tutorial balloon to be drawn even after disabling hand tutorial
-                    drawTutorialBalloon(canvas);
                     return;
                 }
             }
@@ -3081,7 +3072,12 @@ public class Field {
                 + handTutorialPositionIndex + "/" + possibleMoves.size() 
                 + ", cycle " + (handTutorialCycle + 1));*/
         }
-        } // End of if (showHandTutorial)
+        } // End of if (showHandTutorial && possibleMoves != null && !possibleMoves.isEmpty())
+        
+        // Disable hand tutorial if there are no possible moves
+        if (possibleMoves == null || possibleMoves.isEmpty()) {
+            showHandTutorial = false;
+        }
         
         // Draw the tutorial balloon message (controlled by separate setting)
         drawTutorialBalloon(canvas);
