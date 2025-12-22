@@ -331,7 +331,9 @@
     <string name="field_hand_tutorial_bounce_border">عندما تصطدم الكرة بحد، ترتد ويمكنك تحريك الكرة مرة أخرى</string>
     <string name="field_hand_tutorial_bounce_visited">عندما تصطدم الكرة بنقطة تمت زيارتها مسبقًا، ترتد ويمكنك تحريك الكرة مرة أخرى</string>
     <string name="field_hand_tutorial_no_moves">عندما لا توجد حركات ممكنة، يخسر اللاعب على الفور.</string>
-    <string name="field_hand_tutorial_goal">هدف! برافو!</string>
+    <string name="field_hand_tutorial_goal_1">هدف! ⚽🎉</string>
+    <string name="field_hand_tutorial_goal_2">تسديدة رائعة! 😄⚽</string>
+    <string name="field_hand_tutorial_goal_3">هدف عظيم! 👏</string>
     <string name="field_hand_tutorial_own_goal">هدف في المرمى الخاص!</string>
     <string name="field_hand_tutorial_opponent_goal_1">لعبة جيدة! ستحصل عليهم في المرة القادمة 💪</string>
     <string name="field_hand_tutorial_opponent_goal_2">محاولة جيدة! المباراة الثانية تنتظرك 🔁</string>

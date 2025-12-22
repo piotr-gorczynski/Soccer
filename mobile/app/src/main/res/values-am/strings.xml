@@ -350,7 +350,9 @@
     <string name="field_hand_tutorial_bounce_border">ኳሱ ድንበር ሲመታ፣ ይወጣል እና እንደገና ኳሱን ማንቀሳቀስ ይችላሉ</string>
     <string name="field_hand_tutorial_bounce_visited">ኳሱ ቀደም ብሎ የተጎበኘ ነጥብ ሲመታ፣ ይወጣል እና እንደገና ኳሱን ማንቀሳቀስ ይችላሉ</string>
     <string name="field_hand_tutorial_no_moves">ምንም ሊሆኑ የሚችሉ እንቅስቃሴዎች በሌሉበት ጊዜ ተጫዋቹ ወዲያውኑ ያጣል።</string>
-    <string name="field_hand_tutorial_goal">ጎል! ጎበዝ!</string>
+    <string name="field_hand_tutorial_goal_1">ጎል! ⚽🎉</string>
+    <string name="field_hand_tutorial_goal_2">ጥሩ መምታት! 😄⚽</string>
+    <string name="field_hand_tutorial_goal_3">አስደናቂ ጎል! 👏</string>
     <string name="field_hand_tutorial_own_goal">የራስ ጎል!</string>
     <string name="field_hand_tutorial_opponent_goal_1">ጥሩ ጨዋታ! ቀጣዩ ጊዜ እነሱን ታገኛለህ 💪</string>
     <string name="field_hand_tutorial_opponent_goal_2">ጥሩ ሙከራ! መልሶ መጫወቱ ይጠብቃል 🔁</string>

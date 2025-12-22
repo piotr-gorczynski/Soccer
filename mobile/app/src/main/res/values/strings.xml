@@ -217,7 +217,9 @@
     <string name="field_hand_tutorial_bounce_border">When ball hit a border, it bounces and you can again move the ball</string>
     <string name="field_hand_tutorial_bounce_visited">When ball hit a previously visited point, it bounces and you can again move the ball</string>
     <string name="field_hand_tutorial_no_moves">When there are no possible moves, the player immediately loses.</string>
-    <string name="field_hand_tutorial_goal">Goal! Bravo!</string>
+    <string name="field_hand_tutorial_goal_1">GOAL! ⚽🎉</string>
+    <string name="field_hand_tutorial_goal_2">Nice shot! 😄⚽</string>
+    <string name="field_hand_tutorial_goal_3">Great goal! 👏</string>
     <string name="field_hand_tutorial_own_goal">Own goal!</string>
     <string name="field_hand_tutorial_opponent_goal_1">Good game! You\'ll get them next time 💪</string>
     <string name="field_hand_tutorial_opponent_goal_2">Nice try! The rematch awaits 🔁</string>
