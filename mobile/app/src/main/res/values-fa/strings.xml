@@ -331,17 +331,17 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">مسابقه %1$s دیگر در حال اجرا نیست</string>
-    <string name="field_hand_tutorial_message">برای حرکت توپ روی یکی از نقاط ضربه بزنید</string>
-    <string name="field_hand_tutorial_bounce_border">وقتی توپ به مرز برخورد می‌کند، برمی‌گردد و می‌توانید دوباره توپ را حرکت دهید</string>
-    <string name="field_hand_tutorial_bounce_visited">وقتی توپ به نقطه قبلاً بازدید شده برخورد می‌کند، برمی‌گردد و می‌توانید دوباره توپ را حرکت دهید</string>
-    <string name="field_hand_tutorial_no_moves">وقتی حرکت ممکنی وجود ندارد، بازیکن بلافاصله بازنده می‌شود.</string>
-    <string name="field_hand_tutorial_goal_1">گل! ⚽🎉</string>
-    <string name="field_hand_tutorial_goal_2">شوت خوب! 😄⚽</string>
-    <string name="field_hand_tutorial_goal_3">گل عالی! 👏</string>
-    <string name="field_hand_tutorial_own_goal">گل به خودی!</string>
-    <string name="field_hand_tutorial_opponent_goal_1">بازی خوب! دفعه بعد آنها را می‌گیری 💪</string>
-    <string name="field_hand_tutorial_opponent_goal_2">تلاش خوب! بازی دوباره در انتظار است 🔁</string>
-    <string name="field_hand_tutorial_opponent_goal_3">خیلی نزدیک بود! به بازی ادامه بده ⚽</string>
+    <string name="field_tutorial_message">برای حرکت توپ روی یکی از نقاط ضربه بزنید</string>
+    <string name="field_tutorial_bounce_border">وقتی توپ به مرز برخورد می‌کند، برمی‌گردد و می‌توانید دوباره توپ را حرکت دهید</string>
+    <string name="field_tutorial_bounce_visited">وقتی توپ به نقطه قبلاً بازدید شده برخورد می‌کند، برمی‌گردد و می‌توانید دوباره توپ را حرکت دهید</string>
+    <string name="field_tutorial_no_moves">وقتی حرکت ممکنی وجود ندارد، بازیکن بلافاصله بازنده می‌شود.</string>
+    <string name="field_tutorial_goal_1">گل! ⚽🎉</string>
+    <string name="field_tutorial_goal_2">شوت خوب! 😄⚽</string>
+    <string name="field_tutorial_goal_3">گل عالی! 👏</string>
+    <string name="field_tutorial_own_goal">گل به خودی!</string>
+    <string name="field_tutorial_opponent_goal_1">بازی خوب! دفعه بعد آنها را می‌گیری 💪</string>
+    <string name="field_tutorial_opponent_goal_2">تلاش خوب! بازی دوباره در انتظار است 🔁</string>
+    <string name="field_tutorial_opponent_goal_3">خیلی نزدیک بود! به بازی ادامه بده ⚽</string>
     
     <!-- Tournament notification dialog -->
     <string name="tournament_started_dialog_message">مسابقات %1$s شروع شد! آیا می‌خواهید لابی مسابقات را باز کنید؟</string>

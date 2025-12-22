@@ -350,17 +350,17 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">ການແຂ່ງຂັນ %1$s ບໍ່ໄດ້ດຳເນີນການອີກແລ້ວ</string>
-    <string name="field_hand_tutorial_message">ແຕະໃສ່ຈຸດໃດໜຶ່ງເພື່ອເຄື່ອນຍ້າຍບານ</string>
-    <string name="field_hand_tutorial_bounce_border">ເມື່ອບານຕີຂອບເຂດ ມັນສະທ້ອນກັບຄືນ ແລະ ເຈົ້າສາມາດເຄື່ອນຍ້າຍບານອີກຄັ້ງ</string>
-    <string name="field_hand_tutorial_bounce_visited">ເມື່ອບານຕີຈຸດທີ່ເຄີຍໄປແລ້ວ ມັນສະທ້ອນກັບຄືນ ແລະ ເຈົ້າສາມາດເຄື່ອນຍ້າຍບານອີກຄັ້ງ</string>
-    <string name="field_hand_tutorial_no_moves">ເມື່ອບໍ່ມີການເຄື່ອນທີ່ທີ່ເປັນໄປໄດ້ ຜູ້ຫຼິ້ນຈະແພ້ທັນທີ.</string>
-    <string name="field_hand_tutorial_goal_1">ປະຕູ! ⚽🎉</string>
-    <string name="field_hand_tutorial_goal_2">ການຍິງທີ່ດີ! 😄⚽</string>
-    <string name="field_hand_tutorial_goal_3">ປະຕູທີ່ຍິ່ງໃຫຍ່! 👏</string>
-    <string name="field_hand_tutorial_own_goal">ປະຕູຕົນເອງ!</string>
-    <string name="field_hand_tutorial_opponent_goal_1">ເກມດີ! ເທື່ອໜ້າເຈົ້າຈະຊະນະພວກເຂົາ 💪</string>
-    <string name="field_hand_tutorial_opponent_goal_2">ພະຍາຍາມດີ! ການແຂ່ງຂັນຄືນກຳລັງລໍຖ້າ 🔁</string>
-    <string name="field_hand_tutorial_opponent_goal_3">ໃກ້ຫຼາຍ! ຫຼິ້ນຕໍ່ໄປ ⚽</string>
+    <string name="field_tutorial_message">ແຕະໃສ່ຈຸດໃດໜຶ່ງເພື່ອເຄື່ອນຍ້າຍບານ</string>
+    <string name="field_tutorial_bounce_border">ເມື່ອບານຕີຂອບເຂດ ມັນສະທ້ອນກັບຄືນ ແລະ ເຈົ້າສາມາດເຄື່ອນຍ້າຍບານອີກຄັ້ງ</string>
+    <string name="field_tutorial_bounce_visited">ເມື່ອບານຕີຈຸດທີ່ເຄີຍໄປແລ້ວ ມັນສະທ້ອນກັບຄືນ ແລະ ເຈົ້າສາມາດເຄື່ອນຍ້າຍບານອີກຄັ້ງ</string>
+    <string name="field_tutorial_no_moves">ເມື່ອບໍ່ມີການເຄື່ອນທີ່ທີ່ເປັນໄປໄດ້ ຜູ້ຫຼິ້ນຈະແພ້ທັນທີ.</string>
+    <string name="field_tutorial_goal_1">ປະຕູ! ⚽🎉</string>
+    <string name="field_tutorial_goal_2">ການຍິງທີ່ດີ! 😄⚽</string>
+    <string name="field_tutorial_goal_3">ປະຕູທີ່ຍິ່ງໃຫຍ່! 👏</string>
+    <string name="field_tutorial_own_goal">ປະຕູຕົນເອງ!</string>
+    <string name="field_tutorial_opponent_goal_1">ເກມດີ! ເທື່ອໜ້າເຈົ້າຈະຊະນະພວກເຂົາ 💪</string>
+    <string name="field_tutorial_opponent_goal_2">ພະຍາຍາມດີ! ການແຂ່ງຂັນຄືນກຳລັງລໍຖ້າ 🔁</string>
+    <string name="field_tutorial_opponent_goal_3">ໃກ້ຫຼາຍ! ຫຼິ້ນຕໍ່ໄປ ⚽</string>
     
     <!-- Tournament notification dialog -->
     <string name="tournament_started_dialog_message">ການແຂ່ງຂັນ %1$s ເລີ່ມແລ້ວ! ທ່ານຕ້ອງການເປີດຫ້ອງແຂ່ງຂັນບໍ?</string>

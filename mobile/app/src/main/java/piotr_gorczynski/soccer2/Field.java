@@ -3222,40 +3222,40 @@ public class Field {
     private String getTutorialMessage() {
         switch (currentTutorialMessage) {
             case BOUNCE_BORDER:
-                return context.getString(R.string.field_hand_tutorial_bounce_border);
+                return context.getString(R.string.field_tutorial_bounce_border);
             case BOUNCE_VISITED:
-                return context.getString(R.string.field_hand_tutorial_bounce_visited);
+                return context.getString(R.string.field_tutorial_bounce_visited);
             case NO_MOVES:
-                return context.getString(R.string.field_hand_tutorial_no_moves);
+                return context.getString(R.string.field_tutorial_no_moves);
             case GOAL:
                 // Randomly select one of three celebration messages
                 int goalMessageIndex = new Random().nextInt(3);
                 switch (goalMessageIndex) {
                     case 0:
-                        return context.getString(R.string.field_hand_tutorial_goal_1);
+                        return context.getString(R.string.field_tutorial_goal_1);
                     case 1:
-                        return context.getString(R.string.field_hand_tutorial_goal_2);
+                        return context.getString(R.string.field_tutorial_goal_2);
                     case 2:
                     default:
-                        return context.getString(R.string.field_hand_tutorial_goal_3);
+                        return context.getString(R.string.field_tutorial_goal_3);
                 }
             case OWN_GOAL:
-                return context.getString(R.string.field_hand_tutorial_own_goal);
+                return context.getString(R.string.field_tutorial_own_goal);
             case OPPONENT_GOAL:
                 // Randomly select one of three encouraging messages
                 int messageIndex = new Random().nextInt(3);
                 switch (messageIndex) {
                     case 0:
-                        return context.getString(R.string.field_hand_tutorial_opponent_goal_1);
+                        return context.getString(R.string.field_tutorial_opponent_goal_1);
                     case 1:
-                        return context.getString(R.string.field_hand_tutorial_opponent_goal_2);
+                        return context.getString(R.string.field_tutorial_opponent_goal_2);
                     case 2:
                     default:
-                        return context.getString(R.string.field_hand_tutorial_opponent_goal_3);
+                        return context.getString(R.string.field_tutorial_opponent_goal_3);
                 }
             case INITIAL:
             default:
-                return context.getString(R.string.field_hand_tutorial_message);
+                return context.getString(R.string.field_tutorial_message);
         }
     }
 
