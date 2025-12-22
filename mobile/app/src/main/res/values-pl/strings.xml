@@ -379,6 +379,14 @@
     <string name="hand_tutorial_dialog_yes">Tak, kontynuuj</string>
     <string name="hand_tutorial_dialog_no">Nie, wyłącz</string>
     
+    <!-- Tutorial messages feature -->
+    <string name="pref_title_show_tutorial_messages">Pokaż wskazówki</string>
+    <string name="pref_summary_show_tutorial_messages">Wyświetla pomocne komunikaty wyjaśniające zasady gry podczas rozgrywki i w wynikach</string>
+    
+    <!-- Tournament invite errors -->
+    <string name="hand_tutorial_dialog_yes">Tak, kontynuuj</string>
+    <string name="hand_tutorial_dialog_no">Nie, wyłącz</string>
+    
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">Turniej %1$s już się nie toczy</string>
     <string name="field_hand_tutorial_message">Dotknij jednego z punktów, aby przesunąć piłkę</string>

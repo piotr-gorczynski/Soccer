@@ -37,6 +37,13 @@
             android:defaultValue="true"
             android:icon="@android:drawable/ic_menu_help" />
 
+        <CheckBoxPreference
+            android:key="show_tutorial_messages"
+            android:title="@string/pref_title_show_tutorial_messages"
+            android:summary="@string/pref_summary_show_tutorial_messages"
+            android:defaultValue="true"
+            android:icon="@android:drawable/ic_dialog_info" />
+
         <Preference
             android:key="language_preference"
             android:title="@string/pref_title_language"

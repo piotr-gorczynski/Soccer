@@ -322,6 +322,14 @@
     <string name="pref_summary_show_hand_tutorial">يعرض يدًا تشير إلى الحركات الممكنة لمساعدتك على التعلم</string>
     <string name="hand_tutorial_dialog_title">دليل</string>
     <string name="hand_tutorial_dialog_message">هل ما زلت تريد مني أن أريك الحركات الممكنة؟ يمكنك دائمًا تشغيله وإيقافه في الإعدادات.</string>
+    <string name="hand_tutorial_dialog_yes">نعم، استمر</string>
+    <string name="hand_tutorial_dialog_no">لا، أوقف</string>
+    
+    <!-- Tutorial messages feature -->
+    <string name="pref_title_show_tutorial_messages">إظهار نصائح اللعبة</string>
+    <string name="pref_summary_show_tutorial_messages">يعرض رسائل مفيدة تشرح قواعد اللعبة أثناء اللعب وفي النتائج</string>
+    
+    <!-- Tournament invite errors -->
     <string name="hand_tutorial_dialog_yes">نعم، تابع</string>
     <string name="hand_tutorial_dialog_no">لا، أوقف التشغيل</string>
     
