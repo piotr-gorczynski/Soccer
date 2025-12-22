@@ -385,6 +385,10 @@
     <string name="hand_tutorial_dialog_yes">Yes, continue</string>
     <string name="hand_tutorial_dialog_no">No, turn it off</string>
     
+    <!-- Tutorial messages feature -->
+    <string name="pref_title_show_tutorial_messages">Show game tips</string>
+    <string name="pref_summary_show_tutorial_messages">Display helpful messages explaining game rules during play and in results</string>
+    
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">Tournament %1$s is no longer running</string>
     

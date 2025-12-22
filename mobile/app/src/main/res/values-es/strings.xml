@@ -381,6 +381,14 @@
     <string name="hand_tutorial_dialog_yes">Sí, continuar</string>
     <string name="hand_tutorial_dialog_no">No, desactivar</string>
     
+    <!-- Tutorial messages feature -->
+    <string name="pref_title_show_tutorial_messages">Mostrar consejos del juego</string>
+    <string name="pref_summary_show_tutorial_messages">Muestra mensajes útiles que explican las reglas del juego durante la partida y en los resultados</string>
+    
+    <!-- Tournament invite errors -->
+    <string name="hand_tutorial_dialog_yes">Sí, continuar</string>
+    <string name="hand_tutorial_dialog_no">No, desactivar</string>
+    
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">El torneo %1$s ya no está en curso</string>
     <string name="field_hand_tutorial_message">Toca uno de los puntos para mover la pelota</string>

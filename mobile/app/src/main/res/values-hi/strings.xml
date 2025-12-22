@@ -378,6 +378,14 @@
     <string name="hand_tutorial_dialog_yes">हां, जारी रखें</string>
     <string name="hand_tutorial_dialog_no">नहीं, बंद करें</string>
     
+    <!-- Tutorial messages feature -->
+    <string name="pref_title_show_tutorial_messages">गेम टिप्स दिखाएं</string>
+    <string name="pref_summary_show_tutorial_messages">खेल के दौरान और परिणामों में गेम नियमों को समझाने वाले उपयोगी संदेश प्रदर्शित करता है</string>
+    
+    <!-- Tournament invite errors -->
+    <string name="hand_tutorial_dialog_yes">हां, जारी रखें</string>
+    <string name="hand_tutorial_dialog_no">नहीं, बंद करें</string>
+    
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">टूर्नामेंट %1$s अब नहीं चल रहा है</string>
     <string name="field_hand_tutorial_message">गेंद को हिलाने के लिए किसी एक बिंदु पर टैप करें</string>

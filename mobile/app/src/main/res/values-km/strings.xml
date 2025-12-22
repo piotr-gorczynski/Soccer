@@ -344,6 +344,14 @@
     <string name="hand_tutorial_dialog_yes">បាទ/ចាស បន្ត</string>
     <string name="hand_tutorial_dialog_no">ទេ បិទ</string>
     
+    <!-- Tutorial messages feature -->
+    <string name="pref_title_show_tutorial_messages">បង្ហាញគន្លឹះហ្គេម</string>
+    <string name="pref_summary_show_tutorial_messages">បង្ហាញសារមានប្រយោជន៍ដែលពន្យល់ច្បាប់ហ្គេមក្នុងអំឡុងពេលលេង និងក្នុងលទ្ធផល</string>
+    
+    <!-- Tournament invite errors -->
+    <string name="hand_tutorial_dialog_yes">បាទ/ចាស បន្ត</string>
+    <string name="hand_tutorial_dialog_no">ទេ បិទ</string>
+    
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">ការប្រកួត %1$s មិនកំពុងដំណើរការទៀតទេ</string>
     <string name="field_hand_tutorial_message">ប៉ះលើចំណុចណាមួយដើម្បីផ្លាស់ទីបាល់</string>
