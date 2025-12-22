@@ -322,7 +322,10 @@ public class GameView extends View {
         */
 
         try {
-            field = new Field(context, realMoves, possibleMovesForDrawing, GameType, "Player 1", "Player 2", 0, areAnimationsEnabled(context));
+            // Use localized strings for player names
+            String player1Name = SafeStringFormatter.safeGetString(context, R.string.player_with_number, 1);
+            String player2Name = SafeStringFormatter.safeGetString(context, R.string.player_with_number, 2);
+            field = new Field(context, realMoves, possibleMovesForDrawing, GameType, player1Name, player2Name, 0, areAnimationsEnabled(context));
         } catch (Exception e) {
             Log.e("TAG_Soccer", getClass().getSimpleName() + ".<init>: Failed to create Field", e);
             throw new RuntimeException("Failed to initialize game field", e);
