@@ -349,10 +349,6 @@
     <string name="pref_summary_show_tutorial_messages">Waxay muujisaa farriimo waxtar leh oo sharaxaya xeerarka ciyaarta inta lagu jiro ciyaarta iyo natiijooyinka</string>
     
     <!-- Tournament invite errors -->
-    <string name="hand_tutorial_dialog_yes">Haa, sii wad</string>
-    <string name="hand_tutorial_dialog_no">Maya, xidh</string>
-    
-    <!-- Tournament invite errors -->
     <string name="tournament_not_running">Tartanka %1$s hadda ma socdo</string>
     <string name="field_hand_tutorial_message">Taabo mid ka mid ah dhibcaha si aad u dhaqaajiso kubbadda</string>
     <string name="field_hand_tutorial_bounce_border">Marka kubbadda ay ku dhacdo xadka, waxay soo noqotaa oo waxaad mar kale u dhaqaajin kartaa kubbadda</string>

@@ -349,10 +349,6 @@
     <string name="pref_summary_show_tutorial_messages">ක්‍රීඩාව අතරතුර සහ ප්‍රතිඵල වල ක්‍රීඩා නීති පැහැදිලි කරන ප්‍රයෝජනවත් පණිවිඩ පෙන්වයි</string>
     
     <!-- Tournament invite errors -->
-    <string name="hand_tutorial_dialog_yes">ඔව්, දිගටම කරගෙන යන්න</string>
-    <string name="hand_tutorial_dialog_no">නැත, අක්‍රිය කරන්න</string>
-    
-    <!-- Tournament invite errors -->
     <string name="tournament_not_running">තරගාවලිය %1$s තවදුරටත් ක්‍රියාත්මක නොවේ</string>
     <string name="field_hand_tutorial_message">බෝලය චලනය කිරීමට එක් ලක්ෂ්‍යයක් මත තට්ටු කරන්න</string>
     <string name="field_hand_tutorial_bounce_border">බෝලය මායිමට පහර දුන් විට, එය බවුන්ස් වන අතර ඔබට නැවත බෝලය චලනය කළ හැක</string>

@@ -330,10 +330,6 @@
     <string name="pref_summary_show_tutorial_messages">يعرض رسائل مفيدة تشرح قواعد اللعبة أثناء اللعب وفي النتائج</string>
     
     <!-- Tournament invite errors -->
-    <string name="hand_tutorial_dialog_yes">نعم، تابع</string>
-    <string name="hand_tutorial_dialog_no">لا، أوقف التشغيل</string>
-    
-    <!-- Tournament invite errors -->
     <string name="tournament_not_running">البطولة %1$s لم تعد قيد التشغيل</string>
     <string name="field_hand_tutorial_message">اضغط على إحدى النقاط لتحريك الكرة</string>
     <string name="field_hand_tutorial_bounce_border">عندما تصطدم الكرة بحد، ترتد ويمكنك تحريك الكرة مرة أخرى</string>

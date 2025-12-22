@@ -384,10 +384,6 @@
     <string name="pref_summary_show_tutorial_messages">Zeigt hilfreiche Nachrichten, die Spielregeln während des Spiels und in den Ergebnissen erklären</string>
     
     <!-- Tournament invite errors -->
-    <string name="hand_tutorial_dialog_yes">Ja, fortfahren</string>
-    <string name="hand_tutorial_dialog_no">Nein, ausschalten</string>
-    
-    <!-- Tournament invite errors -->
     <string name="tournament_not_running">Turnier %1$s läuft nicht mehr</string>
     <string name="field_hand_tutorial_message">Tippen Sie auf einen der Punkte, um den Ball zu bewegen</string>
     <string name="field_hand_tutorial_bounce_border">Wenn der Ball eine Grenze trifft, prallt er ab und Sie können den Ball erneut bewegen</string>
