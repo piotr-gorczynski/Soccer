@@ -344,6 +344,14 @@
     <string name="hand_tutorial_dialog_yes">Тийм, үргэлжлүүлэх</string>
     <string name="hand_tutorial_dialog_no">Үгүй, унтраах</string>
     
+    <!-- Tutorial messages feature -->
+    <string name="pref_title_show_tutorial_messages">Тоглоомын зөвлөмж харуулах</string>
+    <string name="pref_summary_show_tutorial_messages">Тоглолт болон үр дүнд тоглоомын дүрэм тайлбарласан хэрэгтэй мессежүүд харуулна</string>
+    
+    <!-- Tournament invite errors -->
+    <string name="hand_tutorial_dialog_yes">Тийм, үргэлжлүүлэх</string>
+    <string name="hand_tutorial_dialog_no">Үгүй, унтраах</string>
+    
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">%1$s тэмцээн цаашид үргэлжлэхгүй байна</string>
     <string name="field_hand_tutorial_message">Бөмбөгийг хөдөлгөхийн тулд цэгүүдийн аль нэг дээр товшино уу</string>

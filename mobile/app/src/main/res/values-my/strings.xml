@@ -342,6 +342,14 @@
     <string name="hand_tutorial_dialog_title">ကျူတိုရီရယ်</string>
     <string name="hand_tutorial_dialog_message">သင့်ကို ဖြစ်နိုင်သော ရွှေ့လျားမှုများ ပြသဖို့ သင် လိုချင်သေးလား? ဆက်တင်များတွင် ၎င်းကို အမြဲတမ်း ဖွင့်နှင့် ပိတ်နိုင်ပါသည်။</string>
     <string name="hand_tutorial_dialog_yes">ဟုတ်ကဲ့၊ ဆက်လုပ်ပါ</string>
+    <string name="hand_tutorial_dialog_no">မလုပ်ပါ၊ ပိတ်ပါ</string>
+    
+    <!-- Tutorial messages feature -->
+    <string name="pref_title_show_tutorial_messages">ဂိမ်းအကြံပြုချက်များ ပြပါ</string>
+    <string name="pref_summary_show_tutorial_messages">ကစားနေစဉ်နှင့် ရလဒ်များတွင် ဂိမ်းစည်းမျဉ်းများကို ရှင်းပြသော အသုံးဝင်သောသတင်းစကားများကို ပြသပါသည်</string>
+    
+    <!-- Tournament invite errors -->
+    <string name="hand_tutorial_dialog_yes">ဟုတ်ကဲ့၊ ဆက်လုပ်ပါ</string>
     <string name="hand_tutorial_dialog_no">မဟုတ်ပါ၊ ပိတ်ပါ</string>
     
     <!-- Tournament invite errors -->
