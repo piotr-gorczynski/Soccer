@@ -384,7 +384,9 @@
     <string name="field_hand_tutorial_bounce_border">जब बल सीमामा ठोक्किन्छ, यो उफ्रन्छ र तपाईं फेरि बल सार्न सक्नुहुन्छ</string>
     <string name="field_hand_tutorial_bounce_visited">जब बल पहिले नै भ्रमण गरिएको बिन्दुमा ठोक्किन्छ, यो उफ्रन्छ र तपाईं फेरि बल सार्न सक्नुहुन्छ</string>
     <string name="field_hand_tutorial_no_moves">जब कुनै सम्भावित चालहरू छैनन्, खेलाडी तुरुन्त हराउँछ।</string>
-    <string name="field_hand_tutorial_goal">गोल! साधु!</string>
+    <string name="field_hand_tutorial_goal_1">गोल! ⚽🎉</string>
+    <string name="field_hand_tutorial_goal_2">राम्रो शट! 😄⚽</string>
+    <string name="field_hand_tutorial_goal_3">उत्कृष्ट गोल! 👏</string>
     <string name="field_hand_tutorial_own_goal">आफ्नै गोल!</string>
     <string name="field_hand_tutorial_opponent_goal_1">राम्रो खेल! अर्को पटक तपाईंले तिनीहरूलाई हराउनुहुनेछ 💪</string>
     <string name="field_hand_tutorial_opponent_goal_2">राम्रो प्रयास! पुनः खेलको प्रतीक्षा छ 🔁</string>
