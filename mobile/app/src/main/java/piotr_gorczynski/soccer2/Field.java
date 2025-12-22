@@ -229,6 +229,9 @@ public class Field {
     private static final int THRESHOLD_SECOND = 100;
     private static final int THRESHOLD_THIRD = 200;
     
+    // Tutorial messages constants
+    private static final String PREF_TUTORIAL_MESSAGES_ENABLED = "show_tutorial_messages";
+    
     // Tutorial balloon constants
     private static final float BALLOON_TEXT_SIZE_RATIO = 0.8f; // Ratio of field text size
     private static final float BALLOON_PADDING_RATIO = 0.5f; // Padding as ratio of text size
@@ -253,6 +256,7 @@ public class Field {
     private final Bitmap handBitmap;
     private final SharedPreferences prefs;
     private boolean showHandTutorial = false;
+    private final boolean tutorialMessagesEnabled;
     private int handTutorialCycle = 0;
     private int handTutorialPositionIndex = 0;
     private long handTutorialLastUpdateTime = 0L;
@@ -558,6 +562,9 @@ public class Field {
 
         // Initialize preferences
         prefs = PreferenceManager.getDefaultSharedPreferences(current);
+
+        // Check if tutorial messages are enabled in settings (default is true)
+        tutorialMessagesEnabled = prefs.getBoolean(PREF_TUTORIAL_MESSAGES_ENABLED, true);
 
         // Check if hand tutorial is enabled in settings (default is true)
         boolean handTutorialEnabled = prefs.getBoolean(PREF_HAND_TUTORIAL_ENABLED, true);
@@ -2984,21 +2991,14 @@ public class Field {
     }
 
     private void drawHandTutorial(Canvas canvas, int currentTurn) {
-        /* Only show tutorial if enabled */
-        if (!showHandTutorial) {
-            return;
-        }
-
         // Don't show during Android's turn (gameType 2, currentTurn 1)
-        if (gameType == 2 && currentTurn == 1) {
+        boolean isAndroidTurn = (gameType == 2 && currentTurn == 1);
+        if (isAndroidTurn) {
             return;
         }
 
-        // Don't show if there are no possible moves
-        if (possibleMoves == null || possibleMoves.isEmpty()) {
-            showHandTutorial = false;
-            return;
-        }
+        // Only show hand tutorial if enabled and there are possible moves
+        if (showHandTutorial && possibleMoves != null && !possibleMoves.isEmpty()) {
 
         int currentMoveCount = Moves.size();
         
@@ -3072,8 +3072,14 @@ public class Field {
                 + handTutorialPositionIndex + "/" + possibleMoves.size() 
                 + ", cycle " + (handTutorialCycle + 1));*/
         }
+        } // End of if (showHandTutorial && possibleMoves != null && !possibleMoves.isEmpty())
         
-        // Draw the tutorial balloon message
+        // Disable hand tutorial if there are no possible moves
+        if (possibleMoves == null || possibleMoves.isEmpty()) {
+            showHandTutorial = false;
+        }
+        
+        // Draw the tutorial balloon message (controlled by separate setting)
         drawTutorialBalloon(canvas);
     }
 
@@ -3095,6 +3101,11 @@ public class Field {
      * Draws a white balloon with tutorial message positioned to avoid covering possible moves
      */
     private void drawTutorialBalloon(Canvas canvas) {
+        // Only show tutorial messages if enabled in settings
+        if (!tutorialMessagesEnabled) {
+            return;
+        }
+        
         if (possibleMoves == null || possibleMoves.isEmpty()) {
             return;
         }
