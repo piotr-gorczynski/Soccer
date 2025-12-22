@@ -225,9 +225,9 @@ public class Field {
     private static final String PREF_HAND_TUTORIAL_ENABLED = "show_hand_tutorial";
     private static final String PREF_HAND_TUTORIAL_CYCLE_COUNT = "hand_tutorial_cycle_count";
     private static final String PREF_HAND_TUTORIAL_NEXT_THRESHOLD = "hand_tutorial_next_threshold";
-    private static final int THRESHOLD_FIRST = 20;
-    private static final int THRESHOLD_SECOND = 50;
-    private static final int THRESHOLD_THIRD = 100;
+    private static final int THRESHOLD_FIRST = 50;
+    private static final int THRESHOLD_SECOND = 100;
+    private static final int THRESHOLD_THIRD = 200;
     
     // Tutorial balloon constants
     private static final float BALLOON_TEXT_SIZE_RATIO = 0.8f; // Ratio of field text size
