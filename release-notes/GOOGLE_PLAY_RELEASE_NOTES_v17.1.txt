@@ -1,7 +1,9 @@
 <en-GB>
+🎉 Send localized FCM notifications to participants when tournament starts
+🎉 Add setting name for tutorial messages control
 🎮 Show tutorial balloon messages in winner dialog
 🎮 Fix tutorial message when Android wins and add encouraging messages for opponent goals
-🎉 Send localized FCM notifications to participants when tournament starts
+
 </en-GB>
 
 <pl-PL>
