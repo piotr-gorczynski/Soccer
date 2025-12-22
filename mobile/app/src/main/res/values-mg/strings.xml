@@ -349,10 +349,6 @@
     <string name="pref_summary_show_tutorial_messages">Mampiseho hafatra mahasoa manazava ny fitsipiky ny lalao mandritra ny lalao sy amin\'ny vokatra</string>
     
     <!-- Tournament invite errors -->
-    <string name="hand_tutorial_dialog_yes">Eny, tohizana</string>
-    <string name="hand_tutorial_dialog_no">Tsia, hidio</string>
-    
-    <!-- Tournament invite errors -->
     <string name="tournament_not_running">Ny fifanintsanana %1$s tsy mandeha intsony</string>
     <string name="field_hand_tutorial_message">Kitiho ny iray amin’ireo teboka mba hamindra ny baolina</string>
     <string name="field_hand_tutorial_bounce_border">Rehefa mamely ny sisiny ny baolina dia mitsambikina ary afaka mamindra ny baolina indray ianao</string>

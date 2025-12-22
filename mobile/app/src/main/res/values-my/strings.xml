@@ -349,10 +349,6 @@
     <string name="pref_summary_show_tutorial_messages">ကစားနေစဉ်နှင့် ရလဒ်များတွင် ဂိမ်းစည်းမျဉ်းများကို ရှင်းပြသော အသုံးဝင်သောသတင်းစကားများကို ပြသပါသည်</string>
     
     <!-- Tournament invite errors -->
-    <string name="hand_tutorial_dialog_yes">ဟုတ်ကဲ့၊ ဆက်လုပ်ပါ</string>
-    <string name="hand_tutorial_dialog_no">မဟုတ်ပါ၊ ပိတ်ပါ</string>
-    
-    <!-- Tournament invite errors -->
     <string name="tournament_not_running">ပြိုင်ပွဲ %1$s သည် ယခု မလည်ပတ်တော့ပါ</string>
     <string name="field_hand_tutorial_message">ဘောလုံးကို ရွှေ့ရန် အမှတ်တစ်ခုပေါ်တွင် နှိပ်ပါ</string>
     <string name="field_hand_tutorial_bounce_border">ဘောလုံးသည် နယ်နိမိတ်ကို ထိသောအခါ ပြန်လှည့်ပြီး ဘောလုံးကို ထပ်မံ ရွှေ့နိုင်သည်</string>

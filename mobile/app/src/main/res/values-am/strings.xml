@@ -349,10 +349,6 @@
     <string name="pref_summary_show_tutorial_messages">በጨዋታ ጊዜ እና በውጤቶች ውስጥ የጨዋታ ደንቦችን የሚያብራሩ ጠቃሚ መልዕክቶችን ያሳያል</string>
     
     <!-- Tournament invite errors -->
-    <string name="hand_tutorial_dialog_yes">አዎ፣ ቀጥል</string>
-    <string name="hand_tutorial_dialog_no">አይ፣ አጥፋ</string>
-    
-    <!-- Tournament invite errors -->
     <string name="tournament_not_running">ውድድር %1$s ከአሁን በኋላ እየሄደ አይደለም</string>
     <string name="field_hand_tutorial_message">በአንዱ ነጥብ ላይ ተዳቅሎ ኳሱን ለማንቀሳቀስ</string>
     <string name="field_hand_tutorial_bounce_border">ኳሱ ድንበር ሲመታ፣ ይወጣል እና እንደገና ኳሱን ማንቀሳቀስ ይችላሉ</string>
