@@ -99,6 +99,7 @@ public class Field {
     private final String sPlayer1;
     private final int gameType;
     private final Context context;
+    private AnalyticsManager analyticsManager;
     final ArrayList<MoveTo> possibleMoves;//= new ArrayList<MoveTo>();
     final ArrayList<MoveTo> Moves;//= new ArrayList<MoveTo>();
     private boolean isFlipped=false;
@@ -297,6 +298,11 @@ public class Field {
 
         this.gameType = argGameType;  // ✅ Save GameType for later use
         this.context = current;
+        
+        // Get analytics manager from SoccerApp for tutorial tracking
+        if (current.getApplicationContext() instanceof SoccerApp) {
+            this.analyticsManager = ((SoccerApp) current.getApplicationContext()).getAnalyticsManager();
+        }
 
         switch (argGameType) {
             case 1 -> {
@@ -3406,6 +3412,11 @@ public class Field {
             // User wants to turn it off - disable in settings
             prefs.edit().putBoolean(PREF_HAND_TUTORIAL_ENABLED, false).apply();
             showHandTutorial = false;
+            
+            // Track tutorial completion when user disables it
+            if (analyticsManager != null) {
+                analyticsManager.trackTutorialCompleted("hand_tutorial");
+            }
             
             Log.d("TAG_Soccer", getClass().getSimpleName() + ".onHandTutorialDialogResponse: User chose to disable hand tutorial");
         }

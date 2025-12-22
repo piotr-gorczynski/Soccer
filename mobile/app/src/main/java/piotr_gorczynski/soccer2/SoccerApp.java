@@ -199,6 +199,13 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         // Initialize analytics manager for user research
         analyticsManager = new AnalyticsManager(this);
         
+        // Track first app open timestamp for time_to_first_game metric
+        SharedPreferences prefs = getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
+        if (!prefs.contains("first_open_timestamp")) {
+            prefs.edit().putLong("first_open_timestamp", System.currentTimeMillis()).apply();
+            Log.d(TAG, "SoccerApp.onCreate: First open timestamp recorded");
+        }
+        
         // Initialize Remote Config for A/B testing
         remoteConfigHelper = new RemoteConfigHelper(this);
         
