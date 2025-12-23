@@ -44,7 +44,7 @@ Based on analysis of Firebase Analytics, AdMob, and DAU/MAU data from November 1
 
 **Expected Impact**: Increase Day 1 retention from 0.5% to 5-10%
 
-**Metrics to Track**:
+**Metrics to Track**: - done ✅ (https://github.com/piotr-gorczynski/Soccer/pull/1051)
 - tutorial_completed event
 - games_played_before_signup event
 - first_game_win rate

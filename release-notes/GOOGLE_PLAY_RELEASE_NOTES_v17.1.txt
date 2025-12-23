@@ -1,9 +1,9 @@
 <en-GB>
 🎉 Send localized FCM notifications to participants when tournament starts
 🎉 Add setting name for tutorial messages control
+🎉 Replace bullet icon with speedometer for Android level preference
 🎮 Show tutorial balloon messages in winner dialog
 🎮 Fix tutorial message when Android wins and add encouraging messages for opponent goals
-
 </en-GB>
 
 <pl-PL>
