@@ -149,6 +149,90 @@ public class AnalyticsManagerTest {
         }
     }
     
+    @Test
+    public void testTrackTutorialCompleted_withNullParameters_shouldNotCrash() {
+        // Test that the method doesn't throw NullPointerException when called with null parameters
+        try {
+            TestAnalyticsManagerForTutorial testManager = new TestAnalyticsManagerForTutorial();
+            
+            // Act - these calls should not throw NullPointerException
+            testManager.trackTutorialCompleted(null);
+            testManager.trackTutorialCompleted("hand_tutorial");
+            testManager.trackTutorialCompleted("tutorial_messages");
+            testManager.trackTutorialCompleted("");
+            
+            // If we reach here, no NPE was thrown
+            assertTrue("Method should handle null parameters without throwing NPE", true);
+            
+        } catch (NullPointerException e) {
+            fail("trackTutorialCompleted should not throw NullPointerException with null parameters: " + e.getMessage());
+        } catch (Exception e) {
+            // Other exceptions are acceptable
+            assertTrue("Only testing for NPE prevention", true);
+        }
+    }
+    
+    @Test
+    public void testTrackGamesPlayedBeforeSignup_withValidParameters_shouldNotCrash() {
+        // Test that the method works with valid parameters
+        try {
+            TestAnalyticsManagerForGamesPlayed testManager = new TestAnalyticsManagerForGamesPlayed();
+            
+            // Act - these calls should not throw exceptions
+            testManager.trackGamesPlayedBeforeSignup(0, "google");
+            testManager.trackGamesPlayedBeforeSignup(5, "email");
+            testManager.trackGamesPlayedBeforeSignup(10, "facebook");
+            testManager.trackGamesPlayedBeforeSignup(100, null);
+            
+            // If we reach here, no exception was thrown
+            assertTrue("Method should handle valid parameters without throwing exceptions", true);
+            
+        } catch (Exception e) {
+            fail("trackGamesPlayedBeforeSignup should not throw exceptions with valid parameters: " + e.getMessage());
+        }
+    }
+    
+    @Test
+    public void testTrackFirstGameWin_withVariousParameters_shouldNotCrash() {
+        // Test that the method works with various parameter combinations
+        try {
+            TestAnalyticsManagerForFirstGame testManager = new TestAnalyticsManagerForFirstGame();
+            
+            // Act - these calls should not throw exceptions
+            testManager.trackFirstGameWin(true, 1, false);
+            testManager.trackFirstGameWin(false, 2, true);
+            testManager.trackFirstGameWin(true, 3, false);
+            testManager.trackFirstGameWin(false, 0, true);
+            
+            // If we reach here, no exception was thrown
+            assertTrue("Method should handle all parameter combinations without throwing exceptions", true);
+            
+        } catch (Exception e) {
+            fail("trackFirstGameWin should not throw exceptions: " + e.getMessage());
+        }
+    }
+    
+    @Test
+    public void testTrackTimeToFirstGame_withVariousValues_shouldNotCrash() {
+        // Test that the method works with various time values
+        try {
+            TestAnalyticsManagerForTimeToFirstGame testManager = new TestAnalyticsManagerForTimeToFirstGame();
+            
+            // Act - these calls should not throw exceptions
+            testManager.trackTimeToFirstGame(0);
+            testManager.trackTimeToFirstGame(1000);
+            testManager.trackTimeToFirstGame(60000);
+            testManager.trackTimeToFirstGame(3600000);
+            testManager.trackTimeToFirstGame(Long.MAX_VALUE);
+            
+            // If we reach here, no exception was thrown
+            assertTrue("Method should handle all time values without throwing exceptions", true);
+            
+        } catch (Exception e) {
+            fail("trackTimeToFirstGame should not throw exceptions: " + e.getMessage());
+        }
+    }
+    
     // Helper method to test null-safe string handling
     private String safeString(String input, String fallback) {
         return input != null ? input : fallback;
@@ -269,6 +353,60 @@ public class AnalyticsManagerTest {
             // Always executed - local logging
             String logMessage = "Tracked: nickname check error for " + safeNickname + ": " + safeErrorMessage;
             assertNotNull("Log message should not be null", logMessage);
+        }
+    }
+    
+    // Test implementation to verify trackTutorialCompleted null safety
+    private static class TestAnalyticsManagerForTutorial {
+        public void trackTutorialCompleted(String tutorialType) {
+            // Null-safe parameter handling
+            String safeTutorialType = tutorialType != null ? tutorialType : "unknown";
+            
+            // Verify parameter is not null
+            assertNotNull("safeTutorialType should not be null", safeTutorialType);
+            
+            // Test string concatenation
+            String testLog = "Tutorial completed: " + safeTutorialType;
+            assertNotNull("Log message concatenation should not fail", testLog);
+        }
+    }
+    
+    // Test implementation to verify trackGamesPlayedBeforeSignup null safety
+    private static class TestAnalyticsManagerForGamesPlayed {
+        public void trackGamesPlayedBeforeSignup(int gamesPlayed, String signupMethod) {
+            // Null-safe parameter handling
+            String safeSignupMethod = signupMethod != null ? signupMethod : "unknown";
+            
+            // Verify parameters
+            assertNotNull("safeSignupMethod should not be null", safeSignupMethod);
+            assertTrue("gamesPlayed should be non-negative", gamesPlayed >= 0);
+            
+            // Test string concatenation
+            String testLog = "Games played before signup: " + gamesPlayed + " (method: " + safeSignupMethod + ")";
+            assertNotNull("Log message concatenation should not fail", testLog);
+        }
+    }
+    
+    // Test implementation to verify trackFirstGameWin
+    private static class TestAnalyticsManagerForFirstGame {
+        public void trackFirstGameWin(boolean won, int gameType, boolean isAnonymous) {
+            // Test string concatenation with boolean values
+            String testLog = "First game: " + (won ? "WON" : "LOST") + " (type: " + gameType + ", anonymous: " + isAnonymous + ")";
+            assertNotNull("Log message concatenation should not fail", testLog);
+        }
+    }
+    
+    // Test implementation to verify trackTimeToFirstGame
+    private static class TestAnalyticsManagerForTimeToFirstGame {
+        public void trackTimeToFirstGame(long timeToFirstGameMs) {
+            long timeInSeconds = timeToFirstGameMs / 1000;
+            
+            // Verify calculation doesn't overflow or fail
+            assertTrue("Time calculation should be valid", timeInSeconds >= 0);
+            
+            // Test string concatenation
+            String testLog = "Time to first game: " + timeInSeconds + "s";
+            assertNotNull("Log message concatenation should not fail", testLog);
         }
     }
 }

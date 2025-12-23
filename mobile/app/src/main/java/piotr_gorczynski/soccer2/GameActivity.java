@@ -83,6 +83,8 @@ public class GameActivity extends BaseActivity {
     Timestamp turnStartTimeTs;
 
     private volatile boolean gameEnded = false;
+    
+    private AnalyticsManager analyticsManager;
 
     /**
      * Return millis still left right now, given the seconds stored in
@@ -198,6 +200,9 @@ public class GameActivity extends BaseActivity {
 
         super.onCreate(savedInstanceState);
         
+        // Get analytics manager from SoccerApp
+        analyticsManager = ((SoccerApp) getApplicationContext()).getAnalyticsManager();
+        
         // Early validation: ensure we have a valid Intent
         if (getIntent() == null) {
             Log.e("TAG_Soccer", getClass().getSimpleName() + ".onCreate: No Intent provided");
@@ -205,6 +210,9 @@ public class GameActivity extends BaseActivity {
             finish();
             return;
         }
+        
+        // Track first game metrics (time to first game and first game completion)
+        trackFirstGameMetrics();
         
         // Set up GameActivity-specific crash handling to capture game state
         Thread.UncaughtExceptionHandler originalHandler = Thread.getDefaultUncaughtExceptionHandler();
@@ -1338,6 +1346,70 @@ public class GameActivity extends BaseActivity {
         builder.setPositiveButton(R.string.close, (dialog, which) -> finish());
         dialogWinner = builder.create();
         dialogWinner.show();
+        
+        // Track first game win metric
+        trackFirstGameWinMetric(Winner);
+    }
+    
+    /**
+     * Track metrics for time to first game
+     */
+    private void trackFirstGameMetrics() {
+        SharedPreferences prefs = getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
+        
+        // Track time to first game (only once)
+        if (!prefs.getBoolean("first_game_started", false)) {
+            long firstOpenTime = prefs.getLong("first_open_timestamp", 0);
+            if (firstOpenTime == 0) {
+                // If first_open_timestamp doesn't exist, set it now (shouldn't happen normally)
+                prefs.edit().putLong("first_open_timestamp", System.currentTimeMillis()).apply();
+                firstOpenTime = System.currentTimeMillis();
+            }
+            
+            long timeToFirstGame = System.currentTimeMillis() - firstOpenTime;
+            analyticsManager.trackTimeToFirstGame(timeToFirstGame);
+            
+            // Mark that first game has started
+            prefs.edit().putBoolean("first_game_started", true).apply();
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".trackFirstGameMetrics: First game started, time=" + (timeToFirstGame / 1000) + "s");
+        }
+    }
+    
+    /**
+     * Track first game win/loss metric
+     */
+    private void trackFirstGameWinMetric(int winner) {
+        SharedPreferences prefs = getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
+        
+        // Track games played as anonymous user (for games_played_before_signup metric)
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null && currentUser.isAnonymous()) {
+            int gamesPlayed = prefs.getInt("games_played_as_anonymous", 0);
+            prefs.edit().putInt("games_played_as_anonymous", gamesPlayed + 1).apply();
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".trackFirstGameWinMetric: Anonymous games count=" + (gamesPlayed + 1));
+        }
+        
+        // Track first game win (only once)
+        if (!prefs.getBoolean("first_game_completed", false)) {
+            // Determine if the user won (player 0 in local games, or their player index in online games)
+            boolean userWon = false;
+            if (GameType == 1 || GameType == 2) {
+                // In local games, we consider player 0 as the user
+                // In vs Android games, player 0 is the human player
+                userWon = (winner == 0);
+            } else if (GameType == 3) {
+                // In online games, check if the winner is the local player
+                userWon = (winner == localPlayerIndex);
+            }
+            
+            boolean isAnonymous = currentUser != null && currentUser.isAnonymous();
+            
+            analyticsManager.trackFirstGameWin(userWon, GameType, isAnonymous);
+            
+            // Mark that first game has been completed
+            prefs.edit().putBoolean("first_game_completed", true).apply();
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".trackFirstGameWinMetric: First game completed, won=" + userWon);
+        }
     }
 
     @Override
