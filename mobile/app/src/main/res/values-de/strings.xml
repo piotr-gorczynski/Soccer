@@ -376,15 +376,27 @@
     <string name="pref_summary_show_hand_tutorial">Zeigt eine Hand, die auf mögliche Züge zeigt, um Ihnen beim Lernen zu helfen</string>
     <string name="hand_tutorial_dialog_title">Tutorial</string>
     <string name="hand_tutorial_dialog_message">Soll ich Ihnen weiterhin mögliche Züge zeigen? Sie können dies jederzeit in den Einstellungen ein- und ausschalten.</string>
-    <string name="hand_tutorial_dialog_yes">Ja, fortfahren</string>
+    <string name="hand_tutorial_dialog_yes">Ja, weiter</string>
     <string name="hand_tutorial_dialog_no">Nein, ausschalten</string>
+    
+    <!-- Tutorial messages feature -->
+    <string name="pref_title_show_tutorial_messages">Spieltipps anzeigen</string>
+    <string name="pref_summary_show_tutorial_messages">Zeigt hilfreiche Nachrichten, die Spielregeln während des Spiels und in den Ergebnissen erklären</string>
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">Turnier %1$s läuft nicht mehr</string>
-    <string name="field_hand_tutorial_message">Tippen Sie auf einen der Punkte, um den Ball zu bewegen</string>
-    <string name="field_hand_tutorial_bounce_border">Wenn der Ball eine Grenze trifft, prallt er ab und Sie können den Ball erneut bewegen</string>
-    <string name="field_hand_tutorial_bounce_visited">Wenn der Ball einen zuvor besuchten Punkt trifft, prallt er ab und Sie können den Ball erneut bewegen</string>
-    <string name="field_hand_tutorial_no_moves">Wenn es keine möglichen Züge gibt, verliert der Spieler sofort.</string>
-    <string name="field_hand_tutorial_goal">Tor! Bravo!</string>
-    <string name="field_hand_tutorial_own_goal">Eigentor!</string>
+    <string name="field_tutorial_message">Tippen Sie auf einen der Punkte, um den Ball zu bewegen</string>
+    <string name="field_tutorial_bounce_border">Wenn der Ball eine Grenze trifft, prallt er ab und Sie können den Ball erneut bewegen</string>
+    <string name="field_tutorial_bounce_visited">Wenn der Ball einen zuvor besuchten Punkt trifft, prallt er ab und Sie können den Ball erneut bewegen</string>
+    <string name="field_tutorial_no_moves">Wenn es keine möglichen Züge gibt, verliert der Spieler sofort.</string>
+    <string name="field_tutorial_goal_1">TOR! ⚽🎉</string>
+    <string name="field_tutorial_goal_2">Guter Schuss! 😄⚽</string>
+    <string name="field_tutorial_goal_3">Tolles Tor! 👏</string>
+    <string name="field_tutorial_own_goal">Eigentor!</string>
+    <string name="field_tutorial_opponent_goal_1">Gutes Spiel! Beim nächsten Mal erwischt du sie 💪</string>
+    <string name="field_tutorial_opponent_goal_2">Guter Versuch! Das Rückspiel wartet 🔁</string>
+    <string name="field_tutorial_opponent_goal_3">Das war knapp! Spiel weiter ⚽</string>
+    
+    <!-- Tournament notification dialog -->
+    <string name="tournament_started_dialog_message">Turnier %1$s hat begonnen! Möchten Sie die Turnier-Lobby öffnen?</string>
 </resources>

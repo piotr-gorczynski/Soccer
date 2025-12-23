@@ -4,7 +4,7 @@
         <ListPreference
             android:key="android_level"
             android:title="@string/pref_title_level"
-            android:defaultValue="0.1"
+            android:defaultValue="0"
             android:entries="@array/pref_level_titles"
             android:entryValues="@array/pref_level_values"
             android:icon="@drawable/ic_bullet" />
@@ -36,6 +36,13 @@
             android:summary="@string/pref_summary_show_hand_tutorial"
             android:defaultValue="true"
             android:icon="@android:drawable/ic_menu_help" />
+
+        <CheckBoxPreference
+            android:key="show_tutorial_messages"
+            android:title="@string/pref_title_show_tutorial_messages"
+            android:summary="@string/pref_summary_show_tutorial_messages"
+            android:defaultValue="true"
+            android:icon="@android:drawable/ic_dialog_info" />
 
         <Preference
             android:key="language_preference"

@@ -373,12 +373,24 @@
     <string name="hand_tutorial_dialog_yes">Oui, continuer</string>
     <string name="hand_tutorial_dialog_no">Non, désactiver</string>
     
+    <!-- Tutorial messages feature -->
+    <string name="pref_title_show_tutorial_messages">Afficher les conseils de jeu</string>
+    <string name="pref_summary_show_tutorial_messages">Affiche des messages utiles expliquant les règles du jeu pendant la partie et dans les résultats</string>
+    
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">Le tournoi %1$s n\'est plus en cours</string>
-    <string name="field_hand_tutorial_message">Appuyez sur l’un des points pour déplacer le ballon</string>
-    <string name="field_hand_tutorial_bounce_border">Lorsque le ballon touche un bord, il rebondit et vous pouvez à nouveau déplacer le ballon</string>
-    <string name="field_hand_tutorial_bounce_visited">Lorsque le ballon touche un point déjà visité, il rebondit et vous pouvez à nouveau déplacer le ballon</string>
-    <string name="field_hand_tutorial_no_moves">Lorsqu’il n’y a plus de mouvements possibles, le joueur perd immédiatement.</string>
-    <string name="field_hand_tutorial_goal">But ! Bravo !</string>
-    <string name="field_hand_tutorial_own_goal">But contre son camp !</string>
+    <string name="field_tutorial_message">Appuyez sur l’un des points pour déplacer le ballon</string>
+    <string name="field_tutorial_bounce_border">Lorsque le ballon touche un bord, il rebondit et vous pouvez à nouveau déplacer le ballon</string>
+    <string name="field_tutorial_bounce_visited">Lorsque le ballon touche un point déjà visité, il rebondit et vous pouvez à nouveau déplacer le ballon</string>
+    <string name="field_tutorial_no_moves">Lorsqu’il n’y a plus de mouvements possibles, le joueur perd immédiatement.</string>
+    <string name="field_tutorial_goal_1">BUT ! ⚽🎉</string>
+    <string name="field_tutorial_goal_2">Joli tir ! 😄⚽</string>
+    <string name="field_tutorial_goal_3">Beau but ! 👏</string>
+    <string name="field_tutorial_own_goal">But contre son camp !</string>
+    <string name="field_tutorial_opponent_goal_1">Beau jeu ! Tu les auras la prochaine fois 💪</string>
+    <string name="field_tutorial_opponent_goal_2">Belle tentative ! La revanche attend 🔁</string>
+    <string name="field_tutorial_opponent_goal_3">C’était proche ! Continue à jouer ⚽</string>
+    
+    <!-- Tournament notification dialog -->
+    <string name="tournament_started_dialog_message">Le tournoi %1$s a commencé ! Voulez-vous ouvrir le lobby du tournoi ?</string>
 </resources>

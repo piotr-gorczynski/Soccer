@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Random;
 
 public class Field {
 
@@ -98,6 +99,7 @@ public class Field {
     private final String sPlayer1;
     private final int gameType;
     private final Context context;
+    private AnalyticsManager analyticsManager;
     final ArrayList<MoveTo> possibleMoves;//= new ArrayList<MoveTo>();
     final ArrayList<MoveTo> Moves;//= new ArrayList<MoveTo>();
     private boolean isFlipped=false;
@@ -224,9 +226,12 @@ public class Field {
     private static final String PREF_HAND_TUTORIAL_ENABLED = "show_hand_tutorial";
     private static final String PREF_HAND_TUTORIAL_CYCLE_COUNT = "hand_tutorial_cycle_count";
     private static final String PREF_HAND_TUTORIAL_NEXT_THRESHOLD = "hand_tutorial_next_threshold";
-    private static final int THRESHOLD_FIRST = 3;
-    private static final int THRESHOLD_SECOND = 10;
-    private static final int THRESHOLD_THIRD = 20;
+    private static final int THRESHOLD_FIRST = 50;
+    private static final int THRESHOLD_SECOND = 100;
+    private static final int THRESHOLD_THIRD = 200;
+    
+    // Tutorial messages constants
+    private static final String PREF_TUTORIAL_MESSAGES_ENABLED = "show_tutorial_messages";
     
     // Tutorial balloon constants
     private static final float BALLOON_TEXT_SIZE_RATIO = 0.8f; // Ratio of field text size
@@ -244,13 +249,15 @@ public class Field {
         BOUNCE_VISITED,       // Ball bounced on visited point
         NO_MOVES,             // No possible moves (loss)
         GOAL,                 // Scored in opponent's goal
-        OWN_GOAL              // Scored in own goal
+        OWN_GOAL,             // Scored in own goal
+        OPPONENT_GOAL         // Opponent scored (encouraging message)
     }
     
     // Hand tutorial state
     private final Bitmap handBitmap;
     private final SharedPreferences prefs;
     private boolean showHandTutorial = false;
+    private final boolean tutorialMessagesEnabled;
     private int handTutorialCycle = 0;
     private int handTutorialPositionIndex = 0;
     private long handTutorialLastUpdateTime = 0L;
@@ -291,24 +298,29 @@ public class Field {
 
         this.gameType = argGameType;  // ✅ Save GameType for later use
         this.context = current;
+        
+        // Get analytics manager from SoccerApp for tutorial tracking
+        if (current.getApplicationContext() instanceof SoccerApp) {
+            this.analyticsManager = ((SoccerApp) current.getApplicationContext()).getAnalyticsManager();
+        }
 
         switch (argGameType) {
             case 1 -> {
-                sPlayer0 = "Player 1";
-                sPlayer1 = "Player 2";
+                sPlayer0 = SafeStringFormatter.safeGetString(current, R.string.player_with_number, 1);
+                sPlayer1 = SafeStringFormatter.safeGetString(current, R.string.player_with_number, 2);
             }
             case 2 -> {
-                sPlayer0 = "Player";
-                sPlayer1 = "Android";
+                sPlayer0 = current.getString(R.string.player_label);
+                sPlayer1 = current.getString(R.string.android_label);
             }
             case 3 -> {
-                sPlayer0 = player0Name != null ? player0Name : "Player 0";
-                sPlayer1 = player1Name != null ? player1Name : "Player 1";
+                sPlayer0 = player0Name != null ? player0Name : SafeStringFormatter.safeGetString(current, R.string.player_with_number, 0);
+                sPlayer1 = player1Name != null ? player1Name : SafeStringFormatter.safeGetString(current, R.string.player_with_number, 1);
                 isFlipped = localPlayerIndex == 1;
             }
             default -> {
-                sPlayer0 = "Player 0";
-                sPlayer1 = "Player 1";
+                sPlayer0 = SafeStringFormatter.safeGetString(current, R.string.player_with_number, 0);
+                sPlayer1 = SafeStringFormatter.safeGetString(current, R.string.player_with_number, 1);
             }
         }
 
@@ -556,6 +568,9 @@ public class Field {
 
         // Initialize preferences
         prefs = PreferenceManager.getDefaultSharedPreferences(current);
+
+        // Check if tutorial messages are enabled in settings (default is true)
+        tutorialMessagesEnabled = prefs.getBoolean(PREF_TUTORIAL_MESSAGES_ENABLED, true);
 
         // Check if hand tutorial is enabled in settings (default is true)
         boolean handTutorialEnabled = prefs.getBoolean(PREF_HAND_TUTORIAL_ENABLED, true);
@@ -1057,6 +1072,10 @@ public class Field {
 
     public boolean isHandTutorialActive() {
         return showHandTutorial && spritesLoaded;
+    }
+
+    public boolean isTutorialMessagesEnabled() {
+        return tutorialMessagesEnabled;
     }
 
     private void resetRunFinalPositions() {
@@ -2982,21 +3001,14 @@ public class Field {
     }
 
     private void drawHandTutorial(Canvas canvas, int currentTurn) {
-        /* Only show tutorial if enabled */
-        if (!showHandTutorial) {
-            return;
-        }
-
         // Don't show during Android's turn (gameType 2, currentTurn 1)
-        if (gameType == 2 && currentTurn == 1) {
+        boolean isAndroidTurn = (gameType == 2 && currentTurn == 1);
+        if (isAndroidTurn) {
             return;
         }
 
-        // Don't show if there are no possible moves
-        if (possibleMoves == null || possibleMoves.isEmpty()) {
-            showHandTutorial = false;
-            return;
-        }
+        // Only show hand tutorial if enabled and there are possible moves
+        if (showHandTutorial && possibleMoves != null && !possibleMoves.isEmpty()) {
 
         int currentMoveCount = Moves.size();
         
@@ -3070,8 +3082,14 @@ public class Field {
                 + handTutorialPositionIndex + "/" + possibleMoves.size() 
                 + ", cycle " + (handTutorialCycle + 1));*/
         }
+        } // End of if (showHandTutorial && possibleMoves != null && !possibleMoves.isEmpty())
         
-        // Draw the tutorial balloon message
+        // Disable hand tutorial if there are no possible moves
+        if (possibleMoves == null || possibleMoves.isEmpty()) {
+            showHandTutorial = false;
+        }
+        
+        // Draw the tutorial balloon message (controlled by separate setting)
         drawTutorialBalloon(canvas);
     }
 
@@ -3093,6 +3111,11 @@ public class Field {
      * Draws a white balloon with tutorial message positioned to avoid covering possible moves
      */
     private void drawTutorialBalloon(Canvas canvas) {
+        // Only show tutorial messages if enabled in settings
+        if (!tutorialMessagesEnabled) {
+            return;
+        }
+        
         if (possibleMoves == null || possibleMoves.isEmpty()) {
             return;
         }
@@ -3220,18 +3243,40 @@ public class Field {
     private String getTutorialMessage() {
         switch (currentTutorialMessage) {
             case BOUNCE_BORDER:
-                return context.getString(R.string.field_hand_tutorial_bounce_border);
+                return context.getString(R.string.field_tutorial_bounce_border);
             case BOUNCE_VISITED:
-                return context.getString(R.string.field_hand_tutorial_bounce_visited);
+                return context.getString(R.string.field_tutorial_bounce_visited);
             case NO_MOVES:
-                return context.getString(R.string.field_hand_tutorial_no_moves);
+                return context.getString(R.string.field_tutorial_no_moves);
             case GOAL:
-                return context.getString(R.string.field_hand_tutorial_goal);
+                // Randomly select one of three celebration messages
+                int goalMessageIndex = new Random().nextInt(3);
+                switch (goalMessageIndex) {
+                    case 0:
+                        return context.getString(R.string.field_tutorial_goal_1);
+                    case 1:
+                        return context.getString(R.string.field_tutorial_goal_2);
+                    case 2:
+                    default:
+                        return context.getString(R.string.field_tutorial_goal_3);
+                }
             case OWN_GOAL:
-                return context.getString(R.string.field_hand_tutorial_own_goal);
+                return context.getString(R.string.field_tutorial_own_goal);
+            case OPPONENT_GOAL:
+                // Randomly select one of three encouraging messages
+                int messageIndex = new Random().nextInt(3);
+                switch (messageIndex) {
+                    case 0:
+                        return context.getString(R.string.field_tutorial_opponent_goal_1);
+                    case 1:
+                        return context.getString(R.string.field_tutorial_opponent_goal_2);
+                    case 2:
+                    default:
+                        return context.getString(R.string.field_tutorial_opponent_goal_3);
+                }
             case INITIAL:
             default:
-                return context.getString(R.string.field_hand_tutorial_message);
+                return context.getString(R.string.field_tutorial_message);
         }
     }
 
@@ -3240,6 +3285,20 @@ public class Field {
      */
     public void setTutorialMessageType(TutorialMessageType messageType) {
         this.currentTutorialMessage = messageType;
+    }
+
+    /**
+     * Gets the current tutorial message type
+     */
+    public TutorialMessageType getTutorialMessageType() {
+        return currentTutorialMessage;
+    }
+
+    /**
+     * Gets the current tutorial message string
+     */
+    public String getTutorialMessageString() {
+        return getTutorialMessage();
     }
 
     /**
@@ -3353,6 +3412,11 @@ public class Field {
             // User wants to turn it off - disable in settings
             prefs.edit().putBoolean(PREF_HAND_TUTORIAL_ENABLED, false).apply();
             showHandTutorial = false;
+            
+            // Track tutorial completion when user disables it
+            if (analyticsManager != null) {
+                analyticsManager.trackTutorialCompleted("hand_tutorial");
+            }
             
             Log.d("TAG_Soccer", getClass().getSimpleName() + ".onHandTutorialDialogResponse: User chose to disable hand tutorial");
         }

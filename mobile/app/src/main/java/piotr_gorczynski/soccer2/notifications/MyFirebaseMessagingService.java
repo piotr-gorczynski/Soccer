@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import piotr_gorczynski.soccer2.InvitationsActivity;
+import piotr_gorczynski.soccer2.TournamentLobbyActivity;
 
 /**
  * Firebase Cloud Messaging service for handling push notifications.
@@ -40,8 +41,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = "TAG_Soccer";
     private static final String CHANNEL_ID = "invite_channel";
     private static final String CHANNEL_NAME = "Game Invites";
+    private static final String TOURNAMENT_CHANNEL_ID = "tournament_channel";
+    private static final String TOURNAMENT_CHANNEL_NAME = "Tournament Notifications";
     private static final String DEFAULT_TITLE = "Game Invite";
     private static final String DEFAULT_BODY = "You have a new game invitation";
+    private static final String DEFAULT_TOURNAMENT_TITLE = "Tournament Update";
+    private static final String DEFAULT_TOURNAMENT_BODY = "A tournament has started";
 
     @Override
     public void onNewToken(@NonNull String token) {
@@ -111,6 +116,20 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             return;
         }
 
+        // Determine notification type
+        String notificationType = data.get("type");
+        
+        if ("tournament_started".equals(notificationType)) {
+            showTournamentNotification(context, data);
+        } else {
+            showInviteNotification(context, data);
+        }
+    }
+
+    /**
+     * Displays a game invite notification.
+     */
+    private void showInviteNotification(@NonNull Context context, @NonNull Map<String, String> data) {
         // 1. Extract everything from the data payload with null safety
         String title = extractTitle(data);
         String body = extractBody(data);
@@ -119,7 +138,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         int notificationId = inviteId.hashCode();
 
         // 2. Ensure the notification channel exists (Oreo+) - do this early
-        if (!ensureNotificationChannel(context)) {
+        if (!ensureNotificationChannel(context, CHANNEL_ID, CHANNEL_NAME)) {
             return; // Cannot proceed without notification channel on Oreo+
         }
 
@@ -151,6 +170,57 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     /**
+     * Displays a tournament notification.
+     */
+    private void showTournamentNotification(@NonNull Context context, @NonNull Map<String, String> data) {
+        // 1. Extract tournament data
+        String title = extractTournamentTitle(data);
+        String body = extractTournamentBody(data);
+        String tournamentId = data.get("tournamentId");
+        String tournamentName = data.get("tournamentName");
+        
+        if (tournamentId == null || tournamentId.isEmpty()) {
+            Log.w(TAG, getClass().getSimpleName() + ".showTournamentNotification: tournamentId is missing, cannot show notification");
+            return;
+        }
+        
+        int notificationId = tournamentId.hashCode();
+
+        // 2. Ensure the notification channel exists (Oreo+)
+        if (!ensureNotificationChannel(context, TOURNAMENT_CHANNEL_ID, TOURNAMENT_CHANNEL_NAME)) {
+            return;
+        }
+
+        // 3. Build an Intent to open TournamentLobbyActivity
+        Intent tournamentIntent = new Intent(context, TournamentLobbyActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        tournamentIntent.putExtra("tournamentId", tournamentId);
+        if (tournamentName != null && !tournamentName.isEmpty()) {
+            tournamentIntent.putExtra("tournamentName", tournamentName);
+        }
+
+        // 4. Create a PendingIntent
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                context,
+                tournamentId.hashCode(), // Use unique request code per tournament
+                tournamentIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+        // 5. Build and show the notification
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, TOURNAMENT_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notifications)
+                .setContentTitle(title)
+                .setContentText(body)
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent);
+
+        // 6. Show the notification
+        displayNotification(context, notificationId, builder);
+    }
+
+    /**
      * Extracts and validates the title from FCM data.
      */
     private String extractTitle(@NonNull Map<String, String> data) {
@@ -177,6 +247,32 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     /**
+     * Extracts and validates the tournament title from FCM data.
+     */
+    private String extractTournamentTitle(@NonNull Map<String, String> data) {
+        String title = data.get("title");
+        String trimmedTitle = title != null ? title.trim() : "";
+        if (trimmedTitle.isEmpty()) {
+            Log.w(TAG, getClass().getSimpleName() + ".extractTournamentTitle: title was null or empty, using fallback");
+            return DEFAULT_TOURNAMENT_TITLE;
+        }
+        return trimmedTitle;
+    }
+
+    /**
+     * Extracts and validates the tournament body from FCM data.
+     */
+    private String extractTournamentBody(@NonNull Map<String, String> data) {
+        String body = data.get("body");
+        String trimmedBody = body != null ? body.trim() : "";
+        if (trimmedBody.isEmpty()) {
+            Log.w(TAG, getClass().getSimpleName() + ".extractTournamentBody: body was null or empty, using fallback");
+            return DEFAULT_TOURNAMENT_BODY;
+        }
+        return trimmedBody;
+    }
+
+    /**
      * Extracts and validates the invite ID from FCM data.
      */
     private String extractInviteId(@NonNull Map<String, String> data) {
@@ -186,16 +282,18 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     /**
      * Ensures the notification channel exists on Android Oreo and above.
+     * @param channelId The ID of the notification channel
+     * @param channelName The user-visible name of the notification channel
      * @return true if channel is ready (or not needed), false if channel creation failed
      */
-    private boolean ensureNotificationChannel(@NonNull Context context) {
+    private boolean ensureNotificationChannel(@NonNull Context context, @NonNull String channelId, @NonNull String channelName) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             try {
                 NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                 if (nm != null) {
                     NotificationChannel channel = new NotificationChannel(
-                            CHANNEL_ID,
-                            CHANNEL_NAME,
+                            channelId,
+                            channelName,
                             NotificationManager.IMPORTANCE_HIGH
                     );
                     nm.createNotificationChannel(channel);

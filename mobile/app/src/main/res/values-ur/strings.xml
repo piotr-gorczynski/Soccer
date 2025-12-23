@@ -375,15 +375,27 @@
     <string name="pref_summary_show_hand_tutorial">آپ کو سیکھنے میں مدد کرنے کے لیے ممکنہ چالوں کی طرف اشارہ کرتے ہوئے ایک ہاتھ دکھاتا ہے</string>
     <string name="hand_tutorial_dialog_title">ٹیوٹوریل</string>
     <string name="hand_tutorial_dialog_message">کیا آپ اب بھی چاہتے ہیں کہ میں آپ کو ممکنہ چالیں دکھاؤں؟ آپ اسے ہمیشہ ترتیبات میں آن اور آف کر سکتے ہیں۔</string>
-    <string name="hand_tutorial_dialog_yes">جی ہاں، جاری رکھیں</string>
+    <string name="hand_tutorial_dialog_yes">ہاں، جاری رکھیں</string>
     <string name="hand_tutorial_dialog_no">نہیں، بند کریں</string>
+    
+    <!-- Tutorial messages feature -->
+    <string name="pref_title_show_tutorial_messages">گیم کی تجاویز دکھائیں</string>
+    <string name="pref_summary_show_tutorial_messages">کھیل کے دوران اور نتائج میں گیم کے قوانین کی وضاحت کرنے والے مفید پیغامات دکھاتا ہے</string>
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">ٹورنامنٹ %1$s اب نہیں چل رہا</string>
-    <string name="field_hand_tutorial_message">گیند کو منتقل کرنے کے لیے کسی ایک نقطے پر تھپتھپائیں</string>
-    <string name="field_hand_tutorial_bounce_border">جب گیند سرحد سے ٹکراتی ہے، یہ اچھلتی ہے اور آپ دوبارہ گیند کو منتقل کر سکتے ہیں</string>
-    <string name="field_hand_tutorial_bounce_visited">جب گیند پہلے سے دیکھے گئے نقطے سے ٹکراتی ہے، یہ اچھلتی ہے اور آپ دوبارہ گیند کو منتقل کر سکتے ہیں</string>
-    <string name="field_hand_tutorial_no_moves">جب کوئی ممکنہ چالیں نہیں ہیں، کھلاڑی فوری طور پر ہار جاتا ہے۔</string>
-    <string name="field_hand_tutorial_goal">گول! شاباش!</string>
-    <string name="field_hand_tutorial_own_goal">اپنا گول!</string>
+    <string name="field_tutorial_message">گیند کو منتقل کرنے کے لیے کسی ایک نقطے پر تھپتھپائیں</string>
+    <string name="field_tutorial_bounce_border">جب گیند سرحد سے ٹکراتی ہے، یہ اچھلتی ہے اور آپ دوبارہ گیند کو منتقل کر سکتے ہیں</string>
+    <string name="field_tutorial_bounce_visited">جب گیند پہلے سے دیکھے گئے نقطے سے ٹکراتی ہے، یہ اچھلتی ہے اور آپ دوبارہ گیند کو منتقل کر سکتے ہیں</string>
+    <string name="field_tutorial_no_moves">جب کوئی ممکنہ چالیں نہیں ہیں، کھلاڑی فوری طور پر ہار جاتا ہے۔</string>
+    <string name="field_tutorial_goal_1">گول! ⚽🎉</string>
+    <string name="field_tutorial_goal_2">اچھا شاٹ! 😄⚽</string>
+    <string name="field_tutorial_goal_3">زبردست گول! 👏</string>
+    <string name="field_tutorial_own_goal">اپنا گول!</string>
+    <string name="field_tutorial_opponent_goal_1">اچھا کھیل! اگلی بار آپ انہیں ہرا دیں گے 💪</string>
+    <string name="field_tutorial_opponent_goal_2">اچھی کوشش! دوبارہ میچ کا انتظار ہے 🔁</string>
+    <string name="field_tutorial_opponent_goal_3">یہ قریب تھا! کھیلتے رہیں ⚽</string>
+    
+    <!-- Tournament notification dialog -->
+    <string name="tournament_started_dialog_message">ٹورنامنٹ %1$s شروع ہو گیا! کیا آپ ٹورنامنٹ لابی کھولنا چاہتے ہیں؟</string>
 </resources>

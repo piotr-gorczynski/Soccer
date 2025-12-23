@@ -344,12 +344,24 @@
     <string name="hand_tutorial_dialog_yes">Тийм, үргэлжлүүлэх</string>
     <string name="hand_tutorial_dialog_no">Үгүй, унтраах</string>
     
+    <!-- Tutorial messages feature -->
+    <string name="pref_title_show_tutorial_messages">Тоглоомын зөвлөмж харуулах</string>
+    <string name="pref_summary_show_tutorial_messages">Тоглолт болон үр дүнд тоглоомын дүрэм тайлбарласан хэрэгтэй мессежүүд харуулна</string>
+    
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">%1$s тэмцээн цаашид үргэлжлэхгүй байна</string>
-    <string name="field_hand_tutorial_message">Бөмбөгийг хөдөлгөхийн тулд цэгүүдийн аль нэг дээр товшино уу</string>
-    <string name="field_hand_tutorial_bounce_border">Бөмбөг хил рүү цохих үед буцаж харин бөмбөгийг дахин хөдөлгөж болно</string>
-    <string name="field_hand_tutorial_bounce_visited">Бөмбөг өмнө нь очсон цэг рүү цохих үед буцаж харин бөмбөгийг дахин хөдөлгөж болно</string>
-    <string name="field_hand_tutorial_no_moves">Боломжит нүүдэл байхгүй үед тоглогч шууд ялагдана.</string>
-    <string name="field_hand_tutorial_goal">Гоол! Гайхалтай!</string>
-    <string name="field_hand_tutorial_own_goal">Өөрийн гоол!</string>
+    <string name="field_tutorial_message">Бөмбөгийг хөдөлгөхийн тулд цэгүүдийн аль нэг дээр товшино уу</string>
+    <string name="field_tutorial_bounce_border">Бөмбөг хил рүү цохих үед буцаж харин бөмбөгийг дахин хөдөлгөж болно</string>
+    <string name="field_tutorial_bounce_visited">Бөмбөг өмнө нь очсон цэг рүү цохих үед буцаж харин бөмбөгийг дахин хөдөлгөж болно</string>
+    <string name="field_tutorial_no_moves">Боломжит нүүдэл байхгүй үед тоглогч шууд ялагдана.</string>
+    <string name="field_tutorial_goal_1">ГООЛ! ⚽🎉</string>
+    <string name="field_tutorial_goal_2">Сайхан шидэлт! 😄⚽</string>
+    <string name="field_tutorial_goal_3">Гайхалтай гоол! 👏</string>
+    <string name="field_tutorial_own_goal">Өөрийн гоол!</string>
+    <string name="field_tutorial_opponent_goal_1">Сайн тоглолт! Дараа нь та тэднийг авна 💪</string>
+    <string name="field_tutorial_opponent_goal_2">Сайн оролдлого! Давтан тоглолт хүлээж байна 🔁</string>
+    <string name="field_tutorial_opponent_goal_3">Ойрхон байлаа! Үргэлжлүүлэн тоглооё ⚽</string>
+    
+    <!-- Tournament notification dialog -->
+    <string name="tournament_started_dialog_message">%1$s тэмцээн эхэллээ! Та тэмцээний танхим нээхийг хүсч байна уу?</string>
 </resources>

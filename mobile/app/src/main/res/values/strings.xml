@@ -213,12 +213,17 @@
     <string name="field_move_ellipsis_tail">move… ⏳ %1$s</string>
     <string name="field_waiting_for">Waiting for %1$s</string>
     <string name="field_to_start_tail">to start… ⏳ %1$s</string>
-    <string name="field_hand_tutorial_message">Tap on one of the points to move the ball</string>
-    <string name="field_hand_tutorial_bounce_border">When ball hit a border, it bounces and you can again move the ball</string>
-    <string name="field_hand_tutorial_bounce_visited">When ball hit a previously visited point, it bounces and you can again move the ball</string>
-    <string name="field_hand_tutorial_no_moves">When there are no possible moves, the player immediately loses.</string>
-    <string name="field_hand_tutorial_goal">Goal! Bravo!</string>
-    <string name="field_hand_tutorial_own_goal">Own goal!</string>
+    <string name="field_tutorial_message">Tap on one of the points to move the ball</string>
+    <string name="field_tutorial_bounce_border">When ball hit a border, it bounces and you can again move the ball</string>
+    <string name="field_tutorial_bounce_visited">When ball hit a previously visited point, it bounces and you can again move the ball</string>
+    <string name="field_tutorial_no_moves">When there are no possible moves, the player immediately loses.</string>
+    <string name="field_tutorial_goal_1">GOAL! ⚽🎉</string>
+    <string name="field_tutorial_goal_2">Nice shot! 😄⚽</string>
+    <string name="field_tutorial_goal_3">Great goal! 👏</string>
+    <string name="field_tutorial_own_goal">Own goal!</string>
+    <string name="field_tutorial_opponent_goal_1">Good game! You\'ll get them next time 💪</string>
+    <string name="field_tutorial_opponent_goal_2">Nice try! The rematch awaits 🔁</string>
+    <string name="field_tutorial_opponent_goal_3">That was close! Keep playing ⚽</string>
     <string name="enter_email_and_password">Please enter both email and password</string>
     <string name="login_success">Login successful!</string>
     <string name="login_failed">Login failed: %1$s</string>
@@ -380,6 +385,13 @@
     <string name="hand_tutorial_dialog_yes">Yes, continue</string>
     <string name="hand_tutorial_dialog_no">No, turn it off</string>
     
+    <!-- Tutorial messages feature -->
+    <string name="pref_title_show_tutorial_messages">Show game tips</string>
+    <string name="pref_summary_show_tutorial_messages">Display helpful messages explaining game rules during play and in results</string>
+    
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">Tournament %1$s is no longer running</string>
+    
+    <!-- Tournament notification dialog -->
+    <string name="tournament_started_dialog_message">Tournament %1$s started! Do you want to open tournament lobby?</string>
 </resources>

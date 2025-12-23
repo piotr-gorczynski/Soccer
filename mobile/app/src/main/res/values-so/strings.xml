@@ -342,14 +342,26 @@
     <string name="hand_tutorial_dialog_title">Tababarka</string>
     <string name="hand_tutorial_dialog_message">Miyaad weli rabtaa inaan ku tuso dhaqdhaqaaqyada suurtogalka ah? Weligaaba waxaad ku furi kartaa oo ku xidhi kartaa Goobaha.</string>
     <string name="hand_tutorial_dialog_yes">Haa, sii wad</string>
-    <string name="hand_tutorial_dialog_no">Maya, xidh</string>
+    <string name="hand_tutorial_dialog_no">Maya, xir</string>
+    
+    <!-- Tutorial messages feature -->
+    <string name="pref_title_show_tutorial_messages">Muuji talooyinka ciyaarta</string>
+    <string name="pref_summary_show_tutorial_messages">Waxay muujisaa farriimo waxtar leh oo sharaxaya xeerarka ciyaarta inta lagu jiro ciyaarta iyo natiijooyinka</string>
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">Tartanka %1$s hadda ma socdo</string>
-    <string name="field_hand_tutorial_message">Taabo mid ka mid ah dhibcaha si aad u dhaqaajiso kubbadda</string>
-    <string name="field_hand_tutorial_bounce_border">Marka kubbadda ay ku dhacdo xadka, waxay soo noqotaa oo waxaad mar kale u dhaqaajin kartaa kubbadda</string>
-    <string name="field_hand_tutorial_bounce_visited">Marka kubbadda ay ku dhacdo meel hore loo booqday, waxay soo noqotaa oo waxaad mar kale u dhaqaajin kartaa kubbadda</string>
-    <string name="field_hand_tutorial_no_moves">Marka aysan jirin dhaqaaqyo suurtagal ah, ciyaartoygu markiiba wuu khasaaraa.</string>
-    <string name="field_hand_tutorial_goal">Goal! Fiican!</string>
-    <string name="field_hand_tutorial_own_goal">Goal shakhsi ah!</string>
+    <string name="field_tutorial_message">Taabo mid ka mid ah dhibcaha si aad u dhaqaajiso kubbadda</string>
+    <string name="field_tutorial_bounce_border">Marka kubbadda ay ku dhacdo xadka, waxay soo noqotaa oo waxaad mar kale u dhaqaajin kartaa kubbadda</string>
+    <string name="field_tutorial_bounce_visited">Marka kubbadda ay ku dhacdo meel hore loo booqday, waxay soo noqotaa oo waxaad mar kale u dhaqaajin kartaa kubbadda</string>
+    <string name="field_tutorial_no_moves">Marka aysan jirin dhaqaaqyo suurtagal ah, ciyaartoygu markiiba wuu khasaaraa.</string>
+    <string name="field_tutorial_goal_1">GOAL! ⚽🎉</string>
+    <string name="field_tutorial_goal_2">Toogasho fiican! 😄⚽</string>
+    <string name="field_tutorial_goal_3">Goal weyn! 👏</string>
+    <string name="field_tutorial_own_goal">Goal shakhsi ah!</string>
+    <string name="field_tutorial_opponent_goal_1">Ciyaar fiican! Mar dambe waad ka adkaan doontaa 💪</string>
+    <string name="field_tutorial_opponent_goal_2">Isku day fiican! Dib u ciyaarid baa sugaya 🔁</string>
+    <string name="field_tutorial_opponent_goal_3">Taasi waxay ahayd dhow! Sii wad ciyaarta ⚽</string>
+    
+    <!-- Tournament notification dialog -->
+    <string name="tournament_started_dialog_message">Tartanka %1$s ayaa bilaabmay! Ma rabtaa inaad furto qolka tartanka?</string>
 </resources>
