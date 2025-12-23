@@ -21,6 +21,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
     private FirebaseAuth auth;
     private SharedPreferences prefs;
     private SharedPreferences.OnSharedPreferenceChangeListener consentChangeListener;
+    private AnalyticsManager analyticsManager;
     
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -29,6 +30,12 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
         prefs = PreferenceManager.getDefaultSharedPreferences(requireContext());
+        
+        // Get analytics manager from SoccerApp
+        analyticsManager = ((SoccerApp) requireActivity().getApplication()).getAnalyticsManager();
+        
+        // Setup tutorial preferences to track completion
+        setupTutorialPreferences();
         
         // Setup block invite friend preference
         CheckBoxPreference blockInvitePreference = findPreference("block_invite_friend");
@@ -345,5 +352,36 @@ public class SettingsFragment extends PreferenceFragmentCompat {
         });
         builder.setNegativeButton(android.R.string.cancel, null);
         builder.show();
+    }
+    
+    /**
+     * Setup listeners for tutorial preferences to track when they are disabled
+     */
+    private void setupTutorialPreferences() {
+        CheckBoxPreference handTutorialPref = findPreference("show_hand_tutorial");
+        if (handTutorialPref != null) {
+            handTutorialPref.setOnPreferenceChangeListener((pref, newValue) -> {
+                boolean enabled = (Boolean) newValue;
+                // Track when user disables hand tutorial
+                if (!enabled && analyticsManager != null) {
+                    analyticsManager.trackTutorialCompleted("hand_tutorial");
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".setupTutorialPreferences: Hand tutorial disabled via settings");
+                }
+                return true;
+            });
+        }
+        
+        CheckBoxPreference tutorialMessagesPref = findPreference("show_tutorial_messages");
+        if (tutorialMessagesPref != null) {
+            tutorialMessagesPref.setOnPreferenceChangeListener((pref, newValue) -> {
+                boolean enabled = (Boolean) newValue;
+                // Track when user disables tutorial messages
+                if (!enabled && analyticsManager != null) {
+                    analyticsManager.trackTutorialCompleted("tutorial_messages");
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".setupTutorialPreferences: Tutorial messages disabled via settings");
+                }
+                return true;
+            });
+        }
     }
 }

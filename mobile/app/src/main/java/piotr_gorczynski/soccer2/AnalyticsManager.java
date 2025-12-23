@@ -325,6 +325,124 @@ public class AnalyticsManager {
     // ═══════════════════════════════════════════════════════════════════
     
     // ═══════════════════════════════════════════════════════════════════
+    // USER RETENTION METRICS
+    // ═══════════════════════════════════════════════════════════════════
+    
+    /**
+     * Track when tutorial is completed
+     * @param tutorialType Type of tutorial completed ("hand_tutorial" or "tutorial_messages")
+     */
+    public void trackTutorialCompleted(String tutorialType) {
+        String safeTutorialType = tutorialType != null ? tutorialType : "unknown";
+        Log.d(TAG, "Tracked: tutorial_completed - type=" + safeTutorialType);
+        
+        if (crashlytics != null) {
+            try {
+                crashlytics.log("Tutorial completed: " + safeTutorialType);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log to Crashlytics", e);
+            }
+        }
+        
+        if (firebaseAnalytics != null) {
+            try {
+                Bundle params = new Bundle();
+                params.putString("tutorial_type", safeTutorialType);
+                firebaseAnalytics.logEvent("tutorial_completed", params);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log to Firebase Analytics", e);
+            }
+        }
+    }
+    
+    /**
+     * Track number of games played before signup when user converts from anonymous to registered
+     * @param gamesPlayed Number of games played as anonymous user
+     * @param signupMethod Method used to sign up ("google", "email", "facebook", "microsoft")
+     */
+    public void trackGamesPlayedBeforeSignup(int gamesPlayed, String signupMethod) {
+        String safeSignupMethod = signupMethod != null ? signupMethod : "unknown";
+        Log.d(TAG, "Tracked: games_played_before_signup - count=" + gamesPlayed + ", method=" + safeSignupMethod);
+        
+        if (crashlytics != null) {
+            try {
+                crashlytics.log("Games played before signup: " + gamesPlayed + " (method: " + safeSignupMethod + ")");
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log to Crashlytics", e);
+            }
+        }
+        
+        if (firebaseAnalytics != null) {
+            try {
+                Bundle params = new Bundle();
+                params.putInt("games_count", gamesPlayed);
+                params.putString("signup_method", safeSignupMethod);
+                firebaseAnalytics.logEvent("games_played_before_signup", params);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log to Firebase Analytics", e);
+            }
+        }
+    }
+    
+    /**
+     * Track first game completion and outcome
+     * @param won Whether the user won their first game
+     * @param gameType Type of game (1=PvP local, 2=vs Android, 3=PvP online)
+     * @param isAnonymous Whether the user is anonymous
+     */
+    public void trackFirstGameWin(boolean won, int gameType, boolean isAnonymous) {
+        Log.d(TAG, "Tracked: first_game_win - won=" + won + ", gameType=" + gameType + ", anonymous=" + isAnonymous);
+        
+        if (crashlytics != null) {
+            try {
+                crashlytics.log("First game: " + (won ? "WON" : "LOST") + " (type: " + gameType + ", anonymous: " + isAnonymous + ")");
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log to Crashlytics", e);
+            }
+        }
+        
+        if (firebaseAnalytics != null) {
+            try {
+                Bundle params = new Bundle();
+                params.putBoolean("won", won);
+                params.putInt("game_type", gameType);
+                params.putBoolean("is_anonymous", isAnonymous);
+                firebaseAnalytics.logEvent("first_game_win", params);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log to Firebase Analytics", e);
+            }
+        }
+    }
+    
+    /**
+     * Track time to first game from app installation
+     * @param timeToFirstGameMs Time in milliseconds from first app open to first game start
+     */
+    public void trackTimeToFirstGame(long timeToFirstGameMs) {
+        long timeInSeconds = timeToFirstGameMs / 1000;
+        Log.d(TAG, "Tracked: time_to_first_game - " + timeInSeconds + " seconds");
+        
+        if (crashlytics != null) {
+            try {
+                crashlytics.log("Time to first game: " + timeInSeconds + "s");
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log to Crashlytics", e);
+            }
+        }
+        
+        if (firebaseAnalytics != null) {
+            try {
+                Bundle params = new Bundle();
+                params.putLong("time_seconds", timeInSeconds);
+                params.putLong("time_ms", timeToFirstGameMs);
+                firebaseAnalytics.logEvent("time_to_first_game", params);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log to Firebase Analytics", e);
+            }
+        }
+    }
+    
+    // ═══════════════════════════════════════════════════════════════════
     // USER ATTRIBUTES FOR SEGMENTATION
     // ═══════════════════════════════════════════════════════════════════
     

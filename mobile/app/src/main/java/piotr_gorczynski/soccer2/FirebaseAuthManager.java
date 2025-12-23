@@ -38,10 +38,16 @@ public class FirebaseAuthManager {
 
     private final FirebaseAuth firebaseAuth;
     private final Context context;
+    private AnalyticsManager analyticsManager;
 
     public FirebaseAuthManager(Context context) {
         this.context = context;
         this.firebaseAuth = FirebaseAuth.getInstance();
+        
+        // Get analytics manager from SoccerApp
+        if (context.getApplicationContext() instanceof SoccerApp) {
+            this.analyticsManager = ((SoccerApp) context.getApplicationContext()).getAnalyticsManager();
+        }
     }
 
     public interface LoginCallback {
@@ -967,6 +973,14 @@ public class FirebaseAuthManager {
                                     editor.putString("facebookPhotoUrl", facebookPhotoUrl);
                                 }
                                 editor.apply();
+                                
+                                // Track games played before signup for anonymous users who convert
+                                if (analyticsManager != null) {
+                                    SharedPreferences prefs = context.getSharedPreferences(LanguageManager.PREFS_FILE, Context.MODE_PRIVATE);
+                                    int gamesPlayed = prefs.getInt("games_played_as_anonymous", 0);
+                                    analyticsManager.trackGamesPlayedBeforeSignup(gamesPlayed, method);
+                                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".updateUserDocumentAfterLink: Tracked games_played_before_signup=" + gamesPlayed);
+                                }
                                 
                                 callback.onLinkSuccess();
                             })
