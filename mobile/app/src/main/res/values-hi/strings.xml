@@ -378,12 +378,24 @@
     <string name="hand_tutorial_dialog_yes">हां, जारी रखें</string>
     <string name="hand_tutorial_dialog_no">नहीं, बंद करें</string>
     
+    <!-- Tutorial messages feature -->
+    <string name="pref_title_show_tutorial_messages">गेम टिप्स दिखाएं</string>
+    <string name="pref_summary_show_tutorial_messages">खेल के दौरान और परिणामों में गेम नियमों को समझाने वाले उपयोगी संदेश प्रदर्शित करता है</string>
+    
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">टूर्नामेंट %1$s अब नहीं चल रहा है</string>
-    <string name="field_hand_tutorial_message">गेंद को हिलाने के लिए किसी एक बिंदु पर टैप करें</string>
-    <string name="field_hand_tutorial_bounce_border">जब गेंद किनारे से टकराती है, तो यह उछलती है और आप फिर से गेंद को हिला सकते हैं</string>
-    <string name="field_hand_tutorial_bounce_visited">जब गेंद पहले से देखे गए बिंदु से टकराती है, तो यह उछलती है और आप फिर से गेंद को हिला सकते हैं</string>
-    <string name="field_hand_tutorial_no_moves">जब कोई संभावित चाल नहीं होती है, तो खिलाड़ी तुरंत हार जाता है।</string>
-    <string name="field_hand_tutorial_goal">गोल! शाबाश!</string>
-    <string name="field_hand_tutorial_own_goal">अपना गोल!</string>
+    <string name="field_tutorial_message">गेंद को हिलाने के लिए किसी एक बिंदु पर टैप करें</string>
+    <string name="field_tutorial_bounce_border">जब गेंद किनारे से टकराती है, तो यह उछलती है और आप फिर से गेंद को हिला सकते हैं</string>
+    <string name="field_tutorial_bounce_visited">जब गेंद पहले से देखे गए बिंदु से टकराती है, तो यह उछलती है और आप फिर से गेंद को हिला सकते हैं</string>
+    <string name="field_tutorial_no_moves">जब कोई संभावित चाल नहीं होती है, तो खिलाड़ी तुरंत हार जाता है।</string>
+    <string name="field_tutorial_goal_1">गोल! ⚽🎉</string>
+    <string name="field_tutorial_goal_2">शानदार शॉट! 😄⚽</string>
+    <string name="field_tutorial_goal_3">बेहतरीन गोल! 👏</string>
+    <string name="field_tutorial_own_goal">अपना गोल!</string>
+    <string name="field_tutorial_opponent_goal_1">अच्छा खेल! अगली बार तुम उन्हें हरा दोगे 💪</string>
+    <string name="field_tutorial_opponent_goal_2">अच्छी कोशिश! पुनर्मैच का इंतजार है 🔁</string>
+    <string name="field_tutorial_opponent_goal_3">यह बहुत करीब था! खेलते रहो ⚽</string>
+    
+    <!-- Tournament notification dialog -->
+    <string name="tournament_started_dialog_message">टूर्नामेंट %1$s शुरू हो गया! क्या आप टूर्नामेंट लॉबी खोलना चाहते हैं?</string>
 </resources>

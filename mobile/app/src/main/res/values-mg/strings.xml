@@ -341,15 +341,27 @@
     <string name="pref_summary_show_hand_tutorial">Mampiseho tanana manondro ny fihetsika azo atao mba hanampy anao hianarana</string>
     <string name="hand_tutorial_dialog_title">Fampianarana</string>
     <string name="hand_tutorial_dialog_message">Mbola tianao ve ny hasehoko aminao ny fihetsika azo atao? Azonao atao mandrakariva ny manokatra sy manidy azy ao amin\'ny Fandrindrana.</string>
-    <string name="hand_tutorial_dialog_yes">Eny, tohizana</string>
+    <string name="hand_tutorial_dialog_yes">Eny, tohizo</string>
     <string name="hand_tutorial_dialog_no">Tsia, hidio</string>
+    
+    <!-- Tutorial messages feature -->
+    <string name="pref_title_show_tutorial_messages">Asehoy ny toro-hevitra momba ny lalao</string>
+    <string name="pref_summary_show_tutorial_messages">Mampiseho hafatra mahasoa manazava ny fitsipiky ny lalao mandritra ny lalao sy amin\'ny vokatra</string>
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">Ny fifanintsanana %1$s tsy mandeha intsony</string>
-    <string name="field_hand_tutorial_message">Kitiho ny iray amin’ireo teboka mba hamindra ny baolina</string>
-    <string name="field_hand_tutorial_bounce_border">Rehefa mamely ny sisiny ny baolina dia mitsambikina ary afaka mamindra ny baolina indray ianao</string>
-    <string name="field_hand_tutorial_bounce_visited">Rehefa mamely teboka efa notsidihana ny baolina dia mitsambikina ary afaka mamindra ny baolina indray ianao</string>
-    <string name="field_hand_tutorial_no_moves">Rehefa tsy misy fihetsiketsehana azo atao dia resy avy hatrany ny mpilalao.</string>
-    <string name="field_hand_tutorial_goal">Baolina! Tsara be!</string>
-    <string name="field_hand_tutorial_own_goal">Baolina manokana!</string>
+    <string name="field_tutorial_message">Kitiho ny iray amin’ireo teboka mba hamindra ny baolina</string>
+    <string name="field_tutorial_bounce_border">Rehefa mamely ny sisiny ny baolina dia mitsambikina ary afaka mamindra ny baolina indray ianao</string>
+    <string name="field_tutorial_bounce_visited">Rehefa mamely teboka efa notsidihana ny baolina dia mitsambikina ary afaka mamindra ny baolina indray ianao</string>
+    <string name="field_tutorial_no_moves">Rehefa tsy misy fihetsiketsehana azo atao dia resy avy hatrany ny mpilalao.</string>
+    <string name="field_tutorial_goal_1">BAOLINA! ⚽🎉</string>
+    <string name="field_tutorial_goal_2">Tsara ny baolina! 😄⚽</string>
+    <string name="field_tutorial_goal_3">Baolina mahagaga! 👏</string>
+    <string name="field_tutorial_own_goal">Baolina manokana!</string>
+    <string name="field_tutorial_opponent_goal_1">Lalao tsara! Hahazo azy ireo amin’ny manaraka ianao 💪</string>
+    <string name="field_tutorial_opponent_goal_2">Fiezahana tsara! Miandry ny lalao famerenana 🔁</string>
+    <string name="field_tutorial_opponent_goal_3">Akaiky izany! Tohizo ny lalao ⚽</string>
+    
+    <!-- Tournament notification dialog -->
+    <string name="tournament_started_dialog_message">Nanomboka ny fifaninanana %1$s! Te hanokatra ny efitrano fifaninanana ve ianao?</string>
 </resources>

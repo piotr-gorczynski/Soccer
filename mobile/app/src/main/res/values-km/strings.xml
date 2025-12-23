@@ -344,12 +344,24 @@
     <string name="hand_tutorial_dialog_yes">បាទ/ចាស បន្ត</string>
     <string name="hand_tutorial_dialog_no">ទេ បិទ</string>
     
+    <!-- Tutorial messages feature -->
+    <string name="pref_title_show_tutorial_messages">បង្ហាញគន្លឹះហ្គេម</string>
+    <string name="pref_summary_show_tutorial_messages">បង្ហាញសារមានប្រយោជន៍ដែលពន្យល់ច្បាប់ហ្គេមក្នុងអំឡុងពេលលេង និងក្នុងលទ្ធផល</string>
+    
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">ការប្រកួត %1$s មិនកំពុងដំណើរការទៀតទេ</string>
-    <string name="field_hand_tutorial_message">ប៉ះលើចំណុចណាមួយដើម្បីផ្លាស់ទីបាល់</string>
-    <string name="field_hand_tutorial_bounce_border">នៅពេលបាល់ប៉ះព្រំដែន វាលោតត្រឡប់មកវិញ ហើយអ្នកអាចផ្លាស់ទីបាល់ម្តងទៀត</string>
-    <string name="field_hand_tutorial_bounce_visited">នៅពេលបាល់ប៉ះចំណុចដែលបានទស្សនាពីមុន វាលោតត្រឡប់មកវិញ ហើយអ្នកអាចផ្លាស់ទីបាល់ម្តងទៀត</string>
-    <string name="field_hand_tutorial_no_moves">នៅពេលមិនមានចលនាដែលអាចធ្វើបាន អ្នកលេងនឹងចាញ់ភ្លាមៗ។</string>
-    <string name="field_hand_tutorial_goal">គោល! ល្អណាស់!</string>
-    <string name="field_hand_tutorial_own_goal">គោលផ្ទាល់ខ្លួន!</string>
+    <string name="field_tutorial_message">ប៉ះលើចំណុចណាមួយដើម្បីផ្លាស់ទីបាល់</string>
+    <string name="field_tutorial_bounce_border">នៅពេលបាល់ប៉ះព្រំដែន វាលោតត្រឡប់មកវិញ ហើយអ្នកអាចផ្លាស់ទីបាល់ម្តងទៀត</string>
+    <string name="field_tutorial_bounce_visited">នៅពេលបាល់ប៉ះចំណុចដែលបានទស្សនាពីមុន វាលោតត្រឡប់មកវិញ ហើយអ្នកអាចផ្លាស់ទីបាល់ម្តងទៀត</string>
+    <string name="field_tutorial_no_moves">នៅពេលមិនមានចលនាដែលអាចធ្វើបាន អ្នកលេងនឹងចាញ់ភ្លាមៗ។</string>
+    <string name="field_tutorial_goal_1">គោល! ⚽🎉</string>
+    <string name="field_tutorial_goal_2">ការបាញ់ល្អ! 😄⚽</string>
+    <string name="field_tutorial_goal_3">គោលដ៏អស្ចារ្យ! 👏</string>
+    <string name="field_tutorial_own_goal">គោលផ្ទាល់ខ្លួន!</string>
+    <string name="field_tutorial_opponent_goal_1">ល្អណាស់! ពេលក្រោយអ្នកនឹងឈ្នះពួកគេ 💪</string>
+    <string name="field_tutorial_opponent_goal_2">ការព្យាយាមល្អ! ការប្រកួតឡើងវិញកំពុងរង់ចាំ 🔁</string>
+    <string name="field_tutorial_opponent_goal_3">វាជិតណាស់! បន្តលេង ⚽</string>
+    
+    <!-- Tournament notification dialog -->
+    <string name="tournament_started_dialog_message">ការប្រកួត %1$s បានចាប់ផ្តើម! តើអ្នកចង់បើកសាលប្រជុំប្រកួតទេ?</string>
 </resources>

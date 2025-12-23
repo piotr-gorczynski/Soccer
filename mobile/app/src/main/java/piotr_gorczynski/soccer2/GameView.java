@@ -322,7 +322,10 @@ public class GameView extends View {
         */
 
         try {
-            field = new Field(context, realMoves, possibleMovesForDrawing, GameType, "Player 1", "Player 2", 0, areAnimationsEnabled(context));
+            // Use localized strings for player names
+            String player1Name = SafeStringFormatter.safeGetString(context, R.string.player_with_number, 1);
+            String player2Name = SafeStringFormatter.safeGetString(context, R.string.player_with_number, 2);
+            field = new Field(context, realMoves, possibleMovesForDrawing, GameType, player1Name, player2Name, 0, areAnimationsEnabled(context));
         } catch (Exception e) {
             Log.e("TAG_Soccer", getClass().getSimpleName() + ".<init>: Failed to create Field", e);
             throw new RuntimeException("Failed to initialize game field", e);
@@ -552,14 +555,26 @@ public class GameView extends View {
         if(possibleMoves.isEmpty()) {
             // Check if it's a goal or loss
             if(y==-1) {
-                // Ball landed in top goal - player 0 scores
-                field.setTutorialMessageType(Field.TutorialMessageType.GOAL);
+                // Ball landed in top goal (player 1's goal) - player 0 wins
+                if ((GameType == 1 || GameType == 2 || GameType == 3) && localPlayerIndex == 1) {
+                    // From player 1's perspective: opponent scored, show encouraging message
+                    field.setTutorialMessageType(Field.TutorialMessageType.OPPONENT_GOAL);
+                } else {
+                    // From player 0's perspective: celebrate the goal
+                    field.setTutorialMessageType(Field.TutorialMessageType.GOAL);
+                }
                 gameActivity.showWinner(0);
             }
             else {
                 if(y==intFieldHeight+1) {
-                    // Ball landed in bottom goal - player 1 scores (own goal for player 0 perspective)
-                    field.setTutorialMessageType(Field.TutorialMessageType.OWN_GOAL);
+                    // Ball landed in bottom goal (player 0's goal) - player 1 wins
+                    if ((GameType == 1 || GameType == 2 || GameType == 3) && localPlayerIndex == 0) {
+                        // From player 0's perspective: opponent (Android or player 1) scored, show encouraging message
+                        field.setTutorialMessageType(Field.TutorialMessageType.OPPONENT_GOAL);
+                    } else {
+                        // From player 1's perspective: celebrate the goal
+                        field.setTutorialMessageType(Field.TutorialMessageType.GOAL);
+                    }
                     gameActivity.showWinner(1);
                 }
                 else {
