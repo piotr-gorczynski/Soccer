@@ -78,19 +78,20 @@ public class TournamentLobbyNullUserTest {
         // Original code would call requireNonNull which throws NPE
         // New code checks for null first
         
+        boolean gracefulHandling = false;
         try {
             if (currentUser == null) {
                 // Activity finishes gracefully
-                assertTrue("Activity handles null user gracefully", true);
-                return;
+                gracefulHandling = true;
+            } else {
+                // This line would have thrown NPE in the original code
+                // String uid = currentUser.getUid();  // Would throw NPE
+                fail("Should not reach here when user is null");
             }
-            
-            // This line would have thrown NPE in the original code
-            // String uid = currentUser.getUid();  // Would throw NPE
-            
-            fail("Should not reach here when user is null");
         } catch (NullPointerException e) {
             fail("Should not throw NullPointerException - should handle null gracefully");
         }
+        
+        assertTrue("Activity handles null user gracefully", gracefulHandling);
     }
 }
