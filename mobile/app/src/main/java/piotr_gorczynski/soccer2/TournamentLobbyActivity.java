@@ -5,12 +5,14 @@ import static java.util.Objects.*;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentChange;
 
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -91,7 +93,16 @@ public class TournamentLobbyActivity extends BaseActivity {
 
         String tid   = getIntent().getStringExtra("tournamentId");
         String nameExtra = getIntent().getStringExtra("tournamentName");
-        String myUid = requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
+        
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": User not signed in");
+            Toast.makeText(this, SafeStringFormatter.safeGetString(this, R.string.please_log_in_to_continue), Toast.LENGTH_LONG).show();
+            finish();
+            return;
+        }
+        
+        String myUid = currentUser.getUid();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         if (nameExtra != null) {
