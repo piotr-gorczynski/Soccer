@@ -1,119 +1,135 @@
 <en-GB>
 🎉 Send localized FCM notifications to participants when tournament starts
 🎉 Add setting name for tutorial messages control
+🎉 Replace bullet icon with speedometer for Android level preference
 🎮 Show tutorial balloon messages in winner dialog
 🎮 Fix tutorial message when Android wins and add encouraging messages for opponent goals
-
 </en-GB>
 
 <pl-PL>
-🎮 Naprawiono zapisywanie ustawień gry  
-🎉 Łatwiejszy poziom AI dla nowych graczy  
-🎉 Nowe podpowiedzi w samouczku  
-🎉 Widoczny postęp myślenia AI
+🎉 Wysyłanie lokalnych powiadomień na start turnieju
+🎉 Dodano nazwę ustawienia sterującego komunikatami samouczka
+🎉 Zmieniono ikonę poziomu Androida na prędkościomierz
+🎮 Podpowiedzi samouczka wyświetlane w oknie zwycięzcy
+🎮 Poprawiono komunikaty przy wygranej Androida i dodano pozytywne reakcje na gole rywala
 </pl-PL>
 
 <de-DE>
-🎮 Spieleinstellungen werden jetzt korrekt gespeichert  
-🎉 Leichtere KI für neue Spieler  
-🎉 Neue Tutorial-Hinweise zum Start  
-🎉 Denkfortschritt der KI sichtbar
+🎉 Lokale Benachrichtigungen zum Turnierstart gesendet
+🎉 Einstellungsname für Tutorial-Nachrichten hinzugefügt
+🎉 Symbol für Android-Level auf Tacho geändert
+🎮 Tutorial-Hinweise im Siegerdialog angezeigt
+🎮 Tutorial-Texte bei Android-Sieg korrigiert und motivierende Nachrichten bei Gegentoren ergänzt
 </de-DE>
 
 <fr-FR>
-🎮 Correction de l’enregistrement des paramètres  
-🎉 IA plus facile pour les nouveaux joueurs  
-🎉 Nouveaux conseils dans le tutoriel  
-🎉 Progression de l’IA visible
+🎉 Envoi de notifications localisées au début du tournoi
+🎉 Ajout du nom du réglage pour les messages du tutoriel
+🎉 Icône du niveau Android remplacée par un compteur de vitesse
+🎮 Messages du tutoriel affichés dans la fenêtre du vainqueur
+🎮 Messages corrigés lorsque Android gagne et encouragements ajoutés pour les buts adverses
 </fr-FR>
 
 <es-ES>
-🎮 Configuración del juego guardada correctamente  
-🎉 IA más fácil para nuevos jugadores  
-🎉 Nuevos consejos del tutorial  
-🎉 Progreso del pensamiento de la IA visible
+🎉 Envío de notificaciones localizadas al iniciar el torneo
+🎉 Añadido nombre de ajuste para controlar mensajes del tutorial
+🎉 Icono del nivel Android cambiado por un velocímetro
+🎮 Mensajes del tutorial mostrados en el diálogo del ganador
+🎮 Corregidos mensajes cuando gana Android y añadidos mensajes de ánimo tras goles del rival
 </es-ES>
 
 <ur>
-🎮 گیم سیٹنگز اب درست محفوظ ہوتی ہیں  
-🎉 نئے کھلاڑیوں کے لیے آسان AI  
-🎉 نیا ٹیوٹوریل گائیڈ  
-🎉 AI کی سوچ کا عمل نظر آئے گا
+🎉 ٹورنامنٹ شروع ہونے پر مقامی نوٹیفیکیشن بھیجے جاتے ہیں
+🎉 ٹیوٹوریل پیغامات کے کنٹرول کے لیے سیٹنگ کا نام شامل
+🎉 اینڈرائیڈ لیول کے لیے بُلٹ آئیکن کی جگہ اسپیڈومیٹر
+🎮 فاتح ڈائیلاگ میں ٹیوٹوریل پیغامات دکھائے جاتے ہیں
+🎮 اینڈرائیڈ جیت پر پیغام درست اور حریف کے گول پر حوصلہ افزا پیغامات شامل
 </ur>
 
 <bn-BD>
-🎮 গেম সেটিংস এখন সঠিকভাবে সংরক্ষিত  
-🎉 নতুন খেলোয়াড়দের জন্য সহজ AI  
-🎉 নতুন টিউটোরিয়াল টিপস  
-🎉 AI চিন্তার অগ্রগতি দেখা যাবে
+🎉 টুর্নামেন্ট শুরু হলে স্থানীয় নোটিফিকেশন পাঠানো হয়
+🎉 টিউটোরিয়াল বার্তা নিয়ন্ত্রণের জন্য সেটিং নাম যোগ
+🎉 অ্যান্ড্রয়েড লেভেলের আইকন স্পিডোমিটারে পরিবর্তন
+🎮 বিজয়ী ডায়ালগে টিউটোরিয়াল বার্তা দেখানো হয়
+🎮 অ্যান্ড্রয়েড জিতলে বার্তা ঠিক করা হয়েছে এবং প্রতিপক্ষের গোলে উৎসাহ যোগ করা হয়েছে
 </bn-BD>
 
 <ne-NP>
-🎮 खेल सेटिङ सही रूपमा सेभ हुन्छ  
-🎉 नयाँ खेलाडीका लागि सजिलो AI  
-🎉 नयाँ ट्युटोरियल सुझाव  
-🎉 AI सोच्ने प्रगति देखिन्छ
+🎉 प्रतियोगिता सुरु हुँदा स्थानीय सूचना पठाइन्छ
+🎉 ट्युटोरियल सन्देश नियन्त्रणका लागि सेटिङ नाम थपियो
+🎉 एन्ड्रोइड स्तरको आइकन स्पिडोमिटरमा परिवर्तन
+🎮 विजेता संवादमा ट्युटोरियल सन्देश देखाइन्छ
+🎮 एन्ड्रोइड जित्दा सन्देश सुधारियो र विपक्षी गोलमा उत्साह थपियो
 </ne-NP>
 
 <hi-IN>
-🎮 गेम सेटिंग अब सही सेव होती है  
-🎉 नए खिलाड़ियों के लिए आसान AI  
-🎉 नए ट्यूटोरियल सुझाव  
-🎉 AI सोचने की प्रगति दिखाई देती है
+🎉 टूर्नामेंट शुरू होने पर स्थानीय नोटिफ़िकेशन भेजे जाते हैं
+🎉 ट्यूटोरियल संदेश नियंत्रण के लिए सेटिंग नाम जोड़ा गया
+🎉 एंड्रॉइड स्तर का आइकन स्पीडोमीटर में बदला गया
+🎮 विजेता डायलॉग में ट्यूटोरियल संदेश दिखाए जाते हैं
+🎮 एंड्रॉइड जीत पर संदेश ठीक किए गए और विरोधी गोल पर उत्साहवर्धक संदेश जोड़े गए
 </hi-IN>
 
 <am>
-🎮 የጨዋታ ቅንብሮች አሁን በትክክል ይቀመጣሉ  
-🎉 ለአዲስ ተጫዋቾች ቀላል AI  
-🎉 አዲስ የመጀመሪያ መመሪያ  
-🎉 የAI ሂደት ይታያል
+🎉 ቱርናመንት ሲጀምር የአካባቢ ማሳወቂያዎች ይላካሉ
+🎉 የመጀመሪያ መመሪያ መልዕክቶችን ለመቆጣጠር የቅንብር ስም ተጨምሯል
+🎉 የAndroid ደረጃ ምልክት ወደ ፍጥነት መለኪያ ተቀይሯል
+🎮 የመጀመሪያ መመሪያ መልዕክቶች በድል መስኮት ይታያሉ
+🎮 Android ሲያሸንፍ መልዕክቶች ተስተካክለው ለተቃዋሚ ግቦች አበረታታ መልዕክቶች ተጨምሯል
 </am>
 
 <ar>
-🎮 تم إصلاح حفظ إعدادات اللعبة  
-🎉 ذكاء اصطناعي أسهل للمبتدئين  
-🎉 إرشادات تعليمية جديدة  
-🎉 عرض تقدم تفكير الذكاء الاصطناعي
+🎉 إرسال إشعارات محلية عند بدء البطولة
+🎉 إضافة اسم إعداد للتحكم برسائل الشرح
+🎉 استبدال أيقونة المستوى بمقياس سرعة
+🎮 عرض رسائل الشرح في نافذة الفائز
+🎮 تصحيح الرسائل عند فوز Android وإضافة رسائل تشجيع عند أهداف الخصم
 </ar>
 
 <my-MM>
-🎮 ဂိမ်းဆက်တင်များ ယခုမှန်ကန်စွာ သိမ်းဆည်းသည်  
-🎉 ကစားသမားအသစ်များအတွက် AI ပိုလွယ်  
-🎉 သင်ခန်းစာ အကြံပြုချက်အသစ်များ  
-🎉 AI စဉ်းစားမှု တိုးတက်မှု ပြသ
+🎉 ပြိုင်ပွဲစတင်ချိန်တွင် ဒေသခံအသိပေးချက်များ ပို့ပေးသည်
+🎉 သင်ခန်းစာ မက်ဆေ့ချ်များကို ထိန်းချုပ်ရန် ဆက်တင်အမည် ထည့်သွင်း
+🎉 Android အဆင့် အိုင်ကွန်ကို စပီဒိုမီတာဖြင့် ပြောင်းလဲ
+🎮 အနိုင်ရ ဒိုင်ယာလော့တွင် သင်ခန်းစာ မက်ဆေ့ချ်များ ပြသ
+🎮 Android အနိုင်ရသောအခါ မက်ဆေ့ချ် ပြင်ဆင်ပြီး ပြိုင်ဘက်ဂိုးများအတွက် အားပေးစာ ထည့်သွင်း
 </my-MM>
 
 <km-KH>
-🎮 ការកំណត់ហ្គេមត្រូវបានរក្សាទុកត្រឹមត្រូវ  
-🎉 AI ងាយស្រួលសម្រាប់អ្នកលេងថ្មី  
-🎉 គន្លឹះណែនាំថ្មី  
-🎉 បង្ហាញដំណើរការគិតរបស់ AI
+🎉 ផ្ញើការជូនដំណឹងតាមភាសាមូលដ្ឋាននៅពេលចាប់ផ្តើមតួណាម៉ង់
+🎉 បន្ថែមឈ្មោះការកំណត់សម្រាប់គ្រប់គ្រងសារណែនាំ
+🎉 ប្ដូររូបតំណាងកម្រិត Android ជាស្ពីដូម៉ែត្រ
+🎮 បង្ហាញសារណែនាំក្នុងប្រអប់អ្នកឈ្នះ
+🎮 កែសារពេល Android ឈ្នះ និងបន្ថែមសារលើកទឹកចិត្តសម្រាប់គ្រាប់បាល់គូប្រកួត
 </km-KH>
 
 <lo-LA>
-🎮 ບັນທຶກການຕັ້ງຄ່າເກມໄດ້ຖືກຕ້ອງ  
-🎉 AI ງ່າຍສຳລັບຜູ້ຫຼິ້ນໃໝ່  
-🎉 ຄຳແນະນຳສອນເກມໃໝ່  
-🎉 ສະແດງການຄິດຂອງ AI
+🎉 ສົ່ງແຈ້ງເຕືອນທ້ອງຖິ່ນເມື່ອເລີ່ມທວຣນາເມັນ
+🎉 ເພີ່ມຊື່ການຕັ້ງຄ່າສໍາລັບຄວບຄຸມຂໍ້ຄຳແນະນຳ
+🎉 ປ່ຽນໄອຄອນລະດັບ Android ເປັນສະປີໂດມີເຕີ
+🎮 ສະແດງຂໍ້ຄຳແນະນຳໃນກ່ອງຜູ້ຊະນະ
+🎮 ແກ້ຂໍ້ຄວາມເມື່ອ Android ຊະນະ ແລະເພີ່ມການຊູ້ໃຈເມື່ອຄູ່ແຂ່ງໄດ້ປະຕູ
 </lo-LA>
 
 <mn-MN>
-🎮 Тоглоомын тохиргоо зөв хадгалагдана  
-🎉 Шинэ тоглогчдод илүү хялбар AI  
-🎉 Шинэ заавар зөвлөмжүүд  
-🎉 AI-ийн бодолтын явц харагдана
+🎉 Тэмцээн эхлэхэд орон нутгийн мэдэгдэл илгээнэ
+🎉 Зааврын мессежийг удирдах тохиргооны нэр нэмсэн
+🎉 Android түвшний дүрсийг хурд хэмжигчээр сольсон
+🎮 Ялагчийн цонхонд зааврын мессеж харуулна
+🎮 Android ялсан үед мессеж засаж, өрсөлдөгч гоол оруулахад урамшуулсан текст нэмсэн
 </mn-MN>
 
 <fa-IR>
-🎮 ذخیره تنظیمات بازی اصلاح شد  
-🎉 هوش مصنوعی ساده‌تر برای بازیکنان جدید  
-🎉 راهنمای آموزشی جدید  
-🎉 نمایش روند فکر کردن هوش مصنوعی
+🎉 ارسال اعلان‌های محلی هنگام شروع تورنمنت
+🎉 افزودن نام تنظیم برای کنترل پیام‌های آموزشی
+🎉 جایگزینی آیکن سطح اندروید با سرعت‌سنج
+🎮 نمایش پیام‌های آموزشی در پنجره برنده
+🎮 اصلاح پیام‌ها هنگام برد اندروید و افزودن پیام‌های تشویقی پس از گل حریف
 </fa-IR>
 
 <si-LK>
-🎮 ක්‍රීඩා සැකසුම් දැන් නිවැරදිව සුරකිනවා  
-🎉 නව ක්‍රීඩකයින්ට පහසු AI  
-🎉 නව උපදෙස් සමඟ පාඩම්  
-🎉 AI සිතීමේ ප්‍රගතිය පෙන්වයි
+🎉 තරගය ආරම්භ වන විට දේශීය දැනුම්දීම් යැවීම
+🎉 උපදෙස් පණිවිඩ පාලනය සඳහා සැකසුම් නාමය එක් කළා
+🎉 Android මට්ටමේ අයිකනය වේගමානයක් ලෙස වෙනස් කළා
+🎮 ජයග්‍රාහක සංවාදයේ උපදෙස් පණිවිඩ පෙන්වයි
+🎮 Android ජයගත් විට පණිවිඩ නිවැරදි කර ප්‍රතිවාදී ගෝල් සඳහා උද්යෝගී පණිවිඩ එක් කළා
 </si-LK>

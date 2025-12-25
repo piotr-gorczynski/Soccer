@@ -161,7 +161,13 @@ public class FriendsListActivity extends BaseActivity {
             (currentSortMode == SORT_BY_LAST_SEEN ? "SORT_BY_LAST_SEEN" : "SORT_ALPHABETICALLY") +
             " (position=" + currentSortMode + ")");
         
-        String uid = Objects.requireNonNull(auth.getCurrentUser()).getUid();
+        if (auth.getCurrentUser() == null) {
+            Log.e(TAG, "loadFriends: User not authenticated");
+            isLoadingFriends = false;
+            finish();
+            return;
+        }
+        String uid = auth.getCurrentUser().getUid();
         Log.d(TAG, "loadFriends: Current user UID: " + uid);
         
         db.collection("users").document(uid).collection("friends").get()
@@ -602,7 +608,12 @@ public class FriendsListActivity extends BaseActivity {
     }
 
     private void removeFriend(@NonNull String uidToRemove) {
-        String uid = java.util.Objects.requireNonNull(auth.getCurrentUser()).getUid();
+        if (auth.getCurrentUser() == null) {
+            Log.e(TAG, "removeFriend: User not authenticated");
+            finish();
+            return;
+        }
+        String uid = auth.getCurrentUser().getUid();
         java.util.Map<String,Object> data = new java.util.HashMap<>();
         data.put("userId", uid);
         data.put("friendId", uidToRemove);
