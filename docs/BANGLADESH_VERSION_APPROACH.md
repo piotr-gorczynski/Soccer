@@ -1,22 +1,24 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.0  
+**Document Version:** 2.1  
 **Last Updated:** 2025-12-27  
 **Status:** Planning
 
 **Revision History**:
+- v2.1 (2025-12-27): Simplified document - removed approach comparison, presenting product flavor approach as the chosen solution
 - v2.0 (2025-12-27): Simplified approach - manual payments, self-declaration age verification, ৳2,000 bi-monthly prizes
 - v1.0 (2025-12-27): Initial comprehensive approach with payment gateway integration
 
 ## Executive Summary
 
-This document outlines a simplified, cost-effective approach for creating a Bangladesh-specific version of the Soccer (Gridline Soccer) mobile application that enables skill-based tournaments with promotional cash prizes. The implementation complies with Bangladesh gaming regulations, focusing on skill-based competitions with developer-funded prizes for players aged 18 and above.
+This document outlines a simplified, cost-effective approach for creating a Bangladesh-specific version of the Soccer (Gridline Soccer) mobile application that enables skill-based tournaments with promotional cash prizes. The implementation uses **Android Product Flavors to create a separate APK variant** and complies with Bangladesh gaming regulations, focusing on skill-based competitions with developer-funded prizes for players aged 18 and above.
 
 **Key Simplifications**:
+- **Technical Approach**: Separate Bangladesh APK using Android Product Flavors (`piotr_gorczynski.soccer2.bd`)
 - **Prize Structure**: ৳2,000 BDT (~$18 USD) for 1st place winners only, bi-monthly tournaments
 - **Age Verification**: Self-declaration via checkbox + Google Play Store verification (no document upload)
 - **Payment Processing**: Manual processing by developer outside the app (no payment gateway API integration)
-- **Total Cost**: ~$8,000-$12,000 initial setup, ~$106-$186/month operational (vs. original ~$16,500-$23,000 / ~$900-$1,400)
+- **Total Cost**: ~$8,000-$12,000 initial setup, ~$106-$186/month operational
 
 This streamlined approach significantly reduces development complexity, time to market, user friction, and operational costs while maintaining full compliance with Bangladesh skill-based gaming regulations.
 
@@ -24,7 +26,7 @@ This streamlined approach significantly reduces development complexity, time to 
 
 1. [Legal & Regulatory Framework](#legal--regulatory-framework)
 2. [Key Requirements](#key-requirements)
-3. [Technical Implementation Approaches](#technical-implementation-approaches)
+3. [Technical Implementation](#technical-implementation)
 4. [Prize & Payment System](#prize--payment-system)
 5. [Age Verification System](#age-verification-system)
 6. [Tournament Structure](#tournament-structure)
@@ -81,24 +83,14 @@ Based on Bangladesh gaming laws and skill-based game regulations:
 
 ---
 
-## Technical Implementation Approaches
+## Technical Implementation
 
-### Approach A: Separate Bangladesh APK (Recommended)
+The Bangladesh version will be implemented as a **separate APK using Android Product Flavors**. This approach provides clear separation of features and compliance requirements while maintaining code reuse with the main application.
 
-**Description**: Create a separate app variant specifically for Bangladesh market.
+### Product Flavor Configuration
 
-**Advantages**:
-- ✅ Clear separation of features and compliance requirements
-- ✅ Different package name (`piotr_gorczynski.soccer2.bd`) for Google Play
-- ✅ Easier to manage Bangladesh-specific regulations
-- ✅ Can have different branding/marketing
-- ✅ Simpler rollback if regulations change
+Create a Bangladesh-specific product flavor in the Android build configuration:
 
-**Disadvantages**:
-- ❌ Requires maintaining two codebases (minimal with proper architecture)
-- ❌ Two separate Play Store listings
-
-**Implementation**:
 ```gradle
 // mobile/app/build.gradle
 android {
@@ -117,43 +109,20 @@ android {
 }
 ```
 
-### Approach B: Region-Based Configuration
+### Key Benefits
 
-**Description**: Single app with runtime configuration based on user location.
+- **Clear separation**: Bangladesh-specific features are isolated from the global version
+- **Different package name**: `piotr_gorczynski.soccer2.bd` for separate Google Play listing
+- **Code reuse**: Shared core game logic while enabling region-specific features
+- **Regulatory compliance**: Easier to manage Bangladesh-specific regulations
+- **Flexible deployment**: Independent release cycles for each variant
+- **Simple rollback**: Can pause Bangladesh version without affecting global app
 
-**Advantages**:
-- ✅ Single codebase
-- ✅ One Play Store listing
-- ✅ Easier updates
+### Build Variants
 
-**Disadvantages**:
-- ❌ More complex feature flags
-- ❌ Potential compliance risks if geo-detection fails
-- ❌ Harder to ensure Bangladesh-only features stay isolated
-
-**Implementation**:
-```java
-// Config-based approach
-if (UserRegion.isBangladesh()) {
-    enableCashPrizeTournaments();
-    requireAgeVerification();
-    enablePaymentIntegration();
-}
-```
-
-### Approach C: Completely Separate App
-
-**Description**: Fork the entire repository and create a standalone Bangladesh app.
-
-**Advantages**:
-- ✅ Complete independence
-- ✅ No risk of feature bleeding
-
-**Disadvantages**:
-- ❌ High maintenance overhead
-- ❌ Difficult to sync bug fixes and improvements
-
-**Recommendation**: **Approach A (Separate APK via Product Flavors)** provides the best balance of code reuse and regulatory compliance.
+The configuration creates two separate APKs:
+- **Global variant**: Standard version without cash prize tournaments
+- **Bangladesh variant**: Includes cash prize tournament features with compliance requirements
 
 ---
 
