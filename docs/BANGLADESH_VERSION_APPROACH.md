@@ -151,11 +151,12 @@ if (UserRegion.isBangladesh()) {
 
 **Example Tournament Prize Pool**:
 ```
-1st Place: ৳5,000 BDT (~$45 USD)
-2nd Place: ৳3,000 BDT (~$27 USD)
-3rd Place: ৳2,000 BDT (~$18 USD)
+1st Place: ৳5,000 BDT (approximately $45 USD)
+2nd Place: ৳3,000 BDT (approximately $27 USD)
+3rd Place: ৳2,000 BDT (approximately $18 USD)
 
-Total per tournament: ৳10,000 BDT (~$90 USD)
+Total per tournament: ৳10,000 BDT (approximately $90 USD)
+Note: USD conversions based on December 2025 rates and subject to change
 ```
 
 Prizes can be scaled based on:
@@ -517,19 +518,19 @@ Existing tournament rules (from `tournament_rules_bn.json`) remain the same, wit
 ### Initial Setup Costs
 - Legal consultation: $1,000 - $2,000
 - Payment gateway setup fees: $500 - $1,000
-- Development time: 300-400 hours @ $50/hr = $15,000 - $20,000
-- **Total Initial: ~$16,500 - $23,000**
+- Development time: 300-400 hours (estimated at market rate)
+- **Total Initial: ~$16,500 - $23,000** (adjust based on actual development costs)
 
 ### Monthly Operational Costs
 - Payment gateway transaction fees: ~2-3% of payouts
 - Firebase costs (increased usage): $50 - $200/month
 - Cloud Storage (ID documents): $20 - $50/month
 - Prize pool funding (example):
-  - 4 weekly tournaments × ৳10,000 = ৳40,000/month (~$360/month)
-  - 1 monthly championship × ৳30,000 = ৳30,000/month (~$270/month)
-  - **Total prizes: ~$630/month**
+  - 4 weekly tournaments × ৳10,000 = ৳40,000/month (approximately $360/month)
+  - 1 monthly championship × ৳30,000 = ৳30,000/month (approximately $270/month)
+  - **Total prizes: approximately $630/month** (based on December 2025 exchange rates)
 - Customer support: $200 - $500/month (part-time Bengali speaker)
-- **Total Monthly: ~$900 - $1,400**
+- **Total Monthly: approximately $900 - $1,400**
 
 ### Revenue Potential (Optional)
 While current model is developer-funded with no entry fees, future revenue options:
@@ -689,6 +690,6 @@ This approach document provides a comprehensive framework for launching a Bangla
 
 ---
 
-**Document Author**: GitHub Copilot  
+**Document Prepared By**: Development Team  
 **Review Required**: Legal counsel, payment gateway experts, Bangladesh market specialists  
 **Approval Required**: Product Owner (Piotr Gorczyński)
