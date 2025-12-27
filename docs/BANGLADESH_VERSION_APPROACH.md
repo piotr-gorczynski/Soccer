@@ -1,12 +1,24 @@
 # Bangladesh Version Approach
 
-**Document Version:** 1.0  
+**Document Version:** 2.0  
 **Last Updated:** 2025-12-27  
 **Status:** Planning
 
+**Revision History**:
+- v2.0 (2025-12-27): Simplified approach - manual payments, self-declaration age verification, ৳2,000 bi-monthly prizes
+- v1.0 (2025-12-27): Initial comprehensive approach with payment gateway integration
+
 ## Executive Summary
 
-This document outlines the approach for creating a Bangladesh-specific version of the Soccer (Gridline Soccer) mobile application that enables skill-based tournaments with cash prizes. The implementation will comply with Bangladesh gaming regulations, focusing on skill-based competitions with developer-funded prizes for players aged 18 and above.
+This document outlines a simplified, cost-effective approach for creating a Bangladesh-specific version of the Soccer (Gridline Soccer) mobile application that enables skill-based tournaments with promotional cash prizes. The implementation complies with Bangladesh gaming regulations, focusing on skill-based competitions with developer-funded prizes for players aged 18 and above.
+
+**Key Simplifications**:
+- **Prize Structure**: ৳2,000 BDT (~$18 USD) for 1st place winners only, bi-monthly tournaments
+- **Age Verification**: Self-declaration via checkbox + Google Play Store verification (no document upload)
+- **Payment Processing**: Manual processing by developer outside the app (no payment gateway API integration)
+- **Total Cost**: ~$8,000-$12,000 initial setup, ~$106-$186/month operational (vs. original ~$16,500-$23,000 / ~$900-$1,400)
+
+This streamlined approach significantly reduces development complexity, time to market, user friction, and operational costs while maintaining full compliance with Bangladesh skill-based gaming regulations.
 
 ## Table of Contents
 
@@ -51,9 +63,9 @@ Based on Bangladesh gaming laws and skill-based game regulations:
 
 ### 1. Player Requirements
 - **Age**: 18+ years mandatory
-- **Verification**: Government-issued ID verification
-- **Location**: Bangladesh residency verification
-- **Account**: Valid payment account with approved service
+- **Verification**: Self-declaration via checkbox + Google Play Store account verification
+- **Location**: Bangladesh residency (inferred from Google Play Store region)
+- **Account**: User declares they have a valid payment account with approved service (bKash, Nagad, or Rocket)
 
 ### 2. Tournament Requirements
 - **Entry**: 100% free, no payment required
@@ -62,10 +74,10 @@ Based on Bangladesh gaming laws and skill-based game regulations:
 - **Prizes**: Developer-funded cash rewards
 
 ### 3. Payment Requirements
-- **Services**: Government-approved payment platforms (bKash, Nagad, Rocket, bank transfer)
-- **Verification**: KYC (Know Your Customer) compliance
-- **Processing**: Secure, auditable transactions
-- **Timeline**: Clear payment schedule (e.g., within 7 days of tournament completion)
+- **Services**: Government-approved payment platforms (bKash, Nagad, or Rocket)
+- **Processing**: Manual payment processing outside the app by developer
+- **Status Tracking**: Payment status updated in Firestore (pending, processing, completed)
+- **Timeline**: Prizes distributed within 7 days of tournament completion
 
 ---
 
@@ -149,65 +161,57 @@ if (UserRegion.isBangladesh()) {
 
 ### Prize Structure
 
-**Example Tournament Prize Pool**:
+**Promotional Prize Pool**:
 ```
-1st Place: ৳5,000 BDT (approximately $45 USD)
-2nd Place: ৳3,000 BDT (approximately $27 USD)
-3rd Place: ৳2,000 BDT (approximately $18 USD)
+1st Place: ৳2,000 BDT (approximately $18 USD)
 
-Total per tournament: ৳10,000 BDT (approximately $90 USD)
+Frequency: Twice per month (bi-monthly tournaments)
 Note: USD conversions based on December 2025 rates and subject to change
 ```
 
-Prizes can be scaled based on:
-- Tournament tier (bronze, silver, gold, platinum)
-- Number of participants
-- Special events (seasonal championships)
+This simplified prize structure:
+- Rewards only the tournament winner (1st place)
+- Keeps operational complexity minimal
+- Provides consistent bi-monthly prize opportunities
 
-### Payment Integration
+### Payment Processing
+
+**Manual Payment Processing**:
+
+Payment processing will be handled **manually outside the Gridline Soccer application** by the developer. No automatic API integration with payment gateways will be implemented.
 
 **Supported Payment Methods** (Bangladesh-approved):
 
 1. **bKash** (Mobile Financial Service)
-   - API: bKash Payment Gateway API
-   - KYC: Required
-   - Settlement: T+1 to T+3 days
+   - Manual transfer by developer
+   - Winner provides bKash account number
 
 2. **Nagad** (Mobile Financial Service)
-   - API: Nagad Payment Gateway
-   - KYC: Required
-   - Settlement: T+1 to T+3 days
+   - Manual transfer by developer
+   - Winner provides Nagad account number
 
 3. **Rocket** (Dutch-Bangla Bank Mobile Banking)
-   - API: Rocket Merchant API
-   - KYC: Required
-   - Settlement: T+2 to T+5 days
-
-4. **Bank Transfer** (Fallback)
-   - Direct bank account transfer
-   - Requires bank account details
-   - Settlement: T+3 to T+7 days
+   - Manual transfer by developer
+   - Winner provides Rocket account number
 
 ### Payment Flow
 
 ```
 Tournament Completion
     ↓
-Winners Determined (Firestore: tournaments/{id}/results)
+Winner Determined (1st Place - Firestore: tournaments/{id}/results)
     ↓
-Payment Records Created (Firestore: payments/{id})
+Payment Record Created (Firestore: payments/{id}, status: "pending")
     ↓
-Manual/Automated Payment Processing
+Winner Notified via App (Push Notification)
     ↓
-Payment Gateway API Call (bKash/Nagad/Rocket)
+Winner Provides Payment Account Number (bKash/Nagad/Rocket)
     ↓
-Payment Confirmation
+Developer Processes Manual Payment Outside App
     ↓
-Update Payment Status (Firestore)
+Developer Updates Payment Status in Firestore (status: "completed")
     ↓
-Notify Winner (Push Notification + Email)
-    ↓
-Record in Payment History
+Winner Notified of Payment Completion
 ```
 
 ### Firestore Schema Extension
@@ -216,18 +220,13 @@ Record in Payment History
 // Collection: tournaments
 {
   id: "tournament_123",
-  name: "Bangladesh Championship March 2026",
+  name: "Bangladesh Bi-Monthly Championship March 2026",
   region: "BD",
   prizePool: {
     enabled: true,
     currency: "BDT",
-    prizes: [
-      { rank: 1, amount: 5000 },
-      { rank: 2, amount: 3000 },
-      { rank: 3, amount: 2000 }
-    ],
-    fundedBy: "developer",
-    totalPool: 10000
+    firstPlacePrize: 2000, // Only 1st place winner receives prize
+    fundedBy: "developer"
   },
   ageRestriction: 18,
   // ... existing fields
@@ -238,16 +237,15 @@ Record in Payment History
   id: "payment_456",
   userId: "user_789",
   tournamentId: "tournament_123",
-  amount: 5000,
+  amount: 2000,
   currency: "BDT",
   rank: 1,
-  paymentMethod: "bkash", // or "nagad", "rocket", "bank"
+  paymentMethod: "bkash", // or "nagad", "rocket" (user-selected)
   recipientInfo: {
-    bkashNumber: "+8801XXXXXXXXX", // encrypted
-    accountName: "User Name",
-    verified: true
+    accountNumber: "+8801XXXXXXXXX", // User-provided account number
+    accountName: "User Name" // Optional
   },
-  status: "pending", // pending, processing, completed, failed
+  status: "pending", // pending, completed, failed (manually updated by developer)
   initiatedAt: Timestamp,
   completedAt: Timestamp,
   transactionId: "TXN_123456",
@@ -258,20 +256,12 @@ Record in Payment History
 {
   id: "user_789",
   // ... existing fields
-  bangladeshVerification: {
-    ageVerified: true,
-    idType: "NID", // National ID or Passport
-    idNumber: "XXXX", // last 4 digits only, encrypted storage
-    verifiedAt: Timestamp,
-    documentUrl: "gs://bucket/verifications/user_789_id.jpg", // Cloud Storage
-    verificationStatus: "approved" // pending, approved, rejected
-  },
-  paymentInfo: {
-    preferredMethod: "bkash",
-    bkashNumber: "+8801XXXXXXXXX", // encrypted
-    nagadNumber: null,
-    rocketNumber: null,
-    bankAccount: null
+  bangladeshEligibility: {
+    ageConfirmed: true, // User confirmed via checkbox they are 18+
+    confirmedAt: Timestamp,
+    googlePlayVerified: true, // Verified via Google Play Store account
+    hasPaymentAccount: true, // User declared they have bKash/Nagad/Rocket account
+    preferredPaymentMethod: "bkash" // User's preferred payment method for prizes
   }
 }
 ```
@@ -280,28 +270,47 @@ Record in Payment History
 
 ## Age Verification System
 
+### Simplified Verification Approach
+
+To minimize barriers to entry while maintaining 18+ age compliance, the verification system relies on:
+
+1. **Google Play Store Account Verification**
+   - Users must have a valid Google account registered in Bangladesh
+   - Google Play Store enforces regional policies and account verification
+   - Age restrictions can be enforced through Play Store's family settings
+   
+2. **User Self-Declaration**
+   - Users confirm they are 18+ via in-app checkbox
+   - Legal acknowledgment that false declaration may result in disqualification
+   - Simpler user experience than document upload
+
+3. **Payment Account Declaration**
+   - Users confirm they have a valid bKash, Nagad, or Rocket account
+   - Payment accounts in Bangladesh typically require age verification by the service provider
+   - Acts as indirect age verification
+
 ### Verification Process
 
-1. **Initial Registration** (Bangladesh variant only)
+1. **Initial Eligibility Check** (Bangladesh variant only)
    - User creates account (existing flow)
-   - Prompted to verify age for tournament eligibility
+   - System detects Bangladesh region from Google Play Store
+   - Prompted for tournament eligibility confirmation
    
-2. **Document Upload**
-   - User selects ID type: National ID (NID) or Passport
-   - Takes photo or uploads document image
-   - System extracts date of birth (manual review or OCR)
+2. **Eligibility Confirmation Screen**
+   - Checkbox: "I confirm that I am 18 years of age or older"
+   - Checkbox: "I have a valid bKash, Nagad, or Rocket account"
+   - Checkbox: "I agree to the terms and conditions for cash prize tournaments"
+   - Submit button
    
-3. **Verification Review**
-   - **Option A**: Manual review by administrator
-   - **Option B**: Third-party verification service (e.g., Jumio, Onfido)
-   - **Option C**: Semi-automated (OCR + manual review for edge cases)
+3. **Immediate Approval**
+   - Upon confirmation, user is eligible for cash prize tournaments
+   - No manual review or waiting period
+   - User can immediately register for tournaments
    
-4. **Approval/Rejection**
-   - Approved: User can join cash prize tournaments
-   - Rejected: User notified, can re-submit with correct documentation
-   
-5. **Re-verification**
-   - Periodic re-verification (e.g., annually) if required by regulations
+4. **Winner Verification (Post-Tournament)**
+   - If user wins 1st place, they must provide payment account details
+   - Developer may verify account ownership during manual payment process
+   - False declarations result in prize forfeiture and account suspension
 
 ### UI Flow
 
@@ -310,27 +319,34 @@ Menu Activity
     ↓
 Tournament List (BD only: Shows cash prize badge)
     ↓
-[If not verified] → Age Verification Screen
+[If not confirmed] → Eligibility Confirmation Screen
     ↓
-    - "You must be 18+ to participate"
-    - "Upload National ID or Passport"
-    - Camera / Gallery picker
+    - "You must be 18+ to participate in cash prize tournaments"
+    - ☑ "I confirm I am 18 years or older"
+    - ☑ "I have a valid bKash/Nagad/Rocket account"
+    - ☑ "I agree to tournament terms and conditions"
+    - [Submit Button]
     ↓
-Upload Document → Firebase Storage
+Eligibility Confirmed (Firestore update)
     ↓
-Create verification request → Firestore
+Tournament Registration Enabled
     ↓
-Pending Review Screen
+[If wins 1st place] → Payment Account Details Screen
     ↓
-[After approval] → Tournament Registration
+    - Select payment method (bKash/Nagad/Rocket)
+    - Enter account number
+    - Confirm account name
+    ↓
+Submit for Manual Processing
 ```
 
 ### Privacy & Security
 
-- **Encryption**: ID documents encrypted at rest (Firebase Storage with encryption)
-- **Access Control**: Admin-only access to verification documents
-- **Data Retention**: Documents deleted after verification (keep only verification status)
-- **Compliance**: GDPR-like principles even if not strictly required
+- **No Document Storage**: No ID documents collected or stored
+- **Minimal Data Collection**: Only age confirmation status and payment method preference
+- **Google Play Trust**: Leverage Google's existing account verification
+- **Post-Win Verification**: Developer verifies account during manual payment
+- **Legal Protection**: Terms clearly state false declarations result in disqualification
 
 ---
 
@@ -340,30 +356,17 @@ Pending Review Screen
 
 **Identification**:
 - Tournament documents have `region: "BD"` field
-- Only visible to Bangladesh users (IP + account region check)
-- Separate tournament listings in app
+- Only visible to Bangladesh users (Google Play region check)
+- Separate tournament listings in app with "Cash Prize" badge
 
-**Tournament Types**:
+**Tournament Structure**:
 
-1. **Daily Challenges** (Small prizes)
-   - Prize: ৳500-1,000 BDT
-   - Frequency: 3-5 per week
-   - Participants: 8-16 players
-
-2. **Weekly Tournaments** (Medium prizes)
-   - Prize: ৳5,000-10,000 BDT
-   - Frequency: Weekly
-   - Participants: 32-64 players
-
-3. **Monthly Championships** (Large prizes)
-   - Prize: ৳20,000-50,000 BDT
-   - Frequency: Monthly
-   - Participants: 128-256 players
-
-4. **Special Events** (Premium prizes)
-   - Prize: ৳100,000+ BDT
-   - Frequency: Quarterly or seasonal
-   - Participants: 512+ players
+**Bi-Monthly Cash Prize Tournaments**
+- **Prize**: ৳2,000 BDT (approximately $18 USD) for 1st place only
+- **Frequency**: Twice per month (e.g., 1st and 15th of each month)
+- **Participants**: 16-64 players (adjustable based on participation)
+- **Format**: Round-robin or elimination bracket
+- **Entry**: Completely free, no cost to participate
 
 ### Tournament Rules Enhancement
 
@@ -373,10 +376,10 @@ Existing tournament rules (from `tournament_rules_bn.json`) remain the same, wit
 {
   "rules": [
     // ... existing 13 rules ...
-    "এই টুর্নামেন্টটি ১৮+ বছর বয়সী খেলোয়াড়দের জন্য এবং নগদ পুরস্কার দেওয়া হবে।",
+    "এই টুর্নামেন্টটি ১৮+ বছর বয়সী খেলোয়াড়দের জন্য এবং প্রথম স্থানের জন্য ৳২,০০০ পুরস্কার রয়েছে।",
     "পুরস্কার বিতরণ টুর্নামেন্ট সমাপ্তির ৭ দিনের মধ্যে করা হবে।",
-    "পুরস্কার bKash, Nagad, Rocket বা ব্যাংক ট্রান্সফারের মাধ্যমে প্রদান করা হবে।",
-    "খেলোয়াড়দের অবশ্যই বৈধ পরিচয়পত্র যাচাই করতে হবে।"
+    "পুরস্কার bKash, Nagad বা Rocket এর মাধ্যমে প্রদান করা হবে।",
+    "খেলোয়াড়দের অবশ্যই ১৮+ বছর বয়সী হতে হবে এবং বৈধ পেমেন্ট অ্যাকাউন্ট থাকতে হবে।"
   ],
   "cashPrizeDisclaimer": "এই টুর্নামেন্ট সম্পূর্ণ দক্ষতা-ভিত্তিক এবং কোনো প্রবেশ ফি নেই। পুরস্কার ডেভেলপার কর্তৃক অর্থায়ন করা হয়।",
   "updatedAt": "2025-12-27T00:00:00Z"
@@ -384,10 +387,10 @@ Existing tournament rules (from `tournament_rules_bn.json`) remain the same, wit
 ```
 
 **English Translation**:
-- "This tournament is for players 18+ years old and offers cash prizes."
+- "This tournament is for players 18+ years old and offers ৳2,000 prize for 1st place."
 - "Prize distribution will be completed within 7 days of tournament completion."
-- "Prizes will be paid via bKash, Nagad, Rocket, or bank transfer."
-- "Players must complete valid ID verification."
+- "Prizes will be paid via bKash, Nagad, or Rocket."
+- "Players must be 18+ years old and have a valid payment account."
 - Disclaimer: "This tournament is purely skill-based and has no entry fee. Prizes are funded by the developer."
 
 ---
@@ -401,82 +404,82 @@ Existing tournament rules (from `tournament_rules_bn.json`) remain the same, wit
 - [ ] Define detailed prize structure
 - [ ] Create product flavor for Bangladesh variant
 
-### Phase 2: Backend Development (Week 3-5)
+### Phase 2: Backend Development (Week 3-4)
 - [ ] Extend Firestore schema for Bangladesh features
-- [ ] Create Cloud Functions for payment processing
-  - `initiatePrizePayment(tournamentId, userId, rank)`
-  - `verifyPaymentStatus(paymentId)`
-  - `processPaymentCallback(gatewayResponse)`
-- [ ] Implement age verification workflow
-  - Document upload to Cloud Storage
-  - Firestore verification records
-  - Admin approval interface (Firebase Console or custom admin panel)
+- [ ] Create Cloud Functions for tournament completion
+  - `onTournamentComplete(tournamentId)` - detect winner, create payment record
+  - `updatePaymentStatus(paymentId, status)` - admin function to update payment status
+- [ ] Implement eligibility confirmation workflow
+  - Firestore eligibility records (age confirmation, payment account declaration)
+  - No document upload required
 - [ ] Create Bangladesh-specific tournament creation logic
-- [ ] Add region detection and enforcement
+- [ ] Add region detection (Google Play Store region)
 
-### Phase 3: Mobile App Development (Week 6-8)
+### Phase 3: Mobile App Development (Week 5-7)
 - [ ] Create Bangladesh product flavor
   - Package name: `piotr_gorczynski.soccer2.bd`
   - App name: "Gridline Soccer Bangladesh"
   - Icon badge: "BD" variant
-- [ ] Implement age verification UI
-  - Document upload screen
-  - Camera integration
-  - Verification status screen
-- [ ] Implement payment info collection UI
-  - bKash/Nagad/Rocket number input
-  - Bank account details (optional)
-  - Security and encryption
+- [ ] Implement eligibility confirmation UI
+  - Simple checkbox screen (18+, payment account, terms)
+  - No camera or document upload needed
+  - Immediate confirmation
+- [ ] Implement winner payment details collection UI
+  - Payment method selector (bKash/Nagad/Rocket)
+  - Account number input
+  - Shown only to 1st place winners
 - [ ] Update tournament UI for cash prizes
-  - Prize pool display
+  - "৳2,000 Prize" badge on tournament listings
   - Winner notifications
-  - Payment history screen
+  - Payment status screen (pending/completed)
 - [ ] Add Bengali translations for new features
 
-### Phase 4: Payment Gateway Integration (Week 9-10)
-- [ ] Integrate bKash Payment Gateway API
-  - Merchant authentication
-  - Payout API implementation
-  - Webhook handling
-- [ ] Integrate Nagad Payment Gateway
-- [ ] Integrate Rocket Merchant API
-- [ ] Implement fallback bank transfer process
-- [ ] Test payment flows (sandbox environment)
+### Phase 4: Admin Tools (Week 8)
+- [ ] Create simple admin interface (Firebase Console functions or web panel)
+  - View tournament winners
+  - View payment account details
+  - Update payment status (pending → completed)
+  - Manual payment processing workflow documentation
+- [ ] Test complete workflow (tournament → winner → payment details → manual payment)
 
-### Phase 5: Testing & Compliance (Week 11-12)
+### Phase 5: Testing & Compliance (Week 9-10)
 - [ ] End-to-end testing
   - Tournament creation and registration
-  - Age verification workflow
+  - Eligibility confirmation workflow
   - Match completion and ranking
-  - Prize payout processing
+  - Winner notification and payment details collection
+  - Manual prize payment simulation
 - [ ] Security audit
-  - Payment data encryption
-  - ID document security
+  - Payment account data encryption
   - API authentication
+  - User data protection
 - [ ] Legal compliance verification
   - Review with legal expert
   - Terms of Service update
   - Privacy Policy update
 - [ ] Closed beta testing with Bangladesh users
 
-### Phase 6: Launch Preparation (Week 13-14)
+### Phase 6: Launch Preparation (Week 11-12)
 - [ ] Create Google Play Store listing (Bangladesh)
 - [ ] Prepare marketing materials
 - [ ] Set up customer support (Bengali language support)
-- [ ] Create admin dashboard for tournament and payment management
-- [ ] Establish prize fund reserve
-- [ ] Document operational procedures
+- [ ] Document manual payment procedures
+- [ ] Establish prize fund reserve (৳4,000/month for bi-monthly tournaments)
+- [ ] Create operational runbook
 
-### Phase 7: Soft Launch (Week 15-16)
+### Phase 7: Soft Launch (Week 13-14)
 - [ ] Limited release to 100-500 users
-- [ ] Monitor first tournaments
-- [ ] Process first prize payments
+- [ ] Run first bi-monthly tournament
+- [ ] Process first manual prize payment
 - [ ] Gather user feedback
 - [ ] Fix critical issues
 
-### Phase 8: Full Launch (Week 17+)
+### Phase 8: Full Launch (Week 15+)
 - [ ] Public launch in Bangladesh Google Play Store
 - [ ] Marketing campaign
+- [ ] Establish bi-monthly tournament schedule
+- [ ] Monitor KPIs (participation, payment success, user satisfaction)
+- [ ] Iterate based on feedback
 - [ ] Scale up tournament frequency
 - [ ] Monitor KPIs (participation, payment success rate, user satisfaction)
 - [ ] Iterate based on feedback
@@ -498,39 +501,52 @@ Existing tournament rules (from `tournament_rules_bn.json`) remain the same, wit
 
 | Risk | Impact | Likelihood | Mitigation |
 |------|--------|------------|------------|
-| Payment gateway API failures | High | Medium | Retry logic, multiple gateway options, manual processing fallback |
-| Fraudulent age verification | Medium | Medium | Manual review, periodic re-verification, pattern detection |
-| Server costs exceed budget | Medium | Low | Monitor usage, set limits on concurrent tournaments |
-| Geo-blocking bypass | Low | Medium | Multi-layer verification (IP, phone number, ID document) |
+| Manual payment processing errors | Medium | Low | Double-check payment details, maintain audit trail |
+| False age declarations | Medium | Medium | Legal terms clearly state consequences, post-win verification possible |
+| Server costs exceed budget | Low | Low | Minimal infrastructure changes, monitor usage |
+| Geo-blocking bypass | Low | Medium | Google Play region verification, terms enforcement |
 
 ### Operational Risks
 
 | Risk | Impact | Likelihood | Mitigation |
 |------|--------|------------|------------|
-| Insufficient prize fund | High | Low | Pre-fund reserve, limit concurrent tournaments |
-| Customer support overload | Medium | Medium | Automated FAQs, clear documentation, scale support team |
-| Payment disputes | Medium | Medium | Clear terms, audit trail, responsive support |
+| Insufficient prize fund | Low | Low | Pre-fund reserve, only ৳4,000/month required |
+| Customer support overload | Low | Low | Simple process, automated FAQs, clear documentation |
+| Payment disputes | Medium | Low | Clear terms, manual verification, responsive support |
+| Manual payment delays | Medium | Medium | Set clear timeline (7 days), maintain communication with winners |
 
 ---
 
 ## Cost Estimation
 
 ### Initial Setup Costs
-- Legal consultation: $1,000 - $2,000
-- Payment gateway setup fees: $500 - $1,000
-- Development time: 300-400 hours (estimated at market rate)
-- **Total Initial: ~$16,500 - $23,000** (adjust based on actual development costs)
+- Legal consultation: $500 - $1,000 (simplified approach requires less legal review)
+- Development time: 150-200 hours (estimated at market rate) - significantly reduced due to:
+  - No payment gateway API integration
+  - No document upload/verification system
+  - Simplified user flow
+- **Total Initial: ~$8,000 - $12,000** (adjust based on actual development costs)
 
 ### Monthly Operational Costs
-- Payment gateway transaction fees: ~2-3% of payouts
-- Firebase costs (increased usage): $50 - $200/month
-- Cloud Storage (ID documents): $20 - $50/month
-- Prize pool funding (example):
-  - 4 weekly tournaments × ৳10,000 = ৳40,000/month (approximately $360/month)
-  - 1 monthly championship × ৳30,000 = ৳30,000/month (approximately $270/month)
-  - **Total prizes: approximately $630/month** (based on December 2025 exchange rates)
-- Customer support: $200 - $500/month (part-time Bengali speaker)
-- **Total Monthly: approximately $900 - $1,400**
+- Firebase costs (increased usage): $20 - $50/month (minimal increase)
+- Prize pool funding:
+  - 2 bi-monthly tournaments × ৳2,000 = ৳4,000/month (approximately $36/month)
+  - **Total prizes: approximately $36/month** (based on December 2025 exchange rates)
+- Manual payment processing time: 1-2 hours/month (developer time)
+- Customer support: $50 - $100/month (minimal support needed)
+- **Total Monthly: approximately $106 - $186**
+
+### Cost Savings vs. Original Approach
+- **No payment gateway API fees**: Saved ~$500-1,000 setup + 2-3% transaction fees
+- **No document storage costs**: Saved ~$20-50/month Cloud Storage
+- **No verification review costs**: Saved manual review time or third-party service fees
+- **Simpler development**: Saved ~150-200 development hours (~$7,500-$10,000)
+- **Lower prize pool**: Saved ~$594/month in prize funding
+
+### Annual Cost Projection (Year 1)
+- Initial setup: $8,000 - $12,000
+- Monthly operational: $106 - $186 × 12 = $1,272 - $2,232
+- **Total Year 1: approximately $9,272 - $14,232**
 
 ### Revenue Potential (Optional)
 While current model is developer-funded with no entry fees, future revenue options:
@@ -548,32 +564,33 @@ While current model is developer-funded with no entry fees, future revenue optio
 #### Legal Compliance
 - [ ] Consult with Bangladesh legal expert on gaming regulations
 - [ ] Verify skill-based classification is valid
-- [ ] Confirm payment methods are legally approved
+- [ ] Confirm simplified age verification approach is acceptable
 - [ ] Update Terms of Service with Bangladesh-specific clauses
-- [ ] Update Privacy Policy with age verification and payment data handling
-- [ ] Add age gate and terms acceptance in app
+- [ ] Update Privacy Policy (minimal data collection - no ID documents)
+- [ ] Add eligibility confirmation and terms acceptance in app
 
 #### Technical Compliance
-- [ ] Implement 18+ age verification
-- [ ] Implement geo-restriction (Bangladesh only for cash tournaments)
+- [ ] Implement 18+ eligibility confirmation (checkbox + declaration)
+- [ ] Implement geo-restriction (Bangladesh only via Google Play region)
 - [ ] Free tournament entry (no payment required)
 - [ ] Clear skill-based game mechanics (no randomness in outcomes)
 - [ ] Transparent tournament rules
-- [ ] Secure payment data handling (encryption, PCI DSS considerations)
+- [ ] Secure payment account data handling (encryption for account numbers)
 
 #### Operational Compliance
-- [ ] Establish prize fund reserve
-- [ ] Document prize payout procedures
-- [ ] Create customer support process
+- [ ] Establish prize fund reserve (৳4,000/month minimum)
+- [ ] Document manual prize payout procedures
+- [ ] Create customer support process (Bengali language)
 - [ ] Set up payment dispute resolution process
-- [ ] Implement fraud detection and prevention
-- [ ] Create audit trail for all transactions
+- [ ] Define fraud detection criteria (suspicious accounts)
+- [ ] Create audit trail for manual payments (spreadsheet or database)
 
 #### User Communication
-- [ ] Clear prize structure disclosure
-- [ ] Payment timeline communication
-- [ ] Age verification requirement notification
+- [ ] Clear prize structure disclosure (৳2,000 for 1st place, bi-monthly)
+- [ ] Payment timeline communication (within 7 days)
+- [ ] Eligibility requirements notification (18+, payment account)
 - [ ] Terms and conditions acceptance
+- [ ] Manual payment process explanation
 - [ ] Bengali language support for all compliance materials
 
 ---
@@ -586,20 +603,13 @@ While current model is developer-funded with no entry fees, future revenue optio
 piotr_gorczynski.soccer2/
 ├── common/              # Shared code
 ├── tournament/          # Core tournament logic
-├── payment/             # Payment abstraction
-│   ├── PaymentGateway.java
-│   ├── BkashGateway.java
-│   ├── NagadGateway.java
-│   └── RocketGateway.java
-└── verification/        # Age verification
-    ├── DocumentUploader.java
-    └── VerificationStatus.java
+└── payment/             # Payment data models (no gateway integration)
+    └── PaymentInfo.java
 
 bangladesh-specific/
 ├── BangladeshTournamentManager.java
-├── AgeVerificationActivity.java
-├── PaymentInfoActivity.java
-└── PrizePaymentProcessor.java
+├── EligibilityConfirmationActivity.java
+└── WinnerPaymentDetailsActivity.java
 ```
 
 ### Appendix B: Sample Terms of Service Clause
@@ -608,10 +618,10 @@ bangladesh-specific/
 BANGLADESH SKILL-BASED TOURNAMENTS
 
 Eligibility: Cash prize tournaments are available only to users who:
-- Are 18 years of age or older
-- Are residents of Bangladesh
-- Have completed age verification with valid government-issued ID
-- Have registered valid payment information
+- Are 18 years of age or older (self-declared)
+- Are residents of Bangladesh (verified via Google Play Store region)
+- Have confirmed they possess a valid bKash, Nagad, or Rocket account
+- Have accepted the tournament terms and conditions
 
 Entry: Participation in cash prize tournaments is completely free. No payment, 
 purchase, or entry fee is required.
@@ -620,14 +630,19 @@ Skill-Based: All tournaments are based purely on player skill. The game mechanic
 involve strategic decision-making, tactical planning, and execution. There is no 
 element of chance in determining match outcomes.
 
-Prizes: All prizes are funded by the game developer. Prize amounts are clearly 
-displayed before tournament registration. Winners will be paid within 7 business 
-days of tournament completion via their registered payment method (bKash, Nagad, 
-Rocket, or bank transfer).
+Prizes: Cash prizes are awarded to 1st place winners only. Prize amount is ৳2,000 BDT 
+per bi-monthly tournament. All prizes are funded by the game developer. Winners will 
+be contacted to provide payment account details and will receive payment within 7 
+business days of tournament completion via bKash, Nagad, or Rocket (winner's choice).
 
 Verification: The developer reserves the right to verify winner identity and 
-eligibility before distributing prizes. False information may result in 
-disqualification and account suspension.
+eligibility before distributing prizes. False declarations regarding age or payment 
+account ownership may result in disqualification, prize forfeiture, and account 
+suspension.
+
+Payment Processing: Prizes are processed manually by the developer outside the app. 
+Winners must provide accurate payment account information. The developer is not 
+responsible for delays caused by incorrect account details.
 ```
 
 ### Appendix C: Technical Architecture Diagram
@@ -636,8 +651,8 @@ disqualification and account suspension.
 ┌─────────────────────────────────────────────────────────────┐
 │                    Mobile App (Bangladesh)                  │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
-│  │ Tournament   │  │ Age Verify   │  │ Payment Info │     │
-│  │ Registration │  │ Screen       │  │ Screen       │     │
+│  │ Tournament   │  │ Eligibility  │  │ Winner       │     │
+│  │ Registration │  │ Confirmation │  │ Payment Info │     │
 │  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘     │
 └─────────┼──────────────────┼──────────────────┼────────────┘
           │                  │                  │
@@ -646,47 +661,55 @@ disqualification and account suspension.
 │                     Firebase / Firestore                    │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
 │  │ tournaments  │  │ users        │  │ payments     │     │
-│  │ (region: BD) │  │ (verification│  │              │     │
-│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘     │
-└─────────┼──────────────────┼──────────────────┼────────────┘
-          │                  │                  │
-          │                  │                  │
-┌─────────▼──────────────────▼──────────────────▼────────────┐
+│  │ (region: BD) │  │ (eligibility)│  │ (status)     │     │
+│  └──────┬───────┘  └──────────────┘  └──────┬───────┘     │
+└─────────┼──────────────────────────────────────┼────────────┘
+          │                                      │
+          │                                      │
+┌─────────▼──────────────────────────────────────▼────────────┐
 │                    Cloud Functions                          │
 │  ┌──────────────────┐  ┌──────────────────┐               │
-│  │ onTournamentEnd  │  │ processPrize     │               │
-│  │ - Calculate rank │  │ - Call gateway   │               │
-│  │ - Create payment │  │ - Update status  │               │
-│  └──────────────────┘  └─────────┬────────┘               │
-└────────────────────────────────────┼────────────────────────┘
-                                     │
-                                     │
-          ┌──────────────────────────┼──────────────────┐
-          │                          │                  │
-┌─────────▼───────┐  ┌──────────────▼──┐  ┌───────────▼──────┐
-│ bKash Gateway   │  │ Nagad Gateway   │  │ Rocket Gateway   │
-│ - Payout API    │  │ - Payout API    │  │ - Payout API     │
-└─────────────────┘  └─────────────────┘  └──────────────────┘
+│  │ onTournamentEnd  │  │ updatePayment    │               │
+│  │ - Calculate rank │  │ - Update status  │               │
+│  │ - Create payment │  │ (admin function) │               │
+│  └──────────────────┘  └──────────────────┘               │
+└─────────────────────────────────────────────────────────────┘
+                             │
+                             │
+                   ┌─────────▼────────┐
+                   │  Developer       │
+                   │  Manual Payment  │
+                   │  (bKash/Nagad/   │
+                   │   Rocket)        │
+                   └──────────────────┘
 ```
 
 ---
 
 ## Conclusion
 
-This approach document provides a comprehensive framework for launching a Bangladesh-specific version of Gridline Soccer that enables skill-based tournaments with cash prizes. The recommended implementation uses Android product flavors to create a separate APK variant, ensuring clear separation of features and compliance requirements.
+This approach document provides a simplified, cost-effective framework for launching a Bangladesh-specific version of Gridline Soccer with promotional cash prizes. The streamlined implementation minimizes development complexity and operational overhead while maintaining compliance with Bangladesh skill-based gaming regulations.
 
 **Key Success Factors**:
 1. **Legal Compliance**: Strict adherence to Bangladesh skill-based gaming regulations
-2. **Age Verification**: Robust 18+ verification process
-3. **Payment Reliability**: Multiple payment gateway integrations with fallback options
-4. **User Experience**: Seamless tournament participation and prize redemption
-5. **Operational Excellence**: Efficient prize fund management and customer support
+2. **Simplified Eligibility**: Google Play verification + user declaration (no document upload)
+3. **Manual Payment Processing**: Developer-controlled prize distribution outside the app
+4. **Low Operational Cost**: Only ৳4,000/month (~$36) for bi-monthly tournaments
+5. **User Experience**: Minimal friction for players, no complex verification steps
+
+**Simplified Approach Benefits**:
+- **Faster time to market**: 10-15 weeks vs. 16+ weeks
+- **Lower development cost**: ~$8,000-$12,000 vs. ~$16,500-$23,000
+- **Minimal ongoing costs**: ~$106-$186/month vs. ~$900-$1,400/month
+- **Reduced complexity**: No payment gateway APIs, no document storage, simpler user flow
+- **Lower user friction**: No document upload, immediate eligibility confirmation
 
 **Next Steps**:
-1. Review this document with legal counsel familiar with Bangladesh regulations
-2. Finalize payment gateway partnerships
+1. Review this simplified approach with legal counsel familiar with Bangladesh regulations
+2. Confirm that self-declaration age verification is acceptable
 3. Begin Phase 1 implementation (planning & setup)
-4. Establish development timeline and resource allocation
+4. Establish bi-monthly tournament schedule
+5. Create manual payment processing procedures
 
 ---
 
