@@ -376,7 +376,7 @@ Existing tournament rules (from `tournament_rules_bn.json`) remain the same, wit
 {
   "rules": [
     // ... existing 13 rules ...
-    "এই টুর্নামেন্টটি ১৮+ বছর বয়সী খেলোয়াড়দের জন্য এবং প্রথম স্থানের জন্য ৳২,০০০ পুরস্কার রয়েছে।",
+    "এই টুর্নামেন্টটি ১৮+ বছর বয়সী খেলোয়াড়দের জন্য এবং প্রথম স্থানের জন্য ৳2,000 পুরস্কার রয়েছে।",
     "পুরস্কার বিতরণ টুর্নামেন্ট সমাপ্তির ৭ দিনের মধ্যে করা হবে।",
     "পুরস্কার bKash, Nagad বা Rocket এর মাধ্যমে প্রদান করা হবে।",
     "খেলোয়াড়দের অবশ্যই ১৮+ বছর বয়সী হতে হবে এবং বৈধ পেমেন্ট অ্যাকাউন্ট থাকতে হবে।"
@@ -400,7 +400,7 @@ Existing tournament rules (from `tournament_rules_bn.json`) remain the same, wit
 ### Phase 1: Planning & Setup (Week 1-2)
 - [ ] Finalize legal review (consult Bangladesh legal expert)
 - [ ] Register business entity in Bangladesh (if required)
-- [ ] Set up payment gateway accounts (bKash, Nagad, Rocket)
+- [ ] Set up personal bKash, Nagad, and/or Rocket accounts for manual prize distribution
 - [ ] Define detailed prize structure
 - [ ] Create product flavor for Bangladesh variant
 
@@ -479,9 +479,6 @@ Existing tournament rules (from `tournament_rules_bn.json`) remain the same, wit
 - [ ] Marketing campaign
 - [ ] Establish bi-monthly tournament schedule
 - [ ] Monitor KPIs (participation, payment success, user satisfaction)
-- [ ] Iterate based on feedback
-- [ ] Scale up tournament frequency
-- [ ] Monitor KPIs (participation, payment success rate, user satisfaction)
 - [ ] Iterate based on feedback
 
 ---
