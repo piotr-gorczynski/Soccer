@@ -1,10 +1,12 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.1  
-**Last Updated:** 2025-12-27  
+**Document Version:** 2.3  
+**Last Updated:** 2025-12-28  
 **Status:** Planning
 
 **Revision History**:
+- v2.3 (2025-12-28): Removed FCM/push notification strategy (not viable - users lack registered accounts/tokens)
+- v2.2 (2025-12-28): Added User Onboarding & Migration Strategy section for migrating existing users
 - v2.1 (2025-12-27): Simplified document - removed approach comparison, presenting product flavor approach as the chosen solution
 - v2.0 (2025-12-27): Simplified approach - manual payments, self-declaration age verification, ৳2,000 bi-monthly prizes
 - v1.0 (2025-12-27): Initial comprehensive approach with payment gateway integration
@@ -30,10 +32,11 @@ This streamlined approach significantly reduces development complexity, time to 
 4. [Prize & Payment System](#prize--payment-system)
 5. [Age Verification System](#age-verification-system)
 6. [Tournament Structure](#tournament-structure)
-7. [Implementation Roadmap](#implementation-roadmap)
-8. [Risk Assessment & Mitigation](#risk-assessment--mitigation)
-9. [Cost Estimation](#cost-estimation)
-10. [Compliance Checklist](#compliance-checklist)
+7. [User Onboarding & Migration Strategy](#user-onboarding--migration-strategy)
+8. [Implementation Roadmap](#implementation-roadmap)
+9. [Risk Assessment & Mitigation](#risk-assessment--mitigation)
+10. [Cost Estimation](#cost-estimation)
+11. [Compliance Checklist](#compliance-checklist)
 
 ---
 
@@ -364,6 +367,733 @@ Existing tournament rules (from `tournament_rules_bn.json`) remain the same, wit
 
 ---
 
+## User Onboarding & Migration Strategy
+
+### Migration Challenge
+
+As of December 24, 2025, the current version of Gridline Soccer (`piotr_gorczynski.soccer2`) has **746 active installs in Bangladesh** according to Google Play Console. The new Bangladesh-specific version (`piotr_gorczynski.soccer2.bd`) will be a **separate listing on Google Play Store** with zero initial installs.
+
+**Key Migration Questions**:
+1. How to convince existing users to install the new Bangladesh-specific version?
+2. Should both apps share the same Firebase backend and authentication?
+3. Do we need separate Firebase authentication keys/configurations?
+4. How to preserve user data and progress during migration?
+5. What incentives can drive user adoption of the new version?
+
+---
+
+### Backend & Authentication Strategy
+
+#### Recommended Approach: Shared Firebase Backend
+
+**Use the same Firebase project for both versions** with the following configuration:
+
+```
+Firebase Project: gridline-soccer (existing)
+├── App 1: piotr_gorczynski.soccer2 (Global version)
+│   ├── Firebase Configuration: google-services.json (global)
+│   ├── Authentication: Enabled (existing users)
+│   └── Firestore Database: Shared with regional filtering
+│
+└── App 2: piotr_gorczynski.soccer2.bd (Bangladesh version)
+    ├── Firebase Configuration: google-services.json (bangladesh)
+    ├── Authentication: Same Firebase Auth (shared users)
+    └── Firestore Database: Shared with regional filtering
+```
+
+#### Firebase Configuration Requirements
+
+**Do you need separate authentication keys?**
+
+**Answer: No separate authentication, but separate app configurations:**
+
+1. **Same Firebase Project**: Both apps connect to the same Firebase project
+2. **Different App Registrations**: Each package ID must be registered separately in Firebase Console
+3. **Separate google-services.json files**: Each app variant gets its own configuration file with the same project credentials but different package ID
+
+**Setup Steps**:
+
+```bash
+# In Firebase Console (https://console.firebase.google.com)
+
+1. Go to Project Settings → Your apps
+2. Add Android app: piotr_gorczynski.soccer2 (if not already registered)
+   - Download google-services.json → mobile/app/src/global/google-services.json
+   
+3. Add another Android app: piotr_gorczynski.soccer2.bd
+   - Download google-services.json → mobile/app/src/bangladesh/google-services.json
+   
+4. Enable Authentication methods (same for both apps):
+   - Email/Password
+   - Google Sign-In
+   - Facebook (if applicable)
+   - Anonymous authentication
+   
+5. Firestore Security Rules (apply regional filtering):
+   - Users can access their own data
+   - Bangladesh users can access BD tournaments
+   - Global users see global tournaments only
+```
+
+#### Firebase Authentication Behavior
+
+**Key Points**:
+- **Same user accounts work across both apps** (because they share Firebase Authentication)
+- User signs in with the same credentials (email/password or Google account)
+- User data (profile, stats, friends) is preserved and accessible from both apps
+- **No separate login required** when switching between apps
+
+**Authentication Flow**:
+```
+User installs piotr_gorczynski.soccer2.bd
+    ↓
+Opens app and clicks "Login"
+    ↓
+Uses existing credentials from piotr_gorczynski.soccer2
+    ↓
+Firebase Auth recognizes user (same project, same user UID)
+    ↓
+User data automatically syncs from Firestore
+    ↓
+User sees their existing profile, stats, and friend list
+```
+
+#### Firestore Data Sharing Strategy
+
+**Shared Collections** (accessible from both apps):
+- `users/` - User profiles, statistics, preferences
+- `friendships/` - Friend connections and invitations
+- `matches/` - Match history and results
+- `tournaments/` - All tournaments with regional filtering
+
+**Regional Filtering Logic**:
+
+```javascript
+// Firestore Security Rules
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Users can access their own data from any app variant
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Tournament access based on region
+    match /tournaments/{tournamentId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && 
+                      request.auth.uid == resource.data.createdBy;
+      
+      // Bangladesh users can only join BD tournaments
+      // Global users can only join global tournaments
+      match /participants/{participantId} {
+        allow create: if request.auth != null && 
+                         // Check if user's region matches tournament region
+                         (get(/databases/$(database)/documents/tournaments/$(tournamentId)).data.region == 
+                          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.region ||
+                          get(/databases/$(database)/documents/tournaments/$(tournamentId)).data.region == null);
+      }
+    }
+    
+    // Match data accessible to participants
+    match /matches/{matchId} {
+      allow read: if request.auth != null;
+      allow create, update: if request.auth != null && 
+                               (request.auth.uid == resource.data.player1Id || 
+                                request.auth.uid == resource.data.player2Id);
+    }
+  }
+}
+```
+
+**User Document Extension**:
+
+```javascript
+// Firestore: users/{userId}
+{
+  id: "user_123",
+  email: "user@example.com",
+  displayName: "Player Name",
+  // ... existing fields ...
+  
+  // NEW: Regional configuration
+  region: "BD", // or null for global users
+  appVariant: "bangladesh", // or "global"
+  
+  // Existing users migrating from global to BD version
+  migrationStatus: {
+    migratedFromGlobal: true,
+    migrationDate: Timestamp,
+    eligibilityConfirmedForBD: false // User needs to confirm 18+ in BD app
+  },
+  
+  // Bangladesh-specific fields (only for BD users)
+  bangladeshEligibility: {
+    ageConfirmed: true,
+    confirmedAt: Timestamp,
+    googlePlayVerified: true,
+    hasPaymentAccount: true,
+    preferredPaymentMethod: "bkash"
+  }
+}
+```
+
+---
+
+### Migration Approaches & Recommendation
+
+#### Option 1: In-App Notification with Deep Link (Recommended)
+
+**Description**: Show a prominent notification in the existing `piotr_gorczynski.soccer2` app for Bangladesh users, directing them to install the new Bangladesh version.
+
+**Implementation**:
+
+1. **Detect Bangladesh Users** (in existing global app):
+   - Check device region/locale
+   - Check Google Play Store country from Firebase
+   - Identify users who primarily play in Bangladesh timezone
+
+2. **Show In-App Banner** (one-time or recurring):
+   ```
+   🎉 NEW: Win Cash Prizes in Bangladesh!
+   
+   We've launched a special version of Gridline Soccer for Bangladesh 
+   with bi-monthly cash prize tournaments!
+   
+   • Win ৳2,000 for 1st place
+   • Free entry, skill-based competition
+   • Same account, all your data preserved
+   
+   [Install Bangladesh Version] [Learn More] [Dismiss]
+   ```
+
+3. **Deep Link to Google Play**:
+   ```kotlin
+   // In existing app (piotr_gorczynski.soccer2)
+   val playStoreUrl = "https://play.google.com/store/apps/details?id=piotr_gorczynski.soccer2.bd"
+   val intent = Intent(Intent.ACTION_VIEW, Uri.parse(playStoreUrl))
+   startActivity(intent)
+   ```
+
+**Pros**:
+- Direct communication with existing users through in-app UI
+- Clear call-to-action
+- Preserves user data automatically (shared Firebase backend)
+- Users can keep both apps or uninstall the old one
+- No forced migration
+- Works for all users regardless of account registration status
+
+**Cons**:
+- Requires update to existing app to add notification logic
+- Users must take action (install new app)
+- Some users may ignore the banner
+- Only reaches users who actively use the app
+
+**Note**: Push notifications via FCM are not viable since most Bangladesh users don't have registered accounts and thus no FCM tokens available.
+
+---
+
+#### Option 2: Google Play Store Cross-Promotion
+
+**Description**: Use Google Play Store's own features to promote the Bangladesh version.
+
+**Implementation**:
+
+1. **App Description Update** (existing app):
+   ```markdown
+   🇧🇩 Bangladesh Users: Check out our new Bangladesh-specific version 
+   with cash prize tournaments! Search "Gridline Soccer Bangladesh" 
+   or visit: [link]
+   ```
+
+2. **Developer Profile Cross-Promotion**:
+   - Both apps appear under same developer account
+   - Users browsing one app see "More by this developer"
+   - Add links in "What's New" section
+
+3. **Similar Apps Recommendation**:
+   - Google Play algorithm may recommend BD version to users of global version
+
+**Pros**:
+- No code changes required to existing app
+- Organic discovery through Play Store
+- Professional separation of variants
+
+**Cons**:
+- Passive discovery only
+- Lower conversion rate
+- Relies on users actively searching
+
+---
+
+#### Option 3: Gradual Sunset of Global App in Bangladesh
+
+**Description**: Gradually phase out the global app for Bangladesh users while promoting the new version.
+
+**Implementation**:
+
+**Phase 1: Soft Promotion (Months 1-2)**
+- Add in-app banners promoting BD version
+- Keep global app fully functional
+
+**Phase 2: Feature Gating (Months 3-4)**
+- Disable new tournament creation in global app for BD users
+- Show message: "Create tournaments in Bangladesh version for cash prizes"
+- Existing functionality still works
+
+**Phase 3: Full Migration (Month 5+)**
+- Show full-screen migration prompt in global app for BD users
+- Require BD users to switch to new app for tournaments
+- Maintain read-only access to old app
+
+**Pros**:
+- Ensures complete migration over time
+- Gives users time to adapt
+- Clear migration timeline
+
+**Cons**:
+- More complex implementation
+- Risk of user frustration
+- May violate Play Store policies if too aggressive
+
+---
+
+### Recommended Migration Strategy
+
+**Best Approach: Combination of Option 1 + Option 2**
+
+**Phase 1: Immediate Actions (Week 1-2)**
+
+1. **Launch BD Version on Play Store**
+   - Publish `piotr_gorczynski.soccer2.bd`
+   - Clear app description highlighting cash prizes
+   - Screenshots showing prize tournaments
+   - Localized Bengali description
+
+2. **Update Global App** (piotr_gorczynski.soccer2):
+   ```kotlin
+   // Add to global app codebase
+   if (userRegion == "BD" && !hasSeenBDPromo) {
+       showBangladeshVersionPromotionDialog()
+   }
+   ```
+
+**Phase 2: Ongoing Promotion (Week 3-8)**
+
+1. **In-App Banners**:
+   - Show banner on main menu for BD users in global app
+   - Allow dismissal but show again after 7 days
+   - Track banner impressions and clicks
+
+2. **Play Store Optimization**:
+   - Add "Bangladesh" to global app keywords
+   - Link to BD version in "What's New" section
+   - Use custom Play Store listing experiments
+
+3. **Social Media & Community**:
+   - Announce on any existing social media channels
+   - Encourage users to share in Bangladesh gaming communities
+   - Create viral content about prize winners
+
+**Phase 3: Incentivized Migration (Month 2-3)**
+
+1. **First-Mover Advantage**:
+   - Offer bonus entry into special tournament for early adopters
+   - "Install by [date] to get entry into ৳5,000 inaugural tournament"
+
+2. **Referral Program**:
+   - Users who refer friends to BD version get bonus entries
+   - Track referrals via Firebase Dynamic Links
+
+3. **Email Campaign** (if you have email addresses):
+   - Direct email to Bangladesh users
+   - Personalized message about cash prizes
+
+---
+
+### Data Migration & Continuity
+
+#### User Experience During Migration
+
+**Seamless Transition**:
+
+1. **Install Bangladesh Version**:
+   ```
+   User: [Clicks "Install Bangladesh Version" in global app]
+       ↓
+   Google Play: [Opens piotr_gorczynski.soccer2.bd listing]
+       ↓
+   User: [Installs app]
+       ↓
+   Bangladesh App: [Opens for first time]
+   ```
+
+2. **Automatic Data Sync**:
+   ```
+   Bangladesh App Launch
+       ↓
+   Firebase Authentication: [Detects existing user via Google account]
+       ↓
+   Firestore: [Loads user profile with same UID]
+       ↓
+   User sees:
+       ✅ Same username and avatar
+       ✅ All friend connections
+       ✅ Match history and statistics
+       ✅ Preferences and settings
+       ↓
+   NEW: Prompt for Bangladesh eligibility confirmation (18+, payment account)
+       ↓
+   User: [Confirms eligibility]
+       ↓
+   Bangladesh App: [User is now eligible for cash prize tournaments]
+   ```
+
+3. **What's Preserved**:
+   - User profile (name, avatar, bio)
+   - Friend list and pending invitations
+   - Match history and win/loss record
+   - Player statistics (ELO rating, games played)
+   - Tournament participation history (non-cash tournaments)
+   - Preferences (language, notifications)
+
+4. **What's New/Different**:
+   - Bangladesh eligibility status (requires confirmation)
+   - Access to cash prize tournaments (BD only)
+   - Payment account information (required for prize winners)
+
+#### Handling Edge Cases
+
+**Scenario 1: User has both apps installed**
+- Both apps work independently
+- Same user account in both
+- User can play regular tournaments in global app
+- User can play cash prize tournaments in BD app
+- No conflicts, data stays in sync
+
+**Scenario 2: User uninstalls global app**
+- No data loss (all data in Firebase)
+- Can still access everything in BD app
+- Can reinstall global app later if needed
+
+**Scenario 3: User only wants global app**
+- Completely fine, no forced migration
+- User can dismiss BD promotion banner
+- Global functionality unchanged
+
+---
+
+### Migration Success Metrics
+
+**Target Conversion Rates**:
+- **Week 1**: 10-15% of 746 users (75-112 installs)
+- **Month 1**: 30-40% of users (224-298 installs)
+- **Month 3**: 50-60% of users (373-448 installs)
+- **Month 6**: 60-70% of users (448-522 installs)
+
+**Tracking Metrics**:
+
+```javascript
+// Firebase Analytics Events
+
+// In global app
+logEvent("bd_promotion_shown", {
+  user_id: userId,
+  region: "BD",
+  timestamp: Date.now()
+});
+
+logEvent("bd_promotion_clicked", {
+  user_id: userId,
+  destination: "play_store",
+  timestamp: Date.now()
+});
+
+// In Bangladesh app
+logEvent("bd_app_first_launch", {
+  user_id: userId,
+  migrated_from_global: true, // Check if user exists in Firestore
+  timestamp: Date.now()
+});
+
+logEvent("bd_eligibility_confirmed", {
+  user_id: userId,
+  age_confirmed: true,
+  payment_method: "bkash",
+  timestamp: Date.now()
+});
+```
+
+**Success Indicators**:
+1. **Install Rate**: % of global app BD users who install BD app
+2. **Activation Rate**: % of BD app installs who confirm eligibility
+3. **Tournament Registration**: % of eligible users who join cash prize tournaments
+4. **Retention Rate**: % of migrated users still active after 30 days
+
+---
+
+### Communication Templates
+
+#### In-App Banner (English)
+
+```
+🎉 NEW: Gridline Soccer Bangladesh!
+
+Win ৳2,000 cash prizes in skill-based tournaments!
+
+✅ Free entry, no payment required
+✅ Same account, all your data preserved
+✅ Bi-monthly cash prize tournaments
+
+[Install Now]  [Learn More]  [Maybe Later]
+```
+
+#### In-App Banner (Bengali)
+
+```
+🎉 নতুন: গ্রিডলাইন সকার বাংলাদেশ!
+
+দক্ষতা-ভিত্তিক টুর্নামেন্টে ৳২,০০০ নগদ পুরস্কার জিতুন!
+
+✅ বিনামূল্যে প্রবেশ, কোন পেমেন্ট প্রয়োজন নেই
+✅ একই অ্যাকাউন্ট, আপনার সমস্ত ডেটা সংরক্ষিত
+✅ দ্বি-মাসিক নগদ পুরস্কার টুর্নামেন্ট
+
+[এখনই ইনস্টল করুন]  [আরও জানুন]  [পরে হয়তো]
+```
+
+#### Push Notification
+
+**Title**: 🏆 Win ৳2,000 in Gridline Soccer Bangladesh!
+
+**Body**: New Bangladesh version with cash prize tournaments. Same account, all data preserved. Install now!
+
+**Action**: Deep link to Play Store
+
+#### Google Play Store Description (Bangladesh Version)
+
+```markdown
+# Gridline Soccer Bangladesh - Win Cash Prizes! 🏆
+
+Play the classic paper soccer game and compete in skill-based tournaments 
+to win real cash prizes!
+
+## 💰 Cash Prize Tournaments
+• Win ৳2,000 BDT for 1st place
+• Bi-monthly tournaments (twice per month)
+• 100% FREE entry - no payment required
+• Prizes funded by developer
+
+## 🎮 Game Features
+• Classic paper soccer / Gridline Soccer gameplay
+• Skill-based strategy game (no chance/gambling)
+• Play against friends or compete in tournaments
+• Bengali language support
+• Same great game you already know and love
+
+## 📋 Eligibility Requirements
+• Must be 18+ years old
+• Residents of Bangladesh
+• Have a valid bKash, Nagad, or Rocket account
+• No entry fees or payments required
+
+## 🔐 Safe & Compliant
+• Fully compliant with Bangladesh gaming regulations
+• Skill-based competition (not gambling)
+• Secure payment processing
+• Your data is protected
+
+## 🔄 Existing Users
+Already playing Gridline Soccer? Your account works here too!
+• Same login credentials
+• All your friends and statistics preserved
+• Seamless transition to cash prize tournaments
+
+Download now and start competing for real prizes!
+
+---
+
+প্রশ্ন বা সহায়তার জন্য যোগাযোগ করুন: [support email]
+```
+
+---
+
+### Technical Implementation Checklist
+
+#### Global App Updates (piotr_gorczynski.soccer2)
+
+- [ ] Add Bangladesh user detection logic
+  ```kotlin
+  fun isBangladeshUser(): Boolean {
+      val locale = Locale.getDefault()
+      val playStoreCountry = getPlayStoreCountry() // From Firebase Config
+      return locale.country == "BD" || playStoreCountry == "BD"
+  }
+  ```
+
+- [ ] Create promotion banner UI component
+  ```kotlin
+  class BangladeshPromotionBanner : Fragment() {
+      fun showPromotion() {
+          // Show banner with "Install Bangladesh Version" CTA
+      }
+      
+      fun onInstallClicked() {
+          openPlayStore("piotr_gorczynski.soccer2.bd")
+          logAnalyticsEvent("bd_promotion_clicked")
+      }
+  }
+  ```
+
+- [ ] Implement banner dismissal tracking
+  ```kotlin
+  SharedPreferences.edit {
+      putBoolean("bd_promo_dismissed", true)
+      putLong("bd_promo_dismissed_time", System.currentTimeMillis())
+  }
+  ```
+
+#### Bangladesh App Development (piotr_gorczynski.soccer2.bd)
+
+- [ ] Configure separate google-services.json
+  ```bash
+  # File location: mobile/app/src/bangladesh/google-services.json
+  # Package ID in file: piotr_gorczynski.soccer2.bd
+  ```
+
+- [ ] Detect migrated users on first launch
+  ```kotlin
+  suspend fun detectMigratedUser(): Boolean {
+      val currentUser = FirebaseAuth.getInstance().currentUser ?: return false
+      val userDoc = firestore.collection("users").document(currentUser.uid).get().await()
+      return userDoc.exists() && userDoc.data?.get("region") != "BD"
+  }
+  ```
+
+- [ ] Show migration welcome message
+  ```kotlin
+  if (isMigratedUser) {
+      showWelcomeDialog(
+          title = "Welcome to Gridline Soccer Bangladesh!",
+          message = "All your data has been preserved. Confirm your eligibility to start playing for cash prizes!"
+      )
+  }
+  ```
+
+- [ ] Update user document with BD region
+  ```kotlin
+  suspend fun updateUserRegion(userId: String) {
+      firestore.collection("users").document(userId).update(
+          mapOf(
+              "region" to "BD",
+              "appVariant" to "bangladesh",
+              "migrationStatus" to mapOf(
+                  "migratedFromGlobal" to true,
+                  "migrationDate" to FieldValue.serverTimestamp()
+              )
+          )
+      )
+  }
+  ```
+
+#### Firebase Backend Configuration
+
+- [ ] Register both package IDs in Firebase Console
+  - `piotr_gorczynski.soccer2` (existing)
+  - `piotr_gorczynski.soccer2.bd` (new)
+
+- [ ] Update Firestore security rules
+  - Add regional tournament access rules
+  - Allow cross-app user data access
+  - Implement Bangladesh eligibility checks
+
+- [ ] Create Cloud Function for migration tracking
+  ```javascript
+  exports.onUserMigration = functions.firestore
+      .document('users/{userId}')
+      .onUpdate(async (change, context) => {
+          const before = change.before.data();
+          const after = change.after.data();
+          
+          // Detect migration from global to BD
+          if (!before.region && after.region === 'BD') {
+              await admin.firestore().collection('analytics').add({
+                  event: 'user_migrated_to_bd',
+                  userId: context.params.userId,
+                  timestamp: admin.firestore.FieldValue.serverTimestamp()
+              });
+          }
+      });
+  ```
+
+---
+
+### Cost & Resource Implications
+
+**Additional Costs for Migration**:
+
+1. **Development Time**:
+   - Global app update (promotion banner): 8-16 hours
+   - Firebase configuration (dual app setup): 4-8 hours
+   - Testing migration flow: 8-12 hours
+   - **Total: 20-36 hours (~$1,000-$1,800)**
+
+2. **Marketing Costs** (optional):
+   - Graphic design for promotional materials: $100-$300
+   - Social media advertising (Facebook/Instagram): $200-$500/month
+   - Influencer partnerships in Bangladesh: $100-$500
+   - **Total: $400-$1,300** (one-time or ongoing)
+
+3. **Incentive Costs** (optional):
+   - Inaugural tournament larger prize pool: ৳5,000 (~$45)
+   - Referral bonus prizes: ৳10,000-20,000 (~$90-$180)
+   - **Total: ~$135-$225**
+
+**Total Migration Investment**: ~$1,535-$3,325
+
+---
+
+### Timeline for Migration
+
+**Week 1-2: Development**
+- Update global app with promotion banner
+- Configure Bangladesh app in Firebase
+- Test cross-app authentication
+
+**Week 3: Launch**
+- Publish Bangladesh app to Play Store
+- Update global app with promotion banner
+- Monitor initial user response
+
+**Week 4-8: Active Promotion**
+- Monitor conversion metrics
+- Adjust promotion messaging
+- Engage with early adopters
+
+**Month 3+: Ongoing Optimization**
+- Analyze migration success
+- Continue periodic reminders
+- Build BD-specific community
+
+---
+
+### Success Criteria
+
+**Minimum Viable Success** (3 months):
+- ✅ 30% of existing users (224+ users) install BD version
+- ✅ 50% of BD app installs (112+ users) confirm eligibility
+- ✅ 25% of eligible users (28+ users) participate in first tournament
+- ✅ 90%+ user satisfaction (no major complaints about migration)
+
+**Ideal Success** (6 months):
+- ✅ 60% of existing users (448+ users) install BD version
+- ✅ 70% of BD app installs (313+ users) confirm eligibility
+- ✅ 40% of eligible users (125+ users) participate in tournaments
+- ✅ Positive ROI (tournament participation generates engagement/retention value)
+
+---
+
 ## Implementation Roadmap
 
 ### Phase 1: Planning & Setup (Week 1-2)
@@ -372,6 +1102,10 @@ Existing tournament rules (from `tournament_rules_bn.json`) remain the same, wit
 - [ ] Set up personal bKash, Nagad, and/or Rocket accounts for manual prize distribution
 - [ ] Define detailed prize structure
 - [ ] Create product flavor for Bangladesh variant
+- [ ] **Migration Planning**:
+  - [ ] Define user migration strategy and communication plan
+  - [ ] Prepare promotional materials (banners, notifications, Play Store assets)
+  - [ ] Design Firebase dual-app configuration (shared authentication)
 
 ### Phase 2: Backend Development (Week 3-4)
 - [ ] Extend Firestore schema for Bangladesh features
@@ -383,6 +1117,12 @@ Existing tournament rules (from `tournament_rules_bn.json`) remain the same, wit
   - No document upload required
 - [ ] Create Bangladesh-specific tournament creation logic
 - [ ] Add region detection (Google Play Store region)
+- [ ] **Migration Backend Setup**:
+  - [ ] Register both package IDs in Firebase Console (`piotr_gorczynski.soccer2` and `.bd`)
+  - [ ] Configure separate `google-services.json` files for each flavor
+  - [ ] Update Firestore security rules for cross-app data access
+  - [ ] Create Cloud Function for tracking user migrations
+  - [ ] Extend user schema with migration tracking fields
 
 ### Phase 3: Mobile App Development (Week 5-7)
 - [ ] Create Bangladesh product flavor
@@ -402,6 +1142,14 @@ Existing tournament rules (from `tournament_rules_bn.json`) remain the same, wit
   - Winner notifications
   - Payment status screen (pending/completed)
 - [ ] Add Bengali translations for new features
+- [ ] **Migration UI Development**:
+  - [ ] Add Bangladesh user detection in global app
+  - [ ] Create promotion banner component for global app
+  - [ ] Implement Play Store deep linking from global to BD app
+  - [ ] Add banner dismissal and tracking logic
+  - [ ] Create migrated user welcome flow in BD app
+  - [ ] Implement auto-detection of existing users in BD app
+  - [ ] Add Firebase Analytics events for migration tracking
 
 ### Phase 4: Admin Tools (Week 8)
 - [ ] Create simple admin interface (Firebase Console functions or web panel)
@@ -427,6 +1175,13 @@ Existing tournament rules (from `tournament_rules_bn.json`) remain the same, wit
   - Terms of Service update
   - Privacy Policy update
 - [ ] Closed beta testing with Bangladesh users
+- [ ] **Migration Testing**:
+  - [ ] Test cross-app authentication (same user in both apps)
+  - [ ] Verify data sync between global and BD apps
+  - [ ] Test promotion banner in global app
+  - [ ] Verify Play Store deep linking
+  - [ ] Test migrated user welcome flow
+  - [ ] Validate Firebase Analytics tracking
 
 ### Phase 6: Launch Preparation (Week 11-12)
 - [ ] Create Google Play Store listing (Bangladesh)
@@ -435,6 +1190,11 @@ Existing tournament rules (from `tournament_rules_bn.json`) remain the same, wit
 - [ ] Document manual payment procedures
 - [ ] Establish prize fund reserve (৳4,000/month for bi-monthly tournaments)
 - [ ] Create operational runbook
+- [ ] **Migration Campaign Preparation**:
+  - [ ] Finalize promotional banner designs (English + Bengali)
+  - [ ] Prepare social media announcements
+  - [ ] Create migration FAQ and support documentation
+  - [ ] Design Play Store listing with clear migration benefits
 
 ### Phase 7: Soft Launch (Week 13-14)
 - [ ] Limited release to 100-500 users
@@ -442,13 +1202,28 @@ Existing tournament rules (from `tournament_rules_bn.json`) remain the same, wit
 - [ ] Process first manual prize payment
 - [ ] Gather user feedback
 - [ ] Fix critical issues
+- [ ] **Initial Migration Campaign**:
+  - [ ] Deploy updated global app with promotion banner
+  - [ ] Monitor installation metrics (target: 75-112 installs in Week 1)
+  - [ ] Track banner impressions and click-through rates
+  - [ ] Respond to user questions about migration
+  - [ ] Adjust messaging based on early feedback
+  - [ ] Update Play Store listing based on user feedback
 
-### Phase 8: Full Launch (Week 15+)
+### Phase 8: Full Launch & Ongoing Migration (Week 15+)
 - [ ] Public launch in Bangladesh Google Play Store
 - [ ] Marketing campaign
 - [ ] Establish bi-monthly tournament schedule
 - [ ] Monitor KPIs (participation, payment success, user satisfaction)
 - [ ] Iterate based on feedback
+- [ ] **Ongoing Migration Activities**:
+  - [ ] Monitor migration conversion rates (target: 30% Month 1, 60% Month 6)
+  - [ ] A/B test different promotion messages in banner
+  - [ ] Engage with user community in Bangladesh
+  - [ ] Share success stories from prize winners
+  - [ ] Periodic promotion banner refresh in global app
+  - [ ] Track migration success metrics and adjust strategy
+  - [ ] Continue Play Store optimization and keyword updates
 
 ---
 
@@ -481,6 +1256,17 @@ Existing tournament rules (from `tournament_rules_bn.json`) remain the same, wit
 | Payment disputes | Medium | Low | Clear terms, manual verification, responsive support |
 | Manual payment delays | Medium | Medium | Set clear timeline (7 days), maintain communication with winners |
 
+### Migration-Specific Risks
+
+| Risk | Impact | Likelihood | Mitigation |
+|------|--------|------------|------------|
+| Low user migration rate (<30%) | High | Medium | Multi-channel promotion, incentives, clear value proposition |
+| User confusion about two apps | Medium | Medium | Clear messaging, FAQ, in-app explanations |
+| Data sync issues between apps | High | Low | Thorough testing, shared Firebase backend, monitoring |
+| Firebase dual-app configuration errors | Medium | Low | Careful setup, testing with test accounts first |
+| Existing users angry about migration | Medium | Low | Optional migration, maintain global app, clear communication |
+| Play Store policy violation | High | Low | Review Play Store policies, avoid aggressive migration tactics |
+
 ---
 
 ## Cost Estimation
@@ -491,7 +1277,18 @@ Existing tournament rules (from `tournament_rules_bn.json`) remain the same, wit
   - No payment gateway API integration
   - No document upload/verification system
   - Simplified user flow
-- **Total Initial: ~$8,000 - $12,000** (adjust based on actual development costs)
+- **Migration development**: 20-36 hours (~$1,000-$1,800)
+  - Global app promotion banner
+  - Firebase dual-app configuration
+  - Migration tracking and analytics
+- **Marketing & promotion**: $400 - $1,300 (optional)
+  - Promotional materials design
+  - Social media advertising
+  - Influencer partnerships
+- **Migration incentives**: ~$135 - $225 (optional)
+  - Inaugural tournament bonus prizes
+  - Referral rewards
+- **Total Initial: ~$9,035 - $15,325** (including migration costs)
 
 ### Monthly Operational Costs
 - Firebase costs (increased usage): $20 - $50/month (minimal increase)
@@ -510,9 +1307,22 @@ Existing tournament rules (from `tournament_rules_bn.json`) remain the same, wit
 - **Lower prize pool**: Saved ~$594/month in prize funding
 
 ### Annual Cost Projection (Year 1)
-- Initial setup: $8,000 - $12,000
+- Initial setup: $9,035 - $15,325 (including migration costs)
 - Monthly operational: $106 - $186 × 12 = $1,272 - $2,232
-- **Total Year 1: approximately $9,272 - $14,232**
+- **Total Year 1: approximately $10,307 - $17,557**
+
+### Migration ROI Analysis
+**Investment**: ~$1,535 - $3,325 in migration-specific costs
+**Potential Return**:
+- Higher user retention (engaged users stay longer)
+- Stronger community in Bangladesh market
+- Potential future revenue from engaged user base
+- Brand presence in emerging market
+
+**Break-even Scenario**:
+- If 224 users migrate (30% conversion), cost per acquired user: ~$6.86-$14.84
+- If 448 users migrate (60% conversion), cost per acquired user: ~$3.43-$7.42
+- Comparable to typical mobile app user acquisition costs ($5-$15 per user)
 
 ### Revenue Potential (Optional)
 While current model is developer-funded with no entry fees, future revenue options:
@@ -558,6 +1368,16 @@ While current model is developer-funded with no entry fees, future revenue optio
 - [ ] Terms and conditions acceptance
 - [ ] Manual payment process explanation
 - [ ] Bengali language support for all compliance materials
+
+#### Migration Compliance
+- [ ] Verify Google Play Store policies allow cross-promotion between apps
+- [ ] Ensure migration messaging is not misleading or deceptive
+- [ ] Privacy policy addresses data sharing between app variants
+- [ ] User consent for migration tracking analytics
+- [ ] Clear communication that migration is optional
+- [ ] Respect user choice to stay on global app
+- [ ] No degradation of global app experience for Bangladesh users
+- [ ] Transparent about separate app installations (not an update)
 
 ---
 
@@ -662,20 +1482,34 @@ This approach document provides a simplified, cost-effective framework for launc
 3. **Manual Payment Processing**: Developer-controlled prize distribution outside the app
 4. **Low Operational Cost**: Only ৳4,000/month (~$36) for bi-monthly tournaments
 5. **User Experience**: Minimal friction for players, no complex verification steps
+6. **Seamless Migration**: Shared Firebase backend ensures existing users preserve all data
 
 **Simplified Approach Benefits**:
 - **Faster time to market**: 10-15 weeks vs. 16+ weeks
-- **Lower development cost**: ~$8,000-$12,000 vs. ~$16,500-$23,000
+- **Lower development cost**: ~$9,035-$15,325 vs. ~$16,500-$23,000 (including migration)
 - **Minimal ongoing costs**: ~$106-$186/month vs. ~$900-$1,400/month
 - **Reduced complexity**: No payment gateway APIs, no document storage, simpler user flow
 - **Lower user friction**: No document upload, immediate eligibility confirmation
+- **Data continuity**: Users keep all progress, friends, and stats when migrating
+
+**Migration Strategy Highlights**:
+- **Current user base**: 746 active Bangladesh users on `piotr_gorczynski.soccer2`
+- **Target conversion**: 30% (224 users) in Month 1, 60% (448 users) by Month 6
+- **Shared Firebase**: Same authentication and database for seamless transition
+- **No separate keys needed**: Same Firebase project, different app registrations
+- **Multi-channel promotion**: In-app banners, Play Store optimization, social media
+- **User-friendly approach**: Optional migration, data preservation, clear incentives
+- **Note**: Push notifications not viable as most users don't have registered accounts
 
 **Next Steps**:
-1. Review this simplified approach with legal counsel familiar with Bangladesh regulations
+1. Review this approach with legal counsel familiar with Bangladesh regulations
 2. Confirm that self-declaration age verification is acceptable
-3. Begin Phase 1 implementation (planning & setup)
-4. Establish bi-monthly tournament schedule
-5. Create manual payment processing procedures
+3. Set up dual-app Firebase configuration (register both package IDs)
+4. Begin Phase 1 implementation (planning & setup)
+5. Develop migration promotion materials and messaging
+6. Establish bi-monthly tournament schedule
+7. Create manual payment processing procedures
+8. Launch migration campaign to existing 746 Bangladesh users
 
 ---
 
