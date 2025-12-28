@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.3  
+**Document Version:** 2.4  
 **Last Updated:** 2025-12-28  
 **Status:** Planning
 
 **Revision History**:
+- v2.4 (2025-12-28): Added Authentication Integration with Google and Facebook section
 - v2.3 (2025-12-28): Removed FCM/push notification strategy (not viable - users lack registered accounts/tokens)
 - v2.2 (2025-12-28): Added User Onboarding & Migration Strategy section for migrating existing users
 - v2.1 (2025-12-27): Simplified document - removed approach comparison, presenting product flavor approach as the chosen solution
@@ -33,10 +34,11 @@ This streamlined approach significantly reduces development complexity, time to 
 5. [Age Verification System](#age-verification-system)
 6. [Tournament Structure](#tournament-structure)
 7. [User Onboarding & Migration Strategy](#user-onboarding--migration-strategy)
-8. [Implementation Roadmap](#implementation-roadmap)
-9. [Risk Assessment & Mitigation](#risk-assessment--mitigation)
-10. [Cost Estimation](#cost-estimation)
-11. [Compliance Checklist](#compliance-checklist)
+8. [Authentication Integration with Google and Facebook](#authentication-integration-with-google-and-facebook)
+9. [Implementation Roadmap](#implementation-roadmap)
+10. [Risk Assessment & Mitigation](#risk-assessment--mitigation)
+11. [Cost Estimation](#cost-estimation)
+12. [Compliance Checklist](#compliance-checklist)
 
 ---
 
@@ -1094,6 +1096,688 @@ Download now and start competing for real prizes!
 
 ---
 
+## Authentication Integration with Google and Facebook
+
+### Overview
+
+This section addresses the authentication integration approach for the Bangladesh version (`piotr_gorczynski.soccer2.bd`) and whether separate authentication instances or configurations are required for Google Sign-In and Facebook Login services.
+
+### Executive Summary
+
+**Answer: You DO NOT need separate authentication instances, but you DO need separate app registrations.**
+
+- **Firebase Authentication**: Same Firebase project, same authentication system, different app registration
+- **Google Sign-In**: Automatically configured via Firebase, no additional setup required
+- **Facebook Login**: Requires separate Facebook app registration or adding new package ID to existing app
+
+The Bangladesh APK will share the same user authentication database with the global version, enabling seamless user migration while maintaining separate app identities on Google Play Store.
+
+---
+
+### Firebase Authentication Configuration
+
+#### Single Firebase Project, Multiple Apps
+
+**Recommended Architecture:**
+```
+Firebase Project: gridline-soccer (existing)
+├── Authentication (shared across all apps)
+│   ├── Sign-in Methods:
+│   │   ├── Email/Password ✓
+│   │   ├── Google ✓
+│   │   ├── Facebook ✓
+│   │   ├── Microsoft ✓
+│   │   └── Anonymous ✓
+│   └── User Database (shared)
+│
+├── App 1: piotr_gorczynski.soccer2 (Global)
+│   ├── google-services.json (global config)
+│   └── Android Package Name: piotr_gorczynski.soccer2
+│
+└── App 2: piotr_gorczynski.soccer2.bd (Bangladesh)
+    ├── google-services.json (bangladesh config)
+    └── Android Package Name: piotr_gorczynski.soccer2.bd
+```
+
+#### Why Same Firebase Project?
+
+**Benefits:**
+1. **Shared User Database**: Users can sign in with same credentials across both apps
+2. **Unified Authentication**: Single authentication system, one set of security rules
+3. **No Additional Cost**: Firebase charges by usage, not by number of registered apps
+4. **Seamless Migration**: Users automatically authenticated when switching apps
+5. **Centralized Management**: Manage all users in one Firebase console
+
+**No Drawbacks**: There are no significant disadvantages to using the same Firebase project for both app variants.
+
+---
+
+### Google Sign-In Configuration
+
+#### Current Status
+
+The global app currently uses Google Sign-In via Firebase Authentication with the following configuration:
+
+**Dependencies (mobile/app/build.gradle):**
+```gradle
+implementation 'com.google.firebase:firebase-auth:24.0.1'
+implementation 'com.google.android.gms:play-services-auth:21.4.0'
+```
+
+#### Bangladesh Version Configuration
+
+**Do you need separate Google API credentials?**
+
+**Answer: No, but you need to register the new package ID.**
+
+**Steps Required:**
+
+1. **Register Bangladesh App in Firebase Console**
+   ```
+   Firebase Console → Project Settings → Your apps → Add app → Android
+   
+   Package name: piotr_gorczynski.soccer2.bd
+   App nickname: Gridline Soccer Bangladesh
+   SHA-1 certificate fingerprint: [Your release keystore SHA-1]
+   ```
+
+2. **Download Bangladesh google-services.json**
+   ```
+   After registration, download the Bangladesh-specific google-services.json
+   
+   File location: mobile/app/src/bangladesh/google-services.json
+   ```
+
+3. **Google Sign-In Automatic Configuration**
+   ```
+   Google Sign-In OAuth client IDs are automatically created by Firebase
+   when you register the Android app with your package ID and SHA-1 fingerprint.
+   
+   No manual Google Cloud Console configuration needed!
+   ```
+
+4. **Verify OAuth Client in Google Cloud Console** (Optional)
+   ```
+   Google Cloud Console → APIs & Services → Credentials
+   
+   You should see two Android OAuth clients:
+   - piotr_gorczynski.soccer2 (existing)
+   - piotr_gorczynski.soccer2.bd (new)
+   
+   Both automatically configured with package names and SHA-1 fingerprints
+   ```
+
+#### Implementation Changes Required
+
+**Answer: Zero code changes needed for Google Sign-In!**
+
+The existing Google Sign-In implementation will work automatically with the Bangladesh version because:
+- Firebase SDK reads package name from `google-services.json`
+- OAuth credentials are automatically matched by Firebase
+- Same authentication flow works for both apps
+
+**Gradle Configuration:**
+```gradle
+// mobile/app/build.gradle
+
+android {
+    flavorDimensions "market"
+    productFlavors {
+        global {
+            dimension "market"
+            applicationId "piotr_gorczynski.soccer2"
+            // Uses: mobile/app/src/global/google-services.json
+        }
+        bangladesh {
+            dimension "market"
+            applicationId "piotr_gorczynski.soccer2.bd"
+            // Uses: mobile/app/src/bangladesh/google-services.json
+        }
+    }
+}
+```
+
+The Google Services Gradle plugin automatically selects the correct `google-services.json` based on the build flavor.
+
+---
+
+### Facebook Login Configuration
+
+#### Current Status
+
+The global app currently integrates Facebook Login SDK with the following configuration:
+
+**Dependencies (mobile/app/build.gradle):**
+```gradle
+implementation 'com.facebook.android:facebook-android-sdk:18.1.3'
+```
+
+**AndroidManifest.xml:**
+```xml
+<meta-data
+    android:name="com.facebook.sdk.ApplicationId"
+    android:value="@string/facebook_app_id" />
+<meta-data
+    android:name="com.facebook.sdk.ClientToken"
+    android:value="@string/facebook_client_token" />
+```
+
+**Current Facebook App ID:** `1232966491486195`
+
+#### Bangladesh Version Configuration
+
+**Do you need a separate Facebook app?**
+
+**Answer: No, but you have two options:**
+
+##### Option 1: Add Bangladesh Package ID to Existing Facebook App (Recommended)
+
+**Steps:**
+
+1. **Add Android Platform Configuration**
+   ```
+   Facebook App Dashboard → Settings → Basic → Add Platform → Android
+   
+   OR if Android platform exists:
+   Facebook App Dashboard → Settings → Basic → Android section
+   ```
+
+2. **Add Bangladesh Package Name**
+   ```
+   Google Play Package Name: piotr_gorczynski.soccer2.bd
+   Class Name: piotr_gorczynski.soccer2.UniversalLoginActivity
+   ```
+
+3. **Generate and Add Key Hashes**
+   ```bash
+   # In mobile directory, run:
+   ./gradlew generateFacebookKeyHashes
+   
+   # This generates key hashes for both debug and release builds
+   # Add ALL generated hashes to Facebook App Dashboard
+   ```
+
+4. **Facebook Configuration (values/strings.xml)**
+   ```xml
+   <!-- No changes needed, use same App ID and Client Token -->
+   <string name="facebook_app_id" translatable="false">1232966491486195</string>
+   <string name="facebook_client_token" translatable="false">YOUR_CLIENT_TOKEN</string>
+   ```
+
+**Advantages:**
+- ✅ Single Facebook app to manage
+- ✅ Same App ID and Client Token for both variants
+- ✅ Easier maintenance and monitoring
+- ✅ No additional Facebook app review required
+- ✅ Users can link same Facebook account across both apps
+
+**Disadvantages:**
+- ⚠️ Both apps share same Facebook app settings
+- ⚠️ Cannot have different Facebook branding per variant
+
+##### Option 2: Create Separate Facebook App for Bangladesh
+
+**Steps:**
+
+1. **Create New Facebook App**
+   ```
+   Facebook Developers → My Apps → Create App
+   App Type: Consumer
+   App Name: Gridline Soccer Bangladesh
+   ```
+
+2. **Configure Android Platform**
+   ```
+   Package Name: piotr_gorczynski.soccer2.bd
+   Add key hashes for both debug and release keystores
+   ```
+
+3. **Create Bangladesh-Specific Configuration**
+   ```
+   File: mobile/app/src/bangladesh/res/values/strings.xml
+   
+   <resources>
+       <string name="facebook_app_id" translatable="false">NEW_BD_APP_ID</string>
+       <string name="facebook_client_token" translatable="false">NEW_BD_CLIENT_TOKEN</string>
+   </resources>
+   ```
+
+4. **Submit for Facebook App Review**
+   ```
+   Required permissions:
+   - public_profile (default, no review needed)
+   - email (default, no review needed)
+   ```
+
+**Advantages:**
+- ✅ Independent Facebook app settings per variant
+- ✅ Can customize Facebook branding for Bangladesh
+- ✅ Separate analytics and monitoring
+
+**Disadvantages:**
+- ❌ Requires managing two Facebook apps
+- ❌ Potential app review required
+- ❌ More complex configuration maintenance
+- ❌ Users cannot link same Facebook account across apps (different app scopes)
+
+#### Recommended Approach: Option 1
+
+**Use the existing Facebook app and add the Bangladesh package ID.** This is simpler, requires less maintenance, and provides a better user experience for migration.
+
+---
+
+### Implementation Checklist
+
+#### Phase 1: Firebase Configuration
+
+- [ ] **Register Bangladesh App in Firebase Console**
+  - Package name: `piotr_gorczynski.soccer2.bd`
+  - Download `google-services.json` for Bangladesh variant
+  - Note the SHA-1 fingerprint from your release keystore
+
+- [ ] **Place Configuration Files**
+  ```
+  mobile/app/src/
+  ├── global/
+  │   └── google-services.json (existing global config)
+  └── bangladesh/
+      └── google-services.json (new Bangladesh config)
+  ```
+
+- [ ] **Verify Firebase Auth Methods Enabled**
+  - Email/Password: ✓
+  - Google: ✓
+  - Facebook: ✓
+  - Microsoft: ✓ (if used)
+  - Anonymous: ✓
+
+#### Phase 2: Google Sign-In Setup
+
+- [ ] **Verify OAuth Client Created**
+  ```
+  Firebase automatically creates Android OAuth client when you:
+  - Register the app with package ID
+  - Provide SHA-1 certificate fingerprint
+  ```
+
+- [ ] **Test Google Sign-In**
+  ```bash
+  # Build Bangladesh variant
+  ./gradlew assembleBangladeshDebug
+  
+  # Install and test Google Sign-In flow
+  # Should work identically to global version
+  ```
+
+**No code changes required for Google Sign-In!**
+
+#### Phase 3: Facebook Login Setup
+
+##### If Using Option 1 (Recommended): Add to Existing Facebook App
+
+- [ ] **Add Bangladesh Package ID to Facebook App**
+  - Go to [Facebook App Dashboard](https://developers.facebook.com/apps/1232966491486195)
+  - Settings → Basic → Android platform
+  - Add package name: `piotr_gorczynski.soccer2.bd`
+
+- [ ] **Generate Key Hashes**
+  ```bash
+  cd mobile
+  ./gradlew generateFacebookKeyHashes
+  ```
+
+- [ ] **Add All Key Hashes to Facebook**
+  - Copy both debug and release key hashes
+  - Add to Facebook App Dashboard → Settings → Basic → Key Hashes
+  - Add hashes for both `piotr_gorczynski.soccer2` and `piotr_gorczynski.soccer2.bd`
+
+- [ ] **Update AndroidManifest (if needed)**
+  ```xml
+  <!-- If package-specific authorities needed -->
+  <provider
+      android:name="com.facebook.FacebookContentProvider"
+      android:authorities="com.facebook.app.FacebookContentProvider1232966491486195"
+      android:exported="true" />
+  ```
+
+- [ ] **Test Facebook Login**
+  ```bash
+  # Build and test both debug and release builds
+  ./gradlew assembleBangladeshDebug
+  ./gradlew assembleBangladeshRelease
+  
+  # Verify Facebook login works in both builds
+  ```
+
+##### If Using Option 2: Create Separate Facebook App
+
+- [ ] **Create New Facebook App**
+  - App name: "Gridline Soccer Bangladesh"
+  - App type: Consumer
+
+- [ ] **Configure Android Platform**
+  - Package name: `piotr_gorczynski.soccer2.bd`
+  - Class name: `piotr_gorczynski.soccer2.UniversalLoginActivity`
+
+- [ ] **Create Bangladesh-Specific Strings**
+  ```
+  File: mobile/app/src/bangladesh/res/values/strings.xml
+  
+  <?xml version="1.0" encoding="utf-8"?>
+  <resources>
+      <string name="facebook_app_id" translatable="false">NEW_BD_APP_ID</string>
+      <string name="facebook_client_token" translatable="false">NEW_BD_CLIENT_TOKEN</string>
+  </resources>
+  ```
+
+- [ ] **Update AndroidManifest for Bangladesh Flavor**
+  ```
+  File: mobile/app/src/bangladesh/AndroidManifest.xml
+  
+  <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+      <application>
+          <provider
+              android:name="com.facebook.FacebookContentProvider"
+              android:authorities="com.facebook.app.FacebookContentProviderNEW_BD_APP_ID"
+              android:exported="true" />
+      </application>
+  </manifest>
+  ```
+
+- [ ] **Add Key Hashes and Test**
+
+#### Phase 4: Testing & Validation
+
+- [ ] **Test Authentication Flows**
+  - [ ] Email/Password login works in Bangladesh app
+  - [ ] Google Sign-In works in Bangladesh app
+  - [ ] Facebook Login works in Bangladesh app
+  - [ ] Anonymous authentication works in Bangladesh app
+
+- [ ] **Test User Migration**
+  - [ ] User logs in with Google on global app
+  - [ ] User installs Bangladesh app
+  - [ ] User logs in with same Google account on Bangladesh app
+  - [ ] Verify user data syncs (same Firebase UID, same Firestore documents)
+
+- [ ] **Test Cross-App Authentication**
+  - [ ] Verify same user can be authenticated in both apps simultaneously
+  - [ ] Confirm Firestore security rules allow cross-app access
+  - [ ] Test friend connections work across apps
+
+- [ ] **Test Build Variants**
+  - [ ] `bangladeshDebug` build with Google Sign-In
+  - [ ] `bangladeshDebug` build with Facebook Login
+  - [ ] `bangladeshRelease` build with Google Sign-In
+  - [ ] `bangladeshRelease` build with Facebook Login
+
+---
+
+### Configuration Summary
+
+#### What You Need
+
+| Service | Separate Instance? | Configuration Required |
+|---------|-------------------|------------------------|
+| **Firebase Project** | ❌ No | Register Bangladesh app, download `google-services.json` |
+| **Firebase Authentication** | ❌ No | No changes, automatically shared |
+| **Google Sign-In** | ❌ No | Automatic via Firebase app registration |
+| **Google OAuth Client** | ✅ Yes (auto-created) | Automatic when registering app with SHA-1 |
+| **Facebook App** | ⚠️ Optional | Option 1: Add package ID to existing app (recommended)<br>Option 2: Create separate app |
+| **Facebook App ID** | ⚠️ Optional | Same if Option 1, different if Option 2 |
+
+#### What Stays the Same
+
+- ✅ Firebase project ID
+- ✅ Firebase Authentication database
+- ✅ User UIDs and authentication tokens
+- ✅ Firestore database and security rules
+- ✅ Firebase Authentication sign-in methods configuration
+- ✅ Code for handling authentication (no changes needed)
+
+#### What's Different
+
+- 📦 Package ID: `piotr_gorczynski.soccer2.bd` (vs `piotr_gorczynski.soccer2`)
+- 📄 Configuration file: `google-services.json` (Bangladesh-specific)
+- 🔑 Google OAuth client: Separate Android client (auto-created by Firebase)
+- 🔐 Key hashes: Additional Facebook key hashes for Bangladesh package
+- 🏪 Play Store listing: Completely separate app on Google Play Store
+
+---
+
+### Security Considerations
+
+#### Firebase Security Rules
+
+**Critical**: Ensure Firestore security rules allow cross-app access for the same user:
+
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Users can access their own data from any app variant
+    match /users/{userId} {
+      allow read, write: if request.auth != null && 
+                           request.auth.uid == userId;
+      // No restriction based on app package name
+    }
+    
+    // Friends can be accessed from any app variant
+    match /friendships/{friendshipId} {
+      allow read: if request.auth != null;
+      allow create, update: if request.auth != null;
+    }
+    
+    // Matches accessible from any app variant
+    match /matches/{matchId} {
+      allow read: if request.auth != null;
+      allow create, update: if request.auth != null && 
+                               (request.auth.uid == resource.data.player1Id || 
+                                request.auth.uid == resource.data.player2Id);
+    }
+  }
+}
+```
+
+**Important**: Do NOT add package name restrictions to security rules, as this would prevent cross-app access.
+
+#### Key Hash Security
+
+**Best Practice:**
+- Generate separate key hashes for debug and release builds
+- Add ALL key hashes to Facebook app (both global and Bangladesh)
+- Never commit keystores or signing credentials to version control
+- Store keystore passwords in `secrets/keystore.properties` (gitignored)
+
+#### Google OAuth Security
+
+**Automatic Security:**
+- Google uses package name + SHA-1 fingerprint for app verification
+- Each OAuth client is automatically scoped to its package name
+- No manual security configuration needed
+- Firebase handles token validation automatically
+
+---
+
+### Cost Implications
+
+#### Firebase Costs
+
+**No additional cost for authentication:**
+- Firebase Authentication is free for unlimited users
+- Adding a second app to same project: $0
+- OAuth client creation: $0 (automatic via Firebase)
+
+**Potential increase in usage-based costs:**
+- Firestore reads/writes: May increase if Bangladesh app gains traction
+- Cloud Functions invocations: Proportional to user activity
+- Cloud Storage: Only if file uploads increase
+
+**Estimated Impact:** 
+- If Bangladesh app reaches 500 active users: +10-20% Firebase costs (~$2-$10/month)
+- Still well within Firebase free tier initially
+
+#### Facebook Costs
+
+**Free for standard authentication:**
+- Facebook Login SDK: Free
+- Basic permissions (public_profile, email): Free
+- No per-user charges
+
+**Potential costs:**
+- Advanced permissions requiring app review: Free but requires time investment
+- Facebook Analytics: Free
+
+**Cost: $0**
+
+#### Google Cloud Costs
+
+**OAuth client creation: Free**
+- Android OAuth clients: Free (unlimited)
+- No per-authentication charges
+- Included with Firebase
+
+**Cost: $0**
+
+#### Developer Time Investment
+
+**Option 1 (Recommended - Same Facebook App):**
+- Firebase setup: 2-3 hours
+- Facebook key hash generation and configuration: 1-2 hours
+- Testing: 2-3 hours
+- **Total: 5-8 hours (~$250-$400)**
+
+**Option 2 (Separate Facebook App):**
+- Firebase setup: 2-3 hours
+- Create new Facebook app: 1-2 hours
+- Configure Facebook for Bangladesh: 1-2 hours
+- Create flavor-specific resources: 1-2 hours
+- Testing: 3-4 hours
+- **Total: 8-13 hours (~$400-$650)**
+
+**Recommended**: Use Option 1 to save 3-5 hours of development time.
+
+---
+
+### Common Questions & Troubleshooting
+
+#### Q: Will users need to log in again on the Bangladesh app?
+
+**A:** No, if they use the same authentication method (Google, Facebook, email/password). Firebase recognizes the same user across both apps because they share the same Firebase project and authentication database.
+
+**Example:**
+1. User logs in with Google on global app → User ID: `abc123`
+2. User installs Bangladesh app
+3. User clicks "Sign in with Google" on Bangladesh app → Same User ID: `abc123`
+4. All user data automatically synced (same Firestore user document)
+
+#### Q: Can a user be signed in to both apps at the same time?
+
+**A:** Yes! Both apps can have active sessions simultaneously because they use the same Firebase Authentication. The user will see their same profile, friends, and data in both apps.
+
+#### Q: What happens if I use different Firebase projects?
+
+**A:** **Not recommended.** Different Firebase projects mean:
+- ❌ Different user databases → Users must create separate accounts
+- ❌ Different UIDs → Cannot share data between apps
+- ❌ Complex migration → Must manually copy user data
+- ❌ Double management overhead → Manage two separate backends
+
+**Always use the same Firebase project for both app variants.**
+
+#### Q: How do I test that authentication works correctly?
+
+**A:** Follow this test plan:
+
+```bash
+# 1. Build Bangladesh debug variant
+./gradlew assembleBangladeshDebug
+
+# 2. Install on test device
+adb install mobile/app/build/outputs/apk/bangladesh/debug/app-bangladesh-debug.apk
+
+# 3. Test each authentication method:
+# - Email/Password: Create account, sign in, sign out
+# - Google Sign-In: Click Google button, select account, verify sign-in
+# - Facebook Login: Click Facebook button, authorize, verify sign-in
+# - Anonymous: Click anonymous button, verify sign-in
+
+# 4. Verify user data appears (if user exists from global app)
+
+# 5. Build release variant and repeat
+./gradlew assembleBangladeshRelease
+```
+
+#### Q: What if Google Sign-In fails with "Developer Error"?
+
+**A:** This usually means the OAuth client configuration is incorrect.
+
+**Solution:**
+1. Verify you registered the Bangladesh app in Firebase Console
+2. Ensure you provided the correct SHA-1 fingerprint for your release keystore
+3. Check that `google-services.json` is in the correct location: `mobile/app/src/bangladesh/`
+4. Wait 5-10 minutes after registration for OAuth client propagation
+5. Try signing in with a Google account not previously used for testing
+
+**Debug command:**
+```bash
+# Verify SHA-1 fingerprint of your keystore
+keytool -list -v -keystore path/to/your/keystore.jks -alias your_key_alias
+```
+
+#### Q: What if Facebook Login fails with "Invalid key hash" error?
+
+**A:** This means the key hash you're using doesn't match what's registered in Facebook.
+
+**Solution:**
+```bash
+# 1. Generate current key hash
+cd mobile
+./gradlew generateFacebookKeyHashes
+
+# 2. Copy ALL generated key hashes
+
+# 3. Add to Facebook App Dashboard
+#    Settings → Basic → Key Hashes
+#    Paste all hashes (one per line)
+
+# 4. Save and retry Facebook login after 2-3 minutes
+```
+
+**Common mistake:** Forgetting to add key hashes for BOTH debug and release keystores.
+
+#### Q: Can I migrate from separate Facebook app back to shared?
+
+**A:** Yes, but requires users to re-authenticate with Facebook.
+
+**Migration steps:**
+1. Remove Bangladesh-specific Facebook app configuration
+2. Add Bangladesh package ID to existing Facebook app
+3. Update `strings.xml` to use original Facebook App ID
+4. Users will need to re-authorize Facebook login (one-time inconvenience)
+
+---
+
+### Recommended Configuration Strategy
+
+**For optimal user experience and minimal maintenance:**
+
+1. ✅ **Use same Firebase project** for both app variants
+2. ✅ **Register both package IDs** in Firebase Console
+3. ✅ **Use existing Facebook app** and add Bangladesh package ID (Option 1)
+4. ✅ **Share authentication configuration** (same App IDs, different `google-services.json`)
+5. ✅ **Test thoroughly** with both debug and release builds
+
+**This approach provides:**
+- Seamless user migration between apps
+- Minimal configuration overhead
+- Single authentication system to manage
+- Shared user database and consistent experience
+- Lowest development and maintenance cost
+
+---
+
 ## Implementation Roadmap
 
 ### Phase 1: Planning & Setup (Week 1-2)
@@ -1123,6 +1807,17 @@ Download now and start competing for real prizes!
   - [ ] Update Firestore security rules for cross-app data access
   - [ ] Create Cloud Function for tracking user migrations
   - [ ] Extend user schema with migration tracking fields
+- [ ] **Authentication Integration Setup**:
+  - [ ] Register Bangladesh app in Firebase Console with package ID `piotr_gorczynski.soccer2.bd`
+  - [ ] Provide SHA-1 fingerprint from release keystore for Google Sign-In
+  - [ ] Download Bangladesh-specific `google-services.json`
+  - [ ] Place `google-services.json` in `mobile/app/src/bangladesh/` directory
+  - [ ] Verify Firebase Authentication methods enabled (Email, Google, Facebook, Microsoft, Anonymous)
+  - [ ] Add Bangladesh package ID to existing Facebook app (Option 1 - Recommended)
+    - OR create new Facebook app for Bangladesh (Option 2)
+  - [ ] Generate Facebook key hashes for both debug and release keystores
+  - [ ] Add all key hashes to Facebook App Dashboard
+  - [ ] Verify Firestore security rules allow cross-app user data access (no package restrictions)
 
 ### Phase 3: Mobile App Development (Week 5-7)
 - [ ] Create Bangladesh product flavor
@@ -1182,6 +1877,17 @@ Download now and start competing for real prizes!
   - [ ] Verify Play Store deep linking
   - [ ] Test migrated user welcome flow
   - [ ] Validate Firebase Analytics tracking
+- [ ] **Authentication Testing**:
+  - [ ] Test Email/Password authentication in Bangladesh app
+  - [ ] Test Google Sign-In in Bangladesh debug build
+  - [ ] Test Google Sign-In in Bangladesh release build
+  - [ ] Test Facebook Login in Bangladesh debug build
+  - [ ] Test Facebook Login in Bangladesh release build
+  - [ ] Test Anonymous authentication in Bangladesh app
+  - [ ] Verify same user can authenticate in both global and Bangladesh apps
+  - [ ] Confirm user data syncs correctly (same UID, same Firestore documents)
+  - [ ] Test friend connections work across apps
+  - [ ] Verify authentication with existing global app users
 
 ### Phase 6: Launch Preparation (Week 11-12)
 - [ ] Create Google Play Store listing (Bangladesh)
@@ -1281,6 +1987,11 @@ Download now and start competing for real prizes!
   - Global app promotion banner
   - Firebase dual-app configuration
   - Migration tracking and analytics
+- **Authentication integration setup**: 5-8 hours (~$250-$400)
+  - Firebase app registration for Bangladesh variant
+  - Facebook key hash generation and configuration
+  - Testing authentication flows across both apps
+  - (Note: Using Option 1 - same Facebook app. Option 2 would add 3-5 hours)
 - **Marketing & promotion**: $400 - $1,300 (optional)
   - Promotional materials design
   - Social media advertising
@@ -1288,7 +1999,7 @@ Download now and start competing for real prizes!
 - **Migration incentives**: ~$135 - $225 (optional)
   - Inaugural tournament bonus prizes
   - Referral rewards
-- **Total Initial: ~$9,035 - $15,325** (including migration costs)
+- **Total Initial: ~$9,285 - $15,725** (including migration and authentication setup costs)
 
 ### Monthly Operational Costs
 - Firebase costs (increased usage): $20 - $50/month (minimal increase)
@@ -1307,9 +2018,9 @@ Download now and start competing for real prizes!
 - **Lower prize pool**: Saved ~$594/month in prize funding
 
 ### Annual Cost Projection (Year 1)
-- Initial setup: $9,035 - $15,325 (including migration costs)
+- Initial setup: $9,285 - $15,725 (including migration and authentication setup costs)
 - Monthly operational: $106 - $186 × 12 = $1,272 - $2,232
-- **Total Year 1: approximately $10,307 - $17,557**
+- **Total Year 1: approximately $10,557 - $17,957**
 
 ### Migration ROI Analysis
 **Investment**: ~$1,535 - $3,325 in migration-specific costs
@@ -1378,6 +2089,18 @@ While current model is developer-funded with no entry fees, future revenue optio
 - [ ] Respect user choice to stay on global app
 - [ ] No degradation of global app experience for Bangladesh users
 - [ ] Transparent about separate app installations (not an update)
+
+#### Authentication Integration Compliance
+- [ ] Register both Android apps in Firebase Console (global and Bangladesh)
+- [ ] Download and configure separate `google-services.json` files for each variant
+- [ ] Verify Firebase Authentication methods are enabled for both apps
+- [ ] Add Bangladesh package ID to Facebook app settings (Option 1 recommended)
+- [ ] Generate and add Facebook key hashes for both debug and release keystores
+- [ ] Ensure Firestore security rules allow cross-app user data access
+- [ ] Test authentication works in both global and Bangladesh apps
+- [ ] Verify same user can authenticate in both apps simultaneously
+- [ ] Confirm OAuth client auto-created for Bangladesh app in Google Cloud Console
+- [ ] Privacy policy mentions shared authentication across app variants
 
 ---
 
