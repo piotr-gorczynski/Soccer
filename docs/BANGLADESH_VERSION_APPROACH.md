@@ -2554,10 +2554,6 @@ This approach document provides a simplified, cost-effective framework for launc
 - **Lower user friction**: No document upload, immediate eligibility confirmation
 - **Data continuity**: Users keep all progress, friends, and stats when migrating
 - **International accessibility**: Polish developer can send prizes without Bangladesh residency
-- **Minimal ongoing costs**: ~$106-$186/month vs. ~$900-$1,400/month
-- **Reduced complexity**: No payment gateway APIs, no document storage, simpler user flow
-- **Lower user friction**: No document upload, immediate eligibility confirmation
-- **Data continuity**: Users keep all progress, friends, and stats when migrating
 
 **Migration Strategy Highlights**:
 - **Current user base**: 746 active Bangladesh users on `piotr_gorczynski.soccer2`
