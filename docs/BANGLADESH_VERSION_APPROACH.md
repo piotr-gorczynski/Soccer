@@ -2578,8 +2578,8 @@ This approach document provides a simplified, cost-effective framework for launc
 **Important for Polish Developer**:
 - **DO NOT attempt to create bKash/Nagad/Rocket accounts** - these services are geo-locked to Bangladesh
 - **DO create a Wise account** (https://wise.com) - this works from Poland and can send to Bangladesh mobile wallets
-- **Test the transfer process** before launching tournaments - send ৳500 to a test Bangladesh mobile wallet
-- Budget for transfer fees: ~$0.50-$2.00 per prize payment (covered by developer)
+- **DO test the transfer process** before launching tournaments - send ৳500 to a test Bangladesh mobile wallet
+- **DO budget for transfer fees** - ~$0.50-$2.00 per prize payment (covered by developer)
 
 ---
 
