@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.2  
+**Document Version:** 2.3  
 **Last Updated:** 2025-12-28  
 **Status:** Planning
 
 **Revision History**:
+- v2.3 (2025-12-28): Removed FCM/push notification strategy (not viable - users lack registered accounts/tokens)
 - v2.2 (2025-12-28): Added User Onboarding & Migration Strategy section for migrating existing users
 - v2.1 (2025-12-27): Simplified document - removed approach comparison, presenting product flavor approach as the chosen solution
 - v2.0 (2025-12-27): Simplified approach - manual payments, self-declaration age verification, ৳2,000 bi-monthly prizes
@@ -575,22 +576,21 @@ service cloud.firestore {
    startActivity(intent)
    ```
 
-4. **Cloud Messaging Campaign**:
-   - Use Firebase Cloud Messaging (FCM) to send targeted push notifications
-   - Target: Users with region="BD" or locale="bn-BD"
-   - Message: "🏆 New cash prize tournaments available! Install Gridline Soccer Bangladesh"
-
 **Pros**:
-- Direct communication with existing users
+- Direct communication with existing users through in-app UI
 - Clear call-to-action
 - Preserves user data automatically (shared Firebase backend)
 - Users can keep both apps or uninstall the old one
 - No forced migration
+- Works for all users regardless of account registration status
 
 **Cons**:
 - Requires update to existing app to add notification logic
 - Users must take action (install new app)
-- Some users may ignore the notification
+- Some users may ignore the banner
+- Only reaches users who actively use the app
+
+**Note**: Push notifications via FCM are not viable since most Bangladesh users don't have registered accounts and thus no FCM tokens available.
 
 ---
 
@@ -635,7 +635,6 @@ service cloud.firestore {
 
 **Phase 1: Soft Promotion (Months 1-2)**
 - Add in-app banners promoting BD version
-- Send push notifications about cash prizes
 - Keep global app fully functional
 
 **Phase 2: Feature Gating (Months 3-4)**
@@ -679,11 +678,6 @@ service cloud.firestore {
        showBangladeshVersionPromotionDialog()
    }
    ```
-
-3. **Firebase Cloud Messaging Campaign**:
-   - Target all 746 Bangladesh users
-   - Send push notification with deep link
-   - Message: "🎉 Gridline Soccer Bangladesh is here! Win ৳2,000 cash prizes. Install now!"
 
 **Phase 2: Ongoing Promotion (Week 3-8)**
 
@@ -960,14 +954,6 @@ Download now and start competing for real prizes!
   }
   ```
 
-- [ ] Add FCM targeting for BD users
-  ```kotlin
-  // In Firebase Console, create user segment:
-  // - Region: Bangladesh
-  // - Last active: Within 7 days
-  // - App version: Latest
-  ```
-
 #### Bangladesh App Development (piotr_gorczynski.soccer2.bd)
 
 - [ ] Configure separate google-services.json
@@ -1041,11 +1027,6 @@ Download now and start competing for real prizes!
       });
   ```
 
-- [ ] Set up FCM for cross-promotion
-  - Create user segment: Bangladesh users in global app
-  - Prepare notification templates
-  - Schedule campaign launch
-
 ---
 
 ### Cost & Resource Implications
@@ -1082,8 +1063,8 @@ Download now and start competing for real prizes!
 
 **Week 3: Launch**
 - Publish Bangladesh app to Play Store
-- Update global app with promotion
-- Send FCM notification to all BD users
+- Update global app with promotion banner
+- Monitor initial user response
 
 **Week 4-8: Active Promotion**
 - Monitor conversion metrics
@@ -1211,11 +1192,9 @@ Download now and start competing for real prizes!
 - [ ] Create operational runbook
 - [ ] **Migration Campaign Preparation**:
   - [ ] Finalize promotional banner designs (English + Bengali)
-  - [ ] Prepare Firebase Cloud Messaging notification templates
-  - [ ] Set up user segmentation in Firebase (Bangladesh users only)
-  - [ ] Schedule FCM campaign for launch day
   - [ ] Prepare social media announcements
   - [ ] Create migration FAQ and support documentation
+  - [ ] Design Play Store listing with clear migration benefits
 
 ### Phase 7: Soft Launch (Week 13-14)
 - [ ] Limited release to 100-500 users
@@ -1225,11 +1204,11 @@ Download now and start competing for real prizes!
 - [ ] Fix critical issues
 - [ ] **Initial Migration Campaign**:
   - [ ] Deploy updated global app with promotion banner
-  - [ ] Send FCM notification to all 746 Bangladesh users
   - [ ] Monitor installation metrics (target: 75-112 installs in Week 1)
   - [ ] Track banner impressions and click-through rates
   - [ ] Respond to user questions about migration
   - [ ] Adjust messaging based on early feedback
+  - [ ] Update Play Store listing based on user feedback
 
 ### Phase 8: Full Launch & Ongoing Migration (Week 15+)
 - [ ] Public launch in Bangladesh Google Play Store
@@ -1238,13 +1217,13 @@ Download now and start competing for real prizes!
 - [ ] Monitor KPIs (participation, payment success, user satisfaction)
 - [ ] Iterate based on feedback
 - [ ] **Ongoing Migration Activities**:
-  - [ ] Weekly FCM reminders (for users who haven't migrated)
   - [ ] Monitor migration conversion rates (target: 30% Month 1, 60% Month 6)
-  - [ ] A/B test different promotion messages
+  - [ ] A/B test different promotion messages in banner
   - [ ] Engage with user community in Bangladesh
   - [ ] Share success stories from prize winners
   - [ ] Periodic promotion banner refresh in global app
   - [ ] Track migration success metrics and adjust strategy
+  - [ ] Continue Play Store optimization and keyword updates
 
 ---
 
@@ -1518,8 +1497,9 @@ This approach document provides a simplified, cost-effective framework for launc
 - **Target conversion**: 30% (224 users) in Month 1, 60% (448 users) by Month 6
 - **Shared Firebase**: Same authentication and database for seamless transition
 - **No separate keys needed**: Same Firebase project, different app registrations
-- **Multi-channel promotion**: In-app banners, push notifications, Play Store optimization
+- **Multi-channel promotion**: In-app banners, Play Store optimization, social media
 - **User-friendly approach**: Optional migration, data preservation, clear incentives
+- **Note**: Push notifications not viable as most users don't have registered accounts
 
 **Next Steps**:
 1. Review this approach with legal counsel familiar with Bangladesh regulations
