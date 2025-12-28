@@ -2213,11 +2213,15 @@ cd mobile
 - Firebase costs (increased usage): $20 - $50/month (minimal increase)
 - Prize pool funding:
   - 2 bi-monthly tournaments × ৳2,000 = ৳4,000/month (approximately $36/month)
-  - International transfer fees: 2 transfers × $0.50-$2.00 = $1-$4/month
-  - **Total prizes + fees: approximately $37-$40/month** (based on December 2025 exchange rates)
-- Manual payment processing time: 1-2 hours/month (developer time)
+  - International transfer fees: 2 transfers × $0.20-$0.40 (Wise) = $0.40-$0.80/month
+  - **Total prizes + fees: approximately $36.40-$36.80/month** (based on December 2025 exchange rates)
+- Manual payment processing time: 1-2 hours/month (developer time, not monetized)
 - Customer support: $50 - $100/month (minimal support needed)
-- **Total Monthly: approximately $108 - $190**
+- **Total Monthly: approximately $106.40 - $186.80** (~$107-$187 rounded)
+
+**Breakdown**:
+- Minimum: $20 (Firebase) + $36.40 (prizes) + $50 (support) = $106.40
+- Maximum: $50 (Firebase) + $36.80 (prizes) + $100 (support) = $186.80
 
 ### Cost Savings vs. Original Approach
 - **No payment gateway API fees**: Saved ~$500-1,000 setup + 2-3% transaction fees
@@ -2228,8 +2232,8 @@ cd mobile
 
 ### Annual Cost Projection (Year 1)
 - Initial setup: $9,285 - $15,725 (including migration and authentication setup costs)
-- Monthly operational: $106 - $186 × 12 = $1,272 - $2,232
-- **Total Year 1: approximately $10,557 - $17,957**
+- Monthly operational: $107 - $187 × 12 = $1,284 - $2,244
+- **Total Year 1: approximately $10,569 - $17,969**
 
 ### Migration ROI Analysis
 **Investment**: ~$1,535 - $3,325 in migration-specific costs

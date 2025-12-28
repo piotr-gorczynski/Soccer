@@ -224,13 +224,13 @@ These payment services are geo-restricted to Bangladesh and require:
 - Setup cost: $0 (free account)
 - Per transfer: $0.20-$0.40 in fees
 - Prize amount: ৳2,000 ≈ $18.00
-- **Total per winner**: ~$18.20-$18.40
-- **Monthly cost** (2 tournaments): ~$36.40-$36.80 + $1-$2 in fees = **~$37-$39/month**
+- **Total per winner**: ~$18.20-$18.40 (prize + transfer fee)
+- **Monthly cost** (2 tournaments): 2 × $18.20-$18.40 = **~$36.40-$36.80/month**
 
 ### Impact on Budget:
-- Original estimate: $36/month for prizes
-- New estimate: $37-$39/month (prizes + transfer fees)
-- **Additional cost**: Only $1-$3/month
+- Original estimate: $36/month for prizes (not including transfer fees)
+- New estimate: $36.40-$36.80/month (prizes + transfer fees included)
+- **Additional cost**: Only $0.40-$0.80/month
 - **This is negligible and maintains the low-cost approach**
 
 ---
