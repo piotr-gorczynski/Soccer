@@ -415,12 +415,11 @@ Developer Uses International Transfer Service:
     - Remitly (recommended for mobile wallets): Transfer to bKash/Nagad
     - Wise (if bank transfers accepted): Transfer to bank account
     - Western Union (backup): Transfer to mobile wallet or cash pickup
-    - Remitly: Transfer to mobile wallet
     - PayPal: Direct transfer (if winner has account)
     ↓
 Developer Initiates Transfer Outside App:
-    - Log into Wise/Western Union/Remitly/PayPal
-    - Enter winner's mobile wallet number or details
+    - Log into Remitly (primary), Wise (secondary), or Western Union/PayPal (backup)
+    - Enter winner's mobile wallet number, bank account, or PayPal details
     - Send ৳2,000 BDT (service handles currency conversion)
     - Save transaction ID/receipt
     ↓
