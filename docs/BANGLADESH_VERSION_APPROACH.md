@@ -102,16 +102,35 @@ The Bangladesh version will be implemented as a **separate APK using Android Pro
 
 ### Product Flavor Configuration
 
-Create a Bangladesh-specific product flavor in the Android build configuration:
+**Note**: The current project uses environment-based flavors (`_dev`, `_test`, `_prod`) with a single `environment` dimension. To add the Bangladesh market variant, we need to introduce a **second flavor dimension** called `market`.
+
+**Recommended approach** - Add a new flavor dimension to the existing build.gradle:
 
 ```gradle
 // mobile/app/build.gradle
 android {
-    flavorDimensions "market"
+    // Add market dimension alongside existing environment dimension
+    flavorDimensions "environment", "market"
+    
     productFlavors {
+        // Existing environment flavors
+        _dev {
+            dimension "environment"
+            buildConfigField "String", "AD_UNIT_ID", '"ca-app-pub-3940256099942544/1033173712"'
+        }
+        _test {
+            dimension "environment"
+            buildConfigField "String", "AD_UNIT_ID", '"ca-app-pub-3940256099942544/1033173712"'
+        }
+        _prod {
+            dimension "environment"
+            buildConfigField "String", "AD_UNIT_ID", '"ca-app-pub-9113152787055223/9306362927"'
+        }
+        
+        // New market flavors
         global {
             dimension "market"
-            applicationIdSuffix ""
+            // Base applicationId from defaultConfig: piotr_gorczynski.soccer2
         }
         bangladesh {
             dimension "market"
@@ -121,6 +140,23 @@ android {
     }
 }
 ```
+
+**This creates combined build variants** like:
+- `_devGlobalDebug`, `_devGlobalRelease`
+- `_devBangladeshDebug`, `_devBangladeshRelease`
+- `_testGlobalDebug`, `_testGlobalRelease`
+- `_testBangladeshDebug`, `_testBangladeshRelease`
+- `_prodGlobalDebug`, `_prodGlobalRelease`
+- `_prodBangladeshDebug`, `_prodBangladeshRelease`
+
+**For production releases**:
+- Global version: Use `_prodGlobalRelease` → `piotr_gorczynski.soccer2`
+- Bangladesh version: Use `_prodBangladeshRelease` → `piotr_gorczynski.soccer2.bd`
+
+**google-services.json placement** (with two dimensions):
+- Global: `mobile/app/src/global/google-services.json`
+- Bangladesh: `mobile/app/src/bangladesh/google-services.json`
+- The build system will select the appropriate file based on the market flavor
 
 ### Key Benefits
 
@@ -760,7 +796,7 @@ Existing tournament rules (from `tournament_rules_bn.json`) remain the same, wit
 
 ### Migration Challenge
 
-As of December 24, 2025, the current version of Gridline Soccer (`piotr_gorczynski.soccer2`) has **746 active installs in Bangladesh** according to Google Play Console. The new Bangladesh-specific version (`piotr_gorczynski.soccer2.bd`) will be a **separate listing on Google Play Store** with zero initial installs.
+As of December 24, 2024, the current version of Gridline Soccer (`piotr_gorczynski.soccer2`) has **746 active installs in Bangladesh** according to Google Play Console. The new Bangladesh-specific version (`piotr_gorczynski.soccer2.bd`) will be a **separate listing on Google Play Store** with zero initial installs.
 
 **Key Migration Questions**:
 1. How to convince existing users to install the new Bangladesh-specific version?

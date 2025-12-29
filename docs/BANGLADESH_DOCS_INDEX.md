@@ -178,7 +178,7 @@ This directory contains comprehensive documentation for the Bangladesh-specific 
 ## 📊 Key Metrics
 
 ### Current State
-- **Global app installs (Bangladesh)**: 746 active users (as of Dec 24, 2025)
+- **Global app installs (Bangladesh)**: 746 active users (as of Dec 24, 2024)
 - **Current age rating**: 13+ (Teen)
 - **Prize tournaments**: Not available
 
