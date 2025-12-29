@@ -18,7 +18,7 @@
 
 ## Executive Summary
 
-This document outlines a simplified, cost-effective approach for creating a Bangladesh-specific version of the Soccer (Gridline Soccer) mobile application that enables skill-based tournaments with promotional cash prizes. The implementation uses **Android Product Flavors to create a separate APK variant** and complies with Bangladesh gaming regulations, focusing on skill-based competitions with developer-funded prizes for players aged 18 and above.
+This document outlines a simplified, cost-effective approach for creating a Bangladesh-specific version of the Soccer (Gridline Soccer) mobile application that enables skill-based tournaments with promotional cash prizes. The implementation uses **Android Product Flavors to create a separate APK variant** and is **intended to align** with Bangladesh gaming regulations, focusing on skill-based competitions with developer-funded prizes for players aged 18 and above. **Final compliance must be confirmed by Bangladesh legal counsel** (see “Regulatory Verification Notes” below).
 
 **⚠️ CRITICAL FINDING (v2.5)**: The original approach assumed the developer could directly use bKash, Nagad, or Rocket to distribute prizes. **This is NOT possible from Poland** - these services are geo-restricted and require Bangladesh residency, phone number, and National ID. **Solution**: Use international money transfer services (Remitly, Wise, or Western Union) that can send funds to Bangladesh mobile wallets. **Remitly is recommended** for best mobile wallet support (bKash, Nagad). This adds minimal cost (~$0.50-$1.50 per transfer with Remitly Economy) and maintains the simplified approach.
 
@@ -54,6 +54,18 @@ This streamlined approach significantly reduces development complexity, time to 
 
 ## Legal & Regulatory Framework
 
+### Regulatory Verification Notes (Non-Legal Advice)
+
+The approach below is designed to align with common Bangladesh restrictions on gambling and prize promotions (skill-based, free entry, developer-funded prizes, adults only). **However, this document is not legal advice.** Before launch, engage Bangladesh counsel to confirm:
+
+1. **Applicable gambling/lottery laws** and whether the planned tournaments are clearly classified as **skill-based** promotions with **no consideration** (no entry fee, no purchase requirement).
+2. **Prize promotion/contest rules** (if any) for public marketing, disclosures, winner selection transparency, and dispute handling.
+3. **Age-gating requirements** (whether self-declaration + Play Store age gate is sufficient or if stronger checks are expected).
+4. **Payment/remittance compliance** for inbound transfers to Bangladesh (e.g., Bangladesh Bank rules, mobile wallet receiver requirements) and any **withholding/tax** obligations on prize payouts.
+5. **Data protection requirements** for handling personal data (name, phone, wallet/bank details) and cross-border processing/storage.
+
+**Recommendation**: Treat compliance as **“pending legal validation”** until a local counsel memo confirms the exact regulatory scope and any required licenses, notices, or disclosures.
+
 ### Bangladesh Gaming Regulations
 
 Based on Bangladesh gaming laws and skill-based game regulations:
@@ -64,15 +76,15 @@ Based on Bangladesh gaming laws and skill-based game regulations:
 4. **Developer Funding**: Prizes funded by the game developer/owner (not from player contributions)
 5. **Approved Payment Methods**: Use government-approved payment services operating in Bangladesh
 
-### Legal Compliance Requirements
+### Legal Compliance Requirements (Subject to Legal Validation)
 
 - **Skill Determination**: The game must be demonstrably skill-based
   - ✅ Paper soccer/Gridline Soccer qualifies as it requires strategic thinking, planning, and tactical execution
   - ✅ Outcome determined by player decisions, not random chance
   
 - **Transparency**: Clear rules, prize structure, and terms of service
-- **Data Protection**: Compliance with Bangladesh data protection regulations
-- **Payment Processing**: Use licensed payment processors authorized in Bangladesh
+- **Data Protection**: Compliance with Bangladesh data protection regulations and any cross-border processing requirements
+- **Payment Processing**: Use licensed/authorized remittance/payment providers and comply with Bangladesh Bank rules for inbound transfers to mobile wallets/bank accounts
 
 ---
 
@@ -3086,9 +3098,10 @@ While current model is developer-funded with no entry fees, future revenue optio
 ### Pre-Launch Checklist
 
 #### Legal Compliance
-- [ ] Consult with Bangladesh legal expert on gaming regulations
-- [ ] Verify skill-based classification is valid
+- [ ] Consult with Bangladesh legal expert on gaming/promotions regulations
+- [ ] Verify skill-based classification is valid and that **no consideration** is required
 - [ ] Confirm simplified age verification approach is acceptable
+- [ ] Confirm whether any prize withholding/tax reporting obligations apply
 - [ ] Update Terms of Service with Bangladesh-specific clauses
 - [ ] Update Privacy Policy (minimal data collection - no ID documents)
 - [ ] Add eligibility confirmation and terms acceptance in app
@@ -3104,6 +3117,7 @@ While current model is developer-funded with no entry fees, future revenue optio
 #### Operational Compliance
 - [ ] Establish prize fund reserve (৳4,000/month minimum)
 - [ ] Document manual prize payout procedures
+- [ ] Confirm remittance provider rules for payout descriptions/purpose codes (if required)
 - [ ] Create customer support process (Bengali language)
 - [ ] Set up payment dispute resolution process
 - [ ] Define fraud detection criteria (suspicious accounts)
