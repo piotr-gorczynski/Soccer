@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.4  
+**Document Version:** 2.5  
 **Last Updated:** 2025-12-28  
-**Status:** Planning
+**Status:** Planning - CRITICAL UPDATE: Payment method accessibility from Poland
 
 **Revision History**:
+- v2.5 (2025-12-28): **CRITICAL UPDATE** - Identified that bKash/Nagad/Rocket cannot be accessed from Poland. Added international money transfer solutions (Wise, Western Union, Remitly) as the correct approach for prize distribution. Added detailed setup guides and step-by-step payment processing instructions.
 - v2.4 (2025-12-28): Added Authentication Integration with Google and Facebook section
 - v2.3 (2025-12-28): Removed FCM/push notification strategy (not viable - users lack registered accounts/tokens)
 - v2.2 (2025-12-28): Added User Onboarding & Migration Strategy section for migrating existing users
@@ -16,14 +17,16 @@
 
 This document outlines a simplified, cost-effective approach for creating a Bangladesh-specific version of the Soccer (Gridline Soccer) mobile application that enables skill-based tournaments with promotional cash prizes. The implementation uses **Android Product Flavors to create a separate APK variant** and complies with Bangladesh gaming regulations, focusing on skill-based competitions with developer-funded prizes for players aged 18 and above.
 
+**⚠️ CRITICAL FINDING (v2.5)**: The original approach assumed the developer could directly use bKash, Nagad, or Rocket to distribute prizes. **This is NOT possible from Poland** - these services are geo-restricted and require Bangladesh residency, phone number, and National ID. **Solution**: Use international money transfer services (Wise, Western Union, or Remitly) that can send funds to Bangladesh mobile wallets. This adds minimal cost (~$0.50-$2 per transfer) and maintains the simplified approach.
+
 **Key Simplifications**:
 - **Technical Approach**: Separate Bangladesh APK using Android Product Flavors (`piotr_gorczynski.soccer2.bd`)
 - **Prize Structure**: ৳2,000 BDT (~$18 USD) for 1st place winners only, bi-monthly tournaments
 - **Age Verification**: Self-declaration via checkbox + Google Play Store verification (no document upload)
-- **Payment Processing**: Manual processing by developer outside the app (no payment gateway API integration)
-- **Total Cost**: ~$8,000-$12,000 initial setup, ~$106-$186/month operational
+- **Payment Processing**: Manual processing by developer using **international transfer services** (Wise/Western Union/Remitly) that send to winners' Bangladesh mobile wallets - NOT direct bKash/Nagad/Rocket access
+- **Total Cost**: ~$8,000-$12,000 initial setup, ~$108-$190/month operational (including transfer fees)
 
-This streamlined approach significantly reduces development complexity, time to market, user friction, and operational costs while maintaining full compliance with Bangladesh skill-based gaming regulations.
+This streamlined approach significantly reduces development complexity, time to market, user friction, and operational costs while maintaining full compliance with Bangladesh skill-based gaming regulations and being **accessible to a Polish developer without Bangladesh residency**.
 
 ## Table of Contents
 
@@ -148,25 +151,185 @@ This simplified prize structure:
 - Keeps operational complexity minimal
 - Provides consistent bi-monthly prize opportunities
 
+### International Transfer Service Setup Guide (for Polish Developer)
+
+**⚠️ CRITICAL**: As a Polish citizen, you **CANNOT directly use** bKash, Nagad, or Rocket. You must use international money transfer services.
+
+**Recommended Service: Wise (formerly TransferWise)**
+
+**Setup Steps**:
+1. **Create Wise Account**:
+   - Visit https://wise.com
+   - Sign up with email and create password
+   - Verify email address
+   - Provide personal details (name, address in Poland)
+   - Verify identity (upload Polish ID or passport)
+   - Setup takes ~15-30 minutes, verification ~1-2 days
+
+2. **Add Funding Source**:
+   - Link Polish bank account (via bank transfer)
+   - OR add debit/credit card
+   - Initial verification transfer may be required (~$1)
+
+3. **Test Transfer to Bangladesh** (highly recommended):
+   - Click "Send money"
+   - Select: Poland (PLN or EUR) → Bangladesh (BDT)
+   - Amount: ৳500 BDT (approximately $4.50 - for testing)
+   - Recipient type: "Mobile money" → "bKash" (or Nagad/Rocket)
+   - Enter test recipient details:
+     - Full name (ask a Bangladesh contact or use test account)
+     - Mobile wallet number (bKash/Nagad/Rocket number)
+   - Review fees and exchange rate
+   - Confirm and send
+   - Wait for transfer confirmation (typically 1-2 business days)
+   - **This test ensures the process works before tournament prizes**
+
+4. **Save Recipient Templates** (after tournaments):
+   - For each winner, save as recipient in Wise
+   - Makes future transfers faster
+   - Can reuse if same winner wins again
+
+**Alternative Service: Western Union**
+
+**Setup Steps**:
+1. **Create Account**:
+   - Visit https://www.westernunion.com/pl/en/
+   - Create account with email
+   - Verify identity (Polish ID)
+   - Add payment method (bank account or card)
+
+2. **Send Test Transfer**:
+   - Select "Send money online"
+   - Destination: Bangladesh
+   - Amount: ৳500 BDT (test amount)
+   - Delivery method: "Mobile wallet" or "Cash pickup"
+   - For mobile wallet: Select "bKash" or "Nagad"
+   - Enter recipient details
+   - Review fees (typically higher than Wise)
+   - Send transfer
+
+3. **Save Recipient** (optional):
+   - Western Union allows saving frequent recipients
+   - Speeds up future transfers
+
+**Alternative Service: Remitly**
+
+**Setup Steps**:
+1. **Create Account**:
+   - Visit https://www.remitly.com
+   - Sign up and verify identity
+   - Add payment method
+
+2. **Choose Transfer Speed**:
+   - **Express**: Arrives in minutes (higher fees ~$2-3)
+   - **Economy**: Arrives in 1-3 days (lower fees ~$0.50-1.50)
+   - For tournament prizes, Economy is sufficient
+
+3. **Send to Mobile Wallet**:
+   - Select Bangladesh as destination
+   - Choose "Mobile money" delivery
+   - Select bKash, Nagad, or other supported wallet
+   - Enter recipient details
+   - Review and send
+
+**Comparison Table**:
+
+| Service | Transfer Fee | Speed | Pros | Cons |
+|---------|-------------|-------|------|------|
+| **Wise** | $0.20-$0.40 | 1-2 days | Lowest fees, transparent | Slightly slower |
+| **Western Union** | $2-$5 | Minutes-1 day | Fast, widely known | Higher fees |
+| **Remitly** | $0.50-$1.50 | Express: minutes, Economy: 1-3 days | Good balance | Mid-range fees |
+| **PayPal** | ~$0.36-$0.72 | Instant | Fast if both have accounts | Limited Bangladesh adoption |
+
+**Recommended**: Start with **Wise** for lowest costs, have **Western Union** as backup.
+
 ### Payment Processing
 
 **Manual Payment Processing**:
 
 Payment processing will be handled **manually outside the Gridline Soccer application** by the developer. No automatic API integration with payment gateways will be implemented.
 
-**Supported Payment Methods** (Bangladesh-approved):
+**⚠️ IMPORTANT LIMITATION FOR POLISH DEVELOPER**:
+
+The original approach assumed the developer could directly use bKash, Nagad, or Rocket to send prizes. **This is NOT possible from Poland** due to:
+
+1. **Geo-restrictions**: These apps are blocked outside Bangladesh
+   - bKash shows "Cannot operate in Poland" when attempting to install
+   - Nagad and Rocket have similar geo-locks
+   
+2. **Account requirements**: All three services require:
+   - Bangladesh mobile phone number (mandatory)
+   - Bangladesh National ID (NID) for verification
+   - Physical presence in Bangladesh for initial setup
+   - Connection to Bangladesh banking system
+
+3. **No international access**: These are domestic Bangladesh payment systems, not international transfer services
+
+**SOLUTION**: Use international money transfer services that support Bangladesh mobile wallets as recipients.
+
+**⚠️ CRITICAL LIMITATION IDENTIFIED**: The payment methods listed below **CANNOT be used by a Polish citizen residing in Poland**. These services are geo-restricted to Bangladesh and require:
+- Bangladesh phone number (mandatory)
+- Bangladesh National ID (NID) for account verification
+- Physical presence in Bangladesh for account setup
+- Local Bangladesh bank account
+
+**Attempted installation of bKash from Poland results in: "Cannot operate in Poland" error.**
+
+**Originally Proposed Payment Methods** (Bangladesh-approved but **NOT accessible from Poland**):
 
 1. **bKash** (Mobile Financial Service)
-   - Manual transfer by developer
+   - ❌ **Cannot be used from Poland** - requires Bangladesh phone number and NID
+   - Geo-restricted app, won't install/operate outside Bangladesh
    - Winner provides bKash account number
 
 2. **Nagad** (Mobile Financial Service)
-   - Manual transfer by developer
+   - ❌ **Cannot be used from Poland** - requires Bangladesh phone number and NID
+   - Operated by Bangladesh Post Office, geo-restricted
    - Winner provides Nagad account number
 
 3. **Rocket** (Dutch-Bangla Bank Mobile Banking)
-   - Manual transfer by developer
+   - ❌ **Cannot be used from Poland** - requires Bangladesh phone number and bank account
+   - Geo-restricted to Bangladesh banking system
    - Winner provides Rocket account number
+
+**RECOMMENDED ALTERNATIVE PAYMENT METHODS** (Accessible from Poland):
+
+1. **Wise (formerly TransferWise)** - International Money Transfer
+   - ✅ **Works from Poland** - supports international transfers to Bangladesh
+   - ✅ Can send directly to winner's bKash, Nagad, or Rocket account
+   - ✅ Supports BDT currency with competitive exchange rates
+   - ✅ Transparent fees (typically 1-2% for Poland → Bangladesh)
+   - ✅ Transfer time: 1-2 business days
+   - Winner provides: Name, bKash/Nagad/Rocket account number, phone number
+   - Developer needs: Wise account (free), Polish bank account or card
+   - Estimated cost per ৳2,000 transfer: ~$0.20-$0.40 in fees
+
+2. **Western Union** - International Money Transfer
+   - ✅ **Works from Poland** - global service with Bangladesh support
+   - ✅ Can send cash for pickup or to mobile wallets (bKash, Nagad)
+   - ✅ Available online or at Western Union locations in Poland
+   - ✅ Transfer time: Minutes to 1 day
+   - Winner provides: Full name, phone number, location for pickup OR mobile wallet number
+   - Developer needs: Western Union account, payment method
+   - Estimated cost per ৳2,000 transfer: ~$2-$5 in fees
+
+3. **PayPal** (if winner has account)
+   - ✅ **Works from Poland** - international transfers supported
+   - ⚠️ Limited availability - not all Bangladesh users have PayPal accounts
+   - ✅ Instant transfers if both parties have accounts
+   - ✅ Currency conversion handled automatically
+   - Winner provides: PayPal email address
+   - Developer needs: PayPal account with funding source
+   - Estimated cost per ৳2,000 transfer: ~$0.36-$0.72 in fees (2% + currency conversion)
+
+4. **Remitly** - Money Transfer Service
+   - ✅ **Works from Poland** - specializes in remittances to developing countries
+   - ✅ Direct transfer to bKash, Nagad, or bank accounts in Bangladesh
+   - ✅ Competitive rates and low fees for Bangladesh transfers
+   - ✅ Transfer time: Express (minutes) or Economy (1-3 days)
+   - Winner provides: Mobile wallet number or bank account details
+   - Developer needs: Remitly account, Polish payment method
+   - Estimated cost per ৳2,000 transfer: ~$0.50-$1.50 in fees
 
 ### Payment Flow
 
@@ -177,13 +340,34 @@ Winner Determined (1st Place - Firestore: tournaments/{id}/results)
     ↓
 Payment Record Created (Firestore: payments/{id}, status: "pending")
     ↓
-Winner Notified via App (Push Notification)
+Winner Notified via App (In-app notification)
     ↓
-Winner Provides Payment Account Number (bKash/Nagad/Rocket)
+Winner Provides Payment Details:
+    - Full legal name
+    - bKash/Nagad/Rocket mobile wallet number
+    - Phone number
+    - Alternative: Bank account details or PayPal (if available)
     ↓
-Developer Processes Manual Payment Outside App
+Developer Uses International Transfer Service:
+    - Wise (recommended): Transfer to mobile wallet
+    - Western Union: Transfer to mobile wallet or cash pickup
+    - Remitly: Transfer to mobile wallet
+    - PayPal: Direct transfer (if winner has account)
     ↓
-Developer Updates Payment Status in Firestore (status: "completed")
+Developer Initiates Transfer Outside App:
+    - Log into Wise/Western Union/Remitly/PayPal
+    - Enter winner's mobile wallet number or details
+    - Send ৳2,000 BDT (service handles currency conversion)
+    - Save transaction ID/receipt
+    ↓
+Winner Receives Money in Their Mobile Wallet:
+    - Funds appear in winner's bKash/Nagad/Rocket account
+    - Time: Minutes to 2 business days depending on service
+    ↓
+Developer Updates Payment Status in Firestore:
+    - status: "completed"
+    - transactionId: (from transfer service)
+    - completedAt: timestamp
     ↓
 Winner Notified of Payment Completion
 ```
@@ -214,15 +398,25 @@ Winner Notified of Payment Completion
   amount: 2000,
   currency: "BDT",
   rank: 1,
-  paymentMethod: "bkash", // or "nagad", "rocket" (user-selected)
+  paymentMethod: "bkash", // or "nagad", "rocket", "paypal", "bank" (user-selected)
   recipientInfo: {
-    accountNumber: "+8801XXXXXXXXX", // User-provided account number
-    accountName: "User Name" // Optional
+    fullName: "User Full Legal Name", // Required for international transfers
+    accountNumber: "+8801XXXXXXXXX", // User-provided mobile wallet number
+    phoneNumber: "+8801XXXXXXXXX", // May be same as accountNumber for mobile wallets
+    paypalEmail: "user@email.com", // Optional, if PayPal selected
+    bankDetails: { // Optional, if bank transfer selected
+      accountNumber: "XXXXXXXX",
+      bankName: "Bank Name",
+      branchName: "Branch Name"
+    }
   },
-  status: "pending", // pending, completed, failed (manually updated by developer)
+  transferService: "wise", // "wise", "western_union", "remitly", "paypal" - service used by developer
+  status: "pending", // pending, processing, completed, failed (manually updated by developer)
   initiatedAt: Timestamp,
   completedAt: Timestamp,
-  transactionId: "TXN_123456",
+  transactionId: "TXN_123456", // Transaction ID from Wise/WU/Remitly/PayPal
+  transferFee: 0.35, // Actual fee charged by transfer service (in USD)
+  exchangeRate: 110.5, // Exchange rate used for the transfer
   notes: "March Championship - 1st Place"
 }
 
@@ -305,13 +499,25 @@ Eligibility Confirmed (Firestore update)
     ↓
 Tournament Registration Enabled
     ↓
-[If wins 1st place] → Payment Account Details Screen
+[If wins 1st place] → Payment Details Collection Screen
     ↓
-    - Select payment method (bKash/Nagad/Rocket)
-    - Enter account number
-    - Confirm account name
+    - Select payment method:
+      ☐ bKash mobile wallet (recommended)
+      ☐ Nagad mobile wallet
+      ☐ Rocket mobile wallet
+      ☐ PayPal (if available)
+      ☐ Bank transfer
+    - Enter full legal name (as per NID/passport)
+    - Enter mobile wallet number (for bKash/Nagad/Rocket)
+      OR PayPal email OR bank account details
+    - Confirm phone number
+    - Agree to receive funds via international transfer service
     ↓
 Submit for Manual Processing
+    ↓
+Developer processes via Wise/Western Union/Remitly/PayPal
+    ↓
+Winner receives funds in mobile wallet (1-2 days)
 ```
 
 ### Privacy & Security
@@ -1783,7 +1989,9 @@ cd mobile
 ### Phase 1: Planning & Setup (Week 1-2)
 - [ ] Finalize legal review (consult Bangladesh legal expert)
 - [ ] Register business entity in Bangladesh (if required)
-- [ ] Set up personal bKash, Nagad, and/or Rocket accounts for manual prize distribution
+- [ ] **Set up international money transfer service account** (Wise recommended, Western Union or Remitly as backup)
+- [ ] **Test small transfer to Bangladesh mobile wallet** (verify the process works)
+- [ ] ~~Set up personal bKash, Nagad, and/or Rocket accounts for manual prize distribution~~ ❌ NOT POSSIBLE from Poland
 - [ ] Define detailed prize structure
 - [ ] Create product flavor for Bangladesh variant
 - [ ] **Migration Planning**:
@@ -2005,10 +2213,15 @@ cd mobile
 - Firebase costs (increased usage): $20 - $50/month (minimal increase)
 - Prize pool funding:
   - 2 bi-monthly tournaments × ৳2,000 = ৳4,000/month (approximately $36/month)
-  - **Total prizes: approximately $36/month** (based on December 2025 exchange rates)
-- Manual payment processing time: 1-2 hours/month (developer time)
+  - International transfer fees: 2 transfers × $0.20-$0.40 (Wise) = $0.40-$0.80/month
+  - **Total prizes + fees: approximately $36.40-$36.80/month** (based on December 2025 exchange rates)
+- Manual payment processing time: 1-2 hours/month (developer time, not monetized)
 - Customer support: $50 - $100/month (minimal support needed)
-- **Total Monthly: approximately $106 - $186**
+- **Total Monthly: approximately $106.40 - $186.80** (~$107-$187 rounded)
+
+**Breakdown**:
+- Minimum: $20 (Firebase) + $36.40 (prizes) + $50 (support) = $106.40
+- Maximum: $50 (Firebase) + $36.80 (prizes) + $100 (support) = $186.80
 
 ### Cost Savings vs. Original Approach
 - **No payment gateway API fees**: Saved ~$500-1,000 setup + 2-3% transaction fees
@@ -2019,8 +2232,8 @@ cd mobile
 
 ### Annual Cost Projection (Year 1)
 - Initial setup: $9,285 - $15,725 (including migration and authentication setup costs)
-- Monthly operational: $106 - $186 × 12 = $1,272 - $2,232
-- **Total Year 1: approximately $10,557 - $17,957**
+- Monthly operational: $107 - $187 × 12 = $1,284 - $2,244
+- **Total Year 1: approximately $10,569 - $17,969**
 
 ### Migration ROI Analysis
 **Investment**: ~$1,535 - $3,325 in migration-specific costs
@@ -2129,7 +2342,7 @@ BANGLADESH SKILL-BASED TOURNAMENTS
 Eligibility: Cash prize tournaments are available only to users who:
 - Are 18 years of age or older (self-declared)
 - Are residents of Bangladesh (verified via Google Play Store region)
-- Have confirmed they possess a valid bKash, Nagad, or Rocket account
+- Have confirmed they possess a valid bKash, Nagad, Rocket account, PayPal account, or Bangladesh bank account
 - Have accepted the tournament terms and conditions
 
 Entry: Participation in cash prize tournaments is completely free. No payment, 
@@ -2141,20 +2354,122 @@ element of chance in determining match outcomes.
 
 Prizes: Cash prizes are awarded to 1st place winners only. Prize amount is ৳2,000 BDT 
 per bi-monthly tournament. All prizes are funded by the game developer. Winners will 
-be contacted to provide payment account details and will receive payment within 7 
-business days of tournament completion via bKash, Nagad, or Rocket (winner's choice).
+be contacted to provide payment details (full name and mobile wallet number or bank 
+account) and will receive payment within 7 business days of tournament completion 
+via international money transfer service (Wise, Western Union, or Remitly) to their 
+bKash, Nagad, Rocket, PayPal, or bank account (winner's choice).
 
 Verification: The developer reserves the right to verify winner identity and 
 eligibility before distributing prizes. False declarations regarding age or payment 
 account ownership may result in disqualification, prize forfeiture, and account 
 suspension.
 
-Payment Processing: Prizes are processed manually by the developer outside the app. 
-Winners must provide accurate payment account information. The developer is not 
-responsible for delays caused by incorrect account details.
+Payment Processing: Prizes are processed manually by the developer using international 
+money transfer services. Winners must provide accurate payment details including full 
+legal name and mobile wallet number or bank account information. The developer is not 
+responsible for delays caused by incorrect details. Transfer fees are covered by the 
+developer.
 ```
 
-### Appendix C: Technical Architecture Diagram
+### Appendix C: Step-by-Step Payment Processing Guide (for Developer)
+
+**When a Winner is Determined:**
+
+**Step 1: Receive Winner Information from App**
+- Check Firestore `tournaments/{tournamentId}/results` for 1st place winner
+- Check `payments/{paymentId}` collection for payment record
+- Winner's submitted information should include:
+  - Full legal name
+  - Mobile wallet number (bKash/Nagad/Rocket) OR PayPal email OR bank details
+  - Phone number
+  - Preferred payment method
+
+**Step 2: Log into Wise Account** (or Western Union/Remitly)
+- Go to https://wise.com and log in
+- Click "Send money" button
+
+**Step 3: Configure Transfer**
+- **You send**: Enter amount in PLN or EUR (your funding currency)
+- **Recipient gets**: ৳2,000 BDT
+- Wise will show exchange rate and fees
+- Verify total cost (should be ~$18-$19 USD equivalent)
+
+**Step 4: Select Delivery Method**
+- Choose: "Mobile money" or "Mobile wallet"
+- Select specific service: "bKash" or "Nagad" (Rocket may be under "Bank transfer" depending on Wise options)
+
+**Step 5: Enter Recipient Details**
+- **Full name**: Copy exactly as winner provided (must match their NID/ID)
+- **Mobile wallet number**: Enter with country code +880
+  - Example: +8801712345678
+- **Phone number**: Same as mobile wallet for mobile money
+
+**Step 6: Review and Confirm**
+- Verify all details are correct
+- Check exchange rate and fees
+- Confirm transfer
+- **Save transaction ID** (e.g., "WISE-123456789")
+
+**Step 7: Update Firestore**
+```javascript
+// Update payment record in Firestore
+{
+  status: "processing", // Change from "pending" to "processing"
+  transferService: "wise",
+  transactionId: "WISE-123456789",
+  transferFee: 0.35, // Actual fee from Wise
+  exchangeRate: 110.5, // Rate used
+  processedAt: new Date()
+}
+```
+
+**Step 8: Monitor Transfer Status**
+- Check Wise dashboard for transfer status
+- Typical timeline: 1-2 business days
+- You'll receive email when transfer completes
+
+**Step 9: Confirm Completion**
+- Once Wise confirms delivery, update Firestore:
+```javascript
+{
+  status: "completed",
+  completedAt: new Date()
+}
+```
+
+**Step 10: Winner Notification**
+- App automatically notifies winner when status changes to "completed"
+- Winner checks their bKash/Nagad/Rocket app and sees ৳2,000
+
+**Troubleshooting Common Issues:**
+
+**Problem**: "Recipient name doesn't match account"
+- **Solution**: Contact winner to verify exact name on their mobile wallet account
+- Names must match exactly as registered with bKash/Nagad/Rocket
+
+**Problem**: "Mobile wallet number invalid"
+- **Solution**: Verify format +8801XXXXXXXXX (11 digits after +880)
+- Bangladesh mobile numbers: +880 1X XX XXX XXX
+
+**Problem**: "Transfer delayed"
+- **Solution**: Check Wise status. May need additional verification for first transfer
+- Contact Wise support if delayed >3 days
+- Keep winner informed via app
+
+**Problem**: "Winner wants different payment method"
+- **Solution**: Wise supports multiple delivery options
+- Can switch between mobile wallets if first option fails
+- Can fall back to bank transfer or Western Union cash pickup
+
+**Record Keeping:**
+- Save all transaction IDs in Firestore
+- Keep Wise/WU transaction receipts
+- Create monthly spreadsheet of all prize payments for tax purposes:
+  ```
+  Date | Tournament ID | Winner Name | Amount BDT | Amount USD | Service | Transaction ID | Fee
+  ```
+
+### Appendix D: Technical Architecture Diagram
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -2184,14 +2499,40 @@ responsible for delays caused by incorrect account details.
 │  └──────────────────┘  └──────────────────┘               │
 └─────────────────────────────────────────────────────────────┘
                              │
+                             │ Winner info:
+                             │ - Name
+                             │ - Mobile wallet #
+                ┌────────────▼─────────────┐
+                │  Developer (Poland)      │
+                │  Manual Transfer via:    │
+                │  - Wise (recommended)    │
+                │  - Western Union         │
+                │  - Remitly              │
+                └────────────┬─────────────┘
                              │
-                   ┌─────────▼────────┐
-                   │  Developer       │
-                   │  Manual Payment  │
-                   │  (bKash/Nagad/   │
-                   │   Rocket)        │
-                   └──────────────────┘
+                             │ International
+                             │ Money Transfer
+                ┌────────────▼─────────────┐
+                │  Bangladesh Mobile       │
+                │  Wallet Service:         │
+                │  - bKash                 │
+                │  - Nagad                 │
+                │  - Rocket                │
+                └────────────┬─────────────┘
+                             │
+                             │ ৳2,000 BDT
+                ┌────────────▼─────────────┐
+                │  Winner's Mobile Wallet  │
+                │  Funds Received          │
+                └──────────────────────────┘
 ```
+
+**Key Points**:
+- Developer in Poland **cannot directly access** bKash/Nagad/Rocket
+- Developer uses **Wise/Western Union/Remitly** to send money internationally
+- These services deliver to winner's Bangladesh mobile wallet
+- Winner receives funds in their local bKash/Nagad/Rocket account
+- Process takes 1-2 business days typically
 
 ---
 
@@ -2199,21 +2540,24 @@ responsible for delays caused by incorrect account details.
 
 This approach document provides a simplified, cost-effective framework for launching a Bangladesh-specific version of Gridline Soccer with promotional cash prizes. The streamlined implementation minimizes development complexity and operational overhead while maintaining compliance with Bangladesh skill-based gaming regulations.
 
+**⚠️ CRITICAL UPDATE**: The original document assumed the developer could directly use bKash, Nagad, or Rocket payment services. **This is not possible from Poland** due to geo-restrictions. The solution is to use **international money transfer services** (Wise, Western Union, or Remitly) that can send funds to Bangladesh mobile wallets.
+
 **Key Success Factors**:
 1. **Legal Compliance**: Strict adherence to Bangladesh skill-based gaming regulations
 2. **Simplified Eligibility**: Google Play verification + user declaration (no document upload)
-3. **Manual Payment Processing**: Developer-controlled prize distribution outside the app
-4. **Low Operational Cost**: Only ৳4,000/month (~$36) for bi-monthly tournaments
+3. **International Payment Processing**: Developer uses Wise/Western Union/Remitly to send prizes to winners' Bangladesh mobile wallets
+4. **Low Operational Cost**: ৳4,000/month (~$36) + transfer fees (~$1-4/month) for bi-monthly tournaments
 5. **User Experience**: Minimal friction for players, no complex verification steps
 6. **Seamless Migration**: Shared Firebase backend ensures existing users preserve all data
 
 **Simplified Approach Benefits**:
 - **Faster time to market**: 10-15 weeks vs. 16+ weeks
-- **Lower development cost**: ~$9,035-$15,325 vs. ~$16,500-$23,000 (including migration)
-- **Minimal ongoing costs**: ~$106-$186/month vs. ~$900-$1,400/month
+- **Lower development cost**: ~$9,285-$15,725 vs. ~$16,500-$23,000 (including migration)
+- **Minimal ongoing costs**: ~$108-$190/month (including transfer fees)
 - **Reduced complexity**: No payment gateway APIs, no document storage, simpler user flow
 - **Lower user friction**: No document upload, immediate eligibility confirmation
 - **Data continuity**: Users keep all progress, friends, and stats when migrating
+- **International accessibility**: Polish developer can send prizes without Bangladesh residency
 
 **Migration Strategy Highlights**:
 - **Current user base**: 746 active Bangladesh users on `piotr_gorczynski.soccer2`
@@ -2227,12 +2571,19 @@ This approach document provides a simplified, cost-effective framework for launc
 **Next Steps**:
 1. Review this approach with legal counsel familiar with Bangladesh regulations
 2. Confirm that self-declaration age verification is acceptable
-3. Set up dual-app Firebase configuration (register both package IDs)
-4. Begin Phase 1 implementation (planning & setup)
-5. Develop migration promotion materials and messaging
-6. Establish bi-monthly tournament schedule
-7. Create manual payment processing procedures
-8. Launch migration campaign to existing 746 Bangladesh users
+3. **Set up Wise account and test small transfer to Bangladesh mobile wallet** (CRITICAL for Polish developer)
+4. Set up dual-app Firebase configuration (register both package IDs)
+5. Begin Phase 1 implementation (planning & setup)
+6. Develop migration promotion materials and messaging
+7. Establish bi-monthly tournament schedule
+8. Create manual payment processing procedures using Wise/Western Union/Remitly
+9. Launch migration campaign to existing 746 Bangladesh users
+
+**Important for Polish Developer**:
+- **DO NOT attempt to create bKash/Nagad/Rocket accounts** - these services are geo-locked to Bangladesh
+- **DO create a Wise account** (https://wise.com) - this works from Poland and can send to Bangladesh mobile wallets
+- **DO test the transfer process** before launching tournaments - send ৳500 to a test Bangladesh mobile wallet
+- **DO budget for transfer fees** - ~$0.50-$2.00 per prize payment (covered by developer)
 
 ---
 
