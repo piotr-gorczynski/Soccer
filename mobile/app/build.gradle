@@ -12,7 +12,7 @@ import java.security.cert.Certificate
 // Determine the environment based on -Penv or the build variant being run
 def detectEnvFromTasks = {
     for (String taskName : gradle.startParameter.taskNames) {
-        def m = taskName =~ /_(dev|test|prod)(Debug|Release)/
+        def m = taskName =~ /_(dev|test|prod)(Global|Bangladesh)(Debug|Release)/
         if (m.find()) {
             return m.group(1)
         }
@@ -20,9 +20,22 @@ def detectEnvFromTasks = {
     return null
 }
 
+// Determine the market based on the build variant being run
+def detectMarketFromTasks = {
+    for (String taskName : gradle.startParameter.taskNames) {
+        def m = taskName =~ /_(dev|test|prod)(Global|Bangladesh)(Debug|Release)/
+        if (m.find()) {
+            return m.group(2).toLowerCase()
+        }
+    }
+    return "global"  // Default to global if not detected
+}
+
 ext.buildEnv = project.findProperty("env") ?: detectEnvFromTasks() ?: ""
+ext.buildMarket = project.findProperty("market") ?: detectMarketFromTasks() ?: "global"
 def buildEnv = ext.buildEnv
-println "\n🛠️ Gradle build invoked with env='${buildEnv}'\n"
+def buildMarket = ext.buildMarket
+println "\n🛠️ Gradle build invoked with env='${buildEnv}', market='${buildMarket}'\n"
 
 // Load signing properties if available
 def signingProps = new Properties()
@@ -90,7 +103,7 @@ android {
         }
     }
 
-    flavorDimensions "environment"
+    flavorDimensions "environment", "market"
     productFlavors {
         _dev {
             dimension "environment"
@@ -103,6 +116,17 @@ android {
         _prod {
             dimension "environment"
             buildConfigField "String", "AD_UNIT_ID", '"ca-app-pub-9113152787055223/9306362927"'
+        }
+        
+        // Market flavors for Bangladesh variant
+        global {
+            dimension "market"
+            // Base applicationId from defaultConfig: piotr_gorczynski.soccer2
+        }
+        bangladesh {
+            dimension "market"
+            applicationIdSuffix ".bd"
+            versionNameSuffix "-BD"
         }
     }
     packagingOptions {
@@ -192,20 +216,34 @@ dependencies {
     // Image loading for Facebook profile photos
     implementation 'com.github.bumptech.glide:glide:5.0.5'
 }
-// Register custom copy task
+// Register custom copy task for google-services.json
+// Uses naming convention: secrets/google-services.{env}.json for global market
+//                         secrets/google-services.{env}.bd.json for bangladesh market
+// Examples:
+//   - secrets/google-services.dev.json (global dev)
+//   - secrets/google-services.dev.bd.json (bangladesh dev)
+//   - secrets/google-services.prod.json (global prod)
+//   - secrets/google-services.prod.bd.json (bangladesh prod)
 tasks.register("copyGoogleServicesJson") {
     doLast {
         def env = project.findProperty("env") ?: buildEnv
+        def market = project.findProperty("market") ?: buildMarket
+        
         if (env == null || env.toString().trim().isEmpty()) {
             throw new GradleException("❌ Missing environment. Use variant or -Penv=dev|test|prod")
         }
-        def source = file("../../secrets/google-services.${env}.json")
+        
+        // Determine the file name based on market
+        def fileName = market == "bangladesh" ? "google-services.${env}.bd.json" : "google-services.${env}.json"
+        def source = file("../../secrets/${fileName}")
         def destination = file("google-services.json")
+        
         if (source.exists()) {
             Files.copy(source.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING)
-            println("✅ google-services.json for ${env} copied to app/")
+            println("✅ google-services.json for ${env} (${market}) copied to app/")
+            println("   Source: ${source.name}")
         } else {
-            throw new GradleException("❌ google-services.json for env '${env}' not found in secrets/")
+            throw new GradleException("❌ ${fileName} not found in secrets/\n   Expected: ${source.absolutePath}")
         }
     }
 }
