@@ -50,12 +50,19 @@ The Bangladesh variant uses `applicationIdSuffix ".bd"` which creates a separate
 
 ## Firebase Configuration
 
-The app uses flavor-specific `google-services.json` files:
+The app uses environment and market-specific `google-services.json` files stored in the `secrets/` directory:
 
-- **Global**: `mobile/app/src/global/google-services.json`
-- **Bangladesh**: `mobile/app/src/bangladesh/google-services.json`
+- **Global variants**: `secrets/google-services.{env}.json`
+  - `secrets/google-services.dev.json`
+  - `secrets/google-services.test.json`
+  - `secrets/google-services.prod.json`
 
-The Google Services Gradle plugin automatically selects the correct file based on the build variant.
+- **Bangladesh variants**: `secrets/google-services.{env}.bd.json`
+  - `secrets/google-services.dev.bd.json`
+  - `secrets/google-services.test.bd.json`
+  - `secrets/google-services.prod.bd.json`
+
+The build system automatically copies the appropriate file based on the build variant being assembled.
 
 ### Setting Up Firebase
 
@@ -63,7 +70,7 @@ The Google Services Gradle plugin automatically selects the correct file based o
    - Go to Firebase Console
    - Ensure the app is registered with package name: `piotr_gorczynski.soccer2`
    - Download `google-services.json`
-   - Place it in `mobile/app/src/global/google-services.json`
+   - Place it in `secrets/google-services.{env}.json` (e.g., `secrets/google-services.prod.json`)
 
 2. **For Bangladesh Variant** (NEW):
    - Go to Firebase Console → Project Settings → Your apps → Add app → Android
@@ -71,17 +78,15 @@ The Google Services Gradle plugin automatically selects the correct file based o
    - App nickname: Gridline Soccer Bangladesh
    - SHA-1 certificate fingerprint: [Your release keystore SHA-1]
    - Download `google-services.json`
-   - Place it in `mobile/app/src/bangladesh/google-services.json`
+   - Place it in `secrets/google-services.{env}.bd.json` (e.g., `secrets/google-services.prod.bd.json`)
 
 ## Source Code Organization
 
 ```
 mobile/app/src/
 ├── main/                    # Shared code for all variants
-├── global/                  # Global variant specific code and resources
-│   └── google-services.json
-└── bangladesh/              # Bangladesh variant specific code and resources
-    └── google-services.json
+├── global/                  # Global variant specific code and resources (optional)
+└── bangladesh/              # Bangladesh variant specific code and resources (optional)
 ```
 
 Flavor-specific source sets can include:
