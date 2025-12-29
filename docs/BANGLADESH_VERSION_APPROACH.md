@@ -169,9 +169,22 @@ android {
 - Bangladesh version: Use `_prodBangladeshRelease` → `piotr_gorczynski.soccer2.bd`
 
 **google-services.json placement** (with two dimensions):
-- Global: `mobile/app/src/global/google-services.json`
-- Bangladesh: `mobile/app/src/bangladesh/google-services.json`
-- The build system will select the appropriate file based on the market flavor
+- Configuration files are stored in the `secrets/` directory with environment and market suffixes
+- Global: `secrets/google-services.{env}.json` (e.g., `google-services.prod.json`)
+- Bangladesh: `secrets/google-services.{env}.bd.json` (e.g., `google-services.prod.bd.json`)
+- The build system automatically selects the appropriate file based on the environment and market flavor
+
+### Firebase App Creation
+
+**Automated Setup**: Firebase Android apps for both package names are automatically created during deployment using the Cloud Build script `gcp/cloud-build/deploy_firebase.yaml`. This script:
+- Checks if Firebase apps already exist for the project
+- Creates apps for both package names if they don't exist:
+  - `piotr_gorczynski.soccer2` (global variant)
+  - `piotr_gorczynski.soccer2.bd` (Bangladesh variant)
+- Prevents duplicate app creation by checking existing apps first
+- Logs all operations for debugging and audit purposes
+
+**Manual Alternative**: You can also create Firebase apps manually in the Firebase Console if needed, but the automated approach is recommended for consistency and to avoid manual errors.
 
 ### Key Benefits
 
@@ -2404,19 +2417,33 @@ implementation 'com.facebook.android:facebook-android-sdk:18.1.3'
 
 #### Phase 1: Firebase Configuration
 
-- [ ] **Register Bangladesh App in Firebase Console**
-  - Package name: `piotr_gorczynski.soccer2.bd`
-  - Download `google-services.json` for Bangladesh variant
-  - Note the SHA-1 fingerprint from your release keystore
+- [x] **Register Bangladesh App in Firebase Console** (AUTOMATED)
+  - **Note**: Firebase Android apps are automatically created by the `gcp/cloud-build/deploy_firebase.yaml` Cloud Build script
+  - The script creates apps for both package names:
+    - `piotr_gorczynski.soccer2` (global variant)
+    - `piotr_gorczynski.soccer2.bd` (Bangladesh variant)
+  - The script checks if apps already exist before creating them to avoid duplicates
+  - To run the script: Execute the Cloud Build deployment which includes this step
+
+- [ ] **Download Configuration Files**
+  - After Firebase apps are created (either manually or via script), download `google-services.json` files from Firebase Console
+  - Download separate files for each variant (global and Bangladesh)
 
 - [ ] **Place Configuration Files**
   ```
-  mobile/app/src/
-  ├── global/
-  │   └── google-services.json (existing global config)
-  └── bangladesh/
-      └── google-services.json (new Bangladesh config)
+  secrets/
+  ├── google-services.dev.json (global dev config)
+  ├── google-services.dev.bd.json (Bangladesh dev config)
+  ├── google-services.test.json (global test config)
+  ├── google-services.test.bd.json (Bangladesh test config)
+  ├── google-services.prod.json (global prod config)
+  └── google-services.prod.bd.json (Bangladesh prod config)
   ```
+  **Note**: The build system automatically selects the appropriate file based on environment and market flavor.
+
+- [ ] **Add SHA-1 Fingerprints in Firebase Console**
+  - Note the SHA-1 fingerprint from your release keystore
+  - Add to Firebase Console for both apps to enable Google Sign-In
 
 - [ ] **Verify Firebase Auth Methods Enabled**
   - Email/Password: ✓
