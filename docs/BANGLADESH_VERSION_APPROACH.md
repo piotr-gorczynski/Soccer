@@ -5,7 +5,7 @@
 **Status:** Planning - Age Rating Strategy Clarified
 
 **Revision History**:
-- v2.6 (2025-12-29): Added age rating strategy clarification - Global (13+) and Bangladesh (18+) versions will coexist. Created separate BANGLADESH_AGE_RATING_STRATEGY.md document with comprehensive analysis.
+- v2.6 (2025-12-29): Added comprehensive age rating strategy section - Global (13+) and Bangladesh (18+) versions will coexist. Merged all age rating analysis into main document.
 - v2.5 (2025-12-28): **CRITICAL UPDATE** - Identified that bKash/Nagad/Rocket cannot be accessed from Poland. Added international money transfer solutions (Wise, Western Union, Remitly) as the correct approach for prize distribution. Added detailed setup guides and step-by-step payment processing instructions.
 - v2.4 (2025-12-28): Added Authentication Integration with Google and Facebook section
 - v2.3 (2025-12-28): Removed FCM/push notification strategy (not viable - users lack registered accounts/tokens)
@@ -30,7 +30,7 @@ This document outlines a simplified, cost-effective approach for creating a Bang
 
 This streamlined approach significantly reduces development complexity, time to market, user friction, and operational costs while maintaining full compliance with Bangladesh skill-based gaming regulations and being **accessible to a Polish developer without Bangladesh residency**.
 
-**⚠️ AGE RATING STRATEGY**: The global app is rated 13+ (suitable for teens), while the Bangladesh version with cash prizes must be rated 18+ (adults only). Both versions will coexist in the Bangladesh Google Play Store. Users under 18 can continue using the global version, while users 18+ can choose to install the Bangladesh version for cash prize tournaments. For detailed analysis, see [BANGLADESH_AGE_RATING_STRATEGY.md](BANGLADESH_AGE_RATING_STRATEGY.md).
+**⚠️ AGE RATING STRATEGY**: The global app is rated 13+ (suitable for teens), while the Bangladesh version with cash prizes must be rated 18+ (adults only). Both versions will coexist in the Bangladesh Google Play Store. Users under 18 can continue using the global version, while users 18+ can choose to install the Bangladesh version for cash prize tournaments. See the comprehensive "Age Rating Strategy" section below for full details.
 
 ## Table of Contents
 
@@ -573,98 +573,347 @@ Winner receives funds in mobile wallet (1-2 days)
 
 ## Age Rating Strategy (13+ vs 18+)
 
-### Overview
+### Executive Summary
 
-**Question**: How to handle the fact that the global app is rated 13+ but the Bangladesh version must be 18+ due to cash prizes?
+**Question**: How to handle age ratings when the global app is 13+ but the Bangladesh version with cash prizes must be 18+?
 
-**Answer**: Both versions will **coexist** in the Bangladesh Google Play Store with different age ratings:
+**Answer**: YES, you will have two separate Google Play Store listings with different age ratings coexisting in Bangladesh:
+- **Global version** (`piotr_gorczynski.soccer2`): 13+ rating - regular gameplay without cash prizes
+- **Bangladesh version** (`piotr_gorczynski.soccer2.bd`): 18+ rating - includes cash prize tournaments
 
-| Version | Package Name | Age Rating | Available To |
-|---------|--------------|------------|--------------|
-| **Global** | `piotr_gorczynski.soccer2` | **13+ (Teen)** | All users worldwide, including Bangladesh |
-| **Bangladesh** | `piotr_gorczynski.soccer2.bd` | **18+ (Adults Only)** | Bangladesh users aged 18+ only |
+**This is the correct and compliant approach.** Both apps can coexist in the Bangladesh Google Play Store, allowing users to choose based on their age and interest in cash prize tournaments.
 
-### Why Two Different Age Ratings?
+---
 
-**Global Version (13+)**:
-- No cash prizes or real money elements
-- Pure skill-based gameplay
-- Safe for teenagers
-- Complies with global content standards
+### Google Play Store Age Rating System
 
-**Bangladesh Version (18+)**:
-- Contains real money prizes (cash tournaments)
-- Legal requirement: Bangladesh gaming law requires 18+ for cash prizes
-- Google Play requirement: Apps with real money prizes must be rated 18+
-- Complies with Bangladesh-specific regulations
+#### How Age Ratings Work
 
-### How Google Play Enforces Age Restrictions
+Google Play uses two systems for age classification:
 
-**Automatic Enforcement**:
-1. **User Age Detection**: Google Play knows user's age from their Google account
-2. **Search Filtering**: Users under 18 won't see 18+ apps in search results (or see them as restricted)
-3. **Installation Blocking**: If user under 18 tries to install via direct link, Google Play shows:
+##### 1. Content Rating (IARC - International Age Rating Coalition)
+- **Questionnaire-based**: Developer fills out content questionnaire
+- **Automatic classification**: IARC assigns ratings based on answers
+- **Multiple regions**: Generates ratings for different regions (ESRB, PEGI, etc.)
+- **Content-driven**: Based on violence, language, sexual content, etc.
+
+##### 2. Target Age (Google Play Family Policy)
+- **Developer-selected**: Choose target age groups
+- **Determines visibility**: Affects which users see the app
+- **Separate from content rating**: Independent classification
+
+#### Age Rating Categories
+
+Common IARC ratings:
+- **Everyone**: Suitable for all ages
+- **Everyone 10+**: Suitable for ages 10 and up
+- **Teen**: Suitable for ages 13 and up
+- **Mature 17+**: Suitable for ages 17 and up
+- **Adults Only 18+**: Suitable for ages 18 and up
+
+#### Real Money Gaming Classification
+
+Google Play has specific policies for real money gaming:
+- **Gambling apps**: Must be rated 18+ (Adults Only)
+- **Cash prize apps**: May require 18+ depending on jurisdiction
+- **Skill-based competitions**: Typically rated based on other content
+- **Promotional prizes**: Developer-funded prizes may require 18+ in some regions
+
+**Important**: Bangladesh cash prize tournaments are **skill-based with free entry**, NOT gambling. However, they still involve real money prizes which typically requires 18+ rating.
+
+---
+
+### Recommended Approach
+
+#### Strategy: Two Separate Apps with Different Age Ratings
+
+**Recommended Configuration**:
+
+| App Variant | Package Name | Age Rating | Target Audience | Available In |
+|-------------|--------------|------------|-----------------|--------------|
+| **Global** | `piotr_gorczynski.soccer2` | **13+ (Teen)** | General players, no cash prizes | Worldwide including Bangladesh |
+| **Bangladesh** | `piotr_gorczynski.soccer2.bd` | **18+ (Adults Only)** | Bangladesh adults, cash prizes | Bangladesh only |
+
+#### Why This Works
+
+1. **Different package names**: Completely separate app listings on Google Play Store
+2. **Different content**: Bangladesh version has age-restricted content (cash prizes)
+3. **Google Play allows coexistence**: Multiple apps from same developer can target same market
+4. **User choice**: Users can choose appropriate version based on age and preferences
+5. **Compliance**: Meets both Google Play policies and Bangladesh legal requirements
+
+---
+
+### Age Rating Assignment
+
+#### Global Version (`piotr_gorczynski.soccer2`)
+
+**Current Rating**: 13+ (Teen)
+
+**IARC Questionnaire Answers**:
+- Violence: None (paper soccer, abstract gameplay)
+- Sexual content: None
+- Language: None (clean game)
+- Controlled substances: None
+- Gambling/betting: **No** (no cash prizes, no betting)
+- User interaction: Yes (online multiplayer)
+- Shares location: No
+- Purchases digital goods: No
+- Unrestricted internet: No
+
+**Result**: Teen (13+) rating is appropriate
+
+**No changes needed** for global version.
+
+---
+
+#### Bangladesh Version (`piotr_gorczynski.soccer2.bd`)
+
+**Required Rating**: 18+ (Adults Only)
+
+**IARC Questionnaire Answers**:
+- Violence: None
+- Sexual content: None
+- Language: None
+- Controlled substances: None
+- **Gambling/betting**: Answer carefully:
+  - "Does your app enable users to purchase or earn credits that can be used to gamble?" → **No** (free entry)
+  - "Does your app involve real-world prizes or tournaments?" → **Yes** (cash prizes)
+  - "Are users 18 years or older required?" → **Yes**
+- User interaction: Yes (online multiplayer)
+- Shares location: No
+- **Purchases digital goods**: No (tournaments are free)
+- Unrestricted internet: No
+
+**Additional Questions for Real Money Content**:
+- "Does your app offer promotional contests or sweepstakes?" → **Yes**
+- "Is entry free?" → **Yes**
+- "Are prizes real money/goods?" → **Yes** (cash prizes)
+- "Is it skill-based?" → **Yes**
+- "Minimum age requirement?" → **18 years**
+
+**Result**: Based on real money prizes and age requirement, IARC will likely assign **Mature 17+** or **Adults Only 18+** rating.
+
+**If IARC assigns 17+**: Manually select **18+** in Google Play Console to ensure compliance with Bangladesh legal requirement.
+
+---
+
+### Coexistence Strategy
+
+#### How Both Apps Work Together in Bangladesh
+
+##### Scenario: Bangladesh User on Google Play Store
+
+**User Age: 13-17 years old** (verified via Google account)
+```
+Google Play Store (Bangladesh region)
+├── Search: "Gridline Soccer" or "Soccer"
+│   ├── Result 1: Gridline Soccer (13+) ✅ VISIBLE
+│   │   - Can install and play
+│   │   - Regular tournaments only
+│   │   - No cash prizes
+│   │
+│   └── Result 2: Gridline Soccer Bangladesh (18+) ❌ RESTRICTED
+│       - Not visible in search results OR
+│       - Visible but with age restriction message
+│       - Cannot install (Google Play blocks installation)
+```
+
+**User Age: 18+ years old** (verified via Google account)
+```
+Google Play Store (Bangladesh region)
+├── Search: "Gridline Soccer" or "Soccer"
+│   ├── Result 1: Gridline Soccer (13+) ✅ VISIBLE
+│   │   - Can install and play
+│   │   - Regular tournaments only
+│   │
+│   └── Result 2: Gridline Soccer Bangladesh (18+) ✅ VISIBLE
+│       - Can install and play
+│       - Cash prize tournaments available
+│       - Requires eligibility confirmation in-app
+```
+
+#### Google Play Store Behavior
+
+**Age Restriction Enforcement**:
+1. **Google account age**: Google Play knows user's age from their account
+2. **Automatic filtering**: 18+ apps don't appear in search for users under 18 (in most cases)
+3. **Installation blocking**: If user tries to install via direct link, Google Play shows:
    ```
    "This app is rated 18+ and is not appropriate for your age group."
    [Cannot Install]
    ```
-4. **No Developer Action Needed**: Google Play handles all age enforcement automatically
+4. **Family Link users**: Parents can control access to age-restricted apps
 
-### User Experience Scenarios
-
-#### Scenario 1: User aged 13-17 in Bangladesh
-
-**What they see**:
-- ✅ Can install **Gridline Soccer (13+)** - global version
-- ❌ Cannot install **Gridline Soccer Bangladesh (18+)** - blocked by Google Play
-- Can see promotion banner in global app about Bangladesh version
-- Clicking install redirects to Play Store, but Google blocks installation with age restriction message
-
-**Result**: User continues using global version until they turn 18
+**Visibility**:
+- Both apps appear in "More by this developer" section (with age restrictions applied)
+- Both apps can appear in search results (with age restrictions applied)
+- Both apps have separate listings, descriptions, screenshots
+- Both apps can have different keywords and metadata
 
 ---
 
-#### Scenario 2: User aged 18+ in Bangladesh
+### User Experience Implications
 
-**What they see**:
-- ✅ Can install **Gridline Soccer (13+)** - global version
-- ✅ Can install **Gridline Soccer Bangladesh (18+)** - cash prize version
-- Can see both apps in Google Play Store search
-- Can choose which version(s) to install based on preference
+#### For Users Under 18
 
-**Options**:
-- Install global version only (regular play, no prizes)
-- Install Bangladesh version only (cash prize tournaments)
-- Install both versions (have both for different purposes)
+**Experience**:
+1. User searches for "Gridline Soccer" on Google Play
+2. Sees **Gridline Soccer (13+)** in results
+3. **Does NOT see** or **cannot install** Gridline Soccer Bangladesh (18+)
+4. Installs global version, plays regular tournaments
+5. No cash prizes, but full gameplay experience
+
+**What they cannot access**:
+- Cash prize tournaments
+- Bangladesh-specific promotional events with prizes
+
+**What they CAN access**:
+- All regular gameplay features
+- Online multiplayer
+- Standard tournaments without prizes
+- Friends and social features
+
+---
+
+#### For Users 18+
+
+**Experience**:
+1. User searches for "Gridline Soccer" on Google Play
+2. Sees **both versions** in results:
+   - Gridline Soccer (13+)
+   - Gridline Soccer Bangladesh (18+) 🇧🇩
+3. Can choose to install:
+   - **Global version**: For regular play, no cash prizes
+   - **Bangladesh version**: For cash prize tournaments
+   - **Both**: Can have both installed simultaneously
+
+**Choice guidance**:
+- If interested in cash prizes → Install Bangladesh version
+- If under 18 or not interested in prizes → Install global version
+- Both apps share same user account (Firebase) so progress syncs
+
+---
+
+#### For Existing Users (13-17) Who Installed Global Version
+
+**Scenario**: Teen user (age 15) has global version installed, sees promotion for Bangladesh version
+
+**What happens**:
+1. User sees in-app banner: "Install Bangladesh version for cash prizes!"
+2. User clicks banner → Redirected to Google Play
+3. **Google Play blocks installation**:
+   ```
+   "Gridline Soccer Bangladesh is rated 18+ and is not appropriate for your age."
+   [Cannot Install]
+   ```
+4. User continues using global version with regular tournaments
+
+**Important**: This is **automatic** and handled by Google Play. You don't need to implement age checks in the promotion logic.
+
+---
+
+### Google Play Store Configuration
+
+#### Step-by-Step: Setting Age Ratings
+
+##### For Global Version (Already Done)
+1. Google Play Console → Gridline Soccer (`piotr_gorczynski.soccer2`)
+2. **Content Rating** → Complete IARC questionnaire
+3. Answer "No" to gambling/betting questions
+4. Receive **Teen (13+)** rating
+5. Save and publish
+
+##### For Bangladesh Version (New Setup)
+1. Google Play Console → Create new app → "Gridline Soccer Bangladesh"
+2. Package name: `piotr_gorczynski.soccer2.bd`
+   - **Note**: This will be generated by the Bangladesh product flavor with `applicationIdSuffix ".bd"` in build.gradle
+   - See BANGLADESH_VERSION_APPROACH.md Technical Implementation section for build configuration details
+3. **Content Rating** → Complete IARC questionnaire
+4. **Critical answers**:
+   - "Does your app offer contests/sweepstakes?" → **Yes**
+   - "Is entry free?" → **Yes**
+   - "Real money prizes?" → **Yes**
+   - "Skill-based?" → **Yes**
+   - "Minimum age requirement?" → **18+**
+5. IARC assigns rating (likely **Mature 17+** or **Adults Only 18+**)
+6. If IARC assigns **17+**, manually override:
+   - Go to **Store Presence** → **Store Settings**
+   - Under "Target audience and content" → Select **18+ only**
+7. Save and publish
+
+#### Additional Settings for Bangladesh Version
+
+**Store Listing**:
+- **Title**: "Gridline Soccer Bangladesh" or "Gridline Soccer - Cash Prizes"
+- **Short description**: Mention "18+ only" and cash prizes
+- **Full description**: Clear age restriction disclosure
+- **Screenshots**: Add "18+" badge or indicator
+- **App icon**: Consider adding "BD" or "18+" badge
+
+**Distribution**:
+- **Countries**: Select **Bangladesh only**
+- **Age restriction**: Confirm **18+** is set
+- **Category**: Sports or Strategy (not Gambling)
+
+**Content Rating Details**:
+- Add note in "Additional Information":
+  ```
+  "This app offers skill-based tournaments with real cash prizes.
+   Entry is free and prizes are developer-funded.
+   This is not gambling. Participants must be 18+ as required by Bangladesh law."
+  ```
 
 ---
 
 ### Migration Strategy Impact
 
-**Original Plan**: Target 30% of 746 Bangladesh users (224 users) in Month 1
+#### Effect on Original Migration Plan
 
-**Adjusted Plan**: Account for age restrictions
+The age rating difference **DOES affect** the migration strategy outlined in `BANGLADESH_VERSION_APPROACH.md`:
 
-**Estimate eligible users**:
-- If 70% are 18+: ~522 eligible users → Target: 30% = 157 users
-- If 50% are 18+: ~373 eligible users → Target: 30% = 112 users
-- If 30% are 18+: ~224 eligible users → Target: 30% = 67 users
+##### Original Migration Plan
+- Show in-app banner to all Bangladesh users in global app
+- Direct them to install Bangladesh version
+- Target: 30% migration in Month 1 (224 users out of 746)
 
-**Recommendation**: Check Google Play Console analytics for actual age distribution of current Bangladesh users, then adjust targets accordingly.
+##### Adjusted Plan (Accounting for Age Restrictions)
 
-### In-App Promotion Strategy
+**Step 1: Determine Age Demographics**
 
-**Show promotion to ALL Bangladesh users** (regardless of age):
+From 746 current Bangladesh users:
+- Estimate **% of users 18+**: Unknown (need analytics)
+- If 70% are 18+: ~522 eligible users
+- If 50% are 18+: ~373 eligible users
+- If 30% are 18+: ~224 eligible users
 
+**Action**: Check Google Play Console → User Analytics → Age distribution
+- If available, use actual age data
+- If not available, estimate conservatively (assume 50%)
+
+**Step 2: Adjust Migration Targets**
+
+**Revised Migration Targets** (assuming 50% are 18+):
+- **Eligible users**: ~373 (50% of 746)
+- **Month 1 target**: 30% of eligible = **112 users**
+- **Month 6 target**: 60% of eligible = **224 users**
+
+**Step 3: Age-Aware Promotion Strategy**
+
+**In-App Banner Logic**:
 ```kotlin
-// In global app
+// In global app (piotr_gorczynski.soccer2)
 fun shouldShowBDPromotion(): Boolean {
-    return userRegion == "BD" && !hasUserDismissedPromo()
-    // Don't check age - Google Play will enforce
+    // Show to Bangladesh users only
+    if (userRegion != "BD") return false
+    
+    // Show to all users - Google Play will enforce age restriction
+    // We don't need to check age in-app
+    return !hasUserDismissedPromo()
 }
 ```
 
-**Banner Message** (age-aware):
+**Banner Message** (age-neutral):
 ```
 🎉 NEW: Gridline Soccer Bangladesh!
 
@@ -680,70 +929,311 @@ Note: You must be 18+ to participate in cash prize tournaments.
 Google Play will verify your age.
 ```
 
-**Why show to all users**:
-- Users under 18 need to know about the requirement
-- They'll understand why they can't install (age restriction)
-- When they turn 18, they'll remember the promotion
-- Transparent communication builds trust
+**Key Points**:
+- **Don't hide banner from young users**: They need to know about the requirement
+- **Let Google Play enforce**: Google will block installation if user is under 18
+- **Clear messaging**: Banner mentions "18 and above" requirement
+- **No false hopes**: User understands why they might not be able to install
 
-### Google Play Store Configuration
+##### What Happens to Users Under 18?
 
-**Global Version** (no changes needed):
-- Content rating: Teen (13+)
-- IARC questionnaire: Answer "No" to gambling questions
-- Available: Worldwide
+**Scenario**: 13-17 year old user sees banner and clicks "Install Now"
 
-**Bangladesh Version** (new setup):
-1. Create new app listing with package name `piotr_gorczynski.soccer2.bd`
-2. Complete IARC questionnaire:
-   - "Real money prizes?" → **Yes**
-   - "Free entry?" → **Yes**
-   - "Skill-based?" → **Yes**
-   - "Minimum age?" → **18+**
-3. Result: IARC assigns **Mature 17+** or **Adults Only 18+**
-4. If needed, manually set to **18+** in Store Settings
-5. Distribution: Bangladesh only
-6. Add clear age restriction notice in app description
+1. User redirected to Google Play Store
+2. Google Play shows Gridline Soccer Bangladesh listing
+3. **Google Play displays age restriction message**
+4. User cannot install the app
+5. User returns to global app and continues playing
 
-### Compliance Benefits
+**User experience**:
+- Clear why they can't install (age restriction)
+- Can still enjoy global version
+- Will be able to install when they turn 18 (if still interested)
 
-**Multi-Layer Age Verification**:
-1. **Google Play Store**: Primary enforcement (automatic)
-2. **In-app confirmation**: User declares 18+ (legal clarity)
-3. **Payment account**: bKash/Nagad/Rocket require 18+ (indirect verification)
-4. **Developer verification**: Can verify at payout if needed
+**No negative impact**: Users understand age restrictions (common in gaming)
 
-**Legal Protection**:
-- Google Play handles primary age enforcement
-- Clear terms of service with 18+ requirement
-- Multiple verification touchpoints
-- Documented compliance approach
+---
 
-### Coexistence Benefits
+### Legal & Compliance Considerations
 
-**Why keep both versions**:
-- ✅ Users under 18 can still play the game (global version)
-- ✅ Users 18+ have choice (prizes or no prizes)
-- ✅ Gradual migration (users switch when ready)
-- ✅ Fallback option if issues with Bangladesh version
-- ✅ No forced migration or user frustration
+#### Bangladesh Gaming Law Compliance
 
-**No conflicts**:
-- Different package names (separate installations)
-- Same Firebase backend (data syncs)
-- Same user account (seamless experience)
-- User can have both installed simultaneously
+**Age Requirement**: Bangladesh skill-based gaming laws require participants to be 18+
 
-### Detailed Analysis
+**Compliance Approach**:
+1. **Google Play age rating**: 18+ (primary enforcement)
+2. **In-app confirmation**: User self-declaration checkbox
+3. **Terms of Service**: Clear 18+ requirement
+4. **Payment verification**: Age verification at payout (optional)
 
-For comprehensive analysis including:
-- Google Play age rating system details
-- Step-by-step Google Play Console configuration
-- User experience flows for different age groups
-- Legal compliance considerations
-- FAQ and troubleshooting
+**Multi-Layer Verification**:
+```
+Layer 1: Google Play Store age restriction (automatic)
+    ↓
+Layer 2: In-app eligibility confirmation (user declares 18+)
+    ↓
+Layer 3: Payment account verification (bKash/Nagad requires 18+)
+    ↓
+Layer 4: Developer can verify at payout if needed
+```
 
-**See**: [BANGLADESH_AGE_RATING_STRATEGY.md](BANGLADESH_AGE_RATING_STRATEGY.md)
+This approach provides **robust age verification** while minimizing user friction.
+
+---
+
+#### Google Play Policy Compliance
+
+**Real Money Gaming Policy**: Google Play allows real money gaming apps if:
+- ✅ Properly age-rated (18+ for cash prizes)
+- ✅ Comply with local laws
+- ✅ Clear disclosure of terms
+- ✅ No deceptive practices
+
+**Your App Complies**:
+- ✅ Age-rated 18+
+- ✅ Skill-based (not gambling)
+- ✅ Free entry (no purchase required)
+- ✅ Clear terms and disclosure
+- ✅ Developer-funded prizes
+
+**Potential Policy Concerns**: None identified. Your approach is compliant.
+
+---
+
+### Coexistence Best Practices
+
+#### How to Manage Two Versions
+
+##### In Global Version (`piotr_gorczynski.soccer2`)
+
+**Add Age-Aware Messaging**:
+```kotlin
+// When showing Bangladesh promotion
+fun getBDPromotionMessage(): String {
+    return """
+    🎉 NEW: Gridline Soccer Bangladesh!
+    
+    Win ৳2,000 cash prizes in skill-based tournaments!
+    
+    ✅ Free entry, no payment required
+    ✅ Same account, all your data preserved
+    ✅ Bi-monthly cash prize tournaments
+    
+    ⚠️ REQUIREMENT: You must be 18 years or older to participate
+    in cash prize tournaments as required by Bangladesh law.
+    
+    [Install Bangladesh Version]  [Learn More]  [Maybe Later]
+    """.trimIndent()
+}
+```
+
+**Log Analytics**:
+```kotlin
+// Track banner clicks (regardless of age)
+analytics.logEvent("bd_promotion_clicked", mapOf(
+    "user_id" to userId,
+    "user_region" to "BD",
+    "timestamp" to System.currentTimeMillis()
+))
+
+// Google Play will handle age restriction
+// No need to track install success here
+```
+
+##### In Bangladesh Version (`piotr_gorczynski.soccer2.bd`)
+
+**First Launch Check**:
+```kotlin
+// On first launch of Bangladesh version
+fun onFirstLaunch() {
+    // User already passed Google Play age check (18+)
+    // Still require in-app confirmation for legal clarity
+    
+    showEligibilityConfirmationDialog()
+}
+
+fun showEligibilityConfirmationDialog() {
+    // User must confirm:
+    // - They are 18+ years old
+    // - They have payment account (bKash/Nagad/Rocket)
+    // - They agree to tournament terms
+}
+```
+
+**Eligibility Confirmation Screen**:
+```
+🇧🇩 Bangladesh Tournament Eligibility
+
+To participate in cash prize tournaments, you must confirm:
+
+☑ I am 18 years of age or older
+   (You've already been verified by Google Play)
+
+☑ I have a valid bKash, Nagad, or Rocket account
+   (Required to receive prize payments)
+
+☑ I agree to the tournament terms and conditions
+   (View terms)
+
+[Confirm and Continue]
+
+Note: False declarations may result in disqualification
+and prize forfeiture.
+```
+
+---
+
+### Frequently Asked Questions
+
+#### Q1: Will Google Play automatically block users under 18 from installing Bangladesh version?
+
+**A**: Yes. Google Play enforces age restrictions based on the user's Google account age. If the app is rated 18+ and the user is under 18, they will either:
+- Not see the app in search results, OR
+- See the app but cannot install it (blocked with age restriction message)
+
+No additional implementation needed on your part.
+
+---
+
+#### Q2: Can users lie about their age to Google?
+
+**A**: While users can theoretically create Google accounts with false ages, this is:
+- Against Google's Terms of Service
+- Difficult (requires fake documents for age verification in some cases)
+- Not your responsibility to prevent
+- Mitigated by in-app eligibility confirmation and payment account verification (bKash/Nagad require age verification)
+
+Your multi-layer approach provides adequate protection.
+
+---
+
+#### Q3: What if a 13-17 year old user manages to install Bangladesh version?
+
+**A**: Unlikely due to Google Play enforcement, but if it happens:
+1. User must still confirm eligibility in-app (will see 18+ requirement)
+2. If they falsely confirm, they won't have valid payment account (bKash/Nagad require 18+)
+3. If they somehow win, you can verify age during payout and disqualify if underage
+4. Terms of Service clearly state false declarations result in disqualification
+
+**Risk**: Very low. Multiple verification layers prevent this.
+
+---
+
+#### Q4: Should I remove the global version from Bangladesh to avoid confusion?
+
+**A**: **No, absolutely not.** Keep both versions available because:
+- ✅ Users under 18 need access to the game
+- ✅ Users 18+ may prefer non-prize version
+- ✅ Gradual migration allows users to choose
+- ✅ Fallback option if Bangladesh version has issues
+- ✅ No policy requiring removal of one version
+
+**Both versions should coexist indefinitely.**
+
+---
+
+#### Q5: How do I market both versions without confusing users?
+
+**A**: Clear differentiation in messaging:
+
+**Global Version Marketing**:
+- "Gridline Soccer - Classic Paper Soccer Game"
+- "For all ages, play with friends worldwide"
+- "No registration required for basic play"
+
+**Bangladesh Version Marketing**:
+- "Gridline Soccer Bangladesh - Win Cash Prizes!"
+- "18+ only, compete for ৳2,000 prizes"
+- "Skill-based tournaments for Bangladesh players"
+
+**In-app cross-promotion**: Only show Bangladesh promotion to users in Bangladesh region. Make age requirement clear in every promotion.
+
+---
+
+#### Q6: Will this affect my app's visibility or ranking?
+
+**A**: Minimal impact:
+- Each version has separate ranking and visibility
+- 18+ restriction reduces potential audience for Bangladesh version
+- Global version visibility unchanged
+- Both can rank for different keywords
+
+**Optimize separately**:
+- Global version: "paper soccer", "multiplayer game", "strategy game"
+- Bangladesh version: "cash prizes", "tournament", "skill competition", "Bangladesh"
+
+---
+
+#### Q7: What if Google Play changes its age rating policies?
+
+**A**: Monitor policy changes and adapt:
+- Subscribe to Google Play developer policy updates
+- Review quarterly for any changes
+- Be prepared to update age ratings if required
+- Have legal counsel review annually
+
+**Likelihood of impact**: Low. Age restrictions for real money gaming are well-established and unlikely to become more lenient.
+
+---
+
+#### Q8: Can I migrate users automatically when they turn 18?
+
+**A**: No automatic migration possible because:
+- You don't have access to user's exact birthdate from Google account
+- Google Play doesn't provide age information to apps
+- Age verification is handled by Google Play at install time
+
+**Alternative**: Show promotion to all Bangladesh users. Google Play will allow installation when they turn 18.
+
+---
+
+#### Q9: How does this affect Firebase Analytics and user tracking?
+
+**A**: Both apps share same Firebase project:
+- Can track users across both apps (same user UID)
+- Can see which app variant they're using
+- Can measure migration from global to Bangladesh version
+- Can segment analytics by app version
+
+**Recommended analytics events**:
+```kotlin
+// In global app
+analytics.logEvent("bd_promotion_shown", mapOf("user_region" to "BD"))
+
+// In Bangladesh app
+analytics.logEvent("bd_app_launched", mapOf("user_age_verified" to true))
+```
+
+---
+
+#### Q10: What about users who have both apps installed?
+
+**A**: Users can have both apps installed simultaneously:
+- **Use case 1**: User likes having separate apps for different purposes
+- **Use case 2**: User wants global version for casual play, Bangladesh version for tournaments
+- **Use case 3**: User testing both versions
+
+**Impact**: None. Both apps use same Firebase backend, same user account, data stays synced.
+
+**Storage**: Each app ~50-100 MB, total ~100-200 MB. Not a significant concern.
+
+---
+
+
+---
+
+### Summary
+
+**Your initial understanding was 100% correct:**
+
+✅ **YES** - Two versions will coexist in Bangladesh
+✅ **YES** - Global version stays at 13+
+✅ **YES** - Bangladesh version must be marked 18+
+✅ **YES** - Google Play will enforce age restrictions automatically
+
+**This is the standard, compliant, and recommended approach for your use case.**
+
+No special workarounds needed - just configure age ratings correctly in Google Play Console and let Google handle the enforcement.
 
 ---
 
