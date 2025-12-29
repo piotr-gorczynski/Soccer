@@ -90,7 +90,7 @@ android {
         }
     }
 
-    flavorDimensions "environment"
+    flavorDimensions "environment", "market"
     productFlavors {
         _dev {
             dimension "environment"
@@ -103,6 +103,17 @@ android {
         _prod {
             dimension "environment"
             buildConfigField "String", "AD_UNIT_ID", '"ca-app-pub-9113152787055223/9306362927"'
+        }
+        
+        // Market flavors for Bangladesh variant
+        global {
+            dimension "market"
+            // Base applicationId from defaultConfig: piotr_gorczynski.soccer2
+        }
+        bangladesh {
+            dimension "market"
+            applicationIdSuffix ".bd"
+            versionNameSuffix "-BD"
         }
     }
     packagingOptions {
@@ -193,11 +204,18 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:5.0.5'
 }
 // Register custom copy task
+// Note: With the market dimension, google-services.json files are placed in:
+//   - src/global/google-services.json (for global market)
+//   - src/bangladesh/google-services.json (for bangladesh market)
+// The Google Services plugin automatically selects the correct file based on the build variant.
+// This task maintains backward compatibility for environment-based configs if needed.
 tasks.register("copyGoogleServicesJson") {
     doLast {
         def env = project.findProperty("env") ?: buildEnv
         if (env == null || env.toString().trim().isEmpty()) {
-            throw new GradleException("❌ Missing environment. Use variant or -Penv=dev|test|prod")
+            println("ℹ️  No environment specified. Using flavor-specific google-services.json files from src/global/ and src/bangladesh/")
+            println("   The Google Services plugin will automatically select the correct file based on build variant.")
+            return
         }
         def source = file("../../secrets/google-services.${env}.json")
         def destination = file("google-services.json")
@@ -205,7 +223,8 @@ tasks.register("copyGoogleServicesJson") {
             Files.copy(source.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING)
             println("✅ google-services.json for ${env} copied to app/")
         } else {
-            throw new GradleException("❌ google-services.json for env '${env}' not found in secrets/")
+            println("⚠️  google-services.json for env '${env}' not found in secrets/")
+            println("   Using flavor-specific google-services.json files from src/global/ and src/bangladesh/")
         }
     }
 }
