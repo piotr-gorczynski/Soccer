@@ -90,13 +90,15 @@ To verify the product flavor configuration is working correctly:
 
 ```bash
 cd mobile
-./gradlew tasks --group=build | grep Bangladesh
+./gradlew tasks --all | grep -i assemble.*bangladesh
 ```
 
 You should see tasks like:
 - `assembleBangladesh`
+- `assemble_devBangladesh`
 - `assemble_prodBangladesh`
-- `bundle_prodBangladesh`
+- `assemble_devBangladeshDebug`
+- `assemble_prodBangladeshRelease`
 - etc.
 
 ---
