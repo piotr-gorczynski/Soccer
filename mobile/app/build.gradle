@@ -208,13 +208,18 @@ dependencies {
 //   - src/global/google-services.json (for global market)
 //   - src/bangladesh/google-services.json (for bangladesh market)
 // The Google Services plugin automatically selects the correct file based on the build variant.
-// This task maintains backward compatibility for environment-based configs if needed.
+// 
+// Legacy Support: This task maintains backward compatibility for environment-based configs
+// stored in ../../secrets/google-services.{env}.json. The legacy approach is used when:
+//   - Building with -Penv=dev|test|prod parameter
+//   - Environment-specific Firebase projects are used (not recommended for new development)
+// For new development, use the flavor-specific google-services.json files instead.
 tasks.register("copyGoogleServicesJson") {
     doLast {
         def env = project.findProperty("env") ?: buildEnv
         if (env == null || env.toString().trim().isEmpty()) {
             println("ℹ️  No environment specified. Using flavor-specific google-services.json files from src/global/ and src/bangladesh/")
-            println("   The Google Services plugin will automatically select the correct file based on build variant.")
+            println("ℹ️  The Google Services plugin will automatically select the correct file based on build variant.")
             return
         }
         def source = file("../../secrets/google-services.${env}.json")
@@ -224,7 +229,7 @@ tasks.register("copyGoogleServicesJson") {
             println("✅ google-services.json for ${env} copied to app/")
         } else {
             println("⚠️  google-services.json for env '${env}' not found in secrets/")
-            println("   Using flavor-specific google-services.json files from src/global/ and src/bangladesh/")
+            println("ℹ️  Using flavor-specific google-services.json files from src/global/ and src/bangladesh/")
         }
     }
 }
