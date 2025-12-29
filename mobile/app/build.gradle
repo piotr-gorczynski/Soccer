@@ -214,6 +214,11 @@ dependencies {
 //   - Building with -Penv=dev|test|prod parameter
 //   - Environment-specific Firebase projects are used (not recommended for new development)
 // For new development, use the flavor-specific google-services.json files instead.
+//
+// BEHAVIORAL CHANGE (2025-12-29): This task no longer throws GradleException when environment
+// is not specified or when secrets files are missing. Instead, it logs warnings and relies on
+// flavor-specific google-services.json files. This allows the new flavor-based approach to work
+// without requiring the secrets directory structure.
 tasks.register("copyGoogleServicesJson") {
     doLast {
         def env = project.findProperty("env") ?: buildEnv
