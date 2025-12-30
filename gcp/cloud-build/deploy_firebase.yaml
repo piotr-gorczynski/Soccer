@@ -85,7 +85,7 @@ steps:
           echo "✅ Firebase has been successfully enabled for $firebase_project_id."
         fi
 
-  # Step 7: Check if Firebase Android Apps Exist and Create Them (Bangladesh variant)
+  # Step 7: Check if Firebase Android Apps Exist and Create Them (Global and Bangladesh)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -94,8 +94,8 @@ steps:
         set -e
 
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
-        # Define package names for Bangladesh variant only (global variant already exists)
-        package_names=("piotr_gorczynski.soccer2.bd")
+        # Define package names for global and Bangladesh variants
+        package_names=("piotr_gorczynski.soccer2" "piotr_gorczynski.soccer2.bd")
         mkdir -p /workspace/logs
 
         echo "📱 Checking and creating Firebase Android Apps for project $firebase_project_id..."
@@ -108,7 +108,9 @@ steps:
         echo "$app_list_output"
 
         # Extract Android app package names from the output
-        existing_package_names=$(echo "$app_list_output" | grep "ANDROID" | awk -F'│' '{print $3}' | tr -d ' ')
+        # Parse the Firebase CLI output more reliably by looking for package name patterns
+        # The output is a table where package names follow a pattern like "package_name" or "package.name"
+        existing_package_names=$(echo "$app_list_output" | grep "ANDROID" | grep -oE '[a-z_]+\.[a-z_0-9]+(\.[a-z_0-9]+)?' || true)
 
         # Print extracted Android app package names
         echo "🔍 Extracted Firebase Android App Package Names:"
