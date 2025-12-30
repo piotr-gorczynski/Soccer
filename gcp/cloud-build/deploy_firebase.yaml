@@ -108,7 +108,9 @@ steps:
         echo "$app_list_output"
 
         # Extract Android app package names from the output
-        existing_package_names=$(echo "$app_list_output" | grep "ANDROID" | awk -F'│' '{print $3}' | tr -d ' ')
+        # Parse the Firebase CLI output by looking for valid Android package name patterns
+        # Pattern matches standard Java package naming conventions
+        existing_package_names=$(echo "$app_list_output" | grep "ANDROID" | grep -oE '[a-zA-Z_][a-zA-Z0-9_]*(\.[a-zA-Z_][a-zA-Z0-9_]*)+' || true)
 
         # Print extracted Android app package names
         echo "🔍 Extracted Firebase Android App Package Names:"
