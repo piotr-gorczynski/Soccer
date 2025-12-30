@@ -184,6 +184,12 @@ android {
 - Prevents duplicate app creation by checking existing apps first
 - Logs all operations for debugging and audit purposes
 
+**Automated Configuration Download**: After Firebase apps are created, their configuration files are automatically downloaded using the Cloud Build script `gcp/cloud-build/download_google_services.yaml`. This script:
+- Downloads `google-services.json` files for all registered Android apps
+- Follows the naming convention: `google-services.{env}.json` for global and `google-services.{env}.bd.json` for Bangladesh
+- Commits the files to the private repository's secrets directory
+- Ensures configuration files are kept in sync with Firebase Console
+
 **Manual Alternative**: You can also create Firebase apps manually in the Firebase Console if needed, but the automated approach is recommended for consistency and to avoid manual errors.
 
 ### Key Benefits
@@ -2425,9 +2431,14 @@ implementation 'com.facebook.android:facebook-android-sdk:18.1.3'
   - The script checks if apps already exist before creating them to avoid duplicates
   - To run the script: Execute the Cloud Build deployment which includes this step
 
-- [ ] **Download Configuration Files**
-  - After Firebase apps are created (either manually or via script), download `google-services.json` files from Firebase Console
-  - Download separate files for each variant (global and Bangladesh)
+- [ ] **Download Configuration Files** (AUTOMATED)
+  - **Note**: Configuration files for both apps are automatically downloaded by the `gcp/cloud-build/download_google_services.yaml` Cloud Build script
+  - The script downloads `google-services.json` files for both package names:
+    - `piotr_gorczynski.soccer2` → `google-services.{env}.json`
+    - `piotr_gorczynski.soccer2.bd` → `google-services.{env}.bd.json`
+  - The script follows the naming convention: `google-services.{env}.json` for global and `google-services.{env}.bd.json` for Bangladesh
+  - Files are automatically committed to the private repository's secrets directory
+  - **Manual Alternative**: You can also download `google-services.json` files manually from Firebase Console if needed, but the automated approach is recommended for consistency
 
 - [ ] **Place Configuration Files**
   ```

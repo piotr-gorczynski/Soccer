@@ -3,7 +3,6 @@ substitutions:
   _FOLDER_NAME: 'soccer'
   _PRIVATE_REPO: 'git@github.com:piotr-gorczynski/Soccer-private.git'
   _BRANCH_NAME: 'main'
-  _TARGET_PATH: 'google-services.${_ENVIRONMENT}.json'  # Save env-specific config
 
 availableSecrets:
   secretManager:
@@ -38,7 +37,7 @@ steps:
         cp /usr/local/bin/firebase /workspace/firebase/
         chmod +x /workspace/firebase/firebase
 
-  # Step 3: Extract Android app ID and download config
+  # Step 3: Download configs for all Android apps (Global and Bangladesh)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: 'download-config'
     entrypoint: 'bash'
@@ -48,25 +47,58 @@ steps:
         set -e
         set -x
         project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
-        firebase_output=$(/workspace/firebase/firebase apps:list --project="$project_id")
-        echo "$firebase_output" > /workspace/apps_list.txt
+        
+        # Define package names for global and Bangladesh variants
+        declare -A package_names
+        package_names["piotr_gorczynski.soccer2"]="google-services.${_ENVIRONMENT}.json"
+        package_names["piotr_gorczynski.soccer2.bd"]="google-services.${_ENVIRONMENT}.bd.json"
+        
+        echo "📱 Downloading google-services.json files for all apps in project $project_id..."
+        
+        # List all Firebase apps in JSON format to get app IDs and package names
+        echo "🔍 Fetching list of existing Firebase Android apps..."
+        app_list_json=$(/workspace/firebase/firebase apps:list ANDROID --project="$project_id" --json 2>/dev/null || echo "[]")
+        
+        echo "🔍 Raw Firebase Apps JSON Output:"
+        echo "$app_list_json"
+        
+        # Iterate over package names and download configs
+        for package_name in "${!package_names[@]}"; do
+          target_file="${package_names[$package_name]}"
+          echo "---"
+          echo "🔍 Processing package: $package_name"
+          echo "📁 Target file: $target_file"
+          
+          # Extract app ID for this package name using jq or grep
+          if command -v jq >/dev/null 2>&1; then
+            app_id=$(echo "$app_list_json" | jq -r ".[] | select(.packageName == \"$package_name\") | .appId" 2>/dev/null || true)
+            echo "🔧 Used jq for JSON parsing"
+          else
+            # Fallback to grep-based extraction if jq is not available
+            # This searches for the appId field near the matching packageName in the JSON
+            # Pattern matches the deploy_firebase.yaml implementation for consistency
+            app_id=$(echo "$app_list_json" | grep -B2 "\"packageName\"[[:space:]]*:[[:space:]]*\"$package_name\"" | grep -oE '"appId"[[:space:]]*:[[:space:]]*"[^"]*"' | grep -oE '"[^"]*"$' | tr -d '"' || true)
+            echo "🔧 Used grep for JSON parsing (jq not available)"
+          fi
+          
+          if [ -z "$app_id" ]; then
+            echo "⚠️ Firebase Android app ID not found for package: $package_name"
+            echo "⚠️ Skipping download for this package."
+            continue
+          fi
+          
+          echo "📥 Downloading google-services.json for app ID: $app_id (package: $package_name)"
+          /workspace/firebase/firebase apps:sdkconfig android "$app_id" \
+            --project="$project_id" \
+            > "/workspace/$target_file"
+          
+          echo "✅ Downloaded: $target_file"
+        done
+        
+        echo "---"
+        echo "✅ All google-services.json files downloaded."
 
-        echo "🔍 Firebase apps output:"
-        cat /workspace/apps_list.txt
-
-        app_id=$(grep ANDROID /workspace/apps_list.txt | grep -v "App ID" | awk -F '│' '{print $3}' | xargs)
-
-        if [ -z "$app_id" ]; then
-          echo "❌ Firebase Android app ID not found."
-          exit 1
-        fi
-
-        echo "📥 Downloading google-services.json for app ID: $app_id"
-        /workspace/firebase/firebase apps:sdkconfig android "$app_id" \
-          --project="$project_id" \
-          > /workspace/google-services.json
-
-  # Step 4: Clone private repo
+  # Step 4: Clone private repo and copy all downloaded files
   - name: 'gcr.io/cloud-builders/git'
     id: 'clone-repo'
     secretEnv: ['ssh_private_key']
@@ -85,7 +117,20 @@ steps:
         git config --global user.name "CI Bot"
 
         git clone ${_PRIVATE_REPO} /workspace/private-repo
-        cp /workspace/google-services.json /workspace/private-repo/${_TARGET_PATH}
+        
+        # Copy all downloaded google-services.json files
+        echo "📁 Copying google-services.json files to private repo..."
+        
+        # Copy files matching the naming pattern
+        for config_file in /workspace/google-services.${_ENVIRONMENT}*.json; do
+          if [ -f "$config_file" ]; then
+            filename=$(basename "$config_file")
+            echo "📄 Copying $filename..."
+            cp "$config_file" "/workspace/private-repo/$filename"
+          fi
+        done
+        
+        echo "✅ Files copied to private repo."
 
   # Step 5: Commit and push changes
   - name: 'gcr.io/cloud-builders/git'
@@ -104,11 +149,13 @@ steps:
         chmod 400 /root/.ssh/id_ed25519
         ssh-keyscan github.com >> /root/.ssh/known_hosts
 
-        git add ${_TARGET_PATH}
-        if git diff-index --quiet HEAD -- ${_TARGET_PATH}; then
+        # Add all google-services files for this environment
+        git add google-services.${_ENVIRONMENT}*.json || true
+        
+        if git diff-index --quiet HEAD -- .; then
           echo "No changes to commit"
         else
-          git commit -m "🔄 Update google-services.json from Firebase [CI]"
+          git commit -m "🔄 Update google-services.json files from Firebase [CI]"
           git push origin ${_BRANCH_NAME}
         fi
 
