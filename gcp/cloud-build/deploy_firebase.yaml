@@ -100,17 +100,16 @@ steps:
 
         echo "📱 Checking and creating Firebase Android Apps for project $firebase_project_id..."
         
-        # List all Firebase apps and capture output
-        app_list_output=$(/workspace/firebase/firebase apps:list --project="$firebase_project_id")
+        # List all Firebase apps in JSON format to get package names
+        app_list_json=$(/workspace/firebase/firebase apps:list ANDROID --project="$firebase_project_id" --json 2>/dev/null || echo "[]")
 
         # Print raw Firebase apps output for debugging
-        echo "🔍 Raw Firebase Apps Output:"
-        echo "$app_list_output"
+        echo "🔍 Raw Firebase Apps JSON Output:"
+        echo "$app_list_json"
 
-        # Extract Android app package names from the output
-        # Parse the Firebase CLI output by looking for valid Android package name patterns
-        # Pattern matches standard Java package naming conventions
-        existing_package_names=$(echo "$app_list_output" | grep "ANDROID" | grep -oE '[a-zA-Z_][a-zA-Z0-9_]*(\.[a-zA-Z_][a-zA-Z0-9_]*)+' || true)
+        # Extract Android app package names from JSON output
+        # The JSON contains an array of apps with packageName field
+        existing_package_names=$(echo "$app_list_json" | grep -oE '"packageName"[[:space:]]*:[[:space:]]*"[^"]*"' | grep -oE '"[^"]*"$' | tr -d '"' || true)
 
         # Print extracted Android app package names
         echo "🔍 Extracted Firebase Android App Package Names:"
