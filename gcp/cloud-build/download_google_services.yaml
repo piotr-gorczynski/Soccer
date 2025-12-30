@@ -75,6 +75,8 @@ steps:
             echo "🔧 Used jq for JSON parsing"
           else
             # Fallback to grep-based extraction if jq is not available
+            # This searches for the appId field near the matching packageName in the JSON
+            # Pattern matches the deploy_firebase.yaml implementation for consistency
             app_id=$(echo "$app_list_json" | grep -B2 "\"packageName\"[[:space:]]*:[[:space:]]*\"$package_name\"" | grep -oE '"appId"[[:space:]]*:[[:space:]]*"[^"]*"' | grep -oE '"[^"]*"$' | tr -d '"' || true)
             echo "🔧 Used grep for JSON parsing (jq not available)"
           fi
@@ -118,8 +120,15 @@ steps:
         
         # Copy all downloaded google-services.json files
         echo "📁 Copying google-services.json files to private repo..."
-        cp /workspace/google-services.${_ENVIRONMENT}.json /workspace/private-repo/google-services.${_ENVIRONMENT}.json || echo "⚠️ Global config not found, skipping"
-        cp /workspace/google-services.${_ENVIRONMENT}.bd.json /workspace/private-repo/google-services.${_ENVIRONMENT}.bd.json || echo "⚠️ Bangladesh config not found, skipping"
+        
+        # Copy files matching the naming pattern
+        for config_file in /workspace/google-services.${_ENVIRONMENT}*.json; do
+          if [ -f "$config_file" ]; then
+            filename=$(basename "$config_file")
+            echo "📄 Copying $filename..."
+            cp "$config_file" "/workspace/private-repo/$filename"
+          fi
+        done
         
         echo "✅ Files copied to private repo."
 
@@ -141,8 +150,7 @@ steps:
         ssh-keyscan github.com >> /root/.ssh/known_hosts
 
         # Add all google-services files for this environment
-        git add google-services.${_ENVIRONMENT}.json || true
-        git add google-services.${_ENVIRONMENT}.bd.json || true
+        git add google-services.${_ENVIRONMENT}*.json || true
         
         if git diff-index --quiet HEAD -- .; then
           echo "No changes to commit"
