@@ -100,17 +100,24 @@ steps:
 
         echo "📱 Checking and creating Firebase Android Apps for project $firebase_project_id..."
         
-        # List all Firebase apps and capture output
-        app_list_output=$(/workspace/firebase/firebase apps:list --project="$firebase_project_id")
+        # List all Firebase apps in JSON format to get package names
+        echo "🔍 Fetching list of existing Firebase Android apps..."
+        app_list_json=$(/workspace/firebase/firebase apps:list ANDROID --project="$firebase_project_id" --json 2>/dev/null || echo "[]")
 
         # Print raw Firebase apps output for debugging
-        echo "🔍 Raw Firebase Apps Output:"
-        echo "$app_list_output"
+        echo "🔍 Raw Firebase Apps JSON Output:"
+        echo "$app_list_json"
 
-        # Extract Android app package names from the output
-        # Parse the Firebase CLI output by looking for valid Android package name patterns
-        # Pattern matches standard Java package naming conventions
-        existing_package_names=$(echo "$app_list_output" | grep "ANDROID" | grep -oE '[a-zA-Z_][a-zA-Z0-9_]*(\.[a-zA-Z_][a-zA-Z0-9_]*)+' || true)
+        # Extract Android app package names from JSON output
+        # Try using jq first for robust JSON parsing, fall back to grep if jq is not available
+        if command -v jq >/dev/null 2>&1; then
+          existing_package_names=$(echo "$app_list_json" | jq -r '.[].packageName // empty' 2>/dev/null || true)
+          echo "🔧 Used jq for JSON parsing"
+        else
+          # Fallback to grep-based extraction if jq is not available
+          existing_package_names=$(echo "$app_list_json" | grep -oE '"packageName"[[:space:]]*:[[:space:]]*"[^"]*"' | grep -oE '"[^"]*"$' | tr -d '"' || true)
+          echo "🔧 Used grep for JSON parsing (jq not available)"
+        fi
 
         # Print extracted Android app package names
         echo "🔍 Extracted Firebase Android App Package Names:"
