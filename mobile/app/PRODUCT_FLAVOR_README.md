@@ -57,7 +57,9 @@ The app uses a single `google-services.json` file per environment that contains 
 - `secrets/google-services.test.json` (contains both global and Bangladesh configs)
 - `secrets/google-services.prod.json` (contains both global and Bangladesh configs)
 
-The build system automatically copies the appropriate file based on the environment being built. Firebase automatically selects the correct client configuration based on the application's package name at runtime.
+The build system automatically copies the appropriate file based on the environment being built.
+
+At runtime, Firebase automatically selects the correct client configuration based on the application's package name.
 
 ### Setting Up Firebase
 
