@@ -50,35 +50,33 @@ The Bangladesh variant uses `applicationIdSuffix ".bd"` which creates a separate
 
 ## Firebase Configuration
 
-The app uses environment and market-specific `google-services.json` files stored in the `secrets/` directory:
+The app uses a single `google-services.json` file per environment that contains configurations for all registered Android apps in the Firebase project.
 
-- **Global variants**: `secrets/google-services.{env}.json`
-  - `secrets/google-services.dev.json`
-  - `secrets/google-services.test.json`
-  - `secrets/google-services.prod.json`
+**File locations in `secrets/` directory:**
+- `secrets/google-services.dev.json` (contains both global and Bangladesh configs)
+- `secrets/google-services.test.json` (contains both global and Bangladesh configs)
+- `secrets/google-services.prod.json` (contains both global and Bangladesh configs)
 
-- **Bangladesh variants**: `secrets/google-services.{env}.bd.json`
-  - `secrets/google-services.dev.bd.json`
-  - `secrets/google-services.test.bd.json`
-  - `secrets/google-services.prod.bd.json`
+The build system automatically copies the appropriate file based on the environment being built.
 
-The build system automatically copies the appropriate file based on the build variant being assembled.
+At runtime, Firebase automatically selects the correct client configuration based on the application's package name.
 
 ### Setting Up Firebase
 
-1. **For Global Variant** (if not already done):
-   - Go to Firebase Console
-   - Ensure the app is registered with package name: `piotr_gorczynski.soccer2`
-   - Download `google-services.json`
+1. **Register Both Apps in Firebase Console**:
+   - Go to Firebase Console → Project Settings → Your apps
+   - Ensure both apps are registered:
+     - Package name: `piotr_gorczynski.soccer2` (Global)
+     - Package name: `piotr_gorczynski.soccer2.bd` (Bangladesh)
+
+2. **Download google-services.json**:
+   - Download the `google-services.json` file from Firebase Console
+   - This single file contains client configurations for both package names
    - Place it in `secrets/google-services.{env}.json` (e.g., `secrets/google-services.prod.json`)
 
-2. **For Bangladesh Variant** (NEW):
-   - Go to Firebase Console → Project Settings → Your apps → Add app → Android
-   - Package name: `piotr_gorczynski.soccer2.bd`
-   - App nickname: Gridline Soccer Bangladesh
-   - SHA-1 certificate fingerprint: [Your release keystore SHA-1]
-   - Download `google-services.json`
-   - Place it in `secrets/google-services.{env}.bd.json` (e.g., `secrets/google-services.prod.bd.json`)
+3. **Add SHA-1 Certificate Fingerprints**:
+   - Add your release keystore SHA-1 fingerprint to both apps in Firebase Console
+   - This enables Google Sign-In for both variants
 
 ## Source Code Organization
 
@@ -123,11 +121,12 @@ To test that the variants are correctly configured:
 
 ## Next Steps
 
-1. Register Bangladesh app in Firebase Console
-2. Download and configure `google-services.json` for Bangladesh variant
-3. Add Bangladesh-specific features as per the implementation roadmap
-4. Configure Facebook authentication for Bangladesh package (see `docs/BANGLADESH_VERSION_APPROACH.md`)
-5. Set up Google Play Store listing for Bangladesh variant
+1. Register Bangladesh app in Firebase Console (if not already done)
+2. Ensure both package names are registered in the same Firebase project
+3. Download the `google-services.json` file and place in `secrets/` directory
+4. Add Bangladesh-specific features as per the implementation roadmap
+5. Configure Facebook authentication for Bangladesh package (see `docs/BANGLADESH_VERSION_APPROACH.md`)
+6. Set up Google Play Store listing for Bangladesh variant
 
 ## References
 
