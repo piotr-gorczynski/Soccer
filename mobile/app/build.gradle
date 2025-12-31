@@ -217,31 +217,33 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:5.0.5'
 }
 // Register custom copy task for google-services.json
-// Uses naming convention: secrets/google-services.{env}.json for global market
-//                         secrets/google-services.{env}.bd.json for bangladesh market
+// Uses naming convention: secrets/google-services.{env}.json
+// A single google-services.json file contains configurations for all registered Android apps
+// in the Firebase project, including both global (piotr_gorczynski.soccer2) and
+// Bangladesh (piotr_gorczynski.soccer2.bd) package names.
 // Examples:
-//   - secrets/google-services.dev.json (global dev)
-//   - secrets/google-services.dev.bd.json (bangladesh dev)
-//   - secrets/google-services.prod.json (global prod)
-//   - secrets/google-services.prod.bd.json (bangladesh prod)
+//   - secrets/google-services.dev.json (contains both global and bangladesh configs)
+//   - secrets/google-services.test.json (contains both global and bangladesh configs)
+//   - secrets/google-services.prod.json (contains both global and bangladesh configs)
 tasks.register("copyGoogleServicesJson") {
     doLast {
         def env = project.findProperty("env") ?: buildEnv
-        def market = project.findProperty("market") ?: buildMarket
         
         if (env == null || env.toString().trim().isEmpty()) {
             throw new GradleException("❌ Missing environment. Use variant or -Penv=dev|test|prod")
         }
         
-        // Determine the file name based on market
-        def fileName = market == "bangladesh" ? "google-services.${env}.bd.json" : "google-services.${env}.json"
+        // Use the same google-services.json file for both global and bangladesh markets
+        // The file contains client configurations for all package names
+        def fileName = "google-services.${env}.json"
         def source = file("../../secrets/${fileName}")
         def destination = file("google-services.json")
         
         if (source.exists()) {
             Files.copy(source.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING)
-            println("✅ google-services.json for ${env} (${market}) copied to app/")
+            println("✅ google-services.json for ${env} copied to app/")
             println("   Source: ${source.name}")
+            println("   Note: This file contains configurations for all package names")
         } else {
             throw new GradleException("❌ ${fileName} not found in secrets/\n   Expected: ${source.absolutePath}")
         }
