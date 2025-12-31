@@ -168,11 +168,12 @@ android {
 - Global version: Use `_prodGlobalRelease` → `piotr_gorczynski.soccer2`
 - Bangladesh version: Use `_prodBangladeshRelease` → `piotr_gorczynski.soccer2.bd`
 
-**google-services.json placement** (with two dimensions):
-- Configuration files are stored in the `secrets/` directory with environment and market suffixes
-- Global: `secrets/google-services.{env}.json` (e.g., `google-services.prod.json`)
-- Bangladesh: `secrets/google-services.{env}.bd.json` (e.g., `google-services.prod.bd.json`)
-- The build system automatically selects the appropriate file based on the environment and market flavor
+**google-services.json placement**:
+- A single `google-services.json` file contains configurations for all registered Android apps in the Firebase project
+- This includes both `piotr_gorczynski.soccer2` (global) and `piotr_gorczynski.soccer2.bd` (Bangladesh) package names
+- Configuration files are stored in the `secrets/` directory: `secrets/google-services.{env}.json` (e.g., `google-services.prod.json`)
+- The build system uses the same file for both global and Bangladesh variants
+- Firebase automatically includes all package configurations in a single downloaded file
 
 ### Firebase App Creation
 
@@ -184,13 +185,14 @@ android {
 - Prevents duplicate app creation by checking existing apps first
 - Logs all operations for debugging and audit purposes
 
-**Automated Configuration Download**: After Firebase apps are created, their configuration files are automatically downloaded using the Cloud Build script `gcp/cloud-build/download_google_services.yaml`. This script:
-- Downloads `google-services.json` files for all registered Android apps
-- Follows the naming convention: `google-services.{env}.json` for global and `google-services.{env}.bd.json` for Bangladesh
-- Commits the files to the private repository's secrets directory
+**Automated Configuration Download**: After Firebase apps are created, the configuration file is automatically downloaded using the Cloud Build script `gcp/cloud-build/download_google_services.yaml`. This script:
+- Downloads a single `google-services.json` file that contains configurations for all registered Android apps in the project
+- Uses the naming convention: `google-services.{env}.json` (e.g., `google-services.dev.json`, `google-services.prod.json`)
+- The downloaded file includes client configurations for both package names (`piotr_gorczynski.soccer2` and `piotr_gorczynski.soccer2.bd`)
+- Commits the file to the private repository's secrets directory
 - Ensures configuration files are kept in sync with Firebase Console
 
-**Manual Alternative**: You can also create Firebase apps manually in the Firebase Console if needed, but the automated approach is recommended for consistency and to avoid manual errors.
+**Manual Alternative**: You can also download the `google-services.json` file manually from Firebase Console if needed, but the automated approach is recommended for consistency and to avoid manual errors.
 
 ### Key Benefits
 
@@ -1446,25 +1448,28 @@ As of December 24, 2024, the current version of Gridline Soccer (`piotr_gorczyns
 ```
 Firebase Project: gridline-soccer (existing)
 ├── App 1: piotr_gorczynski.soccer2 (Global version)
-│   ├── Firebase Configuration: google-services.json (global)
+│   ├── Package Name: piotr_gorczynski.soccer2
 │   ├── Authentication: Enabled (existing users)
 │   └── Firestore Database: Shared with regional filtering
 │
 └── App 2: piotr_gorczynski.soccer2.bd (Bangladesh version)
-    ├── Firebase Configuration: google-services.json (bangladesh)
+    ├── Package Name: piotr_gorczynski.soccer2.bd
     ├── Authentication: Same Firebase Auth (shared users)
     └── Firestore Database: Shared with regional filtering
+
+Firebase Configuration: Single google-services.json per environment
+└── Contains client configurations for both package names
 ```
 
 #### Firebase Configuration Requirements
 
 **Do you need separate authentication keys?**
 
-**Answer: No separate authentication, but separate app configurations:**
+**Answer: No separate authentication, and no separate configuration files:**
 
 1. **Same Firebase Project**: Both apps connect to the same Firebase project
 2. **Different App Registrations**: Each package ID must be registered separately in Firebase Console
-3. **Separate google-services.json files**: Each app variant gets its own configuration file with the same project credentials but different package ID
+3. **Single google-services.json file**: One configuration file per environment contains client entries for both package names
 
 **Setup Steps**:
 
@@ -1473,12 +1478,14 @@ Firebase Project: gridline-soccer (existing)
 
 1. Go to Project Settings → Your apps
 2. Add Android app: piotr_gorczynski.soccer2 (if not already registered)
-   - Download google-services.json → mobile/app/src/global/google-services.json
    
 3. Add another Android app: piotr_gorczynski.soccer2.bd
-   - Download google-services.json → mobile/app/src/bangladesh/google-services.json
    
-4. Enable Authentication methods (same for both apps):
+4. Download google-services.json (contains both apps)
+   - Place in: secrets/google-services.{env}.json
+   - The file includes client configurations for both package names
+   
+5. Enable Authentication methods (same for both apps):
    - Email/Password
    - Google Sign-In
    - Facebook (if applicable)
@@ -2011,10 +2018,12 @@ Download now and start competing for real prizes!
 
 #### Bangladesh App Development (piotr_gorczynski.soccer2.bd)
 
-- [ ] Configure separate google-services.json
+- [ ] Use shared google-services.json
   ```bash
-  # File location: mobile/app/src/bangladesh/google-services.json
-  # Package ID in file: piotr_gorczynski.soccer2.bd
+  # File location: secrets/google-services.{env}.json
+  # This file contains client configurations for both package IDs:
+  # - piotr_gorczynski.soccer2 (global)
+  # - piotr_gorczynski.soccer2.bd (bangladesh)
   ```
 
 - [ ] Detect migrated users on first launch
@@ -2184,12 +2193,13 @@ Firebase Project: gridline-soccer (existing)
 │   └── User Database (shared)
 │
 ├── App 1: piotr_gorczynski.soccer2 (Global)
-│   ├── google-services.json (global config)
 │   └── Android Package Name: piotr_gorczynski.soccer2
 │
 └── App 2: piotr_gorczynski.soccer2.bd (Bangladesh)
-    ├── google-services.json (bangladesh config)
     └── Android Package Name: piotr_gorczynski.soccer2.bd
+
+google-services.json (shared configuration)
+└── Contains client entries for both package names
 ```
 
 #### Why Same Firebase Project?
@@ -2234,11 +2244,12 @@ implementation 'com.google.android.gms:play-services-auth:21.4.0'
    SHA-1 certificate fingerprint: [Your release keystore SHA-1]
    ```
 
-2. **Download Bangladesh google-services.json**
+2. **Download google-services.json**
    ```
-   After registration, download the Bangladesh-specific google-services.json
+   After registering both apps, download the google-services.json file
    
-   File location: mobile/app/src/bangladesh/google-services.json
+   File location: secrets/google-services.{env}.json
+   Note: This single file contains client configurations for both package names
    ```
 
 3. **Google Sign-In Automatic Configuration**
@@ -2265,8 +2276,8 @@ implementation 'com.google.android.gms:play-services-auth:21.4.0'
 **Answer: Zero code changes needed for Google Sign-In!**
 
 The existing Google Sign-In implementation will work automatically with the Bangladesh version because:
-- Firebase SDK reads package name from `google-services.json`
-- OAuth credentials are automatically matched by Firebase
+- Firebase SDK reads the appropriate package name from the client configurations in `google-services.json`
+- OAuth credentials are automatically matched by Firebase based on package name
 - Same authentication flow works for both apps
 
 **Gradle Configuration:**
@@ -2274,23 +2285,25 @@ The existing Google Sign-In implementation will work automatically with the Bang
 // mobile/app/build.gradle
 
 android {
-    flavorDimensions "market"
+    flavorDimensions "environment", "market"
     productFlavors {
         global {
             dimension "market"
-            applicationId "piotr_gorczynski.soccer2"
-            // Uses: mobile/app/src/global/google-services.json
+            // Base applicationId: piotr_gorczynski.soccer2
         }
         bangladesh {
             dimension "market"
-            applicationId "piotr_gorczynski.soccer2.bd"
-            // Uses: mobile/app/src/bangladesh/google-services.json
+            applicationIdSuffix ".bd"
+            // Final applicationId: piotr_gorczynski.soccer2.bd
         }
     }
 }
+// Both variants use the same google-services.json file
+// Firebase automatically selects the correct client configuration based on package name
+}
 ```
 
-The Google Services Gradle plugin automatically selects the correct `google-services.json` based on the build flavor.
+The Google Services Gradle plugin uses the single `google-services.json` file, and Firebase automatically selects the correct client configuration based on the application's package name at runtime.
 
 ---
 
@@ -2431,26 +2444,22 @@ implementation 'com.facebook.android:facebook-android-sdk:18.1.3'
   - The script checks if apps already exist before creating them to avoid duplicates
   - To run the script: Execute the Cloud Build deployment which includes this step
 
-- [ ] **Download Configuration Files** (AUTOMATED)
-  - **Note**: Configuration files for both apps are automatically downloaded by the `gcp/cloud-build/download_google_services.yaml` Cloud Build script
-  - The script downloads `google-services.json` files for both package names:
-    - `piotr_gorczynski.soccer2` → `google-services.{env}.json`
-    - `piotr_gorczynski.soccer2.bd` → `google-services.{env}.bd.json`
-  - The script follows the naming convention: `google-services.{env}.json` for global and `google-services.{env}.bd.json` for Bangladesh
-  - Files are automatically committed to the private repository's secrets directory
-  - **Manual Alternative**: You can also download `google-services.json` files manually from Firebase Console if needed, but the automated approach is recommended for consistency
+- [ ] **Download Configuration File** (AUTOMATED)
+  - **Note**: A single configuration file containing both app configurations is automatically downloaded by the `gcp/cloud-build/download_google_services.yaml` Cloud Build script
+  - The script downloads one `google-services.json` file per environment that includes configurations for all registered Android apps:
+    - The file contains client entries for both `piotr_gorczynski.soccer2` and `piotr_gorczynski.soccer2.bd`
+  - Naming convention: `google-services.{env}.json` (e.g., `google-services.dev.json`, `google-services.prod.json`)
+  - The file is automatically committed to the private repository's secrets directory
+  - **Manual Alternative**: You can also download the `google-services.json` file manually from Firebase Console if needed, but the automated approach is recommended for consistency
 
 - [ ] **Place Configuration Files**
   ```
   secrets/
-  ├── google-services.dev.json (global dev config)
-  ├── google-services.dev.bd.json (Bangladesh dev config)
-  ├── google-services.test.json (global test config)
-  ├── google-services.test.bd.json (Bangladesh test config)
-  ├── google-services.prod.json (global prod config)
-  └── google-services.prod.bd.json (Bangladesh prod config)
+  ├── google-services.dev.json (contains both global and Bangladesh configs)
+  ├── google-services.test.json (contains both global and Bangladesh configs)
+  └── google-services.prod.json (contains both global and Bangladesh configs)
   ```
-  **Note**: The build system automatically selects the appropriate file based on environment and market flavor.
+  **Note**: Each file contains client configurations for all package names. The build system uses the same file for both global and Bangladesh variants.
 
 - [ ] **Add SHA-1 Fingerprints in Firebase Console**
   - Note the SHA-1 fingerprint from your release keystore
