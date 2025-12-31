@@ -53,9 +53,19 @@ steps:
         # Download the google-services.json file
         # Note: A single google-services.json contains configurations for all registered Android apps
         # (both piotr_gorczynski.soccer2 and piotr_gorczynski.soccer2.bd)
-        /workspace/firebase/firebase apps:sdkconfig android \
+        if ! /workspace/firebase/firebase apps:sdkconfig android \
           --project="$project_id" \
-          > "/workspace/google-services.${_ENVIRONMENT}.json"
+          > "/workspace/google-services.${_ENVIRONMENT}.json"; then
+          echo "❌ Failed to download google-services.json"
+          echo "   Make sure Android apps are registered in Firebase project $project_id"
+          exit 1
+        fi
+        
+        # Verify the file was created and is not empty
+        if [ ! -s "/workspace/google-services.${_ENVIRONMENT}.json" ]; then
+          echo "❌ Downloaded google-services.json is empty or missing"
+          exit 1
+        fi
         
         echo "✅ Downloaded google-services.${_ENVIRONMENT}.json"
         echo "   This file contains configurations for all registered Android apps in the project."
