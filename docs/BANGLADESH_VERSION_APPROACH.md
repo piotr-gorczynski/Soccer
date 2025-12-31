@@ -3539,19 +3539,14 @@ The configuration generates 12 build variants (3 environments × 2 markets × 2 
 - `_prodBangladeshDebug`, `_prodBangladeshRelease`
 
 #### Firebase Configuration
-Google services configuration files use the following naming convention in `secrets/` directory:
+A single `google-services.json` file per environment contains configurations for all registered Android apps in the Firebase project:
 
-**Global variants:**
-- `secrets/google-services.dev.json`
-- `secrets/google-services.test.json`
-- `secrets/google-services.prod.json`
+**Configuration files in `secrets/` directory:**
+- `secrets/google-services.dev.json` (contains both global and Bangladesh configs)
+- `secrets/google-services.test.json` (contains both global and Bangladesh configs)
+- `secrets/google-services.prod.json` (contains both global and Bangladesh configs)
 
-**Bangladesh variants:**
-- `secrets/google-services.dev.bd.json`
-- `secrets/google-services.test.bd.json`
-- `secrets/google-services.prod.bd.json`
-
-The build system automatically selects the appropriate file based on environment and market.
+The build system uses the same file for both global and Bangladesh variants. Firebase automatically selects the correct client configuration based on the application's package name at runtime.
 
 #### Build Commands
 ```bash
@@ -3567,7 +3562,9 @@ The build system automatically selects the appropriate file based on environment
 
 #### Next Steps
 1. Register Bangladesh app in Firebase Console (package: `piotr_gorczynski.soccer2.bd`)
-2. Download and place google-services.json files in secrets/ directory
+2. Download and place google-services.json file in secrets/ directory
+3. Continue with Phase 2: Backend Development (Firestore schema, Cloud Functions)
+4. Then Phase 3: Mobile App Development (UI, eligibility, payment flows)
 3. Continue with Phase 2: Backend Development (Firestore schema, Cloud Functions)
 4. Then Phase 3: Mobile App Development (UI, eligibility, payment flows)
 
