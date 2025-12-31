@@ -3565,8 +3565,6 @@ The build system uses the same file for both global and Bangladesh variants. Fir
 2. Download and place google-services.json file in secrets/ directory
 3. Continue with Phase 2: Backend Development (Firestore schema, Cloud Functions)
 4. Then Phase 3: Mobile App Development (UI, eligibility, payment flows)
-3. Continue with Phase 2: Backend Development (Firestore schema, Cloud Functions)
-4. Then Phase 3: Mobile App Development (UI, eligibility, payment flows)
 
 ---
 
