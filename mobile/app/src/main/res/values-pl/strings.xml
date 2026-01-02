@@ -385,6 +385,8 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">Turniej %1$s już się nie toczy</string>
+    <string name="tournament_match_already_completed">Ten mecz został już zakończony i %1$s wygrał</string>
+    <string name="tournament_match_already_completed_no_winner">Ten mecz został już zakończony</string>
     <string name="field_tutorial_message">Dotknij jednego z punktów, aby przesunąć piłkę</string>
     <string name="field_tutorial_bounce_border">Gdy piłka uderza w granicę, odbija się i możesz ponownie przesunąć piłkę</string>
     <string name="field_tutorial_bounce_visited">Gdy piłka uderza w wcześniej odwiedzony punkt, odbija się i możesz ponownie przesunąć piłkę</string>

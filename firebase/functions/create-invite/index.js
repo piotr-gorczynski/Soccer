@@ -50,6 +50,26 @@ exports.createInvite = functions
       }
     }
 
+    /* ── check if match is already completed (for tournament matches) ─ */
+    if (matchPath) {
+      const matchDoc = await admin.firestore()
+        .doc(matchPath)
+        .get();
+
+      if (matchDoc.exists) {
+        const matchData = matchDoc.data();
+        const matchStatus = matchData?.status;
+        const winnerId = matchData?.winner;
+
+        if (matchStatus === 'completed' || winnerId) {
+          throw new functions.https.HttpsError(
+            'failed-precondition',
+            `tournament_match_completed:${winnerId || ''}`
+          );
+        }
+      }
+    }
+
     /* ── transaction guarantees one active invite per sender ─ */
     const result = await admin.firestore().runTransaction(async tx => {
 
