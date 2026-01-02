@@ -350,6 +350,7 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">%1$s тэмцээн цаашид үргэлжлэхгүй байна</string>
+    <string name="tournament_match_already_completed">Энэ тоглолт аль хэдийн дууссан бөгөөд %1$s хожсон</string>
     <string name="field_tutorial_message">Бөмбөгийг хөдөлгөхийн тулд цэгүүдийн аль нэг дээр товшино уу</string>
     <string name="field_tutorial_bounce_border">Бөмбөг хил рүү цохих үед буцаж харин бөмбөгийг дахин хөдөлгөж болно</string>
     <string name="field_tutorial_bounce_visited">Бөмбөг өмнө нь очсон цэг рүү цохих үед буцаж харин бөмбөгийг дахин хөдөлгөж болно</string>

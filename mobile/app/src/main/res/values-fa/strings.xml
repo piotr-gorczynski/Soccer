@@ -331,6 +331,7 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">مسابقه %1$s دیگر در حال اجرا نیست</string>
+    <string name="tournament_match_already_completed">این مسابقه قبلاً تمام شده و %1$s برنده شده است</string>
     <string name="field_tutorial_message">برای حرکت توپ روی یکی از نقاط ضربه بزنید</string>
     <string name="field_tutorial_bounce_border">وقتی توپ به مرز برخورد می‌کند، برمی‌گردد و می‌توانید دوباره توپ را حرکت دهید</string>
     <string name="field_tutorial_bounce_visited">وقتی توپ به نقطه قبلاً بازدید شده برخورد می‌کند، برمی‌گردد و می‌توانید دوباره توپ را حرکت دهید</string>
