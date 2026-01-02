@@ -638,6 +638,10 @@ public class InvitationsActivity extends BaseActivity {
                                             R.string.tournament_match_already_completed, "Player");
                                         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
                                     });
+                                // Return early to avoid showing default error message
+                                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                                        + ": createInvite failed - match already completed", e);
+                                return;
                             } else {
                                 customMessage = getString(R.string.tournament_match_already_completed_no_winner);
                             }
