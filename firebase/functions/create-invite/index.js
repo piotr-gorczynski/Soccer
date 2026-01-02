@@ -59,12 +59,12 @@ exports.createInvite = functions
       if (matchDoc.exists) {
         const matchData = matchDoc.data();
         const matchStatus = matchData?.status;
-        const winnerId = matchData?.winner;
 
-        if (matchStatus === 'completed' || winnerId) {
+        if (matchStatus === 'completed') {
+          const winnerId = matchData?.winner;
           throw new functions.https.HttpsError(
             'failed-precondition',
-            `tournament_match_completed:${winnerId || ''}`
+            `tournament_match_already_completed:${winnerId}`
           );
         }
       }

@@ -386,7 +386,6 @@
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">Turnier %1$s läuft nicht mehr</string>
     <string name="tournament_match_already_completed">Dieses Spiel wurde bereits beendet und %1$s hat gewonnen</string>
-    <string name="tournament_match_already_completed_no_winner">Dieses Spiel wurde bereits beendet</string>
     <string name="field_tutorial_message">Tippen Sie auf einen der Punkte, um den Ball zu bewegen</string>
     <string name="field_tutorial_bounce_border">Wenn der Ball eine Grenze trifft, prallt er ab und Sie können den Ball erneut bewegen</string>
     <string name="field_tutorial_bounce_visited">Wenn der Ball einen zuvor besuchten Punkt trifft, prallt er ab und Sie können den Ball erneut bewegen</string>

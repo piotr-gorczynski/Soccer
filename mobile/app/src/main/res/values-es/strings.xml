@@ -388,7 +388,6 @@
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">El torneo %1$s ya no está en curso</string>
     <string name="tournament_match_already_completed">Este partido ya se completó y %1$s ganó</string>
-    <string name="tournament_match_already_completed_no_winner">Este partido ya se completó</string>
     <string name="field_tutorial_message">Toca uno de los puntos para mover la pelota</string>
     <string name="field_tutorial_bounce_border">Cuando la pelota golpea un borde, rebota y puedes mover la pelota nuevamente</string>
     <string name="field_tutorial_bounce_visited">Cuando la pelota golpea un punto previamente visitado, rebota y puedes mover la pelota nuevamente</string>

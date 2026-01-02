@@ -351,7 +351,6 @@
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">ውድድር %1$s ከአሁን በኋላ እየሄደ አይደለም</string>
     <string name="tournament_match_already_completed">ይህ ግጥሚያ ቀድሞውኑ አልቋል እና %1$s አሸንፏል</string>
-    <string name="tournament_match_already_completed_no_winner">ይህ ግጥሚያ ቀድሞውኑ አልቋል</string>
     <string name="field_tutorial_message">በአንዱ ነጥብ ላይ ተዳቅሎ ኳሱን ለማንቀሳቀስ</string>
     <string name="field_tutorial_bounce_border">ኳሱ ድንበር ሲመታ፣ ይወጣል እና እንደገና ኳሱን ማንቀሳቀስ ይችላሉ</string>
     <string name="field_tutorial_bounce_visited">ኳሱ ቀደም ብሎ የተጎበኘ ነጥብ ሲመታ፣ ይወጣል እና እንደገና ኳሱን ማንቀሳቀስ ይችላሉ</string>
