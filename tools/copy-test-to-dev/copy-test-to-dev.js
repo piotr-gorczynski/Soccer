@@ -394,7 +394,8 @@ async function main() {
       try {
         const snapshot = await testRtdb.ref(pathName).once('value');
         if (snapshot.exists()) {
-          const keysCount = Object.keys(snapshot.val()).length;
+          const data = snapshot.val();
+          const keysCount = typeof data === 'object' && data !== null ? Object.keys(data).length : 1;
           console.log(`   📊 Found ${keysCount} key(s) in TEST`);
           results.rtdb[pathName] = { success: keysCount, dryRun: true };
         } else {
