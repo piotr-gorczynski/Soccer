@@ -618,7 +618,7 @@ public class InvitationsActivity extends BaseActivity {
                             Log.d("TAG_Soccer", getClass().getSimpleName() + ".sendInviteViaCF: Match already completed, winnerId=" + winnerId);
                             
                             // Fetch winner's nickname and display message
-                            if (winnerId != null && !winnerId.isEmpty()) {
+                            if (!winnerId.isEmpty()) {
                                 db.collection("users").document(winnerId).get()
                                     .addOnSuccessListener(userDoc -> {
                                         String winnerNickname = "Player";
@@ -638,9 +638,7 @@ public class InvitationsActivity extends BaseActivity {
                                             R.string.tournament_match_already_completed, "Player");
                                         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
                                     });
-                                // Return early to avoid showing default error message
-                                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                                        + ": createInvite failed - match already completed", e);
+                                // Return early to avoid showing default error message - the async callbacks will handle displaying the message
                                 return;
                             } else {
                                 customMessage = getString(R.string.tournament_match_already_completed_no_winner);
