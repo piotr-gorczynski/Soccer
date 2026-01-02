@@ -379,6 +379,8 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">Le tournoi %1$s n\'est plus en cours</string>
+    <string name="tournament_match_already_completed">Ce match est déjà terminé et %1$s a gagné</string>
+    <string name="tournament_match_already_completed_no_winner">Ce match est déjà terminé</string>
     <string name="field_tutorial_message">Appuyez sur l’un des points pour déplacer le ballon</string>
     <string name="field_tutorial_bounce_border">Lorsque le ballon touche un bord, il rebondit et vous pouvez à nouveau déplacer le ballon</string>
     <string name="field_tutorial_bounce_visited">Lorsque le ballon touche un point déjà visité, il rebondit et vous pouvez à nouveau déplacer le ballon</string>
