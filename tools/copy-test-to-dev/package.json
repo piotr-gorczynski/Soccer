@@ -1,0 +1,12 @@
+{
+  "name": "copy-test-to-dev",
+  "version": "1.0.0",
+  "description": "Script to copy data from TEST to DEV Firebase databases",
+  "main": "copy-test-to-dev.js",
+  "scripts": {
+    "start": "node copy-test-to-dev.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.4.0"
+  }
+}
