@@ -392,7 +392,6 @@
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">Tournament %1$s is no longer running</string>
     <string name="tournament_match_already_completed">This match was already completed and %1$s won</string>
-    <string name="tournament_match_already_completed_no_winner">This match was already completed</string>
     
     <!-- Tournament notification dialog -->
     <string name="tournament_started_dialog_message">Tournament %1$s started! Do you want to open tournament lobby?</string>
