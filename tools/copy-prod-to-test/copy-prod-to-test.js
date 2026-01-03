@@ -20,6 +20,46 @@ const RTDB_PATHS = ['status'];
 const AUTH_BATCH_SIZE = 1000; // Firebase Admin SDK limit for listUsers
 
 /**
+ * Recursively delete a document and all its subcollections
+ */
+async function deleteDocumentRecursive(docRef) {
+  const subcollections = await docRef.listCollections();
+
+  // Process all subcollections
+  for (const subcollection of subcollections) {
+    const subcollectionDocs = await subcollection.get();
+
+    for (const doc of subcollectionDocs.docs) {
+      await deleteDocumentRecursive(doc.ref);
+    }
+  }
+
+  // Delete the document itself
+  await docRef.delete();
+}
+
+/**
+ * Recursively copy a document and all its subcollections
+ */
+async function copyDocumentRecursive(sourceDocRef, targetDocRef) {
+  // Copy the document data
+  const sourceDoc = await sourceDocRef.get();
+  if (sourceDoc.exists) {
+    await targetDocRef.set(sourceDoc.data());
+  }
+
+  // Copy all subcollections
+  const subcollections = await sourceDocRef.listCollections();
+  for (const subcollection of subcollections) {
+    const subcollectionDocs = await subcollection.get();
+    for (const doc of subcollectionDocs.docs) {
+      const targetSubcollectionDocRef = targetDocRef.collection(subcollection.id).doc(doc.id);
+      await copyDocumentRecursive(doc.ref, targetSubcollectionDocRef);
+    }
+  }
+}
+
+/**
  * Copy all documents from a Firestore collection
  */
 async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
@@ -37,39 +77,27 @@ async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
     
     let successCount = 0;
     let failedCount = 0;
-    
-    let batch = targetDb.batch();
-    let batchCount = 0;
-    const MAX_BATCH_SIZE = 500; // Firestore limit
-    
+
+    // Copy each document recursively (including subcollections)
     for (const doc of sourceSnapshot.docs) {
       try {
+        const sourceDocRef = sourceDb.collection(collectionName).doc(doc.id);
         const targetDocRef = targetDb.collection(collectionName).doc(doc.id);
-        batch.set(targetDocRef, doc.data(), { merge: true });
-        batchCount++;
-        
-        // Commit batch if we reach the limit
-        if (batchCount >= MAX_BATCH_SIZE) {
-          await batch.commit();
-          successCount += batchCount;
-          console.log(`   ✅ Committed batch of ${batchCount} documents`);
-          batch = targetDb.batch(); // Create new batch
-          batchCount = 0;
+
+        await copyDocumentRecursive(sourceDocRef, targetDocRef);
+        successCount++;
+
+        // Log progress for every 50 documents
+        if (successCount % 50 === 0) {
+          console.log(`   📝 Copied ${successCount}/${sourceSnapshot.size} document(s)...`);
         }
       } catch (error) {
-        console.error(`   ❌ Error preparing document ${doc.id}:`, error.message);
+        console.error(`   ❌ Error copying document ${doc.id}:`, error.message);
         failedCount++;
       }
     }
-    
-    // Commit remaining documents
-    if (batchCount > 0) {
-      await batch.commit();
-      successCount += batchCount;
-      console.log(`   ✅ Committed final batch of ${batchCount} documents`);
-    }
-    
-    console.log(`   ✅ Successfully copied ${successCount} document(s)`);
+
+    console.log(`   ✅ Successfully copied ${successCount} document(s) with subcollections`);
     if (failedCount > 0) {
       console.log(`   ⚠️  Failed to copy ${failedCount} document(s)`);
     }
@@ -79,6 +107,58 @@ async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
     console.error(`   ❌ Error copying collection '${collectionName}':`, error.message);
     return { success: 0, failed: 0, error: error.message };
   }
+}
+
+/**
+ * Clear all documents (and their subcollections) from a Firestore collection
+ */
+async function clearFirestoreCollection(targetDb, collectionName) {
+  console.log(`\n🗑️  Clearing TEST collection: ${collectionName}`);
+
+  const collectionRef = targetDb.collection(collectionName);
+  let deletedCount = 0;
+  let failedCount = 0;
+  let lastDoc = null;
+
+  while (true) {
+    let query = collectionRef
+      .orderBy(admin.firestore.FieldPath.documentId())
+      .limit(200);
+
+    if (lastDoc) {
+      query = query.startAfter(lastDoc);
+    }
+
+    const snapshot = await query.get();
+
+    if (snapshot.empty) {
+      break;
+    }
+
+    for (const doc of snapshot.docs) {
+      try {
+        await deleteDocumentRecursive(doc.ref);
+        deletedCount++;
+
+        // Log progress for every 50 documents
+        if (deletedCount % 50 === 0) {
+          console.log(`   🗑️  Deleted ${deletedCount} document(s)...`);
+        }
+      } catch (error) {
+        console.error(`   ❌ Error deleting document ${doc.id}:`, error.message);
+        failedCount++;
+      }
+    }
+
+    lastDoc = snapshot.docs[snapshot.docs.length - 1];
+  }
+
+  console.log(`   ✅ Cleared ${deletedCount} document(s) with subcollections from TEST`);
+  if (failedCount > 0) {
+    console.log(`   ⚠️  Failed to delete ${failedCount} document(s)`);
+  }
+
+  return { deleted: deletedCount, failed: failedCount };
 }
 
 /**
@@ -363,13 +443,8 @@ async function main() {
       }
     } else {
       if (clearTarget) {
-        console.log(`\n🗑️  Clearing TEST collection: ${collectionName}`);
         try {
-          const testSnapshot = await testDb.collection(collectionName).get();
-          const batch = testDb.batch();
-          testSnapshot.docs.forEach(doc => batch.delete(doc.ref));
-          await batch.commit();
-          console.log(`   ✅ Cleared ${testSnapshot.size} document(s) from TEST`);
+          await clearFirestoreCollection(testDb, collectionName);
         } catch (error) {
           console.error(`   ⚠️  Error clearing collection:`, error.message);
         }
@@ -394,7 +469,8 @@ async function main() {
       try {
         const snapshot = await prodRtdb.ref(pathName).once('value');
         if (snapshot.exists()) {
-          const keysCount = Object.keys(snapshot.val()).length;
+          const data = snapshot.val();
+          const keysCount = typeof data === 'object' && data !== null ? Object.keys(data).length : 1;
           console.log(`   📊 Found ${keysCount} key(s) in PROD`);
           results.rtdb[pathName] = { success: keysCount, dryRun: true };
         } else {
