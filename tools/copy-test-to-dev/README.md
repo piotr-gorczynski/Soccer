@@ -82,7 +82,7 @@ node tools/copy-test-to-dev/copy-test-to-dev.js --clear-target
 ```
 
 ⚠️ **Warning**: This will delete all existing data in the DEV database before copying, including:
-- All Firestore collections
+- All Firestore collections **and their subcollections** (recursively deleted)
 - All Realtime Database paths
 - All Authentication users
 
@@ -99,7 +99,7 @@ node tools/copy-test-to-dev/copy-test-to-dev.js --dry-run --clear-target
 1. **Initialize Firebase Apps**: Creates two separate Firebase Admin SDK instances for TEST and DEV
 2. **Copy Firestore Collections**: 
    - Reads all documents from each collection in TEST
-   - Writes them to DEV using batched writes (for efficiency)
+   - **Recursively copies all subcollections** (e.g., `tournaments/{id}/matches`, `tournaments/{id}/participants`)
    - Uses merge mode by default (won't overwrite if document already exists)
 3. **Copy Realtime Database**: 
    - Reads the entire `status` path from TEST RTDB
@@ -114,7 +114,10 @@ node tools/copy-test-to-dev/copy-test-to-dev.js --dry-run --clear-target
 
 ## Notes
 
-- **Batch Operations**: The script uses Firestore batch writes (max 500 operations per batch) for efficiency
+- **Subcollection Handling**: The script recursively copies and deletes all subcollections to any depth
+  - When clearing with `--clear-target`, all subcollections are deleted recursively
+  - When copying, all subcollections are copied recursively
+  - This prevents "phantom" documents (documents that don't exist but have subcollections)
 - **Merge Mode**: By default, existing documents in DEV are merged with TEST data (not replaced)
 - **RTDB Behavior**: The RTDB `status` path is completely replaced (not merged)
 - **Authentication Import**: Uses Firebase Admin SDK's `importUsers` API which:
@@ -123,7 +126,7 @@ node tools/copy-test-to-dev/copy-test-to-dev.js --dry-run --clear-target
   - Updates existing users if they already exist in DEV
   - Processes up to 1000 users per batch
   - When `--clear-target` is used, all existing users in DEV are deleted before importing from TEST
-- **Large Collections**: The script handles large collections by processing them in batches
+- **Large Collections**: The script handles large collections by processing them one document at a time with progress logging
 - **Error Handling**: Errors are logged but the script continues processing other collections
 
 ## Safety Features
