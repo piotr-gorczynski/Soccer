@@ -22,7 +22,7 @@ const AUTH_BATCH_SIZE = 1000; // Firebase Admin SDK limit for listUsers
 /**
  * Recursively delete a document and all its subcollections
  */
-async function deleteDocumentRecursive(db, docRef) {
+async function deleteDocumentRecursive(docRef) {
   const subcollections = await docRef.listCollections();
   
   // Process all subcollections
@@ -31,7 +31,7 @@ async function deleteDocumentRecursive(db, docRef) {
     
     // Delete subcollection documents in parallel for better performance
     const deletePromises = subcollectionDocs.docs.map(doc => 
-      deleteDocumentRecursive(db, doc.ref)
+      deleteDocumentRecursive(doc.ref)
     );
     await Promise.all(deletePromises);
   }
@@ -392,16 +392,17 @@ async function main() {
       // Always clear DEV collection before copying
       console.log(`\n🗑️  Clearing DEV collection: ${collectionName}`);
       try {
-        const devSnapshot = await devDb.collection(collectionName).get();
+        const devDocRefs = await devDb.collection(collectionName).listDocuments();
         let deletedCount = 0;
+        const totalDocuments = devDocRefs.length;
         
-        for (const doc of devSnapshot.docs) {
-          await deleteDocumentRecursive(devDb, doc.ref);
+        for (const docRef of devDocRefs) {
+          await deleteDocumentRecursive(docRef);
           deletedCount++;
           
           // Log progress for every 50 documents
           if (deletedCount % 50 === 0) {
-            console.log(`   🗑️  Deleted ${deletedCount}/${devSnapshot.size} document(s)...`);
+            console.log(`   🗑️  Deleted ${deletedCount}/${totalDocuments} document(s)...`);
           }
         }
         
