@@ -18,6 +18,69 @@ const RTDB_PATHS = ['status'];
 
 // Batch size for authentication user operations
 const AUTH_BATCH_SIZE = 1000; // Firebase Admin SDK limit for listUsers
+const FIRESTORE_RETRY_OPTIONS = {
+  maxRetries: 5,
+  initialDelayMs: 1000,
+  maxDelayMs: 10000,
+};
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function isRetryableFirestoreError(error) {
+  if (!error) {
+    return false;
+  }
+
+  const message = String(error.message || '').toLowerCase();
+  const retryableMessages = [
+    'total timeout of api',
+    'deadline exceeded',
+    'deadline-exceeded',
+    'etimedout',
+    'econnreset',
+    'unavailable',
+    'resource exhausted',
+    'too many requests',
+  ];
+
+  if (retryableMessages.some(text => message.includes(text))) {
+    return true;
+  }
+
+  const retryableCodes = new Set([4, 8, 13, 14, 429]);
+  if (retryableCodes.has(error.code)) {
+    return true;
+  }
+
+  return false;
+}
+
+async function withRetry(operation, description) {
+  let attempt = 0;
+
+  while (true) {
+    try {
+      return await operation();
+    } catch (error) {
+      if (!isRetryableFirestoreError(error) || attempt >= FIRESTORE_RETRY_OPTIONS.maxRetries) {
+        throw error;
+      }
+
+      const baseDelay = FIRESTORE_RETRY_OPTIONS.initialDelayMs * 2 ** attempt;
+      const jitter = 0.5 + Math.random();
+      const delay = Math.min(baseDelay * jitter, FIRESTORE_RETRY_OPTIONS.maxDelayMs);
+
+      console.warn(
+        `   ⚠️  ${description} failed (${error.message}). Retrying in ${Math.round(delay)}ms...`
+      );
+
+      await sleep(delay);
+      attempt += 1;
+    }
+  }
+}
 
 /**
  * Recursively delete a document and all its subcollections
@@ -84,7 +147,10 @@ async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
         const sourceDocRef = sourceDb.collection(collectionName).doc(doc.id);
         const targetDocRef = targetDb.collection(collectionName).doc(doc.id);
 
-        await copyDocumentRecursive(sourceDocRef, targetDocRef);
+        await withRetry(
+          () => copyDocumentRecursive(sourceDocRef, targetDocRef),
+          `Copying document ${doc.id}`
+        );
         successCount++;
 
         // Log progress for every 50 documents
@@ -137,7 +203,7 @@ async function clearFirestoreCollection(targetDb, collectionName) {
 
     for (const doc of snapshot.docs) {
       try {
-        await deleteDocumentRecursive(doc.ref);
+        await withRetry(() => deleteDocumentRecursive(doc.ref), `Deleting document ${doc.id}`);
         deletedCount++;
 
         // Log progress for every 50 documents
