@@ -83,7 +83,7 @@ This will:
 
 ### Combine Options
 
-The `--dry-run` flag can be used alone. The deprecated `--clear-target` flag is no longer needed as clearing is now the default behavior.
+The `--dry-run` flag can be used alone. The `--clear-target` flag has been removed as clearing is now the default behavior.
 
 ## How it works
 
