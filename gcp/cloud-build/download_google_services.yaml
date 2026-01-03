@@ -54,7 +54,7 @@ steps:
         echo "🔍 Firebase apps output:"
         cat /workspace/apps_list.txt
 
-        app_id=$(grep ANDROID /workspace/apps_list.txt | grep -v "App ID" | awk -F '│' '{print $3}' | xargs)
+        app_id=$(grep ANDROID /workspace/apps_list.txt | grep -v "App ID" | awk -F '│' '{print $3}' | head -n 1 | xargs)
 
         if [ -z "$app_id" ]; then
           echo "❌ Firebase Android app ID not found."
