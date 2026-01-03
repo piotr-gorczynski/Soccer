@@ -20,6 +20,43 @@ const RTDB_PATHS = ['status'];
 const AUTH_BATCH_SIZE = 1000; // Firebase Admin SDK limit for listUsers
 
 /**
+ * Recursively delete a document and all its subcollections
+ */
+async function deleteDocumentRecursive(db, docRef) {
+  const subcollections = await docRef.listCollections();
+  
+  for (const subcollection of subcollections) {
+    const subcollectionDocs = await subcollection.get();
+    for (const doc of subcollectionDocs.docs) {
+      await deleteDocumentRecursive(db, doc.ref);
+    }
+  }
+  
+  await docRef.delete();
+}
+
+/**
+ * Recursively copy a document and all its subcollections
+ */
+async function copyDocumentRecursive(sourceDocRef, targetDocRef) {
+  // Copy the document data
+  const sourceDoc = await sourceDocRef.get();
+  if (sourceDoc.exists) {
+    await targetDocRef.set(sourceDoc.data(), { merge: true });
+  }
+  
+  // Copy all subcollections
+  const subcollections = await sourceDocRef.listCollections();
+  for (const subcollection of subcollections) {
+    const subcollectionDocs = await subcollection.get();
+    for (const doc of subcollectionDocs.docs) {
+      const targetSubcollectionDocRef = targetDocRef.collection(subcollection.id).doc(doc.id);
+      await copyDocumentRecursive(doc.ref, targetSubcollectionDocRef);
+    }
+  }
+}
+
+/**
  * Copy all documents from a Firestore collection
  */
 async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
@@ -38,38 +75,26 @@ async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
     let successCount = 0;
     let failedCount = 0;
     
-    let batch = targetDb.batch();
-    let batchCount = 0;
-    const MAX_BATCH_SIZE = 500; // Firestore limit
-    
+    // Copy each document recursively (including subcollections)
     for (const doc of sourceSnapshot.docs) {
       try {
+        const sourceDocRef = sourceDb.collection(collectionName).doc(doc.id);
         const targetDocRef = targetDb.collection(collectionName).doc(doc.id);
-        batch.set(targetDocRef, doc.data(), { merge: true });
-        batchCount++;
         
-        // Commit batch if we reach the limit
-        if (batchCount >= MAX_BATCH_SIZE) {
-          await batch.commit();
-          successCount += batchCount;
-          console.log(`   ✅ Committed batch of ${batchCount} documents`);
-          batch = targetDb.batch(); // Create new batch
-          batchCount = 0;
+        await copyDocumentRecursive(sourceDocRef, targetDocRef);
+        successCount++;
+        
+        // Log progress for every 50 documents
+        if (successCount % 50 === 0) {
+          console.log(`   📝 Copied ${successCount}/${sourceSnapshot.size} document(s)...`);
         }
       } catch (error) {
-        console.error(`   ❌ Error preparing document ${doc.id}:`, error.message);
+        console.error(`   ❌ Error copying document ${doc.id}:`, error.message);
         failedCount++;
       }
     }
     
-    // Commit remaining documents
-    if (batchCount > 0) {
-      await batch.commit();
-      successCount += batchCount;
-      console.log(`   ✅ Committed final batch of ${batchCount} documents`);
-    }
-    
-    console.log(`   ✅ Successfully copied ${successCount} document(s)`);
+    console.log(`   ✅ Successfully copied ${successCount} document(s) with subcollections`);
     if (failedCount > 0) {
       console.log(`   ⚠️  Failed to copy ${failedCount} document(s)`);
     }
@@ -366,10 +391,19 @@ async function main() {
         console.log(`\n🗑️  Clearing DEV collection: ${collectionName}`);
         try {
           const devSnapshot = await devDb.collection(collectionName).get();
-          const batch = devDb.batch();
-          devSnapshot.docs.forEach(doc => batch.delete(doc.ref));
-          await batch.commit();
-          console.log(`   ✅ Cleared ${devSnapshot.size} document(s) from DEV`);
+          let deletedCount = 0;
+          
+          for (const doc of devSnapshot.docs) {
+            await deleteDocumentRecursive(devDb, doc.ref);
+            deletedCount++;
+            
+            // Log progress for every 50 documents
+            if (deletedCount % 50 === 0) {
+              console.log(`   🗑️  Deleted ${deletedCount}/${devSnapshot.size} document(s)...`);
+            }
+          }
+          
+          console.log(`   ✅ Cleared ${deletedCount} document(s) with subcollections from DEV`);
         } catch (error) {
           console.error(`   ⚠️  Error clearing collection:`, error.message);
         }
