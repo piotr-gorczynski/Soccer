@@ -24,18 +24,16 @@ const AUTH_BATCH_SIZE = 1000; // Firebase Admin SDK limit for listUsers
  */
 async function deleteDocumentRecursive(docRef) {
   const subcollections = await docRef.listCollections();
-  
+
   // Process all subcollections
   for (const subcollection of subcollections) {
     const subcollectionDocs = await subcollection.get();
-    
-    // Delete subcollection documents in parallel for better performance
-    const deletePromises = subcollectionDocs.docs.map(doc => 
-      deleteDocumentRecursive(doc.ref)
-    );
-    await Promise.all(deletePromises);
+
+    for (const doc of subcollectionDocs.docs) {
+      await deleteDocumentRecursive(doc.ref);
+    }
   }
-  
+
   // Delete the document itself
   await docRef.delete();
 }
@@ -47,7 +45,7 @@ async function copyDocumentRecursive(sourceDocRef, targetDocRef) {
   // Copy the document data
   const sourceDoc = await sourceDocRef.get();
   if (sourceDoc.exists) {
-    await targetDocRef.set(sourceDoc.data(), { merge: true });
+    await targetDocRef.set(sourceDoc.data());
   }
   
   // Copy all subcollections
@@ -109,6 +107,58 @@ async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
     console.error(`   ❌ Error copying collection '${collectionName}':`, error.message);
     return { success: 0, failed: 0, error: error.message };
   }
+}
+
+/**
+ * Clear all documents (and their subcollections) from a Firestore collection
+ */
+async function clearFirestoreCollection(targetDb, collectionName) {
+  console.log(`\n🗑️  Clearing DEV collection: ${collectionName}`);
+
+  const collectionRef = targetDb.collection(collectionName);
+  let deletedCount = 0;
+  let failedCount = 0;
+  let lastDoc = null;
+
+  while (true) {
+    let query = collectionRef
+      .orderBy(admin.firestore.FieldPath.documentId())
+      .limit(200);
+
+    if (lastDoc) {
+      query = query.startAfter(lastDoc);
+    }
+
+    const snapshot = await query.get();
+
+    if (snapshot.empty) {
+      break;
+    }
+
+    for (const doc of snapshot.docs) {
+      try {
+        await deleteDocumentRecursive(doc.ref);
+        deletedCount++;
+
+        // Log progress for every 50 documents
+        if (deletedCount % 50 === 0) {
+          console.log(`   🗑️  Deleted ${deletedCount} document(s)...`);
+        }
+      } catch (error) {
+        console.error(`   ❌ Error deleting document ${doc.id}:`, error.message);
+        failedCount++;
+      }
+    }
+
+    lastDoc = snapshot.docs[snapshot.docs.length - 1];
+  }
+
+  console.log(`   ✅ Cleared ${deletedCount} document(s) with subcollections from DEV`);
+  if (failedCount > 0) {
+    console.log(`   ⚠️  Failed to delete ${failedCount} document(s)`);
+  }
+
+  return { deleted: deletedCount, failed: failedCount };
 }
 
 /**
@@ -390,23 +440,8 @@ async function main() {
       }
     } else {
       // Always clear DEV collection before copying
-      console.log(`\n🗑️  Clearing DEV collection: ${collectionName}`);
       try {
-        const devDocRefs = await devDb.collection(collectionName).listDocuments();
-        let deletedCount = 0;
-        const totalDocuments = devDocRefs.length;
-        
-        for (const docRef of devDocRefs) {
-          await deleteDocumentRecursive(docRef);
-          deletedCount++;
-          
-          // Log progress for every 50 documents
-          if (deletedCount % 50 === 0) {
-            console.log(`   🗑️  Deleted ${deletedCount}/${totalDocuments} document(s)...`);
-          }
-        }
-        
-        console.log(`   ✅ Cleared ${deletedCount} document(s) with subcollections from DEV`);
+        await clearFirestoreCollection(devDb, collectionName);
       } catch (error) {
         console.error(`   ⚠️  Error clearing collection:`, error.message);
       }
