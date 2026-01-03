@@ -25,13 +25,18 @@ const AUTH_BATCH_SIZE = 1000; // Firebase Admin SDK limit for listUsers
 async function deleteDocumentRecursive(db, docRef) {
   const subcollections = await docRef.listCollections();
   
+  // Process all subcollections
   for (const subcollection of subcollections) {
     const subcollectionDocs = await subcollection.get();
-    for (const doc of subcollectionDocs.docs) {
-      await deleteDocumentRecursive(db, doc.ref);
-    }
+    
+    // Delete subcollection documents in parallel for better performance
+    const deletePromises = subcollectionDocs.docs.map(doc => 
+      deleteDocumentRecursive(db, doc.ref)
+    );
+    await Promise.all(deletePromises);
   }
   
+  // Delete the document itself
   await docRef.delete();
 }
 
