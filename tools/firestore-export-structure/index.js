@@ -1,5 +1,29 @@
 const admin = require("firebase-admin");
-const serviceAccount = require("../../secrets/serviceAccountKey.dev.json");
+const path = require("path");
+
+const [envArg, limitArg] = process.argv.slice(2);
+const env = (envArg || "").toLowerCase();
+const validEnvs = ["dev", "test", "prod"];
+
+if (!validEnvs.includes(env)) {
+  console.error("Usage: node index.js <dev|test|prod> <docLimit>");
+  process.exit(1);
+}
+
+const docLimit = Number.parseInt(limitArg, 10);
+if (!Number.isInteger(docLimit) || docLimit <= 0) {
+  console.error("docLimit must be a positive integer.");
+  process.exit(1);
+}
+
+const serviceAccountPath = path.join(
+  __dirname,
+  "..",
+  "..",
+  "secrets",
+  `serviceAccountKey.${env}.json`
+);
+const serviceAccount = require(serviceAccountPath);
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
@@ -18,7 +42,7 @@ function inferType(value) {
 }
 
 async function describeCollectionRecursive(collRef, indent = "") {
-  const snapshot = await collRef.limit(2).get();
+  const snapshot = await collRef.limit(docLimit).get();
   console.log(`${indent}📁 ${collRef.path}`);
 
   if (snapshot.empty) {
@@ -46,5 +70,7 @@ async function describeCollectionRecursive(collRef, indent = "") {
   for (const collRef of topLevelCollections) {
     await describeCollectionRecursive(collRef);
   }
-  console.log("✅ Schema (based on up to 2 docs per collection) extracted.");
+  console.log(
+    `✅ Schema (based on up to ${docLimit} docs per collection) extracted.`
+  );
 })();
