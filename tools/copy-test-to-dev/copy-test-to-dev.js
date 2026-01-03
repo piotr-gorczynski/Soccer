@@ -317,14 +317,11 @@ async function main() {
   
   // Check for dry-run flag
   const dryRun = args.includes('--dry-run');
-  const clearTarget = args.includes('--clear-target');
   
   if (dryRun) {
     console.log('🔍 DRY RUN MODE - No data will be written to DEV\n');
-  }
-  
-  if (clearTarget && !dryRun) {
-    console.log('⚠️  CLEAR TARGET MODE - Existing data in DEV will be deleted first\n');
+  } else {
+    console.log('⚠️  CLEAR AND COPY MODE - Existing data in DEV will be deleted before copying\n');
   }
   
   // Load service account keys
@@ -392,26 +389,25 @@ async function main() {
         results.firestore[collectionName] = { error: error.message };
       }
     } else {
-      if (clearTarget) {
-        console.log(`\n🗑️  Clearing DEV collection: ${collectionName}`);
-        try {
-          const devSnapshot = await devDb.collection(collectionName).get();
-          let deletedCount = 0;
+      // Always clear DEV collection before copying
+      console.log(`\n🗑️  Clearing DEV collection: ${collectionName}`);
+      try {
+        const devSnapshot = await devDb.collection(collectionName).get();
+        let deletedCount = 0;
+        
+        for (const doc of devSnapshot.docs) {
+          await deleteDocumentRecursive(devDb, doc.ref);
+          deletedCount++;
           
-          for (const doc of devSnapshot.docs) {
-            await deleteDocumentRecursive(devDb, doc.ref);
-            deletedCount++;
-            
-            // Log progress for every 50 documents
-            if (deletedCount % 50 === 0) {
-              console.log(`   🗑️  Deleted ${deletedCount}/${devSnapshot.size} document(s)...`);
-            }
+          // Log progress for every 50 documents
+          if (deletedCount % 50 === 0) {
+            console.log(`   🗑️  Deleted ${deletedCount}/${devSnapshot.size} document(s)...`);
           }
-          
-          console.log(`   ✅ Cleared ${deletedCount} document(s) with subcollections from DEV`);
-        } catch (error) {
-          console.error(`   ⚠️  Error clearing collection:`, error.message);
         }
+        
+        console.log(`   ✅ Cleared ${deletedCount} document(s) with subcollections from DEV`);
+      } catch (error) {
+        console.error(`   ⚠️  Error clearing collection:`, error.message);
       }
       
       results.firestore[collectionName] = await copyFirestoreCollection(
@@ -446,14 +442,13 @@ async function main() {
         results.rtdb[pathName] = { error: error.message };
       }
     } else {
-      if (clearTarget) {
-        console.log(`\n🗑️  Clearing DEV RTDB path: ${pathName}`);
-        try {
-          await devRtdb.ref(pathName).remove();
-          console.log(`   ✅ Cleared path from DEV`);
-        } catch (error) {
-          console.error(`   ⚠️  Error clearing path:`, error.message);
-        }
+      // Always clear DEV RTDB path before copying
+      console.log(`\n🗑️  Clearing DEV RTDB path: ${pathName}`);
+      try {
+        await devRtdb.ref(pathName).remove();
+        console.log(`   ✅ Cleared path from DEV`);
+      } catch (error) {
+        console.error(`   ⚠️  Error clearing path:`, error.message);
       }
       
       results.rtdb[pathName] = await copyRtdbPath(testRtdb, devRtdb, pathName);
@@ -483,9 +478,8 @@ async function main() {
       results.authentication.users = { error: error.message };
     }
   } else {
-    if (clearTarget) {
-      results.authentication.cleared = await clearAuthenticationUsers(devAuth);
-    }
+    // Always clear DEV Authentication users before copying
+    results.authentication.cleared = await clearAuthenticationUsers(devAuth);
     
     results.authentication.users = await copyAuthenticationUsers(testAuth, devAuth);
   }
