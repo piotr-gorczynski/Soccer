@@ -23,9 +23,26 @@ const FIRESTORE_RETRY_OPTIONS = {
   initialDelayMs: 1000,
   maxDelayMs: 10000,
 };
+const SLOW_OPERATION_THRESHOLD_MS = 2000;
+const SLOW_COLLECTION_THRESHOLD_MS = 30000;
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function formatDuration(ms) {
+  if (ms < 1000) {
+    return `${ms}ms`;
+  }
+
+  const seconds = ms / 1000;
+  if (seconds < 60) {
+    return `${seconds.toFixed(2)}s`;
+  }
+
+  const minutes = Math.floor(seconds / 60);
+  const remainder = (seconds % 60).toFixed(2);
+  return `${minutes}m ${remainder}s`;
 }
 
 function isRetryableFirestoreError(error) {
@@ -57,7 +74,7 @@ function isRetryableFirestoreError(error) {
   return false;
 }
 
-async function withRetry(operation, description) {
+async function withRetry(operation, description, { onRetry } = {}) {
   let attempt = 0;
 
   while (true) {
@@ -68,12 +85,16 @@ async function withRetry(operation, description) {
         throw error;
       }
 
+      if (typeof onRetry === 'function') {
+        onRetry({ attempt: attempt + 1, error });
+      }
+
       const baseDelay = FIRESTORE_RETRY_OPTIONS.initialDelayMs * 2 ** attempt;
       const jitter = 0.5 + Math.random();
       const delay = Math.min(baseDelay * jitter, FIRESTORE_RETRY_OPTIONS.maxDelayMs);
 
       console.warn(
-        `   ⚠️  ${description} failed (${error.message}). Retrying in ${Math.round(delay)}ms...`
+        `   ⚠️  ${description} failed (attempt ${attempt + 1}/${FIRESTORE_RETRY_OPTIONS.maxRetries}). (${error.message}). Retrying in ${Math.round(delay)}ms...`
       );
 
       await sleep(delay);
@@ -86,25 +107,34 @@ async function withRetry(operation, description) {
  * Recursively delete a document and all its subcollections
  */
 async function deleteDocumentRecursive(docRef) {
+  let deletedDocs = 1;
+  let subcollectionsCount = 0;
   const subcollections = await docRef.listCollections();
+  subcollectionsCount += subcollections.length;
 
   // Process all subcollections
   for (const subcollection of subcollections) {
     const subcollectionDocs = await subcollection.get();
 
     for (const doc of subcollectionDocs.docs) {
-      await deleteDocumentRecursive(doc.ref);
+      const result = await deleteDocumentRecursive(doc.ref);
+      deletedDocs += result.documents;
+      subcollectionsCount += result.subcollections;
     }
   }
 
   // Delete the document itself
   await docRef.delete();
+
+  return { documents: deletedDocs, subcollections: subcollectionsCount };
 }
 
 /**
  * Recursively copy a document and all its subcollections
  */
 async function copyDocumentRecursive(sourceDocRef, targetDocRef) {
+  let copiedDocs = 1;
+  let subcollectionsCount = 0;
   // Copy the document data
   const sourceDoc = await sourceDocRef.get();
   if (sourceDoc.exists) {
@@ -113,13 +143,18 @@ async function copyDocumentRecursive(sourceDocRef, targetDocRef) {
 
   // Copy all subcollections
   const subcollections = await sourceDocRef.listCollections();
+  subcollectionsCount += subcollections.length;
   for (const subcollection of subcollections) {
     const subcollectionDocs = await subcollection.get();
     for (const doc of subcollectionDocs.docs) {
       const targetSubcollectionDocRef = targetDocRef.collection(subcollection.id).doc(doc.id);
-      await copyDocumentRecursive(doc.ref, targetSubcollectionDocRef);
+      const result = await copyDocumentRecursive(doc.ref, targetSubcollectionDocRef);
+      copiedDocs += result.documents;
+      subcollectionsCount += result.subcollections;
     }
   }
+
+  return { documents: copiedDocs, subcollections: subcollectionsCount };
 }
 
 /**
@@ -129,17 +164,23 @@ async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
   console.log(`\n📦 Copying Firestore collection: ${collectionName}`);
   
   try {
+    const collectionStart = Date.now();
+    const fetchStart = Date.now();
     const sourceSnapshot = await sourceDb.collection(collectionName).get();
+    const fetchDuration = Date.now() - fetchStart;
     
     if (sourceSnapshot.empty) {
-      console.log(`   ℹ️  Collection '${collectionName}' is empty in PROD`);
+      console.log(`   ℹ️  Collection '${collectionName}' is empty in PROD (${formatDuration(fetchDuration)} to read)`);
       return { success: 0, skipped: 0, failed: 0 };
     }
     
     console.log(`   📊 Found ${sourceSnapshot.size} document(s) in PROD`);
+    console.log(`   ⏱️  Read collection in ${formatDuration(fetchDuration)}`);
     
     let successCount = 0;
     let failedCount = 0;
+    const failedDocs = [];
+    const slowDocs = [];
 
     // Copy each document recursively (including subcollections)
     for (const doc of sourceSnapshot.docs) {
@@ -147,10 +188,24 @@ async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
         const sourceDocRef = sourceDb.collection(collectionName).doc(doc.id);
         const targetDocRef = targetDb.collection(collectionName).doc(doc.id);
 
-        await withRetry(
+        const docStart = Date.now();
+        const copyResult = await withRetry(
           () => copyDocumentRecursive(sourceDocRef, targetDocRef),
-          `Copying document ${doc.id}`
+          `Copying document ${doc.id}`,
+          {
+            onRetry: ({ attempt, error }) => {
+              console.warn(`      ↪️  Retry ${attempt} for ${doc.id} (${error.message})`);
+            }
+          }
         );
+        const docDuration = Date.now() - docStart;
+        if (docDuration >= SLOW_OPERATION_THRESHOLD_MS) {
+          slowDocs.push({ id: doc.id, duration: docDuration });
+          console.warn(
+            `   ⏳ Slow copy for ${doc.id}: ${formatDuration(docDuration)} ` +
+              `(nested docs: ${copyResult.documents}, subcollections: ${copyResult.subcollections})`
+          );
+        }
         successCount++;
 
         // Log progress for every 50 documents
@@ -159,6 +214,7 @@ async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
         }
       } catch (error) {
         console.error(`   ❌ Error copying document ${doc.id}:`, error.message);
+        failedDocs.push({ id: doc.id, message: error.message });
         failedCount++;
       }
     }
@@ -166,6 +222,26 @@ async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
     console.log(`   ✅ Successfully copied ${successCount} document(s) with subcollections`);
     if (failedCount > 0) {
       console.log(`   ⚠️  Failed to copy ${failedCount} document(s)`);
+      failedDocs.forEach(failure => {
+        console.log(`      ❌ ${failure.id}: ${failure.message}`);
+      });
+    }
+
+    const collectionDuration = Date.now() - collectionStart;
+    const averageDuration = successCount > 0 ? collectionDuration / successCount : 0;
+    console.log(`   ⏱️  Collection copy time: ${formatDuration(collectionDuration)} (avg ${formatDuration(Math.round(averageDuration))}/doc)`);
+    if (collectionDuration >= SLOW_COLLECTION_THRESHOLD_MS) {
+      console.warn(`   🐢 Collection '${collectionName}' is slow. Total time ${formatDuration(collectionDuration)} for ${sourceSnapshot.size} docs.`);
+    }
+    if (slowDocs.length > 0) {
+      const slowSummary = slowDocs
+        .slice(0, 10)
+        .map(docInfo => `${docInfo.id} (${formatDuration(docInfo.duration)})`)
+        .join(', ');
+      console.log(`   ⏳ Slow docs (first ${Math.min(10, slowDocs.length)}): ${slowSummary}`);
+      if (slowDocs.length > 10) {
+        console.log(`   ⏳ ${slowDocs.length - 10} more slow document(s) not shown`);
+      }
     }
     
     return { success: successCount, failed: failedCount };
@@ -184,7 +260,9 @@ async function clearFirestoreCollection(targetDb, collectionName) {
   const collectionRef = targetDb.collection(collectionName);
   let deletedCount = 0;
   let failedCount = 0;
+  const failedDocs = [];
   let lastDoc = null;
+  const clearStart = Date.now();
 
   while (true) {
     let query = collectionRef
@@ -203,7 +281,23 @@ async function clearFirestoreCollection(targetDb, collectionName) {
 
     for (const doc of snapshot.docs) {
       try {
-        await withRetry(() => deleteDocumentRecursive(doc.ref), `Deleting document ${doc.id}`);
+        const docStart = Date.now();
+        const deleteResult = await withRetry(
+          () => deleteDocumentRecursive(doc.ref),
+          `Deleting document ${doc.id}`,
+          {
+            onRetry: ({ attempt, error }) => {
+              console.warn(`      ↪️  Retry ${attempt} for delete ${doc.id} (${error.message})`);
+            }
+          }
+        );
+        const docDuration = Date.now() - docStart;
+        if (docDuration >= SLOW_OPERATION_THRESHOLD_MS) {
+          console.warn(
+            `   ⏳ Slow delete for ${doc.id}: ${formatDuration(docDuration)} ` +
+              `(nested docs: ${deleteResult.documents}, subcollections: ${deleteResult.subcollections})`
+          );
+        }
         deletedCount++;
 
         // Log progress for every 50 documents
@@ -212,6 +306,7 @@ async function clearFirestoreCollection(targetDb, collectionName) {
         }
       } catch (error) {
         console.error(`   ❌ Error deleting document ${doc.id}:`, error.message);
+        failedDocs.push({ id: doc.id, message: error.message });
         failedCount++;
       }
     }
@@ -222,7 +317,13 @@ async function clearFirestoreCollection(targetDb, collectionName) {
   console.log(`   ✅ Cleared ${deletedCount} document(s) with subcollections from TEST`);
   if (failedCount > 0) {
     console.log(`   ⚠️  Failed to delete ${failedCount} document(s)`);
+    failedDocs.forEach(failure => {
+      console.log(`      ❌ ${failure.id}: ${failure.message}`);
+    });
   }
+
+  const clearDuration = Date.now() - clearStart;
+  console.log(`   ⏱️  Collection clear time: ${formatDuration(clearDuration)} (avg ${formatDuration(Math.round(clearDuration / Math.max(1, deletedCount)))} /doc)`);
 
   return { deleted: deletedCount, failed: failedCount };
 }
