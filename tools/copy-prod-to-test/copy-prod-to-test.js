@@ -145,6 +145,25 @@ function processBatchResults(results, successCounter, failedCounter, failedDocs,
 }
 
 /**
+ * Create and configure a BulkWriter with retry logic
+ * @param {FirebaseFirestore.Firestore} db - Firestore database instance
+ * @returns {FirebaseFirestore.BulkWriter} Configured BulkWriter instance
+ */
+function createConfiguredBulkWriter(db) {
+  const bulkWriter = db.bulkWriter();
+  
+  // Configure BulkWriter to handle retryable errors
+  bulkWriter.onWriteError((error) => {
+    if (isRetryableFirestoreError(error.error)) {
+      return true; // Retry
+    }
+    return false; // Don't retry
+  });
+  
+  return bulkWriter;
+}
+
+/**
  * Copy all documents from a Firestore collection using BulkWriter
  */
 async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
@@ -165,15 +184,7 @@ async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
     console.log(`   ⏱️  Read collection in ${formatDuration(fetchDuration)}`);
     
     // Create a BulkWriter for efficient batch operations
-    const bulkWriter = targetDb.bulkWriter();
-    
-    // Configure BulkWriter to handle more operations in parallel
-    bulkWriter.onWriteError((error) => {
-      if (isRetryableFirestoreError(error.error)) {
-        return true; // Retry
-      }
-      return false; // Don't retry
-    });
+    const bulkWriter = createConfiguredBulkWriter(targetDb);
 
     let successCount = 0;
     let failedCount = 0;
@@ -206,7 +217,7 @@ async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
         failedCount = counts.failedCount;
         
         // Log progress every PARALLEL_BATCH_SIZE documents
-        if (successCount % PARALLEL_BATCH_SIZE === 0 || successCount + failedCount === sourceSnapshot.size) {
+        if (successCount > 0 && (successCount % PARALLEL_BATCH_SIZE === 0 || successCount + failedCount === sourceSnapshot.size)) {
           console.log(`   📝 Copied ${successCount}/${sourceSnapshot.size} document(s)...`);
         }
         
@@ -246,15 +257,7 @@ async function clearFirestoreCollection(targetDb, collectionName) {
   const collectionRef = targetDb.collection(collectionName);
   
   // Create a BulkWriter for efficient batch operations
-  const bulkWriter = targetDb.bulkWriter();
-  
-  // Configure BulkWriter to handle more operations in parallel
-  bulkWriter.onWriteError((error) => {
-    if (isRetryableFirestoreError(error.error)) {
-      return true; // Retry
-    }
-    return false; // Don't retry
-  });
+  const bulkWriter = createConfiguredBulkWriter(targetDb);
 
   let deletedCount = 0;
   let failedCount = 0;
@@ -300,7 +303,7 @@ async function clearFirestoreCollection(targetDb, collectionName) {
         failedCount = counts.failedCount;
         
         // Log progress every PARALLEL_BATCH_SIZE documents
-        if (deletedCount % PARALLEL_BATCH_SIZE === 0) {
+        if (deletedCount > 0 && deletedCount % PARALLEL_BATCH_SIZE === 0) {
           console.log(`   🗑️  Deleted ${deletedCount} document(s)...`);
         }
         
