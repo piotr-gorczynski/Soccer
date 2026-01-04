@@ -1,6 +1,7 @@
 <en-GB>
 🐝Prevent tournament match invites after completion
 🐝Prevent duplicate tournament dialog when opened from notification
+🎉 Add frontend validation for tournament/match status in invite buttons
 </en-GB>
 
 <pl-PL>
