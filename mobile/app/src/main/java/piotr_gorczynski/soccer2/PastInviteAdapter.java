@@ -83,40 +83,43 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_past_invite, parent, false);
         VH h = new VH(v);
         h.sendInviteBtn.setOnClickListener(btn -> {
-            if (h.uid != null && h.doc != null) {
-                String tournamentId = h.doc.getString("tournamentId");
-                String matchPath = h.doc.getString("matchPath");
-                String tournamentName = tournamentId != null ? tournamentNameCache.get(tournamentId) : null;
-                
-                // Check if tournament has ended
-                if (tournamentId != null && !tournamentId.isEmpty()) {
-                    String tournamentStatus = tournamentStatusCache.get(tournamentId);
-                    if (tournamentStatus != null && !"running".equals(tournamentStatus)) {
-                        String displayName = tournamentName != null ? tournamentName : "Tournament";
-                        String msg = SafeStringFormatter.safeGetString(context, R.string.tournament_not_running, displayName);
-                        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
-                        return;
-                    }
-                }
-                
-                // Check if match is completed
-                if (matchPath != null && !matchPath.isEmpty()) {
-                    String matchStatus = matchStatusCache.get(matchPath);
-                    if ("completed".equals(matchStatus)) {
-                        String winnerId = matchWinnerCache.get(matchPath);
-                        String winnerNickname = winnerId != null ? winnerNicknameCache.get(winnerId) : null;
-                        if (winnerNickname == null) {
-                            winnerNickname = "Player";
-                        }
-                        String msg = SafeStringFormatter.safeGetString(context, 
-                            R.string.tournament_match_already_completed, winnerNickname);
-                        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
-                        return;
-                    }
-                }
-                
-                inviteListener.onInvite(h.uid, tournamentId, matchPath, tournamentName);
+            if (h.uid == null || h.doc == null) {
+                return;
             }
+            
+            String uid = h.uid;
+            String tournamentId = h.doc.getString("tournamentId");
+            String matchPath = h.doc.getString("matchPath");
+            String tournamentName = tournamentId != null ? tournamentNameCache.get(tournamentId) : null;
+            
+            // Check if tournament has ended
+            if (tournamentId != null && !tournamentId.isEmpty()) {
+                String tournamentStatus = tournamentStatusCache.get(tournamentId);
+                if (tournamentStatus != null && !"running".equals(tournamentStatus)) {
+                    String displayName = tournamentName != null ? tournamentName : "Tournament";
+                    String msg = SafeStringFormatter.safeGetString(context, R.string.tournament_not_running, displayName);
+                    Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+                    return;
+                }
+            }
+            
+            // Check if match is completed
+            if (matchPath != null && !matchPath.isEmpty()) {
+                String matchStatus = matchStatusCache.get(matchPath);
+                if ("completed".equals(matchStatus)) {
+                    String winnerId = matchWinnerCache.get(matchPath);
+                    String winnerNickname = winnerId != null ? winnerNicknameCache.get(winnerId) : null;
+                    if (winnerNickname == null) {
+                        winnerNickname = "Player";
+                    }
+                    String msg = SafeStringFormatter.safeGetString(context, 
+                        R.string.tournament_match_already_completed, winnerNickname);
+                    Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+                    return;
+                }
+            }
+            
+            inviteListener.onInvite(uid, tournamentId, matchPath, tournamentName);
         });
         h.addFriendBtn.setOnClickListener(btn -> {
             if (h.uid == null) {
@@ -186,8 +189,10 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
             h.nickname.setText(context.getString(R.string.invite_from_loading));
             h.tournamentName.setVisibility(View.GONE);
             h.presence.setText("");
-            h.sendInviteBtn.setEnabled(false);
-            h.addFriendBtn.setEnabled(false);
+            // Keep buttons enabled to allow click listeners to handle validation
+            h.sendInviteBtn.setEnabled(true);
+            h.sendInviteBtn.setAlpha(0.3f);
+            h.addFriendBtn.setEnabled(true);
             h.addFriendBtn.setAlpha(0.3f);
             h.addFriendBtn.setText(R.string.add_friend_label);
             return;
@@ -343,7 +348,8 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
             h.presence.setText("…");
             // Update button state even before presence data is loaded
             boolean alreadyFriend = friendUids.contains(uid);
-            h.addFriendBtn.setEnabled(!alreadyFriend);
+            // Keep button enabled to allow click listener to show toast
+            h.addFriendBtn.setEnabled(true);
             h.addFriendBtn.setAlpha(alreadyFriend ? 0.3f : 1f);
             
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("status").child(uid);
@@ -482,15 +488,17 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
             }
         }
 
-        // Invite button is enabled only if user is enabled AND tournament is running AND match is not completed
+        // Invite button: Keep enabled so click listener can show toasts, but adjust visual appearance
         boolean inviteEnabled = userEnabled && !tournamentEnded && !matchCompleted;
-        h.sendInviteBtn.setEnabled(inviteEnabled);
+        // Always keep button enabled to allow click listener to fire and show toasts
+        h.sendInviteBtn.setEnabled(true);
         h.sendInviteBtn.setAlpha(inviteEnabled ? 1f : 0.3f);
 
-        // Add friend button logic
+        // Add friend button logic: Keep enabled so click listener can show toasts
         boolean alreadyFriend = friendUids.contains(uid);
         boolean canAddFriend = userEnabled && !alreadyFriend;
-        h.addFriendBtn.setEnabled(canAddFriend);
+        // Always keep button enabled to allow click listener to fire and show toasts
+        h.addFriendBtn.setEnabled(true);
         h.addFriendBtn.setAlpha(canAddFriend ? 1f : 0.3f);
         h.addFriendBtn.setText(context.getString(R.string.add_friend_label));
     }
