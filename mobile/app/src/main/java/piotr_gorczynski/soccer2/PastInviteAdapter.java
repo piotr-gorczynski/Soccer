@@ -204,7 +204,9 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
                 h.tournamentName.setVisibility(View.GONE);
             }
             
-            // Fetch tournament name and status if not cached
+            // Fetch tournament name and status if either is not cached
+            // We use OR here to make a single API call if either value is missing,
+            // then selectively update only the missing values in the callback
             String cachedTournamentStatus = tournamentStatusCache.get(tournamentId);
             if (cachedTournamentName == null || cachedTournamentStatus == null) {
                 FirebaseFirestore.getInstance().collection("tournaments").document(tournamentId).get()
