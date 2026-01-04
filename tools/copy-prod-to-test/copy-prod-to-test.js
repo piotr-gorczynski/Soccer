@@ -265,7 +265,9 @@ async function clearFirestoreCollection(targetDb, collectionName) {
   const PARALLEL_BATCH_SIZE = 50;
 
   // Keep deleting until no more documents are found
-  // Always query from the beginning to avoid pagination issues when deleting
+  // Always query from the beginning to avoid pagination issues when deleting.
+  // Using cursor-based pagination (startAfter) while deleting causes document skipping
+  // because document positions shift as deletions occur, resulting in incomplete clearing.
   while (true) {
     const query = collectionRef
       .orderBy(admin.firestore.FieldPath.documentId())
@@ -277,7 +279,10 @@ async function clearFirestoreCollection(targetDb, collectionName) {
       break;
     }
 
-    // Create a new BulkWriter for each batch to ensure clean state
+    // Create a new BulkWriter for each batch to ensure clean state.
+    // We must commit all deletions before querying again to prevent re-reading
+    // documents that should have been deleted, so we create a fresh BulkWriter
+    // for each iteration after closing the previous one.
     const bulkWriter = createConfiguredBulkWriter(targetDb);
 
     const docPromises = [];
