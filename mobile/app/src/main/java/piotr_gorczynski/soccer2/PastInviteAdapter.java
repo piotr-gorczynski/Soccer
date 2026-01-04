@@ -65,6 +65,7 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
     private final Map<String,String> tournamentStatusCache = new HashMap<>();
     private final Map<String,String> matchStatusCache = new HashMap<>();
     private final Map<String,String> matchWinnerCache = new HashMap<>();
+    private final Map<String,String> winnerNicknameCache = new HashMap<>();
     private static final class RtdbSub { final DatabaseReference ref; final ValueEventListener l; RtdbSub(DatabaseReference r, ValueEventListener l){this.ref=r;this.l=l;}}
     private final Map<String,RtdbSub> presSubs = new HashMap<>();
     private Set<String> friendUids = new HashSet<>();
@@ -103,31 +104,13 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
                     String matchStatus = matchStatusCache.get(matchPath);
                     if ("completed".equals(matchStatus)) {
                         String winnerId = matchWinnerCache.get(matchPath);
-                        if (winnerId != null) {
-                            // Fetch winner nickname and show toast
-                            FirebaseFirestore.getInstance().collection("users").document(winnerId).get()
-                                .addOnSuccessListener(userDoc -> {
-                                    String winnerNickname = "Player";
-                                    if (userDoc.exists()) {
-                                        winnerNickname = userDoc.getString("nickname");
-                                        if (winnerNickname == null || winnerNickname.isEmpty()) {
-                                            winnerNickname = "Player";
-                                        }
-                                    }
-                                    String msg = SafeStringFormatter.safeGetString(context, 
-                                        R.string.tournament_match_already_completed, winnerNickname);
-                                    Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
-                                })
-                                .addOnFailureListener(err -> {
-                                    String msg = SafeStringFormatter.safeGetString(context, 
-                                        R.string.tournament_match_already_completed, "Player");
-                                    Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
-                                });
-                        } else {
-                            String msg = SafeStringFormatter.safeGetString(context, 
-                                R.string.tournament_match_already_completed, "Player");
-                            Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+                        String winnerNickname = winnerId != null ? winnerNicknameCache.get(winnerId) : null;
+                        if (winnerNickname == null) {
+                            winnerNickname = "Player";
                         }
+                        String msg = SafeStringFormatter.safeGetString(context, 
+                            R.string.tournament_match_already_completed, winnerNickname);
+                        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
                         return;
                     }
                 }
@@ -210,7 +193,7 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
             return;
         }
 
-        // Handle tournament name display
+        // Handle tournament name and status display
         String tournamentId = d.getString("tournamentId");
         if (tournamentId != null && !tournamentId.isEmpty()) {
             String cachedTournamentName = tournamentNameCache.get(tournamentId);
@@ -219,41 +202,28 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
                 h.tournamentName.setVisibility(View.VISIBLE);
             } else {
                 h.tournamentName.setVisibility(View.GONE);
+            }
+            
+            // Fetch tournament name and status if not cached
+            String cachedTournamentStatus = tournamentStatusCache.get(tournamentId);
+            if (cachedTournamentName == null || cachedTournamentStatus == null) {
                 FirebaseFirestore.getInstance().collection("tournaments").document(tournamentId).get()
                         .addOnSuccessListener(doc -> {
                             if (doc.exists()) {
                                 String name = doc.getString("name");
-                                if (name != null) {
+                                if (name != null && cachedTournamentName == null) {
                                     tournamentNameCache.put(tournamentId, name);
                                     notifyTournamentChanged(tournamentId);
                                 }
                                 String status = doc.getString("status");
-                                if (status != null) {
+                                if (status != null && cachedTournamentStatus == null) {
                                     tournamentStatusCache.put(tournamentId, status);
                                     notifyTournamentStatusChanged(tournamentId);
                                 }
                             }
                         })
                         .addOnFailureListener(e -> {
-                            android.util.Log.w("TAG_Soccer", "Failed to load tournament name for " + tournamentId, e);
-                        });
-            }
-            
-            // Fetch tournament status if not cached
-            String cachedTournamentStatus = tournamentStatusCache.get(tournamentId);
-            if (cachedTournamentStatus == null) {
-                FirebaseFirestore.getInstance().collection("tournaments").document(tournamentId).get()
-                        .addOnSuccessListener(doc -> {
-                            if (doc.exists()) {
-                                String status = doc.getString("status");
-                                if (status != null) {
-                                    tournamentStatusCache.put(tournamentId, status);
-                                    notifyTournamentStatusChanged(tournamentId);
-                                }
-                            }
-                        })
-                        .addOnFailureListener(e -> {
-                            android.util.Log.w("TAG_Soccer", "Failed to load tournament status for " + tournamentId, e);
+                            android.util.Log.w("TAG_Soccer", "Failed to load tournament data for " + tournamentId, e);
                         });
             }
         } else {
@@ -311,6 +281,19 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
                                         String winnerId = doc.getString("winner");
                                         if (winnerId != null) {
                                             matchWinnerCache.put(matchPath, winnerId);
+                                            // Fetch winner nickname and cache it
+                                            FirebaseFirestore.getInstance().collection("users").document(winnerId).get()
+                                                .addOnSuccessListener(userDoc -> {
+                                                    if (userDoc.exists()) {
+                                                        String nickname = userDoc.getString("nickname");
+                                                        if (nickname != null && !nickname.isEmpty()) {
+                                                            winnerNicknameCache.put(winnerId, nickname);
+                                                        }
+                                                    }
+                                                })
+                                                .addOnFailureListener(e -> {
+                                                    android.util.Log.w("TAG_Soccer", "Failed to load winner nickname for " + winnerId, e);
+                                                });
                                         }
                                     }
                                     notifyMatchStatusChanged(matchPath);
@@ -320,6 +303,8 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
                         .addOnFailureListener(e -> {
                             android.util.Log.w("TAG_Soccer", "Failed to load match status for " + matchPath, e);
                         });
+            }
+        }
             }
         }
 
