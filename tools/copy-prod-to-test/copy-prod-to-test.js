@@ -93,12 +93,13 @@ async function deleteDocumentRecursive(docRef, bulkWriter) {
  * Recursively copy a document and all its subcollections using BulkWriter
  */
 async function copyDocumentRecursive(sourceDocRef, targetDocRef, bulkWriter) {
-  let copiedDocs = 1;
+  let copiedDocs = 0;
   let subcollectionsCount = 0;
   // Copy the document data
   const sourceDoc = await sourceDocRef.get();
   if (sourceDoc.exists) {
     bulkWriter.set(targetDocRef, sourceDoc.data());
+    copiedDocs = 1;
   }
 
   // Copy all subcollections
