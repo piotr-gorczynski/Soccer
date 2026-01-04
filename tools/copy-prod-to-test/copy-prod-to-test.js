@@ -120,6 +120,12 @@ async function copyDocumentRecursive(sourceDocRef, targetDocRef, bulkWriter) {
 
 /**
  * Process batch results sequentially to avoid race conditions
+ * @param {Array} results - Array of result objects from Promise.all
+ * @param {number} successCounter - Current success count
+ * @param {number} failedCounter - Current failed count
+ * @param {Array} failedDocs - Array to store failed document information
+ * @param {string} operationType - Type of operation (e.g., 'copying', 'deleting')
+ * @returns {Object} Updated counts { successCount, failedCount }
  */
 function processBatchResults(results, successCounter, failedCounter, failedDocs, operationType) {
   let newSuccessCount = successCounter;
@@ -199,8 +205,8 @@ async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
         successCount = counts.successCount;
         failedCount = counts.failedCount;
         
-        // Log progress for every 50 documents
-        if (successCount % 50 === 0 || successCount + failedCount === sourceSnapshot.size) {
+        // Log progress every PARALLEL_BATCH_SIZE documents
+        if (successCount % PARALLEL_BATCH_SIZE === 0 || successCount + failedCount === sourceSnapshot.size) {
           console.log(`   📝 Copied ${successCount}/${sourceSnapshot.size} document(s)...`);
         }
         
@@ -293,8 +299,8 @@ async function clearFirestoreCollection(targetDb, collectionName) {
         deletedCount = counts.successCount;
         failedCount = counts.failedCount;
         
-        // Log progress for every 50 documents
-        if (deletedCount % 50 === 0) {
+        // Log progress every PARALLEL_BATCH_SIZE documents
+        if (deletedCount % PARALLEL_BATCH_SIZE === 0) {
           console.log(`   🗑️  Deleted ${deletedCount} document(s)...`);
         }
         
