@@ -785,7 +785,7 @@ async function main() {
         results.rtdb[pathName] = { error: error.message };
       }
     } else {
-      if (clearTarget) {
+      if (clearTarget || clearDatabase) {
         console.log(`\n🗑️  Clearing TEST RTDB path: ${pathName}`);
         try {
           await testRtdb.ref(pathName).remove();
@@ -822,7 +822,7 @@ async function main() {
       results.authentication.users = { error: error.message };
     }
   } else {
-    if (clearTarget) {
+    if (clearTarget || clearDatabase) {
       results.authentication.cleared = await clearAuthenticationUsers(testAuth);
     }
     
