@@ -122,8 +122,9 @@ node tools/copy-prod-to-test/copy-prod-to-test.js --dry-run --clear-target
 1. **Initialize Firebase Apps**: Creates two separate Firebase Admin SDK instances for PROD and TEST
 2. **Clear Database (if `--clear-database` is used)**:
    - Lists all root-level collections in TEST Firestore
+   - Uses `listDocuments()` to get ALL document references including phantom documents
    - Recursively deletes all documents and subcollections
-   - Handles phantom documents (documents that don't exist but have subcollections)
+   - **Handles phantom documents**: Documents that don't exist but have subcollections (e.g., missing ancestor documents)
    - More thorough than per-collection clearing
 3. **Copy Firestore Collections**: 
    - If `--clear-target` is used (and not `--clear-database`), clears each collection individually before copying
@@ -162,7 +163,7 @@ The script has been optimized for large-scale data migrations:
 - **Database Clearing**: Two options available:
   - `--clear-database`: Deletes ALL collections in Firestore (recommended for thorough cleanup)
   - `--clear-target`: Deletes only the predefined collections before copying
-- **Phantom Documents**: The `--clear-database` option handles phantom documents (documents that don't exist but have subcollections), which can be left behind when using `--clear-target`
+- **Phantom Documents**: The `--clear-database` option properly handles phantom documents (documents that don't exist but have subcollections) by using `listDocuments()` instead of query methods. This ensures that missing ancestor documents with subcollections are properly cleaned up, preventing them from appearing in the Firebase Console as "This document does not exist"
 - **BulkWriter API**: The script uses Firestore's BulkWriter API for efficient batch operations with automatic throttling and retry logic
 - **Parallel Processing**: Documents are processed in parallel batches of 50 for optimal performance
 - **Auto-retry**: Failed operations are automatically retried with exponential backoff
@@ -264,3 +265,31 @@ Ensure the service accounts have the following permissions:
 ### Connection timeouts
 
 For very large collections, you might need to run the script multiple times or increase Node.js timeout limits.
+
+## Technical Details: Phantom Document Handling
+
+### What are Phantom Documents?
+
+Phantom documents (also called "missing ancestor documents") are a Firestore behavior where:
+- A document doesn't exist (has no data)
+- But it has one or more subcollections
+- The document appears in the Firebase Console with the message: "This document does not exist. It will not appear in queries or snapshots."
+
+### How They Occur
+
+Phantom documents can occur when:
+1. A document is deleted but its subcollections remain
+2. Subcollections are created without creating the parent document
+3. Data is copied/imported in a way that creates subcollections without parent documents
+
+### The Fix
+
+Previously, the script used Firestore queries (`.get()`) to find documents to delete. However, queries only return documents that actually exist - phantom documents are excluded from query results.
+
+**Solution**: The script now uses `listDocuments()` instead of query methods:
+- `collection.listDocuments()` returns references to ALL document paths, including phantoms
+- This allows the script to find and process phantom documents
+- The `deleteDocumentRecursive()` function then deletes the phantom's subcollections
+- Even though the document doesn't exist, `bulkWriter.delete()` safely handles the non-existent document
+
+This ensures that after running `--clear-database`, there are no phantom documents left in the Firestore database.
