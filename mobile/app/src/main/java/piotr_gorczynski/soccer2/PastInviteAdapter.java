@@ -62,6 +62,10 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
     private final Map<String,Long> hbCache = new HashMap<>();
     private final Map<String,Boolean> userDeletedCache = new HashMap<>();
     private final Map<String,String> tournamentNameCache = new HashMap<>();
+    private final Map<String,String> tournamentStatusCache = new HashMap<>();
+    private final Map<String,String> matchStatusCache = new HashMap<>();
+    private final Map<String,String> matchWinnerCache = new HashMap<>();
+    private final Map<String,String> winnerNicknameCache = new HashMap<>();
     private static final class RtdbSub { final DatabaseReference ref; final ValueEventListener l; RtdbSub(DatabaseReference r, ValueEventListener l){this.ref=r;this.l=l;}}
     private final Map<String,RtdbSub> presSubs = new HashMap<>();
     private Set<String> friendUids = new HashSet<>();
@@ -83,6 +87,34 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
                 String tournamentId = h.doc.getString("tournamentId");
                 String matchPath = h.doc.getString("matchPath");
                 String tournamentName = tournamentId != null ? tournamentNameCache.get(tournamentId) : null;
+                
+                // Check if tournament has ended
+                if (tournamentId != null && !tournamentId.isEmpty()) {
+                    String tournamentStatus = tournamentStatusCache.get(tournamentId);
+                    if (tournamentStatus != null && !"running".equals(tournamentStatus)) {
+                        String displayName = tournamentName != null ? tournamentName : "Tournament";
+                        String msg = SafeStringFormatter.safeGetString(context, R.string.tournament_not_running, displayName);
+                        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                }
+                
+                // Check if match is completed
+                if (matchPath != null && !matchPath.isEmpty()) {
+                    String matchStatus = matchStatusCache.get(matchPath);
+                    if ("completed".equals(matchStatus)) {
+                        String winnerId = matchWinnerCache.get(matchPath);
+                        String winnerNickname = winnerId != null ? winnerNicknameCache.get(winnerId) : null;
+                        if (winnerNickname == null) {
+                            winnerNickname = "Player";
+                        }
+                        String msg = SafeStringFormatter.safeGetString(context, 
+                            R.string.tournament_match_already_completed, winnerNickname);
+                        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                }
+                
                 inviteListener.onInvite(h.uid, tournamentId, matchPath, tournamentName);
             }
         });
@@ -133,6 +165,8 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
                             }
                         }
                     }
+                } else if ("tournamentStatus".equals(payload) || "matchStatus".equals(payload)) {
+                    updateButtonState(h);
                 }
             }
         }
@@ -159,7 +193,7 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
             return;
         }
 
-        // Handle tournament name display
+        // Handle tournament name and status display
         String tournamentId = d.getString("tournamentId");
         if (tournamentId != null && !tournamentId.isEmpty()) {
             String cachedTournamentName = tournamentNameCache.get(tournamentId);
@@ -168,18 +202,30 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
                 h.tournamentName.setVisibility(View.VISIBLE);
             } else {
                 h.tournamentName.setVisibility(View.GONE);
+            }
+            
+            // Fetch tournament name and status if either is not cached
+            // We use OR here to make a single API call if either value is missing,
+            // then selectively update only the missing values in the callback
+            String cachedTournamentStatus = tournamentStatusCache.get(tournamentId);
+            if (cachedTournamentName == null || cachedTournamentStatus == null) {
                 FirebaseFirestore.getInstance().collection("tournaments").document(tournamentId).get()
                         .addOnSuccessListener(doc -> {
                             if (doc.exists()) {
                                 String name = doc.getString("name");
-                                if (name != null) {
+                                if (name != null && cachedTournamentName == null) {
                                     tournamentNameCache.put(tournamentId, name);
                                     notifyTournamentChanged(tournamentId);
+                                }
+                                String status = doc.getString("status");
+                                if (status != null && cachedTournamentStatus == null) {
+                                    tournamentStatusCache.put(tournamentId, status);
+                                    notifyTournamentStatusChanged(tournamentId);
                                 }
                             }
                         })
                         .addOnFailureListener(e -> {
-                            android.util.Log.w("TAG_Soccer", "Failed to load tournament name for " + tournamentId, e);
+                            android.util.Log.w("TAG_Soccer", "Failed to load tournament data for " + tournamentId, e);
                         });
             }
         } else {
@@ -220,6 +266,48 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
             h.inviteReceivedAndStatus.setText(statusText);
         } else {
             h.inviteReceivedAndStatus.setText("");
+        }
+        
+        // Fetch match status if matchPath is present
+        String matchPath = d.getString("matchPath");
+        if (matchPath != null && !matchPath.isEmpty()) {
+            String cachedMatchStatus = matchStatusCache.get(matchPath);
+            if (cachedMatchStatus == null) {
+                FirebaseFirestore.getInstance().document(matchPath).get()
+                        .addOnSuccessListener(doc -> {
+                            if (doc.exists()) {
+                                String matchStatus = doc.getString("status");
+                                if (matchStatus != null) {
+                                    matchStatusCache.put(matchPath, matchStatus);
+                                    if ("completed".equals(matchStatus)) {
+                                        String winnerId = doc.getString("winner");
+                                        if (winnerId != null) {
+                                            matchWinnerCache.put(matchPath, winnerId);
+                                            // Fetch winner nickname and cache it if not already cached
+                                            if (!winnerNicknameCache.containsKey(winnerId)) {
+                                                FirebaseFirestore.getInstance().collection("users").document(winnerId).get()
+                                                    .addOnSuccessListener(userDoc -> {
+                                                        if (userDoc.exists()) {
+                                                            String nickname = userDoc.getString("nickname");
+                                                            if (nickname != null && !nickname.isEmpty()) {
+                                                                winnerNicknameCache.put(winnerId, nickname);
+                                                            }
+                                                        }
+                                                    })
+                                                    .addOnFailureListener(e -> {
+                                                        android.util.Log.w("TAG_Soccer", "Failed to load winner nickname for " + winnerId, e);
+                                                    });
+                                            }
+                                        }
+                                    }
+                                    notifyMatchStatusChanged(matchPath);
+                                }
+                            }
+                        })
+                        .addOnFailureListener(e -> {
+                            android.util.Log.w("TAG_Soccer", "Failed to load match status for " + matchPath, e);
+                        });
+            }
         }
 
         // Load nickname
@@ -314,22 +402,7 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
         h.presence.setText(label);
         h.presence.setTextColor(colour);
         
-        // Enable/disable buttons based on user status
-        Boolean isDeleted = userDeletedCache.get(uid);
-        boolean userDeleted = isDeleted != null && isDeleted;
-
-        // Buttons are disabled if user is deleted OR if user is offline (no heartbeat data)
-        long lastHeartbeat = hbCache.getOrDefault(uid, 0L);
-        boolean isTrulyOffline = "offline".equalsIgnoreCase(state) && lastHeartbeat == 0L;
-
-        boolean enabled = !userDeleted && !isTrulyOffline;
-        boolean alreadyFriend = friendUids.contains(uid);
-
-        h.sendInviteBtn.setEnabled(enabled);
-        boolean canAddFriend = enabled && !alreadyFriend;
-        h.addFriendBtn.setEnabled(canAddFriend);
-        h.addFriendBtn.setAlpha(canAddFriend ? 1f : 0.3f);
-        h.addFriendBtn.setText(context.getString(R.string.add_friend_label));
+        updateButtonState(h);
     }
 
     @Override
@@ -351,6 +424,75 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
                 notifyItemChanged(i, "tournament");
             }
         }
+    }
+
+    private void notifyTournamentStatusChanged(@NonNull String tournamentId) {
+        for (int i = 0; i < docs.size(); i++) {
+            String docTournamentId = docs.get(i).getString("tournamentId");
+            if (tournamentId.equals(docTournamentId)) {
+                notifyItemChanged(i, "tournamentStatus");
+            }
+        }
+    }
+
+    private void notifyMatchStatusChanged(@NonNull String matchPath) {
+        for (int i = 0; i < docs.size(); i++) {
+            String docMatchPath = docs.get(i).getString("matchPath");
+            if (matchPath.equals(docMatchPath)) {
+                notifyItemChanged(i, "matchStatus");
+            }
+        }
+    }
+
+    private void updateButtonState(@NonNull VH h) {
+        if (h.uid == null || h.doc == null) {
+            return;
+        }
+
+        String uid = h.uid;
+        String presenceState = presCache.get(uid);
+
+        // Check user status
+        Boolean isDeleted = userDeletedCache.get(uid);
+        boolean userDeleted = isDeleted != null && isDeleted;
+
+        // Buttons are disabled if user is deleted OR if user is offline (no heartbeat data)
+        long lastHeartbeat = hbCache.getOrDefault(uid, 0L);
+        boolean isTrulyOffline = "offline".equalsIgnoreCase(presenceState) && lastHeartbeat == 0L;
+
+        boolean userEnabled = !userDeleted && !isTrulyOffline;
+
+        // Check tournament and match status
+        boolean tournamentEnded = false;
+        boolean matchCompleted = false;
+
+        String tournamentId = h.doc.getString("tournamentId");
+        if (tournamentId != null && !tournamentId.isEmpty()) {
+            String tournamentStatus = tournamentStatusCache.get(tournamentId);
+            if (tournamentStatus != null && !"running".equals(tournamentStatus)) {
+                tournamentEnded = true;
+            }
+        }
+
+        String matchPath = h.doc.getString("matchPath");
+        if (matchPath != null && !matchPath.isEmpty()) {
+            String matchStatus = matchStatusCache.get(matchPath);
+            if ("completed".equals(matchStatus)) {
+                matchCompleted = true;
+            }
+        }
+
+        // Invite button is enabled only if user is enabled AND tournament is running AND match is not completed
+        boolean inviteEnabled = userEnabled && !tournamentEnded && !matchCompleted;
+        h.sendInviteBtn.setEnabled(inviteEnabled);
+        h.sendInviteBtn.setAlpha(inviteEnabled ? 1f : 0.3f);
+
+        // Add friend button logic
+        boolean alreadyFriend = friendUids.contains(uid);
+        boolean canAddFriend = userEnabled && !alreadyFriend;
+        h.addFriendBtn.setEnabled(canAddFriend);
+        h.addFriendBtn.setAlpha(canAddFriend ? 1f : 0.3f);
+        h.addFriendBtn.setText(context.getString(R.string.add_friend_label));
     }
 
     void setData(@NonNull List<DocumentSnapshot> invites) {
