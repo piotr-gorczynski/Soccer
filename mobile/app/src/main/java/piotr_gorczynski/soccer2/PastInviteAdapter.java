@@ -281,19 +281,21 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
                                         String winnerId = doc.getString("winner");
                                         if (winnerId != null) {
                                             matchWinnerCache.put(matchPath, winnerId);
-                                            // Fetch winner nickname and cache it
-                                            FirebaseFirestore.getInstance().collection("users").document(winnerId).get()
-                                                .addOnSuccessListener(userDoc -> {
-                                                    if (userDoc.exists()) {
-                                                        String nickname = userDoc.getString("nickname");
-                                                        if (nickname != null && !nickname.isEmpty()) {
-                                                            winnerNicknameCache.put(winnerId, nickname);
+                                            // Fetch winner nickname and cache it if not already cached
+                                            if (!winnerNicknameCache.containsKey(winnerId)) {
+                                                FirebaseFirestore.getInstance().collection("users").document(winnerId).get()
+                                                    .addOnSuccessListener(userDoc -> {
+                                                        if (userDoc.exists()) {
+                                                            String nickname = userDoc.getString("nickname");
+                                                            if (nickname != null && !nickname.isEmpty()) {
+                                                                winnerNicknameCache.put(winnerId, nickname);
+                                                            }
                                                         }
-                                                    }
-                                                })
-                                                .addOnFailureListener(e -> {
-                                                    android.util.Log.w("TAG_Soccer", "Failed to load winner nickname for " + winnerId, e);
-                                                });
+                                                    })
+                                                    .addOnFailureListener(e -> {
+                                                        android.util.Log.w("TAG_Soccer", "Failed to load winner nickname for " + winnerId, e);
+                                                    });
+                                            }
                                         }
                                     }
                                     notifyMatchStatusChanged(matchPath);
@@ -303,8 +305,6 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
                         .addOnFailureListener(e -> {
                             android.util.Log.w("TAG_Soccer", "Failed to load match status for " + matchPath, e);
                         });
-            }
-        }
             }
         }
 
