@@ -341,6 +341,110 @@ async function clearFirestoreCollection(targetDb, collectionName) {
 }
 
 /**
+ * Clear entire Firestore database by recursively deleting all collections
+ * This is more thorough than clearing individual collections as it also
+ * handles phantom documents (documents that don't exist but have subcollections)
+ */
+async function clearEntireFirestoreDatabase(targetDb) {
+  console.log('\n🗑️  Clearing ENTIRE TEST Firestore database');
+  console.log('   ⚠️  This will delete ALL collections and subcollections\n');
+
+  const clearStart = Date.now();
+  let totalDeleted = 0;
+  let totalFailed = 0;
+
+  try {
+    // List all root-level collections
+    const collections = await targetDb.listCollections();
+    console.log(`   📊 Found ${collections.length} root-level collection(s) in TEST`);
+
+    for (const collection of collections) {
+      console.log(`\n   🗑️  Clearing collection: ${collection.id}`);
+      const result = await clearFirestoreCollectionRecursive(targetDb, collection.id);
+      totalDeleted += result.deleted;
+      totalFailed += result.failed;
+    }
+
+    const clearDuration = Date.now() - clearStart;
+    console.log(`\n   ✅ Database clear complete: ${totalDeleted} document(s) deleted`);
+    if (totalFailed > 0) {
+      console.log(`   ⚠️  Failed to delete ${totalFailed} document(s)`);
+    }
+    console.log(`   ⏱️  Total clear time: ${formatDuration(clearDuration)}`);
+
+    return { deleted: totalDeleted, failed: totalFailed };
+  } catch (error) {
+    console.error(`   ❌ Error clearing database:`, error.message);
+    return { deleted: totalDeleted, failed: totalFailed, error: error.message };
+  }
+}
+
+/**
+ * Recursively clear all documents in a collection, including phantom documents with subcollections
+ */
+async function clearFirestoreCollectionRecursive(targetDb, collectionPath) {
+  let deletedCount = 0;
+  let failedCount = 0;
+  const PARALLEL_BATCH_SIZE = 50;
+
+  while (true) {
+    const collectionRef = targetDb.collection(collectionPath);
+    const query = collectionRef
+      .orderBy(admin.firestore.FieldPath.documentId())
+      .limit(200);
+
+    const snapshot = await query.get();
+
+    if (snapshot.empty) {
+      break;
+    }
+
+    const bulkWriter = createConfiguredBulkWriter(targetDb);
+    const docPromises = [];
+    const failedDocs = [];
+
+    for (const doc of snapshot.docs) {
+      const promise = deleteDocumentRecursive(doc.ref, bulkWriter)
+        .then(deleteResult => {
+          return { success: true, deleteResult, docId: doc.id };
+        })
+        .catch(error => {
+          return { success: false, error, docId: doc.id };
+        });
+
+      docPromises.push(promise);
+
+      if (docPromises.length >= PARALLEL_BATCH_SIZE) {
+        const results = await Promise.all(docPromises);
+        const counts = processBatchResults(results, deletedCount, failedCount, failedDocs, 'deleting');
+        deletedCount = counts.successCount;
+        failedCount = counts.failedCount;
+        
+        if (deletedCount > 0 && deletedCount % PARALLEL_BATCH_SIZE === 0) {
+          console.log(`      🗑️  Deleted ${deletedCount} document(s)...`);
+        }
+        
+        docPromises.length = 0;
+      }
+    }
+
+    if (docPromises.length > 0) {
+      const results = await Promise.all(docPromises);
+      const counts = processBatchResults(results, deletedCount, failedCount, failedDocs, 'deleting');
+      deletedCount = counts.successCount;
+      failedCount = counts.failedCount;
+    }
+
+    console.log(`      🔄 Committing batch deletions...`);
+    await bulkWriter.close();
+  }
+
+  console.log(`      ✅ Deleted ${deletedCount} document(s) from ${collectionPath}`);
+  
+  return { deleted: deletedCount, failed: failedCount };
+}
+
+/**
  * Clear all authentication users from TEST
  */
 async function clearAuthenticationUsers(targetAuth) {
@@ -547,12 +651,16 @@ async function main() {
   // Check for dry-run flag
   const dryRun = args.includes('--dry-run');
   const clearTarget = args.includes('--clear-target');
+  const clearDatabase = args.includes('--clear-database');
   
   if (dryRun) {
     console.log('🔍 DRY RUN MODE - No data will be written to TEST\n');
   }
   
-  if (clearTarget && !dryRun) {
+  if (clearDatabase && !dryRun) {
+    console.log('⚠️  CLEAR DATABASE MODE - ALL data in TEST Firestore will be deleted first\n');
+    console.log('   This is more thorough than --clear-target as it handles phantom documents\n');
+  } else if (clearTarget && !dryRun) {
     console.log('⚠️  CLEAR TARGET MODE - Existing data in TEST will be deleted first\n');
   }
   
@@ -604,6 +712,21 @@ async function main() {
     authentication: {}
   };
   
+  // Clear entire Firestore database if requested
+  if (clearDatabase && !dryRun) {
+    console.log('\n' + '='.repeat(60));
+    console.log('CLEARING ENTIRE FIRESTORE DATABASE');
+    console.log('='.repeat(60));
+    
+    try {
+      const clearResult = await clearEntireFirestoreDatabase(testDb);
+      results.databaseClear = clearResult;
+    } catch (error) {
+      console.error('   ❌ Error clearing database:', error.message);
+      results.databaseClear = { error: error.message };
+    }
+  }
+  
   // Copy Firestore collections
   console.log('\n' + '='.repeat(60));
   console.log('FIRESTORE COLLECTIONS');
@@ -621,7 +744,8 @@ async function main() {
         results.firestore[collectionName] = { error: error.message };
       }
     } else {
-      if (clearTarget) {
+      // Only clear individual collections if not using --clear-database
+      if (clearTarget && !clearDatabase) {
         try {
           await clearFirestoreCollection(testDb, collectionName);
         } catch (error) {
@@ -709,6 +833,18 @@ async function main() {
   console.log('\n' + '='.repeat(60));
   console.log('SUMMARY');
   console.log('='.repeat(60));
+  
+  if (results.databaseClear) {
+    console.log('\nDatabase Clear:');
+    if (results.databaseClear.error) {
+      console.log(`  ❌ Error - ${results.databaseClear.error}`);
+    } else {
+      console.log(`  🗑️  Deleted ${results.databaseClear.deleted} document(s) from entire database`);
+      if (results.databaseClear.failed > 0) {
+        console.log(`     ⚠️  Failed to delete ${results.databaseClear.failed} document(s)`);
+      }
+    }
+  }
   
   console.log('\nFirestore Collections:');
   for (const [collection, result] of Object.entries(results.firestore)) {
