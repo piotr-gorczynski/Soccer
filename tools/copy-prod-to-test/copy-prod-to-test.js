@@ -394,13 +394,16 @@ async function clearFirestoreCollectionRecursive(targetDb, collectionPath) {
   let deletedCount = 0;
   let failedCount = 0;
   const PARALLEL_BATCH_SIZE = 50;
+  const BATCH_SIZE = 200;
 
   // Use listDocuments() instead of get() to include phantom documents
   // listDocuments() returns references to all documents, including those that don't exist
+  // We loop until no more documents are found, processing in batches
   while (true) {
     const collectionRef = targetDb.collection(collectionPath);
     
     // Get document references (this includes phantoms)
+    // After deletions are committed, the next call should return remaining documents
     const documentRefs = await collectionRef.listDocuments();
     
     if (documentRefs.length === 0) {
@@ -411,9 +414,9 @@ async function clearFirestoreCollectionRecursive(targetDb, collectionPath) {
     const docPromises = [];
     const failedDocs = [];
     
-    // Process documents in batches
-    const batchSize = Math.min(200, documentRefs.length);
-    const refsToProcess = documentRefs.slice(0, batchSize);
+    // Process up to BATCH_SIZE documents in this iteration
+    // After we commit deletions, next iteration will get remaining documents
+    const refsToProcess = documentRefs.slice(0, BATCH_SIZE);
 
     for (const docRef of refsToProcess) {
       const promise = deleteDocumentRecursive(docRef, bulkWriter)
@@ -426,6 +429,7 @@ async function clearFirestoreCollectionRecursive(targetDb, collectionPath) {
 
       docPromises.push(promise);
 
+      // Process in smaller parallel batches for better performance
       if (docPromises.length >= PARALLEL_BATCH_SIZE) {
         const results = await Promise.all(docPromises);
         const counts = processBatchResults(results, deletedCount, failedCount, failedDocs, 'deleting');
@@ -440,6 +444,7 @@ async function clearFirestoreCollectionRecursive(targetDb, collectionPath) {
       }
     }
 
+    // Process any remaining promises in this batch
     if (docPromises.length > 0) {
       const results = await Promise.all(docPromises);
       const counts = processBatchResults(results, deletedCount, failedCount, failedDocs, 'deleting');
@@ -447,6 +452,8 @@ async function clearFirestoreCollectionRecursive(targetDb, collectionPath) {
       failedCount = counts.failedCount;
     }
 
+    // Commit all deletions before next iteration
+    // This ensures deleted documents won't appear in the next listDocuments() call
     console.log(`      🔄 Committing batch deletions...`);
     await bulkWriter.close();
   }
