@@ -350,6 +350,7 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">ການແຂ່ງຂັນ %1$s ບໍ່ໄດ້ດຳເນີນການອີກແລ້ວ</string>
+    <string name="tournament_match_already_completed">ການແຂ່ງຂັນນີ້ສິ້ນສຸດແລ້ວ ແລະ %1$s ຊະນະ</string>
     <string name="field_tutorial_message">ແຕະໃສ່ຈຸດໃດໜຶ່ງເພື່ອເຄື່ອນຍ້າຍບານ</string>
     <string name="field_tutorial_bounce_border">ເມື່ອບານຕີຂອບເຂດ ມັນສະທ້ອນກັບຄືນ ແລະ ເຈົ້າສາມາດເຄື່ອນຍ້າຍບານອີກຄັ້ງ</string>
     <string name="field_tutorial_bounce_visited">ເມື່ອບານຕີຈຸດທີ່ເຄີຍໄປແລ້ວ ມັນສະທ້ອນກັບຄືນ ແລະ ເຈົ້າສາມາດເຄື່ອນຍ້າຍບານອີກຄັ້ງ</string>

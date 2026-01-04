@@ -384,6 +384,7 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">টুর্নামেন্ট %1$s আর চলছে না</string>
+    <string name="tournament_match_already_completed">এই ম্যাচটি ইতিমধ্যে সম্পন্ন হয়েছে এবং %1$s জিতেছে</string>
     <string name="field_tutorial_message">বল সরাতে একটি পয়েন্টে ট্যাপ করুন</string>
     <string name="field_tutorial_bounce_border">যখন বল সীমানায় আঘাত করে, এটি বাউন্স করে এবং আপনি আবার বল সরাতে পারেন</string>
     <string name="field_tutorial_bounce_visited">যখন বল পূর্বে পরিদর্শন করা পয়েন্টে আঘাত করে, এটি বাউন্স করে এবং আপনি আবার বল সরাতে পারেন</string>

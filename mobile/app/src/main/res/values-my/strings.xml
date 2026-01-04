@@ -350,6 +350,7 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">ပြိုင်ပွဲ %1$s သည် ယခု မလည်ပတ်တော့ပါ</string>
+    <string name="tournament_match_already_completed">ဤပွဲစဉ်မှာ ပြီးဆုံးပြီးဖြစ်ပြီး %1$s အနိုင်ရခဲ့သည်</string>
     <string name="field_tutorial_message">ဘောလုံးကို ရွှေ့ရန် အမှတ်တစ်ခုပေါ်တွင် နှိပ်ပါ</string>
     <string name="field_tutorial_bounce_border">ဘောလုံးသည် နယ်နိမိတ်ကို ထိသောအခါ ပြန်လှည့်ပြီး ဘောလုံးကို ထပ်မံ ရွှေ့နိုင်သည်</string>
     <string name="field_tutorial_bounce_visited">ဘောလုံးသည် ယခင်က သွားခဲ့သော အမှတ်ကို ထိသောအခါ ပြန်လှည့်ပြီး ဘောလုံးကို ထပ်မံ ရွှေ့နိုင်သည်</string>
