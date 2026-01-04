@@ -67,8 +67,16 @@ function isRetryableFirestoreError(error) {
  * Recursively delete a document and all its subcollections using BulkWriter
  */
 async function deleteDocumentRecursive(docRef, bulkWriter) {
-  let deletedDocs = 1;
+  let deletedDocs = 0;
   let subcollectionsCount = 0;
+  
+  // Check if document exists to get accurate count
+  const docSnapshot = await docRef.get();
+  if (docSnapshot.exists) {
+    deletedDocs = 1;
+  }
+  
+  // Get all subcollections (works for both existing and phantom documents)
   const subcollections = await docRef.listCollections();
   subcollectionsCount += subcollections.length;
 
@@ -83,7 +91,7 @@ async function deleteDocumentRecursive(docRef, bulkWriter) {
     }
   }
 
-  // Delete the document itself using BulkWriter
+  // Delete the document itself using BulkWriter (works even if document doesn't exist)
   bulkWriter.delete(docRef);
 
   return { documents: deletedDocs, subcollections: subcollectionsCount };
@@ -387,29 +395,33 @@ async function clearFirestoreCollectionRecursive(targetDb, collectionPath) {
   let failedCount = 0;
   const PARALLEL_BATCH_SIZE = 50;
 
+  // Use listDocuments() instead of get() to include phantom documents
+  // listDocuments() returns references to all documents, including those that don't exist
   while (true) {
     const collectionRef = targetDb.collection(collectionPath);
-    const query = collectionRef
-      .orderBy(admin.firestore.FieldPath.documentId())
-      .limit(200);
-
-    const snapshot = await query.get();
-
-    if (snapshot.empty) {
+    
+    // Get document references (this includes phantoms)
+    const documentRefs = await collectionRef.listDocuments();
+    
+    if (documentRefs.length === 0) {
       break;
     }
 
     const bulkWriter = createConfiguredBulkWriter(targetDb);
     const docPromises = [];
     const failedDocs = [];
+    
+    // Process documents in batches
+    const batchSize = Math.min(200, documentRefs.length);
+    const refsToProcess = documentRefs.slice(0, batchSize);
 
-    for (const doc of snapshot.docs) {
-      const promise = deleteDocumentRecursive(doc.ref, bulkWriter)
+    for (const docRef of refsToProcess) {
+      const promise = deleteDocumentRecursive(docRef, bulkWriter)
         .then(deleteResult => {
-          return { success: true, deleteResult, docId: doc.id };
+          return { success: true, deleteResult, docId: docRef.id };
         })
         .catch(error => {
-          return { success: false, error, docId: doc.id };
+          return { success: false, error, docId: docRef.id };
         });
 
       docPromises.push(promise);
