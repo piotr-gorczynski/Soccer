@@ -18,17 +18,6 @@ const RTDB_PATHS = ['status'];
 
 // Batch size for authentication user operations
 const AUTH_BATCH_SIZE = 1000; // Firebase Admin SDK limit for listUsers
-const FIRESTORE_RETRY_OPTIONS = {
-  maxRetries: 5,
-  initialDelayMs: 1000,
-  maxDelayMs: 10000,
-};
-const SLOW_OPERATION_THRESHOLD_MS = 2000;
-const SLOW_COLLECTION_THRESHOLD_MS = 30000;
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 function formatDuration(ms) {
   if (ms < 1000) {
@@ -74,39 +63,10 @@ function isRetryableFirestoreError(error) {
   return false;
 }
 
-async function withRetry(operation, description, { onRetry } = {}) {
-  let attempt = 0;
-
-  while (true) {
-    try {
-      return await operation();
-    } catch (error) {
-      if (!isRetryableFirestoreError(error) || attempt >= FIRESTORE_RETRY_OPTIONS.maxRetries) {
-        throw error;
-      }
-
-      if (typeof onRetry === 'function') {
-        onRetry({ attempt: attempt + 1, error });
-      }
-
-      const baseDelay = FIRESTORE_RETRY_OPTIONS.initialDelayMs * 2 ** attempt;
-      const jitter = 0.5 + Math.random();
-      const delay = Math.min(baseDelay * jitter, FIRESTORE_RETRY_OPTIONS.maxDelayMs);
-
-      console.warn(
-        `   ⚠️  ${description} failed (attempt ${attempt + 1}/${FIRESTORE_RETRY_OPTIONS.maxRetries}). (${error.message}). Retrying in ${Math.round(delay)}ms...`
-      );
-
-      await sleep(delay);
-      attempt += 1;
-    }
-  }
-}
-
 /**
- * Recursively delete a document and all its subcollections
+ * Recursively delete a document and all its subcollections using BulkWriter
  */
-async function deleteDocumentRecursive(docRef) {
+async function deleteDocumentRecursive(docRef, bulkWriter) {
   let deletedDocs = 1;
   let subcollectionsCount = 0;
   const subcollections = await docRef.listCollections();
@@ -117,28 +77,29 @@ async function deleteDocumentRecursive(docRef) {
     const subcollectionDocs = await subcollection.get();
 
     for (const doc of subcollectionDocs.docs) {
-      const result = await deleteDocumentRecursive(doc.ref);
+      const result = await deleteDocumentRecursive(doc.ref, bulkWriter);
       deletedDocs += result.documents;
       subcollectionsCount += result.subcollections;
     }
   }
 
-  // Delete the document itself
-  await docRef.delete();
+  // Delete the document itself using BulkWriter
+  bulkWriter.delete(docRef);
 
   return { documents: deletedDocs, subcollections: subcollectionsCount };
 }
 
 /**
- * Recursively copy a document and all its subcollections
+ * Recursively copy a document and all its subcollections using BulkWriter
  */
-async function copyDocumentRecursive(sourceDocRef, targetDocRef) {
-  let copiedDocs = 1;
+async function copyDocumentRecursive(sourceDocRef, targetDocRef, bulkWriter) {
+  let copiedDocs = 0;
   let subcollectionsCount = 0;
   // Copy the document data
   const sourceDoc = await sourceDocRef.get();
   if (sourceDoc.exists) {
-    await targetDocRef.set(sourceDoc.data());
+    bulkWriter.set(targetDocRef, sourceDoc.data());
+    copiedDocs = 1;
   }
 
   // Copy all subcollections
@@ -148,7 +109,7 @@ async function copyDocumentRecursive(sourceDocRef, targetDocRef) {
     const subcollectionDocs = await subcollection.get();
     for (const doc of subcollectionDocs.docs) {
       const targetSubcollectionDocRef = targetDocRef.collection(subcollection.id).doc(doc.id);
-      const result = await copyDocumentRecursive(doc.ref, targetSubcollectionDocRef);
+      const result = await copyDocumentRecursive(doc.ref, targetSubcollectionDocRef, bulkWriter);
       copiedDocs += result.documents;
       subcollectionsCount += result.subcollections;
     }
@@ -158,7 +119,52 @@ async function copyDocumentRecursive(sourceDocRef, targetDocRef) {
 }
 
 /**
- * Copy all documents from a Firestore collection
+ * Process batch results sequentially to avoid race conditions
+ * @param {Array} results - Array of result objects from Promise.all
+ * @param {number} successCounter - Current success count
+ * @param {number} failedCounter - Current failed count
+ * @param {Array} failedDocs - Array to store failed document information
+ * @param {string} operationType - Type of operation (e.g., 'copying', 'deleting')
+ * @returns {Object} Updated counts { successCount, failedCount }
+ */
+function processBatchResults(results, successCounter, failedCounter, failedDocs, operationType) {
+  let newSuccessCount = successCounter;
+  let newFailedCount = failedCounter;
+  
+  for (const result of results) {
+    if (result.success) {
+      newSuccessCount++;
+    } else {
+      console.error(`   ❌ Error ${operationType} document ${result.docId}:`, result.error.message);
+      failedDocs.push({ id: result.docId, message: result.error.message });
+      newFailedCount++;
+    }
+  }
+  
+  return { successCount: newSuccessCount, failedCount: newFailedCount };
+}
+
+/**
+ * Create and configure a BulkWriter with retry logic
+ * @param {FirebaseFirestore.Firestore} db - Firestore database instance
+ * @returns {FirebaseFirestore.BulkWriter} Configured BulkWriter instance
+ */
+function createConfiguredBulkWriter(db) {
+  const bulkWriter = db.bulkWriter();
+  
+  // Configure BulkWriter to handle retryable errors
+  bulkWriter.onWriteError((error) => {
+    if (isRetryableFirestoreError(error.error)) {
+      return true; // Retry
+    }
+    return false; // Don't retry
+  });
+  
+  return bulkWriter;
+}
+
+/**
+ * Copy all documents from a Firestore collection using BulkWriter
  */
 async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
   console.log(`\n📦 Copying Firestore collection: ${collectionName}`);
@@ -177,47 +183,51 @@ async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
     console.log(`   📊 Found ${sourceSnapshot.size} document(s) in PROD`);
     console.log(`   ⏱️  Read collection in ${formatDuration(fetchDuration)}`);
     
+    // Create a BulkWriter for efficient batch operations
+    const bulkWriter = createConfiguredBulkWriter(targetDb);
+
     let successCount = 0;
     let failedCount = 0;
     const failedDocs = [];
-    const slowDocs = [];
 
-    // Copy each document recursively (including subcollections)
-    for (const doc of sourceSnapshot.docs) {
-      try {
-        const sourceDocRef = sourceDb.collection(collectionName).doc(doc.id);
-        const targetDocRef = targetDb.collection(collectionName).doc(doc.id);
+    // Process documents in parallel batches for better performance
+    const PARALLEL_BATCH_SIZE = 50;
+    const docPromises = [];
 
-        const docStart = Date.now();
-        const copyResult = await withRetry(
-          () => copyDocumentRecursive(sourceDocRef, targetDocRef),
-          `Copying document ${doc.id}`,
-          {
-            onRetry: ({ attempt, error }) => {
-              console.warn(`      ↪️  Retry ${attempt} for ${doc.id} (${error.message})`);
-            }
-          }
-        );
-        const docDuration = Date.now() - docStart;
-        if (docDuration >= SLOW_OPERATION_THRESHOLD_MS) {
-          slowDocs.push({ id: doc.id, duration: docDuration });
-          console.warn(
-            `   ⏳ Slow copy for ${doc.id}: ${formatDuration(docDuration)} ` +
-              `(nested docs: ${copyResult.documents}, subcollections: ${copyResult.subcollections})`
-          );
-        }
-        successCount++;
+    for (let i = 0; i < sourceSnapshot.docs.length; i++) {
+      const doc = sourceSnapshot.docs[i];
+      const sourceDocRef = sourceDb.collection(collectionName).doc(doc.id);
+      const targetDocRef = targetDb.collection(collectionName).doc(doc.id);
 
-        // Log progress for every 50 documents
-        if (successCount % 50 === 0) {
+      const promise = copyDocumentRecursive(sourceDocRef, targetDocRef, bulkWriter)
+        .then(copyResult => {
+          return { success: true, copyResult, docId: doc.id };
+        })
+        .catch(error => {
+          return { success: false, error, docId: doc.id };
+        });
+
+      docPromises.push(promise);
+
+      // Process in batches to avoid overwhelming the system
+      if (docPromises.length >= PARALLEL_BATCH_SIZE || i === sourceSnapshot.docs.length - 1) {
+        const results = await Promise.all(docPromises);
+        const counts = processBatchResults(results, successCount, failedCount, failedDocs, 'copying');
+        successCount = counts.successCount;
+        failedCount = counts.failedCount;
+        
+        // Log progress every PARALLEL_BATCH_SIZE documents
+        if (successCount > 0 && (successCount % PARALLEL_BATCH_SIZE === 0 || successCount + failedCount === sourceSnapshot.size)) {
           console.log(`   📝 Copied ${successCount}/${sourceSnapshot.size} document(s)...`);
         }
-      } catch (error) {
-        console.error(`   ❌ Error copying document ${doc.id}:`, error.message);
-        failedDocs.push({ id: doc.id, message: error.message });
-        failedCount++;
+        
+        docPromises.length = 0; // Clear the array
       }
     }
+
+    // Close the BulkWriter and wait for all operations to complete
+    console.log(`   🔄 Committing all writes...`);
+    await bulkWriter.close();
 
     console.log(`   ✅ Successfully copied ${successCount} document(s) with subcollections`);
     if (failedCount > 0) {
@@ -230,19 +240,6 @@ async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
     const collectionDuration = Date.now() - collectionStart;
     const averageDuration = successCount > 0 ? collectionDuration / successCount : 0;
     console.log(`   ⏱️  Collection copy time: ${formatDuration(collectionDuration)} (avg ${formatDuration(Math.round(averageDuration))}/doc)`);
-    if (collectionDuration >= SLOW_COLLECTION_THRESHOLD_MS) {
-      console.warn(`   🐢 Collection '${collectionName}' is slow. Total time ${formatDuration(collectionDuration)} for ${sourceSnapshot.size} docs.`);
-    }
-    if (slowDocs.length > 0) {
-      const slowSummary = slowDocs
-        .slice(0, 10)
-        .map(docInfo => `${docInfo.id} (${formatDuration(docInfo.duration)})`)
-        .join(', ');
-      console.log(`   ⏳ Slow docs (first ${Math.min(10, slowDocs.length)}): ${slowSummary}`);
-      if (slowDocs.length > 10) {
-        console.log(`   ⏳ ${slowDocs.length - 10} more slow document(s) not shown`);
-      }
-    }
     
     return { success: successCount, failed: failedCount };
   } catch (error) {
@@ -252,17 +249,24 @@ async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
 }
 
 /**
- * Clear all documents (and their subcollections) from a Firestore collection
+ * Clear all documents (and their subcollections) from a Firestore collection using BulkWriter
  */
 async function clearFirestoreCollection(targetDb, collectionName) {
   console.log(`\n🗑️  Clearing TEST collection: ${collectionName}`);
 
   const collectionRef = targetDb.collection(collectionName);
+  
+  // Create a BulkWriter for efficient batch operations
+  const bulkWriter = createConfiguredBulkWriter(targetDb);
+
   let deletedCount = 0;
   let failedCount = 0;
   const failedDocs = [];
   let lastDoc = null;
   const clearStart = Date.now();
+
+  // Process documents in parallel batches
+  const PARALLEL_BATCH_SIZE = 50;
 
   while (true) {
     let query = collectionRef
@@ -279,40 +283,48 @@ async function clearFirestoreCollection(targetDb, collectionName) {
       break;
     }
 
+    const docPromises = [];
     for (const doc of snapshot.docs) {
-      try {
-        const docStart = Date.now();
-        const deleteResult = await withRetry(
-          () => deleteDocumentRecursive(doc.ref),
-          `Deleting document ${doc.id}`,
-          {
-            onRetry: ({ attempt, error }) => {
-              console.warn(`      ↪️  Retry ${attempt} for delete ${doc.id} (${error.message})`);
-            }
-          }
-        );
-        const docDuration = Date.now() - docStart;
-        if (docDuration >= SLOW_OPERATION_THRESHOLD_MS) {
-          console.warn(
-            `   ⏳ Slow delete for ${doc.id}: ${formatDuration(docDuration)} ` +
-              `(nested docs: ${deleteResult.documents}, subcollections: ${deleteResult.subcollections})`
-          );
-        }
-        deletedCount++;
+      const promise = deleteDocumentRecursive(doc.ref, bulkWriter)
+        .then(deleteResult => {
+          return { success: true, deleteResult, docId: doc.id };
+        })
+        .catch(error => {
+          return { success: false, error, docId: doc.id };
+        });
 
-        // Log progress for every 50 documents
-        if (deletedCount % 50 === 0) {
+      docPromises.push(promise);
+
+      // Process in batches to avoid overwhelming the system
+      if (docPromises.length >= PARALLEL_BATCH_SIZE) {
+        const results = await Promise.all(docPromises);
+        const counts = processBatchResults(results, deletedCount, failedCount, failedDocs, 'deleting');
+        deletedCount = counts.successCount;
+        failedCount = counts.failedCount;
+        
+        // Log progress every PARALLEL_BATCH_SIZE documents
+        if (deletedCount > 0 && deletedCount % PARALLEL_BATCH_SIZE === 0) {
           console.log(`   🗑️  Deleted ${deletedCount} document(s)...`);
         }
-      } catch (error) {
-        console.error(`   ❌ Error deleting document ${doc.id}:`, error.message);
-        failedDocs.push({ id: doc.id, message: error.message });
-        failedCount++;
+        
+        docPromises.length = 0; // Clear the array
       }
+    }
+
+    // Wait for remaining promises in this batch
+    if (docPromises.length > 0) {
+      const results = await Promise.all(docPromises);
+      const counts = processBatchResults(results, deletedCount, failedCount, failedDocs, 'deleting');
+      deletedCount = counts.successCount;
+      failedCount = counts.failedCount;
     }
 
     lastDoc = snapshot.docs[snapshot.docs.length - 1];
   }
+
+  // Close the BulkWriter and wait for all operations to complete
+  console.log(`   🔄 Committing all deletions...`);
+  await bulkWriter.close();
 
   console.log(`   ✅ Cleared ${deletedCount} document(s) with subcollections from TEST`);
   if (failedCount > 0) {
