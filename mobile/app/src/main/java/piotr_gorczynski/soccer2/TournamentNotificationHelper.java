@@ -79,6 +79,20 @@ public class TournamentNotificationHelper {
         String tournamentId = tournamentDoc.getId();
         String tournamentName = tournamentDoc.getString("name");
 
+        // Check if user already opened this tournament via notification
+        if (activity instanceof TournamentLobbyActivity) {
+            TournamentLobbyActivity tournamentActivity = (TournamentLobbyActivity) activity;
+            String currentTournamentId = tournamentActivity.getIntent().getStringExtra("tournamentId");
+            boolean fromNotification = tournamentActivity.getIntent().getBooleanExtra("fromNotification", false);
+            
+            if (fromNotification && tournamentId.equals(currentTournamentId)) {
+                Log.d(TAG, "TournamentNotificationHelper: Tournament " + tournamentId + " already opened from notification, skipping dialog");
+                // Mark as shown to prevent showing it later
+                markNotificationShown(activity, tournamentId);
+                return;
+            }
+        }
+
         // Check if we've already shown this tournament
         if (hasShownNotification(activity, tournamentId)) {
             Log.d(TAG, "TournamentNotificationHelper: Already shown notification for tournament " + tournamentId);

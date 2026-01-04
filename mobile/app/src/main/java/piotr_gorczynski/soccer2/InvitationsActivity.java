@@ -612,6 +612,33 @@ public class InvitationsActivity extends BaseActivity {
                             Log.d("TAG_Soccer", getClass().getSimpleName() + ".sendInviteViaCF: displayName=" + displayName + " (from local=" + (tournamentName != null) + ")");
                             customMessage = SafeStringFormatter.safeGetString(this, R.string.tournament_not_running, displayName);
                             Log.d("TAG_Soccer", getClass().getSimpleName() + ".sendInviteViaCF: customMessage=" + customMessage);
+                        } else if (reason.startsWith("tournament_match_already_completed:")) {
+                            // Extract winnerId from error message
+                            String winnerId = reason.substring("tournament_match_already_completed:".length());
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + ".sendInviteViaCF: Match already completed, winnerId=" + winnerId);
+                            
+                            // Fetch winner's nickname and display message
+                            db.collection("users").document(winnerId).get()
+                                .addOnSuccessListener(userDoc -> {
+                                    String winnerNickname = "Player";
+                                    if (userDoc.exists()) {
+                                        winnerNickname = userDoc.getString("nickname");
+                                        if (winnerNickname == null || winnerNickname.isEmpty()) {
+                                            winnerNickname = "Player";
+                                        }
+                                    }
+                                    String msg = SafeStringFormatter.safeGetString(this, 
+                                        R.string.tournament_match_already_completed, winnerNickname);
+                                    Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+                                })
+                                .addOnFailureListener(err -> {
+                                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".sendInviteViaCF: Failed to fetch winner nickname", err);
+                                    String msg = SafeStringFormatter.safeGetString(this, 
+                                        R.string.tournament_match_already_completed, "Player");
+                                    Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+                                });
+                            // Return early to avoid showing default error message - the async callbacks will handle displaying the message
+                            return;
                         } else if (code == FirebaseFunctionsException.Code.FAILED_PRECONDITION) {
                             if (reason.contains("blocked invites")) {
                                 customMessage = reason; // Use the full message from the server

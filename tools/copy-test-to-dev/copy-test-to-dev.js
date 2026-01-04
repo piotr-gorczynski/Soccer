@@ -1,4 +1,4 @@
-// tools/copy-prod-to-test/copy-prod-to-test.js
+// tools/copy-test-to-dev/copy-test-to-dev.js
 const fs = require('fs');
 const path = require('path');
 const admin = require('firebase-admin');
@@ -65,15 +65,10 @@ function isRetryableFirestoreError(error) {
 
 /**
  * Recursively delete a document and all its subcollections using BulkWriter
- * Note: This function does not check if the document exists before deletion.
- * For phantom documents (non-existent documents with subcollections), the document
- * deletion is a no-op, but subcollections are still deleted.
  */
 async function deleteDocumentRecursive(docRef, bulkWriter) {
-  let deletedDocs = 1; // Count this document (will be no-op if phantom)
+  let deletedDocs = 1;
   let subcollectionsCount = 0;
-  
-  // Get all subcollections (works for both existing and phantom documents)
   const subcollections = await docRef.listCollections();
   subcollectionsCount += subcollections.length;
 
@@ -88,7 +83,7 @@ async function deleteDocumentRecursive(docRef, bulkWriter) {
     }
   }
 
-  // Delete the document itself using BulkWriter (works even if document doesn't exist)
+  // Delete the document itself using BulkWriter
   bulkWriter.delete(docRef);
 
   return { documents: deletedDocs, subcollections: subcollectionsCount };
@@ -181,11 +176,11 @@ async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
     const fetchDuration = Date.now() - fetchStart;
     
     if (sourceSnapshot.empty) {
-      console.log(`   ℹ️  Collection '${collectionName}' is empty in PROD (${formatDuration(fetchDuration)} to read)`);
+      console.log(`   ℹ️  Collection '${collectionName}' is empty in TEST (${formatDuration(fetchDuration)} to read)`);
       return { success: 0, skipped: 0, failed: 0 };
     }
     
-    console.log(`   📊 Found ${sourceSnapshot.size} document(s) in PROD`);
+    console.log(`   📊 Found ${sourceSnapshot.size} document(s) in TEST`);
     console.log(`   ⏱️  Read collection in ${formatDuration(fetchDuration)}`);
     
     // Create a BulkWriter for efficient batch operations
@@ -257,7 +252,7 @@ async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
  * Clear all documents (and their subcollections) from a Firestore collection using BulkWriter
  */
 async function clearFirestoreCollection(targetDb, collectionName) {
-  console.log(`\n🗑️  Clearing TEST collection: ${collectionName}`);
+  console.log(`\n🗑️  Clearing DEV collection: ${collectionName}`);
 
   const collectionRef = targetDb.collection(collectionName);
 
@@ -331,7 +326,7 @@ async function clearFirestoreCollection(targetDb, collectionName) {
     await bulkWriter.close();
   }
 
-  console.log(`   ✅ Cleared ${deletedCount} document(s) with subcollections from TEST`);
+  console.log(`   ✅ Cleared ${deletedCount} document(s) with subcollections from DEV`);
   if (failedCount > 0) {
     console.log(`   ⚠️  Failed to delete ${failedCount} document(s)`);
     failedDocs.forEach(failure => {
@@ -351,7 +346,7 @@ async function clearFirestoreCollection(targetDb, collectionName) {
  * handles phantom documents (documents that don't exist but have subcollections)
  */
 async function clearEntireFirestoreDatabase(targetDb) {
-  console.log('\n🗑️  Clearing ENTIRE TEST Firestore database');
+  console.log('\n🗑️  Clearing ENTIRE DEV Firestore database');
   console.log('   ⚠️  This will delete ALL collections and subcollections\n');
 
   const clearStart = Date.now();
@@ -361,7 +356,7 @@ async function clearEntireFirestoreDatabase(targetDb) {
   try {
     // List all root-level collections
     const collections = await targetDb.listCollections();
-    console.log(`   📊 Found ${collections.length} root-level collection(s) in TEST`);
+    console.log(`   📊 Found ${collections.length} root-level collection(s) in DEV`);
 
     for (const collection of collections) {
       console.log(`\n   🗑️  Clearing collection: ${collection.id}`);
@@ -391,45 +386,34 @@ async function clearFirestoreCollectionRecursive(targetDb, collectionPath) {
   let deletedCount = 0;
   let failedCount = 0;
   const PARALLEL_BATCH_SIZE = 50;
-  const BATCH_SIZE = 200;
 
-  // Use listDocuments() instead of get() to include phantom documents
-  // listDocuments() returns references to all documents, including those that don't exist
-  // We loop until no more documents are found, processing in batches
-  // Note: listDocuments() returns ALL document refs, but we process only BATCH_SIZE at a time
-  // to avoid overwhelming memory/network. After committing deletions, the next iteration
-  // will get the remaining documents (deleted ones won't be returned anymore).
   while (true) {
     const collectionRef = targetDb.collection(collectionPath);
-    
-    // Get document references (this includes phantoms)
-    // After deletions are committed, the next call should return remaining documents
-    const documentRefs = await collectionRef.listDocuments();
-    
-    if (documentRefs.length === 0) {
+    const query = collectionRef
+      .orderBy(admin.firestore.FieldPath.documentId())
+      .limit(200);
+
+    const snapshot = await query.get();
+
+    if (snapshot.empty) {
       break;
     }
 
     const bulkWriter = createConfiguredBulkWriter(targetDb);
     const docPromises = [];
     const failedDocs = [];
-    
-    // Process up to BATCH_SIZE documents in this iteration
-    // After we commit deletions, next iteration will get remaining documents
-    const refsToProcess = documentRefs.slice(0, BATCH_SIZE);
 
-    for (const docRef of refsToProcess) {
-      const promise = deleteDocumentRecursive(docRef, bulkWriter)
+    for (const doc of snapshot.docs) {
+      const promise = deleteDocumentRecursive(doc.ref, bulkWriter)
         .then(deleteResult => {
-          return { success: true, deleteResult, docId: docRef.id };
+          return { success: true, deleteResult, docId: doc.id };
         })
         .catch(error => {
-          return { success: false, error, docId: docRef.id };
+          return { success: false, error, docId: doc.id };
         });
 
       docPromises.push(promise);
 
-      // Process in smaller parallel batches for better performance
       if (docPromises.length >= PARALLEL_BATCH_SIZE) {
         const results = await Promise.all(docPromises);
         const counts = processBatchResults(results, deletedCount, failedCount, failedDocs, 'deleting');
@@ -444,7 +428,6 @@ async function clearFirestoreCollectionRecursive(targetDb, collectionPath) {
       }
     }
 
-    // Process any remaining promises in this batch
     if (docPromises.length > 0) {
       const results = await Promise.all(docPromises);
       const counts = processBatchResults(results, deletedCount, failedCount, failedDocs, 'deleting');
@@ -452,8 +435,6 @@ async function clearFirestoreCollectionRecursive(targetDb, collectionPath) {
       failedCount = counts.failedCount;
     }
 
-    // Commit all deletions before next iteration
-    // This ensures deleted documents won't appear in the next listDocuments() call
     console.log(`      🔄 Committing batch deletions...`);
     await bulkWriter.close();
   }
@@ -464,10 +445,10 @@ async function clearFirestoreCollectionRecursive(targetDb, collectionPath) {
 }
 
 /**
- * Clear all authentication users from TEST
+ * Clear all authentication users from DEV
  */
 async function clearAuthenticationUsers(targetAuth) {
-  console.log('\n🗑️  Clearing TEST Authentication users');
+  console.log('\n🗑️  Clearing DEV Authentication users');
   
   try {
     let deletedCount = 0;
@@ -475,7 +456,7 @@ async function clearAuthenticationUsers(targetAuth) {
     let pageToken;
     
     // First pass: Count total users
-    console.log('   📊 Counting users in TEST...');
+    console.log('   📊 Counting users in DEV...');
     let totalUsers = 0;
     let countPageToken;
     do {
@@ -484,7 +465,7 @@ async function clearAuthenticationUsers(targetAuth) {
       countPageToken = listResult.pageToken;
     } while (countPageToken);
     
-    console.log(`   📊 Found ${totalUsers} user(s) in TEST`);
+    console.log(`   📊 Found ${totalUsers} user(s) in DEV`);
     
     if (totalUsers === 0) {
       console.log('   ℹ️  No users to delete');
@@ -530,7 +511,7 @@ async function clearAuthenticationUsers(targetAuth) {
 }
 
 /**
- * Copy authentication users from PROD to TEST
+ * Copy authentication users from TEST to DEV
  */
 async function copyAuthenticationUsers(sourceAuth, targetAuth) {
   console.log('\n📦 Copying Authentication users');
@@ -542,7 +523,7 @@ async function copyAuthenticationUsers(sourceAuth, targetAuth) {
     let totalUsers = 0;
     
     // First pass: Count total users
-    console.log('   📊 Counting users in PROD...');
+    console.log('   📊 Counting users in TEST...');
     let countPageToken;
     do {
       const listResult = await sourceAuth.listUsers(AUTH_BATCH_SIZE, countPageToken);
@@ -550,7 +531,7 @@ async function copyAuthenticationUsers(sourceAuth, targetAuth) {
       countPageToken = listResult.pageToken;
     } while (countPageToken);
     
-    console.log(`   📊 Found ${totalUsers} user(s) in PROD`);
+    console.log(`   📊 Found ${totalUsers} user(s) in TEST`);
     
     if (totalUsers === 0) {
       console.log('   ℹ️  No users to copy');
@@ -643,13 +624,13 @@ async function copyRtdbPath(sourceRtdb, targetRtdb, pathName) {
     const sourceSnapshot = await sourceRtdb.ref(pathName).once('value');
     
     if (!sourceSnapshot.exists()) {
-      console.log(`   ℹ️  Path '${pathName}' is empty or doesn't exist in PROD`);
+      console.log(`   ℹ️  Path '${pathName}' is empty or doesn't exist in TEST`);
       return { success: 0 };
     }
     
     const data = sourceSnapshot.val();
     const keysCount = typeof data === 'object' && data !== null ? Object.keys(data).length : 1;
-    console.log(`   📊 Found ${keysCount} key(s) in PROD`);
+    console.log(`   📊 Found ${keysCount} key(s) in TEST`);
     
     await targetRtdb.ref(pathName).set(data);
     console.log(`   ✅ Successfully copied ${keysCount} key(s)`);
@@ -673,25 +654,19 @@ async function main() {
   const clearDatabase = args.includes('--clear-database');
   
   if (dryRun) {
-    console.log('🔍 DRY RUN MODE - No data will be written to TEST\n');
+    console.log('🔍 DRY RUN MODE - No data will be written to DEV\n');
   }
   
   if (clearDatabase && !dryRun) {
-    console.log('⚠️  CLEAR DATABASE MODE - ALL data in TEST Firestore will be deleted first\n');
+    console.log('⚠️  CLEAR DATABASE MODE - ALL data in DEV Firestore will be deleted first\n');
     console.log('   This is more thorough than --clear-target as it handles phantom documents\n');
   } else if (clearTarget && !dryRun) {
-    console.log('⚠️  CLEAR TARGET MODE - Existing data in TEST will be deleted first\n');
+    console.log('⚠️  CLEAR TARGET MODE - Existing data in DEV will be deleted first\n');
   }
   
   // Load service account keys
-  const prodKeyPath = path.join(__dirname, '..', '..', 'secrets', 'serviceAccountKey.prod.json');
   const testKeyPath = path.join(__dirname, '..', '..', 'secrets', 'serviceAccountKey.test.json');
-  
-  if (!fs.existsSync(prodKeyPath)) {
-    console.error('❌ PROD service account key not found:', prodKeyPath);
-    console.error('   Please ensure the file exists at the expected location.');
-    process.exit(1);
-  }
+  const devKeyPath = path.join(__dirname, '..', '..', 'secrets', 'serviceAccountKey.dev.json');
   
   if (!fs.existsSync(testKeyPath)) {
     console.error('❌ TEST service account key not found:', testKeyPath);
@@ -699,14 +674,14 @@ async function main() {
     process.exit(1);
   }
   
-  const prodServiceAccount = require(prodKeyPath);
-  const testServiceAccount = require(testKeyPath);
+  if (!fs.existsSync(devKeyPath)) {
+    console.error('❌ DEV service account key not found:', devKeyPath);
+    console.error('   Please ensure the file exists at the expected location.');
+    process.exit(1);
+  }
   
-  // Initialize PROD Firebase app
-  const prodApp = admin.initializeApp({
-    credential: admin.credential.cert(prodServiceAccount),
-    databaseURL: prodServiceAccount.database_url || `https://${prodServiceAccount.project_id}-default-rtdb.firebaseio.com`
-  }, 'prod');
+  const testServiceAccount = require(testKeyPath);
+  const devServiceAccount = require(devKeyPath);
   
   // Initialize TEST Firebase app
   const testApp = admin.initializeApp({
@@ -714,16 +689,22 @@ async function main() {
     databaseURL: testServiceAccount.database_url || `https://${testServiceAccount.project_id}-default-rtdb.firebaseio.com`
   }, 'test');
   
-  const prodDb = prodApp.firestore();
+  // Initialize DEV Firebase app
+  const devApp = admin.initializeApp({
+    credential: admin.credential.cert(devServiceAccount),
+    databaseURL: devServiceAccount.database_url || `https://${devServiceAccount.project_id}-default-rtdb.firebaseio.com`
+  }, 'dev');
+  
   const testDb = testApp.firestore();
-  const prodRtdb = prodApp.database();
+  const devDb = devApp.firestore();
   const testRtdb = testApp.database();
-  const prodAuth = prodApp.auth();
+  const devRtdb = devApp.database();
   const testAuth = testApp.auth();
+  const devAuth = devApp.auth();
   
   console.log('🔥 Firebase apps initialized');
-  console.log(`   PROD project: ${prodServiceAccount.project_id}`);
   console.log(`   TEST project: ${testServiceAccount.project_id}`);
+  console.log(`   DEV project: ${devServiceAccount.project_id}`);
   
   const results = {
     firestore: {},
@@ -738,7 +719,7 @@ async function main() {
     console.log('='.repeat(60));
     
     try {
-      const clearResult = await clearEntireFirestoreDatabase(testDb);
+      const clearResult = await clearEntireFirestoreDatabase(devDb);
       results.databaseClear = clearResult;
     } catch (error) {
       console.error('   ❌ Error clearing database:', error.message);
@@ -755,8 +736,8 @@ async function main() {
     if (dryRun) {
       console.log(`\n📦 [DRY RUN] Would copy collection: ${collectionName}`);
       try {
-        const snapshot = await prodDb.collection(collectionName).get();
-        console.log(`   📊 Found ${snapshot.size} document(s) in PROD`);
+        const snapshot = await testDb.collection(collectionName).get();
+        console.log(`   📊 Found ${snapshot.size} document(s) in TEST`);
         results.firestore[collectionName] = { success: snapshot.size, dryRun: true };
       } catch (error) {
         console.error(`   ❌ Error reading collection:`, error.message);
@@ -766,15 +747,15 @@ async function main() {
       // Only clear individual collections if not using --clear-database
       if (clearTarget && !clearDatabase) {
         try {
-          await clearFirestoreCollection(testDb, collectionName);
+          await clearFirestoreCollection(devDb, collectionName);
         } catch (error) {
           console.error(`   ⚠️  Error clearing collection:`, error.message);
         }
       }
       
       results.firestore[collectionName] = await copyFirestoreCollection(
-        prodDb,
         testDb,
+        devDb,
         collectionName
       );
     }
@@ -789,11 +770,11 @@ async function main() {
     if (dryRun) {
       console.log(`\n📦 [DRY RUN] Would copy RTDB path: ${pathName}`);
       try {
-        const snapshot = await prodRtdb.ref(pathName).once('value');
+        const snapshot = await testRtdb.ref(pathName).once('value');
         if (snapshot.exists()) {
           const data = snapshot.val();
           const keysCount = typeof data === 'object' && data !== null ? Object.keys(data).length : 1;
-          console.log(`   📊 Found ${keysCount} key(s) in PROD`);
+          console.log(`   📊 Found ${keysCount} key(s) in TEST`);
           results.rtdb[pathName] = { success: keysCount, dryRun: true };
         } else {
           console.log(`   ℹ️  Path is empty or doesn't exist`);
@@ -805,16 +786,16 @@ async function main() {
       }
     } else {
       if (clearTarget || clearDatabase) {
-        console.log(`\n🗑️  Clearing TEST RTDB path: ${pathName}`);
+        console.log(`\n🗑️  Clearing DEV RTDB path: ${pathName}`);
         try {
-          await testRtdb.ref(pathName).remove();
-          console.log(`   ✅ Cleared path from TEST`);
+          await devRtdb.ref(pathName).remove();
+          console.log(`   ✅ Cleared path from DEV`);
         } catch (error) {
           console.error(`   ⚠️  Error clearing path:`, error.message);
         }
       }
       
-      results.rtdb[pathName] = await copyRtdbPath(prodRtdb, testRtdb, pathName);
+      results.rtdb[pathName] = await copyRtdbPath(testRtdb, devRtdb, pathName);
     }
   }
   
@@ -826,15 +807,15 @@ async function main() {
   if (dryRun) {
     console.log('\n📦 [DRY RUN] Would copy Authentication users');
     try {
-      const listResult = await prodAuth.listUsers(1);
+      const listResult = await testAuth.listUsers(1);
       let totalUsers = 0;
       let pageToken;
       do {
-        const result = await prodAuth.listUsers(AUTH_BATCH_SIZE, pageToken);
+        const result = await testAuth.listUsers(AUTH_BATCH_SIZE, pageToken);
         totalUsers += result.users.length;
         pageToken = result.pageToken;
       } while (pageToken);
-      console.log(`   📊 Found ${totalUsers} user(s) in PROD`);
+      console.log(`   📊 Found ${totalUsers} user(s) in TEST`);
       results.authentication.users = { success: totalUsers, dryRun: true };
     } catch (error) {
       console.error(`   ❌ Error reading authentication users:`, error.message);
@@ -842,10 +823,10 @@ async function main() {
     }
   } else {
     if (clearTarget || clearDatabase) {
-      results.authentication.cleared = await clearAuthenticationUsers(testAuth);
+      results.authentication.cleared = await clearAuthenticationUsers(devAuth);
     }
     
-    results.authentication.users = await copyAuthenticationUsers(prodAuth, testAuth);
+    results.authentication.users = await copyAuthenticationUsers(testAuth, devAuth);
   }
   
   // Summary
@@ -912,8 +893,8 @@ async function main() {
   console.log('\n✨ Done!\n');
   
   // Clean up
-  await prodApp.delete();
   await testApp.delete();
+  await devApp.delete();
 }
 
 // Run the script

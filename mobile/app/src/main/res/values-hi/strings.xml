@@ -384,6 +384,7 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">टूर्नामेंट %1$s अब नहीं चल रहा है</string>
+    <string name="tournament_match_already_completed">यह मैच पहले ही पूरा हो चुका है और %1$s जीत गया</string>
     <string name="field_tutorial_message">गेंद को हिलाने के लिए किसी एक बिंदु पर टैप करें</string>
     <string name="field_tutorial_bounce_border">जब गेंद किनारे से टकराती है, तो यह उछलती है और आप फिर से गेंद को हिला सकते हैं</string>
     <string name="field_tutorial_bounce_visited">जब गेंद पहले से देखे गए बिंदु से टकराती है, तो यह उछलती है और आप फिर से गेंद को हिला सकते हैं</string>

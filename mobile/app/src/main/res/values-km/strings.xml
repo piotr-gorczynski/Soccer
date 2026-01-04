@@ -350,6 +350,7 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">ការប្រកួត %1$s មិនកំពុងដំណើរការទៀតទេ</string>
+    <string name="tournament_match_already_completed">ការប្រកួតនេះបានបញ្ចប់ហើយ ហើយ %1$s បានឈ្នះ</string>
     <string name="field_tutorial_message">ប៉ះលើចំណុចណាមួយដើម្បីផ្លាស់ទីបាល់</string>
     <string name="field_tutorial_bounce_border">នៅពេលបាល់ប៉ះព្រំដែន វាលោតត្រឡប់មកវិញ ហើយអ្នកអាចផ្លាស់ទីបាល់ម្តងទៀត</string>
     <string name="field_tutorial_bounce_visited">នៅពេលបាល់ប៉ះចំណុចដែលបានទស្សនាពីមុន វាលោតត្រឡប់មកវិញ ហើយអ្នកអាចផ្លាស់ទីបាល់ម្តងទៀត</string>

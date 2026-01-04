@@ -350,6 +350,7 @@
     
     <!-- Tournament invite errors -->
     <string name="tournament_not_running">Ny fifanintsanana %1$s tsy mandeha intsony</string>
+    <string name="tournament_match_already_completed">Ity lalao ity dia vita efa ary %1$s no nandresy</string>
     <string name="field_tutorial_message">Kitiho ny iray amin’ireo teboka mba hamindra ny baolina</string>
     <string name="field_tutorial_bounce_border">Rehefa mamely ny sisiny ny baolina dia mitsambikina ary afaka mamindra ny baolina indray ianao</string>
     <string name="field_tutorial_bounce_visited">Rehefa mamely teboka efa notsidihana ny baolina dia mitsambikina ary afaka mamindra ny baolina indray ianao</string>

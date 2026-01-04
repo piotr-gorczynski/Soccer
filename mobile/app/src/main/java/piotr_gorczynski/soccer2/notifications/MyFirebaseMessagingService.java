@@ -195,6 +195,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Intent tournamentIntent = new Intent(context, TournamentLobbyActivity.class)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         tournamentIntent.putExtra("tournamentId", tournamentId);
+        tournamentIntent.putExtra("fromNotification", true);
         if (tournamentName != null && !tournamentName.isEmpty()) {
             tournamentIntent.putExtra("tournamentName", tournamentName);
         }

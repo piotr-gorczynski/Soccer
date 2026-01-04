@@ -1,0 +1,85 @@
+<en-GB>
+🐝Prevent tournament match invites after completion
+🐝Prevent duplicate tournament dialog when opened from notification
+🎉 Add frontend validation for tournament/match status in invite buttons
+</en-GB>
+
+<pl-PL>
+🐝 Naprawiono błąd NPE w FriendsListActivity, gdy użytkownik nie jest zalogowany
+🐝 Naprawiono błąd NullPointerException w TournamentLobbyActivity dla niezalogowanego użytkownika
+</pl-PL>
+
+<de-DE>
+🐝 NPE in FriendsListActivity behoben, wenn der Benutzer nicht angemeldet ist
+🐝 NullPointerException in TournamentLobbyActivity bei nicht angemeldetem Benutzer behoben
+</de-DE>
+
+<fr-FR>
+🐝 Correction d’une NPE dans FriendsListActivity lorsque l’utilisateur n’est pas connecté
+🐝 Correction d’une NullPointerException dans TournamentLobbyActivity pour les utilisateurs non connectés
+</fr-FR>
+
+<es-ES>
+🐝 Corregido NPE en FriendsListActivity cuando el usuario no está autenticado
+🐝 Corregida NullPointerException en TournamentLobbyActivity cuando el usuario no está autenticado
+</es-ES>
+
+<ur>
+🐝 FriendsListActivity میں لاگ ان نہ ہونے پر NPE کریش درست کیا گیا
+🐝 TournamentLobbyActivity میں غیر تصدیق شدہ صارف پر NullPointerException درست
+</ur>
+
+<bn-BD>
+🐝 ব্যবহারকারী লগইন না থাকলে FriendsListActivity-এ NPE ঠিক করা হয়েছে
+🐝 ব্যবহারকারী লগইন না থাকলে TournamentLobbyActivity-এ NullPointerException ঠিক করা হয়েছে
+</bn-BD>
+
+<ne-NP>
+🐝 प्रयोगकर्ता लगइन नभएको अवस्थामा FriendsListActivity मा NPE समाधान गरियो
+🐝 प्रयोगकर्ता लगइन नभएको अवस्थामा TournamentLobbyActivity मा NullPointerException समाधान गरियो
+</ne-NP>
+
+<hi-IN>
+🐝 उपयोगकर्ता लॉग इन न होने पर FriendsListActivity में NPE ठीक किया गया
+🐝 उपयोगकर्ता लॉग इन न होने पर TournamentLobbyActivity में NullPointerException ठीक किया गया
+</hi-IN>
+
+<am>
+🐝 ተጠቃሚው ሳይግባ FriendsListActivity ውስጥ የNPE ስህተት ተስተካክሏል
+🐝 ተጠቃሚው ሳይግባ TournamentLobbyActivity ውስጥ የNullPointerException ችግኝ ተፈታ
+</am>
+
+<ar>
+🐝 إصلاح خطأ NPE في FriendsListActivity عند عدم تسجيل دخول المستخدم
+🐝 إصلاح خطأ NullPointerException في TournamentLobbyActivity عند عدم تسجيل دخول المستخدم
+</ar>
+
+<my-MM>
+🐝 အသုံးပြုသူ မဝင်ရောက်ထားပါက FriendsListActivity တွင် NPE ပြဿနာကို ပြင်ဆင်ခဲ့သည်
+🐝 အသုံးပြုသူ မဝင်ရောက်ထားပါက TournamentLobbyActivity တွင် NullPointerException ပြဿနာကို ပြင်ဆင်ခဲ့သည်
+</my-MM>
+
+<km-KH>
+🐝 កែបញ្ហា NPE ក្នុង FriendsListActivity នៅពេលអ្នកប្រើមិនបានចូល
+🐝 កែបញ្ហា NullPointerException ក្នុង TournamentLobbyActivity នៅពេលអ្នកប្រើមិនបានចូល
+</km-KH>
+
+<lo-LA>
+🐝 ແກ້ຂໍ້ຜິດ NPE ໃນ FriendsListActivity ເມື່ອຜູ້ໃຊ້ບໍ່ໄດ້ເຂົ້າ
+🐝 ແກ້ຂໍ້ຜິດ NullPointerException ໃນ TournamentLobbyActivity ເມື່ອຜູ້ໃຊ້ບໍ່ໄດ້ເຂົ້າ
+</lo-LA>
+
+<mn-MN>
+🐝 Хэрэглэгч нэвтрээгүй үед FriendsListActivity дахь NPE алдааг зассан
+🐝 Хэрэглэгч нэвтрээгүй үед TournamentLobbyActivity дахь NullPointerException алдааг зассан
+</mn-MN>
+
+<fa-IR>
+🐝 رفع خطای NPE در FriendsListActivity زمانی که کاربر وارد نشده است
+🐝 رفع خطای NullPointerException در TournamentLobbyActivity زمانی که کاربر وارد نشده است
+</fa-IR>
+
+<si-LK>
+🐝 පරිශීලකයා ලොග් නොවූ විට FriendsListActivity හි NPE දෝෂය නිවැරදි කළා
+🐝 පරිශීලකයා ලොග් නොවූ විට TournamentLobbyActivity හි NullPointerException දෝෂය නිවැරදි කළා
+</si-LK>

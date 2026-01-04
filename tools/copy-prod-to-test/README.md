@@ -82,9 +82,32 @@ node tools/copy-prod-to-test/copy-prod-to-test.js --clear-target
 ```
 
 ⚠️ **Warning**: This will delete all existing data in the TEST database before copying, including:
-- All Firestore collections
-- All Realtime Database paths
+- All Firestore collections (specified in the script)
+- All Realtime Database paths (specified in the script)
 - All Authentication users
+
+### Clear Database Mode (Recommended)
+
+Delete ALL Firestore collections and subcollections before copying from PROD:
+
+```bash
+node tools/copy-prod-to-test/copy-prod-to-test.js --clear-database
+```
+
+⚠️ **Warning**: This is more thorough than `--clear-target` as it:
+- Deletes **ALL** collections in the Firestore database (not just predefined ones)
+- Handles phantom documents (documents that don't exist but have subcollections)
+- Recursively deletes all subcollections at any level
+- Then copies over the data from PROD
+
+**Use `--clear-database` when**:
+- You have orphaned subcollections under phantom documents
+- You want to ensure a completely clean TEST database
+- Previous runs left behind data that wasn't deleted
+
+**Use `--clear-target` when**:
+- You only want to clear the specific collections defined in the script
+- You have other collections in TEST that should remain untouched
 
 ### Combine Options
 
@@ -97,25 +120,53 @@ node tools/copy-prod-to-test/copy-prod-to-test.js --dry-run --clear-target
 ## How it works
 
 1. **Initialize Firebase Apps**: Creates two separate Firebase Admin SDK instances for PROD and TEST
-2. **Copy Firestore Collections**: 
+2. **Clear Database (if `--clear-database` is used)**:
+   - Lists all root-level collections in TEST Firestore
+   - Uses `listDocuments()` to get ALL document references including phantom documents
+   - Recursively deletes all documents and subcollections
+   - **Handles phantom documents**: Documents that don't exist but have subcollections (e.g., missing ancestor documents)
+   - More thorough than per-collection clearing
+3. **Copy Firestore Collections**: 
+   - If `--clear-target` is used (and not `--clear-database`), clears each collection individually before copying
    - Reads all documents from each collection in PROD
-   - Writes them to TEST using batched writes (for efficiency)
-   - Uses merge mode by default (won't overwrite if document already exists)
-3. **Copy Realtime Database**: 
+   - Uses Firestore BulkWriter API for efficient batch operations (auto-throttling and retry logic)
+   - Processes documents in parallel batches of 50 for improved performance
+   - Automatically handles rate limiting and retries for failed operations
+   - Recursively copies all subcollections
+4. **Copy Realtime Database**: 
+   - If clearing is enabled, removes the entire path from TEST first
    - Reads the entire `status` path from PROD RTDB
    - Writes it to TEST RTDB (replaces existing data at that path)
-4. **Copy Authentication Users**:
+5. **Copy Authentication Users**:
+   - If clearing is enabled, deletes all users from TEST first
    - Lists all users from PROD Authentication
    - Exports user data including credentials, metadata, and custom claims
    - Imports users to TEST Authentication in batches (1000 users per batch)
    - Preserves password hashes when available
    - Updates existing users if they already exist in TEST
-5. **Summary**: Shows a summary of what was copied
+6. **Summary**: Shows a summary of what was copied
+
+## Performance Improvements
+
+The script has been optimized for large-scale data migrations:
+
+- **BulkWriter API**: Uses Firestore's BulkWriter for automatic batching, throttling, and retry logic
+- **Parallel Processing**: Processes up to 50 documents in parallel per batch
+- **Efficient Deletes**: Batch delete operations are much faster than sequential deletes
+- **Auto-retry**: Automatically retries failed operations with exponential backoff
+- **Expected Performance**: 
+  - ~100-500ms per document (down from 330ms-3+ minutes)
+  - Thousands of documents can be processed in minutes instead of hours
 
 ## Notes
 
-- **Batch Operations**: The script uses Firestore batch writes (max 500 operations per batch) for efficiency
-- **Merge Mode**: By default, existing documents in TEST are merged with PROD data (not replaced)
+- **Database Clearing**: Two options available:
+  - `--clear-database`: Deletes ALL collections in Firestore (recommended for thorough cleanup)
+  - `--clear-target`: Deletes only the predefined collections before copying
+- **Phantom Documents**: The `--clear-database` option properly handles phantom documents (documents that don't exist but have subcollections) by using `listDocuments()` instead of query methods. This ensures that missing ancestor documents with subcollections are properly cleaned up, preventing them from appearing in the Firebase Console as "This document does not exist"
+- **BulkWriter API**: The script uses Firestore's BulkWriter API for efficient batch operations with automatic throttling and retry logic
+- **Parallel Processing**: Documents are processed in parallel batches of 50 for optimal performance
+- **Auto-retry**: Failed operations are automatically retried with exponential backoff
 - **RTDB Behavior**: The RTDB `status` path is completely replaced (not merged)
 - **Authentication Import**: Uses Firebase Admin SDK's `importUsers` API which:
   - Preserves user UIDs
@@ -123,8 +174,9 @@ node tools/copy-prod-to-test/copy-prod-to-test.js --dry-run --clear-target
   - Updates existing users if they already exist in TEST
   - Processes up to 1000 users per batch
   - When `--clear-target` is used, all existing users in TEST are deleted before importing from PROD
-- **Large Collections**: The script handles large collections by processing them in batches
+- **Large Collections**: The script efficiently handles large collections with thousands of documents
 - **Error Handling**: Errors are logged but the script continues processing other collections
+- **Subcollections**: All subcollections are recursively copied and deleted at any nesting level
 
 ## Safety Features
 
@@ -213,3 +265,31 @@ Ensure the service accounts have the following permissions:
 ### Connection timeouts
 
 For very large collections, you might need to run the script multiple times or increase Node.js timeout limits.
+
+## Technical Details: Phantom Document Handling
+
+### What are Phantom Documents?
+
+Phantom documents (also called "missing ancestor documents") are a Firestore behavior where:
+- A document doesn't exist (has no data)
+- But it has one or more subcollections
+- The document appears in the Firebase Console with the message: "This document does not exist. It will not appear in queries or snapshots."
+
+### How They Occur
+
+Phantom documents can occur when:
+1. A document is deleted but its subcollections remain
+2. Subcollections are created without creating the parent document
+3. Data is copied/imported in a way that creates subcollections without parent documents
+
+### The Fix
+
+Previously, the script used Firestore queries (`.get()`) to find documents to delete. However, queries only return documents that actually exist - phantom documents are excluded from query results.
+
+**Solution**: The script now uses `listDocuments()` instead of query methods:
+- `collection.listDocuments()` returns references to ALL document paths, including phantoms
+- This allows the script to find and process phantom documents
+- The `deleteDocumentRecursive()` function then deletes the phantom's subcollections
+- Even though the document doesn't exist, `bulkWriter.delete()` safely handles the non-existent document
+
+This ensures that after running `--clear-database`, there are no phantom documents left in the Firestore database.
