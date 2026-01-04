@@ -255,33 +255,35 @@ async function clearFirestoreCollection(targetDb, collectionName) {
   console.log(`\n🗑️  Clearing TEST collection: ${collectionName}`);
 
   const collectionRef = targetDb.collection(collectionName);
-  
-  // Create a BulkWriter for efficient batch operations
-  const bulkWriter = createConfiguredBulkWriter(targetDb);
 
   let deletedCount = 0;
   let failedCount = 0;
   const failedDocs = [];
-  let lastDoc = null;
   const clearStart = Date.now();
 
   // Process documents in parallel batches
   const PARALLEL_BATCH_SIZE = 50;
 
+  // Keep deleting until no more documents are found
+  // Always query from the beginning to avoid pagination issues when deleting.
+  // Using cursor-based pagination (startAfter) while deleting causes document skipping
+  // because document positions shift as deletions occur, resulting in incomplete clearing.
   while (true) {
-    let query = collectionRef
+    const query = collectionRef
       .orderBy(admin.firestore.FieldPath.documentId())
       .limit(200);
-
-    if (lastDoc) {
-      query = query.startAfter(lastDoc);
-    }
 
     const snapshot = await query.get();
 
     if (snapshot.empty) {
       break;
     }
+
+    // Create a new BulkWriter for each batch to ensure clean state.
+    // We must commit all deletions before querying again to prevent re-reading
+    // documents that should have been deleted, so we create a fresh BulkWriter
+    // for each iteration after closing the previous one.
+    const bulkWriter = createConfiguredBulkWriter(targetDb);
 
     const docPromises = [];
     for (const doc of snapshot.docs) {
@@ -319,12 +321,10 @@ async function clearFirestoreCollection(targetDb, collectionName) {
       failedCount = counts.failedCount;
     }
 
-    lastDoc = snapshot.docs[snapshot.docs.length - 1];
+    // Close the BulkWriter and commit all pending deletions before querying again
+    console.log(`   🔄 Committing batch deletions...`);
+    await bulkWriter.close();
   }
-
-  // Close the BulkWriter and wait for all operations to complete
-  console.log(`   🔄 Committing all deletions...`);
-  await bulkWriter.close();
 
   console.log(`   ✅ Cleared ${deletedCount} document(s) with subcollections from TEST`);
   if (failedCount > 0) {
