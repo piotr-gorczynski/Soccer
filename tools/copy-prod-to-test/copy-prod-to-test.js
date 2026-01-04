@@ -118,6 +118,26 @@ async function copyDocumentRecursive(sourceDocRef, targetDocRef, bulkWriter) {
 }
 
 /**
+ * Process batch results sequentially to avoid race conditions
+ */
+function processBatchResults(results, successCounter, failedCounter, failedDocs, operationType) {
+  let newSuccessCount = successCounter;
+  let newFailedCount = failedCounter;
+  
+  for (const result of results) {
+    if (result.success) {
+      newSuccessCount++;
+    } else {
+      console.error(`   ❌ Error ${operationType} document ${result.docId}:`, result.error.message);
+      failedDocs.push({ id: result.docId, message: result.error.message });
+      newFailedCount++;
+    }
+  }
+  
+  return { successCount: newSuccessCount, failedCount: newFailedCount };
+}
+
+/**
  * Copy all documents from a Firestore collection using BulkWriter
  */
 async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
@@ -174,17 +194,9 @@ async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
       // Process in batches to avoid overwhelming the system
       if (docPromises.length >= PARALLEL_BATCH_SIZE || i === sourceSnapshot.docs.length - 1) {
         const results = await Promise.all(docPromises);
-        
-        // Process results sequentially to avoid race conditions
-        for (const result of results) {
-          if (result.success) {
-            successCount++;
-          } else {
-            console.error(`   ❌ Error copying document ${result.docId}:`, result.error.message);
-            failedDocs.push({ id: result.docId, message: result.error.message });
-            failedCount++;
-          }
-        }
+        const counts = processBatchResults(results, successCount, failedCount, failedDocs, 'copying');
+        successCount = counts.successCount;
+        failedCount = counts.failedCount;
         
         // Log progress for every 50 documents
         if (successCount % 50 === 0 || successCount + failedCount === sourceSnapshot.size) {
@@ -192,22 +204,6 @@ async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
         }
         
         docPromises.length = 0; // Clear the array
-      }
-    }
-
-    // Wait for all remaining promises
-    if (docPromises.length > 0) {
-      const results = await Promise.all(docPromises);
-      
-      // Process results sequentially to avoid race conditions
-      for (const result of results) {
-        if (result.success) {
-          successCount++;
-        } else {
-          console.error(`   ❌ Error copying document ${result.docId}:`, result.error.message);
-          failedDocs.push({ id: result.docId, message: result.error.message });
-          failedCount++;
-        }
       }
     }
 
@@ -292,17 +288,9 @@ async function clearFirestoreCollection(targetDb, collectionName) {
       // Process in batches to avoid overwhelming the system
       if (docPromises.length >= PARALLEL_BATCH_SIZE) {
         const results = await Promise.all(docPromises);
-        
-        // Process results sequentially to avoid race conditions
-        for (const result of results) {
-          if (result.success) {
-            deletedCount++;
-          } else {
-            console.error(`   ❌ Error deleting document ${result.docId}:`, result.error.message);
-            failedDocs.push({ id: result.docId, message: result.error.message });
-            failedCount++;
-          }
-        }
+        const counts = processBatchResults(results, deletedCount, failedCount, failedDocs, 'deleting');
+        deletedCount = counts.successCount;
+        failedCount = counts.failedCount;
         
         // Log progress for every 50 documents
         if (deletedCount % 50 === 0) {
@@ -316,17 +304,9 @@ async function clearFirestoreCollection(targetDb, collectionName) {
     // Wait for remaining promises in this batch
     if (docPromises.length > 0) {
       const results = await Promise.all(docPromises);
-      
-      // Process results sequentially to avoid race conditions
-      for (const result of results) {
-        if (result.success) {
-          deletedCount++;
-        } else {
-          console.error(`   ❌ Error deleting document ${result.docId}:`, result.error.message);
-          failedDocs.push({ id: result.docId, message: result.error.message });
-          failedCount++;
-        }
-      }
+      const counts = processBatchResults(results, deletedCount, failedCount, failedDocs, 'deleting');
+      deletedCount = counts.successCount;
+      failedCount = counts.failedCount;
     }
 
     lastDoc = snapshot.docs[snapshot.docs.length - 1];
