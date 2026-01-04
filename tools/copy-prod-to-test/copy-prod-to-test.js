@@ -18,17 +18,6 @@ const RTDB_PATHS = ['status'];
 
 // Batch size for authentication user operations
 const AUTH_BATCH_SIZE = 1000; // Firebase Admin SDK limit for listUsers
-const FIRESTORE_RETRY_OPTIONS = {
-  maxRetries: 5,
-  initialDelayMs: 1000,
-  maxDelayMs: 10000,
-};
-const SLOW_OPERATION_THRESHOLD_MS = 2000;
-const SLOW_COLLECTION_THRESHOLD_MS = 30000;
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 function formatDuration(ms) {
   if (ms < 1000) {
@@ -72,35 +61,6 @@ function isRetryableFirestoreError(error) {
   }
 
   return false;
-}
-
-async function withRetry(operation, description, { onRetry } = {}) {
-  let attempt = 0;
-
-  while (true) {
-    try {
-      return await operation();
-    } catch (error) {
-      if (!isRetryableFirestoreError(error) || attempt >= FIRESTORE_RETRY_OPTIONS.maxRetries) {
-        throw error;
-      }
-
-      if (typeof onRetry === 'function') {
-        onRetry({ attempt: attempt + 1, error });
-      }
-
-      const baseDelay = FIRESTORE_RETRY_OPTIONS.initialDelayMs * 2 ** attempt;
-      const jitter = 0.5 + Math.random();
-      const delay = Math.min(baseDelay * jitter, FIRESTORE_RETRY_OPTIONS.maxDelayMs);
-
-      console.warn(
-        `   ⚠️  ${description} failed (attempt ${attempt + 1}/${FIRESTORE_RETRY_OPTIONS.maxRetries}). (${error.message}). Retrying in ${Math.round(delay)}ms...`
-      );
-
-      await sleep(delay);
-      attempt += 1;
-    }
-  }
 }
 
 /**
@@ -191,7 +151,6 @@ async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
     let successCount = 0;
     let failedCount = 0;
     const failedDocs = [];
-    const slowDocs = [];
 
     // Process documents in parallel batches for better performance
     const PARALLEL_BATCH_SIZE = 50;
