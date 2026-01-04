@@ -1,85 +1,101 @@
 <en-GB>
-🐝Prevent tournament match invites after completion
-🐝Prevent duplicate tournament dialog when opened from notification
+🐝 Prevent tournament match invites after completion
+🐝 Prevent duplicate tournament dialog when opened from notification
 🎉 Add frontend validation for tournament/match status in invite buttons
 </en-GB>
 
 <pl-PL>
-🐝 Naprawiono błąd NPE w FriendsListActivity, gdy użytkownik nie jest zalogowany
-🐝 Naprawiono błąd NullPointerException w TournamentLobbyActivity dla niezalogowanego użytkownika
+🐝 Zablokowano zaproszenia do meczów turniejowych po ich zakończeniu
+🐝 Zapobieżono podwójnemu otwieraniu okna turnieju z powiadomienia
+🎉 Dodano walidację statusu turnieju i meczu w przyciskach zaproszeń
 </pl-PL>
 
 <de-DE>
-🐝 NPE in FriendsListActivity behoben, wenn der Benutzer nicht angemeldet ist
-🐝 NullPointerException in TournamentLobbyActivity bei nicht angemeldetem Benutzer behoben
+🐝 Turniereinladungen nach Abschluss werden verhindert
+🐝 Doppelte Turnierdialoge bei Öffnung aus Benachrichtigungen verhindert
+🎉 Frontend-Validierung für Turnier- und Matchstatus in Einladungsbuttons hinzugefügt
 </de-DE>
 
 <fr-FR>
-🐝 Correction d’une NPE dans FriendsListActivity lorsque l’utilisateur n’est pas connecté
-🐝 Correction d’une NullPointerException dans TournamentLobbyActivity pour les utilisateurs non connectés
+🐝 Invitations aux matchs de tournoi bloquées après la fin
+🐝 Prévention de l’ouverture en double du dialogue de tournoi depuis une notification
+🎉 Validation du statut du tournoi et du match ajoutée aux boutons d’invitation
 </fr-FR>
 
 <es-ES>
-🐝 Corregido NPE en FriendsListActivity cuando el usuario no está autenticado
-🐝 Corregida NullPointerException en TournamentLobbyActivity cuando el usuario no está autenticado
+🐝 Se evitan invitaciones a partidos de torneo tras su finalización
+🐝 Evitada la apertura duplicada del diálogo del torneo desde notificaciones
+🎉 Validación del estado del torneo y del partido añadida a los botones de invitación
 </es-ES>
 
 <ur>
-🐝 FriendsListActivity میں لاگ ان نہ ہونے پر NPE کریش درست کیا گیا
-🐝 TournamentLobbyActivity میں غیر تصدیق شدہ صارف پر NullPointerException درست
+🐝 ٹورنامنٹ ختم ہونے کے بعد میچ دعوتوں کو روکا گیا
+🐝 نوٹیفکیشن سے ٹورنامنٹ ڈائیلاگ کے دو بار کھلنے سے بچاؤ
+🎉 دعوت بٹن میں ٹورنامنٹ اور میچ اسٹیٹس کی جانچ شامل
 </ur>
 
 <bn-BD>
-🐝 ব্যবহারকারী লগইন না থাকলে FriendsListActivity-এ NPE ঠিক করা হয়েছে
-🐝 ব্যবহারকারী লগইন না থাকলে TournamentLobbyActivity-এ NullPointerException ঠিক করা হয়েছে
+🐝 টুর্নামেন্ট শেষ হওয়ার পর ম্যাচ আমন্ত্রণ বন্ধ করা হয়েছে
+🐝 নোটিফিকেশন থেকে টুর্নামেন্ট ডায়ালগ বারবার খোলা প্রতিরোধ
+🎉 আমন্ত্রণ বাটনে টুর্নামেন্ট ও ম্যাচ স্ট্যাটাস যাচাই যোগ করা হয়েছে
 </bn-BD>
 
 <ne-NP>
-🐝 प्रयोगकर्ता लगइन नभएको अवस्थामा FriendsListActivity मा NPE समाधान गरियो
-🐝 प्रयोगकर्ता लगइन नभएको अवस्थामा TournamentLobbyActivity मा NullPointerException समाधान गरियो
+🐝 प्रतियोगिता सकिएपछि म्याच निमन्त्रण रोकियो
+🐝 सूचनाबाट टुर्नामेन्ट संवाद दोहोरिन नदिन सुधार
+🎉 निमन्त्रण बटनमा टुर्नामेन्ट र म्याच अवस्थाको जाँच थपियो
 </ne-NP>
 
 <hi-IN>
-🐝 उपयोगकर्ता लॉग इन न होने पर FriendsListActivity में NPE ठीक किया गया
-🐝 उपयोगकर्ता लॉग इन न होने पर TournamentLobbyActivity में NullPointerException ठीक किया गया
+🐝 टूर्नामेंट समाप्त होने के बाद मैच आमंत्रण रोके गए
+🐝 नोटिफ़िकेशन से टूर्नामेंट डायलॉग दोबारा खुलने से रोका गया
+🎉 आमंत्रण बटन में टूर्नामेंट और मैच स्थिति की जाँच जोड़ी गई
 </hi-IN>
 
 <am>
-🐝 ተጠቃሚው ሳይግባ FriendsListActivity ውስጥ የNPE ስህተት ተስተካክሏል
-🐝 ተጠቃሚው ሳይግባ TournamentLobbyActivity ውስጥ የNullPointerException ችግኝ ተፈታ
+🐝 ቱርናመንት ከተጠናቀቀ በኋላ የጨዋታ ግብዣ ተከልክሏል
+🐝 ከማሳወቂያ የሚከፈት የቱርናመንት መስኮት እንዳይደገም ተከላከለ
+🎉 በግብዣ አዝራሮች ላይ የቱርናመንትና የጨዋታ ሁኔታ ማረጋገጫ ተጨምሯል
 </am>
 
 <ar>
-🐝 إصلاح خطأ NPE في FriendsListActivity عند عدم تسجيل دخول المستخدم
-🐝 إصلاح خطأ NullPointerException في TournamentLobbyActivity عند عدم تسجيل دخول المستخدم
+🐝 منع دعوات مباريات البطولة بعد انتهائها
+🐝 منع فتح نافذة البطولة مرتين عند فتحها من الإشعار
+🎉 إضافة التحقق من حالة البطولة والمباراة في أزرار الدعوة
 </ar>
 
 <my-MM>
-🐝 အသုံးပြုသူ မဝင်ရောက်ထားပါက FriendsListActivity တွင် NPE ပြဿနာကို ပြင်ဆင်ခဲ့သည်
-🐝 အသုံးပြုသူ မဝင်ရောက်ထားပါက TournamentLobbyActivity တွင် NullPointerException ပြဿနာကို ပြင်ဆင်ခဲ့သည်
+🐝 ပြိုင်ပွဲပြီးဆုံးပြီးနောက် မက်ချ်ဖိတ်ကြားမှုများကို တားဆီးထားသည်
+🐝 အကြောင်းကြားစာမှ ပြိုင်ပွဲ ဒိုင်ယာလော့ခ် နှစ်ကြိမ်ဖွင့်ခြင်းကို တားဆီးထားသည်
+🎉 ဖိတ်ကြားခလုတ်များတွင် ပြိုင်ပွဲနှင့် မက်ချ် အခြေအနေ စစ်ဆေးမှု ထည့်သွင်းထားသည်
 </my-MM>
 
 <km-KH>
-🐝 កែបញ្ហា NPE ក្នុង FriendsListActivity នៅពេលអ្នកប្រើមិនបានចូល
-🐝 កែបញ្ហា NullPointerException ក្នុង TournamentLobbyActivity នៅពេលអ្នកប្រើមិនបានចូល
+🐝 ទប់ស្កាត់ការអញ្ជើញប្រកួតបន្ទាប់ពីបញ្ចប់តួណាម៉ង់
+🐝 ទប់ស្កាត់ការបើកប្រអប់តួណាម៉ង់ស្ទួនពីការជូនដំណឹង
+🎉 បន្ថែមការផ្ទៀងផ្ទាត់ស្ថានភាពតួណាម៉ង់ និងប្រកួតនៅលើប៊ូតុងអញ្ជើញ
 </km-KH>
 
 <lo-LA>
-🐝 ແກ້ຂໍ້ຜິດ NPE ໃນ FriendsListActivity ເມື່ອຜູ້ໃຊ້ບໍ່ໄດ້ເຂົ້າ
-🐝 ແກ້ຂໍ້ຜິດ NullPointerException ໃນ TournamentLobbyActivity ເມື່ອຜູ້ໃຊ້ບໍ່ໄດ້ເຂົ້າ
+🐝 ປ້ອງກັນການເຊີນແຂ່ງຂັນຫຼັງຈາກທວຣນາເມັນສິ້ນສຸດ
+🐝 ປ້ອງກັນການເປີດກ່ອງທວຣນາເມັນຊ້ຳຈາກແຈ້ງເຕືອນ
+🎉 ເພີ່ມການກວດສອບສະຖານະທວຣນາເມັນ ແລະ ແມັດໃນປຸ່ມເຊີນ
 </lo-LA>
 
 <mn-MN>
-🐝 Хэрэглэгч нэвтрээгүй үед FriendsListActivity дахь NPE алдааг зассан
-🐝 Хэрэглэгч нэвтрээгүй үед TournamentLobbyActivity дахь NullPointerException алдааг зассан
+🐝 Тэмцээн дууссаны дараа тоглолтын урилгыг хаав
+🐝 Мэдэгдлээс нээгдэх тэмцээний цонх давхар нээгдэхээс сэргийлэв
+🎉 Урилгын товчлууруудад тэмцээн ба тоглолтын төлөв шалгах нэмэлт оруулсан
 </mn-MN>
 
 <fa-IR>
-🐝 رفع خطای NPE در FriendsListActivity زمانی که کاربر وارد نشده است
-🐝 رفع خطای NullPointerException در TournamentLobbyActivity زمانی که کاربر وارد نشده است
+🐝 جلوگیری از ارسال دعوت مسابقه پس از پایان تورنمنت
+🐝 جلوگیری از باز شدن دوباره پنجره تورنمنت از طریق اعلان
+🎉 افزودن اعتبارسنجی وضعیت تورنمنت و مسابقه در دکمه‌های دعوت
 </fa-IR>
 
 <si-LK>
-🐝 පරිශීලකයා ලොග් නොවූ විට FriendsListActivity හි NPE දෝෂය නිවැරදි කළා
-🐝 පරිශීලකයා ලොග් නොවූ විට TournamentLobbyActivity හි NullPointerException දෝෂය නිවැරදි කළා
+🐝 තරගය අවසන් වූ පසු තරග ආරාධනා නවතා ඇත
+🐝 දැනුම්දීමකින් විවෘත කරන විට තරග සංවාදය දෙවරක් පෙනීම වැළැක්වීය
+🎉 ආරාධනා බොත්තම්වල තරග හා මැච් තත්ත්වය පරීක්ෂා කිරීම එක් කළා
 </si-LK>
