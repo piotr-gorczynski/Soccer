@@ -192,7 +192,6 @@ async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
     let failedCount = 0;
     const failedDocs = [];
     const slowDocs = [];
-    let progressCount = 0;
 
     // Process documents in parallel batches for better performance
     const PARALLEL_BATCH_SIZE = 50;
@@ -203,45 +202,54 @@ async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
       const sourceDocRef = sourceDb.collection(collectionName).doc(doc.id);
       const targetDocRef = targetDb.collection(collectionName).doc(doc.id);
 
-      const docStart = Date.now();
       const promise = copyDocumentRecursive(sourceDocRef, targetDocRef, bulkWriter)
         .then(copyResult => {
-          const docDuration = Date.now() - docStart;
-          if (docDuration >= SLOW_OPERATION_THRESHOLD_MS) {
-            slowDocs.push({ id: doc.id, duration: docDuration });
-            console.warn(
-              `   ⏳ Slow copy for ${doc.id}: ${formatDuration(docDuration)} ` +
-                `(nested docs: ${copyResult.documents}, subcollections: ${copyResult.subcollections})`
-            );
-          }
-          successCount++;
-          progressCount++;
-
-          // Log progress for every 50 documents
-          if (progressCount % 50 === 0) {
-            console.log(`   📝 Copied ${progressCount}/${sourceSnapshot.size} document(s)...`);
-          }
-          return { success: true, copyResult };
+          return { success: true, copyResult, docId: doc.id };
         })
         .catch(error => {
-          console.error(`   ❌ Error copying document ${doc.id}:`, error.message);
-          failedDocs.push({ id: doc.id, message: error.message });
-          failedCount++;
-          return { success: false, error };
+          return { success: false, error, docId: doc.id };
         });
 
       docPromises.push(promise);
 
       // Process in batches to avoid overwhelming the system
       if (docPromises.length >= PARALLEL_BATCH_SIZE || i === sourceSnapshot.docs.length - 1) {
-        await Promise.all(docPromises);
+        const results = await Promise.all(docPromises);
+        
+        // Process results sequentially to avoid race conditions
+        for (const result of results) {
+          if (result.success) {
+            successCount++;
+          } else {
+            console.error(`   ❌ Error copying document ${result.docId}:`, result.error.message);
+            failedDocs.push({ id: result.docId, message: result.error.message });
+            failedCount++;
+          }
+        }
+        
+        // Log progress for every 50 documents
+        if (successCount % 50 === 0 || successCount + failedCount === sourceSnapshot.size) {
+          console.log(`   📝 Copied ${successCount}/${sourceSnapshot.size} document(s)...`);
+        }
+        
         docPromises.length = 0; // Clear the array
       }
     }
 
     // Wait for all remaining promises
     if (docPromises.length > 0) {
-      await Promise.all(docPromises);
+      const results = await Promise.all(docPromises);
+      
+      // Process results sequentially to avoid race conditions
+      for (const result of results) {
+        if (result.success) {
+          successCount++;
+        } else {
+          console.error(`   ❌ Error copying document ${result.docId}:`, result.error.message);
+          failedDocs.push({ id: result.docId, message: result.error.message });
+          failedCount++;
+        }
+      }
     }
 
     // Close the BulkWriter and wait for all operations to complete
@@ -259,19 +267,6 @@ async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
     const collectionDuration = Date.now() - collectionStart;
     const averageDuration = successCount > 0 ? collectionDuration / successCount : 0;
     console.log(`   ⏱️  Collection copy time: ${formatDuration(collectionDuration)} (avg ${formatDuration(Math.round(averageDuration))}/doc)`);
-    if (collectionDuration >= SLOW_COLLECTION_THRESHOLD_MS) {
-      console.warn(`   🐢 Collection '${collectionName}' is slow. Total time ${formatDuration(collectionDuration)} for ${sourceSnapshot.size} docs.`);
-    }
-    if (slowDocs.length > 0) {
-      const slowSummary = slowDocs
-        .slice(0, 10)
-        .map(docInfo => `${docInfo.id} (${formatDuration(docInfo.duration)})`)
-        .join(', ');
-      console.log(`   ⏳ Slow docs (first ${Math.min(10, slowDocs.length)}): ${slowSummary}`);
-      if (slowDocs.length > 10) {
-        console.log(`   ⏳ ${slowDocs.length - 10} more slow document(s) not shown`);
-      }
-    }
     
     return { success: successCount, failed: failedCount };
   } catch (error) {
@@ -304,7 +299,6 @@ async function clearFirestoreCollection(targetDb, collectionName) {
   const failedDocs = [];
   let lastDoc = null;
   const clearStart = Date.now();
-  let progressCount = 0;
 
   // Process documents in parallel batches
   const PARALLEL_BATCH_SIZE = 50;
@@ -326,44 +320,54 @@ async function clearFirestoreCollection(targetDb, collectionName) {
 
     const docPromises = [];
     for (const doc of snapshot.docs) {
-      const docStart = Date.now();
       const promise = deleteDocumentRecursive(doc.ref, bulkWriter)
         .then(deleteResult => {
-          const docDuration = Date.now() - docStart;
-          if (docDuration >= SLOW_OPERATION_THRESHOLD_MS) {
-            console.warn(
-              `   ⏳ Slow delete for ${doc.id}: ${formatDuration(docDuration)} ` +
-                `(nested docs: ${deleteResult.documents}, subcollections: ${deleteResult.subcollections})`
-            );
-          }
-          deletedCount++;
-          progressCount++;
-
-          // Log progress for every 50 documents
-          if (progressCount % 50 === 0) {
-            console.log(`   🗑️  Deleted ${progressCount} document(s)...`);
-          }
-          return { success: true, deleteResult };
+          return { success: true, deleteResult, docId: doc.id };
         })
         .catch(error => {
-          console.error(`   ❌ Error deleting document ${doc.id}:`, error.message);
-          failedDocs.push({ id: doc.id, message: error.message });
-          failedCount++;
-          return { success: false, error };
+          return { success: false, error, docId: doc.id };
         });
 
       docPromises.push(promise);
 
       // Process in batches to avoid overwhelming the system
       if (docPromises.length >= PARALLEL_BATCH_SIZE) {
-        await Promise.all(docPromises);
+        const results = await Promise.all(docPromises);
+        
+        // Process results sequentially to avoid race conditions
+        for (const result of results) {
+          if (result.success) {
+            deletedCount++;
+          } else {
+            console.error(`   ❌ Error deleting document ${result.docId}:`, result.error.message);
+            failedDocs.push({ id: result.docId, message: result.error.message });
+            failedCount++;
+          }
+        }
+        
+        // Log progress for every 50 documents
+        if (deletedCount % 50 === 0) {
+          console.log(`   🗑️  Deleted ${deletedCount} document(s)...`);
+        }
+        
         docPromises.length = 0; // Clear the array
       }
     }
 
     // Wait for remaining promises in this batch
     if (docPromises.length > 0) {
-      await Promise.all(docPromises);
+      const results = await Promise.all(docPromises);
+      
+      // Process results sequentially to avoid race conditions
+      for (const result of results) {
+        if (result.success) {
+          deletedCount++;
+        } else {
+          console.error(`   ❌ Error deleting document ${result.docId}:`, result.error.message);
+          failedDocs.push({ id: result.docId, message: result.error.message });
+          failedCount++;
+        }
+      }
     }
 
     lastDoc = snapshot.docs[snapshot.docs.length - 1];
