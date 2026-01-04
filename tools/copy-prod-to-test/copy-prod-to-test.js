@@ -65,16 +65,13 @@ function isRetryableFirestoreError(error) {
 
 /**
  * Recursively delete a document and all its subcollections using BulkWriter
+ * Note: This function does not check if the document exists before deletion.
+ * For phantom documents (non-existent documents with subcollections), the document
+ * deletion is a no-op, but subcollections are still deleted.
  */
 async function deleteDocumentRecursive(docRef, bulkWriter) {
-  let deletedDocs = 0;
+  let deletedDocs = 1; // Count this document (will be no-op if phantom)
   let subcollectionsCount = 0;
-  
-  // Check if document exists to get accurate count
-  const docSnapshot = await docRef.get();
-  if (docSnapshot.exists) {
-    deletedDocs = 1;
-  }
   
   // Get all subcollections (works for both existing and phantom documents)
   const subcollections = await docRef.listCollections();
@@ -399,6 +396,9 @@ async function clearFirestoreCollectionRecursive(targetDb, collectionPath) {
   // Use listDocuments() instead of get() to include phantom documents
   // listDocuments() returns references to all documents, including those that don't exist
   // We loop until no more documents are found, processing in batches
+  // Note: listDocuments() returns ALL document refs, but we process only BATCH_SIZE at a time
+  // to avoid overwhelming memory/network. After committing deletions, the next iteration
+  // will get the remaining documents (deleted ones won't be returned anymore).
   while (true) {
     const collectionRef = targetDb.collection(collectionPath);
     
