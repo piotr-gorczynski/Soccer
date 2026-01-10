@@ -264,7 +264,7 @@ steps:
             # Copy each SHA certificate from global app to target app
             if command -v jq >/dev/null 2>&1; then
               # Use jq for robust parsing
-              echo "$sha_response" | jq -c '.certificates[]? // empty' 2>/dev/null | while IFS= read -r cert; do
+              while IFS= read -r cert; do
                 sha_hash=$(echo "$cert" | jq -r '.shaHash // empty')
                 cert_type=$(echo "$cert" | jq -r '.certType // "SHA_1"')
                 
@@ -295,7 +295,7 @@ steps:
                   echo "⚠️  Failed to add SHA certificate (HTTP $http_code)"
                   echo "Response: $(echo "$add_response" | head -n-1)"
                 fi
-              done
+              done < <(echo "$sha_response" | jq -c '.certificates[]? // empty' 2>/dev/null)
             else
               # Fallback without jq - manual parsing
               echo "🔧 Using grep-based parsing (jq not available)"
