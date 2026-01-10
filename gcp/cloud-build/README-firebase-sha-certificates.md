@@ -174,18 +174,30 @@ package_names=("piotr_gorczynski.soccer2" "piotr_gorczynski.soccer2.bd")
 2. Refresh the Firebase Console page
 3. Check Cloud Build logs for any error messages
 
-### Problem: SHA certificates not being copied (Fixed in PR #1122 follow-up)
+### Problem: SHA certificates not being copied
 
 **Issue**: SHA certificates were found in the global app but were not being copied to variant apps.
 
-**Root Cause**: The script used a pipe with a `while` loop (`echo ... | while`), which runs the loop in a subshell. With `set -e` enabled, if any error occurred during processing, the loop could exit prematurely without processing all certificates.
+**Root Causes & Solutions**:
 
-**Solution**: Changed to use process substitution (`while ... done < <(...)`) instead of a pipe. This ensures:
-- The while loop runs in the current shell (not a subshell)
-- All certificates are processed even if individual API calls encounter errors
-- Error handling is more predictable with `set -e`
+1. **Subshell Issue (Fixed in PR #1124)**
+   - **Cause**: The script used a pipe with a `while` loop (`echo ... | while`), which runs the loop in a subshell. With `set -e` enabled, if any error occurred during processing, the loop could exit prematurely without processing all certificates.
+   - **Solution**: Changed to use process substitution (`while ... done < <(...)`) instead of a pipe. This ensures the while loop runs in the current shell and all certificates are processed even if individual API calls encounter errors.
 
-**Fixed in**: Commit following issue #1122
+2. **Silent Failures (Fixed in follow-up)**
+   - **Cause**: JQ errors were suppressed with `2>/dev/null`, making it impossible to debug parsing issues. The script had no way to detect if the certificate copying loop actually executed.
+   - **Solution**: 
+     - Removed `2>/dev/null` from jq command to expose parsing errors
+     - Added counter to track how many certificates were processed
+     - Added warning message if loop executes zero times
+     - Added debug logging throughout the process
+
+**Debugging**: The script now provides detailed logging:
+- Shows whether jq or grep parsing is used
+- Reports number of certificates found and processed
+- Logs each certificate as it's being added
+- Warns if no certificates were processed (indicates jq failure or empty list)
+- Shows HTTP status codes and error responses for failed API calls
 
 ## Security Considerations
 
