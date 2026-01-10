@@ -2512,14 +2512,33 @@ implementation 'com.facebook.android:facebook-android-sdk:18.1.3'
   - Add to Facebook App Dashboard → Settings → Basic → Key Hashes
   - Add hashes for both `piotr_gorczynski.soccer2` and `piotr_gorczynski.soccer2.bd`
 
-- [ ] **Update AndroidManifest (if needed)**
+- [ ] **Update AndroidManifest for Bangladesh Flavor (COMPLETED)**
+  
+  **File**: `mobile/app/src/bangladesh/AndroidManifest.xml`
+  
+  ✅ **Already implemented** - The Bangladesh-specific manifest has been created to prevent Facebook Content Provider conflicts:
+  
   ```xml
-  <!-- If package-specific authorities needed -->
-  <provider
-      android:name="com.facebook.FacebookContentProvider"
-      android:authorities="com.facebook.app.FacebookContentProvider1232966491486195"
-      android:exported="true" />
+  <?xml version="1.0" encoding="utf-8"?>
+  <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:tools="http://schemas.android.com/tools">
+
+      <application>
+          <!-- Override Facebook Content Provider authority for Bangladesh variant -->
+          <!-- This prevents conflict when both global and Bangladesh apps are installed -->
+          <provider
+              android:name="com.facebook.FacebookContentProvider"
+              android:authorities="com.facebook.app.FacebookContentProvider1232966491486195.bd"
+              android:exported="true"
+              tools:replace="android:authorities" />
+      </application>
+
+  </manifest>
   ```
+  
+  **Why this is needed**: When both the global app (`piotr_gorczynski.soccer2`) and Bangladesh app (`piotr_gorczynski.soccer2.bd`) are installed on the same device, they cannot share the same Facebook Content Provider authority. The Bangladesh variant uses a unique authority with `.bd` suffix to prevent the `INSTALL_FAILED_CONFLICTING_PROVIDER` error.
+  
+  **No action required** - This fix has already been implemented and is ready to use.
 
 - [ ] **Test Facebook Login**
   ```bash
@@ -3560,6 +3579,36 @@ The build system uses the same file for both global and Bangladesh variants. Fir
 #### Documentation
 - `mobile/app/PRODUCT_FLAVOR_README.md` - Complete setup and usage guide
 
+#### Facebook Content Provider Configuration
+To prevent conflicts when both global and Bangladesh apps are installed on the same device, a Bangladesh-specific AndroidManifest.xml has been created:
+
+**File**: `mobile/app/src/bangladesh/AndroidManifest.xml`
+
+This manifest overrides the Facebook Content Provider authority to use a unique value for the Bangladesh variant:
+- **Global app**: `com.facebook.app.FacebookContentProvider1232966491486195`
+- **Bangladesh app**: `com.facebook.app.FacebookContentProvider1232966491486195.bd`
+
+This allows both apps to coexist on the same device without Android provider conflicts.
+
+#### Troubleshooting
+
+**Error**: `INSTALL_FAILED_CONFLICTING_PROVIDER`
+```
+Can't install because provider name com.facebook.app.FacebookContentProvider1232966491486195 
+(in package piotr_gorczynski.soccer2.bd) is already used by piotr_gorczynski.soccer2
+```
+
+**Solution**: This error occurs when both the global and Bangladesh apps use the same Facebook Content Provider authority. The fix has been implemented in `mobile/app/src/bangladesh/AndroidManifest.xml` which overrides the provider authority with a `.bd` suffix for the Bangladesh variant.
+
+**To verify the fix**:
+```bash
+# Build the Bangladesh debug variant
+cd mobile
+./gradlew assemble_devBangladeshDebug
+
+# The APK should now install without conflicts
+```
+
 #### Next Steps
 1. Register Bangladesh app in Firebase Console (package: `piotr_gorczynski.soccer2.bd`)
 2. Download and place google-services.json file in secrets/ directory
@@ -3568,6 +3617,6 @@ The build system uses the same file for both global and Bangladesh variants. Fir
 
 ---
 
-**Status**: ✅ Product Flavor Setup Complete  
+**Status**: ✅ Product Flavor Setup Complete (with Facebook provider conflict fix)  
 **Next Phase**: Backend Development (Phase 2)  
-**Last Updated**: 2025-12-29
+**Last Updated**: 2026-01-10
