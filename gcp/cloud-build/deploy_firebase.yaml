@@ -201,6 +201,7 @@ steps:
           "https://firebase.googleapis.com/v1beta1/projects/$firebase_project_id/androidApps/$global_app_id/sha")
         
         echo "$sha_response" > /tmp/sha_response.json
+        echo "🔍 SHA response saved to /tmp/sha_response.json for debugging"
         
         # Check if there are any SHA certificates
         if echo "$sha_response" | grep -q '"certificates"'; then
@@ -218,6 +219,7 @@ steps:
           if [ "$sha_count" -eq "0" ]; then
             echo "⚠️  No SHA certificates found in global app"
             echo "ℹ️  Please add SHA certificates to the global app first in Firebase Console."
+            echo "🔍 Check /tmp/sha_response.json to see the actual API response"
             exit 0
           fi
           
