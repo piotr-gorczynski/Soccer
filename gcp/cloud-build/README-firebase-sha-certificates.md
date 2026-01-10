@@ -174,6 +174,19 @@ package_names=("piotr_gorczynski.soccer2" "piotr_gorczynski.soccer2.bd")
 2. Refresh the Firebase Console page
 3. Check Cloud Build logs for any error messages
 
+### Problem: SHA certificates not being copied (Fixed in PR #1122 follow-up)
+
+**Issue**: SHA certificates were found in the global app but were not being copied to variant apps.
+
+**Root Cause**: The script used a pipe with a `while` loop (`echo ... | while`), which runs the loop in a subshell. With `set -e` enabled, if any error occurred during processing, the loop could exit prematurely without processing all certificates.
+
+**Solution**: Changed to use process substitution (`while ... done < <(...)`) instead of a pipe. This ensures:
+- The while loop runs in the current shell (not a subshell)
+- All certificates are processed even if individual API calls encounter errors
+- Error handling is more predictable with `set -e`
+
+**Fixed in**: Commit following issue #1122
+
 ## Security Considerations
 
 - SHA certificates are public information and don't need to be treated as secrets
