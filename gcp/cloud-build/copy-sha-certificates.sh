@@ -82,17 +82,54 @@ if echo "$sha_response" | grep -q '"certificates"'; then
     echo "---"
     echo "🔍 Processing package: $package_name"
     
-    # Find app ID for this package
+    # Find app ID for this package with retry logic
+    # (to handle Firebase API propagation delays after app creation)
     target_app_id=""
-    if command -v jq >/dev/null 2>&1; then
-      target_app_id=$(echo "$apps_response" | jq -r ".apps[] | select(.packageName == \"$package_name\") | .appId" 2>/dev/null || true)
-    else
-      target_app_id=$(echo "$apps_response" | grep -A 5 "\"packageName\"[[:space:]]*:[[:space:]]*\"$package_name\"" | grep -oE '"appId"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | grep -oE '"[^"]*"$' | tr -d '"' || true)
-    fi
+    max_retries=3
+    retry_count=0
+    retry_delay=5  # Start with 5 seconds
     
+    while [ $retry_count -le $max_retries ]; do
+      if command -v jq >/dev/null 2>&1; then
+        target_app_id=$(echo "$apps_response" | jq -r ".apps[] | select(.packageName == \"$package_name\") | .appId" 2>/dev/null || true)
+      else
+        target_app_id=$(echo "$apps_response" | grep -A 5 "\"packageName\"[[:space:]]*:[[:space:]]*\"$package_name\"" | grep -oE '"appId"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | grep -oE '"[^"]*"$' | tr -d '"' || true)
+      fi
+      
+      # If we found the app ID, break out of retry loop
+      if [ -n "$target_app_id" ]; then
+        if [ $retry_count -gt 0 ]; then
+          echo "✅ App ID found after $retry_count retry/retries"
+        fi
+        break
+      fi
+      
+      # If not found and we haven't exceeded max retries, wait and refetch
+      if [ $retry_count -lt $max_retries ]; then
+        retry_count=$((retry_count + 1))
+        echo "⏳ App ID not found, waiting ${retry_delay}s before retry $retry_count/$max_retries..."
+        sleep $retry_delay
+        
+        # Refetch the app list
+        echo "🔄 Refetching Firebase app list..."
+        apps_response=$(curl -s -H "Authorization: Bearer $access_token" \
+          "https://firebase.googleapis.com/v1beta1/projects/$firebase_project_id/androidApps")
+        
+        # Increase delay for next retry (exponential backoff)
+        retry_delay=$((retry_delay * 2))
+      else
+        # Max retries exceeded
+        retry_count=$((retry_count + 1))
+        break
+      fi
+    done
+    
+    # Check if we found the app ID after all retries
     if [ -z "$target_app_id" ]; then
-      echo "⚠️  Could not find app ID for package: $package_name"
+      echo "⚠️  Could not find app ID for package: $package_name (after $retry_count attempts)"
       echo "⚠️  Skipping SHA certificate copy for this package."
+      echo "ℹ️  The app may not exist or there may be an API propagation delay."
+      echo "ℹ️  You can manually copy SHA certificates in Firebase Console or re-run the deployment."
       continue
     fi
     
