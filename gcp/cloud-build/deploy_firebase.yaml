@@ -201,6 +201,7 @@ steps:
           "https://firebase.googleapis.com/v1beta1/projects/$firebase_project_id/androidApps/$global_app_id/sha")
         
         echo "$sha_response" > /tmp/sha_response.json
+        echo "🔍 SHA response saved to /tmp/sha_response.json for debugging"
         
         # Check if there are any SHA certificates
         if echo "$sha_response" | grep -q '"certificates"'; then
@@ -218,6 +219,7 @@ steps:
           if [ "$sha_count" -eq "0" ]; then
             echo "⚠️  No SHA certificates found in global app"
             echo "ℹ️  Please add SHA certificates to the global app first in Firebase Console."
+            echo "🔍 Check /tmp/sha_response.json to see the actual API response"
             exit 0
           fi
           
@@ -264,11 +266,16 @@ steps:
             # Copy each SHA certificate from global app to target app
             if command -v jq >/dev/null 2>&1; then
               # Use jq for robust parsing
+              echo "🔧 Using jq for JSON parsing"
+              certs_processed=0
               while IFS= read -r cert; do
+                certs_processed=$((certs_processed + 1))
+                echo "🔍 Processing certificate $certs_processed"
                 sha_hash=$(echo "$cert" | jq -r '.shaHash // empty')
                 cert_type=$(echo "$cert" | jq -r '.certType // "SHA_1"')
                 
                 if [ -z "$sha_hash" ]; then
+                  echo "⚠️  Skipping certificate with empty SHA hash"
                   continue
                 fi
                 
@@ -295,13 +302,22 @@ steps:
                   echo "⚠️  Failed to add SHA certificate (HTTP $http_code)"
                   echo "Response: $(echo "$add_response" | head -n-1)"
                 fi
-              done < <(echo "$sha_response" | jq -c '.certificates[]? // empty' 2>/dev/null)
+              done < <(echo "$sha_response" | jq -c '.certificates[]? // empty')
+              
+              if [ "$certs_processed" -eq "0" ]; then
+                echo "⚠️  WARNING: No certificates were processed by the loop!"
+                echo "🔍 This might indicate a problem with jq parsing or an empty certificate list."
+                echo "🔍 Raw SHA response saved to /tmp/sha_response.json for debugging"
+              else
+                echo "✅ Processed $certs_processed certificate(s)"
+              fi
             else
               # Fallback without jq - manual parsing
               echo "🔧 Using grep-based parsing (jq not available)"
               
               # Count certificates
               cert_count=$(echo "$sha_response" | grep -c '"shaHash"' || echo "0")
+              echo "🔍 Found $cert_count certificate(s) to process"
               
               if [ "$cert_count" -gt "0" ]; then
                 # Extract each SHA hash and cert type
@@ -312,12 +328,16 @@ steps:
                 IFS=$'\n' read -rd '' -a sha_array <<< "$sha_hashes" || true
                 IFS=$'\n' read -rd '' -a type_array <<< "$cert_types" || true
                 
+                echo "🔍 Extracted ${#sha_array[@]} SHA hash(es)"
+                
                 # Iterate through certificates
+                certs_added=0
                 for i in "${!sha_array[@]}"; do
                   sha_hash="${sha_array[$i]}"
                   cert_type="${type_array[$i]:-SHA_1}"
                   
                   if [ -z "$sha_hash" ]; then
+                    echo "⚠️  Skipping empty SHA hash at index $i"
                     continue
                   fi
                   
@@ -340,11 +360,16 @@ steps:
                   
                   if [[ "$http_code" == "200" ]] || [[ "$http_code" == "201" ]]; then
                     echo "✅ Successfully added SHA certificate"
+                    certs_added=$((certs_added + 1))
                   else
                     echo "⚠️  Failed to add SHA certificate (HTTP $http_code)"
                     echo "Response: $(echo "$add_response" | head -n-1)"
                   fi
                 done
+                
+                echo "✅ Added $certs_added out of ${#sha_array[@]} certificate(s)"
+              else
+                echo "⚠️  No certificates found to process"
               fi
             fi
             
