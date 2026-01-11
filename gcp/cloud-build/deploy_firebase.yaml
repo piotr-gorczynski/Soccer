@@ -272,7 +272,9 @@ steps:
               sha_hashes=$(echo "$sha_response" | jq -r '.certificates[]?.shaHash // empty' || true)
               cert_types=$(echo "$sha_response" | jq -r '.certificates[]?.certType // "SHA_1"' || true)
               
-              # Convert to arrays - use mapfile/readarray if available, otherwise read
+              # Convert to arrays
+              # Try mapfile first (bash 4.0+), then readarray (sometimes available when mapfile isn't),
+              # finally fall back to read (works in older bash but has edge cases with trailing newlines)
               if command -v mapfile >/dev/null 2>&1; then
                 mapfile -t sha_array <<< "$sha_hashes"
                 mapfile -t type_array <<< "$cert_types"
