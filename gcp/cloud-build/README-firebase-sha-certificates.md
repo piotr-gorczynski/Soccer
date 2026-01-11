@@ -16,7 +16,7 @@ Manually copying SHA certificates to each package variant is error-prone and tim
 
 ## How It Works
 
-The script (Step 8 in `deploy_firebase.yaml`) performs the following operations:
+The SHA certificate copying functionality is implemented in the `copy-sha-certificates.sh` script, which is invoked by Step 8 in `deploy_firebase.yaml`. The script performs the following operations:
 
 1. **Fetch Android Apps**: Retrieves all Android apps registered in the Firebase project
 2. **Identify Global App**: Finds the global app (`piotr_gorczynski.soccer2`) and extracts its app ID
@@ -192,7 +192,7 @@ package_names=("piotr_gorczynski.soccer2" "piotr_gorczynski.soccer2.bd")
      - Added warning message if loop executes zero times
      - Added debug logging throughout the process
 
-3. **Process Substitution Reliability (Fixed in current PR)**
+3. **Process Substitution Reliability (Fixed in PR #1128)**
    - **Cause**: Using `while read` with process substitution (`while ... done < <(...)`) can have reliability issues in certain shell environments, especially in containerized environments like Cloud Build. The loop might silently fail to execute if the process substitution doesn't work properly, resulting in zero certificates processed.
    - **Solution**: 
      - Replaced the `while read` loop with an array-based approach
@@ -200,6 +200,14 @@ package_names=("piotr_gorczynski.soccer2" "piotr_gorczynski.soccer2.bd")
      - Iterate through arrays using index-based for loop
      - This approach is more robust and works consistently across all environments
      - Uses `mapfile` when available for better performance, falls back to `read` otherwise
+
+4. **Cloud Build Step Size Limit (Fixed in PR #1129)**
+   - **Cause**: The array-based approach introduced in PR #1128 added significant code to the inline script in Step 8, increasing it to 13,538 characters. This exceeded Cloud Build's 10,000 character limit for build step arguments, causing the error: "invalid build: invalid .steps field: build step 6 arg 1 too long (max: 10000)"
+   - **Solution**: 
+     - Extracted the entire SHA certificate copying logic to a separate file (`copy-sha-certificates.sh`)
+     - Updated Step 8 to execute the external script instead of inline code
+     - This reduces Step 8 to only 221 characters while preserving all functionality
+     - The script file is executable and includes proper error handling with `set -e`
 
 **Debugging**: The script now provides detailed logging:
 - Shows whether jq or grep parsing is used
@@ -221,7 +229,7 @@ package_names=("piotr_gorczynski.soccer2" "piotr_gorczynski.soccer2.bd")
 
 To add a new package variant (e.g., `piotr_gorczynski.soccer2.in` for India):
 
-1. Update the `package_names` array in the script:
+1. Update the `package_names` array in `copy-sha-certificates.sh`:
    ```bash
    package_names=("piotr_gorczynski.soccer2" "piotr_gorczynski.soccer2.bd" "piotr_gorczynski.soccer2.in")
    ```
@@ -241,7 +249,8 @@ If you need to use a different package as the source of SHA certificates:
 
 ## Related Files
 
-- `deploy_firebase.yaml` - Main deployment script with SHA copy functionality
+- `deploy_firebase.yaml` - Main deployment script
+- `copy-sha-certificates.sh` - SHA certificate copying script (called by Step 8)
 - `deploy_firebase_with_auth.yaml` - Authentication configuration
 - `final-instructions.yaml` - Manual setup instructions
 
