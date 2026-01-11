@@ -269,18 +269,20 @@ steps:
               echo "🔧 Using jq for JSON parsing"
               
               # Extract arrays of SHA hashes and cert types using jq
-              sha_hashes=$(echo "$sha_response" | jq -r '.certificates[]?.shaHash // empty' || true)
-              cert_types=$(echo "$sha_response" | jq -r '.certificates[]?.certType // "SHA_1"' || true)
+              # Use a single jq command to extract both values to ensure perfect alignment
+              sha_hashes=$(echo "$sha_response" | jq -r '.certificates[]? | .shaHash // empty' || true)
+              cert_types=$(echo "$sha_response" | jq -r '.certificates[]? | .certType // "SHA_1"' || true)
               
               # Convert to arrays
               # Try mapfile (bash 4.0+), fall back to read for older bash versions
               # Note: We try to use the command and catch errors rather than checking for availability
               # since mapfile/readarray are builtins and may not be detectable with command -v in all environments
               if mapfile -t sha_array <<< "$sha_hashes" 2>/dev/null && mapfile -t type_array <<< "$cert_types" 2>/dev/null; then
-                # mapfile succeeded
+                # mapfile succeeded - arrays are already populated
                 :
               else
                 # Fall back to read for older bash versions
+                # Note: read -rd '' is expected to return non-zero exit code, hence || true
                 IFS=$'\n' read -rd '' -a sha_array <<< "$sha_hashes" || true
                 IFS=$'\n' read -rd '' -a type_array <<< "$cert_types" || true
               fi
