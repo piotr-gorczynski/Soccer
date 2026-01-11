@@ -174,6 +174,18 @@ package_names=("piotr_gorczynski.soccer2" "piotr_gorczynski.soccer2.bd")
 2. Refresh the Firebase Console page
 3. Check Cloud Build logs for any error messages
 
+### Problem: "Could not find app ID for package" with newly created apps
+
+**Solution**: This is now automatically handled by the script's retry logic (added in PR #1130). The script will:
+1. Wait and retry up to 3 times if an app is not found
+2. Refetch the app list between retries to catch newly created apps
+3. Use exponential backoff (5s, 10s, 20s delays)
+
+If the error persists after all retries, verify:
+- The app was actually created in Step 7 (check earlier build logs)
+- The package name matches exactly (case-sensitive)
+- You have proper Firebase permissions
+
 ### Problem: SHA certificates not being copied
 
 **Issue**: SHA certificates were found in the global app but were not being copied to variant apps.
@@ -209,12 +221,24 @@ package_names=("piotr_gorczynski.soccer2" "piotr_gorczynski.soccer2.bd")
      - This reduces Step 8 to only 221 characters while preserving all functionality
      - The script file is executable and includes proper error handling with `set -e`
 
+5. **Firebase API Propagation Delay (Fixed in PR #1130)**
+   - **Cause**: When Firebase apps are created in Step 7 (deploy_firebase.yaml), there can be a brief propagation delay before they appear in the Firebase Management API's app list. When Step 8 runs immediately after and fetches the app list, newly created apps may not be included yet. The script would then skip copying SHA certificates to those apps with the warning "Could not find app ID for package", even though the apps were successfully created.
+   - **Solution**: 
+     - Added retry logic with exponential backoff when looking for target app IDs
+     - If an app ID is not found initially, the script waits 5 seconds and refetches the app list
+     - Retries up to 3 times with delays of 5s, 10s, and 20s (total wait time up to 35 seconds)
+     - This gracefully handles Firebase API propagation delays without requiring manual intervention
+     - Improved logging shows retry attempts and final status
+   - **Impact**: SHA certificates are now reliably copied even when apps are freshly created, eliminating the need for manual certificate copying or re-running the deployment
+
 **Debugging**: The script now provides detailed logging:
 - Shows whether jq or grep parsing is used
 - Reports number of certificates found and extracted into arrays
 - Logs each certificate as it's being added with its SHA hash
 - Warns if no certificates were processed (indicates jq failure or empty list)
 - Shows HTTP status codes and error responses for failed API calls
+- Displays retry attempts when apps are not found initially (indicates API propagation delay)
+- Shows when apps are found after retries
 
 ## Security Considerations
 
