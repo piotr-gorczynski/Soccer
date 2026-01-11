@@ -267,17 +267,36 @@ steps:
             if command -v jq >/dev/null 2>&1; then
               # Use jq for robust parsing
               echo "🔧 Using jq for JSON parsing"
+              
+              # Extract arrays of SHA hashes and cert types using jq
+              sha_hashes=$(echo "$sha_response" | jq -r '.certificates[]?.shaHash // empty' || true)
+              cert_types=$(echo "$sha_response" | jq -r '.certificates[]?.certType // "SHA_1"' || true)
+              
+              # Convert to arrays - use mapfile if available, otherwise read
+              if command -v mapfile >/dev/null 2>&1; then
+                mapfile -t sha_array <<< "$sha_hashes"
+                mapfile -t type_array <<< "$cert_types"
+              else
+                IFS=$'\n' read -rd '' -a sha_array <<< "$sha_hashes" || true
+                IFS=$'\n' read -rd '' -a type_array <<< "$cert_types" || true
+              fi
+              
+              echo "🔍 Extracted ${#sha_array[@]} SHA hash(es) from certificates"
+              
+              # Iterate through certificates using array indices
               certs_processed=0
-              while IFS= read -r cert; do
-                certs_processed=$((certs_processed + 1))
-                echo "🔍 Processing certificate $certs_processed"
-                sha_hash=$(echo "$cert" | jq -r '.shaHash // empty')
-                cert_type=$(echo "$cert" | jq -r '.certType // "SHA_1"')
+              for i in "${!sha_array[@]}"; do
+                sha_hash="${sha_array[$i]}"
+                cert_type="${type_array[$i]:-SHA_1}"
                 
-                if [ -z "$sha_hash" ]; then
-                  echo "⚠️  Skipping certificate with empty SHA hash"
+                # Skip empty SHA hashes (can happen with empty input)
+                if [ -z "$sha_hash" ] || [[ "$sha_hash" == "" ]]; then
+                  echo "⚠️  Skipping empty SHA hash at index $i"
                   continue
                 fi
+                
+                certs_processed=$((certs_processed + 1))
+                echo "🔍 Processing certificate $certs_processed: $sha_hash"
                 
                 # Check if SHA already exists in target app
                 if echo "$existing_hashes" | grep -qF "$sha_hash"; then
@@ -302,10 +321,10 @@ steps:
                   echo "⚠️  Failed to add SHA certificate (HTTP $http_code)"
                   echo "Response: $(echo "$add_response" | head -n-1)"
                 fi
-              done < <(echo "$sha_response" | jq -c '.certificates[]? // empty')
+              done
               
               if [ "$certs_processed" -eq "0" ]; then
-                echo "⚠️  WARNING: No certificates were processed by the loop!"
+                echo "⚠️  WARNING: No certificates were processed!"
                 echo "🔍 This might indicate a problem with jq parsing or an empty certificate list."
                 echo "🔍 Raw SHA response saved to /tmp/sha_response.json for debugging"
               else
