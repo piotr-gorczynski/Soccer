@@ -272,16 +272,25 @@ steps:
               sha_hashes=$(echo "$sha_response" | jq -r '.certificates[]?.shaHash // empty' || true)
               cert_types=$(echo "$sha_response" | jq -r '.certificates[]?.certType // "SHA_1"' || true)
               
-              # Convert to arrays - use mapfile if available, otherwise read
+              # Convert to arrays - use mapfile/readarray if available, otherwise read
               if command -v mapfile >/dev/null 2>&1; then
                 mapfile -t sha_array <<< "$sha_hashes"
                 mapfile -t type_array <<< "$cert_types"
+              elif command -v readarray >/dev/null 2>&1; then
+                readarray -t sha_array <<< "$sha_hashes"
+                readarray -t type_array <<< "$cert_types"
               else
                 IFS=$'\n' read -rd '' -a sha_array <<< "$sha_hashes" || true
                 IFS=$'\n' read -rd '' -a type_array <<< "$cert_types" || true
               fi
               
               echo "🔍 Extracted ${#sha_array[@]} SHA hash(es) from certificates"
+              
+              # Verify array lengths match (should be equal for proper pairing)
+              if [ "${#sha_array[@]}" -ne "${#type_array[@]}" ]; then
+                echo "⚠️  WARNING: SHA array length (${#sha_array[@]}) does not match cert type array length (${#type_array[@]})"
+                echo "⚠️  Will use SHA_1 as default for missing cert types"
+              fi
               
               # Iterate through certificates using array indices
               certs_processed=0
@@ -290,7 +299,7 @@ steps:
                 cert_type="${type_array[$i]:-SHA_1}"
                 
                 # Skip empty SHA hashes (can happen with empty input)
-                if [ -z "$sha_hash" ] || [[ "$sha_hash" == "" ]]; then
+                if [ -z "$sha_hash" ]; then
                   echo "⚠️  Skipping empty SHA hash at index $i"
                   continue
                 fi
