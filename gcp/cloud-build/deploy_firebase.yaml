@@ -273,15 +273,14 @@ steps:
               cert_types=$(echo "$sha_response" | jq -r '.certificates[]?.certType // "SHA_1"' || true)
               
               # Convert to arrays
-              # Try mapfile first (bash 4.0+), then readarray (sometimes available when mapfile isn't),
-              # finally fall back to read (works in older bash but has edge cases with trailing newlines)
-              if command -v mapfile >/dev/null 2>&1; then
-                mapfile -t sha_array <<< "$sha_hashes"
-                mapfile -t type_array <<< "$cert_types"
-              elif command -v readarray >/dev/null 2>&1; then
-                readarray -t sha_array <<< "$sha_hashes"
-                readarray -t type_array <<< "$cert_types"
+              # Try mapfile (bash 4.0+), fall back to read for older bash versions
+              # Note: We try to use the command and catch errors rather than checking for availability
+              # since mapfile/readarray are builtins and may not be detectable with command -v in all environments
+              if mapfile -t sha_array <<< "$sha_hashes" 2>/dev/null && mapfile -t type_array <<< "$cert_types" 2>/dev/null; then
+                # mapfile succeeded
+                :
               else
+                # Fall back to read for older bash versions
                 IFS=$'\n' read -rd '' -a sha_array <<< "$sha_hashes" || true
                 IFS=$'\n' read -rd '' -a type_array <<< "$cert_types" || true
               fi
