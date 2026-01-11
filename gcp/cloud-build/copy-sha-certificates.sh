@@ -99,7 +99,11 @@ if echo "$sha_response" | grep -q '"certificates"'; then
       # If we found the app ID, break out of retry loop
       if [ -n "$target_app_id" ]; then
         if [ $retry_count -gt 0 ]; then
-          echo "✅ App ID found after $retry_count retry/retries"
+          if [ $retry_count -eq 1 ]; then
+            echo "✅ App ID found after 1 retry"
+          else
+            echo "✅ App ID found after $retry_count retries"
+          fi
         fi
         break
       fi
@@ -126,7 +130,9 @@ if echo "$sha_response" | grep -q '"certificates"'; then
     
     # Check if we found the app ID after all retries
     if [ -z "$target_app_id" ]; then
-      echo "⚠️  Could not find app ID for package: $package_name (after $retry_count attempts)"
+      # retry_count represents number of retries (not including initial attempt)
+      total_attempts=$((retry_count))
+      echo "⚠️  Could not find app ID for package: $package_name (tried $total_attempts time(s))"
       echo "⚠️  Skipping SHA certificate copy for this package."
       echo "ℹ️  The app may not exist or there may be an API propagation delay."
       echo "ℹ️  You can manually copy SHA certificates in Firebase Console or re-run the deployment."
