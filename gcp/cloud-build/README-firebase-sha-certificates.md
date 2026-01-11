@@ -184,7 +184,7 @@ package_names=("piotr_gorczynski.soccer2" "piotr_gorczynski.soccer2.bd")
    - **Cause**: The script used a pipe with a `while` loop (`echo ... | while`), which runs the loop in a subshell. With `set -e` enabled, if any error occurred during processing, the loop could exit prematurely without processing all certificates.
    - **Solution**: Changed to use process substitution (`while ... done < <(...)`) instead of a pipe. This ensures the while loop runs in the current shell and all certificates are processed even if individual API calls encounter errors.
 
-2. **Silent Failures (Fixed in follow-up)**
+2. **Silent Failures (Fixed in PR #1126)**
    - **Cause**: JQ errors were suppressed with `2>/dev/null`, making it impossible to debug parsing issues. The script had no way to detect if the certificate copying loop actually executed.
    - **Solution**: 
      - Removed `2>/dev/null` from jq command to expose parsing errors
@@ -192,10 +192,19 @@ package_names=("piotr_gorczynski.soccer2" "piotr_gorczynski.soccer2.bd")
      - Added warning message if loop executes zero times
      - Added debug logging throughout the process
 
+3. **Process Substitution Reliability (Fixed in current PR)**
+   - **Cause**: Using `while read` with process substitution (`while ... done < <(...)`) can have reliability issues in certain shell environments, especially in containerized environments like Cloud Build. The loop might silently fail to execute if the process substitution doesn't work properly, resulting in zero certificates processed.
+   - **Solution**: 
+     - Replaced the `while read` loop with an array-based approach
+     - Extract SHA hashes and cert types into arrays using jq
+     - Iterate through arrays using index-based for loop
+     - This approach is more robust and works consistently across all environments
+     - Uses `mapfile` when available for better performance, falls back to `read` otherwise
+
 **Debugging**: The script now provides detailed logging:
 - Shows whether jq or grep parsing is used
-- Reports number of certificates found and processed
-- Logs each certificate as it's being added
+- Reports number of certificates found and extracted into arrays
+- Logs each certificate as it's being added with its SHA hash
 - Warns if no certificates were processed (indicates jq failure or empty list)
 - Shows HTTP status codes and error responses for failed API calls
 
