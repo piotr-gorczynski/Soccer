@@ -55,7 +55,23 @@ PY
   fi
 
   # Fallback without jq/python3 - extract app ID for the package
-  echo "$apps_response" | grep -A 5 "\"packageName\"[[:space:]]*:[[:space:]]*\"$package_name\"" | grep -oE '"appId"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | grep -oE '"[^"]*"$' | tr -d '"' || true
+  # Normalize JSON into one object per line to handle compact responses
+  app_block=$(echo "$apps_response" | tr '{' '\n' | tr '}' '\n' | grep -F "\"packageName\":\"$package_name\"" | head -1 || true)
+
+  if [ -z "$app_block" ]; then
+    return
+  fi
+
+  app_id=$(echo "$app_block" | grep -oE '"appId"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed -E 's/.*"appId"[[:space:]]*:[[:space:]]*"([^"]*)".*/\1/')
+  if [ -n "$app_id" ]; then
+    echo "$app_id"
+    return
+  fi
+
+  name_id=$(echo "$app_block" | grep -oE '"name"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed -E 's/.*"name"[[:space:]]*:[[:space:]]*"([^"]*)".*/\1/' | awk -F'/' '{print $NF}')
+  if [ -n "$name_id" ]; then
+    echo "$name_id"
+  fi
 }
 
 # Parse JSON to find app ID for global package
