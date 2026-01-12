@@ -94,6 +94,8 @@ sha_response=$(curl -s -H "Authorization: Bearer $access_token" \
 
 echo "$sha_response" > /tmp/sha_response.json
 echo "🔍 SHA response saved to /tmp/sha_response.json for debugging"
+echo "🔍 Raw SHA response content:"
+cat /tmp/sha_response.json
 
 # Check if there are any SHA certificates
 if echo "$sha_response" | grep -q '"certificates"'; then
@@ -186,12 +188,24 @@ if echo "$sha_response" | grep -q '"certificates"'; then
     target_sha_response=$(curl -s -H "Authorization: Bearer $access_token" \
       "https://firebase.googleapis.com/v1beta1/projects/$firebase_project_id/androidApps/$target_app_id/sha")
     
+    echo "🔍 Target app SHA response saved for debugging"
+    echo "$target_sha_response" > /tmp/target_sha_response_${package_name}.json
+    echo "🔍 Target app SHA response content:"
+    cat /tmp/target_sha_response_${package_name}.json
+    
     # Extract existing SHA hashes to avoid duplicates
     existing_hashes=""
     if command -v jq >/dev/null 2>&1; then
       existing_hashes=$(echo "$target_sha_response" | jq -r '.certificates[]?.shaHash // empty' 2>/dev/null || true)
     else
       existing_hashes=$(echo "$target_sha_response" | grep -oE '"shaHash"[[:space:]]*:[[:space:]]*"[^"]*"' | grep -oE '"[^"]*"$' | tr -d '"' || true)
+    fi
+    
+    if [ -n "$existing_hashes" ]; then
+      echo "🔍 Found existing SHA certificates in target app:"
+      echo "$existing_hashes"
+    else
+      echo "🔍 No existing SHA certificates found in target app"
     fi
     
     # Copy each SHA certificate from global app to target app
@@ -201,24 +215,65 @@ if echo "$sha_response" | grep -q '"certificates"'; then
       
       # Extract arrays of SHA hashes and cert types using jq
       # Use a single jq command to extract both values to ensure perfect alignment
-      sha_hashes=$(echo "$sha_response" | jq -r '.certificates[]? | .shaHash // empty' || true)
-      cert_types=$(echo "$sha_response" | jq -r '.certificates[]? | .certType // "SHA_1"' || true)
+      # CRITICAL: Do NOT use || true here - we need to catch jq errors!
+      echo "🔍 DEBUG: Extracting SHA hashes from JSON..."
+      sha_hashes=$(echo "$sha_response" | jq -r '.certificates[]? | .shaHash // empty')
+      jq_exit_code=$?
+      if [ $jq_exit_code -ne 0 ]; then
+        echo "❌ ERROR: jq failed to parse SHA hashes (exit code: $jq_exit_code)"
+        echo "🔍 Check /tmp/sha_response.json for the raw API response"
+        exit 1
+      fi
+      echo "🔍 DEBUG: SHA hashes extracted successfully"
+      echo "🔍 DEBUG: SHA hashes content:"
+      echo "$sha_hashes"
+      
+      echo "🔍 DEBUG: Extracting certificate types from JSON..."
+      cert_types=$(echo "$sha_response" | jq -r '.certificates[]? | .certType // "SHA_1"')
+      jq_exit_code=$?
+      if [ $jq_exit_code -ne 0 ]; then
+        echo "❌ ERROR: jq failed to parse certificate types (exit code: $jq_exit_code)"
+        echo "🔍 Check /tmp/sha_response.json for the raw API response"
+        exit 1
+      fi
+      echo "🔍 DEBUG: Certificate types extracted successfully"
+      echo "🔍 DEBUG: Certificate types content:"
+      echo "$cert_types"
+      
+      # Check if extraction resulted in empty strings
+      if [ -z "$sha_hashes" ]; then
+        echo "❌ ERROR: SHA hashes extraction resulted in empty string"
+        echo "🔍 This means jq succeeded but found no certificates"
+        echo "🔍 Check /tmp/sha_response.json - the 'certificates' array may be empty or malformed"
+        exit 1
+      fi
       
       # Convert to arrays
       # Try mapfile (bash 4.0+), fall back to read for older bash versions
       # Note: We try to use the command and catch errors rather than checking for availability
       # since mapfile/readarray are builtins and may not be detectable with command -v in all environments
+      echo "🔍 DEBUG: Converting to bash arrays..."
       if mapfile -t sha_array <<< "$sha_hashes" 2>/dev/null && mapfile -t type_array <<< "$cert_types" 2>/dev/null; then
         # mapfile succeeded - arrays are already populated
-        :
+        echo "🔍 DEBUG: Used mapfile for array conversion"
       else
         # Fall back to read for older bash versions
         # Note: read -rd '' is expected to return non-zero exit code, hence || true
         IFS=$'\n' read -rd '' -a sha_array <<< "$sha_hashes" || true
         IFS=$'\n' read -rd '' -a type_array <<< "$cert_types" || true
+        echo "🔍 DEBUG: Used read for array conversion (mapfile not available)"
       fi
       
       echo "🔍 Extracted ${#sha_array[@]} SHA hash(es) from certificates"
+      echo "🔍 DEBUG: SHA array contents:"
+      for idx in "${!sha_array[@]}"; do
+        echo "  [$idx]: '${sha_array[$idx]}'"
+      done
+      
+      echo "🔍 DEBUG: Type array contents:"
+      for idx in "${!type_array[@]}"; do
+        echo "  [$idx]: '${type_array[$idx]}'"
+      done
       
       # Verify array lengths match (should be equal for proper pairing)
       if [ "${#sha_array[@]}" -ne "${#type_array[@]}" ]; then
@@ -228,6 +283,10 @@ if echo "$sha_response" | grep -q '"certificates"'; then
       
       # Iterate through certificates using array indices
       certs_processed=0
+      certs_added=0
+      certs_skipped_existing=0
+      certs_failed=0
+      
       for i in "${!sha_array[@]}"; do
         sha_hash="${sha_array[$i]}"
         cert_type="${type_array[$i]:-SHA_1}"
@@ -244,10 +303,12 @@ if echo "$sha_response" | grep -q '"certificates"'; then
         # Check if SHA already exists in target app
         if echo "$existing_hashes" | grep -qF "$sha_hash"; then
           echo "⏭️  SHA certificate already exists: $sha_hash (type: $cert_type)"
+          certs_skipped_existing=$((certs_skipped_existing + 1))
           continue
         fi
         
         echo "📥 Adding SHA certificate: $sha_hash (type: $cert_type)"
+        echo "🔍 DEBUG: Making POST request to Firebase API..."
         
         # Add SHA certificate to target app
         add_response=$(curl -s -w '\n%{http_code}' -X POST \
@@ -257,21 +318,54 @@ if echo "$sha_response" | grep -q '"certificates"'; then
           -d "{\"shaHash\": \"$sha_hash\", \"certType\": \"$cert_type\"}")
         
         http_code=$(echo "$add_response" | tail -n1)
+        response_body=$(echo "$add_response" | head -n-1)
+        
+        echo "🔍 DEBUG: HTTP Response Code: $http_code"
+        echo "🔍 DEBUG: Response Body: $response_body"
         
         if [[ "$http_code" == "200" ]] || [[ "$http_code" == "201" ]]; then
           echo "✅ Successfully added SHA certificate"
+          certs_added=$((certs_added + 1))
         else
-          echo "⚠️  Failed to add SHA certificate (HTTP $http_code)"
-          echo "Response: $(echo "$add_response" | head -n-1)"
+          echo "❌ FAILED to add SHA certificate (HTTP $http_code)"
+          echo "Response: $response_body"
+          certs_failed=$((certs_failed + 1))
         fi
       done
       
+      echo "---"
+      echo "📊 SUMMARY for package: $package_name"
+      echo "  Total certificates processed: $certs_processed"
+      echo "  Successfully added: $certs_added"
+      echo "  Skipped (already exist): $certs_skipped_existing"
+      echo "  Failed: $certs_failed"
+      
       if [ "$certs_processed" -eq "0" ]; then
-        echo "⚠️  WARNING: No certificates were processed!"
-        echo "🔍 This might indicate a problem with jq parsing or an empty certificate list."
+        echo "❌ CRITICAL ERROR: No certificates were processed!"
+        echo "🔍 This indicates a problem with jq parsing or array initialization."
         echo "🔍 Raw SHA response saved to /tmp/sha_response.json for debugging"
-      else
-        echo "✅ Processed $certs_processed certificate(s)"
+        echo "🔍 Review the DEBUG output above to identify the issue"
+        exit 1
+      fi
+      
+      # Check if we had certificates to add but all failed
+      expected_to_add=$((certs_processed - certs_skipped_existing))
+      if [ "$expected_to_add" -gt "0" ] && [ "$certs_added" -eq "0" ]; then
+        echo "❌ CRITICAL ERROR: Expected to add $expected_to_add certificate(s) but added 0!"
+        echo "🔍 All certificate additions failed. Check the error messages above."
+        exit 1
+      fi
+      
+      if [ "$certs_failed" -gt "0" ]; then
+        echo "⚠️  WARNING: $certs_failed certificate(s) failed to add"
+        echo "⚠️  Some certificates were not copied successfully"
+        # Don't exit here - we'll track this per-package and report at the end
+      fi
+      
+      if [ "$certs_added" -gt "0" ]; then
+        echo "✅ Successfully added $certs_added certificate(s)"
+      elif [ "$certs_skipped_existing" -gt "0" ]; then
+        echo "ℹ️  All certificates already exist in target app (nothing to add)"
       fi
     else
       # Fallback without jq - manual parsing
@@ -283,17 +377,34 @@ if echo "$sha_response" | grep -q '"certificates"'; then
       
       if [ "$cert_count" -gt "0" ]; then
         # Extract each SHA hash and cert type
+        echo "🔍 DEBUG: Extracting SHA hashes using grep..."
         sha_hashes=$(echo "$sha_response" | grep -oE '"shaHash"[[:space:]]*:[[:space:]]*"[^"]*"' | grep -oE '"[^"]*"$' | tr -d '"')
+        echo "🔍 DEBUG: SHA hashes extracted"
+        echo "🔍 DEBUG: SHA hashes content:"
+        echo "$sha_hashes"
+        
+        echo "🔍 DEBUG: Extracting certificate types using grep..."
         cert_types=$(echo "$sha_response" | grep -oE '"certType"[[:space:]]*:[[:space:]]*"[^"]*"' | grep -oE '"[^"]*"$' | tr -d '"')
+        echo "🔍 DEBUG: Certificate types extracted"
+        echo "🔍 DEBUG: Certificate types content:"
+        echo "$cert_types"
         
         # Convert to arrays
         IFS=$'\n' read -rd '' -a sha_array <<< "$sha_hashes" || true
         IFS=$'\n' read -rd '' -a type_array <<< "$cert_types" || true
         
         echo "🔍 Extracted ${#sha_array[@]} SHA hash(es)"
+        echo "🔍 DEBUG: SHA array contents:"
+        for idx in "${!sha_array[@]}"; do
+          echo "  [$idx]: '${sha_array[$idx]}'"
+        done
         
         # Iterate through certificates
+        certs_processed=0
         certs_added=0
+        certs_skipped_existing=0
+        certs_failed=0
+        
         for i in "${!sha_array[@]}"; do
           sha_hash="${sha_array[$i]}"
           cert_type="${type_array[$i]:-SHA_1}"
@@ -303,13 +414,17 @@ if echo "$sha_response" | grep -q '"certificates"'; then
             continue
           fi
           
+          certs_processed=$((certs_processed + 1))
+          
           # Check if SHA already exists
           if echo "$existing_hashes" | grep -qF "$sha_hash"; then
             echo "⏭️  SHA certificate already exists: $sha_hash (type: $cert_type)"
+            certs_skipped_existing=$((certs_skipped_existing + 1))
             continue
           fi
           
           echo "📥 Adding SHA certificate: $sha_hash (type: $cert_type)"
+          echo "🔍 DEBUG: Making POST request to Firebase API..."
           
           # Add SHA certificate
           add_response=$(curl -s -w '\n%{http_code}' -X POST \
@@ -319,19 +434,115 @@ if echo "$sha_response" | grep -q '"certificates"'; then
             -d "{\"shaHash\": \"$sha_hash\", \"certType\": \"$cert_type\"}")
           
           http_code=$(echo "$add_response" | tail -n1)
+          response_body=$(echo "$add_response" | head -n-1)
+          
+          echo "🔍 DEBUG: HTTP Response Code: $http_code"
+          echo "🔍 DEBUG: Response Body: $response_body"
           
           if [[ "$http_code" == "200" ]] || [[ "$http_code" == "201" ]]; then
             echo "✅ Successfully added SHA certificate"
             certs_added=$((certs_added + 1))
           else
-            echo "⚠️  Failed to add SHA certificate (HTTP $http_code)"
-            echo "Response: $(echo "$add_response" | head -n-1)"
+            echo "❌ FAILED to add SHA certificate (HTTP $http_code)"
+            echo "Response: $response_body"
+            certs_failed=$((certs_failed + 1))
           fi
         done
         
-        echo "✅ Added $certs_added out of ${#sha_array[@]} certificate(s)"
+        echo "---"
+        echo "📊 SUMMARY for package: $package_name"
+        echo "  Total certificates processed: $certs_processed"
+        echo "  Successfully added: $certs_added"
+        echo "  Skipped (already exist): $certs_skipped_existing"
+        echo "  Failed: $certs_failed"
+        
+        if [ "$certs_processed" -eq "0" ]; then
+          echo "❌ CRITICAL ERROR: No certificates were processed!"
+          echo "🔍 This indicates a problem with grep parsing or array initialization."
+          echo "🔍 Raw SHA response saved to /tmp/sha_response.json for debugging"
+          exit 1
+        fi
+        
+        # Check if we had certificates to add but all failed
+        expected_to_add=$((certs_processed - certs_skipped_existing))
+        if [ "$expected_to_add" -gt "0" ] && [ "$certs_added" -eq "0" ]; then
+          echo "❌ CRITICAL ERROR: Expected to add $expected_to_add certificate(s) but added 0!"
+          echo "🔍 All certificate additions failed. Check the error messages above."
+          exit 1
+        fi
+        
+        if [ "$certs_failed" -gt "0" ]; then
+          echo "⚠️  WARNING: $certs_failed certificate(s) failed to add"
+          echo "⚠️  Some certificates were not copied successfully"
+        fi
+        
+        if [ "$certs_added" -gt "0" ]; then
+          echo "✅ Successfully added $certs_added certificate(s)"
+        elif [ "$certs_skipped_existing" -gt "0" ]; then
+          echo "ℹ️  All certificates already exist in target app (nothing to add)"
+        fi
       else
         echo "⚠️  No certificates found to process"
+      fi
+    fi
+    
+    # VERIFICATION STEP: Re-fetch SHA certificates from target app to confirm they were added
+    echo "---"
+    echo "🔍 VERIFICATION: Re-fetching SHA certificates from target app to confirm changes..."
+    verification_response=$(curl -s -H "Authorization: Bearer $access_token" \
+      "https://firebase.googleapis.com/v1beta1/projects/$firebase_project_id/androidApps/$target_app_id/sha")
+    
+    echo "$verification_response" > /tmp/verification_response_${package_name}.json
+    echo "🔍 Verification response saved to /tmp/verification_response_${package_name}.json"
+    
+    # Extract SHA hashes from verification response
+    verified_hashes=""
+    if command -v jq >/dev/null 2>&1; then
+      verified_hashes=$(echo "$verification_response" | jq -r '.certificates[]?.shaHash // empty' 2>/dev/null || true)
+    else
+      verified_hashes=$(echo "$verification_response" | grep -oE '"shaHash"[[:space:]]*:[[:space:]]*"[^"]*"' | grep -oE '"[^"]*"$' | tr -d '"' || true)
+    fi
+    
+    if [ -n "$verified_hashes" ]; then
+      echo "✅ VERIFICATION: Found SHA certificates in target app after copy:"
+      echo "$verified_hashes"
+      
+      # Compare with source SHA certificates - all should be present
+      echo "🔍 VERIFICATION: Checking if all source SHAs are present in target..."
+      verification_failed=0
+      if command -v jq >/dev/null 2>&1; then
+        source_hashes=$(echo "$sha_response" | jq -r '.certificates[]?.shaHash // empty' 2>/dev/null || true)
+      else
+        source_hashes=$(echo "$sha_response" | grep -oE '"shaHash"[[:space:]]*:[[:space:]]*"[^"]*"' | grep -oE '"[^"]*"$' | tr -d '"' || true)
+      fi
+      
+      while IFS= read -r source_hash; do
+        if [ -z "$source_hash" ]; then
+          continue
+        fi
+        
+        if echo "$verified_hashes" | grep -qF "$source_hash"; then
+          echo "  ✅ $source_hash - PRESENT"
+        else
+          echo "  ❌ $source_hash - MISSING!"
+          verification_failed=1
+        fi
+      done <<< "$source_hashes"
+      
+      if [ "$verification_failed" -eq "1" ]; then
+        echo "❌ VERIFICATION FAILED: Not all source SHA certificates are present in target app!"
+        echo "🔍 Expected all source SHAs to be in target, but some are missing."
+        echo "🔍 This indicates the copying process failed silently."
+        exit 1
+      else
+        echo "✅ VERIFICATION PASSED: All source SHA certificates are present in target app!"
+      fi
+    else
+      echo "⚠️  VERIFICATION: No SHA certificates found in target app after copy"
+      # Only fail if we expected to have added certificates
+      if [ "${certs_added:-0}" -gt "0" ]; then
+        echo "❌ VERIFICATION FAILED: Expected to find certificates after adding $certs_added, but found none!"
+        exit 1
       fi
     fi
     
