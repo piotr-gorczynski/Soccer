@@ -25,14 +25,42 @@ echo "$apps_response" > /tmp/apps_response.json
 global_app_id=""
 echo "🔍 Searching for global app ID..."
 
+# Helper to get app ID for a package name
+get_app_id_for_package() {
+  local package_name="$1"
+
+  if command -v jq >/dev/null 2>&1; then
+    echo "$apps_response" | jq -r ".apps[] | select(.packageName == \"$package_name\") | .appId" 2>/dev/null || true
+    return
+  fi
+
+  if command -v python3 >/dev/null 2>&1; then
+    python3 - "$package_name" <<'PY' <<<"$apps_response"
+import json
+import sys
+
+package = sys.argv[1]
+data = json.load(sys.stdin)
+apps = data.get("apps") or data.get("result") or []
+for app in apps:
+    if app.get("packageName") == package:
+        app_id = app.get("appId") or ""
+        if not app_id and app.get("name"):
+            app_id = app["name"].split("/")[-1]
+        if app_id:
+            print(app_id)
+            break
+PY
+    return
+  fi
+
+  # Fallback without jq/python3 - extract app ID for the package
+  echo "$apps_response" | grep -A 5 "\"packageName\"[[:space:]]*:[[:space:]]*\"$package_name\"" | grep -oE '"appId"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | grep -oE '"[^"]*"$' | tr -d '"' || true
+}
+
 # Parse JSON to find app ID for global package
 # The response format is: "apps": [{"name": "projects/.../androidApps/APP_ID", "packageName": "..."}]
-if command -v jq >/dev/null 2>&1; then
-  global_app_id=$(echo "$apps_response" | jq -r ".apps[] | select(.packageName == \"$global_package_name\") | .appId" 2>/dev/null || true)
-else
-  # Fallback without jq - extract app ID for the global package
-  global_app_id=$(echo "$apps_response" | grep -A 5 "\"packageName\"[[:space:]]*:[[:space:]]*\"$global_package_name\"" | grep -oE '"appId"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | grep -oE '"[^"]*"$' | tr -d '"' || true)
-fi
+global_app_id=$(get_app_id_for_package "$global_package_name")
 
 if [ -z "$global_app_id" ]; then
   echo "⚠️  Could not find app ID for global package: $global_package_name"
@@ -90,11 +118,7 @@ if echo "$sha_response" | grep -q '"certificates"'; then
     retry_delay=5  # Start with 5 seconds
     
     while [ $retry_count -le $max_retries ]; do
-      if command -v jq >/dev/null 2>&1; then
-        target_app_id=$(echo "$apps_response" | jq -r ".apps[] | select(.packageName == \"$package_name\") | .appId" 2>/dev/null || true)
-      else
-        target_app_id=$(echo "$apps_response" | grep -A 5 "\"packageName\"[[:space:]]*:[[:space:]]*\"$package_name\"" | grep -oE '"appId"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | grep -oE '"[^"]*"$' | tr -d '"' || true)
-      fi
+      target_app_id=$(get_app_id_for_package "$package_name")
       
       # If we found the app ID, break out of retry loop
       if [ -n "$target_app_id" ]; then
