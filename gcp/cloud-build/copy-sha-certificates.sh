@@ -252,19 +252,18 @@ if echo "$sha_response" | grep -q '"certificates"'; then
       fi
       echo "🔍 DEBUG: Certificate types extracted successfully"
       
-      # Check if BOTH extractions resulted in empty strings
-      if [ -z "$sha_hashes" ] && [ -z "$cert_types" ]; then
-        echo "❌ ERROR: Both SHA hashes and certificate types extraction resulted in empty strings"
-        echo "🔍 This means jq succeeded but found no certificates"
-        echo "🔍 Check /tmp/sha_response.json - the 'certificates' array may be empty or malformed"
-        exit 1
-      fi
-      
-      # Check if extraction resulted in empty strings (after checking both are empty)
+      # Check if SHA hashes extraction resulted in empty string (critical requirement)
       if [ -z "$sha_hashes" ]; then
-        echo "❌ ERROR: SHA hashes extraction resulted in empty string"
-        echo "🔍 This means jq succeeded but found no SHA hashes in certificates"
-        echo "🔍 Check /tmp/sha_response.json - the certificates may be missing shaHash field"
+        # If SHA hashes are empty, check if cert types are also empty to provide better error message
+        if [ -z "$cert_types" ]; then
+          echo "❌ ERROR: Both SHA hashes and certificate types extraction resulted in empty strings"
+          echo "🔍 This means jq succeeded but found no certificates"
+          echo "🔍 Check /tmp/sha_response.json - the 'certificates' array may be empty or malformed"
+        else
+          echo "❌ ERROR: SHA hashes extraction resulted in empty string (but cert types were found)"
+          echo "🔍 This means jq succeeded but found no SHA hashes in certificates"
+          echo "🔍 Check /tmp/sha_response.json - the certificates may be missing shaHash field"
+        fi
         exit 1
       fi
       
@@ -395,11 +394,20 @@ if echo "$sha_response" | grep -q '"certificates"'; then
         sha_hashes=$(echo "$sha_response" | grep -oE '"shaHash"[[:space:]]*:[[:space:]]*"[^"]*"' | grep -oE '"[^"]*"$' | tr -d '"')
         echo "🔍 DEBUG: SHA hashes extracted"
         
+        # Check if SHA hashes extraction succeeded
+        if [ -z "$sha_hashes" ]; then
+          echo "❌ ERROR: Grep-based SHA hash extraction resulted in empty string"
+          echo "🔍 Check /tmp/sha_response.json - the JSON may not match expected format"
+          exit 1
+        fi
+        
         echo "🔍 DEBUG: Extracting certificate types using grep..."
+        # Note: cert_types can be empty if certType field is missing (we'll default to SHA_1)
         cert_types=$(echo "$sha_response" | grep -oE '"certType"[[:space:]]*:[[:space:]]*"[^"]*"' | grep -oE '"[^"]*"$' | tr -d '"')
         echo "🔍 DEBUG: Certificate types extracted"
         
         # Convert to arrays
+        # Note: read -rd '' returns non-zero when reaching EOF, which is expected, hence || true
         IFS=$'\n' read -rd '' -a sha_array <<< "$sha_hashes" || true
         IFS=$'\n' read -rd '' -a type_array <<< "$cert_types" || true
         
