@@ -63,29 +63,29 @@ Look for these key indicators:
 
 ```
 🔍 DEBUG: First 500 chars of SHA response:
-{"certificates":[{"name":"projects/.../sha/...","shaHash":"e2:bf:0e:81:34:a8:aa:fe:e2:47:56:0d:5c:66:ce:eb:df:16:86:0b","certType":"SHA_1"}]}
+{"certificates":[{"name":"projects/.../sha/...","shaHash":"XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX","certType":"SHA_1"}]}
 
 🔍 Extracting source SHA hashes for verification...
 🔍 Extracted 1 source SHA hash(es) for verification
 🔍 DEBUG: Source SHA hashes for verification:
-  - e2:bf:0e:81:34:a8:aa:fe:e2:47:56:0d:5c:66:ce:eb:df:16:86:0b
+  - XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX
 
 🔍 DEBUG: SHA hashes extracted successfully
 🔍 DEBUG: Raw sha_hashes variable content (showing first 500 chars):
-e2:bf:0e:81:34:a8:aa:fe:e2:47:56:0d:5c:66:ce:eb:df:16:86:0b
+XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX
 
 🔍 Extracted 1 SHA hash(es) from certificates
 🔍 DEBUG: SHA array contents:
-  [0]: 'e2:bf:0e:81:34:a8:aa:fe:e2:47:56:0d:5c:66:ce:eb:df:16:86:0b' (length: 59)
+  [0]: 'XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX' (length: 59)
 🔍 DEBUG: Cert type array contents:
   [0]: 'SHA_1'
 
-🔍 Processing certificate 1: e2:bf:0e:81:34:a8:aa:fe:e2:47:56:0d:5c:66:ce:eb:df:16:86:0b
-📥 Adding SHA certificate: e2:bf:0e:81:34:a8:aa:fe:e2:47:56:0d:5c:66:ce:eb:df:16:86:0b (type: SHA_1)
+🔍 Processing certificate 1: XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX
+📥 Adding SHA certificate: XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX (type: SHA_1)
 🔍 DEBUG: Request URL: https://firebase.googleapis.com/v1beta1/projects/.../androidApps/.../sha
-🔍 DEBUG: Request payload: {"shaHash": "e2:bf:0e:81:34:a8:aa:fe:e2:47:56:0d:5c:66:ce:eb:df:16:86:0b", "certType": "SHA_1"}
+🔍 DEBUG: Request payload: {"shaHash": "XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX", "certType": "SHA_1"}
 🔍 DEBUG: HTTP Response Code: 200
-🔍 DEBUG: Response Body (first 500 chars): {"name":"projects/.../sha/...","shaHash":"e2:bf:...","certType":"SHA_1"}
+🔍 DEBUG: Response Body (first 500 chars): {"name":"projects/.../sha/...","shaHash":"XX:XX:...","certType":"SHA_1"}
 ✅ Successfully added SHA certificate
 
 📊 SUMMARY for package: piotr_gorczynski.soccer2.bd
@@ -96,11 +96,11 @@ e2:bf:0e:81:34:a8:aa:fe:e2:47:56:0d:5c:66:ce:eb:df:16:86:0b
 
 🔍 VERIFICATION: Re-fetching SHA certificates from target app to confirm changes...
 🔍 DEBUG: Verification response (first 500 chars):
-{"certificates":[{"name":"...","shaHash":"e2:bf:0e:81:34:a8:aa:fe:e2:47:56:0d:5c:66:ce:eb:df:16:86:0b","certType":"SHA_1"}]}
+{"certificates":[{"name":"...","shaHash":"XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX","certType":"SHA_1"}]}
 ✅ VERIFICATION: Found 1 SHA certificate(s) in target app after copy
 🔍 DEBUG: Verified hashes in target app:
-  - e2:bf:0e:81:34:a8:aa:fe:e2:47:56:0d:5c:66:ce:eb:df:16:86:0b
-  ✅ e2:bf:0e:81:34:a8:aa:fe:e2:47:56:0d:5c:66:ce:eb:df:16:86:0b - PRESENT
+  - XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX
+  ✅ XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX - PRESENT
 ✅ VERIFICATION PASSED: All source SHA certificates are present in target app!
 ```
 
@@ -175,16 +175,16 @@ e2:bf:0e:81:34:a8:aa:fe:e2:47:56:0d:5c:66:ce:eb:df:16:86:0b
 ```
 🔍 VERIFICATION: Re-fetching SHA certificates from target app to confirm changes...
 🔍 DEBUG: Verification response (first 500 chars):
-{"certificates":[{"shaHash":"aa:bb:cc:dd:ee:ff:..."}]}
+{"certificates":[{"shaHash":"AA:BB:CC:DD:EE:FF:..."}]}
 ✅ VERIFICATION: Found 1 SHA certificate(s) in target app after copy
 🔍 DEBUG: Verified hashes in target app:
-  - aa:bb:cc:dd:ee:ff:...
+  - AA:BB:CC:DD:EE:FF:...
 🔍 VERIFICATION: Checking if all source SHAs are present in target...
-  ✅ aa:bb:cc:dd:ee:ff:... - PRESENT
-  ❌ e2:bf:0e:81:34:a8:aa:fe:e2:47:56:0d:5c:66:ce:eb:df:16:86:0b - MISSING!
+  ✅ AA:BB:CC:DD:EE:FF:... - PRESENT
+  ❌ XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX - MISSING!
 ❌ VERIFICATION FAILED: Not all source SHA certificates are present in target app!
 🔍 Missing SHAs:
-e2:bf:0e:81:34:a8:aa:fe:e2:47:56:0d:5c:66:ce:eb:df:16:86:0b
+XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX
 🔍 Summary of what should have been copied but is missing:
   - Expected to copy: 2 SHA(s)
   - Actually present: 1 SHA(s)

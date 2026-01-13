@@ -48,13 +48,13 @@ This PR adds **comprehensive debugging** to catch exactly WHERE and WHY the SHA 
 You'll see detailed output like:
 ```
 🔍 DEBUG: First 500 chars of SHA response:
-{"certificates":[{"shaHash":"e2:bf:0e:81:..."}]}
+{"certificates":[{"shaHash":"XX:XX:XX:XX:..."}]}
 
 🔍 Extracted 1 SHA hash(es) from certificates
 🔍 DEBUG: SHA array contents:
-  [0]: 'e2:bf:0e:81:34:a8:aa:fe:e2:47:56:0d:5c:66:ce:eb:df:16:86:0b' (length: 59)
+  [0]: 'XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX' (length: 59)
 
-🔍 DEBUG: Request payload: {"shaHash": "e2:bf:...", "certType": "SHA_1"}
+🔍 DEBUG: Request payload: {"shaHash": "XX:XX:...", "certType": "SHA_1"}
 🔍 DEBUG: HTTP Response Code: 200
 ✅ Successfully added SHA certificate
 
@@ -81,7 +81,7 @@ The script will **exit with error** and show exactly what failed:
 **If verification fails:**
 ```
 ❌ VERIFICATION FAILED: Not all source SHA certificates are present in target app!
-  ❌ e2:bf:0e:81:34:a8:aa:fe:e2:47:56:0d:5c:66:ce:eb:df:16:86:0b - MISSING!
+  ❌ XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX - MISSING!
 🔍 Summary:
   - Expected to copy: 1 SHA(s)
   - Actually present: 0 SHA(s)
