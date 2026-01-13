@@ -62,17 +62,30 @@ Previous logs didn't show:
 Look for these key indicators:
 
 ```
+🔍 DEBUG: First 500 chars of SHA response:
+{"certificates":[{"name":"projects/.../sha/...","shaHash":"XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX","certType":"SHA_1"}]}
+
+🔍 Extracting source SHA hashes for verification...
+🔍 Extracted 1 source SHA hash(es) for verification
+🔍 DEBUG: Source SHA hashes for verification:
+  - XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX
+
 🔍 DEBUG: SHA hashes extracted successfully
-🔍 DEBUG: SHA hashes content:
+🔍 DEBUG: Raw sha_hashes variable content (showing first 500 chars):
 XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX
 
 🔍 Extracted 1 SHA hash(es) from certificates
 🔍 DEBUG: SHA array contents:
-  [0]: 'XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX'
+  [0]: 'XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX' (length: 59)
+🔍 DEBUG: Cert type array contents:
+  [0]: 'SHA_1'
 
 🔍 Processing certificate 1: XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX
 📥 Adding SHA certificate: XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX (type: SHA_1)
+🔍 DEBUG: Request URL: https://firebase.googleapis.com/v1beta1/projects/.../androidApps/.../sha
+🔍 DEBUG: Request payload: {"shaHash": "XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX", "certType": "SHA_1"}
 🔍 DEBUG: HTTP Response Code: 200
+🔍 DEBUG: Response Body (first 500 chars): {"name":"projects/.../sha/...","shaHash":"e2:bf:...","certType":"SHA_1"}
 ✅ Successfully added SHA certificate
 
 📊 SUMMARY for package: piotr_gorczynski.soccer2.bd
@@ -81,8 +94,12 @@ XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX
   Skipped (already exist): 0
   Failed: 0
 
-🔍 VERIFICATION: Found SHA certificates in target app after copy:
-XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX
+🔍 VERIFICATION: Re-fetching SHA certificates from target app to confirm changes...
+🔍 DEBUG: Verification response (first 500 chars):
+{"certificates":[{"name":"...","shaHash":"XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX","certType":"SHA_1"}]}
+✅ VERIFICATION: Found 1 SHA certificate(s) in target app after copy
+🔍 DEBUG: Verified hashes in target app:
+  - XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX
   ✅ XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX - PRESENT
 ✅ VERIFICATION PASSED: All source SHA certificates are present in target app!
 ```
@@ -102,6 +119,9 @@ XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX
 #### Scenario 2: Empty Extraction
 
 ```
+🔍 DEBUG: SHA hashes extracted successfully
+🔍 DEBUG: Raw sha_hashes variable content (showing first 500 chars):
+
 ❌ ERROR: SHA hashes extraction resulted in empty string
 🔍 This means jq succeeded but found no certificates
 🔍 Check /tmp/sha_response.json - the 'certificates' array may be empty or malformed
@@ -110,7 +130,20 @@ XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX
 **What it means**: JSON parsed successfully but no certificates found
 **Action**: Verify SHA certificates are added to global app in Firebase Console
 
-#### Scenario 3: No Certificates Processed
+#### Scenario 3: Extraction Count Mismatch
+
+```
+📋 Number of SHA certificates found: 1
+🔍 Extracting source SHA hashes for verification...
+🔍 Extracted 0 source SHA hash(es) for verification
+❌ ERROR: Extracted 0 source SHA hashes but sha_count=1
+🔍 This indicates a mismatch in how SHAs are counted vs extracted
+```
+
+**What it means**: Counting found certificates but extraction returned nothing
+**Action**: Check /tmp/sha_response.json to see if the JSON structure is unexpected
+
+#### Scenario 4: No Certificates Processed
 
 ```
 ❌ CRITICAL ERROR: No certificates were processed!
@@ -121,7 +154,7 @@ XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX
 **What it means**: Arrays were created but all entries were empty
 **Action**: Check DEBUG output for SHA array contents to see what went wrong
 
-#### Scenario 4: All Additions Failed
+#### Scenario 5: All Additions Failed
 
 ```
 📊 SUMMARY for package: piotr_gorczynski.soccer2.bd
@@ -137,12 +170,25 @@ XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX
 **What it means**: Certificates were parsed correctly but API calls failed
 **Action**: Look for HTTP error codes and response bodies in the DEBUG output above
 
-#### Scenario 5: Verification Failed
+#### Scenario 6: Verification Failed
 
 ```
-❌ VERIFICATION FAILED: Not all source SHA certificates are present in target app!
+🔍 VERIFICATION: Re-fetching SHA certificates from target app to confirm changes...
+🔍 DEBUG: Verification response (first 500 chars):
+{"certificates":[{"shaHash":"aa:bb:cc:dd:ee:ff:..."}]}
+✅ VERIFICATION: Found 1 SHA certificate(s) in target app after copy
+🔍 DEBUG: Verified hashes in target app:
+  - aa:bb:cc:dd:ee:ff:...
+🔍 VERIFICATION: Checking if all source SHAs are present in target...
   ✅ aa:bb:cc:dd:ee:ff:... - PRESENT
   ❌ XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX - MISSING!
+❌ VERIFICATION FAILED: Not all source SHA certificates are present in target app!
+🔍 Missing SHAs:
+XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX
+🔍 Summary of what should have been copied but is missing:
+  - Expected to copy: 2 SHA(s)
+  - Actually present: 1 SHA(s)
+  - Missing: 1 SHA(s)
 ```
 
 **What it means**: API reported success but certificates aren't actually in Firebase
@@ -158,7 +204,54 @@ The script now saves these files in `/tmp` for debugging:
 
 These files help diagnose issues with the Firebase API responses.
 
-## What Changed in This Fix
+## What Changed in This Fix (PR #7)
+
+### New Debugging Features
+
+1. **API Response Preview**
+   - Shows first 500 characters of all API responses immediately
+   - Applies to: SHA fetch, target SHA fetch, verification fetch
+   - Benefit: Quick visibility into what Firebase is actually returning
+
+2. **Enhanced Source Hash Extraction**
+   - Now fails immediately if extraction returns 0 hashes when count > 0
+   - Shows all source hashes that will be used for verification
+   - Validates extracted count matches expected count
+   - Benefit: Catches extraction issues before any processing
+
+3. **Raw Variable Content Display**
+   - Shows first 500 chars of extracted `sha_hashes` variable
+   - Shows first 500 chars of extracted `cert_types` variable
+   - Applies to both jq and grep parsing paths
+   - Benefit: See exactly what was extracted before array conversion
+
+4. **Detailed Array Inspection**
+   - Shows each array element with index and character length
+   - Displays for both SHA and cert type arrays
+   - Helps identify empty strings in arrays
+   - Benefit: Catches the "empty array element" bug
+
+5. **Complete POST Request Logging**
+   - Logs exact URL being called
+   - Logs exact JSON payload being sent
+   - Shows response body (first 500 chars) for ALL requests (not just failures)
+   - Shows full error response on failures
+   - Benefit: Can verify request format and see API feedback
+
+6. **Mandatory Verification**
+   - Verification now fails if source_sha_hashes is not available
+   - Shows first 500 chars of verification response
+   - Lists all hashes found in target app
+   - Provides detailed missing SHA summary with counts
+   - Benefit: Ensures we always verify copying worked
+
+7. **Failure Exit Points**
+   - Extraction count mismatch → exit
+   - Source hash extraction fails → exit
+   - Verification parse fails → exit
+   - Verification finds missing SHAs → exit with detailed report
+   - No certs in target when none skipped → exit
+   - Benefit: Script never claims success when copying failed
 
 ### Before (Previous Behavior)
 ```bash
