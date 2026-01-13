@@ -188,7 +188,9 @@ If the error persists after all retries, verify:
 
 ### Problem: SHA certificates not being copied
 
-**Issue**: SHA certificates were found in the global app but were not being copied to variant apps.
+**Issue**: SHA certificates were found in the global app but were not being copied to variant apps, yet the script reported success.
+
+**⚠️ LATEST FIX (PR #XXXX)**: See [SHA_COPY_DEBUG_GUIDE.md](./SHA_COPY_DEBUG_GUIDE.md) for comprehensive documentation of the latest debugging improvements.
 
 **Root Causes & Solutions**:
 
@@ -231,12 +233,33 @@ If the error persists after all retries, verify:
      - Improved logging shows retry attempts and final status
    - **Impact**: SHA certificates are now reliably copied even when apps are freshly created, eliminating the need for manual certificate copying or re-running the deployment
 
-**Debugging**: The script now provides detailed logging:
+6. **Silent Failures with Error Suppression (Fixed in PR #XXXX - LATEST)**
+   - **Cause**: The script used `|| true` on jq commands, which suppressed ALL errors including parsing failures. If jq failed, the script would continue with empty strings/arrays, process zero certificates, but still report "✅ Success". The script also never verified that certificates were actually added to Firebase after the API calls.
+   - **Solution**: 
+     - **Removed `|| true` from jq commands** - Now catches and exits on jq errors
+     - **Added explicit jq error checking** - Check exit codes and fail immediately if jq fails
+     - **Added empty string detection** - Exit if jq succeeds but returns empty (no certificates found)
+     - **Added comprehensive DEBUG logging** - Shows extracted SHA hashes, array contents, HTTP response codes AND bodies
+     - **Added tracking counters** - Track processed, added, skipped, and failed certificates
+     - **Added CRITICAL ERROR exits** - Exit with error code when:
+       - No certificates processed despite finding them in source
+       - All certificate additions fail
+       - Verification shows missing certificates
+     - **Added verification step** - Re-fetch certificates from target app after copying and confirm all source SHAs are present
+     - **Created debug guide** - [SHA_COPY_DEBUG_GUIDE.md](./SHA_COPY_DEBUG_GUIDE.md) documents all changes and how to interpret logs
+   - **Impact**: The script now **fails loudly with detailed diagnostics** instead of failing silently and claiming success. This makes it possible to identify the actual root cause of copying failures.
+
+**Debugging**: The script now provides extremely detailed logging (see [SHA_COPY_DEBUG_GUIDE.md](./SHA_COPY_DEBUG_GUIDE.md) for full details):
+- Shows raw API responses saved to /tmp files for debugging
 - Shows whether jq or grep parsing is used
+- Shows extracted SHA hashes and certificate types before processing
+- Shows array contents after conversion to bash arrays
 - Reports number of certificates found and extracted into arrays
 - Logs each certificate as it's being added with its SHA hash
-- Warns if no certificates were processed (indicates jq failure or empty list)
-- Shows HTTP status codes and error responses for failed API calls
+- Shows HTTP status codes AND response bodies for all API calls
+- Shows detailed summary per package: processed, added, skipped, failed counts
+- Performs verification by re-fetching and comparing SHAs after copying
+- **CRITICAL**: Now exits with error code when copying fails instead of claiming success
 - Displays retry attempts when apps are not found initially (indicates API propagation delay)
 - Shows when apps are found after retries
 
