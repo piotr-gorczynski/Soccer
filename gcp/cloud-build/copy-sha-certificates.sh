@@ -95,6 +95,9 @@ sha_response=$(curl -s -H "Authorization: Bearer $access_token" \
 echo "$sha_response" > /tmp/sha_response.json
 echo "🔍 SHA response saved to /tmp/sha_response.json for debugging"
 echo "🔍 SHA response contains $(echo "$sha_response" | wc -c) bytes"
+echo "🔍 DEBUG: First 500 chars of SHA response:"
+echo "$sha_response" | head -c 500
+echo ""
 echo "🔍 Checking for 'certificates' field in response..."
 
 # Check if there are any SHA certificates
@@ -124,14 +127,38 @@ if echo "$sha_response" | grep -q '"certificates"'; then
     source_sha_hashes=$(echo "$sha_response" | jq -r '.certificates[]?.shaHash // empty')
     jq_exit_code=$?
     if [ $jq_exit_code -ne 0 ]; then
-      echo "⚠️  WARNING: Failed to extract source SHA hashes for verification"
-      echo "🔍 Verification step will be skipped"
+      echo "❌ ERROR: Failed to extract source SHA hashes for verification (jq exit code: $jq_exit_code)"
+      echo "🔍 This is critical - verification is mandatory"
+      echo "🔍 Check /tmp/sha_response.json for the raw API response"
+      exit 1
     else
-      echo "🔍 Extracted $(echo "$source_sha_hashes" | grep -c . || echo "0") source SHA hash(es) for verification"
+      extracted_count=$(echo "$source_sha_hashes" | grep -c . || echo "0")
+      echo "🔍 Extracted $extracted_count source SHA hash(es) for verification"
+      if [ "$extracted_count" -eq "0" ]; then
+        echo "❌ ERROR: Extracted 0 source SHA hashes but sha_count=$sha_count"
+        echo "🔍 This indicates a mismatch in how SHAs are counted vs extracted"
+        echo "🔍 Check /tmp/sha_response.json for the raw API response"
+        exit 1
+      fi
+      echo "🔍 DEBUG: Source SHA hashes for verification:"
+      echo "$source_sha_hashes" | while IFS= read -r hash; do
+        echo "  - $hash"
+      done
     fi
   else
     source_sha_hashes=$(echo "$sha_response" | grep -oE '"shaHash"[[:space:]]*:[[:space:]]*"[^"]*"' | grep -oE '"[^"]*"$' | tr -d '"')
-    echo "🔍 Extracted $(echo "$source_sha_hashes" | grep -c . || echo "0") source SHA hash(es) for verification"
+    extracted_count=$(echo "$source_sha_hashes" | grep -c . || echo "0")
+    echo "🔍 Extracted $extracted_count source SHA hash(es) for verification"
+    if [ "$extracted_count" -eq "0" ]; then
+      echo "❌ ERROR: Extracted 0 source SHA hashes but sha_count=$sha_count"
+      echo "🔍 This indicates a problem with grep-based extraction"
+      echo "🔍 Check /tmp/sha_response.json for the raw API response"
+      exit 1
+    fi
+    echo "🔍 DEBUG: Source SHA hashes for verification:"
+    echo "$source_sha_hashes" | while IFS= read -r hash; do
+      echo "  - $hash"
+    done
   fi
   
   # Iterate through other packages and copy SHA certificates
@@ -241,6 +268,9 @@ if echo "$sha_response" | grep -q '"certificates"'; then
         exit 1
       fi
       echo "🔍 DEBUG: SHA hashes extracted successfully"
+      echo "🔍 DEBUG: Raw sha_hashes variable content (showing first 500 chars):"
+      echo "$sha_hashes" | head -c 500
+      echo ""
       
       echo "🔍 DEBUG: Extracting certificate types from JSON..."
       cert_types=$(echo "$sha_response" | jq -r '.certificates[]? | .certType // "SHA_1"')
@@ -251,6 +281,9 @@ if echo "$sha_response" | grep -q '"certificates"'; then
         exit 1
       fi
       echo "🔍 DEBUG: Certificate types extracted successfully"
+      echo "🔍 DEBUG: Raw cert_types variable content (showing first 500 chars):"
+      echo "$cert_types" | head -c 500
+      echo ""
       
       # Check if SHA hashes extraction resulted in empty string (critical requirement)
       if [ -z "$sha_hashes" ]; then
@@ -284,6 +317,14 @@ if echo "$sha_response" | grep -q '"certificates"'; then
       fi
       
       echo "🔍 Extracted ${#sha_array[@]} SHA hash(es) from certificates"
+      echo "🔍 DEBUG: SHA array contents:"
+      for i in "${!sha_array[@]}"; do
+        echo "  [$i]: '${sha_array[$i]}' (length: ${#sha_array[$i]})"
+      done
+      echo "🔍 DEBUG: Cert type array contents:"
+      for i in "${!type_array[@]}"; do
+        echo "  [$i]: '${type_array[$i]}'"
+      done
       
       # Verify array lengths match (should be equal for proper pairing)
       if [ "${#sha_array[@]}" -ne "${#type_array[@]}" ]; then
@@ -319,6 +360,8 @@ if echo "$sha_response" | grep -q '"certificates"'; then
         
         echo "📥 Adding SHA certificate: $sha_hash (type: $cert_type)"
         echo "🔍 DEBUG: Making POST request to Firebase API..."
+        echo "🔍 DEBUG: Request URL: https://firebase.googleapis.com/v1beta1/projects/$firebase_project_id/androidApps/$target_app_id/sha"
+        echo "🔍 DEBUG: Request payload: {\"shaHash\": \"$sha_hash\", \"certType\": \"$cert_type\"}"
         
         # Add SHA certificate to target app
         add_response=$(curl -s -w '\n%{http_code}' -X POST \
@@ -331,17 +374,14 @@ if echo "$sha_response" | grep -q '"certificates"'; then
         response_body=$(echo "$add_response" | head -n-1)
         
         echo "🔍 DEBUG: HTTP Response Code: $http_code"
-        if [ "$http_code" != "200" ] && [ "$http_code" != "201" ]; then
-          # Only log response body on failure to avoid logging sensitive data unnecessarily
-          echo "🔍 DEBUG: Error Response Body (sanitized): $(echo "$response_body" | head -c 200)..."
-        fi
+        echo "🔍 DEBUG: Response Body (first 500 chars): $(echo "$response_body" | head -c 500)"
         
         if [[ "$http_code" == "200" ]] || [[ "$http_code" == "201" ]]; then
           echo "✅ Successfully added SHA certificate"
           certs_added=$((certs_added + 1))
         else
           echo "❌ FAILED to add SHA certificate (HTTP $http_code)"
-          echo "Response (first 200 chars): $(echo "$response_body" | head -c 200)"
+          echo "❌ Full Response Body: $response_body"
           certs_failed=$((certs_failed + 1))
         fi
       done
@@ -393,6 +433,9 @@ if echo "$sha_response" | grep -q '"certificates"'; then
         echo "🔍 DEBUG: Extracting SHA hashes using grep..."
         sha_hashes=$(echo "$sha_response" | grep -oE '"shaHash"[[:space:]]*:[[:space:]]*"[^"]*"' | grep -oE '"[^"]*"$' | tr -d '"')
         echo "🔍 DEBUG: SHA hashes extracted"
+        echo "🔍 DEBUG: Raw sha_hashes variable content (showing first 500 chars):"
+        echo "$sha_hashes" | head -c 500
+        echo ""
         
         # Check if SHA hashes extraction succeeded
         if [ -z "$sha_hashes" ]; then
@@ -405,6 +448,9 @@ if echo "$sha_response" | grep -q '"certificates"'; then
         # Note: cert_types can be empty if certType field is missing (we'll default to SHA_1)
         cert_types=$(echo "$sha_response" | grep -oE '"certType"[[:space:]]*:[[:space:]]*"[^"]*"' | grep -oE '"[^"]*"$' | tr -d '"')
         echo "🔍 DEBUG: Certificate types extracted"
+        echo "🔍 DEBUG: Raw cert_types variable content (showing first 500 chars):"
+        echo "$cert_types" | head -c 500
+        echo ""
         
         # Convert to arrays
         # Note: read -rd '' returns non-zero when reaching EOF, which is expected, hence || true
@@ -412,6 +458,14 @@ if echo "$sha_response" | grep -q '"certificates"'; then
         IFS=$'\n' read -rd '' -a type_array <<< "$cert_types" || true
         
         echo "🔍 Extracted ${#sha_array[@]} SHA hash(es)"
+        echo "🔍 DEBUG: SHA array contents:"
+        for i in "${!sha_array[@]}"; do
+          echo "  [$i]: '${sha_array[$i]}' (length: ${#sha_array[$i]})"
+        done
+        echo "🔍 DEBUG: Cert type array contents:"
+        for i in "${!type_array[@]}"; do
+          echo "  [$i]: '${type_array[$i]}'"
+        done
         
         # Iterate through certificates
         certs_processed=0
@@ -439,6 +493,8 @@ if echo "$sha_response" | grep -q '"certificates"'; then
           
           echo "📥 Adding SHA certificate: $sha_hash (type: $cert_type)"
           echo "🔍 DEBUG: Making POST request to Firebase API..."
+          echo "🔍 DEBUG: Request URL: https://firebase.googleapis.com/v1beta1/projects/$firebase_project_id/androidApps/$target_app_id/sha"
+          echo "🔍 DEBUG: Request payload: {\"shaHash\": \"$sha_hash\", \"certType\": \"$cert_type\"}"
           
           # Add SHA certificate
           add_response=$(curl -s -w '\n%{http_code}' -X POST \
@@ -451,17 +507,14 @@ if echo "$sha_response" | grep -q '"certificates"'; then
           response_body=$(echo "$add_response" | head -n-1)
           
           echo "🔍 DEBUG: HTTP Response Code: $http_code"
-          if [ "$http_code" != "200" ] && [ "$http_code" != "201" ]; then
-            # Only log response body on failure to avoid logging sensitive data unnecessarily
-            echo "🔍 DEBUG: Error Response Body (sanitized): $(echo "$response_body" | head -c 200)..."
-          fi
+          echo "🔍 DEBUG: Response Body (first 500 chars): $(echo "$response_body" | head -c 500)"
           
           if [[ "$http_code" == "200" ]] || [[ "$http_code" == "201" ]]; then
             echo "✅ Successfully added SHA certificate"
             certs_added=$((certs_added + 1))
           else
             echo "❌ FAILED to add SHA certificate (HTTP $http_code)"
-            echo "Response (first 200 chars): $(echo "$response_body" | head -c 200)"
+            echo "❌ Full Response Body: $response_body"
             certs_failed=$((certs_failed + 1))
           fi
         done
@@ -513,6 +566,9 @@ if echo "$sha_response" | grep -q '"certificates"'; then
       
       echo "$verification_response" > /tmp/verification_response_${package_name}.json
       echo "🔍 Verification response saved to /tmp/verification_response_${package_name}.json"
+      echo "🔍 DEBUG: Verification response (first 500 chars):"
+      echo "$verification_response" | head -c 500
+      echo ""
       
       # Extract SHA hashes from verification response
       verified_hashes=""
@@ -520,9 +576,9 @@ if echo "$sha_response" | grep -q '"certificates"'; then
         verified_hashes=$(echo "$verification_response" | jq -r '.certificates[]?.shaHash // empty')
         jq_exit_code=$?
         if [ $jq_exit_code -ne 0 ]; then
-          echo "⚠️  WARNING: Failed to parse verification response with jq (exit code: $jq_exit_code)"
-          echo "🔍 Verification step will be skipped"
-          verified_hashes=""
+          echo "❌ VERIFICATION FAILED: Failed to parse verification response with jq (exit code: $jq_exit_code)"
+          echo "🔍 Cannot verify if certificates were actually added"
+          exit 1
         fi
       else
         verified_hashes=$(echo "$verification_response" | grep -oE '"shaHash"[[:space:]]*:[[:space:]]*"[^"]*"' | grep -oE '"[^"]*"$' | tr -d '"' || true)
@@ -531,10 +587,15 @@ if echo "$sha_response" | grep -q '"certificates"'; then
       if [ -n "$verified_hashes" ]; then
         verified_count=$(echo "$verified_hashes" | grep -c . || echo "0")
         echo "✅ VERIFICATION: Found $verified_count SHA certificate(s) in target app after copy"
+        echo "🔍 DEBUG: Verified hashes in target app:"
+        echo "$verified_hashes" | while IFS= read -r hash; do
+          echo "  - $hash"
+        done
         
         # Compare with source SHA certificates - all should be present
         echo "🔍 VERIFICATION: Checking if all source SHAs are present in target..."
         verification_failed=0
+        missing_shas=""
         
         # Use the pre-extracted source_sha_hashes instead of re-extracting
         while IFS= read -r source_hash; do
@@ -547,13 +608,20 @@ if echo "$sha_response" | grep -q '"certificates"'; then
           else
             echo "  ❌ $source_hash - MISSING!"
             verification_failed=1
+            missing_shas="${missing_shas}${source_hash}\n"
           fi
         done <<< "$source_sha_hashes"
         
         if [ "$verification_failed" -eq "1" ]; then
           echo "❌ VERIFICATION FAILED: Not all source SHA certificates are present in target app!"
           echo "🔍 Expected all source SHAs to be in target, but some are missing."
-          echo "🔍 This indicates the copying process failed silently."
+          echo "🔍 Missing SHAs:"
+          echo -e "$missing_shas"
+          echo "🔍 This indicates the copying process failed silently despite HTTP success codes."
+          echo "🔍 Summary of what should have been copied but is missing:"
+          echo "  - Expected to copy: $(echo "$source_sha_hashes" | grep -c . || echo "0") SHA(s)"
+          echo "  - Actually present: $verified_count SHA(s)"
+          echo "  - Missing: $(echo -e "$missing_shas" | grep -c . || echo "0") SHA(s)"
           exit 1
         else
           echo "✅ VERIFICATION PASSED: All source SHA certificates are present in target app!"
@@ -563,12 +631,19 @@ if echo "$sha_response" | grep -q '"certificates"'; then
         # Only fail if we expected to have added certificates
         if [ "${certs_added:-0}" -gt "0" ]; then
           echo "❌ VERIFICATION FAILED: Expected to find certificates after adding $certs_added, but found none!"
+          echo "🔍 This indicates a serious problem - API reported success but certificates are not in Firebase"
+          exit 1
+        elif [ "${certs_skipped_existing:-0}" -eq "0" ]; then
+          echo "❌ VERIFICATION FAILED: No certificates found in target, and none were marked as already existing!"
+          echo "🔍 This means source has certificates but target has none - copying completely failed!"
           exit 1
         fi
       fi
     else
       echo "---"
-      echo "⚠️  VERIFICATION: Skipping verification (source SHA hashes not available)"
+      echo "❌ VERIFICATION FAILED: Source SHA hashes not available - cannot verify!"
+      echo "🔍 This should not happen - source_sha_hashes should have been extracted earlier"
+      exit 1
     fi
     
     echo "✅ Completed SHA certificate copy for package: $package_name"
