@@ -48,13 +48,13 @@ This PR adds **comprehensive debugging** to catch exactly WHERE and WHY the SHA 
 You'll see detailed output like:
 ```
 🔍 DEBUG: First 500 chars of SHA response:
-{"certificates":[{"shaHash":"e2:bf:0e:81:..."}]}
+{"certificates":[{"shaHash":"XX:XX:XX:XX:..."}]}
 
 🔍 Extracted 1 SHA hash(es) from certificates
 🔍 DEBUG: SHA array contents:
   [0]: 'XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX' (length: 59)
 
-🔍 DEBUG: Request payload: {"shaHash": "e2:bf:...", "certType": "SHA_1"}
+🔍 DEBUG: Request payload: {"shaHash": "XX:XX:...", "certType": "SHA_1"}
 🔍 DEBUG: HTTP Response Code: 200
 ✅ Successfully added SHA certificate
 

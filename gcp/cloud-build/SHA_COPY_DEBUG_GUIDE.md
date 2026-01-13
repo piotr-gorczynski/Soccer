@@ -85,7 +85,7 @@ XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX
 🔍 DEBUG: Request URL: https://firebase.googleapis.com/v1beta1/projects/.../androidApps/.../sha
 🔍 DEBUG: Request payload: {"shaHash": "XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX", "certType": "SHA_1"}
 🔍 DEBUG: HTTP Response Code: 200
-🔍 DEBUG: Response Body (first 500 chars): {"name":"projects/.../sha/...","shaHash":"e2:bf:...","certType":"SHA_1"}
+🔍 DEBUG: Response Body (first 500 chars): {"name":"projects/.../sha/...","shaHash":"XX:XX:...","certType":"SHA_1"}
 ✅ Successfully added SHA certificate
 
 📊 SUMMARY for package: piotr_gorczynski.soccer2.bd
@@ -175,12 +175,12 @@ XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX
 ```
 🔍 VERIFICATION: Re-fetching SHA certificates from target app to confirm changes...
 🔍 DEBUG: Verification response (first 500 chars):
-{"certificates":[{"shaHash":"aa:bb:cc:dd:ee:ff:..."}]}
+{"certificates":[{"shaHash":"AA:BB:CC:DD:EE:FF:..."}]}
 ✅ VERIFICATION: Found 1 SHA certificate(s) in target app after copy
 🔍 DEBUG: Verified hashes in target app:
-  - aa:bb:cc:dd:ee:ff:...
+  - AA:BB:CC:DD:EE:FF:...
 🔍 VERIFICATION: Checking if all source SHAs are present in target...
-  ✅ aa:bb:cc:dd:ee:ff:... - PRESENT
+  ✅ AA:BB:CC:DD:EE:FF:... - PRESENT
   ❌ XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX - MISSING!
 ❌ VERIFICATION FAILED: Not all source SHA certificates are present in target app!
 🔍 Missing SHAs:
