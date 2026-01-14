@@ -55,8 +55,11 @@ PY
   fi
 
   # Fallback without jq/python3 - extract app ID for the package
+  # Normalize JSON by removing whitespace so we can match packageName reliably.
+  compact_response=$(echo "$apps_response" | tr -d '[:space:]')
+
   # Normalize JSON into one object per line to handle compact responses
-  app_block=$(echo "$apps_response" | tr '{' '\n' | tr '}' '\n' | grep -F "\"packageName\":\"$package_name\"" | head -1 || true)
+  app_block=$(echo "$compact_response" | tr '{' '\n' | tr '}' '\n' | grep -F "\"packageName\":\"$package_name\"" | head -1 || true)
 
   if [ -z "$app_block" ]; then
     return
