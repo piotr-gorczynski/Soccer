@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.10  
-**Last Updated:** 2025-12-30  
+**Document Version:** 2.11  
+**Last Updated:** 2025-12-31  
 **Status:** Planning - Legal Validation Completed
 
 **Revision History**:
+- v2.11 (2025-12-31): **FIREBASE APP ID LOOKUP FIX** - Clarified that the SHA copy step now detects Firebase app IDs from API responses that return either `apps` or `result`, preventing false "app ID not found" warnings in Cloud Build.
 - v2.10 (2025-12-30): **FIREBASE SHA COPY RELIABILITY** - Documented the SHA certificate copy step for Firebase Android app variants and noted the resilient JSON parsing to ensure the global app ID is discovered before copying SHA certificates to the Bangladesh variant.
 - v2.9 (2025-12-29): **LEGAL VALIDATION COMPLETED** - Game assumptions validated with ChatGPT legal consultation. Updated document to reflect that skill-based game structure, free entry, developer-funded prizes, and 18+ age restriction align with typical legal frameworks for promotional contests. Removed "pending legal validation" status.
 - v2.8 (2025-12-29): **DOCUMENTATION CONSOLIDATION** - Merged BANGLADESH_PAYMENT_METHODS_VERIFICATION.md into this document. Added detailed payment service verification section with technical details on why bKash/Nagad/Rocket cannot be used from Poland. Added payment service FAQs. All analysis now in single document.
@@ -186,7 +187,7 @@ android {
 - Prevents duplicate app creation by checking existing apps first
 - Logs all operations for debugging and audit purposes
 
-**SHA Certificate Copy for Variants**: After app creation, the Cloud Build flow runs `gcp/cloud-build/copy-sha-certificates.sh` to copy SHA certificates from the global app to the Bangladesh variant when needed. The script uses Firebase Management API responses and includes whitespace-tolerant parsing in the fallback path to ensure the global app ID is detected even when JSON output is formatted with spaces or newlines. This keeps the Bangladesh variant aligned with the global app’s signing configuration without manual console updates.
+**SHA Certificate Copy for Variants**: After app creation, the Cloud Build flow runs `gcp/cloud-build/copy-sha-certificates.sh` to copy SHA certificates from the global app to the Bangladesh variant when needed. The script recognizes Firebase Management API responses that return either an `apps` array or a `result` array (depending on the endpoint version), and includes whitespace-tolerant parsing in the fallback path to ensure the global app ID is detected even when JSON output is formatted with spaces or newlines. This keeps the Bangladesh variant aligned with the global app’s signing configuration without manual console updates.
 
 **Automated Configuration Download**: After Firebase apps are created, the configuration file is automatically downloaded using the Cloud Build script `gcp/cloud-build/download_google_services.yaml`. This script:
 - Downloads a single `google-services.json` file that contains configurations for all registered Android apps in the project
