@@ -13,29 +13,34 @@ echo "📱 Global package: $global_package_name"
 # Generate access token for Firebase Management API
 access_token=$(gcloud auth print-access-token)
 
-# Get list of all Android apps with their app IDs
-echo "🔍 Fetching list of Android apps..."
-apps_response=$(curl -s -H "Authorization: Bearer $access_token" \
-  "https://firebase.googleapis.com/v1beta1/projects/$firebase_project_id/androidApps")
-
-# Extract app IDs and package names using grep (jq alternative)
-echo "$apps_response" > /tmp/apps_response.json
-
 # Find the global app ID
 global_app_id=""
 echo "🔍 Searching for global app ID..."
 
-# Helper to get app ID for a package name
+# Fetch a page of Android apps from Firebase
+fetch_apps_page() {
+  local page_token="$1"
+  local url="https://firebase.googleapis.com/v1beta1/projects/$firebase_project_id/androidApps"
+
+  if [ -n "$page_token" ]; then
+    url="${url}?pageToken=${page_token}"
+  fi
+
+  curl -s -H "Authorization: Bearer $access_token" "$url"
+}
+
+# Helper to extract app ID for a package name from a response payload
 get_app_id_for_package() {
   local package_name="$1"
+  local response="$2"
 
   if command -v jq >/dev/null 2>&1; then
-    echo "$apps_response" | jq -r ".apps[] | select(.packageName == \"$package_name\") | .appId" 2>/dev/null || true
+    echo "$response" | jq -r ".apps[] | select(.packageName == \"$package_name\") | .appId" 2>/dev/null || true
     return
   fi
 
   if command -v python3 >/dev/null 2>&1; then
-    python3 - "$package_name" <<'PY' <<<"$apps_response"
+    python3 - "$package_name" <<'PY' <<<"$response"
 import json
 import sys
 
@@ -56,7 +61,7 @@ PY
 
   # Fallback without jq/python3 - extract app ID for the package
   # Normalize JSON by removing whitespace so we can match packageName reliably.
-  compact_response=$(echo "$apps_response" | tr -d '[:space:]')
+  compact_response=$(echo "$response" | tr -d '[:space:]')
 
   # Normalize JSON into one object per line to handle compact responses
   app_block=$(echo "$compact_response" | tr '{' '\n' | tr '}' '\n' | grep -F "\"packageName\":\"$package_name\"" | head -1 || true)
@@ -77,9 +82,68 @@ PY
   fi
 }
 
+# Helper to extract nextPageToken from a response payload
+get_next_page_token() {
+  local response="$1"
+
+  if command -v jq >/dev/null 2>&1; then
+    echo "$response" | jq -r '.nextPageToken // empty' 2>/dev/null || true
+    return
+  fi
+
+  if command -v python3 >/dev/null 2>&1; then
+    python3 - <<'PY' <<<"$response"
+import json
+import sys
+
+data = json.load(sys.stdin)
+token = data.get("nextPageToken") or ""
+if token:
+    print(token)
+PY
+    return
+  fi
+
+  echo "$response" | grep -oE '"nextPageToken"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed -E 's/.*"nextPageToken"[[:space:]]*:[[:space:]]*"([^"]*)".*/\1/'
+}
+
+# Find app ID across paginated Firebase app list
+find_app_id_across_pages() {
+  local package_name="$1"
+  local page_token=""
+  local page=1
+  local app_id=""
+  local next_page_token=""
+
+  while :; do
+    if [ -n "$page_token" ]; then
+      echo "🔄 Fetching Firebase app list page $page..."
+    else
+      echo "🔍 Fetching list of Android apps..."
+    fi
+
+    apps_response=$(fetch_apps_page "$page_token")
+    echo "$apps_response" > /tmp/apps_response_page_${page}.json
+
+    app_id=$(get_app_id_for_package "$package_name" "$apps_response")
+    if [ -n "$app_id" ]; then
+      echo "$app_id"
+      return
+    fi
+
+    next_page_token=$(get_next_page_token "$apps_response")
+    if [ -z "$next_page_token" ]; then
+      break
+    fi
+
+    page_token="$next_page_token"
+    page=$((page + 1))
+  done
+}
+
 # Parse JSON to find app ID for global package
 # The response format is: "apps": [{"name": "projects/.../androidApps/APP_ID", "packageName": "..."}]
-global_app_id=$(get_app_id_for_package "$global_package_name")
+global_app_id=$(find_app_id_across_pages "$global_package_name")
 
 if [ -z "$global_app_id" ]; then
   echo "⚠️  Could not find app ID for global package: $global_package_name"
@@ -183,7 +247,7 @@ if echo "$sha_response" | grep -q '"certificates"'; then
     retry_delay=5  # Start with 5 seconds
     
     while [ $retry_count -le $max_retries ]; do
-      target_app_id=$(get_app_id_for_package "$package_name")
+      target_app_id=$(find_app_id_across_pages "$package_name")
       
       # If we found the app ID, break out of retry loop
       if [ -n "$target_app_id" ]; then
@@ -203,10 +267,8 @@ if echo "$sha_response" | grep -q '"certificates"'; then
         echo "⏳ App ID not found, waiting ${retry_delay}s before retry $retry_count/$max_retries..."
         sleep $retry_delay
         
-        # Refetch the app list
+        # Refetch the app list (including pagination)
         echo "🔄 Refetching Firebase app list..."
-        apps_response=$(curl -s -H "Authorization: Bearer $access_token" \
-          "https://firebase.googleapis.com/v1beta1/projects/$firebase_project_id/androidApps")
         
         # Increase delay for next retry (exponential backoff)
         retry_delay=$((retry_delay * 2))
