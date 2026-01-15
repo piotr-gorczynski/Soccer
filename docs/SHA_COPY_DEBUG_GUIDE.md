@@ -1,5 +1,7 @@
 # SHA Certificate Copy Debugging Guide
 
+**Note**: The SHA copy automation now runs via the Cloud Build config `gcp/cloud-build/sha_copy.yaml`. The previous `copy-sha-certificates.sh` script has been removed; use this guide for understanding the API behavior and expected diagnostics.
+
 ## Problem Summary
 
 The SHA certificate copying script was claiming success but not actually copying certificates from the global app (`piotr_gorczynski.soccer2`) to variant apps (e.g., `piotr_gorczynski.soccer2.bd`).

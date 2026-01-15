@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.12  
+**Document Version:** 2.13  
 **Last Updated:** 2025-12-31  
 **Status:** Planning - Legal Validation Completed
 
 **Revision History**:
+- v2.13 (2025-12-31): **SHA COPY YAML MIGRATION** - Moved SHA certificate copy automation into a dedicated Cloud Build config (`gcp/cloud-build/sha_copy.yaml`) and removed the standalone shell script step from the main deploy flow.
 - v2.12 (2025-12-31): **FIREBASE APP ID LOOKUP HARDENING** - Updated the SHA copy step documentation to reflect more resilient app ID parsing across `apps`, `androidApps`, or `result` response shapes, plus a safer fallback split that avoids dropping fields in grep-only environments.
 - v2.11 (2025-12-31): **FIREBASE APP ID LOOKUP FIX** - Clarified that the SHA copy step now detects Firebase app IDs from API responses that return either `apps` or `result`, preventing false "app ID not found" warnings in Cloud Build.
 - v2.10 (2025-12-30): **FIREBASE SHA COPY RELIABILITY** - Documented the SHA certificate copy step for Firebase Android app variants and noted the resilient JSON parsing to ensure the global app ID is discovered before copying SHA certificates to the Bangladesh variant.
@@ -188,7 +189,7 @@ android {
 - Prevents duplicate app creation by checking existing apps first
 - Logs all operations for debugging and audit purposes
 
-**SHA Certificate Copy for Variants**: After app creation, the Cloud Build flow runs `gcp/cloud-build/copy-sha-certificates.sh` to copy SHA certificates from the global app to the Bangladesh variant when needed. The script recognizes Firebase Management API responses that return `apps`, `androidApps`, or `result` arrays (depending on endpoint/version) and uses a safer fallback split for grep-only environments so package matches retain all fields. This keeps the Bangladesh variant aligned with the global app’s signing configuration without manual console updates.
+**SHA Certificate Copy for Variants**: After app creation, run the dedicated Cloud Build config `gcp/cloud-build/sha_copy.yaml` to copy SHA certificates from the global app to the Bangladesh variant when needed. The workflow resolves app IDs via the Firebase CLI output and uses the Firebase Management API to sync certificates without manual console updates.
 
 **Automated Configuration Download**: After Firebase apps are created, the configuration file is automatically downloaded using the Cloud Build script `gcp/cloud-build/download_google_services.yaml`. This script:
 - Downloads a single `google-services.json` file that contains configurations for all registered Android apps in the project
