@@ -35,7 +35,7 @@ get_app_id_for_package() {
   local response="$2"
 
   if command -v jq >/dev/null 2>&1; then
-    echo "$response" | jq -r --arg pkg "$package_name" '(.apps // .result // [])[] | select(.packageName == $pkg) | (.appId // (if .name then (.name | split("/") | last) else "" end))' 2>/dev/null | head -n1 || true
+    echo "$response" | jq -r --arg pkg "$package_name" '(.apps // .androidApps // .result // [])[] | select(.packageName == $pkg) | (.appId // (if .name then (.name | split("/") | last) else "" end))' 2>/dev/null | head -n1 || true
     return
   fi
 
@@ -46,7 +46,7 @@ import sys
 
 package = sys.argv[1]
 data = json.load(sys.stdin)
-apps = data.get("apps") or data.get("result") or []
+apps = data.get("apps") or data.get("androidApps") or data.get("result") or []
 for app in apps:
     if app.get("packageName") == package:
         app_id = app.get("appId") or ""
@@ -63,8 +63,9 @@ PY
   # Normalize JSON by removing whitespace so we can match packageName reliably.
   compact_response=$(echo "$response" | tr -d '[:space:]')
 
-  # Normalize JSON into one object per line to handle compact responses
-  app_block=$(echo "$compact_response" | tr '{' '\n' | tr '}' '\n' | grep -F "\"packageName\":\"$package_name\"" | head -1 || true)
+  # Split into one JSON object per line for each app entry.
+  # This avoids brace-based splitting that can drop key/value pairs.
+  app_block=$(echo "$compact_response" | sed 's/},{/}\n{/g' | grep -F "\"packageName\":\"$package_name\"" | head -1 || true)
 
   if [ -z "$app_block" ]; then
     return
