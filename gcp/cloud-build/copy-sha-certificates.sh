@@ -35,7 +35,7 @@ get_app_id_for_package() {
   local response="$2"
 
   if command -v jq >/dev/null 2>&1; then
-    echo "$response" | jq -r ".apps[] | select(.packageName == \"$package_name\") | .appId" 2>/dev/null || true
+    echo "$response" | jq -r --arg pkg "$package_name" '(.apps // .result // [])[] | select(.packageName == $pkg) | (.appId // (if .name then (.name | split("/") | last) else "" end))' 2>/dev/null | head -n1 || true
     return
   fi
 
