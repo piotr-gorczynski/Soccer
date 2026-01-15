@@ -32,47 +32,48 @@ steps:
         gcloud services enable firebase.googleapis.com --project="$(cat /workspace/SOCCER_PROJECT_ID.txt)"
 
   # Step 3: Install Firebase CLI
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+  - name: 'node:20-bullseye'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e
         echo "⬇️ Installing Firebase CLI..."
-        curl -sL https://firebase.tools | bash
         mkdir -p /workspace/firebase
-        cp /usr/local/bin/firebase /workspace/firebase/
-        chmod +x /workspace/firebase/firebase
+        npm install --prefix /workspace/firebase firebase-tools@latest --no-fund --no-audit
+        firebase_bin="/workspace/firebase/node_modules/.bin/firebase"
         echo "🔍 Verifying Firebase CLI installation..."
-        if ! /workspace/firebase/firebase --version; then
+        if ! "$firebase_bin" --version; then
           echo "❌ Firebase CLI installation failed. Exiting."
           exit 1
         fi
         echo "✅ Firebase CLI installed successfully!"
 
   # Step 4: List Existing Firebase Projects
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+  - name: 'node:20-bullseye'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
+        firebase_bin="/workspace/firebase/node_modules/.bin/firebase"
         echo "📱 Listing existing Firebase projects..."
-        /workspace/firebase/firebase projects:list
+        "$firebase_bin" projects:list
 
   # Step 6: Enable Firebase for the Project (if missing)
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+  - name: 'node:20-bullseye'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
         set -e
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
+        firebase_bin="/workspace/firebase/node_modules/.bin/firebase"
         echo "🛠️ Checking if Firebase is enabled for project: $firebase_project_id..."
 
         # List Firebase projects and store the result (excluding table headers)
-        firebase_projects=$(/workspace/firebase/firebase projects:list | tail -n +2 | awk '{print $2}')
+        firebase_projects=$("$firebase_bin" projects:list | tail -n +2 | awk '{print $2}')
 
         echo "🔍 Firebase projects found:"
         echo "$firebase_projects"
@@ -81,12 +82,12 @@ steps:
           echo "✅ Firebase is already enabled for this project."
         else
           echo "🚀 Enabling Firebase for project $firebase_project_id..."
-          /workspace/firebase/firebase projects:addfirebase "$firebase_project_id"
+          "$firebase_bin" projects:addfirebase "$firebase_project_id"
           echo "✅ Firebase has been successfully enabled for $firebase_project_id."
         fi
 
   # Step 7: Check if Firebase Android Apps Exist and Create Them (Global and Bangladesh)
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+  - name: 'node:20-bullseye'
     entrypoint: 'bash'
     args:
       - '-c'
@@ -94,6 +95,7 @@ steps:
         set -e
 
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
+        firebase_bin="/workspace/firebase/node_modules/.bin/firebase"
         # Define package names for global and Bangladesh variants
         package_names=("piotr_gorczynski.soccer2" "piotr_gorczynski.soccer2.bd")
         mkdir -p /workspace/logs
@@ -102,7 +104,7 @@ steps:
         
         # List all Firebase apps in JSON format to get package names
         echo "🔍 Fetching list of existing Firebase Android apps..."
-        app_list_json=$(/workspace/firebase/firebase apps:list ANDROID --project="$firebase_project_id" --json 2>/dev/null || echo "[]")
+        app_list_json=$("$firebase_bin" apps:list ANDROID --project="$firebase_project_id" --json 2>/dev/null || echo "[]")
 
         # Print raw Firebase apps output for debugging
         echo "🔍 Raw Firebase Apps JSON Output:"
@@ -134,7 +136,7 @@ steps:
             echo "📱 Creating Firebase Android App for package: $package_name..."
             firebase_log_file="/workspace/logs/firebase-debug-${package_name}.log"
             
-            if ! /workspace/firebase/firebase apps:create android --package-name="$package_name" --project="$firebase_project_id" > "$firebase_log_file" 2>&1; then
+            if ! "$firebase_bin" apps:create android --package-name="$package_name" --project="$firebase_project_id" > "$firebase_log_file" 2>&1; then
               echo "⚠️ Error occurred while creating Android app for $package_name. Logging details..."
               cat "$firebase_log_file"
               exit 1
