@@ -92,40 +92,40 @@ steps:
           > "$target_sha_file"
 
         python3 - <<'PY'
-import json
-from pathlib import Path
+        import json
+        from pathlib import Path
 
-global_file = Path("/workspace/global_sha.json")
-target_file = Path("/workspace/target_sha.json")
-missing_file = Path("/workspace/sha_missing.txt")
+        global_file = Path("/workspace/global_sha.json")
+        target_file = Path("/workspace/target_sha.json")
+        missing_file = Path("/workspace/sha_missing.txt")
 
-def load_certs(path: Path):
-    if not path.exists():
-        return []
-    try:
-        data = json.loads(path.read_text() or "{}")
-    except json.JSONDecodeError:
-        return []
-    certs = data.get("certificates") or []
-    cleaned = []
-    for cert in certs:
-        sha = cert.get("shaHash")
-        if not sha:
-            continue
-        cleaned.append((sha, cert.get("certType") or "SHA_1"))
-    return cleaned
+        def load_certs(path: Path):
+            if not path.exists():
+                return []
+            try:
+                data = json.loads(path.read_text() or "{}")
+            except json.JSONDecodeError:
+                return []
+            certs = data.get("certificates") or []
+            cleaned = []
+            for cert in certs:
+                sha = cert.get("shaHash")
+                if not sha:
+                    continue
+                cleaned.append((sha, cert.get("certType") or "SHA_1"))
+            return cleaned
 
-global_certs = load_certs(global_file)
-target_certs = load_certs(target_file)
-target_hashes = {sha for sha, _ in target_certs}
-missing = [(sha, cert_type) for sha, cert_type in global_certs if sha not in target_hashes]
+        global_certs = load_certs(global_file)
+        target_certs = load_certs(target_file)
+        target_hashes = {sha for sha, _ in target_certs}
+        missing = [(sha, cert_type) for sha, cert_type in global_certs if sha not in target_hashes]
 
-missing_file.write_text("\n".join([f"{sha}|{cert_type}" for sha, cert_type in missing]))
+        missing_file.write_text("\n".join([f"{sha}|{cert_type}" for sha, cert_type in missing]))
 
-print(f"📋 Global certs: {len(global_certs)}")
-print(f"📋 Bangladesh certs: {len(target_certs)}")
-print(f"📋 Missing certs to add: {len(missing)}")
-PY
+        print(f"📋 Global certs: {len(global_certs)}")
+        print(f"📋 Bangladesh certs: {len(target_certs)}")
+        print(f"📋 Missing certs to add: {len(missing)}")
+        PY
 
         missing_count=$(grep -c . "$missing_file" || true)
         if [ "$missing_count" -eq 0 ]; then
