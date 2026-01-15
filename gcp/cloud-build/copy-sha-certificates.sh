@@ -120,6 +120,7 @@ find_app_id_across_pages() {
       echo "🔄 Fetching Firebase app list page $page..." >&2
     else
       echo "🔍 Fetching list of Android apps..." >&2
+
     fi
 
     apps_response=$(fetch_apps_page "$page_token")
