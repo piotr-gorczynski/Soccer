@@ -1,5 +1,7 @@
 # SHA Certificate Copy - Quick Reference Card
 
+**Note**: The SHA copy automation now runs via the Cloud Build config `gcp/cloud-build/sha_copy.yaml`. The previous `copy-sha-certificates.sh` script has been removed.
+
 ## 🎯 What Was Fixed
 
 The script was **failing silently** - reporting "✅ Success" even when SHA certificates were NOT copied. 

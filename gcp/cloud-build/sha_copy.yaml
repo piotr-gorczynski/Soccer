@@ -1,0 +1,164 @@
+substitutions:
+  _ENVIRONMENT: 'dev'
+  _FOLDER_NAME: 'soccer'
+  _GLOBAL_PACKAGE: 'piotr_gorczynski.soccer2'
+  _BD_PACKAGE: 'piotr_gorczynski.soccer2.bd'
+
+steps:
+  # Step 1: Retrieve the project ID
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        echo "Checking if project starting with ${_FOLDER_NAME}-${_ENVIRONMENT} exists..."
+        gcloud projects list \
+          --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
+          --format="value(projectId)" | head -n 1 > /workspace/SOCCER_PROJECT_ID.txt
+
+        if [ ! -s /workspace/SOCCER_PROJECT_ID.txt ] || [ -z "$(cat /workspace/SOCCER_PROJECT_ID.txt)" ]; then
+          echo "❌ Error: Project ID not found. Ensure the project exists."
+          exit 1
+        fi
+        echo "✅ Using project: $(cat /workspace/SOCCER_PROJECT_ID.txt)"
+
+  # Step 2: Install Firebase CLI + resolve app IDs
+  - name: 'node:20-bullseye'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
+        echo "⬇️ Installing Firebase CLI..."
+        mkdir -p /workspace/firebase
+        npm install --prefix /workspace/firebase firebase-tools@latest --no-fund --no-audit
+        firebase_bin="/workspace/firebase/node_modules/.bin/firebase"
+
+        echo "🔍 Fetching Firebase Android apps for $firebase_project_id..."
+        app_list_json=$("$firebase_bin" apps:list ANDROID --project="$firebase_project_id" --json 2>/dev/null || echo "{}")
+
+        echo "🔍 Resolving app IDs for global and Bangladesh packages..."
+        node -e 'const fs=require("fs");const data=JSON.parse(fs.readFileSync(0,"utf8")||"{}");const apps=data.result||data.apps||data.androidApps||[];const pkg=process.argv[1];const app=apps.find(a=>a.packageName===pkg);if(app){const id=app.appId||((app.name||"").split("/").pop());if(id) process.stdout.write(id);}' "${_GLOBAL_PACKAGE}" <<<"$app_list_json" > /workspace/global_app_id.txt
+        node -e 'const fs=require("fs");const data=JSON.parse(fs.readFileSync(0,"utf8")||"{}");const apps=data.result||data.apps||data.androidApps||[];const pkg=process.argv[1];const app=apps.find(a=>a.packageName===pkg);if(app){const id=app.appId||((app.name||"").split("/").pop());if(id) process.stdout.write(id);}' "${_BD_PACKAGE}" <<<"$app_list_json" > /workspace/bd_app_id.txt
+
+        if [ ! -s /workspace/global_app_id.txt ]; then
+          echo "⚠️  Could not resolve global app ID for package ${_GLOBAL_PACKAGE}."
+        else
+          echo "✅ Global app ID resolved."
+        fi
+
+        if [ ! -s /workspace/bd_app_id.txt ]; then
+          echo "⚠️  Could not resolve Bangladesh app ID for package ${_BD_PACKAGE}."
+        else
+          echo "✅ Bangladesh app ID resolved."
+        fi
+
+  # Step 3: Copy SHA certificates from global app to Bangladesh app
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
+        global_app_id=$(cat /workspace/global_app_id.txt 2>/dev/null || true)
+        bd_app_id=$(cat /workspace/bd_app_id.txt 2>/dev/null || true)
+
+        if [ -z "$global_app_id" ]; then
+          echo "⚠️  Missing global app ID. SHA copy skipped."
+          exit 0
+        fi
+
+        if [ -z "$bd_app_id" ]; then
+          echo "⚠️  Missing Bangladesh app ID. SHA copy skipped."
+          exit 0
+        fi
+
+        access_token=$(gcloud auth print-access-token)
+        global_sha_file=/workspace/global_sha.json
+        target_sha_file=/workspace/target_sha.json
+        missing_file=/workspace/sha_missing.txt
+
+        echo "🔑 Fetching SHA certificates from global app..."
+        curl -s -H "Authorization: Bearer $access_token" \
+          "https://firebase.googleapis.com/v1beta1/projects/$firebase_project_id/androidApps/$global_app_id/sha" \
+          > "$global_sha_file"
+
+        echo "🔍 Fetching SHA certificates from Bangladesh app..."
+        curl -s -H "Authorization: Bearer $access_token" \
+          "https://firebase.googleapis.com/v1beta1/projects/$firebase_project_id/androidApps/$bd_app_id/sha" \
+          > "$target_sha_file"
+
+        python3 - <<'PY'
+import json
+from pathlib import Path
+
+global_file = Path("/workspace/global_sha.json")
+target_file = Path("/workspace/target_sha.json")
+missing_file = Path("/workspace/sha_missing.txt")
+
+def load_certs(path: Path):
+    if not path.exists():
+        return []
+    try:
+        data = json.loads(path.read_text() or "{}")
+    except json.JSONDecodeError:
+        return []
+    certs = data.get("certificates") or []
+    cleaned = []
+    for cert in certs:
+        sha = cert.get("shaHash")
+        if not sha:
+            continue
+        cleaned.append((sha, cert.get("certType") or "SHA_1"))
+    return cleaned
+
+global_certs = load_certs(global_file)
+target_certs = load_certs(target_file)
+target_hashes = {sha for sha, _ in target_certs}
+missing = [(sha, cert_type) for sha, cert_type in global_certs if sha not in target_hashes]
+
+missing_file.write_text("\n".join([f"{sha}|{cert_type}" for sha, cert_type in missing]))
+
+print(f"📋 Global certs: {len(global_certs)}")
+print(f"📋 Bangladesh certs: {len(target_certs)}")
+print(f"📋 Missing certs to add: {len(missing)}")
+PY
+
+        missing_count=$(grep -c . "$missing_file" || true)
+        if [ "$missing_count" -eq 0 ]; then
+          echo "✅ No missing SHA certificates. Nothing to copy."
+          exit 0
+        fi
+
+        echo "📥 Copying missing SHA certificates..."
+        failures=0
+
+        while IFS='|' read -r sha_hash cert_type; do
+          if [ -z "$sha_hash" ]; then
+            continue
+          fi
+
+          add_response=$(curl -s -w '\n%{http_code}' -X POST \
+            -H "Authorization: Bearer $access_token" \
+            -H "Content-Type: application/json" \
+            "https://firebase.googleapis.com/v1beta1/projects/$firebase_project_id/androidApps/$bd_app_id/sha" \
+            -d "{\"shaHash\":\"$sha_hash\",\"certType\":\"$cert_type\"}")
+
+          http_code=$(echo "$add_response" | tail -n1)
+          if [[ "$http_code" != "200" && "$http_code" != "201" ]]; then
+            failures=$((failures + 1))
+          fi
+        done < "$missing_file"
+
+        if [ "$failures" -gt 0 ]; then
+          echo "❌ Failed to add $failures SHA certificate(s)."
+          exit 1
+        fi
+
+        echo "✅ SHA certificate copy completed successfully."
+
+options:
+  logging: CLOUD_LOGGING_ONLY

@@ -1,5 +1,7 @@
 # SHA Certificate Copying Fix - Summary
 
+**Note**: This summary documents legacy fixes for the removed `copy-sha-certificates.sh` script. The current SHA copy automation lives in `gcp/cloud-build/sha_copy.yaml`.
+
 ## Problem
 The SHA certificate copying script was claiming success but not actually copying SHA certificates from the global Firebase app (`piotr_gorczynski.soccer2`) to variant apps (e.g., `piotr_gorczynski.soccer2.bd`). This had failed 10 times previously.
 
@@ -112,8 +114,8 @@ The script saves these files in `/tmp` for debugging:
 
 ## Files Modified
 
-1. `gcp/cloud-build/copy-sha-certificates.sh` - Main script with enhanced debugging
-2. `gcp/cloud-build/SHA_COPY_DEBUG_GUIDE.md` - Updated debug guide with new features
+1. `gcp/cloud-build/copy-sha-certificates.sh` - Legacy script (removed)
+2. `docs/SHA_COPY_DEBUG_GUIDE.md` - Updated debug guide with new features
 
 ## For More Details
 

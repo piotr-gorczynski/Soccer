@@ -149,11 +149,5 @@ steps:
         echo "---"
         echo "✅ All Firebase Android Apps have been checked and created as needed."
 
-  # Step 8: Copy SHA certificates from global app to other packages
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    entrypoint: 'bash'
-    args:
-      - '/workspace/gcp/cloud-build/copy-sha-certificates.sh'
-
 options:
   logging: CLOUD_LOGGING_ONLY
