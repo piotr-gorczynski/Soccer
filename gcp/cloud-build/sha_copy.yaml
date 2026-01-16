@@ -146,6 +146,12 @@ steps:
         PY
 
         missing_count=$(grep -c . "$missing_file" || true)
+        echo "🧾 Missing cert list:"
+        if [ -s "$missing_file" ]; then
+          cat "$missing_file"
+        else
+          echo "(empty)"
+        fi
         if [ "$missing_count" -eq 0 ]; then
           echo "✅ No missing SHA certificates. Nothing to copy."
           exit 0
@@ -160,11 +166,16 @@ steps:
           fi
 
           echo "➕ Adding SHA certificate $sha_hash ($cert_type) to Bangladesh app..."
-          add_response=$(curl -sS -w '\n%{http_code}' -X POST \
+          if ! add_response=$(curl -sS -w '\n%{http_code}' -X POST \
             -H "Authorization: Bearer $access_token" \
             -H "Content-Type: application/json" \
             "https://firebase.googleapis.com/v1beta1/projects/$firebase_project_id/androidApps/$bd_app_id/sha" \
-            -d "{\"shaHash\":\"$sha_hash\",\"certType\":\"$cert_type\"}")
+            -d "{\"shaHash\":\"$sha_hash\",\"certType\":\"$cert_type\"}" 2>&1); then
+            echo "❌ curl failed while adding $sha_hash ($cert_type)."
+            echo "Response/Error: $add_response"
+            failures=$((failures + 1))
+            continue
+          fi
 
           http_code=$(echo "$add_response" | tail -n1)
           response_body=$(echo "$add_response" | head -n -1)
@@ -176,9 +187,7 @@ steps:
             failures=$((failures + 1))
           else
             echo "✅ Added $sha_hash ($cert_type). HTTP $http_code"
-            if [ -n "$response_body" ]; then
-              echo "Response: $response_body"
-            fi
+            echo "Response: ${response_body:-<empty>}"
           fi
         done < "$missing_file"
 
