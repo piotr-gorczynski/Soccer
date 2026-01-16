@@ -141,6 +141,7 @@ steps:
             continue
           fi
 
+          echo "➕ Adding SHA certificate $sha_hash ($cert_type) to Bangladesh app..."
           add_response=$(curl -s -w '\n%{http_code}' -X POST \
             -H "Authorization: Bearer $access_token" \
             -H "Content-Type: application/json" \
@@ -148,8 +149,15 @@ steps:
             -d "{\"shaHash\":\"$sha_hash\",\"certType\":\"$cert_type\"}")
 
           http_code=$(echo "$add_response" | tail -n1)
+          response_body=$(echo "$add_response" | head -n -1)
           if [[ "$http_code" != "200" && "$http_code" != "201" ]]; then
+            echo "❌ Failed to add $sha_hash ($cert_type). HTTP $http_code"
+            if [ -n "$response_body" ]; then
+              echo "Response: $response_body"
+            fi
             failures=$((failures + 1))
+          else
+            echo "✅ Added $sha_hash ($cert_type). HTTP $http_code"
           fi
         done < "$missing_file"
 
@@ -159,6 +167,49 @@ steps:
         fi
 
         echo "✅ SHA certificate copy completed successfully."
+
+        echo "🔍 Verifying SHA certificates on Bangladesh app after copy..."
+        curl -s -H "Authorization: Bearer $access_token" \
+          "https://firebase.googleapis.com/v1beta1/projects/$firebase_project_id/androidApps/$bd_app_id/sha" \
+          > "$target_sha_file"
+
+        python3 - <<'PY'
+        import json
+        from pathlib import Path
+
+        global_file = Path("/workspace/global_sha.json")
+        target_file = Path("/workspace/target_sha.json")
+
+        def load_certs(path: Path):
+            if not path.exists():
+                return []
+            try:
+                data = json.loads(path.read_text() or "{}")
+            except json.JSONDecodeError:
+                return []
+            certs = data.get("certificates") or []
+            cleaned = []
+            for cert in certs:
+                sha = cert.get("shaHash")
+                if not sha:
+                    continue
+                cleaned.append((sha, cert.get("certType") or "SHA_1"))
+            return cleaned
+
+        global_certs = load_certs(global_file)
+        target_certs = load_certs(target_file)
+        target_hashes = {sha for sha, _ in target_certs}
+        missing = [(sha, cert_type) for sha, cert_type in global_certs if sha not in target_hashes]
+
+        print(f"📋 Post-copy Bangladesh certs: {len(target_certs)}")
+        print(f"📋 Remaining missing certs: {len(missing)}")
+        if missing:
+            print("❌ Missing certificates after copy:")
+            for sha, cert_type in missing:
+                print(f"- {sha} ({cert_type})")
+            raise SystemExit(1)
+        print("✅ Verification succeeded. All global certs are present on Bangladesh app.")
+        PY
 
 options:
   logging: CLOUD_LOGGING_ONLY
