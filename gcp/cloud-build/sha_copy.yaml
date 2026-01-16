@@ -82,10 +82,7 @@ steps:
         missing_file=/workspace/sha_missing.txt
 
         echo "🔑 Fetching SHA certificates from global app..."
-
-        global_response=$(curl -sS -w '\n%{http_code}' -H "Authorization: Bearer $access_token" \
-
-          "https://firebase.googleapis.com/v1beta1/projects/$firebase_project_id/androidApps/$global_app_id/sha")
+        global_response=$(curl -sS -w '\n%{http_code}' -H "Authorization: Bearer $access_token" "https://firebase.googleapis.com/v1beta1/projects/$firebase_project_id/androidApps/$global_app_id/sha")
         global_http_code=$(echo "$global_response" | tail -n1)
         global_body=$(echo "$global_response" | head -n -1)
         echo "$global_body" > "$global_sha_file"
@@ -98,10 +95,7 @@ steps:
         fi
 
         echo "🔍 Fetching SHA certificates from Bangladesh app..."
-
-        target_response=$(curl -sS -w '\n%{http_code}' -H "Authorization: Bearer $access_token" \
-
-          "https://firebase.googleapis.com/v1beta1/projects/$firebase_project_id/androidApps/$bd_app_id/sha")
+        target_response=$(curl -sS -w '\n%{http_code}' -H "Authorization: Bearer $access_token" "https://firebase.googleapis.com/v1beta1/projects/$firebase_project_id/androidApps/$bd_app_id/sha")
         target_http_code=$(echo "$target_response" | tail -n1)
         target_body=$(echo "$target_response" | head -n -1)
         echo "$target_body" > "$target_sha_file"
@@ -196,14 +190,12 @@ steps:
         echo "✅ SHA certificate copy completed successfully."
 
         echo "🔍 Verifying SHA certificates on Bangladesh app after copy..."
-
         attempt=1
         max_attempts=3
         sleep_seconds=5
         while true; do
           echo "🔁 Verification attempt ${attempt}/${max_attempts}..."
-          verify_response=$(curl -sS -w '\n%{http_code}' -H "Authorization: Bearer $access_token" \
-            "https://firebase.googleapis.com/v1beta1/projects/$firebase_project_id/androidApps/$bd_app_id/sha")
+          verify_response=$(curl -sS -w '\n%{http_code}' -H "Authorization: Bearer $access_token" "https://firebase.googleapis.com/v1beta1/projects/$firebase_project_id/androidApps/$bd_app_id/sha")
           verify_http_code=$(echo "$verify_response" | tail -n1)
           verify_body=$(echo "$verify_response" | head -n -1)
           echo "$verify_body" > "$target_sha_file"
@@ -214,7 +206,6 @@ steps:
             fi
             exit 1
           fi
-
 
           if python3 - <<'PY'
         import json
