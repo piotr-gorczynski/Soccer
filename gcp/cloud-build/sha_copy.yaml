@@ -11,7 +11,7 @@ steps:
     args:
       - '-c'
       - |
-        set -e
+        set -euo pipefail
         echo "Checking if project starting with ${_FOLDER_NAME}-${_ENVIRONMENT} exists..."
         gcloud projects list \
           --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
@@ -29,7 +29,7 @@ steps:
     args:
       - '-c'
       - |
-        set -e
+        set -euo pipefail
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         echo "⬇️ Installing Firebase CLI..."
         mkdir -p /workspace/firebase
@@ -61,7 +61,7 @@ steps:
     args:
       - '-c'
       - |
-        set -e
+        set -euo pipefail
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         global_app_id=$(cat /workspace/global_app_id.txt 2>/dev/null || true)
         bd_app_id=$(cat /workspace/bd_app_id.txt 2>/dev/null || true)
@@ -82,14 +82,32 @@ steps:
         missing_file=/workspace/sha_missing.txt
 
         echo "🔑 Fetching SHA certificates from global app..."
-        curl -s -H "Authorization: Bearer $access_token" \
-          "https://firebase.googleapis.com/v1beta1/projects/$firebase_project_id/androidApps/$global_app_id/sha" \
-          > "$global_sha_file"
+        global_response=$(curl -s -w '\n%{http_code}' -H "Authorization: Bearer $access_token" \
+          "https://firebase.googleapis.com/v1beta1/projects/$firebase_project_id/androidApps/$global_app_id/sha")
+        global_http_code=$(echo "$global_response" | tail -n1)
+        global_body=$(echo "$global_response" | head -n -1)
+        echo "$global_body" > "$global_sha_file"
+        if [[ "$global_http_code" != "200" ]]; then
+          echo "❌ Failed to fetch global SHA certificates. HTTP $global_http_code"
+          if [ -n "$global_body" ]; then
+            echo "Response: $global_body"
+          fi
+          exit 1
+        fi
 
         echo "🔍 Fetching SHA certificates from Bangladesh app..."
-        curl -s -H "Authorization: Bearer $access_token" \
-          "https://firebase.googleapis.com/v1beta1/projects/$firebase_project_id/androidApps/$bd_app_id/sha" \
-          > "$target_sha_file"
+        target_response=$(curl -s -w '\n%{http_code}' -H "Authorization: Bearer $access_token" \
+          "https://firebase.googleapis.com/v1beta1/projects/$firebase_project_id/androidApps/$bd_app_id/sha")
+        target_http_code=$(echo "$target_response" | tail -n1)
+        target_body=$(echo "$target_response" | head -n -1)
+        echo "$target_body" > "$target_sha_file"
+        if [[ "$target_http_code" != "200" ]]; then
+          echo "❌ Failed to fetch Bangladesh SHA certificates. HTTP $target_http_code"
+          if [ -n "$target_body" ]; then
+            echo "Response: $target_body"
+          fi
+          exit 1
+        fi
 
         python3 - <<'PY'
         import json
@@ -105,6 +123,8 @@ steps:
             try:
                 data = json.loads(path.read_text() or "{}")
             except json.JSONDecodeError:
+                print(f"❌ Invalid JSON in {path}. Raw content:")
+                print(path.read_text())
                 return []
             certs = data.get("certificates") or []
             cleaned = []
@@ -158,6 +178,9 @@ steps:
             failures=$((failures + 1))
           else
             echo "✅ Added $sha_hash ($cert_type). HTTP $http_code"
+            if [ -n "$response_body" ]; then
+              echo "Response: $response_body"
+            fi
           fi
         done < "$missing_file"
 
@@ -169,9 +192,18 @@ steps:
         echo "✅ SHA certificate copy completed successfully."
 
         echo "🔍 Verifying SHA certificates on Bangladesh app after copy..."
-        curl -s -H "Authorization: Bearer $access_token" \
-          "https://firebase.googleapis.com/v1beta1/projects/$firebase_project_id/androidApps/$bd_app_id/sha" \
-          > "$target_sha_file"
+        verify_response=$(curl -s -w '\n%{http_code}' -H "Authorization: Bearer $access_token" \
+          "https://firebase.googleapis.com/v1beta1/projects/$firebase_project_id/androidApps/$bd_app_id/sha")
+        verify_http_code=$(echo "$verify_response" | tail -n1)
+        verify_body=$(echo "$verify_response" | head -n -1)
+        echo "$verify_body" > "$target_sha_file"
+        if [[ "$verify_http_code" != "200" ]]; then
+          echo "❌ Failed to verify Bangladesh SHA certificates. HTTP $verify_http_code"
+          if [ -n "$verify_body" ]; then
+            echo "Response: $verify_body"
+          fi
+          exit 1
+        fi
 
         python3 - <<'PY'
         import json
@@ -186,6 +218,8 @@ steps:
             try:
                 data = json.loads(path.read_text() or "{}")
             except json.JSONDecodeError:
+                print(f"❌ Invalid JSON in {path}. Raw content:")
+                print(path.read_text())
                 return []
             certs = data.get("certificates") or []
             cleaned = []
