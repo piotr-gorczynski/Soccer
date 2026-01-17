@@ -130,6 +130,16 @@ steps:
           echo "$target_body"
           exit 1
         fi
+        
+        # Check if the response is an empty object (indicates app may not be fully provisioned)
+        if [[ "$target_body" == "{}" ]] || [[ -z "$target_body" ]]; then
+          echo "⚠️  Bangladesh app returned empty response. App may not be fully provisioned yet."
+          echo "⚠️  This typically happens with newly created Firebase apps that need time to initialize."
+          echo "⚠️  Skipping SHA certificate copy for Bangladesh app."
+          echo "ℹ️  To retry, run this build again after the app is fully provisioned (usually takes a few minutes)."
+          exit 0
+        fi
+        
         echo "✅ Bangladesh SHA certificates fetched successfully"
 
   # Step 3b: Compare and copy missing SHA certificates
@@ -144,6 +154,15 @@ steps:
         global_sha_file=/workspace/global_sha.json
         target_sha_file=/workspace/target_sha.json
         missing_file=/workspace/sha_missing.txt
+
+        # Check if target file is just empty object (app not provisioned)
+        target_content=$(cat "$target_sha_file" 2>/dev/null || echo "")
+        if [[ "$target_content" == "{}" ]] || [[ -z "$target_content" ]]; then
+          echo "⚠️  Bangladesh app not fully provisioned (empty response from API)."
+          echo "⚠️  Skipping SHA certificate copy. The app needs time to initialize."
+          echo "ℹ️  This is normal for newly created Firebase apps. Retry in a few minutes."
+          exit 0
+        fi
 
         python3 - <<'PY'
         import json
