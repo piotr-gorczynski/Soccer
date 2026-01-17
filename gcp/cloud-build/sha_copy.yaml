@@ -132,11 +132,15 @@ steps:
         fi
         
         # Check if the response is an empty object (indicates app may not be fully provisioned)
+        # Note: Firebase API returns {"certificates": []} for empty cert list, not {}
+        # An empty object {} indicates the app is not fully initialized
         if [[ "$target_body" == "{}" ]] || [[ -z "$target_body" ]]; then
           echo "⚠️  Bangladesh app returned empty response. App may not be fully provisioned yet."
           echo "⚠️  This typically happens with newly created Firebase apps that need time to initialize."
           echo "⚠️  Skipping SHA certificate copy for Bangladesh app."
           echo "ℹ️  To retry, run this build again after the app is fully provisioned (usually takes a few minutes)."
+          # Create flag file to indicate SHA copy was skipped
+          touch /workspace/sha_copy_skipped.flag
           exit 0
         fi
         
@@ -156,11 +160,15 @@ steps:
         missing_file=/workspace/sha_missing.txt
 
         # Check if target file is just empty object (app not provisioned)
+        # This is a redundant safety check since step 3a already validates this,
+        # but Cloud Build steps are independent so we verify again
         target_content=$(cat "$target_sha_file" 2>/dev/null || echo "")
         if [[ "$target_content" == "{}" ]] || [[ -z "$target_content" ]]; then
           echo "⚠️  Bangladesh app not fully provisioned (empty response from API)."
           echo "⚠️  Skipping SHA certificate copy. The app needs time to initialize."
           echo "ℹ️  This is normal for newly created Firebase apps. Retry in a few minutes."
+          # Create flag file to indicate SHA copy was skipped
+          touch /workspace/sha_copy_skipped.flag
           exit 0
         fi
 
@@ -293,12 +301,12 @@ steps:
         target_sha_file=/workspace/target_sha.json
 
         # Check if we skipped SHA copy due to unprovisioned app
-        if [ ! -f /workspace/sha_missing.txt ]; then
-          echo "⚠️  SHA copy was skipped (missing file not found). Skipping verification."
+        if [ -f /workspace/sha_copy_skipped.flag ]; then
+          echo "⚠️  SHA copy was skipped due to unprovisioned app. Skipping verification."
           exit 0
         fi
         
-        # Check if target file indicates unprovisioned app
+        # Additional check: verify target file is not empty
         target_content=$(cat "$target_sha_file" 2>/dev/null || echo "")
         if [[ "$target_content" == "{}" ]] || [[ -z "$target_content" ]]; then
           echo "⚠️  Bangladesh app not fully provisioned. Skipping verification."
