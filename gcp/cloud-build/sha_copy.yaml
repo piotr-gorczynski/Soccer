@@ -184,7 +184,12 @@ steps:
         target_hashes = {sha for sha, _ in target_certs}
         missing = [(sha, cert_type) for sha, cert_type in global_certs if sha not in target_hashes]
 
-        missing_file.write_text("\n".join([f"{sha}|{cert_type}" for sha, cert_type in missing]))
+        # Write missing certs to file with proper newline handling
+        # The trailing newline is crucial for the bash 'while read' loop to read the last line
+        if missing:
+            missing_file.write_text("\n".join([f"{sha}|{cert_type}" for sha, cert_type in missing]) + "\n")
+        else:
+            missing_file.write_text("")
 
         print(f"📋 Global certs: {len(global_certs)}")
         print(f"📋 Bangladesh certs: {len(target_certs)}")
@@ -206,9 +211,18 @@ steps:
         echo "📥 Copying missing SHA certificates..."
         access_token=$(gcloud auth print-access-token)
         failures=0
+        
+        echo "🔍 DEBUG: About to process missing certificates from file: $missing_file"
+        echo "🔍 DEBUG: File exists: $([ -f "$missing_file" ] && echo 'yes' || echo 'no')"
+        echo "🔍 DEBUG: File size: $(wc -c < "$missing_file" 2>/dev/null || echo 'N/A') bytes"
+        echo "🔍 DEBUG: File line count: $(wc -l < "$missing_file" 2>/dev/null || echo 'N/A')"
+        echo "🔍 DEBUG: File content (hexdump last 50 bytes):"
+        tail -c 50 "$missing_file" | od -A x -t x1z -v || true
 
         while IFS='|' read -r sha_hash cert_type; do
+          echo "🔍 DEBUG: Loop iteration - sha_hash='$sha_hash', cert_type='$cert_type'"
           if [ -z "$sha_hash" ]; then
+            echo "🔍 DEBUG: Skipping empty sha_hash"
             continue
           fi
 
@@ -240,6 +254,8 @@ steps:
             echo "✅ Added $sha_hash ($cert_type). HTTP $http_code"
           fi
         done < "$missing_file"
+        
+        echo "🔍 DEBUG: Completed processing loop"
 
         if [ "$failures" -gt 0 ]; then
           echo "❌ Failed to add $failures SHA certificate(s)."
