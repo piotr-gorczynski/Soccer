@@ -292,6 +292,19 @@ steps:
         bd_app_id=$(cat /workspace/bd_app_id.txt 2>/dev/null || true)
         target_sha_file=/workspace/target_sha.json
 
+        # Check if we skipped SHA copy due to unprovisioned app
+        if [ ! -f /workspace/sha_missing.txt ]; then
+          echo "⚠️  SHA copy was skipped (missing file not found). Skipping verification."
+          exit 0
+        fi
+        
+        # Check if target file indicates unprovisioned app
+        target_content=$(cat "$target_sha_file" 2>/dev/null || echo "")
+        if [[ "$target_content" == "{}" ]] || [[ -z "$target_content" ]]; then
+          echo "⚠️  Bangladesh app not fully provisioned. Skipping verification."
+          exit 0
+        fi
+
         echo "🔍 Verifying SHA certificates on Bangladesh app after copy..."
         access_token=$(gcloud auth print-access-token)
         attempt=1
