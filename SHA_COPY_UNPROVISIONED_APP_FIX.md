@@ -59,7 +59,9 @@ After fetching SHA certificates from the Bangladesh app, check if the response i
 # Check if the response is an empty object (indicates app may not be fully provisioned)
 # Note: Firebase API returns {"certificates": []} for empty cert list, not {}
 # An empty object {} indicates the app is not fully initialized
-if [[ "$target_body" == "{}" ]] || [[ -z "$target_body" ]]; then
+# Trim whitespace and check if empty or just {}
+target_body_trimmed=$(echo "$target_body" | tr -d '[:space:]')
+if [[ "$target_body_trimmed" == "{}" ]] || [[ -z "$target_body_trimmed" ]]; then
   echo "⚠️  Bangladesh app returned empty response. App may not be fully provisioned yet."
   echo "⚠️  This typically happens with newly created Firebase apps that need time to initialize."
   echo "⚠️  Skipping SHA certificate copy for Bangladesh app."
@@ -79,7 +81,8 @@ Before attempting to copy certificates, verify the target file is not empty (red
 # This is a redundant safety check since step 3a already validates this,
 # but Cloud Build steps are independent so we verify again
 target_content=$(cat "$target_sha_file" 2>/dev/null || echo "")
-if [[ "$target_content" == "{}" ]] || [[ -z "$target_content" ]]; then
+target_content_trimmed=$(echo "$target_content" | tr -d '[:space:]')
+if [[ "$target_content_trimmed" == "{}" ]] || [[ -z "$target_content_trimmed" ]]; then
   echo "⚠️  Bangladesh app not fully provisioned (empty response from API)."
   echo "⚠️  Skipping SHA certificate copy. The app needs time to initialize."
   echo "ℹ️  This is normal for newly created Firebase apps. Retry in a few minutes."
@@ -102,7 +105,8 @@ fi
 
 # Additional check: verify target file is not empty
 target_content=$(cat "$target_sha_file" 2>/dev/null || echo "")
-if [[ "$target_content" == "{}" ]] || [[ -z "$target_content" ]]; then
+target_content_trimmed=$(echo "$target_content" | tr -d '[:space:]')
+if [[ "$target_content_trimmed" == "{}" ]] || [[ -z "$target_content_trimmed" ]]; then
   echo "⚠️  Bangladesh app not fully provisioned. Skipping verification."
   exit 0
 fi
