@@ -32,48 +32,75 @@ This happens because:
 
 Added checks in three places to detect and gracefully handle unprovisioned apps:
 
-### 1. Step 3a: Fetch SHA Certificates (lines 134-141)
+### Design Decisions
 
-After fetching SHA certificates from the Bangladesh app, check if the response is empty:
+**Why check in multiple places?**
+- Cloud Build steps run in independent containers
+- State from previous steps doesn't carry over (except via files in `/workspace`)
+- Defense-in-depth: if one check fails, others provide safety
+
+**Why use a flag file instead of environment variables?**
+- Cloud Build substitution variables are set at build time and cannot be modified during execution
+- Environment variables don't persist across different Cloud Build steps
+- File-based flags in `/workspace` are the standard pattern for communicating state between steps
+
+**Why is `{}` considered invalid?**
+- Firebase API returns `{"certificates": []}` for apps with no SHA certificates
+- An empty object `{}` indicates the API couldn't retrieve the certificates list
+- This only happens when the app is not fully provisioned yet
+
+### Implementation
+
+### 1. Step 3a: Fetch SHA Certificates (lines 134-145)
+
+After fetching SHA certificates from the Bangladesh app, check if the response is empty and create a flag file:
 
 ```bash
 # Check if the response is an empty object (indicates app may not be fully provisioned)
+# Note: Firebase API returns {"certificates": []} for empty cert list, not {}
+# An empty object {} indicates the app is not fully initialized
 if [[ "$target_body" == "{}" ]] || [[ -z "$target_body" ]]; then
   echo "⚠️  Bangladesh app returned empty response. App may not be fully provisioned yet."
   echo "⚠️  This typically happens with newly created Firebase apps that need time to initialize."
   echo "⚠️  Skipping SHA certificate copy for Bangladesh app."
   echo "ℹ️  To retry, run this build again after the app is fully provisioned (usually takes a few minutes)."
+  # Create flag file to indicate SHA copy was skipped
+  touch /workspace/sha_copy_skipped.flag
   exit 0
 fi
 ```
 
-### 2. Step 3b: Compare and Copy (lines 158-165)
+### 2. Step 3b: Compare and Copy (lines 162-172)
 
-Before attempting to copy certificates, verify the target file is not empty:
+Before attempting to copy certificates, verify the target file is not empty (redundant safety check):
 
 ```bash
 # Check if target file is just empty object (app not provisioned)
+# This is a redundant safety check since step 3a already validates this,
+# but Cloud Build steps are independent so we verify again
 target_content=$(cat "$target_sha_file" 2>/dev/null || echo "")
 if [[ "$target_content" == "{}" ]] || [[ -z "$target_content" ]]; then
   echo "⚠️  Bangladesh app not fully provisioned (empty response from API)."
   echo "⚠️  Skipping SHA certificate copy. The app needs time to initialize."
   echo "ℹ️  This is normal for newly created Firebase apps. Retry in a few minutes."
+  # Create flag file to indicate SHA copy was skipped
+  touch /workspace/sha_copy_skipped.flag
   exit 0
 fi
 ```
 
-### 3. Step 3c: Verify Certificates (lines 295-307)
+### 3. Step 3c: Verify Certificates (lines 303-312)
 
-Before verification, check if SHA copy was actually performed:
+Before verification, check if SHA copy was skipped using the flag file:
 
 ```bash
 # Check if we skipped SHA copy due to unprovisioned app
-if [ ! -f /workspace/sha_missing.txt ]; then
-  echo "⚠️  SHA copy was skipped (missing file not found). Skipping verification."
+if [ -f /workspace/sha_copy_skipped.flag ]; then
+  echo "⚠️  SHA copy was skipped due to unprovisioned app. Skipping verification."
   exit 0
 fi
 
-# Check if target file indicates unprovisioned app
+# Additional check: verify target file is not empty
 target_content=$(cat "$target_sha_file" 2>/dev/null || echo "")
 if [[ "$target_content" == "{}" ]] || [[ -z "$target_content" ]]; then
   echo "⚠️  Bangladesh app not fully provisioned. Skipping verification."
