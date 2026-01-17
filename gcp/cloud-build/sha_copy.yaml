@@ -55,7 +55,7 @@ steps:
           echo "✅ Bangladesh app ID resolved."
         fi
 
-  # Step 3: Copy SHA certificates from global app to Bangladesh app
+  # Step 3a: Fetch SHA certificates from both apps
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     entrypoint: 'bash'
     args:
@@ -79,7 +79,6 @@ steps:
         access_token=$(gcloud auth print-access-token)
         global_sha_file=/workspace/global_sha.json
         target_sha_file=/workspace/target_sha.json
-        missing_file=/workspace/sha_missing.txt
 
         echo "🔑 Fetching SHA certificates from global app..."
         echo "🔍 DEBUG: GET https://firebase.googleapis.com/v1beta1/projects/$firebase_project_id/androidApps/$global_app_id/sha"
@@ -132,6 +131,19 @@ steps:
           exit 1
         fi
         echo "✅ Bangladesh SHA certificates fetched successfully"
+
+  # Step 3b: Compare and copy missing SHA certificates
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -euo pipefail
+        firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
+        bd_app_id=$(cat /workspace/bd_app_id.txt 2>/dev/null || true)
+        global_sha_file=/workspace/global_sha.json
+        target_sha_file=/workspace/target_sha.json
+        missing_file=/workspace/sha_missing.txt
 
         python3 - <<'PY'
         import json
@@ -192,6 +204,7 @@ steps:
         fi
 
         echo "📥 Copying missing SHA certificates..."
+        access_token=$(gcloud auth print-access-token)
         failures=0
 
         while IFS='|' read -r sha_hash cert_type; do
@@ -200,18 +213,9 @@ steps:
           fi
 
           echo "➕ Adding SHA certificate $sha_hash ($cert_type) to Bangladesh app..."
-          
-          # Prepare the API endpoint and payload
           api_url="https://firebase.googleapis.com/v1beta1/projects/$firebase_project_id/androidApps/$bd_app_id/sha"
           payload="{\"shaHash\":\"$sha_hash\",\"certType\":\"$cert_type\"}"
           
-          # Log the exact command being executed
-          echo "🔍 DEBUG: Executing curl command..."
-          echo "  URL: $api_url"
-          echo "  Payload: $payload"
-          echo "  Command: curl -sS -w '\\n%{http_code}' -X POST -H 'Authorization: Bearer [REDACTED]' -H 'Content-Type: application/json' '$api_url' -d '$payload'"
-          
-          # Execute curl and capture all output
           add_response=$(curl -sS -w '\n%{http_code}' -X POST \
             -H "Authorization: Bearer $access_token" \
             -H "Content-Type: application/json" \
@@ -219,12 +223,8 @@ steps:
             -d "$payload" 2>&1)
           curl_exit_code=$?
           
-          echo "🔍 DEBUG: curl exit code: $curl_exit_code"
-          
           if [ $curl_exit_code -ne 0 ]; then
-            echo "❌ curl command failed with exit code $curl_exit_code while adding $sha_hash ($cert_type)."
-            echo "❌ Full curl output/error:"
-            echo "$add_response"
+            echo "❌ curl failed with exit code $curl_exit_code for $sha_hash ($cert_type)."
             failures=$((failures + 1))
             continue
           fi
@@ -232,23 +232,12 @@ steps:
           http_code=$(echo "$add_response" | tail -n1)
           response_body=$(echo "$add_response" | head -n -1)
           
-          echo "🔍 DEBUG: HTTP response code: $http_code"
-          echo "🔍 DEBUG: Response body length: ${#response_body} characters"
-          echo "🔍 DEBUG: Full response body:"
-          echo "$response_body"
-          
           if [[ "$http_code" != "200" && "$http_code" != "201" ]]; then
             echo "❌ Failed to add $sha_hash ($cert_type). HTTP $http_code"
-            echo "❌ Full response:"
-            echo "$response_body"
+            echo "❌ Response: $response_body"
             failures=$((failures + 1))
           else
             echo "✅ Added $sha_hash ($cert_type). HTTP $http_code"
-            if [ -n "$response_body" ]; then
-              echo "✅ Response details: $response_body"
-            else
-              echo "⚠️  WARNING: Response body is empty despite HTTP $http_code"
-            fi
           fi
         done < "$missing_file"
 
@@ -259,33 +248,38 @@ steps:
 
         echo "✅ SHA certificate copy completed successfully."
 
+  # Step 3c: Verify SHA certificates were copied
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -euo pipefail
+        firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
+        bd_app_id=$(cat /workspace/bd_app_id.txt 2>/dev/null || true)
+        target_sha_file=/workspace/target_sha.json
+
         echo "🔍 Verifying SHA certificates on Bangladesh app after copy..."
+        access_token=$(gcloud auth print-access-token)
         attempt=1
         max_attempts=3
         sleep_seconds=5
         while true; do
           echo "🔁 Verification attempt ${attempt}/${max_attempts}..."
-          echo "🔍 DEBUG: GET https://firebase.googleapis.com/v1beta1/projects/$firebase_project_id/androidApps/$bd_app_id/sha"
           verify_response=$(curl -sS -w '\n%{http_code}' -H "Authorization: Bearer $access_token" "https://firebase.googleapis.com/v1beta1/projects/$firebase_project_id/androidApps/$bd_app_id/sha" 2>&1)
           verify_curl_exit=$?
-          echo "🔍 DEBUG: curl exit code: $verify_curl_exit"
           
           if [ $verify_curl_exit -ne 0 ]; then
-            echo "❌ curl command failed with exit code $verify_curl_exit during verification"
-            echo "❌ Full output: $verify_response"
+            echo "❌ curl failed with exit code $verify_curl_exit during verification"
             exit 1
           fi
           
           verify_http_code=$(echo "$verify_response" | tail -n1)
           verify_body=$(echo "$verify_response" | head -n -1)
           echo "$verify_body" > "$target_sha_file"
-          echo "🔍 DEBUG: HTTP response code: $verify_http_code"
-          echo "🔍 DEBUG: Response body length: ${#verify_body} characters"
           
           if [[ "$verify_http_code" != "200" ]]; then
             echo "❌ Failed to verify Bangladesh SHA certificates. HTTP $verify_http_code"
-            echo "❌ Full response body:"
-            echo "$verify_body"
             exit 1
           fi
 
@@ -305,8 +299,6 @@ steps:
                 data = json.loads(content or "{}")
             except json.JSONDecodeError as e:
                 print(f"❌ Invalid JSON in {path}. Error: {e}")
-                print(f"❌ Raw content (first 500 chars):")
-                print(path.read_text()[:500])
                 return []
             certs = data.get("certificates") or []
             cleaned = []
@@ -324,16 +316,10 @@ steps:
 
         print(f"📋 Post-copy Bangladesh certs: {len(target_certs)}")
         print(f"📋 Remaining missing certs: {len(missing)}")
-        if target_certs:
-            print(f"🔍 DEBUG: Bangladesh certificates present:")
-            for sha, cert_type in target_certs:
-                print(f"  - {sha} ({cert_type})")
         if missing:
             print("❌ Missing certificates after copy:")
             for sha, cert_type in missing:
                 print(f"- {sha} ({cert_type})")
-            print(f"🔍 DEBUG: Showing content of {target_file} for troubleshooting:")
-            print(Path(target_file).read_text()[:1000])
             raise SystemExit(1)
         print("✅ Verification succeeded. All global certs are present on Bangladesh app.")
         PY
