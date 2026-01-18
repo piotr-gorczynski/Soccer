@@ -203,7 +203,7 @@ android {
 6. **Verification**: Verifies all certificates were successfully copied with automatic retry logic
 
 **Handles Unprovisioned Apps**: The workflow gracefully handles newly created Firebase apps that are not fully provisioned yet. When a Firebase app is created, it may take a few minutes for internal services (like OAuth Brand) to initialize. The workflow:
-- Detects unprovisioned apps by checking for empty API responses (`{}`)
+- Detects unprovisioned apps by checking for empty JSON object responses (`{}` instead of the expected `{"certificates": []}`)
 - Skips SHA copy with clear warning messages explaining the situation
 - Exits successfully (build doesn't fail) and provides instructions to retry after a few minutes
 - Once the app is provisioned, re-running the workflow will successfully copy certificates
