@@ -130,6 +130,22 @@ steps:
           echo "$target_body"
           exit 1
         fi
+        
+        # Check if the response is an empty object (indicates app may not be fully provisioned)
+        # Note: Firebase API returns {"certificates": []} for empty cert list, not {}
+        # An empty object {} indicates the app is not fully initialized
+        # Trim whitespace and check if empty or just {}
+        target_body_trimmed=$(echo "$target_body" | tr -d '[:space:]')
+        if [[ "$target_body_trimmed" == "{}" ]] || [[ -z "$target_body_trimmed" ]]; then
+          echo "⚠️  Bangladesh app returned empty response. App may not be fully provisioned yet."
+          echo "⚠️  This typically happens with newly created Firebase apps that need time to initialize."
+          echo "⚠️  Skipping SHA certificate copy for Bangladesh app."
+          echo "ℹ️  To retry, run this build again after the app is fully provisioned (usually takes a few minutes)."
+          # Create flag file to indicate SHA copy was skipped
+          touch /workspace/sha_copy_skipped.flag
+          exit 0
+        fi
+        
         echo "✅ Bangladesh SHA certificates fetched successfully"
 
   # Step 3b: Compare and copy missing SHA certificates
@@ -144,6 +160,20 @@ steps:
         global_sha_file=/workspace/global_sha.json
         target_sha_file=/workspace/target_sha.json
         missing_file=/workspace/sha_missing.txt
+
+        # Check if target file is just empty object (app not provisioned)
+        # This is a redundant safety check since step 3a already validates this,
+        # but Cloud Build steps are independent so we verify again
+        target_content=$(cat "$target_sha_file" 2>/dev/null || echo "")
+        target_content_trimmed=$(echo "$target_content" | tr -d '[:space:]')
+        if [[ "$target_content_trimmed" == "{}" ]] || [[ -z "$target_content_trimmed" ]]; then
+          echo "⚠️  Bangladesh app not fully provisioned (empty response from API)."
+          echo "⚠️  Skipping SHA certificate copy. The app needs time to initialize."
+          echo "ℹ️  This is normal for newly created Firebase apps. Retry in a few minutes."
+          # Create flag file to indicate SHA copy was skipped
+          touch /workspace/sha_copy_skipped.flag
+          exit 0
+        fi
 
         python3 - <<'PY'
         import json
@@ -184,7 +214,10 @@ steps:
         target_hashes = {sha for sha, _ in target_certs}
         missing = [(sha, cert_type) for sha, cert_type in global_certs if sha not in target_hashes]
 
-        missing_file.write_text("\n".join([f"{sha}|{cert_type}" for sha, cert_type in missing]))
+        # Write missing certs to file with proper newline handling
+        # The trailing newline is crucial for the bash 'while read' loop to read the last line
+        missing_content = "\n".join([f"{sha}|{cert_type}" for sha, cert_type in missing]) + "\n"
+        missing_file.write_text(missing_content)
 
         print(f"📋 Global certs: {len(global_certs)}")
         print(f"📋 Bangladesh certs: {len(target_certs)}")
@@ -206,9 +239,18 @@ steps:
         echo "📥 Copying missing SHA certificates..."
         access_token=$(gcloud auth print-access-token)
         failures=0
+        
+        echo "🔍 DEBUG: About to process missing certificates from file: $missing_file"
+        echo "🔍 DEBUG: File exists: $([ -f "$missing_file" ] && echo 'yes' || echo 'no')"
+        echo "🔍 DEBUG: File size: $(wc -c < "$missing_file" 2>/dev/null || echo 'N/A') bytes"
+        echo "🔍 DEBUG: File line count: $(wc -l < "$missing_file" 2>/dev/null || echo 'N/A')"
+        echo "🔍 DEBUG: File content with line endings visible:"
+        cat -A "$missing_file" || true
 
         while IFS='|' read -r sha_hash cert_type; do
+          echo "🔍 DEBUG: Loop iteration - sha_hash='$sha_hash', cert_type='$cert_type'"
           if [ -z "$sha_hash" ]; then
+            echo "🔍 DEBUG: Skipping empty sha_hash"
             continue
           fi
 
@@ -240,6 +282,8 @@ steps:
             echo "✅ Added $sha_hash ($cert_type). HTTP $http_code"
           fi
         done < "$missing_file"
+        
+        echo "🔍 DEBUG: Completed processing loop"
 
         if [ "$failures" -gt 0 ]; then
           echo "❌ Failed to add $failures SHA certificate(s)."
@@ -258,6 +302,20 @@ steps:
         firebase_project_id=$(cat /workspace/SOCCER_PROJECT_ID.txt)
         bd_app_id=$(cat /workspace/bd_app_id.txt 2>/dev/null || true)
         target_sha_file=/workspace/target_sha.json
+
+        # Check if we skipped SHA copy due to unprovisioned app
+        if [ -f /workspace/sha_copy_skipped.flag ]; then
+          echo "⚠️  SHA copy was skipped due to unprovisioned app. Skipping verification."
+          exit 0
+        fi
+        
+        # Additional check: verify target file is not empty
+        target_content=$(cat "$target_sha_file" 2>/dev/null || echo "")
+        target_content_trimmed=$(echo "$target_content" | tr -d '[:space:]')
+        if [[ "$target_content_trimmed" == "{}" ]] || [[ -z "$target_content_trimmed" ]]; then
+          echo "⚠️  Bangladesh app not fully provisioned. Skipping verification."
+          exit 0
+        fi
 
         echo "🔍 Verifying SHA certificates on Bangladesh app after copy..."
         access_token=$(gcloud auth print-access-token)
