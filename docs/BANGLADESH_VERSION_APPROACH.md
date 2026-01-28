@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.14  
-**Last Updated:** 2026-01-18  
+**Document Version:** 2.15  
+**Last Updated:** 2026-01-19  
 **Status:** Planning - Legal Validation Completed
 
 **Revision History**:
+- v2.15 (2026-01-19): Added source documents that confirm Remitly can deliver to bKash and Nagad mobile wallets.
 - v2.14 (2026-01-18): **SHA COPY APPROACH VALIDATED** - Documented the successful automated SHA certificate copy approach using `gcp/cloud-build/sha_copy.yaml`. The workflow has been validated (issue #1159) and successfully handles app discovery, certificate comparison, copying, verification, and graceful handling of unprovisioned Firebase apps. Updated documentation to describe the complete working solution with detailed workflow steps, prerequisites, and usage instructions.
 - v2.13 (2025-12-31): **SHA COPY YAML MIGRATION** - Moved SHA certificate copy automation into a dedicated Cloud Build config (`gcp/cloud-build/sha_copy.yaml`) and removed the standalone shell script step from the main deploy flow.
 - v2.12 (2025-12-31): **FIREBASE APP ID LOOKUP HARDENING** - Updated the SHA copy step documentation to reflect more resilient app ID parsing across `apps`, `androidApps`, or `result` response shapes, plus a safer fallback split that avoids dropping fields in grep-only environments.
@@ -331,6 +332,12 @@ This simplified prize structure:
 **Recommended Service for Mobile Wallets: Remitly**
 
 **Why Remitly**: Remitly has excellent support for direct transfers to bKash and Nagad mobile wallets from Poland, making it the most reliable choice for paying tournament winners.
+
+**Source documents (proof of bKash/Nagad delivery support)**:
+- Remitly country page for Bangladesh lists mobile money delivery options that include **bKash** and **Nagad** (select destination Bangladesh and delivery method “Mobile money”).  
+  - https://www.remitly.com/us/en/bangladesh
+- Remitly Help Center article for Bangladesh transfers documents **bKash**/**Nagad** as supported mobile money providers.  
+  - https://help.remitly.com/s/article/How-do-I-send-money-to-Bangladesh?language=en_US
 
 **Setup Steps**:
 1. **Create Account**:
