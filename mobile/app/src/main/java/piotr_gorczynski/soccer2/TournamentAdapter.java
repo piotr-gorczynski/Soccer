@@ -74,6 +74,7 @@ public class TournamentAdapter
         this.joinListener = null;
         this.leaveListener = null;
         this.endedListener = endedListener;
+        this.viewResultListener = null;
         this.isEndedMode = true;
     }
 
