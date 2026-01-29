@@ -69,7 +69,12 @@ public class TournamentsActivity extends BaseActivity {
         TournamentAdapter runningAdapter = new TournamentAdapter(
                 runningDocs,
                 this::joinTournament,
-                this::leaveTournament
+                this::leaveTournament,
+                doc -> {
+                    Intent i = new Intent(this, TournamentResultsActivity.class)
+                            .putExtra("tournamentId", doc.getId());
+                    startActivity(i);
+                }
         );
         TournamentAdapter endedAdapter = new TournamentAdapter(
                 endedDocs,
