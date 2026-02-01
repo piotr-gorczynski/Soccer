@@ -23,13 +23,26 @@ jobs:
           cache: npm
           cache-dependency-path: ${{ matrix.dir }}/package-lock.json
 
-      - name: Install deps
+      - name: Show versions + files
         working-directory: ${{ matrix.dir }}
-        run: npm ci --ignore-scripts
+        run: |
+          node -v
+          npm -v
+          pwd
+          ls -la
+          test -f package.json && cat package.json | head -n 80
+          test -f package-lock.json && cat package-lock.json | head -n 60
+
+      - name: Install deps (clean)
+        working-directory: ${{ matrix.dir }}
+        run: |
+          rm -rf node_modules
+          npm ci --ignore-scripts
 
       - name: Debug installed versions
         working-directory: ${{ matrix.dir }}
-        run: npm ls fast-xml-parser lodash || true
+        run: |
+          npm ls fast-xml-parser lodash || true
 
       - name: npm audit (fail on high+)
         working-directory: ${{ matrix.dir }}
