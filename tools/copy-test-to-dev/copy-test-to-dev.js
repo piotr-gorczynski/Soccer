@@ -1,7 +1,33 @@
 // tools/copy-test-to-dev/copy-test-to-dev.js
 const fs = require('fs');
 const path = require('path');
-const admin = require('firebase-admin');
+const { createRequire } = require('module');
+
+const LOCAL_NODE_MODULES = path.join(__dirname, 'node_modules');
+const ROOT_NODE_MODULES = path.join(__dirname, '..', '..', 'node_modules');
+const LOCAL_FIREBASE_ADMIN = path.join(LOCAL_NODE_MODULES, 'firebase-admin');
+const ROOT_FIREBASE_ADMIN = path.join(ROOT_NODE_MODULES, 'firebase-admin');
+
+const moduleBaseDir = fs.existsSync(LOCAL_FIREBASE_ADMIN)
+  ? __dirname
+  : path.join(__dirname, '..', '..');
+const moduleNodeModules = fs.existsSync(LOCAL_FIREBASE_ADMIN)
+  ? LOCAL_NODE_MODULES
+  : ROOT_NODE_MODULES;
+
+if (!fs.existsSync(LOCAL_FIREBASE_ADMIN) && !fs.existsSync(ROOT_FIREBASE_ADMIN)) {
+  console.error('❌ Missing firebase-admin dependency.');
+  console.error('   Run `npm install` in tools/copy-test-to-dev or in the repo root.');
+  process.exit(1);
+}
+
+if (!fs.existsSync(path.join(moduleNodeModules, '@google-cloud', 'firestore'))) {
+  console.error('❌ Missing @google-cloud/firestore dependency for firebase-admin.');
+  console.error(`   Run \`npm install\` in ${moduleBaseDir} to install it.`);
+  process.exit(1);
+}
+
+const admin = createRequire(path.join(moduleBaseDir, 'package.json'))('firebase-admin');
 
 // Collections to copy from Firestore
 const FIRESTORE_COLLECTIONS = [
