@@ -1423,11 +1423,29 @@ No special workarounds needed - just configure age ratings correctly in Google P
 
 ## Tournament Structure
 
+> **📖 See [MULTI_FLAVOUR_TOURNAMENTS.md](MULTI_FLAVOUR_TOURNAMENTS.md) for complete technical documentation on multi-flavour tournament support, including schema changes, filtering implementation, and migration instructions.**
+
+### Multi-Flavour Tournament Support
+
+**Implementation Status**: ✅ Implemented (2026-02-01)
+
+Tournaments now support visibility control across app flavours using the `visibleInFlavours` field:
+
+- **Global tournaments**: `visibleInFlavours: ["global", "bangladesh"]` - visible in all app variants
+- **Bangladesh-only tournaments**: `visibleInFlavours: ["bangladesh"]` - visible only in Bangladesh variant (for cash prize tournaments)
+- **Backward compatibility**: Tournaments without the field are visible in all flavours
+
+**Key Features**:
+- Client-side filtering based on package name detection
+- Migration script to update existing tournaments
+- Updated tournament creation tools
+- Full documentation in `MULTI_FLAVOUR_TOURNAMENTS.md`
+
 ### Bangladesh-Specific Tournaments
 
 **Identification**:
-- Tournament documents have `region: "BD"` field
-- Only visible to Bangladesh users (Google Play region check)
+- Tournament documents have `visibleInFlavours: ["bangladesh"]` field (new approach)
+- Only visible to users of the Bangladesh app variant (`piotr_gorczynski.soccer2.bd`)
 - Separate tournament listings in app with "Cash Prize" badge
 
 **Tournament Structure**:

@@ -1,0 +1,14 @@
+{
+  "name": "migrate-tournaments-flavours",
+  "version": "1.0.0",
+  "description": "Migrate existing tournaments to support multi-flavour visibility",
+  "main": "migrate-tournaments-flavours.js",
+  "scripts": {
+    "migrate:dev": "node migrate-tournaments-flavours.js dev",
+    "migrate:test": "node migrate-tournaments-flavours.js test",
+    "migrate:prod": "node migrate-tournaments-flavours.js prod"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.0.0"
+  }
+}
