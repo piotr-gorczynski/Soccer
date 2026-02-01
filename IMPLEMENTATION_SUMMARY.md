@@ -10,9 +10,13 @@ This implementation adds support for multi-flavour tournament visibility in the 
 
 #### Tournament Schema Extension
 - **Added field**: `visibleInFlavours` (Array of strings)
-- **Possible values**: `["global"]`, `["bangladesh"]`, or `["global", "bangladesh"]`
-- **Default**: `["global", "bangladesh"]` (visible in all flavours)
+- **Possible values**: 
+  - `["global"]` - Visible in all app flavours (recommended)
+  - `["bangladesh"]` - Visible only in Bangladesh variant
+  - `["global", "bangladesh"]` - Also visible in all flavours (same as `["global"]`)
+- **Default**: `["global"]` (visible in all flavours)
 - **Backward compatible**: Tournaments without this field are visible in all flavours
+- **Semantic meaning**: `"global"` means "visible globally/everywhere", not "only in global app"
 
 **Example Tournament Document**:
 ```json
@@ -31,7 +35,8 @@ This implementation adds support for multi-flavour tournament visibility in the 
 **Location**: `tools/migrate-tournaments-flavours/`
 
 **Features**:
-- Adds `visibleInFlavours: ["global", "bangladesh"]` to all existing tournaments
+- Adds `visibleInFlavours: ["global"]` to all existing tournaments
+- `"global"` means visible in all app flavours
 - Idempotent (can be run multiple times safely)
 - Detailed logging and error handling
 - Non-destructive (only adds new field)
@@ -49,7 +54,7 @@ node migrate-tournaments-flavours.js prod
 
 **Changes**:
 - Accepts `visibleInFlavours` parameter in JSON configuration
-- Defaults to `["global", "bangladesh"]` if not specified
+- Defaults to `["global"]` if not specified (visible in all flavours)
 - Logs the flavour visibility when creating tournaments
 
 **Usage with custom visibility**:
@@ -103,8 +108,13 @@ final String currentFlavour = AppFlavourDetector.getCurrentFlavour(this);
 
 for (DocumentSnapshot doc : snap.getDocuments()) {
     List<String> visibleInFlavours = (List<String>) doc.get("visibleInFlavours");
-    if (visibleInFlavours != null && !visibleInFlavours.contains(currentFlavour)) {
-        continue; // Skip tournament
+    if (visibleInFlavours != null) {
+        // "global" means visible in all flavours
+        if (visibleInFlavours.contains("global")) {
+            // Tournament is global - visible everywhere
+        } else if (!visibleInFlavours.contains(currentFlavour)) {
+            continue; // Skip tournament
+        }
     }
     // Process visible tournaments...
 }
@@ -175,10 +185,12 @@ The implementation uses **client-side filtering** rather than server-side for se
 ### 1. Global Tournament (Visible Everywhere)
 ```json
 {
-  "visibleInFlavours": ["global", "bangladesh"]
+  "visibleInFlavours": ["global"]  // Simple and recommended
 }
 ```
 **When to use**: General tournaments for all users
+
+**Note**: You can also use `["global", "bangladesh"]` but `["global"]` alone is simpler and has the same effect since `"global"` means "visible globally/everywhere".
 
 ### 2. Bangladesh-Only Tournament (Cash Prizes)
 ```json
@@ -187,14 +199,6 @@ The implementation uses **client-side filtering** rather than server-side for se
 }
 ```
 **When to use**: Tournaments with cash prizes (18+ requirement, Bangladesh-specific)
-
-### 3. Global-Only Tournament
-```json
-{
-  "visibleInFlavours": ["global"]
-}
-```
-**When to use**: Tournaments that should not appear in Bangladesh variant
 
 ## Migration Path
 

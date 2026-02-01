@@ -53,8 +53,8 @@ async function main () {
     process.exit(1);
   }
 
-  // Default to visible in all flavours if not specified
-  const flavours = visibleInFlavours || ['global', 'bangladesh'];
+  // Default to "global" (visible in all flavours) if not specified
+  const flavours = visibleInFlavours || ['global'];
 
   const { Timestamp } = admin.firestore;
   const regDeadline   = Timestamp.fromDate(new Date(registrationDeadline));

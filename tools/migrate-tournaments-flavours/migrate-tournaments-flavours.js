@@ -67,12 +67,12 @@ async function main() {
         }
 
         // Update tournament with visibleInFlavours field
-        // By default, make all existing tournaments visible in all flavours
+        // By default, make all existing tournaments visible in all flavours using "global"
         await doc.ref.update({
-          visibleInFlavours: ['global', 'bangladesh']
+          visibleInFlavours: ['global']
         });
 
-        console.log(`✅ Migrated ${tournamentId} ("${tournamentName}"): added visibleInFlavours: ["global", "bangladesh"]`);
+        console.log(`✅ Migrated ${tournamentId} ("${tournamentName}"): added visibleInFlavours: ["global"]`);
         migratedCount++;
 
       } catch (error) {

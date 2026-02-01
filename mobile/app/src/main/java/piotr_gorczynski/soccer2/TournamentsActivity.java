@@ -131,9 +131,15 @@ public class TournamentsActivity extends BaseActivity {
                 // Filter tournaments based on visibleInFlavours field
                 // If the field doesn't exist, show the tournament (backward compatibility)
                 List<String> visibleInFlavours = (List<String>) doc.get("visibleInFlavours");
-                if (visibleInFlavours != null && !visibleInFlavours.contains(currentFlavour)) {
-                    // Skip this tournament - not visible in current flavour
-                    continue;
+                if (visibleInFlavours != null) {
+                    // "global" means visible in all flavours
+                    // "bangladesh" means visible only in bangladesh flavour
+                    if (visibleInFlavours.contains("global")) {
+                        // Tournament is global - visible everywhere
+                    } else if (!visibleInFlavours.contains(currentFlavour)) {
+                        // Skip this tournament - not visible in current flavour
+                        continue;
+                    }
                 }
 
                 String status = doc.getString("status");

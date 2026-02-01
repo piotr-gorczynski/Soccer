@@ -13,13 +13,15 @@ The script adds the following field to each tournament document:
 ```javascript
 {
   // ... existing fields ...
-  visibleInFlavours: ["global", "bangladesh"]  // Array of flavour names
+  visibleInFlavours: ["global"]  // "global" means visible in all flavours
 }
 ```
 
 ## Default Behavior
 
-By default, all existing tournaments are migrated to be visible in **all flavours** (`["global", "bangladesh"]`). This ensures backward compatibility and prevents any tournaments from disappearing after migration.
+By default, all existing tournaments are migrated to be visible in **all flavours** using `["global"]`. This ensures backward compatibility and prevents any tournaments from disappearing after migration.
+
+**Note**: `"global"` in the visibleInFlavours array means "visible globally/everywhere", not "only in the global app variant".
 
 ## Usage
 
@@ -62,10 +64,10 @@ npm run migrate:prod
 
 After migration, you can manually configure specific tournaments:
 
-### Global-only tournament (visible in all flavours except Bangladesh with prizes):
+### Global tournament (visible in all flavours):
 ```javascript
 {
-  visibleInFlavours: ["global"]
+  visibleInFlavours: ["global"]  // Recommended - simple and clear
 }
 ```
 
@@ -76,11 +78,7 @@ After migration, you can manually configure specific tournaments:
 }
 ```
 
-### Visible in all flavours:
-```javascript
-{
-  visibleInFlavours: ["global", "bangladesh"]
-}
+**Note**: `["global", "bangladesh"]` also means visible everywhere, but `["global"]` alone is simpler and has the same effect.
 ```
 
 ## Example Output
@@ -90,13 +88,13 @@ After migration, you can manually configure specific tournaments:
 
 Found 7 tournament(s) to migrate.
 
-✅ Migrated 2VPmEJA6pgoVZGEU9qoK ("🏁 New Year Kickstart League"): added visibleInFlavours: ["global", "bangladesh"]
-✅ Migrated AYnQgeaeb365kG1v4uLg ("🔥 January Momentum Cup"): added visibleInFlavours: ["global", "bangladesh"]
-✅ Migrated AvJpQXVHDDT4PBvHyjPb ("🌨️ Winter Final Sprint"): added visibleInFlavours: ["global", "bangladesh"]
-✅ Migrated HMwZEjzzpn9oZlreYwnn ("🏆 Opening Tournament 🏆"): added visibleInFlavours: ["global", "bangladesh"]
-✅ Migrated USzUlCRfq5w3W9m2wtWa ("🍾 New Year Countdown Clash"): added visibleInFlavours: ["global", "bangladesh"]
-✅ Migrated XaOdzq6T3vdcxh4xhEog ("❄️ February Frost Clash"): added visibleInFlavours: ["global", "bangladesh"]
-✅ Migrated v0E5lHTtYrePb4qIdFMk ("❄️ December Tournament ❄️"): added visibleInFlavours: ["global", "bangladesh"]
+✅ Migrated 2VPmEJA6pgoVZGEU9qoK ("🏁 New Year Kickstart League"): added visibleInFlavours: ["global"]
+✅ Migrated AYnQgeaeb365kG1v4uLg ("🔥 January Momentum Cup"): added visibleInFlavours: ["global"]
+✅ Migrated AvJpQXVHDDT4PBvHyjPb ("🌨️ Winter Final Sprint"): added visibleInFlavours: ["global"]
+✅ Migrated HMwZEjzzpn9oZlreYwnn ("🏆 Opening Tournament 🏆"): added visibleInFlavours: ["global"]
+✅ Migrated USzUlCRfq5w3W9m2wtWa ("🍾 New Year Countdown Clash"): added visibleInFlavours: ["global"]
+✅ Migrated XaOdzq6T3vdcxh4xhEog ("❄️ February Frost Clash"): added visibleInFlavours: ["global"]
+✅ Migrated v0E5lHTtYrePb4qIdFMk ("❄️ December Tournament ❄️"): added visibleInFlavours: ["global"]
 
 📊 Migration Summary:
    Total tournaments: 7

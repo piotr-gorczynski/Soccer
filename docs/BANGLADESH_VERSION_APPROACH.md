@@ -1431,13 +1431,15 @@ No special workarounds needed - just configure age ratings correctly in Google P
 
 Tournaments now support visibility control across app flavours using the `visibleInFlavours` field:
 
-- **Global tournaments**: `visibleInFlavours: ["global", "bangladesh"]` - visible in all app variants
+- **Global tournaments**: `visibleInFlavours: ["global"]` - visible in all app variants (recommended)
 - **Bangladesh-only tournaments**: `visibleInFlavours: ["bangladesh"]` - visible only in Bangladesh variant (for cash prize tournaments)
 - **Backward compatibility**: Tournaments without the field are visible in all flavours
 
+**Semantic Meaning**: `"global"` means "visible globally/everywhere", not "only in global app variant". This simplifies tournament configuration - you don't need to specify `["global", "bangladesh"]`, just `["global"]` is sufficient.
+
 **Key Features**:
 - Client-side filtering based on package name detection
-- Migration script to update existing tournaments
+- Migration script to update existing tournaments with `["global"]`
 - Updated tournament creation tools
 - Full documentation in `MULTI_FLAVOUR_TOURNAMENTS.md`
 

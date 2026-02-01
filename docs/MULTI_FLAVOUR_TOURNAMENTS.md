@@ -34,7 +34,7 @@ Each tournament document in the `tournaments` Firestore collection now includes 
   createdAt: Timestamp,
   
   // New field for multi-flavour support
-  visibleInFlavours: ["global", "bangladesh"]  // Array of flavour names
+  visibleInFlavours: ["global"]  // "global" means visible in all flavours
 }
 ```
 
@@ -42,8 +42,11 @@ Each tournament document in the `tournaments` Firestore collection now includes 
 
 - **Field Name**: `visibleInFlavours`
 - **Type**: `Array<string>`
-- **Values**: Array containing one or more of: `"global"`, `"bangladesh"`
-- **Default**: `["global", "bangladesh"]` (visible in all flavours)
+- **Values**: 
+  - `["global"]` - Visible in all app flavours (recommended for most tournaments)
+  - `["bangladesh"]` - Visible only in Bangladesh variant
+  - `["global", "bangladesh"]` - Also visible in all flavours (same as `["global"]`)
+- **Default**: `["global"]` (visible in all flavours)
 - **Required**: No (for backward compatibility)
 
 ### Frontend Implementation
@@ -73,8 +76,15 @@ final String currentFlavour = AppFlavourDetector.getCurrentFlavour(this);
 for (DocumentSnapshot doc : snap.getDocuments()) {
     // Check if tournament is visible in current flavour
     List<String> visibleInFlavours = (List<String>) doc.get("visibleInFlavours");
-    if (visibleInFlavours != null && !visibleInFlavours.contains(currentFlavour)) {
-        continue; // Skip this tournament
+    if (visibleInFlavours != null) {
+        // "global" means visible in all flavours
+        // "bangladesh" means visible only in bangladesh flavour
+        if (visibleInFlavours.contains("global")) {
+            // Tournament is global - visible everywhere
+        } else if (!visibleInFlavours.contains(currentFlavour)) {
+            // Skip this tournament - not visible in current flavour
+            continue;
+        }
     }
     
     // Process visible tournaments...
@@ -82,6 +92,10 @@ for (DocumentSnapshot doc : snap.getDocuments()) {
 ```
 
 **Backward Compatibility**: If `visibleInFlavours` field is missing, the tournament is shown (assumes visible in all flavours).
+
+**Semantic Meaning**:
+- `"global"` in the array means "visible globally/everywhere"
+- `"bangladesh"` means "specific to Bangladesh variant only"
 
 ### Migration Process
 
@@ -134,7 +148,7 @@ Example `tournament.json`:
 node create-tournament.js prod "Tournament Name" 10 "2026-03-01" "2026-03-15" "regulationId"
 ```
 
-**Note**: Command-line creation defaults to `["global", "bangladesh"]`. Use JSON file for custom visibility.
+**Note**: Command-line creation defaults to `["global"]`. Use JSON file for custom visibility.
 
 #### Manually in Firestore Console
 
@@ -145,17 +159,19 @@ When creating tournaments manually:
 3. Create new document with all required fields
 4. Add `visibleInFlavours` field:
    - Type: `array`
-   - Values: `"global"` and/or `"bangladesh"`
+   - Values: `"global"` (for all flavours) or `"bangladesh"` (Bangladesh only)
 
 ### Tournament Visibility Configurations
 
 #### Global Tournament (Visible Everywhere)
 ```javascript
 {
-  visibleInFlavours: ["global", "bangladesh"]
+  visibleInFlavours: ["global"]  // Simplest - just use "global"
 }
 ```
-**Use Case**: General tournaments accessible to all users regardless of app variant.
+**Use Case**: General tournaments accessible to all users regardless of app variant. This is the recommended default.
+
+**Note**: You can also use `["global", "bangladesh"]` but `["global"]` alone has the same effect and is simpler.
 
 #### Bangladesh-Only Tournament (With Cash Prizes)
 ```javascript
@@ -164,14 +180,6 @@ When creating tournaments manually:
 }
 ```
 **Use Case**: Tournaments with cash prizes, only visible in the Bangladesh variant which has 18+ age rating and prize support.
-
-#### Global-Only Tournament (Hidden in Bangladesh)
-```javascript
-{
-  visibleInFlavours: ["global"]
-}
-```
-**Use Case**: Tournaments that should not appear in the Bangladesh variant (e.g., region-specific promotions).
 
 ### Security Considerations
 
