@@ -2937,7 +2937,7 @@ cd mobile
   - [ ] If Wise supports mobile wallets from Poland, test that as well
 - [ ] ~~Set up personal bKash, Nagad, and/or Rocket accounts for manual prize distribution~~ ❌ NOT POSSIBLE from Poland
 - [x] Define detailed prize structure (see [PRIZE_STRATEGY.md](PRIZE_STRATEGY.md))
-- [ ] Create product flavor for Bangladesh variant
+- [x] Create product flavor for Bangladesh variant
 - [ ] **Migration Planning**:
   - [ ] Define user migration strategy and communication plan
   - [ ] Prepare promotional materials (banners, notifications, Play Store assets)
@@ -2972,7 +2972,7 @@ cd mobile
   - [ ] Verify Firestore security rules allow cross-app user data access (no package restrictions)
 
 ### Phase 3: Mobile App Development (Week 5-7)
-- [ ] Create Bangladesh product flavor
+- [x] Create Bangladesh product flavor
   - Package name: `piotr_gorczynski.soccer2.bd`
   - App name: "Gridline Soccer Bangladesh"
   - Icon badge: "BD" variant
