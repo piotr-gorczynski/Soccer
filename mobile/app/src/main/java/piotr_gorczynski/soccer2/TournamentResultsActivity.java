@@ -129,6 +129,9 @@ public class TournamentResultsActivity extends BaseActivity {
             
             groupSize++;
             
+            // Assign rank to all players
+            e.rank = currentPosition;
+            
             // Assign medal only for positions 1, 2, 3 AND if the player has won at least one game
             if (currentPosition <= 3 && e.wins > 0) {
                 e.medalCategory = currentPosition;
@@ -152,6 +155,7 @@ public class TournamentResultsActivity extends BaseActivity {
         String nickname;
         int wins = 0;
         int medalCategory = 0; // 0=none,1=gold,2=silver,3=bronze
+        int rank = 0; // actual rank position (1, 2, 3, etc.)
 
         StandingEntry(String uid) {
             this.uid = uid;
@@ -199,7 +203,7 @@ public class TournamentResultsActivity extends BaseActivity {
             if (medal != null) {
                 holder.rank.setText(medal);
             } else {
-                holder.rank.setText(String.valueOf(position + 1));
+                holder.rank.setText(String.valueOf(entry.rank));
             }
             holder.player.setText(entry.nickname != null ? entry.nickname : entry.uid);
             Context context = holder.itemView.getContext();
