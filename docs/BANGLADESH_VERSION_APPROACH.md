@@ -2936,7 +2936,7 @@ cd mobile
   - [ ] Document the exact process for future reference
   - [ ] If Wise supports mobile wallets from Poland, test that as well
 - [ ] ~~Set up personal bKash, Nagad, and/or Rocket accounts for manual prize distribution~~ ❌ NOT POSSIBLE from Poland
-- [ ] Define detailed prize structure
+- [x] Define detailed prize structure (see [PRIZE_STRATEGY.md](PRIZE_STRATEGY.md))
 - [ ] Create product flavor for Bangladesh variant
 - [ ] **Migration Planning**:
   - [ ] Define user migration strategy and communication plan
