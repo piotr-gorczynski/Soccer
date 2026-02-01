@@ -114,13 +114,28 @@ public class TournamentResultsActivity extends BaseActivity {
     }
 
     private void assignMedals(List<StandingEntry> list) {
-        int category = 1; // 1 gold, 2 silver, 3 bronze
+        if (list.isEmpty()) return;
+        
+        int currentPosition = 1; // current rank position (1st, 2nd, 3rd, etc.)
         int prevWins = -1;
+        int groupSize = 0;
+        
         for (StandingEntry e : list) {
+            // If wins changed, move to next position (accounting for group size)
             if (prevWins != -1 && e.wins != prevWins) {
-                category += 1;
+                currentPosition += groupSize;
+                groupSize = 0;
             }
-            e.medalCategory = category <= 3 ? category : 0;
+            
+            groupSize++;
+            
+            // Assign medal only for positions 1, 2, 3
+            if (currentPosition <= 3) {
+                e.medalCategory = currentPosition;
+            } else {
+                e.medalCategory = 0;
+            }
+            
             prevWins = e.wins;
         }
     }
