@@ -16,16 +16,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Use Node 18 (matches Firebase runtime)
+      - name: Use Node 20
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           cache: npm
           cache-dependency-path: ${{ matrix.dir }}/package-lock.json
 
       - name: Install deps
         working-directory: ${{ matrix.dir }}
         run: npm ci --ignore-scripts
+
+      - name: Debug installed versions
+        working-directory: ${{ matrix.dir }}
+        run: npm ls fast-xml-parser lodash || true
 
       - name: npm audit (fail on high+)
         working-directory: ${{ matrix.dir }}
