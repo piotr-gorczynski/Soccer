@@ -24,15 +24,17 @@ public class RankingMedalAssignmentTest {
     }
 
     /**
-     * Helper method to invoke assignMedals using reflection
+     * Helper method to invoke assignMedals
+     * Uses a test implementation since we can't easily instantiate the Activity
      */
     private void invokeAssignMedals(List<?> ranking) throws Exception {
-        // Use test implementation instead of trying to invoke on null activity
         assignMedalsTestImpl(ranking);
     }
 
     /**
-     * Test implementation of assignMedals based on the requirement
+     * Test implementation of assignMedals based on the RankingActivity requirement
+     * Note: RankingActivity uses a simpler algorithm than TournamentResultsActivity.
+     * It increments category for each new win value, without accounting for group sizes.
      */
     private void assignMedalsTestImpl(List<?> list) throws Exception {
         int category = 1; // 1 gold, 2 silver, 3 bronze
@@ -117,7 +119,9 @@ public class RankingMedalAssignmentTest {
         // Both tied players should get gold (category 1)
         assertEquals("Player 1 should have gold medal", 1, getMedalCategory(ranking.get(0)));
         assertEquals("Player 2 should have gold medal", 1, getMedalCategory(ranking.get(1)));
-        // Third player should get silver (category 2, as the simple algorithm just increments category)
+        // Third player gets silver (category 2) because RankingActivity's simpler algorithm
+        // increments category for each new win value, unlike TournamentResultsActivity which
+        // accounts for group sizes and would assign bronze
         assertEquals("Player 3 should have silver medal", 2, getMedalCategory(ranking.get(2)));
     }
 
