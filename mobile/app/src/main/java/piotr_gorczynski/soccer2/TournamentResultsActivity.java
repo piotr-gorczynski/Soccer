@@ -129,8 +129,8 @@ public class TournamentResultsActivity extends BaseActivity {
             
             groupSize++;
             
-            // Assign medal only for positions 1, 2, 3
-            if (currentPosition <= 3) {
+            // Assign medal only for positions 1, 2, 3 AND if the player has won at least one game
+            if (currentPosition <= 3 && e.wins > 0) {
                 e.medalCategory = currentPosition;
             } else {
                 e.medalCategory = 0;
