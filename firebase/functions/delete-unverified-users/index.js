@@ -8,6 +8,7 @@ exports.deleteUnverifiedUsers = functions.pubsub
   .onRun(async (context) => {
     const auth = admin.auth();
     const db = admin.firestore();
+    const rtdb = admin.database();
     let nextPageToken = undefined;
 
     const now = Date.now();
@@ -45,6 +46,15 @@ exports.deleteUnverifiedUsers = functions.pubsub
             // Also delete from Firestore
             await db.collection("users").doc(user.uid).delete();
             console.log(`🧹 Deleted user document from Firestore: users/${user.uid}`);
+
+            // Delete from realtime database status
+            try {
+              await rtdb.ref('status').child(user.uid).remove();
+              console.log(`🧹 Deleted user status from RTDB: status/${user.uid}`);
+            } catch (rtdbErr) {
+              console.error(`⚠️ Failed to delete RTDB status for ${user.uid}: ${rtdbErr.message}`);
+              // Don't throw - main deletion is complete
+            }
 
             deletedCount++;
           } catch (err) {
