@@ -115,6 +115,9 @@ public class TournamentsActivity extends BaseActivity {
         // ── Firestore ────────────────────────────────────────────────
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+        // Get current app flavour to filter tournaments
+        final String currentFlavour = AppFlavourDetector.getCurrentFlavour(this);
+
         db.collection("tournaments")
                 .addSnapshotListener((snap, e) -> {
             if (e != null || snap == null) return;
@@ -125,6 +128,20 @@ public class TournamentsActivity extends BaseActivity {
             endedDocs.clear();
 
             for (DocumentSnapshot doc : snap.getDocuments()) {
+                // Filter tournaments based on visibleInFlavours field
+                // If the field doesn't exist, show the tournament (backward compatibility)
+                List<String> visibleInFlavours = (List<String>) doc.get("visibleInFlavours");
+                if (visibleInFlavours != null) {
+                    // "global" means visible in all flavours
+                    // "bangladesh" means visible only in bangladesh flavour
+                    if (visibleInFlavours.contains("global")) {
+                        // Tournament is global - visible everywhere
+                    } else if (!visibleInFlavours.contains(currentFlavour)) {
+                        // Skip this tournament - not visible in current flavour
+                        continue;
+                    }
+                }
+
                 String status = doc.getString("status");
                 if (status != null) status = status.trim().toLowerCase();
 
