@@ -105,7 +105,7 @@ public class RankingActivity extends BaseActivity {
             if (prevWins != -1 && e.wins != prevWins) {
                 category += 1;
             }
-            e.medalCategory = category <= 3 ? category : 0;
+            e.medalCategory = (category <= 3 && e.wins > 0) ? category : 0;
             prevWins = e.wins;
         }
     }

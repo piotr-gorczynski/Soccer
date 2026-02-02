@@ -1,10 +1,16 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.9  
-**Last Updated:** 2025-12-29  
+**Document Version:** 2.15  
+**Last Updated:** 2026-01-19  
 **Status:** Planning - Legal Validation Completed
 
 **Revision History**:
+- v2.15 (2026-01-19): Added source documents that confirm Remitly can deliver to bKash and Nagad mobile wallets.
+- v2.14 (2026-01-18): **SHA COPY APPROACH VALIDATED** - Documented the successful automated SHA certificate copy approach using `gcp/cloud-build/sha_copy.yaml`. The workflow has been validated (issue #1159) and successfully handles app discovery, certificate comparison, copying, verification, and graceful handling of unprovisioned Firebase apps. Updated documentation to describe the complete working solution with detailed workflow steps, prerequisites, and usage instructions.
+- v2.13 (2025-12-31): **SHA COPY YAML MIGRATION** - Moved SHA certificate copy automation into a dedicated Cloud Build config (`gcp/cloud-build/sha_copy.yaml`) and removed the standalone shell script step from the main deploy flow.
+- v2.12 (2025-12-31): **FIREBASE APP ID LOOKUP HARDENING** - Updated the SHA copy step documentation to reflect more resilient app ID parsing across `apps`, `androidApps`, or `result` response shapes, plus a safer fallback split that avoids dropping fields in grep-only environments.
+- v2.11 (2025-12-31): **FIREBASE APP ID LOOKUP FIX** - Clarified that the SHA copy step now detects Firebase app IDs from API responses that return either `apps` or `result`, preventing false "app ID not found" warnings in Cloud Build.
+- v2.10 (2025-12-30): **FIREBASE SHA COPY RELIABILITY** - Documented the SHA certificate copy step for Firebase Android app variants and noted the resilient JSON parsing to ensure the global app ID is discovered before copying SHA certificates to the Bangladesh variant.
 - v2.9 (2025-12-29): **LEGAL VALIDATION COMPLETED** - Game assumptions validated with ChatGPT legal consultation. Updated document to reflect that skill-based game structure, free entry, developer-funded prizes, and 18+ age restriction align with typical legal frameworks for promotional contests. Removed "pending legal validation" status.
 - v2.8 (2025-12-29): **DOCUMENTATION CONSOLIDATION** - Merged BANGLADESH_PAYMENT_METHODS_VERIFICATION.md into this document. Added detailed payment service verification section with technical details on why bKash/Nagad/Rocket cannot be used from Poland. Added payment service FAQs. All analysis now in single document.
 - v2.7 (2025-12-29): **PAYMENT METHOD UPDATE** - Clarified that Wise may have limited mobile wallet support from Poland. Updated recommendations to prioritize Remitly for direct mobile wallet transfers (bKash, Nagad), with Wise as alternative for bank transfers. Updated all payment-related sections, setup guides, and cost estimates to reflect accurate service capabilities.
@@ -185,6 +191,36 @@ android {
 - Prevents duplicate app creation by checking existing apps first
 - Logs all operations for debugging and audit purposes
 
+**SHA Certificate Copy for Variants (AUTOMATED APPROACH - WORKING)**: After app creation, SHA certificates (SHA-1 and SHA-256 fingerprints) need to be copied from the global app to the Bangladesh variant for features like Google Sign-In, Facebook Login, and Firebase Authentication to work properly.
+
+**Successful Approach**: The automated SHA certificate copy is implemented in the dedicated Cloud Build config `gcp/cloud-build/sha_copy.yaml`. This approach has been validated and is working successfully (issue #1159).
+
+**How It Works**:
+1. **App Discovery**: Uses Firebase CLI to fetch all Android apps registered in the Firebase project
+2. **ID Resolution**: Identifies both the global app (`piotr_gorczynski.soccer2`) and Bangladesh app (`piotr_gorczynski.soccer2.bd`) and extracts their app IDs
+3. **Certificate Retrieval**: Fetches all SHA certificates from the global app using the Firebase Management API (`GET /v1beta1/projects/{projectId}/androidApps/{appId}/sha`)
+4. **Comparison**: Compares certificates between global and Bangladesh apps to identify missing certificates
+5. **Certificate Copy**: Copies only the missing SHA certificates to the Bangladesh app using Firebase Management API (`POST /v1beta1/projects/{projectId}/androidApps/{appId}/sha`)
+6. **Verification**: Verifies all certificates were successfully copied with automatic retry logic
+
+**Handles Unprovisioned Apps**: The workflow gracefully handles newly created Firebase apps that are not fully provisioned yet. When a Firebase app is created, it may take a few minutes for internal services (like OAuth Brand) to initialize. The workflow:
+- Detects unprovisioned apps by checking for empty JSON object responses (`{}` instead of the expected `{"certificates": []}`)
+- Skips SHA copy with clear warning messages explaining the situation
+- Exits successfully (build doesn't fail) and provides instructions to retry after a few minutes
+- Once the app is provisioned, re-running the workflow will successfully copy certificates
+
+**Running the Workflow**:
+```bash
+gcloud builds submit --config gcp/cloud-build/sha_copy.yaml \
+  --substitutions=_ENVIRONMENT=dev,_FOLDER_NAME=soccer
+```
+
+**Prerequisites**:
+- Global Firebase app must exist with SHA certificates already configured
+- Cloud Build service account needs Firebase Admin permissions
+
+**Documentation**: See `docs/README-firebase-sha-certificates.md` for complete details and troubleshooting guide.
+
 **Automated Configuration Download**: After Firebase apps are created, the configuration file is automatically downloaded using the Cloud Build script `gcp/cloud-build/download_google_services.yaml`. This script:
 - Downloads a single `google-services.json` file that contains configurations for all registered Android apps in the project
 - Uses the naming convention: `google-services.{env}.json` (e.g., `google-services.dev.json`, `google-services.prod.json`)
@@ -296,6 +332,12 @@ This simplified prize structure:
 **Recommended Service for Mobile Wallets: Remitly**
 
 **Why Remitly**: Remitly has excellent support for direct transfers to bKash and Nagad mobile wallets from Poland, making it the most reliable choice for paying tournament winners.
+
+**Source documents (proof of bKash/Nagad delivery support)**:
+- Remitly country page for Bangladesh lists mobile money delivery options that include **bKash** and **Nagad** (select destination Bangladesh and delivery method “Mobile money”).  
+  - https://www.remitly.com/us/en/bangladesh
+- Remitly Help Center article for Bangladesh transfers documents **bKash**/**Nagad** as supported mobile money providers.  
+  - https://help.remitly.com/s/article/How-do-I-send-money-to-Bangladesh?language=en_US
 
 **Setup Steps**:
 1. **Create Account**:
@@ -1381,11 +1423,31 @@ No special workarounds needed - just configure age ratings correctly in Google P
 
 ## Tournament Structure
 
+> **📖 See [MULTI_FLAVOUR_TOURNAMENTS.md](MULTI_FLAVOUR_TOURNAMENTS.md) for complete technical documentation on multi-flavour tournament support, including schema changes, filtering implementation, and migration instructions.**
+
+### Multi-Flavour Tournament Support
+
+**Implementation Status**: ✅ Implemented (2026-02-01)
+
+Tournaments now support visibility control across app flavours using the `visibleInFlavours` field:
+
+- **Global tournaments**: `visibleInFlavours: ["global"]` - visible in all app variants (recommended)
+- **Bangladesh-only tournaments**: `visibleInFlavours: ["bangladesh"]` - visible only in Bangladesh variant (for cash prize tournaments)
+- **Backward compatibility**: Tournaments without the field are visible in all flavours
+
+**Semantic Meaning**: `"global"` means "visible globally/everywhere", not "only in global app variant". This simplifies tournament configuration - you don't need to specify `["global", "bangladesh"]`, just `["global"]` is sufficient.
+
+**Key Features**:
+- Client-side filtering based on package name detection
+- Migration script to update existing tournaments with `["global"]`
+- Updated tournament creation tools
+- Full documentation in `MULTI_FLAVOUR_TOURNAMENTS.md`
+
 ### Bangladesh-Specific Tournaments
 
 **Identification**:
-- Tournament documents have `region: "BD"` field
-- Only visible to Bangladesh users (Google Play region check)
+- Tournament documents have `visibleInFlavours: ["bangladesh"]` field (new approach)
+- Only visible to users of the Bangladesh app variant (`piotr_gorczynski.soccer2.bd`)
 - Separate tournament listings in app with "Cash Prize" badge
 
 **Tournament Structure**:
@@ -2512,14 +2574,33 @@ implementation 'com.facebook.android:facebook-android-sdk:18.1.3'
   - Add to Facebook App Dashboard → Settings → Basic → Key Hashes
   - Add hashes for both `piotr_gorczynski.soccer2` and `piotr_gorczynski.soccer2.bd`
 
-- [ ] **Update AndroidManifest (if needed)**
+- [ ] **Update AndroidManifest for Bangladesh Flavor (COMPLETED)**
+  
+  **File**: `mobile/app/src/bangladesh/AndroidManifest.xml`
+  
+  ✅ **Already implemented** - The Bangladesh-specific manifest has been created to prevent Facebook Content Provider conflicts:
+  
   ```xml
-  <!-- If package-specific authorities needed -->
-  <provider
-      android:name="com.facebook.FacebookContentProvider"
-      android:authorities="com.facebook.app.FacebookContentProvider1232966491486195"
-      android:exported="true" />
+  <?xml version="1.0" encoding="utf-8"?>
+  <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:tools="http://schemas.android.com/tools">
+
+      <application>
+          <!-- Override Facebook Content Provider authority for Bangladesh variant -->
+          <!-- This prevents conflict when both global and Bangladesh apps are installed -->
+          <provider
+              android:name="com.facebook.FacebookContentProvider"
+              android:authorities="com.facebook.app.FacebookContentProvider1232966491486195.bd"
+              android:exported="true"
+              tools:replace="android:authorities" />
+      </application>
+
+  </manifest>
   ```
+  
+  **Why this is needed**: When both the global app (`piotr_gorczynski.soccer2`) and Bangladesh app (`piotr_gorczynski.soccer2.bd`) are installed on the same device, they cannot share the same Facebook Content Provider authority. The Bangladesh variant uses a unique authority with `.bd` suffix to prevent the `INSTALL_FAILED_CONFLICTING_PROVIDER` error.
+  
+  **No action required** - This fix has already been implemented and is ready to use.
 
 - [ ] **Test Facebook Login**
   ```bash
@@ -2875,8 +2956,8 @@ cd mobile
   - [ ] Document the exact process for future reference
   - [ ] If Wise supports mobile wallets from Poland, test that as well
 - [ ] ~~Set up personal bKash, Nagad, and/or Rocket accounts for manual prize distribution~~ ❌ NOT POSSIBLE from Poland
-- [ ] Define detailed prize structure
-- [ ] Create product flavor for Bangladesh variant
+- [x] Define detailed prize structure (see [PRIZE_STRATEGY.md](PRIZE_STRATEGY.md))
+- [x] Create product flavor for Bangladesh variant
 - [ ] **Migration Planning**:
   - [ ] Define user migration strategy and communication plan
   - [ ] Prepare promotional materials (banners, notifications, Play Store assets)
@@ -2911,7 +2992,7 @@ cd mobile
   - [ ] Verify Firestore security rules allow cross-app user data access (no package restrictions)
 
 ### Phase 3: Mobile App Development (Week 5-7)
-- [ ] Create Bangladesh product flavor
+- [x] Create Bangladesh product flavor
   - Package name: `piotr_gorczynski.soccer2.bd`
   - App name: "Gridline Soccer Bangladesh"
   - Icon badge: "BD" variant
@@ -3560,6 +3641,36 @@ The build system uses the same file for both global and Bangladesh variants. Fir
 #### Documentation
 - `mobile/app/PRODUCT_FLAVOR_README.md` - Complete setup and usage guide
 
+#### Facebook Content Provider Configuration
+To prevent conflicts when both global and Bangladesh apps are installed on the same device, a Bangladesh-specific AndroidManifest.xml has been created:
+
+**File**: `mobile/app/src/bangladesh/AndroidManifest.xml`
+
+This manifest overrides the Facebook Content Provider authority to use a unique value for the Bangladesh variant:
+- **Global app**: `com.facebook.app.FacebookContentProvider1232966491486195`
+- **Bangladesh app**: `com.facebook.app.FacebookContentProvider1232966491486195.bd`
+
+This allows both apps to coexist on the same device without Android provider conflicts.
+
+#### Troubleshooting
+
+**Error**: `INSTALL_FAILED_CONFLICTING_PROVIDER`
+```
+Can't install because provider name com.facebook.app.FacebookContentProvider1232966491486195 
+(in package piotr_gorczynski.soccer2.bd) is already used by piotr_gorczynski.soccer2
+```
+
+**Solution**: This error occurs when both the global and Bangladesh apps use the same Facebook Content Provider authority. The fix has been implemented in `mobile/app/src/bangladesh/AndroidManifest.xml` which overrides the provider authority with a `.bd` suffix for the Bangladesh variant.
+
+**To verify the fix**:
+```bash
+# Build the Bangladesh debug variant
+cd mobile
+./gradlew assemble_devBangladeshDebug
+
+# The APK should now install without conflicts
+```
+
 #### Next Steps
 1. Register Bangladesh app in Firebase Console (package: `piotr_gorczynski.soccer2.bd`)
 2. Download and place google-services.json file in secrets/ directory
@@ -3568,6 +3679,6 @@ The build system uses the same file for both global and Bangladesh variants. Fir
 
 ---
 
-**Status**: ✅ Product Flavor Setup Complete  
+**Status**: ✅ Product Flavor Setup Complete (with Facebook provider conflict fix)  
 **Next Phase**: Backend Development (Phase 2)  
-**Last Updated**: 2025-12-29
+**Last Updated**: 2026-01-10

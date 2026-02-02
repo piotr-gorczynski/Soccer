@@ -1,7 +1,33 @@
 // tools/copy-test-to-dev/copy-test-to-dev.js
 const fs = require('fs');
 const path = require('path');
-const admin = require('firebase-admin');
+const { createRequire } = require('module');
+
+const LOCAL_NODE_MODULES = path.join(__dirname, 'node_modules');
+const ROOT_NODE_MODULES = path.join(__dirname, '..', '..', 'node_modules');
+const LOCAL_FIREBASE_ADMIN = path.join(LOCAL_NODE_MODULES, 'firebase-admin');
+const ROOT_FIREBASE_ADMIN = path.join(ROOT_NODE_MODULES, 'firebase-admin');
+
+const moduleBaseDir = fs.existsSync(LOCAL_FIREBASE_ADMIN)
+  ? __dirname
+  : path.join(__dirname, '..', '..');
+const moduleNodeModules = fs.existsSync(LOCAL_FIREBASE_ADMIN)
+  ? LOCAL_NODE_MODULES
+  : ROOT_NODE_MODULES;
+
+if (!fs.existsSync(LOCAL_FIREBASE_ADMIN) && !fs.existsSync(ROOT_FIREBASE_ADMIN)) {
+  console.error('❌ Missing firebase-admin dependency.');
+  console.error('   Run `npm install` in tools/copy-test-to-dev or in the repo root.');
+  process.exit(1);
+}
+
+if (!fs.existsSync(path.join(moduleNodeModules, '@google-cloud', 'firestore'))) {
+  console.error('❌ Missing @google-cloud/firestore dependency for firebase-admin.');
+  console.error(`   Run \`npm install\` in ${moduleBaseDir} to install it.`);
+  process.exit(1);
+}
+
+const admin = createRequire(path.join(moduleBaseDir, 'package.json'))('firebase-admin');
 
 // Collections to copy from Firestore
 const FIRESTORE_COLLECTIONS = [
@@ -65,9 +91,12 @@ function isRetryableFirestoreError(error) {
 
 /**
  * Recursively delete a document and all its subcollections using BulkWriter
+ * Note: This function does not check if the document exists before deletion.
+ * For phantom documents (non-existent documents with subcollections), the document
+ * deletion is a no-op, but subcollections are still deleted.
  */
 async function deleteDocumentRecursive(docRef, bulkWriter) {
-  let deletedDocs = 1;
+  let deletedDocs = 1; // Count this document (will be no-op if phantom)
   let subcollectionsCount = 0;
   const subcollections = await docRef.listCollections();
   subcollectionsCount += subcollections.length;
@@ -386,34 +415,45 @@ async function clearFirestoreCollectionRecursive(targetDb, collectionPath) {
   let deletedCount = 0;
   let failedCount = 0;
   const PARALLEL_BATCH_SIZE = 50;
+  const BATCH_SIZE = 200;
 
+  // Use listDocuments() instead of get() to include phantom documents
+  // listDocuments() returns references to all documents, including those that don't exist
+  // We loop until no more documents are found, processing in batches
+  // Note: listDocuments() returns ALL document refs, but we process only BATCH_SIZE at a time
+  // to avoid overwhelming memory/network. After committing deletions, the next iteration
+  // will get the remaining documents (deleted ones won't be returned anymore).
   while (true) {
     const collectionRef = targetDb.collection(collectionPath);
-    const query = collectionRef
-      .orderBy(admin.firestore.FieldPath.documentId())
-      .limit(200);
-
-    const snapshot = await query.get();
-
-    if (snapshot.empty) {
+    
+    // Get document references (this includes phantoms)
+    // After deletions are committed, the next call should return remaining documents
+    const documentRefs = await collectionRef.listDocuments();
+    
+    if (documentRefs.length === 0) {
       break;
     }
 
     const bulkWriter = createConfiguredBulkWriter(targetDb);
     const docPromises = [];
     const failedDocs = [];
+    
+    // Process up to BATCH_SIZE documents in this iteration
+    // After we commit deletions, next iteration will get remaining documents
+    const refsToProcess = documentRefs.slice(0, BATCH_SIZE);
 
-    for (const doc of snapshot.docs) {
-      const promise = deleteDocumentRecursive(doc.ref, bulkWriter)
+    for (const docRef of refsToProcess) {
+      const promise = deleteDocumentRecursive(docRef, bulkWriter)
         .then(deleteResult => {
-          return { success: true, deleteResult, docId: doc.id };
+          return { success: true, deleteResult, docId: docRef.id };
         })
         .catch(error => {
-          return { success: false, error, docId: doc.id };
+          return { success: false, error, docId: docRef.id };
         });
 
       docPromises.push(promise);
 
+      // Process in smaller parallel batches for better performance
       if (docPromises.length >= PARALLEL_BATCH_SIZE) {
         const results = await Promise.all(docPromises);
         const counts = processBatchResults(results, deletedCount, failedCount, failedDocs, 'deleting');
@@ -428,6 +468,7 @@ async function clearFirestoreCollectionRecursive(targetDb, collectionPath) {
       }
     }
 
+    // Process any remaining promises in this batch
     if (docPromises.length > 0) {
       const results = await Promise.all(docPromises);
       const counts = processBatchResults(results, deletedCount, failedCount, failedDocs, 'deleting');
@@ -435,6 +476,8 @@ async function clearFirestoreCollectionRecursive(targetDb, collectionPath) {
       failedCount = counts.failedCount;
     }
 
+    // Commit all deletions before next iteration
+    // This ensures deleted documents won't appear in the next listDocuments() call
     console.log(`      🔄 Committing batch deletions...`);
     await bulkWriter.close();
   }

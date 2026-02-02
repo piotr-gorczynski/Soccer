@@ -47,11 +47,14 @@ async function main () {
     process.exit(1);
   }
 
-  const { name, maxParticipants, registrationDeadline, matchesDeadline, regulation } = params;
+  const { name, maxParticipants, registrationDeadline, matchesDeadline, regulation, visibleInFlavours } = params;
   if (!name || !maxParticipants || !registrationDeadline || !matchesDeadline || !regulation) {
     console.error('Missing required parameters.');
     process.exit(1);
   }
+
+  // Default to "global" (visible in all flavours) if not specified
+  const flavours = visibleInFlavours || ['global'];
 
   const { Timestamp } = admin.firestore;
   const regDeadline   = Timestamp.fromDate(new Date(registrationDeadline));
@@ -77,9 +80,11 @@ async function main () {
       format: 'RoundRobin',
       status: 'registering',
       participantsCount: 0,
-      createdAt: Timestamp.now()
+      createdAt: Timestamp.now(),
+      visibleInFlavours: flavours
     });
     console.log('Tournament created with ID:', doc.id);
+    console.log('Visible in flavours:', flavours.join(', '));
   } catch (err) {
     console.error('Failed to create tournament:', err.message);
     process.exit(1);

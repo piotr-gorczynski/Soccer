@@ -114,13 +114,31 @@ public class TournamentResultsActivity extends BaseActivity {
     }
 
     private void assignMedals(List<StandingEntry> list) {
-        int category = 1; // 1 gold, 2 silver, 3 bronze
+        if (list.isEmpty()) return;
+        
+        int currentPosition = 1; // current rank position (1st, 2nd, 3rd, etc.)
         int prevWins = -1;
+        int groupSize = 0;
+        
         for (StandingEntry e : list) {
+            // If wins changed, move to next position (accounting for group size)
             if (prevWins != -1 && e.wins != prevWins) {
-                category += 1;
+                currentPosition += groupSize;
+                groupSize = 0;
             }
-            e.medalCategory = category <= 3 ? category : 0;
+            
+            groupSize++;
+            
+            // Assign rank to all players
+            e.rank = currentPosition;
+            
+            // Assign medal only for positions 1, 2, 3 AND if the player has won at least one game
+            if (currentPosition <= 3 && e.wins > 0) {
+                e.medalCategory = currentPosition;
+            } else {
+                e.medalCategory = 0;
+            }
+            
             prevWins = e.wins;
         }
     }
@@ -137,6 +155,7 @@ public class TournamentResultsActivity extends BaseActivity {
         String nickname;
         int wins = 0;
         int medalCategory = 0; // 0=none,1=gold,2=silver,3=bronze
+        int rank = 0; // actual rank position (1, 2, 3, etc.)
 
         StandingEntry(String uid) {
             this.uid = uid;
@@ -184,7 +203,7 @@ public class TournamentResultsActivity extends BaseActivity {
             if (medal != null) {
                 holder.rank.setText(medal);
             } else {
-                holder.rank.setText(String.valueOf(position + 1));
+                holder.rank.setText(String.valueOf(entry.rank));
             }
             holder.player.setText(entry.nickname != null ? entry.nickname : entry.uid);
             Context context = holder.itemView.getContext();

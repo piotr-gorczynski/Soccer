@@ -3,7 +3,6 @@ package piotr_gorczynski.soccer2;
 import static android.widget.Toast.LENGTH_SHORT;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -51,7 +50,6 @@ public class GameActivity extends BaseActivity {
     int GameType=-1;
     GameView gameView;
     double androidLevel = 0;
-    private FrameLayout gameRootContainer;
     private View loadingOverlay;
     private TextView loadingMessageView;
 
@@ -112,7 +110,7 @@ public class GameActivity extends BaseActivity {
                 FrameLayout.LayoutParams.MATCH_PARENT
         );
 
-        gameRootContainer = new FrameLayout(this);
+        FrameLayout gameRootContainer = new FrameLayout(this);
         gameRootContainer.setLayoutParams(matchParams);
         gameRootContainer.addView(view, matchParams);
 
@@ -180,7 +178,7 @@ public class GameActivity extends BaseActivity {
         
         if (gameType == 3) {
             // Online multiplayer game - validate the change
-            if (currentPath != null && newPath != null && !currentPath.equals(newPath)) {
+            if (currentPath != null && newPath != null) {
                 // This could be problematic - different active matches
                 Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
                         + ": Warning - Different matchPath for online game: " + currentPath + " -> " + newPath);
@@ -262,6 +260,32 @@ public class GameActivity extends BaseActivity {
                 // Fallback to hardcoded values if resource access fails
                 Moves.add(new MoveTo(3, 4, 0));
             }
+
+            //Ticket #7  studying MINMAX situation whenall moves are own goal
+            Moves.add( new MoveTo(3,3,0));
+            Moves.add( new MoveTo(3,2,0));
+            Moves.add( new MoveTo(3,1,0));
+            Moves.add( new MoveTo(2,0,0));
+            Moves.add( new MoveTo(1,1,0));
+            Moves.add( new MoveTo(1,0,0));
+            Moves.add( new MoveTo(2,1,0));
+            Moves.add( new MoveTo(1,1,0));
+            Moves.add( new MoveTo(1,2,0));
+            Moves.add( new MoveTo(2,1,0));
+            Moves.add( new MoveTo(2,2,0));
+            Moves.add( new MoveTo(3,1,0));
+            Moves.add( new MoveTo(2,1,0));
+            Moves.add( new MoveTo(3,2,0));
+            Moves.add( new MoveTo(4,1,0));
+            Moves.add( new MoveTo(3,1,0));
+            Moves.add( new MoveTo(4,2,0));
+            Moves.add( new MoveTo(4,1,0));
+            Moves.add( new MoveTo(5,1,0));
+            Moves.add( new MoveTo(5,0,0));
+            Moves.add( new MoveTo(4,1,0));
+            Moves.add( new MoveTo(3,0,0));
+            Moves.add( new MoveTo(4,0,1));
+
 
             //Ticket #6 studying MINMAX situation if Android should trunc the defeat branch
             //Moves.add( new MoveTo(3,2,1));
@@ -508,10 +532,8 @@ public class GameActivity extends BaseActivity {
         if (sharedPreferences != null && sharedPreferences.contains("android_level")) {
             try {
                 String levelStr = sharedPreferences.getString("android_level", "0");
-                if (levelStr != null) {
-                    androidLevel = Double.parseDouble(levelStr);
-                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Preference android_level=" + androidLevel);
-                }
+                androidLevel = Double.parseDouble(levelStr);
+                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Preference android_level=" + androidLevel);
             } catch (NumberFormatException e) {
                 Log.w("TAG_Soccer", getClass().getSimpleName() + ".onCreate: Invalid android_level preference, using default", e);
                 androidLevel = 0;
@@ -710,9 +732,9 @@ public class GameActivity extends BaseActivity {
             }
 
             // Read timing information safely
-            Long rawT0 = null;
-            Long rawT1 = null;
-            Long turn = null;
+            Long rawT0;
+            Long rawT1;
+            Long turn;
             
             try {
                 rawT0 = snap.getLong("remainingTime0");
@@ -837,7 +859,8 @@ public class GameActivity extends BaseActivity {
                       ", Winner=" + Winner + 
                       ", localPlayerIndex=" + localPlayerIndex + 
                       ", clockStartAttempted=" + clockStartAttempted);
-                if (snap != null && snap.getReference() != null) {
+                if (snap != null) {
+                    snap.getReference();
                     Log.e("TAG_Soccer", getClass().getSimpleName() + ".onClockUpdate: Document path=" + snap.getReference().getPath());
                 }
                 
