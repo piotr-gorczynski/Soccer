@@ -37,11 +37,16 @@ public class TournamentAdapter
         void onEnded(DocumentSnapshot tournamentDoc);
     }
 
+    public interface OnViewResultClick {
+        void onViewResult(DocumentSnapshot tournamentDoc);
+    }
+
     private final List<DocumentSnapshot> data;
     private final OnJoinClick joinListener;
     private final OnLeaveClick leaveListener;
 
     private final OnEndedClick endedListener;
+    private final OnViewResultClick viewResultListener;
     private final boolean isEndedMode;
 
     public TournamentAdapter(List<DocumentSnapshot> data, OnJoinClick joinListener, OnLeaveClick leaveListener) {
@@ -49,6 +54,17 @@ public class TournamentAdapter
         this.joinListener = joinListener;
         this.leaveListener = leaveListener;
         this.endedListener = null;
+        this.viewResultListener = null;
+        this.isEndedMode = false;
+    }
+
+    // Constructor with view result listener for running tournaments
+    public TournamentAdapter(List<DocumentSnapshot> data, OnJoinClick joinListener, OnLeaveClick leaveListener, OnViewResultClick viewResultListener) {
+        this.data     = data;
+        this.joinListener = joinListener;
+        this.leaveListener = leaveListener;
+        this.endedListener = null;
+        this.viewResultListener = viewResultListener;
         this.isEndedMode = false;
     }
 
@@ -58,6 +74,7 @@ public class TournamentAdapter
         this.joinListener = null;
         this.leaveListener = null;
         this.endedListener = endedListener;
+        this.viewResultListener = null;
         this.isEndedMode = true;
     }
 
@@ -198,10 +215,12 @@ public class TournamentAdapter
             h.endsIn.setText(endsText);
             h.notRegistered.setVisibility(View.GONE);
 
-            // ② button: Open (enabled only if user joined)
+            // ② buttons: Open (for registered users) and View Results (for everyone)
             h.joinBtn.setText(R.string.open);
-            h.leaveBtn.setVisibility(View.GONE);
+            h.leaveBtn.setText(R.string.view_results);
             h.joinBtn.setEnabled(false);
+            h.leaveBtn.setEnabled(true);
+            h.leaveBtn.setVisibility(View.VISIBLE);
 
             String uid = FirebaseAuth.getInstance().getCurrentUser() != null
                     ? FirebaseAuth.getInstance().getCurrentUser().getUid()
@@ -215,6 +234,7 @@ public class TournamentAdapter
                             boolean joinedAlready = p.exists();
                             if (joinedAlready) {
                                 h.joinBtn.setEnabled(true);
+                                h.joinBtn.setVisibility(View.VISIBLE);
                                 h.notRegistered.setVisibility(View.GONE);
                             } else {
                                 h.joinBtn.setVisibility(View.GONE);
@@ -233,6 +253,12 @@ public class TournamentAdapter
                         .putExtra("tournamentId", tid)
                         .putExtra("tournamentName", name);
                 v.getContext().startActivity(i);
+            });
+
+            h.leaveBtn.setOnClickListener(v -> {
+                if (viewResultListener != null) {
+                    viewResultListener.onViewResult(doc);
+                }
             });
         }
     }

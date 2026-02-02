@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <application>
+        <!-- Override Facebook Content Provider authority for Bangladesh variant -->
+        <!-- This prevents conflict when both global and Bangladesh apps are installed -->
+        <provider
+            android:name="com.facebook.FacebookContentProvider"
+            android:authorities="com.facebook.app.FacebookContentProvider1232966491486195.bd"
+            android:exported="true"
+            tools:replace="android:authorities" />
+    </application>
+
+</manifest>
