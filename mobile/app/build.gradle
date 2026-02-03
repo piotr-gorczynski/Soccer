@@ -31,7 +31,7 @@ def detectMarketFromTasks = {
     return "global"  // Default to global if not detected
 }
 
-ext.buildEnv = project.findProperty("env") ?: detectEnvFromTasks() ?: ""
+ext.buildEnv = project.findProperty("env") ?: detectEnvFromTasks() ?: "dev"
 // buildMarket is detected for informational logging purposes
 // Note: The copyGoogleServicesJson task uses a single file for all markets
 ext.buildMarket = project.findProperty("market") ?: detectMarketFromTasks() ?: "global"
