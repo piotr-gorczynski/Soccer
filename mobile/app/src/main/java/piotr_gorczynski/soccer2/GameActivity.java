@@ -262,7 +262,7 @@ public class GameActivity extends BaseActivity {
             }
 
             //Ticket #7  studying MINMAX situation whenall moves are own goal
-            Moves.add( new MoveTo(3,3,0));
+            /*Moves.add( new MoveTo(3,3,0));
             Moves.add( new MoveTo(3,2,0));
             Moves.add( new MoveTo(3,1,0));
             Moves.add( new MoveTo(2,0,0));
@@ -284,7 +284,7 @@ public class GameActivity extends BaseActivity {
             Moves.add( new MoveTo(5,0,0));
             Moves.add( new MoveTo(4,1,0));
             Moves.add( new MoveTo(3,0,0));
-            Moves.add( new MoveTo(4,0,1));
+            Moves.add( new MoveTo(4,0,1));*/
 
 
             //Ticket #6 studying MINMAX situation if Android should trunc the defeat branch
