@@ -1,121 +1,284 @@
-# Implementation Summary: Missed Invitation Notification
+# Implementation Summary: Multi-Flavour Tournament Support
 
 ## Overview
-This PR implements a notification feature that alerts users when they receive game invitations while they were offline, as requested in the issue.
+
+This implementation adds support for multi-flavour tournament visibility in the Soccer (Gridline Soccer) mobile application. The feature allows tournaments to be selectively visible in different app variants (Global and Bangladesh).
 
 ## Changes Made
 
-### Code Changes (Minimal & Surgical)
-1. **MenuActivity.java** (+104 lines, -2 lines)
-   - Added 1 constant: `PREF_LAST_ACTIVE_TIMESTAMP`
-   - Added 3 methods:
-     - `checkForMissedInvitations()`: Main logic to query and check for missed invites
-     - `showMissedInviteDialog()`: Display the notification dialog
-     - `updateLastActiveTimestamp()`: Update the timestamp in SharedPreferences
-   - Modified `continueWithInviteRestore()`: Added 3 calls to `checkForMissedInvitations()` at appropriate exit points
+### 1. Backend Schema Changes
 
-### String Resources (20 language files)
-- Added 3 strings to each of 20 language files (60 total new strings):
-  - `missed_invite_title`: Dialog title
-  - `missed_invite_message`: Dialog message
-  - `see_invites`: Positive button text
-- Languages covered: English, Polish, German, French, Spanish, Arabic, Urdu, Hindi, Bengali, Persian, Amharic, Sinhala, Burmese, Khmer, Lao, Malagasy, Mongolian, Nepali, Somali, Swahili
+#### Tournament Schema Extension
+- **Added field**: `visibleInFlavours` (Array of strings)
+- **Possible values**: 
+  - `["global"]` - Visible in all app flavours (recommended)
+  - `["bangladesh"]` - Visible only in Bangladesh variant
+  - `["global", "bangladesh"]` - Also visible in all flavours (same as `["global"]`)
+- **Default**: `["global"]` (visible in all flavours)
+- **Backward compatible**: Tournaments without this field are visible in all flavours
+- **Semantic meaning**: `"global"` means "visible globally/everywhere", not "only in global app"
 
-### Testing & Documentation
-- **MenuActivityMissedInviteTest.java**: New test class with 5 tests
-- **MISSED_INVITE_NOTIFICATION_FEATURE.md**: Complete documentation with flow diagrams and code examples
-
-## How It Works
-
-### Trigger Sequence
-```
-User opens app → MenuActivity resumes → Check backend availability → 
-Check for active match → Check for outgoing invites → 
-Check for missed invitations [NEW] → Show dialog if found
+**Example Tournament Document**:
+```json
+{
+  "name": "💰 Bangladesh Championship",
+  "status": "registering",
+  "format": "RoundRobin",
+  "maxParticipants": 10,
+  "visibleInFlavours": ["bangladesh"],
+  // ... other fields
+}
 ```
 
-### Key Logic
-1. **Timestamp Tracking**: Each app activation stores current timestamp
-2. **Query Firestore**: Look for invitations received since last timestamp
-3. **Validation**: Only show notification for valid (not expired) invitations
-4. **User Choice**: "See Invites" opens InvitationsActivity, "Close" dismisses dialog
+### 2. Migration Script
 
-### Safeguards
-- ✅ Backend availability check (skip if offline)
-- ✅ User authentication check (skip if not logged in)
-- ✅ First-run handling (no notification on first app launch)
-- ✅ Expiration check (only notify for valid invitations)
-- ✅ Comprehensive logging for debugging
+**Location**: `tools/migrate-tournaments-flavours/`
 
-## Requirements Met
+**Features**:
+- Adds `visibleInFlavours: ["global"]` to all existing tournaments
+- `"global"` means visible in all app flavours
+- Idempotent (can be run multiple times safely)
+- Detailed logging and error handling
+- Non-destructive (only adds new field)
 
-✅ Check for invitations received while user was offline  
-✅ Show popup with notification message  
-✅ Provide two options: "See Invites" and "Close"  
-✅ "See Invites" opens pending invites activity  
-✅ "Close" dismisses the popup  
-✅ Translate strings to all supported languages  
-✅ Only check when system is not offline (backend availability)  
+**Usage**:
+```bash
+cd tools/migrate-tournaments-flavours
+npm install
+node migrate-tournaments-flavours.js prod
+```
+
+### 3. Tournament Creation Tool Update
+
+**Updated**: `tools/create-tournament/create-tournament.js`
+
+**Changes**:
+- Accepts `visibleInFlavours` parameter in JSON configuration
+- Defaults to `["global"]` if not specified (visible in all flavours)
+- Logs the flavour visibility when creating tournaments
+
+**Usage with custom visibility**:
+```bash
+node create-tournament.js prod tournament.json
+```
+
+Where `tournament.json` contains:
+```json
+{
+  "name": "Tournament Name",
+  "maxParticipants": 10,
+  "registrationDeadline": "2026-03-01T00:59:00Z",
+  "matchesDeadline": "2026-03-15T00:59:00Z",
+  "regulation": "regulationId",
+  "visibleInFlavours": ["bangladesh"]
+}
+```
+
+### 4. Mobile App Changes
+
+#### AppFlavourDetector Utility (New)
+**Location**: `mobile/app/src/main/java/piotr_gorczynski/soccer2/AppFlavourDetector.java`
+
+**Purpose**: Detects current app flavour based on package name
+
+**API**:
+```java
+String flavour = AppFlavourDetector.getCurrentFlavour(context);
+// Returns: "global" or "bangladesh"
+
+boolean isBD = AppFlavourDetector.isBangladeshFlavour(context);
+boolean isGlobal = AppFlavourDetector.isGlobalFlavour(context);
+```
+
+**Detection Logic**:
+- Package name ends with `.bd` → `"bangladesh"`
+- All other cases → `"global"`
+
+#### TournamentsActivity Update
+**Location**: `mobile/app/src/main/java/piotr_gorczynski/soccer2/TournamentsActivity.java`
+
+**Changes**:
+- Detects current app flavour on activity creation
+- Filters tournaments based on `visibleInFlavours` field in snapshot listener
+- Maintains backward compatibility (tournaments without field are shown)
+
+**Filtering Logic**:
+```java
+final String currentFlavour = AppFlavourDetector.getCurrentFlavour(this);
+
+for (DocumentSnapshot doc : snap.getDocuments()) {
+    List<String> visibleInFlavours = (List<String>) doc.get("visibleInFlavours");
+    if (visibleInFlavours != null) {
+        // "global" means visible in all flavours
+        if (visibleInFlavours.contains("global")) {
+            // Tournament is global - visible everywhere
+        } else if (!visibleInFlavours.contains(currentFlavour)) {
+            continue; // Skip tournament
+        }
+    }
+    // Process visible tournaments...
+}
+```
+
+### 5. Testing
+
+#### Unit Tests (New)
+**Location**: `mobile/app/src/test/java/piotr_gorczynski/soccer2/AppFlavourDetectorTest.java`
+
+**Coverage**:
+- Global package detection
+- Bangladesh package detection
+- Helper method tests (`isBangladeshFlavour`, `isGlobalFlavour`)
+- Edge cases (unknown packages, .bd in middle of name)
+
+### 6. Documentation
+
+#### Comprehensive Technical Documentation (New)
+**Location**: `docs/MULTI_FLAVOUR_TOURNAMENTS.md`
+
+**Contents**:
+- Overview and technical implementation details
+- Backend schema specification
+- Frontend filtering logic
+- Migration process and tools
+- Creating new tournaments
+- Security considerations
+- Testing guidelines
+- Troubleshooting guide
+- Future enhancements
+
+#### Bangladesh Approach Document Update
+**Location**: `docs/BANGLADESH_VERSION_APPROACH.md`
+
+**Changes**:
+- Added reference to new `MULTI_FLAVOUR_TOURNAMENTS.md` documentation
+- Updated Tournament Structure section
+- Replaced old `region: "BD"` approach with new `visibleInFlavours` approach
+- Added implementation status and key features summary
+
+## Technical Approach
+
+### Why Client-Side Filtering?
+
+The implementation uses **client-side filtering** rather than server-side for several reasons:
+
+1. **Simplicity**: No changes to Cloud Functions or Firestore queries needed
+2. **Performance**: All tournaments are fetched in a single query (as before)
+3. **Flexibility**: Easy to extend with additional flavours or filtering logic
+4. **Security**: Tournament data is public information; no sensitive data exposure
+5. **Backward Compatibility**: Existing code continues to work
+
+### Security Considerations
+
+- **Firestore Rules**: Unchanged; all authenticated users can read tournaments
+- **Data Access**: Users can technically read all tournaments via direct Firestore access
+- **UI Filtering**: The `visibleInFlavours` field controls UI visibility, not data access
+- **Acceptable**: Tournaments are public information with no sensitive data
+
+**Note**: If server-side enforcement is required in the future, consider:
+- Separate collections per flavour
+- Cloud Function filtering
+- More restrictive security rules
+
+## Use Cases
+
+### 1. Global Tournament (Visible Everywhere)
+```json
+{
+  "visibleInFlavours": ["global"]  // Simple and recommended
+}
+```
+**When to use**: General tournaments for all users
+
+**Note**: You can also use `["global", "bangladesh"]` but `["global"]` alone is simpler and has the same effect since `"global"` means "visible globally/everywhere".
+
+### 2. Bangladesh-Only Tournament (Cash Prizes)
+```json
+{
+  "visibleInFlavours": ["bangladesh"]
+}
+```
+**When to use**: Tournaments with cash prizes (18+ requirement, Bangladesh-specific)
+
+## Migration Path
+
+1. **Run migration script** to add `visibleInFlavours` to existing tournaments
+2. **Deploy updated app** with filtering logic
+3. **Create new tournaments** with appropriate visibility settings
+4. **Monitor** tournament participation by flavour
+
+## Future Enhancements
+
+### Potential Improvements
+- Server-side filtering via Cloud Functions
+- Dynamic flavours without code changes
+- User-level visibility targeting
+- A/B testing capabilities
+- Scheduled visibility (time-based)
+- Admin UI for managing visibility
+
+### Extensibility
+The implementation is designed for easy extension:
+- **New flavours**: Just add to the array
+- **Complex logic**: Client-side filtering can be enhanced
+- **Admin tools**: Build UI for managing tournament visibility
 
 ## Testing Recommendations
 
 ### Manual Testing
-1. **Setup**: User A invites User B while B is offline
-2. **Expected**: When B opens app, sees "You Missed an Invitation" dialog
-3. **Action 1**: Click "See Invites" → Should open InvitationsActivity
-4. **Action 2**: Click "Close" → Dialog should dismiss
+1. **Build both variants** (Global and Bangladesh)
+2. **Create test tournaments** with different visibility settings
+3. **Verify filtering** in each variant
+4. **Test backward compatibility** with tournaments missing the field
 
-### Test Scenarios
-- [ ] First app launch (should not show notification)
-- [ ] Backend offline (should not show notification)
-- [ ] User not logged in (should not show notification)
-- [ ] Received invite while offline (should show notification)
-- [ ] Invite expired (should not show notification)
-- [ ] Multiple invites (shows one notification)
-- [ ] All language translations display correctly
+### Automated Testing
+- Run unit tests: `./gradlew test`
+- Verify AppFlavourDetector logic
+- Check compilation of new code
 
-## Files Modified
+## Files Changed
 
-```
-mobile/app/src/main/java/piotr_gorczynski/soccer2/MenuActivity.java
-mobile/app/src/main/res/values*/strings.xml (20 files)
-```
+### New Files
+- `mobile/app/src/main/java/piotr_gorczynski/soccer2/AppFlavourDetector.java`
+- `mobile/app/src/test/java/piotr_gorczynski/soccer2/AppFlavourDetectorTest.java`
+- `tools/migrate-tournaments-flavours/migrate-tournaments-flavours.js`
+- `tools/migrate-tournaments-flavours/package.json`
+- `tools/migrate-tournaments-flavours/README.md`
+- `docs/MULTI_FLAVOUR_TOURNAMENTS.md`
 
-## Files Added
+### Modified Files
+- `mobile/app/src/main/java/piotr_gorczynski/soccer2/TournamentsActivity.java`
+- `tools/create-tournament/create-tournament.js`
+- `docs/BANGLADESH_VERSION_APPROACH.md`
 
-```
-mobile/app/src/test/java/piotr_gorczynski/soccer2/MenuActivityMissedInviteTest.java
-MISSED_INVITE_NOTIFICATION_FEATURE.md
-```
+## Deployment Checklist
 
-## Total Changes
+- [ ] Review and merge PR
+- [ ] Run migration script on dev environment
+- [ ] Test in dev environment
+- [ ] Run migration script on test environment
+- [ ] Test in test environment
+- [ ] Deploy updated mobile app to test track
+- [ ] Verify filtering works correctly
+- [ ] Run migration script on prod environment
+- [ ] Deploy updated mobile app to production
+- [ ] Monitor analytics for tournament participation
 
-- 23 files changed
-- 421 insertions (+)
-- 2 deletions (-)
-- Net: +419 lines
+## Support and Maintenance
 
-## Code Quality
+### Documentation
+- Primary: `docs/MULTI_FLAVOUR_TOURNAMENTS.md`
+- Context: `docs/BANGLADESH_VERSION_APPROACH.md`
+- Migration: `tools/migrate-tournaments-flavours/README.md`
 
-- ✅ Follows existing code style and patterns
-- ✅ Proper error handling with try-catch and callbacks
-- ✅ Comprehensive logging using TAG_Soccer
-- ✅ Uses existing SharedPreferences infrastructure
-- ✅ Integrates with existing backend availability system
-- ✅ No duplicate code or unnecessary complexity
-- ✅ All strings externalized and translated
+### Common Issues
+See troubleshooting section in `docs/MULTI_FLAVOUR_TOURNAMENTS.md`
 
-## Performance Impact
+### Contact
+For questions or issues, refer to project documentation or repository issues.
 
-- **Minimal**: One additional Firestore query on app resume (only when backend is available and user is logged in)
-- **Query is optimized**: Uses indexes, whereEqualTo, limit(1)
-- **Cached timestamp**: SharedPreferences access is fast
-- **No impact on existing flows**: Only adds new check at the end
+---
 
-## Future Enhancements (Not in Scope)
-
-Potential improvements for future iterations:
-- Show count of missed invitations in dialog message
-- Notification sound/vibration
-- Direct link to specific invitation
-- Notification history tracking
+**Implementation Date**: 2026-02-01  
+**Version**: 1.0  
+**Status**: ✅ Complete and Ready for Review
