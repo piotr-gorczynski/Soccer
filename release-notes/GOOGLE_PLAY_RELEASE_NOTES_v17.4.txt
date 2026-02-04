@@ -1,0 +1,118 @@
+<en-GB>
+🐝 Fix tournament ranking to group players with identical scores
+🐝 Prevent medal assignment to players with zero wins
+🎉 Add multi-flavour tournament visibility control
+🎉 Add VIEW RESULTS button for running tournaments
+</en-GB>
+
+<pl-PL>
+🐝 Poprawiono ranking turnieju – gracze z tym samym wynikiem są grupowani
+🐝 Zablokowano przyznawanie medali graczom bez zwycięstw
+🎉 Dodano kontrolę widoczności turniejów dla wielu wersji aplikacji
+🎉 Dodano przycisk „ZOBACZ WYNIKI” dla trwających turniejów
+</pl-PL>
+
+<de-DE>
+🐝 Turnierrangliste korrigiert – Spieler mit gleichen Punkten werden gruppiert
+🐝 Medaillenvergabe für Spieler ohne Siege verhindert
+🎉 Steuerung der Turniersichtbarkeit für mehrere App-Versionen hinzugefügt
+🎉 Schaltfläche „ERGEBNISSE ANZEIGEN“ für laufende Turniere hinzugefügt
+</de-DE>
+
+<fr-FR>
+🐝 Classement des tournois corrigé – regroupement des joueurs avec le même score
+🐝 Attribution de médailles empêchée pour les joueurs sans victoire
+🎉 Ajout du contrôle de visibilité des tournois pour plusieurs versions de l’app
+🎉 Bouton « VOIR LES RÉSULTATS » ajouté pour les tournois en cours
+</fr-FR>
+
+<es-ES>
+🐝 Clasificación del torneo corregida: jugadores con la misma puntuación se agrupan
+🐝 Evitada la asignación de medallas a jugadores sin victorias
+🎉 Añadido control de visibilidad de torneos para múltiples versiones de la app
+🎉 Añadido botón «VER RESULTADOS» para torneos en curso
+</es-ES>
+
+<ur>
+🐝 ٹورنامنٹ رینکنگ درست، برابر اسکور والے کھلاڑی گروپ کیے گئے
+🐝 بغیر جیت کے کھلاڑیوں کو میڈل دینے سے روک دیا گیا
+🎉 مختلف ایپ ورژنز کے لیے ٹورنامنٹ وزیبلٹی کنٹرول شامل
+🎉 جاری ٹورنامنٹس کے لیے “نتائج دیکھیں” بٹن شامل
+</ur>
+
+<bn-BD>
+🐝 টুর্নামেন্ট র‍্যাঙ্কিং ঠিক করা হয়েছে, সমান স্কোরের খেলোয়াড় একত্রে দেখানো হবে
+🐝 জয়হীন খেলোয়াড়দের মেডেল দেওয়া বন্ধ করা হয়েছে
+🎉 একাধিক অ্যাপ ভার্সনের জন্য টুর্নামেন্ট দৃশ্যমানতা নিয়ন্ত্রণ যোগ
+🎉 চলমান টুর্নামেন্টের জন্য “ফলাফল দেখুন” বাটন যোগ
+</bn-BD>
+
+<ne-NP>
+🐝 प्रतियोगिता र्याङ्किङ सुधार गरियो, समान अंक भएका खेलाडी समूहबद्ध
+🐝 जित नभएका खेलाडीलाई पदक दिन रोकियो
+🎉 बहु एप संस्करणका लागि प्रतियोगिता दृश्यता नियन्त्रण थपियो
+🎉 चलिरहेका प्रतियोगिताका लागि “नतिजा हेर्नुहोस्” बटन थपियो
+</ne-NP>
+
+<hi-IN>
+🐝 टूर्नामेंट रैंकिंग ठीक की गई, समान स्कोर वाले खिलाड़ी समूहित
+🐝 बिना जीत वाले खिलाड़ियों को मेडल देने से रोका गया
+🎉 कई ऐप वर्ज़न के लिए टूर्नामेंट दृश्यता नियंत्रण जोड़ा गया
+🎉 चल रहे टूर्नामेंट के लिए “परिणाम देखें” बटन जोड़ा गया
+</hi-IN>
+
+<am>
+🐝 የቱርናመንት ደረጃ ተስተካክሏል – ተመሳሳይ ነጥብ ያላቸው ተጫዋቾች ተቀላቀሉ
+🐝 ድል የሌላቸው ተጫዋቾች ሜዳል እንዳይሰጣቸው ተከለከለ
+🎉 ለተለያዩ የመተግበሪያ ስሪቶች የቱርናመንት ታይነት መቆጣጠሪያ ተጨምሯል
+🎉 ለቀጥሎ የሚካሄዱ ቱርናመንቶች “ውጤቶችን ይመልከቱ” አዝራር ተጨምሯል
+</am>
+
+<ar>
+🐝 تم تصحيح ترتيب البطولة مع تجميع اللاعبين ذوي النتائج المتساوية
+🐝 منع منح الميداليات للاعبين دون أي فوز
+🎉 إضافة التحكم في عرض البطولات لنسخ متعددة من التطبيق
+🎉 إضافة زر «عرض النتائج» للبطولات الجارية
+</ar>
+
+<my-MM>
+🐝 တူညီသော အမှတ်ရှိ ကစားသမားများကို အုပ်စုဖွဲ့ပြသရန် ပြိုင်ပွဲအဆင့် ပြင်ဆင်ခဲ့သည်
+🐝 အနိုင်မရှိသော ကစားသမားများအား ဆုမပေးရန် တားဆီးခဲ့သည်
+🎉 အက်ပ်ဗားရှင်းများစွာအတွက် ပြိုင်ပွဲမြင်နိုင်မှု ထိန်းချုပ်မှု ထည့်သွင်းခဲ့သည်
+🎉 ဆက်လက်ကျင်းပနေသော ပြိုင်ပွဲများအတွက် “ရလဒ်ကြည့်ရန်” ခလုတ် ထည့်သွင်းခဲ့သည်
+</my-MM>
+
+<km-KH>
+🐝 កែសម្រួលចំណាត់ថ្នាក់តួណាម៉ង់ ដោយក្រុមអ្នកលេងដែលមានពិន្ទុដូចគ្នា
+🐝 ទប់ស្កាត់ការផ្តល់មេដាយដល់អ្នកលេងដែលគ្មានជ័យជម្នះ
+🎉 បន្ថែមការគ្រប់គ្រងភាពមើលឃើញតួណាម៉ង់សម្រាប់កំណែអេបច្រើន
+🎉 បន្ថែមប៊ូតុង «មើលលទ្ធផល» សម្រាប់តួណាម៉ង់កំពុងដំណើរការ
+</km-KH>
+
+<lo-LA>
+🐝 ແກ້ໄຂອັນດັບທວຣນາເມັນ ໂດຍຈັດກຸ່ມນັກຫຼິ້ນທີ່ມີຄະແນນເທົ່າກັນ
+🐝 ປ້ອງກັນການໃຫ້ຫຼຽນແກ່ນັກຫຼິ້ນທີ່ບໍ່ຊະນະ
+🎉 ເພີ່ມການຄວບຄຸມການມອງເຫັນທວຣນາເມັນສໍາລັບຫຼາຍເວີຊັນ
+🎉 ເພີ່ມປຸ່ມ “ເບິ່ງຜົນ” ສໍາລັບທວຣນາເມັນທີ່ກໍາລັງດໍາເນີນ
+</lo-LA>
+
+<mn-MN>
+🐝 Тэнцүү оноотой тоглогчдыг бүлэглэхээр тэмцээний эрэмбийг зассан
+🐝 Ялалтгүй тоглогчдод медаль олгохоос сэргийлсэн
+🎉 Олон хувилбарт тэмцээний харагдах байдлыг удирдах боломж нэмсэн
+🎉 Үргэлжилж буй тэмцээнд “ҮР ДҮН ХАРАХ” товч нэмсэн
+</mn-MN>
+
+<fa-IR>
+🐝 رتبه‌بندی تورنمنت اصلاح شد و بازیکنان با امتیاز برابر گروه‌بندی شدند
+🐝 جلوگیری از اعطای مدال به بازیکنان بدون برد
+🎉 افزودن کنترل نمایش تورنمنت برای نسخه‌های مختلف برنامه
+🎉 افزودن دکمه «مشاهده نتایج» برای تورنمنت‌های در حال اجرا
+</fa-IR>
+
+<si-LK>
+🐝 එකම ලකුණු ඇති ක්‍රීඩකයන් කණ්ඩායම් කිරීම සඳහා තරග ශ්‍රේණිගත කිරීම නිවැරදි කළා
+🐝 ජයග්‍රහණ නොමැති ක්‍රීඩකයන්ට පදක්කම් ලබාදීම වැළැක්වීය
+🎉 විවිධ යෙදුම් අනුවාද සඳහා තරග දෘශ්‍යතාව පාලනය එක් කළා
+🎉 පවත්නා තරග සඳහා “ප්‍රතිඵල බලන්න” බොත්තම එක් කළා
+</si-LK>
