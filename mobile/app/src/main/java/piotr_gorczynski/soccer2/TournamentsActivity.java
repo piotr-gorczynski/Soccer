@@ -130,13 +130,13 @@ public class TournamentsActivity extends BaseActivity {
             for (DocumentSnapshot doc : snap.getDocuments()) {
                 // Filter tournaments based on visibleInFlavours field
                 // If the field doesn't exist, show the tournament (backward compatibility)
-                List<String> visibleInFlavours;
-                visibleInFlavours = (List<String>) doc.get("visibleInFlavours");
-                if (visibleInFlavours != null) {
-                        if (!visibleInFlavours.contains(currentFlavour)) {
-                            // Skip this tournament - not visible in current flavour
-                            continue;
-                        }
+                Object visibleInFlavoursObj = doc.get("visibleInFlavours");
+                if (visibleInFlavoursObj instanceof List<?>) {
+                    List<?> visibleInFlavours = (List<?>) visibleInFlavoursObj;
+                    if (!visibleInFlavours.contains(currentFlavour)) {
+                        // Skip this tournament - not visible in current flavour
+                        continue;
+                    }
                 }
 
                 String status = doc.getString("status");
@@ -293,4 +293,3 @@ public class TournamentsActivity extends BaseActivity {
     }
 
 }
-
