@@ -78,7 +78,7 @@ public class TournamentsActivity extends BaseActivity {
         );
         TournamentAdapter endedAdapter = new TournamentAdapter(
                 endedDocs,
-                (TournamentAdapter.OnEndedClick) doc -> {
+                doc -> {
                     Intent i = new Intent(this, TournamentResultsActivity.class)
                             .putExtra("tournamentId", doc.getId());
                     startActivity(i);
@@ -131,8 +131,7 @@ public class TournamentsActivity extends BaseActivity {
                 // Filter tournaments based on visibleInFlavours field
                 // If the field doesn't exist, show the tournament (backward compatibility)
                 Object visibleInFlavoursObj = doc.get("visibleInFlavours");
-                if (visibleInFlavoursObj instanceof List<?>) {
-                    List<?> visibleInFlavours = (List<?>) visibleInFlavoursObj;
+                if (visibleInFlavoursObj instanceof List<?> visibleInFlavours) {
                     if (!visibleInFlavours.contains(currentFlavour)) {
                         // Skip this tournament - not visible in current flavour
                         continue;
