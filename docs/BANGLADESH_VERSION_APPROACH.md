@@ -2959,7 +2959,7 @@ cd mobile
 - [x] Define detailed prize structure (see [PRIZE_STRATEGY.md](PRIZE_STRATEGY.md))
 - [x] Create product flavor for Bangladesh variant
 - [ ] **Migration Planning**:
-  - [ ] Define user migration strategy and communication plan
+  - [x] Define user migration strategy and communication plan (see [USER_MIGRATION_STRATEGY.md](USER_MIGRATION_STRATEGY.md))
   - [ ] Prepare promotional materials (banners, notifications, Play Store assets)
   - [ ] Design Firebase dual-app configuration (shared authentication)
 
