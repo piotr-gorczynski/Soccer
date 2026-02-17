@@ -395,4 +395,14 @@
     
     <!-- Tournament notification dialog -->
     <string name="tournament_started_dialog_message">Tournament %1$s started! Do you want to open tournament lobby?</string>
+    
+    <!-- Bangladesh version migration promotion (global flavor only) -->
+    <string name="bd_promo_title">🇧🇩 Bangladesh Version Available</string>
+    <string name="bd_promo_message">A special version of Gridline Soccer for Bangladesh is now available.\n\nAvailable for users 18 years and older on Google Play Store.</string>
+    <string name="bd_promo_learn_more">Learn More</string>
+    <string name="bd_promo_install">Install</string>
+    <string name="bd_promo_maybe_later">Maybe Later</string>
+    <string name="bd_promo_info_title">Gridline Soccer Bangladesh</string>
+    <string name="bd_promo_info_message">A special version of the game designed for Bangladesh players.\n\nFeatures:\n✓ Regular skill-based tournaments\n✓ Same friends and statistics\n✓ Seamless account migration\n\nAvailable on Google Play Store for users 18+.</string>
+    <string name="bd_promo_close">Close</string>
 </resources>
