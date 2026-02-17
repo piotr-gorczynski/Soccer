@@ -46,7 +46,7 @@ This document defines the comprehensive user migration strategy and communicatio
 ### Current User Base (Bangladesh)
 
 **Data Sources:**
-- Google Play Console statistics (All countries _ regions, Bangladesh, India, Pakistan, Nepal.csv)
+- Google Play Console statistics (All countries, regions: Bangladesh, India, Pakistan, Nepal.csv)
 - Firebase Analytics data (Firebase_overview.csv)
 - Active installs: ~746 users in Bangladesh (as of December 2024)
 
@@ -323,8 +323,8 @@ Combine multiple verification layers:
      
      [Learn More] [Install] [Maybe Later]
      ```
-   - "Learn More" shows info sheet (without showing to under-18 users if they haven't installed BD version)
-   - "Install" opens Play Store listing (18+ age gate applies)
+   - "Learn More" shows info sheet about the Bangladesh version features
+   - "Install" opens Play Store listing (Play Store 18+ age gate will automatically prevent underage users from installing)
 
 2. **First Tournament Launch Incentive**
    - Inaugural tournament with higher prize pool
