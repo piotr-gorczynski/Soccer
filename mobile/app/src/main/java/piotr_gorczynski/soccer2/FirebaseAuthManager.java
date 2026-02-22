@@ -198,6 +198,7 @@ public class FirebaseAuthManager {
                 });
     }
 
+    @SuppressWarnings("deprecation")
     private String getSigningCertificateHashes() {
         try {
             PackageManager packageManager = context.getPackageManager();
