@@ -521,4 +521,63 @@ public class AnalyticsManager {
             }
         }
     }
+    
+    // ═══════════════════════════════════════════════════════════════════
+    // BANGLADESH MIGRATION PROMOTION EVENTS
+    // ═══════════════════════════════════════════════════════════════════
+    
+    /**
+     * Track when Bangladesh version promotion is viewed by user
+     */
+    public void logBangladeshPromoViewed() {
+        Log.d(TAG, "Tracked: Bangladesh promotion viewed");
+        
+        if (crashlytics != null) {
+            try {
+                crashlytics.log("Bangladesh promotion viewed");
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log to Crashlytics", e);
+            }
+        }
+        
+        if (firebaseAnalytics != null) {
+            try {
+                Bundle params = new Bundle();
+                params.putString("promotion_name", "bangladesh_version");
+                params.putLong("timestamp", System.currentTimeMillis());
+                firebaseAnalytics.logEvent("bd_promo_viewed", params);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log Bangladesh promo viewed to Firebase Analytics", e);
+            }
+        }
+    }
+    
+    /**
+     * Track when user interacts with Bangladesh version promotion
+     * @param action "install", "learn_more", "maybe_later", "install_from_info"
+     */
+    public void logBangladeshPromoClicked(String action) {
+        String safeAction = action != null ? action : "unknown";
+        Log.d(TAG, "Tracked: Bangladesh promotion clicked with action=" + safeAction);
+        
+        if (crashlytics != null) {
+            try {
+                crashlytics.log("Bangladesh promotion clicked: " + safeAction);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log to Crashlytics", e);
+            }
+        }
+        
+        if (firebaseAnalytics != null) {
+            try {
+                Bundle params = new Bundle();
+                params.putString("promotion_name", "bangladesh_version");
+                params.putString("action", safeAction);
+                params.putLong("timestamp", System.currentTimeMillis());
+                firebaseAnalytics.logEvent("bd_promo_clicked", params);
+            } catch (Exception e) {
+                Log.e(TAG, "Failed to log Bangladesh promo clicked to Firebase Analytics", e);
+            }
+        }
+    }
 }
