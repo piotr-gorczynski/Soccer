@@ -673,6 +673,9 @@ public class MenuActivity extends BaseActivity {
 
         // Now that all authentication-related checks are done, look for any active match
         checkForActiveMatch();
+        
+        // Show Bangladesh version promotion if applicable (only in global flavor, only for BD users)
+        checkAndShowBangladeshPromotion();
 
         Button youVsAndroid = findViewById(R.id.youVsAndroidBtn);
         if (youVsAndroid != null) {
@@ -2205,6 +2208,104 @@ public class MenuActivity extends BaseActivity {
                     prefs.edit().putBoolean(PREF_ANIMATION_INFO_SHOWN, true).apply();
                 })
                 .setCancelable(false)
+                .show();
+    }
+
+    /**
+     * Check if Bangladesh promotion should be shown and display it if applicable.
+     * This promotion is only shown in the global app flavor to users in Bangladesh.
+     * It informs them about the Bangladesh-specific version with tournament features.
+     */
+    private void checkAndShowBangladeshPromotion() {
+        // Check if activity is still valid
+        if (isFinishing() || isDestroyed()) {
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".checkAndShowBangladeshPromotion: Activity finishing or destroyed, skipping");
+            return;
+        }
+        
+        // Check if promotion should be shown based on flavor, region, and dismissal state
+        if (!BangladeshMigrationHelper.shouldShowPromotion(this)) {
+            return;
+        }
+        
+        // Log analytics event for promotion view
+        if (analyticsManager != null) {
+            analyticsManager.logBangladeshPromoViewed();
+        }
+        
+        // Mark as shown for tracking
+        BangladeshMigrationHelper.markPromotionShown(this);
+        
+        // Show the promotion dialog
+        showBangladeshPromotionDialog();
+    }
+
+    /**
+     * Show the Bangladesh version promotion dialog.
+     * Provides options to learn more, install, or dismiss the promotion.
+     */
+    private void showBangladeshPromotionDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.bd_promo_title)
+                .setMessage(R.string.bd_promo_message)
+                .setPositiveButton(R.string.bd_promo_install, (dialog, which) -> {
+                    // Log analytics event
+                    if (analyticsManager != null) {
+                        analyticsManager.logBangladeshPromoClicked("install");
+                    }
+                    
+                    // Mark as accepted (won't show again)
+                    BangladeshMigrationHelper.markPromotionAccepted(this);
+                    
+                    // Open Play Store
+                    BangladeshMigrationHelper.openBangladeshPlayStore(this);
+                })
+                .setNeutralButton(R.string.bd_promo_learn_more, (dialog, which) -> {
+                    // Log analytics event
+                    if (analyticsManager != null) {
+                        analyticsManager.logBangladeshPromoClicked("learn_more");
+                    }
+                    
+                    // Show info dialog
+                    showBangladeshInfoDialog();
+                })
+                .setNegativeButton(R.string.bd_promo_maybe_later, (dialog, which) -> {
+                    // Log analytics event
+                    if (analyticsManager != null) {
+                        analyticsManager.logBangladeshPromoClicked("maybe_later");
+                    }
+                    
+                    // Mark as dismissed (will show again in 7 days)
+                    BangladeshMigrationHelper.markPromotionDismissed(this);
+                })
+                .setCancelable(false) // Require explicit user choice
+                .show();
+    }
+
+    /**
+     * Show detailed information about the Bangladesh version.
+     * This is shown when user clicks "Learn More" in the promotion dialog.
+     */
+    private void showBangladeshInfoDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.bd_promo_info_title)
+                .setMessage(R.string.bd_promo_info_message)
+                .setPositiveButton(R.string.bd_promo_install, (dialog, which) -> {
+                    // Log analytics event
+                    if (analyticsManager != null) {
+                        analyticsManager.logBangladeshPromoClicked("install_from_info");
+                    }
+                    
+                    // Mark as accepted
+                    BangladeshMigrationHelper.markPromotionAccepted(this);
+                    
+                    // Open Play Store
+                    BangladeshMigrationHelper.openBangladeshPlayStore(this);
+                })
+                .setNegativeButton(R.string.bd_promo_close, (dialog, which) -> {
+                    // User closed info dialog, mark as dismissed
+                    BangladeshMigrationHelper.markPromotionDismissed(this);
+                })
                 .show();
     }
 
