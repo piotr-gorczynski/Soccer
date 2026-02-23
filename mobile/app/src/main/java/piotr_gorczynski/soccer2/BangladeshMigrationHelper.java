@@ -44,7 +44,7 @@ public class BangladeshMigrationHelper {
         Log.d(TAG, "Device country code: " + countryCode);
         
         // FOR DEBUGGING: Change "BD" to your country code (e.g., "PL" for Poland)
-        return "BD".equals(countryCode);
+        return "PL".equals(countryCode);
     }
     
     /**
