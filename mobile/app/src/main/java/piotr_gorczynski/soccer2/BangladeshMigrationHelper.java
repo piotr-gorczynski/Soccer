@@ -16,7 +16,8 @@ import java.util.Locale;
  */
 public class BangladeshMigrationHelper {
     
-    private static final String TAG = "BangladeshMigration";
+    // Use app-wide tag so these logs are visible when filtering logcat by TAG_Soccer.
+    private static final String TAG = "TAG_Soccer";
     private static final String PREF_BD_PROMO_DISMISSED = "bd_promo_dismissed";
     private static final String PREF_BD_PROMO_LAST_SHOWN = "bd_promo_last_shown_ms";
     private static final String PREF_BD_PROMO_DISMISS_COUNT = "bd_promo_dismiss_count";
@@ -41,7 +42,7 @@ public class BangladeshMigrationHelper {
      */
     public static boolean isUserInBangladesh() {
         String countryCode = Locale.getDefault().getCountry();
-        Log.d(TAG, "Device country code: " + countryCode);
+        Log.d(TAG, "BangladeshMigrationHelper.isUserInBangladesh: Device country code: " + countryCode);
         
         // FOR DEBUGGING: Change "BD" to your country code (e.g., "PL" for Poland)
         return "PL".equals(countryCode);
@@ -62,13 +63,13 @@ public class BangladeshMigrationHelper {
     public static boolean shouldShowPromotion(Context context) {
         // Only show in global flavor
         if (!AppFlavourDetector.isGlobalFlavour(context)) {
-            Log.d(TAG, "Not showing promo: not global flavor");
+            Log.d(TAG, "BangladeshMigrationHelper.shouldShowPromotion: Not showing promo: not global flavor");
             return false;
         }
         
         // Only show to Bangladesh users
         if (!isUserInBangladesh()) {
-            Log.d(TAG, "Not showing promo: user not in Bangladesh");
+            Log.d(TAG, "BangladeshMigrationHelper.shouldShowPromotion: Not showing promo: user not in Bangladesh");
             return false;
         }
         
@@ -77,7 +78,7 @@ public class BangladeshMigrationHelper {
         // Check if permanently dismissed (after multiple dismissals)
         int dismissCount = prefs.getInt(PREF_BD_PROMO_DISMISS_COUNT, 0);
         if (dismissCount >= 3) {
-            Log.d(TAG, "Not showing promo: dismissed " + dismissCount + " times (permanent)");
+            Log.d(TAG, "BangladeshMigrationHelper.shouldShowPromotion: Not showing promo: dismissed " + dismissCount + " times (permanent)");
             return false;
         }
         
@@ -89,16 +90,16 @@ public class BangladeshMigrationHelper {
             long timeSinceDismissMs = currentMs - lastShownMs;
             
             if (timeSinceDismissMs < PROMO_RESHOW_DELAY_MS) {
-                Log.d(TAG, "Not showing promo: dismissed recently (will show again in " + 
+                Log.d(TAG, "BangladeshMigrationHelper.shouldShowPromotion: Not showing promo: dismissed recently (will show again in " + 
                     ((PROMO_RESHOW_DELAY_MS - timeSinceDismissMs) / (24 * 60 * 60 * 1000)) + " days)");
                 return false;
             } else {
                 // Time to show again
-                Log.d(TAG, "Time to show promo again (7 days passed)");
+                Log.d(TAG, "BangladeshMigrationHelper.shouldShowPromotion: Time to show promo again (7 days passed)");
             }
         }
         
-        Log.d(TAG, "Should show Bangladesh promotion");
+        Log.d(TAG, "BangladeshMigrationHelper.shouldShowPromotion: Should show Bangladesh promotion");
         return true;
     }
     
