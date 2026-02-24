@@ -409,4 +409,10 @@
     <string name="bd_promo_info_title">Gridline Soccer Bangladesh</string>
     <string name="bd_promo_info_message">বাংলাদেশী খেলোয়াড়দের জন্য ডিজাইন করা গেমের একটি বিশেষ সংস্করণ।\n\nবৈশিষ্ট্যসমূহ:\n✓ নিয়মিত দক্ষতা-ভিত্তিক টুর্নামেন্ট\n✓ একই বন্ধু এবং পরিসংখ্যান\n✓ নির্বিঘ্ন অ্যাকাউন্ট মাইগ্রেশন\n\nGoogle Play Store এ ১৮+ ব্যবহারকারীদের জন্য উপলব্ধ।</string>
     <string name="bd_promo_close">বন্ধ করুন</string>
+
+    <!-- Uninstall global app prompt (Bangladesh flavor only) -->
+    <string name="uninstall_global_title">পুরনো অ্যাপ সরান</string>
+    <string name="uninstall_global_message">এই বাংলাদেশ সংস্করণের পাশাপাশি আপনার ডিভাইসে গ্লোবাল Soccer অ্যাপটি ইনস্টল রয়েছে। বিভ্রান্তি এড়াতে গ্লোবাল সংস্করণটি আনইনস্টল করুন।</string>
+    <string name="uninstall_global_uninstall">আনইনস্টল করুন</string>
+    <string name="uninstall_global_later">আর দেখাবেন না</string>
 </resources>

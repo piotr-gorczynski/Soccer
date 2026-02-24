@@ -676,6 +676,9 @@ public class MenuActivity extends BaseActivity {
         
         // Show Bangladesh version promotion if applicable (only in global flavor, only for BD users)
         checkAndShowBangladeshPromotion();
+        
+        // Prompt to uninstall the global app if running in Bangladesh flavor and global app is installed
+        checkAndShowUninstallGlobalPrompt();
 
         Button youVsAndroid = findViewById(R.id.youVsAndroidBtn);
         if (youVsAndroid != null) {
@@ -2306,6 +2309,30 @@ public class MenuActivity extends BaseActivity {
                     // User closed info dialog, mark as dismissed
                     BangladeshMigrationHelper.markPromotionDismissed(this);
                 })
+                .show();
+    }
+
+    /**
+     * Check if the uninstall-global-app prompt should be shown and display it if applicable.
+     * This is only shown in the Bangladesh flavor when the global app is also installed.
+     */
+    private void checkAndShowUninstallGlobalPrompt() {
+        if (isFinishing() || isDestroyed()) {
+            return;
+        }
+        if (!BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(this)) {
+            return;
+        }
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.uninstall_global_title)
+                .setMessage(R.string.uninstall_global_message)
+                .setPositiveButton(R.string.uninstall_global_uninstall, (dialog, which) -> {
+                    BangladeshMigrationHelper.markUninstallGlobalPromptDismissed(this);
+                    BangladeshMigrationHelper.promptUninstallGlobalApp(this);
+                })
+                .setNegativeButton(R.string.uninstall_global_later, (dialog, which) ->
+                    BangladeshMigrationHelper.markUninstallGlobalPromptDismissed(this))
+                .setCancelable(false)
                 .show();
     }
 
