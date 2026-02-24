@@ -1,11 +1,13 @@
 package piotr_gorczynski.soccer2;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 
@@ -117,6 +119,43 @@ public class BangladeshMigrationHelperTest {
         verify(mockEditor).remove("bd_promo_last_shown_ms");
         verify(mockEditor).remove("bd_promo_dismiss_count");
         verify(mockEditor).apply();
+    }
+
+    @Test
+    public void testIsGlobalAppInstalled_ReturnsFalse_WhenNotInstalled() throws Exception {
+        android.content.pm.PackageManager mockPm = mock(android.content.pm.PackageManager.class);
+        when(mockContext.getPackageManager()).thenReturn(mockPm);
+        when(mockPm.getPackageInfo("piotr_gorczynski.soccer2", 0))
+            .thenThrow(new android.content.pm.PackageManager.NameNotFoundException());
+
+        boolean result = BangladeshMigrationHelper.isGlobalAppInstalled(mockContext);
+
+        assertFalse("Should return false when Global app is not installed", result);
+    }
+
+    @Test
+    public void testIsGlobalAppInstalled_ReturnsTrue_WhenInstalled() throws Exception {
+        android.content.pm.PackageManager mockPm = mock(android.content.pm.PackageManager.class);
+        when(mockContext.getPackageManager()).thenReturn(mockPm);
+        when(mockPm.getPackageInfo("piotr_gorczynski.soccer2", 0))
+            .thenReturn(mock(android.content.pm.PackageInfo.class));
+
+        boolean result = BangladeshMigrationHelper.isGlobalAppInstalled(mockContext);
+
+        assertTrue("Should return true when Global app is installed", result);
+    }
+
+    @Test
+    public void testPromptUninstallGlobalApp_StartsDeleteIntent() {
+        ArgumentCaptor<Intent> intentCaptor = ArgumentCaptor.forClass(Intent.class);
+
+        BangladeshMigrationHelper.promptUninstallGlobalApp(mockContext);
+
+        verify(mockContext).startActivity(intentCaptor.capture());
+        Intent capturedIntent = intentCaptor.getValue();
+        assertEquals("Intent action should be ACTION_DELETE", Intent.ACTION_DELETE, capturedIntent.getAction());
+        assertEquals("Intent data should target Global app package",
+            "package:piotr_gorczynski.soccer2", capturedIntent.getData().toString());
     }
 
     @Test
