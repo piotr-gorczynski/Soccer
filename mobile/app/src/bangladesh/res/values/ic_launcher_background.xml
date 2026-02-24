@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Bangladesh flavor uses red background to distinguish from the green Global app icon -->
+    <color name="ic_launcher_background">#CC0000</color>
+</resources>

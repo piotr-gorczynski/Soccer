@@ -3,6 +3,7 @@ package piotr_gorczynski.soccer2;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -29,6 +30,9 @@ public class BangladeshMigrationHelper {
     // Bangladesh version Play Store URL
     private static final String BD_PLAY_STORE_URL = 
         "https://play.google.com/store/apps/details?id=piotr_gorczynski.soccer2.bd";
+    
+    // Global app package name (used when prompting to uninstall from BD flavor)
+    private static final String GLOBAL_APP_PACKAGE = "piotr_gorczynski.soccer2";
     
     private static String normalizeCountryCode(String countryCode) {
         if (countryCode == null) {
@@ -231,5 +235,40 @@ public class BangladeshMigrationHelper {
             .remove(PREF_BD_PROMO_DISMISS_COUNT)
             .apply();
         Log.d(TAG, "Reset promotion state for testing");
+    }
+
+    /**
+     * Check if the Global app is installed on the device.
+     * Useful in the Bangladesh flavor to determine whether to prompt the user to uninstall it.
+     *
+     * @param context Android context
+     * @return true if the Global app (piotr_gorczynski.soccer2) is installed
+     */
+    public static boolean isGlobalAppInstalled(Context context) {
+        try {
+            context.getPackageManager().getPackageInfo(GLOBAL_APP_PACKAGE, 0);
+            return true;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
+    }
+
+    /**
+     * Open the Android system uninstall dialog for the Global app so the user can remove it.
+     * Android does not allow apps to silently uninstall other apps; user confirmation is required.
+     * This should only be called from the Bangladesh flavor.
+     *
+     * @param context Android context
+     */
+    public static void promptUninstallGlobalApp(Context context) {
+        try {
+            Intent intent = new Intent(Intent.ACTION_DELETE);
+            intent.setData(Uri.parse("package:" + GLOBAL_APP_PACKAGE));
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+            Log.d(TAG, "Opened system uninstall dialog for Global app");
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to open uninstall dialog for Global app", e);
+        }
     }
 }
