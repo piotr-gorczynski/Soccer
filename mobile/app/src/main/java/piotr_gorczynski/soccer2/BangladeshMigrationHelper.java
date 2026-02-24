@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import androidx.preference.PreferenceManager;
 
@@ -29,23 +30,67 @@ public class BangladeshMigrationHelper {
     private static final String BD_PLAY_STORE_URL = 
         "https://play.google.com/store/apps/details?id=piotr_gorczynski.soccer2.bd";
     
+    private static String normalizeCountryCode(String countryCode) {
+        if (countryCode == null) {
+            return "";
+        }
+        return countryCode.trim().toUpperCase(Locale.US);
+    }
+
+    private static String resolveCountryCode(Context context) {
+        if (context != null) {
+            try {
+                TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+                if (telephonyManager != null) {
+                    String networkCountry = normalizeCountryCode(telephonyManager.getNetworkCountryIso());
+                    if (!networkCountry.isEmpty()) {
+                        return networkCountry;
+                    }
+
+                    String simCountry = normalizeCountryCode(telephonyManager.getSimCountryIso());
+                    if (!simCountry.isEmpty()) {
+                        return simCountry;
+                    }
+                }
+            } catch (Exception e) {
+                Log.w(TAG, "Unable to read telephony country, falling back to locale", e);
+            }
+        }
+
+        String localeCountry = normalizeCountryCode(Locale.getDefault().getCountry());
+        if (!localeCountry.isEmpty()) {
+            return localeCountry;
+        }
+
+        String localeDisplayCountry = normalizeCountryCode(Locale.getDefault(Locale.Category.DISPLAY).getCountry());
+        if (!localeDisplayCountry.isEmpty()) {
+            return localeDisplayCountry;
+        }
+
+        return "";
+    }
+
     /**
-     * Check if user is in Bangladesh based on device locale.
-     * 
-     * NOTE FOR DEBUGGING: To test this feature while in Poland (or any other country),
-     * temporarily change "BD" to "PL" in the line below:
-     *     return "BD".equals(countryCode);  // Change BD to PL for testing in Poland
-     * 
-     * Remember to change it back to "BD" before committing!
-     * 
-     * @return true if user's device locale indicates Bangladesh
+     * Check if user is in Bangladesh based on network/SIM country (preferred)
+     * and locale as fallback.
+     *
+     * @return true if user's device information indicates Bangladesh
      */
     public static boolean isUserInBangladesh() {
-        String countryCode = Locale.getDefault().getCountry();
+        return isUserInBangladesh(null);
+    }
+
+    /**
+     * Check if user is in Bangladesh based on network/SIM country (preferred)
+     * and locale as fallback.
+     *
+     * @param context Android context (optional, but improves detection)
+     * @return true if user's device information indicates Bangladesh
+     */
+    public static boolean isUserInBangladesh(Context context) {
+        String countryCode = resolveCountryCode(context);
         Log.d(TAG, "BangladeshMigrationHelper.isUserInBangladesh: Device country code: " + countryCode);
-        
-        // FOR DEBUGGING: Change "BD" to your country code (e.g., "PL" for Poland)
-        return "PL".equals(countryCode);
+        return "BD".equals(countryCode);
     }
     
     /**
@@ -68,7 +113,7 @@ public class BangladeshMigrationHelper {
         }
         
         // Only show to Bangladesh users
-        if (!isUserInBangladesh()) {
+        if (!isUserInBangladesh(context)) {
             Log.d(TAG, "BangladeshMigrationHelper.shouldShowPromotion: Not showing promo: user not in Bangladesh");
             return false;
         }
