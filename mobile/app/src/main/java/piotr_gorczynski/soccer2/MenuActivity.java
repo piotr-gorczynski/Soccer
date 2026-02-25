@@ -108,6 +108,7 @@ public class MenuActivity extends BaseActivity {
     private final Handler adRetryHandler = new Handler(Looper.getMainLooper());
     private final Runnable adRetryRunnable = this::loadInterstitialAd;
     private boolean isAdLoading = false;
+    private boolean globalUninstallPending = false; // true while system uninstall dialog is open
     private View loadingOverlay;
     private final Handler overlayHandler = new Handler(Looper.getMainLooper());
     private final Runnable hideOverlayRunnable = this::hideLoadingOverlayImmediate;
@@ -2322,6 +2323,11 @@ public class MenuActivity extends BaseActivity {
         if (isFinishing() || isDestroyed()) {
             return;
         }
+        if (globalUninstallPending) {
+            // We already launched the system uninstall dialog; skip until user returns from it.
+            globalUninstallPending = false;
+            return;
+        }
         if (!BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(this)) {
             return;
         }
@@ -2331,6 +2337,7 @@ public class MenuActivity extends BaseActivity {
                 .setMessage(R.string.uninstall_global_message)
                 .setPositiveButton(R.string.uninstall_global_uninstall, (d, which) -> {
                     uninstallClicked[0] = true;
+                    globalUninstallPending = true;
                     BangladeshMigrationHelper.promptUninstallGlobalApp(this);
                 })
                 .setCancelable(false)
