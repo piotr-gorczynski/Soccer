@@ -2324,9 +2324,10 @@ public class MenuActivity extends BaseActivity {
             return;
         }
         if (globalUninstallPending) {
-            // We already launched the system uninstall dialog; skip until user returns from it.
+            // User has returned from the system uninstall dialog; reset the flag and fall through
+            // to check whether the global app was actually removed. If the user cancelled the
+            // system dialog the global app will still be installed and the prompt should reappear.
             globalUninstallPending = false;
-            return;
         }
         if (!BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(this)) {
             return;
