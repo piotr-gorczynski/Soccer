@@ -412,7 +412,6 @@
 
     <!-- Uninstall global app prompt (Bangladesh flavor only) -->
     <string name="uninstall_global_title">পুরনো অ্যাপ সরান</string>
-    <string name="uninstall_global_message">এই বাংলাদেশ সংস্করণের পাশাপাশি আপনার ডিভাইসে গ্লোবাল Soccer অ্যাপটি ইনস্টল রয়েছে। বিভ্রান্তি এড়াতে গ্লোবাল সংস্করণটি আনইনস্টল করুন।</string>
+    <string name="uninstall_global_message">বাংলাদেশ সংস্করণের সাথে দ্বন্দ্ব এড়াতে পূর্ববর্তী গ্লোবাল সংস্করণটি আনইনস্টল করতে হবে।</string>
     <string name="uninstall_global_uninstall">আনইনস্টল করুন</string>
-    <string name="uninstall_global_later">আর দেখাবেন না</string>
 </resources>

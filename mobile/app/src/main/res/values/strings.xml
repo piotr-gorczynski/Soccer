@@ -408,7 +408,6 @@
 
     <!-- Uninstall global app prompt (Bangladesh flavor only) -->
     <string name="uninstall_global_title">Remove Old App</string>
-    <string name="uninstall_global_message">You have the global Soccer app installed alongside this Bangladesh version. To avoid confusion, please uninstall the global version.</string>
+    <string name="uninstall_global_message">You have to uninstall the former global version in order to avoid conflict with the Bangladesh version.</string>
     <string name="uninstall_global_uninstall">Uninstall</string>
-    <string name="uninstall_global_later">Don\'t show again</string>
 </resources>

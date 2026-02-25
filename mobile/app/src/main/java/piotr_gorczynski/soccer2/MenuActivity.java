@@ -2315,6 +2315,8 @@ public class MenuActivity extends BaseActivity {
     /**
      * Check if the uninstall-global-app prompt should be shown and display it if applicable.
      * This is only shown in the Bangladesh flavor when the global app is also installed.
+     * If the user does not tap Uninstall, the app is closed to prevent running alongside
+     * the global version.
      */
     private void checkAndShowUninstallGlobalPrompt() {
         if (isFinishing() || isDestroyed()) {
@@ -2323,17 +2325,22 @@ public class MenuActivity extends BaseActivity {
         if (!BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(this)) {
             return;
         }
-        new AlertDialog.Builder(this)
+        final boolean[] uninstallClicked = {false};
+        AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle(R.string.uninstall_global_title)
                 .setMessage(R.string.uninstall_global_message)
-                .setPositiveButton(R.string.uninstall_global_uninstall, (dialog, which) -> {
-                    BangladeshMigrationHelper.markUninstallGlobalPromptDismissed(this);
+                .setPositiveButton(R.string.uninstall_global_uninstall, (d, which) -> {
+                    uninstallClicked[0] = true;
                     BangladeshMigrationHelper.promptUninstallGlobalApp(this);
                 })
-                .setNegativeButton(R.string.uninstall_global_later, (dialog, which) ->
-                    BangladeshMigrationHelper.markUninstallGlobalPromptDismissed(this))
                 .setCancelable(false)
-                .show();
+                .create();
+        dialog.setOnDismissListener(d -> {
+            if (!uninstallClicked[0]) {
+                finish();
+            }
+        });
+        dialog.show();
     }
 
 }

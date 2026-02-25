@@ -234,7 +234,7 @@ public class BangladeshMigrationHelperTest {
     }
 
     @Test
-    public void testShouldShowUninstallGlobalPrompt_BangladeshFlavor_GlobalInstalled_NotDismissed() throws Exception {
+    public void testShouldShowUninstallGlobalPrompt_BangladeshFlavor_GlobalInstalled() throws Exception {
         // Setup: Bangladesh flavor
         when(mockContext.getPackageName()).thenReturn("piotr_gorczynski.soccer2.bd");
 
@@ -244,12 +244,9 @@ public class BangladeshMigrationHelperTest {
         when(mockPm.getPackageInfo("piotr_gorczynski.soccer2", 0))
                 .thenReturn(mock(android.content.pm.PackageInfo.class));
 
-        // Setup: Not dismissed
-        when(mockPrefs.getBoolean("uninstall_global_prompt_dismissed", false)).thenReturn(false);
-
         boolean result = BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(mockContext);
 
-        assertTrue("Should show uninstall prompt in Bangladesh flavor when Global app is installed and not dismissed", result);
+        assertTrue("Should show uninstall prompt in Bangladesh flavor when Global app is installed", result);
     }
 
     @Test
@@ -276,32 +273,5 @@ public class BangladeshMigrationHelperTest {
         boolean result = BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(mockContext);
 
         assertFalse("Should not show uninstall prompt when Global app is not installed", result);
-    }
-
-    @Test
-    public void testShouldShowUninstallGlobalPrompt_BangladeshFlavor_AlreadyDismissed() throws Exception {
-        // Setup: Bangladesh flavor
-        when(mockContext.getPackageName()).thenReturn("piotr_gorczynski.soccer2.bd");
-
-        // Setup: Global app is installed
-        android.content.pm.PackageManager mockPm = mock(android.content.pm.PackageManager.class);
-        when(mockContext.getPackageManager()).thenReturn(mockPm);
-        when(mockPm.getPackageInfo("piotr_gorczynski.soccer2", 0))
-                .thenReturn(mock(android.content.pm.PackageInfo.class));
-
-        // Setup: Already dismissed
-        when(mockPrefs.getBoolean("uninstall_global_prompt_dismissed", false)).thenReturn(true);
-
-        boolean result = BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(mockContext);
-
-        assertFalse("Should not show uninstall prompt after it has been dismissed", result);
-    }
-
-    @Test
-    public void testMarkUninstallGlobalPromptDismissed_SetsPreference() {
-        BangladeshMigrationHelper.markUninstallGlobalPromptDismissed(mockContext);
-
-        verify(mockEditor).putBoolean("uninstall_global_prompt_dismissed", true);
-        verify(mockEditor).apply();
     }
 }

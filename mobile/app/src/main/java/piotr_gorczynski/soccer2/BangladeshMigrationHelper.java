@@ -23,7 +23,6 @@ public class BangladeshMigrationHelper {
     private static final String PREF_BD_PROMO_DISMISSED = "bd_promo_dismissed";
     private static final String PREF_BD_PROMO_LAST_SHOWN = "bd_promo_last_shown_ms";
     private static final String PREF_BD_PROMO_DISMISS_COUNT = "bd_promo_dismiss_count";
-    private static final String PREF_UNINSTALL_GLOBAL_PROMPT_DISMISSED = "uninstall_global_prompt_dismissed";
     
     // Show again after 7 days if dismissed
     private static final long PROMO_RESHOW_DELAY_MS = 7L * 24 * 60 * 60 * 1000; // 7 days
@@ -240,8 +239,7 @@ public class BangladeshMigrationHelper {
 
     /**
      * Check if the uninstall-global-app prompt should be shown.
-     * Only shown in the Bangladesh flavor when the Global app is installed and the user
-     * has not already dismissed the prompt.
+     * Only shown in the Bangladesh flavor when the Global app is installed.
      *
      * @param context Android context
      * @return true if the prompt should be shown
@@ -254,25 +252,7 @@ public class BangladeshMigrationHelper {
             Log.d(TAG, "BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt: Global app not installed");
             return false;
         }
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        if (prefs.getBoolean(PREF_UNINSTALL_GLOBAL_PROMPT_DISMISSED, false)) {
-            Log.d(TAG, "BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt: Already dismissed");
-            return false;
-        }
         return true;
-    }
-
-    /**
-     * Mark the uninstall-global-app prompt as dismissed so it is not shown again.
-     *
-     * @param context Android context
-     */
-    public static void markUninstallGlobalPromptDismissed(Context context) {
-        PreferenceManager.getDefaultSharedPreferences(context)
-                .edit()
-                .putBoolean(PREF_UNINSTALL_GLOBAL_PROMPT_DISMISSED, true)
-                .apply();
-        Log.d(TAG, "BangladeshMigrationHelper.markUninstallGlobalPromptDismissed: Marked as dismissed");
     }
 
     /**
