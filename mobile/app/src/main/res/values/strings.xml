@@ -405,4 +405,9 @@
     <string name="bd_promo_info_title">Gridline Soccer Bangladesh</string>
     <string name="bd_promo_info_message">A special version of the game designed for Bangladesh players.\n\nFeatures:\n✓ Regular skill-based tournaments\n✓ Same friends and statistics\n✓ Seamless account migration\n\nAvailable on Google Play Store for users 18+.</string>
     <string name="bd_promo_close">Close</string>
+
+    <!-- Uninstall global app prompt (Bangladesh flavor only) -->
+    <string name="uninstall_global_title">Remove Old App</string>
+    <string name="uninstall_global_message">You have to uninstall the former global version in order to avoid conflict with the Bangladesh version.</string>
+    <string name="uninstall_global_uninstall">Uninstall</string>
 </resources>

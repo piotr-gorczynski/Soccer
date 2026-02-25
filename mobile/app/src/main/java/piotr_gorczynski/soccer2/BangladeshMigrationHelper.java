@@ -238,6 +238,24 @@ public class BangladeshMigrationHelper {
     }
 
     /**
+     * Check if the uninstall-global-app prompt should be shown.
+     * Only shown in the Bangladesh flavor when the Global app is installed.
+     *
+     * @param context Android context
+     * @return true if the prompt should be shown
+     */
+    public static boolean shouldShowUninstallGlobalPrompt(Context context) {
+        if (!AppFlavourDetector.isBangladeshFlavour(context)) {
+            return false;
+        }
+        if (!isGlobalAppInstalled(context)) {
+            Log.d(TAG, "BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt: Global app not installed");
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Check if the Global app is installed on the device.
      * Useful in the Bangladesh flavor to determine whether to prompt the user to uninstall it.
      *
