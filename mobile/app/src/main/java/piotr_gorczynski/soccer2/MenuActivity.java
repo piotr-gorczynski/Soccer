@@ -2324,10 +2324,14 @@ public class MenuActivity extends BaseActivity {
             return;
         }
         if (globalUninstallPending) {
-            // User has returned from the system uninstall dialog; reset the flag and fall through
-            // to check whether the global app was actually removed. If the user cancelled the
-            // system dialog the global app will still be installed and the prompt should reappear.
+            // Reset the flag. The system uninstall dialog causes an immediate onPause/onResume
+            // cycle on this activity before the user has interacted with it. Return early here
+            // so the prompt does not reappear during that transient resume. On the subsequent
+            // real resume (after the user dismisses the system dialog) globalUninstallPending
+            // will already be false and shouldShowUninstallGlobalPrompt() will re-check whether
+            // the global app was actually removed — showing the prompt again only if it was not.
             globalUninstallPending = false;
+            return;
         }
         if (!BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(this)) {
             return;
