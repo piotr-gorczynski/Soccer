@@ -108,7 +108,8 @@ public class MenuActivity extends BaseActivity {
     private final Handler adRetryHandler = new Handler(Looper.getMainLooper());
     private final Runnable adRetryRunnable = this::loadInterstitialAd;
     private boolean isAdLoading = false;
-    private boolean globalUninstallPending = false; // true while system uninstall dialog is open
+    private boolean globalUninstallPending = false; // true during the transient onResume caused by launching the system dialog
+    private boolean globalUninstallDialogOpen = false; // true from when the system dialog is launched until focus returns
     private View loadingOverlay;
     private final Handler overlayHandler = new Handler(Looper.getMainLooper());
     private final Runnable hideOverlayRunnable = this::hideLoadingOverlayImmediate;
@@ -592,6 +593,23 @@ public class MenuActivity extends BaseActivity {
         super.onStop();
         unregisterNetworkCallback();
         stopRunningPlayerAnimation();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        // When the system uninstall dialog opens in a new task the activity may remain
+        // "resumed" (no second onResume fires after the dialog closes). Detect the dialog
+        // closing via focus returning to verify the uninstall result.
+        // globalUninstallDialogOpen guards against unrelated focus changes (keyboard, etc.).
+        if (hasFocus && globalUninstallDialogOpen) {
+            globalUninstallDialogOpen = false;
+            // Do not reset globalUninstallPending here: if no transient resume occurred it
+            // is still true and checkAndShowUninstallGlobalPrompt() will reset it and return
+            // early, deferring the real check to the subsequent continueOnResumeAfterBackendCheck
+            // call. If the transient resume already reset it, the check runs immediately below.
+            checkAndShowUninstallGlobalPrompt();
+        }
     }
 
     /**
@@ -2326,10 +2344,9 @@ public class MenuActivity extends BaseActivity {
         if (globalUninstallPending) {
             // Reset the flag. The system uninstall dialog causes an immediate onPause/onResume
             // cycle on this activity before the user has interacted with it. Return early here
-            // so the prompt does not reappear during that transient resume. On the subsequent
-            // real resume (after the user dismisses the system dialog) globalUninstallPending
-            // will already be false and shouldShowUninstallGlobalPrompt() will re-check whether
-            // the global app was actually removed — showing the prompt again only if it was not.
+            // so the prompt does not reappear during that transient resume.
+            // onWindowFocusChanged(true) will fire once the system dialog actually closes
+            // and will call this method again to re-check the global-app state.
             globalUninstallPending = false;
             return;
         }
@@ -2343,6 +2360,7 @@ public class MenuActivity extends BaseActivity {
                 .setPositiveButton(R.string.uninstall_global_uninstall, (d, which) -> {
                     uninstallClicked[0] = true;
                     globalUninstallPending = true;
+                    globalUninstallDialogOpen = true;
                     BangladeshMigrationHelper.promptUninstallGlobalApp(this);
                 })
                 .setCancelable(false)
