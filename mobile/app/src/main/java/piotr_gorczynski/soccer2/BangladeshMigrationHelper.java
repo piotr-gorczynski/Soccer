@@ -281,6 +281,17 @@ public class BangladeshMigrationHelper {
     }
 
     /**
+     * Build uninstall intent for the Global app package.
+     * Includes EXTRA_RETURN_RESULT so caller can observe user action outcome.
+     */
+    public static Intent buildUninstallGlobalAppIntent() {
+        Intent intent = new Intent(Intent.ACTION_DELETE);
+        intent.setData(Uri.parse("package:" + GLOBAL_APP_PACKAGE));
+        intent.putExtra(Intent.EXTRA_RETURN_RESULT, true);
+        return intent;
+    }
+
+    /**
      * Open the Android system uninstall dialog for the Global app so the user can remove it.
      * Android does not allow apps to silently uninstall other apps; user confirmation is required.
      * This should only be called from the Bangladesh flavor.
@@ -289,8 +300,7 @@ public class BangladeshMigrationHelper {
      */
     public static void promptUninstallGlobalApp(Context context) {
         try {
-            Intent intent = new Intent(Intent.ACTION_DELETE);
-            intent.setData(Uri.parse("package:" + GLOBAL_APP_PACKAGE));
+            Intent intent = buildUninstallGlobalAppIntent();
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
             Log.d(TAG, "Opened system uninstall dialog for Global app");
