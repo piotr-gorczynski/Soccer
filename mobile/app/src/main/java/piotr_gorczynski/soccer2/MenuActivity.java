@@ -1,6 +1,7 @@
 package piotr_gorczynski.soccer2;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -28,6 +29,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.FullScreenContentCallback;
@@ -110,9 +113,34 @@ public class MenuActivity extends BaseActivity {
     private boolean isAdLoading = false;
     private boolean globalUninstallPending = false; // true during the transient onResume caused by launching the system dialog
     private boolean globalUninstallDialogOpen = false; // true from when the system dialog is launched until focus returns
+    private boolean awaitingGlobalUninstallResult = false;
+    private static final long GLOBAL_UNINSTALL_RECHECK_DELAY_MS = 1500L;
+    private static final long GLOBAL_UNINSTALL_PROMPT_COOLDOWN_MS = 10_000L;
     private View loadingOverlay;
     private final Handler overlayHandler = new Handler(Looper.getMainLooper());
     private final Runnable hideOverlayRunnable = this::hideLoadingOverlayImmediate;
+    private long suppressUninstallPromptUntilMs = 0L;
+    private final Runnable delayedUninstallRecheckRunnable = this::checkAndShowUninstallGlobalPrompt;
+    private final ActivityResultLauncher<Intent> uninstallGlobalAppLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                awaitingGlobalUninstallResult = false;
+                globalUninstallDialogOpen = false;
+                globalUninstallPending = false;
+                boolean uninstallSucceeded = result.getResultCode() == Activity.RESULT_OK;
+                boolean globalStillInstalled = BangladeshMigrationHelper.isGlobalAppInstalled(this);
+                Log.d("TAG_Soccer", "MenuActivity.uninstallGlobalAppLauncher: resultCode=" + result.getResultCode()
+                        + ", uninstallSucceeded=" + uninstallSucceeded
+                        + ", globalStillInstalled=" + globalStillInstalled);
+                if (!uninstallSucceeded || globalStillInstalled) {
+                    suppressUninstallPromptUntilMs = SystemClock.elapsedRealtime() + GLOBAL_UNINSTALL_PROMPT_COOLDOWN_MS;
+                    Log.d("TAG_Soccer", "MenuActivity.uninstallGlobalAppLauncher: suppressing uninstall prompt for "
+                            + GLOBAL_UNINSTALL_PROMPT_COOLDOWN_MS + "ms to avoid immediate re-prompt loop");
+                }
+                overlayHandler.removeCallbacks(delayedUninstallRecheckRunnable);
+                overlayHandler.postDelayed(delayedUninstallRecheckRunnable, GLOBAL_UNINSTALL_RECHECK_DELAY_MS);
+                Log.d("TAG_Soccer", "MenuActivity.uninstallGlobalAppLauncher: scheduled uninstall-state recheck in "
+                        + GLOBAL_UNINSTALL_RECHECK_DELAY_MS + "ms");
+            });
     private long loadingOverlayShownAtMs = 0L;
     private static final long MIN_LOADING_OVERLAY_DURATION_MS = 250L;
 
@@ -598,16 +626,9 @@ public class MenuActivity extends BaseActivity {
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        // When the system uninstall dialog opens in a new task the activity may remain
-        // "resumed" (no second onResume fires after the dialog closes). Detect the dialog
-        // closing via focus returning to verify the uninstall result.
-        // globalUninstallDialogOpen guards against unrelated focus changes (keyboard, etc.).
-        if (hasFocus && globalUninstallDialogOpen) {
+        if (hasFocus && globalUninstallDialogOpen && !awaitingGlobalUninstallResult) {
+            Log.d("TAG_Soccer", "MenuActivity.onWindowFocusChanged: focus returned with no pending uninstall result callback; forcing recheck");
             globalUninstallDialogOpen = false;
-            // Do not reset globalUninstallPending here: if no transient resume occurred it
-            // is still true and checkAndShowUninstallGlobalPrompt() will reset it and return
-            // early, deferring the real check to the subsequent continueOnResumeAfterBackendCheck
-            // call. If the transient resume already reset it, the check runs immediately below.
             checkAndShowUninstallGlobalPrompt();
         }
     }
@@ -2338,7 +2359,31 @@ public class MenuActivity extends BaseActivity {
      * the global version.
      */
     private void checkAndShowUninstallGlobalPrompt() {
+        Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: entered with state {isFinishing="
+                + isFinishing()
+                + ", isDestroyed="
+                + isDestroyed()
+                + ", globalUninstallPending="
+                + globalUninstallPending
+                + ", globalUninstallDialogOpen="
+                + globalUninstallDialogOpen
+                + ", awaitingGlobalUninstallResult="
+                + awaitingGlobalUninstallResult
+                + ", suppressUninstallPromptUntilMs="
+                + suppressUninstallPromptUntilMs
+                + "}");
         if (isFinishing() || isDestroyed()) {
+            Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: returning early because activity is finishing/destroyed");
+            return;
+        }
+        if (awaitingGlobalUninstallResult) {
+            Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: uninstall flow is in progress; waiting for result callback");
+            return;
+        }
+        long nowElapsedMs = SystemClock.elapsedRealtime();
+        if (nowElapsedMs < suppressUninstallPromptUntilMs) {
+            Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: in cooldown; remainingMs="
+                    + (suppressUninstallPromptUntilMs - nowElapsedMs));
             return;
         }
         if (globalUninstallPending) {
@@ -2348,12 +2393,16 @@ public class MenuActivity extends BaseActivity {
             // onWindowFocusChanged(true) will fire once the system dialog actually closes
             // and will call this method again to re-check the global-app state.
             globalUninstallPending = false;
+            Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: consumed globalUninstallPending=true and skipped prompt on this pass");
             return;
         }
-        if (!BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(this)) {
+        boolean shouldShow = BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(this);
+        Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: helper decision shouldShow=" + shouldShow);
+        if (!shouldShow) {
             return;
         }
         final boolean[] uninstallClicked = {false};
+        Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: showing uninstall-required dialog");
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle(R.string.uninstall_global_title)
                 .setMessage(R.string.uninstall_global_message)
@@ -2361,12 +2410,28 @@ public class MenuActivity extends BaseActivity {
                     uninstallClicked[0] = true;
                     globalUninstallPending = true;
                     globalUninstallDialogOpen = true;
-                    BangladeshMigrationHelper.promptUninstallGlobalApp(this);
+                    Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: uninstall clicked; updated flags {globalUninstallPending="
+                            + globalUninstallPending
+                            + ", globalUninstallDialogOpen="
+                            + globalUninstallDialogOpen
+                            + "}");
+                    awaitingGlobalUninstallResult = true;
+                    Intent uninstallIntent = BangladeshMigrationHelper.buildUninstallGlobalAppIntent();
+                    Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: launching uninstall intent=" + uninstallIntent);
+                    uninstallGlobalAppLauncher.launch(uninstallIntent);
                 })
                 .setCancelable(false)
                 .create();
         dialog.setOnDismissListener(d -> {
+            Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: dialog dismissed; uninstallClicked="
+                    + uninstallClicked[0]
+                    + ", flags {globalUninstallPending="
+                    + globalUninstallPending
+                    + ", globalUninstallDialogOpen="
+                    + globalUninstallDialogOpen
+                    + "}");
             if (!uninstallClicked[0]) {
+                Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: uninstall not clicked -> finishing activity");
                 finish();
             }
         });
