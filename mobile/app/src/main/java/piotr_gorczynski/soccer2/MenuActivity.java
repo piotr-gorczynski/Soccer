@@ -114,32 +114,28 @@ public class MenuActivity extends BaseActivity {
     private boolean globalUninstallPending = false; // true during the transient onResume caused by launching the system dialog
     private boolean globalUninstallDialogOpen = false; // true from when the system dialog is launched until focus returns
     private boolean awaitingGlobalUninstallResult = false;
-    private static final long GLOBAL_UNINSTALL_RECHECK_DELAY_MS = 1500L;
-    private static final long GLOBAL_UNINSTALL_PROMPT_COOLDOWN_MS = 10_000L;
     private View loadingOverlay;
     private final Handler overlayHandler = new Handler(Looper.getMainLooper());
     private final Runnable hideOverlayRunnable = this::hideLoadingOverlayImmediate;
-    private long suppressUninstallPromptUntilMs = 0L;
-    private final Runnable delayedUninstallRecheckRunnable = this::checkAndShowUninstallGlobalPrompt;
     private final ActivityResultLauncher<Intent> uninstallGlobalAppLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                 awaitingGlobalUninstallResult = false;
                 globalUninstallDialogOpen = false;
                 globalUninstallPending = false;
+
                 boolean uninstallSucceeded = result.getResultCode() == Activity.RESULT_OK;
                 boolean globalStillInstalled = BangladeshMigrationHelper.isGlobalAppInstalled(this);
                 Log.d("TAG_Soccer", "MenuActivity.uninstallGlobalAppLauncher: resultCode=" + result.getResultCode()
                         + ", uninstallSucceeded=" + uninstallSucceeded
                         + ", globalStillInstalled=" + globalStillInstalled);
-                if (!uninstallSucceeded || globalStillInstalled) {
-                    suppressUninstallPromptUntilMs = SystemClock.elapsedRealtime() + GLOBAL_UNINSTALL_PROMPT_COOLDOWN_MS;
-                    Log.d("TAG_Soccer", "MenuActivity.uninstallGlobalAppLauncher: suppressing uninstall prompt for "
-                            + GLOBAL_UNINSTALL_PROMPT_COOLDOWN_MS + "ms to avoid immediate re-prompt loop");
+
+                if (globalStillInstalled) {
+                    Log.w("TAG_Soccer", "MenuActivity.uninstallGlobalAppLauncher: Global app still installed after uninstall flow; finishing activity to enforce uninstall requirement");
+                    finish();
+                    return;
                 }
-                overlayHandler.removeCallbacks(delayedUninstallRecheckRunnable);
-                overlayHandler.postDelayed(delayedUninstallRecheckRunnable, GLOBAL_UNINSTALL_RECHECK_DELAY_MS);
-                Log.d("TAG_Soccer", "MenuActivity.uninstallGlobalAppLauncher: scheduled uninstall-state recheck in "
-                        + GLOBAL_UNINSTALL_RECHECK_DELAY_MS + "ms");
+
+                Log.d("TAG_Soccer", "MenuActivity.uninstallGlobalAppLauncher: Global app uninstall confirmed");
             });
     private long loadingOverlayShownAtMs = 0L;
     private static final long MIN_LOADING_OVERLAY_DURATION_MS = 250L;
@@ -2369,8 +2365,6 @@ public class MenuActivity extends BaseActivity {
                 + globalUninstallDialogOpen
                 + ", awaitingGlobalUninstallResult="
                 + awaitingGlobalUninstallResult
-                + ", suppressUninstallPromptUntilMs="
-                + suppressUninstallPromptUntilMs
                 + "}");
         if (isFinishing() || isDestroyed()) {
             Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: returning early because activity is finishing/destroyed");
@@ -2378,12 +2372,6 @@ public class MenuActivity extends BaseActivity {
         }
         if (awaitingGlobalUninstallResult) {
             Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: uninstall flow is in progress; waiting for result callback");
-            return;
-        }
-        long nowElapsedMs = SystemClock.elapsedRealtime();
-        if (nowElapsedMs < suppressUninstallPromptUntilMs) {
-            Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: in cooldown; remainingMs="
-                    + (suppressUninstallPromptUntilMs - nowElapsedMs));
             return;
         }
         if (globalUninstallPending) {
