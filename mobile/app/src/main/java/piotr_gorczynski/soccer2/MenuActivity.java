@@ -2338,7 +2338,17 @@ public class MenuActivity extends BaseActivity {
      * the global version.
      */
     private void checkAndShowUninstallGlobalPrompt() {
+        Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: entered with state {isFinishing="
+                + isFinishing()
+                + ", isDestroyed="
+                + isDestroyed()
+                + ", globalUninstallPending="
+                + globalUninstallPending
+                + ", globalUninstallDialogOpen="
+                + globalUninstallDialogOpen
+                + "}");
         if (isFinishing() || isDestroyed()) {
+            Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: returning early because activity is finishing/destroyed");
             return;
         }
         if (globalUninstallPending) {
@@ -2348,12 +2358,16 @@ public class MenuActivity extends BaseActivity {
             // onWindowFocusChanged(true) will fire once the system dialog actually closes
             // and will call this method again to re-check the global-app state.
             globalUninstallPending = false;
+            Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: consumed globalUninstallPending=true and skipped prompt on this pass");
             return;
         }
-        if (!BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(this)) {
+        boolean shouldShow = BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(this);
+        Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: helper decision shouldShow=" + shouldShow);
+        if (!shouldShow) {
             return;
         }
         final boolean[] uninstallClicked = {false};
+        Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: showing uninstall-required dialog");
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle(R.string.uninstall_global_title)
                 .setMessage(R.string.uninstall_global_message)
@@ -2361,12 +2375,25 @@ public class MenuActivity extends BaseActivity {
                     uninstallClicked[0] = true;
                     globalUninstallPending = true;
                     globalUninstallDialogOpen = true;
+                    Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: uninstall clicked; updated flags {globalUninstallPending="
+                            + globalUninstallPending
+                            + ", globalUninstallDialogOpen="
+                            + globalUninstallDialogOpen
+                            + "}");
                     BangladeshMigrationHelper.promptUninstallGlobalApp(this);
                 })
                 .setCancelable(false)
                 .create();
         dialog.setOnDismissListener(d -> {
+            Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: dialog dismissed; uninstallClicked="
+                    + uninstallClicked[0]
+                    + ", flags {globalUninstallPending="
+                    + globalUninstallPending
+                    + ", globalUninstallDialogOpen="
+                    + globalUninstallDialogOpen
+                    + "}");
             if (!uninstallClicked[0]) {
+                Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: uninstall not clicked -> finishing activity");
                 finish();
             }
         });
