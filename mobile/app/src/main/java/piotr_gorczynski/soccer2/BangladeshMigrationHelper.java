@@ -245,13 +245,20 @@ public class BangladeshMigrationHelper {
      * @return true if the prompt should be shown
      */
     public static boolean shouldShowUninstallGlobalPrompt(Context context) {
-        if (!AppFlavourDetector.isBangladeshFlavour(context)) {
+        boolean isBangladeshFlavour = AppFlavourDetector.isBangladeshFlavour(context);
+        Log.d(TAG, "BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt: isBangladeshFlavour=" + isBangladeshFlavour);
+        if (!isBangladeshFlavour) {
             return false;
         }
-        if (!isGlobalAppInstalled(context)) {
+
+        boolean globalInstalled = isGlobalAppInstalled(context);
+        Log.d(TAG, "BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt: globalInstalled=" + globalInstalled);
+        if (!globalInstalled) {
             Log.d(TAG, "BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt: Global app not installed");
             return false;
         }
+
+        Log.d(TAG, "BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt: Showing uninstall prompt");
         return true;
     }
 
@@ -265,10 +272,23 @@ public class BangladeshMigrationHelper {
     public static boolean isGlobalAppInstalled(Context context) {
         try {
             context.getPackageManager().getPackageInfo(GLOBAL_APP_PACKAGE, 0);
+            Log.d(TAG, "BangladeshMigrationHelper.isGlobalAppInstalled: package " + GLOBAL_APP_PACKAGE + " is installed");
             return true;
         } catch (PackageManager.NameNotFoundException e) {
+            Log.d(TAG, "BangladeshMigrationHelper.isGlobalAppInstalled: package " + GLOBAL_APP_PACKAGE + " is NOT installed");
             return false;
         }
+    }
+
+    /**
+     * Build uninstall intent for the Global app package.
+     * Includes EXTRA_RETURN_RESULT so caller can observe user action outcome.
+     */
+    public static Intent buildUninstallGlobalAppIntent() {
+        Intent intent = new Intent(Intent.ACTION_DELETE);
+        intent.setData(Uri.parse("package:" + GLOBAL_APP_PACKAGE));
+        intent.putExtra(Intent.EXTRA_RETURN_RESULT, true);
+        return intent;
     }
 
     /**
@@ -280,8 +300,7 @@ public class BangladeshMigrationHelper {
      */
     public static void promptUninstallGlobalApp(Context context) {
         try {
-            Intent intent = new Intent(Intent.ACTION_DELETE);
-            intent.setData(Uri.parse("package:" + GLOBAL_APP_PACKAGE));
+            Intent intent = buildUninstallGlobalAppIntent();
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
             Log.d(TAG, "Opened system uninstall dialog for Global app");
