@@ -130,8 +130,8 @@ public class MenuActivity extends BaseActivity {
                         + ", globalStillInstalled=" + globalStillInstalled);
 
                 if (globalStillInstalled) {
-                    Log.w("TAG_Soccer", "MenuActivity.uninstallGlobalAppLauncher: Global app still installed after uninstall flow; finishing activity to enforce uninstall requirement");
-                    finish();
+                    Log.w("TAG_Soccer", "MenuActivity.uninstallGlobalAppLauncher: Global app still installed after uninstall flow; keeping activity open and re-prompting uninstall requirement");
+                    checkAndShowUninstallGlobalPrompt();
                     return;
                 }
 
