@@ -114,6 +114,7 @@ public class MenuActivity extends BaseActivity {
     private boolean globalUninstallPending = false; // true during the transient onResume caused by launching the system dialog
     private boolean globalUninstallDialogOpen = false; // true from when the system dialog is launched until focus returns
     private boolean awaitingGlobalUninstallResult = false;
+    private AlertDialog globalUninstallDialog; // reference to the currently-showing uninstall dialog
     private View loadingOverlay;
     private final Handler overlayHandler = new Handler(Looper.getMainLooper());
     private final Runnable hideOverlayRunnable = this::hideLoadingOverlayImmediate;
@@ -130,8 +131,10 @@ public class MenuActivity extends BaseActivity {
                         + ", globalStillInstalled=" + globalStillInstalled);
 
                 if (globalStillInstalled) {
-                    Log.w("TAG_Soccer", "MenuActivity.uninstallGlobalAppLauncher: Global app still installed after uninstall flow; keeping activity open and re-prompting uninstall requirement");
-                    checkAndShowUninstallGlobalPrompt();
+                    Log.w("TAG_Soccer", "MenuActivity.uninstallGlobalAppLauncher: Global app still installed after uninstall flow; onResume will re-check");
+                    // Do not re-prompt here; the upcoming onResume cycle will call
+                    // checkAndShowUninstallGlobalPrompt() and show the dialog if needed,
+                    // avoiding a double-dialog race with the backend-availability callback.
                     return;
                 }
 
@@ -2384,6 +2387,13 @@ public class MenuActivity extends BaseActivity {
             Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: consumed globalUninstallPending=true and skipped prompt on this pass");
             return;
         }
+        // Guard against showing a second dialog while one is already on screen
+        // (e.g. a rapid second call from the backend-check callback racing with
+        // the onWindowFocusChanged-triggered call).
+        if (globalUninstallDialog != null && globalUninstallDialog.isShowing()) {
+            Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: dialog already showing, skipping duplicate");
+            return;
+        }
         boolean shouldShow = BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(this);
         Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: helper decision shouldShow=" + shouldShow);
         if (!shouldShow) {
@@ -2403,10 +2413,21 @@ public class MenuActivity extends BaseActivity {
                             + ", globalUninstallDialogOpen="
                             + globalUninstallDialogOpen
                             + "}");
-                    awaitingGlobalUninstallResult = true;
-                    Intent uninstallIntent = BangladeshMigrationHelper.buildUninstallGlobalAppIntent();
-                    Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: launching uninstall intent=" + uninstallIntent);
-                    uninstallGlobalAppLauncher.launch(uninstallIntent);
+                    // Prefer the bridge: the Global app triggers ACTION_DELETE for itself,
+                    // which avoids cross-app EXTRA_RETURN_RESULT restrictions on some
+                    // Android versions that caused RESULT_FIRST_USER to be returned
+                    // immediately without showing the system dialog.
+                    Intent bridgeIntent = BangladeshMigrationHelper.buildGlobalUninstallBridgeIntent(this);
+                    if (bridgeIntent != null) {
+                        Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: launching via Global-app bridge=" + bridgeIntent);
+                        startActivity(bridgeIntent);
+                    } else {
+                        // Fallback for Global app versions that predate the bridge activity.
+                        awaitingGlobalUninstallResult = true;
+                        Intent uninstallIntent = BangladeshMigrationHelper.buildUninstallGlobalAppIntent();
+                        Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: launching direct uninstall intent=" + uninstallIntent);
+                        uninstallGlobalAppLauncher.launch(uninstallIntent);
+                    }
                 })
                 .setCancelable(false)
                 .create();
@@ -2423,6 +2444,7 @@ public class MenuActivity extends BaseActivity {
                 finish();
             }
         });
+        globalUninstallDialog = dialog;
         dialog.show();
     }
 

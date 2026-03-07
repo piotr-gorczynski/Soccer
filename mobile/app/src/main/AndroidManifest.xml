@@ -136,6 +136,17 @@
             android:name=".AnalyticsTestActivity"
             android:exported="false" />
 
+        <!--
+            Bridge used by the Bangladesh flavour to uninstall the Global app.
+            Exported so that piotr_gorczynski.soccer2.bd can start it; it immediately
+            launches the system uninstall UI for the Global package and finishes.
+        -->
+        <activity
+            android:name=".GlobalUninstallBridgeActivity"
+            android:exported="true"
+            android:excludeFromRecents="true"
+            android:noHistory="true" />
+
         <service
             android:name=".notifications.MyFirebaseMessagingService"
             android:exported="false">

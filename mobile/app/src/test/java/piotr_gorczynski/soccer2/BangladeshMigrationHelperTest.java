@@ -1,8 +1,11 @@
 package piotr_gorczynski.soccer2;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -273,5 +276,47 @@ public class BangladeshMigrationHelperTest {
         boolean result = BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(mockContext);
 
         assertFalse("Should not show uninstall prompt when Global app is not installed", result);
+    }
+
+    @Test
+    public void testBuildUninstallGlobalAppIntent_NoExtraReturnResult() {
+        Intent intent = BangladeshMigrationHelper.buildUninstallGlobalAppIntent();
+
+        assertEquals("Intent action should be ACTION_DELETE", Intent.ACTION_DELETE, intent.getAction());
+        assertEquals("Intent data should target Global app package",
+                "package:piotr_gorczynski.soccer2", intent.getData().toString());
+        assertFalse("EXTRA_RETURN_RESULT must NOT be set; it causes some Android versions to return " +
+                "RESULT_FIRST_USER immediately without showing the uninstall dialog",
+                intent.hasExtra(Intent.EXTRA_RETURN_RESULT));
+    }
+
+    @Test
+    public void testBuildGlobalUninstallBridgeIntent_ReturnsNullWhenBridgeNotAvailable() throws Exception {
+        PackageManager mockPm = mock(PackageManager.class);
+        when(mockContext.getPackageManager()).thenReturn(mockPm);
+        when(mockPm.getActivityInfo(any(ComponentName.class), anyInt()))
+                .thenThrow(new PackageManager.NameNotFoundException());
+
+        Intent result = BangladeshMigrationHelper.buildGlobalUninstallBridgeIntent(mockContext);
+
+        assertNull("Should return null when GlobalUninstallBridgeActivity is not available", result);
+    }
+
+    @Test
+    public void testBuildGlobalUninstallBridgeIntent_ReturnsIntentWhenBridgeAvailable() throws Exception {
+        PackageManager mockPm = mock(PackageManager.class);
+        when(mockContext.getPackageManager()).thenReturn(mockPm);
+        when(mockPm.getActivityInfo(any(ComponentName.class), anyInt()))
+                .thenReturn(mock(ActivityInfo.class));
+
+        Intent result = BangladeshMigrationHelper.buildGlobalUninstallBridgeIntent(mockContext);
+
+        assertNotNull("Should return an Intent when GlobalUninstallBridgeActivity is available", result);
+        ComponentName component = result.getComponent();
+        assertNotNull("Intent must have an explicit component", component);
+        assertEquals("Component package should be the Global app",
+                "piotr_gorczynski.soccer2", component.getPackageName());
+        assertEquals("Component class should be GlobalUninstallBridgeActivity",
+                "piotr_gorczynski.soccer2.GlobalUninstallBridgeActivity", component.getClassName());
     }
 }

@@ -1,8 +1,10 @@
 package piotr_gorczynski.soccer2;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.telephony.TelephonyManager;
@@ -282,13 +284,44 @@ public class BangladeshMigrationHelper {
 
     /**
      * Build uninstall intent for the Global app package.
-     * Includes EXTRA_RETURN_RESULT so caller can observe user action outcome.
+     *
+     * <p>Note: {@code EXTRA_RETURN_RESULT} is intentionally <em>not</em> set here.
+     * On some Android versions, setting it causes the PackageInstaller to return
+     * {@code RESULT_FIRST_USER} immediately without showing the uninstall dialog,
+     * which makes the uninstall flow impossible to complete.</p>
      */
     public static Intent buildUninstallGlobalAppIntent() {
         Intent intent = new Intent(Intent.ACTION_DELETE);
         intent.setData(Uri.parse("package:" + GLOBAL_APP_PACKAGE));
-        intent.putExtra(Intent.EXTRA_RETURN_RESULT, true);
         return intent;
+    }
+
+    /**
+     * Build an explicit Intent that starts {@code GlobalUninstallBridgeActivity} inside
+     * the Global app, if that activity is present and reachable.
+     *
+     * <p>Using this bridge means the <em>Global</em> app itself triggers
+     * {@code ACTION_DELETE} for its own package, which avoids cross-app restrictions
+     * that on certain Android versions cause {@code ACTION_DELETE} launched from a
+     * third-party app to return {@code RESULT_FIRST_USER} without showing the dialog.</p>
+     *
+     * @param context Android context (used to verify the activity is reachable)
+     * @return explicit Intent targeting the bridge, or {@code null} if the Global app
+     *         is not installed or the bridge activity is not exported in that version
+     */
+    public static Intent buildGlobalUninstallBridgeIntent(Context context) {
+        ComponentName bridge = new ComponentName(
+                GLOBAL_APP_PACKAGE,
+                GLOBAL_APP_PACKAGE + ".GlobalUninstallBridgeActivity");
+        try {
+            context.getPackageManager().getActivityInfo(bridge, 0);
+            Intent intent = new Intent();
+            intent.setComponent(bridge);
+            return intent;
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.d(TAG, "BangladeshMigrationHelper.buildGlobalUninstallBridgeIntent: bridge activity not available in Global app");
+            return null;
+        }
     }
 
     /**
