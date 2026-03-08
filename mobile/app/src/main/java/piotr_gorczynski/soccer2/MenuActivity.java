@@ -626,9 +626,21 @@ public class MenuActivity extends BaseActivity {
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus && globalUninstallDialogOpen && !awaitingGlobalUninstallResult) {
-            Log.d("TAG_Soccer", "MenuActivity.onWindowFocusChanged: focus returned with no pending uninstall result callback; forcing recheck");
-            globalUninstallDialogOpen = false;
-            checkAndShowUninstallGlobalPrompt();
+            if (globalUninstallPending) {
+                // The bridge activity finished and returned focus to us *before* the system
+                // uninstall dialog had a chance to appear.  Consume the pending flag so that
+                // a direct call to checkAndShowUninstallGlobalPrompt() from this point forward
+                // is correctly suppressed by the globalUninstallDialogOpen guard, but keep
+                // globalUninstallDialogOpen=true so that the *real* focus return (once the
+                // system dialog is dismissed) will still trigger the recheck.
+                globalUninstallPending = false;
+                Log.d("TAG_Soccer", "MenuActivity.onWindowFocusChanged: bridge returned focus early (system dialog pending); globalUninstallPending consumed, keeping globalUninstallDialogOpen=true");
+            } else {
+                // Real focus return – the system uninstall dialog has been dismissed.
+                Log.d("TAG_Soccer", "MenuActivity.onWindowFocusChanged: focus returned with no pending uninstall result callback; forcing recheck");
+                globalUninstallDialogOpen = false;
+                checkAndShowUninstallGlobalPrompt();
+            }
         }
     }
 
@@ -2375,6 +2387,14 @@ public class MenuActivity extends BaseActivity {
         }
         if (awaitingGlobalUninstallResult) {
             Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: uninstall flow is in progress; waiting for result callback");
+            return;
+        }
+        if (globalUninstallDialogOpen) {
+            // The system uninstall dialog was launched via the bridge and is still open
+            // (or the bridge just returned focus before the system dialog appeared).
+            // Do not show our own dialog on top; onWindowFocusChanged will trigger a
+            // recheck once the system dialog is actually dismissed.
+            Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: system uninstall dialog still open; skipping prompt");
             return;
         }
         if (globalUninstallPending) {
