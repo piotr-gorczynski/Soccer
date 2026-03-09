@@ -317,6 +317,7 @@ public class BangladeshMigrationHelper {
             context.getPackageManager().getActivityInfo(bridge, 0);
             Intent intent = new Intent();
             intent.setComponent(bridge);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
             return intent;
         } catch (PackageManager.NameNotFoundException e) {
             Log.d(TAG, "BangladeshMigrationHelper.buildGlobalUninstallBridgeIntent: bridge activity not available in Global app");
