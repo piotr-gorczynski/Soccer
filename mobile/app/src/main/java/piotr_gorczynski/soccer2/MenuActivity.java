@@ -111,7 +111,7 @@ public class MenuActivity extends BaseActivity {
     private final Handler adRetryHandler = new Handler(Looper.getMainLooper());
     private final Runnable adRetryRunnable = this::loadInterstitialAd;
     private boolean isAdLoading = false;
-    private boolean globalUninstallPending = false; // true during the transient onResume caused by launching the system dialog
+    private boolean globalUninstallPending = false; // true from when the user clicks "Uninstall" until focus returns after the bridge/dialog finishes
     private boolean globalUninstallDialogOpen = false; // true from when the system dialog is launched until focus returns
     private boolean awaitingGlobalUninstallResult = false;
     private AlertDialog globalUninstallDialog; // reference to the currently-showing uninstall dialog
@@ -626,21 +626,13 @@ public class MenuActivity extends BaseActivity {
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus && globalUninstallDialogOpen && !awaitingGlobalUninstallResult) {
-            if (globalUninstallPending) {
-                // The bridge activity finished and returned focus to us *before* the system
-                // uninstall dialog had a chance to appear.  Consume the pending flag so that
-                // a direct call to checkAndShowUninstallGlobalPrompt() from this point forward
-                // is correctly suppressed by the globalUninstallDialogOpen guard, but keep
-                // globalUninstallDialogOpen=true so that the *real* focus return (once the
-                // system dialog is dismissed) will still trigger the recheck.
-                globalUninstallPending = false;
-                Log.d("TAG_Soccer", "MenuActivity.onWindowFocusChanged: bridge returned focus early (system dialog pending); globalUninstallPending consumed, keeping globalUninstallDialogOpen=true");
-            } else {
-                // Real focus return – the system uninstall dialog has been dismissed.
-                Log.d("TAG_Soccer", "MenuActivity.onWindowFocusChanged: focus returned with no pending uninstall result callback; forcing recheck");
-                globalUninstallDialogOpen = false;
-                checkAndShowUninstallGlobalPrompt();
-            }
+            // The bridge activity has finished (either the system uninstall dialog was
+            // confirmed, cancelled, or the bridge cleaned up after itself).  Clear all
+            // in-progress flags and re-evaluate whether the prompt needs to be shown.
+            Log.d("TAG_Soccer", "MenuActivity.onWindowFocusChanged: focus returned after uninstall flow; clearing state and rechecking");
+            globalUninstallDialogOpen = false;
+            globalUninstallPending = false;
+            checkAndShowUninstallGlobalPrompt();
         }
     }
 
