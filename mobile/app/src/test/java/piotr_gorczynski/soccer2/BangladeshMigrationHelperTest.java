@@ -318,5 +318,10 @@ public class BangladeshMigrationHelperTest {
                 "piotr_gorczynski.soccer2", component.getPackageName());
         assertEquals("Component class should be GlobalUninstallBridgeActivity",
                 "piotr_gorczynski.soccer2.GlobalUninstallBridgeActivity", component.getClassName());
+        assertTrue("Intent must include FLAG_ACTIVITY_NEW_TASK so the bridge runs in an isolated task " +
+                        "and does not expose the Global app's back stack when it finishes",
+                (result.getFlags() & Intent.FLAG_ACTIVITY_NEW_TASK) != 0);
+        assertTrue("Intent must include FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS to hide the isolated bridge task",
+                (result.getFlags() & Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS) != 0);
     }
 }
