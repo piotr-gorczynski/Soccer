@@ -96,7 +96,7 @@ public class BangladeshMigrationHelper {
     public static boolean isUserInBangladesh(Context context) {
         String countryCode = resolveCountryCode(context);
         Log.d(TAG, "BangladeshMigrationHelper.isUserInBangladesh: Device country code: " + countryCode);
-        return "BD".equals(countryCode);
+        return "PL".equals(countryCode);
     }
     
     /**
