@@ -346,4 +346,9 @@
     
     <!-- Tournament notification dialog -->
     <string name="tournament_started_dialog_message">بدأت البطولة %1$s! هل تريد فتح صالة البطولة؟</string>
+
+    <!-- Uninstall global dialog -->
+    <string name="uninstall_global_title">إزالة التطبيق القديم</string>
+    <string name="uninstall_global_message">يجب عليك إلغاء تثبيت الإصدار العالمي السابق لتجنب التعارض مع إصدار بنغلاديش.\n\nلإلغاء التثبيت: افتح الإعدادات ← التطبيقات ← ابحث عن \"Soccer\" (الإصدار العالمي) ← إلغاء التثبيت.</string>
+    <string name="uninstall_global_uninstall">إغلاق</string>
 </resources>

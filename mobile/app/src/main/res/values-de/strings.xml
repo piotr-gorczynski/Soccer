@@ -400,4 +400,9 @@
     
     <!-- Tournament notification dialog -->
     <string name="tournament_started_dialog_message">Turnier %1$s hat begonnen! Möchten Sie die Turnier-Lobby öffnen?</string>
+
+    <!-- Uninstall global dialog -->
+    <string name="uninstall_global_title">Alte App entfernen</string>
+    <string name="uninstall_global_message">Sie müssen die frühere globale Version deinstallieren, um Konflikte mit der Bangladesh-Version zu vermeiden.\n\nZum Deinstallieren: Einstellungen → Apps → „Soccer" (globale Version) suchen → Deinstallieren.</string>
+    <string name="uninstall_global_uninstall">Schließen</string>
 </resources>

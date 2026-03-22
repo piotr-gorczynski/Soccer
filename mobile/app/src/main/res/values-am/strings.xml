@@ -365,4 +365,9 @@
     
     <!-- Tournament notification dialog -->
     <string name="tournament_started_dialog_message">ውድድር %1$s ተጀምሯል! የውድድር አዳራሽ መክፈት ይፈልጋሉ?</string>
+
+    <!-- Uninstall global dialog -->
+    <string name="uninstall_global_title">ቀዳሚ አፕ ያስወግዱ</string>
+    <string name="uninstall_global_message">ከባንግላዲሽ ስሪት ጋር ግጭት እንዳይፈጠር ቀዳሚውን ዓለምአቀፍ ስሪት ማስወገድ ያስፈልግዎታል።\n\nለማስወገድ: ቅንብሮች → ፕሮግራሞች → \"Soccer\" (ዓለምአቀፍ ስሪት) → ማስወገድ ይሂዱ።</string>
+    <string name="uninstall_global_uninstall">ዝጋ</string>
 </resources>

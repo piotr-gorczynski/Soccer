@@ -365,4 +365,9 @@
     
     <!-- Tournament notification dialog -->
     <string name="tournament_started_dialog_message">ការប្រកួត %1$s បានចាប់ផ្តើម! តើអ្នកចង់បើកសាលប្រជុំប្រកួតទេ?</string>
+
+    <!-- Uninstall global dialog -->
+    <string name="uninstall_global_title">លុបកម្មវិធីចាស់</string>
+    <string name="uninstall_global_message">អ្នកត្រូវលុបកំណែចាស់ដែលជាកំណែសកល ដើម្បីជៀសវាងការប៉ះទង្គិចជាមួយកំណែបង់ក្លាដេស។\n\nដើម្បីលុប: ចូលទៅ ការកំណត់ → កម្មវិធី → រកឃើញ \"Soccer\" (កំណែសកល) → លុប។</string>
+    <string name="uninstall_global_uninstall">បិទ</string>
 </resources>
