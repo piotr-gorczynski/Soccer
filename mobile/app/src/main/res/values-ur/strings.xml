@@ -402,6 +402,6 @@
 
     <!-- Uninstall global dialog -->
     <string name="uninstall_global_title">پرانی ایپ ہٹائیں</string>
-    <string name="uninstall_global_message">بنگلہ دیش ورژن کے ساتھ تنازعہ سے بچنے کے لیے آپ کو پرانا عالمی ورژن ان انسٹال کرنا ہوگا۔\n\nان انسٹال کرنے کے لیے: ترتیبات ← ایپس ← \"Soccer\" (عالمی ورژن) تلاش کریں ← ان انسٹال کریں۔</string>
+    <string name="uninstall_global_message">بنگلہ دیش ورژن کے ساتھ تنازعہ سے بچنے کے لیے آپ کو پرانا عالمی ورژن ان انسٹال کرنا ہوگا۔\n\nان انسٹال کرنے کے لیے: ترتیبات ← ایپس ← \"Soccer\" (بغیر جھنڈے کے) تلاش کریں ← ان انسٹال کریں۔</string>
     <string name="uninstall_global_uninstall">بند کریں</string>
 </resources>

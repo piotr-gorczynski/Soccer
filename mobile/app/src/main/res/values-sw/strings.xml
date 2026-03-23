@@ -368,6 +368,6 @@
 
     <!-- Uninstall global dialog -->
     <string name="uninstall_global_title">Ondoa programu ya zamani</string>
-    <string name="uninstall_global_message">Lazima uondoe toleo la zamani la kimataifa ili kuepuka mgongano na toleo la Bangladesh.\n\nIli kuondoa: nenda kwa Mipangilio → Programu → tafuta \"Soccer\" (toleo la kimataifa) → Ondoa.</string>
+    <string name="uninstall_global_message">Lazima uondoe toleo la zamani la kimataifa ili kuepuka mgongano na toleo la Bangladesh.\n\nIli kuondoa: nenda kwa Mipangilio → Programu → tafuta \"Soccer\" (bila bendera) → Ondoa.</string>
     <string name="uninstall_global_uninstall">Funga</string>
 </resources>

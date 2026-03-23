@@ -368,6 +368,6 @@
 
     <!-- Uninstall global dialog -->
     <string name="uninstall_global_title">Esorey ny app taloha</string>
-    <string name="uninstall_global_message">Tsy maintsy hanesorana ny dikan-teny maneran-tany taloha ianao mba hanerena ny fifanolanana amin\'ny dikan-teny Banglades.\n\nMba hanesorana: Mankanesa amin\'ny Paramètre → Fampiharana → Tadiavo ny \"Soccer\" (dikan-teny maneran-tany) → Esory.</string>
+    <string name="uninstall_global_message">Tsy maintsy hanesorana ny dikan-teny maneran-tany taloha ianao mba hanerena ny fifanolanana amin\'ny dikan-teny Banglades.\n\nMba hanesorana: Mankanesa amin\'ny Paramètre → Fampiharana → Tadiavo ny \"Soccer\" (tsy misy sainan-tanindrazana) → Esory.</string>
     <string name="uninstall_global_uninstall">Akatona</string>
 </resources>

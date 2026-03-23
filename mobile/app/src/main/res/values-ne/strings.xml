@@ -402,6 +402,6 @@
 
     <!-- Uninstall global dialog -->
     <string name="uninstall_global_title">पुरानो अनुप्रयोग हटाउनुहोस्</string>
-    <string name="uninstall_global_message">बंगलादेश संस्करणसँग द्वन्द्व हुनबाट बच्न तपाईंले पुरानो विश्व संस्करण अनइन्स्टल गर्नु पर्छ।\n\nअनइन्स्टल गर्न: सेटिङ्स → अनुप्रयोगहरू → \"Soccer\" (विश्व संस्करण) खोज्नुहोस् → अनइन्स्टल गर्नुहोस्।</string>
+    <string name="uninstall_global_message">बंगलादेश संस्करणसँग द्वन्द्व हुनबाट बच्न तपाईंले पुरानो विश्व संस्करण अनइन्स्टल गर्नु पर्छ।\n\nअनइन्स्टल गर्न: सेटिङ्स → अनुप्रयोगहरू → \"Soccer\" (झण्डा बिना) खोज्नुहोस् → अनइन्स्टल गर्नुहोस्।</string>
     <string name="uninstall_global_uninstall">बन्द गर्नुहोस्</string>
 </resources>

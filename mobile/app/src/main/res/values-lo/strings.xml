@@ -368,6 +368,6 @@
 
     <!-- Uninstall global dialog -->
     <string name="uninstall_global_title">ລຶບແອັບເກົ່າ</string>
-    <string name="uninstall_global_message">ທ່ານຕ້ອງຖອນການຕິດຕັ້ງລຸ້ນສາກົນເກົ່າເພື່ອຫຼີກລ່ຽງຄວາມຂັດແຍ້ງກັບລຸ້ນບັງກາລາເດດ.\n\nເພື່ອຖອນການຕິດຕັ້ງ: ໄປທີ່ ການຕັ້ງຄ່າ → ແອັບ → ຊອກຫາ \"Soccer\" (ລຸ້ນສາກົນ) → ຖອນການຕິດຕັ້ງ.</string>
+    <string name="uninstall_global_message">ທ່ານຕ້ອງຖອນການຕິດຕັ້ງລຸ້ນສາກົນເກົ່າເພື່ອຫຼີກລ່ຽງຄວາມຂັດແຍ້ງກັບລຸ້ນບັງກາລາເດດ.\n\nເພື່ອຖອນການຕິດຕັ້ງ: ໄປທີ່ ການຕັ້ງຄ່າ → ແອັບ → ຊອກຫາ \"Soccer\" (ບໍ່ມີທຸງ) → ຖອນການຕິດຕັ້ງ.</string>
     <string name="uninstall_global_uninstall">ປິດ</string>
 </resources>

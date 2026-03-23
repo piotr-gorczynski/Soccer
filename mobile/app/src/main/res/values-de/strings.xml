@@ -403,6 +403,6 @@
 
     <!-- Uninstall global dialog -->
     <string name="uninstall_global_title">Alte App entfernen</string>
-    <string name="uninstall_global_message">Sie müssen die frühere globale Version deinstallieren, um Konflikte mit der Bangladesh-Version zu vermeiden.\n\nZum Deinstallieren: Einstellungen → Apps → „Soccer" (globale Version) suchen → Deinstallieren.</string>
+    <string name="uninstall_global_message">Sie müssen die frühere globale Version deinstallieren, um Konflikte mit der Bangladesh-Version zu vermeiden.\n\nZum Deinstallieren: Einstellungen → Apps → „Soccer" (ohne Flagge) suchen → Deinstallieren.</string>
     <string name="uninstall_global_uninstall">Schließen</string>
 </resources>
