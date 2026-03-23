@@ -368,6 +368,6 @@
 
     <!-- Uninstall global dialog -->
     <string name="uninstall_global_title">အဟောင်း App ကို ဖြုတ်သိမ်းပါ</string>
-    <string name="uninstall_global_message">ဘင်္ဂလားဒေ့ရှ်ဗားရှင်းနှင့် ပဋိပက္ခမဖြစ်ရန် ယခင်ကမ္ဘာ့ဗားရှင်းကို ဖြုတ်သိမ်းရမည်။\n\nဖြုတ်သိမ်းရန်: ဆက်တင်များ → အက်ပ်များ → \"Soccer\" (အလံမပါ) ကို ရှာပါ → ဖြုတ်သိမ်းပါ။</string>
+    <string name="uninstall_global_message">ဘင်္ဂလားဒေ့ရှ်ဗားရှင်းနှင့် ပဋိပက္ခမဖြစ်ရန် ယခင်ကမ္ဘာ့ဗားရှင်းကို ဖြုတ်သိမ်းရမည်။\n\nဖြုတ်သိမ်းရန်: ဆက်တင်များ → အက်ပ်များ → \"Gridline Soccer\" (အလံမပါ) ကို ရှာပါ → ဖြုတ်သိမ်းပါ။</string>
     <string name="uninstall_global_uninstall">ပိတ်</string>
 </resources>

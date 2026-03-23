@@ -368,6 +368,6 @@
 
     <!-- Uninstall global dialog -->
     <string name="uninstall_global_title">Хуучин аппыг устгах</string>
-    <string name="uninstall_global_message">Бангладешийн хувилбартай зөрчил гарахаас зайлсхийхийн тулд хуучин дэлхийн хувилбарыг устгах хэрэгтэй.\n\nУстгахын тулд: Тохиргоо → Аппликейшн → \"Soccer\" (тугалгүй)-г хайж → Устга.</string>
+    <string name="uninstall_global_message">Бангладешийн хувилбартай зөрчил гарахаас зайлсхийхийн тулд хуучин дэлхийн хувилбарыг устгах хэрэгтэй.\n\nУстгахын тулд: Тохиргоо → Аппликейшн → \"Gridline Soccer\" (тугалгүй)-г хайж → Устга.</string>
     <string name="uninstall_global_uninstall">Хаах</string>
 </resources>

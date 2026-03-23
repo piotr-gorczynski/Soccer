@@ -349,6 +349,6 @@
 
     <!-- Uninstall global dialog -->
     <string name="uninstall_global_title">حذف برنامه قدیمی</string>
-    <string name="uninstall_global_message">برای جلوگیری از تداخل با نسخه بنگلادش، باید نسخه جهانی قدیمی را حذف نصب کنید.\n\nبرای حذف نصب: تنظیمات ← برنامه‌ها ← «Soccer» (بدون پرچم) را پیدا کنید ← حذف نصب.</string>
+    <string name="uninstall_global_message">برای جلوگیری از تداخل با نسخه بنگلادش، باید نسخه جهانی قدیمی را حذف نصب کنید.\n\nبرای حذف نصب: تنظیمات ← برنامه‌ها ← «Gridline Soccer» (بدون پرچم) را پیدا کنید ← حذف نصب.</string>
     <string name="uninstall_global_uninstall">بستن</string>
 </resources>

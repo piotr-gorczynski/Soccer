@@ -405,6 +405,6 @@
 
     <!-- Uninstall global dialog -->
     <string name="uninstall_global_title">Eliminar aplicación anterior</string>
-    <string name="uninstall_global_message">Debe desinstalar la versión global anterior para evitar conflictos con la versión de Bangladesh.\n\nPara desinstalar: abra Ajustes → Aplicaciones → busque \"Soccer\" (sin bandera) → Desinstalar.</string>
+    <string name="uninstall_global_message">Debe desinstalar la versión global anterior para evitar conflictos con la versión de Bangladesh.\n\nPara desinstalar: abra Ajustes → Aplicaciones → busque \"Gridline Soccer\" (sin bandera) → Desinstalar.</string>
     <string name="uninstall_global_uninstall">Cerrar</string>
 </resources>

@@ -349,6 +349,6 @@
 
     <!-- Uninstall global dialog -->
     <string name="uninstall_global_title">إزالة التطبيق القديم</string>
-    <string name="uninstall_global_message">يجب عليك إلغاء تثبيت الإصدار العالمي السابق لتجنب التعارض مع إصدار بنغلاديش.\n\nلإلغاء التثبيت: افتح الإعدادات ← التطبيقات ← ابحث عن \"Soccer\" (بدون علم) ← إلغاء التثبيت.</string>
+    <string name="uninstall_global_message">يجب عليك إلغاء تثبيت الإصدار العالمي السابق لتجنب التعارض مع إصدار بنغلاديش.\n\nلإلغاء التثبيت: افتح الإعدادات ← التطبيقات ← ابحث عن \"Gridline Soccer\" (بدون علم) ← إلغاء التثبيت.</string>
     <string name="uninstall_global_uninstall">إغلاق</string>
 </resources>

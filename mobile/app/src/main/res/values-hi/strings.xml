@@ -402,6 +402,6 @@
 
     <!-- Uninstall global dialog -->
     <string name="uninstall_global_title">पुराना ऐप हटाएं</string>
-    <string name="uninstall_global_message">बांग्लादेश संस्करण के साथ संघर्ष से बचने के लिए आपको पूर्व वैश्विक संस्करण को अनइंस्टॉल करना होगा।\n\nअनइंस्टॉल करने के लिए: सेटिंग्स → ऐप्स → \"Soccer\" (बिना झंडे के) खोजें → अनइंस्टॉल करें।</string>
+    <string name="uninstall_global_message">बांग्लादेश संस्करण के साथ संघर्ष से बचने के लिए आपको पूर्व वैश्विक संस्करण को अनइंस्टॉल करना होगा।\n\nअनइंस्टॉल करने के लिए: सेटिंग्स → ऐप्स → \"Gridline Soccer\" (बिना झंडे के) खोजें → अनइंस्टॉल करें।</string>
     <string name="uninstall_global_uninstall">बंद करें</string>
 </resources>
