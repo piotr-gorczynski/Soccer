@@ -412,6 +412,6 @@
 
     <!-- Uninstall global app prompt (Bangladesh flavor only) -->
     <string name="uninstall_global_title">পুরনো অ্যাপ সরান</string>
-    <string name="uninstall_global_message">বাংলাদেশ সংস্করণের সাথে দ্বন্দ্ব এড়াতে পূর্ববর্তী গ্লোবাল সংস্করণটি আনইনস্টল করতে হবে।</string>
-    <string name="uninstall_global_uninstall">আনইনস্টল করুন</string>
+    <string name="uninstall_global_message">বাংলাদেশ সংস্করণের সাথে দ্বন্দ্ব এড়াতে পূর্ববর্তী গ্লোবাল সংস্করণটি আনইনস্টল করতে হবে।\n\nআনইনস্টল করতে: আপনার ফোনের সেটিংস → অ্যাপস → "Gridline Soccer" (পতাকা ছাড়া) খুঁজুন → আনইনস্টল করুন।</string>
+    <string name="uninstall_global_uninstall">বন্ধ করুন</string>
 </resources>

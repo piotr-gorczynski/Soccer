@@ -365,4 +365,9 @@
     
     <!-- Tournament notification dialog -->
     <string name="tournament_started_dialog_message">ပြိုင်ပွဲ %1$s စတင်ပြီ! သင်ပြိုင်ပွဲစည်းဝေးခန်းဖွင့်ချင်ပါသလား?</string>
+
+    <!-- Uninstall global dialog -->
+    <string name="uninstall_global_title">အဟောင်း App ကို ဖြုတ်သိမ်းပါ</string>
+    <string name="uninstall_global_message">ဘင်္ဂလားဒေ့ရှ်ဗားရှင်းနှင့် ပဋိပက္ခမဖြစ်ရန် ယခင်ကမ္ဘာ့ဗားရှင်းကို ဖြုတ်သိမ်းရမည်။\n\nဖြုတ်သိမ်းရန်: ဆက်တင်များ → အက်ပ်များ → \"Gridline Soccer\" (အလံမပါ) ကို ရှာပါ → ဖြုတ်သိမ်းပါ။</string>
+    <string name="uninstall_global_uninstall">ပိတ်</string>
 </resources>
