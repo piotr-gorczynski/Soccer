@@ -365,4 +365,9 @@
     
     <!-- Tournament notification dialog -->
     <string name="tournament_started_dialog_message">තරඟාවලිය %1$s ආරම්භ විය! ඔබට තරඟාවලි ලොබිය විවෘත කිරීමට අවශ්‍යද?</string>
+
+    <!-- Uninstall global dialog -->
+    <string name="uninstall_global_title">පැරණි යෙදුම ඉවත් කරන්න</string>
+    <string name="uninstall_global_message">බංග්ලාදේශ අනුවාදය සමඟ ගැටුම් ඇතිවීම වළක්වා ගැනීම සඳහා ඔබ පෙර ගෝලීය අනුවාදය අස්ථාපනය කළ යුතුය.\n\nඅස්ථාපනය කිරීමට: සැකසීම් → යෙදුම් → \"Gridline Soccer\" (කොඩිය නොමැතිව) සොයන්න → අස්ථාපනය කරන්න.</string>
+    <string name="uninstall_global_uninstall">වසන්න</string>
 </resources>

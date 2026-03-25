@@ -365,4 +365,9 @@
     
     <!-- Tournament notification dialog -->
     <string name="tournament_started_dialog_message">Tartanka %1$s ayaa bilaabmay! Ma rabtaa inaad furto qolka tartanka?</string>
+
+    <!-- Uninstall global dialog -->
+    <string name="uninstall_global_title">Ka saar barnaamijkii hore</string>
+    <string name="uninstall_global_message">Waa inaad ka saartaa nooca hore ee caalamiga ah si looga fogaado khilaafka nooca Bangladesh.\n\nSi aad u saartid: Aad Goobaha → Codsiyada → raadi \"Gridline Soccer\" (aan calanka lahayn) → Ka saar.</string>
+    <string name="uninstall_global_uninstall">Xir</string>
 </resources>
