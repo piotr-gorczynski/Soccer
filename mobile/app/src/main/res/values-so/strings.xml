@@ -366,6 +366,16 @@
     <!-- Tournament notification dialog -->
     <string name="tournament_started_dialog_message">Tartanka %1$s ayaa bilaabmay! Ma rabtaa inaad furto qolka tartanka?</string>
 
+    <!-- Bangladesh promotion dialog -->
+    <string name="bd_promo_title">🇧🇩 Nooca Bangladesh wuu diyaar yahay</string>
+    <string name="bd_promo_message">Nooc gaara oo Gridline Soccer ah oo loogu talagalay Bangladesh waa la heli karaa.\n\nLa heli karo Google Play Store isticmaalayaasha da\'da 18 sano ama ka weyn.</string>
+    <string name="bd_promo_learn_more">Wax badan baro</string>
+    <string name="bd_promo_install">Rakib</string>
+    <string name="bd_promo_maybe_later">Laga yaabaa dambe</string>
+    <string name="bd_promo_info_title">Gridline Soccer Bangladesh</string>
+    <string name="bd_promo_info_message">Nooc gaara oo ciyaarta ah oo loo naqshadeeyay ciyaareyaasha Bangladesh.\n\nSifooyinka:\n✓ Tartamada xirfadda ku salaysan ee joogtada ah\n✓ Asxaab iyo xogta isku mid ah\n✓ Wareejinta akoonka si fudud\n\nLa heli karo Google Play Store isticmaalayaasha 18+.</string>
+    <string name="bd_promo_close">Xidh</string>
+
     <!-- Uninstall global dialog -->
     <string name="uninstall_global_title">Ka saar barnaamijkii hore</string>
     <string name="uninstall_global_message">Waa inaad ka saartaa nooca hore ee caalamiga ah si looga fogaado khilaafka nooca Bangladesh.\n\nSi aad u saartid: Aad Goobaha → Codsiyada → raadi \"Gridline Soccer\" (aan calanka lahayn) → Ka saar.</string>
