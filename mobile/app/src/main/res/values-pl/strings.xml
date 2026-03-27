@@ -401,6 +401,16 @@
     <!-- Tournament notification dialog -->
     <string name="tournament_started_dialog_message">Turniej %1$s rozpoczął się! Czy chcesz otworzyć lobby turnieju?</string>
 
+    <!-- Bangladesh promotion dialog -->
+    <string name="bd_promo_title">🇧🇩 Wersja bangladeska dostępna</string>
+    <string name="bd_promo_message">Specjalna wersja Gridline Soccer dla Bangladeszu jest już dostępna.\n\nDostępna dla użytkowników w wieku 18 lat i starszych w sklepie Google Play.</string>
+    <string name="bd_promo_learn_more">Dowiedz się więcej</string>
+    <string name="bd_promo_install">Zainstaluj</string>
+    <string name="bd_promo_maybe_later">Może później</string>
+    <string name="bd_promo_info_title">Gridline Soccer Bangladesh</string>
+    <string name="bd_promo_info_message">Specjalna wersja gry stworzona dla graczy z Bangladeszu.\n\nFunkcje:\n✓ Regularne turnieje oparte na umiejętnościach\n✓ Ci sami znajomi i statystyki\n✓ Bezproblemowa migracja konta\n\nDostępna w sklepie Google Play dla użytkowników 18+.</string>
+    <string name="bd_promo_close">Zamknij</string>
+
     <!-- Uninstall global dialog -->
     <string name="uninstall_global_title">Usuń starą aplikację</string>
     <string name="uninstall_global_message">Aby uniknąć konfliktu z wersją bangladeską, musisz odinstalować poprzednią wersję globalną.\n\nAby odinstalować: otwórz Ustawienia → Aplikacje → znajdź „Gridline Soccer" (bez flagi) → Odinstaluj.</string>

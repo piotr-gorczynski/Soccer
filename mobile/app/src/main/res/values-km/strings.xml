@@ -366,6 +366,16 @@
     <!-- Tournament notification dialog -->
     <string name="tournament_started_dialog_message">ការប្រកួត %1$s បានចាប់ផ្តើម! តើអ្នកចង់បើកសាលប្រជុំប្រកួតទេ?</string>
 
+    <!-- Bangladesh promotion dialog -->
+    <string name="bd_promo_title">🇧🇩 កំណែបង់ក្លាដែស អាចប្រើបាន</string>
+    <string name="bd_promo_message">កំណែពិសេសរបស់ Gridline Soccer សម្រាប់បង់ក្លាដែស ឥឡូវនេះអាចប្រើបាន។\n\nអាចប្រើបានសម្រាប់អ្នកប្រើប្រាស់អាយុ 18 ឆ្នាំ ឬច្រើនជាងនេះ នៅលើ Google Play Store។</string>
+    <string name="bd_promo_learn_more">ស្វែងយល់បន្ថែម</string>
+    <string name="bd_promo_install">ដំឡើង</string>
+    <string name="bd_promo_maybe_later">ប្រហែលជានៅពេលក្រោយ</string>
+    <string name="bd_promo_info_title">Gridline Soccer Bangladesh</string>
+    <string name="bd_promo_info_message">កំណែពិសេសរបស់ហ្គេម ដែលរចនាឡើងសម្រាប់អ្នកលេងបង់ក្លាដែស។\n\nមុខងារ:\n✓ ការប្រកួតប្រឡែងជំនាញទៀងទាត់\n✓ មិត្តភក្តិ និងស្ថិតិដូចគ្នា\n✓ ការផ្ទេរគណនីដោយរលូន\n\nអាចប្រើបាននៅ Google Play Store សម្រាប់អ្នកប្រើប្រាស់ 18+។</string>
+    <string name="bd_promo_close">បិទ</string>
+
     <!-- Uninstall global dialog -->
     <string name="uninstall_global_title">លុបកម្មវិធីចាស់</string>
     <string name="uninstall_global_message">អ្នកត្រូវលុបកំណែចាស់ដែលជាកំណែសកល ដើម្បីជៀសវាងការប៉ះទង្គិចជាមួយកំណែបង់ក្លាដេស។\n\nដើម្បីលុប: ចូលទៅ ការកំណត់ → កម្មវិធី → រកឃើញ \"Gridline Soccer\" (គ្មានទង់) → លុប។</string>

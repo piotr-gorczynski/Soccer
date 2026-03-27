@@ -366,6 +366,16 @@
     <!-- Tournament notification dialog -->
     <string name="tournament_started_dialog_message">ການແຂ່ງຂັນ %1$s ເລີ່ມແລ້ວ! ທ່ານຕ້ອງການເປີດຫ້ອງແຂ່ງຂັນບໍ?</string>
 
+    <!-- Bangladesh promotion dialog -->
+    <string name="bd_promo_title">🇧🇩 ເວີຊັ່ນບັງກລາເທດພ້ອມໃຊ້ງານ</string>
+    <string name="bd_promo_message">ເວີຊັ່ນພິເສດຂອງ Gridline Soccer ສໍາລັບບັງກລາເທດດຽວນີ້ພ້ອມໃຊ້ງານ.\n\nພ້ອມໃຊ້ງານສໍາລັບຜູ້ໃຊ້ທີ່ມີອາຍຸ 18 ປີ ຫຼື ຫຼາຍກວ່ານັ້ນ ຢູ່ Google Play Store.</string>
+    <string name="bd_promo_learn_more">ຮຽນຮູ້ເພີ່ມເຕີມ</string>
+    <string name="bd_promo_install">ຕິດຕັ້ງ</string>
+    <string name="bd_promo_maybe_later">ບາງທີຕໍ່ມາ</string>
+    <string name="bd_promo_info_title">Gridline Soccer Bangladesh</string>
+    <string name="bd_promo_info_message">ເວີຊັ່ນພິເສດຂອງເກມທີ່ອອກແບບມາສໍາລັບຜູ້ຫຼິ້ນບັງກລາເທດ.\n\nຄຸນສົມບັດ:\n✓ ການແຂ່ງຂັນທີ່ອີງໃສ່ທັກສະຢ່າງສະຫມໍ່າສະເຫມີ\n✓ ໝູ່ເພື່ອນ ແລະ ສະຖິຕິດຽວກັນ\n✓ ການຍ້າຍຍ່ຳບັນຊີທີ່ລຽບງ່າຍ\n\nພ້ອມໃຊ້ງານຢູ່ Google Play Store ສໍາລັບຜູ້ໃຊ້ 18+.</string>
+    <string name="bd_promo_close">ປິດ</string>
+
     <!-- Uninstall global dialog -->
     <string name="uninstall_global_title">ລຶບແອັບເກົ່າ</string>
     <string name="uninstall_global_message">ທ່ານຕ້ອງຖອນການຕິດຕັ້ງລຸ້ນສາກົນເກົ່າເພື່ອຫຼີກລ່ຽງຄວາມຂັດແຍ້ງກັບລຸ້ນບັງກາລາເດດ.\n\nເພື່ອຖອນການຕິດຕັ້ງ: ໄປທີ່ ການຕັ້ງຄ່າ → ແອັບ → ຊອກຫາ \"Gridline Soccer\" (ບໍ່ມີທຸງ) → ຖອນການຕິດຕັ້ງ.</string>
