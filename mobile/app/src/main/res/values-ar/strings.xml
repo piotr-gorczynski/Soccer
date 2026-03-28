@@ -350,12 +350,8 @@
     <!-- Bangladesh promotion dialog -->
     <string name="bd_promo_title">🇧🇩 إصدار بنغلاديش متاح</string>
     <string name="bd_promo_message">إصدار خاص من Gridline Soccer لبنغلاديش متاح الآن.\n\nمتاح على Google Play Store للمستخدمين 18 عامًا فأكثر.</string>
-    <string name="bd_promo_learn_more">معرفة المزيد</string>
     <string name="bd_promo_install">تثبيت</string>
     <string name="bd_promo_maybe_later">ربما لاحقًا</string>
-    <string name="bd_promo_info_title">Gridline Soccer Bangladesh</string>
-    <string name="bd_promo_info_message">إصدار خاص من اللعبة مصمم للاعبي بنغلاديش.\n\nالميزات:\n✓ بطولات منتظمة قائمة على المهارة\n✓ نفس الأصدقاء والإحصاءات\n✓ ترحيل سلس للحساب\n\nمتاح على Google Play Store للمستخدمين 18+.</string>
-    <string name="bd_promo_close">إغلاق</string>
 
     <!-- Uninstall global dialog -->
     <string name="uninstall_global_title">إزالة التطبيق القديم</string>

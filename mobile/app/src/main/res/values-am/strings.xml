@@ -369,12 +369,8 @@
     <!-- Bangladesh promotion dialog -->
     <string name="bd_promo_title">🇧🇩 የባንግላዲሽ ስሪት ይገኛል</string>
     <string name="bd_promo_message">ለባንግላዲሽ የGridline Soccer ልዩ ስሪት አሁን ይገኛል።\n\nGoogle Play Store ላይ 18 ዓመት ወይም ከዚያ በላይ ላሉ ተጠቃሚዎች ይገኛል።</string>
-    <string name="bd_promo_learn_more">ተጨማሪ ይወቁ</string>
     <string name="bd_promo_install">ጫን</string>
     <string name="bd_promo_maybe_later">ምናልባት ኋላ</string>
-    <string name="bd_promo_info_title">Gridline Soccer Bangladesh</string>
-    <string name="bd_promo_info_message">ለባንግላዲሽ ተጫዋቾች የተነደፈ የጨዋታ ልዩ ስሪት።\n\nባህሪያት:\n✓ መደበኛ ክህሎት-ተኮር ውድድሮች\n✓ ተመሳሳይ ጓደኞች እና ስታቲስቲክስ\n✓ ቀላል የሂሳብ ሚግሬሽን\n\nGoogle Play Store ላይ 18+ ለሆኑ ተጠቃሚዎች ይገኛል።</string>
-    <string name="bd_promo_close">ዝጋ</string>
 
     <!-- Uninstall global dialog -->
     <string name="uninstall_global_title">ቀዳሚ አፕ ያስወግዱ</string>

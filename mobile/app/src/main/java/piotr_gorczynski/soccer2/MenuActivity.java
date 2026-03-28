@@ -2288,7 +2288,7 @@ public class MenuActivity extends BaseActivity {
 
     /**
      * Show the Bangladesh version promotion dialog.
-     * Provides options to learn more, install, or dismiss the promotion.
+     * Provides options to install or dismiss the promotion.
      */
     private void showBangladeshPromotionDialog() {
         new AlertDialog.Builder(this)
@@ -2306,15 +2306,6 @@ public class MenuActivity extends BaseActivity {
                     // Open Play Store
                     BangladeshMigrationHelper.openBangladeshPlayStore(this);
                 })
-                .setNeutralButton(R.string.bd_promo_learn_more, (dialog, which) -> {
-                    // Log analytics event
-                    if (analyticsManager != null) {
-                        analyticsManager.logBangladeshPromoClicked("learn_more");
-                    }
-                    
-                    // Show info dialog
-                    showBangladeshInfoDialog();
-                })
                 .setNegativeButton(R.string.bd_promo_maybe_later, (dialog, which) -> {
                     // Log analytics event
                     if (analyticsManager != null) {
@@ -2325,33 +2316,6 @@ public class MenuActivity extends BaseActivity {
                     BangladeshMigrationHelper.markPromotionDismissed(this);
                 })
                 .setCancelable(false) // Require explicit user choice
-                .show();
-    }
-
-    /**
-     * Show detailed information about the Bangladesh version.
-     * This is shown when user clicks "Learn More" in the promotion dialog.
-     */
-    private void showBangladeshInfoDialog() {
-        new AlertDialog.Builder(this)
-                .setTitle(R.string.bd_promo_info_title)
-                .setMessage(R.string.bd_promo_info_message)
-                .setPositiveButton(R.string.bd_promo_install, (dialog, which) -> {
-                    // Log analytics event
-                    if (analyticsManager != null) {
-                        analyticsManager.logBangladeshPromoClicked("install_from_info");
-                    }
-                    
-                    // Mark as accepted
-                    BangladeshMigrationHelper.markPromotionAccepted(this);
-                    
-                    // Open Play Store
-                    BangladeshMigrationHelper.openBangladeshPlayStore(this);
-                })
-                .setNegativeButton(R.string.bd_promo_close, (dialog, which) -> {
-                    // User closed info dialog, mark as dismissed
-                    BangladeshMigrationHelper.markPromotionDismissed(this);
-                })
                 .show();
     }
 

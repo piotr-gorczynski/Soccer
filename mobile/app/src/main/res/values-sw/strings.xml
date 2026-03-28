@@ -369,12 +369,8 @@
     <!-- Bangladesh promotion dialog -->
     <string name="bd_promo_title">🇧🇩 Toleo la Bangladesh Linapatikana</string>
     <string name="bd_promo_message">Toleo maalum la Gridline Soccer kwa Bangladesh sasa linapatikana.\n\nLinapatikana kwa watumiaji wenye umri wa miaka 18 au zaidi kwenye Google Play Store.</string>
-    <string name="bd_promo_learn_more">Jifunze Zaidi</string>
     <string name="bd_promo_install">Sakinisha</string>
     <string name="bd_promo_maybe_later">Labda Baadaye</string>
-    <string name="bd_promo_info_title">Gridline Soccer Bangladesh</string>
-    <string name="bd_promo_info_message">Toleo maalum la mchezo lililoundwa kwa wachezaji wa Bangladesh.\n\nVipengele:\n✓ Mashindano ya kawaida yanayotegemea ustadi\n✓ Marafiki na takwimu sawa\n✓ Uhamiaji wa akaunti bila mshono\n\nLinapatikana kwenye Google Play Store kwa watumiaji 18+.</string>
-    <string name="bd_promo_close">Funga</string>
 
     <!-- Uninstall global dialog -->
     <string name="uninstall_global_title">Ondoa programu ya zamani</string>
