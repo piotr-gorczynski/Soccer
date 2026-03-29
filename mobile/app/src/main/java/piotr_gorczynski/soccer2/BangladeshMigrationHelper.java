@@ -22,6 +22,16 @@ public class BangladeshMigrationHelper {
     
     // Use app-wide tag so these logs are visible when filtering logcat by TAG_Soccer.
     private static final String TAG = "TAG_Soccer";
+
+    /**
+     * Global switch to enable or disable the Bangladesh version promotion dialog.
+     *
+     * <p>Set to {@code false} until {@code piotr_gorczynski.soccer2.bd} is published on the
+     * Google Play Store. Once the Bangladesh app is live, set this to {@code true} and release
+     * a new version of {@code piotr_gorczynski.soccer2} to start showing the promotion.</p>
+     */
+    public static final boolean BANGLADESH_PROMO_ENABLED = false;
+
     private static final String PREF_BD_PROMO_DISMISSED = "bd_promo_dismissed";
     private static final String PREF_BD_PROMO_LAST_SHOWN = "bd_promo_last_shown_ms";
     private static final String PREF_BD_PROMO_DISMISS_COUNT = "bd_promo_dismiss_count";
@@ -96,13 +106,14 @@ public class BangladeshMigrationHelper {
     public static boolean isUserInBangladesh(Context context) {
         String countryCode = resolveCountryCode(context);
         Log.d(TAG, "BangladeshMigrationHelper.isUserInBangladesh: Device country code: " + countryCode);
-        return "PL".equals(countryCode);
+        return "BD".equals(countryCode);
     }
     
     /**
      * Check if the Bangladesh promotion should be shown to the user.
      * 
      * Criteria:
+     * - {@link #BANGLADESH_PROMO_ENABLED} must be {@code true}
      * - Must be running global app flavor (not Bangladesh flavor)
      * - User must be in Bangladesh (based on locale)
      * - User hasn't permanently dismissed the promo
@@ -112,6 +123,12 @@ public class BangladeshMigrationHelper {
      * @return true if promotion should be shown
      */
     public static boolean shouldShowPromotion(Context context) {
+        // Global on/off switch – set to true only after piotr_gorczynski.soccer2.bd is on Play Store
+        if (!BANGLADESH_PROMO_ENABLED) {
+            Log.d(TAG, "BangladeshMigrationHelper.shouldShowPromotion: Not showing promo: feature disabled (BANGLADESH_PROMO_ENABLED=false)");
+            return false;
+        }
+
         // Only show in global flavor
         if (!AppFlavourDetector.isGlobalFlavour(context)) {
             Log.d(TAG, "BangladeshMigrationHelper.shouldShowPromotion: Not showing promo: not global flavor");
