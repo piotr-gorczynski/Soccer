@@ -40,16 +40,11 @@ Integrated the promotion into the main menu flow:
 - Appears in `continueOnResumeAfterBackendCheck()` method
 - Non-intrusive - shown once per app resume if conditions are met
 
-#### Dialogs
-1. **Main Promotion Dialog**
+#### Dialog
+1. **Promotion Dialog**
    - Title: "🇧🇩 Bangladesh Version Available"
    - Message: Age-neutral explanation (no cash prize mentions)
-   - Buttons: "Learn More", "Install", "Maybe Later"
-
-2. **Info Dialog** (when "Learn More" is clicked)
-   - Detailed feature list
-   - Emphasizes account continuity
-   - Buttons: "Install", "Close"
+   - Buttons: "Install", "Maybe Later"
 
 ### 3. Analytics (AnalyticsManager.java)
 
@@ -58,7 +53,7 @@ Complete tracking of user interactions:
 #### Events
 - `bd_promo_viewed` - When promotion dialog is shown
 - `bd_promo_clicked` - When any button is clicked
-  - Action parameter: "install", "learn_more", "maybe_later", "install_from_info"
+  - Action parameter: "install", "maybe_later"
 
 #### Usage
 - All events logged to Firebase Analytics
@@ -70,12 +65,8 @@ Complete tracking of user interactions:
 #### English (values/strings.xml)
 - bd_promo_title
 - bd_promo_message
-- bd_promo_learn_more
 - bd_promo_install
 - bd_promo_maybe_later
-- bd_promo_info_title
-- bd_promo_info_message
-- bd_promo_close
 
 #### Bengali (values-bn/strings.xml)
 - All strings fully translated
@@ -150,16 +141,16 @@ Complete tracking of user interactions:
 ### Modified Files
 1. `mobile/app/src/main/java/piotr_gorczynski/soccer2/MenuActivity.java`
    - Added promotion check in continueOnResumeAfterBackendCheck()
-   - Added 3 new methods: checkAndShowBangladeshPromotion(), showBangladeshPromotionDialog(), showBangladeshInfoDialog()
+   - Added 2 new methods: checkAndShowBangladeshPromotion(), showBangladeshPromotionDialog()
 
 2. `mobile/app/src/main/java/piotr_gorczynski/soccer2/AnalyticsManager.java`
    - Added 2 new methods: logBangladeshPromoViewed(), logBangladeshPromoClicked()
 
 3. `mobile/app/src/main/res/values/strings.xml`
-   - Added 8 new string resources
+   - Added 4 new string resources
 
 4. `mobile/app/src/main/res/values-bn/strings.xml`
-   - Added 8 new Bengali translations
+   - Added 4 new Bengali translations
 
 ## Key Design Decisions
 
@@ -212,7 +203,6 @@ Complete tracking of user interactions:
 3. Open app, dialog should appear on MenuActivity
 
 4. Test all buttons:
-   - "Learn More" → Info dialog
    - "Install" → Opens Play Store
    - "Maybe Later" → Dialog dismissed
 
@@ -328,8 +318,7 @@ Remember to change it back to `"BD"` before committing to production!
 ## Conclusion
 
 This implementation successfully delivers:
-- ✅ Phase 2 requirements (Simple banner)
-- ✅ Phase 3 requirements (Enhanced promotion with "Learn More")
+- ✅ Phase 2 requirements (Simple banner with Install and Maybe Later buttons)
 - ✅ Age-appropriate messaging (neutral, Play Store handles 18+ gate)
 - ✅ Only shown in global flavor
 - ✅ Only shown to Bangladesh users
