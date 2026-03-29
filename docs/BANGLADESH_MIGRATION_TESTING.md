@@ -7,6 +7,7 @@ This document explains how to test the Bangladesh migration feature that was imp
 ## Feature Description
 
 The Bangladesh migration promotion feature:
+- **Controlled by a global switch** – `BANGLADESH_PROMO_ENABLED` in `BangladeshMigrationHelper.java` must be `true` for any promotion to appear. **It is currently `false`** until `piotr_gorczynski.soccer2.bd` is published on the Play Store.
 - **Only shows in the global app flavor** (`piotr_gorczynski.soccer2`)
 - **Only shows to users in Bangladesh** (based on device locale)
 - Displays an age-neutral dialog informing users about the Bangladesh version
@@ -34,6 +35,22 @@ The Bangladesh migration promotion feature:
 ## Testing with Poland (or Any Other Country)
 
 Since the feature is designed for Bangladesh users only, you may want to test it from Poland (or your country) during development. Here's how:
+
+### Step 0: Enable the Global Switch
+
+The promotion is disabled by default. Before any other testing step, enable it:
+
+**File:** `mobile/app/src/main/java/piotr_gorczynski/soccer2/BangladeshMigrationHelper.java`
+
+```java
+// Change from:
+public static final boolean BANGLADESH_PROMO_ENABLED = false;
+
+// To:
+public static final boolean BANGLADESH_PROMO_ENABLED = true;
+```
+
+**Important:** This must be reverted to `false` before committing to production!
 
 ### Option 1: Temporary Code Change (Recommended for Quick Testing)
 
@@ -167,10 +184,11 @@ Promotion dismissed (count: 1/3)
 ## Important Notes
 
 ⚠️ **Before Committing:**
-1. Ensure `isUserInBangladesh()` returns `"BD".equals(countryCode)` (not hardcoded true or other country)
-2. Remove any temporary testing code (reset promotion state, etc.)
-3. Verify tests pass
-4. Test in **both** global and Bangladesh flavors
+1. Ensure `BANGLADESH_PROMO_ENABLED` is set back to `false`
+2. Ensure `isUserInBangladesh()` returns `"BD".equals(countryCode)` (not hardcoded true or other country)
+3. Remove any temporary testing code (reset promotion state, etc.)
+4. Verify tests pass
+5. Test in **both** global and Bangladesh flavors
 
 ✅ **Production Requirements:**
 - Feature only visible in global flavor
