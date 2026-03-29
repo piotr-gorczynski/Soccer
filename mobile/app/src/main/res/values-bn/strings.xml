@@ -403,12 +403,8 @@
     <!-- Bangladesh version migration promotion (global flavor only) -->
     <string name="bd_promo_title">🇧🇩 বাংলাদেশ সংস্করণ উপলব্ধ</string>
     <string name="bd_promo_message">বাংলাদেশের জন্য Gridline Soccer এর একটি বিশেষ সংস্করণ এখন উপলব্ধ।\n\nGoogle Play Store এ ১৮ বছর বা তার বেশি বয়সী ব্যবহারকারীদের জন্য উপলব্ধ।</string>
-    <string name="bd_promo_learn_more">আরও জানুন</string>
     <string name="bd_promo_install">ইনস্টল করুন</string>
     <string name="bd_promo_maybe_later">পরে হয়তো</string>
-    <string name="bd_promo_info_title">Gridline Soccer Bangladesh</string>
-    <string name="bd_promo_info_message">বাংলাদেশী খেলোয়াড়দের জন্য ডিজাইন করা গেমের একটি বিশেষ সংস্করণ।\n\nবৈশিষ্ট্যসমূহ:\n✓ নিয়মিত দক্ষতা-ভিত্তিক টুর্নামেন্ট\n✓ একই বন্ধু এবং পরিসংখ্যান\n✓ নির্বিঘ্ন অ্যাকাউন্ট মাইগ্রেশন\n\nGoogle Play Store এ ১৮+ ব্যবহারকারীদের জন্য উপলব্ধ।</string>
-    <string name="bd_promo_close">বন্ধ করুন</string>
 
     <!-- Uninstall global app prompt (Bangladesh flavor only) -->
     <string name="uninstall_global_title">পুরনো অ্যাপ সরান</string>

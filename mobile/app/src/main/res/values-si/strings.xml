@@ -369,12 +369,8 @@
     <!-- Bangladesh promotion dialog -->
     <string name="bd_promo_title">🇧🇩 බංග්ලාදේශ අනුවාදය ලබා ගත හැකිය</string>
     <string name="bd_promo_message">බංග්ලාදේශය සඳහා Gridline Soccer හි විශේෂ අනුවාදයක් දැන් ලබා ගත හැකිය.\n\nGoogle Play Store හි වයස අවුරුදු 18 හෝ ඊට වැඩි පරිශීලකයින් සඳහා ලබා ගත හැකිය.</string>
-    <string name="bd_promo_learn_more">තව දැනගන්න</string>
     <string name="bd_promo_install">ස්ථාපනය කරන්න</string>
     <string name="bd_promo_maybe_later">සමහරවිට පසුව</string>
-    <string name="bd_promo_info_title">Gridline Soccer Bangladesh</string>
-    <string name="bd_promo_info_message">බංග්ලාදේශ ක්‍රීඩකයින් සඳහා නිර්මාණය කරන ලද ක්‍රීඩාවේ විශේෂ අනුවාදයකි.\n\nලක්ෂණ:\n✓ නිතිපතා කුසලතා-පදනම් කරගත් තරඟාවලි\n✓ එකම මිතුරන් සහ සංඛ්‍යාලේඛන\n✓ බාධාවකින් තොරව ගිණුම් සංක්‍රමණය\n\nGoogle Play Store හි 18+ පරිශීලකයින් සඳහා ලබා ගත හැකිය.</string>
-    <string name="bd_promo_close">වසන්න</string>
 
     <!-- Uninstall global dialog -->
     <string name="uninstall_global_title">පැරණි යෙදුම ඉවත් කරන්න</string>

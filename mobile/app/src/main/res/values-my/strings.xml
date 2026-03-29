@@ -369,12 +369,8 @@
     <!-- Bangladesh promotion dialog -->
     <string name="bd_promo_title">🇧🇩 ဘင်္ဂလားဒေ့ရှ် ဗားရှင်း ရရှိနိုင်သည်</string>
     <string name="bd_promo_message">ဘင်္ဂလားဒေ့ရှ်အတွက် Gridline Soccer ၏ အထူးဗားရှင်း ယခုရရှိနိုင်ပြီ။\n\nGoogle Play Store တွင် အသက် 18 နှစ်နှင့်အထက် သုံးစွဲသူများအတွက် ရရှိနိုင်သည်။</string>
-    <string name="bd_promo_learn_more">ပိုမိုလေ့လာရန်</string>
     <string name="bd_promo_install">ထည့်သွင်းရန်</string>
     <string name="bd_promo_maybe_later">နောက်မှဖြစ်မည်</string>
-    <string name="bd_promo_info_title">Gridline Soccer Bangladesh</string>
-    <string name="bd_promo_info_message">ဘင်္ဂလားဒေ့ရှ် ကစားသူများအတွက် ဒီဇိုင်းထုတ်ထားသော ဂိမ်း၏ အထူးဗားရှင်း။\n\nလုပ်ဆောင်ချက်များ:\n✓ ကျွမ်းကျင်မှုအခြေပြုပြကြေပွဲများ ပုံမှန်ကျင်းပ\n✓ မိတ်ဆွေများနှင့် စာရင်းဇယားများ တူညီ\n✓ အကောင့်မွေ့မွေ့ပြောင်းရွှေ့\n\nGoogle Play Store တွင် သုံးစွဲသူ 18+ များအတွက် ရရှိနိုင်သည်။</string>
-    <string name="bd_promo_close">ပိတ်ရန်</string>
 
     <!-- Uninstall global dialog -->
     <string name="uninstall_global_title">အဟောင်း App ကို ဖြုတ်သိမ်းပါ</string>
