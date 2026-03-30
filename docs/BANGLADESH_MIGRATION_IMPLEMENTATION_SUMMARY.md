@@ -13,12 +13,18 @@ February 17, 2026
 
 A utility class that manages all aspects of the Bangladesh migration promotion:
 
+#### Global On/Off Switch
+- **`BANGLADESH_PROMO_ENABLED`** - A `public static final boolean` that acts as a master switch
+- **Currently set to `false`** - Promotion is disabled until `piotr_gorczynski.soccer2.bd` is published on Play Store
+- To enable: set `BANGLADESH_PROMO_ENABLED = true` and release a new version of the global app
+
 #### Region Detection
 - Detects if user is in Bangladesh based on device locale (`Locale.getDefault().country == "BD"`)
 - Includes debugging comments for testing with other countries (e.g., Poland)
 - Can be easily modified for testing by changing country code in one location
 
 #### Promotion Logic
+- **Global on/off switch** - `BANGLADESH_PROMO_ENABLED` must be `true` for any promotion to appear
 - **Only shows in global flavor** - Never shows in Bangladesh app (prevents self-promotion)
 - **Only shows to Bangladesh users** - Based on device locale
 - **Smart dismissal tracking**:
@@ -76,7 +82,8 @@ Complete tracking of user interactions:
 ### 5. Testing
 
 #### Unit Tests (BangladeshMigrationHelperTest.java)
-- 13 test cases covering:
+- 15 test cases covering:
+  - Global promo switch enforcement (BANGLADESH_PROMO_ENABLED=false returns false)
   - Flavor detection (global vs. Bangladesh)
   - Dismissal counting (1, 2, 3 dismissals)
   - Acceptance tracking
@@ -123,6 +130,11 @@ Complete tracking of user interactions:
 - Locale-based detection
 - Easy to test with other countries
 - Well-documented override process
+
+### Global On/Off Switch
+✅ **Promotion disabled until Bangladesh app is on Play Store**
+- `BANGLADESH_PROMO_ENABLED = false` prevents any promotion from appearing
+- When `piotr_gorczynski.soccer2.bd` is published, set to `true` and release a new global app version
 
 ### Flavor Separation
 ✅ **Global app only**
@@ -187,6 +199,27 @@ Complete tracking of user interactions:
 - Aligns with migration strategy document
 
 ## Testing Instructions
+
+### Enabling the Promotion for Testing
+
+The promotion is globally disabled by default (`BANGLADESH_PROMO_ENABLED = false`). To test it:
+
+1. Edit `BangladeshMigrationHelper.java` and set the flag to `true`:
+   ```java
+   public static final boolean BANGLADESH_PROMO_ENABLED = true;
+   ```
+
+2. To also test from Poland (instead of needing a Bangladesh device/locale), temporarily change `isUserInBangladesh()`:
+   ```java
+   return "PL".equals(countryCode);  // Change BD to PL for Polish testing
+   ```
+
+3. Build and run global flavor:
+   ```bash
+   ./gradlew install_devGlobalDebug
+   ```
+
+**Important:** Remember to revert both changes before merging to production!
 
 ### Quick Test (Poland or Any Country)
 
@@ -327,5 +360,7 @@ This implementation successfully delivers:
 - ✅ Comprehensive testing support
 - ✅ Zero security vulnerabilities
 - ✅ Easy debugging for Poland (or any country)
+- ✅ **Global on/off switch** (`BANGLADESH_PROMO_ENABLED = false`) — promotion is fully disabled until `piotr_gorczynski.soccer2.bd` launches on the Play Store
 
 The feature is production-ready and aligns with all requirements from `docs/USER_MIGRATION_STRATEGY.md`.
+To enable the promotion after the Bangladesh app launches, set `BANGLADESH_PROMO_ENABLED = true` in `BangladeshMigrationHelper.java` and release a new version of the global app.

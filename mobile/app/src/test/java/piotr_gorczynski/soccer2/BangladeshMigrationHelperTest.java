@@ -42,6 +42,29 @@ public class BangladeshMigrationHelperTest {
     }
 
     @Test
+    public void testBangladeshPromoEnabled_IsDisabledUntilPlayStoreLaunch() {
+        // BANGLADESH_PROMO_ENABLED must be false until piotr_gorczynski.soccer2.bd is published
+        // on the Google Play Store. When launching, set it to true and release a new version.
+        assertFalse(
+            "BANGLADESH_PROMO_ENABLED should be false until the Bangladesh app is live on Play Store",
+            BangladeshMigrationHelper.BANGLADESH_PROMO_ENABLED);
+    }
+
+    @Test
+    public void testShouldShowPromotion_WhenPromoFeatureDisabled_ReturnsFalse() {
+        // When BANGLADESH_PROMO_ENABLED is false, shouldShowPromotion() must always return false
+        // regardless of flavor, region or dismissal state.
+        when(mockContext.getPackageName()).thenReturn("piotr_gorczynski.soccer2");
+        when(mockPrefs.getInt("bd_promo_dismiss_count", 0)).thenReturn(0);
+        when(mockPrefs.getBoolean("bd_promo_dismissed", false)).thenReturn(false);
+
+        boolean result = BangladeshMigrationHelper.shouldShowPromotion(mockContext);
+
+        // BANGLADESH_PROMO_ENABLED is currently false, so the promotion must not be shown.
+        assertFalse("shouldShowPromotion must return false when BANGLADESH_PROMO_ENABLED is false", result);
+    }
+
+    @Test
     public void testShouldShowPromotion_GlobalFlavor_BangladeshUser_NotDismissed() {
         // Setup: Global flavor
         when(mockContext.getPackageName()).thenReturn("piotr_gorczynski.soccer2");
