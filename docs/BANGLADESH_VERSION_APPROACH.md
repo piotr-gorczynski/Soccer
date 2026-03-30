@@ -3089,6 +3089,8 @@ cd mobile
   - [ ] Update Play Store listing based on user feedback
 
 ### Phase 8: Full Launch & Ongoing Migration (Week 15+)
+> ⚠️ **REMINDER**: Before or at launch, release a new global app version with the promo flag set to **TRUE** so the promotion banner is displayed to global users (see #1240).
+
 - [ ] Public launch in Bangladesh Google Play Store
 - [ ] Marketing campaign
 - [ ] Establish bi-monthly tournament schedule
