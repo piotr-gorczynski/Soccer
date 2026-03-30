@@ -19,6 +19,7 @@
     "protobufjs": "^7.2.5",
     "fast-xml-parser": "5.5.7",
     "@tootallnate/once": "3.0.1",
-    "lodash": "^4.17.22"
+    "lodash": "^4.17.22",
+    "path-to-regexp": "0.1.13"
   }
 }
