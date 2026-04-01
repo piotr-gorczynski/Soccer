@@ -2961,7 +2961,7 @@ cd mobile
 - [ ] **Migration Planning**:
   - [x] Define user migration strategy and communication plan (see [USER_MIGRATION_STRATEGY.md](USER_MIGRATION_STRATEGY.md))
   - [ ] Prepare promotional materials (banners, notifications, Play Store assets)
-  - [ ] Design Firebase dual-app configuration (shared authentication)
+  - [x] Design Firebase dual-app configuration (shared authentication)
 
 ### Phase 2: Backend Development (Week 3-4)
 - [ ] Extend Firestore schema for Bangladesh features

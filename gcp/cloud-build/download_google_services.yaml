@@ -38,7 +38,10 @@ steps:
         cp /usr/local/bin/firebase /workspace/firebase/
         chmod +x /workspace/firebase/firebase
 
-  # Step 3: Extract Android app ID and download config
+  # Step 3: Download configs for ALL Android apps and merge into a single google-services.json
+  # A single google-services.json contains client entries for every registered Android app
+  # (e.g. piotr_gorczynski.soccer2 and piotr_gorczynski.soccer2.bd) so the Firebase
+  # Google-Services Gradle plugin can resolve the correct config for each product flavor.
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: 'download-config'
     entrypoint: 'bash'
@@ -54,17 +57,66 @@ steps:
         echo "🔍 Firebase apps output:"
         cat /workspace/apps_list.txt
 
-        app_id=$(grep ANDROID /workspace/apps_list.txt | grep -v "App ID" | awk -F '│' '{print $3}' | head -n 1 | xargs)
+        # Collect ALL Android app IDs (not just the first one)
+        app_ids=$(grep ANDROID /workspace/apps_list.txt | grep -v "App ID" | awk -F '│' '{print $3}' | tr -d ' ')
 
-        if [ -z "$app_id" ]; then
-          echo "❌ Firebase Android app ID not found."
+        if [ -z "$app_ids" ]; then
+          echo "❌ No Firebase Android app IDs found."
           exit 1
         fi
 
-        echo "📥 Downloading google-services.json for app ID: $app_id"
-        /workspace/firebase/firebase apps:sdkconfig android "$app_id" \
-          --project="$project_id" \
-          > /workspace/google-services.json
+        echo "📥 Downloading google-services configs for all Android apps..."
+        mkdir -p /workspace/app_configs
+        index=0
+        while IFS= read -r app_id; do
+          if [ -z "$app_id" ]; then
+            continue
+          fi
+          echo "📥 Downloading config for app ID: $app_id"
+          /workspace/firebase/firebase apps:sdkconfig android "$app_id" \
+            --project="$project_id" \
+            > /workspace/app_configs/config_${index}.json
+          index=$((index + 1))
+        done <<< "$app_ids"
+
+        if [ "$index" -eq 0 ]; then
+          echo "❌ No configs were downloaded."
+          exit 1
+        fi
+
+        echo "🔀 Merging ${index} config(s) into single google-services.json..."
+        python3 - <<'PY'
+        import json
+        import sys
+        from pathlib import Path
+
+        config_dir = Path("/workspace/app_configs")
+        config_files = sorted(config_dir.glob("config_*.json"))
+
+        if not config_files:
+            print("❌ No config files found to merge", file=sys.stderr)
+            sys.exit(1)
+
+        with open(config_files[0]) as f:
+            merged = json.load(f)
+
+        if "client" not in merged:
+            merged["client"] = []
+
+        for config_file in config_files[1:]:
+            with open(config_file) as f:
+                config = json.load(f)
+            merged["client"].extend(config.get("client", []))
+
+        with open("/workspace/google-services.json", "w") as f:
+            json.dump(merged, f, indent=2)
+
+        print(f"✅ Merged {len(config_files)} app config(s) into google-services.json")
+        print(f"   Total clients: {len(merged.get('client', []))}")
+        for client in merged.get("client", []):
+            pkg = client.get("client_info", {}).get("android_client_info", {}).get("package_name", "unknown")
+            print(f"   - Package: {pkg}")
+        PY
 
   # Step 4: Clone private repo
   - name: 'gcr.io/cloud-builders/git'
