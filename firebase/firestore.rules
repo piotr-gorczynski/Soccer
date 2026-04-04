@@ -154,6 +154,14 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // 5. Payments: Bangladesh prize payouts — users may only read their own records;
+    //    all writes are performed exclusively by Cloud Functions via Admin SDK.
+    match /payments/{paymentId} {
+      allow read: if request.auth != null
+               && request.auth.uid == resource.data.userId;
+      allow create, update, delete: if false;
+    }
+
     // 4. Everything else denied
     match /{document=**} {
       allow read, write: if false;
