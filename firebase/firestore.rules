@@ -154,12 +154,22 @@ service cloud.firestore {
       allow write: if false;
     }
 
-    // 5. Payments: Bangladesh prize payouts — users may only read their own records;
-    //    all writes are performed exclusively by Cloud Functions via Admin SDK.
+    // 5. Payments: Bangladesh prize payouts.
+    //    - Cloud Functions (Admin SDK) create records and update status/admin fields.
+    //    - The winner (document owner) may update only their own `recipientInfo`
+    //      (bKash/Nagad wallet number, full name, etc.) so they can submit payout details.
     match /payments/{paymentId} {
       allow read: if request.auth != null
                && request.auth.uid == resource.data.userId;
-      allow create, update, delete: if false;
+
+      // Winner submits their payment account details (recipientInfo only).
+      allow update: if request.auth != null
+                 && request.auth.uid == resource.data.userId
+                 && request.resource.data.diff(resource.data).affectedKeys()
+                      .hasOnly(['recipientInfo']);
+
+      // Creation and deletion are server-side only.
+      allow create, delete: if false;
     }
 
     // 4. Everything else denied
