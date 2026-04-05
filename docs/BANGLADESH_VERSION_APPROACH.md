@@ -2964,7 +2964,7 @@ cd mobile
   - [x] Design Firebase dual-app configuration (shared authentication)
 
 ### Phase 2: Backend Development (Week 3-4)
-- [ ] Extend Firestore schema for Bangladesh features
+- [x] Extend Firestore schema for Bangladesh features
 - [ ] Create Cloud Functions for tournament completion
   - `onTournamentComplete(tournamentId)` - detect winner, create payment record
   - `updatePaymentStatus(paymentId, status)` - admin function to update payment status
