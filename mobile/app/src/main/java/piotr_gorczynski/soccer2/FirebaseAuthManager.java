@@ -4,6 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
+import android.content.pm.SigningInfo;
+import android.os.Build;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -24,6 +29,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Locale;
 
 import android.content.SharedPreferences;
 
@@ -177,8 +185,76 @@ public class FirebaseAuthManager {
                             Objects.requireNonNull(new Object() {
                             }.getClass().getEnclosingMethod()).getName() +
                             ": signInWithProvider FAILED", e);
-                    callback.onLoginFailure(e.getMessage());
+                    String errorMessage = e.getMessage();
+                    if (errorMessage != null && errorMessage.contains("package certificate hash")) {
+                        String signatureInfo = getSigningCertificateHashes();
+                        Log.e("TAG_Soccer", getClass().getSimpleName() +
+                                ": package certificate hash error. " + signatureInfo);
+                        errorMessage = "Google sign-in misconfigured. Add the app signing SHA-1/" +
+                                "SHA-256 certificate hashes in Firebase for package " +
+                                context.getPackageName() + ".";
+                    }
+                    callback.onLoginFailure(errorMessage);
                 });
+    }
+
+    @SuppressWarnings("deprecation")
+    private String getSigningCertificateHashes() {
+        try {
+            PackageManager packageManager = context.getPackageManager();
+            if (packageManager == null) {
+                return "PackageManager unavailable";
+            }
+            String packageName = context.getPackageName();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                PackageInfo packageInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNING_CERTIFICATES);
+                SigningInfo signingInfo = packageInfo.signingInfo;
+                if (signingInfo == null) {
+                    return "SigningInfo unavailable";
+                }
+                Signature[] signatures = signingInfo.hasMultipleSigners()
+                        ? signingInfo.getApkContentsSigners()
+                        : signingInfo.getSigningCertificateHistory();
+                return buildSignatureHashes(signatures);
+            }
+            PackageInfo packageInfo = packageManager.getPackageInfo(packageName, PackageManager.GET_SIGNATURES);
+            return buildSignatureHashes(packageInfo.signatures);
+        } catch (PackageManager.NameNotFoundException e) {
+            return "Package info not found";
+        }
+    }
+
+    private String buildSignatureHashes(Signature[] signatures) {
+        if (signatures == null || signatures.length == 0) {
+            return "No signatures available";
+        }
+        StringBuilder builder = new StringBuilder("Signing cert hashes: ");
+        for (int i = 0; i < signatures.length; i++) {
+            if (i > 0) {
+                builder.append(" | ");
+            }
+            builder.append("SHA-1=").append(getDigest(signatures[i].toByteArray(), "SHA-1"));
+            builder.append(", SHA-256=").append(getDigest(signatures[i].toByteArray(), "SHA-256"));
+        }
+        return builder.toString();
+    }
+
+    private String getDigest(byte[] data, String algorithm) {
+        try {
+            MessageDigest messageDigest = MessageDigest.getInstance(algorithm);
+            byte[] digest = messageDigest.digest(data);
+            return toHex(digest);
+        } catch (NoSuchAlgorithmException e) {
+            return "n/a";
+        }
+    }
+
+    private String toHex(byte[] bytes) {
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : bytes) {
+            hexString.append(String.format(Locale.US, "%02X", b));
+        }
+        return hexString.toString();
     }
 
     /**

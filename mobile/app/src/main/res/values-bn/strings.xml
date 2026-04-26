@@ -399,4 +399,15 @@
     
     <!-- Tournament notification dialog -->
     <string name="tournament_started_dialog_message">টুর্নামেন্ট %1$s শুরু হয়েছে! আপনি কি টুর্নামেন্ট লবি খুলতে চান?</string>
+    
+    <!-- Bangladesh version migration promotion (global flavor only) -->
+    <string name="bd_promo_title">🇧🇩 বাংলাদেশ সংস্করণ উপলব্ধ</string>
+    <string name="bd_promo_message">বাংলাদেশের জন্য Gridline Soccer এর একটি বিশেষ সংস্করণ এখন উপলব্ধ।\n\nGoogle Play Store এ ১৮ বছর বা তার বেশি বয়সী ব্যবহারকারীদের জন্য উপলব্ধ।</string>
+    <string name="bd_promo_install">ইনস্টল করুন</string>
+    <string name="bd_promo_maybe_later">পরে হয়তো</string>
+
+    <!-- Uninstall global app prompt (Bangladesh flavor only) -->
+    <string name="uninstall_global_title">পুরনো অ্যাপ সরান</string>
+    <string name="uninstall_global_message">বাংলাদেশ সংস্করণের সাথে দ্বন্দ্ব এড়াতে পূর্ববর্তী গ্লোবাল সংস্করণটি আনইনস্টল করতে হবে।\n\nআনইনস্টল করতে: আপনার ফোনের সেটিংস → অ্যাপস → "Gridline Soccer" (পতাকা ছাড়া) খুঁজুন → আনইনস্টল করুন।</string>
+    <string name="uninstall_global_uninstall">বন্ধ করুন</string>
 </resources>
