@@ -2959,12 +2959,12 @@ cd mobile
 - [x] Define detailed prize structure (see [PRIZE_STRATEGY.md](PRIZE_STRATEGY.md))
 - [x] Create product flavor for Bangladesh variant
 - [ ] **Migration Planning**:
-  - [ ] Define user migration strategy and communication plan
+  - [x] Define user migration strategy and communication plan (see [USER_MIGRATION_STRATEGY.md](USER_MIGRATION_STRATEGY.md))
   - [ ] Prepare promotional materials (banners, notifications, Play Store assets)
-  - [ ] Design Firebase dual-app configuration (shared authentication)
+  - [x] Design Firebase dual-app configuration (shared authentication)
 
 ### Phase 2: Backend Development (Week 3-4)
-- [ ] Extend Firestore schema for Bangladesh features
+- [x] Extend Firestore schema for Bangladesh features
 - [ ] Create Cloud Functions for tournament completion
   - `onTournamentComplete(tournamentId)` - detect winner, create payment record
   - `updatePaymentStatus(paymentId, status)` - admin function to update payment status
@@ -3089,6 +3089,8 @@ cd mobile
   - [ ] Update Play Store listing based on user feedback
 
 ### Phase 8: Full Launch & Ongoing Migration (Week 15+)
+> ⚠️ **REMINDER**: Before or at launch, release a new global app version with the promo flag set to **TRUE** so the promotion banner is displayed to global users (see #1240).
+
 - [ ] Public launch in Bangladesh Google Play Store
 - [ ] Marketing campaign
 - [ ] Establish bi-monthly tournament schedule

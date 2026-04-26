@@ -365,4 +365,15 @@
     
     <!-- Tournament notification dialog -->
     <string name="tournament_started_dialog_message">ပြိုင်ပွဲ %1$s စတင်ပြီ! သင်ပြိုင်ပွဲစည်းဝေးခန်းဖွင့်ချင်ပါသလား?</string>
+
+    <!-- Bangladesh promotion dialog -->
+    <string name="bd_promo_title">🇧🇩 ဘင်္ဂလားဒေ့ရှ် ဗားရှင်း ရရှိနိုင်သည်</string>
+    <string name="bd_promo_message">ဘင်္ဂလားဒေ့ရှ်အတွက် Gridline Soccer ၏ အထူးဗားရှင်း ယခုရရှိနိုင်ပြီ။\n\nGoogle Play Store တွင် အသက် 18 နှစ်နှင့်အထက် သုံးစွဲသူများအတွက် ရရှိနိုင်သည်။</string>
+    <string name="bd_promo_install">ထည့်သွင်းရန်</string>
+    <string name="bd_promo_maybe_later">နောက်မှဖြစ်မည်</string>
+
+    <!-- Uninstall global dialog -->
+    <string name="uninstall_global_title">အဟောင်း App ကို ဖြုတ်သိမ်းပါ</string>
+    <string name="uninstall_global_message">ဘင်္ဂလားဒေ့ရှ်ဗားရှင်းနှင့် ပဋိပက္ခမဖြစ်ရန် ယခင်ကမ္ဘာ့ဗားရှင်းကို ဖြုတ်သိမ်းရမည်။\n\nဖြုတ်သိမ်းရန်: ဆက်တင်များ → အက်ပ်များ → \"Gridline Soccer\" (အလံမပါ) ကို ရှာပါ → ဖြုတ်သိမ်းပါ။</string>
+    <string name="uninstall_global_uninstall">ပိတ်</string>
 </resources>

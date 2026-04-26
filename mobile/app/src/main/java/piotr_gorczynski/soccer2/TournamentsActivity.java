@@ -78,7 +78,7 @@ public class TournamentsActivity extends BaseActivity {
         );
         TournamentAdapter endedAdapter = new TournamentAdapter(
                 endedDocs,
-                (TournamentAdapter.OnEndedClick) doc -> {
+                doc -> {
                     Intent i = new Intent(this, TournamentResultsActivity.class)
                             .putExtra("tournamentId", doc.getId());
                     startActivity(i);
@@ -130,13 +130,9 @@ public class TournamentsActivity extends BaseActivity {
             for (DocumentSnapshot doc : snap.getDocuments()) {
                 // Filter tournaments based on visibleInFlavours field
                 // If the field doesn't exist, show the tournament (backward compatibility)
-                List<String> visibleInFlavours = (List<String>) doc.get("visibleInFlavours");
-                if (visibleInFlavours != null) {
-                    // "global" means visible in all flavours
-                    // "bangladesh" means visible only in bangladesh flavour
-                    if (visibleInFlavours.contains("global")) {
-                        // Tournament is global - visible everywhere
-                    } else if (!visibleInFlavours.contains(currentFlavour)) {
+                Object visibleInFlavoursObj = doc.get("visibleInFlavours");
+                if (visibleInFlavoursObj instanceof List<?> visibleInFlavours) {
+                    if (!visibleInFlavours.contains(currentFlavour)) {
                         // Skip this tournament - not visible in current flavour
                         continue;
                     }
@@ -296,4 +292,3 @@ public class TournamentsActivity extends BaseActivity {
     }
 
 }
-

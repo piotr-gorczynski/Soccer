@@ -365,4 +365,15 @@
     
     <!-- Tournament notification dialog -->
     <string name="tournament_started_dialog_message">Nanomboka ny fifaninanana %1$s! Te hanokatra ny efitrano fifaninanana ve ianao?</string>
+
+    <!-- Bangladesh promotion dialog -->
+    <string name="bd_promo_title">🇧🇩 Misy ny dikan\'ny Bangladesh</string>
+    <string name="bd_promo_message">Misy dikan\'ny manokana an\'i Gridline Soccer ho an\'i Bangladesh izao.\n\nMahazo ampiasaina ho an\'ny mpampiasa 18 taona na mihoatra eo amin\'ny Google Play Store.</string>
+    <string name="bd_promo_install">Mametraka</string>
+    <string name="bd_promo_maybe_later">Angamba any aoriana</string>
+
+    <!-- Uninstall global dialog -->
+    <string name="uninstall_global_title">Esorey ny app taloha</string>
+    <string name="uninstall_global_message">Tsy maintsy hanesorana ny dikan-teny maneran-tany taloha ianao mba hanerena ny fifanolanana amin\'ny dikan-teny Banglades.\n\nMba hanesorana: Mankanesa amin\'ny Paramètre → Fampiharana → Tadiavo ny \"Gridline Soccer\" (tsy misy sainan-tanindrazana) → Esory.</string>
+    <string name="uninstall_global_uninstall">Akatona</string>
 </resources>

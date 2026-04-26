@@ -402,4 +402,15 @@
     
     <!-- Tournament notification dialog -->
     <string name="tournament_started_dialog_message">¡El torneo %1$s ha comenzado! ¿Quieres abrir el lobby del torneo?</string>
+
+    <!-- Bangladesh promotion dialog -->
+    <string name="bd_promo_title">🇧🇩 Versión de Bangladesh disponible</string>
+    <string name="bd_promo_message">Una versión especial de Gridline Soccer para Bangladesh ya está disponible.\n\nDisponible para usuarios de 18 años o más en Google Play Store.</string>
+    <string name="bd_promo_install">Instalar</string>
+    <string name="bd_promo_maybe_later">Quizás después</string>
+
+    <!-- Uninstall global dialog -->
+    <string name="uninstall_global_title">Eliminar aplicación anterior</string>
+    <string name="uninstall_global_message">Debe desinstalar la versión global anterior para evitar conflictos con la versión de Bangladesh.\n\nPara desinstalar: abra Ajustes → Aplicaciones → busque \"Gridline Soccer\" (sin bandera) → Desinstalar.</string>
+    <string name="uninstall_global_uninstall">Cerrar</string>
 </resources>

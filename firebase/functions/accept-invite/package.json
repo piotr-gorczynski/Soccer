@@ -4,11 +4,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "engines": {
-    "node": "20"
+    "node": ">=20"
   },
   "dependencies": {
-    "firebase-admin": "^11.10.1",
-    "firebase-functions": "^4.5.0"
+    "firebase-admin": "^13.6.1",
+    "firebase-functions": "^7.0.5"
   },
   "overrides": {
     "jsonwebtoken": {
@@ -17,7 +17,9 @@
     "jws": "^4.0.0",
     "form-data": "^4.0.4",
     "protobufjs": "^7.2.5",
-    "fast-xml-parser": "5.3.4",
-    "lodash": "^4.17.22"
+    "fast-xml-parser": "5.5.7",
+    "@tootallnate/once": "3.0.1",
+    "lodash": "^4.17.22",
+    "path-to-regexp": "0.1.13"
   }
 }

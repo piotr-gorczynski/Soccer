@@ -1,6 +1,7 @@
 package piotr_gorczynski.soccer2;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -28,6 +29,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.FullScreenContentCallback;
@@ -108,9 +111,35 @@ public class MenuActivity extends BaseActivity {
     private final Handler adRetryHandler = new Handler(Looper.getMainLooper());
     private final Runnable adRetryRunnable = this::loadInterstitialAd;
     private boolean isAdLoading = false;
+    private boolean globalUninstallPending = false; // true from when the user clicks "Uninstall" until focus returns after the bridge/dialog finishes
+    private boolean globalUninstallDialogOpen = false; // true from when the system dialog is launched until focus returns
+    private boolean awaitingGlobalUninstallResult = false;
+    private AlertDialog globalUninstallDialog; // reference to the currently-showing uninstall dialog
     private View loadingOverlay;
     private final Handler overlayHandler = new Handler(Looper.getMainLooper());
     private final Runnable hideOverlayRunnable = this::hideLoadingOverlayImmediate;
+    private final ActivityResultLauncher<Intent> uninstallGlobalAppLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                awaitingGlobalUninstallResult = false;
+                globalUninstallDialogOpen = false;
+                globalUninstallPending = false;
+
+                boolean uninstallSucceeded = result.getResultCode() == Activity.RESULT_OK;
+                boolean globalStillInstalled = BangladeshMigrationHelper.isGlobalAppInstalled(this);
+                Log.d("TAG_Soccer", "MenuActivity.uninstallGlobalAppLauncher: resultCode=" + result.getResultCode()
+                        + ", uninstallSucceeded=" + uninstallSucceeded
+                        + ", globalStillInstalled=" + globalStillInstalled);
+
+                if (globalStillInstalled) {
+                    Log.w("TAG_Soccer", "MenuActivity.uninstallGlobalAppLauncher: Global app still installed after uninstall flow; onResume will re-check");
+                    // Do not re-prompt here; the upcoming onResume cycle will call
+                    // checkAndShowUninstallGlobalPrompt() and show the dialog if needed,
+                    // avoiding a double-dialog race with the backend-availability callback.
+                    return;
+                }
+
+                Log.d("TAG_Soccer", "MenuActivity.uninstallGlobalAppLauncher: Global app uninstall confirmed");
+            });
     private long loadingOverlayShownAtMs = 0L;
     private static final long MIN_LOADING_OVERLAY_DURATION_MS = 250L;
 
@@ -593,6 +622,20 @@ public class MenuActivity extends BaseActivity {
         stopRunningPlayerAnimation();
     }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus && globalUninstallDialogOpen && !awaitingGlobalUninstallResult) {
+            // The bridge activity has finished (either the system uninstall dialog was
+            // confirmed, cancelled, or the bridge cleaned up after itself).  Clear all
+            // in-progress flags and re-evaluate whether the prompt needs to be shown.
+            Log.d("TAG_Soccer", "MenuActivity.onWindowFocusChanged: focus returned after uninstall flow; clearing state and rechecking");
+            globalUninstallDialogOpen = false;
+            globalUninstallPending = false;
+            checkAndShowUninstallGlobalPrompt();
+        }
+    }
+
     /**
      * Continue with authentication and UI logic after backend availability check is complete
      */
@@ -673,6 +716,12 @@ public class MenuActivity extends BaseActivity {
 
         // Now that all authentication-related checks are done, look for any active match
         checkForActiveMatch();
+        
+        // Show Bangladesh version promotion if applicable (only in global flavor, only for BD users)
+        checkAndShowBangladeshPromotion();
+        
+        // Prompt to uninstall the global app if running in Bangladesh flavor and global app is installed
+        checkAndShowUninstallGlobalPrompt();
 
         Button youVsAndroid = findViewById(R.id.youVsAndroidBtn);
         if (youVsAndroid != null) {
@@ -2206,6 +2255,138 @@ public class MenuActivity extends BaseActivity {
                 })
                 .setCancelable(false)
                 .show();
+    }
+
+    /**
+     * Check if Bangladesh promotion should be shown and display it if applicable.
+     * This promotion is only shown in the global app flavor to users in Bangladesh.
+     * It informs them about the Bangladesh-specific version with tournament features.
+     */
+    private void checkAndShowBangladeshPromotion() {
+        // Check if activity is still valid
+        if (isFinishing() || isDestroyed()) {
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".checkAndShowBangladeshPromotion: Activity finishing or destroyed, skipping");
+            return;
+        }
+        
+        // Check if promotion should be shown based on flavor, region, and dismissal state
+        if (!BangladeshMigrationHelper.shouldShowPromotion(this)) {
+            return;
+        }
+        
+        // Log analytics event for promotion view
+        if (analyticsManager != null) {
+            analyticsManager.logBangladeshPromoViewed();
+        }
+        
+        // Mark as shown for tracking
+        BangladeshMigrationHelper.markPromotionShown(this);
+        
+        // Show the promotion dialog
+        showBangladeshPromotionDialog();
+    }
+
+    /**
+     * Show the Bangladesh version promotion dialog.
+     * Provides options to install or dismiss the promotion.
+     */
+    private void showBangladeshPromotionDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.bd_promo_title)
+                .setMessage(R.string.bd_promo_message)
+                .setPositiveButton(R.string.bd_promo_install, (dialog, which) -> {
+                    // Log analytics event
+                    if (analyticsManager != null) {
+                        analyticsManager.logBangladeshPromoClicked("install");
+                    }
+                    
+                    // Mark as accepted (won't show again)
+                    BangladeshMigrationHelper.markPromotionAccepted(this);
+                    
+                    // Open Play Store
+                    BangladeshMigrationHelper.openBangladeshPlayStore(this);
+                })
+                .setNegativeButton(R.string.bd_promo_maybe_later, (dialog, which) -> {
+                    // Log analytics event
+                    if (analyticsManager != null) {
+                        analyticsManager.logBangladeshPromoClicked("maybe_later");
+                    }
+                    
+                    // Mark as dismissed (will show again in 7 days)
+                    BangladeshMigrationHelper.markPromotionDismissed(this);
+                })
+                .setCancelable(false) // Require explicit user choice
+                .show();
+    }
+
+    /**
+     * Check if the uninstall-global-app prompt should be shown and display it if applicable.
+     * This is only shown in the Bangladesh flavor when the global app is also installed.
+     * If the user does not tap Uninstall, the app is closed to prevent running alongside
+     * the global version.
+     */
+    private void checkAndShowUninstallGlobalPrompt() {
+        Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: entered with state {isFinishing="
+                + isFinishing()
+                + ", isDestroyed="
+                + isDestroyed()
+                + ", globalUninstallPending="
+                + globalUninstallPending
+                + ", globalUninstallDialogOpen="
+                + globalUninstallDialogOpen
+                + ", awaitingGlobalUninstallResult="
+                + awaitingGlobalUninstallResult
+                + "}");
+        if (isFinishing() || isDestroyed()) {
+            Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: returning early because activity is finishing/destroyed");
+            return;
+        }
+        if (awaitingGlobalUninstallResult) {
+            Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: uninstall flow is in progress; waiting for result callback");
+            return;
+        }
+        if (globalUninstallDialogOpen) {
+            // The system uninstall dialog was launched via the bridge and is still open
+            // (or the bridge just returned focus before the system dialog appeared).
+            // Do not show our own dialog on top; onWindowFocusChanged will trigger a
+            // recheck once the system dialog is actually dismissed.
+            Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: system uninstall dialog still open; skipping prompt");
+            return;
+        }
+        if (globalUninstallPending) {
+            // Reset the flag. The system uninstall dialog causes an immediate onPause/onResume
+            // cycle on this activity before the user has interacted with it. Return early here
+            // so the prompt does not reappear during that transient resume.
+            // onWindowFocusChanged(true) will fire once the system dialog actually closes
+            // and will call this method again to re-check the global-app state.
+            globalUninstallPending = false;
+            Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: consumed globalUninstallPending=true and skipped prompt on this pass");
+            return;
+        }
+        // Guard against showing a second dialog while one is already on screen
+        // (e.g. a rapid second call from the backend-check callback racing with
+        // the onWindowFocusChanged-triggered call).
+        if (globalUninstallDialog != null && globalUninstallDialog.isShowing()) {
+            Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: dialog already showing, skipping duplicate");
+            return;
+        }
+        boolean shouldShow = BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(this);
+        Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: helper decision shouldShow=" + shouldShow);
+        if (!shouldShow) {
+            return;
+        }
+        Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: showing uninstall-required dialog");
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(R.string.uninstall_global_title)
+                .setMessage(R.string.uninstall_global_message)
+                .setPositiveButton(R.string.uninstall_global_uninstall, (d, which) -> {
+                    Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: close clicked -> finishing activity");
+                    finish();
+                })
+                .setCancelable(false)
+                .create();
+        globalUninstallDialog = dialog;
+        dialog.show();
     }
 
 }

@@ -2,6 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Required for Android 11+ package visibility: allows detecting if the global app is installed -->
+    <queries>
+        <package android:name="piotr_gorczynski.soccer2" />
+    </queries>
+
     <application>
         <!-- Override Facebook Content Provider authority for Bangladesh variant -->
         <!-- This prevents conflict when both global and Bangladesh apps are installed -->

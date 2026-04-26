@@ -365,4 +365,15 @@
     
     <!-- Tournament notification dialog -->
     <string name="tournament_started_dialog_message">ውድድር %1$s ተጀምሯል! የውድድር አዳራሽ መክፈት ይፈልጋሉ?</string>
+
+    <!-- Bangladesh promotion dialog -->
+    <string name="bd_promo_title">🇧🇩 የባንግላዲሽ ስሪት ይገኛል</string>
+    <string name="bd_promo_message">ለባንግላዲሽ የGridline Soccer ልዩ ስሪት አሁን ይገኛል።\n\nGoogle Play Store ላይ 18 ዓመት ወይም ከዚያ በላይ ላሉ ተጠቃሚዎች ይገኛል።</string>
+    <string name="bd_promo_install">ጫን</string>
+    <string name="bd_promo_maybe_later">ምናልባት ኋላ</string>
+
+    <!-- Uninstall global dialog -->
+    <string name="uninstall_global_title">ቀዳሚ አፕ ያስወግዱ</string>
+    <string name="uninstall_global_message">ከባንግላዲሽ ስሪት ጋር ግጭት እንዳይፈጠር ቀዳሚውን ዓለምአቀፍ ስሪት ማስወገድ ያስፈልግዎታል።\n\nለማስወገድ: ቅንብሮች → ፕሮግራሞች → \"Gridline Soccer\" (ሰንደቅ ዓላማ ሳይኖር) → ማስወገድ ይሂዱ።</string>
+    <string name="uninstall_global_uninstall">ዝጋ</string>
 </resources>

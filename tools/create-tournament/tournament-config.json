@@ -1,8 +1,8 @@
 {
-  "name": "🇧🇩 Bangladesh Championship",
-  "maxParticipants": 16,
-  "registrationDeadline": "2026-02-15T00:00:00Z",
-  "matchesDeadline": "2026-02-28T23:59:59Z",
+  "name": "🌼 May Bloom Clash",
+  "maxParticipants": 10,
+  "registrationDeadline": "2026-05-09T22:59:00Z",
+  "matchesDeadline": "2026-05-23T22:59:00Z",
   "regulation": "kMkYf7Y7WEPNEXcJbj6E",
-  "visibleInFlavours": ["bangladesh"]
+  "visibleInFlavours": ["global"]
 }
