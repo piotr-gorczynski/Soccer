@@ -105,6 +105,12 @@
       "codebase": "update-payment-status",
       "runtime": "nodejs20",
       "region": "us-central1"
+    },
+    {
+      "source": "functions/on-tournament-complete",
+      "codebase": "on-tournament-complete",
+      "runtime": "nodejs20",
+      "region": "us-central1"
     }
   ],
   "firestore": {
