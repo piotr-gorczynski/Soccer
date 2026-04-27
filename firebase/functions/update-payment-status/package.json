@@ -1,0 +1,13 @@
+{
+  "name": "update-payment-status",
+  "description": "Callable admin function to update a prize payment record's status and transfer details.",
+  "version": "1.0.0",
+  "main": "index.js",
+  "engines": {
+    "node": "20"
+  },
+  "dependencies": {
+    "firebase-admin": "^11.10.1",
+    "firebase-functions": "^4.5.0"
+  }
+}
