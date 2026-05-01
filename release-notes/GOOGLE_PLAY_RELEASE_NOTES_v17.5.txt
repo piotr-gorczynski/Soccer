@@ -1,8 +1,8 @@
 <en-GB>
-🐝 Fix tournament ranking to group players with identical scores
-🐝 Prevent medal assignment to players with zero wins
-🎉 Add multi-flavour tournament visibility control
-🎉 Add VIEW RESULTS button for running tournaments
+🎉 Improved Bangladesh migration and app-switch experience
+🎉 Added automated winner payout backend flow after tournament completion
+🐝 Fixed a production crash related to broadcast delivery
+🐝 Upgraded security/build dependencies for improved stability
 </en-GB>
 
 <pl-PL>

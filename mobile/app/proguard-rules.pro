@@ -25,6 +25,11 @@
 # The comprehensive rule below covers all Firebase Auth classes including internal ones
 -keep class com.google.firebase.auth.** { *; }
 
+# Firebase Messaging - Keep all classes to prevent broadcast delivery failures.
+# Although the Firebase SDK ships its own consumer rules, an explicit rule here
+# ensures internal receiver/service classes are never removed by R8 in release builds.
+-keep class com.google.firebase.messaging.** { *; }
+
 # Google Play Services Auth - Keep SignInHubActivity and related classes
 # to prevent crashes during Google Sign-In flow
 -keep class com.google.android.gms.auth.** { *; }

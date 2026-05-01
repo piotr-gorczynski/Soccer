@@ -7,6 +7,8 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
@@ -28,6 +30,27 @@ public class ExceptionHandler implements
 
     @Override
     public void uncaughtException(@NonNull Thread thread, Throwable exception) {
+        // Suppress the system-level "can't deliver broadcast" RemoteServiceException.
+        // This is thrown by ActivityThread when Android cannot deliver an FCM (or other)
+        // broadcast to the app — it originates in system code before any app code runs,
+        // so the try-catch in onMessageReceived cannot prevent it.
+        // We record it as a non-fatal event so it remains visible in Crashlytics, then
+        // terminate the process cleanly to avoid it being counted as a fatal crash.
+        if (isCannotDeliverBroadcastException(exception)) {
+            try {
+                Log.w("TAG_Soccer", "ExceptionHandler.uncaughtException: "
+                        + "Suppressing system broadcast delivery failure as non-fatal", exception);
+                FirebaseCrashlytics.getInstance().recordException(exception);
+            } catch (Throwable ignored) {
+                // Crashlytics may not be available; fall back to basic logging only
+                Log.w("TAG_Soccer", "ExceptionHandler.uncaughtException: "
+                        + "Crashlytics unavailable, broadcast delivery failure not recorded remotely");
+            }
+            android.os.Process.killProcess(android.os.Process.myPid());
+            System.exit(0);
+            return;
+        }
+
         try {
             // Generate comprehensive crash report
             String crashReport = generateCrashReport(thread, exception);
@@ -176,5 +199,31 @@ public class ExceptionHandler implements
             default:
                 return "UNKNOWN(" + importance + ")";
         }
+    }
+
+    /**
+     * Returns {@code true} when the throwable is an Android system-level broadcast delivery
+     * failure that cannot be prevented by app code.
+     *
+     * <ul>
+     *   <li>On Android 14+ (API 34) the system uses the explicit
+     *       {@code RemoteServiceException$CannotDeliverBroadcastException} subclass.</li>
+     *   <li>On older Android versions the same failure surfaces as a plain
+     *       {@code RemoteServiceException} with message "can't deliver broadcast".</li>
+     * </ul>
+     */
+    private boolean isCannotDeliverBroadcastException(Throwable t) {
+        if (t == null) return false;
+        String className = t.getClass().getName();
+        // Android 14+ (API 34) introduced a dedicated subclass
+        if ("android.app.RemoteServiceException$CannotDeliverBroadcastException".equals(className)) {
+            return true;
+        }
+        // Older Android raises a plain RemoteServiceException with this message
+        if ("android.app.RemoteServiceException".equals(className)) {
+            String msg = t.getMessage();
+            return msg != null && msg.contains("can't deliver broadcast");
+        }
+        return false;
     }
 }
