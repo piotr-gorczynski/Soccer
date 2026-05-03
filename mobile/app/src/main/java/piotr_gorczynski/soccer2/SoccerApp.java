@@ -343,8 +343,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
 
     /* ------------ APP RETURNS TO FOREGROUND --------------------------- */
     @Override public void onStart(@NonNull LifecycleOwner owner) {
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                + ": APP RETURNS TO FOREGROUND");
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".onStart: APP RETURNS TO FOREGROUND");
 
         appInForeground = true;
         tournamentNotificationChecked = false;  // Reset flag when app returns to foreground
@@ -366,8 +365,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
 
     /* ------------ APP GOES TO BACKGROUND ------------------------------ */
     @Override public void onStop(@NonNull LifecycleOwner owner) {
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                + ": APP GOES TO BACKGROUND");
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".onStop: APP GOES TO BACKGROUND");
         appInForeground = false;
         if (userStatusDbRef == null) return;             // ← ADD
 
@@ -375,16 +373,13 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
 
         userStatusDbRef.setValue(offline)                 // atomic write
                 .addOnSuccessListener(v -> {
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                            + ": ✅ calling goOffline()");
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".onStop: ✅ calling goOffline()");
                     FirebaseDatabase.getInstance().goOffline();
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                            + ": ✅ calling scheduleHeartbeat()");
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".onStop: ✅ calling scheduleHeartbeat()");
                     scheduleHeartbeat();                      // 15-min pulses
                 })
                 .addOnFailureListener(e ->
-                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
-                                + ": ❌ seting value offline failed", e));
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + ".onStop: ❌ seting value offline failed", e));
     }
 
     /**
