@@ -144,9 +144,7 @@ public class MatchAdapter
                 if (oppUidNow == null) return;
             }
 
-            Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                    Objects.requireNonNull(new Object() {
-                    }.getClass().getEnclosingMethod()).getName()
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".onCreateViewHolder"
                     + ": On click started");
 
             String matchPath = mNow.getReference().getPath();
@@ -194,7 +192,7 @@ public class MatchAdapter
                             }
                         }
                         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
-                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + ".onCreateViewHolder"
                                 + ": createInvite failed", e);
                     });
         });
@@ -336,8 +334,7 @@ public class MatchAdapter
         
 
         // Determine button visibility
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".onBindViewHolder"
                 + ": inviteBtn visibility logic: st=" + st + ", pState=" + pState);
 
         boolean isActiveOrCompleted = "playing".equals(st) || "completed".equals(st);
@@ -448,8 +445,7 @@ public class MatchAdapter
     void set(int idx, DocumentSnapshot d){
         matches.set(idx, d);
         notifyItemChanged(idx);
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".set"
                 + ": 📌 notifyItemChanged(" + idx + ") triggered from nickname or presence update");
     }
     void move(int o,int n,DocumentSnapshot d){

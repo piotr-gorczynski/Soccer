@@ -24,7 +24,6 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Random;
 
 public class Field {
@@ -2982,7 +2981,7 @@ public class Field {
                         bottomHintY - (float) rText.height()/2,
                         pHintText);
 
-                logAnimation(getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": textBottom: " + textBottom);
+                logAnimation(getClass().getSimpleName() + ".draw" + ": textBottom: " + textBottom);
 
             }
 

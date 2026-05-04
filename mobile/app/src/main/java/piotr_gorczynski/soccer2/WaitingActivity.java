@@ -18,7 +18,6 @@ import com.google.firebase.functions.FirebaseFunctions;
 
 import java.util.Collections;
 import java.util.Locale;
-import java.util.Objects;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;   // already used elsewhere
@@ -37,12 +36,10 @@ public class WaitingActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.view_waiting_for_opponent);
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-        }.getClass().getEnclosingMethod()).getName() + ": Started");
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".onCreate" + ": Started");
         inviteId = getIntent().getStringExtra("inviteId");
         if (inviteId == null || inviteId.isEmpty()) {
-            Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-            }.getClass().getEnclosingMethod()).getName()
+            Log.e("TAG_Soccer", getClass().getSimpleName() + ".onCreate"
                     + ": Missing inviteId");
             finish();
             return;
@@ -212,8 +209,7 @@ public class WaitingActivity extends BaseActivity {
 
         // just in case we never hit the first match…
         if (matchListener != null) {
-            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-            }.getClass().getEnclosingMethod()).getName() + ": removing matchListener");
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".onDestroy" + ": removing matchListener");
             matchListener.remove();
             matchListener = null;
         }
@@ -240,7 +236,7 @@ public class WaitingActivity extends BaseActivity {
 
                 /* handle network / CF errors */
                 .addOnFailureListener(e -> {
-                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {}.getClass().getEnclosingMethod()).getName()
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".cancelInvite"
                             + ": cancelInvite failed", e);
                     Toast.makeText(this,
                             SafeStringFormatter.safeGetString(this, R.string.could_not_cancel_invite, e.getMessage()),

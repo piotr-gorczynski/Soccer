@@ -212,9 +212,7 @@ public class UniversalLoginActivity extends BaseActivity {
                 
                 Log.d(
                         "TAG_Soccer",
-                        getClass().getSimpleName() + "." +
-                                Objects.requireNonNull(new Object() {
-                                }.getClass().getEnclosingMethod()).getName() +
+                        getClass().getSimpleName() + ".onLoginSuccess" +
                                 ": onLoginSuccess"
                 );
 
@@ -273,8 +271,7 @@ public class UniversalLoginActivity extends BaseActivity {
                 // Re-enable login buttons
                 setLoginButtonsEnabled(true);
                 
-                Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
-                        Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                Log.e("TAG_Soccer", getClass().getSimpleName() + ".onLoginFailure" +
                         ": onLoginFailure: " + message);
                 
                 // Track login/signup error
