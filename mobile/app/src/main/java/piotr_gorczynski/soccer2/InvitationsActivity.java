@@ -57,7 +57,7 @@ public class InvitationsActivity extends BaseActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": InvitationsActivity onNewIntent: " + intent.toUri(Intent.URI_INTENT_SCHEME));
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".onNewIntent" + ": InvitationsActivity onNewIntent: " + intent.toUri(Intent.URI_INTENT_SCHEME));
     }
 
     @Override
@@ -175,28 +175,28 @@ public class InvitationsActivity extends BaseActivity {
     private void acceptInvite(@NonNull String invitationId) {
 
         if (TextUtils.isEmpty(invitationId)) {
-            Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": acceptInvite called with empty invitationId");
+            Log.w("TAG_Soccer", getClass().getSimpleName() + ".acceptInvite" + ": acceptInvite called with empty invitationId");
             Toast.makeText(this, getString(R.string.invitation_not_found), Toast.LENGTH_LONG).show();
             return;
         }
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
-            Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": User not signed-in");
+            Log.e("TAG_Soccer", getClass().getSimpleName() + ".acceptInvite" + ": User not signed-in");
             Toast.makeText(this, getString(R.string.must_log_in_to_accept_invites),
                     Toast.LENGTH_LONG).show();
             return;
         }
 
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Refreshing ID token…");
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".acceptInvite" + ": Refreshing ID token…");
         user.getIdToken(/* forceRefresh = */ true)
                 .addOnSuccessListener(tokenResult -> {
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Token refresh OK");
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".acceptInvite" + ": Token refresh OK");
 
                     FirebaseFunctions functions = FirebaseFunctions.getInstance("us-central1");
                     Map<String, Object> data = Collections.singletonMap("invitationId", invitationId);
 
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Calling Cloud Function acceptInvite");
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".acceptInvite" + ": Calling Cloud Function acceptInvite");
                     functions.getHttpsCallable("acceptInvite")
                             .call(data)
 
@@ -207,13 +207,13 @@ public class InvitationsActivity extends BaseActivity {
                                 String matchPath = payload != null ? (String) payload.get("matchPath") : null;
 
                                 if (TextUtils.isEmpty(matchPath)) {
-                                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": matchPath missing in response: " + payload);
+                                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".acceptInvite" + ": matchPath missing in response: " + payload);
                                     Toast.makeText(this, getString(R.string.invalid_response_from_server),
                                             Toast.LENGTH_LONG).show();
                                     return;
                                 }
 
-                                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": matchPath received: " + matchPath);
+                                Log.d("TAG_Soccer", getClass().getSimpleName() + ".acceptInvite" + ": matchPath received: " + matchPath);
                                 Toast.makeText(this, getString(R.string.invite_accepted_starting_game),
                                         Toast.LENGTH_SHORT).show();
 
@@ -233,7 +233,7 @@ public class InvitationsActivity extends BaseActivity {
                                 String userMsg = getString(R.string.could_not_accept_invite);
 
                                 if (e instanceof FirebaseFunctionsException ffe) {
-                                    Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": code=" + ffe.getCode()
+                                    Log.w("TAG_Soccer", getClass().getSimpleName() + ".acceptInvite" + ": code=" + ffe.getCode()
                                             + "  message=" + ffe.getMessage()
                                             + "  details=" + ffe.getDetails());
 
@@ -260,7 +260,7 @@ public class InvitationsActivity extends BaseActivity {
 
                 })
                 .addOnFailureListener(e -> {
-                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Token refresh failed", e);
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".acceptInvite" + ": Token refresh failed", e);
                     Toast.makeText(this, getString(R.string.authentication_error_try_again),
                             Toast.LENGTH_LONG).show();
                 });
@@ -296,7 +296,7 @@ public class InvitationsActivity extends BaseActivity {
                         }
                         pendingEmptyAdapter.setVisible(true);
                         logUiSnapshot("listenForInvites_error");
-                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + ".listenForInvites"
                                 + ": Listen failed", e);
                         return;
                     }
@@ -663,7 +663,7 @@ public class InvitationsActivity extends BaseActivity {
                         Toast.makeText(this, msgId, Toast.LENGTH_LONG).show();
                     }
 
-                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".sendInviteViaCF"
                             + ": createInvite failed", e);
                 });
     }

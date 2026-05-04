@@ -419,7 +419,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                         15, TimeUnit.MINUTES)        // WorkManager’s minimum
                         .build();
 
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".scheduleHeartbeat"
                 + ": Launching WorkManager");
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
                 HEARTBEAT_WORK,
@@ -428,7 +428,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     }
 
     private void cancelHeartbeat() {
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".cancelHeartbeat"
                 + ": Cancelling WorkManager");
         WorkManager wm = WorkManager.getInstance(this);
         wm.cancelUniqueWork(HEARTBEAT_WORK);
@@ -457,11 +457,11 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
             );
             try {
                 Tasks.await( hbRef.updateChildren(pulse) );      // block until ACK
-                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                Log.d("TAG_Soccer", getClass().getSimpleName() + ".doWork"
                                 + ":✅ heartbeat written for uid=" + uid);
                 return Result.success();
             } catch (Exception e) {
-                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                Log.e("TAG_Soccer", getClass().getSimpleName() + ".doWork"
                                 + ": ❌ heartbeat write failed", e);
                 return Result.retry();          // let WM try again later
             } finally {
@@ -473,17 +473,17 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     private void setUserOnline() {
         // Only set user online if user is authenticated
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".setUserOnline"
                     + ": User not authenticated, skipping setUserOnline");
             return;
         }
 
         userStatusDbRef.setValue(buildOnline())
                 .addOnSuccessListener(v ->
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".setUserOnline"
                             + ": ✅ setUserOnline ok"))
                 .addOnFailureListener(e ->
-                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + ".setUserOnline"
                             + ": ❌ setUserOnline failed", e));
     }
 
@@ -503,7 +503,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
 
                 if (!appInForeground) return;
 
-                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                Log.d("TAG_Soccer", getClass().getSimpleName() + ".onDataChange"
                         + ": 🔁 RTDB reconnected; refreshing presence");
                 setUserOnline();
                 cancelHeartbeat();
@@ -511,7 +511,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                Log.w("TAG_Soccer", getClass().getSimpleName() + ".onCancelled"
                         + ": ⚠️ .info/connected listener cancelled", error.toException());
             }
         };
@@ -530,7 +530,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     public Task<Void> forceUserOffline(@NonNull String uid) {
         // Validate that uid is not null or empty
         if (uid == null || uid.isEmpty()) {
-            Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+            Log.w("TAG_Soccer", getClass().getSimpleName() + ".forceUserOffline"
                     + ": Cannot force user offline - invalid UID");
             return Tasks.forException(new IllegalArgumentException("Invalid UID"));
         }
@@ -547,10 +547,10 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
 
         return ref.updateChildren(offline)     // <-- return the Task to caller
                 .addOnSuccessListener(v ->
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".forceUserOffline"
                                 + ": ✅ user " + uid + " marked offline"))
                 .addOnFailureListener(e ->
-                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + ".forceUserOffline"
                                 + ": ❌ could not mark offline", e));
     }
 

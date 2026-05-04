@@ -77,16 +77,12 @@ public class FirebaseAuthManager {
     }
 
     public void loginWithProvider(Activity activity, String providerId, @Nullable String nickname, LoginCallback callback) {
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                Objects.requireNonNull(new Object() {
-                }.getClass().getEnclosingMethod()).getName() +
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginWithProvider" +
                 ": Starting provider login. providerId=" + providerId + ", nickname=" + nickname);
         OAuthProvider.Builder provider = OAuthProvider.newBuilder(providerId);
         firebaseAuth.startActivityForSignInWithProvider(activity, provider.build())
                 .addOnSuccessListener(authResult -> {
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                            Objects.requireNonNull(new Object() {
-                            }.getClass().getEnclosingMethod()).getName() +
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginWithProvider" +
                             ": signInWithProvider success");
                     String uid = authResult.getUser().getUid();
                     String email = authResult.getUser().getEmail();
@@ -150,9 +146,7 @@ public class FirebaseAuthManager {
                                             .addOnCompleteListener(task -> {
                                                 storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId, finalFacebookId, finalFacebookName, finalFacebookPhotoUrl);
                                                 ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
-                                                Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                                                        Objects.requireNonNull(new Object() {
-                                                        }.getClass().getEnclosingMethod()).getName() +
+                                                Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginWithProvider" +
                                                         ": login success uid=" + uid + ", nickname=" +
                                                         (finalNickname != null ? finalNickname : "null"));
                                                 callback.onLoginSuccess();
@@ -163,9 +157,7 @@ public class FirebaseAuthManager {
                                             .addOnCompleteListener(task -> {
                                                 storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId, finalFacebookId, finalFacebookName, finalFacebookPhotoUrl);
                                                 ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
-                                                Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                                                        Objects.requireNonNull(new Object() {
-                                                        }.getClass().getEnclosingMethod()).getName() +
+                                                Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginWithProvider" +
                                                         ": login success uid=" + uid + ", nickname=" +
                                                         (finalNickname != null ? finalNickname : "null"));
                                                 callback.onLoginSuccess();
@@ -173,17 +165,13 @@ public class FirebaseAuthManager {
                                 }
                             })
                             .addOnFailureListener(e -> {
-                                Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
-                                        Objects.requireNonNull(new Object() {
-                                        }.getClass().getEnclosingMethod()).getName() +
+                                Log.e("TAG_Soccer", getClass().getSimpleName() + ".loginWithProvider" +
                                         ": failed to read user data", e);
                                 callback.onLoginFailure(e.getMessage());
                             });
                 })
                 .addOnFailureListener(e -> {
-                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
-                            Objects.requireNonNull(new Object() {
-                            }.getClass().getEnclosingMethod()).getName() +
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".loginWithProvider" +
                             ": signInWithProvider FAILED", e);
                     String errorMessage = e.getMessage();
                     if (errorMessage != null && errorMessage.contains("package certificate hash")) {
@@ -319,9 +307,7 @@ public class FirebaseAuthManager {
         firebaseAuth.signInWithCredential(credential)
                 .addOnSuccessListener(authResult -> {
                     String providerId = "facebook.com";
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                            Objects.requireNonNull(new Object() {
-                            }.getClass().getEnclosingMethod()).getName() +
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginWithFacebookToken" +
                             ": signInWithCredential success");
                     String uid = authResult.getUser().getUid();
                     String email = authResult.getUser().getEmail();
@@ -395,9 +381,7 @@ public class FirebaseAuthManager {
                                                 .addOnCompleteListener(task -> {
                                                     storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId, finalFacebookId, finalFacebookName, finalFacebookPhotoUrl);
                                                     ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
-                                                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                                                            Objects.requireNonNull(new Object() {
-                                                            }.getClass().getEnclosingMethod()).getName() +
+                                                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginWithFacebookToken" +
                                                             ": login success uid=" + uid + ", nickname=" +
                                                             (finalNickname != null ? finalNickname : "null"));
                                                     callback.onLoginSuccess();
@@ -407,9 +391,7 @@ public class FirebaseAuthManager {
                                                 .addOnCompleteListener(task -> {
                                                     storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId, finalFacebookId, finalFacebookName, finalFacebookPhotoUrl);
                                                     ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
-                                                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                                                            Objects.requireNonNull(new Object() {
-                                                            }.getClass().getEnclosingMethod()).getName() +
+                                                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginWithFacebookToken" +
                                                             ": login success uid=" + uid + ", nickname=" +
                                                             (finalNickname != null ? finalNickname : "null"));
                                                     callback.onLoginSuccess();
@@ -417,9 +399,7 @@ public class FirebaseAuthManager {
                                     }
                                 })
                                 .addOnFailureListener(e -> {
-                                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
-                                            Objects.requireNonNull(new Object() {
-                                            }.getClass().getEnclosingMethod()).getName() +
+                                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".loginWithFacebookToken" +
                                             ": failed to read user data", e);
                                     callback.onLoginFailure(e.getMessage());
                                 });
@@ -462,9 +442,7 @@ public class FirebaseAuthManager {
                                                 .addOnCompleteListener(task -> {
                                                     storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId, finalFacebookId, finalFacebookName, finalFacebookPhotoUrl);
                                                     ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
-                                                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                                                            Objects.requireNonNull(new Object() {
-                                                            }.getClass().getEnclosingMethod()).getName() +
+                                                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginWithFacebookToken" +
                                                             ": login success uid=" + uid + ", nickname=" +
                                                             (finalNickname != null ? finalNickname : "null"));
                                                     callback.onLoginSuccess();
@@ -474,9 +452,7 @@ public class FirebaseAuthManager {
                                                 .addOnCompleteListener(task -> {
                                                     storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId, finalFacebookId, finalFacebookName, finalFacebookPhotoUrl);
                                                     ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
-                                                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                                                            Objects.requireNonNull(new Object() {
-                                                            }.getClass().getEnclosingMethod()).getName() +
+                                                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginWithFacebookToken" +
                                                             ": login success uid=" + uid + ", nickname=" +
                                                             (finalNickname != null ? finalNickname : "null"));
                                                     callback.onLoginSuccess();
@@ -484,9 +460,7 @@ public class FirebaseAuthManager {
                                     }
                                 })
                                 .addOnFailureListener(e -> {
-                                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
-                                            Objects.requireNonNull(new Object() {
-                                            }.getClass().getEnclosingMethod()).getName() +
+                                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".loginWithFacebookToken" +
                                             ": failed to read user data", e);
                                     callback.onLoginFailure(e.getMessage());
                                 });
@@ -494,9 +468,7 @@ public class FirebaseAuthManager {
                     });
                 })
                 .addOnFailureListener(e -> {
-                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
-                            Objects.requireNonNull(new Object() {
-                            }.getClass().getEnclosingMethod()).getName() +
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".loginWithFacebookToken" +
                             ": signInWithCredential FAILED", e);
                     callback.onLoginFailure(e.getMessage());
                 });
@@ -542,10 +514,8 @@ public class FirebaseAuthManager {
                         if (firebaseAuth.getCurrentUser() != null) {
                             boolean isVerified = firebaseAuth.getCurrentUser().isEmailVerified();
                             String uid = firebaseAuth.getCurrentUser().getUid();
-                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                            }.getClass().getEnclosingMethod()).getName() + ": User UID: " + uid);
-                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                            }.getClass().getEnclosingMethod()).getName() + ": Email Verified: " + isVerified);
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginUser" + ": User UID: " + uid);
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginUser" + ": Email Verified: " + isVerified);
 
                             if (isVerified) {
                                 FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -578,33 +548,26 @@ public class FirebaseAuthManager {
                                                     "email");
                                             ((SoccerApp) context.getApplicationContext())
                                                     .enableFcmAutoInit();
-                                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                                                    Objects.requireNonNull(new Object() {
-                                                    }.getClass().getEnclosingMethod()).getName() +
+                                            Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginUser" +
                                                     ": login success uid=" + uid + ", nickname=" +
                                                     (nickname != null ? nickname : "null"));
                                             callback.onLoginSuccess();
                                         })
                                         .addOnFailureListener(e -> {
-                                            Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                                            }.getClass().getEnclosingMethod()).getName() + ": ⚠️ Failed to load nickname from Firestore", e);
+                                            Log.e("TAG_Soccer", getClass().getSimpleName() + ".loginUser" + ": ⚠️ Failed to load nickname from Firestore", e);
                                             // Important: don't overwrite prefs with an empty nickname.
                                             // Keep existing prefs; MenuActivity will do a fresh fetch.
-                                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                                                    Objects.requireNonNull(new Object() {
-                                                    }.getClass().getEnclosingMethod()).getName() +
+                                            Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginUser" +
                                                     ": login success uid=" + uid + ", nickname=null");
                                             callback.onLoginSuccess();
                                         });
                             } else {
-                                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                                }.getClass().getEnclosingMethod()).getName() + ": Email is NOT verified, signing out...");
+                                Log.e("TAG_Soccer", getClass().getSimpleName() + ".loginUser" + ": Email is NOT verified, signing out...");
                                 firebaseAuth.signOut();
                                 callback.onLoginFailure(context.getString(R.string.please_verify_email_before_login));
                             }
                         } else {
-                            Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                            }.getClass().getEnclosingMethod()).getName() + ": firebaseAuth.getCurrentUser() is NULL after signIn!");
+                            Log.e("TAG_Soccer", getClass().getSimpleName() + ".loginUser" + ": firebaseAuth.getCurrentUser() is NULL after signIn!");
                             callback.onLoginFailure(context.getString(R.string.authentication_failed));
                         }
                     } else {
@@ -618,8 +581,7 @@ public class FirebaseAuthManager {
         firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                        }.getClass().getEnclosingMethod()).getName() + ": User registered: " + Objects.requireNonNull(firebaseAuth.getCurrentUser()).getEmail());
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".registerUser" + ": User registered: " + Objects.requireNonNull(firebaseAuth.getCurrentUser()).getEmail());
                         Toast.makeText(context, SafeStringFormatter.safeGetString(context, R.string.registered_as, firebaseAuth.getCurrentUser().getEmail()), Toast.LENGTH_SHORT).show();
 
                         ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
@@ -639,8 +601,7 @@ public class FirebaseAuthManager {
 
                         db.collection("users").document(uid).set(userData, SetOptions.merge())
                                 .addOnFailureListener(e ->
-                                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                                        }.getClass().getEnclosingMethod()).getName() + ": Failed to save user data: " + e.getMessage())
+                                        Log.e("TAG_Soccer", getClass().getSimpleName() + ".registerUser" + ": Failed to save user data: " + e.getMessage())
                                 );
 
 
@@ -671,8 +632,7 @@ public class FirebaseAuthManager {
 
                     } else {
                         String errorMsg = task.getException() != null ? task.getException().getMessage() : "Unknown error occurred";
-                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                        }.getClass().getEnclosingMethod()).getName() + ": Registration failed: " + errorMsg);
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + ".registerUser" + ": Registration failed: " + errorMsg);
                         new AlertDialog.Builder(context)
                                 .setTitle(R.string.registration_failed_title)
                                 .setMessage(errorMsg)
@@ -683,24 +643,18 @@ public class FirebaseAuthManager {
     }
 
     public void resetPassword(String email, ResetPasswordCallback callback) {
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                Objects.requireNonNull(new Object() {
-                }.getClass().getEnclosingMethod()).getName() +
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".resetPassword" +
                 ": Starting password reset for email: " + email);
 
         firebaseAuth.sendPasswordResetEmail(email)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                                Objects.requireNonNull(new Object() {
-                                }.getClass().getEnclosingMethod()).getName() +
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".resetPassword" +
                                 ": Password reset email sent successfully for: " + email);
                         callback.onResetPasswordSuccess();
                     } else {
                         String errorMsg = task.getException() != null ? task.getException().getMessage() : "Unknown error occurred";
-                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
-                                Objects.requireNonNull(new Object() {
-                                }.getClass().getEnclosingMethod()).getName() +
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + ".resetPassword" +
                                 ": Password reset failed for: " + email + ", error: " + errorMsg);
                         callback.onResetPasswordFailure(errorMsg);
                     }
@@ -708,9 +662,7 @@ public class FirebaseAuthManager {
     }
 
     public void loginAnonymously(LoginCallback callback) {
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                Objects.requireNonNull(new Object() {
-                }.getClass().getEnclosingMethod()).getName() +
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginAnonymously" +
                 ": Starting anonymous login");
 
         firebaseAuth.signInAnonymously()
@@ -719,9 +671,7 @@ public class FirebaseAuthManager {
                         FirebaseUser user = firebaseAuth.getCurrentUser();
                         if (user != null) {
                             String uid = user.getUid();
-                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                                    Objects.requireNonNull(new Object() {
-                                    }.getClass().getEnclosingMethod()).getName() +
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginAnonymously" +
                                     ": Anonymous login successful, UID: " + uid);
 
                             FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -739,39 +689,29 @@ public class FirebaseAuthManager {
                                         db.collection("users").document(uid).set(data, SetOptions.merge())
                                                 .addOnCompleteListener(updateTask -> {
                                                     ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
-                                                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                                                            Objects.requireNonNull(new Object() {
-                                                            }.getClass().getEnclosingMethod()).getName() +
+                                                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginAnonymously" +
                                                             ": Anonymous user document created/updated successfully");
                                                     callback.onLoginSuccess();
                                                 })
                                                 .addOnFailureListener(e -> {
-                                                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
-                                                            Objects.requireNonNull(new Object() {
-                                                            }.getClass().getEnclosingMethod()).getName() +
+                                                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".loginAnonymously" +
                                                             ": Failed to create/update anonymous user document: " + e.getMessage());
                                                     callback.onLoginFailure("Failed to setup user profile: " + e.getMessage());
                                                 });
                                     })
                                     .addOnFailureListener(e -> {
-                                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
-                                                Objects.requireNonNull(new Object() {
-                                                }.getClass().getEnclosingMethod()).getName() +
+                                        Log.e("TAG_Soccer", getClass().getSimpleName() + ".loginAnonymously" +
                                                 ": Failed to check existing user document: " + e.getMessage());
                                         callback.onLoginFailure("Failed to verify user profile: " + e.getMessage());
                                     });
                         } else {
-                            Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
-                                    Objects.requireNonNull(new Object() {
-                                    }.getClass().getEnclosingMethod()).getName() +
+                            Log.e("TAG_Soccer", getClass().getSimpleName() + ".loginAnonymously" +
                                     ": Anonymous login succeeded but user is null");
                             callback.onLoginFailure("Authentication failed - user is null");
                         }
                     } else {
                         String errorMsg = task.getException() != null ? task.getException().getMessage() : "Unknown error occurred";
-                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
-                                Objects.requireNonNull(new Object() {
-                                }.getClass().getEnclosingMethod()).getName() +
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + ".loginAnonymously" +
                                 ": Anonymous login failed: " + errorMsg);
                         callback.onLoginFailure(errorMsg);
                     }

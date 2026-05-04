@@ -35,18 +35,18 @@ public class TournamentLobbyActivity extends BaseActivity {
     EventListener<QuerySnapshot> makeHandler(String label) {
         return (snap, err) -> {
             if (err != null) {
-                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                Log.e("TAG_Soccer", getClass().getSimpleName() + ".makeHandler"
                         + ": "+ label + " listener FAILED", err);
                 return;                           // <-- bail early on error
             }
 
             if (snap == null) {
-                Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                Log.w("TAG_Soccer", getClass().getSimpleName() + ".makeHandler"
                         + ": " + label + " listener returned a NULL snapshot");
                 return;
             }
 
-            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".makeHandler"
                             + ": " + String.format(
                     "%s → got snapshot: size=%d (fromCache=%b, pending=%b)",
                     label, snap.size(),
@@ -56,7 +56,7 @@ public class TournamentLobbyActivity extends BaseActivity {
             /* dump every doc once, before we feed the adapter */
             if (BuildConfig.DEBUG) {
                 for (DocumentSnapshot d : snap.getDocuments()) {
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".makeHandler"
                                     + ": " + String.format(
                             "  • %s  p0=%s  p1=%s  status=%s",
                             d.getId(),
@@ -83,7 +83,7 @@ public class TournamentLobbyActivity extends BaseActivity {
 
     @Override protected void onCreate(Bundle b) {
         super.onCreate(b);
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".onCreate"
                 + ": Method start");
         setContentView(R.layout.activity_tournament_lobby);
 
@@ -96,7 +96,7 @@ public class TournamentLobbyActivity extends BaseActivity {
         
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
-            Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": User not signed in");
+            Log.e("TAG_Soccer", getClass().getSimpleName() + ".onCreate" + ": User not signed in");
             Toast.makeText(this, SafeStringFormatter.safeGetString(this, R.string.please_log_in_to_continue), Toast.LENGTH_LONG).show();
             finish();
             return;
@@ -163,10 +163,10 @@ public class TournamentLobbyActivity extends BaseActivity {
                 .collection("matches")
                 .get()
                 .addOnSuccessListener(q ->
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".onCreate"
                                 + ": Direct read: matches sub-col size = " + q.size()))
                 .addOnFailureListener(e ->
-                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + ".onCreate"
                                 + ": Direct read FAILED", e));
 
     }

@@ -196,14 +196,14 @@ public class TournamentAdapter
                     ? endDL.toDate().getTime() - System.currentTimeMillis()
                     : -1;
             if (endDL == null) {
-                Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                Log.w("TAG_Soccer", getClass().getSimpleName() + ".onBindViewHolder"
                         + ": " + tid + " has no matchesDeadline!");
             } else {
-                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                Log.d("TAG_Soccer", getClass().getSimpleName() + ".onBindViewHolder"
                         + ": Deadline  : " + endDL.toDate());
-                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                Log.d("TAG_Soccer", getClass().getSimpleName() + ".onBindViewHolder"
                         + ": Device now: " + new Date());
-                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                Log.d("TAG_Soccer", getClass().getSimpleName() + ".onBindViewHolder"
                         + ": mLeft (ms): " + mLeft);
             }
             String endsText = (mLeft <= 0)
