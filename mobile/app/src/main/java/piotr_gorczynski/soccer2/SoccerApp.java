@@ -55,7 +55,6 @@ import androidx.core.os.LocaleListCompat;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import androidx.lifecycle.LifecycleOwner;
@@ -326,7 +325,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     private void startPresence(@NonNull String uid) {
 
         if (userStatusDbRef != null                      // already tracking?
-                && Objects.requireNonNull(userStatusDbRef.getKey()).equals(uid)) return;
+                && uid.equals(userStatusDbRef.getKey())) return;
 
         userStatusDbRef = FirebaseDatabase.getInstance()
                 .getReference("status").child(uid);
