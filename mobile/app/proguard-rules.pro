@@ -45,10 +45,8 @@
 -keep class okhttp3.** { public *; }
 -keep interface okhttp3.** { *; }
 
-# Keep EnclosingMethod and InnerClasses attributes so that anonymous inner
-# classes created via "new Object(){}" retain their getEnclosingMethod()
-# reference at runtime.  Without this, R8/ProGuard strips these attributes in
-# release builds and Class.getEnclosingMethod() returns null, causing the
-# NullPointerException inside MenuActivity.runHousekeeping (and similar log
-# helper sites across the app) that wraps the result in Objects.requireNonNull().
+# Keep EnclosingMethod and InnerClasses attributes for better stack traces and
+# to support any third-party libraries that rely on reflection-based introspection.
+# Note: the app code no longer uses Class.getEnclosingMethod() directly; all log
+# helper calls now use hardcoded method name strings to avoid NPE on release builds.
 -keepattributes EnclosingMethod,InnerClasses
