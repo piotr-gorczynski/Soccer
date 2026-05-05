@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.DefaultLifecycleObserver;
 
 import androidx.lifecycle.ProcessLifecycleOwner;
+import androidx.work.Configuration;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
@@ -253,6 +254,17 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
             }
         });
 
+        // Ensure WorkManager is initialized before presence tracking starts.
+        // On some devices, the App Startup ContentProvider may not have initialized
+        // WorkManager yet when onCreate() runs, causing a NullPointerException in
+        // cancelHeartbeat() via WorkManager.getInstance(). If WorkManager was already
+        // initialized by App Startup, the IllegalStateException is caught and ignored.
+        try {
+            WorkManager.initialize(this, new Configuration.Builder().build());
+        } catch (IllegalStateException e) {
+            // Already initialized by App Startup - this is the expected normal case
+        }
+
         FirebaseAuth auth = FirebaseAuth.getInstance();
         auth.addAuthStateListener(a -> {
             if (a.getCurrentUser() != null) {
@@ -430,8 +442,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     private void cancelHeartbeat() {
         Log.d("TAG_Soccer", getClass().getSimpleName() + ".cancelHeartbeat"
                 + ": Cancelling WorkManager");
-        WorkManager wm = WorkManager.getInstance(this);
-        wm.cancelUniqueWork(HEARTBEAT_WORK);
+        WorkManager.getInstance(this).cancelUniqueWork(HEARTBEAT_WORK);
     }
     public static class HeartbeatWorker extends Worker {
 
