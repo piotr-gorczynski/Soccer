@@ -64,7 +64,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
@@ -1596,8 +1595,8 @@ public class MenuActivity extends BaseActivity {
                     String inviteId = doc.getId();
 
                     // Make sure the invite hasn’t already expired
-                    if (doc.getTimestamp("expireAt") != null &&
-                            Objects.requireNonNull(doc.getTimestamp("expireAt")).toDate().getTime() > nowMs) {
+                    com.google.firebase.Timestamp expireAt = doc.getTimestamp("expireAt");
+                    if (expireAt != null && expireAt.toDate().getTime() > nowMs) {
 
                         Log.d("TAG_Soccer", getClass().getSimpleName() + ".continueWithInviteRestore: ↩️ valid invite found "
                                 + inviteId + " → resuming WaitingActivity");
