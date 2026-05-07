@@ -2965,7 +2965,7 @@ cd mobile
 
 ### Phase 2: Backend Development (Week 3-4)
 - [x] Extend Firestore schema for Bangladesh features
-- [ ] Create Cloud Functions for tournament completion
+- [x] Create Cloud Functions for tournament completion
   - `onTournamentComplete(tournamentId)` - detect winner, create payment record
   - `updatePaymentStatus(paymentId, status)` - admin function to update payment status
 - [ ] Implement eligibility confirmation workflow

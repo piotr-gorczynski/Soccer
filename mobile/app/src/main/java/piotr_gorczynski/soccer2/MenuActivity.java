@@ -64,7 +64,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
@@ -405,9 +404,7 @@ public class MenuActivity extends BaseActivity {
             Log.w(
                     "TAG_Soccer",
                     getClass().getSimpleName()
-                            + "."
-                            + Objects.requireNonNull(new Object() {
-                            }.getClass().getEnclosingMethod()).getName()
+                            + ".runHousekeeping"
                             + ": ⚠️ No logged-in user; clearing stored credentials"
             );
             // Note: Preserve ads consent data as requested in issue - only clear if there are specific user-related data in default prefs
@@ -424,8 +421,7 @@ public class MenuActivity extends BaseActivity {
 
         FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
             if (!task.isSuccessful()) {
-                Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                }.getClass().getEnclosingMethod()).getName() + ": ❌ Failed to get FCM token", task.getException());
+                Log.w("TAG_Soccer", getClass().getSimpleName() + ".runHousekeeping: ❌ Failed to get FCM token", task.getException());
                 return;
             }
 
@@ -444,8 +440,7 @@ public class MenuActivity extends BaseActivity {
                 
                 // Check if account is deleted - logout if true
                 if (accountDeleted != null && accountDeleted) {
-                    Log.w("TAG_Soccer", getClass().getSimpleName() + "." +
-                            Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                    Log.w("TAG_Soccer", getClass().getSimpleName() + ".runHousekeeping" +
                             ": Account is deleted - logging out user");
                     logoutUser();
                     return;
@@ -470,8 +465,7 @@ public class MenuActivity extends BaseActivity {
                 }
                 
                 if (shouldLogout) {
-                    Log.w("TAG_Soccer", getClass().getSimpleName() + "." +
-                            Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                    Log.w("TAG_Soccer", getClass().getSimpleName() + ".runHousekeeping" +
                             ": " + logoutReason + " - logging out user");
                     logoutUser();
                     return;
@@ -480,26 +474,20 @@ public class MenuActivity extends BaseActivity {
                 String remoteToken = doc.getString("fcmToken");
 
                 if (remoteToken == null || !remoteToken.equals(newToken)) {
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                    }.getClass().getEnclosingMethod()).getName() + ": 🔑 Updating Firestore FCM token");
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".runHousekeeping: 🔑 Updating Firestore FCM token");
                     docRef.set(Map.of("fcmToken", newToken), SetOptions.merge())
                             .addOnSuccessListener(v -> {
                                 prefs.edit().putString(PREF_FCM_TOKEN, newToken).apply();
-                                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                                }.getClass().getEnclosingMethod()).getName() + ": ✅ FCM token saved");
+                                Log.d("TAG_Soccer", getClass().getSimpleName() + ".runHousekeeping: ✅ FCM token saved");
                             })
-                            .addOnFailureListener(e -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                            }.getClass().getEnclosingMethod()).getName() + ": ❌ Failed to save FCM token", e));
+                            .addOnFailureListener(e -> Log.e("TAG_Soccer", getClass().getSimpleName() + ".runHousekeeping: ❌ Failed to save FCM token", e));
                 } else if (savedToken == null || !savedToken.equals(remoteToken)) {
                     prefs.edit().putString(PREF_FCM_TOKEN, remoteToken).apply();
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                    }.getClass().getEnclosingMethod()).getName() + ": 🔑 Synced FCM token from Firestore");
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".runHousekeeping: 🔑 Synced FCM token from Firestore");
                 } else {
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                    }.getClass().getEnclosingMethod()).getName() + ": 🔑 FCM token unchanged; skip Firestore write");
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".runHousekeeping: 🔑 FCM token unchanged; skip Firestore write");
                 }
-            }).addOnFailureListener(e -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-            }.getClass().getEnclosingMethod()).getName() + ": ❌ Failed to read Firestore token", e));
+            }).addOnFailureListener(e -> Log.e("TAG_Soccer", getClass().getSimpleName() + ".runHousekeeping: ❌ Failed to read Firestore token", e));
         });
 
         // ✅ Call permission request
@@ -584,8 +572,7 @@ public class MenuActivity extends BaseActivity {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-        }.getClass().getEnclosingMethod()).getName() + ": InvitationsActivity onNewIntent: " + intent.toUri(Intent.URI_INTENT_SCHEME));
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".onNewIntent: " + intent.toUri(Intent.URI_INTENT_SCHEME));
     }
 
     @SuppressLint("ApplySharedPref")
@@ -689,9 +676,7 @@ public class MenuActivity extends BaseActivity {
             Log.d(
                     "TAG_Soccer",
                     getClass().getSimpleName()
-                            + "."
-                            + Objects.requireNonNull(new Object() {
-                    }.getClass().getEnclosingMethod()).getName()
+                            + ".continueOnResumeAfterBackendCheck"
                             + ": Nickname: "
                             + nickname
             );
@@ -786,8 +771,7 @@ public class MenuActivity extends BaseActivity {
         SharedPreferences prefs =
                 getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
         String uid = FirebaseAuth.getInstance().getUid();
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-        }.getClass().getEnclosingMethod()).getName() + ": Auth UID at match-lookup = " + uid);
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".checkForActiveMatch: Auth UID at match-lookup = " + uid);
 
         if (uid != null) {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -807,8 +791,7 @@ public class MenuActivity extends BaseActivity {
                     }
                 }
                 if (doc != null) {
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                    }.getClass().getEnclosingMethod()).getName()
+                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".checkForActiveMatch"
                             + ": Found active match: "
                             + doc.getReference().getPath()
                             + ". calling startGame...");
@@ -817,8 +800,7 @@ public class MenuActivity extends BaseActivity {
                     continueWithInviteRestore();
                 }
             }).addOnFailureListener(err -> {
-                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                }.getClass().getEnclosingMethod()).getName()
+                Log.e("TAG_Soccer", getClass().getSimpleName() + ".checkForActiveMatch"
                         + ": Failed to query active matches → " + err.getMessage(), err);
                 continueWithInviteRestore();
             });
@@ -1603,8 +1585,7 @@ public class MenuActivity extends BaseActivity {
                 .get()
                 .addOnSuccessListener(snap -> {
                     if (snap.isEmpty()) {
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                        }.getClass().getEnclosingMethod()).getName() + ": continueWithInviteRestore: no pending invites");
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".continueWithInviteRestore: no pending invites");
                         // After checking for outgoing invites, check for new incoming invites
                         checkForMissedInvitations();
                         return;
@@ -1614,11 +1595,10 @@ public class MenuActivity extends BaseActivity {
                     String inviteId = doc.getId();
 
                     // Make sure the invite hasn’t already expired
-                    if (doc.getTimestamp("expireAt") != null &&
-                            Objects.requireNonNull(doc.getTimestamp("expireAt")).toDate().getTime() > nowMs) {
+                    com.google.firebase.Timestamp expireAt = doc.getTimestamp("expireAt");
+                    if (expireAt != null && expireAt.toDate().getTime() > nowMs) {
 
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                        }.getClass().getEnclosingMethod()).getName() + ": continueWithInviteRestore: ↩️ valid invite found "
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".continueWithInviteRestore: ↩️ valid invite found "
                                 + inviteId + " → resuming WaitingActivity");
 
                         startActivity(new Intent(this, WaitingActivity.class)
@@ -1627,8 +1607,7 @@ public class MenuActivity extends BaseActivity {
                         finish();
 
                     } else {
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                        }.getClass().getEnclosingMethod()).getName() + ": continueWithInviteRestore: invite " + inviteId + " is already expired → skipping");
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".continueWithInviteRestore: invite " + inviteId + " is already expired → skipping");
                         // After checking for outgoing invites, check for new incoming invites
                         checkForMissedInvitations();
                     }
@@ -1650,11 +1629,9 @@ public class MenuActivity extends BaseActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                }.getClass().getEnclosingMethod()).getName() + ": ✅ Notification permission granted");
+                Log.d("TAG_Soccer", getClass().getSimpleName() + ".onRequestPermissionsResult: ✅ Notification permission granted");
             } else {
-                Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-                }.getClass().getEnclosingMethod()).getName() + ": ❌ Notification permission denied");
+                Log.w("TAG_Soccer", getClass().getSimpleName() + ".onRequestPermissionsResult: ❌ Notification permission denied");
             }
         }
     }
@@ -1689,8 +1666,7 @@ public class MenuActivity extends BaseActivity {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
 //---save whatever you need to persist—
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object() {
-        }.getClass().getEnclosingMethod()).getName() + ": MenuActivity.onSaveInstanceState entered");
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".onSaveInstanceState: MenuActivity.onSaveInstanceState entered");
         super.onSaveInstanceState(outState);
     }
 

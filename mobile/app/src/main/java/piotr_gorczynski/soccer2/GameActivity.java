@@ -168,7 +168,7 @@ public class GameActivity extends BaseActivity {
         // Handle different scenarios appropriately
         if (Objects.equals(newPath, currentPath)) {
             // Paths are identical (including both null) - safe to skip
-            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".onNewIntent"
                     + ": identical matchPath, skipping");
             return;
         }
@@ -180,7 +180,7 @@ public class GameActivity extends BaseActivity {
             // Online multiplayer game - validate the change
             if (currentPath != null && newPath != null) {
                 // This could be problematic - different active matches
-                Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                Log.w("TAG_Soccer", getClass().getSimpleName() + ".onNewIntent"
                         + ": Warning - Different matchPath for online game: " + currentPath + " -> " + newPath);
                 // For now, allow it but log as warning instead of crashing
             }
@@ -188,7 +188,7 @@ public class GameActivity extends BaseActivity {
 
         // Update to new intent (this is the expected behavior for singleTop launch mode)
         setIntent(intent);
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".onNewIntent"
                 + ": Intent updated successfully");
     }
 
@@ -377,7 +377,7 @@ public class GameActivity extends BaseActivity {
         }
 
         GameType=getIntent().getIntExtra("GameType",0);
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Game Type entered: " + GameType);
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".onCreate" + ": Game Type entered: " + GameType);
 
         // Validate GameType to prevent invalid states
         if (GameType < 0 || GameType > 3) {
@@ -389,11 +389,11 @@ public class GameActivity extends BaseActivity {
 
         if (GameType == 3) {
             matchPath = getIntent().getStringExtra("matchPath");
-            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": matchPath=" + matchPath);
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".onCreate" + ": matchPath=" + matchPath);
             String localNickname = getIntent().getStringExtra("localNickname");
 
             if (matchPath == null || localNickname == null) {
-                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Missing matchPath or localNickname");
+                Log.e("TAG_Soccer", getClass().getSimpleName() + ".onCreate" + ": Missing matchPath or localNickname");
                 Toast.makeText(this, SafeStringFormatter.safeGetString(this, R.string.game_launch_failed), Toast.LENGTH_LONG).show();
                 finish();
                 return;
@@ -401,7 +401,7 @@ public class GameActivity extends BaseActivity {
 
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if (user == null) {
-                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": User not signed in");
+                Log.e("TAG_Soccer", getClass().getSimpleName() + ".onCreate" + ": User not signed in");
                 Toast.makeText(this, SafeStringFormatter.safeGetString(this, R.string.please_log_in_to_continue), Toast.LENGTH_LONG).show();
                 finish();
                 return;
@@ -419,7 +419,7 @@ public class GameActivity extends BaseActivity {
             matchRef.get()
                 .addOnSuccessListener(doc -> {
                     if (!doc.exists()) {
-                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Match not found: " + matchPath);
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + ".onCreate" + ": Match not found: " + matchPath);
                         Toast.makeText(this, SafeStringFormatter.safeGetString(this, R.string.match_not_found), Toast.LENGTH_LONG).show();
                         finish();
                         return;
@@ -430,7 +430,7 @@ public class GameActivity extends BaseActivity {
 
 
                     if (player0Uid == null || player1Uid == null) {
-                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": player0 or player1 field is missing");
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + ".onCreate" + ": player0 or player1 field is missing");
                         Toast.makeText(this, SafeStringFormatter.safeGetString(this, R.string.invalid_match_record), Toast.LENGTH_LONG).show();
                         finish();
                         return;
@@ -459,7 +459,7 @@ public class GameActivity extends BaseActivity {
                                 Long rawT1 = doc.getLong("remainingTime1");
 
                                 if (rawT0 == null || rawT1 == null) {
-                                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock fields missing on read!");
+                                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".onCreate" + ": Clock fields missing on read!");
                                     throw new IllegalStateException("Missing remainingTime0/1 fields");
                                 }
                                 remainingTime0 = rawT0;
@@ -490,7 +490,7 @@ public class GameActivity extends BaseActivity {
                                 movesRef = matchRef.collection("moves");
 
                                 // MOVE listener → only calls replaceMoves(...)
-                                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Attaching Firestore listener to: matches/" + matchPath + "/moves");
+                                Log.d("TAG_Soccer", getClass().getSimpleName() + ".onCreate" + ": Attaching Firestore listener to: matches/" + matchPath + "/moves");
                                 // Set up moves listener with error handling
                                 try {
                                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".onCreate: Setting up moves listener for path: " + movesRef.getPath());
@@ -510,13 +510,13 @@ public class GameActivity extends BaseActivity {
                                 }
                             })
                             .addOnFailureListener(e -> {
-                                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to load opponent info.", e);
+                                Log.e("TAG_Soccer", getClass().getSimpleName() + ".onCreate" + ": Failed to load opponent info.", e);
                                 Toast.makeText(this, SafeStringFormatter.safeGetString(this, R.string.failed_to_load_opponent), Toast.LENGTH_LONG).show();
                                 finish();
                             });
                 })
                 .addOnFailureListener(e -> {
-                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to load match", e);
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".onCreate" + ": Failed to load match", e);
                     Toast.makeText(this, SafeStringFormatter.safeGetString(this, R.string.network_error), Toast.LENGTH_LONG).show();
                     finish();
                 });
@@ -533,14 +533,14 @@ public class GameActivity extends BaseActivity {
             try {
                 String levelStr = sharedPreferences.getString("android_level", "0");
                 androidLevel = Double.parseDouble(levelStr);
-                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Preference android_level=" + androidLevel);
+                Log.e("TAG_Soccer", getClass().getSimpleName() + ".onCreate" + ": Preference android_level=" + androidLevel);
             } catch (NumberFormatException e) {
                 Log.w("TAG_Soccer", getClass().getSimpleName() + ".onCreate: Invalid android_level preference, using default", e);
                 androidLevel = 0;
             }
         }
 
-        //Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": GameActivity.onCreate entered");
+        //Log.d("TAG_Soccer", getClass().getSimpleName() + ".onCreate" + ": GameActivity.onCreate entered");
         if (GameType != 3) {
             // Additional validation before creating GameView
             if (Moves == null || Moves.isEmpty()) {
@@ -589,18 +589,18 @@ public class GameActivity extends BaseActivity {
         if (gameEnded) return;              // ⬅️ hard gate
         // cancel any existing
         if (turnTimer != null) turnTimer.cancel();
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started");
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".startClock" + ": Started");
         turnTimer = new CountDownTimer(remainingMillis, 1000) {
             @Override public void onTick(long msUntilFinished) {
 /*                long t0 = remainingTime0;
                 long t1 = remainingTime1;
                 if (playerIndex == 0)  t0 = msUntilFinished / 1000;
                 else                   t1 = msUntilFinished / 1000;
-                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": t0=" + t0 + ", t1=" + t1);
+                Log.d("TAG_Soccer", getClass().getSimpleName() + ".onTick" + ": t0=" + t0 + ", t1=" + t1);
                 gameView.updateTimes(t0, t1, turnStartTime);*/
                 if (playerIndex == 0)  remainingTime0 = msUntilFinished / 1000;
                 else                   remainingTime1 = msUntilFinished / 1000;
-                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": remainingTime0=" + remainingTime0 + ", remainingTime1=" + remainingTime1);
+                Log.d("TAG_Soccer", getClass().getSimpleName() + ".onTick" + ": remainingTime0=" + remainingTime0 + ", remainingTime1=" + remainingTime1);
                 gameView.updateTimes(remainingTime0, remainingTime1, turnStartTime);
 
             }
@@ -637,16 +637,16 @@ public class GameActivity extends BaseActivity {
                     }
                     return null;
                 }).addOnSuccessListener(v -> {
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".handleTimeout"
                                 + ": 🏆 Timeout result recorded");
                         // ⏹️  stop the local countdown immediately
                         runOnUiThread(() -> {
                             if (turnTimer != null) {
-                                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                                Log.d("TAG_Soccer", getClass().getSimpleName() + ".handleTimeout"
                                         + ": Stopping clock...");
                                 turnTimer.cancel();
                                 turnTimer = null;      // hygiene – prevents reuse
-                                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                                Log.d("TAG_Soccer", getClass().getSimpleName() + ".handleTimeout"
                                         + ": Calling showWinner");
                                 int winner = (timedOutPlayer == 0) ? 1 : 0;
                                 showWinner(winner);           // dialog now sees reason="timeout"
@@ -654,7 +654,7 @@ public class GameActivity extends BaseActivity {
                         });
                 })
                 .addOnFailureListener(e -> {
-                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + ".handleTimeout"
                                 + ": ❌ Failed to record timeout", e);
                         stopClock();
                 });
@@ -662,28 +662,28 @@ public class GameActivity extends BaseActivity {
 
     private void onClockUpdate(DocumentSnapshot snap, FirebaseFirestoreException e) {
         try {
-            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started");
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".onClockUpdate" + ": Started");
             
             // Check for Firestore errors first
             if (e != null) {
-                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Firestore error in clock update", e);
+                Log.e("TAG_Soccer", getClass().getSimpleName() + ".onClockUpdate" + ": Firestore error in clock update", e);
                 return;
             }
             
             // Check for null or non-existent snapshot
             if (snap == null) {
-                Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Received null snapshot");
+                Log.w("TAG_Soccer", getClass().getSimpleName() + ".onClockUpdate" + ": Received null snapshot");
                 return;
             }
             
             if (!snap.exists()) {
-                Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Received non-existent snapshot");
+                Log.w("TAG_Soccer", getClass().getSimpleName() + ".onClockUpdate" + ": Received non-existent snapshot");
                 return;
             }
             
             // Check game state
             if (gameEnded) {
-                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Game already ended, ignoring update");
+                Log.d("TAG_Soccer", getClass().getSimpleName() + ".onClockUpdate" + ": Game already ended, ignoring update");
                 return;   // board frozen
             }
             
@@ -693,16 +693,16 @@ public class GameActivity extends BaseActivity {
             try {
                 serverWinner = snap.getString("winner");
                 reason = snap.getString("reason");
-                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": serverWinner=" + serverWinner + ", reason=" + reason);
+                Log.d("TAG_Soccer", getClass().getSimpleName() + ".onClockUpdate" + ": serverWinner=" + serverWinner + ", reason=" + reason);
             } catch (Exception ex) {
-                Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to read winner/reason fields", ex);
+                Log.w("TAG_Soccer", getClass().getSimpleName() + ".onClockUpdate" + ": Failed to read winner/reason fields", ex);
             }
             
             if (serverWinner != null && Winner == -1) {      // nobody has shown a dialog yet
                 try {
                     int winnerIdx = serverWinner.equals(player0Uid) ? 0 : 1;
                     if ("timeout".equals(reason) || "abandon".equals(reason)) {              // optional filter
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Showing winner due to " + reason);
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".onClockUpdate" + ": Showing winner due to " + reason);
                         runOnUiThread(() -> {
                             try {
                                 showWinner(winnerIdx);
@@ -713,7 +713,7 @@ public class GameActivity extends BaseActivity {
                         return;                                  // nothing else to update
                     }
                 } catch (Exception winnerEx) {
-                    Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Error processing winner information", winnerEx);
+                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".onClockUpdate" + ": Error processing winner information", winnerEx);
                 }
             }
 
@@ -721,13 +721,13 @@ public class GameActivity extends BaseActivity {
             String status = null;
             try {
                 status = snap.getString("status");
-                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Match status=" + status);
+                Log.d("TAG_Soccer", getClass().getSimpleName() + ".onClockUpdate" + ": Match status=" + status);
             } catch (Exception statusEx) {
-                Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to read status field", statusEx);
+                Log.w("TAG_Soccer", getClass().getSimpleName() + ".onClockUpdate" + ": Failed to read status field", statusEx);
             }
             
             if (!"active".equals(status)) {
-                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ️ 🎯 Match not active, ignoring update");
+                Log.d("TAG_Soccer", getClass().getSimpleName() + ".onClockUpdate" + ": ️ 🎯 Match not active, ignoring update");
                 return;                                  // match over → ignore update
             }
 
@@ -740,9 +740,9 @@ public class GameActivity extends BaseActivity {
                 rawT0 = snap.getLong("remainingTime0");
                 rawT1 = snap.getLong("remainingTime1");
                 turn = snap.getLong("turn");
-                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Read timing fields - rawT0=" + rawT0 + ", rawT1=" + rawT1 + ", turn=" + turn);
+                Log.d("TAG_Soccer", getClass().getSimpleName() + ".onClockUpdate" + ": Read timing fields - rawT0=" + rawT0 + ", rawT1=" + rawT1 + ", turn=" + turn);
             } catch (Exception timingEx) {
-                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to read timing fields", timingEx);
+                Log.e("TAG_Soccer", getClass().getSimpleName() + ".onClockUpdate" + ": Failed to read timing fields", timingEx);
                 return;
             }
             
@@ -750,22 +750,22 @@ public class GameActivity extends BaseActivity {
             try {
                 turnStartTimeTs = snap.getTimestamp("turnStartTime");
                 turnStartTime = (turnStartTimeTs != null) ? turnStartTimeTs.toDate().getTime() : null;
-                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": turnStartTime=" + ((turnStartTime == null) ? "null" : String.valueOf(turnStartTime)));
+                Log.d("TAG_Soccer", getClass().getSimpleName() + ".onClockUpdate" + ": turnStartTime=" + ((turnStartTime == null) ? "null" : String.valueOf(turnStartTime)));
             } catch (Exception timestampEx) {
-                Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to read turnStartTime", timestampEx);
+                Log.w("TAG_Soccer", getClass().getSimpleName() + ".onClockUpdate" + ": Failed to read turnStartTime", timestampEx);
                 turnStartTimeTs = null;
                 turnStartTime = null;
             }
 
             // Validate required fields
             if (rawT0 == null || rawT1 == null || turn == null) {
-                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock fields missing on update! rawT0=" + rawT0 + ", rawT1=" + rawT1 + ", turn=" + turn);
+                Log.e("TAG_Soccer", getClass().getSimpleName() + ".onClockUpdate" + ": Clock fields missing on update! rawT0=" + rawT0 + ", rawT1=" + rawT1 + ", turn=" + turn);
                 return; // Don't throw exception, just return - the data might be in an intermediate state
             }
             
             remainingTime0 = rawT0;
             remainingTime1 = rawT1;
-            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".onClockUpdate"
                     + ": remainingTime0="+remainingTime0
                     + " remainingTime1="+remainingTime1
                     + " turnStartTime="+((turnStartTime == null) ? "null" : String.valueOf(turnStartTime))
@@ -774,7 +774,7 @@ public class GameActivity extends BaseActivity {
 
             //Continue only if times changed...
             if(previousRemainingTime0==remainingTime0 && previousRemainingTime1==remainingTime1 && Objects.equals(previousTurnSTartTime, turnStartTime)) {
-                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                Log.d("TAG_Soccer", getClass().getSimpleName() + ".onClockUpdate"
                         + ": Times the same as previously, exiting");
                 return;
             }
@@ -788,10 +788,10 @@ public class GameActivity extends BaseActivity {
                 if (gameView != null) {
                     gameView.updateTimes(remainingTime0, remainingTime1, turnStartTime);
                 } else {
-                    Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": gameView is null, cannot update times");
+                    Log.w("TAG_Soccer", getClass().getSimpleName() + ".onClockUpdate" + ": gameView is null, cannot update times");
                 }
             } catch (Exception gameViewEx) {
-                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to update game view", gameViewEx);
+                Log.e("TAG_Soccer", getClass().getSimpleName() + ".onClockUpdate" + ": Failed to update game view", gameViewEx);
             }
 
             DocumentReference matchRefThisSnap = snap.getReference();
@@ -799,7 +799,7 @@ public class GameActivity extends BaseActivity {
         //reseting the flag if the turn was nullified
         if (clockStartAttempted && turnStartTimeTs == null ) {
             clockStartAttempted=false;
-            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Flag clockStartAttempted=false");
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".onClockUpdate" + ": Flag clockStartAttempted=false");
             stopClock();
         }
 
@@ -819,22 +819,22 @@ public class GameActivity extends BaseActivity {
             })
             .addOnSuccessListener(unused -> {
                 clockStartAttempted = true; // Prevent repeat attempts!
-                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": turnStartTime updated by player " + localPlayerIndex);
+                Log.d("TAG_Soccer", getClass().getSimpleName() + ".onClockUpdate" + ": turnStartTime updated by player " + localPlayerIndex);
                 matchRefThisSnap.get()
                         .addOnSuccessListener(updatedSnap -> {
                             turnStartTimeTs = updatedSnap.getTimestamp("turnStartTime");
                             turnStartTime = (turnStartTimeTs != null) ? turnStartTimeTs.toDate().getTime() : null;
                             runOnUiThread(() -> gameView.updateTimes(remainingTime0, remainingTime1, turnStartTime));
-                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Clock started for player " + localPlayerIndex);
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + ".onClockUpdate" + ": Clock started for player " + localPlayerIndex);
                             //turnStartTimeMs = System.currentTimeMillis();
                             long remSecs = localPlayerIndex==0 ? remainingTime0 : remainingTime1;
                             startClock(localPlayerIndex, remSecs*1000);
                         })
-                        .addOnFailureListener(err -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to re-fetch turnStartTime and start the clock",err));
+                        .addOnFailureListener(err -> Log.e("TAG_Soccer", getClass().getSimpleName() + ".onClockUpdate" + ": Failed to re-fetch turnStartTime and start the clock",err));
             })
             .addOnFailureListener(ex -> {
                 clockStartAttempted = false; // Allow retry if failed
-                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": turnStartTime update failed", ex);
+                Log.e("TAG_Soccer", getClass().getSimpleName() + ".onClockUpdate" + ": turnStartTime update failed", ex);
             });
         }
         /*  ⏱  If a valid turnStartTime exists and we haven’t started a
@@ -847,12 +847,12 @@ public class GameActivity extends BaseActivity {
             long timeLeft  = computeTimeLeft(remSecs, turnStartTime);
             startClock(turn.intValue(), timeLeft);
 
-            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".onClockUpdate"
                             + ": Clock started locally for player " + turn);
         }
         
         } catch (Exception ex) {
-            Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Unexpected error in onClockUpdate", ex);
+            Log.e("TAG_Soccer", getClass().getSimpleName() + ".onClockUpdate" + ": Unexpected error in onClockUpdate", ex);
             // Additional context logging
             try {
                 Log.e("TAG_Soccer", getClass().getSimpleName() + ".onClockUpdate: Context - gameEnded=" + gameEnded + 
@@ -878,7 +878,7 @@ public class GameActivity extends BaseActivity {
     public void stopClock(){
         runOnUiThread(() -> {
             if(turnTimer!=null) {
-                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                Log.d("TAG_Soccer", getClass().getSimpleName() + ".stopClock"
                         + ": Stopping clock...");
                 turnTimer.cancel();
                 turnTimer = null;
@@ -987,9 +987,9 @@ public class GameActivity extends BaseActivity {
 
                                 // 🔄 Update match document
                                 matchRef.update(update)
-                                        .addOnSuccessListener(unused -> Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                                        .addOnSuccessListener(unused -> Log.d("TAG_Soccer", getClass().getSimpleName() + ".handleOnBackPressed"
                                                 + ": 🏳️ Match marked as forfeited"))
-                                        .addOnFailureListener(err -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                                        .addOnFailureListener(err -> Log.e("TAG_Soccer", getClass().getSimpleName() + ".handleOnBackPressed"
                                                 + ": ❌ Failed to update match", err));
 
                                 // 📤 Add a dummy move to trigger opponent's listener
@@ -1000,8 +1000,8 @@ public class GameActivity extends BaseActivity {
                                 forfeitMove.put("createdAt", FieldValue.serverTimestamp());
 
                                 matchRef.collection("moves").add(forfeitMove)
-                                        .addOnSuccessListener(unused -> Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": 📨 Forfeit move added"))
-                                        .addOnFailureListener(e -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ❌ Failed to send forfeit move", e));*/
+                                        .addOnSuccessListener(unused -> Log.d("TAG_Soccer", getClass().getSimpleName() + ".handleOnBackPressed" + ": 📨 Forfeit move added"))
+                                        .addOnFailureListener(e -> Log.e("TAG_Soccer", getClass().getSimpleName() + ".handleOnBackPressed" + ": ❌ Failed to send forfeit move", e));*/
                             }
 
                             finish();
@@ -1044,24 +1044,24 @@ public class GameActivity extends BaseActivity {
 
     private void onMovesUpdate(QuerySnapshot snapshot, FirebaseFirestoreException e) {
         try {
-            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started");
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".onMovesUpdate" + ": Started");
             
             if (e != null) {
-                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Listen for moves failed", e);
+                Log.e("TAG_Soccer", getClass().getSimpleName() + ".onMovesUpdate" + ": Listen for moves failed", e);
                 return;
             }
             
             if (snapshot == null) {
-                Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Received null snapshot");
+                Log.w("TAG_Soccer", getClass().getSimpleName() + ".onMovesUpdate" + ": Received null snapshot");
                 return;
             }
             
             if (gameEnded) {
-                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Game already ended, ignoring moves update");
+                Log.d("TAG_Soccer", getClass().getSimpleName() + ".onMovesUpdate" + ": Game already ended, ignoring moves update");
                 return;   // board frozen
             }
             
-            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Processing moves. Snapshot Size: " + snapshot.size());
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".onMovesUpdate" + ": Processing moves. Snapshot Size: " + snapshot.size());
 
             ArrayList<MoveTo> newMoves = new ArrayList<>();
             try {
@@ -1091,14 +1091,14 @@ public class GameActivity extends BaseActivity {
             }
 
             if (newMoves.isEmpty()) {
-                Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": No valid moves found in Firestore yet — skipping view creation");
+                Log.w("TAG_Soccer", getClass().getSimpleName() + ".onMovesUpdate" + ": No valid moves found in Firestore yet — skipping view creation");
                 return;
             }
 
             runOnUiThread(() -> {
                 try {
                     if (gameView != null) {
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Replacing moves: newMoves.size=" + newMoves.size());
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".onMovesUpdate" + ": Replacing moves: newMoves.size=" + newMoves.size());
                         gameView.replaceMoves(newMoves);
                         gameView.invalidate();
 
@@ -1159,32 +1159,32 @@ public class GameActivity extends BaseActivity {
             // Send the move
             movesRef.add(moveData)
                     .addOnSuccessListener(docRef -> {
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Sent move (change turn). x="+x+" y="+y+" p="+p);
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".sendMoveToFirestore" + ": Sent move (change turn). x="+x+" y="+y+" p="+p);
                         turnStartTime=null;
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Updating GameView");
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".sendMoveToFirestore" + ": Updating GameView");
                         gameView.updateTimes(remainingTime0,remainingTime1,null);
                     })
 
 /*                    .addOnSuccessListener(docRef -> matchRef.update(matchUpdates)
                             .addOnSuccessListener(aVoid -> {
                                 // Reset local turn/clock flags here if needed
-                                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Sent move an updated match");
+                                Log.d("TAG_Soccer", getClass().getSimpleName() + ".sendMoveToFirestore" + ": Sent move an updated match");
                                 turnStartTime=null;
                                 gameView.updateTimes(remainingTime0,remainingTime1,null);
                                 // clockStartAttempted = false; // So next time this device's turn comes, it'll try to start the clock
                                 // Optionally reset local timing state
                             })
-                            .addOnFailureListener(err -> Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to update match")))*/
+                            .addOnFailureListener(err -> Log.e("TAG_Soccer", getClass().getSimpleName() + ".sendMoveToFirestore" + ": Failed to update match")))*/
                     .addOnFailureListener(err -> {
-                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to send move");
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + ".sendMoveToFirestore" + ": Failed to send move");
                         Toast.makeText(this, SafeStringFormatter.safeGetString(this, R.string.failed_to_send_move, err), LENGTH_SHORT).show();
                     });
         } else {
             // Send the move
             movesRef.add(moveData)
-                    .addOnSuccessListener(docRef -> Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Sent move (bouncing). x="+x+" y="+y+" p="+p))
+                    .addOnSuccessListener(docRef -> Log.d("TAG_Soccer", getClass().getSimpleName() + ".sendMoveToFirestore" + ": Sent move (bouncing). x="+x+" y="+y+" p="+p))
                     .addOnFailureListener(err -> {
-                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to send move");
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + ".sendMoveToFirestore" + ": Failed to send move");
                         Toast.makeText(this, SafeStringFormatter.safeGetString(this, R.string.failed_to_send_move, err), LENGTH_SHORT).show();
                     });
         }
@@ -1202,7 +1202,7 @@ public class GameActivity extends BaseActivity {
     public void onSaveInstanceState(Bundle outState)
     {
         //---save whatever you need to persist—
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started");
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".onSaveInstanceState" + ": Started");
         //Moves=gameView.GetMoves();
 
         outState.putParcelableArrayList("Moves",Moves);
@@ -1239,7 +1239,7 @@ public class GameActivity extends BaseActivity {
 
     public void showWinner(int Winner) {
         if (alertShown) return;
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Started. Winner = " + Winner);
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".showWinner" + ": Started. Winner = " + Winner);
         alertShown = true;
         gameEnded = true;
         if (movesListener != null) {  // extra hygiene
@@ -1277,7 +1277,7 @@ public class GameActivity extends BaseActivity {
             final String sLooser= (Winner == 0 ? sPlayer1 : sPlayer0);
 
             if(matchPath == null) {
-                Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to load match reason");
+                Log.e("TAG_Soccer", getClass().getSimpleName() + ".showWinner" + ": Failed to load match reason");
                 Toast.makeText(this, SafeStringFormatter.safeGetString(this, R.string.fatal_error_matchpath_null), Toast.LENGTH_LONG).show();
                 throw new IllegalStateException("Fatal error matchPath == null");
             }
@@ -1301,13 +1301,13 @@ public class GameActivity extends BaseActivity {
                     })
                     .addOnSuccessListener(didWrite -> {
                         if (didWrite) {
-                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": 🏆 Match result recorded");
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + ".showWinner" + ": 🏆 Match result recorded");
                         } else {
-                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": 🏆 Match result already recorded by other client");
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + ".showWinner" + ": 🏆 Match result already recorded by other client");
                         }
                     })
                     .addOnFailureListener(e ->
-                            Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ❌ Failed to record match result", e));
+                            Log.e("TAG_Soccer", getClass().getSimpleName() + ".showWinner" + ": ❌ Failed to record match result", e));
 
 
             // Show dialog immediately with default message to avoid ANR
@@ -1321,10 +1321,10 @@ public class GameActivity extends BaseActivity {
             // make sure we're still alive before showing dialog
             if (!isFinishing() && !isDestroyed()) {
                 dialogWinner = builder.create();
-                Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": dialogWinner show (immediate): "+defaultMsg);
+                Log.d("TAG_Soccer", getClass().getSimpleName() + ".showWinner" + ": dialogWinner show (immediate): "+defaultMsg);
                 dialogWinner.show();
             } else {
-                Log.w("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Tried to show dialog when activity is finishing or destroyed");
+                Log.w("TAG_Soccer", getClass().getSimpleName() + ".showWinner" + ": Tried to show dialog when activity is finishing or destroyed");
                 return;
             }
 
@@ -1348,14 +1348,14 @@ public class GameActivity extends BaseActivity {
                                         
                                         // Update the dialog message if it's still showing
                                         if (dialogWinner != null && dialogWinner.isShowing()) {
-                                            Log.d("TAG_Soccer", GameActivity.this.getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Updating dialogWinner message: "+msg);
+                                            Log.d("TAG_Soccer", GameActivity.this.getClass().getSimpleName() + ".showWinner" + ": Updating dialogWinner message: "+msg);
                                             dialogWinner.setMessage(msg);
                                         }
                                     }
                                 }
                             })
                     .addOnFailureListener(err -> {
-                        Log.e("TAG_Soccer", GameActivity.this.getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": Failed to load match reason (non-critical)", err);
+                        Log.e("TAG_Soccer", GameActivity.this.getClass().getSimpleName() + ".showWinner" + ": Failed to load match reason (non-critical)", err);
                         // Don't show error toast since dialog is already showing with default message
                     });
             return; // Avoid showing duplicate dialog below
@@ -1364,7 +1364,7 @@ public class GameActivity extends BaseActivity {
         // GameType 1 or 2 fallback
         String defaultMsg = SafeStringFormatter.safeGetString(this, R.string.winner_is, (Winner == 0 ? sPlayer0 : sPlayer1));
         defaultMsg = prependTutorialMessageIfNeeded(defaultMsg);
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": dialogWinner defaultMsg="+defaultMsg);
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".showWinner" + ": dialogWinner defaultMsg="+defaultMsg);
         builder.setMessage(defaultMsg);
         builder.setPositiveButton(R.string.close, (dialog, which) -> finish());
         dialogWinner = builder.create();
