@@ -48,14 +48,14 @@ if (signingPropsFile.exists()) {
 
 android {
 
-    compileSdk = 36 // Set the compile SDK version
+    compileSdk = 37 // Set the compile SDK version
 
     defaultConfig {
         applicationId = "piotr_gorczynski.soccer2"
         minSdk = 24
         targetSdk = 36
-        versionCode = 40
-        versionName = '17.5'
+        versionCode = 41
+        versionName = '17.6'
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         
@@ -171,13 +171,13 @@ dependencies {
 
     //GPT fixes
     implementation platform('com.google.firebase:firebase-bom:34.12.0')
-    implementation 'com.google.firebase:firebase-auth:24.0.1'
+    implementation 'com.google.firebase:firebase-auth:24.1.0'
     implementation 'com.google.android.gms:play-services-auth:21.5.1' // Required for Google Sign-In
     //GPT fixes
     implementation 'androidx.appcompat:appcompat:1.7.1'
     implementation 'androidx.core:core:1.18.0'
     implementation 'com.google.android.material:material:1.13.0'
-    implementation 'com.google.firebase:firebase-firestore:26.2.0' // or latest version
+    implementation 'com.google.firebase:firebase-firestore:26.3.0' // or latest version
     //GPT fixes
     implementation 'androidx.preference:preference:1.2.1'
     implementation 'androidx.work:work-runtime:2.11.2'
@@ -195,12 +195,12 @@ dependencies {
     //Added dependencies for invoking acceptInvite
     implementation 'com.google.firebase:firebase-functions:22.1.1'
     // FCM
-    implementation 'com.google.firebase:firebase-messaging:25.0.1' // Latest as of May 2025
+    implementation 'com.google.firebase:firebase-messaging:25.0.2' // Latest as of May 2025
     
     // Firebase Analytics for user research and funnel tracking
     implementation 'com.google.firebase:firebase-analytics:23.2.0'
-    implementation 'com.google.firebase:firebase-config:23.0.1' // Remote Config for A/B testing
-    implementation 'com.google.firebase:firebase-crashlytics:20.0.5' // Enhanced error tracking
+    implementation 'com.google.firebase:firebase-config:23.1.0' // Remote Config for A/B testing
+    implementation 'com.google.firebase:firebase-crashlytics:20.0.6' // Enhanced error tracking
 
     implementation "com.google.guava:guava:33.6.0-android"
 
