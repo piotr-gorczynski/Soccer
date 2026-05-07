@@ -97,18 +97,14 @@ public class UniversalLoginActivity extends BaseActivity {
     }
 
     private void handleProviderLogin(String provider) {
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
-                ": Provider selected = " + provider);
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".handleProviderLogin: Provider selected = " + provider);
 
         // Disable all login buttons and show toast to prevent multiple clicks
         setLoginButtonsEnabled(false);
         Toast.makeText(this, getString(R.string.login_in_progress), Toast.LENGTH_SHORT).show();
 
         String nickname = storedNickname; // may be null
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
-                ": Calling authManager.loginWithProvider");
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".handleProviderLogin: Calling authManager.loginWithProvider");
 
         FirebaseAuthManager.LoginCallback callback = createLoginCallback();
 
@@ -216,9 +212,7 @@ public class UniversalLoginActivity extends BaseActivity {
                 
                 Log.d(
                         "TAG_Soccer",
-                        getClass().getSimpleName() + "." +
-                                Objects.requireNonNull(new Object() {
-                                }.getClass().getEnclosingMethod()).getName() +
+                        getClass().getSimpleName() + ".onLoginSuccess" +
                                 ": onLoginSuccess"
                 );
 
@@ -277,8 +271,7 @@ public class UniversalLoginActivity extends BaseActivity {
                 // Re-enable login buttons
                 setLoginButtonsEnabled(true);
                 
-                Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
-                        Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                Log.e("TAG_Soccer", getClass().getSimpleName() + ".onLoginFailure" +
                         ": onLoginFailure: " + message);
                 
                 // Track login/signup error

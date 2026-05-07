@@ -602,7 +602,7 @@ public class FriendsListActivity extends BaseActivity {
                         android.widget.Toast.makeText(this, msgId, android.widget.Toast.LENGTH_LONG).show();
                     }
 
-                    android.util.Log.e("TAG_Soccer", getClass().getSimpleName() + "." + java.util.Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                    android.util.Log.e("TAG_Soccer", getClass().getSimpleName() + ".sendInviteViaCF"
                             + ": createInvite failed", e);
                 });
     }

@@ -7,8 +7,8 @@
     "node": ">=20"
   },
   "dependencies": {
-    "firebase-admin": "^13.6.1",
-    "firebase-functions": "^7.0.5"
+    "firebase-admin": "^13.8.0",
+    "firebase-functions": "^7.2.5"
   },
   "overrides": {
     "jsonwebtoken": {
@@ -16,10 +16,11 @@
     },
     "jws": "^4.0.0",
     "form-data": "^4.0.4",
-    "protobufjs": "^7.2.5",
-    "fast-xml-parser": "5.5.7",
+    "protobufjs": "^7.5.5",
+    "fast-xml-parser": "^5.7.0",
     "@tootallnate/once": "3.0.1",
     "lodash": "^4.17.22",
-    "path-to-regexp": "0.1.13"
+    "path-to-regexp": "0.1.13",
+    "uuid": "^14.0.0"
   }
 }

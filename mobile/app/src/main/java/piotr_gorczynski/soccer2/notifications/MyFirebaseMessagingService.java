@@ -24,7 +24,6 @@ import android.app.PendingIntent;
 import android.content.Intent;
 
 import java.util.Map;
-import java.util.Objects;
 
 import piotr_gorczynski.soccer2.InvitationsActivity;
 import piotr_gorczynski.soccer2.TournamentLobbyActivity;
@@ -51,7 +50,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onNewToken(@NonNull String token) {
         super.onNewToken(token);
-        Log.d(TAG, getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": 🔐 New FCM token: " + token);
+        Log.d(TAG, getClass().getSimpleName() + ".onNewToken: 🔐 New FCM token: " + token);
 
         String uid = FirebaseAuth.getInstance().getCurrentUser() != null
                 ? FirebaseAuth.getInstance().getCurrentUser().getUid()
@@ -62,10 +61,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                     .collection("users")
                     .document(uid)
                     .update("fcmToken", token)
-                    .addOnSuccessListener(aVoid -> Log.d(TAG, getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ✅ Token saved"))
-                    .addOnFailureListener(e -> Log.e(TAG, getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ❌ Failed to save token", e));
+                    .addOnSuccessListener(aVoid -> Log.d(TAG, getClass().getSimpleName() + ".onNewToken: ✅ Token saved"))
+                    .addOnFailureListener(e -> Log.e(TAG, getClass().getSimpleName() + ".onNewToken: ❌ Failed to save token", e));
         } else {
-            Log.w(TAG, getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() + ": ⚠️ No user logged in; token not saved");
+            Log.w(TAG, getClass().getSimpleName() + ".onNewToken: ⚠️ No user logged in; token not saved");
         }
     }
 

@@ -17,7 +17,6 @@ import com.google.firebase.functions.FirebaseFunctionsException;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class RegulationActivity extends BaseActivity {
 
@@ -42,21 +41,18 @@ public class RegulationActivity extends BaseActivity {
         // Get analytics manager from SoccerApp  
         analyticsManager = ((SoccerApp) getApplicationContext()).getAnalyticsManager();
 
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".onCreate" +
                 ": tournamentId=" + tournamentId + " regulationId=" + regulationId);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         if (!TextUtils.isEmpty(regulationId)) {
             FirebaseUser authUser = FirebaseAuth.getInstance().getCurrentUser();
-            Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                    Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".onCreate" +
                     ": querying regulation from Firestore, currentUser=" +
                     (authUser != null ? authUser.getUid() : "null"));
 
             if (authUser == null) {
-                Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
-                        Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                Log.e("TAG_Soccer", getClass().getSimpleName() + ".onCreate" +
                         ": user not authenticated – cannot load regulation");
                 Toast.makeText(this, R.string.regulation_auth_required, Toast.LENGTH_LONG).show();
                 return;
@@ -64,8 +60,7 @@ public class RegulationActivity extends BaseActivity {
             db.collection("regulations").document(regulationId).get()
                     .addOnSuccessListener(doc -> {
                         if (doc.exists()) {
-                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                                    Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + ".onCreate" +
                                     ": document found");
                             nameTv.setText(doc.getString("name"));
 
@@ -93,8 +88,7 @@ public class RegulationActivity extends BaseActivity {
                                         }
                                     })
                                     .addOnFailureListener(e -> {
-                                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
-                                                Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                                        Log.e("TAG_Soccer", getClass().getSimpleName() + ".onCreate" +
                                                 ": Failed to load regulation", e);
                                         String body = doc.getString("body");
                                         if (!TextUtils.isEmpty(body)) {
@@ -104,21 +98,18 @@ public class RegulationActivity extends BaseActivity {
                                         }
                                     });
                         } else {
-                            Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                                    Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                            Log.d("TAG_Soccer", getClass().getSimpleName() + ".onCreate" +
                                     ": regulation document not found");
                             bodyTv.setText(R.string.regulation_not_found);
                         }
                     })
                     .addOnFailureListener(e -> {
-                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
-                                Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + ".onCreate" +
                                 ": Failed to load regulation", e);
                         Toast.makeText(this, R.string.regulation_load_error, Toast.LENGTH_LONG).show();
                     });
         } else {
-            Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
-                    Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+            Log.e("TAG_Soccer", getClass().getSimpleName() + ".onCreate" +
                     ": empty regulationId");
             bodyTv.setText(R.string.regulation_not_found);
         }
@@ -129,16 +120,14 @@ public class RegulationActivity extends BaseActivity {
     }
 
     private void acceptAndJoin() {
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".acceptAndJoin" +
                 ": starting acceptAndJoin");
 
         acceptBtn.setEnabled(false);
         Toast.makeText(this, R.string.registration_in_progress, Toast.LENGTH_SHORT).show();
 
         if (TextUtils.isEmpty(tournamentId)) {
-            Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
-                    Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+            Log.e("TAG_Soccer", getClass().getSimpleName() + ".acceptAndJoin" +
                     ": empty tournamentId");
             Toast.makeText(this, getString(R.string.tournament_not_found), Toast.LENGTH_LONG).show();
             acceptBtn.setEnabled(true);
@@ -146,34 +135,29 @@ public class RegulationActivity extends BaseActivity {
         }
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
-            Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
-                    Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+            Log.e("TAG_Soccer", getClass().getSimpleName() + ".acceptAndJoin" +
                     ": user not logged-in");
             Toast.makeText(this, getString(R.string.must_be_logged_in), Toast.LENGTH_LONG).show();
             acceptBtn.setEnabled(true);
             return;
         }
 
-        Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+        Log.d("TAG_Soccer", getClass().getSimpleName() + ".acceptAndJoin" +
                 ": refreshing ID token");
         user.getIdToken(true).addOnSuccessListener(tokenRes -> {
-            Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                    Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".acceptAndJoin" +
                     ": token refresh OK");
             FirebaseFunctions functions = FirebaseFunctions.getInstance("us-central1");
             Map<String,Object> data = Map.of(
                     "tournamentId", tournamentId,
                     "regulation", "accepted"
             );
-            Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                    Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+            Log.d("TAG_Soccer", getClass().getSimpleName() + ".acceptAndJoin" +
                     ": calling joinTournament");
             functions.getHttpsCallable("joinTournament")
                     .call(data)
                     .addOnSuccessListener(r -> {
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + "." +
-                                Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".acceptAndJoin" +
                                 ": joinTournament success");
                         
                         // Track successful tournament join
@@ -189,7 +173,7 @@ public class RegulationActivity extends BaseActivity {
                         
                         if (e instanceof FirebaseFunctionsException ffe) {
                             errorCode = ffe.getCode().name();
-                            Log.e("TAG_Soccer", getClass().getSimpleName() + "." + Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName()
+                            Log.e("TAG_Soccer", getClass().getSimpleName() + ".acceptAndJoin"
                                     + ": code=" + ffe.getCode()
                                     + "  msg=" + ffe.getMessage()
                                     + "  details=" + ffe.getDetails());
@@ -199,15 +183,13 @@ public class RegulationActivity extends BaseActivity {
                         analyticsManager.trackTournamentJoinError(tournamentId, errorCode, errorMessage);
                         analyticsManager.addTournamentBreadcrumb("join_error", tournamentId, "error=" + errorCode + ", msg=" + errorMessage);
                         
-                        Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
-                                Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + ".acceptAndJoin" +
                                 ": joinTournament failed", e);
                         Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
                         acceptBtn.setEnabled(true);
                     });
         }).addOnFailureListener(e -> {
-            Log.e("TAG_Soccer", getClass().getSimpleName() + "." +
-                    Objects.requireNonNull(new Object(){}.getClass().getEnclosingMethod()).getName() +
+            Log.e("TAG_Soccer", getClass().getSimpleName() + ".acceptAndJoin" +
                     ": token refresh failed", e);
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
             acceptBtn.setEnabled(true);
