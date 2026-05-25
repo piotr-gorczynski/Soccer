@@ -1,0 +1,118 @@
+<en-GB>
+🎉 Improved Bangladesh migration and app-switch experience
+🎉 Added automated winner payout backend flow after tournament completion
+🐝 Fixed a production crash related to broadcast delivery
+🐝 Upgraded security/build dependencies for improved stability
+</en-GB>
+
+<pl-PL>
+🎉 Ulepszono migrację w Bangladeszu i przełączanie między aplikacjami
+🎉 Dodano automatyczne wypłaty nagród po zakończeniu turnieju
+🐝 Naprawiono błąd produkcyjny związany z dostarczaniem broadcastów
+🐝 Zaktualizowano zależności bezpieczeństwa dla lepszej stabilności
+</pl-PL>
+
+<de-DE>
+🎉 Migration in Bangladesch und App-Wechsel verbessert
+🎉 Automatische Gewinnauszahlung nach Turnierende hinzugefügt
+🐝 Produktionsabsturz bei Broadcast-Zustellung behoben
+🐝 Sicherheits- und Build-Abhängigkeiten für bessere Stabilität aktualisiert
+</de-DE>
+
+<fr-FR>
+🎉 Amélioration de la migration au Bangladesh et du changement d’app
+🎉 Ajout du paiement automatique des gagnants après le tournoi
+🐝 Correction d’un crash en production lié aux broadcasts
+🐝 Mise à jour des dépendances de sécurité pour plus de stabilité
+</fr-FR>
+
+<es-ES>
+🎉 Mejora de la migración en Bangladesh y cambio entre apps
+🎉 Añadido pago automático a ganadores tras el torneo
+🐝 Corregido fallo en producción relacionado con broadcasts
+🐝 Dependencias de seguridad actualizadas para mayor estabilidad
+</es-ES>
+
+<ur>
+🎉 بنگلہ دیش مائیگریشن اور ایپ سوئچنگ کا تجربہ بہتر بنایا گیا
+🎉 ٹورنامنٹ کے بعد خودکار انعام ادائیگی شامل
+🐝 براڈکاسٹ ڈیلیوری سے متعلق پروڈکشن کریش درست
+🐝 بہتر استحکام کے لیے سیکیورٹی اور بلڈ اپڈیٹس
+</ur>
+
+<bn-BD>
+🎉 বাংলাদেশ মাইগ্রেশন ও অ্যাপ সুইচিং অভিজ্ঞতা উন্নত
+🎉 টুর্নামেন্ট শেষে স্বয়ংক্রিয় পুরস্কার প্রদান যোগ
+🐝 ব্রডকাস্ট ডেলিভারি সংক্রান্ত প্রোডাকশন ক্র্যাশ ঠিক
+🐝 স্থিতিশীলতার জন্য সিকিউরিটি আপডেট
+</bn-BD>
+
+<ne-NP>
+🎉 बंगलादेश माइग्रेशन र एप स्विच अनुभव सुधारियो
+🎉 प्रतियोगिता पछि स्वचालित पुरस्कार भुक्तानी थपियो
+🐝 ब्रॉडकास्ट डेलिभरीसँग सम्बन्धित प्रोडक्सन क्र्यास समाधान
+🐝 सुरक्षा र बिल्ड अद्यावधिकले स्थिरता सुधार
+</ne-NP>
+
+<hi-IN>
+🎉 बांग्लादेश माइग्रेशन और ऐप स्विच अनुभव बेहतर किया गया
+🎉 टूर्नामेंट के बाद स्वचालित विजेता भुगतान जोड़ा गया
+🐝 ब्रॉडकास्ट डिलीवरी से जुड़ा प्रोडक्शन क्रैश ठीक किया गया
+🐝 बेहतर स्थिरता के लिए सुरक्षा और बिल्ड अपडेट
+</hi-IN>
+
+<am>
+🎉 በባንግላዲሽ ማይግሬሽን እና የአፕ መቀየር ተሻሻለ
+🎉 ከቱርናመንት በኋላ የአሸናፊዎች ክፍያ በራስ-ሰር ተጨምሯል
+🐝 ከbroadcast ጋር የተያያዘ የፕሮዳክሽን ክራሽ ተፈታ
+🐝 የደህንነት እና ቢልድ ማዘመን ለተሻለ መረጋጋት
+</am>
+
+<ar>
+🎉 تحسين تجربة الانتقال في بنغلاديش والتبديل بين التطبيقات
+🎉 إضافة دفع تلقائي للفائزين بعد انتهاء البطولة
+🐝 إصلاح عطل في الإنتاج متعلق بإرسال البث
+🐝 تحديثات الأمان والبناء لتحسين الاستقرار
+</ar>
+
+<my-MM>
+🎉 ဘင်္ဂလားဒေ့ရှ် မိုင်ဂရေးရှင်းနှင့် အက်ပ်ပြောင်းခြင်း အတွေ့အကြုံ တိုးတက်
+🎉 ပြိုင်ပွဲပြီးနောက် အနိုင်ရသူများအတွက် အလိုအလျောက်ပေးချေမှု ထည့်သွင်း
+🐝 broadcast ပို့ဆောင်မှုဆိုင်ရာ production crash ကို ပြင်ဆင်
+🐝 လုံခြုံရေးနှင့် build အပ်ဒိတ်များဖြင့် တည်ငြိမ်မှု တိုးတက်
+</my-MM>
+
+<km-KH>
+🎉 កែលម្អបទពិសោធន៍ការផ្លាស់ទី និងប្តូរអេបនៅបង់ក្លាដែស
+🎉 បន្ថែមការបង់ប្រាក់ឈ្នះដោយស្វ័យប្រវត្តិបន្ទាប់ពីតួណាម៉ង់
+🐝 កែបញ្ហា crash ក្នុង production ពាក់ព័ន្ធនឹង broadcast
+🐝 អាប់ដេតសុវត្ថិភាព និង build សម្រាប់ស្ថិរភាពល្អជាងមុន
+</km-KH>
+
+<lo-LA>
+🎉 ປັບປຸງປະສົບການຍ້າຍໃນບັງກະລາເທດ ແລະ ການສະຫຼັບແອັບ
+🎉 ເພີ່ມການຈ່າຍລາງວັນອັດຕະໂນມັດຫຼັງຈາກທວຣນາເມັນ
+🐝 ແກ້ production crash ທີ່ເກີດຈາກ broadcast
+🐝 ອັບເດດຄວາມປອດໄພ ແລະ build ເພື່ອຄວາມສະເຫຼີມສົມບູນ
+</lo-LA>
+
+<mn-MN>
+🎉 Бангладеш шилжилт ба апп солих туршлага сайжирсан
+🎉 Тэмцээний дараа ялагчдад автоматаар төлбөр хийх боломж нэмсэн
+🐝 Broadcast-тэй холбоотой production crash зассан
+🐝 Аюулгүй байдал болон build шинэчлэлтээр тогтвортой байдал сайжирсан
+</mn-MN>
+
+<fa-IR>
+🎉 بهبود تجربه مهاجرت در بنگلادش و جابه‌جایی بین برنامه‌ها
+🎉 افزودن پرداخت خودکار به برندگان پس از پایان تورنمنت
+🐝 رفع کرش تولید مرتبط با ارسال broadcast
+🐝 به‌روزرسانی امنیت و وابستگی‌ها برای پایداری بیشتر
+</fa-IR>
+
+<si-LK>
+🎉 බංග්ලාදේශ මයිග්‍රේෂන් සහ ඇප් මාරු කිරීමේ අත්දැකීම වැඩිදියුණු කළා
+🎉 තරගය අවසන් වූ පසු ජයග්‍රාහකයන්ට ස්වයංක්‍රීය ගෙවීම් එකතු කළා
+🐝 broadcast සම්බන්ධ production crash නිවැරදි කළා
+🐝 වැඩි ස්ථාවරතාව සඳහා ආරක්ෂක සහ build යාවත්කාලීන
+</si-LK>
