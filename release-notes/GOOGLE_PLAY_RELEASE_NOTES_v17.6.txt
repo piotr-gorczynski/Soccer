@@ -1,8 +1,5 @@
 <en-GB>
-🎉 Improved Bangladesh migration and app-switch experience
-🎉 Added automated winner payout backend flow after tournament completion
-🐝 Fixed a production crash related to broadcast delivery
-🐝 Upgraded security/build dependencies for improved stability
+🐝 Guard GameActivity saved-state restore from MoveTo parcel crashes
 </en-GB>
 
 <pl-PL>
