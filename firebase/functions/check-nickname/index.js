@@ -14,7 +14,7 @@ if (!projectId) {
 
 const vertex = new VertexAI({ project: projectId, location });
 const modelInstance = vertex.getGenerativeModel({
-  model: "gemini-2.5-flash",
+  model: "gemini-2.0-flash",
   safetySettings: [
     {
       category: "HARM_CATEGORY_HATE_SPEECH",

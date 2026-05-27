@@ -6,7 +6,7 @@ The backend logs showed that the `checkNickname` function was failing with Verte
 
 ## Root Cause
 
-The `check-nickname` Cloud Function uses the `@google-cloud/vertexai` package to call Google's Gemini 1.5 Flash model for content moderation. However, this requires two things:
+The `check-nickname` Cloud Function uses the `@google-cloud/vertexai` package to call Google's Gemini 2.0 Flash model for content moderation. However, this requires two things:
 
 1. **Vertex AI API** must be enabled in the Google Cloud project (`aiplatform.googleapis.com`)
 2. **IAM Permissions**: The Cloud Functions service account needs the `roles/aiplatform.user` role to call Vertex AI endpoints
