@@ -53,7 +53,7 @@ android {
     defaultConfig {
         applicationId = "piotr_gorczynski.soccer2"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 41
         versionName = '17.6'
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
