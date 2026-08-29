@@ -1,6 +1,8 @@
-apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'
-apply plugin: 'com.google.firebase.crashlytics'
+plugins {
+    id 'com.android.application'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
+}
 
 
 import java.nio.file.Files
@@ -99,6 +101,8 @@ android {
             }
         }
         debug {
+            isDefault = true
+
             ndk {
                 debugSymbolLevel 'FULL'
             }
@@ -109,6 +113,7 @@ android {
     productFlavors {
         _dev {
             dimension "environment"
+            isDefault = true
             buildConfigField "String", "AD_UNIT_ID", '"ca-app-pub-3940256099942544/1033173712"'
         }
         _test {
@@ -123,6 +128,7 @@ android {
         // Market flavors for Bangladesh variant
         global {
             dimension "market"
+            isDefault = true
             // Base applicationId from defaultConfig: piotr_gorczynski.soccer2
         }
         bangladesh {
