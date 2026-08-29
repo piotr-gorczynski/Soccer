@@ -86,6 +86,7 @@ android {
         }
     }
 
+    // Preferred Android Studio build variant: _devGlobalDebug
     buildTypes {
         release {
             signingConfig signingConfigs.release
