@@ -44,6 +44,7 @@ class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.VH> {
 
     private final List<DocumentSnapshot> allData = new ArrayList<>();
     private final List<DocumentSnapshot> data = new ArrayList<>();
+    private final Set<String> resultUids = new HashSet<>();
     private final OnAddClick listener;
     private final OnVisibleResultsChanged resultsChangedListener;
     private boolean onlineOnly;
@@ -148,10 +149,17 @@ class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.VH> {
     @Override
     public int getItemCount() { return data.size(); }
 
-    void addResults(List<DocumentSnapshot> docs) {
-        allData.addAll(docs);
-        for (DocumentSnapshot doc : docs) subscribeToPresence(doc.getId());
+    int addResults(List<DocumentSnapshot> docs) {
+        int addedCount = 0;
+        for (DocumentSnapshot doc : docs) {
+            if (resultUids.add(doc.getId())) {
+                allData.add(doc);
+                subscribeToPresence(doc.getId());
+                addedCount++;
+            }
+        }
         refreshVisibleData();
+        return addedCount;
     }
 
     void setOnlineOnly(boolean onlineOnly) {
@@ -220,6 +228,7 @@ class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.VH> {
         presSubs.clear();
         presCache.clear();
         hbCache.clear();
+        resultUids.clear();
         allData.clear();
         data.clear();
         notifyDataSetChanged();

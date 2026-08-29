@@ -29,6 +29,9 @@ import java.util.HashSet;
 
 public class AddFriendActivity extends BaseActivity {
 
+    private static final String TAG = "TAG_Soccer";
+    private static final int PAGE_SIZE = 50;
+
     EditText nicknameInput;
     Button searchButton;
     Button loadMoreButton;
@@ -41,6 +44,10 @@ public class AddFriendActivity extends BaseActivity {
     private String currentQuery;
     private String originalQuery;
     private boolean fallbackMode;
+    private boolean isPageLoading;
+    private boolean hasMoreResults;
+    private boolean loadMoreRevealedForCurrentPage;
+    private int lastKnownVisibleResultCount;
     private boolean searchFeedbackActive = true;
     private Set<String> friendUids = new HashSet<>();
 
@@ -65,8 +72,14 @@ public class AddFriendActivity extends BaseActivity {
         resultText = findViewById(R.id.addFriendResult);
 
         resultsList.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new UserSearchAdapter(this::searchAndAdd, this::updateEmptyState);
+        adapter = new UserSearchAdapter(this::searchAndAdd, this::onVisibleResultsChanged);
         resultsList.setAdapter(adapter);
+        resultsList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                revealLoadMoreIfAtEnd();
+            }
+        });
 
         onlineOnlyCheckbox.setOnCheckedChangeListener((buttonView, isChecked) ->
                 adapter.setOnlineOnly(isChecked));
@@ -90,11 +103,20 @@ public class AddFriendActivity extends BaseActivity {
             originalQuery = query;
             currentQuery = query.toLowerCase();
             fallbackMode = false;
+            hasMoreResults = false;
+            loadMoreRevealedForCurrentPage = false;
 
-            searchPage();
+            loadMoreButton.setVisibility(View.GONE);
+            searchPage(false, 0);
         });
 
-        loadMoreButton.setOnClickListener(v -> searchPage());
+        loadMoreButton.setOnClickListener(v -> {
+            Log.d(TAG, "AddFriendActivity.pagination: Load more tapped"
+                    + ", inProgress=" + isPageLoading
+                    + ", visibleCount=" + adapter.getItemCount()
+                    + ", cursorAvailable=" + (lastVisible != null));
+            searchPage(true, 0);
+        });
 
         db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
@@ -110,6 +132,16 @@ public class AddFriendActivity extends BaseActivity {
         } else {
             resultText.setText("");
         }
+    }
+
+    private void onVisibleResultsChanged(int visibleResultCount) {
+        if (!isPageLoading && visibleResultCount != lastKnownVisibleResultCount) {
+            loadMoreRevealedForCurrentPage = false;
+            loadMoreButton.setVisibility(View.GONE);
+        }
+        lastKnownVisibleResultCount = visibleResultCount;
+        updateEmptyState(visibleResultCount);
+        resultsList.post(this::revealLoadMoreIfAtEnd);
     }
 
     static boolean shouldShowEmptyState(int visibleResultCount, String query) {
@@ -140,23 +172,45 @@ public class AddFriendActivity extends BaseActivity {
                 });
     }
 
-    private void searchPage() {
+    private void searchPage(boolean loadMoreRequest, int pagesFetchedForAction) {
+        if (isPageLoading) {
+            Log.d(TAG, "AddFriendActivity.pagination: Request ignored because another page is loading"
+                    + ", loadMore=" + loadMoreRequest
+                    + ", visibleCount=" + adapter.getItemCount());
+            return;
+        }
+        isPageLoading = true;
+        loadMoreButton.setEnabled(false);
+        loadMoreButton.setVisibility(View.GONE);
+        fetchPage(loadMoreRequest, pagesFetchedForAction);
+    }
+
+    private void fetchPage(boolean loadMoreRequest, int pagesFetchedForAction) {
         String currentUserId = Objects.requireNonNull(auth.getCurrentUser()).getUid();
+        boolean hadCursor = lastVisible != null;
+        int visibleBefore = adapter.getItemCount();
 
         Query q;
         if (fallbackMode) {
             // Fallback mode: fetch all users ordered by nickname for client-side filtering
             q = db.collection("users")
                     .orderBy("nickname")
-                    .limit(50); // Increased limit for client-side filtering
+                    .limit(PAGE_SIZE);
         } else {
             // Primary mode: fetch all users ordered by nicknameLowercase for client-side filtering
             q = db.collection("users")
                     .orderBy("nicknameLowercase")
-                    .limit(50); // Increased limit for client-side filtering
+                    .limit(PAGE_SIZE);
         }
 
         if (lastVisible != null) q = q.startAfter(lastVisible);
+
+        Log.d(TAG, "AddFriendActivity.pagination: Request started"
+                + ", loadMore=" + loadMoreRequest
+                + ", pageInAction=" + (pagesFetchedForAction + 1)
+                + ", fallbackMode=" + fallbackMode
+                + ", cursorAvailable=" + hadCursor
+                + ", visibleBefore=" + visibleBefore);
 
         q.get()
                 .addOnSuccessListener(snap -> {
@@ -186,27 +240,89 @@ public class AddFriendActivity extends BaseActivity {
                             docs.add(d);
                         }
                     }
-                    adapter.addResults(docs);
+                    int appendedCount = adapter.addResults(docs);
+                    boolean hasMore = docsAll.size() == PAGE_SIZE;
 
-                    if (docs.isEmpty() && !fallbackMode && lastVisible == null) {
+                    if (hasMore) {
+                        lastVisible = docsAll.get(docsAll.size() - 1);
+                    }
+
+                    Log.d(TAG, "AddFriendActivity.pagination: Request completed"
+                            + ", loadMore=" + loadMoreRequest
+                            + ", pageInAction=" + (pagesFetchedForAction + 1)
+                            + ", returned=" + docsAll.size()
+                            + ", matched=" + docs.size()
+                            + ", appended=" + appendedCount
+                            + ", visibleAfter=" + adapter.getItemCount()
+                            + ", hasMore=" + hasMore);
+
+                    if (docs.isEmpty() && !fallbackMode && !hadCursor) {
                         fallbackMode = true;
-                        searchPage();
+                        lastVisible = null;
+                        Log.d(TAG, "AddFriendActivity.pagination: Switching to fallback nickname field");
+                        isPageLoading = false;
+                        searchPage(loadMoreRequest, pagesFetchedForAction + 1);
                         return;
                     }
 
-                    if (docsAll.size() == 50) { // Updated to match new limit
-                        lastVisible = docsAll.get(docsAll.size() - 1);
-                        loadMoreButton.setVisibility(View.VISIBLE);
-                    } else {
-                        loadMoreButton.setVisibility(View.GONE);
+                    if (shouldContinueLoading(loadMoreRequest, appendedCount, hasMore)) {
+                        Log.d(TAG, "AddFriendActivity.pagination: No matching results on page; fetching next page for the same tap");
+                        isPageLoading = false;
+                        searchPage(true, pagesFetchedForAction + 1);
+                        return;
                     }
 
+                    finishPageRequest(hasMore);
                     updateEmptyState(adapter.getItemCount());
                 })
                 .addOnFailureListener(e -> {
+                    finishPageRequest(lastVisible != null);
                     resultText.setText(R.string.error_searching_user);
-                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".searchPage: User lookup failed", e);
+                    Log.e(TAG, "AddFriendActivity.pagination: Request failed"
+                            + ", loadMore=" + loadMoreRequest
+                            + ", pageInAction=" + (pagesFetchedForAction + 1)
+                            + ", cursorPreserved=" + (lastVisible != null)
+                            + ", visibleCount=" + adapter.getItemCount(), e);
                 });
+    }
+
+    private void finishPageRequest(boolean hasMore) {
+        isPageLoading = false;
+        hasMoreResults = hasMore;
+        loadMoreRevealedForCurrentPage = false;
+        loadMoreButton.setEnabled(true);
+        loadMoreButton.setVisibility(View.GONE);
+        Log.d(TAG, "AddFriendActivity.pagination: Action finished"
+                + ", visibleCount=" + adapter.getItemCount()
+                + ", hasMore=" + hasMore
+                + ", loadMoreVisible=false");
+        resultsList.post(this::revealLoadMoreIfAtEnd);
+    }
+
+    private void revealLoadMoreIfAtEnd() {
+        if (loadMoreRevealedForCurrentPage || !hasMoreResults || isPageLoading) return;
+
+        RecyclerView.LayoutManager manager = resultsList.getLayoutManager();
+        if (!(manager instanceof LinearLayoutManager linearLayoutManager)) return;
+
+        int itemCount = adapter.getItemCount();
+        int lastVisiblePosition = linearLayoutManager.findLastVisibleItemPosition();
+        if (shouldRevealLoadMore(hasMoreResults, isPageLoading, itemCount, lastVisiblePosition)) {
+            loadMoreRevealedForCurrentPage = true;
+            loadMoreButton.setVisibility(View.VISIBLE);
+            Log.d(TAG, "AddFriendActivity.pagination: Load more revealed at end of list"
+                    + ", visibleCount=" + itemCount
+                    + ", lastVisiblePosition=" + lastVisiblePosition);
+        }
+    }
+
+    static boolean shouldContinueLoading(boolean loadMoreRequest, int appendedCount, boolean hasMore) {
+        return loadMoreRequest && appendedCount == 0 && hasMore;
+    }
+
+    static boolean shouldRevealLoadMore(boolean hasMore, boolean isLoading,
+                                        int itemCount, int lastVisiblePosition) {
+        return hasMore && !isLoading && itemCount > 0 && lastVisiblePosition >= itemCount - 1;
     }
 
     private void searchAndAdd(String uid) {
