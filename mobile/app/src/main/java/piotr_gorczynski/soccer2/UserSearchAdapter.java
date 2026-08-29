@@ -27,6 +27,7 @@ import java.util.HashSet;
 
 class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.VH> {
     interface OnAddClick { void onAdd(String uid); }
+    interface OnVisibleResultsChanged { void onChanged(int visibleResultCount); }
 
     static class VH extends RecyclerView.ViewHolder {
         final TextView nickname;
@@ -41,16 +42,21 @@ class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.VH> {
         }
     }
 
+    private final List<DocumentSnapshot> allData = new ArrayList<>();
     private final List<DocumentSnapshot> data = new ArrayList<>();
+    private final Set<String> resultUids = new HashSet<>();
     private final OnAddClick listener;
+    private final OnVisibleResultsChanged resultsChangedListener;
+    private boolean onlineOnly;
     private Set<String> friendUids = new HashSet<>();
     private final Map<String,String> presCache = new HashMap<>();
     private final Map<String,Long> hbCache = new HashMap<>();
     private static final class RtdbSub { final DatabaseReference ref; final ValueEventListener l; RtdbSub(DatabaseReference r, ValueEventListener l){this.ref=r;this.l=l;}}
     private final Map<String,RtdbSub> presSubs = new HashMap<>();
 
-    UserSearchAdapter(OnAddClick listener) {
+    UserSearchAdapter(OnAddClick listener, OnVisibleResultsChanged resultsChangedListener) {
         this.listener = listener;
+        this.resultsChangedListener = resultsChangedListener;
         setHasStableIds(true);
     }
 
@@ -101,34 +107,6 @@ class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.VH> {
         String pState = presCache.get(uid);
         if (pState == null) {
             h.presence.setText("…");
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("status").child(uid);
-            ValueEventListener l = new ValueEventListener() {
-                @Override public void onDataChange(@NonNull DataSnapshot snap) {
-                    if (!snap.exists()) {
-                        presCache.put(uid, "offline");
-                        hbCache.put(uid, 0L);
-                        int idx = indexForUid(uid);
-                        if (idx != RecyclerView.NO_POSITION) notifyItemChanged(idx, "presence");
-                        return;
-                    }
-                    String stateStr = snap.child("state").getValue(String.class);
-                    Long lastHbBox = snap.child("last_heartbeat").getValue(Long.class);
-                    long lastHb = lastHbBox != null ? lastHbBox : 0L;
-                    String state = "offline";
-                    if ("online".equals(stateStr)) {
-                        state = "online";
-                    } else if (lastHb > 0L) {
-                        state = "active";
-                    }
-                    presCache.put(uid, state);
-                    hbCache.put(uid, lastHb);
-                    int idx = indexForUid(uid);
-                    if (idx != RecyclerView.NO_POSITION) notifyItemChanged(idx, "presence");
-                }
-                @Override public void onCancelled(@NonNull DatabaseError error) {}
-            };
-            ref.addValueEventListener(l);
-            presSubs.put(uid, new RtdbSub(ref, l));
         } else {
             bindPresence(h, uid, pState);
         }
@@ -171,10 +149,75 @@ class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.VH> {
     @Override
     public int getItemCount() { return data.size(); }
 
-    void addResults(List<DocumentSnapshot> docs) {
-        int start = data.size();
-        data.addAll(docs);
-        notifyItemRangeInserted(start, docs.size());
+    int addResults(List<DocumentSnapshot> docs) {
+        int addedCount = 0;
+        for (DocumentSnapshot doc : docs) {
+            if (resultUids.add(doc.getId())) {
+                allData.add(doc);
+                subscribeToPresence(doc.getId());
+                addedCount++;
+            }
+        }
+        refreshVisibleData();
+        return addedCount;
+    }
+
+    void setOnlineOnly(boolean onlineOnly) {
+        if (this.onlineOnly == onlineOnly) return;
+        this.onlineOnly = onlineOnly;
+        refreshVisibleData();
+    }
+
+    static boolean shouldShowPresence(boolean onlineOnly, String state) {
+        return !onlineOnly || "online".equals(state) || "active".equals(state);
+    }
+
+    private void refreshVisibleData() {
+        data.clear();
+        for (DocumentSnapshot doc : allData) {
+            if (shouldShowPresence(onlineOnly, presCache.get(doc.getId()))) {
+                data.add(doc);
+            }
+        }
+        notifyDataSetChanged();
+        resultsChangedListener.onChanged(data.size());
+    }
+
+    private void subscribeToPresence(@NonNull String uid) {
+        if (presSubs.containsKey(uid)) return;
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("status").child(uid);
+        ValueEventListener listener = new ValueEventListener() {
+            @Override public void onDataChange(@NonNull DataSnapshot snap) {
+                String state = "offline";
+                long lastHeartbeat = 0L;
+                if (snap.exists()) {
+                    String stateValue = snap.child("state").getValue(String.class);
+                    Long heartbeatValue = snap.child("last_heartbeat").getValue(Long.class);
+                    lastHeartbeat = heartbeatValue != null ? heartbeatValue : 0L;
+                    if ("online".equals(stateValue)) {
+                        state = "online";
+                    } else if (lastHeartbeat > 0L) {
+                        state = "active";
+                    }
+                }
+                presCache.put(uid, state);
+                hbCache.put(uid, lastHeartbeat);
+                if (onlineOnly) {
+                    refreshVisibleData();
+                } else {
+                    int index = indexForUid(uid);
+                    if (index != RecyclerView.NO_POSITION) notifyItemChanged(index, "presence");
+                }
+            }
+
+            @Override public void onCancelled(@NonNull DatabaseError error) {
+                presCache.put(uid, "offline");
+                hbCache.put(uid, 0L);
+                if (onlineOnly) refreshVisibleData();
+            }
+        };
+        ref.addValueEventListener(listener);
+        presSubs.put(uid, new RtdbSub(ref, listener));
     }
 
     void clear() {
@@ -185,8 +228,11 @@ class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.VH> {
         presSubs.clear();
         presCache.clear();
         hbCache.clear();
+        resultUids.clear();
+        allData.clear();
         data.clear();
         notifyDataSetChanged();
+        resultsChangedListener.onChanged(0);
     }
     
     void setFriendUids(Set<String> friendUids) {
@@ -194,6 +240,12 @@ class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.VH> {
         notifyDataSetChanged(); // Refresh all items to update button states
     }
     
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView rv) {
+        super.onAttachedToRecyclerView(rv);
+        for (DocumentSnapshot doc : allData) subscribeToPresence(doc.getId());
+    }
+
     @Override
     public void onDetachedFromRecyclerView(@NonNull RecyclerView rv) {
         super.onDetachedFromRecyclerView(rv);

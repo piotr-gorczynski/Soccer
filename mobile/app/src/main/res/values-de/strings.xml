@@ -96,6 +96,7 @@
     <string name="failed_to_add_friend_reason">Freund konnte nicht hinzugefügt werden: %1$s</string>
     <string name="failed_to_load_nickname">Spitzname konnte nicht geladen werden.</string>
     <string name="search">Suchen</string>
+    <string name="online_only">Offline-Nutzer ausblenden</string>
     <string name="load_more">Mehr laden</string>
     <string name="failed_to_load_more_invites">Weitere Einladungen konnten nicht geladen werden</string>
     <string name="add_friend_label">Zu Freunden hinzufügen</string>

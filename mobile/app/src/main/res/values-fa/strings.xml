@@ -91,6 +91,7 @@
     <string name="failed_to_add_friend_reason">افزودن دوست انجام نشد: %1$s</string>
     <string name="failed_to_load_nickname">بارگذاری نام مستعار ناموفق بود.</string>
     <string name="search">جستجو</string>
+    <string name="online_only">پنهان کردن کاربران آفلاین</string>
     <string name="load_more">بارگذاری بیشتر</string>
     <string name="failed_to_load_more_invites">بارگذاری دعوت‌نامه‌های بیشتر ناموفق بود</string>
     <string name="add_friend_label">افزودن به دوستان</string>

@@ -98,6 +98,7 @@
     <string name="failed_to_add_friend_reason">Échec de l’ajout d’ami : %1$s</string>
     <string name="failed_to_load_nickname">Échec du chargement du pseudonyme.</string>
     <string name="search">Rechercher</string>
+    <string name="online_only">Masquer les utilisateurs hors ligne</string>
     <string name="load_more">Charger plus</string>
     <string name="failed_to_load_more_invites">Échec du chargement d\'autres invitations</string>
     <string name="add_friend_label">Ajouter aux amis</string>

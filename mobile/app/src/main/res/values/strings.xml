@@ -76,6 +76,7 @@
     <string name="failed_to_add_friend_reason">Failed to add friend: %1$s</string>
     <string name="failed_to_load_nickname">Failed to load nickname.</string>
     <string name="search">Search</string>
+    <string name="online_only">Hide offline users</string>
     <string name="load_more">Load more</string>
     <string name="failed_to_load_more_invites">Failed to load more invitations</string>
     <string name="add_friend_label">Add to friends</string>
