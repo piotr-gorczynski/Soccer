@@ -110,6 +110,7 @@
     <string name="failed_to_add_friend_reason">ເພີ່ມໝູ່ບໍ່ສໍາເລັດ: %1$s</string>
     <string name="failed_to_load_nickname">ໂຫລດຊື່ເລັ່ນບໍ່ສໍາເລັດ.</string>
     <string name="search">ຄົ້ນຫາ</string>
+    <string name="online_only">ເຊື່ອງຜູ້ໃຊ້ອອບໄລນ໌</string>
     <string name="load_more">ໂຫລດເພີ່ມ</string>
     <string name="failed_to_load_more_invites">ບໍ່ສາມາດໂຫລດຄຳເຊີນເພີ່ມໄດ້</string>
     <string name="add_friend_label">ເພີ່ມເຂົ້າໝູ່ເພື່ອນ</string>

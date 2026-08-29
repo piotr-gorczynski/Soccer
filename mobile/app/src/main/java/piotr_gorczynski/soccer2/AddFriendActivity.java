@@ -6,6 +6,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -31,6 +32,7 @@ public class AddFriendActivity extends BaseActivity {
     EditText nicknameInput;
     Button searchButton;
     Button loadMoreButton;
+    CheckBox onlineOnlyCheckbox;
     RecyclerView resultsList;
     TextView resultText;
 
@@ -39,6 +41,7 @@ public class AddFriendActivity extends BaseActivity {
     private String currentQuery;
     private String originalQuery;
     private boolean fallbackMode;
+    private boolean searchFeedbackActive = true;
     private Set<String> friendUids = new HashSet<>();
 
     FirebaseFirestore db;
@@ -57,12 +60,16 @@ public class AddFriendActivity extends BaseActivity {
         nicknameInput = findViewById(R.id.nicknameInput);
         searchButton = findViewById(R.id.searchButton);
         loadMoreButton = findViewById(R.id.loadMoreButton);
+        onlineOnlyCheckbox = findViewById(R.id.onlineOnlyCheckbox);
         resultsList = findViewById(R.id.searchResults);
         resultText = findViewById(R.id.addFriendResult);
 
         resultsList.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new UserSearchAdapter(this::searchAndAdd);
+        adapter = new UserSearchAdapter(this::searchAndAdd, this::updateEmptyState);
         resultsList.setAdapter(adapter);
+
+        onlineOnlyCheckbox.setOnCheckedChangeListener((buttonView, isChecked) ->
+                adapter.setOnlineOnly(isChecked));
 
         searchButton.setEnabled(false);
         nicknameInput.addTextChangedListener(new TextWatcher() {
@@ -76,6 +83,7 @@ public class AddFriendActivity extends BaseActivity {
         searchButton.setOnClickListener(v -> {
             String query = nicknameInput.getText().toString().trim();
             if (query.length() < 1) return;
+            searchFeedbackActive = true;
             adapter.clear();
             lastVisible = null;
 
@@ -93,6 +101,19 @@ public class AddFriendActivity extends BaseActivity {
         
         // Load friends list to determine which users already are friends
         loadFriends();
+    }
+
+    private void updateEmptyState(int visibleResultCount) {
+        if (!searchFeedbackActive) return;
+        if (shouldShowEmptyState(visibleResultCount, currentQuery)) {
+            resultText.setText(R.string.user_not_found);
+        } else {
+            resultText.setText("");
+        }
+    }
+
+    static boolean shouldShowEmptyState(int visibleResultCount, String query) {
+        return visibleResultCount == 0 && query != null;
     }
     
     private void loadFriends() {
@@ -180,11 +201,7 @@ public class AddFriendActivity extends BaseActivity {
                         loadMoreButton.setVisibility(View.GONE);
                     }
 
-                    if (adapter.getItemCount() == 0) {
-                        resultText.setText(R.string.user_not_found);
-                    } else {
-                        resultText.setText("");
-                    }
+                    updateEmptyState(adapter.getItemCount());
                 })
                 .addOnFailureListener(e -> {
                     resultText.setText(R.string.error_searching_user);
@@ -210,12 +227,14 @@ public class AddFriendActivity extends BaseActivity {
                 .getHttpsCallable("addFriend")
                 .call(data)
                 .addOnSuccessListener(res -> {
+                    searchFeedbackActive = false;
                     resultText.setText(R.string.add_friend);
                     // Add the friend to our local set and update the adapter
                     friendUids.add(friendId);
                     adapter.setFriendUids(friendUids);
                 })
                 .addOnFailureListener(e -> {
+                    searchFeedbackActive = false;
                     String text = SafeStringFormatter.safeGetString(this, R.string.failed_to_add_friend);
                     if (e instanceof FirebaseFunctionsException ffe) {
                         String reason = ffe.getMessage();
