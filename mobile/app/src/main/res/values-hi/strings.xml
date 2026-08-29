@@ -96,6 +96,7 @@
     <string name="failed_to_add_friend_reason">मित्र जोड़ने में विफल: %1$s</string>
     <string name="failed_to_load_nickname">उपनाम लोड करने में विफल।</string>
     <string name="search">खोजें</string>
+    <string name="online_only">ऑफ़लाइन उपयोगकर्ता छिपाएँ</string>
     <string name="load_more">और लोड करें</string>
     <string name="failed_to_load_more_invites">अधिक आमंत्रण लोड करने में विफल</string>
     <string name="add_friend_label">दोस्तों में जोड़ें</string>

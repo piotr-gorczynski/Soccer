@@ -110,6 +110,7 @@
     <string name="failed_to_add_friend_reason">បន្ថែមមិត្តភក្តិបរាជ័យ៖ %1$s</string>
     <string name="failed_to_load_nickname">មិនអាចផ្ទុកឈ្មោះហៅក្រៅបានទេ។</string>
     <string name="search">ស្វែងរក</string>
+    <string name="online_only">លាក់អ្នកប្រើក្រៅបណ្តាញ</string>
     <string name="load_more">ផ្ទុកបន្ថែម</string>
     <string name="failed_to_load_more_invites">បរាជ័យក្នុងការផ្ទុកការអញ្ជើញបន្ថែម</string>
     <string name="add_friend_label">បន្ថែមទៅកាន់មិត្តភក្តិ</string>

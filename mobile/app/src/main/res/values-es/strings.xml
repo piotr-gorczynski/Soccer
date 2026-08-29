@@ -96,6 +96,7 @@
     <string name="failed_to_add_friend_reason">Error al agregar amigo: %1$s</string>
     <string name="failed_to_load_nickname">Error al cargar apodo.</string>
     <string name="search">Buscar</string>
+    <string name="online_only">Ocultar usuarios desconectados</string>
     <string name="load_more">Cargar más</string>
     <string name="failed_to_load_more_invites">Error al cargar más invitaciones</string>
     <string name="add_friend_label">Agregar a amigos</string>

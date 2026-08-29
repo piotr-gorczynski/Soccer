@@ -110,6 +110,7 @@
     <string name="failed_to_add_friend_reason">ጓደኛ ማከል አልተሳካም፡ %1$s</string>
     <string name="failed_to_load_nickname">ቅጽል ስምን መጫን አልተሳካም።</string>
     <string name="search">ፈልግ</string>
+    <string name="online_only">ከመስመር ውጭ ያሉ ተጠቃሚዎችን ደብቅ</string>
     <string name="load_more">ተጨማሪ አስገባ</string>
     <string name="failed_to_load_more_invites">ተጨማሪ ግብዣዎችን መጫን አልተሳካም</string>
     <string name="add_friend_label">ወደ ጓደኞች አክል</string>

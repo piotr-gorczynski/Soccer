@@ -96,6 +96,7 @@
     <string name="failed_to_add_friend_reason">دوست شامل کرنے میں ناکام: %1$s</string>
     <string name="failed_to_load_nickname">عرفی نام لوڈ کرنے میں ناکام۔</string>
     <string name="search">تلاش</string>
+    <string name="online_only">آف لائن صارفین چھپائیں</string>
     <string name="load_more">مزید لوڈ کریں</string>
     <string name="failed_to_load_more_invites">مزید دعوت نامے لوڈ کرنے میں ناکام</string>
     <string name="add_friend_label">دوستوں میں شامل کریں</string>

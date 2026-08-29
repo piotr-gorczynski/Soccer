@@ -46,3 +46,7 @@ tools/*/package-lock.json
 tools/*/node_modules/
 secrets/
 *.args
+
+# Gemini AI / Android Studio agent artifacts
+mobile/.artifacts/
+mobile/.tools/

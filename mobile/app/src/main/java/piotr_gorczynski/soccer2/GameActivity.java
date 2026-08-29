@@ -151,10 +151,26 @@ public class GameActivity extends BaseActivity {
         runOnUiThread(this::hideLoadingOverlay);
     }
 
+    @Nullable
     @SuppressLint("RedundantSuppression")
     @SuppressWarnings("deprecation")
-    private boolean isLegacyMovesNotNull(Bundle savedInstanceState) {
-        return savedInstanceState.getParcelableArrayList("Moves") != null;
+    private ArrayList<MoveTo> restoreMoves(Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
+            return null;
+        }
+
+        savedInstanceState.setClassLoader(MoveTo.class.getClassLoader());
+
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                return savedInstanceState.getParcelableArrayList("Moves", MoveTo.class);
+            }
+
+            return savedInstanceState.getParcelableArrayList("Moves");
+        } catch (RuntimeException e) {
+            Log.e("TAG_Soccer", getClass().getSimpleName() + ".restoreMoves: Failed to restore saved moves", e);
+            return null;
+        }
     }
 
     @Override
@@ -233,19 +249,10 @@ public class GameActivity extends BaseActivity {
         });
         
         //this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        if (savedInstanceState != null && (
-                (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && savedInstanceState.getParcelableArrayList("Moves", MoveTo.class) != null) ||
-                        isLegacyMovesNotNull(savedInstanceState)
-        )) {
+        ArrayList<MoveTo> restoredMoves = restoreMoves(savedInstanceState);
+        if (restoredMoves != null) {
             Winner       = savedInstanceState.getInt("Winner", -1);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                Moves = savedInstanceState.getParcelableArrayList("Moves", MoveTo.class);
-            } else {
-                @SuppressLint("RedundantSuppression")
-                @SuppressWarnings("deprecation")
-                ArrayList<MoveTo> legacyMoves = savedInstanceState.getParcelableArrayList("Moves");
-                Moves = legacyMoves;
-            }
+            Moves = restoredMoves;
         }
         else {
             // Ensure Moves is properly initialized
