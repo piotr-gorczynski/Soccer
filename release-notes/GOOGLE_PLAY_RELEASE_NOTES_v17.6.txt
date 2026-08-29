@@ -1,115 +1,152 @@
 <en-GB>
-🐝 Guard GameActivity saved-state restore from MoveTo parcel crashes
+🎉 Hide offline users in friend search
+🎉 Smoother one-tap loading of more search results
+🎉 Improved Bangladesh migration and sign-in
+🎉 Automated winner payouts after tournaments
+🐝 Fixed crashes when restoring a game
+🐝 Updated Android support, security and moderation reliability
 </en-GB>
 
 <pl-PL>
-🎉 Ulepszono migrację w Bangladeszu i przełączanie między aplikacjami
-🎉 Dodano automatyczne wypłaty nagród po zakończeniu turnieju
-🐝 Naprawiono błąd produkcyjny związany z dostarczaniem broadcastów
-🐝 Zaktualizowano zależności bezpieczeństwa dla lepszej stabilności
+🎉 Ukrywaj użytkowników offline w wyszukiwaniu znajomych
+🎉 Płynniejsze ładowanie kolejnych wyników jednym dotknięciem
+🎉 Ulepszono migrację i logowanie w wersji bangladeskiej
+🎉 Automatyczne wypłaty zwycięzcom po turniejach
+🐝 Naprawiono awarie podczas przywracania gry
+🐝 Zaktualizowano obsługę Androida, bezpieczeństwo i moderację
 </pl-PL>
 
 <de-DE>
-🎉 Migration in Bangladesch und App-Wechsel verbessert
-🎉 Automatische Gewinnauszahlung nach Turnierende hinzugefügt
-🐝 Produktionsabsturz bei Broadcast-Zustellung behoben
-🐝 Sicherheits- und Build-Abhängigkeiten für bessere Stabilität aktualisiert
+🎉 Offline-Nutzer in der Freundessuche ausblenden
+🎉 Weitere Suchergebnisse mit einem Tippen flüssiger laden
+🎉 Migration und Anmeldung für Bangladesch verbessert
+🎉 Automatische Gewinnauszahlung nach Turnieren
+🐝 Abstürze beim Wiederherstellen eines Spiels behoben
+🐝 Android-Unterstützung, Sicherheit und Moderation aktualisiert
 </de-DE>
 
 <fr-FR>
-🎉 Amélioration de la migration au Bangladesh et du changement d’app
-🎉 Ajout du paiement automatique des gagnants après le tournoi
-🐝 Correction d’un crash en production lié aux broadcasts
-🐝 Mise à jour des dépendances de sécurité pour plus de stabilité
+🎉 Masquez les utilisateurs hors ligne dans la recherche d’amis
+🎉 Chargez plus de résultats facilement en un seul appui
+🎉 Migration et connexion améliorées pour le Bangladesh
+🎉 Paiement automatique des gagnants après les tournois
+🐝 Correction des plantages lors de la restauration d’une partie
+🐝 Mise à jour d’Android, de la sécurité et de la modération
 </fr-FR>
 
 <es-ES>
-🎉 Mejora de la migración en Bangladesh y cambio entre apps
-🎉 Añadido pago automático a ganadores tras el torneo
-🐝 Corregido fallo en producción relacionado con broadcasts
-🐝 Dependencias de seguridad actualizadas para mayor estabilidad
+🎉 Oculta usuarios desconectados al buscar amigos
+🎉 Carga más resultados fácilmente con un solo toque
+🎉 Migración e inicio de sesión mejorados para Bangladés
+🎉 Pagos automáticos a ganadores tras los torneos
+🐝 Corregidos fallos al restaurar una partida
+🐝 Compatibilidad con Android, seguridad y moderación actualizadas
 </es-ES>
 
 <ur>
-🎉 بنگلہ دیش مائیگریشن اور ایپ سوئچنگ کا تجربہ بہتر بنایا گیا
-🎉 ٹورنامنٹ کے بعد خودکار انعام ادائیگی شامل
-🐝 براڈکاسٹ ڈیلیوری سے متعلق پروڈکشن کریش درست
-🐝 بہتر استحکام کے لیے سیکیورٹی اور بلڈ اپڈیٹس
+🎉 دوستوں کی تلاش میں آف لائن صارفین چھپائیں
+🎉 ایک ٹیپ سے مزید نتائج آسانی سے لوڈ کریں
+🎉 بنگلہ دیش مائیگریشن اور سائن اِن بہتر بنایا گیا
+🎉 ٹورنامنٹ کے بعد فاتحین کو خودکار ادائیگی
+🐝 گیم بحال کرتے وقت کریش درست کیے گئے
+🐝 اینڈرائیڈ سپورٹ، سیکیورٹی اور موڈریشن اپڈیٹ کی گئی
 </ur>
 
 <bn-BD>
-🎉 বাংলাদেশ মাইগ্রেশন ও অ্যাপ সুইচিং অভিজ্ঞতা উন্নত
-🎉 টুর্নামেন্ট শেষে স্বয়ংক্রিয় পুরস্কার প্রদান যোগ
-🐝 ব্রডকাস্ট ডেলিভারি সংক্রান্ত প্রোডাকশন ক্র্যাশ ঠিক
-🐝 স্থিতিশীলতার জন্য সিকিউরিটি আপডেট
+🎉 বন্ধু খোঁজার সময় অফলাইন ব্যবহারকারীদের লুকান
+🎉 এক ট্যাপে আরও ফলাফল সহজে লোড করুন
+🎉 বাংলাদেশ মাইগ্রেশন ও সাইন-ইন উন্নত করা হয়েছে
+🎉 টুর্নামেন্ট শেষে বিজয়ীদের স্বয়ংক্রিয় অর্থপ্রদান
+🐝 গেম পুনরুদ্ধারের সময় ক্র্যাশ ঠিক করা হয়েছে
+🐝 অ্যান্ড্রয়েড সমর্থন, নিরাপত্তা ও মডারেশন আপডেট করা হয়েছে
 </bn-BD>
 
 <ne-NP>
-🎉 बंगलादेश माइग्रेशन र एप स्विच अनुभव सुधारियो
-🎉 प्रतियोगिता पछि स्वचालित पुरस्कार भुक्तानी थपियो
-🐝 ब्रॉडकास्ट डेलिभरीसँग सम्बन्धित प्रोडक्सन क्र्यास समाधान
-🐝 सुरक्षा र बिल्ड अद्यावधिकले स्थिरता सुधार
+🎉 साथी खोज्दा अफलाइन प्रयोगकर्ताहरू लुकाउनुहोस्
+🎉 एक ट्यापमै थप नतिजा सहज रूपमा लोड गर्नुहोस्
+🎉 बंगलादेश माइग्रेशन र साइन-इन सुधारियो
+🎉 प्रतियोगितापछि विजेतालाई स्वचालित भुक्तानी
+🐝 खेल पुनर्स्थापना गर्दा हुने क्र्यास समाधान
+🐝 एन्ड्रोइड समर्थन, सुरक्षा र मोडरेशन अद्यावधिक
 </ne-NP>
 
 <hi-IN>
-🎉 बांग्लादेश माइग्रेशन और ऐप स्विच अनुभव बेहतर किया गया
-🎉 टूर्नामेंट के बाद स्वचालित विजेता भुगतान जोड़ा गया
-🐝 ब्रॉडकास्ट डिलीवरी से जुड़ा प्रोडक्शन क्रैश ठीक किया गया
-🐝 बेहतर स्थिरता के लिए सुरक्षा और बिल्ड अपडेट
+🎉 मित्र खोज में ऑफ़लाइन उपयोगकर्ताओं को छिपाएँ
+🎉 एक टैप में और परिणाम आसानी से लोड करें
+🎉 बांग्लादेश माइग्रेशन और साइन-इन बेहतर किया गया
+🎉 टूर्नामेंट के बाद विजेताओं को स्वचालित भुगतान
+🐝 गेम पुनर्स्थापित करते समय होने वाले क्रैश ठीक किए
+🐝 Android समर्थन, सुरक्षा और मॉडरेशन अपडेट किए गए
 </hi-IN>
 
 <am>
-🎉 በባንግላዲሽ ማይግሬሽን እና የአፕ መቀየር ተሻሻለ
-🎉 ከቱርናመንት በኋላ የአሸናፊዎች ክፍያ በራስ-ሰር ተጨምሯል
-🐝 ከbroadcast ጋር የተያያዘ የፕሮዳክሽን ክራሽ ተፈታ
-🐝 የደህንነት እና ቢልድ ማዘመን ለተሻለ መረጋጋት
+🎉 በጓደኛ ፍለጋ ከመስመር ውጭ ያሉትን ደብቅ
+🎉 ተጨማሪ ውጤቶችን በአንድ ንክኪ በቀላሉ ጫን
+🎉 የባንግላዲሽ ማይግሬሽንና መግቢያ ተሻሽሏል
+🎉 ከውድድር በኋላ ለአሸናፊዎች ራስ-ሰር ክፍያ
+🐝 ጨዋታን ሲመልሱ የሚከሰቱ ብልሽቶች ተስተካክለዋል
+🐝 የAndroid ድጋፍ፣ ደህንነትና ማጣሪያ ተዘምኗል
 </am>
 
 <ar>
-🎉 تحسين تجربة الانتقال في بنغلاديش والتبديل بين التطبيقات
-🎉 إضافة دفع تلقائي للفائزين بعد انتهاء البطولة
-🐝 إصلاح عطل في الإنتاج متعلق بإرسال البث
-🐝 تحديثات الأمان والبناء لتحسين الاستقرار
+🎉 إخفاء المستخدمين غير المتصلين عند البحث عن أصدقاء
+🎉 تحميل المزيد من النتائج بسهولة بنقرة واحدة
+🎉 تحسين الانتقال وتسجيل الدخول في بنغلاديش
+🎉 دفع تلقائي للفائزين بعد البطولات
+🐝 إصلاح الأعطال عند استعادة اللعبة
+🐝 تحديث دعم Android والأمان والإشراف
 </ar>
 
 <my-MM>
-🎉 ဘင်္ဂလားဒေ့ရှ် မိုင်ဂရေးရှင်းနှင့် အက်ပ်ပြောင်းခြင်း အတွေ့အကြုံ တိုးတက်
-🎉 ပြိုင်ပွဲပြီးနောက် အနိုင်ရသူများအတွက် အလိုအလျောက်ပေးချေမှု ထည့်သွင်း
-🐝 broadcast ပို့ဆောင်မှုဆိုင်ရာ production crash ကို ပြင်ဆင်
-🐝 လုံခြုံရေးနှင့် build အပ်ဒိတ်များဖြင့် တည်ငြိမ်မှု တိုးတက်
+🎉 သူငယ်ချင်းရှာဖွေရာတွင် အော့ဖ်လိုင်းအသုံးပြုသူများကို ဖျောက်ပါ
+🎉 တစ်ချက်နှိပ်ရုံဖြင့် ရလဒ်များကို ပိုမိုလွယ်ကူစွာ တင်ပါ
+🎉 ဘင်္ဂလားဒေ့ရှ် မိုင်ဂရေးရှင်းနှင့် အကောင့်ဝင်ခြင်း ပိုကောင်းလာသည်
+🎉 ပြိုင်ပွဲပြီးနောက် အနိုင်ရသူများအား အလိုအလျောက်ငွေပေးချေမှု
+🐝 ဂိမ်းပြန်လည်ရယူစဉ် ဖြစ်ပွားသော crash များကို ပြင်ဆင်ထားသည်
+🐝 Android ပံ့ပိုးမှု၊ လုံခြုံရေးနှင့် စိစစ်မှုကို အပ်ဒိတ်လုပ်ထားသည်
 </my-MM>
 
 <km-KH>
-🎉 កែលម្អបទពិសោធន៍ការផ្លាស់ទី និងប្តូរអេបនៅបង់ក្លាដែស
-🎉 បន្ថែមការបង់ប្រាក់ឈ្នះដោយស្វ័យប្រវត្តិបន្ទាប់ពីតួណាម៉ង់
-🐝 កែបញ្ហា crash ក្នុង production ពាក់ព័ន្ធនឹង broadcast
-🐝 អាប់ដេតសុវត្ថិភាព និង build សម្រាប់ស្ថិរភាពល្អជាងមុន
+🎉 លាក់អ្នកប្រើក្រៅបណ្តាញពេលស្វែងរកមិត្តភក្តិ
+🎉 ផ្ទុកលទ្ធផលបន្ថែមដោយងាយស្រួលក្នុងការចុចម្តង
+🎉 កែលម្អការផ្លាស់ទី និងការចូលប្រើនៅបង់ក្លាដែស
+🎉 បង់ប្រាក់ស្វ័យប្រវត្តិដល់អ្នកឈ្នះបន្ទាប់ពីការប្រកួត
+🐝 កែបញ្ហាគាំងពេលស្តារហ្គេម
+🐝 អាប់ដេតការគាំទ្រ Android សុវត្ថិភាព និងការត្រួតពិនិត្យ
 </km-KH>
 
 <lo-LA>
-🎉 ປັບປຸງປະສົບການຍ້າຍໃນບັງກະລາເທດ ແລະ ການສະຫຼັບແອັບ
-🎉 ເພີ່ມການຈ່າຍລາງວັນອັດຕະໂນມັດຫຼັງຈາກທວຣນາເມັນ
-🐝 ແກ້ production crash ທີ່ເກີດຈາກ broadcast
-🐝 ອັບເດດຄວາມປອດໄພ ແລະ build ເພື່ອຄວາມສະເຫຼີມສົມບູນ
+🎉 ເຊື່ອງຜູ້ໃຊ້ອອບໄລນ໌ເມື່ອຊອກຫາໝູ່
+🎉 ໂຫຼດຜົນລັບເພີ່ມໄດ້ງ່າຍດ້ວຍການແຕະຄັ້ງດຽວ
+🎉 ປັບປຸງການຍ້າຍ ແລະ ເຂົ້າລະບົບໃນບັງກະລາເທດ
+🎉 ຈ່າຍເງິນໃຫ້ຜູ້ຊະນະອັດຕະໂນມັດຫຼັງການແຂ່ງຂັນ
+🐝 ແກ້ໄຂການຂັດຂ້ອງເມື່ອກູ້ຄືນເກມ
+🐝 ອັບເດດການຮອງຮັບ Android, ຄວາມປອດໄພ ແລະ ການກວດສອບ
 </lo-LA>
 
 <mn-MN>
-🎉 Бангладеш шилжилт ба апп солих туршлага сайжирсан
-🎉 Тэмцээний дараа ялагчдад автоматаар төлбөр хийх боломж нэмсэн
-🐝 Broadcast-тэй холбоотой production crash зассан
-🐝 Аюулгүй байдал болон build шинэчлэлтээр тогтвортой байдал сайжирсан
+🎉 Найз хайхдаа офлайн хэрэглэгчдийг нуух
+🎉 Нэг товшилтоор илүү олон үр дүнг хялбар ачаалах
+🎉 Бангладешийн шилжилт болон нэвтрэлтийг сайжруулсан
+🎉 Тэмцээний дараа ялагчдад автомат төлбөр хийх
+🐝 Тоглоом сэргээх үеийн гацалтыг зассан
+🐝 Android дэмжлэг, аюулгүй байдал, хяналтыг шинэчилсэн
 </mn-MN>
 
 <fa-IR>
-🎉 بهبود تجربه مهاجرت در بنگلادش و جابه‌جایی بین برنامه‌ها
-🎉 افزودن پرداخت خودکار به برندگان پس از پایان تورنمنت
-🐝 رفع کرش تولید مرتبط با ارسال broadcast
-🐝 به‌روزرسانی امنیت و وابستگی‌ها برای پایداری بیشتر
+🎉 کاربران آفلاین را در جستجوی دوستان پنهان کنید
+🎉 نتایج بیشتر را با یک لمس آسان‌تر بارگذاری کنید
+🎉 مهاجرت و ورود به سیستم در بنگلادش بهبود یافت
+🎉 پرداخت خودکار به برندگان پس از مسابقات
+🐝 رفع خرابی هنگام بازیابی بازی
+🐝 پشتیبانی Android، امنیت و نظارت به‌روزرسانی شد
 </fa-IR>
 
 <si-LK>
-🎉 බංග්ලාදේශ මයිග්‍රේෂන් සහ ඇප් මාරු කිරීමේ අත්දැකීම වැඩිදියුණු කළා
-🎉 තරගය අවසන් වූ පසු ජයග්‍රාහකයන්ට ස්වයංක්‍රීය ගෙවීම් එකතු කළා
-🐝 broadcast සම්බන්ධ production crash නිවැරදි කළා
-🐝 වැඩි ස්ථාවරතාව සඳහා ආරක්ෂක සහ build යාවත්කාලීන
+🎉 මිතුරන් සෙවීමේදී නොබැඳි පරිශීලකයින් සඟවන්න
+🎉 එක් තට්ටු කිරීමකින් තවත් ප්‍රතිඵල පහසුවෙන් පූරණය කරන්න
+🎉 බංග්ලාදේශ සංක්‍රමණය සහ පුරනය වීම වැඩිදියුණු කළා
+🎉 තරගවලින් පසු ජයග්‍රාහකයන්ට ස්වයංක්‍රීය ගෙවීම්
+🐝 ක්‍රීඩාව ප්‍රතිසාධනය කිරීමේදී ඇතිවන බිඳවැටීම් නිවැරදි කළා
+🐝 Android සහාය, ආරක්ෂාව සහ අන්තර්ගත පාලනය යාවත්කාලීන කළා
 </si-LK>
