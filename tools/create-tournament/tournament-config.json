@@ -1,8 +1,8 @@
 {
-  "name": "🍂 Autumn Kickoff Cup",
+  "name": "🍁 September Showdown",
   "maxParticipants": 10,
-  "registrationDeadline": "2026-08-29T22:59:00Z",
-  "matchesDeadline": "2026-09-12T22:59:00Z",
+  "registrationDeadline": "2026-09-12T22:59:00Z",
+  "matchesDeadline": "2026-09-26T22:59:00Z",
   "regulation": "kMkYf7Y7WEPNEXcJbj6E",
   "visibleInFlavours": ["global"]
 }
