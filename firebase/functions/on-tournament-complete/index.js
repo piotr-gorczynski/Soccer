@@ -225,8 +225,8 @@ async function notifyWinner(userId, tournamentId, tournamentName) {
     }
 
     const userData = userDoc.data();
-    if (userData.accountDeleted === true || !userData.fcmToken) {
-      console.log(`[notifyWinner] Skipping notification for user ${userId} (deleted or no token)`);
+    if (userData.accountDeleted === true || (!userData.fcmInstallationId && !userData.fcmToken)) {
+      console.log(`[notifyWinner] Skipping notification for user ${userId} (deleted or no FCM target)`);
       return;
     }
 
@@ -234,7 +234,9 @@ async function notifyWinner(userId, tournamentId, tournamentName) {
     const localizedMessage = WINNER_MESSAGES[language] || WINNER_MESSAGES['en'];
 
     const message = {
-      token: userData.fcmToken,
+      ...(userData.fcmInstallationId
+        ? { fid: userData.fcmInstallationId }
+        : { token: userData.fcmToken }),
       data: {
         type: 'tournament_winner',
         tournamentId: tournamentId,

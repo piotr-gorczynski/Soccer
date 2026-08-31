@@ -42,10 +42,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Source;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -410,8 +408,7 @@ public class MenuActivity extends BaseActivity {
             // Note: Preserve ads consent data as requested in issue - only clear if there are specific user-related data in default prefs
             // Currently no user-specific data is stored in default SharedPreferences, so we don't need to clear anything
             // prefs.edit().clear().commit(); // Commented out to preserve ads consent data
-            FirebaseMessaging.getInstance().deleteToken();
-            FirebaseMessaging.getInstance().setAutoInitEnabled(false);
+            ((SoccerApp) getApplication()).unregisterFromFcm();
             // Removed Firestore terminate/clearPersistence to prevent AsyncQueue threading crash
             return;
         }
@@ -419,20 +416,10 @@ public class MenuActivity extends BaseActivity {
         // 🔄 Sync nickname from Firestore
         fetchNicknameFromFirestore(uid, prefs, () -> {});
 
-        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
-            if (!task.isSuccessful()) {
-                Log.w("TAG_Soccer", getClass().getSimpleName() + ".runHousekeeping: ❌ Failed to get FCM token", task.getException());
-                return;
-            }
-
-            String newToken = task.getResult();
-            if (newToken == null) return;
-
-            String savedToken = prefs.getString(PREF_FCM_TOKEN, null);
-            DocumentReference docRef = FirebaseFirestore.getInstance()
+        DocumentReference docRef = FirebaseFirestore.getInstance()
                     .collection("users")
                     .document(uid);
-            docRef.get().addOnSuccessListener(doc -> {
+        docRef.get().addOnSuccessListener(doc -> {
                 String emailField = doc.getString("email");
                 String methodField = doc.getString("method");
                 String facebookIdField = doc.getString("facebookId");
@@ -471,24 +458,8 @@ public class MenuActivity extends BaseActivity {
                     return;
                 }
 
-                String remoteToken = doc.getString("fcmToken");
-
-                if (remoteToken == null || !remoteToken.equals(newToken)) {
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".runHousekeeping: 🔑 Updating Firestore FCM token");
-                    docRef.set(Map.of("fcmToken", newToken), SetOptions.merge())
-                            .addOnSuccessListener(v -> {
-                                prefs.edit().putString(PREF_FCM_TOKEN, newToken).apply();
-                                Log.d("TAG_Soccer", getClass().getSimpleName() + ".runHousekeeping: ✅ FCM token saved");
-                            })
-                            .addOnFailureListener(e -> Log.e("TAG_Soccer", getClass().getSimpleName() + ".runHousekeeping: ❌ Failed to save FCM token", e));
-                } else if (savedToken == null || !savedToken.equals(remoteToken)) {
-                    prefs.edit().putString(PREF_FCM_TOKEN, remoteToken).apply();
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".runHousekeeping: 🔑 Synced FCM token from Firestore");
-                } else {
-                    Log.d("TAG_Soccer", getClass().getSimpleName() + ".runHousekeeping: 🔑 FCM token unchanged; skip Firestore write");
-                }
-            }).addOnFailureListener(e -> Log.e("TAG_Soccer", getClass().getSimpleName() + ".runHousekeeping: ❌ Failed to read Firestore token", e));
-        });
+                ((SoccerApp) getApplication()).syncFcmRegistrationIfNeeded();
+            }).addOnFailureListener(e -> Log.e("TAG_Soccer", getClass().getSimpleName() + ".runHousekeeping: ❌ Failed to read user document", e));
 
         // ✅ Call permission request
         requestNotificationPermissionIfNeeded();
@@ -532,6 +503,7 @@ public class MenuActivity extends BaseActivity {
         getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
                 .edit()
                 .remove(PREF_FCM_TOKEN)
+                .remove(SoccerApp.FCM_INSTALLATION_ID_PREF)
                 .remove("uid")
                 .remove("email")
                 .remove("nickname")
@@ -541,15 +513,7 @@ public class MenuActivity extends BaseActivity {
                 .remove("facebookPhotoUrl")
                 .apply();
 
-        FirebaseMessaging.getInstance().deleteToken()
-                .addOnCompleteListener(t -> {
-                    if (t.isSuccessful()) {
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".logoutUser: ✅ FCM token deleted");
-                    } else {
-                        Log.w("TAG_Soccer", getClass().getSimpleName() + ".logoutUser: ❌ Failed to delete FCM token", t.getException());
-                    }
-                });
-        FirebaseMessaging.getInstance().setAutoInitEnabled(false);
+        ((SoccerApp) getApplication()).unregisterFromFcm();
 
         Toast.makeText(this, R.string.logged_out, Toast.LENGTH_SHORT).show();
 
@@ -592,7 +556,7 @@ public class MenuActivity extends BaseActivity {
         checkBackendAvailabilityAndContinue();
 
         // Ensure the FCM token is stored after login
-        ((SoccerApp) getApplication()).syncFcmTokenIfNeeded();
+        ((SoccerApp) getApplication()).syncFcmRegistrationIfNeeded();
     }
 
     @Override
@@ -643,12 +607,12 @@ public class MenuActivity extends BaseActivity {
               .remove("facebookId")
               .remove("facebookName")
               .remove("facebookPhotoUrl")
-              .remove("fcmToken");
+              .remove("fcmToken")
+              .remove(SoccerApp.FCM_INSTALLATION_ID_PREF);
             // Use apply() instead of commit() to prevent fsync ANR
             ed.apply();
 
-            FirebaseMessaging.getInstance().deleteToken();
-            FirebaseMessaging.getInstance().setAutoInitEnabled(false);
+            ((SoccerApp) getApplication()).unregisterFromFcm();
             // Removed Firestore terminate/clearPersistence to prevent AsyncQueue threading crash
             nickname = null;
         } else {

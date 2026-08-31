@@ -21,7 +21,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException;
 import com.google.firebase.functions.FirebaseFunctions;
-import com.google.firebase.messaging.FirebaseMessaging;
 import android.util.Log;
 import com.bumptech.glide.Glide;
 
@@ -162,6 +161,7 @@ public class AccountActivity extends BaseActivity {
         getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
                 .edit()
                 .remove("fcmToken") // ensure FCM token is wiped
+                .remove(SoccerApp.FCM_INSTALLATION_ID_PREF)
                 .remove("uid")
                 .remove("email")
                 .remove("nickname")
@@ -171,15 +171,7 @@ public class AccountActivity extends BaseActivity {
                 .remove("facebookPhotoUrl")
                 .apply();
 
-        FirebaseMessaging.getInstance().deleteToken()
-                .addOnCompleteListener(t -> {
-                    if (t.isSuccessful()) {
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".finishLogoutUi: ✅ FCM token deleted");
-                    } else {
-                        Log.w("TAG_Soccer", getClass().getSimpleName() + ".finishLogoutUi: ❌ Failed to delete FCM token", t.getException());
-                    }
-                });
-        FirebaseMessaging.getInstance().setAutoInitEnabled(false);
+        ((SoccerApp) getApplication()).unregisterFromFcm();
 
         Toast.makeText(this, R.string.logged_out, Toast.LENGTH_SHORT).show();
         finish();
@@ -290,18 +282,10 @@ public class AccountActivity extends BaseActivity {
                 .remove("facebookName")
                 .remove("facebookPhotoUrl")
                 .remove("fcmToken")
+                .remove(SoccerApp.FCM_INSTALLATION_ID_PREF)
                 .apply();
 
-        // Clear FCM token
-        FirebaseMessaging.getInstance().deleteToken()
-                .addOnCompleteListener(t -> {
-                    if (t.isSuccessful()) {
-                        Log.d("TAG_Soccer", getClass().getSimpleName() + ".finishAccountRemoval: FCM token deleted");
-                    } else {
-                        Log.w("TAG_Soccer", getClass().getSimpleName() + ".finishAccountRemoval: Failed to delete FCM token", t.getException());
-                    }
-                });
-        FirebaseMessaging.getInstance().setAutoInitEnabled(false);
+        ((SoccerApp) getApplication()).unregisterFromFcm();
 
         // Show success message
         Toast.makeText(this, R.string.account_removed, Toast.LENGTH_SHORT).show();

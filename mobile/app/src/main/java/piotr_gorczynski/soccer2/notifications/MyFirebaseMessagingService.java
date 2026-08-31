@@ -16,9 +16,9 @@ import androidx.core.content.ContextCompat;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import piotr_gorczynski.soccer2.R;
+import piotr_gorczynski.soccer2.SoccerApp;
 
 import android.app.PendingIntent;
 import android.content.Intent;
@@ -48,24 +48,25 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private static final String DEFAULT_TOURNAMENT_BODY = "A tournament has started";
 
     @Override
-    public void onNewToken(@NonNull String token) {
-        super.onNewToken(token);
-        Log.d(TAG, getClass().getSimpleName() + ".onNewToken: 🔐 New FCM token: " + token);
+    public void onRegistered(@NonNull String installationId) {
+        super.onRegistered(installationId);
+        Log.d(TAG, getClass().getSimpleName() + ".onRegistered: FCM registration completed");
 
         String uid = FirebaseAuth.getInstance().getCurrentUser() != null
                 ? FirebaseAuth.getInstance().getCurrentUser().getUid()
                 : null;
 
         if (uid != null) {
-            FirebaseFirestore.getInstance()
-                    .collection("users")
-                    .document(uid)
-                    .update("fcmToken", token)
-                    .addOnSuccessListener(aVoid -> Log.d(TAG, getClass().getSimpleName() + ".onNewToken: ✅ Token saved"))
-                    .addOnFailureListener(e -> Log.e(TAG, getClass().getSimpleName() + ".onNewToken: ❌ Failed to save token", e));
+            ((SoccerApp) getApplication()).saveFcmInstallationId(uid, installationId);
         } else {
-            Log.w(TAG, getClass().getSimpleName() + ".onNewToken: ⚠️ No user logged in; token not saved");
+            Log.w(TAG, getClass().getSimpleName() + ".onRegistered: No user logged in; FID not saved");
         }
+    }
+
+    @Override
+    public void onUnregistered(@NonNull String installationId) {
+        super.onUnregistered(installationId);
+        Log.d(TAG, getClass().getSimpleName() + ".onUnregistered: FCM unregistration completed");
     }
 
     @Override

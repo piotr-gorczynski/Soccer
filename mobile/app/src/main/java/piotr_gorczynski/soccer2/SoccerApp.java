@@ -43,6 +43,7 @@ import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.installations.FirebaseInstallations;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.android.ump.ConsentInformation;
 import com.google.android.ump.ConsentRequestParameters;
@@ -62,6 +63,8 @@ import androidx.lifecycle.LifecycleOwner;
 public class SoccerApp extends Application implements DefaultLifecycleObserver {
 
     private static final String TAG = "TAG_Soccer";
+    public static final String FCM_INSTALLATION_ID_FIELD = "fcmInstallationId";
+    public static final String FCM_INSTALLATION_ID_PREF = "fcmInstallationId";
     private static final android.os.Handler MAIN_HANDLER = new android.os.Handler(android.os.Looper.getMainLooper());
     
     private DatabaseReference userStatusDbRef;
@@ -292,24 +295,77 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         // This ensures no data is collected until explicit consent is given (EEA and US regulations)
         ConsentUtils.setDefaultFirebaseAnalyticsConsent(this);
     }
-    public void syncFcmTokenIfNeeded() {
+    public void syncFcmRegistrationIfNeeded() {
         String uid = FirebaseAuth.getInstance().getUid();
         if (uid == null) return;
 
-        FirebaseMessaging.getInstance().getToken()
-                .addOnSuccessListener(newToken -> {
-                    SharedPreferences prefs =
-                            getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
-                    String saved = prefs.getString("fcmToken", null);
-                    if (saved != null && saved.equals(newToken)) return;
+        FirebaseMessaging.getInstance().register()
+                .addOnSuccessListener(unused -> FirebaseInstallations.getInstance().getId()
+                        .addOnSuccessListener(installationId ->
+                                saveFcmInstallationId(uid, installationId))
+                        .addOnFailureListener(error -> Log.w(
+                                TAG,
+                                "SoccerApp.syncFcmRegistrationIfNeeded: Failed to obtain FID",
+                                error)))
+                .addOnFailureListener(error -> Log.w(
+                        TAG,
+                        "SoccerApp.syncFcmRegistrationIfNeeded: FCM registration failed",
+                        error));
+    }
 
-                    FirebaseFirestore.getInstance()
-                            .collection("users")
-                            .document(uid)
-                            .set(Map.of("fcmToken", newToken), SetOptions.merge())
-                            .addOnSuccessListener(v ->
-                                    prefs.edit().putString("fcmToken", newToken).apply());
-                });
+    public void saveFcmInstallationId(@NonNull String uid, @NonNull String installationId) {
+        if (!uid.equals(FirebaseAuth.getInstance().getUid())) return;
+
+        SharedPreferences prefs =
+                getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
+        String saved = prefs.getString(FCM_INSTALLATION_ID_PREF, null);
+        if (installationId.equals(saved)) return;
+
+        FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(uid)
+                .set(Map.of(FCM_INSTALLATION_ID_FIELD, installationId), SetOptions.merge())
+                .addOnSuccessListener(v -> {
+                    prefs.edit().putString(FCM_INSTALLATION_ID_PREF, installationId).apply();
+                    Log.d(TAG, "SoccerApp.saveFcmInstallationId: FID saved");
+                })
+                .addOnFailureListener(error -> Log.e(
+                        TAG,
+                        "SoccerApp.saveFcmInstallationId: Failed to save FID",
+                        error));
+    }
+
+    public void unregisterFromFcm() {
+        FirebaseMessaging messaging = FirebaseMessaging.getInstance();
+        messaging.setAutoInitEnabled(false);
+        messaging.unregister()
+                .continueWithTask(unregisterTask -> {
+                    if (unregisterTask.isSuccessful()) {
+                        Log.d(TAG, "SoccerApp.unregisterFromFcm: FCM unregistered");
+                    } else {
+                        Log.w(
+                                TAG,
+                                "SoccerApp.unregisterFromFcm: Failed to unregister from FCM",
+                                unregisterTask.getException());
+                    }
+
+                    // A FID is stable across registrations. Delete it at the account boundary
+                    // so a later user on this device cannot inherit the previous user's target.
+                    return FirebaseInstallations.getInstance().delete();
+                })
+                .addOnSuccessListener(unused -> Log.d(
+                        TAG,
+                        "SoccerApp.unregisterFromFcm: Firebase Installation deleted"))
+                .addOnFailureListener(error -> Log.w(
+                        TAG,
+                        "SoccerApp.unregisterFromFcm: Failed to delete Firebase Installation",
+                        error));
+
+        getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
+                .edit()
+                .remove(FCM_INSTALLATION_ID_PREF)
+                .remove("fcmToken")
+                .apply();
     }
 
     public void disableFcmAutoInit() {
@@ -318,7 +374,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
 
     public void enableFcmAutoInit() {
         FirebaseMessaging.getInstance().setAutoInitEnabled(true);
-        syncFcmTokenIfNeeded();
+        syncFcmRegistrationIfNeeded();
     }
 
     /* ---------------- central place to start presence tracking ---------- */

@@ -135,13 +135,15 @@ async function sendNotificationsToParticipants(tournamentRef, tournamentName) {
         // Check if account is deleted
         if (userData.accountDeleted === true) return false;
 
-        // Check if user has FCM token
-        if (!userData.fcmToken) return false;
+        // Prefer the current FID registration, but keep legacy tokens working
+        // while users migrate from app version 17.6.
+        if (!userData.fcmInstallationId && !userData.fcmToken) return false;
 
         return true;
       })
       .map(doc => ({
         uid: doc.id,
+        fcmInstallationId: doc.data().fcmInstallationId,
         fcmToken: doc.data().fcmToken,
         language: doc.data().language || 'en'
       }));
@@ -159,7 +161,9 @@ async function sendNotificationsToParticipants(tournamentRef, tournamentName) {
         const localizedMessage = TOURNAMENT_STARTED_MESSAGES[user.language] || TOURNAMENT_STARTED_MESSAGES['en'];
         
         const message = {
-          token: user.fcmToken,
+          ...(user.fcmInstallationId
+            ? { fid: user.fcmInstallationId }
+            : { token: user.fcmToken }),
           data: {
             type: 'tournament_started',
             tournamentId: tournamentId,
@@ -172,7 +176,7 @@ async function sendNotificationsToParticipants(tournamentRef, tournamentName) {
 
         await admin.messaging().send(message);
         sentCount++;
-        console.log(`[sendNotifications] Sent to user ${user.uid} (${user.language})`);
+        console.log(`[sendNotifications] Sent to user ${user.uid} (${user.language}, ${user.fcmInstallationId ? 'fid' : 'legacy-token'})`);
       } catch (error) {
         failedCount++;
         
