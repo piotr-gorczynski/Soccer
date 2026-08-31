@@ -1,4 +1,4 @@
-const functions = require("firebase-functions");
+const functions = require("firebase-functions/v1");
 const admin     = require("firebase-admin");
 
 admin.initializeApp();
@@ -44,17 +44,17 @@ exports.sendInviteNotification = functions.firestore
         return null;
       }
 
-      const fromNickname = fromDoc.get('nickname') ?? 'Someone';
-      const fcmToken     = toDoc.get('fcmToken');
+      const fromNickname      = fromDoc.get('nickname') ?? 'Someone';
+      const fcmInstallationId = toDoc.get('fcmInstallationId');
+      const fcmToken          = toDoc.get('fcmToken');
 
-      // Check if FCM token exists
-      if (!fcmToken) {
-        console.log(`[sendInviteNotification] No FCM token for user ${to}, skipping notification for invitation ${inviteId}`);
+      if (!fcmInstallationId && !fcmToken) {
+        console.log(`[sendInviteNotification] No FCM target for user ${to}, skipping notification for invitation ${inviteId}`);
         return null;
       }
 
       const message = {
-        token: fcmToken,
+        ...(fcmInstallationId ? { fid: fcmInstallationId } : { token: fcmToken }),
         data : {
           type:  'invite',
           fromNickname,
@@ -66,7 +66,8 @@ exports.sendInviteNotification = functions.firestore
 
       console.log(`[sendInviteNotification] Sending notification for invitation ${inviteId}`, {
         to: to,
-        fromNickname: fromNickname
+        fromNickname: fromNickname,
+        targetType: fcmInstallationId ? 'fid' : 'legacy-token'
       });
 
       const result = await admin.messaging().send(message);
