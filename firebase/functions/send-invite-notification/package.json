@@ -2,7 +2,7 @@
     "name": "send-invite-notification",
     "main": "index.js",
     "engines": {
-         "node": "20"
+         "node": "22"
     },
     "dependencies": {
       "firebase-admin": "^13.8.0",
