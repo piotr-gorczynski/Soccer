@@ -1,7 +1,12 @@
 const functions = require("firebase-functions/v1");
-const admin     = require("firebase-admin");
+const { initializeApp } = require("firebase-admin/app");
+const { FieldValue, getFirestore } = require("firebase-admin/firestore");
+const { getMessaging } = require("firebase-admin/messaging");
 
-admin.initializeApp();
+initializeApp();
+
+const db = getFirestore();
+const messaging = getMessaging();
 
 exports.sendInviteNotification = functions.firestore
   .document('invitations/{inviteId}')
@@ -29,8 +34,8 @@ exports.sendInviteNotification = functions.firestore
     try {
       // Look up both users in parallel
       const [fromDoc, toDoc] = await Promise.all([
-        admin.firestore().doc(`users/${from}`).get(),
-        admin.firestore().doc(`users/${to}`).get()
+        db.doc(`users/${from}`).get(),
+        db.doc(`users/${to}`).get()
       ]);
 
       // Check if user documents exist
@@ -70,7 +75,7 @@ exports.sendInviteNotification = functions.firestore
         targetType: fcmInstallationId ? 'fid' : 'legacy-token'
       });
 
-      const result = await admin.messaging().send(message);
+      const result = await messaging.send(message);
       console.log(`[sendInviteNotification] Successfully sent notification for invitation ${inviteId}`, {
         messageId: result
       });
@@ -91,9 +96,9 @@ exports.sendInviteNotification = functions.firestore
             ? 'NotRegistered' 
             : 'InvalidRegistration';
           
-          await admin.firestore().doc(`users/${to}`).update({
+          await db.doc(`users/${to}`).update({
             fcmErrorType: fcmErrorType,
-            fcmErrorDate: admin.firestore.FieldValue.serverTimestamp()
+            fcmErrorDate: FieldValue.serverTimestamp()
           });
           
           console.log(`[sendInviteNotification] Stored FCM error info for user ${to}`, {

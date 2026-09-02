@@ -6,7 +6,7 @@ This Cloud Function uses Google's Vertex AI (Gemini model) to moderate nicknames
 
 The `checkNickname` function:
 - Accepts a nickname as input
-- Uses Vertex AI's Gemini 2.0 Flash model to check for inappropriate content
+- Uses the generally available Gemini 3.5 Flash model through Vertex AI's global endpoint
 - Returns whether the nickname is allowed or violates content rules
 - Falls back to allowing nicknames if the API is unavailable (graceful degradation)
 
@@ -219,7 +219,7 @@ The function:
 ## Dependencies
 
 See [`package.json`](package.json) for the complete list of dependencies. Key packages:
-- `@google-cloud/vertexai` - Vertex AI SDK for Node.js
+- `@google/genai` - Google Gen AI SDK configured to use Vertex AI
 - `firebase-functions` - Firebase Functions SDK
 
 ## Troubleshooting

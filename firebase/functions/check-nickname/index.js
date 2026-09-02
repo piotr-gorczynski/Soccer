@@ -1,8 +1,9 @@
 import { HttpsError, onCall } from "firebase-functions/v2/https";
-import { VertexAI } from "@google-cloud/vertexai";
+import { GoogleGenAI } from "@google/genai";
 
 const projectId = process.env.GCLOUD_PROJECT ?? process.env.GOOGLE_CLOUD_PROJECT;
-const location = "us-central1";
+const location = "global";
+const model = "gemini-3.5-flash";
 
 // gRPC error codes
 const GRPC_PERMISSION_DENIED = 7;
@@ -12,10 +13,8 @@ if (!projectId) {
   throw new Error("Project ID is not set in GCLOUD_PROJECT or GOOGLE_CLOUD_PROJECT environment variables.");
 }
 
-const vertex = new VertexAI({ project: projectId, location });
-const modelInstance = vertex.getGenerativeModel({
-  model: "gemini-2.0-flash",
-  safetySettings: [
+const vertex = new GoogleGenAI({ vertexai: true, project: projectId, location });
+const safetySettings = [
     {
       category: "HARM_CATEGORY_HATE_SPEECH",
       threshold: "BLOCK_LOW_AND_ABOVE",
@@ -32,8 +31,7 @@ const modelInstance = vertex.getGenerativeModel({
       category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
       threshold: "BLOCK_LOW_AND_ABOVE",
     },
-  ],
-});
+];
 
 export const checkNickname = onCall({ region: "us-central1" }, async (request) => {
   const nickname = (request.data?.nickname ?? "").trim();
@@ -52,14 +50,16 @@ export const checkNickname = onCall({ region: "us-central1" }, async (request) =
     // Use a moderation prompt to ask the model to evaluate the content
     const prompt = `Evaluate if the following text is appropriate as a user nickname. Check for profanity, vulgar language, hate speech, offensive content, or inappropriate material. The text may contain obfuscation like spaces, numbers, or special characters mixed in with offensive words (e.g., "f u c k" or "fuck 2"). Respond with only "APPROPRIATE" or "INAPPROPRIATE".\n\nText to evaluate: "${nickname}"`;
     
-    const response = await modelInstance.generateContent({
-      contents: [{ role: "user", parts: [{ text: prompt }] }],
+    const response = await vertex.models.generateContent({
+      model,
+      contents: prompt,
+      config: { safetySettings },
     });
 
     console.log("checkNickname: Vertex AI response received for nickname:", nickname);
     
-    const safetyRatings = response.response?.candidates?.[0]?.safetyRatings ?? [];
-    const textResponse = response.response?.candidates?.[0]?.content?.parts?.[0]?.text?.trim().toUpperCase() ?? "";
+    const safetyRatings = response.candidates?.[0]?.safetyRatings ?? [];
+    const textResponse = response.text?.trim().toUpperCase() ?? "";
     
     // Log detailed safety ratings for debugging
     console.log("checkNickname: Safety ratings for nickname:", nickname, {
