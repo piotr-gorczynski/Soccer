@@ -5,10 +5,10 @@
   "type": "module",
   "main": "index.js",
   "engines": {
-    "node": "20"
+    "node": "22"
   },
   "dependencies": {
-    "@google-cloud/vertexai": "^1.4.0",
+    "@google/genai": "^2.20.0",
     "firebase-functions": "^4.5.0"
   }
 }

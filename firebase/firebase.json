@@ -15,13 +15,13 @@
     {
       "source": "functions/send-invite-notification",
       "codebase": "send-invite-notification",
-      "runtime": "nodejs20",
+      "runtime": "nodejs22",
       "region": "us-central1"
     },
     {
       "source": "functions/change-player-turn",
       "codebase": "change-player-turn",
-      "runtime": "nodejs20",
+      "runtime": "nodejs22",
       "region": "us-central1"
     },
     {
@@ -77,39 +77,31 @@
       "codebase": "leave-tournament"
     },
     {
-      "source": "functions/seed-ads-frequency",
-      "codebase": "seed-ads-frequency"
-    },
-    {
-      "source": "functions/seed-service-status",
-      "codebase": "seed-service-status"
-    },
-    {
       "source": "functions/remove-account",
       "codebase": "remove-account"
     },
     {
       "source": "functions/cleanup-inactive-users",
       "codebase": "cleanup-inactive-users",
-      "runtime": "nodejs20",
+      "runtime": "nodejs22",
       "region": "us-central1"
     },
     {
       "source": "functions/check-nickname",
       "codebase": "check-nickname",
-      "runtime": "nodejs20",
+      "runtime": "nodejs22",
       "region": "us-central1"
     },
     {
       "source": "functions/update-payment-status",
       "codebase": "update-payment-status",
-      "runtime": "nodejs20",
+      "runtime": "nodejs22",
       "region": "us-central1"
     },
     {
       "source": "functions/on-tournament-complete",
       "codebase": "on-tournament-complete",
-      "runtime": "nodejs20",
+      "runtime": "nodejs22",
       "region": "us-central1"
     }
   ],
