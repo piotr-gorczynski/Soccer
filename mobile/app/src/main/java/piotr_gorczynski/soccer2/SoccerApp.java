@@ -56,6 +56,8 @@ import androidx.core.os.LocaleListCompat;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import androidx.lifecycle.LifecycleOwner;
@@ -66,6 +68,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     public static final String FCM_INSTALLATION_ID_FIELD = "fcmInstallationId";
     public static final String FCM_INSTALLATION_ID_PREF = "fcmInstallationId";
     private static final android.os.Handler MAIN_HANDLER = new android.os.Handler(android.os.Looper.getMainLooper());
+    private final ExecutorService fcmExecutor = Executors.newSingleThreadExecutor();
     
     private DatabaseReference userStatusDbRef;
     private DatabaseReference connectedRef;
@@ -278,12 +281,6 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
             }
         });
 
-        // handle "already signed-in" on cold start
-        if (auth.getCurrentUser() != null) {
-            startPresence(auth.getCurrentUser().getUid());
-            enableFcmAutoInit();
-        }
-
         // Pre-initialize WebView and MobileAds to prevent ANR crashes
         // This fixes Crashlytics issue: WV.xv.execute ANR
         // The issue occurs when WebView is first initialized by Google Ads SDK, blocking the main thread
@@ -373,8 +370,10 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     }
 
     public void enableFcmAutoInit() {
-        FirebaseMessaging.getInstance().setAutoInitEnabled(true);
-        syncFcmRegistrationIfNeeded();
+        fcmExecutor.execute(() -> {
+            FirebaseMessaging.getInstance().setAutoInitEnabled(true);
+            syncFcmRegistrationIfNeeded();
+        });
     }
 
     /* ---------------- central place to start presence tracking ---------- */

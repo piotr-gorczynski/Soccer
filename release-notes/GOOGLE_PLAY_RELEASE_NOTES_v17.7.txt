@@ -1,4 +1,5 @@
 <en-GB>
+🐝 Updated push notification registration for improved reliability
 </en-GB>
 
 <pl-PL>
