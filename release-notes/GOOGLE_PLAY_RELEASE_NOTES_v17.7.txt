@@ -1,5 +1,8 @@
 <en-GB>
 🐝 Updated push notification registration for improved reliability
+🔔 Fixed game invitation notifications on devices using Firebase Installation IDs
+🛡️ Updated nickname moderation to use the latest Vertex AI model
+⚙️ Migrated backend functions to Node.js 22 for improved reliability and long-term support
 </en-GB>
 
 <pl-PL>
