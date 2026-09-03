@@ -3327,7 +3327,73 @@ public class Field {
                 return true;
             }
         }
+
+        int firstRecentSegment = Math.max(1, Moves.size() - 3);
+        for (int i = firstRecentSegment; i < Moves.size(); i++) {
+            MoveTo start = Moves.get(i - 1);
+            MoveTo end = Moves.get(i);
+            float startX = w2x(flipX(start.X));
+            float startY = h2y(flipY(start.Y));
+            float endX = w2x(flipX(end.X));
+            float endY = h2y(flipY(end.Y));
+
+            if (lineIntersectsRectangle(startX, startY, endX, endY,
+                    balloonRect.left - pulseDotSize,
+                    balloonRect.top - pulseDotSize,
+                    balloonRect.right + pulseDotSize,
+                    balloonRect.bottom + pulseDotSize)) {
+                return true;
+            }
+        }
         return false;
+    }
+
+    static boolean shouldPlaceBalloonAtBottom(float ballY, float fieldCenterY) {
+        return ballY < fieldCenterY;
+    }
+
+    static boolean lineIntersectsRectangle(float x1, float y1, float x2, float y2,
+                                           float left, float top, float right, float bottom) {
+        if (pointInsideRectangle(x1, y1, left, top, right, bottom)
+                || pointInsideRectangle(x2, y2, left, top, right, bottom)) {
+            return true;
+        }
+
+        return segmentsIntersect(x1, y1, x2, y2, left, top, right, top)
+                || segmentsIntersect(x1, y1, x2, y2, right, top, right, bottom)
+                || segmentsIntersect(x1, y1, x2, y2, right, bottom, left, bottom)
+                || segmentsIntersect(x1, y1, x2, y2, left, bottom, left, top);
+    }
+
+    private static boolean pointInsideRectangle(float x, float y,
+                                                float left, float top, float right, float bottom) {
+        return x >= left && x <= right && y >= top && y <= bottom;
+    }
+
+    private static boolean segmentsIntersect(float ax, float ay, float bx, float by,
+                                             float cx, float cy, float dx, float dy) {
+        float abC = cross(ax, ay, bx, by, cx, cy);
+        float abD = cross(ax, ay, bx, by, dx, dy);
+        float cdA = cross(cx, cy, dx, dy, ax, ay);
+        float cdB = cross(cx, cy, dx, dy, bx, by);
+        if (((abC > 0f && abD < 0f) || (abC < 0f && abD > 0f))
+                && ((cdA > 0f && cdB < 0f) || (cdA < 0f && cdB > 0f))) {
+            return true;
+        }
+
+        return (abC == 0f && pointOnSegment(cx, cy, ax, ay, bx, by))
+                || (abD == 0f && pointOnSegment(dx, dy, ax, ay, bx, by))
+                || (cdA == 0f && pointOnSegment(ax, ay, cx, cy, dx, dy))
+                || (cdB == 0f && pointOnSegment(bx, by, cx, cy, dx, dy));
+    }
+
+    private static boolean pointOnSegment(float px, float py, float ax, float ay, float bx, float by) {
+        return px >= Math.min(ax, bx) && px <= Math.max(ax, bx)
+                && py >= Math.min(ay, by) && py <= Math.max(ay, by);
+    }
+
+    private static float cross(float ax, float ay, float bx, float by, float px, float py) {
+        return (bx - ax) * (py - ay) - (by - ay) * (px - ax);
     }
 
     /**
@@ -3340,43 +3406,33 @@ public class Field {
         float fieldTop = rField.top;
         float fieldBottom = rField.bottom;
         
-        // Try to position the balloon at the top center of the field
         float balloonCenterX = (fieldLeft + fieldRight) / 2f;
-        float balloonTop = fieldTop + (fieldBottom - fieldTop) * BALLOON_MARGIN_RATIO;
-        
+        float margin = (fieldBottom - fieldTop) * BALLOON_MARGIN_RATIO;
+        float topPosition = fieldTop + margin;
+        float bottomPosition = fieldBottom - balloonHeight - margin;
+
+        MoveTo activeMove = Moves.get(Moves.size() - 1);
+        float activeBallY = h2y(flipY(activeMove.Y));
+        boolean preferBottom = shouldPlaceBalloonAtBottom(activeBallY, (fieldTop + fieldBottom) / 2f);
+        float preferredTop = preferBottom ? bottomPosition : topPosition;
+        float alternativeTop = preferBottom ? topPosition : bottomPosition;
+
         RectF balloonRect = new RectF(
             balloonCenterX - balloonWidth / 2f,
-            balloonTop,
+            preferredTop,
             balloonCenterX + balloonWidth / 2f,
-            balloonTop + balloonHeight
+            preferredTop + balloonHeight
         );
-        
-        // Check if this position overlaps with any possible moves
-        boolean overlaps = checkBalloonOverlap(balloonRect, pulseDotSize);
-        
-        // If top position overlaps, try bottom of field
-        if (overlaps) {
-            balloonTop = fieldBottom - balloonHeight - (fieldBottom - fieldTop) * BALLOON_MARGIN_RATIO;
-            balloonRect = new RectF(
+
+        if (checkBalloonOverlap(balloonRect, pulseDotSize)) {
+            RectF alternativeRect = new RectF(
                 balloonCenterX - balloonWidth / 2f,
-                balloonTop,
+                alternativeTop,
                 balloonCenterX + balloonWidth / 2f,
-                balloonTop + balloonHeight
+                alternativeTop + balloonHeight
             );
-            
-            // Check again for overlaps at bottom position
-            overlaps = checkBalloonOverlap(balloonRect, pulseDotSize);
-            
-            // If bottom also overlaps, try left side
-            if (overlaps) {
-                float balloonLeft = fieldLeft + (fieldRight - fieldLeft) * BALLOON_MARGIN_RATIO;
-                float balloonCenterY = (fieldTop + fieldBottom) / 2f;
-                balloonRect = new RectF(
-                    balloonLeft,
-                    balloonCenterY - balloonHeight / 2f,
-                    balloonLeft + balloonWidth,
-                    balloonCenterY + balloonHeight / 2f
-                );
+            if (!checkBalloonOverlap(alternativeRect, pulseDotSize)) {
+                balloonRect = alternativeRect;
             }
         }
         
