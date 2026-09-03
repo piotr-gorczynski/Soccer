@@ -97,6 +97,7 @@ public class Field {
     private final String sPlayer0;
     private final String sPlayer1;
     private final int gameType;
+    private final int localPlayerIndex;
     private final Context context;
     private AnalyticsManager analyticsManager;
     final ArrayList<MoveTo> possibleMoves;//= new ArrayList<MoveTo>();
@@ -296,6 +297,7 @@ public class Field {
                 + ", animationsEnabled=" + animationsEnabled);
 
         this.gameType = argGameType;  // ✅ Save GameType for later use
+        this.localPlayerIndex = localPlayerIndex;
         this.context = current;
         
         // Get analytics manager from SoccerApp for tutorial tracking
@@ -3240,6 +3242,11 @@ public class Field {
      * Gets the tutorial message string based on current tutorial message type
      */
     private String getTutorialMessage() {
+        if (!Moves.isEmpty()
+                && shouldShowWaitingForOpponent(gameType, localPlayerIndex, Moves.get(Moves.size() - 1).P)) {
+            return context.getString(R.string.field_waiting_for_opponent_move);
+        }
+
         switch (currentTutorialMessage) {
             case BOUNCE_BORDER:
                 return context.getString(R.string.field_tutorial_bounce_border);
@@ -3277,6 +3284,10 @@ public class Field {
             default:
                 return context.getString(R.string.field_tutorial_message);
         }
+    }
+
+    static boolean shouldShowWaitingForOpponent(int gameType, int localPlayerIndex, int activePlayerIndex) {
+        return gameType == 3 && localPlayerIndex != activePlayerIndex;
     }
 
     /**

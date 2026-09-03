@@ -334,6 +334,7 @@
     <string name="tournament_not_running">البطولة %1$s لم تعد قيد التشغيل</string>
     <string name="tournament_match_already_completed">تم إكمال هذه المباراة بالفعل و%1$s فاز</string>
     <string name="field_tutorial_message">اضغط على إحدى النقاط لتحريك الكرة</string>
+    <string name="field_waiting_for_opponent_move">في انتظار تحرك الخصم</string>
     <string name="field_tutorial_bounce_border">عندما تصطدم الكرة بحد، ترتد ويمكنك تحريك الكرة مرة أخرى</string>
     <string name="field_tutorial_bounce_visited">عندما تصطدم الكرة بنقطة تمت زيارتها مسبقًا، ترتد ويمكنك تحريك الكرة مرة أخرى</string>
     <string name="field_tutorial_no_moves">عندما لا توجد حركات ممكنة، يخسر اللاعب على الفور.</string>

@@ -387,6 +387,7 @@
     <string name="tournament_not_running">प्रतियोगिता %1$s अब चलिरहेको छैन</string>
     <string name="tournament_match_already_completed">यो खेल पहिले नै सकिएको छ र %1$s जित्यो</string>
     <string name="field_tutorial_message">बल सार्न बिन्दुहरू मध्ये एकमा ट्याप गर्नुहोस्</string>
+    <string name="field_waiting_for_opponent_move">विपक्षीले चाल चाल्ने प्रतीक्षामा</string>
     <string name="field_tutorial_bounce_border">जब बल सीमामा ठोक्किन्छ, यो उफ्रन्छ र तपाईं फेरि बल सार्न सक्नुहुन्छ</string>
     <string name="field_tutorial_bounce_visited">जब बल पहिले नै भ्रमण गरिएको बिन्दुमा ठोक्किन्छ, यो उफ्रन्छ र तपाईं फेरि बल सार्न सक्नुहुन्छ</string>
     <string name="field_tutorial_no_moves">जब कुनै सम्भावित चालहरू छैनन्, खेलाडी तुरुन्त हराउँछ।</string>
