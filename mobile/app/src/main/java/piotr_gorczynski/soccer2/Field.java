@@ -1072,7 +1072,23 @@ public class Field {
     }
 
     public boolean isHandTutorialActive() {
-        return showHandTutorial && spritesLoaded;
+        return shouldRenderHandTutorial(showHandTutorial, spritesLoaded,
+                possibleMoves != null && !possibleMoves.isEmpty(),
+                false, runAnimationActive, kickAnimationActive);
+    }
+
+    static boolean shouldRenderHandTutorial(boolean tutorialEnabled,
+                                            boolean spritesLoaded,
+                                            boolean hasPossibleMoves,
+                                            boolean isAndroidTurn,
+                                            boolean runAnimationActive,
+                                            boolean kickAnimationActive) {
+        return tutorialEnabled
+                && spritesLoaded
+                && hasPossibleMoves
+                && !isAndroidTurn
+                && !runAnimationActive
+                && !kickAnimationActive;
     }
 
     public boolean isTutorialMessagesEnabled() {
@@ -3008,8 +3024,12 @@ public class Field {
             return;
         }
 
+        boolean hasPossibleMoves = possibleMoves != null && !possibleMoves.isEmpty();
+        boolean shouldRenderHand = shouldRenderHandTutorial(showHandTutorial, spritesLoaded,
+                hasPossibleMoves, false, runAnimationActive, kickAnimationActive);
+
         // Only show hand tutorial if enabled and there are possible moves
-        if (showHandTutorial && possibleMoves != null && !possibleMoves.isEmpty()) {
+        if (shouldRenderHand) {
 
         int currentMoveCount = Moves.size();
         
