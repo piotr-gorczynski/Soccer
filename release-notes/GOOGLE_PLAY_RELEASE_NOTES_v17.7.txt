@@ -3,52 +3,150 @@
 🔔 Fixed game invitation notifications on devices using Firebase Installation IDs
 🛡️ Updated nickname moderation to use the latest Vertex AI model
 ⚙️ Migrated backend functions to Node.js 22 for improved reliability and long-term support
+💬 Moved gameplay hints away from active movement paths
+🖐️ Delayed hand guidance until player animations finish
 </en-GB>
 
 <pl-PL>
+🐝 Usprawniono rejestrację powiadomień push
+🔔 Naprawiono powiadomienia o zaproszeniach na urządzeniach z Firebase Installation ID
+🛡️ Zaktualizowano moderację pseudonimów do najnowszego modelu Vertex AI
+⚙️ Przeniesiono funkcje backendu do Node.js 22, zwiększając niezawodność i zapewniając długoterminowe wsparcie
+💬 Przeniesiono podpowiedzi z dala od aktywnej ścieżki ruchu
+🖐️ Opóźniono wskazówki dłoni do zakończenia animacji graczy
 </pl-PL>
 
 <de-DE>
+🐝 Push-Benachrichtigungsregistrierung für höhere Zuverlässigkeit aktualisiert
+🔔 Benachrichtigungen für Spieleinladungen auf Geräten mit Firebase-Installations-IDs korrigiert
+🛡️ Spitznamenmoderation auf das neueste Vertex-AI-Modell aktualisiert
+⚙️ Backend-Funktionen für mehr Zuverlässigkeit und langfristige Unterstützung auf Node.js 22 migriert
+💬 Spielhinweise vom aktiven Bewegungspfad weg verschoben
+🖐️ Handhinweise werden erst nach Abschluss der Spieleranimationen angezeigt
 </de-DE>
 
 <fr-FR>
+🐝 Fiabilité accrue de l’inscription aux notifications push
+🔔 Correction des invitations sur les appareils utilisant des ID d’installation Firebase
+🛡️ Mise à jour de la modération des pseudonymes avec le dernier modèle Vertex AI
+⚙️ Migration des fonctions backend vers Node.js 22 pour une fiabilité et un suivi à long terme améliorés
+💬 Déplacement des astuces pour dégager la trajectoire active
+🖐️ Affichage de la main retardé jusqu’à la fin des animations des joueurs
 </fr-FR>
 
 <es-ES>
+🐝 Registro de notificaciones push actualizado para mejorar la fiabilidad
+🔔 Corregidas las notificaciones de invitaciones en dispositivos con IDs de instalación de Firebase
+🛡️ Moderación de apodos actualizada al último modelo de Vertex AI
+⚙️ Funciones del backend migradas a Node.js 22 para mejorar la fiabilidad y el soporte a largo plazo
+💬 Las indicaciones ya no cubren la trayectoria activa
+🖐️ La guía de la mano espera a que terminen las animaciones de los jugadores
 </es-ES>
 
 <ur>
+🐝 بہتر قابل اعتماد کارکردگی کے لیے پش نوٹیفکیشن رجسٹریشن اپ ڈیٹ کر دی گئی
+🔔 Firebase Installation IDs استعمال کرنے والے آلات پر گیم دعوت کے نوٹیفکیشن درست کر دیے گئے
+🛡️ عرفی نام کی جانچ کو تازہ ترین Vertex AI ماڈل پر اپ ڈیٹ کر دیا گیا
+⚙️ بہتر قابل اعتماد کارکردگی اور طویل مدتی سپورٹ کے لیے بیک اینڈ فنکشنز Node.js 22 پر منتقل کر دیے گئے
+💬 گیم کی ہدایات کو فعال حرکت کے راستے سے ہٹا دیا گیا
+🖐️ ہاتھ کی رہنمائی اب کھلاڑی کی اینیمیشن مکمل ہونے کے بعد دکھائی دیتی ہے
 </ur>
 
 <bn-BD>
+🐝 আরও নির্ভরযোগ্য করতে পুশ নোটিফিকেশন নিবন্ধন আপডেট করা হয়েছে
+🔔 Firebase Installation ID ব্যবহারকারী ডিভাইসে গেম আমন্ত্রণের নোটিফিকেশন ঠিক করা হয়েছে
+🛡️ ডাকনাম যাচাইয়ে সর্বশেষ Vertex AI মডেল ব্যবহার করা হয়েছে
+⚙️ উন্নত নির্ভরযোগ্যতা ও দীর্ঘমেয়াদি সহায়তার জন্য ব্যাকএন্ড ফাংশন Node.js 22-এ নেওয়া হয়েছে
+💬 গেমের নির্দেশনা সক্রিয় চলার পথ থেকে সরানো হয়েছে
+🖐️ খেলোয়াড়ের অ্যানিমেশন শেষ না হওয়া পর্যন্ত হাতের নির্দেশনা অপেক্ষা করবে
 </bn-BD>
 
 <ne-NP>
+🐝 थप भरपर्दो बनाउन पुश सूचनाको दर्ता अद्यावधिक गरियो
+🔔 Firebase Installation ID प्रयोग गर्ने उपकरणमा खेल निमन्त्रणाका सूचनाहरू सच्याइयो
+🛡️ उपनाम अनुगमनलाई नवीनतम Vertex AI मोडेलमा अद्यावधिक गरियो
+⚙️ सुधारिएको विश्वसनीयता र दीर्घकालीन सहयोगका लागि ब्याकएन्ड फङ्सनहरू Node.js 22 मा सारियो
+💬 खेलका सङ्केतहरू सक्रिय चालको बाटोबाट टाढा सारियो
+🖐️ खेलाडीको एनिमेसन सकिएपछि मात्र हातको मार्गदर्शन देखिने बनाइयो
 </ne-NP>
 
 <hi-IN>
+🐝 बेहतर विश्वसनीयता के लिए पुश नोटिफिकेशन पंजीकरण अपडेट किया गया
+🔔 Firebase Installation ID वाले डिवाइस पर गेम आमंत्रण नोटिफिकेशन ठीक किए गए
+🛡️ उपनाम मॉडरेशन को नवीनतम Vertex AI मॉडल पर अपडेट किया गया
+⚙️ बेहतर विश्वसनीयता और लंबे समय के समर्थन के लिए बैकएंड फ़ंक्शन Node.js 22 पर माइग्रेट किए गए
+💬 गेम संकेतों को सक्रिय चाल के रास्ते से दूर किया गया
+🖐️ खिलाड़ी की एनिमेशन पूरी होने तक हाथ का मार्गदर्शन रोका गया
 </hi-IN>
 
 <am>
+🐝 የግፊት ማሳወቂያ ምዝገባ ለተሻለ አስተማማኝነት ተዘምኗል
+🔔 Firebase Installation ID በሚጠቀሙ መሣሪያዎች ላይ የጨዋታ ግብዣ ማሳወቂያዎች ተስተካክለዋል
+🛡️ የቅጽል ስም ቁጥጥር ወደ የቅርብ ጊዜው Vertex AI ሞዴል ተዘምኗል
+⚙️ የጀርባ ስርዓት ተግባራት ወደ Node.js 22 ተዛውረዋል
+💬 የጨዋታ ፍንጮች ከንቁ የእንቅስቃሴ መንገድ ርቀው ተንቀሳቅሰዋል
+🖐️ የእጅ መመሪያው የተጫዋች እነማዎች እስኪያልቁ ዘግይቷል
 </am>
 
 <ar>
+🐝 تم تحديث تسجيل الإشعارات الفورية لتحسين الموثوقية
+🔔 تم إصلاح إشعارات دعوات اللعب على الأجهزة التي تستخدم معرّفات تثبيت Firebase
+🛡️ تم تحديث الإشراف على الأسماء المستعارة إلى أحدث نموذج Vertex AI
+⚙️ تم نقل وظائف الخادم إلى Node.js 22 لتحسين الموثوقية والدعم طويل الأمد
+💬 تم إبعاد تلميحات اللعب عن مسار الحركة النشط
+🖐️ لن يظهر إرشاد اليد حتى تنتهي حركات اللاعبين
 </ar>
 
 <my-MM>
+🐝 ပိုမိုယုံကြည်စိတ်ချရစေရန် push အသိပေးချက် မှတ်ပုံတင်ခြင်းကို အပ်ဒိတ်လုပ်ထားသည်
+🔔 Firebase Installation ID သုံးသည့် စက်များတွင် ဂိမ်းဖိတ်ကြားချက် အသိပေးချက်များကို ပြင်ဆင်ထားသည်
+🛡️ အမည်ပြောင် စိစစ်မှုကို နောက်ဆုံး Vertex AI မော်ဒယ်သို့ အပ်ဒိတ်လုပ်ထားသည်
+⚙️ ပိုမိုယုံကြည်စိတ်ချရပြီး ရေရှည်ပံ့ပိုးနိုင်ရန် backend လုပ်ဆောင်ချက်များကို Node.js 22 သို့ ပြောင်းထားသည်
+💬 ဂိမ်းအကြံပြုချက်များကို လက်ရှိရွေ့လျားရာလမ်းကြောင်းမှ ဖယ်ထားသည်
+🖐️ ကစားသမား လှုပ်ရှားမှုများပြီးမှ လက်ညွှန်ကို ပြသသည်
 </my-MM>
 
 <km-KH>
+🐝 បានធ្វើបច្ចុប្បន្នភាពការចុះឈ្មោះការជូនដំណឹង ដើម្បីបង្កើនភាពជឿជាក់
+🔔 បានកែការជូនដំណឹងអំពីការអញ្ជើញលេងលើឧបករណ៍ដែលប្រើ Firebase Installation ID
+🛡️ បានធ្វើបច្ចុប្បន្នភាពការត្រួតពិនិត្យឈ្មោះហៅក្រៅទៅម៉ូដែល Vertex AI ថ្មីបំផុត
+⚙️ បានផ្លាស់ទីមុខងារ backend ទៅ Node.js 22 សម្រាប់ភាពជឿជាក់ និងការគាំទ្ររយៈពេលវែង
+💬 បានផ្លាស់ទីគន្លឹះហ្គេមឱ្យឆ្ងាយពីផ្លូវចលនាបច្ចុប្បន្ន
+🖐️ ការណែនាំដោយដៃបង្ហាញក្រោយចលនាតួអង្គបញ្ចប់
 </km-KH>
 
 <lo-LA>
+🐝 ອັບເດດການລົງທະບຽນການແຈ້ງເຕືອນເພື່ອຄວາມເຊື່ອຖືທີ່ດີຂຶ້ນ
+🔔 ແກ້ໄຂການແຈ້ງເຕືອນຄຳເຊີນຫຼິ້ນເກມໃນອຸປະກອນທີ່ໃຊ້ Firebase Installation ID
+🛡️ ອັບເດດການກວດສອບຊື່ຫຼິ້ນເປັນໂມເດວ Vertex AI ລ່າສຸດ
+⚙️ ຍ້າຍຟັງຊັນ backend ໄປ Node.js 22 ເພື່ອຄວາມເຊື່ອຖືແລະການຮອງຮັບໄລຍະຍາວ
+💬 ຍ້າຍຄຳແນະນຳເກມອອກຈາກເສັ້ນທາງການເຄື່ອນໄຫວ
+🖐️ ສະແດງຄຳແນະນຳດ້ວຍມືຫຼັງຈາກພາບເຄື່ອນໄຫວຂອງຜູ້ຫຼິ້ນສິ້ນສຸດ
 </lo-LA>
 
 <mn-MN>
+🐝 Илүү найдвартай болгохын тулд түлхэх мэдэгдлийн бүртгэлийг шинэчиллээ
+🔔 Firebase Installation ID ашигладаг төхөөрөмжүүдийн тоглоомын урилгын мэдэгдлийг заслаа
+🛡️ Хоч нэрийн хяналтыг хамгийн сүүлийн Vertex AI загварт шинэчиллээ
+⚙️ Найдвартай ажиллагаа, урт хугацааны дэмжлэгийг сайжруулахын тулд backend функцүүдийг Node.js 22 руу шилжүүллээ
+💬 Тоглоомын зөвлөмжийг идэвхтэй хөдөлгөөний замаас холдууллаа
+🖐️ Тоглогчийн хөдөлгөөнт дүрс дууссаны дараа гарын заавар харагдана
 </mn-MN>
 
 <fa-IR>
+🐝 ثبت اعلان‌های فوری برای اطمینان بیشتر به‌روزرسانی شد
+🔔 اعلان دعوت بازی در دستگاه‌های دارای شناسه نصب Firebase اصلاح شد
+🛡️ نظارت بر نام مستعار به جدیدترین مدل Vertex AI به‌روزرسانی شد
+⚙️ توابع بخش پشتیبان برای اطمینان و پشتیبانی بلندمدت به Node.js 22 منتقل شدند
+💬 راهنمای بازی از مسیر حرکت فعال دور شد
+🖐️ راهنمای دست پس از پایان پویانمایی بازیکنان نمایش داده می‌شود
 </fa-IR>
 
 <si-LK>
+🐝 වැඩි විශ්වාසනීයත්වයක් සඳහා push දැනුම්දීම් ලියාපදිංචිය යාවත්කාලීන කරන ලදී
+🔔 Firebase Installation ID භාවිත කරන උපාංගවල ක්‍රීඩා ආරාධනා දැනුම්දීම් නිවැරදි කරන ලදී
+🛡️ අන්වර්ථ නාම පාලනය නවතම Vertex AI මාදිලියට යාවත්කාලීන කරන ලදී
+⚙️ වැඩි විශ්වාසනීයත්වයක් සහ දිගුකාලීන සහාය සඳහා backend functions Node.js 22 වෙත ගෙන යන ලදී
+💬 ක්‍රීඩා ඉඟි සක්‍රිය චලන මාර්ගයෙන් ඉවතට ගෙන යන ලදී
+🖐️ ක්‍රීඩක සජීවිකරණ අවසන් වූ පසු අත් මාර්ගෝපදේශය පෙන්වයි
 </si-LK>
