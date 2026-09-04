@@ -21,7 +21,9 @@ import com.google.firebase.firestore.*;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.FirebaseFunctionsException;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -101,7 +103,7 @@ public class AddFriendActivity extends BaseActivity {
             lastVisible = null;
 
             originalQuery = query;
-            currentQuery = query.toLowerCase();
+            currentQuery = normalizeSearchText(query);
             fallbackMode = false;
             hasMoreResults = false;
             loadMoreRevealedForCurrentPage = false;
@@ -236,7 +238,7 @@ public class AddFriendActivity extends BaseActivity {
                         
                         // Client-side filtering: check if nickname contains the search query anywhere
                         String nickname = fallbackMode ? d.getString("nickname") : d.getString("nicknameLowercase");
-                        if (nickname != null && nickname.toLowerCase().contains(currentQuery)) {
+                        if (nickname != null && normalizeSearchText(nickname).contains(currentQuery)) {
                             docs.add(d);
                         }
                     }
@@ -256,19 +258,19 @@ public class AddFriendActivity extends BaseActivity {
                             + ", visibleAfter=" + adapter.getItemCount()
                             + ", hasMore=" + hasMore);
 
-                    if (docs.isEmpty() && !fallbackMode && !hadCursor) {
+                    if (!fallbackMode && adapter.getItemCount() == 0 && !hasMore) {
                         fallbackMode = true;
                         lastVisible = null;
-                        Log.d(TAG, "AddFriendActivity.pagination: Switching to fallback nickname field");
+                        Log.d(TAG, "AddFriendActivity.pagination: Primary field exhausted; switching to fallback nickname field");
                         isPageLoading = false;
                         searchPage(loadMoreRequest, pagesFetchedForAction + 1);
                         return;
                     }
 
-                    if (shouldContinueLoading(loadMoreRequest, appendedCount, hasMore)) {
+                    if (shouldContinueLoading(appendedCount, hasMore)) {
                         Log.d(TAG, "AddFriendActivity.pagination: No matching results on page; fetching next page for the same tap");
                         isPageLoading = false;
-                        searchPage(true, pagesFetchedForAction + 1);
+                        searchPage(loadMoreRequest, pagesFetchedForAction + 1);
                         return;
                     }
 
@@ -316,8 +318,12 @@ public class AddFriendActivity extends BaseActivity {
         }
     }
 
-    static boolean shouldContinueLoading(boolean loadMoreRequest, int appendedCount, boolean hasMore) {
-        return loadMoreRequest && appendedCount == 0 && hasMore;
+    static boolean shouldContinueLoading(int appendedCount, boolean hasMore) {
+        return appendedCount == 0 && hasMore;
+    }
+
+    static String normalizeSearchText(String value) {
+        return Normalizer.normalize(value, Normalizer.Form.NFC).toLowerCase(Locale.ROOT);
     }
 
     static boolean shouldRevealLoadMore(boolean hasMore, boolean isLoading,

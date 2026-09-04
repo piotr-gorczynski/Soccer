@@ -1,50 +1,67 @@
 <en-GB>
+🔎 Fixed friend search for nicknames using Bengali, Arabic, and other Unicode scripts
 </en-GB>
 
 <pl-PL>
+🔎 Naprawiono wyszukiwanie znajomych o pseudonimach zapisanych alfabetem bengalskim, arabskim i innymi znakami Unicode
 </pl-PL>
 
 <de-DE>
+🔎 Freundessuche für Spitznamen mit bengalischen, arabischen und anderen Unicode-Zeichen korrigiert
 </de-DE>
 
 <fr-FR>
+🔎 Correction de la recherche d’amis dont le pseudonyme utilise des caractères bengalis, arabes ou Unicode
 </fr-FR>
 
 <es-ES>
+🔎 Corregida la búsqueda de amigos con apodos en bengalí, árabe y otros caracteres Unicode
 </es-ES>
 
 <ur>
+🔎 بنگالی، عربی اور دیگر یونیکوڈ حروف والے عرفی ناموں کے لیے دوستوں کی تلاش درست کر دی گئی
 </ur>
 
 <bn-BD>
+🔎 বাংলা, আরবি ও অন্যান্য ইউনিকোড লিপির ডাকনামের জন্য বন্ধু খোঁজার সমস্যা ঠিক করা হয়েছে
 </bn-BD>
 
 <ne-NP>
+🔎 बङ्गाली, अरबी र अन्य युनिकोड लिपिका उपनाम भएका साथीहरूको खोजी सच्याइयो
 </ne-NP>
 
 <hi-IN>
+🔎 बंगाली, अरबी और अन्य यूनिकोड लिपियों वाले उपनामों के लिए मित्र खोज को ठीक किया गया
 </hi-IN>
 
 <am>
+🔎 በቤንጋሊ፣ በአረብኛ እና በሌሎች ዩኒኮድ ፊደላት የተጻፉ ቅጽል ስሞችን የጓደኛ ፍለጋ ተስተካክሏል
 </am>
 
 <ar>
+🔎 تم إصلاح البحث عن الأصدقاء للأسماء المستعارة المكتوبة بالبنغالية والعربية ومحارف Unicode الأخرى
 </ar>
 
 <my-MM>
+🔎 ဘင်္ဂါလီ၊ အာရဗီနှင့် အခြား Unicode အက္ခရာများပါသော အမည်ပြောင်များအတွက် သူငယ်ချင်းရှာဖွေမှုကို ပြင်ဆင်ထားသည်
 </my-MM>
 
 <km-KH>
+🔎 បានកែការស្វែងរកមិត្តភក្តិសម្រាប់ឈ្មោះហៅក្រៅជាអក្សរបង់ក្លាដែស អារ៉ាប់ និង Unicode ផ្សេងទៀត
 </km-KH>
 
 <lo-LA>
+🔎 ແກ້ໄຂການຄົ້ນຫາໝູ່ສຳລັບຊື່ຫຼິ້ນທີ່ໃຊ້ອັກສອນເບັງກາລີ, ອາຣັບ ແລະ Unicode ອື່ນໆ
 </lo-LA>
 
 <mn-MN>
+🔎 Бенгал, араб болон бусад Unicode бичигтэй хоч нэрийн найз хайлтыг заслаа
 </mn-MN>
 
 <fa-IR>
+🔎 جست‌وجوی دوستان برای نام‌های مستعار با نویسه‌های بنگالی، عربی و سایر نویسه‌های یونیکد اصلاح شد
 </fa-IR>
 
 <si-LK>
+🔎 බෙංගාලි, අරාබි සහ වෙනත් Unicode අක්ෂර සහිත අන්වර්ථ නාම සඳහා මිතුරු සෙවීම නිවැරදි කරන ලදී
 </si-LK>
