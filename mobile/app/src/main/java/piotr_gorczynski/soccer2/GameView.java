@@ -116,6 +116,7 @@ public class GameView extends View {
     this.realMoves.addAll(newMoves);
     createPossibleMoves(possibleMovesForDrawing, realMoves);
     startPulseIfNeeded();
+    invalidate();
     }
 
     public static class MyHandler extends Handler {

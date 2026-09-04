@@ -215,6 +215,7 @@
     <string name="field_waiting_for">Waiting for %1$s</string>
     <string name="field_to_start_tail">to start… ⏳ %1$s</string>
     <string name="field_tutorial_message">Tap on one of the points to move the ball</string>
+    <string name="field_waiting_for_opponent_move">Waiting for opponent to move</string>
     <string name="field_tutorial_bounce_border">When ball hit a border, it bounces and you can again move the ball</string>
     <string name="field_tutorial_bounce_visited">When ball hit a previously visited point, it bounces and you can again move the ball</string>
     <string name="field_tutorial_no_moves">When there are no possible moves, the player immediately loses.</string>

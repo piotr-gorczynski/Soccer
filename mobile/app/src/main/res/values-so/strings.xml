@@ -353,6 +353,7 @@
     <string name="tournament_not_running">Tartanka %1$s hadda ma socdo</string>
     <string name="tournament_match_already_completed">Ciyaartan waa la dhammeeyay oo %1$s ayaa guuleystay</string>
     <string name="field_tutorial_message">Taabo mid ka mid ah dhibcaha si aad u dhaqaajiso kubbadda</string>
+    <string name="field_waiting_for_opponent_move">Sugaya qofka kaa soo horjeeda inuu dhaqaaqo</string>
     <string name="field_tutorial_bounce_border">Marka kubbadda ay ku dhacdo xadka, waxay soo noqotaa oo waxaad mar kale u dhaqaajin kartaa kubbadda</string>
     <string name="field_tutorial_bounce_visited">Marka kubbadda ay ku dhacdo meel hore loo booqday, waxay soo noqotaa oo waxaad mar kale u dhaqaajin kartaa kubbadda</string>
     <string name="field_tutorial_no_moves">Marka aysan jirin dhaqaaqyo suurtagal ah, ciyaartoygu markiiba wuu khasaaraa.</string>

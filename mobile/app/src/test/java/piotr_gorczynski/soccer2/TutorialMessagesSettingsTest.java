@@ -50,6 +50,7 @@ public class TutorialMessagesSettingsTest {
         
         String[] tutorialMessageKeys = {
             "field_tutorial_message",
+            "field_waiting_for_opponent_move",
             "field_tutorial_goal_1",
             "field_tutorial_goal_2",
             "field_tutorial_goal_3",
