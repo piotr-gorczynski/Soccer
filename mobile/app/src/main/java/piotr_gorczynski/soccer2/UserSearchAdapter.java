@@ -1,6 +1,9 @@
 package piotr_gorczynski.soccer2;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +29,9 @@ import java.util.Set;
 import java.util.HashSet;
 
 class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.VH> {
+    private static final String TAG = "TAG_Soccer";
+    private static final long PRESENCE_TIMEOUT_MS = 5_000L;
+
     interface OnAddClick { void onAdd(String uid); }
     interface OnVisibleResultsChanged { void onChanged(int visibleResultCount); }
 
@@ -51,6 +57,8 @@ class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.VH> {
     private Set<String> friendUids = new HashSet<>();
     private final Map<String,String> presCache = new HashMap<>();
     private final Map<String,Long> hbCache = new HashMap<>();
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+    private final Map<String,Runnable> presenceTimeouts = new HashMap<>();
     private static final class RtdbSub { final DatabaseReference ref; final ValueEventListener l; RtdbSub(DatabaseReference r, ValueEventListener l){this.ref=r;this.l=l;}}
     private final Map<String,RtdbSub> presSubs = new HashMap<>();
 
@@ -185,7 +193,22 @@ class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.VH> {
 
     private void subscribeToPresence(@NonNull String uid) {
         if (presSubs.containsKey(uid)) return;
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("status").child(uid);
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        database.goOnline();
+        DatabaseReference ref = database.getReference("status").child(uid);
+        Log.d(TAG, "UserSearchAdapter.presence: subscribing uid=" + uid
+                + ", path=" + ref.toString());
+
+        Runnable timeout = () -> {
+            presenceTimeouts.remove(uid);
+            if (presCache.containsKey(uid)) return;
+            Log.w(TAG, "UserSearchAdapter.presence: timed out uid=" + uid
+                    + ", defaulting to offline");
+            updatePresence(uid, "offline", 0L);
+        };
+        presenceTimeouts.put(uid, timeout);
+        mainHandler.postDelayed(timeout, PRESENCE_TIMEOUT_MS);
+
         ValueEventListener listener = new ValueEventListener() {
             @Override public void onDataChange(@NonNull DataSnapshot snap) {
                 String state = "offline";
@@ -193,31 +216,52 @@ class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.VH> {
                 if (snap.exists()) {
                     String stateValue = snap.child("state").getValue(String.class);
                     Long heartbeatValue = snap.child("last_heartbeat").getValue(Long.class);
-                    lastHeartbeat = heartbeatValue != null ? heartbeatValue : 0L;
+                    if (heartbeatValue != null) {
+                        lastHeartbeat = heartbeatValue;
+                    } else {
+                        Double heartbeatDouble = snap.child("last_heartbeat").getValue(Double.class);
+                        if (heartbeatDouble != null) lastHeartbeat = heartbeatDouble.longValue();
+                    }
                     if ("online".equals(stateValue)) {
                         state = "online";
                     } else if (lastHeartbeat > 0L) {
                         state = "active";
                     }
                 }
-                presCache.put(uid, state);
-                hbCache.put(uid, lastHeartbeat);
-                if (onlineOnly) {
-                    refreshVisibleData();
-                } else {
-                    int index = indexForUid(uid);
-                    if (index != RecyclerView.NO_POSITION) notifyItemChanged(index, "presence");
-                }
+                cancelPresenceTimeout(uid);
+                Log.d(TAG, "UserSearchAdapter.presence: received uid=" + uid
+                        + ", exists=" + snap.exists()
+                        + ", state=" + state
+                        + ", lastHeartbeat=" + lastHeartbeat);
+                updatePresence(uid, state, lastHeartbeat);
             }
 
             @Override public void onCancelled(@NonNull DatabaseError error) {
-                presCache.put(uid, "offline");
-                hbCache.put(uid, 0L);
-                if (onlineOnly) refreshVisibleData();
+                cancelPresenceTimeout(uid);
+                Log.e(TAG, "UserSearchAdapter.presence: cancelled uid=" + uid
+                        + ", code=" + error.getCode()
+                        + ", message=" + error.getMessage(), error.toException());
+                updatePresence(uid, "offline", 0L);
             }
         };
         ref.addValueEventListener(listener);
         presSubs.put(uid, new RtdbSub(ref, listener));
+    }
+
+    private void updatePresence(@NonNull String uid, @NonNull String state, long lastHeartbeat) {
+        presCache.put(uid, state);
+        hbCache.put(uid, lastHeartbeat);
+        if (onlineOnly) {
+            refreshVisibleData();
+        } else {
+            int index = indexForUid(uid);
+            if (index != RecyclerView.NO_POSITION) notifyItemChanged(index, "presence");
+        }
+    }
+
+    private void cancelPresenceTimeout(@NonNull String uid) {
+        Runnable timeout = presenceTimeouts.remove(uid);
+        if (timeout != null) mainHandler.removeCallbacks(timeout);
     }
 
     void clear() {
@@ -226,6 +270,10 @@ class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.VH> {
             sub.ref.removeEventListener(sub.l);
         }
         presSubs.clear();
+        for (Runnable timeout : presenceTimeouts.values()) {
+            mainHandler.removeCallbacks(timeout);
+        }
+        presenceTimeouts.clear();
         presCache.clear();
         hbCache.clear();
         resultUids.clear();
@@ -253,5 +301,9 @@ class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.VH> {
             sub.ref.removeEventListener(sub.l);
         }
         presSubs.clear();
+        for (Runnable timeout : presenceTimeouts.values()) {
+            mainHandler.removeCallbacks(timeout);
+        }
+        presenceTimeouts.clear();
     }
 }

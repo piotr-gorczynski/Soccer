@@ -1,67 +1,101 @@
 <en-GB>
 🔎 Fixed friend search for nicknames using Bengali, Arabic, and other Unicode scripts
+👥 The Add a Friend screen now shows all users immediately with pagination
+🟢 Fixed online, offline, and last-seen status display
 </en-GB>
 
 <pl-PL>
 🔎 Naprawiono wyszukiwanie znajomych o pseudonimach zapisanych alfabetem bengalskim, arabskim i innymi znakami Unicode
+👥 Ekran dodawania znajomego od razu wyświetla wszystkich użytkowników z paginacją
+🟢 Naprawiono wyświetlanie statusów online, offline i ostatniej aktywności
 </pl-PL>
 
 <de-DE>
 🔎 Freundessuche für Spitznamen mit bengalischen, arabischen und anderen Unicode-Zeichen korrigiert
+👥 Der Bildschirm „Freund hinzufügen“ zeigt jetzt sofort alle Benutzer mit Seitennavigation
+🟢 Anzeige von Online-, Offline- und Zuletzt-gesehen-Status korrigiert
 </de-DE>
 
 <fr-FR>
 🔎 Correction de la recherche d’amis dont le pseudonyme utilise des caractères bengalis, arabes ou Unicode
+👥 L’écran d’ajout d’amis affiche désormais immédiatement tous les utilisateurs avec pagination
+🟢 Correction de l’affichage des statuts en ligne, hors ligne et dernière activité
 </fr-FR>
 
 <es-ES>
 🔎 Corregida la búsqueda de amigos con apodos en bengalí, árabe y otros caracteres Unicode
+👥 La pantalla Añadir amigo ahora muestra de inmediato todos los usuarios con paginación
+🟢 Corregida la visualización de estados en línea, desconectado y última conexión
 </es-ES>
 
 <ur>
 🔎 بنگالی، عربی اور دیگر یونیکوڈ حروف والے عرفی ناموں کے لیے دوستوں کی تلاش درست کر دی گئی
+👥 دوست شامل کریں اسکرین اب تمام صارفین کو صفحہ بندی کے ساتھ فوراً دکھاتی ہے
+🟢 آن لائن، آف لائن اور آخری بار فعال ہونے کی حالت درست کر دی گئی
 </ur>
 
 <bn-BD>
 🔎 বাংলা, আরবি ও অন্যান্য ইউনিকোড লিপির ডাকনামের জন্য বন্ধু খোঁজার সমস্যা ঠিক করা হয়েছে
+👥 বন্ধু যোগ করার স্ক্রিন এখন পেজিনেশনসহ সব ব্যবহারকারীকে সঙ্গে সঙ্গে দেখায়
+🟢 অনলাইন, অফলাইন ও সর্বশেষ সক্রিয়তার অবস্থা দেখানো ঠিক করা হয়েছে
 </bn-BD>
 
 <ne-NP>
 🔎 बङ्गाली, अरबी र अन्य युनिकोड लिपिका उपनाम भएका साथीहरूको खोजी सच्याइयो
+👥 साथी थप्ने स्क्रिनले अब पृष्ठ विभाजनसहित सबै प्रयोगकर्ता तुरुन्तै देखाउँछ
+🟢 अनलाइन, अफलाइन र अन्तिम सक्रियता स्थिति देखाउने समस्या सच्याइयो
 </ne-NP>
 
 <hi-IN>
 🔎 बंगाली, अरबी और अन्य यूनिकोड लिपियों वाले उपनामों के लिए मित्र खोज को ठीक किया गया
+👥 मित्र जोड़ें स्क्रीन अब पेजिनेशन के साथ सभी उपयोगकर्ताओं को तुरंत दिखाती है
+🟢 ऑनलाइन, ऑफलाइन और अंतिम सक्रियता स्थिति का प्रदर्शन ठीक किया गया
 </hi-IN>
 
 <am>
 🔎 በቤንጋሊ፣ በአረብኛ እና በሌሎች ዩኒኮድ ፊደላት የተጻፉ ቅጽል ስሞችን የጓደኛ ፍለጋ ተስተካክሏል
+👥 የጓደኛ ማከያ ገጹ አሁን ሁሉንም ተጠቃሚዎች በገጽ ክፍፍል ወዲያውኑ ያሳያል
+🟢 የመስመር ላይ፣ ከመስመር ውጭ እና የመጨረሻ እንቅስቃሴ ሁኔታ ተስተካክሏል
 </am>
 
 <ar>
 🔎 تم إصلاح البحث عن الأصدقاء للأسماء المستعارة المكتوبة بالبنغالية والعربية ومحارف Unicode الأخرى
+👥 تعرض شاشة إضافة صديق الآن جميع المستخدمين فورًا مع تقسيم الصفحات
+🟢 تم إصلاح عرض حالة الاتصال وعدم الاتصال وآخر ظهور
 </ar>
 
 <my-MM>
 🔎 ဘင်္ဂါလီ၊ အာရဗီနှင့် အခြား Unicode အက္ခရာများပါသော အမည်ပြောင်များအတွက် သူငယ်ချင်းရှာဖွေမှုကို ပြင်ဆင်ထားသည်
+👥 သူငယ်ချင်းထည့်ရန် မျက်နှာပြင်တွင် အသုံးပြုသူအားလုံးကို စာမျက်နှာခွဲ၍ ချက်ချင်းပြသသည်
+🟢 အွန်လိုင်း၊ အော့ဖ်လိုင်းနှင့် နောက်ဆုံးအသုံးပြုချိန် အခြေအနေပြသမှုကို ပြင်ဆင်ထားသည်
 </my-MM>
 
 <km-KH>
 🔎 បានកែការស្វែងរកមិត្តភក្តិសម្រាប់ឈ្មោះហៅក្រៅជាអក្សរបង់ក្លាដែស អារ៉ាប់ និង Unicode ផ្សេងទៀត
+👥 អេក្រង់បន្ថែមមិត្តឥឡូវបង្ហាញអ្នកប្រើទាំងអស់ភ្លាមៗជាមួយការបែងចែកទំព័រ
+🟢 បានកែការបង្ហាញស្ថានភាពអនឡាញ អอฟឡាញ និងសកម្មភាពចុងក្រោយ
 </km-KH>
 
 <lo-LA>
 🔎 ແກ້ໄຂການຄົ້ນຫາໝູ່ສຳລັບຊື່ຫຼິ້ນທີ່ໃຊ້ອັກສອນເບັງກາລີ, ອາຣັບ ແລະ Unicode ອື່ນໆ
+👥 ໜ້າເພີ່ມໝູ່ສະແດງຜູ້ໃຊ້ທັງໝົດທັນທີພ້ອມການແບ່ງໜ້າ
+🟢 ແກ້ໄຂການສະແດງສະຖານະອອນລາຍ, ອອບລາຍ ແລະ ໃຊ້ງານລ່າສຸດ
 </lo-LA>
 
 <mn-MN>
 🔎 Бенгал, араб болон бусад Unicode бичигтэй хоч нэрийн найз хайлтыг заслаа
+👥 Найз нэмэх дэлгэц одоо бүх хэрэглэгчийг хуудаслалттайгаар шууд харуулна
+🟢 Онлайн, офлайн болон сүүлд идэвхтэй байсан төлөвийг заслаа
 </mn-MN>
 
 <fa-IR>
 🔎 جست‌وجوی دوستان برای نام‌های مستعار با نویسه‌های بنگالی، عربی و سایر نویسه‌های یونیکد اصلاح شد
+👥 صفحه افزودن دوست اکنون همه کاربران را بلافاصله با صفحه‌بندی نمایش می‌دهد
+🟢 نمایش وضعیت آنلاین، آفلاین و آخرین فعالیت اصلاح شد
 </fa-IR>
 
 <si-LK>
 🔎 බෙංගාලි, අරාබි සහ වෙනත් Unicode අක්ෂර සහිත අන්වර්ථ නාම සඳහා මිතුරු සෙවීම නිවැරදි කරන ලදී
+👥 මිතුරෙකු එක් කිරීමේ තිරය දැන් පිටු බෙදීම සමඟ සියලු පරිශීලකයන් වහාම පෙන්වයි
+🟢 සබැඳි, නොබැඳි සහ අවසන් ක්‍රියාකාරී තත්ත්වය පෙන්වීම නිවැරදි කරන ලදී
 </si-LK>
