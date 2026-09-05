@@ -9,22 +9,22 @@ public class AddFriendPaginationTest {
 
     @Test
     public void loadMoreContinuesPastAFullPageWithNoMatches() {
-        assertTrue(AddFriendActivity.shouldContinueLoading(true, 0, true));
+        assertTrue(AddFriendActivity.shouldContinueLoading(0, true));
     }
 
     @Test
     public void loadMoreStopsAfterAppendingResults() {
-        assertFalse(AddFriendActivity.shouldContinueLoading(true, 1, true));
+        assertFalse(AddFriendActivity.shouldContinueLoading(1, true));
     }
 
     @Test
     public void loadMoreStopsAtEndOfCollection() {
-        assertFalse(AddFriendActivity.shouldContinueLoading(true, 0, false));
+        assertFalse(AddFriendActivity.shouldContinueLoading(0, false));
     }
 
     @Test
-    public void initialSearchDoesNotAutoPaginate() {
-        assertFalse(AddFriendActivity.shouldContinueLoading(false, 0, true));
+    public void initialSearchContinuesUntilItFindsAMatch() {
+        assertTrue(AddFriendActivity.shouldContinueLoading(0, true));
     }
 
     @Test

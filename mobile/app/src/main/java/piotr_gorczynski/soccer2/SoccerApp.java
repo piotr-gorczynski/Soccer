@@ -439,6 +439,10 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
 
         userStatusDbRef.setValue(offline)                 // atomic write
                 .addOnSuccessListener(v -> {
+                    if (appInForeground) {
+                        Log.d(TAG, "SoccerApp.onStop: App returned to foreground before offline write completed; keeping RTDB online");
+                        return;
+                    }
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".onStop: ✅ calling goOffline()");
                     FirebaseDatabase.getInstance().goOffline();
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".onStop: ✅ calling scheduleHeartbeat()");
@@ -530,10 +534,23 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                                 + ": ❌ heartbeat write failed", e);
                 return Result.retry();          // let WM try again later
             } finally {
-                FirebaseDatabase.getInstance().goOffline();      // always close
+                boolean appIsForeground = ProcessLifecycleOwner.get()
+                        .getLifecycle()
+                        .getCurrentState()
+                        .isAtLeast(androidx.lifecycle.Lifecycle.State.STARTED);
+                if (shouldDisconnectDatabase(appIsForeground)) {
+                    FirebaseDatabase.getInstance().goOffline();
+                    Log.d(TAG, "HeartbeatWorker.doWork: RTDB disconnected while app is in background");
+                } else {
+                    Log.d(TAG, "HeartbeatWorker.doWork: App is in foreground; keeping RTDB online");
+                }
             }
 
         }
+    }
+
+    static boolean shouldDisconnectDatabase(boolean appIsForeground) {
+        return !appIsForeground;
     }
     private void setUserOnline() {
         // Only set user online if user is authenticated
