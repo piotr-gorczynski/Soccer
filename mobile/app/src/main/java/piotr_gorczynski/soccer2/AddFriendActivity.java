@@ -1,8 +1,6 @@
 package piotr_gorczynski.soccer2;
 
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -21,7 +19,9 @@ import com.google.firebase.firestore.*;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.FirebaseFunctionsException;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -42,7 +42,6 @@ public class AddFriendActivity extends BaseActivity {
     private UserSearchAdapter adapter;
     private DocumentSnapshot lastVisible;
     private String currentQuery;
-    private String originalQuery;
     private boolean fallbackMode;
     private boolean isPageLoading;
     private boolean hasMoreResults;
@@ -84,31 +83,8 @@ public class AddFriendActivity extends BaseActivity {
         onlineOnlyCheckbox.setOnCheckedChangeListener((buttonView, isChecked) ->
                 adapter.setOnlineOnly(isChecked));
 
-        searchButton.setEnabled(false);
-        nicknameInput.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int st, int c, int a) {}
-            @Override public void onTextChanged(CharSequence s, int st, int b, int c) {
-                searchButton.setEnabled(s.length() >= 1);
-            }
-            @Override public void afterTextChanged(Editable s) {}
-        });
-
-        searchButton.setOnClickListener(v -> {
-            String query = nicknameInput.getText().toString().trim();
-            if (query.length() < 1) return;
-            searchFeedbackActive = true;
-            adapter.clear();
-            lastVisible = null;
-
-            originalQuery = query;
-            currentQuery = query.toLowerCase();
-            fallbackMode = false;
-            hasMoreResults = false;
-            loadMoreRevealedForCurrentPage = false;
-
-            loadMoreButton.setVisibility(View.GONE);
-            searchPage(false, 0);
-        });
+        searchButton.setOnClickListener(v ->
+                startSearch(nicknameInput.getText().toString().trim()));
 
         loadMoreButton.setOnClickListener(v -> {
             Log.d(TAG, "AddFriendActivity.pagination: Load more tapped"
@@ -123,6 +99,25 @@ public class AddFriendActivity extends BaseActivity {
         
         // Load friends list to determine which users already are friends
         loadFriends();
+        if (auth.getCurrentUser() != null) {
+            startSearch("");
+        }
+    }
+
+    private void startSearch(String query) {
+        searchFeedbackActive = false;
+        currentQuery = normalizeSearchText(query);
+        adapter.clear();
+        lastVisible = null;
+
+        // Browsing all users must use nickname because legacy accounts may not
+        // have the derived nicknameLowercase field used by filtered searches.
+        fallbackMode = isBrowseAllQuery(currentQuery);
+        hasMoreResults = false;
+        loadMoreRevealedForCurrentPage = false;
+
+        loadMoreButton.setVisibility(View.GONE);
+        searchPage(false, 0);
     }
 
     private void updateEmptyState(int visibleResultCount) {
@@ -180,6 +175,7 @@ public class AddFriendActivity extends BaseActivity {
             return;
         }
         isPageLoading = true;
+        searchButton.setEnabled(false);
         loadMoreButton.setEnabled(false);
         loadMoreButton.setVisibility(View.GONE);
         fetchPage(loadMoreRequest, pagesFetchedForAction);
@@ -236,7 +232,7 @@ public class AddFriendActivity extends BaseActivity {
                         
                         // Client-side filtering: check if nickname contains the search query anywhere
                         String nickname = fallbackMode ? d.getString("nickname") : d.getString("nicknameLowercase");
-                        if (nickname != null && nickname.toLowerCase().contains(currentQuery)) {
+                        if (nickname != null && normalizeSearchText(nickname).contains(currentQuery)) {
                             docs.add(d);
                         }
                     }
@@ -256,19 +252,19 @@ public class AddFriendActivity extends BaseActivity {
                             + ", visibleAfter=" + adapter.getItemCount()
                             + ", hasMore=" + hasMore);
 
-                    if (docs.isEmpty() && !fallbackMode && !hadCursor) {
+                    if (!fallbackMode && adapter.getItemCount() == 0 && !hasMore) {
                         fallbackMode = true;
                         lastVisible = null;
-                        Log.d(TAG, "AddFriendActivity.pagination: Switching to fallback nickname field");
+                        Log.d(TAG, "AddFriendActivity.pagination: Primary field exhausted; switching to fallback nickname field");
                         isPageLoading = false;
                         searchPage(loadMoreRequest, pagesFetchedForAction + 1);
                         return;
                     }
 
-                    if (shouldContinueLoading(loadMoreRequest, appendedCount, hasMore)) {
+                    if (shouldContinueLoading(appendedCount, hasMore)) {
                         Log.d(TAG, "AddFriendActivity.pagination: No matching results on page; fetching next page for the same tap");
                         isPageLoading = false;
-                        searchPage(true, pagesFetchedForAction + 1);
+                        searchPage(loadMoreRequest, pagesFetchedForAction + 1);
                         return;
                     }
 
@@ -288,8 +284,10 @@ public class AddFriendActivity extends BaseActivity {
 
     private void finishPageRequest(boolean hasMore) {
         isPageLoading = false;
+        searchFeedbackActive = true;
         hasMoreResults = hasMore;
         loadMoreRevealedForCurrentPage = false;
+        searchButton.setEnabled(true);
         loadMoreButton.setEnabled(true);
         loadMoreButton.setVisibility(View.GONE);
         Log.d(TAG, "AddFriendActivity.pagination: Action finished"
@@ -316,8 +314,16 @@ public class AddFriendActivity extends BaseActivity {
         }
     }
 
-    static boolean shouldContinueLoading(boolean loadMoreRequest, int appendedCount, boolean hasMore) {
-        return loadMoreRequest && appendedCount == 0 && hasMore;
+    static boolean shouldContinueLoading(int appendedCount, boolean hasMore) {
+        return appendedCount == 0 && hasMore;
+    }
+
+    static String normalizeSearchText(String value) {
+        return Normalizer.normalize(value, Normalizer.Form.NFC).toLowerCase(Locale.ROOT);
+    }
+
+    static boolean isBrowseAllQuery(String query) {
+        return query.isEmpty();
     }
 
     static boolean shouldRevealLoadMore(boolean hasMore, boolean isLoading,
