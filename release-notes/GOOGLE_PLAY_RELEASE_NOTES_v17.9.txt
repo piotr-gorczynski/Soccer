@@ -1,67 +1,67 @@
 <en-GB>
-Improved push notification reliability and inactive device handling.
+🔔 Improved push notification reliability and inactive device handling.
 </en-GB>
 
 <pl-PL>
-Poprawiono niezawodność powiadomień push i obsługę nieaktywnych urządzeń.
+🔔 Poprawiono niezawodność powiadomień push i obsługę nieaktywnych urządzeń.
 </pl-PL>
 
 <de-DE>
-Push-Benachrichtigungen und die Erkennung inaktiver Geräte wurden verbessert.
+🔔 Push-Benachrichtigungen und die Erkennung inaktiver Geräte wurden verbessert.
 </de-DE>
 
 <fr-FR>
-Amélioration de la fiabilité des notifications push et de la gestion des appareils inactifs.
+🔔 Amélioration de la fiabilité des notifications push et de la gestion des appareils inactifs.
 </fr-FR>
 
 <es-ES>
-Se mejoró la fiabilidad de las notificaciones push y la gestión de dispositivos inactivos.
+🔔 Se mejoró la fiabilidad de las notificaciones push y la gestión de dispositivos inactivos.
 </es-ES>
 
 <ur>
-پش اطلاعات کی قابل اعتماد کارکردگی اور غیر فعال آلات کی ہینڈلنگ بہتر بنائی گئی۔
+🔔 پش اطلاعات کی قابل اعتماد کارکردگی اور غیر فعال آلات کی ہینڈلنگ بہتر بنائی گئی۔
 </ur>
 
 <bn-BD>
-পুশ নোটিফিকেশনের নির্ভরযোগ্যতা ও নিষ্ক্রিয় ডিভাইস ব্যবস্থাপনা উন্নত করা হয়েছে।
+🔔 পুশ নোটিফিকেশনের নির্ভরযোগ্যতা ও নিষ্ক্রিয় ডিভাইস ব্যবস্থাপনা উন্নত করা হয়েছে।
 </bn-BD>
 
 <ne-NP>
-पुश सूचनाको विश्वसनीयता र निष्क्रिय उपकरण व्यवस्थापन सुधार गरिएको छ।
+🔔 पुश सूचनाको विश्वसनीयता र निष्क्रिय उपकरण व्यवस्थापन सुधार गरिएको छ।
 </ne-NP>
 
 <hi-IN>
-पुश नोटिफ़िकेशन की विश्वसनीयता और निष्क्रिय डिवाइस प्रबंधन में सुधार किया गया।
+🔔 पुश नोटिफ़िकेशन की विश्वसनीयता और निष्क्रिय डिवाइस प्रबंधन में सुधार किया गया।
 </hi-IN>
 
 <am>
-የግፊት ማሳወቂያዎች አስተማማኝነት እና የቦዘኑ መሣሪያዎች አያያዝ ተሻሽሏል።
+🔔 የግፊት ማሳወቂያዎች አስተማማኝነት እና የቦዘኑ መሣሪያዎች አያያዝ ተሻሽሏል።
 </am>
 
 <ar>
-تم تحسين موثوقية الإشعارات الفورية والتعامل مع الأجهزة غير النشطة.
+🔔 تم تحسين موثوقية الإشعارات الفورية والتعامل مع الأجهزة غير النشطة.
 </ar>
 
 <my-MM>
-Push အသိပေးချက်များ၏ ယုံကြည်စိတ်ချရမှုနှင့် အသုံးမပြုသော စက်များကို ကိုင်တွယ်မှုအား မြှင့်တင်ထားသည်။
+🔔 Push အသိပေးချက်များ၏ ယုံကြည်စိတ်ချရမှုနှင့် အသုံးမပြုသော စက်များကို ကိုင်တွယ်မှုအား မြှင့်တင်ထားသည်။
 </my-MM>
 
 <km-KH>
-បានកែលម្អភាពជឿជាក់នៃការជូនដំណឹង Push និងការគ្រប់គ្រងឧបករណ៍អសកម្ម។
+🔔 បានកែលម្អភាពជឿជាក់នៃការជូនដំណឹង Push និងការគ្រប់គ្រងឧបករណ៍អសកម្ម។
 </km-KH>
 
 <lo-LA>
-ປັບປຸງຄວາມໜ້າເຊື່ອຖືຂອງການແຈ້ງເຕືອນ Push ແລະ ການຈັດການອຸປະກອນທີ່ບໍ່ເຄື່ອນໄຫວ.
+🔔 ປັບປຸງຄວາມໜ້າເຊື່ອຖືຂອງການແຈ້ງເຕືອນ Push ແລະ ການຈັດການອຸປະກອນທີ່ບໍ່ເຄື່ອນໄຫວ.
 </lo-LA>
 
 <mn-MN>
-Push мэдэгдлийн найдвартай ажиллагаа болон идэвхгүй төхөөрөмжийн зохицуулалтыг сайжрууллаа.
+🔔 Push мэдэгдлийн найдвартай ажиллагаа болон идэвхгүй төхөөрөмжийн зохицуулалтыг сайжрууллаа.
 </mn-MN>
 
 <fa-IR>
-قابلیت اطمینان اعلان‌های فوری و مدیریت دستگاه‌های غیرفعال بهبود یافت.
+🔔 قابلیت اطمینان اعلان‌های فوری و مدیریت دستگاه‌های غیرفعال بهبود یافت.
 </fa-IR>
 
 <si-LK>
-Push දැනුම්දීම්වල විශ්වසනීයත්වය සහ අක්‍රිය උපාංග කළමනාකරණය වැඩිදියුණු කරන ලදී.
+🔔 Push දැනුම්දීම්වල විශ්වසනීයත්වය සහ අක්‍රිය උපාංග කළමනාකරණය වැඩිදියුණු කරන ලදී.
 </si-LK>
