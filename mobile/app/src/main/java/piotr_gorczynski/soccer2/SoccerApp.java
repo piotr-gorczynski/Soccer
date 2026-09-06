@@ -42,6 +42,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.installations.FirebaseInstallations;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -315,13 +316,16 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
 
         SharedPreferences prefs =
                 getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
-        String saved = prefs.getString(FCM_INSTALLATION_ID_PREF, null);
-        if (installationId.equals(saved)) return;
+        Map<String, Object> updates = new HashMap<>();
+        updates.put(FCM_INSTALLATION_ID_FIELD, installationId);
+        updates.put("fcmToken", FieldValue.delete());
+        updates.put("fcmErrorType", FieldValue.delete());
+        updates.put("fcmErrorDate", FieldValue.delete());
 
         FirebaseFirestore.getInstance()
                 .collection("users")
                 .document(uid)
-                .set(Map.of(FCM_INSTALLATION_ID_FIELD, installationId), SetOptions.merge())
+                .set(updates, SetOptions.merge())
                 .addOnSuccessListener(v -> {
                     prefs.edit().putString(FCM_INSTALLATION_ID_PREF, installationId).apply();
                     Log.d(TAG, "SoccerApp.saveFcmInstallationId: FID saved");
@@ -329,6 +333,26 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                 .addOnFailureListener(error -> Log.e(
                         TAG,
                         "SoccerApp.saveFcmInstallationId: Failed to save FID",
+                        error));
+    }
+
+    public void clearFcmRegistration(@NonNull String uid) {
+        Map<String, Object> updates = new HashMap<>();
+        updates.put(FCM_INSTALLATION_ID_FIELD, FieldValue.delete());
+        updates.put("fcmToken", FieldValue.delete());
+        updates.put("fcmErrorType", "NotRegistered");
+        updates.put("fcmErrorDate", FieldValue.serverTimestamp());
+
+        FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(uid)
+                .update(updates)
+                .addOnSuccessListener(unused -> Log.d(
+                        TAG,
+                        "SoccerApp.clearFcmRegistration: Server registration cleared"))
+                .addOnFailureListener(error -> Log.w(
+                        TAG,
+                        "SoccerApp.clearFcmRegistration: Failed to clear server registration",
                         error));
     }
 

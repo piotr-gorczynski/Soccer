@@ -135,6 +135,7 @@ public class AccountActivity extends BaseActivity {
         // Attempt to mark the user offline before signing out so permissions work
         if (uid != null) {
             ((SoccerApp) getApplication()).forceUserOffline(uid);
+            ((SoccerApp) getApplication()).clearFcmRegistration(uid);
         }
 
         // Sign out immediately so the UI updates even if network operations fail
