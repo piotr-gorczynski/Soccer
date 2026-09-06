@@ -182,19 +182,29 @@ async function sendNotificationsToParticipants(tournamentRef, tournamentName) {
         
         // Handle invalid/expired FCM tokens
         if (error.code === 'messaging/registration-token-not-registered' ||
+            error.code === 'messaging/installation-id-not-registered' ||
             error.code === 'messaging/invalid-registration-token') {
           console.warn(`[sendNotifications] Invalid FCM token for user ${user.uid}`);
           
           // Mark the token as invalid in Firestore
           try {
-            const fcmErrorType = error.code === 'messaging/registration-token-not-registered' 
+            const fcmErrorType = error.code === 'messaging/registration-token-not-registered' ||
+              error.code === 'messaging/installation-id-not-registered'
               ? 'NotRegistered' 
               : 'InvalidRegistration';
-            
-            await db.collection('users').doc(user.uid).update({
+
+            const updates = {
               fcmErrorType: fcmErrorType,
               fcmErrorDate: admin.firestore.FieldValue.serverTimestamp()
-            });
+            };
+
+            if (error.code === 'messaging/installation-id-not-registered') {
+              updates.fcmInstallationId = admin.firestore.FieldValue.delete();
+            } else {
+              updates.fcmToken = admin.firestore.FieldValue.delete();
+            }
+
+            await db.collection('users').doc(user.uid).update(updates);
           } catch (updateError) {
             console.error(`[sendNotifications] Failed to update FCM error for user ${user.uid}: ${updateError.message}`);
           }

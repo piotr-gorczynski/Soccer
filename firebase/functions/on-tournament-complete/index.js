@@ -252,18 +252,28 @@ async function notifyWinner(userId, tournamentId, tournamentName) {
   } catch (error) {
     // Notification failure must never prevent payment record creation.
     if (error.code === 'messaging/registration-token-not-registered' ||
+        error.code === 'messaging/installation-id-not-registered' ||
         error.code === 'messaging/invalid-registration-token') {
       console.warn(`[notifyWinner] Invalid FCM token for user ${userId}`);
 
       try {
-        const fcmErrorType = error.code === 'messaging/registration-token-not-registered'
+        const fcmErrorType = error.code === 'messaging/registration-token-not-registered' ||
+          error.code === 'messaging/installation-id-not-registered'
           ? 'NotRegistered'
           : 'InvalidRegistration';
 
-        await db.collection('users').doc(userId).update({
+        const updates = {
           fcmErrorType: fcmErrorType,
           fcmErrorDate: admin.firestore.FieldValue.serverTimestamp(),
-        });
+        };
+
+        if (error.code === 'messaging/installation-id-not-registered') {
+          updates.fcmInstallationId = admin.firestore.FieldValue.delete();
+        } else {
+          updates.fcmToken = admin.firestore.FieldValue.delete();
+        }
+
+        await db.collection('users').doc(userId).update(updates);
       } catch (updateError) {
         console.error(`[notifyWinner] Failed to update FCM error for user ${userId}: ${updateError.message}`);
       }
