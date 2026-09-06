@@ -84,6 +84,7 @@ exports.sendInviteNotification = functions.firestore
     } catch (error) {
       // Handle FCM-specific errors
       if (error.code === 'messaging/registration-token-not-registered' ||
+          error.code === 'messaging/installation-id-not-registered' ||
           error.code === 'messaging/invalid-registration-token') {
         console.error(`[sendInviteNotification] Invalid or expired FCM token for user ${to}, invitation ${inviteId}`, {
           errorCode: error.code,
@@ -92,14 +93,23 @@ exports.sendInviteNotification = functions.firestore
         
         // Store error information in user document
         try {
-          const fcmErrorType = error.code === 'messaging/registration-token-not-registered' 
+          const fcmErrorType = error.code === 'messaging/registration-token-not-registered' ||
+            error.code === 'messaging/installation-id-not-registered'
             ? 'NotRegistered' 
             : 'InvalidRegistration';
-          
-          await db.doc(`users/${to}`).update({
+
+          const updates = {
             fcmErrorType: fcmErrorType,
             fcmErrorDate: FieldValue.serverTimestamp()
-          });
+          };
+
+          if (error.code === 'messaging/installation-id-not-registered') {
+            updates.fcmInstallationId = FieldValue.delete();
+          } else {
+            updates.fcmToken = FieldValue.delete();
+          }
+
+          await db.doc(`users/${to}`).update(updates);
           
           console.log(`[sendInviteNotification] Stored FCM error info for user ${to}`, {
             fcmErrorType: fcmErrorType
