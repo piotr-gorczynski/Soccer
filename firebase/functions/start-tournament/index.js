@@ -2,7 +2,34 @@ const functions = require('firebase-functions/v1');
 const admin     = require('firebase-admin');
 admin.initializeApp();
 const db  = admin.firestore();
+const rtdb = admin.database();
 const { Timestamp } = admin.firestore;
+
+async function invalidateFcmTarget(user, fcmErrorType, sendStartedAt) {
+  const targetField = user.fcmInstallationId ? 'fcmInstallationId' : 'fcmToken';
+  const targetValue = user.fcmInstallationId || user.fcmToken;
+  const userRef = db.collection('users').doc(user.uid);
+  const targetWasInvalidated = await db.runTransaction(async transaction => {
+    const currentUser = await transaction.get(userRef);
+    if (!currentUser.exists || currentUser.get(targetField) !== targetValue) return false;
+    transaction.update(userRef, {
+      [targetField]: admin.firestore.FieldValue.delete(),
+      fcmErrorType,
+      fcmErrorDate: admin.firestore.FieldValue.serverTimestamp()
+    });
+    return true;
+  });
+
+  if (!targetWasInvalidated || fcmErrorType !== 'NotRegistered') return targetWasInvalidated;
+
+  const result = await rtdb.ref(`status/${user.uid}`).transaction(currentStatus => {
+    const lastHeartbeat = Number(currentStatus?.last_heartbeat || 0);
+    if (lastHeartbeat > sendStartedAt) return;
+    return { ...(currentStatus || {}), state: 'offline', last_heartbeat: 0 };
+  });
+  console.log(`[sendNotifications] Presence invalidation for user ${user.uid}: committed=${result.committed}`);
+  return true;
+}
 
 /**
  * Localized messages for "Tournament started!" in all supported languages.
@@ -157,6 +184,7 @@ async function sendNotificationsToParticipants(tournamentRef, tournamentName) {
     let failedCount = 0;
 
     for (const user of eligibleUsers) {
+      const sendStartedAt = Date.now();
       try {
         const localizedMessage = TOURNAMENT_STARTED_MESSAGES[user.language] || TOURNAMENT_STARTED_MESSAGES['en'];
         
@@ -193,18 +221,7 @@ async function sendNotificationsToParticipants(tournamentRef, tournamentName) {
               ? 'NotRegistered' 
               : 'InvalidRegistration';
 
-            const updates = {
-              fcmErrorType: fcmErrorType,
-              fcmErrorDate: admin.firestore.FieldValue.serverTimestamp()
-            };
-
-            if (error.code === 'messaging/installation-id-not-registered') {
-              updates.fcmInstallationId = admin.firestore.FieldValue.delete();
-            } else {
-              updates.fcmToken = admin.firestore.FieldValue.delete();
-            }
-
-            await db.collection('users').doc(user.uid).update(updates);
+            await invalidateFcmTarget(user, fcmErrorType, sendStartedAt);
           } catch (updateError) {
             console.error(`[sendNotifications] Failed to update FCM error for user ${user.uid}: ${updateError.message}`);
           }
