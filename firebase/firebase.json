@@ -87,6 +87,12 @@
       "region": "us-central1"
     },
     {
+      "source": "functions/verify-inactive-fcm-registrations",
+      "codebase": "verify-inactive-fcm-registrations",
+      "runtime": "nodejs22",
+      "region": "us-central1"
+    },
+    {
       "source": "functions/check-nickname",
       "codebase": "check-nickname",
       "runtime": "nodejs22",
