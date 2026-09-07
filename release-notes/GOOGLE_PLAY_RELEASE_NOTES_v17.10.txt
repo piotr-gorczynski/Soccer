@@ -1,0 +1,67 @@
+<en-GB>
+📴 Users with unregistered notification devices are now immediately marked offline.
+</en-GB>
+
+<pl-PL>
+📴 Użytkownicy z wyrejestrowanymi urządzeniami powiadomień są teraz natychmiast oznaczani jako offline.
+</pl-PL>
+
+<de-DE>
+📴 Nutzer mit nicht mehr registrierten Benachrichtigungsgeräten werden jetzt sofort als offline markiert.
+</de-DE>
+
+<fr-FR>
+📴 Les utilisateurs dont l’appareil de notification n’est plus enregistré sont désormais immédiatement marqués hors ligne.
+</fr-FR>
+
+<es-ES>
+📴 Los usuarios cuyos dispositivos de notificación ya no están registrados ahora se marcan inmediatamente como desconectados.
+</es-ES>
+
+<ur>
+📴 جن صارفین کے نوٹیفکیشن آلات رجسٹرڈ نہیں رہے، انہیں اب فوراً آف لائن نشان زد کیا جاتا ہے۔
+</ur>
+
+<bn-BD>
+📴 যেসব ব্যবহারকারীর নোটিফিকেশন ডিভাইস আর নিবন্ধিত নেই, তাদের এখন সঙ্গে সঙ্গে অফলাইন হিসেবে চিহ্নিত করা হয়।
+</bn-BD>
+
+<ne-NP>
+📴 सूचना उपकरण दर्ता नरहेका प्रयोगकर्ताहरूलाई अब तुरुन्तै अफलाइन चिन्ह लगाइन्छ।
+</ne-NP>
+
+<hi-IN>
+📴 जिन उपयोगकर्ताओं के नोटिफ़िकेशन डिवाइस अब पंजीकृत नहीं हैं, उन्हें तुरंत ऑफ़लाइन चिह्नित किया जाता है।
+</hi-IN>
+
+<am>
+📴 የማሳወቂያ መሣሪያቸው ያልተመዘገበ ተጠቃሚዎች አሁን ወዲያውኑ ከመስመር ውጭ ተብለው ይመዘገባሉ።
+</am>
+
+<ar>
+📴 يتم الآن وضع علامة غير متصل فورًا على المستخدمين الذين لم تعد أجهزة الإشعارات الخاصة بهم مسجلة.
+</ar>
+
+<my-MM>
+📴 အသိပေးချက် စက်ပစ္စည်း မှတ်ပုံတင်မှု မရှိတော့သော အသုံးပြုသူများကို ယခု ချက်ချင်း အော့ဖ်လိုင်းအဖြစ် သတ်မှတ်ပါသည်။
+</my-MM>
+
+<km-KH>
+📴 អ្នកប្រើប្រាស់ដែលឧបករណ៍ជូនដំណឹងលែងបានចុះឈ្មោះ ឥឡូវនេះត្រូវបានសម្គាល់ថាក្រៅបណ្ដាញភ្លាមៗ។
+</km-KH>
+
+<lo-LA>
+📴 ຜູ້ໃຊ້ທີ່ອຸປະກອນຮັບແຈ້ງເຕືອນບໍ່ໄດ້ລົງທະບຽນແລ້ວ ຈະຖືກໝາຍວ່າອອບລາຍທັນທີ.
+</lo-LA>
+
+<mn-MN>
+📴 Мэдэгдэл хүлээн авах төхөөрөмж нь бүртгэлгүй болсон хэрэглэгчийг одоо шууд офлайн гэж тэмдэглэнэ.
+</mn-MN>
+
+<fa-IR>
+📴 کاربرانی که دستگاه اعلان آن‌ها دیگر ثبت‌شده نیست، اکنون بلافاصله آفلاین علامت‌گذاری می‌شوند.
+</fa-IR>
+
+<si-LK>
+📴 දැනුම්දීම් උපාංගය තවදුරටත් ලියාපදිංචි වී නොමැති පරිශීලකයන් දැන් වහාම නොබැඳි ලෙස සලකුණු කෙරේ.
+</si-LK>
