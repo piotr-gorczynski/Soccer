@@ -54,7 +54,6 @@ steps:
 
         mkdir -p /workspace/firebase/functions/verify-inactive-fcm-registrations
         cp /workspace/soccer/firebase/functions/verify-inactive-fcm-registrations/package.json /workspace/firebase/functions/verify-inactive-fcm-registrations/
-        cp /workspace/soccer/firebase/functions/verify-inactive-fcm-registrations/package-lock.json /workspace/firebase/functions/verify-inactive-fcm-registrations/
         cp /workspace/soccer/firebase/functions/verify-inactive-fcm-registrations/index.js /workspace/firebase/functions/verify-inactive-fcm-registrations/
 
   # Step 4: Install Node dependencies
@@ -66,7 +65,7 @@ steps:
       - |
         set -ex
         cd /workspace/firebase/functions/verify-inactive-fcm-registrations
-        npm ci
+        npm install
         echo "📦 Dependencies installed."
 
   # Step 5: Deploy function using firebase.json in /workspace/firebase
