@@ -2,11 +2,49 @@ const functions = require("firebase-functions/v1");
 const { initializeApp } = require("firebase-admin/app");
 const { FieldValue, getFirestore } = require("firebase-admin/firestore");
 const { getMessaging } = require("firebase-admin/messaging");
+const { getDatabase } = require("firebase-admin/database");
 
 initializeApp();
 
 const db = getFirestore();
 const messaging = getMessaging();
+const rtdb = getDatabase();
+
+async function invalidateFcmTarget(userId, targetField, targetValue, fcmErrorType, sendStartedAt) {
+  const userRef = db.doc(`users/${userId}`);
+  const targetWasInvalidated = await db.runTransaction(async transaction => {
+    const currentUser = await transaction.get(userRef);
+    if (!currentUser.exists || currentUser.get(targetField) !== targetValue) {
+      return false;
+    }
+
+    transaction.update(userRef, {
+      [targetField]: FieldValue.delete(),
+      fcmErrorType,
+      fcmErrorDate: FieldValue.serverTimestamp()
+    });
+    return true;
+  });
+
+  if (!targetWasInvalidated || fcmErrorType !== 'NotRegistered') {
+    return targetWasInvalidated;
+  }
+
+  const statusRef = rtdb.ref(`status/${userId}`);
+  const presenceResult = await statusRef.transaction(currentStatus => {
+    const lastHeartbeat = Number(currentStatus?.last_heartbeat || 0);
+    if (lastHeartbeat > sendStartedAt) {
+      return;
+    }
+    return { ...(currentStatus || {}), state: 'offline', last_heartbeat: 0 };
+  });
+
+  console.log(`[sendInviteNotification] Presence invalidation for user ${userId}`, {
+    committed: presenceResult.committed,
+    sendStartedAt
+  });
+  return true;
+}
 
 exports.sendInviteNotification = functions.firestore
   .document('invitations/{inviteId}')
@@ -21,6 +59,9 @@ exports.sendInviteNotification = functions.firestore
     });
 
     const { from, to } = inviteData;
+    const sendStartedAt = Date.now();
+    let attemptedTargetField;
+    let attemptedTargetValue;
 
     // Validate required fields
     if (!from || !to) {
@@ -69,6 +110,9 @@ exports.sendInviteNotification = functions.firestore
         android: { priority: 'high' }
       };
 
+      attemptedTargetField = fcmInstallationId ? 'fcmInstallationId' : 'fcmToken';
+      attemptedTargetValue = fcmInstallationId || fcmToken;
+
       console.log(`[sendInviteNotification] Sending notification for invitation ${inviteId}`, {
         to: to,
         fromNickname: fromNickname,
@@ -98,21 +142,17 @@ exports.sendInviteNotification = functions.firestore
             ? 'NotRegistered' 
             : 'InvalidRegistration';
 
-          const updates = {
-            fcmErrorType: fcmErrorType,
-            fcmErrorDate: FieldValue.serverTimestamp()
-          };
-
-          if (error.code === 'messaging/installation-id-not-registered') {
-            updates.fcmInstallationId = FieldValue.delete();
-          } else {
-            updates.fcmToken = FieldValue.delete();
-          }
-
-          await db.doc(`users/${to}`).update(updates);
+          const invalidated = await invalidateFcmTarget(
+            to,
+            attemptedTargetField,
+            attemptedTargetValue,
+            fcmErrorType,
+            sendStartedAt
+          );
           
           console.log(`[sendInviteNotification] Stored FCM error info for user ${to}`, {
-            fcmErrorType: fcmErrorType
+            fcmErrorType: fcmErrorType,
+            invalidated
           });
         } catch (updateError) {
           console.error(`[sendInviteNotification] Failed to update user document with FCM error for user ${to}`, {

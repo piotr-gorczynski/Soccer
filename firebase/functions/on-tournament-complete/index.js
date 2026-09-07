@@ -8,7 +8,34 @@ if (!admin.apps.length) {
 }
 
 const db = admin.firestore();
+const rtdb = admin.database();
 const { Timestamp } = admin.firestore;
+
+async function invalidateFcmTarget(userId, userData, fcmErrorType, sendStartedAt) {
+  const targetField = userData.fcmInstallationId ? 'fcmInstallationId' : 'fcmToken';
+  const targetValue = userData.fcmInstallationId || userData.fcmToken;
+  const userRef = db.collection('users').doc(userId);
+  const targetWasInvalidated = await db.runTransaction(async transaction => {
+    const currentUser = await transaction.get(userRef);
+    if (!currentUser.exists || currentUser.get(targetField) !== targetValue) return false;
+    transaction.update(userRef, {
+      [targetField]: admin.firestore.FieldValue.delete(),
+      fcmErrorType,
+      fcmErrorDate: admin.firestore.FieldValue.serverTimestamp(),
+    });
+    return true;
+  });
+
+  if (!targetWasInvalidated || fcmErrorType !== 'NotRegistered') return targetWasInvalidated;
+
+  const result = await rtdb.ref(`status/${userId}`).transaction(currentStatus => {
+    const lastHeartbeat = Number(currentStatus?.last_heartbeat || 0);
+    if (lastHeartbeat > sendStartedAt) return;
+    return { ...(currentStatus || {}), state: 'offline', last_heartbeat: 0 };
+  });
+  console.log(`[notifyWinner] Presence invalidation for user ${userId}: committed=${result.committed}`);
+  return true;
+}
 
 /**
  * Localized "You won the tournament!" messages for FCM push notifications.
@@ -217,6 +244,8 @@ async function computeStandings(tournamentRef) {
  *  Helper: send an FCM push notification to the tournament winner.*
  * ─────────────────────────────────────────────────────────────── */
 async function notifyWinner(userId, tournamentId, tournamentName) {
+  const sendStartedAt = Date.now();
+  let attemptedUserData;
   try {
     const userDoc = await db.collection('users').doc(userId).get();
     if (!userDoc.exists) {
@@ -225,6 +254,7 @@ async function notifyWinner(userId, tournamentId, tournamentName) {
     }
 
     const userData = userDoc.data();
+    attemptedUserData = userData;
     if (userData.accountDeleted === true || (!userData.fcmInstallationId && !userData.fcmToken)) {
       console.log(`[notifyWinner] Skipping notification for user ${userId} (deleted or no FCM target)`);
       return;
@@ -262,18 +292,7 @@ async function notifyWinner(userId, tournamentId, tournamentName) {
           ? 'NotRegistered'
           : 'InvalidRegistration';
 
-        const updates = {
-          fcmErrorType: fcmErrorType,
-          fcmErrorDate: admin.firestore.FieldValue.serverTimestamp(),
-        };
-
-        if (error.code === 'messaging/installation-id-not-registered') {
-          updates.fcmInstallationId = admin.firestore.FieldValue.delete();
-        } else {
-          updates.fcmToken = admin.firestore.FieldValue.delete();
-        }
-
-        await db.collection('users').doc(userId).update(updates);
+        await invalidateFcmTarget(userId, attemptedUserData, fcmErrorType, sendStartedAt);
       } catch (updateError) {
         console.error(`[notifyWinner] Failed to update FCM error for user ${userId}: ${updateError.message}`);
       }
