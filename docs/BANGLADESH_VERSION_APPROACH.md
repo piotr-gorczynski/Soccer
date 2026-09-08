@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.15  
-**Last Updated:** 2026-01-19  
+**Document Version:** 2.16
+**Last Updated:** 2026-09-08
 **Status:** Planning - Legal Validation Completed
 
 **Revision History**:
+- v2.16 (2026-09-08): Added the JSON-based regulation import workflow. Regulations use native Firestore IDs, retain the existing localized subcollection layout, and may carry structured market, minimum-age, and prize-payout metadata. Documented backward compatibility, successful validation on the dev environment, and the remaining `create-tournament` integration work.
 - v2.15 (2026-01-19): Added source documents that confirm Remitly can deliver to bKash and Nagad mobile wallets.
 - v2.14 (2026-01-18): **SHA COPY APPROACH VALIDATED** - Documented the successful automated SHA certificate copy approach using `gcp/cloud-build/sha_copy.yaml`. The workflow has been validated (issue #1159) and successfully handles app discovery, certificate comparison, copying, verification, and graceful handling of unprovisioned Firebase apps. Updated documentation to describe the complete working solution with detailed workflow steps, prerequisites, and usage instructions.
 - v2.13 (2025-12-31): **SHA COPY YAML MIGRATION** - Moved SHA certificate copy automation into a dedicated Cloud Build config (`gcp/cloud-build/sha_copy.yaml`) and removed the standalone shell script step from the main deploy flow.
@@ -598,6 +599,38 @@ This section provides detailed technical verification of why bKash, Nagad, and R
 - Winner providing correct details (collect carefully via app)
 
 ### Firestore Schema Extension
+
+#### Regulation import and structured tournament rules
+
+Regulations are created from reviewed JSON files with
+[`tools/create-regulation`](../tools/create-regulation/README.md). The importer validates the complete input before writing and stores the root regulation plus every localized rules document in one Firestore batch.
+
+```text
+regulations/{nativeFirestoreId}
+regulations/{nativeFirestoreId}/{language}/rules
+```
+
+The root regulation may contain the following machine-readable constraints in addition to the existing `name`, `body`, and `status` fields:
+
+```javascript
+{
+  market: "BD",
+  minimumAge: 18,
+  prizeRules: {
+    cashPrizesEnabled: true,
+    currency: "BDT",
+    payoutMethods: ["bkash", "nagad"]
+  }
+}
+```
+
+`payoutMethods` defines destinations that may be offered to a tournament winner. Administrative transfer operators such as Remitly or Wise are deliberately not stored in this list. A tournament will continue to reference its regulation by the native Firestore document ID. No application-level regulation version field or generated custom ID is introduced.
+
+This extension is backward compatible: existing regulation documents without `market`, `minimumAge`, or `prizeRules` remain valid and are not migrated or modified. The existing `420-deploy-seed-regulations` trigger is also unchanged.
+
+The workflow was validated against the `dev` Firebase project on 2026-09-08. It created `regulations/lvHsdrf4rp0585LemozL` with the expected Bangladesh constraints and both `en/rules` and `bn/rules` localized documents.
+
+The next step is to extend `tools/create-tournament` so that it reads the referenced regulation and consistently derives or validates tournament market, age, currency, and allowed payout methods. Until that is implemented, importing a regulation does not by itself enforce those constraints on tournament creation or participation.
 
 ```javascript
 // Collection: tournaments
@@ -2965,13 +2998,22 @@ cd mobile
 
 ### Phase 2: Backend Development (Week 3-4)
 - [x] Extend Firestore schema for Bangladesh features
+- [x] Add `tools/create-regulation` JSON importer
+  - Uses native Firestore document IDs (no custom regulation versioning)
+  - Preserves the existing `regulations/{id}/{language}/rules` layout
+  - Writes structured `market`, `minimumAge`, and `prizeRules` metadata atomically
+  - Preserves backward compatibility with existing regulations
+  - Validated on the `dev` project with English and Bengali rules
 - [x] Create Cloud Functions for tournament completion
   - `onTournamentComplete(tournamentId)` - detect winner, create payment record
   - `updatePaymentStatus(paymentId, status)` - admin function to update payment status
 - [ ] Implement eligibility confirmation workflow
   - Firestore eligibility records (age confirmation, payment account declaration)
   - No document upload required
-- [ ] Create Bangladesh-specific tournament creation logic
+- [ ] Integrate `tools/create-tournament` with structured regulation metadata
+  - Accept the native regulation document ID
+  - Derive or validate market, minimum age, currency, and payout methods
+  - Keep existing tournaments and regulations without the new fields working
 - [ ] Add region detection (Google Play Store region)
 - [ ] **Migration Backend Setup**:
   - [ ] Register both package IDs in Firebase Console (`piotr_gorczynski.soccer2` and `.bd`)

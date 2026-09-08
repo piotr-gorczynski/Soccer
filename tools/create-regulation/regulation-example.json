@@ -1,0 +1,41 @@
+{
+  "name": "Bangladesh Cash Tournament Rules",
+  "status": "active",
+  "market": "BD",
+  "minimumAge": 18,
+  "prizeRules": {
+    "cashPrizesEnabled": true,
+    "currency": "BDT",
+    "payoutMethods": [
+      "bkash",
+      "nagad"
+    ]
+  },
+  "translations": {
+    "en": {
+      "rules": [
+        "Participation is free and no purchase is required.",
+        "Participants must be at least 18 years old.",
+        "The available prize payout methods are bKash or Nagad.",
+	    "Matches are played on a 6x8 grid. The ball starts at the center (3,4).",
+    "Players move the ball to any of the eight adjacent points. Lines cannot be repeated.",
+    "Hitting a border or a previously visited point counts as a bounce and grants another move to the same player.",
+    "A goal is scored when the ball enters the opponent's goal at the top or bottom edge.",
+    "If a player moves the ball to a point from which there are no possible moves, that player immediately loses.",
+    "Each player has a 5-minute chess clock. Time runs only during your turn. Running out of time results in a loss.",
+    "If a player's phone disconnects before their turn begins, the backend will automatically start their clock after one minute.",
+    "Leaving the match early forfeits the game to the opponent.",
+    "Tournaments run in a round-robin format. Pairings are generated automatically once registration closes.",
+    "Stale matches with no activity for over five minutes are automatically decided on time.",
+    "The tournament ends when the deadline is reached."
+      ]
+    },
+    "bn": {
+      "rules": [
+        "অংশগ্রহণ বিনামূল্যে এবং কোনো কেনাকাটার প্রয়োজন নেই।",
+        "অংশগ্রহণকারীদের বয়স কমপক্ষে ১৮ বছর হতে হবে।",
+        "পুরস্কার প্রদানের মাধ্যম হলো বিকাশ, নগদ এবং ব্যাংক ট্রান্সফার।"
+      ]
+    }
+  }
+}
