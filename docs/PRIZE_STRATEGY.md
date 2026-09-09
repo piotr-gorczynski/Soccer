@@ -8,7 +8,7 @@ This document defines the complete prize allocation strategy for the Bangladesh 
 
 ## 1. Scope
 
-This specification defines how 1st, 2nd, and 3rd place must be determined and how financial rewards must be allocated in a skill-based tournament, including tie handling and eligibility rules.
+This specification defines two supported prize variants and how financial rewards must be allocated in a skill-based tournament, including ranking, tie handling, and eligibility rules. Each tournament MUST select exactly one variant before registration opens.
 
 ### Goals
 
@@ -27,16 +27,27 @@ This specification defines how 1st, 2nd, and 3rd place must be determined and ho
 | **Participant** | A registered tournament player |
 | **Final Score** | Numeric score calculated by the existing tournament algorithm |
 | **Eligible Participant** | A participant whose final score is greater than 0 |
-| **Prize Positions** | 1st, 2nd, and 3rd place only |
-| **Prize Pool** | Total amount available for distribution: 3,500 BDT |
+| **Prize Variant** | Immutable prize configuration selected for a tournament before registration opens |
+| **Prize Positions** | Variant 1: 1st place only; Variant 2: 1st, 2nd, and 3rd place |
+| **Prize Pool** | Variant 1: 1,000 BDT; Variant 2: 3,500 BDT |
 | **Tie** | Two or more eligible participants with identical final scores |
 
-### Prize Pool Breakdown
+### Prize Variants
+
+#### Variant 1 — Winner Only
+
+- **1st Place**: 1,000 BDT
+- **Total**: 1,000 BDT
+- No prizes are assigned to 2nd or 3rd place.
+
+#### Variant 2 — Top Three
 
 - **1st Place**: 2,000 BDT
 - **2nd Place**: 1,000 BDT
 - **3rd Place**: 500 BDT
 - **Total**: 3,500 BDT
+
+The selected variant, prize positions, amounts, and total pool MUST be displayed in the tournament rules before a participant registers. The variant MUST NOT change after registration opens.
 
 ---
 
@@ -53,22 +64,24 @@ This specification defines how 1st, 2nd, and 3rd place must be determined and ho
 Participants with `final score = 0`:
 
 - **MUST NOT** receive any prize
-- **MUST NOT** be considered when determining 1st, 2nd, or 3rd place
+- **MUST NOT** be considered when determining any prize position
 - **MUST NOT** participate in tie calculations
 
 **Rationale**: Prevents participation-based rewards, maintaining skill-based classification.
 
 ### R3 — Fewer Eligible Players
 
-If fewer than 3 eligible participants exist:
+If fewer eligible participants exist than the selected variant defines prize positions for:
 
 - Only corresponding prize positions **MAY** be paid
 - Unused prize amounts **MUST NOT** be redistributed
 
-**Example**: If only 2 eligible participants exist:
+**Variant 2 example**: If only 2 eligible participants exist:
 - 1st place receives 2,000 BDT
 - 2nd place receives 1,000 BDT
 - 3rd place prize (500 BDT) remains unpaid
+
+For Variant 1, one eligible participant is sufficient to award the 1,000 BDT first-place prize.
 
 ---
 
@@ -120,7 +133,25 @@ Prize positions covered by a tie **MUST** be skipped for subsequent participants
 
 ## 6. Tie Examples (For Validation)
 
-### Example A — Two Players Tied for 1st
+### Example A — Variant 1: Two Players Tied for 1st
+
+**Eligible Players:**
+- Player A: 100 points (tie for 1st)
+- Player B: 100 points (tie for 1st)
+
+**Calculation:**
+```
+Combined prizes = 1st = 1,000 BDT
+Tied players: 2
+Payout per tied player = 1,000 ÷ 2 = 500 BDT
+```
+
+**Result:**
+- Player A: 500 BDT (1st place, tied)
+- Player B: 500 BDT (1st place, tied)
+- **Total paid**: 1,000 BDT ✓
+
+### Example B — Variant 2: Two Players Tied for 1st
 
 **Eligible Players:**
 - Player A: 100 points (tie for 1st)
@@ -142,7 +173,7 @@ Payout per tied player = 3,000 ÷ 2 = 1,500 BDT
 
 ---
 
-### Example B — Four Players Tied for 1st
+### Example C — Variant 2: Four Players Tied for 1st
 
 **Eligible Players:**
 - Player A: 100 points (tie for 1st)
@@ -166,7 +197,7 @@ Payout per player = 3,500 ÷ 4 = 875 BDT
 
 ---
 
-### Example C — Zero-Score Crowd
+### Example D — Variant 2: Zero-Score Crowd
 
 **Scores:**
 - Player A: 10 points
@@ -188,7 +219,7 @@ Zero-score players excluded from ranking
 
 ---
 
-### Example D — Three-Way Tie for 2nd Place
+### Example E — Variant 2: Three-Way Tie for 2nd Place
 
 **Eligible Players:**
 - Player A: 100 points (1st)
@@ -228,7 +259,7 @@ Remaining fractional amounts **MUST NOT**:
 - Be redistributed in any manner
 - Be carried over to future tournaments
 
-**Example:**
+**Variant 2 example:**
 ```
 Total: 3,500 BDT
 Tied players: 3
@@ -244,7 +275,10 @@ Remaining: 2 BDT (retained, not distributed)
 
 ### R10 — Maximum Payout
 
-**Rule**: Total payouts **MUST NOT** exceed the predefined total prize pool (3,500 BDT).
+**Rule**: Total payouts **MUST NOT** exceed the total prize pool of the selected variant:
+
+- Variant 1: 1,000 BDT
+- Variant 2: 3,500 BDT
 
 The algorithm **MUST NOT**:
 
@@ -254,7 +288,7 @@ The algorithm **MUST NOT**:
 
 **Verification**: Before finalizing payouts, the system must verify:
 ```
-SUM(all_payouts) ≤ 3,500 BDT
+SUM(all_payouts) ≤ selectedVariant.totalPrizePool
 ```
 
 ---
@@ -288,7 +322,7 @@ For each eligible participant:
 
 The output must include proof that:
 - ✓ Zero-score participants are excluded from prizes
-- ✓ Total payout ≤ 3,500 BDT
+- ✓ Total payout ≤ the selected variant's prize pool
 - ✓ Tie logic was applied correctly
 - ✓ No randomness was used
 - ✓ Rounding rules were followed
@@ -299,8 +333,9 @@ The output must include proof that:
 
 The following are **explicitly excluded** from this specification:
 
-❌ **No prizes beyond 3rd place**
-- Only top 3 positions receive financial rewards
+❌ **No prizes beyond the selected variant's positions**
+- Variant 1 rewards 1st place only
+- Variant 2 rewards 1st, 2nd, and 3rd place only
 
 ❌ **No participation prizes**
 - All prizes are performance-based (score > 0)
@@ -346,7 +381,23 @@ The algorithm **MUST**:
 ## 12. Implementation Algorithm (Pseudocode)
 
 ```pseudocode
-function calculateTournamentPrizes(participants):
+function calculateTournamentPrizes(participants, prizeVariant):
+    // Step 0: Load the immutable configuration selected for this tournament
+    if prizeVariant == "winner_only":
+        prizePositions = [
+            {position: 1, amount: 1000}
+        ]
+    else if prizeVariant == "top_three":
+        prizePositions = [
+            {position: 1, amount: 2000},
+            {position: 2, amount: 1000},
+            {position: 3, amount: 500}
+        ]
+    else:
+        fail("Unsupported prize variant")
+
+    totalPrizePool = sum(prizePositions.amount)
+
     // Step 1: Filter eligible participants
     eligible = participants.filter(p => p.finalScore > 0)
     
@@ -357,22 +408,16 @@ function calculateTournamentPrizes(participants):
     scoreGroups = groupByScore(eligible)
     
     // Step 4: Assign prize positions
-    prizePositions = [
-        {position: 1, amount: 2000},
-        {position: 2, amount: 1000},
-        {position: 3, amount: 500}
-    ]
-    
     payouts = []
     currentPosition = 0
     
     for each scoreGroup in scoreGroups:
-        if currentPosition >= 3:
+        if currentPosition >= prizePositions.length:
             break  // No more prizes
         
         // Calculate how many prize positions this group occupies
         groupSize = scoreGroup.length
-        positionsToConsume = min(groupSize, 3 - currentPosition)
+        positionsToConsume = min(groupSize, prizePositions.length - currentPosition)
         
         // Sum prizes for occupied positions
         combinedPrize = sum(prizePositions[currentPosition...currentPosition+positionsToConsume].amount)
@@ -394,7 +439,7 @@ function calculateTournamentPrizes(participants):
     
     // Step 5: Verify total payout
     totalPayout = sum(payouts.amount)
-    assert(totalPayout <= 3500)
+    assert(totalPayout <= totalPrizePool)
     
     return payouts
 
@@ -426,49 +471,65 @@ function groupByScore(participants):
 
 The implementation must pass all of the following test scenarios:
 
-1. **Single winner, no ties**
+1. **Variant 1: single winner, no ties**
+   - 1+ eligible participants
+   - Verify 1st place receives 1,000 BDT and no other position is paid
+
+2. **Variant 1: tie for 1st**
+   - Two eligible participants with the same highest score
+   - Verify equal splitting (500, 500)
+
+3. **Variant 1: all zero scores**
+   - Verify no prize is awarded and the full 1,000 BDT remains unpaid
+
+4. **Variant 2: single winner, no ties**
    - 3+ eligible participants with unique scores
    - Verify correct prize allocation (2000, 1000, 500)
 
-2. **Two-way tie for 1st**
-   - As per Example A above
+5. **Variant 2: two-way tie for 1st**
+   - As per Example B above
    - Verify equal splitting (1500, 1500, 500)
 
-3. **Four-way tie for 1st**
-   - As per Example B above
+6. **Variant 2: four-way tie for 1st**
+   - As per Example C above
    - Verify equal splitting (875, 875, 875, 875)
 
-4. **Zero-score exclusion**
-   - As per Example C above
+7. **Variant 2: zero-score exclusion**
+   - As per Example D above
    - Verify zero-score players receive nothing
 
-5. **Three-way tie for 2nd**
-   - As per Example D above
+8. **Variant 2: three-way tie for 2nd**
+   - As per Example E above
    - Verify correct splitting (2000, 500, 500, 500)
 
-6. **Rounding test**
+9. **Variant 2: rounding test**
    - 3-way tie for 1st (3500 ÷ 3 = 1166.66...)
    - Verify floor rounding (1166, 1166, 1166)
 
-7. **Fewer than 3 eligible participants**
+10. **Variant 2: fewer than 3 eligible participants**
    - Test with 1 and 2 eligible participants
    - Verify unused prizes are not redistributed
 
-8. **All zero scores**
+11. **Both variants: all zero scores**
    - All participants have score = 0
    - Verify no prizes awarded
 
-9. **Determinism test**
+12. **Both variants: determinism test**
    - Run same input data multiple times
    - Verify identical output every time
 
-10. **Maximum payout verification**
-    - For all test cases, verify total ≤ 3500 BDT
+13. **Maximum payout verification**
+    - For Variant 1, verify total ≤ 1,000 BDT
+    - For Variant 2, verify total ≤ 3,500 BDT
+
+14. **Immutable variant test**
+    - Verify the selected variant cannot be changed after registration opens
 
 ### 13.2 Edge Cases
 
-- Exactly 3 participants, all with different scores
-- Exactly 3 participants, all with same score
+- Variant 1 with one participant and with multiple players tied for 1st
+- Variant 2 with exactly 3 participants, all with different scores
+- Variant 2 with exactly 3 participants, all with same score
 - 100+ participants with various tie scenarios
 - Maximum possible score values
 - Minimum eligible score (score = 1)
@@ -507,7 +568,7 @@ For regulatory compliance, each tournament must maintain:
 This specification is designed to be extensible. Potential future enhancements (not currently in scope):
 
 - **Additional prize tiers** (4th, 5th place)
-- **Variable prize pools** based on entry fees
+- **Additional fixed prize variants** introduced before tournament registration opens
 - **Tournament size adjustments** (different rules for small vs. large tournaments)
 - **Regional variations** (different currencies/amounts)
 
@@ -534,6 +595,7 @@ Any changes to this specification must:
 
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
+| 1.1 | 2026-09-09 | Codex | Added Winner Only (1,000 BDT) and Top Three (3,500 BDT) variants |
 | 1.0 | 2026-01-31 | GitHub Copilot | Initial specification based on requirements |
 
 ---
