@@ -60,6 +60,47 @@ function validateTranslations(translations) {
   return validated;
 }
 
+function validatePrizePool(prizePool) {
+  if (!isPlainObject(prizePool)) {
+    fail('`prizeRules.prizePool` must be an object.');
+  }
+  if (!Number.isSafeInteger(prizePool.totalAmount) ||
+      prizePool.totalAmount <= 0) {
+    fail('`prizeRules.prizePool.totalAmount` must be a positive integer.');
+  }
+  if (!Array.isArray(prizePool.awards) || prizePool.awards.length === 0) {
+    fail('`prizeRules.prizePool.awards` must be a non-empty array.');
+  }
+
+  const awards = prizePool.awards.map((award, index) => {
+    if (!isPlainObject(award)) {
+      fail(`\`prizeRules.prizePool.awards[${index}]\` must be an object.`);
+    }
+    if (!Number.isSafeInteger(award.place) || award.place <= 0) {
+      fail(`\`prizeRules.prizePool.awards[${index}].place\` must be a positive integer.`);
+    }
+    if (!Number.isSafeInteger(award.amount) || award.amount <= 0) {
+      fail(`\`prizeRules.prizePool.awards[${index}].amount\` must be a positive integer.`);
+    }
+    return { place: award.place, amount: award.amount };
+  });
+
+  const places = awards.map(award => award.place);
+  if (new Set(places).size !== places.length) {
+    fail('`prizeRules.prizePool.awards` must not contain duplicate places.');
+  }
+
+  const allocatedAmount = awards.reduce((sum, award) => sum + award.amount, 0);
+  if (allocatedAmount !== prizePool.totalAmount) {
+    fail('The sum of award amounts must equal `prizeRules.prizePool.totalAmount`.');
+  }
+
+  return {
+    totalAmount: prizePool.totalAmount,
+    awards: awards.sort((left, right) => left.place - right.place),
+  };
+}
+
 function validatePrizeRules(prizeRules, market, minimumAge) {
   if (prizeRules === undefined) return undefined;
   if (!isPlainObject(prizeRules)) {
@@ -105,6 +146,7 @@ function validatePrizeRules(prizeRules, market, minimumAge) {
 
   validated.currency = prizeRules.currency;
   validated.payoutMethods = payoutMethods;
+  validated.prizePool = validatePrizePool(prizeRules.prizePool);
   return validated;
 }
 

@@ -6,6 +6,7 @@
 - Added full input validation and dry-run support before any Firestore write.
 - Regulations use native Firestore document IDs and preserve the existing `regulations/{id}/{language}/rules` localization layout.
 - Added optional structured regulation metadata for market eligibility, minimum age, and cash-prize payout methods without breaking existing regulation documents.
+- Added a generic prize-pool definition with total amount and per-place awards, allowing future prize structures without introducing hard-coded variant identifiers.
 - Root and localized regulation documents are created atomically in one Firestore batch.
 - Added automated tests and a Bangladesh example regulation.
 - Successfully validated the complete import on the `dev` environment, including English and Bengali localized rules.

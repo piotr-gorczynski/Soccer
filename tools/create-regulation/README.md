@@ -64,7 +64,24 @@ Optional fields:
 
 When `prizeRules.cashPrizesEnabled` is `true`, `market`, `minimumAge`, a
 three-letter uppercase `currency`, and at least one `payoutMethods` entry are
-required.
+required. A `prizePool` must also define the total amount and the amount paid
+for every prize-winning place. Amounts are positive integers expressed in the
+configured currency:
+
+```json
+{
+  "prizePool": {
+    "totalAmount": 1000,
+    "awards": [
+      { "place": 1, "amount": 1000 }
+    ]
+  }
+}
+```
+
+The schema does not refer to named or numbered prize variants. Any set of
+unique positive places can be defined, and the awards are normalized in place
+order. The sum of all award amounts must equal `totalAmount`.
 
 Payout methods describe destinations offered to the winner, such as `bkash`,
 `nagad`, or `bank_account`. Transfer operators used administratively, such as
@@ -76,6 +93,8 @@ created regulation.
 
 ## Backward compatibility
 
-Existing regulations without `market`, `minimumAge`, or `prizeRules` remain
-valid. This tool does not modify or migrate existing documents, and the current
-`420-deploy-seed-regulations` trigger is unchanged.
+Existing regulations without `market`, `minimumAge`, `prizeRules`, or
+`prizeRules.prizePool` remain valid in Firestore. This tool does not modify or
+migrate existing documents, and the current `420-deploy-seed-regulations`
+trigger is unchanged. New JSON imports with cash prizes enabled must include
+the complete prize pool definition.

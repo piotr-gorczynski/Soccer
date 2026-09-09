@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.16
-**Last Updated:** 2026-09-08
+**Document Version:** 2.17
+**Last Updated:** 2026-09-09
 **Status:** Planning - Legal Validation Completed
 
 **Revision History**:
+- v2.17 (2026-09-09): Extended structured regulation metadata with a generic prize pool and per-place award allocation. The schema describes amounts directly and is not coupled to named prize variants.
 - v2.16 (2026-09-08): Added the JSON-based regulation import workflow. Regulations use native Firestore IDs, retain the existing localized subcollection layout, and may carry structured market, minimum-age, and prize-payout metadata. Documented backward compatibility, successful validation on the dev environment, and the remaining `create-tournament` integration work.
 - v2.15 (2026-01-19): Added source documents that confirm Remitly can deliver to bKash and Nagad mobile wallets.
 - v2.14 (2026-01-18): **SHA COPY APPROACH VALIDATED** - Documented the successful automated SHA certificate copy approach using `gcp/cloud-build/sha_copy.yaml`. The workflow has been validated (issue #1159) and successfully handles app discovery, certificate comparison, copying, verification, and graceful handling of unprovisioned Firebase apps. Updated documentation to describe the complete working solution with detailed workflow steps, prerequisites, and usage instructions.
@@ -619,12 +620,18 @@ The root regulation may contain the following machine-readable constraints in ad
   prizeRules: {
     cashPrizesEnabled: true,
     currency: "BDT",
-    payoutMethods: ["bkash", "nagad"]
+    payoutMethods: ["bkash", "nagad"],
+    prizePool: {
+      totalAmount: 1000,
+      awards: [
+        { place: 1, amount: 1000 }
+      ]
+    }
   }
 }
 ```
 
-`payoutMethods` defines destinations that may be offered to a tournament winner. Administrative transfer operators such as Remitly or Wise are deliberately not stored in this list. A tournament will continue to reference its regulation by the native Firestore document ID. No application-level regulation version field or generated custom ID is introduced.
+`payoutMethods` defines destinations that may be offered to a tournament winner. Administrative transfer operators such as Remitly or Wise are deliberately not stored in this list. `prizePool` defines the complete allocation without coupling the regulation to a named prize variant: `totalAmount` is the total pool, while `awards` defines the amount for each winning place. A tournament will continue to reference its regulation by the native Firestore document ID. No application-level regulation version field or generated custom ID is introduced.
 
 This extension is backward compatible: existing regulation documents without `market`, `minimumAge`, or `prizeRules` remain valid and are not migrated or modified. The existing `420-deploy-seed-regulations` trigger is also unchanged.
 
