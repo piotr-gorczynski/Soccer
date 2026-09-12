@@ -1,9 +1,14 @@
 const functions = require('firebase-functions/v1');
-const admin     = require('firebase-admin');
-admin.initializeApp();
-const db  = admin.firestore();
-const rtdb = admin.database();
-const { Timestamp } = admin.firestore;
+const { getApps, initializeApp } = require('firebase-admin/app');
+const { FieldValue, getFirestore, Timestamp } = require('firebase-admin/firestore');
+const { getMessaging } = require('firebase-admin/messaging');
+const { getDatabase } = require('firebase-admin/database');
+
+if (!getApps().length) initializeApp();
+
+const db = getFirestore();
+const rtdb = getDatabase();
+const messaging = getMessaging();
 
 async function invalidateFcmTarget(user, fcmErrorType, sendStartedAt) {
   const targetField = user.fcmInstallationId ? 'fcmInstallationId' : 'fcmToken';
@@ -13,9 +18,9 @@ async function invalidateFcmTarget(user, fcmErrorType, sendStartedAt) {
     const currentUser = await transaction.get(userRef);
     if (!currentUser.exists || currentUser.get(targetField) !== targetValue) return false;
     transaction.update(userRef, {
-      [targetField]: admin.firestore.FieldValue.delete(),
+      [targetField]: FieldValue.delete(),
       fcmErrorType,
-      fcmErrorDate: admin.firestore.FieldValue.serverTimestamp()
+      fcmErrorDate: FieldValue.serverTimestamp()
     });
     return true;
   });
@@ -202,7 +207,7 @@ async function sendNotificationsToParticipants(tournamentRef, tournamentName) {
           android: { priority: 'high' }
         };
 
-        await admin.messaging().send(message);
+        await messaging.send(message);
         sentCount++;
         console.log(`[sendNotifications] Sent to user ${user.uid} (${user.language}, ${user.fcmInstallationId ? 'fid' : 'legacy-token'})`);
       } catch (error) {

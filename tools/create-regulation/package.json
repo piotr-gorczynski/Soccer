@@ -1,0 +1,18 @@
+{
+  "name": "create-regulation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Validate a regulation JSON file and import it into Firestore with a native document ID.",
+  "main": "create-regulation.js",
+  "type": "commonjs",
+  "scripts": {
+    "test": "node --test create-regulation.test.js",
+    "validate:example": "node create-regulation.js dev regulation-example.json --dry-run"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.4.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

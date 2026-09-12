@@ -1,0 +1,54 @@
+{
+  "name": "Bangladesh Cash Tournament Rules",
+  "status": "active",
+  "market": "BD",
+  "minimumAge": 18,
+  "prizeRules": {
+    "cashPrizesEnabled": true,
+    "currency": "BDT",
+    "payoutMethods": [
+      "bkash",
+      "nagad"
+    ],
+    "prizePool": {
+      "totalAmount": 1000,
+      "awards": [
+        {
+          "place": 1,
+          "amount": 1000
+        }
+      ]
+    }
+  },
+  "translations": {
+    "en": {
+      "rules": [
+        "1. Eligibility and entry — Participation is free and no purchase, entry fee, deposit, or stake is required. Participants must be at least 18 years old.",
+        "2. Tournament format — The tournament is played in a round-robin format. Pairings are generated automatically after registration closes, and the tournament ends at the announced deadline.",
+        "3. Match board and movement — Matches are played on a 6x8 grid. The ball starts at the center point (3,4). On a turn, a player moves the ball to one of the eight adjacent points. A line that has already been drawn cannot be used again.",
+        "4. Bounces — Moving the ball to the border or to a previously visited point counts as a bounce and gives the same player another move.",
+        "5. Winning a match — A goal is scored when the ball enters the opponent's goal at the top or bottom edge. A player also loses immediately if they move the ball to a point from which no legal move is available.",
+        "6. Match clock — Each player has a five-minute chess clock. A player's time runs only during that player's turn. A player who runs out of time loses the match.",
+        "7. Disconnections and inactivity — If a player's device disconnects before their turn begins, the backend starts that player's clock automatically after one minute. A match with no activity for more than five minutes may be decided automatically on time.",
+        "8. Leaving a match — A player who leaves a match before it is completed forfeits that match to the opponent.",
+        "9. Final score and eligibility for the prize — Tournament ranking is based only on each participant's final score. A participant must have a final score greater than zero to be eligible for the prize. Participants with a score of zero are excluded from the prize calculation.",
+        "10. Prize — The total prize pool is 1,000 BDT and is assigned only to first place. Second place and all lower places receive no cash prize. The announced prize pool and allocation cannot be changed after tournament registration opens.",
+        "11. Determining first place — Eligible participants are ranked from the highest final score to the lowest. The highest-ranked eligible participant receives the first-place prize. Ranking and prize calculations are deterministic, contain no random selection, and cannot be manually overridden.",
+        "12. Tie for first place — If two or more eligible participants have the same highest final score, they share the 1,000 BDT first-place prize equally. No separate tie-breaker or additional prize is used.",
+        "13. Rounding — Each payout is rounded down to a whole BDT. Any amount remaining because of rounding is not paid, redistributed, or carried over to another tournament.",
+        "14. No eligible winner — If no participant finishes with a final score greater than zero, no prize is awarded. The unclaimed prize is not redistributed or carried over.",
+        "15. Payout limit — The combined amount paid to all winners cannot exceed the advertised prize pool of 1,000 BDT.",
+        "16. Receiving the prize — Prize payments are available through bKash or Nagad. A winner must provide correct recipient information required to complete the selected payout method.",
+        "17. Acceptance of rules — By registering for the tournament, the participant confirms that they meet the eligibility requirements and agrees to these tournament and prize rules."
+      ]
+    },
+    "bn": {
+      "rules": [
+        "অংশগ্রহণ বিনামূল্যে এবং কোনো কেনাকাটার প্রয়োজন নেই।",
+        "অংশগ্রহণকারীদের বয়স কমপক্ষে ১৮ বছর হতে হবে।",
+        "প্রথম স্থান অধিকারী ১,০০০ বাংলাদেশি টাকা পাবেন। অন্য কোনো স্থানের জন্য পুরস্কার দেওয়া হবে না।",
+        "পুরস্কার বিকাশ বা নগদের মাধ্যমে প্রদান করা হবে।"
+      ]
+    }
+  }
+}
