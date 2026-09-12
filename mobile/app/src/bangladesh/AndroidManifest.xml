@@ -8,10 +8,10 @@
     </queries>
 
     <application>
-        <!-- Use the same Facebook Content Provider authority as global flavor -->
+        <!-- Keep the authority unique so the Bangladesh and global apps can coexist. -->
         <provider
             android:name="com.facebook.FacebookContentProvider"
-            android:authorities="com.facebook.app.FacebookContentProvider1232966491486195"
+            android:authorities="com.facebook.app.FacebookContentProvider1232966491486195.bd"
             android:exported="true"
             tools:replace="android:authorities" />
     </application>
