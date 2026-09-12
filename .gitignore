@@ -39,6 +39,7 @@ node_modules/
 # Signing configuration (local only)
 secrets/keystore.properties
 # Temporary development files
+.audit/
 secrets/
 firebase/functions/*/package-lock.json
 firebase/functions/*/node_modules/
