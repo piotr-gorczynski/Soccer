@@ -16,6 +16,8 @@
   and possession of an account with at least one payout method dynamically listed by the regulation.
 - Eligibility is validated by `joinTournament` and stored atomically in the participant record; no
   concrete payout method or account details are collected before a participant wins.
+- Fixed tournament visibility so `visibleInFlavours: ["global"]` is shown in every app flavour,
+  while market-specific values such as `["bangladesh"]` remain restricted to that flavour.
 
 ## Follow-up work
 

@@ -129,13 +129,11 @@ public class TournamentsActivity extends BaseActivity {
 
             for (DocumentSnapshot doc : snap.getDocuments()) {
                 // Filter tournaments based on visibleInFlavours field
-                // If the field doesn't exist, show the tournament (backward compatibility)
+                // "global" means visible in every flavour. If the field doesn't exist,
+                // show the tournament for backward compatibility.
                 Object visibleInFlavoursObj = doc.get("visibleInFlavours");
-                if (visibleInFlavoursObj instanceof List<?> visibleInFlavours) {
-                    if (!visibleInFlavours.contains(currentFlavour)) {
-                        // Skip this tournament - not visible in current flavour
-                        continue;
-                    }
+                if (!TournamentVisibility.isVisible(visibleInFlavoursObj, currentFlavour)) {
+                    continue;
                 }
 
                 String status = doc.getString("status");
