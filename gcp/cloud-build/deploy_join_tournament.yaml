@@ -52,9 +52,8 @@ steps:
         cp /workspace/soccer/firebase/firebase.json /workspace/firebase/firebase.json
         cp /workspace/soccer/firebase/firestore.rules /workspace/firebase/firestore.rules
 
-        mkdir -p /workspace/firebase/functions/join-tournament
-        cp /workspace/soccer/firebase/functions/join-tournament/package.json /workspace/firebase/functions/join-tournament/
-        cp /workspace/soccer/firebase/functions/join-tournament/index.js /workspace/firebase/functions/join-tournament/
+        mkdir -p /workspace/firebase/functions
+        cp -R /workspace/soccer/firebase/functions/join-tournament /workspace/firebase/functions/
 
   # Step 4: Install dependencies
   - name: 'node:18-slim'
