@@ -166,6 +166,12 @@
     <string name="regulation_not_found">Xeerka lama helin.</string>
     <string name="regulation_load_error">Ku guuldarraystay soo dejinta xeerka.</string>
     <string name="regulation_auth_required">Fadlan soo gal si aad u aragto xeerka.</string>
+    <string name="eligibility_confirmation_title">Xaqiijinnada loo baahan yahay</string>
+    <string name="eligibility_confirm_age">Waxaan xaqiijinayaa inaan ugu yaraan %1$d jir ahay.</string>
+    <string name="eligibility_confirm_payout_account">Waxaan xaqiijinayaa inaan akoon firfircoon ku leeyahay ugu yaraan mid ka mid ah hababka lacag-bixinta ee xeerarkani taageeraan: %1$s.</string>
+    <string name="eligibility_confirm_terms">Waan akhriyey waana aqbalay xeerarkan tartanka iyo abaalmarinta.</string>
+    <string name="eligibility_confirmation_required">Dooro dhammaan xaqiijinnada loo baahan yahay si aad tartankan ugu biirto.</string>
+    <string name="eligibility_configuration_error">Qaabeynta u-qalmitaanka tartankani sax ma aha.</string>
     <string name="server_unavailable">Adeeggu ma jiro</string>
     <string name="server_unavailable_message">Waan ka xunnahay, laakiin server-ka Soccer waqtigan lama heli karo…</string>
     <string name="account">Akoon</string>

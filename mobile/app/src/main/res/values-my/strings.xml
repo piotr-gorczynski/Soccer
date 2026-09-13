@@ -166,6 +166,12 @@
     <string name="regulation_not_found">စည်းမျဉ်း မတွေ့ပါ။</string>
     <string name="regulation_load_error">စည်းမျဉ်းဖော်ပြရန် မအောင်မြင်ပါ။</string>
     <string name="regulation_auth_required">စည်းမျဉ်းကို ကြည့်ရှုရန် ဝင်ရောက်ပါ။</string>
+    <string name="eligibility_confirmation_title">လိုအပ်သော အတည်ပြုချက်များ</string>
+    <string name="eligibility_confirm_age">ကျွန်ုပ်သည် အနည်းဆုံး အသက် %1$d နှစ်ရှိကြောင်း အတည်ပြုပါသည်။</string>
+    <string name="eligibility_confirm_payout_account">ဤစည်းမျဉ်းများက ပံ့ပိုးသော ငွေပေးချေမှုနည်းလမ်းများထဲမှ အနည်းဆုံးတစ်ခုတွင် လက်ရှိအသုံးပြုနေသော အကောင့်ရှိကြောင်း အတည်ပြုပါသည်: %1$s။</string>
+    <string name="eligibility_confirm_terms">ဤပြိုင်ပွဲနှင့် ဆုစည်းမျဉ်းများကို ဖတ်ရှုပြီး သဘောတူပါသည်။</string>
+    <string name="eligibility_confirmation_required">ဤပြိုင်ပွဲတွင် ပါဝင်ရန် လိုအပ်သော အတည်ပြုချက်အားလုံးကို ရွေးချယ်ပါ။</string>
+    <string name="eligibility_configuration_error">ဤပြိုင်ပွဲ၏ ပါဝင်ခွင့်သတ်မှတ်ချက် မမှန်ကန်ပါ။</string>
     <string name="server_unavailable">ဆာဗာမရှိပါ</string>
     <string name="server_unavailable_message">ကျွန်ုပ်တို့ ဝမ်းနည်းပါသည်၊ ယခုအခါ Soccer ဆာဗာ မရရှိနိုင်ပါ…</string>
     <string name="account">အကောင့်</string>

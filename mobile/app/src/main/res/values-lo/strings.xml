@@ -166,6 +166,12 @@
     <string name="regulation_not_found">ບໍ່ພົບກົດລະບຽບ.</string>
     <string name="regulation_load_error">ໂຫລດກົດລະບຽບບໍ່ສໍາເລັດ.</string>
     <string name="regulation_auth_required">ກະລຸນາເຂົ້າລະບົບເພື່ອເບິ່ງກົດລະບຽບ.</string>
+    <string name="eligibility_confirmation_title">ການຢືນຢັນທີ່ຈຳເປັນ</string>
+    <string name="eligibility_confirm_age">ຂ້ອຍຢືນຢັນວ່າຂ້ອຍມີອາຍຸຢ່າງໜ້ອຍ %1$d ປີ.</string>
+    <string name="eligibility_confirm_payout_account">ຂ້ອຍຢືນຢັນວ່າຂ້ອຍມີບັນຊີທີ່ໃຊ້ງານຢູ່ກັບຢ່າງໜ້ອຍໜຶ່ງວິທີການຈ່າຍເງິນທີ່ກົດນີ້ຮອງຮັບ: %1$s.</string>
+    <string name="eligibility_confirm_terms">ຂ້ອຍໄດ້ອ່ານ ແລະ ຍອມຮັບກົດການແຂ່ງຂັນ ແລະ ລາງວັນນີ້.</string>
+    <string name="eligibility_confirmation_required">ເລືອກການຢືນຢັນທີ່ຈຳເປັນທັງໝົດເພື່ອເຂົ້າຮ່ວມການແຂ່ງຂັນນີ້.</string>
+    <string name="eligibility_configuration_error">ການຕັ້ງຄ່າສິດເຂົ້າຮ່ວມຂອງການແຂ່ງຂັນນີ້ບໍ່ຖືກຕ້ອງ.</string>
     <string name="server_unavailable">ເຊີບເວີບໍ່ວ່າງ</string>
     <string name="server_unavailable_message">ຂໍອະໄພ, ເຊີບເວີ Soccer ບໍ່ພ້ອມໃຊ້ງານໃນຂະນະນີ້...</string>
     <string name="account">ບັນຊີ</string>

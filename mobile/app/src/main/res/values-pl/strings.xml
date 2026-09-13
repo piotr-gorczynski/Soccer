@@ -164,6 +164,12 @@
     <string name="regulation_not_found">Regulamin nie znaleziony.</string>
     <string name="regulation_load_error">Nie udało się wczytać regulaminu.</string>
     <string name="regulation_auth_required">Zaloguj się, aby zobaczyć regulamin.</string>
+    <string name="eligibility_confirmation_title">Wymagane potwierdzenia</string>
+    <string name="eligibility_confirm_age">Potwierdzam, że mam co najmniej %1$d lat.</string>
+    <string name="eligibility_confirm_payout_account">Potwierdzam, że mam aktywne konto w co najmniej jednej metodzie wypłaty obsługiwanej przez ten regulamin: %1$s.</string>
+    <string name="eligibility_confirm_terms">Przeczytałem(-am) i akceptuję regulamin turnieju oraz zasady przyznawania nagród.</string>
+    <string name="eligibility_confirmation_required">Zaznacz wszystkie wymagane potwierdzenia, aby dołączyć do turnieju.</string>
+    <string name="eligibility_configuration_error">Turniej ma nieprawidłową konfigurację wymagań uczestnictwa.</string>
     <string name="server_unavailable">Serwer niedostępny</string>
     <string name="server_unavailable_message">Przepraszamy, ale serwer Soccer jest obecnie niedostępny…</string>
     

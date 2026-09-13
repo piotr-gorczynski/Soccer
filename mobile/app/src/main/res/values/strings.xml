@@ -137,6 +137,12 @@
     <string name="regulation_not_found">Regulation not found.</string>
     <string name="regulation_load_error">Failed to load regulation.</string>
     <string name="regulation_auth_required">Please log in to view the regulation.</string>
+    <string name="eligibility_confirmation_title">Required confirmations</string>
+    <string name="eligibility_confirm_age">I confirm that I am at least %1$d years old.</string>
+    <string name="eligibility_confirm_payout_account">I confirm that I have an active account with at least one payout method supported by these rules: %1$s.</string>
+    <string name="eligibility_confirm_terms">I have read and accept these tournament and prize rules.</string>
+    <string name="eligibility_confirmation_required">Select all required confirmations to join this tournament.</string>
+    <string name="eligibility_configuration_error">This tournament has an invalid eligibility configuration.</string>
     <string name="server_unavailable">Server Unavailable</string>
     <string name="server_unavailable_message">We are sorry, but the Soccer server is not available at the moment…</string>
 

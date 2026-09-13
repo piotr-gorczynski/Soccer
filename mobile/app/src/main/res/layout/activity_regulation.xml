@@ -19,10 +19,52 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
-        <TextView
-            android:id="@+id/regulationBody"
+
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/regulationBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:id="@+id/eligibilityConfirmation"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:layout_marginTop="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:text="@string/eligibility_confirmation_title"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorGreenDark"
+                    android:layout_marginBottom="8dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <CheckBox
+                    android:id="@+id/confirmMinimumAge"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <CheckBox
+                    android:id="@+id/confirmPayoutAccount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <CheckBox
+                    android:id="@+id/confirmTournamentTerms"
+                    android:text="@string/eligibility_confirm_terms"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+        </LinearLayout>
     </ScrollView>
 
     <LinearLayout
@@ -41,6 +83,7 @@
         <Button
             android:id="@+id/acceptRegulation"
             android:text="@string/accept"
+            android:enabled="false"
             android:layout_marginStart="16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />

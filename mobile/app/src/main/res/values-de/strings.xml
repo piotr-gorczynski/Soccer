@@ -163,6 +163,12 @@
     <string name="regulation_not_found">Regelwerk nicht gefunden.</string>
     <string name="regulation_load_error">Regelwerk konnte nicht geladen werden.</string>
     <string name="regulation_auth_required">Bitte melden Sie sich an, um das Regelwerk zu sehen.</string>
+    <string name="eligibility_confirmation_title">Erforderliche Bestätigungen</string>
+    <string name="eligibility_confirm_age">Ich bestätige, dass ich mindestens %1$d Jahre alt bin.</string>
+    <string name="eligibility_confirm_payout_account">Ich bestätige, dass ich ein aktives Konto bei mindestens einer von diesem Regelwerk unterstützten Auszahlungsmethode habe: %1$s.</string>
+    <string name="eligibility_confirm_terms">Ich habe diese Turnier- und Preisregeln gelesen und akzeptiere sie.</string>
+    <string name="eligibility_confirmation_required">Wähle alle erforderlichen Bestätigungen aus, um diesem Turnier beizutreten.</string>
+    <string name="eligibility_configuration_error">Dieses Turnier hat eine ungültige Teilnahmeberechtigungskonfiguration.</string>
     <string name="server_unavailable">Server nicht verfügbar</string>
     <string name="server_unavailable_message">Es tut uns leid, aber der Soccer-Server ist derzeit nicht verfügbar…</string>
     

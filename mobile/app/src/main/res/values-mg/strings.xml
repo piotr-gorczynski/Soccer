@@ -166,6 +166,12 @@
     <string name="regulation_not_found">Tsy hita ny fitsipika.</string>
     <string name="regulation_load_error">Tsy nahomby ny fampidirana ny fitsipika.</string>
     <string name="regulation_auth_required">Midira azafady mba hijery ny fitsipika.</string>
+    <string name="eligibility_confirmation_title">Fanamafisana ilaina</string>
+    <string name="eligibility_confirm_age">Manamafy aho fa %1$d taona farafahakeliny ny taonako.</string>
+    <string name="eligibility_confirm_payout_account">Manamafy aho fa manana kaonty mavitrika amin’ny iray farafahakeliny amin’ireo fomba fandoavam-bola tohanan’ireto fitsipika ireto: %1$s.</string>
+    <string name="eligibility_confirm_terms">Novakiako ary ekeko ireto fitsipiky ny fifaninanana sy ny loka ireto.</string>
+    <string name="eligibility_confirmation_required">Safidio ny fanamafisana rehetra ilaina mba handraisana anjara amin’ity fifaninanana ity.</string>
+    <string name="eligibility_configuration_error">Tsy manankery ny firafitry ny fepetra fandraisana anjara amin’ity fifaninanana ity.</string>
     <string name="server_unavailable">Tsy azo idirana ny mpizara</string>
     <string name="server_unavailable_message">Miala tsiny izahay, tsy misy amin`izao fotoana izao ny mpizara Soccer…</string>
     <string name="account">Kaonty</string>

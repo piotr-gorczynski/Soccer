@@ -166,6 +166,12 @@
     <string name="regulation_not_found">Kanuni haijapatikana.</string>
     <string name="regulation_load_error">Imeshindwa kupakia kanuni.</string>
     <string name="regulation_auth_required">Tafadhali ingia ili kuona kanuni.</string>
+    <string name="eligibility_confirmation_title">Uthibitisho unaohitajika</string>
+    <string name="eligibility_confirm_age">Ninathibitisha kuwa nina umri wa angalau miaka %1$d.</string>
+    <string name="eligibility_confirm_payout_account">Ninathibitisha kuwa nina akaunti inayotumika katika angalau mojawapo ya njia za malipo zinazokubaliwa na kanuni hizi: %1$s.</string>
+    <string name="eligibility_confirm_terms">Nimesoma na ninakubali kanuni hizi za mashindano na zawadi.</string>
+    <string name="eligibility_confirmation_required">Chagua uthibitisho wote unaohitajika ili ujiunge na mashindano haya.</string>
+    <string name="eligibility_configuration_error">Mipangilio ya ustahiki wa mashindano haya si sahihi.</string>
     <string name="server_unavailable">Seva haipatikani</string>
     <string name="server_unavailable_message">Samahani, seva ya Soccer haipatikani kwa sasa…</string>
     <string name="account">Akaunti</string>

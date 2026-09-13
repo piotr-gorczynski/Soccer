@@ -163,6 +163,12 @@
     <string name="regulation_not_found">নিয়মাবলী পাওয়া যায়নি।</string>
     <string name="regulation_load_error">নিয়মাবলী লোড করতে ব্যর্থ।</string>
     <string name="regulation_auth_required">নিয়মাবলী দেখতে অনুগ্রহ করে লগ ইন করুন।</string>
+    <string name="eligibility_confirmation_title">প্রয়োজনীয় নিশ্চিতকরণ</string>
+    <string name="eligibility_confirm_age">আমি নিশ্চিত করছি যে আমার বয়স কমপক্ষে %1$d বছর।</string>
+    <string name="eligibility_confirm_payout_account">আমি নিশ্চিত করছি যে এই নিয়মে সমর্থিত অন্তত একটি পেমেন্ট পদ্ধতিতে আমার একটি সক্রিয় অ্যাকাউন্ট আছে: %1$s।</string>
+    <string name="eligibility_confirm_terms">আমি এই টুর্নামেন্ট ও পুরস্কারের নিয়ম পড়েছি এবং মেনে নিচ্ছি।</string>
+    <string name="eligibility_confirmation_required">এই টুর্নামেন্টে যোগ দিতে সব প্রয়োজনীয় নিশ্চিতকরণ নির্বাচন করুন।</string>
+    <string name="eligibility_configuration_error">এই টুর্নামেন্টের যোগ্যতা কনফিগারেশন সঠিক নয়।</string>
     <string name="server_unavailable">সার্ভার অনুপলব্ধ</string>
     <string name="server_unavailable_message">আমরা দুঃখিত, কিন্তু Soccer সার্ভার এই মুহূর্তে উপলব্ধ নেই…</string>
     

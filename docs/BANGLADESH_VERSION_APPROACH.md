@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.18
+**Document Version:** 2.19
 **Last Updated:** 2026-09-13
 **Status:** Implementation in progress - core prize tournament backend validated on dev
 
 **Revision History**:
+- v2.19 (2026-09-13): Implemented per-registration eligibility confirmation for cash-prize tournaments. The app dynamically displays the minimum age and supported payout methods from the assigned regulation; `joinTournament` validates all declarations and stores an atomic audit record without collecting a concrete payout method or account details.
 - v2.18 (2026-09-13): Updated the implementation roadmap after validating the complete Variant 1 tournament backend flow on dev. `tools/create-tournament` now derives and validates `prizePool` from a native regulation document, while market, minimum-age, and payout-method enforcement remain outstanding.
 - v2.17 (2026-09-09): Extended structured regulation metadata with a generic prize pool and per-place award allocation. The schema describes amounts directly and is not coupled to named prize variants.
 - v2.16 (2026-09-08): Added the JSON-based regulation import workflow. Regulations use native Firestore IDs, retain the existing localized subcollection layout, and may carry structured market, minimum-age, and prize-payout metadata. Documented backward compatibility, successful validation on the dev environment, and the remaining `create-tournament` integration work.
@@ -638,7 +639,10 @@ This extension is backward compatible: existing regulation documents without `ma
 
 The workflow was validated against the `dev` Firebase project on 2026-09-08. It created `regulations/lvHsdrf4rp0585LemozL` with the expected Bangladesh constraints and both `en/rules` and `bn/rules` localized documents.
 
-The next step is to extend `tools/create-tournament` so that it reads the referenced regulation and consistently derives or validates tournament market, age, currency, and allowed payout methods. Until that is implemented, importing a regulation does not by itself enforce those constraints on tournament creation or participation.
+`tools/create-tournament` now reads the referenced regulation and derives the currency and prize
+allocation. During registration, `joinTournament` reads the same regulation and enforces fresh age,
+rules, and supported-payout-account declarations. Deriving or validating the tournament market and
+minimum age during tournament creation remains follow-up work.
 
 ```javascript
 // Collection: tournaments
@@ -686,19 +690,28 @@ The next step is to extend `tools/create-tournament` so that it reads the refere
   notes: "March Championship - 1st Place"
 }
 
-// Collection: users (extended)
+// Per-registration audit record:
+// tournaments/{tournamentId}/participants/{userId}
 {
-  id: "user_789",
-  // ... existing fields
-  bangladeshEligibility: {
-    ageConfirmed: true, // User confirmed via checkbox they are 18+
-    confirmedAt: Timestamp,
-    googlePlayVerified: true, // Verified via Google Play Store account
-    hasPaymentAccount: true, // User declared they have bKash/Nagad/Rocket account
-    preferredPaymentMethod: "bkash" // User's preferred payment method for prizes
+  joinedAt: Timestamp,
+  regulation: "accepted",
+  eligibilityConfirmation: {
+    regulationId: "native-regulation-document-id",
+    market: "BD",
+    minimumAge: 18,
+    ageConfirmed: true,
+    termsAccepted: true,
+    hasSupportedPayoutAccount: true,
+    payoutMethodsOffered: ["bkash", "nagad"],
+    confirmedAt: Timestamp
   }
 }
 ```
+
+The confirmation is recorded for every tournament registration, even when the same regulation was
+accepted previously. A user may have stopped meeting an eligibility condition since an earlier
+tournament. `payoutMethodsOffered` is copied from the current regulation for audit purposes, but the
+user does not select a method or provide payout account details unless they win.
 
 ---
 
@@ -719,30 +732,32 @@ To minimize barriers to entry while maintaining 18+ age compliance, the verifica
    - Simpler user experience than document upload
 
 3. **Payment Account Declaration**
-   - Users confirm they have a valid bKash, Nagad, or Rocket account
+   - Users confirm they have an active account with at least one payout method listed by the assigned regulation
    - Payment accounts in Bangladesh typically require age verification by the service provider
    - Acts as indirect age verification
 
 ### Verification Process
 
-1. **Initial Eligibility Check** (Bangladesh variant only)
+1. **Initial Eligibility Check** (when joining a cash-prize tournament)
    - User creates account (existing flow)
-   - System detects Bangladesh region from Google Play Store
-   - Prompted for tournament eligibility confirmation
+   - User opens the regulation assigned to the selected tournament
+   - The app reads `minimumAge` and `prizeRules.payoutMethods` from that regulation
+   - User is prompted for a fresh eligibility confirmation on every join attempt
    
 2. **Eligibility Confirmation Screen**
    - Checkbox: "I confirm that I am 18 years of age or older"
-   - Checkbox: "I have a valid bKash, Nagad, or Rocket account"
+   - Checkbox: "I have an active account with at least one payout method supported by these rules: [methods from regulation]"
    - Checkbox: "I agree to the terms and conditions for cash prize tournaments"
    - Submit button
    
 3. **Immediate Approval**
-   - Upon confirmation, user is eligible for cash prize tournaments
+   - Upon confirmation, the user is registered for that specific cash-prize tournament
    - No manual review or waiting period
-   - User can immediately register for tournaments
+   - The confirmations are requested again for every future tournament registration
    
 4. **Winner Verification (Post-Tournament)**
    - If user wins 1st place, they must provide payment account details
+   - The winner selects the concrete payout method only at this stage
    - Developer may verify account ownership during manual payment process
    - False declarations result in prize forfeiture and account suspension
 
@@ -753,11 +768,11 @@ Menu Activity
     ↓
 Tournament List (BD only: Shows cash prize badge)
     ↓
-[If not confirmed] → Eligibility Confirmation Screen
+Eligibility Confirmation Screen (required on every registration)
     ↓
     - "You must be 18+ to participate in cash prize tournaments"
     - ☑ "I confirm I am 18 years or older"
-    - ☑ "I have a valid bKash/Nagad/Rocket account"
+    - ☑ "I have an active account with at least one payout method supported by these rules: [methods from regulation]"
     - ☑ "I agree to tournament terms and conditions"
     - [Submit Button]
     ↓
@@ -1267,35 +1282,27 @@ analytics.logEvent("bd_promotion_clicked", mapOf(
 
 ##### In Bangladesh Version (`piotr_gorczynski.soccer2.bd`)
 
-**First Launch Check**:
+**Cash-Prize Tournament Registration Check**:
 ```kotlin
-// On first launch of Bangladesh version
-fun onFirstLaunch() {
-    // User already passed Google Play age check (18+)
-    // Still require in-app confirmation for legal clarity
-    
-    showEligibilityConfirmationDialog()
-}
-
-fun showEligibilityConfirmationDialog() {
-    // User must confirm:
-    // - They are 18+ years old
-    // - They have payment account (bKash/Nagad/Rocket)
-    // - They agree to tournament terms
+fun onJoinCashPrizeTournament(tournament: Tournament) {
+    val regulation = loadRegulation(tournament.regulationId)
+    showRegulationAndEligibilityConfirmation(
+        minimumAge = regulation.minimumAge,
+        payoutMethods = regulation.prizeRules.payoutMethods
+    )
 }
 ```
 
 **Eligibility Confirmation Screen**:
 ```
-🇧🇩 Bangladesh Tournament Eligibility
+🇧🇩 Cash-Prize Tournament Eligibility
 
 To participate in cash prize tournaments, you must confirm:
 
-☑ I am 18 years of age or older
-   (You've already been verified by Google Play)
+☑ I am at least 18 years old
 
-☑ I have a valid bKash, Nagad, or Rocket account
-   (Required to receive prize payments)
+☑ I have an active account with at least one payout method
+   supported by these rules: bKash, Nagad
 
 ☑ I agree to the tournament terms and conditions
    (View terms)
@@ -1305,6 +1312,10 @@ To participate in cash prize tournaments, you must confirm:
 Note: False declarations may result in disqualification
 and prize forfeiture.
 ```
+
+This screen is shown with the regulation every time the user attempts to join a cash-prize
+tournament. The payout-method labels in the confirmation are populated from the current regulation;
+the user does not select a concrete method at this stage.
 
 ---
 
@@ -1689,20 +1700,13 @@ service cloud.firestore {
   // Existing users migrating from global to BD version
   migrationStatus: {
     migratedFromGlobal: true,
-    migrationDate: Timestamp,
-    eligibilityConfirmedForBD: false // User needs to confirm 18+ in BD app
-  },
-  
-  // Bangladesh-specific fields (only for BD users)
-  bangladeshEligibility: {
-    ageConfirmed: true,
-    confirmedAt: Timestamp,
-    googlePlayVerified: true,
-    hasPaymentAccount: true,
-    preferredPaymentMethod: "bkash"
+    migrationDate: Timestamp
   }
 }
 ```
+
+Eligibility is deliberately not stored as a permanent user-profile flag. It is confirmed afresh and
+recorded under `tournaments/{tournamentId}/participants/{userId}` for every cash-prize tournament.
 
 ---
 
@@ -2060,7 +2064,7 @@ to win real cash prizes!
 ## 📋 Eligibility Requirements
 • Must be 18+ years old
 • Residents of Bangladesh
-• Have a valid bKash, Nagad, or Rocket account
+• Have an active account with at least one payout method supported by the tournament rules
 • No entry fees or payments required
 
 ## 🔐 Safe & Compliant
@@ -3025,8 +3029,13 @@ cd mobile
   - `updatePaymentStatus(paymentId, status)` - admin function to update payment status
   - Tournament start and completion functions deployed to `dev`, `test`, and `prod`
   - Production tournament-start notification confirmed on a device
-- [ ] Implement eligibility confirmation workflow
-  - Firestore eligibility records (age confirmation, payment account declaration)
+- [x] Implement eligibility confirmation workflow
+  - Fresh confirmation is required whenever a user joins a cash-prize tournament
+  - Minimum age and the displayed payout-method list are read from the assigned regulation
+  - The user confirms age, acceptance of the rules, and possession of an account with at least one supported payout method
+  - The concrete payout method and account details are not collected before the user wins
+  - The confirmation is written atomically into the tournament participant document
+  - Backend validation prevents clients from bypassing required confirmations
   - No document upload required
 - [ ] Integrate `tools/create-tournament` with all structured regulation metadata (partially completed)
   - [x] Accept and validate the native regulation document ID
@@ -3061,8 +3070,11 @@ cd mobile
   - Package name: `piotr_gorczynski.soccer2.bd`
   - App name: "Gridline Soccer Bangladesh"
   - Icon badge: "BD" variant
-- [ ] Implement eligibility confirmation UI
-  - Simple checkbox screen (18+, payment account, terms)
+- [x] Implement eligibility confirmation UI
+  - Checkboxes displayed with the assigned tournament regulation (age, supported payout account, terms)
+  - Minimum age and payout-method names loaded dynamically from the regulation
+  - Fresh confirmation required for every cash-prize tournament registration
+  - No concrete payout method or account details collected before a win
   - No camera or document upload needed
   - Immediate confirmation
 - [ ] Implement winner payment details collection UI
@@ -3380,7 +3392,7 @@ BANGLADESH SKILL-BASED TOURNAMENTS
 Eligibility: Cash prize tournaments are available only to users who:
 - Are 18 years of age or older (self-declared)
 - Are residents of Bangladesh (verified via Google Play Store region)
-- Have confirmed they possess a valid bKash, Nagad, Rocket account, PayPal account, or Bangladesh bank account
+- Have confirmed they possess an active account with at least one payout method listed by the applicable tournament regulation
 - Have accepted the tournament terms and conditions
 
 Entry: Participation in cash prize tournaments is completely free. No payment, 
