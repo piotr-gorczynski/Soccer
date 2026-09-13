@@ -2982,6 +2982,13 @@ cd mobile
 
 ## Implementation Roadmap
 
+> **Implementation status (13 September 2026):** The Bangladesh product flavor, regulation importer,
+> prize-aware tournament creation, scheduled tournament lifecycle, final ranking, pending payment
+> creation, and winner notification have been implemented. The complete Variant 1 flow (one
+> `1,000 BDT` first-place prize) was successfully exercised on the `dev` environment with three
+> participants and three completed matches. Eligibility, winner payment-details collection, manual
+> payout completion, and the remaining launch/compliance work are still outstanding.
+
 ### Phase 1: Planning & Setup (Week 1-2)
 - [x] Game assumptions validated with ChatGPT legal consultation
 - [ ] Consider additional legal review with Bangladesh legal expert (optional for regulatory certainty)
@@ -3012,15 +3019,23 @@ cd mobile
   - Preserves backward compatibility with existing regulations
   - Validated on the `dev` project with English and Bengali rules
 - [x] Create Cloud Functions for tournament completion
-  - `onTournamentComplete(tournamentId)` - detect winner, create payment record
+  - `endTournament` - scheduled transition from `running` to `ended`
+  - `onTournamentComplete(tournamentId)` - calculate and persist rankings, detect winner, create an idempotent payment record, and notify the winner
   - `updatePaymentStatus(paymentId, status)` - admin function to update payment status
+  - Tournament start and completion functions deployed to `dev`, `test`, and `prod`
+  - Production tournament-start notification confirmed on a device
 - [ ] Implement eligibility confirmation workflow
   - Firestore eligibility records (age confirmation, payment account declaration)
   - No document upload required
-- [ ] Integrate `tools/create-tournament` with structured regulation metadata
-  - Accept the native regulation document ID
-  - Derive or validate market, minimum age, currency, and payout methods
-  - Keep existing tournaments and regulations without the new fields working
+- [x] Integrate `tools/create-tournament` with structured prize metadata
+  - Accepts and validates the native regulation document ID
+  - Derives `prizePool.enabled`, `currency`, `totalAmount`, and an arbitrary `awards` list from `prizeRules`
+  - Retains `firstPlacePrize` for compatibility with the current tournament-completion function
+  - Validates positive award amounts, the first-place award, and that allocations equal the total prize pool
+  - Keeps non-cash and legacy regulations working by writing `prizePool.enabled: false`
+  - Covered by automated tests for one-place, multi-place, disabled, and invalid prize configurations
+- [ ] Extend tournament enforcement beyond prize metadata
+  - Derive or validate market, minimum age, and payout methods where runtime enforcement requires them
 - [ ] Add region detection (Google Play Store region)
 - [ ] **Migration Backend Setup**:
   - [ ] Register both package IDs in Firebase Console (`piotr_gorczynski.soccer2` and `.bd`)
@@ -3055,7 +3070,7 @@ cd mobile
   - Shown only to 1st place winners
 - [ ] Update tournament UI for cash prizes
   - "৳2,000 Prize" badge on tournament listings
-  - Winner notifications
+  - [x] Winner push notification from the backend
   - Payment status screen (pending/completed)
 - [ ] Add Bengali translations for new features
 - [ ] **Migration UI Development**:
@@ -3076,11 +3091,14 @@ cd mobile
 - [ ] Test complete workflow (tournament → winner → payment details → manual payment)
 
 ### Phase 5: Testing & Compliance (Week 9-10)
-- [ ] End-to-end testing
-  - Tournament creation and registration
+- [ ] End-to-end testing (core Variant 1 backend flow completed on `dev`; payout workflow remains)
+  - [x] Tournament creation and registration
   - Eligibility confirmation workflow
-  - Match completion and ranking
-  - Winner notification and payment details collection
+  - [x] Scheduled tournament start and participant notification
+  - [x] Match completion and ranking (three participants, full round-robin)
+  - [x] Scheduled tournament end and `results` creation
+  - [x] Winner notification and pending `1,000 BDT` payment record
+  - Winner payment details collection
   - Manual prize payment simulation
 - [ ] Security audit
   - Payment account data encryption
