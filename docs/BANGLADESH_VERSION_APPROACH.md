@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.17
-**Last Updated:** 2026-09-09
-**Status:** Planning - Legal Validation Completed
+**Document Version:** 2.18
+**Last Updated:** 2026-09-13
+**Status:** Implementation in progress - core prize tournament backend validated on dev
 
 **Revision History**:
+- v2.18 (2026-09-13): Updated the implementation roadmap after validating the complete Variant 1 tournament backend flow on dev. `tools/create-tournament` now derives and validates `prizePool` from a native regulation document, while market, minimum-age, and payout-method enforcement remain outstanding.
 - v2.17 (2026-09-09): Extended structured regulation metadata with a generic prize pool and per-place award allocation. The schema describes amounts directly and is not coupled to named prize variants.
 - v2.16 (2026-09-08): Added the JSON-based regulation import workflow. Regulations use native Firestore IDs, retain the existing localized subcollection layout, and may carry structured market, minimum-age, and prize-payout metadata. Documented backward compatibility, successful validation on the dev environment, and the remaining `create-tournament` integration work.
 - v2.15 (2026-01-19): Added source documents that confirm Remitly can deliver to bKash and Nagad mobile wallets.
@@ -3027,15 +3028,15 @@ cd mobile
 - [ ] Implement eligibility confirmation workflow
   - Firestore eligibility records (age confirmation, payment account declaration)
   - No document upload required
-- [x] Integrate `tools/create-tournament` with structured prize metadata
-  - Accepts and validates the native regulation document ID
-  - Derives `prizePool.enabled`, `currency`, `totalAmount`, and an arbitrary `awards` list from `prizeRules`
-  - Retains `firstPlacePrize` for compatibility with the current tournament-completion function
-  - Validates positive award amounts, the first-place award, and that allocations equal the total prize pool
-  - Keeps non-cash and legacy regulations working by writing `prizePool.enabled: false`
-  - Covered by automated tests for one-place, multi-place, disabled, and invalid prize configurations
-- [ ] Extend tournament enforcement beyond prize metadata
-  - Derive or validate market, minimum age, and payout methods where runtime enforcement requires them
+- [ ] Integrate `tools/create-tournament` with all structured regulation metadata (partially completed)
+  - [x] Accept and validate the native regulation document ID
+  - [x] Derive `prizePool.enabled`, `currency`, `totalAmount`, and an arbitrary `awards` list from `prizeRules`
+  - [x] Retain `firstPlacePrize` for compatibility with the current tournament-completion function
+  - [x] Validate positive award amounts, the first-place award, and that allocations equal the total prize pool
+  - [x] Keep non-cash and legacy regulations working by writing `prizePool.enabled: false`
+  - [x] Cover one-place, multi-place, disabled, and invalid prize configurations with automated tests
+  - [ ] Derive or validate the market and minimum age where runtime enforcement requires them
+  - [ ] Derive or validate supported payout methods
 - [ ] Add region detection (Google Play Store region)
 - [ ] **Migration Backend Setup**:
   - [ ] Register both package IDs in Firebase Console (`piotr_gorczynski.soccer2` and `.bd`)
