@@ -3,6 +3,54 @@ const fs   = require('fs');
 const path = require('path');
 const admin = require('firebase-admin');
 
+function derivePrizePool(regulationData) {
+  const prizeRules = regulationData && regulationData.prizeRules;
+  if (!prizeRules || prizeRules.cashPrizesEnabled !== true) {
+    return { enabled: false };
+  }
+
+  const sourcePool = prizeRules.prizePool;
+  const currency = prizeRules.currency;
+  const awards = sourcePool && sourcePool.awards;
+
+  if (!currency || typeof currency !== 'string') {
+    throw new Error('Active cash-prize regulation is missing prizeRules.currency.');
+  }
+  if (!sourcePool || !Number.isFinite(sourcePool.totalAmount) || sourcePool.totalAmount <= 0) {
+    throw new Error('Active cash-prize regulation has an invalid prizeRules.prizePool.totalAmount.');
+  }
+  if (!Array.isArray(awards) || awards.length === 0) {
+    throw new Error('Active cash-prize regulation must define at least one prize award.');
+  }
+
+  const normalizedAwards = awards.map((award, index) => {
+    if (!Number.isInteger(award.place) || award.place < 1 ||
+        !Number.isFinite(award.amount) || award.amount <= 0) {
+      throw new Error(`Invalid prize award at index ${index}.`);
+    }
+    return { place: award.place, amount: award.amount };
+  });
+
+  const allocatedAmount = normalizedAwards.reduce((sum, award) => sum + award.amount, 0);
+  if (allocatedAmount !== sourcePool.totalAmount) {
+    throw new Error('Prize award amounts must add up to prizeRules.prizePool.totalAmount.');
+  }
+
+  const firstPlaceAward = normalizedAwards.find(award => award.place === 1);
+  if (!firstPlaceAward) {
+    throw new Error('Active cash-prize regulation must define a first-place award.');
+  }
+
+  return {
+    enabled: true,
+    currency,
+    totalAmount: sourcePool.totalAmount,
+    awards: normalizedAwards,
+    // Backward compatibility with the current tournament-completion function.
+    firstPlacePrize: firstPlaceAward.amount
+  };
+}
+
 // ────────────────────────────────────────────────────────────────
 // Service account loading happens after reading the desired environment
 // from the command line. The key files are stored two directories up
@@ -70,6 +118,14 @@ async function main () {
     process.exit(1);
   }
 
+  let prizePool;
+  try {
+    prizePool = derivePrizePool(regSnap.data());
+  } catch (err) {
+    console.error('Invalid prize configuration in regulation:', err.message);
+    process.exit(1);
+  }
+
   try {
     const doc = await db.collection('tournaments').add({
       name,
@@ -81,14 +137,20 @@ async function main () {
       status: 'registering',
       participantsCount: 0,
       createdAt: Timestamp.now(),
-      visibleInFlavours: flavours
+      visibleInFlavours: flavours,
+      prizePool
     });
     console.log('Tournament created with ID:', doc.id);
     console.log('Visible in flavours:', flavours.join(', '));
+    console.log('Prize pool:', JSON.stringify(prizePool));
   } catch (err) {
     console.error('Failed to create tournament:', err.message);
     process.exit(1);
   }
 }
 
-main();
+if (require.main === module) {
+  main();
+}
+
+module.exports = { derivePrizePool };

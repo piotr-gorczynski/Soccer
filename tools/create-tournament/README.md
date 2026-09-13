@@ -133,14 +133,16 @@ The `visibleInFlavours` field controls where tournaments appear:
 6. Sets `visibleInFlavours` to `["global"]` if not specified
 7. Converts date strings to Firestore Timestamps
 8. Validates that the regulation document exists and is active
-9. Creates the tournament document with:
+9. Derives `prizePool` from the regulation's structured `prizeRules` metadata
+10. Creates the tournament document with:
    - All provided parameters
    - `format: "RoundRobin"` (default format)
    - `status: "registering"` (initial status)
    - `participantsCount: 0` (starts with zero participants)
    - `createdAt: <current timestamp>`
    - `visibleInFlavours: ["global"]` or custom value
-10. Logs the created tournament ID and flavour visibility
+   - `prizePool`, including generic `totalAmount` and `awards`, plus the backward-compatible `firstPlacePrize`
+11. Logs the created tournament ID, flavour visibility, and prize pool
 
 ## Complete Example: Bangladesh Tournament
 
@@ -168,11 +170,13 @@ node create-tournament.js test bd-prize-tournament.json
 ```
 Tournament created with ID: abc123def456
 Visible in flavours: bangladesh
+Prize pool: {"enabled":true,"currency":"BDT","totalAmount":1000,"awards":[{"place":1,"amount":1000}],"firstPlacePrize":1000}
 ```
 
 **4. Check in Firebase Console:**
 - Navigate to Firestore → `tournaments` collection
 - Find the document with ID `abc123def456`
+- Verify that `prizePool` matches the structured prize allocation in the referenced regulation
 - Verify `visibleInFlavours: ["bangladesh"]`
 
 ## Troubleshooting
