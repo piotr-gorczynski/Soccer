@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.19
-**Last Updated:** 2026-09-13
+**Document Version:** 2.20
+**Last Updated:** 2026-09-14
 **Status:** Implementation in progress - core prize tournament backend validated on dev
 
 **Revision History**:
+- v2.20 (2026-09-14): Marked the implemented 18+ eligibility confirmation, eligibility-requirements notification, and tournament terms acceptance checklist items as complete.
 - v2.19 (2026-09-13): Implemented per-registration eligibility confirmation for cash-prize tournaments. The app dynamically displays the minimum age and supported payout methods from the assigned regulation; `joinTournament` validates all declarations and stores an atomic audit record without collecting a concrete payout method or account details.
 - v2.18 (2026-09-13): Updated the implementation roadmap after validating the complete Variant 1 tournament backend flow on dev. `tools/create-tournament` now derives and validates `prizePool` from a native regulation document, while market, minimum-age, and payout-method enforcement remain outstanding.
 - v2.17 (2026-09-09): Extended structured regulation metadata with a generic prize pool and per-place award allocation. The schema describes amounts directly and is not coupled to named prize variants.
@@ -3319,7 +3320,7 @@ While current model is developer-funded with no entry fees, future revenue optio
 - [ ] Add eligibility confirmation and terms acceptance in app
 
 #### Technical Compliance
-- [ ] Implement 18+ eligibility confirmation (checkbox + declaration)
+- [x] Implement 18+ eligibility confirmation (checkbox + declaration)
 - [ ] Implement geo-restriction (Bangladesh only via Google Play region)
 - [ ] Free tournament entry (no payment required)
 - [ ] Clear skill-based game mechanics (no randomness in outcomes)
@@ -3338,8 +3339,8 @@ While current model is developer-funded with no entry fees, future revenue optio
 #### User Communication
 - [ ] Clear prize structure disclosure (৳2,000 for 1st place, bi-monthly)
 - [ ] Payment timeline communication (within 7 days)
-- [ ] Eligibility requirements notification (18+, payment account)
-- [ ] Terms and conditions acceptance
+- [x] Eligibility requirements notification (18+, payment account)
+- [x] Terms and conditions acceptance
 - [ ] Manual payment process explanation
 - [ ] Bengali language support for all compliance materials
 
