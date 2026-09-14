@@ -51,6 +51,39 @@ function derivePrizePool(regulationData) {
   };
 }
 
+function validateEligibilityMetadata(regulationData) {
+  const prizeRules = regulationData && regulationData.prizeRules;
+  if (!prizeRules || prizeRules.cashPrizesEnabled !== true) {
+    return null;
+  }
+
+  const market = regulationData.market;
+  const minimumAge = regulationData.minimumAge;
+  const payoutMethods = prizeRules.payoutMethods;
+
+  if (typeof market !== 'string' || !/^[A-Z]{2}$/.test(market)) {
+    throw new Error('Active cash-prize regulation must define a valid ISO 3166-1 alpha-2 market.');
+  }
+  if (!Number.isInteger(minimumAge) || minimumAge < 1 || minimumAge > 120) {
+    throw new Error('Active cash-prize regulation must define a minimumAge between 1 and 120.');
+  }
+  if (!Array.isArray(payoutMethods) || payoutMethods.length === 0) {
+    throw new Error('Active cash-prize regulation must define at least one payout method.');
+  }
+
+  const normalizedPayoutMethods = payoutMethods.map((method, index) => {
+    if (typeof method !== 'string' || !/^[a-z][a-z0-9_]*$/.test(method)) {
+      throw new Error(`Invalid payout method at prizeRules.payoutMethods[${index}].`);
+    }
+    return method;
+  });
+  if (new Set(normalizedPayoutMethods).size !== normalizedPayoutMethods.length) {
+    throw new Error('Active cash-prize regulation must not contain duplicate payout methods.');
+  }
+
+  return { market, minimumAge, payoutMethods: normalizedPayoutMethods };
+}
+
 // ────────────────────────────────────────────────────────────────
 // Service account loading happens after reading the desired environment
 // from the command line. The key files are stored two directories up
@@ -119,10 +152,12 @@ async function main () {
   }
 
   let prizePool;
+  let eligibilityRequirements;
   try {
     prizePool = derivePrizePool(regSnap.data());
+    eligibilityRequirements = validateEligibilityMetadata(regSnap.data());
   } catch (err) {
-    console.error('Invalid prize configuration in regulation:', err.message);
+    console.error('Invalid structured metadata in regulation:', err.message);
     process.exit(1);
   }
 
@@ -143,6 +178,9 @@ async function main () {
     console.log('Tournament created with ID:', doc.id);
     console.log('Visible in flavours:', flavours.join(', '));
     console.log('Prize pool:', JSON.stringify(prizePool));
+    if (eligibilityRequirements) {
+      console.log('Eligibility requirements validated:', JSON.stringify(eligibilityRequirements));
+    }
   } catch (err) {
     console.error('Failed to create tournament:', err.message);
     process.exit(1);
@@ -153,4 +191,4 @@ if (require.main === module) {
   main();
 }
 
-module.exports = { derivePrizePool };
+module.exports = { derivePrizePool, validateEligibilityMetadata };

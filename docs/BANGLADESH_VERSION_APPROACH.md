@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.20
+**Document Version:** 2.21
 **Last Updated:** 2026-09-14
 **Status:** Implementation in progress - core prize tournament backend validated on dev
 
 **Revision History**:
+- v2.21 (2026-09-14): Completed structured regulation integration in `tools/create-tournament`. Cash-prize tournaments now require a valid ISO market, minimum age, and unique supported payout methods before creation, while legacy and non-cash regulations remain compatible.
 - v2.20 (2026-09-14): Marked the implemented 18+ eligibility confirmation, eligibility-requirements notification, and tournament terms acceptance checklist items as complete.
 - v2.19 (2026-09-13): Implemented per-registration eligibility confirmation for cash-prize tournaments. The app dynamically displays the minimum age and supported payout methods from the assigned regulation; `joinTournament` validates all declarations and stores an atomic audit record without collecting a concrete payout method or account details.
 - v2.18 (2026-09-13): Updated the implementation roadmap after validating the complete Variant 1 tournament backend flow on dev. `tools/create-tournament` now derives and validates `prizePool` from a native regulation document, while market, minimum-age, and payout-method enforcement remain outstanding.
@@ -640,10 +641,11 @@ This extension is backward compatible: existing regulation documents without `ma
 
 The workflow was validated against the `dev` Firebase project on 2026-09-08. It created `regulations/lvHsdrf4rp0585LemozL` with the expected Bangladesh constraints and both `en/rules` and `bn/rules` localized documents.
 
-`tools/create-tournament` now reads the referenced regulation and derives the currency and prize
-allocation. During registration, `joinTournament` reads the same regulation and enforces fresh age,
-rules, and supported-payout-account declarations. Deriving or validating the tournament market and
-minimum age during tournament creation remains follow-up work.
+`tools/create-tournament` now reads the referenced regulation, derives the currency and prize
+allocation, and validates the ISO market, minimum age, and supported payout methods required for a
+cash-prize tournament. During registration, `joinTournament` reads the same regulation and enforces
+fresh age, rules, and supported-payout-account declarations. Legacy and non-cash regulations remain
+valid without the new metadata.
 
 ```javascript
 // Collection: tournaments
@@ -3038,15 +3040,15 @@ cd mobile
   - The confirmation is written atomically into the tournament participant document
   - Backend validation prevents clients from bypassing required confirmations
   - No document upload required
-- [ ] Integrate `tools/create-tournament` with all structured regulation metadata (partially completed)
+- [x] Integrate `tools/create-tournament` with all structured regulation metadata
   - [x] Accept and validate the native regulation document ID
   - [x] Derive `prizePool.enabled`, `currency`, `totalAmount`, and an arbitrary `awards` list from `prizeRules`
   - [x] Retain `firstPlacePrize` for compatibility with the current tournament-completion function
   - [x] Validate positive award amounts, the first-place award, and that allocations equal the total prize pool
   - [x] Keep non-cash and legacy regulations working by writing `prizePool.enabled: false`
   - [x] Cover one-place, multi-place, disabled, and invalid prize configurations with automated tests
-  - [ ] Derive or validate the market and minimum age where runtime enforcement requires them
-  - [ ] Derive or validate supported payout methods
+  - [x] Validate the market and minimum age required by the cash-prize registration workflow
+  - [x] Validate supported payout methods
 - [ ] Add region detection (Google Play Store region)
 - [ ] **Migration Backend Setup**:
   - [ ] Register both package IDs in Firebase Console (`piotr_gorczynski.soccer2` and `.bd`)

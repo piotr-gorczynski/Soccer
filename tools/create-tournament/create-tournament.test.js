@@ -1,7 +1,7 @@
 const assert = require('node:assert/strict');
 const test = require('node:test');
 
-const { derivePrizePool } = require('./create-tournament');
+const { derivePrizePool, validateEligibilityMetadata } = require('./create-tournament');
 
 test('derives a backward-compatible prize pool from regulation metadata', () => {
   assert.deepEqual(derivePrizePool({
@@ -60,4 +60,48 @@ test('rejects inconsistent total and award amounts', () => {
       }
     }
   }), /must add up/);
+});
+
+test('validates eligibility metadata required by a cash-prize regulation', () => {
+  assert.deepEqual(validateEligibilityMetadata({
+    market: 'BD',
+    minimumAge: 18,
+    prizeRules: {
+      cashPrizesEnabled: true,
+      payoutMethods: ['bkash', 'nagad']
+    }
+  }), {
+    market: 'BD',
+    minimumAge: 18,
+    payoutMethods: ['bkash', 'nagad']
+  });
+});
+
+test('does not require eligibility metadata for legacy and non-cash regulations', () => {
+  assert.equal(validateEligibilityMetadata({}), null);
+  assert.equal(validateEligibilityMetadata({
+    prizeRules: { cashPrizesEnabled: false }
+  }), null);
+});
+
+test('rejects invalid cash-prize eligibility metadata', () => {
+  const valid = {
+    market: 'BD',
+    minimumAge: 18,
+    prizeRules: {
+      cashPrizesEnabled: true,
+      payoutMethods: ['bkash', 'nagad']
+    }
+  };
+
+  assert.throws(() => validateEligibilityMetadata({ ...valid, market: 'Bangladesh' }), /market/);
+  assert.throws(() => validateEligibilityMetadata({ ...valid, minimumAge: 0 }), /minimumAge/);
+  assert.throws(() => validateEligibilityMetadata({
+    ...valid,
+    prizeRules: { ...valid.prizeRules, payoutMethods: [] }
+  }), /payout method/);
+  assert.throws(() => validateEligibilityMetadata({
+    ...valid,
+    prizeRules: { ...valid.prizeRules, payoutMethods: ['bkash', 'bkash'] }
+  }), /duplicate/);
 });

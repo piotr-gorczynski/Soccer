@@ -134,7 +134,8 @@ The `visibleInFlavours` field controls where tournaments appear:
 7. Converts date strings to Firestore Timestamps
 8. Validates that the regulation document exists and is active
 9. Derives `prizePool` from the regulation's structured `prizeRules` metadata
-10. Creates the tournament document with:
+10. For cash-prize regulations, validates the ISO market code, minimum age, and supported payout methods used by the registration workflow
+11. Creates the tournament document with:
    - All provided parameters
    - `format: "RoundRobin"` (default format)
    - `status: "registering"` (initial status)
@@ -142,7 +143,7 @@ The `visibleInFlavours` field controls where tournaments appear:
    - `createdAt: <current timestamp>`
    - `visibleInFlavours: ["global"]` or custom value
    - `prizePool`, including generic `totalAmount` and `awards`, plus the backward-compatible `firstPlacePrize`
-11. Logs the created tournament ID, flavour visibility, and prize pool
+12. Logs the created tournament ID, flavour visibility, prize pool, and validated eligibility requirements
 
 ## Complete Example: Bangladesh Tournament
 
