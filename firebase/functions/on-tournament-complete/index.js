@@ -118,7 +118,9 @@ exports.onTournamentComplete = functions.firestore
         rank:        entry.rank,
         userId:      entry.userId,
         wins:        entry.wins,
+        draws:       entry.draws,
         losses:      entry.losses,
+        gamesPlayed: entry.gamesPlayed,
         points:      entry.points,
         computedAt:  now,
       });
@@ -177,7 +179,9 @@ exports.onTournamentComplete = functions.firestore
  *  Helper: compute Round-Robin standings from completed matches.  *
  *                                                                 *
  *  Points scheme: win = 3 pts, draw = 1 pt (each), loss = 0.    *
- *  Tie-break: total wins descending, then userId ascending.       *
+ *  Tie-break: completed matches descending, then total wins,     *
+ *  then userId ascending. This prevents an inactive participant  *
+ *  from ranking above an active participant with equal points.   *
  * ─────────────────────────────────────────────────────────────── */
 async function computeStandings(tournamentRef) {
   // Fetch all participants to include players with no completed matches.
@@ -227,12 +231,14 @@ async function computeStandings(tournamentRef) {
     wins:   wins[uid],
     draws:  draws[uid],
     losses: losses[uid],
+    gamesPlayed: wins[uid] + draws[uid] + losses[uid],
     points: wins[uid] * 3 + draws[uid],
   }));
 
   standings.sort((a, b) => {
     if (b.points !== a.points) return b.points - a.points;
-    if (b.wins   !== a.wins)   return b.wins   - a.wins;
+    if (b.gamesPlayed !== a.gamesPlayed) return b.gamesPlayed - a.gamesPlayed;
+    if (b.wins !== a.wins) return b.wins - a.wins;
     return a.userId.localeCompare(b.userId);  // deterministic tie-break
   });
 
