@@ -163,6 +163,12 @@
     <string name="regulation_not_found">Reglamento no encontrado.</string>
     <string name="regulation_load_error">Error al cargar el reglamento.</string>
     <string name="regulation_auth_required">Por favor inicia sesión para ver el reglamento.</string>
+    <string name="eligibility_confirmation_title">Confirmaciones obligatorias</string>
+    <string name="eligibility_confirm_age">Confirmo que tengo al menos %1$d años.</string>
+    <string name="eligibility_confirm_payout_account">Confirmo que tengo una cuenta activa con al menos uno de los métodos de pago admitidos por estas reglas: %1$s.</string>
+    <string name="eligibility_confirm_terms">He leído y acepto estas reglas del torneo y de los premios.</string>
+    <string name="eligibility_confirmation_required">Selecciona todas las confirmaciones obligatorias para unirte a este torneo.</string>
+    <string name="eligibility_configuration_error">Este torneo tiene una configuración de elegibilidad no válida.</string>
     <string name="server_unavailable">Servidor no disponible</string>
     <string name="server_unavailable_message">Lo sentimos, pero el servidor de Soccer no está disponible en este momento…</string>
     

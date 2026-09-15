@@ -163,6 +163,12 @@
     <string name="regulation_not_found">ضابطہ نہیں ملا۔</string>
     <string name="regulation_load_error">ضابطہ لوڈ کرنے میں ناکام۔</string>
     <string name="regulation_auth_required">ضابطہ دیکھنے کے لیے براہ کرم لاگ ان کریں۔</string>
+    <string name="eligibility_confirmation_title">ضروری تصدیقات</string>
+    <string name="eligibility_confirm_age">میں تصدیق کرتا/کرتی ہوں کہ میری عمر کم از کم %1$d سال ہے۔</string>
+    <string name="eligibility_confirm_payout_account">میں تصدیق کرتا/کرتی ہوں کہ ان قواعد کے تحت معاون کم از کم ایک ادائیگی کے طریقے میں میرا فعال اکاؤنٹ ہے: %1$s۔</string>
+    <string name="eligibility_confirm_terms">میں نے ٹورنامنٹ اور انعام کے یہ قواعد پڑھ لیے ہیں اور انہیں قبول کرتا/کرتی ہوں۔</string>
+    <string name="eligibility_confirmation_required">اس ٹورنامنٹ میں شامل ہونے کے لیے تمام ضروری تصدیقات منتخب کریں۔</string>
+    <string name="eligibility_configuration_error">اس ٹورنامنٹ کی اہلیت کی ترتیب درست نہیں ہے۔</string>
     <string name="server_unavailable">سرور دستیاب نہیں</string>
     <string name="server_unavailable_message">ہمیں افسوس ہے، لیکن Soccer سرور اس وقت دستیاب نہیں ہے…</string>
     

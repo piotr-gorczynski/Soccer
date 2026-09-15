@@ -147,6 +147,12 @@
     <string name="regulation_not_found">قوانین پیدا نشد.</string>
     <string name="regulation_load_error">بارگذاری قوانین ناموفق بود.</string>
     <string name="regulation_auth_required">برای مشاهده قوانین لطفاً وارد شوید.</string>
+    <string name="eligibility_confirmation_title">تأییدهای الزامی</string>
+    <string name="eligibility_confirm_age">تأیید می‌کنم که حداقل %1$d سال سن دارم.</string>
+    <string name="eligibility_confirm_payout_account">تأیید می‌کنم که در حداقل یکی از روش‌های پرداخت پشتیبانی‌شده در این قوانین حساب فعال دارم: %1$s.</string>
+    <string name="eligibility_confirm_terms">این قوانین مسابقه و جوایز را خوانده‌ام و می‌پذیرم.</string>
+    <string name="eligibility_confirmation_required">برای پیوستن به این مسابقه، همه تأییدهای الزامی را انتخاب کنید.</string>
+    <string name="eligibility_configuration_error">پیکربندی شرایط شرکت در این مسابقه نامعتبر است.</string>
     <string name="server_unavailable">سرور در دسترس نیست</string>
     <string name="server_unavailable_message">متأسفیم، اما سرور Soccer در حال حاضر در دسترس نیست…</string>
     <string name="account">حساب</string>

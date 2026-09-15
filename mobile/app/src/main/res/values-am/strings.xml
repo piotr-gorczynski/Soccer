@@ -166,6 +166,12 @@
     <string name="regulation_not_found">ደንብ አልተገኘም።</string>
     <string name="regulation_load_error">ደንቡን መጫን አልተሳካም።</string>
     <string name="regulation_auth_required">ደንቡን ለመመልከት እባክዎ ይግቡ።</string>
+    <string name="eligibility_confirmation_title">አስፈላጊ ማረጋገጫዎች</string>
+    <string name="eligibility_confirm_age">ዕድሜዬ ቢያንስ %1$d ዓመት መሆኑን አረጋግጣለሁ።</string>
+    <string name="eligibility_confirm_payout_account">በእነዚህ ደንቦች ከሚደገፉት የክፍያ ዘዴዎች ቢያንስ በአንዱ ንቁ መለያ እንዳለኝ አረጋግጣለሁ፦ %1$s።</string>
+    <string name="eligibility_confirm_terms">እነዚህን የውድድር እና የሽልማት ደንቦች አንብቤ ተስማምቻለሁ።</string>
+    <string name="eligibility_confirmation_required">ወደዚህ ውድድር ለመቀላቀል ሁሉንም አስፈላጊ ማረጋገጫዎች ይምረጡ።</string>
+    <string name="eligibility_configuration_error">ይህ ውድድር ልክ ያልሆነ የብቁነት ውቅር አለው።</string>
     <string name="server_unavailable">አገልጋዩ አይገኝም</string>
     <string name="server_unavailable_message">ይቅርታ እናልሳለን፣ የSoccer አገልጋዩ በአሁኑ ጊዜ አይገኝም…</string>
     <string name="account">መለያ</string>

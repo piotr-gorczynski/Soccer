@@ -147,6 +147,12 @@
     <string name="regulation_not_found">لم يتم العثور على اللوائح.</string>
     <string name="regulation_load_error">فشل تحميل اللوائح.</string>
     <string name="regulation_auth_required">يرجى تسجيل الدخول لعرض اللوائح.</string>
+    <string name="eligibility_confirmation_title">التأكيدات المطلوبة</string>
+    <string name="eligibility_confirm_age">أؤكد أن عمري لا يقل عن %1$d عامًا.</string>
+    <string name="eligibility_confirm_payout_account">أؤكد أن لدي حسابًا نشطًا لدى واحدة على الأقل من طرق الدفع التي تدعمها هذه القواعد: %1$s.</string>
+    <string name="eligibility_confirm_terms">لقد قرأت قواعد البطولة والجوائز هذه وأوافق عليها.</string>
+    <string name="eligibility_confirmation_required">حدد جميع التأكيدات المطلوبة للانضمام إلى هذه البطولة.</string>
+    <string name="eligibility_configuration_error">إعدادات الأهلية لهذه البطولة غير صالحة.</string>
     <string name="server_unavailable">الخادم غير متاح</string>
     <string name="server_unavailable_message">نأسف، خادم Soccer غير متاح في الوقت الحالي…</string>
     <string name="account">الحساب</string>

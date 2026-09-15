@@ -166,6 +166,12 @@
     <string name="regulation_not_found">Дүрэм олдсонгүй.</string>
     <string name="regulation_load_error">Дүрмийг ачаалж чадсангүй.</string>
     <string name="regulation_auth_required">Дүрмийг харахын тулд нэвтэрнэ үү.</string>
+    <string name="eligibility_confirmation_title">Шаардлагатай баталгаажуулалт</string>
+    <string name="eligibility_confirm_age">Би өөрийгөө хамгийн багадаа %1$d настай гэдгээ баталж байна.</string>
+    <string name="eligibility_confirm_payout_account">Би эдгээр дүрмээр дэмжигдсэн төлбөрийн аргуудаас дор хаяж нэгэнд нь идэвхтэй данстай гэдгээ баталж байна: %1$s.</string>
+    <string name="eligibility_confirm_terms">Би тэмцээн болон шагналын эдгээр дүрмийг уншиж, зөвшөөрч байна.</string>
+    <string name="eligibility_confirmation_required">Энэ тэмцээнд оролцохын тулд шаардлагатай бүх баталгаажуулалтыг сонгоно уу.</string>
+    <string name="eligibility_configuration_error">Энэ тэмцээний оролцох эрхийн тохиргоо буруу байна.</string>
     <string name="server_unavailable">Сервер ашиглах боломжгүй</string>
     <string name="server_unavailable_message">Уучлаарай, Soccer сервер одоогоор ажиллахгүй байна…</string>
     <string name="account">Бүртгэл</string>

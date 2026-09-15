@@ -3,6 +3,87 @@ const fs   = require('fs');
 const path = require('path');
 const admin = require('firebase-admin');
 
+function derivePrizePool(regulationData) {
+  const prizeRules = regulationData && regulationData.prizeRules;
+  if (!prizeRules || prizeRules.cashPrizesEnabled !== true) {
+    return { enabled: false };
+  }
+
+  const sourcePool = prizeRules.prizePool;
+  const currency = prizeRules.currency;
+  const awards = sourcePool && sourcePool.awards;
+
+  if (!currency || typeof currency !== 'string') {
+    throw new Error('Active cash-prize regulation is missing prizeRules.currency.');
+  }
+  if (!sourcePool || !Number.isFinite(sourcePool.totalAmount) || sourcePool.totalAmount <= 0) {
+    throw new Error('Active cash-prize regulation has an invalid prizeRules.prizePool.totalAmount.');
+  }
+  if (!Array.isArray(awards) || awards.length === 0) {
+    throw new Error('Active cash-prize regulation must define at least one prize award.');
+  }
+
+  const normalizedAwards = awards.map((award, index) => {
+    if (!Number.isInteger(award.place) || award.place < 1 ||
+        !Number.isFinite(award.amount) || award.amount <= 0) {
+      throw new Error(`Invalid prize award at index ${index}.`);
+    }
+    return { place: award.place, amount: award.amount };
+  });
+
+  const allocatedAmount = normalizedAwards.reduce((sum, award) => sum + award.amount, 0);
+  if (allocatedAmount !== sourcePool.totalAmount) {
+    throw new Error('Prize award amounts must add up to prizeRules.prizePool.totalAmount.');
+  }
+
+  const firstPlaceAward = normalizedAwards.find(award => award.place === 1);
+  if (!firstPlaceAward) {
+    throw new Error('Active cash-prize regulation must define a first-place award.');
+  }
+
+  return {
+    enabled: true,
+    currency,
+    totalAmount: sourcePool.totalAmount,
+    awards: normalizedAwards,
+    // Backward compatibility with the current tournament-completion function.
+    firstPlacePrize: firstPlaceAward.amount
+  };
+}
+
+function validateEligibilityMetadata(regulationData) {
+  const prizeRules = regulationData && regulationData.prizeRules;
+  if (!prizeRules || prizeRules.cashPrizesEnabled !== true) {
+    return null;
+  }
+
+  const market = regulationData.market;
+  const minimumAge = regulationData.minimumAge;
+  const payoutMethods = prizeRules.payoutMethods;
+
+  if (typeof market !== 'string' || !/^[A-Z]{2}$/.test(market)) {
+    throw new Error('Active cash-prize regulation must define a valid ISO 3166-1 alpha-2 market.');
+  }
+  if (!Number.isInteger(minimumAge) || minimumAge < 1 || minimumAge > 120) {
+    throw new Error('Active cash-prize regulation must define a minimumAge between 1 and 120.');
+  }
+  if (!Array.isArray(payoutMethods) || payoutMethods.length === 0) {
+    throw new Error('Active cash-prize regulation must define at least one payout method.');
+  }
+
+  const normalizedPayoutMethods = payoutMethods.map((method, index) => {
+    if (typeof method !== 'string' || !/^[a-z][a-z0-9_]*$/.test(method)) {
+      throw new Error(`Invalid payout method at prizeRules.payoutMethods[${index}].`);
+    }
+    return method;
+  });
+  if (new Set(normalizedPayoutMethods).size !== normalizedPayoutMethods.length) {
+    throw new Error('Active cash-prize regulation must not contain duplicate payout methods.');
+  }
+
+  return { market, minimumAge, payoutMethods: normalizedPayoutMethods };
+}
+
 // ────────────────────────────────────────────────────────────────
 // Service account loading happens after reading the desired environment
 // from the command line. The key files are stored two directories up
@@ -70,6 +151,16 @@ async function main () {
     process.exit(1);
   }
 
+  let prizePool;
+  let eligibilityRequirements;
+  try {
+    prizePool = derivePrizePool(regSnap.data());
+    eligibilityRequirements = validateEligibilityMetadata(regSnap.data());
+  } catch (err) {
+    console.error('Invalid structured metadata in regulation:', err.message);
+    process.exit(1);
+  }
+
   try {
     const doc = await db.collection('tournaments').add({
       name,
@@ -81,14 +172,23 @@ async function main () {
       status: 'registering',
       participantsCount: 0,
       createdAt: Timestamp.now(),
-      visibleInFlavours: flavours
+      visibleInFlavours: flavours,
+      prizePool
     });
     console.log('Tournament created with ID:', doc.id);
     console.log('Visible in flavours:', flavours.join(', '));
+    console.log('Prize pool:', JSON.stringify(prizePool));
+    if (eligibilityRequirements) {
+      console.log('Eligibility requirements validated:', JSON.stringify(eligibilityRequirements));
+    }
   } catch (err) {
     console.error('Failed to create tournament:', err.message);
     process.exit(1);
   }
 }
 
-main();
+if (require.main === module) {
+  main();
+}
+
+module.exports = { derivePrizePool, validateEligibilityMetadata };

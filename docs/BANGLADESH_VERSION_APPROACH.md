@@ -1,10 +1,16 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.17
-**Last Updated:** 2026-09-09
-**Status:** Planning - Legal Validation Completed
+**Document Version:** 2.23
+**Last Updated:** 2026-09-15
+**Status:** Implementation in progress - core prize tournament backend validated on dev
 
 **Revision History**:
+- v2.23 (2026-09-15): Registered the Bangladesh Android app in every Firebase environment and implemented generic app-variant and migration tracking. Added server-managed user migration metadata, protected it in Firestore rules, and documented the shared per-environment `google-services.json` model.
+- v2.22 (2026-09-14): Replaced runtime region detection with Google Play production country targeting. The `.bd` production listing will be restricted to Bangladesh by Play country, while dev and test builds remain unrestricted for development and QA.
+- v2.21 (2026-09-14): Completed structured regulation integration in `tools/create-tournament`. Cash-prize tournaments now require a valid ISO market, minimum age, and unique supported payout methods before creation, while legacy and non-cash regulations remain compatible.
+- v2.20 (2026-09-14): Marked the implemented 18+ eligibility confirmation, eligibility-requirements notification, and tournament terms acceptance checklist items as complete.
+- v2.19 (2026-09-13): Implemented per-registration eligibility confirmation for cash-prize tournaments. The app dynamically displays the minimum age and supported payout methods from the assigned regulation; `joinTournament` validates all declarations and stores an atomic audit record without collecting a concrete payout method or account details.
+- v2.18 (2026-09-13): Updated the implementation roadmap after validating the complete Variant 1 tournament backend flow on dev. `tools/create-tournament` now derives and validates `prizePool` from a native regulation document, while market, minimum-age, and payout-method enforcement remain outstanding.
 - v2.17 (2026-09-09): Extended structured regulation metadata with a generic prize pool and per-place award allocation. The schema describes amounts directly and is not coupled to named prize variants.
 - v2.16 (2026-09-08): Added the JSON-based regulation import workflow. Regulations use native Firestore IDs, retain the existing localized subcollection layout, and may carry structured market, minimum-age, and prize-payout metadata. Documented backward compatibility, successful validation on the dev environment, and the remaining `create-tournament` integration work.
 - v2.15 (2026-01-19): Added source documents that confirm Remitly can deliver to bKash and Nagad mobile wallets.
@@ -637,7 +643,11 @@ This extension is backward compatible: existing regulation documents without `ma
 
 The workflow was validated against the `dev` Firebase project on 2026-09-08. It created `regulations/lvHsdrf4rp0585LemozL` with the expected Bangladesh constraints and both `en/rules` and `bn/rules` localized documents.
 
-The next step is to extend `tools/create-tournament` so that it reads the referenced regulation and consistently derives or validates tournament market, age, currency, and allowed payout methods. Until that is implemented, importing a regulation does not by itself enforce those constraints on tournament creation or participation.
+`tools/create-tournament` now reads the referenced regulation, derives the currency and prize
+allocation, and validates the ISO market, minimum age, and supported payout methods required for a
+cash-prize tournament. During registration, `joinTournament` reads the same regulation and enforces
+fresh age, rules, and supported-payout-account declarations. Legacy and non-cash regulations remain
+valid without the new metadata.
 
 ```javascript
 // Collection: tournaments
@@ -685,19 +695,28 @@ The next step is to extend `tools/create-tournament` so that it reads the refere
   notes: "March Championship - 1st Place"
 }
 
-// Collection: users (extended)
+// Per-registration audit record:
+// tournaments/{tournamentId}/participants/{userId}
 {
-  id: "user_789",
-  // ... existing fields
-  bangladeshEligibility: {
-    ageConfirmed: true, // User confirmed via checkbox they are 18+
-    confirmedAt: Timestamp,
-    googlePlayVerified: true, // Verified via Google Play Store account
-    hasPaymentAccount: true, // User declared they have bKash/Nagad/Rocket account
-    preferredPaymentMethod: "bkash" // User's preferred payment method for prizes
+  joinedAt: Timestamp,
+  regulation: "accepted",
+  eligibilityConfirmation: {
+    regulationId: "native-regulation-document-id",
+    market: "BD",
+    minimumAge: 18,
+    ageConfirmed: true,
+    termsAccepted: true,
+    hasSupportedPayoutAccount: true,
+    payoutMethodsOffered: ["bkash", "nagad"],
+    confirmedAt: Timestamp
   }
 }
 ```
+
+The confirmation is recorded for every tournament registration, even when the same regulation was
+accepted previously. A user may have stopped meeting an eligibility condition since an earlier
+tournament. `payoutMethodsOffered` is copied from the current regulation for audit purposes, but the
+user does not select a method or provide payout account details unless they win.
 
 ---
 
@@ -718,30 +737,32 @@ To minimize barriers to entry while maintaining 18+ age compliance, the verifica
    - Simpler user experience than document upload
 
 3. **Payment Account Declaration**
-   - Users confirm they have a valid bKash, Nagad, or Rocket account
+   - Users confirm they have an active account with at least one payout method listed by the assigned regulation
    - Payment accounts in Bangladesh typically require age verification by the service provider
    - Acts as indirect age verification
 
 ### Verification Process
 
-1. **Initial Eligibility Check** (Bangladesh variant only)
+1. **Initial Eligibility Check** (when joining a cash-prize tournament)
    - User creates account (existing flow)
-   - System detects Bangladesh region from Google Play Store
-   - Prompted for tournament eligibility confirmation
+   - User opens the regulation assigned to the selected tournament
+   - The app reads `minimumAge` and `prizeRules.payoutMethods` from that regulation
+   - User is prompted for a fresh eligibility confirmation on every join attempt
    
 2. **Eligibility Confirmation Screen**
    - Checkbox: "I confirm that I am 18 years of age or older"
-   - Checkbox: "I have a valid bKash, Nagad, or Rocket account"
+   - Checkbox: "I have an active account with at least one payout method supported by these rules: [methods from regulation]"
    - Checkbox: "I agree to the terms and conditions for cash prize tournaments"
    - Submit button
    
 3. **Immediate Approval**
-   - Upon confirmation, user is eligible for cash prize tournaments
+   - Upon confirmation, the user is registered for that specific cash-prize tournament
    - No manual review or waiting period
-   - User can immediately register for tournaments
+   - The confirmations are requested again for every future tournament registration
    
 4. **Winner Verification (Post-Tournament)**
    - If user wins 1st place, they must provide payment account details
+   - The winner selects the concrete payout method only at this stage
    - Developer may verify account ownership during manual payment process
    - False declarations result in prize forfeiture and account suspension
 
@@ -752,11 +773,11 @@ Menu Activity
     ↓
 Tournament List (BD only: Shows cash prize badge)
     ↓
-[If not confirmed] → Eligibility Confirmation Screen
+Eligibility Confirmation Screen (required on every registration)
     ↓
     - "You must be 18+ to participate in cash prize tournaments"
     - ☑ "I confirm I am 18 years or older"
-    - ☑ "I have a valid bKash/Nagad/Rocket account"
+    - ☑ "I have an active account with at least one payout method supported by these rules: [methods from regulation]"
     - ☑ "I agree to tournament terms and conditions"
     - [Submit Button]
     ↓
@@ -1266,35 +1287,27 @@ analytics.logEvent("bd_promotion_clicked", mapOf(
 
 ##### In Bangladesh Version (`piotr_gorczynski.soccer2.bd`)
 
-**First Launch Check**:
+**Cash-Prize Tournament Registration Check**:
 ```kotlin
-// On first launch of Bangladesh version
-fun onFirstLaunch() {
-    // User already passed Google Play age check (18+)
-    // Still require in-app confirmation for legal clarity
-    
-    showEligibilityConfirmationDialog()
-}
-
-fun showEligibilityConfirmationDialog() {
-    // User must confirm:
-    // - They are 18+ years old
-    // - They have payment account (bKash/Nagad/Rocket)
-    // - They agree to tournament terms
+fun onJoinCashPrizeTournament(tournament: Tournament) {
+    val regulation = loadRegulation(tournament.regulationId)
+    showRegulationAndEligibilityConfirmation(
+        minimumAge = regulation.minimumAge,
+        payoutMethods = regulation.prizeRules.payoutMethods
+    )
 }
 ```
 
 **Eligibility Confirmation Screen**:
 ```
-🇧🇩 Bangladesh Tournament Eligibility
+🇧🇩 Cash-Prize Tournament Eligibility
 
 To participate in cash prize tournaments, you must confirm:
 
-☑ I am 18 years of age or older
-   (You've already been verified by Google Play)
+☑ I am at least 18 years old
 
-☑ I have a valid bKash, Nagad, or Rocket account
-   (Required to receive prize payments)
+☑ I have an active account with at least one payout method
+   supported by these rules: bKash, Nagad
 
 ☑ I agree to the tournament terms and conditions
    (View terms)
@@ -1304,6 +1317,10 @@ To participate in cash prize tournaments, you must confirm:
 Note: False declarations may result in disqualification
 and prize forfeiture.
 ```
+
+This screen is shown with the regulation every time the user attempts to join a cash-prize
+tournament. The payout-method labels in the confirmation are populated from the current regulation;
+the user does not select a concrete method at this stage.
 
 ---
 
@@ -1593,10 +1610,10 @@ Firebase Configuration: Single google-services.json per environment
    - Facebook (if applicable)
    - Anonymous authentication
    
-5. Firestore Security Rules (apply regional filtering):
-   - Users can access their own data
-   - Bangladesh users can access BD tournaments
-   - Global users see global tournaments only
+6. Firestore Security Rules:
+   - Both registered apps use the same authenticated-user access rules
+   - No package-specific rule is required or available in Firestore rules
+   - Server-managed app-variant and migration fields cannot be modified directly by clients
 ```
 
 #### Firebase Authentication Behavior
@@ -1630,7 +1647,7 @@ User sees their existing profile, stats, and friend list
 - `matches/` - Match history and results
 - `tournaments/` - All tournaments with regional filtering
 
-**Regional Filtering Logic**:
+**Cross-app access and migration metadata protection**:
 
 ```javascript
 // Firestore Security Rules
@@ -1638,38 +1655,22 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Users can access their own data from any app variant
+    // Users can access their data from either registered app.
     match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-    }
-    
-    // Tournament access based on region
-    match /tournaments/{tournamentId} {
       allow read: if request.auth != null;
-      allow write: if request.auth != null && 
-                      request.auth.uid == resource.data.createdBy;
-      
-      // Bangladesh users can only join BD tournaments
-      // Global users can only join global tournaments
-      match /participants/{participantId} {
-        allow create: if request.auth != null && 
-                         // Check if user's region matches tournament region
-                         (get(/databases/$(database)/documents/tournaments/$(tournamentId)).data.region == 
-                          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.region ||
-                          get(/databases/$(database)/documents/tournaments/$(tournamentId)).data.region == null);
-      }
-    }
-    
-    // Match data accessible to participants
-    match /matches/{matchId} {
-      allow read: if request.auth != null;
-      allow create, update: if request.auth != null && 
-                               (request.auth.uid == resource.data.player1Id || 
-                                request.auth.uid == resource.data.player2Id);
+      allow create: if request.auth.uid == userId
+                    && !request.resource.data.keys()
+                         .hasAny(['appVariant', 'appVariants', 'migrationStatus']);
+      allow update: if request.auth.uid == userId
+                    && request.resource.data.diff(resource.data).affectedKeys()
+                         .hasNone(['appVariant', 'appVariants', 'migrationStatus']);
     }
   }
 }
 ```
+
+Tournament visibility remains controlled by `visibleInFlavours` in the clients. Tournament joins are
+performed by callable backend functions rather than direct participant writes.
 
 **User Document Extension**:
 
@@ -1681,27 +1682,36 @@ service cloud.firestore {
   displayName: "Player Name",
   // ... existing fields ...
   
-  // NEW: Regional configuration
-  region: "BD", // or null for global users
-  appVariant: "bangladesh", // or "global"
-  
-  // Existing users migrating from global to BD version
+  // Maintained by trackAppVariant, never trusted from a direct client write.
+  appVariant: "bangladesh",
+  appVariants: {
+    global: {
+      firstSeenAt: Timestamp,
+      lastSeenAt: Timestamp
+    },
+    bangladesh: {
+      firstSeenAt: Timestamp,
+      lastSeenAt: Timestamp
+    }
+  },
   migrationStatus: {
     migratedFromGlobal: true,
-    migrationDate: Timestamp,
-    eligibilityConfirmedForBD: false // User needs to confirm 18+ in BD app
-  },
-  
-  // Bangladesh-specific fields (only for BD users)
-  bangladeshEligibility: {
-    ageConfirmed: true,
-    confirmedAt: Timestamp,
-    googlePlayVerified: true,
-    hasPaymentAccount: true,
-    preferredPaymentMethod: "bkash"
+    sourceVariant: "global",
+    targetVariant: "bangladesh",
+    firstDetectedAt: Timestamp,
+    lastDetectedAt: Timestamp
   }
 }
 ```
+
+`trackAppVariant` is called after authentication by every flavor. It records first and latest use of
+each variant with server timestamps. A migration is recorded only when the same Firebase UID was
+previously observed in `global` and is subsequently observed in a market flavor. This is intentionally
+generic so another market flavor can be added later. Anonymous installations do not share a UID across
+separate application packages and therefore cannot be automatically linked as the same migration.
+
+Eligibility is deliberately not stored as a permanent user-profile flag. It is confirmed afresh and
+recorded under `tournaments/{tournamentId}/participants/{userId}` for every cash-prize tournament.
 
 ---
 
@@ -2059,7 +2069,7 @@ to win real cash prizes!
 ## 📋 Eligibility Requirements
 • Must be 18+ years old
 • Residents of Bangladesh
-• Have a valid bKash, Nagad, or Rocket account
+• Have an active account with at least one payout method supported by the tournament rules
 • No entry fees or payments required
 
 ## 🔐 Safe & Compliant
@@ -2982,6 +2992,13 @@ cd mobile
 
 ## Implementation Roadmap
 
+> **Implementation status (13 September 2026):** The Bangladesh product flavor, regulation importer,
+> prize-aware tournament creation, scheduled tournament lifecycle, final ranking, pending payment
+> creation, and winner notification have been implemented. The complete Variant 1 flow (one
+> `1,000 BDT` first-place prize) was successfully exercised on the `dev` environment with three
+> participants and three completed matches. Eligibility, winner payment-details collection, manual
+> payout completion, and the remaining launch/compliance work are still outstanding.
+
 ### Phase 1: Planning & Setup (Week 1-2)
 - [x] Game assumptions validated with ChatGPT legal consultation
 - [ ] Consider additional legal review with Bangladesh legal expert (optional for regulatory certainty)
@@ -3012,22 +3029,38 @@ cd mobile
   - Preserves backward compatibility with existing regulations
   - Validated on the `dev` project with English and Bengali rules
 - [x] Create Cloud Functions for tournament completion
-  - `onTournamentComplete(tournamentId)` - detect winner, create payment record
+  - `endTournament` - scheduled transition from `running` to `ended`
+  - `onTournamentComplete(tournamentId)` - calculate and persist rankings, detect winner, create an idempotent payment record, and notify the winner
   - `updatePaymentStatus(paymentId, status)` - admin function to update payment status
-- [ ] Implement eligibility confirmation workflow
-  - Firestore eligibility records (age confirmation, payment account declaration)
+  - Tournament start and completion functions deployed to `dev`, `test`, and `prod`
+  - Production tournament-start notification confirmed on a device
+- [x] Implement eligibility confirmation workflow
+  - Fresh confirmation is required whenever a user joins a cash-prize tournament
+  - Minimum age and the displayed payout-method list are read from the assigned regulation
+  - The user confirms age, acceptance of the rules, and possession of an account with at least one supported payout method
+  - The concrete payout method and account details are not collected before the user wins
+  - The confirmation is written atomically into the tournament participant document
+  - Backend validation prevents clients from bypassing required confirmations
   - No document upload required
-- [ ] Integrate `tools/create-tournament` with structured regulation metadata
-  - Accept the native regulation document ID
-  - Derive or validate market, minimum age, currency, and payout methods
-  - Keep existing tournaments and regulations without the new fields working
-- [ ] Add region detection (Google Play Store region)
-- [ ] **Migration Backend Setup**:
-  - [ ] Register both package IDs in Firebase Console (`piotr_gorczynski.soccer2` and `.bd`)
-  - [ ] Configure separate `google-services.json` files for each flavor
-  - [ ] Update Firestore security rules for cross-app data access
-  - [ ] Create Cloud Function for tracking user migrations
-  - [ ] Extend user schema with migration tracking fields
+- [x] Integrate `tools/create-tournament` with all structured regulation metadata
+  - [x] Accept and validate the native regulation document ID
+  - [x] Derive `prizePool.enabled`, `currency`, `totalAmount`, and an arbitrary `awards` list from `prizeRules`
+  - [x] Retain `firstPlacePrize` for compatibility with the current tournament-completion function
+  - [x] Validate positive award amounts, the first-place award, and that allocations equal the total prize pool
+  - [x] Keep non-cash and legacy regulations working by writing `prizePool.enabled: false`
+  - [x] Cover one-place, multi-place, disabled, and invalid prize configurations with automated tests
+  - [x] Validate the market and minimum age required by the cash-prize registration workflow
+  - [x] Validate supported payout methods
+- [ ] Restrict the production `.bd` Play Store listing to Bangladesh
+  - Configure production country availability in Google Play Console
+  - Use the user's Google Play country as enforced by Play distribution
+  - Keep dev and test builds unrestricted for development and QA
+- [ ] **Migration Backend Setup** (implementation complete; deployment/config refresh pending):
+  - [x] Register both package IDs in Firebase Console (`piotr_gorczynski.soccer2` and `.bd`) for dev, test, and prod
+  - [ ] Refresh the shared `google-services.<env>.json` for test and prod so each contains both clients
+  - [x] Update Firestore security rules to protect server-managed migration fields while preserving cross-app access
+  - [x] Create the generic `trackAppVariant` Cloud Function for tracking migrations
+  - [x] Extend the user schema with `appVariant`, `appVariants`, and `migrationStatus`
 - [ ] **Authentication Integration Setup**:
   - [ ] Register Bangladesh app in Firebase Console with package ID `piotr_gorczynski.soccer2.bd`
   - [ ] Provide SHA-1 fingerprint from release keystore for Google Sign-In
@@ -3045,8 +3078,11 @@ cd mobile
   - Package name: `piotr_gorczynski.soccer2.bd`
   - App name: "Gridline Soccer Bangladesh"
   - Icon badge: "BD" variant
-- [ ] Implement eligibility confirmation UI
-  - Simple checkbox screen (18+, payment account, terms)
+- [x] Implement eligibility confirmation UI
+  - Checkboxes displayed with the assigned tournament regulation (age, supported payout account, terms)
+  - Minimum age and payout-method names loaded dynamically from the regulation
+  - Fresh confirmation required for every cash-prize tournament registration
+  - No concrete payout method or account details collected before a win
   - No camera or document upload needed
   - Immediate confirmation
 - [ ] Implement winner payment details collection UI
@@ -3055,7 +3091,7 @@ cd mobile
   - Shown only to 1st place winners
 - [ ] Update tournament UI for cash prizes
   - "৳2,000 Prize" badge on tournament listings
-  - Winner notifications
+  - [x] Winner push notification from the backend
   - Payment status screen (pending/completed)
 - [ ] Add Bengali translations for new features
 - [ ] **Migration UI Development**:
@@ -3076,11 +3112,14 @@ cd mobile
 - [ ] Test complete workflow (tournament → winner → payment details → manual payment)
 
 ### Phase 5: Testing & Compliance (Week 9-10)
-- [ ] End-to-end testing
-  - Tournament creation and registration
+- [ ] End-to-end testing (core Variant 1 backend flow completed on `dev`; payout workflow remains)
+  - [x] Tournament creation and registration
   - Eligibility confirmation workflow
-  - Match completion and ranking
-  - Winner notification and payment details collection
+  - [x] Scheduled tournament start and participant notification
+  - [x] Match completion and ranking (three participants, full round-robin)
+  - [x] Scheduled tournament end and `results` creation
+  - [x] Winner notification and pending `1,000 BDT` payment record
+  - Winner payment details collection
   - Manual prize payment simulation
 - [ ] Security audit
   - Payment account data encryption
@@ -3288,7 +3327,7 @@ While current model is developer-funded with no entry fees, future revenue optio
 - [ ] Add eligibility confirmation and terms acceptance in app
 
 #### Technical Compliance
-- [ ] Implement 18+ eligibility confirmation (checkbox + declaration)
+- [x] Implement 18+ eligibility confirmation (checkbox + declaration)
 - [ ] Implement geo-restriction (Bangladesh only via Google Play region)
 - [ ] Free tournament entry (no payment required)
 - [ ] Clear skill-based game mechanics (no randomness in outcomes)
@@ -3307,8 +3346,8 @@ While current model is developer-funded with no entry fees, future revenue optio
 #### User Communication
 - [ ] Clear prize structure disclosure (৳2,000 for 1st place, bi-monthly)
 - [ ] Payment timeline communication (within 7 days)
-- [ ] Eligibility requirements notification (18+, payment account)
-- [ ] Terms and conditions acceptance
+- [x] Eligibility requirements notification (18+, payment account)
+- [x] Terms and conditions acceptance
 - [ ] Manual payment process explanation
 - [ ] Bengali language support for all compliance materials
 
@@ -3361,7 +3400,7 @@ BANGLADESH SKILL-BASED TOURNAMENTS
 Eligibility: Cash prize tournaments are available only to users who:
 - Are 18 years of age or older (self-declared)
 - Are residents of Bangladesh (verified via Google Play Store region)
-- Have confirmed they possess a valid bKash, Nagad, Rocket account, PayPal account, or Bangladesh bank account
+- Have confirmed they possess an active account with at least one payout method listed by the applicable tournament regulation
 - Have accepted the tournament terms and conditions
 
 Entry: Participation in cash prize tournaments is completely free. No payment, 
