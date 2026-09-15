@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.27
+**Document Version:** 2.28
 **Last Updated:** 2026-09-15
 **Status:** Implementation in progress - Migration Backend Setup complete on dev, test, and prod
 
 **Revision History**:
+- v2.28 (2026-09-15): Verified that Email/Password, Google, Facebook, and Anonymous authentication are enabled in Firebase on dev, test, and prod. Removed Microsoft authentication from the planned provider set. Added `piotr_gorczynski.soccer2.bd` to the existing live Meta app alongside the global Android package; Meta will be able to verify its Play Store association after the `.bd` app is registered in Google Play Console.
 - v2.27 (2026-09-15): Completed the Google Sign-In certificate setup for the Bangladesh app. Fixed `065-sha-copy` so an empty Firebase certificate list is handled correctly, provisioned the required OAuth Brands for test and prod, synchronized all registered SHA-1/SHA-256 certificates to the `.bd` app in dev, test, and prod, and verified that the production Play App Signing SHA-1 is registered for both production package IDs.
 - v2.26 (2026-09-15): Deployed the updated Firestore security rules successfully to dev, test, and prod through `190-deploy-firestore-rules`. The Migration Backend Setup phase is now complete across all three environments.
 - v2.25 (2026-09-15): Refreshed `google-services.test.json` and `google-services.prod.json` through `320-download-google-services`. The shared Google Services configuration rollout now covers dev, test, and prod; deployment of the updated Firestore rules remains the only open Migration Backend Setup item.
@@ -2297,7 +2298,6 @@ Firebase Project: gridline-soccer (existing)
 │   │   ├── Email/Password ✓
 │   │   ├── Google ✓
 │   │   ├── Facebook ✓
-│   │   ├── Microsoft ✓
 │   │   └── Anonymous ✓
 │   └── User Database (shared)
 │
@@ -2574,11 +2574,10 @@ implementation 'com.facebook.android:facebook-android-sdk:18.1.3'
   - Synchronize all registered SHA-1/SHA-256 certificates from the global app to the Bangladesh app with `065-sha-copy`
   - Verify the production Play App Signing SHA-1 is registered for both production package IDs
 
-- [ ] **Verify Firebase Auth Methods Enabled**
+- [x] **Verify Firebase Auth Methods Enabled on dev, test, and prod**
   - Email/Password: ✓
   - Google: ✓
   - Facebook: ✓
-  - Microsoft: ✓ (if used)
   - Anonymous: ✓
 
 #### Phase 2: Google Sign-In Setup
@@ -3068,9 +3067,11 @@ cd mobile
   - [x] Verify the production Play App Signing SHA-1 is registered for both production package IDs
   - [x] Use a shared environment-specific `google-services.json` containing the global and Bangladesh clients instead of a flavor-specific file
   - [x] Refresh the shared Google Services configuration for test and prod with `320-download-google-services`
-  - [ ] Verify Firebase Authentication methods enabled (Email, Google, Facebook, Microsoft, Anonymous)
-  - [ ] Add Bangladesh package ID to existing Facebook app (Option 1 - Recommended)
-    - OR create new Facebook app for Bangladesh (Option 2)
+  - [x] Verify Firebase Authentication methods enabled on dev, test, and prod (Email/Password, Google, Facebook, Anonymous)
+  - Microsoft authentication is intentionally not supported
+  - [x] Add Bangladesh package ID to existing Facebook app (Option 1 - Recommended)
+    - The existing Meta app now contains both `piotr_gorczynski.soccer2` and `piotr_gorczynski.soccer2.bd`
+    - Play Store verification for `.bd` remains unavailable until that package is registered in Google Play Console
   - [ ] Generate Facebook key hashes for both debug and release keystores
   - [ ] Add all key hashes to Facebook App Dashboard
   - [x] Verify the Firestore rules design preserves cross-app user data access (no package restrictions)
@@ -3372,8 +3373,10 @@ While current model is developer-funded with no entry fees, future revenue optio
   - [x] Refresh test and prod with `320-download-google-services`
 - [x] Synchronize all registered SHA-1/SHA-256 certificates to the Bangladesh app on dev, test, and prod
 - [x] Verify the production Play App Signing SHA-1 is registered for both production package IDs
-- [ ] Verify Firebase Authentication methods are enabled for both apps
-- [ ] Add Bangladesh package ID to Facebook app settings (Option 1 recommended)
+- [x] Verify Email/Password, Google, Facebook, and Anonymous authentication are enabled on dev, test, and prod
+- [x] Confirm Microsoft authentication is outside the supported provider set
+- [x] Add Bangladesh package ID to the existing Facebook app settings
+  - Both global and `.bd` package IDs are configured; Play Store verification for `.bd` will follow its Play Console registration
 - [ ] Generate and add Facebook key hashes for both debug and release keystores
 - [x] Ensure the Firestore rules source allows cross-app user data access
 - [x] Deploy the updated Firestore rules to dev, test, and prod
