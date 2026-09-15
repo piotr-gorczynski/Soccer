@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.29
+**Document Version:** 2.30
 **Last Updated:** 2026-09-15
 **Status:** Implementation in progress - Migration Backend Setup complete on dev, test, and prod
 
 **Revision History**:
+- v2.30 (2026-09-15): Marked Authentication Integration Setup as complete after verifying Firebase providers, shared Google Services configuration, signing certificates, the shared Meta app configuration, and deployed cross-app Firestore access rules. End-to-end authentication tests and policy/compliance checks remain tracked separately.
 - v2.29 (2026-09-15): Verified the Facebook key hashes for the current debug keystore, release/upload keystore, and Google Play App Signing certificate. Added the current debug hash to the existing Meta app and removed the malformed near-duplicate entry.
 - v2.28 (2026-09-15): Verified that Email/Password, Google, Facebook, and Anonymous authentication are enabled in Firebase on dev, test, and prod. Removed Microsoft authentication from the planned provider set. Added `piotr_gorczynski.soccer2.bd` to the existing live Meta app alongside the global Android package; Meta will be able to verify its Play Store association after the `.bd` app is registered in Google Play Console.
 - v2.27 (2026-09-15): Completed the Google Sign-In certificate setup for the Bangladesh app. Fixed `065-sha-copy` so an empty Firebase certificate list is handled correctly, provisioned the required OAuth Brands for test and prod, synchronized all registered SHA-1/SHA-256 certificates to the `.bd` app in dev, test, and prod, and verified that the production Play App Signing SHA-1 is registered for both production package IDs.
@@ -3062,7 +3063,7 @@ cd mobile
   - [x] Create the `570-deploy-track-app-variant` Cloud Build trigger
   - [x] Deploy and verify `trackAppVariant` on dev, test, and prod
   - [x] Extend the user schema with `appVariant`, `appVariants`, and `migrationStatus`
-- [ ] **Authentication Integration Setup**:
+- [x] **Authentication Integration Setup**:
   - [x] Register Bangladesh app in Firebase Console with package ID `piotr_gorczynski.soccer2.bd` for dev, test, and prod
   - [x] Synchronize all registered SHA-1/SHA-256 certificates to `.bd` on dev, test, and prod with `065-sha-copy`
   - [x] Verify the production Play App Signing SHA-1 is registered for both production package IDs
