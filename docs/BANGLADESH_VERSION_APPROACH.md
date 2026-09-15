@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.26
+**Document Version:** 2.27
 **Last Updated:** 2026-09-15
 **Status:** Implementation in progress - Migration Backend Setup complete on dev, test, and prod
 
 **Revision History**:
+- v2.27 (2026-09-15): Completed the Google Sign-In certificate setup for the Bangladesh app. Fixed `065-sha-copy` so an empty Firebase certificate list is handled correctly, provisioned the required OAuth Brands for test and prod, synchronized all registered SHA-1/SHA-256 certificates to the `.bd` app in dev, test, and prod, and verified that the production Play App Signing SHA-1 is registered for both production package IDs.
 - v2.26 (2026-09-15): Deployed the updated Firestore security rules successfully to dev, test, and prod through `190-deploy-firestore-rules`. The Migration Backend Setup phase is now complete across all three environments.
 - v2.25 (2026-09-15): Refreshed `google-services.test.json` and `google-services.prod.json` through `320-download-google-services`. The shared Google Services configuration rollout now covers dev, test, and prod; deployment of the updated Firestore rules remains the only open Migration Backend Setup item.
 - v2.24 (2026-09-15): Created the `570-deploy-track-app-variant` Cloud Build trigger and deployed `trackAppVariant` successfully to dev, test, and prod. Clarified that Google Services configuration is shared per environment and contains both Android clients, and recorded the remaining test/prod configuration refresh and Firestore rules rollout work.
@@ -2569,9 +2570,9 @@ implementation 'com.facebook.android:facebook-android-sdk:18.1.3'
   ```
   **Note**: Each file contains client configurations for all package names. The build system uses the same file for both global and Bangladesh variants.
 
-- [ ] **Add SHA-1 Fingerprints in Firebase Console**
-  - Note the SHA-1 fingerprint from your release keystore
-  - Add to Firebase Console for both apps to enable Google Sign-In
+- [x] **Add signing certificate fingerprints in Firebase Console**
+  - Synchronize all registered SHA-1/SHA-256 certificates from the global app to the Bangladesh app with `065-sha-copy`
+  - Verify the production Play App Signing SHA-1 is registered for both production package IDs
 
 - [ ] **Verify Firebase Auth Methods Enabled**
   - Email/Password: ✓
@@ -3063,7 +3064,8 @@ cd mobile
   - [x] Extend the user schema with `appVariant`, `appVariants`, and `migrationStatus`
 - [ ] **Authentication Integration Setup**:
   - [x] Register Bangladesh app in Firebase Console with package ID `piotr_gorczynski.soccer2.bd` for dev, test, and prod
-  - [ ] Provide SHA-1 fingerprint from release keystore for Google Sign-In
+  - [x] Synchronize all registered SHA-1/SHA-256 certificates to `.bd` on dev, test, and prod with `065-sha-copy`
+  - [x] Verify the production Play App Signing SHA-1 is registered for both production package IDs
   - [x] Use a shared environment-specific `google-services.json` containing the global and Bangladesh clients instead of a flavor-specific file
   - [x] Refresh the shared Google Services configuration for test and prod with `320-download-google-services`
   - [ ] Verify Firebase Authentication methods enabled (Email, Google, Facebook, Microsoft, Anonymous)
@@ -3368,6 +3370,8 @@ While current model is developer-funded with no entry fees, future revenue optio
   - [x] Use one environment-specific file containing both Android clients
   - [x] Verify the dev file
   - [x] Refresh test and prod with `320-download-google-services`
+- [x] Synchronize all registered SHA-1/SHA-256 certificates to the Bangladesh app on dev, test, and prod
+- [x] Verify the production Play App Signing SHA-1 is registered for both production package IDs
 - [ ] Verify Firebase Authentication methods are enabled for both apps
 - [ ] Add Bangladesh package ID to Facebook app settings (Option 1 recommended)
 - [ ] Generate and add Facebook key hashes for both debug and release keystores
