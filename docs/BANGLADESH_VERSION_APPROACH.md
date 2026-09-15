@@ -1,10 +1,13 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.23
+**Document Version:** 2.26
 **Last Updated:** 2026-09-15
-**Status:** Implementation in progress - core prize tournament backend validated on dev
+**Status:** Implementation in progress - Migration Backend Setup complete on dev, test, and prod
 
 **Revision History**:
+- v2.26 (2026-09-15): Deployed the updated Firestore security rules successfully to dev, test, and prod through `190-deploy-firestore-rules`. The Migration Backend Setup phase is now complete across all three environments.
+- v2.25 (2026-09-15): Refreshed `google-services.test.json` and `google-services.prod.json` through `320-download-google-services`. The shared Google Services configuration rollout now covers dev, test, and prod; deployment of the updated Firestore rules remains the only open Migration Backend Setup item.
+- v2.24 (2026-09-15): Created the `570-deploy-track-app-variant` Cloud Build trigger and deployed `trackAppVariant` successfully to dev, test, and prod. Clarified that Google Services configuration is shared per environment and contains both Android clients, and recorded the remaining test/prod configuration refresh and Firestore rules rollout work.
 - v2.23 (2026-09-15): Registered the Bangladesh Android app in every Firebase environment and implemented generic app-variant and migration tracking. Added server-managed user migration metadata, protected it in Firestore rules, and documented the shared per-environment `google-services.json` model.
 - v2.22 (2026-09-14): Replaced runtime region detection with Google Play production country targeting. The `.bd` production listing will be restricted to Bangladesh by Play country, while dev and test builds remain unrestricted for development and QA.
 - v2.21 (2026-09-14): Completed structured regulation integration in `tools/create-tournament`. Cash-prize tournaments now require a valid ISO market, minimum age, and unique supported payout methods before creation, while legacy and non-cash regulations remain compatible.
@@ -2175,33 +2178,26 @@ Download now and start competing for real prizes!
 
 #### Firebase Backend Configuration
 
-- [ ] Register both package IDs in Firebase Console
-  - `piotr_gorczynski.soccer2` (existing)
-  - `piotr_gorczynski.soccer2.bd` (new)
-
-- [ ] Update Firestore security rules
-  - Add regional tournament access rules
-  - Allow cross-app user data access
-  - Implement Bangladesh eligibility checks
-
-- [ ] Create Cloud Function for migration tracking
-  ```javascript
-  exports.onUserMigration = functions.firestore
-      .document('users/{userId}')
-      .onUpdate(async (change, context) => {
-          const before = change.before.data();
-          const after = change.after.data();
-          
-          // Detect migration from global to BD
-          if (!before.region && after.region === 'BD') {
-              await admin.firestore().collection('analytics').add({
-                  event: 'user_migrated_to_bd',
-                  userId: context.params.userId,
-                  timestamp: admin.firestore.FieldValue.serverTimestamp()
-              });
-          }
-      });
-  ```
+- [x] Register both package IDs in Firebase Console for dev, test, and prod
+  - `piotr_gorczynski.soccer2`
+  - `piotr_gorczynski.soccer2.bd`
+- [x] Complete the Google Services configuration rollout
+  - [x] Use one environment-specific `google-services.json` containing both Android clients; separate files per flavor are not required
+  - [x] Verify the dev configuration contains both package IDs
+  - [x] Refresh `google-services.test.json` and `google-services.prod.json` with `320-download-google-services`
+- [x] Complete the Firestore security rules rollout
+  - [x] Preserve shared cross-app access within the same Firebase project
+  - [x] Protect `appVariant`, `appVariants`, and `migrationStatus` from direct client writes
+  - [x] Deploy the updated rules to dev, test, and prod through `190-deploy-firestore-rules`
+- [x] Create and deploy the generic `trackAppVariant` Cloud Function
+  - Called after authentication by both flavors
+  - Uses server timestamps and records migration only for the same Firebase UID
+  - Deployed and verified as `ACTIVE` on dev, test, and prod
+  - Deployed through `570-deploy-track-app-variant`
+- [x] Extend the user schema with server-managed migration fields
+  - `appVariant`
+  - `appVariants`
+  - `migrationStatus`
 
 ---
 
@@ -3055,23 +3051,28 @@ cd mobile
   - Configure production country availability in Google Play Console
   - Use the user's Google Play country as enforced by Play distribution
   - Keep dev and test builds unrestricted for development and QA
-- [ ] **Migration Backend Setup** (implementation complete; deployment/config refresh pending):
+- [x] **Migration Backend Setup**:
   - [x] Register both package IDs in Firebase Console (`piotr_gorczynski.soccer2` and `.bd`) for dev, test, and prod
-  - [ ] Refresh the shared `google-services.<env>.json` for test and prod so each contains both clients
-  - [x] Update Firestore security rules to protect server-managed migration fields while preserving cross-app access
+  - [x] Configure one shared, environment-specific Google Services file containing both Android clients for each environment
+  - [x] Refresh the test and prod files with `320-download-google-services`
+  - [x] Update Firestore security rules in source to protect server-managed migration fields while preserving cross-app access
+  - [x] Deploy the updated Firestore security rules to dev, test, and prod through `190-deploy-firestore-rules`
   - [x] Create the generic `trackAppVariant` Cloud Function for tracking migrations
+  - [x] Create the `570-deploy-track-app-variant` Cloud Build trigger
+  - [x] Deploy and verify `trackAppVariant` on dev, test, and prod
   - [x] Extend the user schema with `appVariant`, `appVariants`, and `migrationStatus`
 - [ ] **Authentication Integration Setup**:
-  - [ ] Register Bangladesh app in Firebase Console with package ID `piotr_gorczynski.soccer2.bd`
+  - [x] Register Bangladesh app in Firebase Console with package ID `piotr_gorczynski.soccer2.bd` for dev, test, and prod
   - [ ] Provide SHA-1 fingerprint from release keystore for Google Sign-In
-  - [ ] Download Bangladesh-specific `google-services.json`
-  - [ ] Place `google-services.json` in `mobile/app/src/bangladesh/` directory
+  - [x] Use a shared environment-specific `google-services.json` containing the global and Bangladesh clients instead of a flavor-specific file
+  - [x] Refresh the shared Google Services configuration for test and prod with `320-download-google-services`
   - [ ] Verify Firebase Authentication methods enabled (Email, Google, Facebook, Microsoft, Anonymous)
   - [ ] Add Bangladesh package ID to existing Facebook app (Option 1 - Recommended)
     - OR create new Facebook app for Bangladesh (Option 2)
   - [ ] Generate Facebook key hashes for both debug and release keystores
   - [ ] Add all key hashes to Facebook App Dashboard
-  - [ ] Verify Firestore security rules allow cross-app user data access (no package restrictions)
+  - [x] Verify the Firestore rules design preserves cross-app user data access (no package restrictions)
+  - [x] Deploy the updated Firestore rules to dev, test, and prod
 
 ### Phase 3: Mobile App Development (Week 5-7)
 - [x] Create Bangladesh product flavor
@@ -3362,12 +3363,16 @@ While current model is developer-funded with no entry fees, future revenue optio
 - [ ] Transparent about separate app installations (not an update)
 
 #### Authentication Integration Compliance
-- [ ] Register both Android apps in Firebase Console (global and Bangladesh)
-- [ ] Download and configure separate `google-services.json` files for each variant
+- [x] Register both Android apps in Firebase Console (global and Bangladesh) for dev, test, and prod
+- [x] Complete the shared Google Services configuration rollout
+  - [x] Use one environment-specific file containing both Android clients
+  - [x] Verify the dev file
+  - [x] Refresh test and prod with `320-download-google-services`
 - [ ] Verify Firebase Authentication methods are enabled for both apps
 - [ ] Add Bangladesh package ID to Facebook app settings (Option 1 recommended)
 - [ ] Generate and add Facebook key hashes for both debug and release keystores
-- [ ] Ensure Firestore security rules allow cross-app user data access
+- [x] Ensure the Firestore rules source allows cross-app user data access
+- [x] Deploy the updated Firestore rules to dev, test, and prod
 - [ ] Test authentication works in both global and Bangladesh apps
 - [ ] Verify same user can authenticate in both apps simultaneously
 - [ ] Confirm OAuth client auto-created for Bangladesh app in Google Cloud Console
