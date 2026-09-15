@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.21
+**Document Version:** 2.22
 **Last Updated:** 2026-09-14
 **Status:** Implementation in progress - core prize tournament backend validated on dev
 
 **Revision History**:
+- v2.22 (2026-09-14): Replaced runtime region detection with Google Play production country targeting. The `.bd` production listing will be restricted to Bangladesh by Play country, while dev and test builds remain unrestricted for development and QA.
 - v2.21 (2026-09-14): Completed structured regulation integration in `tools/create-tournament`. Cash-prize tournaments now require a valid ISO market, minimum age, and unique supported payout methods before creation, while legacy and non-cash regulations remain compatible.
 - v2.20 (2026-09-14): Marked the implemented 18+ eligibility confirmation, eligibility-requirements notification, and tournament terms acceptance checklist items as complete.
 - v2.19 (2026-09-13): Implemented per-registration eligibility confirmation for cash-prize tournaments. The app dynamically displays the minimum age and supported payout methods from the assigned regulation; `joinTournament` validates all declarations and stores an atomic audit record without collecting a concrete payout method or account details.
@@ -3049,7 +3050,10 @@ cd mobile
   - [x] Cover one-place, multi-place, disabled, and invalid prize configurations with automated tests
   - [x] Validate the market and minimum age required by the cash-prize registration workflow
   - [x] Validate supported payout methods
-- [ ] Add region detection (Google Play Store region)
+- [ ] Restrict the production `.bd` Play Store listing to Bangladesh
+  - Configure production country availability in Google Play Console
+  - Use the user's Google Play country as enforced by Play distribution
+  - Keep dev and test builds unrestricted for development and QA
 - [ ] **Migration Backend Setup**:
   - [ ] Register both package IDs in Firebase Console (`piotr_gorczynski.soccer2` and `.bd`)
   - [ ] Configure separate `google-services.json` files for each flavor
