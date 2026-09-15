@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.28
+**Document Version:** 2.29
 **Last Updated:** 2026-09-15
 **Status:** Implementation in progress - Migration Backend Setup complete on dev, test, and prod
 
 **Revision History**:
+- v2.29 (2026-09-15): Verified the Facebook key hashes for the current debug keystore, release/upload keystore, and Google Play App Signing certificate. Added the current debug hash to the existing Meta app and removed the malformed near-duplicate entry.
 - v2.28 (2026-09-15): Verified that Email/Password, Google, Facebook, and Anonymous authentication are enabled in Firebase on dev, test, and prod. Removed Microsoft authentication from the planned provider set. Added `piotr_gorczynski.soccer2.bd` to the existing live Meta app alongside the global Android package; Meta will be able to verify its Play Store association after the `.bd` app is registered in Google Play Console.
 - v2.27 (2026-09-15): Completed the Google Sign-In certificate setup for the Bangladesh app. Fixed `065-sha-copy` so an empty Firebase certificate list is handled correctly, provisioned the required OAuth Brands for test and prod, synchronized all registered SHA-1/SHA-256 certificates to the `.bd` app in dev, test, and prod, and verified that the production Play App Signing SHA-1 is registered for both production package IDs.
 - v2.26 (2026-09-15): Deployed the updated Firestore security rules successfully to dev, test, and prod through `190-deploy-firestore-rules`. The Migration Backend Setup phase is now complete across all three environments.
@@ -3072,8 +3073,9 @@ cd mobile
   - [x] Add Bangladesh package ID to existing Facebook app (Option 1 - Recommended)
     - The existing Meta app now contains both `piotr_gorczynski.soccer2` and `piotr_gorczynski.soccer2.bd`
     - Play Store verification for `.bd` remains unavailable until that package is registered in Google Play Console
-  - [ ] Generate Facebook key hashes for both debug and release keystores
-  - [ ] Add all key hashes to Facebook App Dashboard
+  - [x] Verify Facebook key hashes for the current debug keystore, release/upload keystore, and Google Play App Signing certificate
+  - [x] Add the verified key hashes to the existing Facebook App Dashboard configuration
+    - The hashes are certificate-specific and apply to both package IDs because both variants use the same signing certificates
   - [x] Verify the Firestore rules design preserves cross-app user data access (no package restrictions)
   - [x] Deploy the updated Firestore rules to dev, test, and prod
 
@@ -3377,7 +3379,7 @@ While current model is developer-funded with no entry fees, future revenue optio
 - [x] Confirm Microsoft authentication is outside the supported provider set
 - [x] Add Bangladesh package ID to the existing Facebook app settings
   - Both global and `.bd` package IDs are configured; Play Store verification for `.bd` will follow its Play Console registration
-- [ ] Generate and add Facebook key hashes for both debug and release keystores
+- [x] Verify and register the Facebook key hashes for the current debug, release/upload, and Google Play App Signing certificates
 - [x] Ensure the Firestore rules source allows cross-app user data access
 - [x] Deploy the updated Firestore rules to dev, test, and prod
 - [ ] Test authentication works in both global and Bangladesh apps
