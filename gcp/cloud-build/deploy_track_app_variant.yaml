@@ -48,7 +48,7 @@ steps:
       - |
         set -e
         cd /workspace/firebase/functions/track-app-variant
-        npm ci
+        npm install
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
     id: 'deploy-track-app-variant'
