@@ -10,10 +10,17 @@
 - Root and localized regulation documents are created atomically in one Firestore batch.
 - Added automated tests and a Bangladesh example regulation.
 - Successfully validated the complete import on the `dev` environment, including English and Bengali localized rules.
+- Updated `tools/create-tournament` to derive and validate the tournament `prizePool` from the selected regulation, while retaining `firstPlacePrize` compatibility for the current completion function.
+- Added automated coverage for single-place, multi-place, disabled, and inconsistent prize configurations.
+- Added per-registration eligibility confirmation for cash-prize tournaments: age, tournament rules,
+  and possession of an account with at least one payout method dynamically listed by the regulation.
+- Eligibility is validated by `joinTournament` and stored atomically in the participant record; no
+  concrete payout method or account details are collected before a participant wins.
+- Fixed tournament visibility so `visibleInFlavours: ["global"]` is shown in every app flavour,
+  while market-specific values such as `["bangladesh"]` remain restricted to that flavour.
 
 ## Follow-up work
 
-- Integrate `tools/create-tournament` with the structured regulation metadata so tournament configuration can be derived from or validated against the selected native regulation ID.
 - Enforce the regulation constraints in the relevant backend and client participation flows.
 
 This is an internal tooling and backend-schema update; it does not add a user-visible mobile feature by itself.

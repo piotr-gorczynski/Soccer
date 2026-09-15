@@ -1,13 +1,13 @@
 {
-  "name": "join-tournament",
-  "description": "Cloud Function to handle player joining tournaments.",
-  "version": "1.3.0",
+  "name": "track-app-variant",
+  "version": "1.0.0",
+  "private": true,
   "main": "index.js",
   "engines": {
     "node": "22"
   },
   "scripts": {
-    "test": "node --test eligibility.test.js"
+    "test": "node --test migration.test.js"
   },
   "dependencies": {
     "firebase-admin": "^11.10.1",

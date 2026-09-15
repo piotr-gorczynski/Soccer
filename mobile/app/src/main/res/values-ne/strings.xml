@@ -163,6 +163,12 @@
     <string name="regulation_not_found">नियमावली फेला परेन।</string>
     <string name="regulation_load_error">नियमावली लोड गर्न असफल।</string>
     <string name="regulation_auth_required">नियमावली हेर्न कृपया लग इन गर्नुहोस्।</string>
+    <string name="eligibility_confirmation_title">आवश्यक पुष्टिहरू</string>
+    <string name="eligibility_confirm_age">म कम्तीमा %1$d वर्षको छु भनेर पुष्टि गर्छु।</string>
+    <string name="eligibility_confirm_payout_account">यी नियमहरूले समर्थन गर्ने कम्तीमा एउटा भुक्तानी विधिमा मेरो सक्रिय खाता छ भनेर पुष्टि गर्छु: %1$s।</string>
+    <string name="eligibility_confirm_terms">मैले यी प्रतियोगिता र पुरस्कारका नियमहरू पढेको छु र स्वीकार गर्छु।</string>
+    <string name="eligibility_confirmation_required">यस प्रतियोगितामा सहभागी हुन सबै आवश्यक पुष्टिहरू चयन गर्नुहोस्।</string>
+    <string name="eligibility_configuration_error">यस प्रतियोगिताको योग्यता कन्फिगरेसन अमान्य छ।</string>
     <string name="server_unavailable">सर्भर उपलब्ध छैन</string>
     <string name="server_unavailable_message">हामी माफी चाहन्छौं, तर Soccer सर्भर अहिले उपलब्ध छैन…</string>
     

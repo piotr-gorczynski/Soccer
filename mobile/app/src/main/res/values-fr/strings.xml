@@ -166,6 +166,12 @@
     <string name="regulation_not_found">Règlement introuvable.</string>
     <string name="regulation_load_error">Échec du chargement du règlement.</string>
     <string name="regulation_auth_required">Veuillez vous connecter pour voir le règlement.</string>
+    <string name="eligibility_confirmation_title">Confirmations requises</string>
+    <string name="eligibility_confirm_age">Je confirme avoir au moins %1$d ans.</string>
+    <string name="eligibility_confirm_payout_account">Je confirme disposer d’un compte actif auprès d’au moins un moyen de paiement accepté par ce règlement : %1$s.</string>
+    <string name="eligibility_confirm_terms">J’ai lu et j’accepte le règlement du tournoi et des prix.</string>
+    <string name="eligibility_confirmation_required">Sélectionnez toutes les confirmations requises pour rejoindre ce tournoi.</string>
+    <string name="eligibility_configuration_error">La configuration des conditions d’admissibilité de ce tournoi est incorrecte.</string>
     <string name="server_unavailable">Serveur indisponible</string>
     <string name="server_unavailable_message">Désolés, le serveur Soccer n’est pas disponible pour le moment…</string>
 

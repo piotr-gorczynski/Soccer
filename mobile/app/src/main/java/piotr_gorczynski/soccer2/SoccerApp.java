@@ -44,6 +44,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.installations.FirebaseInstallations;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.android.ump.ConsentInformation;
@@ -276,6 +277,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
             if (a.getCurrentUser() != null) {
                 startPresence(a.getCurrentUser().getUid());
                 enableFcmAutoInit();
+                trackAppVariant();
             } else {
                 stopPresence();
                 disableFcmAutoInit();
@@ -292,6 +294,23 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         // Set Firebase Analytics consent to DENIED by default for privacy compliance
         // This ensures no data is collected until explicit consent is given (EEA and US regulations)
         ConsentUtils.setDefaultFirebaseAnalyticsConsent(this);
+    }
+
+    private void trackAppVariant() {
+        String appVariant = AppFlavourDetector.getCurrentFlavour(this);
+        Map<String, Object> data = new HashMap<>();
+        data.put("appVariant", appVariant);
+
+        FirebaseFunctions.getInstance("us-central1")
+                .getHttpsCallable("trackAppVariant")
+                .call(data)
+                .addOnSuccessListener(unused -> Log.d(
+                        TAG,
+                        "SoccerApp.trackAppVariant: tracked " + appVariant))
+                .addOnFailureListener(error -> Log.w(
+                        TAG,
+                        "SoccerApp.trackAppVariant: tracking failed for " + appVariant,
+                        error));
     }
     public void syncFcmRegistrationIfNeeded() {
         String uid = FirebaseAuth.getInstance().getUid();

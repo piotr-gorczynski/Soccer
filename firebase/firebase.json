@@ -109,6 +109,12 @@
       "codebase": "on-tournament-complete",
       "runtime": "nodejs22",
       "region": "us-central1"
+    },
+    {
+      "source": "functions/track-app-variant",
+      "codebase": "track-app-variant",
+      "runtime": "nodejs22",
+      "region": "us-central1"
     }
   ],
   "firestore": {

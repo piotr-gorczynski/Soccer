@@ -166,6 +166,12 @@
     <string name="regulation_not_found">រកមិនឃើញបទបញ្ជា។</string>
     <string name="regulation_load_error">មិនអាចផ្ទុកបទបញ្ជាបានទេ។</string>
     <string name="regulation_auth_required">សូមចូលប្រើដើម្បីមើលបទបញ្ជា។</string>
+    <string name="eligibility_confirmation_title">ការបញ្ជាក់ដែលត្រូវការ</string>
+    <string name="eligibility_confirm_age">ខ្ញុំបញ្ជាក់ថាខ្ញុំមានអាយុយ៉ាងតិច %1$d ឆ្នាំ។</string>
+    <string name="eligibility_confirm_payout_account">ខ្ញុំបញ្ជាក់ថាខ្ញុំមានគណនីសកម្មជាមួយវិធីបង់ប្រាក់យ៉ាងតិចមួយដែលគាំទ្រដោយបទបញ្ជានេះ៖ %1$s។</string>
+    <string name="eligibility_confirm_terms">ខ្ញុំបានអាន និងយល់ព្រមតាមបទបញ្ជាការប្រកួត និងរង្វាន់នេះ។</string>
+    <string name="eligibility_confirmation_required">សូមជ្រើសរើសការបញ្ជាក់ទាំងអស់ដែលត្រូវការ ដើម្បីចូលរួមការប្រកួតនេះ។</string>
+    <string name="eligibility_configuration_error">ការកំណត់សិទ្ធិចូលរួមការប្រកួតនេះមិនត្រឹមត្រូវទេ។</string>
     <string name="server_unavailable">ម៉ាស៊ីនមេមិនអាចប្រើបាន</string>
     <string name="server_unavailable_message">យើងសូមទោស ប៉ុន្តែម៉ាស៊ីនមេ Soccer មិនអាចប្រើបាននៅពេលនេះ…</string>
     <string name="account">គណនី</string>

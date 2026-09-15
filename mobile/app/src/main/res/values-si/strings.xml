@@ -166,6 +166,12 @@
     <string name="regulation_not_found">නියමාව සොයාගත නොහැකි විය.</string>
     <string name="regulation_load_error">නියමාව පූරණය කිරීමට අසමත් විය.</string>
     <string name="regulation_auth_required">නියමාව බලන්න කරුණාකර පුරනය වන්න.</string>
+    <string name="eligibility_confirmation_title">අවශ්‍ය තහවුරු කිරීම්</string>
+    <string name="eligibility_confirm_age">මගේ වයස අවම වශයෙන් අවුරුදු %1$d ක් බව තහවුරු කරමි.</string>
+    <string name="eligibility_confirm_payout_account">මෙම නීති මඟින් සහාය දක්වන අවම වශයෙන් එක් ගෙවීම් ක්‍රමයක සක්‍රිය ගිණුමක් මට ඇති බව තහවුරු කරමි: %1$s.</string>
+    <string name="eligibility_confirm_terms">මම මෙම තරඟ සහ ත්‍යාග නීති කියවා පිළිගනිමි.</string>
+    <string name="eligibility_confirmation_required">මෙම තරඟයට එක්වීමට අවශ්‍ය සියලු තහවුරු කිරීම් තෝරන්න.</string>
+    <string name="eligibility_configuration_error">මෙම තරඟයේ සුදුසුකම් වින්‍යාසය වලංගු නොවේ.</string>
     <string name="server_unavailable">සේවාදායකය ලබාගත නොහැක</string>
     <string name="server_unavailable_message">සමාවෙන්න, දැනට Soccer සේවාදායකය ලබාගත නොහැක…</string>
     <string name="account">ගිණුම</string>

@@ -3,7 +3,10 @@ package piotr_gorczynski.soccer2;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,7 +18,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.FirebaseFunctionsException;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class RegulationActivity extends BaseActivity {
@@ -24,6 +30,13 @@ public class RegulationActivity extends BaseActivity {
     private String regulationId;
     private AnalyticsManager analyticsManager;
     private Button acceptBtn;
+    private LinearLayout eligibilityConfirmation;
+    private CheckBox confirmMinimumAge;
+    private CheckBox confirmPayoutAccount;
+    private CheckBox confirmTournamentTerms;
+    private boolean regulationContentLoaded;
+    private boolean eligibilityConfigurationValid;
+    private boolean requiresEligibilityConfirmation;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -34,6 +47,15 @@ public class RegulationActivity extends BaseActivity {
         TextView bodyTv = findViewById(R.id.regulationBody);
         acceptBtn = findViewById(R.id.acceptRegulation);
         Button declineBtn = findViewById(R.id.declineRegulation);
+        eligibilityConfirmation = findViewById(R.id.eligibilityConfirmation);
+        confirmMinimumAge = findViewById(R.id.confirmMinimumAge);
+        confirmPayoutAccount = findViewById(R.id.confirmPayoutAccount);
+        confirmTournamentTerms = findViewById(R.id.confirmTournamentTerms);
+
+        View.OnClickListener confirmationListener = v -> updateAcceptButtonState();
+        confirmMinimumAge.setOnClickListener(confirmationListener);
+        confirmPayoutAccount.setOnClickListener(confirmationListener);
+        confirmTournamentTerms.setOnClickListener(confirmationListener);
 
         tournamentId = getIntent().getStringExtra("tournamentId");
         regulationId = getIntent().getStringExtra("regulationId");
@@ -64,6 +86,11 @@ public class RegulationActivity extends BaseActivity {
                                     ": document found");
                             nameTv.setText(doc.getString("name"));
 
+                            eligibilityConfigurationValid = configureEligibilityConfirmation(doc.getData());
+                            if (!eligibilityConfigurationValid) {
+                                Toast.makeText(this, R.string.eligibility_configuration_error, Toast.LENGTH_LONG).show();
+                            }
+
                             String langCode = LanguageManager.getCurrentLanguageCode(this);
                             doc.getReference().collection(langCode).document("rules").get()
                                     .addOnSuccessListener(ruleDoc -> {
@@ -77,15 +104,17 @@ public class RegulationActivity extends BaseActivity {
                                                 bodyTv.setText(sb.toString().trim());
                                             } else {
                                                 bodyTv.setText(R.string.regulation_not_found);
-                                            }
-                                        } else {
+                                                }
+                                                markRegulationContentLoaded();
+                                            } else {
                                             String body = doc.getString("body");
                                             if (!TextUtils.isEmpty(body)) {
                                                 bodyTv.setText(body);
                                             } else {
-                                                bodyTv.setText(R.string.regulation_not_found);
+                                                    bodyTv.setText(R.string.regulation_not_found);
+                                                }
+                                                markRegulationContentLoaded();
                                             }
-                                        }
                                     })
                                     .addOnFailureListener(e -> {
                                         Log.e("TAG_Soccer", getClass().getSimpleName() + ".onCreate" +
@@ -96,6 +125,7 @@ public class RegulationActivity extends BaseActivity {
                                         } else {
                                             Toast.makeText(this, R.string.regulation_load_error, Toast.LENGTH_LONG).show();
                                         }
+                                        markRegulationContentLoaded();
                                     });
                         } else {
                             Log.d("TAG_Soccer", getClass().getSimpleName() + ".onCreate" +
@@ -119,9 +149,83 @@ public class RegulationActivity extends BaseActivity {
         acceptBtn.setOnClickListener(v -> acceptAndJoin());
     }
 
+    @SuppressWarnings("unchecked")
+    private boolean configureEligibilityConfirmation(Map<String, Object> regulation) {
+        Object prizeRulesValue = regulation == null ? null : regulation.get("prizeRules");
+        Map<String, Object> prizeRules = prizeRulesValue instanceof Map
+                ? (Map<String, Object>) prizeRulesValue
+                : null;
+        requiresEligibilityConfirmation = prizeRules != null
+                && Boolean.TRUE.equals(prizeRules.get("cashPrizesEnabled"));
+
+        if (!requiresEligibilityConfirmation) {
+            eligibilityConfirmation.setVisibility(View.GONE);
+            return true;
+        }
+
+        Object minimumAgeValue = regulation.get("minimumAge");
+        Object payoutMethodsValue = prizeRules.get("payoutMethods");
+        if (!(minimumAgeValue instanceof Number)
+                || ((Number) minimumAgeValue).intValue() < 1
+                || !(payoutMethodsValue instanceof List)
+                || ((List<?>) payoutMethodsValue).isEmpty()) {
+            eligibilityConfirmation.setVisibility(View.GONE);
+            return false;
+        }
+
+        int minimumAge = ((Number) minimumAgeValue).intValue();
+        List<String> payoutMethods = new ArrayList<>();
+        for (Object method : (List<?>) payoutMethodsValue) {
+            if (!(method instanceof String) || TextUtils.isEmpty((String) method)) {
+                return false;
+            }
+            payoutMethods.add(formatPayoutMethod((String) method));
+        }
+
+        confirmMinimumAge.setText(getString(R.string.eligibility_confirm_age, minimumAge));
+        confirmPayoutAccount.setText(getString(
+                R.string.eligibility_confirm_payout_account,
+                TextUtils.join(", ", payoutMethods)
+        ));
+        eligibilityConfirmation.setVisibility(View.VISIBLE);
+        return true;
+    }
+
+    private String formatPayoutMethod(String method) {
+        switch (method.toLowerCase(Locale.ROOT)) {
+            case "bkash": return "bKash";
+            case "nagad": return "Nagad";
+            case "rocket": return "Rocket";
+            default: return method;
+        }
+    }
+
+    private void markRegulationContentLoaded() {
+        regulationContentLoaded = true;
+        updateAcceptButtonState();
+    }
+
+    private void updateAcceptButtonState() {
+        boolean confirmationsComplete = !requiresEligibilityConfirmation
+                || (confirmMinimumAge.isChecked()
+                && confirmPayoutAccount.isChecked()
+                && confirmTournamentTerms.isChecked());
+        acceptBtn.setEnabled(regulationContentLoaded
+                && eligibilityConfigurationValid
+                && confirmationsComplete);
+    }
+
     private void acceptAndJoin() {
         Log.d("TAG_Soccer", getClass().getSimpleName() + ".acceptAndJoin" +
                 ": starting acceptAndJoin");
+
+        if (requiresEligibilityConfirmation
+                && (!confirmMinimumAge.isChecked()
+                || !confirmPayoutAccount.isChecked()
+                || !confirmTournamentTerms.isChecked())) {
+            Toast.makeText(this, R.string.eligibility_confirmation_required, Toast.LENGTH_LONG).show();
+            return;
+        }
 
         acceptBtn.setEnabled(false);
         Toast.makeText(this, R.string.registration_in_progress, Toast.LENGTH_SHORT).show();
@@ -148,10 +252,16 @@ public class RegulationActivity extends BaseActivity {
             Log.d("TAG_Soccer", getClass().getSimpleName() + ".acceptAndJoin" +
                     ": token refresh OK");
             FirebaseFunctions functions = FirebaseFunctions.getInstance("us-central1");
-            Map<String,Object> data = Map.of(
-                    "tournamentId", tournamentId,
-                    "regulation", "accepted"
-            );
+            Map<String,Object> data = new HashMap<>();
+            data.put("tournamentId", tournamentId);
+            data.put("regulation", "accepted");
+            if (requiresEligibilityConfirmation) {
+                Map<String, Object> eligibility = new HashMap<>();
+                eligibility.put("ageConfirmed", confirmMinimumAge.isChecked());
+                eligibility.put("hasSupportedPayoutAccount", confirmPayoutAccount.isChecked());
+                eligibility.put("termsAccepted", confirmTournamentTerms.isChecked());
+                data.put("eligibility", eligibility);
+            }
             Log.d("TAG_Soccer", getClass().getSimpleName() + ".acceptAndJoin" +
                     ": calling joinTournament");
             functions.getHttpsCallable("joinTournament")
