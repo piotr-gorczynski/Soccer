@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.22
-**Last Updated:** 2026-09-14
+**Document Version:** 2.23
+**Last Updated:** 2026-09-15
 **Status:** Implementation in progress - core prize tournament backend validated on dev
 
 **Revision History**:
+- v2.23 (2026-09-15): Registered the Bangladesh Android app in every Firebase environment and implemented generic app-variant and migration tracking. Added server-managed user migration metadata, protected it in Firestore rules, and documented the shared per-environment `google-services.json` model.
 - v2.22 (2026-09-14): Replaced runtime region detection with Google Play production country targeting. The `.bd` production listing will be restricted to Bangladesh by Play country, while dev and test builds remain unrestricted for development and QA.
 - v2.21 (2026-09-14): Completed structured regulation integration in `tools/create-tournament`. Cash-prize tournaments now require a valid ISO market, minimum age, and unique supported payout methods before creation, while legacy and non-cash regulations remain compatible.
 - v2.20 (2026-09-14): Marked the implemented 18+ eligibility confirmation, eligibility-requirements notification, and tournament terms acceptance checklist items as complete.
@@ -1609,10 +1610,10 @@ Firebase Configuration: Single google-services.json per environment
    - Facebook (if applicable)
    - Anonymous authentication
    
-5. Firestore Security Rules (apply regional filtering):
-   - Users can access their own data
-   - Bangladesh users can access BD tournaments
-   - Global users see global tournaments only
+6. Firestore Security Rules:
+   - Both registered apps use the same authenticated-user access rules
+   - No package-specific rule is required or available in Firestore rules
+   - Server-managed app-variant and migration fields cannot be modified directly by clients
 ```
 
 #### Firebase Authentication Behavior
@@ -1646,7 +1647,7 @@ User sees their existing profile, stats, and friend list
 - `matches/` - Match history and results
 - `tournaments/` - All tournaments with regional filtering
 
-**Regional Filtering Logic**:
+**Cross-app access and migration metadata protection**:
 
 ```javascript
 // Firestore Security Rules
@@ -1654,38 +1655,22 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Users can access their own data from any app variant
+    // Users can access their data from either registered app.
     match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
-    }
-    
-    // Tournament access based on region
-    match /tournaments/{tournamentId} {
       allow read: if request.auth != null;
-      allow write: if request.auth != null && 
-                      request.auth.uid == resource.data.createdBy;
-      
-      // Bangladesh users can only join BD tournaments
-      // Global users can only join global tournaments
-      match /participants/{participantId} {
-        allow create: if request.auth != null && 
-                         // Check if user's region matches tournament region
-                         (get(/databases/$(database)/documents/tournaments/$(tournamentId)).data.region == 
-                          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.region ||
-                          get(/databases/$(database)/documents/tournaments/$(tournamentId)).data.region == null);
-      }
-    }
-    
-    // Match data accessible to participants
-    match /matches/{matchId} {
-      allow read: if request.auth != null;
-      allow create, update: if request.auth != null && 
-                               (request.auth.uid == resource.data.player1Id || 
-                                request.auth.uid == resource.data.player2Id);
+      allow create: if request.auth.uid == userId
+                    && !request.resource.data.keys()
+                         .hasAny(['appVariant', 'appVariants', 'migrationStatus']);
+      allow update: if request.auth.uid == userId
+                    && request.resource.data.diff(resource.data).affectedKeys()
+                         .hasNone(['appVariant', 'appVariants', 'migrationStatus']);
     }
   }
 }
 ```
+
+Tournament visibility remains controlled by `visibleInFlavours` in the clients. Tournament joins are
+performed by callable backend functions rather than direct participant writes.
 
 **User Document Extension**:
 
@@ -1697,17 +1682,33 @@ service cloud.firestore {
   displayName: "Player Name",
   // ... existing fields ...
   
-  // NEW: Regional configuration
-  region: "BD", // or null for global users
-  appVariant: "bangladesh", // or "global"
-  
-  // Existing users migrating from global to BD version
+  // Maintained by trackAppVariant, never trusted from a direct client write.
+  appVariant: "bangladesh",
+  appVariants: {
+    global: {
+      firstSeenAt: Timestamp,
+      lastSeenAt: Timestamp
+    },
+    bangladesh: {
+      firstSeenAt: Timestamp,
+      lastSeenAt: Timestamp
+    }
+  },
   migrationStatus: {
     migratedFromGlobal: true,
-    migrationDate: Timestamp
+    sourceVariant: "global",
+    targetVariant: "bangladesh",
+    firstDetectedAt: Timestamp,
+    lastDetectedAt: Timestamp
   }
 }
 ```
+
+`trackAppVariant` is called after authentication by every flavor. It records first and latest use of
+each variant with server timestamps. A migration is recorded only when the same Firebase UID was
+previously observed in `global` and is subsequently observed in a market flavor. This is intentionally
+generic so another market flavor can be added later. Anonymous installations do not share a UID across
+separate application packages and therefore cannot be automatically linked as the same migration.
 
 Eligibility is deliberately not stored as a permanent user-profile flag. It is confirmed afresh and
 recorded under `tournaments/{tournamentId}/participants/{userId}` for every cash-prize tournament.
@@ -3054,12 +3055,12 @@ cd mobile
   - Configure production country availability in Google Play Console
   - Use the user's Google Play country as enforced by Play distribution
   - Keep dev and test builds unrestricted for development and QA
-- [ ] **Migration Backend Setup**:
-  - [ ] Register both package IDs in Firebase Console (`piotr_gorczynski.soccer2` and `.bd`)
-  - [ ] Configure separate `google-services.json` files for each flavor
-  - [ ] Update Firestore security rules for cross-app data access
-  - [ ] Create Cloud Function for tracking user migrations
-  - [ ] Extend user schema with migration tracking fields
+- [ ] **Migration Backend Setup** (implementation complete; deployment/config refresh pending):
+  - [x] Register both package IDs in Firebase Console (`piotr_gorczynski.soccer2` and `.bd`) for dev, test, and prod
+  - [ ] Refresh the shared `google-services.<env>.json` for test and prod so each contains both clients
+  - [x] Update Firestore security rules to protect server-managed migration fields while preserving cross-app access
+  - [x] Create the generic `trackAppVariant` Cloud Function for tracking migrations
+  - [x] Extend the user schema with `appVariant`, `appVariants`, and `migrationStatus`
 - [ ] **Authentication Integration Setup**:
   - [ ] Register Bangladesh app in Firebase Console with package ID `piotr_gorczynski.soccer2.bd`
   - [ ] Provide SHA-1 fingerprint from release keystore for Google Sign-In

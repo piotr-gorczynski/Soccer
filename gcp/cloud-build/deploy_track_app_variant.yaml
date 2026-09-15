@@ -1,0 +1,79 @@
+substitutions:
+  _ENVIRONMENT: 'dev'
+  _FOLDER_NAME: 'soccer'
+
+steps:
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'get-project-id'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -e
+        gcloud projects list \
+          --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
+          --format="value(projectId)" \
+          | head -n 1 > /workspace/FIREBASE_PROJECT_ID.txt
+        test -s /workspace/FIREBASE_PROJECT_ID.txt
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'install-firebase-cli'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -e
+        curl -sL https://firebase.tools | bash
+        mkdir -p /workspace/firebase
+        cp /usr/local/bin/firebase /workspace/firebase/
+        chmod +x /workspace/firebase/firebase
+
+  - name: 'gcr.io/cloud-builders/git'
+    id: 'pull-files'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -e
+        git clone -b ${_ENVIRONMENT} --single-branch https://github.com/piotr-gorczynski/Soccer.git /workspace/soccer
+        cp /workspace/soccer/firebase/firebase.json /workspace/firebase/firebase.json
+        mkdir -p /workspace/firebase/functions
+        cp -R /workspace/soccer/firebase/functions/track-app-variant /workspace/firebase/functions/
+
+  - name: 'node:22-slim'
+    id: 'install-dependencies'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -e
+        cd /workspace/firebase/functions/track-app-variant
+        npm ci
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'deploy-track-app-variant'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -e
+        cd /workspace/firebase
+        project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
+        ./firebase deploy --only functions:track-app-variant --project="$project_id" --force
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'bind-invoker-role'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -e
+        project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
+        gcloud functions add-iam-policy-binding trackAppVariant \
+          --region=us-central1 \
+          --project="$project_id" \
+          --member="allUsers" \
+          --role="roles/cloudfunctions.invoker"
+
+options:
+  logging: CLOUD_LOGGING_ONLY
