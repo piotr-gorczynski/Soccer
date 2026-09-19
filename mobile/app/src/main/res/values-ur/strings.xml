@@ -418,4 +418,17 @@
     <string name="uninstall_global_title">پرانی ایپ ہٹائیں</string>
     <string name="uninstall_global_message">بنگلہ دیش ورژن کے ساتھ تنازعہ سے بچنے کے لیے آپ کو پرانا عالمی ورژن ان انسٹال کرنا ہوگا۔\n\nان انسٹال کرنے کے لیے: ترتیبات ← ایپس ← \"Gridline Soccer\" (بغیر جھنڈے کے) تلاش کریں ← ان انسٹال کریں۔</string>
     <string name="uninstall_global_uninstall">بند کریں</string>
+    <!-- Winner payment details -->
+    <string name="payment_details_title">انعام کی ادائیگی کی تفصیلات</string>
+    <string name="payment_prize_summary">انعام: %1$s %2$s</string>
+    <string name="payment_method_label">ادائیگی کا طریقہ</string>
+    <string name="payment_account_number_hint">اکاؤنٹ یا والیٹ نمبر</string>
+    <string name="payment_account_number_error">درست نمبر درج کریں (10–18 ہندسے)</string>
+    <string name="payment_details_required">انعام کی ادائیگی کے لیے اپنی تفصیلات جمع کریں۔</string>
+    <string name="payment_details_received">ادائیگی کی تفصیلات موصول ہو گئیں</string>
+    <string name="payment_transfer_details">%1$s کے ذریعے بھیجا گیا&#10;منتقلی کا حوالہ: %2$s</string>
+    <string name="payment_details_save">ادائیگی کی تفصیلات محفوظ کریں</string>
+    <string name="payment_details_save_failed">تفصیلات محفوظ نہیں ہو سکیں۔ دوبارہ کوشش کریں۔</string>
+    <string name="payment_account_number_error_mobile">01 سے شروع ہونے والا 11 ہندسوں کا بنگلہ دیشی موبائل نمبر درج کریں (یا +880)۔</string>
+    <string name="payment_account_number_error_rocket">01 سے شروع ہونے والا 12 ہندسوں کا Rocket اکاؤنٹ نمبر، چیک ہندسے سمیت، درج کریں (یا +880)۔</string>
 </resources>

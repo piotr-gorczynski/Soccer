@@ -384,4 +384,17 @@
     <string name="uninstall_global_title">Esorey ny app taloha</string>
     <string name="uninstall_global_message">Tsy maintsy hanesorana ny dikan-teny maneran-tany taloha ianao mba hanerena ny fifanolanana amin\'ny dikan-teny Banglades.\n\nMba hanesorana: Mankanesa amin\'ny Paramètre → Fampiharana → Tadiavo ny \"Gridline Soccer\" (tsy misy sainan-tanindrazana) → Esory.</string>
     <string name="uninstall_global_uninstall">Akatona</string>
+    <!-- Winner payment details -->
+    <string name="payment_details_title">Antsipirian’ny fandoavana loka</string>
+    <string name="payment_prize_summary">Loka: %1$s %2$s</string>
+    <string name="payment_method_label">Fomba fandoavana</string>
+    <string name="payment_account_number_hint">Laharan-kaonty na kitapom-bola</string>
+    <string name="payment_account_number_error">Ampidiro isa manan-kery (tarehimarika 10–18)</string>
+    <string name="payment_details_required">Alefaso ny antsipiriany mba handoavana ny lokanao.</string>
+    <string name="payment_details_received">Voaray ny antsipirian’ny fandoavana</string>
+    <string name="payment_transfer_details">Nalefa tamin’ny %1$s&#10;Laharana fanondroana ny famindrana: %2$s</string>
+    <string name="payment_details_save">Tehirizo ny antsipiriany</string>
+    <string name="payment_details_save_failed">Tsy voatahiry ny antsipiriany. Andramo indray.</string>
+    <string name="payment_account_number_error_mobile">Ampidiro laharana finday Bangladesh misy tarehimarika 11 manomboka amin’ny 01 (na +880).</string>
+    <string name="payment_account_number_error_rocket">Ampidiro laharan-kaonty Rocket misy tarehimarika 12 manomboka amin’ny 01, miaraka amin’ny tarehimarika fanamarinana (na +880).</string>
 </resources>

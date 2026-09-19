@@ -27,6 +27,7 @@ import java.util.Map;
 
 import piotr_gorczynski.soccer2.InvitationsActivity;
 import piotr_gorczynski.soccer2.TournamentLobbyActivity;
+import piotr_gorczynski.soccer2.TournamentResultsActivity;
 
 /**
  * Firebase Cloud Messaging service for handling push notifications.
@@ -121,9 +122,46 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         
         if ("tournament_started".equals(notificationType)) {
             showTournamentNotification(context, data);
+        } else if ("payment_status_changed".equals(notificationType)) {
+            showPaymentStatusNotification(context, data);
         } else {
             showInviteNotification(context, data);
         }
+    }
+
+    private void showPaymentStatusNotification(@NonNull Context context,
+                                               @NonNull Map<String, String> data) {
+        String tournamentId = data.get("tournamentId");
+        String paymentId = data.get("paymentId");
+        if (tournamentId == null || tournamentId.isEmpty()) {
+            Log.w(TAG, getClass().getSimpleName() +
+                    ".showPaymentStatusNotification: tournamentId is missing");
+            return;
+        }
+
+        if (!ensureNotificationChannel(context, TOURNAMENT_CHANNEL_ID, TOURNAMENT_CHANNEL_NAME)) {
+            return;
+        }
+
+        Intent intent = new Intent(context, TournamentResultsActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .putExtra("tournamentId", tournamentId)
+                .putExtra("fromNotification", true);
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                context,
+                paymentId == null ? tournamentId.hashCode() : paymentId.hashCode(),
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, TOURNAMENT_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notifications)
+                .setContentTitle(extractTitle(data))
+                .setContentText(extractBody(data))
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent);
+        displayNotification(context, paymentId == null ? tournamentId.hashCode() : paymentId.hashCode(), builder);
     }
 
     /**

@@ -418,4 +418,22 @@
     <string name="uninstall_global_title">পুরনো অ্যাপ সরান</string>
     <string name="uninstall_global_message">বাংলাদেশ সংস্করণের সাথে দ্বন্দ্ব এড়াতে পূর্ববর্তী গ্লোবাল সংস্করণটি আনইনস্টল করতে হবে।\n\nআনইনস্টল করতে: আপনার ফোনের সেটিংস → অ্যাপস → "Gridline Soccer" (পতাকা ছাড়া) খুঁজুন → আনইনস্টল করুন।</string>
     <string name="uninstall_global_uninstall">বন্ধ করুন</string>
+    <!-- Winner payment details -->
+    <string name="payment_details_title">পুরস্কার প্রদানের তথ্য</string>
+    <string name="payment_prize_summary">পুরস্কার: %1$s %2$s</string>
+    <string name="payment_method_label">পেমেন্ট পদ্ধতি</string>
+    <string name="payment_account_number_hint">অ্যাকাউন্ট বা ওয়ালেট নম্বর</string>
+    <string name="payment_account_number_error">সঠিক নম্বর লিখুন (১০–১৮ সংখ্যা)</string>
+    <string name="payment_details_required">আপনার পুরস্কার পাঠাতে তথ্য জমা দিন।</string>
+    <string name="payment_details_received">পেমেন্টের তথ্য গ্রহণ করা হয়েছে</string>
+    <string name="payment_transfer_details">%1$s-এর মাধ্যমে পাঠানো হয়েছে&#10;ট্রান্সফার রেফারেন্স: %2$s</string>
+    <string name="payment_status_processing">পেমেন্ট প্রক্রিয়াধীন</string>
+    <string name="payment_status_sent">প্রাপকের কাছে অর্থ পাঠানো হয়েছে</string>
+    <string name="payment_status_completed">পেমেন্ট পৌঁছে দেওয়া হয়েছে</string>
+    <string name="payment_status_action_required">পদক্ষেপ প্রয়োজন: পেমেন্টের তথ্য সংশোধন করুন</string>
+    <string name="payment_status_cancelled">পেমেন্ট বাতিল করা হয়েছে</string>
+    <string name="payment_details_save">পেমেন্টের তথ্য সংরক্ষণ করুন</string>
+    <string name="payment_details_save_failed">পেমেন্টের তথ্য সংরক্ষণ করা যায়নি। আবার চেষ্টা করুন।</string>
+    <string name="payment_account_number_error_mobile">01 দিয়ে শুরু হওয়া ১১ সংখ্যার বাংলাদেশি মোবাইল নম্বর লিখুন (অথবা +880)।</string>
+    <string name="payment_account_number_error_rocket">চেক ডিজিটসহ 01 দিয়ে শুরু হওয়া ১২ সংখ্যার Rocket অ্যাকাউন্ট নম্বর লিখুন (অথবা +880)।</string>
 </resources>
