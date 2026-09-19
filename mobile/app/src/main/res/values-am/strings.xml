@@ -384,4 +384,16 @@
     <string name="uninstall_global_title">ቀዳሚ አፕ ያስወግዱ</string>
     <string name="uninstall_global_message">ከባንግላዲሽ ስሪት ጋር ግጭት እንዳይፈጠር ቀዳሚውን ዓለምአቀፍ ስሪት ማስወገድ ያስፈልግዎታል።\n\nለማስወገድ: ቅንብሮች → ፕሮግራሞች → \"Gridline Soccer\" (ሰንደቅ ዓላማ ሳይኖር) → ማስወገድ ይሂዱ።</string>
     <string name="uninstall_global_uninstall">ዝጋ</string>
+    <!-- Winner payment details -->
+    <string name="payment_details_title">የሽልማት ክፍያ ዝርዝሮች</string>
+    <string name="payment_prize_summary">ሽልማት፦ %1$s %2$s</string>
+    <string name="payment_method_label">የክፍያ ዘዴ</string>
+    <string name="payment_account_number_hint">የመለያ ወይም የዋሌት ቁጥር</string>
+    <string name="payment_account_number_error">ትክክለኛ ቁጥር ያስገቡ (10–18 አሃዞች)</string>
+    <string name="payment_details_required">ሽልማትዎን ለመክፈል ዝርዝሮችዎን ያስገቡ።</string>
+    <string name="payment_details_saved">የክፍያ ዝርዝሮች ተቀምጠዋል</string>
+    <string name="payment_details_save">የክፍያ ዝርዝሮችን አስቀምጥ</string>
+    <string name="payment_details_save_failed">የክፍያ ዝርዝሮችን ማስቀመጥ አልተቻለም። እንደገና ይሞክሩ።</string>
+    <string name="payment_account_number_error_mobile">በ01 የሚጀምር 11 አሃዝ የባንግላዴሽ ሞባይል ቁጥር (ወይም +880) ያስገቡ።</string>
+    <string name="payment_account_number_error_rocket">በ01 የሚጀምር 12 አሃዝ የRocket መለያ ቁጥር፣ የማረጋገጫ አሃዙን ጨምሮ (ወይም +880) ያስገቡ።</string>
 </resources>

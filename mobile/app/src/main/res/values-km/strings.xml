@@ -384,4 +384,16 @@
     <string name="uninstall_global_title">លុបកម្មវិធីចាស់</string>
     <string name="uninstall_global_message">អ្នកត្រូវលុបកំណែចាស់ដែលជាកំណែសកល ដើម្បីជៀសវាងការប៉ះទង្គិចជាមួយកំណែបង់ក្លាដេស។\n\nដើម្បីលុប: ចូលទៅ ការកំណត់ → កម្មវិធី → រកឃើញ \"Gridline Soccer\" (គ្មានទង់) → លុប។</string>
     <string name="uninstall_global_uninstall">បិទ</string>
+    <!-- Winner payment details -->
+    <string name="payment_details_title">ព័ត៌មានទូទាត់រង្វាន់</string>
+    <string name="payment_prize_summary">រង្វាន់៖ %1$s %2$s</string>
+    <string name="payment_method_label">វិធីទូទាត់</string>
+    <string name="payment_account_number_hint">លេខគណនី ឬកាបូប</string>
+    <string name="payment_account_number_error">បញ្ចូលលេខត្រឹមត្រូវ (10–18 ខ្ទង់)</string>
+    <string name="payment_details_required">ដាក់ព័ត៌មានរបស់អ្នក ដើម្បីយើងអាចបង់រង្វាន់។</string>
+    <string name="payment_details_saved">បានរក្សាទុកព័ត៌មានទូទាត់</string>
+    <string name="payment_details_save">រក្សាទុកព័ត៌មានទូទាត់</string>
+    <string name="payment_details_save_failed">មិនអាចរក្សាទុកព័ត៌មានបានទេ។ សូមព្យាយាមម្តងទៀត។</string>
+    <string name="payment_account_number_error_mobile">បញ្ចូលលេខទូរសព្ទបង់ក្លាដែស 11 ខ្ទង់ ដែលចាប់ផ្តើមដោយ 01 (ឬ +880)។</string>
+    <string name="payment_account_number_error_rocket">បញ្ចូលលេខគណនី Rocket 12 ខ្ទង់ ដែលចាប់ផ្តើមដោយ 01 និងរួមបញ្ចូលលេខត្រួតពិនិត្យ (ឬ +880)។</string>
 </resources>

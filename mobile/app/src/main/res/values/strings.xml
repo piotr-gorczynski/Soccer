@@ -414,4 +414,16 @@
     <string name="uninstall_global_title">Remove Old App</string>
     <string name="uninstall_global_message">You have to uninstall the former global version in order to avoid conflict with the Bangladesh version.\n\nTo uninstall: open your phone\'s Settings → Apps → find \"Gridline Soccer\" (without flag) → Uninstall.</string>
     <string name="uninstall_global_uninstall">Close</string>
+    <!-- Winner payment details -->
+    <string name="payment_details_title">Prize payout details</string>
+    <string name="payment_prize_summary">Prize: %1$s %2$s</string>
+    <string name="payment_method_label">Payout method</string>
+    <string name="payment_account_number_hint">Account or wallet number</string>
+    <string name="payment_account_number_error">Enter a valid number (10–18 digits)</string>
+    <string name="payment_details_required">Submit your details so we can pay your prize.</string>
+    <string name="payment_details_saved">Payment details saved</string>
+    <string name="payment_details_save">Save payment details</string>
+    <string name="payment_details_save_failed">Could not save payment details. Try again.</string>
+    <string name="payment_account_number_error_mobile">Enter an 11-digit Bangladesh mobile number starting with 01 (or +880).</string>
+    <string name="payment_account_number_error_rocket">Enter a 12-digit Rocket account number starting with 01, including the check digit (or +880).</string>
 </resources>

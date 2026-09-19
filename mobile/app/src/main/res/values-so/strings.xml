@@ -384,4 +384,16 @@
     <string name="uninstall_global_title">Ka saar barnaamijkii hore</string>
     <string name="uninstall_global_message">Waa inaad ka saartaa nooca hore ee caalamiga ah si looga fogaado khilaafka nooca Bangladesh.\n\nSi aad u saartid: Aad Goobaha → Codsiyada → raadi \"Gridline Soccer\" (aan calanka lahayn) → Ka saar.</string>
     <string name="uninstall_global_uninstall">Xir</string>
+    <!-- Winner payment details -->
+    <string name="payment_details_title">Faahfaahinta bixinta abaalmarinta</string>
+    <string name="payment_prize_summary">Abaalmarin: %1$s %2$s</string>
+    <string name="payment_method_label">Habka lacag-bixinta</string>
+    <string name="payment_account_number_hint">Lambarka koontada ama jeebka</string>
+    <string name="payment_account_number_error">Geli lambar sax ah (10–18 lambar)</string>
+    <string name="payment_details_required">Soo gudbi faahfaahinta si aan abaalmarinta kuu bixino.</string>
+    <string name="payment_details_saved">Faahfaahinta lacag-bixinta waa la kaydiyay</string>
+    <string name="payment_details_save">Kaydi faahfaahinta lacag-bixinta</string>
+    <string name="payment_details_save_failed">Faahfaahinta lama kaydin. Mar kale isku day.</string>
+    <string name="payment_account_number_error_mobile">Geli lambarka moobilka Bangladesh oo 11 lambar ah kana bilaabma 01 (ama +880).</string>
+    <string name="payment_account_number_error_rocket">Geli lambarka koontada Rocket oo 12 lambar ah kana bilaabma 01, kuna jira lambarka hubinta (ama +880).</string>
 </resources>

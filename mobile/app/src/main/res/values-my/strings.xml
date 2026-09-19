@@ -384,4 +384,16 @@
     <string name="uninstall_global_title">အဟောင်း App ကို ဖြုတ်သိမ်းပါ</string>
     <string name="uninstall_global_message">ဘင်္ဂလားဒေ့ရှ်ဗားရှင်းနှင့် ပဋိပက္ခမဖြစ်ရန် ယခင်ကမ္ဘာ့ဗားရှင်းကို ဖြုတ်သိမ်းရမည်။\n\nဖြုတ်သိမ်းရန်: ဆက်တင်များ → အက်ပ်များ → \"Gridline Soccer\" (အလံမပါ) ကို ရှာပါ → ဖြုတ်သိမ်းပါ။</string>
     <string name="uninstall_global_uninstall">ပိတ်</string>
+    <!-- Winner payment details -->
+    <string name="payment_details_title">ဆုငွေပေးချေမှု အသေးစိတ်</string>
+    <string name="payment_prize_summary">ဆုငွေ: %1$s %2$s</string>
+    <string name="payment_method_label">ငွေပေးချေမှုနည်းလမ်း</string>
+    <string name="payment_account_number_hint">အကောင့် သို့မဟုတ် ပိုက်ဆံအိတ်နံပါတ်</string>
+    <string name="payment_account_number_error">မှန်ကန်သောနံပါတ် ထည့်ပါ (ဂဏန်း 10–18 လုံး)</string>
+    <string name="payment_details_required">ဆုငွေပေးရန် သင့်အချက်အလက်ကို ပေးပို့ပါ။</string>
+    <string name="payment_details_saved">ငွေပေးချေမှုအချက်အလက် သိမ်းပြီးပါပြီ</string>
+    <string name="payment_details_save">ငွေပေးချေမှုအချက်အလက် သိမ်းမည်</string>
+    <string name="payment_details_save_failed">အချက်အလက် မသိမ်းနိုင်ပါ။ ထပ်မံကြိုးစားပါ။</string>
+    <string name="payment_account_number_error_mobile">01 ဖြင့်စသော ဘင်္ဂလားဒေ့ရှ် မိုဘိုင်းနံပါတ် 11 လုံး (သို့မဟုတ် +880) ထည့်ပါ။</string>
+    <string name="payment_account_number_error_rocket">01 ဖြင့်စပြီး စစ်ဆေးဂဏန်းပါသော Rocket အကောင့်နံပါတ် 12 လုံး (သို့မဟုတ် +880) ထည့်ပါ။</string>
 </resources>

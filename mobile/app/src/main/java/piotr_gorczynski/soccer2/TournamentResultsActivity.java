@@ -4,8 +4,16 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 import java.util.Objects;
@@ -16,10 +24,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldPath;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +38,14 @@ public class TournamentResultsActivity extends BaseActivity {
 
     private StandingsAdapter adapter;
     private final List<StandingEntry> standings = new ArrayList<>();
+    private final List<String> payoutMethodCodes = new ArrayList<>();
+    private LinearLayout paymentDetailsPanel;
+    private Spinner paymentMethodSpinner;
+    private EditText paymentAccountNumber;
+    private TextView paymentPrizeSummary;
+    private TextView paymentDetailsStatus;
+    private Button savePaymentDetailsButton;
+    private DocumentSnapshot winnerPayment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +62,13 @@ public class TournamentResultsActivity extends BaseActivity {
         adapter = new StandingsAdapter(standings);
         standingsList.setAdapter(adapter);
 
+        paymentDetailsPanel = findViewById(R.id.paymentDetailsPanel);
+        paymentMethodSpinner = findViewById(R.id.paymentMethodSpinner);
+        paymentAccountNumber = findViewById(R.id.paymentAccountNumber);
+        paymentPrizeSummary = findViewById(R.id.paymentPrizeSummary);
+        paymentDetailsStatus = findViewById(R.id.paymentDetailsStatus);
+        savePaymentDetailsButton = findViewById(R.id.savePaymentDetailsButton);
+
         String tid = getIntent().getStringExtra("tournamentId");
         if (tid != null) {
             loadTournament(tid);
@@ -57,6 +83,7 @@ public class TournamentResultsActivity extends BaseActivity {
                     if (!doc.exists()) return;
                     Objects.requireNonNull(getSupportActionBar())
                             .setTitle(doc.getString("name"));
+                    loadWinnerPayment(tid, doc.getString("regulation"));
                 });
 
         // Step 1: fetch all participants
@@ -111,6 +138,142 @@ public class TournamentResultsActivity extends BaseActivity {
                                         });
                             });
                 });
+    }
+
+    private void loadWinnerPayment(String tournamentId, String regulationId) {
+        if (FirebaseAuth.getInstance().getCurrentUser() == null || TextUtils.isEmpty(regulationId)) {
+            paymentDetailsPanel.setVisibility(View.GONE);
+            return;
+        }
+
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("payments")
+                .whereEqualTo("userId", userId)
+                .whereEqualTo("tournamentId", tournamentId)
+                .whereEqualTo("rank", 1)
+                .limit(1)
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    if (snapshot.isEmpty()) {
+                        paymentDetailsPanel.setVisibility(View.GONE);
+                        return;
+                    }
+                    winnerPayment = snapshot.getDocuments().get(0);
+                    db.collection("regulations").document(regulationId).get()
+                            .addOnSuccessListener(this::showPaymentDetailsForm)
+                            .addOnFailureListener(error -> paymentDetailsPanel.setVisibility(View.GONE));
+                })
+                .addOnFailureListener(error -> paymentDetailsPanel.setVisibility(View.GONE));
+    }
+
+    @SuppressWarnings("unchecked")
+    private void showPaymentDetailsForm(DocumentSnapshot regulation) {
+        if (!regulation.exists() || winnerPayment == null) return;
+
+        Object prizeRulesValue = regulation.get("prizeRules");
+        if (!(prizeRulesValue instanceof Map)) return;
+        Object methodsValue = ((Map<String, Object>) prizeRulesValue).get("payoutMethods");
+        if (!(methodsValue instanceof List) || ((List<?>) methodsValue).isEmpty()) return;
+
+        payoutMethodCodes.clear();
+        List<String> methodLabels = new ArrayList<>();
+        for (Object value : (List<?>) methodsValue) {
+            if (!(value instanceof String) || TextUtils.isEmpty((String) value)) continue;
+            String code = ((String) value).trim().toLowerCase(java.util.Locale.ROOT);
+            if (!payoutMethodCodes.contains(code)) {
+                payoutMethodCodes.add(code);
+                methodLabels.add(formatPayoutMethod(code));
+            }
+        }
+        if (payoutMethodCodes.isEmpty()) return;
+
+        ArrayAdapter<String> methodsAdapter = new ArrayAdapter<>(
+                this, android.R.layout.simple_spinner_item, methodLabels);
+        methodsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        paymentMethodSpinner.setAdapter(methodsAdapter);
+
+        Number amount = winnerPayment.getDouble("amount");
+        if (amount == null) amount = winnerPayment.getLong("amount");
+        String currency = winnerPayment.getString("currency");
+        String amountText = amount == null ? "" : formatAmount(amount);
+        paymentPrizeSummary.setText(getString(
+                R.string.payment_prize_summary, amountText, currency == null ? "" : currency));
+
+        Map<String, Object> recipientInfo = (Map<String, Object>) winnerPayment.get("recipientInfo");
+        if (recipientInfo != null) {
+            String savedMethod = recipientInfo.get("method") instanceof String
+                    ? (String) recipientInfo.get("method") : null;
+            String savedAccount = recipientInfo.get("accountNumber") instanceof String
+                    ? (String) recipientInfo.get("accountNumber") : null;
+            int selectedIndex = savedMethod == null ? -1 : payoutMethodCodes.indexOf(savedMethod);
+            if (selectedIndex >= 0) paymentMethodSpinner.setSelection(selectedIndex);
+            if (savedAccount != null) paymentAccountNumber.setText(savedAccount);
+            paymentDetailsStatus.setText(R.string.payment_details_saved);
+        } else {
+            paymentDetailsStatus.setText(R.string.payment_details_required);
+        }
+
+        boolean editable = "pending".equals(winnerPayment.getString("status"));
+        paymentMethodSpinner.setEnabled(editable);
+        paymentAccountNumber.setEnabled(editable);
+        savePaymentDetailsButton.setVisibility(editable ? View.VISIBLE : View.GONE);
+        savePaymentDetailsButton.setOnClickListener(view -> savePaymentDetails());
+        paymentDetailsPanel.setVisibility(View.VISIBLE);
+    }
+
+    private void savePaymentDetails() {
+        if (winnerPayment == null || payoutMethodCodes.isEmpty()) return;
+        int selected = paymentMethodSpinner.getSelectedItemPosition();
+        if (selected < 0 || selected >= payoutMethodCodes.size()) return;
+
+        String method = payoutMethodCodes.get(selected);
+        String accountNumber = BangladeshPayoutAccountValidator.normalize(
+                paymentAccountNumber.getText().toString());
+        if (!BangladeshPayoutAccountValidator.isValid(method, accountNumber)) {
+            int errorResource = switch (method) {
+                case "bkash", "nagad" -> R.string.payment_account_number_error_mobile;
+                case "rocket" -> R.string.payment_account_number_error_rocket;
+                default -> R.string.payment_account_number_error;
+            };
+            paymentAccountNumber.setError(getString(errorResource));
+            return;
+        }
+
+        paymentAccountNumber.setText(accountNumber);
+
+        Map<String, Object> recipientInfo = new HashMap<>();
+        recipientInfo.put("method", method);
+        recipientInfo.put("accountNumber", accountNumber);
+        recipientInfo.put("submittedAt", FieldValue.serverTimestamp());
+
+        savePaymentDetailsButton.setEnabled(false);
+        winnerPayment.getReference().update("recipientInfo", recipientInfo)
+                .addOnSuccessListener(unused -> {
+                    paymentDetailsStatus.setText(R.string.payment_details_saved);
+                    savePaymentDetailsButton.setEnabled(true);
+                    Toast.makeText(this, R.string.payment_details_saved, Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(error -> {
+                    savePaymentDetailsButton.setEnabled(true);
+                    Toast.makeText(this, R.string.payment_details_save_failed, Toast.LENGTH_LONG).show();
+                });
+    }
+
+    private String formatPayoutMethod(String method) {
+        return switch (method) {
+            case "bkash" -> "bKash";
+            case "nagad" -> "Nagad";
+            case "rocket" -> "Rocket";
+            default -> method;
+        };
+    }
+
+    private String formatAmount(Number amount) {
+        double value = amount.doubleValue();
+        return value == Math.rint(value)
+                ? String.valueOf(amount.longValue())
+                : String.valueOf(value);
     }
 
     private void assignMedals(List<StandingEntry> list) {

@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.30
+**Document Version:** 2.31
 **Last Updated:** 2026-09-15
 **Status:** Implementation in progress - Migration Backend Setup complete on dev, test, and prod
 
 **Revision History**:
+- v2.31 (2026-09-15): Implemented winner payout-details collection on the tournament results screen. Only the authenticated first-place winner with a server-created payment record sees the form; payout methods are loaded from the assigned regulation. bKash and Nagad require an 11-digit Bangladesh mobile number, while Rocket requires a 12-digit account number including its check digit; local and `+880` input formats are normalized. Firestore rules repeat the validation and restrict writes to the winner's pending payment and regulation-supported methods. Added localized UI text and validation feedback for every supported language.
 - v2.30 (2026-09-15): Marked Authentication Integration Setup as complete after verifying Firebase providers, shared Google Services configuration, signing certificates, the shared Meta app configuration, and deployed cross-app Firestore access rules. End-to-end authentication tests and policy/compliance checks remain tracked separately.
 - v2.29 (2026-09-15): Verified the Facebook key hashes for the current debug keystore, release/upload keystore, and Google Play App Signing certificate. Added the current debug hash to the existing Meta app and removed the malformed near-duplicate entry.
 - v2.28 (2026-09-15): Verified that Email/Password, Google, Facebook, and Anonymous authentication are enabled in Firebase on dev, test, and prod. Removed Microsoft authentication from the planned provider set. Added `piotr_gorczynski.soccer2.bd` to the existing live Meta app alongside the global Android package; Meta will be able to verify its Play Store association after the `.bd` app is registered in Google Play Console.
@@ -3092,15 +3093,19 @@ cd mobile
   - No concrete payout method or account details collected before a win
   - No camera or document upload needed
   - Immediate confirmation
-- [ ] Implement winner payment details collection UI
-  - Payment method selector (bKash/Nagad/Rocket)
-  - Account number input
-  - Shown only to 1st place winners
+- [x] Implement winner payment details collection UI
+  - Payout method selector populated dynamically from the assigned regulation (for example bKash, Nagad, or Rocket)
+  - Validated account or mobile-wallet number input
+    - bKash/Nagad: 11-digit Bangladesh mobile number starting with `01`
+    - Rocket: 12-digit account number starting with `01`, including the check digit
+    - `+880` input is accepted and normalized before storage
+  - Shown only to the authenticated 1st-place winner with a server-created payment record
+  - Firestore rules allow updates only to `recipientInfo` on the winner's pending payment and validate the selected method against the regulation
 - [ ] Update tournament UI for cash prizes
   - "৳2,000 Prize" badge on tournament listings
   - [x] Winner push notification from the backend
   - Payment status screen (pending/completed)
-- [ ] Add Bengali translations for new features
+- [x] Add Bengali translations for eligibility and winner payment-detail features
 - [ ] **Migration UI Development**:
   - [ ] Add Bangladesh user detection in global app
   - [ ] Create promotion banner component for global app

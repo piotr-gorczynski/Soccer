@@ -164,14 +164,42 @@ service cloud.firestore {
     //    - The winner (document owner) may update only their own `recipientInfo`
     //      (bKash/Nagad wallet number, full name, etc.) so they can submit payout details.
     match /payments/{paymentId} {
+      function hasValidRecipientInfo() {
+        let tournament = get(
+          /databases/$(database)/documents/tournaments/$(resource.data.tournamentId)
+        ).data;
+        let regulation = get(
+          /databases/$(database)/documents/regulations/$(tournament.regulation)
+        ).data;
+        let info = request.resource.data.recipientInfo;
+        let validAccountNumber =
+            ((info.method == 'bkash' || info.method == 'nagad')
+              && info.accountNumber.matches('^01[3-9][0-9]{8}$'))
+            || (info.method == 'rocket'
+              && info.accountNumber.matches('^01[3-9][0-9]{9}$'))
+            || (!['bkash', 'nagad', 'rocket'].hasAny([info.method])
+              && info.accountNumber.matches('^[0-9]{10,18}$'));
+        return info is map
+            && info.keys().hasAll(['method', 'accountNumber', 'submittedAt'])
+            && info.keys().hasOnly(['method', 'accountNumber', 'submittedAt'])
+            && info.method is string
+            && regulation.prizeRules.payoutMethods.hasAny([info.method])
+            && info.accountNumber is string
+            && validAccountNumber
+            && info.submittedAt == request.time;
+      }
+
       allow read: if request.auth != null
                && request.auth.uid == resource.data.userId;
 
       // Winner submits their payment account details (recipientInfo only).
       allow update: if request.auth != null
                  && request.auth.uid == resource.data.userId
+                 && resource.data.rank == 1
+                 && resource.data.status == 'pending'
                  && request.resource.data.diff(resource.data).affectedKeys()
-                      .hasOnly(['recipientInfo']);
+                      .hasOnly(['recipientInfo'])
+                 && hasValidRecipientInfo();
 
       // Creation and deletion are server-side only.
       allow create, delete: if false;
