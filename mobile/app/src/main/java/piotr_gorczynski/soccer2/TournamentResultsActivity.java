@@ -26,6 +26,7 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
@@ -44,8 +45,10 @@ public class TournamentResultsActivity extends BaseActivity {
     private EditText paymentAccountNumber;
     private TextView paymentPrizeSummary;
     private TextView paymentDetailsStatus;
+    private TextView paymentIssueMessage;
     private Button savePaymentDetailsButton;
     private DocumentSnapshot winnerPayment;
+    private ListenerRegistration paymentListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +70,7 @@ public class TournamentResultsActivity extends BaseActivity {
         paymentAccountNumber = findViewById(R.id.paymentAccountNumber);
         paymentPrizeSummary = findViewById(R.id.paymentPrizeSummary);
         paymentDetailsStatus = findViewById(R.id.paymentDetailsStatus);
+        paymentIssueMessage = findViewById(R.id.paymentIssueMessage);
         savePaymentDetailsButton = findViewById(R.id.savePaymentDetailsButton);
 
         String tid = getIntent().getStringExtra("tournamentId");
@@ -148,13 +152,17 @@ public class TournamentResultsActivity extends BaseActivity {
 
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("payments")
+        if (paymentListener != null) paymentListener.remove();
+        paymentListener = db.collection("payments")
                 .whereEqualTo("userId", userId)
                 .whereEqualTo("tournamentId", tournamentId)
                 .whereEqualTo("rank", 1)
                 .limit(1)
-                .get()
-                .addOnSuccessListener(snapshot -> {
+                .addSnapshotListener((snapshot, error) -> {
+                    if (error != null || snapshot == null) {
+                        paymentDetailsPanel.setVisibility(View.GONE);
+                        return;
+                    }
                     if (snapshot.isEmpty()) {
                         paymentDetailsPanel.setVisibility(View.GONE);
                         return;
@@ -162,9 +170,9 @@ public class TournamentResultsActivity extends BaseActivity {
                     winnerPayment = snapshot.getDocuments().get(0);
                     db.collection("regulations").document(regulationId).get()
                             .addOnSuccessListener(this::showPaymentDetailsForm)
-                            .addOnFailureListener(error -> paymentDetailsPanel.setVisibility(View.GONE));
-                })
-                .addOnFailureListener(error -> paymentDetailsPanel.setVisibility(View.GONE));
+                            .addOnFailureListener(regulationError ->
+                                    paymentDetailsPanel.setVisibility(View.GONE));
+                });
     }
 
     @SuppressWarnings("unchecked")
@@ -235,16 +243,25 @@ public class TournamentResultsActivity extends BaseActivity {
             default -> R.string.payment_details_required;
         };
         paymentDetailsStatus.setText(messageResource);
+        paymentIssueMessage.setText("");
+        paymentIssueMessage.setVisibility(View.GONE);
 
         if ("action_required".equals(status) && winnerPayment != null) {
             Object issueValue = winnerPayment.get("issue");
             if (issueValue instanceof Map) {
                 Object message = ((Map<String, Object>) issueValue).get("userMessage");
                 if (message instanceof String && !TextUtils.isEmpty((String) message)) {
-                    paymentDetailsStatus.setText((String) message);
+                    paymentIssueMessage.setText((String) message);
+                    paymentIssueMessage.setVisibility(View.VISIBLE);
                 }
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (paymentListener != null) paymentListener.remove();
+        super.onDestroy();
     }
 
     private void savePaymentDetails() {

@@ -121,12 +121,17 @@ exports.onPaymentStatusChanged = functions.firestore
     const user = userSnap.data();
     const targetField = user.fcmInstallationId ? 'fcmInstallationId' : 'fcmToken';
     const targetValue = user[targetField];
-    if (user.accountDeleted === true || !targetValue) return null;
+    if (user.accountDeleted === true || !targetValue) {
+      console.log(`[onPaymentStatusChanged] Skipped ${after.userId}: no FCM target`);
+      return null;
+    }
 
     const messages = PAYMENT_MESSAGES[user.language] || PAYMENT_MESSAGES.en;
     const [title, body] = messages[after.status] || PAYMENT_MESSAGES.en[after.status];
     const message = {
-      ...(targetField === 'fcmInstallationId' ? { fid: targetValue } : { token: targetValue }),
+      // The Admin SDK uses the `token` transport field for both legacy
+      // registration tokens and FID-based per-installation targets.
+      token: targetValue,
       data: {
         type: 'payment_status_changed',
         paymentId: context.params.paymentId,
