@@ -421,7 +421,12 @@
     <string name="payment_account_number_hint">Account or wallet number</string>
     <string name="payment_account_number_error">Enter a valid number (10–18 digits)</string>
     <string name="payment_details_required">Submit your details so we can pay your prize.</string>
-    <string name="payment_details_saved">Payment details saved</string>
+    <string name="payment_details_received">Payment details received</string>
+    <string name="payment_status_processing">Payment in progress</string>
+    <string name="payment_status_sent">Money sent to recipient</string>
+    <string name="payment_status_completed">Payment delivered</string>
+    <string name="payment_status_action_required">Action required: correct your payment details</string>
+    <string name="payment_status_cancelled">Payment cancelled</string>
     <string name="payment_details_save">Save payment details</string>
     <string name="payment_details_save_failed">Could not save payment details. Try again.</string>
     <string name="payment_account_number_error_mobile">Enter an 11-digit Bangladesh mobile number starting with 01 (or +880).</string>

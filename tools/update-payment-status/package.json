@@ -1,0 +1,12 @@
+{
+  "name": "update-payment-status-tool",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "test": "node --test update-payment-status.test.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.4.0"
+  }
+}

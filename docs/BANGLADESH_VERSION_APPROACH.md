@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.31
-**Last Updated:** 2026-09-15
+**Document Version:** 2.32
+**Last Updated:** 2026-09-19
 **Status:** Implementation in progress - Migration Backend Setup complete on dev, test, and prod
 
 **Revision History**:
+- v2.32 (2026-09-19): Added the Bangladesh prize-payment lifecycle and administrator CLI. Payment status changes now use validated transitions and audit history; a Firestore trigger notifies the winner by FCM when processing starts, money is sent, delivery completes, details require correction, or a payout is cancelled. The winner UI displays the stored status and payment notifications open the tournament results screen.
 - v2.31 (2026-09-15): Implemented winner payout-details collection on the tournament results screen. Only the authenticated first-place winner with a server-created payment record sees the form; payout methods are loaded from the assigned regulation. bKash and Nagad require an 11-digit Bangladesh mobile number, while Rocket requires a 12-digit account number including its check digit; local and `+880` input formats are normalized. Firestore rules repeat the validation and restrict writes to the winner's pending payment and regulation-supported methods. Added localized UI text and validation feedback for every supported language.
 - v2.30 (2026-09-15): Marked Authentication Integration Setup as complete after verifying Firebase providers, shared Google Services configuration, signing certificates, the shared Meta app configuration, and deployed cross-app Firestore access rules. End-to-end authentication tests and policy/compliance checks remain tracked separately.
 - v2.29 (2026-09-15): Verified the Facebook key hashes for the current debug keystore, release/upload keystore, and Google Play App Signing certificate. Added the current debug hash to the existing Meta app and removed the malformed near-duplicate entry.

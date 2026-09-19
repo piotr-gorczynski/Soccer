@@ -426,7 +426,7 @@
     <string name="payment_account_number_hint">Konto- oder Walletnummer</string>
     <string name="payment_account_number_error">Gültige Nummer eingeben (10–18 Ziffern)</string>
     <string name="payment_details_required">Gib deine Daten ein, damit wir deinen Preis auszahlen können.</string>
-    <string name="payment_details_saved">Auszahlungsdaten gespeichert</string>
+    <string name="payment_details_received">Auszahlungsdaten erhalten</string>
     <string name="payment_details_save">Auszahlungsdaten speichern</string>
     <string name="payment_details_save_failed">Auszahlungsdaten konnten nicht gespeichert werden. Erneut versuchen.</string>
     <string name="payment_account_number_error_mobile">Gib eine 11-stellige Mobilnummer aus Bangladesch ein, die mit 01 beginnt (oder +880).</string>

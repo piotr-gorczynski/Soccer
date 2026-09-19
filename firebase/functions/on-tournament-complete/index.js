@@ -161,7 +161,8 @@ exports.onTournamentComplete = functions.firestore
       amount:       prizePool.firstPlacePrize,
       currency:     prizePool.currency || 'BDT',
       rank:         1,
-      status:       'pending',
+      status:       'awaiting_details',
+      statusUpdatedAt: now,
       createdAt:    now,
     });
 

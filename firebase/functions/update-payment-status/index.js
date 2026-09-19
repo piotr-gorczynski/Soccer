@@ -1,138 +1,161 @@
-// functions/update-payment-status/index.js
-const functions = require('firebase-functions');
-const admin     = require('firebase-admin');
+'use strict';
 
-// Only initialize if not already initialized
-if (!admin.apps.length) {
-  admin.initializeApp();
-}
+const functions = require('firebase-functions/v1');
+const { getApps, initializeApp } = require('firebase-admin/app');
+const { FieldValue, getFirestore } = require('firebase-admin/firestore');
+const { getMessaging } = require('firebase-admin/messaging');
+const { VALID_STATUSES, NOTIFIABLE_STATUSES, assertTransition, validateTransitionData } = require('./payment-workflow');
 
-const db = admin.firestore();
+if (!getApps().length) initializeApp();
+const db = getFirestore();
+const messaging = getMessaging();
 
-/**
- * Valid payment status values and the transitions allowed.
- * pending → processing → completed | failed
- */
-const VALID_STATUSES = new Set(['pending', 'processing', 'completed', 'failed']);
-const ALLOWED_TRANSITIONS = {
-  pending:    new Set(['processing', 'failed']),
-  processing: new Set(['completed', 'failed']),
-  completed:  new Set(),   // terminal state
-  failed:     new Set(['pending']),  // allow retry
+const PAYMENT_MESSAGES = {
+  en: {
+    processing: ['Prize payment update', 'Your prize payment is now being processed.'],
+    sent: ['Prize payment update', 'Your prize money has been sent and is on its way.'],
+    completed: ['Prize payment delivered', 'Your prize payment has been delivered.'],
+    action_required: ['Payment details need attention', 'Open the app and correct your payout details.'],
+    cancelled: ['Prize payment cancelled', 'Your prize payment has been cancelled.'],
+  },
+  bn: {
+    processing: ['পুরস্কারের পেমেন্ট আপডেট', 'আপনার পুরস্কারের পেমেন্ট এখন প্রক্রিয়াধীন।'],
+    sent: ['পুরস্কারের পেমেন্ট আপডেট', 'আপনার পুরস্কারের অর্থ পাঠানো হয়েছে এবং পৌঁছানোর পথে রয়েছে।'],
+    completed: ['পুরস্কারের পেমেন্ট পৌঁছেছে', 'আপনার পুরস্কারের পেমেন্ট পৌঁছে দেওয়া হয়েছে।'],
+    action_required: ['পেমেন্টের তথ্যে সংশোধন প্রয়োজন', 'অ্যাপ খুলে আপনার পেমেন্টের তথ্য সংশোধন করুন।'],
+    cancelled: ['পুরস্কারের পেমেন্ট বাতিল', 'আপনার পুরস্কারের পেমেন্ট বাতিল করা হয়েছে।'],
+  },
+  pl: {
+    processing: ['Aktualizacja wypłaty nagrody', 'Twoja wypłata nagrody jest teraz realizowana.'],
+    sent: ['Aktualizacja wypłaty nagrody', 'Pieniądze zostały wysłane i są w drodze.'],
+    completed: ['Nagroda została wypłacona', 'Wypłata nagrody została dostarczona.'],
+    action_required: ['Dane do wypłaty wymagają poprawy', 'Otwórz aplikację i popraw dane do wypłaty.'],
+    cancelled: ['Wypłata nagrody anulowana', 'Twoja wypłata nagrody została anulowana.'],
+  },
 };
 
-/**
- * updatePaymentStatus – admin callable function.
- *
- * Expected data:
- *   {
- *     paymentId:       string   (required)
- *     status:          string   (required) – "processing" | "completed" | "failed"
- *     transferService: string   (optional) – "remitly" | "wise" | "western_union" | "paypal"
- *     transactionId:   string   (optional) – ID from the transfer service
- *     transferFee:     number   (optional) – fee in USD
- *     exchangeRate:    number   (optional) – exchange rate used
- *     notes:           string   (optional) – free-text notes for internal use
- *   }
- *
- * This function is intended to be called by the developer/admin only.
- * It requires authentication (any signed-in user) as a baseline guard;
- * additional access control should be enforced at the deployment level.
- */
-exports.updatePaymentStatus = functions.https.onCall(async (data, context) => {
-  // Require authentication.
-  if (!context.auth) {
-    throw new functions.https.HttpsError(
-      'unauthenticated',
-      'Authentication required.'
-    );
-  }
-
-  // Restrict to admin users only (custom claim: admin === true).
-  if (context.auth.token.admin !== true) {
-    throw new functions.https.HttpsError(
-      'permission-denied',
-      'Caller must have admin privileges.'
-    );
-  }
-
-  const { paymentId, status, transferService, transactionId, transferFee, exchangeRate, notes } = data || {};
-
-  // Validate required fields.
-  if (!paymentId || typeof paymentId !== 'string') {
-    throw new functions.https.HttpsError(
-      'invalid-argument',
-      '`paymentId` is required and must be a string.'
-    );
-  }
-
-  if (!status || !VALID_STATUSES.has(status)) {
-    throw new functions.https.HttpsError(
-      'invalid-argument',
-      `\`status\` must be one of: ${[...VALID_STATUSES].join(', ')}.`
-    );
-  }
-
-  // Validate optional numeric fields.
-  if (transferFee !== undefined && (typeof transferFee !== 'number' || transferFee < 0)) {
-    throw new functions.https.HttpsError(
-      'invalid-argument',
-      '`transferFee` must be a non-negative number.'
-    );
-  }
-
-  if (exchangeRate !== undefined && (typeof exchangeRate !== 'number' || exchangeRate <= 0)) {
-    throw new functions.https.HttpsError(
-      'invalid-argument',
-      '`exchangeRate` must be a positive number.'
-    );
-  }
-
-  const paymentRef = db.collection('payments').doc(paymentId);
-  const paymentSnap = await paymentRef.get();
-
-  if (!paymentSnap.exists) {
-    throw new functions.https.HttpsError(
-      'not-found',
-      `Payment record ${paymentId} not found.`
-    );
-  }
-
-  const currentStatus = paymentSnap.data().status;
-
-  // Enforce valid status transitions.
-  const allowed = ALLOWED_TRANSITIONS[currentStatus];
-  if (!allowed || !allowed.has(status)) {
-    throw new functions.https.HttpsError(
-      'failed-precondition',
-      `Cannot transition payment from "${currentStatus}" to "${status}".`
-    );
-  }
-
-  // Build the update payload.
+function buildPaymentUpdate(status, data) {
   const update = {
     status,
-    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    statusUpdatedAt: FieldValue.serverTimestamp(),
+    updatedAt: FieldValue.serverTimestamp(),
   };
-
-  if (transferService !== undefined) update.transferService = transferService;
-  if (transactionId   !== undefined) update.transactionId   = transactionId;
-  if (transferFee     !== undefined) update.transferFee     = transferFee;
-  if (exchangeRate    !== undefined) update.exchangeRate    = exchangeRate;
-  if (notes           !== undefined) update.notes           = notes;
-
-  // Set timestamp fields based on target status.
-  if (status === 'processing') {
-    update.processedAt = admin.firestore.FieldValue.serverTimestamp();
-  } else if (status === 'completed') {
-    update.completedAt = admin.firestore.FieldValue.serverTimestamp();
+  if (status === 'processing') update.processingAt = FieldValue.serverTimestamp();
+  if (status === 'sent') {
+    update['transfer.provider'] = data.provider.trim();
+    update['transfer.providerReference'] = data.providerReference.trim();
+    update['transfer.sentAt'] = FieldValue.serverTimestamp();
   }
+  if (status === 'completed') update['transfer.completedAt'] = FieldValue.serverTimestamp();
+  if (status === 'action_required') {
+    update.issue = {
+      code: data.issueCode.trim(),
+      userMessage: data.userMessage.trim(),
+      createdAt: FieldValue.serverTimestamp(),
+    };
+  } else if (data.clearIssue === true || status === 'processing') {
+    update.issue = FieldValue.delete();
+  }
+  if (typeof data.notes === 'string' && data.notes.trim()) update.adminNotes = data.notes.trim();
+  return update;
+}
 
-  await paymentRef.update(update);
+async function updatePayment(paymentId, status, data, actor) {
+  const paymentRef = db.collection('payments').doc(paymentId);
+  const historyRef = paymentRef.collection('statusHistory').doc();
+  return db.runTransaction(async transaction => {
+    const paymentSnap = await transaction.get(paymentRef);
+    if (!paymentSnap.exists) throw new Error(`Payment record ${paymentId} not found.`);
+    const currentStatus = paymentSnap.get('status');
+    assertTransition(currentStatus, status);
+    validateTransitionData(status, data);
+    transaction.update(paymentRef, buildPaymentUpdate(status, data));
+    transaction.set(historyRef, {
+      from: currentStatus,
+      to: status,
+      changedAt: FieldValue.serverTimestamp(),
+      changedBy: actor,
+      source: 'updatePaymentStatus',
+      ...(data.issueCode ? { reasonCode: data.issueCode.trim() } : {}),
+    });
+    return { previousStatus: currentStatus };
+  });
+}
 
-  console.log(
-    `[updatePaymentStatus] Payment ${paymentId} updated: ${currentStatus} → ${status}`
-  );
-
-  return { ok: true, paymentId, status };
+exports.updatePaymentStatus = functions.https.onCall(async (data, context) => {
+  if (!context.auth) throw new functions.https.HttpsError('unauthenticated', 'Authentication required.');
+  if (context.auth.token.admin !== true) {
+    throw new functions.https.HttpsError('permission-denied', 'Caller must have admin privileges.');
+  }
+  const { paymentId, status } = data || {};
+  if (typeof paymentId !== 'string' || !paymentId.trim()) {
+    throw new functions.https.HttpsError('invalid-argument', '`paymentId` is required.');
+  }
+  if (!VALID_STATUSES.has(status)) {
+    throw new functions.https.HttpsError('invalid-argument', `Unknown payment status: ${status}.`);
+  }
+  try {
+    const result = await updatePayment(paymentId.trim(), status, data, context.auth.uid);
+    console.log(`[updatePaymentStatus] ${paymentId}: ${result.previousStatus} -> ${status}`);
+    return { ok: true, paymentId, status };
+  } catch (error) {
+    const code = /not found/.test(error.message) ? 'not-found'
+      : /Cannot transition/.test(error.message) ? 'failed-precondition' : 'invalid-argument';
+    throw new functions.https.HttpsError(code, error.message);
+  }
 });
+
+exports.onPaymentStatusChanged = functions.firestore
+  .document('payments/{paymentId}')
+  .onUpdate(async (change, context) => {
+    const before = change.before.data();
+    const after = change.after.data();
+    if (before.status === after.status || !NOTIFIABLE_STATUSES.has(after.status)) return null;
+
+    const eventRef = change.after.ref.collection('notificationEvents').doc(context.eventId);
+    const eventSnap = await eventRef.get();
+    if (eventSnap.exists && eventSnap.get('sent') === true) return null;
+
+    const userSnap = await db.collection('users').doc(after.userId).get();
+    if (!userSnap.exists) return null;
+    const user = userSnap.data();
+    const targetField = user.fcmInstallationId ? 'fcmInstallationId' : 'fcmToken';
+    const targetValue = user[targetField];
+    if (user.accountDeleted === true || !targetValue) return null;
+
+    const messages = PAYMENT_MESSAGES[user.language] || PAYMENT_MESSAGES.en;
+    const [title, body] = messages[after.status] || PAYMENT_MESSAGES.en[after.status];
+    const message = {
+      ...(targetField === 'fcmInstallationId' ? { fid: targetValue } : { token: targetValue }),
+      data: {
+        type: 'payment_status_changed',
+        paymentId: context.params.paymentId,
+        tournamentId: after.tournamentId || '',
+        status: after.status,
+        title,
+        body,
+      },
+      android: { priority: 'high' },
+    };
+
+    try {
+      await messaging.send(message);
+      await eventRef.set({ status: after.status, sent: true, sentAt: FieldValue.serverTimestamp() });
+      console.log(`[onPaymentStatusChanged] Sent ${after.status} to ${after.userId}`);
+    } catch (error) {
+      if (error.code === 'messaging/registration-token-not-registered' ||
+          error.code === 'messaging/installation-id-not-registered' ||
+          error.code === 'messaging/invalid-registration-token') {
+        await userSnap.ref.update({
+          [targetField]: FieldValue.delete(),
+          fcmErrorType: error.code,
+          fcmErrorDate: FieldValue.serverTimestamp(),
+        });
+        return null;
+      }
+      throw error;
+    }
+    return null;
+  });
+
+exports._test = { buildPaymentUpdate, updatePayment };

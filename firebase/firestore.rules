@@ -192,13 +192,16 @@ service cloud.firestore {
       allow read: if request.auth != null
                && request.auth.uid == resource.data.userId;
 
-      // Winner submits their payment account details (recipientInfo only).
+      // Winner submits or corrects payout details and atomically advances the
+      // payment to the administrator's processing queue.
       allow update: if request.auth != null
                  && request.auth.uid == resource.data.userId
                  && resource.data.rank == 1
-                 && resource.data.status == 'pending'
+                 && ['awaiting_details', 'action_required'].hasAny([resource.data.status])
+                 && request.resource.data.status == 'ready_for_processing'
+                 && request.resource.data.statusUpdatedAt == request.time
                  && request.resource.data.diff(resource.data).affectedKeys()
-                      .hasOnly(['recipientInfo'])
+                      .hasOnly(['recipientInfo', 'status', 'statusUpdatedAt'])
                  && hasValidRecipientInfo();
 
       // Creation and deletion are server-side only.

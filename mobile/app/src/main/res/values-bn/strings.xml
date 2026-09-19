@@ -425,7 +425,12 @@
     <string name="payment_account_number_hint">অ্যাকাউন্ট বা ওয়ালেট নম্বর</string>
     <string name="payment_account_number_error">সঠিক নম্বর লিখুন (১০–১৮ সংখ্যা)</string>
     <string name="payment_details_required">আপনার পুরস্কার পাঠাতে তথ্য জমা দিন।</string>
-    <string name="payment_details_saved">পেমেন্টের তথ্য সংরক্ষিত হয়েছে</string>
+    <string name="payment_details_received">পেমেন্টের তথ্য গ্রহণ করা হয়েছে</string>
+    <string name="payment_status_processing">পেমেন্ট প্রক্রিয়াধীন</string>
+    <string name="payment_status_sent">প্রাপকের কাছে অর্থ পাঠানো হয়েছে</string>
+    <string name="payment_status_completed">পেমেন্ট পৌঁছে দেওয়া হয়েছে</string>
+    <string name="payment_status_action_required">পদক্ষেপ প্রয়োজন: পেমেন্টের তথ্য সংশোধন করুন</string>
+    <string name="payment_status_cancelled">পেমেন্ট বাতিল করা হয়েছে</string>
     <string name="payment_details_save">পেমেন্টের তথ্য সংরক্ষণ করুন</string>
     <string name="payment_details_save_failed">পেমেন্টের তথ্য সংরক্ষণ করা যায়নি। আবার চেষ্টা করুন।</string>
     <string name="payment_account_number_error_mobile">01 দিয়ে শুরু হওয়া ১১ সংখ্যার বাংলাদেশি মোবাইল নম্বর লিখুন (অথবা +880)।</string>

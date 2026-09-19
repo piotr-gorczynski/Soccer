@@ -391,7 +391,7 @@
     <string name="payment_account_number_hint">Lambarka koontada ama jeebka</string>
     <string name="payment_account_number_error">Geli lambar sax ah (10–18 lambar)</string>
     <string name="payment_details_required">Soo gudbi faahfaahinta si aan abaalmarinta kuu bixino.</string>
-    <string name="payment_details_saved">Faahfaahinta lacag-bixinta waa la kaydiyay</string>
+    <string name="payment_details_received">Faahfaahinta lacag-bixinta waa la helay</string>
     <string name="payment_details_save">Kaydi faahfaahinta lacag-bixinta</string>
     <string name="payment_details_save_failed">Faahfaahinta lama kaydin. Mar kale isku day.</string>
     <string name="payment_account_number_error_mobile">Geli lambarka moobilka Bangladesh oo 11 lambar ah kana bilaabma 01 (ama +880).</string>

@@ -257,6 +257,7 @@ timestamps and create a history event in the same transaction or batch.
 Send an FCM notification when:
 
 - payout details are required after winning;
+- payment changes to `processing`;
 - payment changes to `sent`;
 - payment changes to `completed`;
 - payment changes to `action_required`.

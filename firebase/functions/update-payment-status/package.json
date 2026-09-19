@@ -3,6 +3,9 @@
   "description": "Callable admin function to update a prize payment record's status and transfer details.",
   "version": "1.0.0",
   "main": "index.js",
+  "scripts": {
+    "test": "node --test payment-workflow.test.js"
+  },
   "engines": {
     "node": "22"
   },

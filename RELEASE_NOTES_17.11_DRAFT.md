@@ -20,8 +20,10 @@
   while market-specific values such as `["bangladesh"]` remain restricted to that flavour.
 - Added a winner-only payout-details form to tournament results. The available payout methods come
   from the tournament regulation, and the winner can securely submit a validated account or wallet number.
-- Restricted payout-detail writes in Firestore to the authenticated owner of a pending first-place
-  payment, with the selected method validated against the assigned regulation.
+- Restricted payout-detail writes in Firestore to the authenticated first-place winner and made a
+  successful submission advance the payment from `awaiting_details` to `ready_for_processing`.
+- Added the complete Bangladesh payment-status workflow, an audited administrator CLI, status-aware
+  winner UI, and FCM notifications for processing, sending, delivery, correction requests, and cancellation.
 - Added method-specific account validation and feedback: bKash/Nagad use an 11-digit Bangladesh
   mobile number, Rocket uses its 12-digit account number, and `+880` input is normalized.
 - Added payout-form translations for all supported application languages.

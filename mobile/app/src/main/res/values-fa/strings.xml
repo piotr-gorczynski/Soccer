@@ -372,7 +372,7 @@
     <string name="payment_account_number_hint">شماره حساب یا کیف پول</string>
     <string name="payment_account_number_error">شماره معتبر وارد کنید (۱۰ تا ۱۸ رقم)</string>
     <string name="payment_details_required">برای دریافت جایزه، اطلاعات خود را ارسال کنید.</string>
-    <string name="payment_details_saved">اطلاعات پرداخت ذخیره شد</string>
+    <string name="payment_details_received">اطلاعات پرداخت دریافت شد</string>
     <string name="payment_details_save">ذخیره اطلاعات پرداخت</string>
     <string name="payment_details_save_failed">اطلاعات پرداخت ذخیره نشد. دوباره تلاش کنید.</string>
     <string name="payment_account_number_error_mobile">یک شماره موبایل ۱۱ رقمی بنگلادش با شروع 01 (یا +880) وارد کنید.</string>

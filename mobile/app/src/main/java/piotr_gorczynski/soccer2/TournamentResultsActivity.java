@@ -200,6 +200,7 @@ public class TournamentResultsActivity extends BaseActivity {
         paymentPrizeSummary.setText(getString(
                 R.string.payment_prize_summary, amountText, currency == null ? "" : currency));
 
+        String paymentStatus = winnerPayment.getString("status");
         Map<String, Object> recipientInfo = (Map<String, Object>) winnerPayment.get("recipientInfo");
         if (recipientInfo != null) {
             String savedMethod = recipientInfo.get("method") instanceof String
@@ -209,17 +210,41 @@ public class TournamentResultsActivity extends BaseActivity {
             int selectedIndex = savedMethod == null ? -1 : payoutMethodCodes.indexOf(savedMethod);
             if (selectedIndex >= 0) paymentMethodSpinner.setSelection(selectedIndex);
             if (savedAccount != null) paymentAccountNumber.setText(savedAccount);
-            paymentDetailsStatus.setText(R.string.payment_details_saved);
-        } else {
-            paymentDetailsStatus.setText(R.string.payment_details_required);
         }
 
-        boolean editable = "pending".equals(winnerPayment.getString("status"));
+        setPaymentStatusMessage(paymentStatus);
+
+        boolean editable = "awaiting_details".equals(paymentStatus)
+                || "action_required".equals(paymentStatus);
         paymentMethodSpinner.setEnabled(editable);
         paymentAccountNumber.setEnabled(editable);
         savePaymentDetailsButton.setVisibility(editable ? View.VISIBLE : View.GONE);
         savePaymentDetailsButton.setOnClickListener(view -> savePaymentDetails());
         paymentDetailsPanel.setVisibility(View.VISIBLE);
+    }
+
+    @SuppressWarnings("unchecked")
+    private void setPaymentStatusMessage(String status) {
+        int messageResource = switch (status == null ? "" : status) {
+            case "ready_for_processing" -> R.string.payment_details_received;
+            case "processing" -> R.string.payment_status_processing;
+            case "sent" -> R.string.payment_status_sent;
+            case "completed" -> R.string.payment_status_completed;
+            case "action_required" -> R.string.payment_status_action_required;
+            case "cancelled" -> R.string.payment_status_cancelled;
+            default -> R.string.payment_details_required;
+        };
+        paymentDetailsStatus.setText(messageResource);
+
+        if ("action_required".equals(status) && winnerPayment != null) {
+            Object issueValue = winnerPayment.get("issue");
+            if (issueValue instanceof Map) {
+                Object message = ((Map<String, Object>) issueValue).get("userMessage");
+                if (message instanceof String && !TextUtils.isEmpty((String) message)) {
+                    paymentDetailsStatus.setText((String) message);
+                }
+            }
+        }
     }
 
     private void savePaymentDetails() {
@@ -248,11 +273,18 @@ public class TournamentResultsActivity extends BaseActivity {
         recipientInfo.put("submittedAt", FieldValue.serverTimestamp());
 
         savePaymentDetailsButton.setEnabled(false);
-        winnerPayment.getReference().update("recipientInfo", recipientInfo)
+        Map<String, Object> update = new HashMap<>();
+        update.put("recipientInfo", recipientInfo);
+        update.put("status", "ready_for_processing");
+        update.put("statusUpdatedAt", FieldValue.serverTimestamp());
+
+        winnerPayment.getReference().update(update)
                 .addOnSuccessListener(unused -> {
-                    paymentDetailsStatus.setText(R.string.payment_details_saved);
-                    savePaymentDetailsButton.setEnabled(true);
-                    Toast.makeText(this, R.string.payment_details_saved, Toast.LENGTH_SHORT).show();
+                    paymentDetailsStatus.setText(R.string.payment_details_received);
+                    paymentMethodSpinner.setEnabled(false);
+                    paymentAccountNumber.setEnabled(false);
+                    savePaymentDetailsButton.setVisibility(View.GONE);
+                    Toast.makeText(this, R.string.payment_details_received, Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(error -> {
                     savePaymentDetailsButton.setEnabled(true);

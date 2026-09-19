@@ -426,7 +426,12 @@
     <string name="payment_account_number_hint">Numer konta lub portfela</string>
     <string name="payment_account_number_error">Wpisz prawidłowy numer (10–18 cyfr)</string>
     <string name="payment_details_required">Podaj dane, abyśmy mogli wypłacić Twoją nagrodę.</string>
-    <string name="payment_details_saved">Dane do wypłaty zostały zapisane</string>
+    <string name="payment_details_received">Otrzymaliśmy dane do wypłaty</string>
+    <string name="payment_status_processing">Wypłata jest realizowana</string>
+    <string name="payment_status_sent">Pieniądze zostały wysłane do odbiorcy</string>
+    <string name="payment_status_completed">Wypłata została dostarczona</string>
+    <string name="payment_status_action_required">Wymagane działanie: popraw dane do wypłaty</string>
+    <string name="payment_status_cancelled">Wypłata została anulowana</string>
     <string name="payment_details_save">Zapisz dane do wypłaty</string>
     <string name="payment_details_save_failed">Nie udało się zapisać danych. Spróbuj ponownie.</string>
     <string name="payment_account_number_error_mobile">Wpisz 11-cyfrowy numer komórkowy z Bangladeszu zaczynający się od 01 (lub +880).</string>

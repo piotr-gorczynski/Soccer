@@ -391,7 +391,7 @@
     <string name="payment_account_number_hint">ເລກບັນຊີ ຫຼື ກະເປົາ</string>
     <string name="payment_account_number_error">ໃສ່ເລກທີ່ຖືກຕ້ອງ (10–18 ຕົວເລກ)</string>
     <string name="payment_details_required">ສົ່ງລາຍລະອຽດເພື່ອຮັບລາງວັນ.</string>
-    <string name="payment_details_saved">ບັນທຶກລາຍລະອຽດແລ້ວ</string>
+    <string name="payment_details_received">ໄດ້ຮັບລາຍລະອຽດການຈ່າຍເງິນແລ້ວ</string>
     <string name="payment_details_save">ບັນທຶກລາຍລະອຽດ</string>
     <string name="payment_details_save_failed">ບັນທຶກບໍ່ສຳເລັດ. ລອງອີກຄັ້ງ.</string>
     <string name="payment_account_number_error_mobile">ໃສ່ເບີມືຖືບັງກະລາເທດ 11 ຕົວເລກ ທີ່ຂຶ້ນຕົ້ນດ້ວຍ 01 (ຫຼື +880).</string>

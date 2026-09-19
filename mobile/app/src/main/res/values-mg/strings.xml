@@ -391,7 +391,7 @@
     <string name="payment_account_number_hint">Laharan-kaonty na kitapom-bola</string>
     <string name="payment_account_number_error">Ampidiro isa manan-kery (tarehimarika 10–18)</string>
     <string name="payment_details_required">Alefaso ny antsipiriany mba handoavana ny lokanao.</string>
-    <string name="payment_details_saved">Voatahiry ny antsipirian’ny fandoavana</string>
+    <string name="payment_details_received">Voaray ny antsipirian’ny fandoavana</string>
     <string name="payment_details_save">Tehirizo ny antsipiriany</string>
     <string name="payment_details_save_failed">Tsy voatahiry ny antsipiriany. Andramo indray.</string>
     <string name="payment_account_number_error_mobile">Ampidiro laharana finday Bangladesh misy tarehimarika 11 manomboka amin’ny 01 (na +880).</string>
