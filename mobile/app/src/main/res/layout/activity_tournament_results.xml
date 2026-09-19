@@ -84,6 +84,14 @@
                 android:layout_marginTop="4dp"
                 android:visibility="gone" />
 
+            <TextView
+                android:id="@+id/paymentTransferDetails"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textIsSelectable="true"
+                android:visibility="gone" />
+
             <Button
                 android:id="@+id/savePaymentDetailsButton"
                 android:layout_width="match_parent"

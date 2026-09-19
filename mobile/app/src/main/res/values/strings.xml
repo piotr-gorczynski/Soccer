@@ -422,6 +422,7 @@
     <string name="payment_account_number_error">Enter a valid number (10–18 digits)</string>
     <string name="payment_details_required">Submit your details so we can pay your prize.</string>
     <string name="payment_details_received">Payment details received</string>
+    <string name="payment_transfer_details">Sent via %1$s&#10;Transfer reference: %2$s</string>
     <string name="payment_status_processing">Payment in progress</string>
     <string name="payment_status_sent">Money sent to recipient</string>
     <string name="payment_status_completed">Payment delivered</string>

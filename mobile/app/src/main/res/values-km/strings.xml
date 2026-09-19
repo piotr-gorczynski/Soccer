@@ -392,6 +392,7 @@
     <string name="payment_account_number_error">បញ្ចូលលេខត្រឹមត្រូវ (10–18 ខ្ទង់)</string>
     <string name="payment_details_required">ដាក់ព័ត៌មានរបស់អ្នក ដើម្បីយើងអាចបង់រង្វាន់។</string>
     <string name="payment_details_received">បានទទួលព័ត៌មានទូទាត់</string>
+    <string name="payment_transfer_details">បានផ្ញើតាម %1$s&#10;លេខយោងការផ្ទេរ៖ %2$s</string>
     <string name="payment_details_save">រក្សាទុកព័ត៌មានទូទាត់</string>
     <string name="payment_details_save_failed">មិនអាចរក្សាទុកព័ត៌មានបានទេ។ សូមព្យាយាមម្តងទៀត។</string>
     <string name="payment_account_number_error_mobile">បញ្ចូលលេខទូរសព្ទបង់ក្លាដែស 11 ខ្ទង់ ដែលចាប់ផ្តើមដោយ 01 (ឬ +880)។</string>

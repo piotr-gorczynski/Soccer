@@ -426,6 +426,7 @@
     <string name="payment_account_number_error">সঠিক নম্বর লিখুন (১০–১৮ সংখ্যা)</string>
     <string name="payment_details_required">আপনার পুরস্কার পাঠাতে তথ্য জমা দিন।</string>
     <string name="payment_details_received">পেমেন্টের তথ্য গ্রহণ করা হয়েছে</string>
+    <string name="payment_transfer_details">%1$s-এর মাধ্যমে পাঠানো হয়েছে&#10;ট্রান্সফার রেফারেন্স: %2$s</string>
     <string name="payment_status_processing">পেমেন্ট প্রক্রিয়াধীন</string>
     <string name="payment_status_sent">প্রাপকের কাছে অর্থ পাঠানো হয়েছে</string>
     <string name="payment_status_completed">পেমেন্ট পৌঁছে দেওয়া হয়েছে</string>

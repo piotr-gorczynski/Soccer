@@ -427,6 +427,7 @@
     <string name="payment_account_number_error">Wpisz prawidłowy numer (10–18 cyfr)</string>
     <string name="payment_details_required">Podaj dane, abyśmy mogli wypłacić Twoją nagrodę.</string>
     <string name="payment_details_received">Otrzymaliśmy dane do wypłaty</string>
+    <string name="payment_transfer_details">Wysłano przez %1$s&#10;Numer referencyjny przelewu: %2$s</string>
     <string name="payment_status_processing">Wypłata jest realizowana</string>
     <string name="payment_status_sent">Pieniądze zostały wysłane do odbiorcy</string>
     <string name="payment_status_completed">Wypłata została dostarczona</string>

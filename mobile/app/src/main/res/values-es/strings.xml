@@ -429,6 +429,7 @@
     <string name="payment_account_number_error">Introduce un número válido (10–18 dígitos)</string>
     <string name="payment_details_required">Envía tus datos para que podamos pagar tu premio.</string>
     <string name="payment_details_received">Datos de pago recibidos</string>
+    <string name="payment_transfer_details">Enviado mediante %1$s&#10;Referencia de transferencia: %2$s</string>
     <string name="payment_details_save">Guardar datos de pago</string>
     <string name="payment_details_save_failed">No se pudieron guardar los datos. Inténtalo de nuevo.</string>
     <string name="payment_account_number_error_mobile">Introduce un número móvil de Bangladesh de 11 dígitos que empiece por 01 (o +880).</string>

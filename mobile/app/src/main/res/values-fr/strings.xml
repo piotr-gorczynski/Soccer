@@ -421,6 +421,7 @@
     <string name="payment_account_number_error">Saisissez un numéro valide (10–18 chiffres)</string>
     <string name="payment_details_required">Envoyez vos coordonnées afin que nous puissions verser votre prix.</string>
     <string name="payment_details_received">Coordonnées de paiement reçues</string>
+    <string name="payment_transfer_details">Envoyé via %1$s&#10;Référence du transfert : %2$s</string>
     <string name="payment_details_save">Enregistrer les coordonnées</string>
     <string name="payment_details_save_failed">Impossible d’enregistrer les coordonnées. Réessayez.</string>
     <string name="payment_account_number_error_mobile">Saisissez un numéro mobile bangladais à 11 chiffres commençant par 01 (ou +880).</string>

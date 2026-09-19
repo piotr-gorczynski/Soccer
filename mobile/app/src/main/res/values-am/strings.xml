@@ -392,6 +392,7 @@
     <string name="payment_account_number_error">ትክክለኛ ቁጥር ያስገቡ (10–18 አሃዞች)</string>
     <string name="payment_details_required">ሽልማትዎን ለመክፈል ዝርዝሮችዎን ያስገቡ።</string>
     <string name="payment_details_received">የክፍያ ዝርዝሮች ደርሰውናል</string>
+    <string name="payment_transfer_details">በ%1$s ተልኳል&#10;የዝውውር ማጣቀሻ፦ %2$s</string>
     <string name="payment_details_save">የክፍያ ዝርዝሮችን አስቀምጥ</string>
     <string name="payment_details_save_failed">የክፍያ ዝርዝሮችን ማስቀመጥ አልተቻለም። እንደገና ይሞክሩ።</string>
     <string name="payment_account_number_error_mobile">በ01 የሚጀምር 11 አሃዝ የባንግላዴሽ ሞባይል ቁጥር (ወይም +880) ያስገቡ።</string>

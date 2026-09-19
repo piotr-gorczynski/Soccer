@@ -426,6 +426,7 @@
     <string name="payment_account_number_error">درست نمبر درج کریں (10–18 ہندسے)</string>
     <string name="payment_details_required">انعام کی ادائیگی کے لیے اپنی تفصیلات جمع کریں۔</string>
     <string name="payment_details_received">ادائیگی کی تفصیلات موصول ہو گئیں</string>
+    <string name="payment_transfer_details">%1$s کے ذریعے بھیجا گیا&#10;منتقلی کا حوالہ: %2$s</string>
     <string name="payment_details_save">ادائیگی کی تفصیلات محفوظ کریں</string>
     <string name="payment_details_save_failed">تفصیلات محفوظ نہیں ہو سکیں۔ دوبارہ کوشش کریں۔</string>
     <string name="payment_account_number_error_mobile">01 سے شروع ہونے والا 11 ہندسوں کا بنگلہ دیشی موبائل نمبر درج کریں (یا +880)۔</string>

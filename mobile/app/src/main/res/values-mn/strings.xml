@@ -392,6 +392,7 @@
     <string name="payment_account_number_error">Зөв дугаар оруулна уу (10–18 орон)</string>
     <string name="payment_details_required">Шагналаа авахын тулд мэдээллээ илгээнэ үү.</string>
     <string name="payment_details_received">Төлбөрийн мэдээллийг хүлээн авлаа</string>
+    <string name="payment_transfer_details">%1$s-ээр илгээсэн&#10;Шилжүүлгийн лавлах дугаар: %2$s</string>
     <string name="payment_details_save">Төлбөрийн мэдээлэл хадгалах</string>
     <string name="payment_details_save_failed">Мэдээллийг хадгалж чадсангүй. Дахин оролдоно уу.</string>
     <string name="payment_account_number_error_mobile">01-ээр эхэлсэн Бангладешийн 11 оронтой гар утасны дугаар оруулна уу (эсвэл +880).</string>

@@ -46,6 +46,7 @@ public class TournamentResultsActivity extends BaseActivity {
     private TextView paymentPrizeSummary;
     private TextView paymentDetailsStatus;
     private TextView paymentIssueMessage;
+    private TextView paymentTransferDetails;
     private Button savePaymentDetailsButton;
     private DocumentSnapshot winnerPayment;
     private ListenerRegistration paymentListener;
@@ -71,6 +72,7 @@ public class TournamentResultsActivity extends BaseActivity {
         paymentPrizeSummary = findViewById(R.id.paymentPrizeSummary);
         paymentDetailsStatus = findViewById(R.id.paymentDetailsStatus);
         paymentIssueMessage = findViewById(R.id.paymentIssueMessage);
+        paymentTransferDetails = findViewById(R.id.paymentTransferDetails);
         savePaymentDetailsButton = findViewById(R.id.savePaymentDetailsButton);
 
         String tid = getIntent().getStringExtra("tournamentId");
@@ -245,6 +247,8 @@ public class TournamentResultsActivity extends BaseActivity {
         paymentDetailsStatus.setText(messageResource);
         paymentIssueMessage.setText("");
         paymentIssueMessage.setVisibility(View.GONE);
+        paymentTransferDetails.setText("");
+        paymentTransferDetails.setVisibility(View.GONE);
 
         if ("action_required".equals(status) && winnerPayment != null) {
             Object issueValue = winnerPayment.get("issue");
@@ -253,6 +257,24 @@ public class TournamentResultsActivity extends BaseActivity {
                 if (message instanceof String && !TextUtils.isEmpty((String) message)) {
                     paymentIssueMessage.setText((String) message);
                     paymentIssueMessage.setVisibility(View.VISIBLE);
+                }
+            }
+        }
+
+        if (("sent".equals(status) || "completed".equals(status)) && winnerPayment != null) {
+            Object transferValue = winnerPayment.get("transfer");
+            if (transferValue instanceof Map) {
+                Map<String, Object> transfer = (Map<String, Object>) transferValue;
+                Object provider = transfer.get("provider");
+                Object reference = transfer.get("providerReference");
+                if (provider instanceof String && reference instanceof String
+                        && !TextUtils.isEmpty((String) provider)
+                        && !TextUtils.isEmpty((String) reference)) {
+                    paymentTransferDetails.setText(getString(
+                            R.string.payment_transfer_details,
+                            formatPayoutMethod((String) provider),
+                            reference));
+                    paymentTransferDetails.setVisibility(View.VISIBLE);
                 }
             }
         }
@@ -314,6 +336,7 @@ public class TournamentResultsActivity extends BaseActivity {
             case "bkash" -> "bKash";
             case "nagad" -> "Nagad";
             case "rocket" -> "Rocket";
+            case "remitly" -> "Remitly";
             default -> method;
         };
     }

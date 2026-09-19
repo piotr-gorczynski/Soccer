@@ -392,6 +392,7 @@
     <string name="payment_account_number_error">Weka nambari halali (tarakimu 10–18)</string>
     <string name="payment_details_required">Wasilisha maelezo yako ili tulipe zawadi yako.</string>
     <string name="payment_details_received">Maelezo ya malipo yamepokelewa</string>
+    <string name="payment_transfer_details">Imetumwa kupitia %1$s&#10;Rejea ya uhamisho: %2$s</string>
     <string name="payment_details_save">Hifadhi maelezo ya malipo</string>
     <string name="payment_details_save_failed">Imeshindikana kuhifadhi maelezo. Jaribu tena.</string>
     <string name="payment_account_number_error_mobile">Weka nambari ya simu ya Bangladesh yenye tarakimu 11 inayoanza na 01 (au +880).</string>

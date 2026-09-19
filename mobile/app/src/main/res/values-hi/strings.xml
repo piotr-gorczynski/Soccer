@@ -426,6 +426,7 @@
     <string name="payment_account_number_error">सही नंबर दर्ज करें (10–18 अंक)</string>
     <string name="payment_details_required">पुरस्कार पाने के लिए अपना विवरण जमा करें।</string>
     <string name="payment_details_received">भुगतान विवरण प्राप्त हुआ</string>
+    <string name="payment_transfer_details">%1$s के माध्यम से भेजा गया&#10;ट्रांसफ़र संदर्भ: %2$s</string>
     <string name="payment_details_save">भुगतान विवरण सहेजें</string>
     <string name="payment_details_save_failed">भुगतान विवरण सहेजा नहीं जा सका। फिर प्रयास करें।</string>
     <string name="payment_account_number_error_mobile">01 से शुरू होने वाला 11 अंकों का बांग्लादेशी मोबाइल नंबर दर्ज करें (या +880)।</string>
