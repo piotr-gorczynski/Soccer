@@ -1,10 +1,15 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.27
-**Last Updated:** 2026-09-15
+**Document Version:** 2.32
+**Last Updated:** 2026-09-19
 **Status:** Implementation in progress - Migration Backend Setup complete on dev, test, and prod
 
 **Revision History**:
+- v2.32 (2026-09-19): Added the Bangladesh prize-payment lifecycle and administrator CLI. Payment status changes now use validated transitions and audit history; a Firestore trigger notifies the winner by FCM when processing starts, money is sent, delivery completes, details require correction, or a payout is cancelled. The winner UI displays the stored status and payment notifications open the tournament results screen.
+- v2.31 (2026-09-15): Implemented winner payout-details collection on the tournament results screen. Only the authenticated first-place winner with a server-created payment record sees the form; payout methods are loaded from the assigned regulation. bKash and Nagad require an 11-digit Bangladesh mobile number, while Rocket requires a 12-digit account number including its check digit; local and `+880` input formats are normalized. Firestore rules repeat the validation and restrict writes to the winner's pending payment and regulation-supported methods. Added localized UI text and validation feedback for every supported language.
+- v2.30 (2026-09-15): Marked Authentication Integration Setup as complete after verifying Firebase providers, shared Google Services configuration, signing certificates, the shared Meta app configuration, and deployed cross-app Firestore access rules. End-to-end authentication tests and policy/compliance checks remain tracked separately.
+- v2.29 (2026-09-15): Verified the Facebook key hashes for the current debug keystore, release/upload keystore, and Google Play App Signing certificate. Added the current debug hash to the existing Meta app and removed the malformed near-duplicate entry.
+- v2.28 (2026-09-15): Verified that Email/Password, Google, Facebook, and Anonymous authentication are enabled in Firebase on dev, test, and prod. Removed Microsoft authentication from the planned provider set. Added `piotr_gorczynski.soccer2.bd` to the existing live Meta app alongside the global Android package; Meta will be able to verify its Play Store association after the `.bd` app is registered in Google Play Console.
 - v2.27 (2026-09-15): Completed the Google Sign-In certificate setup for the Bangladesh app. Fixed `065-sha-copy` so an empty Firebase certificate list is handled correctly, provisioned the required OAuth Brands for test and prod, synchronized all registered SHA-1/SHA-256 certificates to the `.bd` app in dev, test, and prod, and verified that the production Play App Signing SHA-1 is registered for both production package IDs.
 - v2.26 (2026-09-15): Deployed the updated Firestore security rules successfully to dev, test, and prod through `190-deploy-firestore-rules`. The Migration Backend Setup phase is now complete across all three environments.
 - v2.25 (2026-09-15): Refreshed `google-services.test.json` and `google-services.prod.json` through `320-download-google-services`. The shared Google Services configuration rollout now covers dev, test, and prod; deployment of the updated Firestore rules remains the only open Migration Backend Setup item.
@@ -2297,7 +2302,6 @@ Firebase Project: gridline-soccer (existing)
 │   │   ├── Email/Password ✓
 │   │   ├── Google ✓
 │   │   ├── Facebook ✓
-│   │   ├── Microsoft ✓
 │   │   └── Anonymous ✓
 │   └── User Database (shared)
 │
@@ -2574,11 +2578,10 @@ implementation 'com.facebook.android:facebook-android-sdk:18.1.3'
   - Synchronize all registered SHA-1/SHA-256 certificates from the global app to the Bangladesh app with `065-sha-copy`
   - Verify the production Play App Signing SHA-1 is registered for both production package IDs
 
-- [ ] **Verify Firebase Auth Methods Enabled**
+- [x] **Verify Firebase Auth Methods Enabled on dev, test, and prod**
   - Email/Password: ✓
   - Google: ✓
   - Facebook: ✓
-  - Microsoft: ✓ (if used)
   - Anonymous: ✓
 
 #### Phase 2: Google Sign-In Setup
@@ -3062,17 +3065,20 @@ cd mobile
   - [x] Create the `570-deploy-track-app-variant` Cloud Build trigger
   - [x] Deploy and verify `trackAppVariant` on dev, test, and prod
   - [x] Extend the user schema with `appVariant`, `appVariants`, and `migrationStatus`
-- [ ] **Authentication Integration Setup**:
+- [x] **Authentication Integration Setup**:
   - [x] Register Bangladesh app in Firebase Console with package ID `piotr_gorczynski.soccer2.bd` for dev, test, and prod
   - [x] Synchronize all registered SHA-1/SHA-256 certificates to `.bd` on dev, test, and prod with `065-sha-copy`
   - [x] Verify the production Play App Signing SHA-1 is registered for both production package IDs
   - [x] Use a shared environment-specific `google-services.json` containing the global and Bangladesh clients instead of a flavor-specific file
   - [x] Refresh the shared Google Services configuration for test and prod with `320-download-google-services`
-  - [ ] Verify Firebase Authentication methods enabled (Email, Google, Facebook, Microsoft, Anonymous)
-  - [ ] Add Bangladesh package ID to existing Facebook app (Option 1 - Recommended)
-    - OR create new Facebook app for Bangladesh (Option 2)
-  - [ ] Generate Facebook key hashes for both debug and release keystores
-  - [ ] Add all key hashes to Facebook App Dashboard
+  - [x] Verify Firebase Authentication methods enabled on dev, test, and prod (Email/Password, Google, Facebook, Anonymous)
+  - Microsoft authentication is intentionally not supported
+  - [x] Add Bangladesh package ID to existing Facebook app (Option 1 - Recommended)
+    - The existing Meta app now contains both `piotr_gorczynski.soccer2` and `piotr_gorczynski.soccer2.bd`
+    - Play Store verification for `.bd` remains unavailable until that package is registered in Google Play Console
+  - [x] Verify Facebook key hashes for the current debug keystore, release/upload keystore, and Google Play App Signing certificate
+  - [x] Add the verified key hashes to the existing Facebook App Dashboard configuration
+    - The hashes are certificate-specific and apply to both package IDs because both variants use the same signing certificates
   - [x] Verify the Firestore rules design preserves cross-app user data access (no package restrictions)
   - [x] Deploy the updated Firestore rules to dev, test, and prod
 
@@ -3088,15 +3094,19 @@ cd mobile
   - No concrete payout method or account details collected before a win
   - No camera or document upload needed
   - Immediate confirmation
-- [ ] Implement winner payment details collection UI
-  - Payment method selector (bKash/Nagad/Rocket)
-  - Account number input
-  - Shown only to 1st place winners
+- [x] Implement winner payment details collection UI
+  - Payout method selector populated dynamically from the assigned regulation (for example bKash, Nagad, or Rocket)
+  - Validated account or mobile-wallet number input
+    - bKash/Nagad: 11-digit Bangladesh mobile number starting with `01`
+    - Rocket: 12-digit account number starting with `01`, including the check digit
+    - `+880` input is accepted and normalized before storage
+  - Shown only to the authenticated 1st-place winner with a server-created payment record
+  - Firestore rules allow updates only to `recipientInfo` on the winner's pending payment and validate the selected method against the regulation
 - [ ] Update tournament UI for cash prizes
   - "৳2,000 Prize" badge on tournament listings
   - [x] Winner push notification from the backend
   - Payment status screen (pending/completed)
-- [ ] Add Bengali translations for new features
+- [x] Add Bengali translations for eligibility and winner payment-detail features
 - [ ] **Migration UI Development**:
   - [ ] Add Bangladesh user detection in global app
   - [ ] Create promotion banner component for global app
@@ -3372,9 +3382,11 @@ While current model is developer-funded with no entry fees, future revenue optio
   - [x] Refresh test and prod with `320-download-google-services`
 - [x] Synchronize all registered SHA-1/SHA-256 certificates to the Bangladesh app on dev, test, and prod
 - [x] Verify the production Play App Signing SHA-1 is registered for both production package IDs
-- [ ] Verify Firebase Authentication methods are enabled for both apps
-- [ ] Add Bangladesh package ID to Facebook app settings (Option 1 recommended)
-- [ ] Generate and add Facebook key hashes for both debug and release keystores
+- [x] Verify Email/Password, Google, Facebook, and Anonymous authentication are enabled on dev, test, and prod
+- [x] Confirm Microsoft authentication is outside the supported provider set
+- [x] Add Bangladesh package ID to the existing Facebook app settings
+  - Both global and `.bd` package IDs are configured; Play Store verification for `.bd` will follow its Play Console registration
+- [x] Verify and register the Facebook key hashes for the current debug, release/upload, and Google Play App Signing certificates
 - [x] Ensure the Firestore rules source allows cross-app user data access
 - [x] Deploy the updated Firestore rules to dev, test, and prod
 - [ ] Test authentication works in both global and Bangladesh apps

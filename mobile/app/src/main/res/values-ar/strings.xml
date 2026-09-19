@@ -365,4 +365,17 @@
     <string name="uninstall_global_title">إزالة التطبيق القديم</string>
     <string name="uninstall_global_message">يجب عليك إلغاء تثبيت الإصدار العالمي السابق لتجنب التعارض مع إصدار بنغلاديش.\n\nلإلغاء التثبيت: افتح الإعدادات ← التطبيقات ← ابحث عن \"Gridline Soccer\" (بدون علم) ← إلغاء التثبيت.</string>
     <string name="uninstall_global_uninstall">إغلاق</string>
+    <!-- Winner payment details -->
+    <string name="payment_details_title">تفاصيل دفع الجائزة</string>
+    <string name="payment_prize_summary">الجائزة: %1$s %2$s</string>
+    <string name="payment_method_label">طريقة الدفع</string>
+    <string name="payment_account_number_hint">رقم الحساب أو المحفظة</string>
+    <string name="payment_account_number_error">أدخل رقمًا صالحًا (10–18 رقمًا)</string>
+    <string name="payment_details_required">أرسل بياناتك حتى نتمكن من دفع جائزتك.</string>
+    <string name="payment_details_received">تم استلام بيانات الدفع</string>
+    <string name="payment_transfer_details">تم الإرسال عبر %1$s&#10;مرجع التحويل: %2$s</string>
+    <string name="payment_details_save">حفظ بيانات الدفع</string>
+    <string name="payment_details_save_failed">تعذر حفظ بيانات الدفع. حاول مرة أخرى.</string>
+    <string name="payment_account_number_error_mobile">أدخل رقم هاتف بنغلاديشيًا من 11 رقمًا يبدأ بـ 01 (أو +880).</string>
+    <string name="payment_account_number_error_rocket">أدخل رقم حساب Rocket من 12 رقمًا يبدأ بـ 01 ويتضمن رقم التحقق (أو +880).</string>
 </resources>

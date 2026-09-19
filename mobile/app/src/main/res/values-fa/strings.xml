@@ -365,4 +365,17 @@
     <string name="uninstall_global_title">حذف برنامه قدیمی</string>
     <string name="uninstall_global_message">برای جلوگیری از تداخل با نسخه بنگلادش، باید نسخه جهانی قدیمی را حذف نصب کنید.\n\nبرای حذف نصب: تنظیمات ← برنامه‌ها ← «Gridline Soccer» (بدون پرچم) را پیدا کنید ← حذف نصب.</string>
     <string name="uninstall_global_uninstall">بستن</string>
+    <!-- Winner payment details -->
+    <string name="payment_details_title">اطلاعات پرداخت جایزه</string>
+    <string name="payment_prize_summary">جایزه: %1$s %2$s</string>
+    <string name="payment_method_label">روش پرداخت</string>
+    <string name="payment_account_number_hint">شماره حساب یا کیف پول</string>
+    <string name="payment_account_number_error">شماره معتبر وارد کنید (۱۰ تا ۱۸ رقم)</string>
+    <string name="payment_details_required">برای دریافت جایزه، اطلاعات خود را ارسال کنید.</string>
+    <string name="payment_details_received">اطلاعات پرداخت دریافت شد</string>
+    <string name="payment_transfer_details">ارسال‌شده از طریق %1$s&#10;شناسه انتقال: %2$s</string>
+    <string name="payment_details_save">ذخیره اطلاعات پرداخت</string>
+    <string name="payment_details_save_failed">اطلاعات پرداخت ذخیره نشد. دوباره تلاش کنید.</string>
+    <string name="payment_account_number_error_mobile">یک شماره موبایل ۱۱ رقمی بنگلادش با شروع 01 (یا +880) وارد کنید.</string>
+    <string name="payment_account_number_error_rocket">شماره حساب ۱۲ رقمی Rocket را با شروع 01 و شامل رقم کنترل (یا +880) وارد کنید.</string>
 </resources>

@@ -55,6 +55,7 @@ steps:
         mkdir -p /workspace/firebase/functions/update-payment-status
         cp /workspace/soccer/firebase/functions/update-payment-status/package.json /workspace/firebase/functions/update-payment-status/
         cp /workspace/soccer/firebase/functions/update-payment-status/index.js /workspace/firebase/functions/update-payment-status/
+        cp /workspace/soccer/firebase/functions/update-payment-status/payment-workflow.js /workspace/firebase/functions/update-payment-status/
 
   # Step 4: Install dependencies
   - name: 'node:20-slim'
@@ -84,7 +85,7 @@ steps:
           --project="$project_id" \
           --force
 
-        echo "✅ Function 'updatePaymentStatus' deployed successfully."
+        echo "✅ Functions 'updatePaymentStatus' and 'onPaymentStatusChanged' deployed successfully."
 
 
 

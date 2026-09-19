@@ -384,4 +384,17 @@
     <string name="uninstall_global_title">පැරණි යෙදුම ඉවත් කරන්න</string>
     <string name="uninstall_global_message">බංග්ලාදේශ අනුවාදය සමඟ ගැටුම් ඇතිවීම වළක්වා ගැනීම සඳහා ඔබ පෙර ගෝලීය අනුවාදය අස්ථාපනය කළ යුතුය.\n\nඅස්ථාපනය කිරීමට: සැකසීම් → යෙදුම් → \"Gridline Soccer\" (කොඩිය නොමැතිව) සොයන්න → අස්ථාපනය කරන්න.</string>
     <string name="uninstall_global_uninstall">වසන්න</string>
+    <!-- Winner payment details -->
+    <string name="payment_details_title">ත්‍යාග ගෙවීම් විස්තර</string>
+    <string name="payment_prize_summary">ත්‍යාගය: %1$s %2$s</string>
+    <string name="payment_method_label">ගෙවීම් ක්‍රමය</string>
+    <string name="payment_account_number_hint">ගිණුම් හෝ පසුම්බි අංකය</string>
+    <string name="payment_account_number_error">වලංගු අංකයක් ඇතුළත් කරන්න (ඉලක්කම් 10–18)</string>
+    <string name="payment_details_required">ත්‍යාගය ගෙවීමට ඔබගේ විස්තර යොමු කරන්න.</string>
+    <string name="payment_details_received">ගෙවීම් විස්තර ලැබී ඇත</string>
+    <string name="payment_transfer_details">%1$s හරහා යවන ලදී&#10;මාරු යොමුව: %2$s</string>
+    <string name="payment_details_save">ගෙවීම් විස්තර සුරකින්න</string>
+    <string name="payment_details_save_failed">විස්තර සුරැකීමට නොහැකි විය. නැවත උත්සාහ කරන්න.</string>
+    <string name="payment_account_number_error_mobile">01 න් ආරම්භ වන ඉලක්කම් 11ක බංග්ලාදේශ ජංගම අංකයක් ඇතුළත් කරන්න (හෝ +880).</string>
+    <string name="payment_account_number_error_rocket">පරීක්ෂණ ඉලක්කමද ඇතුළුව 01 න් ආරම්භ වන ඉලක්කම් 12ක Rocket ගිණුම් අංකයක් ඇතුළත් කරන්න (හෝ +880).</string>
 </resources>

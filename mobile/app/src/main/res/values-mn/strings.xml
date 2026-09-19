@@ -384,4 +384,17 @@
     <string name="uninstall_global_title">Хуучин аппыг устгах</string>
     <string name="uninstall_global_message">Бангладешийн хувилбартай зөрчил гарахаас зайлсхийхийн тулд хуучин дэлхийн хувилбарыг устгах хэрэгтэй.\n\nУстгахын тулд: Тохиргоо → Аппликейшн → \"Gridline Soccer\" (тугалгүй)-г хайж → Устга.</string>
     <string name="uninstall_global_uninstall">Хаах</string>
+    <!-- Winner payment details -->
+    <string name="payment_details_title">Шагнал олгох мэдээлэл</string>
+    <string name="payment_prize_summary">Шагнал: %1$s %2$s</string>
+    <string name="payment_method_label">Төлбөрийн арга</string>
+    <string name="payment_account_number_hint">Данс эсвэл хэтэвчийн дугаар</string>
+    <string name="payment_account_number_error">Зөв дугаар оруулна уу (10–18 орон)</string>
+    <string name="payment_details_required">Шагналаа авахын тулд мэдээллээ илгээнэ үү.</string>
+    <string name="payment_details_received">Төлбөрийн мэдээллийг хүлээн авлаа</string>
+    <string name="payment_transfer_details">%1$s-ээр илгээсэн&#10;Шилжүүлгийн лавлах дугаар: %2$s</string>
+    <string name="payment_details_save">Төлбөрийн мэдээлэл хадгалах</string>
+    <string name="payment_details_save_failed">Мэдээллийг хадгалж чадсангүй. Дахин оролдоно уу.</string>
+    <string name="payment_account_number_error_mobile">01-ээр эхэлсэн Бангладешийн 11 оронтой гар утасны дугаар оруулна уу (эсвэл +880).</string>
+    <string name="payment_account_number_error_rocket">01-ээр эхэлсэн, шалгах оронтой 12 оронтой Rocket дансны дугаар оруулна уу (эсвэл +880).</string>
 </resources>

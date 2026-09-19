@@ -419,4 +419,22 @@
     <string name="uninstall_global_title">Usuń starą aplikację</string>
     <string name="uninstall_global_message">Aby uniknąć konfliktu z wersją bangladeską, musisz odinstalować poprzednią wersję globalną.\n\nAby odinstalować: otwórz Ustawienia → Aplikacje → znajdź „Gridline Soccer" (bez flagi) → Odinstaluj.</string>
     <string name="uninstall_global_uninstall">Zamknij</string>
+    <!-- Winner payment details -->
+    <string name="payment_details_title">Dane do wypłaty nagrody</string>
+    <string name="payment_prize_summary">Nagroda: %1$s %2$s</string>
+    <string name="payment_method_label">Metoda wypłaty</string>
+    <string name="payment_account_number_hint">Numer konta lub portfela</string>
+    <string name="payment_account_number_error">Wpisz prawidłowy numer (10–18 cyfr)</string>
+    <string name="payment_details_required">Podaj dane, abyśmy mogli wypłacić Twoją nagrodę.</string>
+    <string name="payment_details_received">Otrzymaliśmy dane do wypłaty</string>
+    <string name="payment_transfer_details">Wysłano przez %1$s&#10;Numer referencyjny przelewu: %2$s</string>
+    <string name="payment_status_processing">Wypłata jest realizowana</string>
+    <string name="payment_status_sent">Pieniądze zostały wysłane do odbiorcy</string>
+    <string name="payment_status_completed">Wypłata została dostarczona</string>
+    <string name="payment_status_action_required">Wymagane działanie: popraw dane do wypłaty</string>
+    <string name="payment_status_cancelled">Wypłata została anulowana</string>
+    <string name="payment_details_save">Zapisz dane do wypłaty</string>
+    <string name="payment_details_save_failed">Nie udało się zapisać danych. Spróbuj ponownie.</string>
+    <string name="payment_account_number_error_mobile">Wpisz 11-cyfrowy numer komórkowy z Bangladeszu zaczynający się od 01 (lub +880).</string>
+    <string name="payment_account_number_error_rocket">Wpisz 12-cyfrowy numer konta Rocket zaczynający się od 01, wraz z cyfrą kontrolną (lub +880).</string>
 </resources>

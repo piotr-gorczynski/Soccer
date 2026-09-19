@@ -418,4 +418,17 @@
     <string name="uninstall_global_title">पुरानो अनुप्रयोग हटाउनुहोस्</string>
     <string name="uninstall_global_message">बंगलादेश संस्करणसँग द्वन्द्व हुनबाट बच्न तपाईंले पुरानो विश्व संस्करण अनइन्स्टल गर्नु पर्छ।\n\nअनइन्स्टल गर्न: सेटिङ्स → अनुप्रयोगहरू → \"Gridline Soccer\" (झण्डा बिना) खोज्नुहोस् → अनइन्स्टल गर्नुहोस्।</string>
     <string name="uninstall_global_uninstall">बन्द गर्नुहोस्</string>
+    <!-- Winner payment details -->
+    <string name="payment_details_title">पुरस्कार भुक्तानी विवरण</string>
+    <string name="payment_prize_summary">पुरस्कार: %1$s %2$s</string>
+    <string name="payment_method_label">भुक्तानी विधि</string>
+    <string name="payment_account_number_hint">खाता वा वालेट नम्बर</string>
+    <string name="payment_account_number_error">मान्य नम्बर लेख्नुहोस् (१०–१८ अंक)</string>
+    <string name="payment_details_required">पुरस्कार पाउन आफ्नो विवरण पठाउनुहोस्।</string>
+    <string name="payment_details_received">भुक्तानी विवरण प्राप्त भयो</string>
+    <string name="payment_transfer_details">%1$s मार्फत पठाइएको&#10;ट्रान्सफर सन्दर्भ: %2$s</string>
+    <string name="payment_details_save">भुक्तानी विवरण सुरक्षित गर्नुहोस्</string>
+    <string name="payment_details_save_failed">विवरण सुरक्षित गर्न सकिएन। फेरि प्रयास गर्नुहोस्।</string>
+    <string name="payment_account_number_error_mobile">01 बाट सुरु हुने ११ अङ्कको बङ्गलादेशी मोबाइल नम्बर लेख्नुहोस् (वा +880)।</string>
+    <string name="payment_account_number_error_rocket">01 बाट सुरु हुने र जाँच अङ्कसहितको १२ अङ्कको Rocket खाता नम्बर लेख्नुहोस् (वा +880)।</string>
 </resources>
