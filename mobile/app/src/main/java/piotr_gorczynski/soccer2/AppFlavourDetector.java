@@ -45,4 +45,15 @@ public class AppFlavourDetector {
     public static boolean isGlobalFlavour(Context context) {
         return "global".equals(getCurrentFlavour(context));
     }
+
+    /**
+     * Markets that currently expose cash-prize UI. Add future market flavours
+     * (for example India) here without changing individual screens.
+     */
+    public static boolean supportsPrizeFeatures(Context context) {
+        return switch (getCurrentFlavour(context)) {
+            case "bangladesh" -> true;
+            default -> false;
+        };
+    }
 }

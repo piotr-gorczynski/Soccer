@@ -441,9 +441,26 @@
     <string name="payment_support_open">Support request %1$s is open.</string>
     <string name="payment_support_waiting">Support replied to request %1$s:\n%2$s</string>
     <string name="payment_support_resolved">Support request %1$s was resolved.\n%2$s</string>
+    <string name="payment_support_requests_title">Your support requests</string>
+    <string name="payment_support_ticket_summary">%1$s · %2$s</string>
+    <string name="payment_support_status_open">Open</string>
+    <string name="payment_support_status_waiting">Support replied</string>
+    <string name="payment_support_status_resolved">Resolved</string>
+    <string name="payment_support_status_closed">Closed</string>
+    <string name="payment_support_your_message">Your message: %1$s</string>
+    <string name="payment_support_reply">Support reply: %1$s</string>
+    <string name="payment_support_no_message">No additional message</string>
+    <string name="payment_support_status_label">Status:</string>
+    <string name="payment_support_your_message_label">Your message:</string>
+    <string name="payment_support_reply_label">Support reply:</string>
     <string name="payment_status_cancelled">Payment cancelled</string>
     <string name="payment_details_save">Save payment details</string>
     <string name="payment_details_save_failed">Could not save payment details. Try again.</string>
     <string name="payment_account_number_error_mobile">Enter an 11-digit Bangladesh mobile number starting with 01 (or +880).</string>
     <string name="payment_account_number_error_rocket">Enter a 12-digit Rocket account number starting with 01, including the check digit (or +880).</string>
+    <string name="my_prizes">My prizes</string>
+    <string name="no_prizes_yet">You do not have any prizes yet.</string>
+    <string name="prize_unknown_tournament">Tournament prize</string>
+    <string name="prize_rank">Place: %1$d</string>
+    <string name="prize_list_status">Status: %1$s</string>
 </resources>

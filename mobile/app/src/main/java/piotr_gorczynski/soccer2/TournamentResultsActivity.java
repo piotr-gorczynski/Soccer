@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.graphics.Typeface;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +41,7 @@ import java.util.Map;
 public class TournamentResultsActivity extends BaseActivity {
 
     private StandingsAdapter adapter;
+    private RecyclerView standingsList;
     private final List<StandingEntry> standings = new ArrayList<>();
     private final List<String> payoutMethodCodes = new ArrayList<>();
     private LinearLayout paymentDetailsPanel;
@@ -51,7 +53,7 @@ public class TournamentResultsActivity extends BaseActivity {
     private TextView paymentTransferDetails;
     private Button savePaymentDetailsButton;
     private Button reportPaymentProblemButton;
-    private TextView paymentSupportStatus;
+    private LinearLayout paymentSupportTicketsContainer;
     private DocumentSnapshot winnerPayment;
     private ListenerRegistration paymentListener;
     private ListenerRegistration supportTicketListener;
@@ -65,7 +67,7 @@ public class TournamentResultsActivity extends BaseActivity {
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        RecyclerView standingsList = findViewById(R.id.standingsList);
+        standingsList = findViewById(R.id.standingsList);
         standingsList.setLayoutManager(new LinearLayoutManager(this));
 
         adapter = new StandingsAdapter(standings);
@@ -80,12 +82,58 @@ public class TournamentResultsActivity extends BaseActivity {
         paymentTransferDetails = findViewById(R.id.paymentTransferDetails);
         savePaymentDetailsButton = findViewById(R.id.savePaymentDetailsButton);
         reportPaymentProblemButton = findViewById(R.id.reportPaymentProblemButton);
-        paymentSupportStatus = findViewById(R.id.paymentSupportStatus);
+        paymentSupportTicketsContainer = findViewById(R.id.paymentSupportTicketsContainer);
 
-        String tid = getIntent().getStringExtra("tournamentId");
-        if (tid != null) {
-            loadTournament(tid);
+        if (isPrizeDetailsOnly()) {
+            standingsList.setVisibility(View.GONE);
+            String paymentId = getIntent().getStringExtra("paymentId");
+            if (TextUtils.isEmpty(paymentId)) {
+                finish();
+                return;
+            }
+            loadPrizePayment(paymentId);
+        } else {
+            String tid = getIntent().getStringExtra("tournamentId");
+            if (tid != null) loadTournament(tid);
         }
+    }
+
+    protected boolean isPrizeDetailsOnly() {
+        return false;
+    }
+
+    private void loadPrizePayment(String paymentId) {
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            finish();
+            return;
+        }
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        if (paymentListener != null) paymentListener.remove();
+        paymentListener = db.collection("payments").document(paymentId)
+                .addSnapshotListener((payment, error) -> {
+                    if (error != null || payment == null || !payment.exists()) {
+                        paymentDetailsPanel.setVisibility(View.GONE);
+                        return;
+                    }
+                    winnerPayment = payment;
+                    listenForSupportTickets(payment.getId(),
+                            FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    String tournamentId = payment.getString("tournamentId");
+                    if (TextUtils.isEmpty(tournamentId)) return;
+                    db.collection("tournaments").document(tournamentId).get()
+                            .addOnSuccessListener(tournament -> {
+                                if (!tournament.exists()) return;
+                                String name = tournament.getString("name");
+                                Objects.requireNonNull(getSupportActionBar()).setTitle(
+                                        TextUtils.isEmpty(name) ? getString(R.string.my_prizes) : name);
+                                String regulationId = tournament.getString("regulation");
+                                if (TextUtils.isEmpty(regulationId)) return;
+                                db.collection("regulations").document(regulationId).get()
+                                        .addOnSuccessListener(this::showPaymentDetailsForm)
+                                        .addOnFailureListener(regulationError ->
+                                                paymentDetailsPanel.setVisibility(View.GONE));
+                            });
+                });
     }
     @SuppressLint("NotifyDataSetChanged")
     private void loadTournament(String tid) {
@@ -339,35 +387,111 @@ public class TournamentResultsActivity extends BaseActivity {
                 .whereEqualTo("userId", userId)
                 .addSnapshotListener((snapshot, error) -> {
                     if (error != null || snapshot == null || snapshot.isEmpty()) {
-                        paymentSupportStatus.setVisibility(View.GONE);
+                        paymentSupportTicketsContainer.removeAllViews();
+                        paymentSupportTicketsContainer.setVisibility(View.GONE);
                         return;
                     }
-                    DocumentSnapshot latest = null;
-                    for (DocumentSnapshot ticket : snapshot.getDocuments()) {
-                        if (latest == null || (ticket.getTimestamp("createdAt") != null
-                                && (latest.getTimestamp("createdAt") == null
-                                || ticket.getTimestamp("createdAt").compareTo(
-                                latest.getTimestamp("createdAt")) > 0))) {
-                            latest = ticket;
-                        }
-                    }
-                    if (latest == null) return;
-                    String reference = latest.getString("reference");
-                    String status = latest.getString("status");
-                    String reply = latest.getString("latestSupportReply");
-                    if ("waiting_for_user".equals(status) && !TextUtils.isEmpty(reply)) {
-                        paymentSupportStatus.setText(getString(
-                                R.string.payment_support_waiting, reference, reply));
-                    } else if ("resolved".equals(status) || "closed".equals(status)) {
-                        paymentSupportStatus.setText(getString(
-                                R.string.payment_support_resolved, reference,
-                                reply == null ? "" : reply));
-                    } else {
-                        paymentSupportStatus.setText(getString(
-                                R.string.payment_support_open, reference));
-                    }
-                    paymentSupportStatus.setVisibility(View.VISIBLE);
+                    List<DocumentSnapshot> tickets = new ArrayList<>(snapshot.getDocuments());
+                    tickets.sort((left, right) -> {
+                        com.google.firebase.Timestamp leftTime = left.getTimestamp("updatedAt");
+                        com.google.firebase.Timestamp rightTime = right.getTimestamp("updatedAt");
+                        if (leftTime == null && rightTime == null) return 0;
+                        if (leftTime == null) return 1;
+                        if (rightTime == null) return -1;
+                        return rightTime.compareTo(leftTime);
+                    });
+                    showSupportTickets(tickets);
                 });
+    }
+
+    private void showSupportTickets(List<DocumentSnapshot> tickets) {
+        paymentSupportTicketsContainer.removeAllViews();
+
+        TextView heading = new TextView(this);
+        heading.setText(R.string.payment_support_requests_title);
+        heading.setTypeface(heading.getTypeface(), Typeface.BOLD);
+        heading.setTextColor(getColor(R.color.colorGreenDark));
+        heading.setPadding(0, dp(8), 0, dp(4));
+        paymentSupportTicketsContainer.addView(heading);
+
+        for (DocumentSnapshot ticket : tickets) {
+            LinearLayout ticketView = new LinearLayout(this);
+            ticketView.setOrientation(LinearLayout.VERTICAL);
+            ticketView.setPadding(0, dp(8), 0, dp(8));
+
+            String reference = ticket.getString("reference");
+            String category = getSupportCategoryLabel(ticket.getString("category"));
+            TextView summary = new TextView(this);
+            summary.setText(getString(R.string.payment_support_ticket_summary,
+                    reference == null ? ticket.getId() : reference, category));
+            summary.setTypeface(summary.getTypeface(), Typeface.BOLD);
+            ticketView.addView(summary);
+
+            String userMessage = ticket.getString("message");
+            TextView message = new TextView(this);
+            setLabelAndValue(message,
+                    getString(R.string.payment_support_your_message_label),
+                    TextUtils.isEmpty(userMessage)
+                            ? getString(R.string.payment_support_no_message) : userMessage);
+            ticketView.addView(message);
+
+            TextView status = new TextView(this);
+            setLabelAndValue(status,
+                    getString(R.string.payment_support_status_label),
+                    getSupportStatusLabel(ticket.getString("status")));
+            status.setTypeface(status.getTypeface(), Typeface.BOLD);
+            status.setTextColor(getColor(R.color.colorGrey));
+            ticketView.addView(status);
+
+            String reply = ticket.getString("latestSupportReply");
+            if (!TextUtils.isEmpty(reply)) {
+                TextView replyView = new TextView(this);
+                setLabelAndValue(replyView,
+                        getString(R.string.payment_support_reply_label), reply);
+                replyView.setTextColor(getColor(R.color.colorGrey));
+                replyView.setPadding(0, dp(4), 0, 0);
+                ticketView.addView(replyView);
+            }
+
+            paymentSupportTicketsContainer.addView(ticketView);
+            View divider = new View(this);
+            divider.setBackgroundColor(getColor(android.R.color.darker_gray));
+            paymentSupportTicketsContainer.addView(divider,
+                    new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, dp(1)));
+        }
+        paymentSupportTicketsContainer.setVisibility(View.VISIBLE);
+    }
+
+    private void setLabelAndValue(TextView view, String label, String value) {
+        String text = label + " " + value;
+        android.text.SpannableString styled = new android.text.SpannableString(text);
+        styled.setSpan(new android.text.style.StyleSpan(Typeface.BOLD),
+                0, label.length(), android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        view.setText(styled);
+    }
+
+    private String getSupportCategoryLabel(String category) {
+        int resource = switch (category == null ? "" : category) {
+            case "validation_rejected" -> R.string.payment_support_category_validation;
+            case "payout_method_unavailable" -> R.string.payment_support_category_method;
+            case "payment_not_received" -> R.string.payment_support_category_not_received;
+            default -> R.string.payment_support_category_other;
+        };
+        return getString(resource);
+    }
+
+    private String getSupportStatusLabel(String status) {
+        int resource = switch (status == null ? "" : status) {
+            case "waiting_for_user" -> R.string.payment_support_status_waiting;
+            case "resolved" -> R.string.payment_support_status_resolved;
+            case "closed" -> R.string.payment_support_status_closed;
+            default -> R.string.payment_support_status_open;
+        };
+        return getString(resource);
+    }
+
+    private int dp(int value) {
+        return Math.round(value * getResources().getDisplayMetrics().density);
     }
 
     @SuppressWarnings("unchecked")

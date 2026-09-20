@@ -445,9 +445,26 @@
     <string name="payment_support_open">সহায়তা অনুরোধ %1$s খোলা আছে।</string>
     <string name="payment_support_waiting">সহায়তা দল %1$s অনুরোধের উত্তর দিয়েছে:\n%2$s</string>
     <string name="payment_support_resolved">সহায়তা অনুরোধ %1$s সমাধান হয়েছে।\n%2$s</string>
+    <string name="payment_support_requests_title">আপনার সহায়তা অনুরোধ</string>
+    <string name="payment_support_ticket_summary">%1$s · %2$s</string>
+    <string name="payment_support_status_open">খোলা</string>
+    <string name="payment_support_status_waiting">সহায়তা দল উত্তর দিয়েছে</string>
+    <string name="payment_support_status_resolved">সমাধান হয়েছে</string>
+    <string name="payment_support_status_closed">বন্ধ</string>
+    <string name="payment_support_your_message">আপনার বার্তা: %1$s</string>
+    <string name="payment_support_reply">সহায়তা দলের উত্তর: %1$s</string>
+    <string name="payment_support_no_message">অতিরিক্ত বার্তা নেই</string>
+    <string name="payment_support_status_label">স্ট্যাটাস:</string>
+    <string name="payment_support_your_message_label">আপনার বার্তা:</string>
+    <string name="payment_support_reply_label">সহায়তা দলের উত্তর:</string>
     <string name="payment_status_cancelled">পেমেন্ট বাতিল করা হয়েছে</string>
     <string name="payment_details_save">পেমেন্টের তথ্য সংরক্ষণ করুন</string>
     <string name="payment_details_save_failed">পেমেন্টের তথ্য সংরক্ষণ করা যায়নি। আবার চেষ্টা করুন।</string>
     <string name="payment_account_number_error_mobile">01 দিয়ে শুরু হওয়া ১১ সংখ্যার বাংলাদেশি মোবাইল নম্বর লিখুন (অথবা +880)।</string>
     <string name="payment_account_number_error_rocket">চেক ডিজিটসহ 01 দিয়ে শুরু হওয়া ১২ সংখ্যার Rocket অ্যাকাউন্ট নম্বর লিখুন (অথবা +880)।</string>
+    <string name="my_prizes">আমার পুরস্কার</string>
+    <string name="no_prizes_yet">আপনার এখনো কোনো পুরস্কার নেই।</string>
+    <string name="prize_unknown_tournament">টুর্নামেন্ট পুরস্কার</string>
+    <string name="prize_rank">স্থান: %1$d</string>
+    <string name="prize_list_status">স্ট্যাটাস: %1$s</string>
 </resources>

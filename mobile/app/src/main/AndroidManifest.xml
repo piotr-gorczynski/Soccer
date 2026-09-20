@@ -123,6 +123,16 @@
         </activity>
 
         <activity
+            android:name=".MyPrizesActivity"
+            android:exported="false"
+            android:parentActivityName=".MenuActivity" />
+
+        <activity
+            android:name=".PrizeDetailsActivity"
+            android:exported="false"
+            android:parentActivityName=".MyPrizesActivity" />
+
+        <activity
             android:name=".RankingActivity"
             android:exported="false"
             android:parentActivityName=".MenuActivity"

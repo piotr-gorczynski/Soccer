@@ -446,9 +446,26 @@
     <string name="payment_support_open">Zgłoszenie %1$s jest otwarte.</string>
     <string name="payment_support_waiting">Pomoc odpowiedziała na zgłoszenie %1$s:\n%2$s</string>
     <string name="payment_support_resolved">Zgłoszenie %1$s zostało rozwiązane.\n%2$s</string>
+    <string name="payment_support_requests_title">Twoje zgłoszenia</string>
+    <string name="payment_support_ticket_summary">%1$s · %2$s</string>
+    <string name="payment_support_status_open">Otwarte</string>
+    <string name="payment_support_status_waiting">Pomoc odpowiedziała</string>
+    <string name="payment_support_status_resolved">Rozwiązane</string>
+    <string name="payment_support_status_closed">Zamknięte</string>
+    <string name="payment_support_your_message">Twoja wiadomość: %1$s</string>
+    <string name="payment_support_reply">Odpowiedź pomocy: %1$s</string>
+    <string name="payment_support_no_message">Brak dodatkowej wiadomości</string>
+    <string name="payment_support_status_label">Status:</string>
+    <string name="payment_support_your_message_label">Twoja wiadomość:</string>
+    <string name="payment_support_reply_label">Odpowiedź pomocy:</string>
     <string name="payment_status_cancelled">Wypłata została anulowana</string>
     <string name="payment_details_save">Zapisz dane do wypłaty</string>
     <string name="payment_details_save_failed">Nie udało się zapisać danych. Spróbuj ponownie.</string>
     <string name="payment_account_number_error_mobile">Wpisz 11-cyfrowy numer komórkowy z Bangladeszu zaczynający się od 01 (lub +880).</string>
     <string name="payment_account_number_error_rocket">Wpisz 12-cyfrowy numer konta Rocket zaczynający się od 01, wraz z cyfrą kontrolną (lub +880).</string>
+    <string name="my_prizes">Moje nagrody</string>
+    <string name="no_prizes_yet">Nie masz jeszcze żadnych nagród.</string>
+    <string name="prize_unknown_tournament">Nagroda turniejowa</string>
+    <string name="prize_rank">Miejsce: %1$d</string>
+    <string name="prize_list_status">Status: %1$s</string>
 </resources>

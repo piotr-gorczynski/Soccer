@@ -28,6 +28,7 @@ import java.util.Map;
 import piotr_gorczynski.soccer2.InvitationsActivity;
 import piotr_gorczynski.soccer2.TournamentLobbyActivity;
 import piotr_gorczynski.soccer2.TournamentResultsActivity;
+import piotr_gorczynski.soccer2.PrizeDetailsActivity;
 
 /**
  * Firebase Cloud Messaging service for handling push notifications.
@@ -144,9 +145,15 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             return;
         }
 
-        Intent intent = new Intent(context, TournamentResultsActivity.class)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .putExtra("tournamentId", tournamentId)
+        Intent intent;
+        if (paymentId != null && !paymentId.isEmpty()) {
+            intent = new Intent(context, PrizeDetailsActivity.class)
+                    .putExtra("paymentId", paymentId);
+        } else {
+            intent = new Intent(context, TournamentResultsActivity.class)
+                    .putExtra("tournamentId", tournamentId);
+        }
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .putExtra("fromNotification", true);
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 context,
