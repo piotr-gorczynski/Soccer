@@ -4,6 +4,7 @@ const { getApps, initializeApp } = require('firebase-admin/app');
 const { FieldValue, getFirestore, Timestamp } = require('firebase-admin/firestore');
 const { getMessaging } = require('firebase-admin/messaging');
 const { getDatabase } = require('firebase-admin/database');
+const { calculatePayouts } = require('./prize-allocation');
 
 // Only initialize if not already initialized
 if (!getApps().length) {
@@ -73,9 +74,9 @@ const WINNER_MESSAGES = {
  *  function:                                                      *
  *    1. Computes Round-Robin standings from completed matches.    *
  *    2. Writes per-rank documents to tournaments/{id}/results.   *
- *    3. If the tournament has a prize pool, creates a pending     *
- *       payment record for the 1st-place winner.                 *
- *    4. Sends an FCM notification to the winner.                 *
+ *    3. If the tournament has a prize pool, calculates prize     *
+ *       sharing and creates awaiting-details payment records.    *
+ *    4. Sends an FCM notification to each prize winner.          *
  * ─────────────────────────────────────────────────────────────── */
 exports.onTournamentComplete = functions.firestore
   .document('tournaments/{tournamentId}')
@@ -136,17 +137,16 @@ exports.onTournamentComplete = functions.firestore
       return null;
     }
 
-    if (standings.length === 0 || !standings[0]) {
-      console.log(`[onTournamentComplete] No winner could be determined for ${tournamentId}`);
+    const payouts = calculatePayouts(standings, prizePool);
+    if (payouts.length === 0) {
+      console.log(`[onTournamentComplete] No eligible prize winner for ${tournamentId}`);
       return null;
     }
 
-    const winner = standings[0]; // rank 1
-
-    // Idempotency guard: skip if a payment record already exists for this tournament.
+    // Idempotency guard: payments for a tournament are created as one batch.
     const existingPayment = await db.collection('payments')
       .where('tournamentId', '==', tournamentId)
-      .where('rank', '==', 1)
+      .limit(1)
       .get();
 
     if (!existingPayment.empty) {
@@ -154,24 +154,29 @@ exports.onTournamentComplete = functions.firestore
       return null;
     }
 
-    const paymentRef = db.collection('payments').doc();
-    await paymentRef.set({
-      userId:       winner.userId,
-      tournamentId: tournamentId,
-      amount:       prizePool.firstPlacePrize,
-      currency:     prizePool.currency || 'BDT',
-      rank:         1,
-      status:       'awaiting_details',
-      statusUpdatedAt: now,
-      createdAt:    now,
-    });
+    const paymentBatch = db.batch();
+    for (const payout of payouts) {
+      const paymentRef = db.collection('payments').doc();
+      paymentBatch.set(paymentRef, {
+        userId:       payout.userId,
+        tournamentId: tournamentId,
+        amount:       payout.amount,
+        currency:     prizePool.currency || 'BDT',
+        rank:         payout.rank,
+        tied:         payout.tied,
+        status:       'awaiting_details',
+        statusUpdatedAt: now,
+        createdAt:    now,
+      });
+    }
+    await paymentBatch.commit();
 
-    console.log(
-      `[onTournamentComplete] Payment record ${paymentRef.id} created for winner ${winner.userId}`
-    );
+    console.log(`[onTournamentComplete] Created ${payouts.length} payment record(s) for ${tournamentId}`);
 
-    // Step 4: Notify the winner via FCM (best-effort; failure does not abort the function).
-    await notifyWinner(winner.userId, tournamentId, after.name || '');
+    // Step 4: Notify prize winners via FCM (best-effort; failures do not abort processing).
+    await Promise.all(payouts.map(payout =>
+      notifyWinner(payout.userId, tournamentId, after.name || '')
+    ));
 
     return null;
   });
