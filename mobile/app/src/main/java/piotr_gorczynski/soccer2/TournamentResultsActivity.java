@@ -15,6 +15,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import java.util.Objects;
 
@@ -28,6 +29,7 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.functions.FirebaseFunctions;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -48,8 +50,11 @@ public class TournamentResultsActivity extends BaseActivity {
     private TextView paymentIssueMessage;
     private TextView paymentTransferDetails;
     private Button savePaymentDetailsButton;
+    private Button reportPaymentProblemButton;
+    private TextView paymentSupportStatus;
     private DocumentSnapshot winnerPayment;
     private ListenerRegistration paymentListener;
+    private ListenerRegistration supportTicketListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +79,8 @@ public class TournamentResultsActivity extends BaseActivity {
         paymentIssueMessage = findViewById(R.id.paymentIssueMessage);
         paymentTransferDetails = findViewById(R.id.paymentTransferDetails);
         savePaymentDetailsButton = findViewById(R.id.savePaymentDetailsButton);
+        reportPaymentProblemButton = findViewById(R.id.reportPaymentProblemButton);
+        paymentSupportStatus = findViewById(R.id.paymentSupportStatus);
 
         String tid = getIntent().getStringExtra("tournamentId");
         if (tid != null) {
@@ -170,6 +177,7 @@ public class TournamentResultsActivity extends BaseActivity {
                         return;
                     }
                     winnerPayment = snapshot.getDocuments().get(0);
+                    listenForSupportTickets(winnerPayment.getId(), userId);
                     db.collection("regulations").document(regulationId).get()
                             .addOnSuccessListener(this::showPaymentDetailsForm)
                             .addOnFailureListener(regulationError ->
@@ -230,7 +238,136 @@ public class TournamentResultsActivity extends BaseActivity {
         paymentAccountNumber.setEnabled(editable);
         savePaymentDetailsButton.setVisibility(editable ? View.VISIBLE : View.GONE);
         savePaymentDetailsButton.setOnClickListener(view -> savePaymentDetails());
+        reportPaymentProblemButton.setOnClickListener(view -> showSupportDialog());
         paymentDetailsPanel.setVisibility(View.VISIBLE);
+    }
+
+    private void showSupportDialog() {
+        if (winnerPayment == null) return;
+
+        LinearLayout content = new LinearLayout(this);
+        content.setOrientation(LinearLayout.VERTICAL);
+        int padding = (int) (20 * getResources().getDisplayMetrics().density);
+        content.setPadding(padding, 0, padding, 0);
+
+        TextView categoryLabel = new TextView(this);
+        categoryLabel.setText(R.string.payment_support_category_label);
+        content.addView(categoryLabel);
+
+        Spinner categorySpinner = new Spinner(this);
+        String[] categoryLabels = {
+                getString(R.string.payment_support_category_validation),
+                getString(R.string.payment_support_category_method),
+                getString(R.string.payment_support_category_not_received),
+                getString(R.string.payment_support_category_other)
+        };
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                this, android.R.layout.simple_spinner_item, categoryLabels);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        categorySpinner.setAdapter(adapter);
+        content.addView(categorySpinner);
+
+        EditText messageInput = new EditText(this);
+        messageInput.setHint(R.string.payment_support_message_hint);
+        messageInput.setMinLines(3);
+        messageInput.setMaxLines(6);
+        messageInput.setFilters(new android.text.InputFilter[]{
+                new android.text.InputFilter.LengthFilter(1000)
+        });
+        content.addView(messageInput);
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(R.string.payment_support_title)
+                .setView(content)
+                .setNegativeButton(android.R.string.cancel, null)
+                .setPositiveButton(R.string.payment_support_send, null)
+                .create();
+        dialog.setOnShowListener(unused -> dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                .setOnClickListener(view -> submitSupportTicket(
+                        categorySpinner.getSelectedItemPosition(),
+                        messageInput.getText().toString(), dialog)));
+        dialog.show();
+    }
+
+    @SuppressWarnings("unchecked")
+    private void submitSupportTicket(int selectedCategory, String message, AlertDialog dialog) {
+        if (winnerPayment == null) return;
+        String[] categoryCodes = {
+                "validation_rejected", "payout_method_unavailable", "payment_not_received", "other"
+        };
+        if (selectedCategory < 0 || selectedCategory >= categoryCodes.length) return;
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("paymentId", winnerPayment.getId());
+        data.put("category", categoryCodes[selectedCategory]);
+        data.put("message", message == null ? "" : message.trim());
+        data.put("appVersion", BuildConfig.VERSION_NAME);
+        data.put("appVariant", BuildConfig.FLAVOR);
+        data.put("locale", java.util.Locale.getDefault().toLanguageTag());
+        Object issue = winnerPayment.get("issue");
+        if (issue instanceof Map) {
+            Object code = ((Map<String, Object>) issue).get("code");
+            if (code instanceof String) data.put("validationErrorCode", code);
+        }
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+        FirebaseFunctions.getInstance("us-central1")
+                .getHttpsCallable("createSupportTicket")
+                .call(data)
+                .addOnSuccessListener(result -> {
+                    dialog.dismiss();
+                    Object resultData = result.getData();
+                    String reference = "";
+                    if (resultData instanceof Map) {
+                        Object value = ((Map<String, Object>) resultData).get("reference");
+                        if (value instanceof String) reference = (String) value;
+                    }
+                    Toast.makeText(this,
+                            getString(R.string.payment_support_sent, reference),
+                            Toast.LENGTH_LONG).show();
+                })
+                .addOnFailureListener(error -> {
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                    Toast.makeText(this, R.string.payment_support_failed, Toast.LENGTH_LONG).show();
+                });
+    }
+
+    private void listenForSupportTickets(String paymentId, String userId) {
+        if (supportTicketListener != null) supportTicketListener.remove();
+        supportTicketListener = FirebaseFirestore.getInstance().collection("supportTickets")
+                .whereEqualTo("paymentId", paymentId)
+                .whereEqualTo("userId", userId)
+                .addSnapshotListener((snapshot, error) -> {
+                    if (error != null || snapshot == null || snapshot.isEmpty()) {
+                        paymentSupportStatus.setVisibility(View.GONE);
+                        return;
+                    }
+                    DocumentSnapshot latest = null;
+                    for (DocumentSnapshot ticket : snapshot.getDocuments()) {
+                        if (latest == null || (ticket.getTimestamp("createdAt") != null
+                                && (latest.getTimestamp("createdAt") == null
+                                || ticket.getTimestamp("createdAt").compareTo(
+                                latest.getTimestamp("createdAt")) > 0))) {
+                            latest = ticket;
+                        }
+                    }
+                    if (latest == null) return;
+                    String reference = latest.getString("reference");
+                    String status = latest.getString("status");
+                    String reply = latest.getString("latestSupportReply");
+                    if ("waiting_for_user".equals(status) && !TextUtils.isEmpty(reply)) {
+                        paymentSupportStatus.setText(getString(
+                                R.string.payment_support_waiting, reference, reply));
+                    } else if ("resolved".equals(status) || "closed".equals(status)) {
+                        paymentSupportStatus.setText(getString(
+                                R.string.payment_support_resolved, reference,
+                                reply == null ? "" : reply));
+                    } else {
+                        paymentSupportStatus.setText(getString(
+                                R.string.payment_support_open, reference));
+                    }
+                    paymentSupportStatus.setVisibility(View.VISIBLE);
+                });
     }
 
     @SuppressWarnings("unchecked")
@@ -283,6 +420,7 @@ public class TournamentResultsActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         if (paymentListener != null) paymentListener.remove();
+        if (supportTicketListener != null) supportTicketListener.remove();
         super.onDestroy();
     }
 

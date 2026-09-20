@@ -208,6 +208,27 @@ service cloud.firestore {
       allow create, delete: if false;
     }
 
+    // Payout support requests are created and administered only by trusted
+    // Cloud Functions/Admin SDK. The user may read their own ticket and its
+    // conversation, but cannot change its status or support replies directly.
+    match /supportTickets/{ticketId} {
+      allow read: if request.auth != null
+               && request.auth.uid == resource.data.userId;
+      allow create, update, delete: if false;
+
+      match /messages/{messageId} {
+        allow read: if request.auth != null
+                 && request.auth.uid == get(
+                      /databases/$(database)/documents/supportTickets/$(ticketId)
+                    ).data.userId;
+        allow write: if false;
+      }
+
+      match /notificationEvents/{eventId} {
+        allow read, write: if false;
+      }
+    }
+
     // 4. Everything else denied
     match /{document=**} {
       allow read, write: if false;

@@ -122,7 +122,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         
         if ("tournament_started".equals(notificationType)) {
             showTournamentNotification(context, data);
-        } else if ("payment_status_changed".equals(notificationType)) {
+        } else if ("payment_status_changed".equals(notificationType)
+                || "support_ticket_updated".equals(notificationType)) {
             showPaymentStatusNotification(context, data);
         } else {
             showInviteNotification(context, data);

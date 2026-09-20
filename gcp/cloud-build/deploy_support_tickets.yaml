@@ -1,0 +1,76 @@
+substitutions:
+  _ENVIRONMENT: 'dev'
+  _FOLDER_NAME: 'soccer'
+
+steps:
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'get-project-id'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -e
+        gcloud projects list \
+          --filter="name~^${_FOLDER_NAME}-${_ENVIRONMENT}" \
+          --format="value(projectId)" \
+          | head -n 1 > /workspace/FIREBASE_PROJECT_ID.txt
+        test -s /workspace/FIREBASE_PROJECT_ID.txt
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'install-firebase-cli'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -e
+        curl -sL https://firebase.tools | bash
+        mkdir -p /workspace/firebase
+        cp /usr/local/bin/firebase /workspace/firebase/
+        chmod +x /workspace/firebase/firebase
+
+  - name: 'gcr.io/cloud-builders/git'
+    id: 'pull-files'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -ex
+        git clone -b ${_ENVIRONMENT} --single-branch \
+          https://github.com/piotr-gorczynski/Soccer.git /workspace/soccer
+        cp /workspace/soccer/firebase/firebase.json /workspace/firebase/firebase.json
+        cp /workspace/soccer/firebase/firestore.rules /workspace/firebase/firestore.rules
+        cp /workspace/soccer/firebase/firestore.indexes.json /workspace/firebase/firestore.indexes.json
+        mkdir -p /workspace/firebase/functions/support-tickets
+        cp /workspace/soccer/firebase/functions/support-tickets/package.json \
+          /workspace/firebase/functions/support-tickets/
+        cp /workspace/soccer/firebase/functions/support-tickets/index.js \
+          /workspace/firebase/functions/support-tickets/
+        cp /workspace/soccer/firebase/functions/support-tickets/support-ticket.js \
+          /workspace/firebase/functions/support-tickets/
+
+  - name: 'node:22-slim'
+    id: 'install-dependencies'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -ex
+        cd /workspace/firebase/functions/support-tickets
+        npm install
+
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    id: 'deploy-support-tickets'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -e
+        cd /workspace/firebase
+        project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
+        ./firebase deploy \
+          --only functions:support-tickets,firestore:rules,firestore:indexes \
+          --project="$project_id" \
+          --force
+
+options:
+  logging: CLOUD_LOGGING_ONLY
