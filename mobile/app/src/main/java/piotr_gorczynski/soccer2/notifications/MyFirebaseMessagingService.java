@@ -26,8 +26,11 @@ import android.content.Intent;
 import java.util.Map;
 
 import piotr_gorczynski.soccer2.InvitationsActivity;
+import piotr_gorczynski.soccer2.AppFlavourDetector;
+import piotr_gorczynski.soccer2.MyPrizesActivity;
 import piotr_gorczynski.soccer2.TournamentLobbyActivity;
 import piotr_gorczynski.soccer2.TournamentResultsActivity;
+import piotr_gorczynski.soccer2.PrizeDetailsActivity;
 
 /**
  * Firebase Cloud Messaging service for handling push notifications.
@@ -122,7 +125,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         
         if ("tournament_started".equals(notificationType)) {
             showTournamentNotification(context, data);
-        } else if ("payment_status_changed".equals(notificationType)) {
+        } else if ("tournament_winner".equals(notificationType)) {
+            showTournamentWinnerNotification(context, data);
+        } else if ("payment_status_changed".equals(notificationType)
+                || "support_ticket_updated".equals(notificationType)) {
             showPaymentStatusNotification(context, data);
         } else {
             showInviteNotification(context, data);
@@ -143,9 +149,15 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             return;
         }
 
-        Intent intent = new Intent(context, TournamentResultsActivity.class)
-                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                .putExtra("tournamentId", tournamentId)
+        Intent intent;
+        if (paymentId != null && !paymentId.isEmpty()) {
+            intent = new Intent(context, PrizeDetailsActivity.class)
+                    .putExtra("paymentId", paymentId);
+        } else {
+            intent = new Intent(context, TournamentResultsActivity.class)
+                    .putExtra("tournamentId", tournamentId);
+        }
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 .putExtra("fromNotification", true);
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 context,
@@ -162,6 +174,48 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent);
         displayNotification(context, paymentId == null ? tournamentId.hashCode() : paymentId.hashCode(), builder);
+    }
+
+    private void showTournamentWinnerNotification(@NonNull Context context,
+                                                  @NonNull Map<String, String> data) {
+        String tournamentId = data.get("tournamentId");
+        if (tournamentId == null || tournamentId.isEmpty()) {
+            Log.w(TAG, getClass().getSimpleName() +
+                    ".showTournamentWinnerNotification: tournamentId is missing");
+            return;
+        }
+
+        if (!ensureNotificationChannel(context, TOURNAMENT_CHANNEL_ID, TOURNAMENT_CHANNEL_NAME)) {
+            return;
+        }
+
+        Intent intent;
+        if (AppFlavourDetector.supportsPrizeFeatures(context)) {
+            intent = new Intent(context, MyPrizesActivity.class);
+        } else {
+            // Cash-prize navigation is market-specific. Global and future
+            // unsupported flavours retain the safe tournament-results route.
+            intent = new Intent(context, TournamentResultsActivity.class)
+                    .putExtra("tournamentId", tournamentId);
+        }
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .putExtra("fromNotification", true);
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                context,
+                tournamentId.hashCode(),
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        );
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, TOURNAMENT_CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_notifications)
+                .setContentTitle(extractTitle(data))
+                .setContentText(extractBody(data))
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true)
+                .setContentIntent(pendingIntent);
+        displayNotification(context, tournamentId.hashCode(), builder);
     }
 
     /**

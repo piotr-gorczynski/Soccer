@@ -1,0 +1,7 @@
+{
+  "name": "support-tickets-tool",
+  "version": "1.0.0",
+  "private": true,
+  "main": "support-tickets.js",
+  "dependencies": { "firebase-admin": "^11.10.1" }
+}

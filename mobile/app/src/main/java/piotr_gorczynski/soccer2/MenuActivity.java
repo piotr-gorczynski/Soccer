@@ -685,6 +685,11 @@ public class MenuActivity extends BaseActivity {
         Button pendingBtn = findViewById(R.id.ShowInvites);
         Button tournamentsBtn = findViewById(R.id.openTournamentsBtn);
         Button rankingBtn = findViewById(R.id.openRankingBtn);
+        Button myPrizesBtn = findViewById(R.id.openMyPrizesBtn);
+        if (myPrizesBtn != null) {
+            myPrizesBtn.setVisibility(AppFlavourDetector.supportsPrizeFeatures(this)
+                    ? View.VISIBLE : View.GONE);
+        }
 
         // Check if backend is available - if not, disable ALL buttons
         if (!isBackendAvailable) {
@@ -704,6 +709,10 @@ public class MenuActivity extends BaseActivity {
             if (rankingBtn != null) {
                 rankingBtn.setEnabled(false);
                 rankingBtn.setAlpha(0.3f);
+            }
+            if (myPrizesBtn != null) {
+                myPrizesBtn.setEnabled(false);
+                myPrizesBtn.setAlpha(0.3f);
             }
 
             return; // Skip the normal auth-based logic
@@ -728,6 +737,10 @@ public class MenuActivity extends BaseActivity {
         if (rankingBtn != null) {
             rankingBtn.setEnabled(true);
             rankingBtn.setAlpha(alpha);
+        }
+        if (myPrizesBtn != null) {
+            myPrizesBtn.setEnabled(true);
+            myPrizesBtn.setAlpha(alpha);
         }
     }
 
@@ -1668,6 +1681,15 @@ public class MenuActivity extends BaseActivity {
         }
 
         showAdThenRun(() -> startActivity(new Intent(this, RankingActivity.class)));
+    }
+
+    public void OpenMyPrizes(View view) {
+        if (!AppFlavourDetector.supportsPrizeFeatures(this)) return;
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            showRegistrationDialog();
+            return;
+        }
+        startActivity(new Intent(this, MyPrizesActivity.class));
     }
 
     @Override

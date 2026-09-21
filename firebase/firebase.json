@@ -115,6 +115,12 @@
       "codebase": "track-app-variant",
       "runtime": "nodejs22",
       "region": "us-central1"
+    },
+    {
+      "source": "functions/support-tickets",
+      "codebase": "support-tickets",
+      "runtime": "nodejs22",
+      "region": "us-central1"
     }
   ],
   "firestore": {
