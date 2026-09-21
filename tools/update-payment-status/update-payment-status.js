@@ -7,8 +7,17 @@ const ENVIRONMENTS = new Set(['dev', 'test', 'prod']);
 
 function parseArgs(argv) {
   const [env, paymentId, status, ...rest] = argv;
-  if (!ENVIRONMENTS.has(env) || !paymentId || !status) {
-    throw new Error('Usage: node update-payment-status.js <dev|test|prod> <paymentId> <status> [options]');
+  if (!ENVIRONMENTS.has(env)) {
+    throw new Error('Usage: node update-payment-status.js <dev|test|prod> list\n' +
+      '   or: node update-payment-status.js <dev|test|prod> <paymentId> <status> [options]');
+  }
+  if (paymentId === 'list') {
+    if (status || rest.length > 0) throw new Error('The list command does not accept additional arguments.');
+    return { env, command: 'list' };
+  }
+  if (!paymentId || !status) {
+    throw new Error('Usage: node update-payment-status.js <dev|test|prod> list\n' +
+      '   or: node update-payment-status.js <dev|test|prod> <paymentId> <status> [options]');
   }
   const data = {};
   let dryRun = false;
@@ -30,6 +39,34 @@ function parseArgs(argv) {
     data[key] = rest[++index];
   }
   return { env, paymentId, status, data, dryRun };
+}
+
+function paymentListRow(doc) {
+  const payment = doc.data();
+  return {
+    paymentId: doc.id,
+    status: payment.status || '(missing)',
+    amount: payment.amount ?? '',
+    currency: payment.currency || '',
+    userId: payment.userId || '',
+    tournamentId: payment.tournamentId || '',
+  };
+}
+
+async function listIncompletePayments(db) {
+  const snapshot = await db.collection('payments').get();
+  const rows = snapshot.docs
+    .filter(doc => doc.get('status') !== 'completed')
+    .map(paymentListRow)
+    .sort((left, right) => left.status.localeCompare(right.status) ||
+      left.paymentId.localeCompare(right.paymentId));
+
+  if (rows.length === 0) {
+    console.log('No incomplete payments found.');
+    return;
+  }
+  console.table(rows);
+  console.log(`${rows.length} incomplete payment(s).`);
 }
 
 function buildUpdate(status, data, FieldValue) {
@@ -72,6 +109,11 @@ async function main() {
     __dirname, '..', '..', 'secrets', `serviceAccountKey.${args.env}.json`));
   admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
   const db = admin.firestore();
+  if (args.command === 'list') {
+    console.log(`Environment: ${args.env}`);
+    await listIncompletePayments(db);
+    return;
+  }
   const paymentRef = db.collection('payments').doc(args.paymentId);
   const paymentSnap = await paymentRef.get();
   if (!paymentSnap.exists) throw new Error(`Payment ${args.paymentId} does not exist.`);
@@ -112,4 +154,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { parseArgs, buildUpdate };
+module.exports = { parseArgs, buildUpdate, paymentListRow, listIncompletePayments };

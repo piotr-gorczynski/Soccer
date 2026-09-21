@@ -164,6 +164,7 @@ exports.onTournamentComplete = functions.firestore
         currency:     prizePool.currency || 'BDT',
         rank:         payout.rank,
         tied:         payout.tied,
+        tieCount:     payout.tieCount,
         status:       'awaiting_details',
         statusUpdatedAt: now,
         createdAt:    now,

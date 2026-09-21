@@ -48,6 +48,7 @@ public class TournamentResultsActivity extends BaseActivity {
     private Spinner paymentMethodSpinner;
     private EditText paymentAccountNumber;
     private TextView paymentPrizeSummary;
+    private TextView paymentTieSummary;
     private TextView paymentDetailsStatus;
     private TextView paymentIssueMessage;
     private TextView paymentTransferDetails;
@@ -55,6 +56,7 @@ public class TournamentResultsActivity extends BaseActivity {
     private Button reportPaymentProblemButton;
     private LinearLayout paymentSupportTicketsContainer;
     private DocumentSnapshot winnerPayment;
+    private DocumentSnapshot winnerTournament;
     private ListenerRegistration paymentListener;
     private ListenerRegistration supportTicketListener;
 
@@ -77,6 +79,7 @@ public class TournamentResultsActivity extends BaseActivity {
         paymentMethodSpinner = findViewById(R.id.paymentMethodSpinner);
         paymentAccountNumber = findViewById(R.id.paymentAccountNumber);
         paymentPrizeSummary = findViewById(R.id.paymentPrizeSummary);
+        paymentTieSummary = findViewById(R.id.paymentTieSummary);
         paymentDetailsStatus = findViewById(R.id.paymentDetailsStatus);
         paymentIssueMessage = findViewById(R.id.paymentIssueMessage);
         paymentTransferDetails = findViewById(R.id.paymentTransferDetails);
@@ -124,6 +127,7 @@ public class TournamentResultsActivity extends BaseActivity {
                             .addOnSuccessListener(tournament -> {
                                 if (!tournament.exists()) return;
                                 String name = tournament.getString("name");
+                                winnerTournament = tournament;
                                 Objects.requireNonNull(getSupportActionBar()).setTitle(
                                         TextUtils.isEmpty(name) ? getString(R.string.my_prizes) : name);
                                 String regulationId = tournament.getString("regulation");
@@ -144,6 +148,7 @@ public class TournamentResultsActivity extends BaseActivity {
                     if (!doc.exists()) return;
                     Objects.requireNonNull(getSupportActionBar())
                             .setTitle(doc.getString("name"));
+                    winnerTournament = doc;
                     loadWinnerPayment(tid, doc.getString("regulation"));
                 });
 
@@ -265,6 +270,14 @@ public class TournamentResultsActivity extends BaseActivity {
         String amountText = amount == null ? "" : formatAmount(amount);
         paymentPrizeSummary.setText(getString(
                 R.string.payment_prize_summary, amountText, currency == null ? "" : currency));
+        int tieCount = resolveTieCount(amount);
+        if (tieCount > 1) {
+            paymentTieSummary.setText(getString(
+                    R.string.payment_joint_first_place_summary, tieCount));
+            paymentTieSummary.setVisibility(View.VISIBLE);
+        } else {
+            paymentTieSummary.setVisibility(View.GONE);
+        }
 
         String paymentStatus = winnerPayment.getString("status");
         Map<String, Object> recipientInfo = (Map<String, Object>) winnerPayment.get("recipientInfo");
@@ -288,6 +301,44 @@ public class TournamentResultsActivity extends BaseActivity {
         savePaymentDetailsButton.setOnClickListener(view -> savePaymentDetails());
         reportPaymentProblemButton.setOnClickListener(view -> showSupportDialog());
         paymentDetailsPanel.setVisibility(View.VISIBLE);
+    }
+
+    @SuppressWarnings("unchecked")
+    private int resolveTieCount(Number paymentAmount) {
+        if (!Boolean.TRUE.equals(winnerPayment.getBoolean("tied"))) return 1;
+
+        Long storedTieCount = winnerPayment.getLong("tieCount");
+        if (storedTieCount != null && storedTieCount > 1 && storedTieCount <= Integer.MAX_VALUE) {
+            return storedTieCount.intValue();
+        }
+
+        if (winnerTournament == null || paymentAmount == null) return 0;
+        Object prizePoolValue = winnerTournament.get("prizePool");
+        if (!(prizePoolValue instanceof Map)) return 0;
+        Object awardsValue = ((Map<String, Object>) prizePoolValue).get("awards");
+        if (!(awardsValue instanceof List)) return 0;
+
+        Map<Integer, Long> awardsByPlace = new HashMap<>();
+        for (Object awardValue : (List<?>) awardsValue) {
+            if (!(awardValue instanceof Map)) continue;
+            Map<String, Object> award = (Map<String, Object>) awardValue;
+            Object placeValue = award.get("place");
+            Object amountValue = award.get("amount");
+            if (placeValue instanceof Number && amountValue instanceof Number) {
+                awardsByPlace.put(((Number) placeValue).intValue(),
+                        ((Number) amountValue).longValue());
+            }
+        }
+
+        Long rankValue = winnerPayment.getLong("rank");
+        int rank = rankValue == null ? 1 : rankValue.intValue();
+        long expectedAmount = paymentAmount.longValue();
+        long combinedPrize = 0;
+        for (int count = 1; count <= 100; count += 1) {
+            combinedPrize += awardsByPlace.getOrDefault(rank + count - 1, 0L);
+            if (count > 1 && combinedPrize / count == expectedAmount) return count;
+        }
+        return 0;
     }
 
     private void showSupportDialog() {

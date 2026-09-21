@@ -16,8 +16,8 @@ test('splits a single first-place prize between players tied on points', () => {
   };
 
   assert.deepEqual(calculatePayouts(standings, prizePool), [
-    { userId: 'player-b', rank: 1, amount: 500, tied: true, points: 3 },
-    { userId: 'player-a', rank: 1, amount: 500, tied: true, points: 3 },
+    { userId: 'player-b', rank: 1, amount: 500, tied: true, tieCount: 2, points: 3 },
+    { userId: 'player-a', rank: 1, amount: 500, tied: true, tieCount: 2, points: 3 },
   ]);
 });
 
@@ -37,9 +37,9 @@ test('combines occupied prize positions for a first-place tie', () => {
   };
 
   assert.deepEqual(calculatePayouts(standings, prizePool), [
-    { userId: 'a', rank: 1, amount: 1500, tied: true, points: 6 },
-    { userId: 'b', rank: 1, amount: 1500, tied: true, points: 6 },
-    { userId: 'c', rank: 3, amount: 500, tied: false, points: 3 },
+    { userId: 'a', rank: 1, amount: 1500, tied: true, tieCount: 2, points: 6 },
+    { userId: 'b', rank: 1, amount: 1500, tied: true, tieCount: 2, points: 6 },
+    { userId: 'c', rank: 3, amount: 500, tied: false, tieCount: 1, points: 3 },
   ]);
 });
 
@@ -68,6 +68,6 @@ test('supports the legacy firstPlacePrize field', () => {
   );
 
   assert.deepEqual(payouts, [
-    { userId: 'winner', rank: 1, amount: 1000, tied: false, points: 3 },
+    { userId: 'winner', rank: 1, amount: 1000, tied: false, tieCount: 1, points: 3 },
   ]);
 });

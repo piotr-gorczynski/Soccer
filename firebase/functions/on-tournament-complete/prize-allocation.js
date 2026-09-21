@@ -53,6 +53,7 @@ function calculatePayouts(standings, prizePool) {
           rank: currentPosition,
           amount: amountPerPlayer,
           tied: tiedPlayers.length > 1,
+          tieCount: tiedPlayers.length,
           points: player.points,
         });
       }

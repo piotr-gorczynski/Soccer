@@ -417,6 +417,7 @@
     <!-- Winner payment details -->
     <string name="payment_details_title">Prize payout details</string>
     <string name="payment_prize_summary">Prize: %1$s %2$s</string>
+    <string name="payment_joint_first_place_summary">Joint 1st place · %1$d winners</string>
     <string name="payment_method_label">Payout method</string>
     <string name="payment_account_number_hint">Account or wallet number</string>
     <string name="payment_account_number_error">Enter a valid number (10–18 digits)</string>

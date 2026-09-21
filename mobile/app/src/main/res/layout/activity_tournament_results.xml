@@ -57,6 +57,14 @@
                 android:layout_marginTop="4dp" />
 
             <TextView
+                android:id="@+id/paymentTieSummary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textStyle="normal"
+                android:visibility="gone" />
+
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
