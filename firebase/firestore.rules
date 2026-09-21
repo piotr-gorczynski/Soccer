@@ -24,8 +24,8 @@ service cloud.firestore {
                     && !request.resource.data.keys()
                          .hasAny(['appVariant', 'appVariants', 'migrationStatus']);
       allow update: if request.auth.uid == userId
-                    && request.resource.data.diff(resource.data).affectedKeys()
-                         .hasNone(['appVariant', 'appVariants', 'migrationStatus']);
+                    && !request.resource.data.diff(resource.data).affectedKeys()
+                         .hasAny(['appVariant', 'appVariants', 'migrationStatus']);
 
       // No one else may delete or overwrite another’s profile.
       allow delete: if false;
