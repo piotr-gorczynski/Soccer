@@ -118,6 +118,19 @@
         android:textColor="@color/colorWhite"
         android:textStyle="bold" />
 
+    <Button
+        android:id="@+id/openMyPrizesBtn"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/colorGreenDark"
+        android:onClick="OpenMyPrizes"
+        android:text="@string/my_prizes"
+        android:textAllCaps="false"
+        android:textColor="@color/colorWhite"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
         </LinearLayout>
     </LinearLayout>
 

@@ -7,8 +7,10 @@ const admin = require('firebase-admin');
 const FIRESTORE_COLLECTIONS = [
   'invitations',
   'matches',
+  'payments',
   'regulations',
   'settings',
+  'supportTickets',
   'tournaments',
   'users'
 ];

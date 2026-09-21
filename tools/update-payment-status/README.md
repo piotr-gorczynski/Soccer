@@ -13,6 +13,17 @@ npm install
 
 The tool uses `secrets/serviceAccountKey.<env>.json`.
 
+## List incomplete payments
+
+List every payment whose status is not `completed`:
+
+```bash
+node update-payment-status.js dev list
+```
+
+The output includes the payment ID, status, amount, currency, user ID, and tournament ID. Replace `dev`
+with `test` or `prod` to inspect another environment.
+
 ## Preview and update
 
 ```bash

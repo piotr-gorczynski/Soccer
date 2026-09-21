@@ -18,6 +18,16 @@ test('parses sent provider metadata', () => {
   assert.equal(result.data.providerReference, 'R-123');
 });
 
+test('parses the incomplete payment list command', () => {
+  assert.deepEqual(parseArgs(['test', 'list']), {
+    env: 'test', command: 'list'
+  });
+});
+
+test('rejects additional arguments for the list command', () => {
+  assert.throws(() => parseArgs(['dev', 'list', 'processing']), /does not accept/);
+});
+
 test('rejects unsupported environments and incomplete options', () => {
   assert.throws(() => parseArgs(['local', 'p1', 'processing']), /Usage/);
   assert.throws(() => parseArgs(['dev', 'p1', 'sent', '--provider']), /Invalid/);

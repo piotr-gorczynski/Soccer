@@ -33,8 +33,10 @@ const admin = createRequire(path.join(moduleBaseDir, 'package.json'))('firebase-
 const FIRESTORE_COLLECTIONS = [
   'invitations',
   'matches',
+  'payments',
   'regulations',
   'settings',
+  'supportTickets',
   'tournaments',
   'users'
 ];

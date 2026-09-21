@@ -9,8 +9,10 @@ The script copies data from the following sources:
 **Firestore Collections:**
 - `invitations`
 - `matches`
+- `payments`
 - `regulations`
 - `settings`
+- `supportTickets`
 - `tournaments`
 - `users`
 
