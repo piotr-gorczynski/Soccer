@@ -75,7 +75,7 @@ steps:
         cp /workspace/soccer/firebase/functions/send-invite-notification/package.json /workspace/firebase/functions/send-invite-notification/
 
   # Step 4: Install dependencies
-  - name: 'node:18-slim'
+  - name: 'node:22-slim'
     id: 'install-deps-send-invite-notification'
     entrypoint: bash
     args:
