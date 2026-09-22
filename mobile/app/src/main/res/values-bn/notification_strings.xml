@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_game_invitation_title">গেমের আমন্ত্রণ</string>
+    <string name="notification_game_invitation_body">%1$s আপনাকে খেলতে আমন্ত্রণ জানিয়েছে!</string>
+    <string name="notification_invite_unknown_player">কেউ একজন</string>
+</resources>
