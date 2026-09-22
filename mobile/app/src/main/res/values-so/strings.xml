@@ -387,6 +387,7 @@
     <!-- Winner payment details -->
     <string name="payment_details_title">Faahfaahinta bixinta abaalmarinta</string>
     <string name="payment_prize_summary">Abaalmarin: %1$s %2$s</string>
+    <string name="payment_joint_first_place_summary">Kaalinta 1aad oo la wadaagay · %1$d guuleystayaal</string>
     <string name="payment_method_label">Habka lacag-bixinta</string>
     <string name="payment_account_number_hint">Lambarka koontada ama jeebka</string>
     <string name="payment_account_number_error">Geli lambar sax ah (10–18 lambar)</string>

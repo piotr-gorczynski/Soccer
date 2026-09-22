@@ -387,6 +387,7 @@
     <!-- Winner payment details -->
     <string name="payment_details_title">ລາຍລະອຽດການຈ່າຍລາງວັນ</string>
     <string name="payment_prize_summary">ລາງວັນ: %1$s %2$s</string>
+    <string name="payment_joint_first_place_summary">ອັນດັບ 1 ຮ່ວມ · ຜູ້ຊະນະ %1$d ຄົນ</string>
     <string name="payment_method_label">ວິທີຈ່າຍເງິນ</string>
     <string name="payment_account_number_hint">ເລກບັນຊີ ຫຼື ກະເປົາ</string>
     <string name="payment_account_number_error">ໃສ່ເລກທີ່ຖືກຕ້ອງ (10–18 ຕົວເລກ)</string>
