@@ -387,6 +387,7 @@
     <!-- Winner payment details -->
     <string name="payment_details_title">Antsipirian’ny fandoavana loka</string>
     <string name="payment_prize_summary">Loka: %1$s %2$s</string>
+    <string name="payment_joint_first_place_summary">Laharana voalohany iraisana · mpandresy %1$d</string>
     <string name="payment_method_label">Fomba fandoavana</string>
     <string name="payment_account_number_hint">Laharan-kaonty na kitapom-bola</string>
     <string name="payment_account_number_error">Ampidiro isa manan-kery (tarehimarika 10–18)</string>

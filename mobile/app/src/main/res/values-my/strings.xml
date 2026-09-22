@@ -387,6 +387,7 @@
     <!-- Winner payment details -->
     <string name="payment_details_title">ဆုငွေပေးချေမှု အသေးစိတ်</string>
     <string name="payment_prize_summary">ဆုငွေ: %1$s %2$s</string>
+    <string name="payment_joint_first_place_summary">ပူးတွဲ ပထမနေရာ · အနိုင်ရသူ %1$d ဦး</string>
     <string name="payment_method_label">ငွေပေးချေမှုနည်းလမ်း</string>
     <string name="payment_account_number_hint">အကောင့် သို့မဟုတ် ပိုက်ဆံအိတ်နံပါတ်</string>
     <string name="payment_account_number_error">မှန်ကန်သောနံပါတ် ထည့်ပါ (ဂဏန်း 10–18 လုံး)</string>

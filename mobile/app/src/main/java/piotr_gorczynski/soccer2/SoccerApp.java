@@ -7,6 +7,7 @@ import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -61,7 +62,9 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 
 public class SoccerApp extends Application implements DefaultLifecycleObserver {
@@ -71,6 +74,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     public static final String FCM_INSTALLATION_ID_PREF = "fcmInstallationId";
     private static final android.os.Handler MAIN_HANDLER = new android.os.Handler(android.os.Looper.getMainLooper());
     private final ExecutorService fcmExecutor = Executors.newSingleThreadExecutor();
+    private final AtomicBoolean consentRequestInProgress = new AtomicBoolean(false);
     
     private DatabaseReference userStatusDbRef;
     private DatabaseReference connectedRef;
@@ -786,6 +790,14 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     }
 
     public void requestConsent(Activity activity) {
+        if (!isActivityReadyForWindow(activity)) {
+            Log.d(TAG, getClass().getSimpleName() + ".requestConsent: activity is not ready; deferring");
+            return;
+        }
+        if (!consentRequestInProgress.compareAndSet(false, true)) {
+            Log.d(TAG, getClass().getSimpleName() + ".requestConsent: request already in progress");
+            return;
+        }
         Log.d(
                 "TAG_Soccer",
                 getClass().getSimpleName() + ".requestConsent: starting"
@@ -805,11 +817,19 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                             "TAG_Soccer",
                             getClass().getSimpleName() + ".requestConsent: consent info updated. form available=" + consentInformation.isConsentFormAvailable()
                     );
-                    if (consentInformation.isConsentFormAvailable()) {
+                    if (!isActivityReadyForWindow(activity)) {
+                        Log.d(TAG, getClass().getSimpleName() + ".requestConsent: activity stopped before form load; deferring");
+                        consentRequestInProgress.set(false);
+                    } else if (consentInformation.isConsentFormAvailable()) {
                         loadAndShowConsentForm(activity);
+                    } else {
+                        consentRequestInProgress.set(false);
                     }
                 },
-                formError -> Log.w("TAG_Soccer", "UMP: Failed to update consent info: " + formError.getMessage())
+                formError -> {
+                    consentRequestInProgress.set(false);
+                    Log.w("TAG_Soccer", "UMP: Failed to update consent info: " + formError.getMessage());
+                }
         );
     }
 
@@ -858,6 +878,11 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     }
 
     private void loadAndShowConsentForm(Activity activity) {
+        if (!isActivityReadyForWindow(activity)) {
+            consentRequestInProgress.set(false);
+            Log.d(TAG, getClass().getSimpleName() + ".loadAndShowConsentForm: activity is not ready; deferring");
+            return;
+        }
         UserMessagingPlatform.loadConsentForm(
                 activity,
                 consentForm -> {
@@ -865,11 +890,15 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                             "TAG_Soccer",
                             getClass().getSimpleName() + ".loadAndShowConsentForm: form loaded"
                     );
-                    if (UserMessagingPlatform.getConsentInformation(activity).getConsentStatus()
+                    if (!isActivityReadyForWindow(activity)) {
+                        consentRequestInProgress.set(false);
+                        Log.d(TAG, getClass().getSimpleName() + ".loadAndShowConsentForm: activity stopped before form show; deferring");
+                    } else if (UserMessagingPlatform.getConsentInformation(activity).getConsentStatus()
                             == ConsentInformation.ConsentStatus.REQUIRED) {
                         consentForm.show(
                                 activity,
                                 formError -> {
+                                    consentRequestInProgress.set(false);
                                     if (formError != null) {
                                         Log.w("TAG_Soccer", "UMP: Consent form error: " + formError.getMessage());
                                     } else {
@@ -890,14 +919,33 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                                     }
                                 });
                     } else {
+                        consentRequestInProgress.set(false);
                         Log.d(
                                 "TAG_Soccer",
                                 getClass().getSimpleName() + ".loadAndShowConsentForm: consent not required"
                         );
                     }
                 },
-                formError -> Log.w("TAG_Soccer", "UMP: Failed to load consent form: " + formError.getMessage())
+                formError -> {
+                    consentRequestInProgress.set(false);
+                    Log.w("TAG_Soccer", "UMP: Failed to load consent form: " + formError.getMessage());
+                }
         );
+    }
+
+    private static boolean isActivityReadyForWindow(Activity activity) {
+        if (activity == null || activity.isFinishing() || activity.isDestroyed()) {
+            return false;
+        }
+        if (activity instanceof LifecycleOwner
+                && !((LifecycleOwner) activity).getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.RESUMED)) {
+            return false;
+        }
+        if (activity.getWindow() == null) {
+            return false;
+        }
+        View decorView = activity.getWindow().getDecorView();
+        return decorView != null && decorView.isAttachedToWindow();
     }
 
     private static boolean isNetworkAvailable(Context context) {

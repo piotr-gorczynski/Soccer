@@ -421,6 +421,7 @@
     <!-- Winner payment details -->
     <string name="payment_details_title">انعام کی ادائیگی کی تفصیلات</string>
     <string name="payment_prize_summary">انعام: %1$s %2$s</string>
+    <string name="payment_joint_first_place_summary">مشترکہ پہلی پوزیشن · %1$d فاتحین</string>
     <string name="payment_method_label">ادائیگی کا طریقہ</string>
     <string name="payment_account_number_hint">اکاؤنٹ یا والیٹ نمبر</string>
     <string name="payment_account_number_error">درست نمبر درج کریں (10–18 ہندسے)</string>

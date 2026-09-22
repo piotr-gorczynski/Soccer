@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_game_invitation_title">ක්‍රීඩා ආරාධනය</string>
+    <string name="notification_game_invitation_body">%1$s ඔබට ක්‍රීඩා කිරීමට ආරාධනා කළා!</string>
+    <string name="notification_invite_unknown_player">කෙනෙකු</string>
+</resources>

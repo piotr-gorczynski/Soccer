@@ -387,6 +387,7 @@
     <!-- Winner payment details -->
     <string name="payment_details_title">Шагнал олгох мэдээлэл</string>
     <string name="payment_prize_summary">Шагнал: %1$s %2$s</string>
+    <string name="payment_joint_first_place_summary">1-р байрыг хуваалцсан · %1$d ялагч</string>
     <string name="payment_method_label">Төлбөрийн арга</string>
     <string name="payment_account_number_hint">Данс эсвэл хэтэвчийн дугаар</string>
     <string name="payment_account_number_error">Зөв дугаар оруулна уу (10–18 орон)</string>

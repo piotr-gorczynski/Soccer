@@ -38,6 +38,7 @@ import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.DocumentReference;
@@ -62,6 +63,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.Set;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
@@ -112,6 +116,8 @@ public class MenuActivity extends BaseActivity {
     private boolean globalUninstallDialogOpen = false; // true from when the system dialog is launched until focus returns
     private boolean awaitingGlobalUninstallResult = false;
     private AlertDialog globalUninstallDialog; // reference to the currently-showing uninstall dialog
+    private final Set<AlertDialog> managedDialogs = Collections.newSetFromMap(new IdentityHashMap<>());
+    private final Runnable showAnimationInfoRunnable = this::showAnimationInfoDialog;
     private View loadingOverlay;
     private final Handler overlayHandler = new Handler(Looper.getMainLooper());
     private final Runnable hideOverlayRunnable = this::hideLoadingOverlayImmediate;
@@ -543,6 +549,7 @@ public class MenuActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        recordWindowLifecycle("resumed");
 
         String lang = LanguageManager.getCurrentLanguageCode(this);
         if (currentLanguage == null || !currentLanguage.equals(lang)) {
@@ -560,6 +567,14 @@ public class MenuActivity extends BaseActivity {
     }
 
     @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        if (!hasAdsConsent()) {
+            ((SoccerApp) getApplication()).requestConsent(this);
+        }
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
         registerNetworkCallback();
@@ -568,9 +583,12 @@ public class MenuActivity extends BaseActivity {
 
     @Override
     protected void onStop() {
-        super.onStop();
+        recordWindowLifecycle("stopped");
+        runningPlayerHandler.removeCallbacks(showAnimationInfoRunnable);
+        dismissManagedDialogs();
         unregisterNetworkCallback();
         stopRunningPlayerAnimation();
+        super.onStop();
     }
 
     @Override
@@ -800,11 +818,6 @@ public class MenuActivity extends BaseActivity {
         // detect a missing/transparent window background.
         enforceSafeTheme();
 
-        // Request consent early for EEA compliance - ensures GA4 doesn't collect data before consent
-        if (!hasAdsConsent()) {
-            ((SoccerApp) getApplication()).requestConsent(this);
-        }
-        
         /* ① Inflate the view immediately so onResume() has valid widgets */
         try {
             setContentView(R.layout.activity_menu);
@@ -1286,7 +1299,8 @@ public class MenuActivity extends BaseActivity {
         runningPlayerAnimator.run();
         
         // Show animation info dialog after a short delay to ensure UI is fully loaded
-        new Handler(Looper.getMainLooper()).postDelayed(this::showAnimationInfoDialog, 500);
+        runningPlayerHandler.removeCallbacks(showAnimationInfoRunnable);
+        runningPlayerHandler.postDelayed(showAnimationInfoRunnable, 500);
     }
 
     private void stopRunningPlayerAnimation() {
@@ -1319,10 +1333,9 @@ public class MenuActivity extends BaseActivity {
     }
 
     private void showConsentRequiredDialog() {
-        new AlertDialog.Builder(this)
+        showManagedDialog(new AlertDialog.Builder(this)
                 .setMessage(R.string.ads_consent_required)
-                .setPositiveButton(android.R.string.ok, null)
-                .show();
+                .setPositiveButton(android.R.string.ok, null), "ads_consent_required");
     }
 
     private void showLoadingOverlay() {
@@ -1368,7 +1381,7 @@ public class MenuActivity extends BaseActivity {
     }
 
     private void showRegistrationDialog() {
-        new AlertDialog.Builder(this)
+        showManagedDialog(new AlertDialog.Builder(this)
                 .setMessage(R.string.register_dialog_message)
                 .setPositiveButton(R.string.proceed, (dialog, which) -> startActivity(new Intent(this, UniversalLoginActivity.class)))
                 .setNegativeButton(R.string.cancel, (dialog, which) -> {
@@ -1377,8 +1390,7 @@ public class MenuActivity extends BaseActivity {
                         // User has provided feedback, no further action needed
                         Log.d("TAG_Soccer", "User declined registration, reason: " + reason);
                     });
-                })
-                .show();
+                }), "registration");
     }
 
     public void showAdThenRun(Runnable action) {
@@ -1744,10 +1756,13 @@ public class MenuActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
+        recordWindowLifecycle("destroying");
         adRetryHandler.removeCallbacks(adRetryRunnable);
         overlayHandler.removeCallbacks(hideOverlayRunnable);
+        runningPlayerHandler.removeCallbacks(showAnimationInfoRunnable);
+        dismissManagedDialogs();
         releaseRunningPlayerResources();
+        super.onDestroy();
     }
 
     /**
@@ -2176,12 +2191,11 @@ public class MenuActivity extends BaseActivity {
             return;
         }
 
-        new AlertDialog.Builder(this)
+        showManagedDialog(new AlertDialog.Builder(this)
                 .setTitle(R.string.missed_invite_title)
                 .setMessage(R.string.missed_invite_message)
                 .setPositiveButton(R.string.see_invites, (dialog, which) -> startActivity(new Intent(this, InvitationsActivity.class)))
-                .setNegativeButton(R.string.close, null)
-                .show();
+                .setNegativeButton(R.string.close, null), "missed_invite");
     }
 
     /**
@@ -2209,14 +2223,13 @@ public class MenuActivity extends BaseActivity {
             return;
         }
         
-        new AlertDialog.Builder(this)
+        showManagedDialog(new AlertDialog.Builder(this)
                 .setMessage(R.string.animation_info_message)
                 .setPositiveButton(android.R.string.ok, (dialog, which) -> {
                     // Mark dialog as shown
                     prefs.edit().putBoolean(PREF_ANIMATION_INFO_SHOWN, true).apply();
                 })
-                .setCancelable(false)
-                .show();
+                .setCancelable(false), "animation_info");
     }
 
     /**
@@ -2253,7 +2266,7 @@ public class MenuActivity extends BaseActivity {
      * Provides options to install or dismiss the promotion.
      */
     private void showBangladeshPromotionDialog() {
-        new AlertDialog.Builder(this)
+        showManagedDialog(new AlertDialog.Builder(this)
                 .setTitle(R.string.bd_promo_title)
                 .setMessage(R.string.bd_promo_message)
                 .setPositiveButton(R.string.bd_promo_install, (dialog, which) -> {
@@ -2277,8 +2290,7 @@ public class MenuActivity extends BaseActivity {
                     // Mark as dismissed (will show again in 7 days)
                     BangladeshMigrationHelper.markPromotionDismissed(this);
                 })
-                .setCancelable(false) // Require explicit user choice
-                .show();
+                .setCancelable(false), "bangladesh_promotion"); // Require explicit user choice
     }
 
     /**
@@ -2348,7 +2360,63 @@ public class MenuActivity extends BaseActivity {
                 .setCancelable(false)
                 .create();
         globalUninstallDialog = dialog;
+        showManagedDialog(dialog, "uninstall_global");
+    }
+
+    private boolean canPresentWindow() {
+        return !isFinishing()
+                && !isDestroyed()
+                && getLifecycle().getCurrentState().isAtLeast(androidx.lifecycle.Lifecycle.State.RESUMED)
+                && getWindow() != null
+                && getWindow().getDecorView() != null
+                && getWindow().getDecorView().isAttachedToWindow();
+    }
+
+    private AlertDialog showManagedDialog(AlertDialog.Builder builder, String name) {
+        if (!canPresentWindow()) {
+            Log.d("TAG_Soccer", "MenuActivity.showManagedDialog: skipping " + name + " because activity is not resumed");
+            return null;
+        }
+        return showManagedDialog(builder.create(), name);
+    }
+
+    private AlertDialog showManagedDialog(AlertDialog dialog, String name) {
+        if (!canPresentWindow()) {
+            Log.d("TAG_Soccer", "MenuActivity.showManagedDialog: skipping " + name + " because activity is not resumed");
+            return null;
+        }
+        managedDialogs.add(dialog);
+        dialog.setOnDismissListener(ignored -> {
+            managedDialogs.remove(dialog);
+            FirebaseCrashlytics.getInstance().setCustomKey("menu_active_dialog", "none");
+        });
+        FirebaseCrashlytics.getInstance().setCustomKey("menu_active_dialog", name);
         dialog.show();
+        return dialog;
+    }
+
+    private void dismissManagedDialogs() {
+        for (AlertDialog dialog : new ArrayList<>(managedDialogs)) {
+            try {
+                if (dialog.isShowing()) {
+                    dialog.dismiss();
+                }
+            } catch (IllegalArgumentException exception) {
+                Log.w("TAG_Soccer", "MenuActivity.dismissManagedDialogs: dialog window already detached", exception);
+            }
+        }
+        managedDialogs.clear();
+        globalUninstallDialog = null;
+        FirebaseCrashlytics.getInstance().setCustomKey("menu_active_dialog", "none");
+    }
+
+    private void recordWindowLifecycle(String state) {
+        FirebaseCrashlytics crashlytics = FirebaseCrashlytics.getInstance();
+        crashlytics.setCustomKey("menu_lifecycle", state);
+        crashlytics.setCustomKey("menu_window_attached",
+                getWindow() != null
+                        && getWindow().getDecorView() != null
+                        && getWindow().getDecorView().isAttachedToWindow());
     }
 
 }

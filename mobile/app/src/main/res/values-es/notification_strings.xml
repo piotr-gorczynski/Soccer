@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_game_invitation_title">Invitación para jugar</string>
+    <string name="notification_game_invitation_body">¡%1$s te invitó a jugar!</string>
+    <string name="notification_invite_unknown_player">Alguien</string>
+</resources>

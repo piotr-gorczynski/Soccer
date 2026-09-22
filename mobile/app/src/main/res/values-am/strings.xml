@@ -387,6 +387,7 @@
     <!-- Winner payment details -->
     <string name="payment_details_title">የሽልማት ክፍያ ዝርዝሮች</string>
     <string name="payment_prize_summary">ሽልማት፦ %1$s %2$s</string>
+    <string name="payment_joint_first_place_summary">የጋራ 1ኛ ደረጃ · %1$d አሸናፊዎች</string>
     <string name="payment_method_label">የክፍያ ዘዴ</string>
     <string name="payment_account_number_hint">የመለያ ወይም የዋሌት ቁጥር</string>
     <string name="payment_account_number_error">ትክክለኛ ቁጥር ያስገቡ (10–18 አሃዞች)</string>

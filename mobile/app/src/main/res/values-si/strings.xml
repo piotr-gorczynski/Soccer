@@ -387,6 +387,7 @@
     <!-- Winner payment details -->
     <string name="payment_details_title">ත්‍යාග ගෙවීම් විස්තර</string>
     <string name="payment_prize_summary">ත්‍යාගය: %1$s %2$s</string>
+    <string name="payment_joint_first_place_summary">සම පළමු ස්ථානය · ජයග්‍රාහකයින් %1$d</string>
     <string name="payment_method_label">ගෙවීම් ක්‍රමය</string>
     <string name="payment_account_number_hint">ගිණුම් හෝ පසුම්බි අංකය</string>
     <string name="payment_account_number_error">වලංගු අංකයක් ඇතුළත් කරන්න (ඉලක්කම් 10–18)</string>
