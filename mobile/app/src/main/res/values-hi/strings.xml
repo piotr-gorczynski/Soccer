@@ -421,6 +421,7 @@
     <!-- Winner payment details -->
     <string name="payment_details_title">पुरस्कार भुगतान विवरण</string>
     <string name="payment_prize_summary">पुरस्कार: %1$s %2$s</string>
+    <string name="payment_joint_first_place_summary">संयुक्त प्रथम स्थान · %1$d विजेता</string>
     <string name="payment_method_label">भुगतान विधि</string>
     <string name="payment_account_number_hint">खाता या वॉलेट नंबर</string>
     <string name="payment_account_number_error">सही नंबर दर्ज करें (10–18 अंक)</string>

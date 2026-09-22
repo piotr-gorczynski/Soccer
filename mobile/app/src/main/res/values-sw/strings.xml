@@ -387,6 +387,7 @@
     <!-- Winner payment details -->
     <string name="payment_details_title">Maelezo ya malipo ya zawadi</string>
     <string name="payment_prize_summary">Zawadi: %1$s %2$s</string>
+    <string name="payment_joint_first_place_summary">Nafasi ya 1 kwa pamoja · washindi %1$d</string>
     <string name="payment_method_label">Njia ya malipo</string>
     <string name="payment_account_number_hint">Nambari ya akaunti au pochi</string>
     <string name="payment_account_number_error">Weka nambari halali (tarakimu 10–18)</string>

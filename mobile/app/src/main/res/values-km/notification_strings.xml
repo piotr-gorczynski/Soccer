@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_game_invitation_title">ការអញ្ជើញលេងហ្គេម</string>
+    <string name="notification_game_invitation_body">%1$s បានអញ្ជើញអ្នកឱ្យលេង!</string>
+    <string name="notification_invite_unknown_player">នរណាម្នាក់</string>
+</resources>

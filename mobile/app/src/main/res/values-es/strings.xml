@@ -424,6 +424,7 @@
     <!-- Winner payment details -->
     <string name="payment_details_title">Datos de pago del premio</string>
     <string name="payment_prize_summary">Premio: %1$s %2$s</string>
+    <string name="payment_joint_first_place_summary">1.er puesto compartido · %1$d ganadores</string>
     <string name="payment_method_label">Método de pago</string>
     <string name="payment_account_number_hint">Número de cuenta o monedero</string>
     <string name="payment_account_number_error">Introduce un número válido (10–18 dígitos)</string>

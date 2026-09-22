@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_game_invitation_title">ຄຳເຊີນຫຼິ້ນເກມ</string>
+    <string name="notification_game_invitation_body">%1$s ເຊີນທ່ານຫຼິ້ນເກມ!</string>
+    <string name="notification_invite_unknown_player">ບາງຄົນ</string>
+</resources>

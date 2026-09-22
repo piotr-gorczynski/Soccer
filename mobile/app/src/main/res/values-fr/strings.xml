@@ -416,6 +416,7 @@
     <!-- Winner payment details -->
     <string name="payment_details_title">Coordonnées de versement du prix</string>
     <string name="payment_prize_summary">Prix : %1$s %2$s</string>
+    <string name="payment_joint_first_place_summary">1re place ex æquo · %1$d gagnants</string>
     <string name="payment_method_label">Mode de versement</string>
     <string name="payment_account_number_hint">Numéro de compte ou de portefeuille</string>
     <string name="payment_account_number_error">Saisissez un numéro valide (10–18 chiffres)</string>

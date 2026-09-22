@@ -27,6 +27,7 @@ import java.util.Map;
 
 import piotr_gorczynski.soccer2.InvitationsActivity;
 import piotr_gorczynski.soccer2.AppFlavourDetector;
+import piotr_gorczynski.soccer2.LanguageManager;
 import piotr_gorczynski.soccer2.MyPrizesActivity;
 import piotr_gorczynski.soccer2.TournamentLobbyActivity;
 import piotr_gorczynski.soccer2.TournamentResultsActivity;
@@ -222,10 +223,22 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      * Displays a game invite notification.
      */
     private void showInviteNotification(@NonNull Context context, @NonNull Map<String, String> data) {
-        // 1. Extract everything from the data payload with null safety
-        String title = extractTitle(data);
-        String body = extractBody(data);
+        // Invitation text is rendered on-device using the language selected in
+        // the app. The English title/body carried by older backend deployments
+        // remain only as a compatibility fallback for old app versions.
+        Context localizedContext = LanguageManager.applyLanguage(
+                context,
+                LanguageManager.getCurrentLanguageCode(context)
+        );
         String fromNickname = data.get("fromNickname");
+        if (fromNickname == null || fromNickname.trim().isEmpty()) {
+            fromNickname = localizedContext.getString(R.string.notification_invite_unknown_player);
+        }
+        String title = localizedContext.getString(R.string.notification_game_invitation_title);
+        String body = localizedContext.getString(
+                R.string.notification_game_invitation_body,
+                fromNickname
+        );
         String inviteId = extractInviteId(data);
         int notificationId = inviteId.hashCode();
 

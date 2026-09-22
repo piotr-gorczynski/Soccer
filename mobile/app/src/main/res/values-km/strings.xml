@@ -387,6 +387,7 @@
     <!-- Winner payment details -->
     <string name="payment_details_title">ព័ត៌មានទូទាត់រង្វាន់</string>
     <string name="payment_prize_summary">រង្វាន់៖ %1$s %2$s</string>
+    <string name="payment_joint_first_place_summary">ចំណាត់ថ្នាក់លេខ ១ រួម · អ្នកឈ្នះ %1$d នាក់</string>
     <string name="payment_method_label">វិធីទូទាត់</string>
     <string name="payment_account_number_hint">លេខគណនី ឬកាបូប</string>
     <string name="payment_account_number_error">បញ្ចូលលេខត្រឹមត្រូវ (10–18 ខ្ទង់)</string>

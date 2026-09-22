@@ -103,7 +103,11 @@ exports.sendInviteNotification = functions.firestore
         ...(fcmInstallationId ? { fid: fcmInstallationId } : { token: fcmToken }),
         data : {
           type:  'invite',
+          inviteId,
           fromNickname,
+          // Retained for clients released before invitations were localized
+          // on-device. Current clients render these strings in the language
+          // selected in the application.
           title: 'Game Invitation',
           body:  `${fromNickname} invited you to play!`
         },

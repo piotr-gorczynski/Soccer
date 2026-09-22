@@ -368,6 +368,7 @@
     <!-- Winner payment details -->
     <string name="payment_details_title">اطلاعات پرداخت جایزه</string>
     <string name="payment_prize_summary">جایزه: %1$s %2$s</string>
+    <string name="payment_joint_first_place_summary">مقام اول مشترک · %1$d برنده</string>
     <string name="payment_method_label">روش پرداخت</string>
     <string name="payment_account_number_hint">شماره حساب یا کیف پول</string>
     <string name="payment_account_number_error">شماره معتبر وارد کنید (۱۰ تا ۱۸ رقم)</string>

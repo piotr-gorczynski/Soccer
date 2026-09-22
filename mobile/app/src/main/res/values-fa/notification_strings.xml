@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_game_invitation_title">دعوت به بازی</string>
+    <string name="notification_game_invitation_body">%1$s شما را به بازی دعوت کرد!</string>
+    <string name="notification_invite_unknown_player">یک نفر</string>
+</resources>

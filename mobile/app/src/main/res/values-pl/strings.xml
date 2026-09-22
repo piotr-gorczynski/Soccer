@@ -422,6 +422,7 @@
     <!-- Winner payment details -->
     <string name="payment_details_title">Dane do wypłaty nagrody</string>
     <string name="payment_prize_summary">Nagroda: %1$s %2$s</string>
+    <string name="payment_joint_first_place_summary">Wspólne 1. miejsce · %1$d zwycięzców</string>
     <string name="payment_method_label">Metoda wypłaty</string>
     <string name="payment_account_number_hint">Numer konta lub portfela</string>
     <string name="payment_account_number_error">Wpisz prawidłowy numer (10–18 cyfr)</string>
