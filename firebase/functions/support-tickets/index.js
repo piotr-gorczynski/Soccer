@@ -53,7 +53,9 @@ exports.createSupportTicket = functions.region('us-central1').https.onCall(async
 
   const ticketRef = db.collection('supportTickets').doc();
   const reference = `SUP-${ticketRef.id.slice(0, 8).toUpperCase()}`;
-  await ticketRef.set({
+  const now = FieldValue.serverTimestamp();
+  const batch = db.batch();
+  batch.set(ticketRef, {
     reference,
     userId: context.auth.uid,
     paymentId: payment.id,
@@ -62,8 +64,9 @@ exports.createSupportTicket = functions.region('us-central1').https.onCall(async
     category: input.category,
     message: input.message,
     status: 'open',
-    createdAt: FieldValue.serverTimestamp(),
-    updatedAt: FieldValue.serverTimestamp(),
+    createdAt: now,
+    updatedAt: now,
+    statusUpdatedAt: now,
     appContext: {
       appVersion: input.appVersion,
       appVariant: input.appVariant,
@@ -73,6 +76,17 @@ exports.createSupportTicket = functions.region('us-central1').https.onCall(async
       payoutMethod: payment.get('recipientInfo.method') || '',
     },
   });
+  batch.set(ticketRef.collection('statusHistory').doc('created'), {
+    eventType: 'ticket_created', from: null, to: 'open', changedAt: now,
+    changedBy: context.auth.uid, actorType: 'user', source: 'createSupportTicket',
+    category: input.category, message: input.message,
+    paymentStatus: payment.get('status') || '',
+  });
+  if (input.message) batch.set(ticketRef.collection('messages').doc('initial'), {
+    authorType: 'user', authorId: context.auth.uid, message: input.message,
+    createdAt: now, source: 'createSupportTicket', historyId: 'created',
+  });
+  await batch.commit();
   return { ok: true, ticketId: ticketRef.id, reference };
 });
 

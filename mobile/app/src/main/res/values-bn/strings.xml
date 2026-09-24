@@ -468,4 +468,7 @@
     <string name="prize_unknown_tournament">টুর্নামেন্ট পুরস্কার</string>
     <string name="prize_rank">স্থান: %1$d</string>
     <string name="prize_list_status">স্ট্যাটাস: %1$s</string>
+    <string name="prize_reminder_title">আপনি টুর্নামেন্টে পুরস্কার জিতেছেন!</string>
+    <string name="prize_reminder_message">আপনার পুরস্কার অপেক্ষা করছে। পুরস্কারের টাকা পাঠানোর জন্য পেমেন্টের তথ্য পূরণ করুন।</string>
+    <string name="prize_reminder_open">পেমেন্টের তথ্য পূরণ করুন</string>
 </resources>

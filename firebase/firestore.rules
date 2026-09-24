@@ -200,8 +200,11 @@ service cloud.firestore {
                  && ['awaiting_details', 'action_required'].hasAny([resource.data.status])
                  && request.resource.data.status == 'ready_for_processing'
                  && request.resource.data.statusUpdatedAt == request.time
+                 // Older clients omit updatedAt. If supplied/changed, it must be server time.
+                 && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['updatedAt'])
+                      || request.resource.data.updatedAt == request.time)
                  && request.resource.data.diff(resource.data).affectedKeys()
-                      .hasOnly(['recipientInfo', 'status', 'statusUpdatedAt'])
+                      .hasOnly(['recipientInfo', 'status', 'statusUpdatedAt', 'updatedAt'])
                  && hasValidRecipientInfo();
 
       // Creation and deletion are server-side only.

@@ -1,7 +1,6 @@
 'use strict';
 
 const path = require('path');
-const admin = require('firebase-admin');
 
 const ENVIRONMENTS = new Set(['dev', 'test', 'prod']);
 
@@ -15,6 +14,7 @@ function usage() {
 }
 
 async function main() {
+  const admin = require('firebase-admin');
   const [env, command, ...args] = process.argv.slice(2);
   if (!ENVIRONMENTS.has(env) || !command) throw new Error(usage());
   const serviceAccount = require(path.join(
@@ -40,32 +40,59 @@ async function main() {
 
   const [ticketId, ...messageParts] = args;
   if (!ticketId || !['reply', 'resolve'].includes(command)) throw new Error(usage());
-  const message = messageParts.join(' ').trim();
-  if (command === 'reply' && !message) throw new Error('A reply message is required.');
+  const message = messageParts.join(' ');
+  if (command === 'reply' && !message.trim()) throw new Error('A reply message is required.');
   if (message.length > 2000) throw new Error('Reply is too long (maximum 2000 characters).');
 
   const ticketRef = db.collection('supportTickets').doc(ticketId);
-  const ticket = await ticketRef.get();
-  if (!ticket.exists) throw new Error(`Ticket ${ticketId} does not exist.`);
-  const status = command === 'resolve' ? 'resolved' : 'waiting_for_user';
-  const now = admin.firestore.FieldValue.serverTimestamp();
-  const update = { status, updatedAt: now };
-  if (message) {
-    update.latestSupportReply = message;
-    update.latestSupportReplyAt = now;
-  }
-  const messageRef = ticketRef.collection('messages').doc();
-  const batch = db.batch();
-  batch.update(ticketRef, update);
-  if (message) batch.set(messageRef, {
-    authorType: 'support', message, createdAt: now, source: 'tools/support-tickets',
-  });
-  await batch.commit();
-  console.log(`${ticket.get('reference') || ticketId} updated to ${status}.`);
+  const result = await updateTicket(db, ticketRef, command, message,
+    serviceAccount.client_email, admin.firestore.FieldValue);
+  console.log(`${result.reference || ticketId} updated to ${result.status}.`);
   console.log('The deployed support notification trigger will notify the user.');
 }
 
-main().catch(error => {
-  console.error(`Support ticket operation failed: ${error.message}`);
-  process.exit(1);
-});
+async function updateTicket(db, ticketRef, command, message, actor, FieldValue) {
+  if (!['reply', 'resolve'].includes(command)) throw new Error('Unknown support command.');
+  if (typeof message !== 'string' || message.length > 2000
+      || (command === 'reply' && !message.trim())) throw new Error('Invalid support message.');
+  const status = command === 'resolve' ? 'resolved' : 'waiting_for_user';
+  const now = FieldValue.serverTimestamp();
+  const historyRef = ticketRef.collection('statusHistory').doc();
+  const messageRef = ticketRef.collection('messages').doc();
+  return db.runTransaction(async transaction => {
+    const ticket = await transaction.get(ticketRef);
+    if (!ticket.exists) throw new Error(`Ticket ${ticketRef.id} does not exist.`);
+    const previousStatus = ticket.get('status');
+    const update = { status, updatedAt: now };
+    if (previousStatus !== status) update.statusUpdatedAt = now;
+    if (command === 'resolve') update.resolvedAt = now;
+    else if (previousStatus === 'resolved' || previousStatus === 'closed') {
+      update.resolvedAt = FieldValue.delete();
+    }
+    if (message.trim()) {
+      update.latestSupportReply = message.trim();
+      update.latestSupportReplyAt = now;
+      transaction.set(messageRef, {
+        authorType: 'support', authorId: actor, message, createdAt: now,
+        source: 'tools/support-tickets', historyId: historyRef.id,
+      });
+    }
+    transaction.update(ticketRef, update);
+    transaction.set(historyRef, {
+      eventType: command === 'reply' ? 'support_reply' : 'ticket_resolved',
+      from: previousStatus, to: status, changedAt: now,
+      changedBy: actor, actorType: 'admin', source: 'tools/support-tickets',
+      command, message, messageId: message.trim() ? messageRef.id : null,
+    });
+    return { status, reference: ticket.get('reference') };
+  });
+}
+
+if (require.main === module) {
+  main().catch(error => {
+    console.error(`Support ticket operation failed: ${error.message}`);
+    process.exit(1);
+  });
+}
+
+module.exports = { updateTicket };

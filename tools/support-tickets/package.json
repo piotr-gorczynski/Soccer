@@ -3,5 +3,6 @@
   "version": "1.0.0",
   "private": true,
   "main": "support-tickets.js",
+  "scripts": { "test": "node --test support-tickets.test.js" },
   "dependencies": { "firebase-admin": "^11.10.1" }
 }
