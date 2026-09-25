@@ -20,6 +20,6 @@ final class PrizeReminderPolicy {
     }
 
     static boolean needsDetails(String status) {
-        return "awaiting_details".equals(status);
+        return "awaiting_details".equals(status) || "action_required".equals(status);
     }
 }

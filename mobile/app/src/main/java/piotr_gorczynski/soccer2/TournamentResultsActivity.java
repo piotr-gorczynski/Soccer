@@ -631,6 +631,7 @@ public class TournamentResultsActivity extends BaseActivity {
         update.put("status", "ready_for_processing");
         update.put("statusUpdatedAt", FieldValue.serverTimestamp());
         update.put("updatedAt", FieldValue.serverTimestamp());
+        update.put("issue", FieldValue.delete());
 
         winnerPayment.getReference().update(update)
                 .addOnSuccessListener(unused -> {

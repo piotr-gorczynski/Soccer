@@ -15,6 +15,10 @@ node support-tickets.js dev reply TICKET_ID "Please try again with an 11-digit n
 node support-tickets.js dev resolve TICKET_ID "The issue has been resolved."
 ```
 
+The list prints a table with the ticket ID, reference, status, category, payment ID,
+and the user's original message. Tickets are ordered newest first; `--status`
+filters the rows as before.
+
 Replies are stored under `supportTickets/{ticketId}/messages` and mirrored in
 `latestSupportReply` for the current mobile UI. Updating a ticket triggers an
 FCM notification when the support function is deployed.

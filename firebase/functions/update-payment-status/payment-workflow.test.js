@@ -37,7 +37,8 @@ test('recipient submissions use event time and survive repeated/out-of-order tri
     set: (ref, value) => records.set(ref.id, value),
   }) };
   const fields = { serverTimestamp: () => 'RECORDING_TIME' };
-  const before = { status: 'action_required', recipientInfo: { accountNumber: 'old' } };
+  const before = { status: 'action_required', recipientInfo: { accountNumber: 'old' },
+    issue: { code: 'validation_rejected', userMessage: 'Please correct your account.' } };
   const after = { status: 'ready_for_processing', userId: 'winner',
     statusUpdatedAt: 'SUBMISSION_TIME', recipientInfo: { accountNumber: 'new' } };
   await recordRecipientSubmission(db, paymentRef, before, after, 'second', fields);
@@ -50,9 +51,11 @@ test('recipient submissions use event time and survive repeated/out-of-order tri
   assert.equal(recorded.changedAt, 'SUBMISSION_TIME');
   assert.equal(recorded.recordedAt, 'RECORDING_TIME');
   assert.equal(recorded.previousRecipientInfo.accountNumber, 'old');
+  assert.deepEqual(recorded.previousIssue, before.issue);
   assert.equal(recorded.recipientInfo.accountNumber, 'new');
   assert.equal(recorded.changedBy, 'winner');
   assert.equal(records.get('recipient-first').changedAt, 'EARLIER_TIME');
+  assert.equal(records.get('recipient-first').previousIssue, null);
 });
 
 test('admin transitions are not duplicated by recipient history recorder', async () => {

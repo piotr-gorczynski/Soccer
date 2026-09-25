@@ -22,10 +22,11 @@ public class PrizeReminderPolicyTest {
         assertFalse(policy.canRemind("first"));
     }
 
-    @Test public void onlyMissingInitialDetailsQualify() {
+    @Test public void missingOrRejectedDetailsQualify() {
         assertTrue(PrizeReminderPolicy.needsDetails("awaiting_details"));
+        assertTrue(PrizeReminderPolicy.needsDetails("action_required"));
         for (String status : new String[] {null, "", "ready_for_processing", "processing",
-                "sent", "completed", "action_required", "cancelled"}) {
+                "sent", "completed", "cancelled"}) {
             assertFalse("Unexpected reminder for " + status, PrizeReminderPolicy.needsDetails(status));
         }
     }

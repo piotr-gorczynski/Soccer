@@ -30,10 +30,14 @@ async function main() {
     const snapshot = await query.get();
     const tickets = snapshot.docs
       .sort((a, b) => (b.get('createdAt')?.toMillis() || 0) - (a.get('createdAt')?.toMillis() || 0));
-    for (const ticket of tickets) {
-      console.log(`${ticket.id}\t${ticket.get('reference')}\t${ticket.get('status')}\t` +
-        `${ticket.get('category')}\tpayment=${ticket.get('paymentId')}`);
-    }
+    console.table(tickets.map(ticket => ({
+      ticketId: ticket.id,
+      reference: ticket.get('reference') || '',
+      status: ticket.get('status') || '',
+      category: ticket.get('category') || '',
+      paymentId: ticket.get('paymentId') || '',
+      message: ticket.get('message') || '',
+    })));
     console.log(`${tickets.length} ticket(s).`);
     return;
   }

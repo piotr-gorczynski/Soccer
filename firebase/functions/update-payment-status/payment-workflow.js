@@ -88,6 +88,7 @@ async function recordRecipientSubmission(db, paymentRef, before, after, eventId,
       changedBy: after.userId, actorType: 'user',
       source: 'onPaymentStatusChanged',
       previousRecipientInfo: before.recipientInfo || null,
+      previousIssue: before.issue || null,
       recipientInfo: after.recipientInfo || null,
     });
   });
