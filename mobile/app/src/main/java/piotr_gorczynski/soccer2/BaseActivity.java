@@ -14,6 +14,14 @@ import androidx.appcompat.app.AppCompatActivity;
  */
 public class BaseActivity extends AppCompatActivity {
     @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus && getApplication() instanceof SoccerApp) {
+            ((SoccerApp) getApplication()).checkPrizeReminderAfterWindowFocus(this);
+        }
+    }
+
+    @Override
     protected void attachBaseContext(Context newBase) {
         try {
             String code = LanguageManager.getCurrentLanguageCode(newBase);

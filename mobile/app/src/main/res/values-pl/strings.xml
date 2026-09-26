@@ -469,4 +469,7 @@
     <string name="prize_unknown_tournament">Nagroda turniejowa</string>
     <string name="prize_rank">Miejsce: %1$d</string>
     <string name="prize_list_status">Status: %1$s</string>
+    <string name="prize_reminder_title">Masz nagrodę za turniej!</string>
+    <string name="prize_reminder_message">Twoja nagroda czeka. Uzupełnij dane do wypłaty, abyśmy mogli przekazać Ci wygraną.</string>
+    <string name="prize_reminder_open">Uzupełnij dane do wypłaty</string>
 </resources>

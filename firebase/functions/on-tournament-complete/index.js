@@ -155,6 +155,7 @@ exports.onTournamentComplete = functions.firestore
     }
 
     const paymentBatch = db.batch();
+    const paymentCreatedAt = FieldValue.serverTimestamp();
     for (const payout of payouts) {
       const paymentRef = db.collection('payments').doc();
       paymentBatch.set(paymentRef, {
@@ -166,8 +167,14 @@ exports.onTournamentComplete = functions.firestore
         tied:         payout.tied,
         tieCount:     payout.tieCount,
         status:       'awaiting_details',
-        statusUpdatedAt: now,
-        createdAt:    now,
+        statusUpdatedAt: paymentCreatedAt,
+        createdAt:    paymentCreatedAt,
+        updatedAt:    paymentCreatedAt,
+      });
+      paymentBatch.set(paymentRef.collection('statusHistory').doc('created'), {
+        eventType: 'payment_created', from: null, to: 'awaiting_details',
+        changedAt: paymentCreatedAt, changedBy: 'onTournamentComplete', actorType: 'system',
+        source: 'onTournamentComplete',
       });
     }
     await paymentBatch.commit();
