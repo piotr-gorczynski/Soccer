@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.32
-**Last Updated:** 2026-09-19
-**Status:** Implementation in progress - Migration Backend Setup complete on dev, test, and prod
+**Document Version:** 2.33
+**Last Updated:** 2026-09-26
+**Status:** Prize, payment, and support workflows implemented; simulated end-to-end flow tested on dev; Bangladesh launch work remains
 
 **Revision History**:
+- v2.33 (2026-09-26): Reconciled implementation changes since 7 September: configuration-driven prizes and tie allocation, prize screens and foreground reminders, payment/support CLI tools, server-timestamped audit history, and completed dev payout/support simulations. Updated Phase 3–5 checklists and recorded deployment of payment, tournament-completion, support functions, and Firestore rules to dev, test, and prod. Real remittance, Bangladesh beta, and launch/compliance checks remain separate.
 - v2.32 (2026-09-19): Added the Bangladesh prize-payment lifecycle and administrator CLI. Payment status changes now use validated transitions and audit history; a Firestore trigger notifies the winner by FCM when processing starts, money is sent, delivery completes, details require correction, or a payout is cancelled. The winner UI displays the stored status and payment notifications open the tournament results screen.
 - v2.31 (2026-09-15): Implemented winner payout-details collection on the tournament results screen. Only the authenticated first-place winner with a server-created payment record sees the form; payout methods are loaded from the assigned regulation. bKash and Nagad require an 11-digit Bangladesh mobile number, while Rocket requires a 12-digit account number including its check digit; local and `+880` input formats are normalized. Firestore rules repeat the validation and restrict writes to the winner's pending payment and regulation-supported methods. Added localized UI text and validation feedback for every supported language.
 - v2.30 (2026-09-15): Marked Authentication Integration Setup as complete after verifying Firebase providers, shared Google Services configuration, signing certificates, the shared Meta app configuration, and deployed cross-app Firestore access rules. End-to-end authentication tests and policy/compliance checks remain tracked separately.
@@ -49,7 +50,7 @@ This document outlines a simplified, cost-effective approach for creating a Bang
 **Key Simplifications**:
 - **Technical Approach**: Separate Bangladesh APK using Android Product Flavors (`piotr_gorczynski.soccer2.bd`)
 - **Age Rating**: Global version (13+) and Bangladesh version (18+) will coexist in Bangladesh Play Store
-- **Prize Structure**: ৳2,000 BDT (~$18 USD) for 1st place winners only, bi-monthly tournaments
+- **Prize Structure**: Tournament JSON selects the regulation; its structured `prizeRules` defines currency, total pool, and awards. No fixed amount or tournament frequency is hardcoded into the payout workflow.
 - **Age Verification**: Self-declaration via checkbox + Google Play Store verification (no document upload)
 - **Payment Processing**: Manual processing by developer using **international transfer services** (Remitly recommended for mobile wallets, Wise for bank transfers, Western Union as backup) that send to winners' Bangladesh mobile wallets or bank accounts - NOT direct bKash/Nagad/Rocket access
 - **Total Cost**: ~$8,000-$12,000 initial setup, ~$108-$190/month operational (including transfer fees)
@@ -129,7 +130,7 @@ Based on Bangladesh gaming laws and skill-based game regulations:
 ### 3. Payment Requirements
 - **Services**: Government-approved payment platforms (bKash, Nagad, or Rocket)
 - **Processing**: Manual payment processing outside the app by developer
-- **Status Tracking**: Payment status updated in Firestore (pending, processing, completed)
+- **Status Tracking**: `awaiting_details` → `ready_for_processing` → `processing` → `sent` → `completed`, with correction (`action_required`) and cancellation paths, notifications, and audit history
 - **Timeline**: Prizes distributed within 7 days of tournament completion
 
 ---
@@ -268,18 +269,18 @@ The configuration creates two separate APKs:
 
 ### Prize Structure
 
-**Promotional Prize Pool**:
-```
-1st Place: ৳2,000 BDT (approximately $18 USD)
+**Configuration-driven prize pool (implemented):** `tools/create-tournament` reads tournament JSON
+and its assigned native Firestore regulation ID. The regulation's `prizeRules` supplies currency,
+total amount, and per-place awards; the tool validates them and derives `tournaments/{id}.prizePool`.
+Dates and visibility are tournament configuration, not a fixed bi-monthly schedule.
 
-Frequency: Twice per month (bi-monthly tournaments)
-Note: USD conversions based on December 2025 rates and subject to change
-```
+The completion backend allocates the configured awards. Players tied on a positive final score
+share the awards for the positions occupied by that group, rounded down to whole currency units;
+the total payout never exceeds the advertised pool. The UI shows the stored award and each
+winner's allocated amount, including shared-place information.
 
-This simplified prize structure:
-- Rewards only the tournament winner (1st place)
-- Keeps operational complexity minimal
-- Provides consistent bi-monthly prize opportunities
+Fixed amounts in older marketing and cost examples below are illustrative planning assumptions,
+not application constants. Any launch copy must match the selected tournament and regulation.
 
 ### International Transfer Service Setup Guide (for Polish Developer)
 
@@ -490,44 +491,39 @@ The original approach assumed the developer could directly use bKash, Nagad, or 
 
 ### Payment Flow
 
+```text
+Tournament JSON + assigned regulation → validated prizePool
+    ↓
+Tournament completion → ranking and configured prize allocation (including ties)
+    ↓
+payments/{id}: awaiting_details + payment_created history → winner notification
+    ↓
+Winner submits regulation-supported method and validated account number
+    ↓
+ready_for_processing + recipient_details_submitted history
+    ↓
+Administrator: processing → initiate transfer outside the app
+    ↓
+Administrator: sent (transfer.provider + transfer.providerReference)
+    ↓
+Provider confirms delivery → administrator: completed
 ```
-Tournament Completion
-    ↓
-Winner Determined (1st Place - Firestore: tournaments/{id}/results)
-    ↓
-Payment Record Created (Firestore: payments/{id}, status: "pending")
-    ↓
-Winner Notified via App (In-app notification)
-    ↓
-Winner Provides Payment Details:
-    - Full legal name
-    - bKash/Nagad/Rocket mobile wallet number
-    - Phone number
-    - Alternative: Bank account details or PayPal (if available)
-    ↓
-Developer Uses International Transfer Service:
-    - Remitly (recommended for mobile wallets): Transfer to bKash/Nagad
-    - Wise (if bank transfers accepted): Transfer to bank account
-    - Western Union (backup): Transfer to mobile wallet or cash pickup
-    - PayPal: Direct transfer (if winner has account)
-    ↓
-Developer Initiates Transfer Outside App:
-    - Log into Remitly (primary), Wise (secondary), or Western Union/PayPal (backup)
-    - Enter winner's mobile wallet number, bank account, or PayPal details
-    - Send ৳2,000 BDT (service handles currency conversion)
-    - Save transaction ID/receipt
-    ↓
-Winner Receives Money in Their Mobile Wallet:
-    - Funds appear in winner's bKash/Nagad/Rocket account
-    - Time: Minutes to 2 business days depending on service
-    ↓
-Developer Updates Payment Status in Firestore:
-    - status: "completed"
-    - transactionId: (from transfer service)
-    - completedAt: timestamp
-    ↓
-Winner Notified of Payment Completion
-```
+
+For rejected details, an administrator moves an eligible payment to `action_required` with an
+issue code and user-facing explanation. The winner corrects and resubmits the details, returning
+it to `ready_for_processing` and clearing the current issue. Prior details and the issue remain
+in history. `cancelled` is available only from states allowed by the shared transition model.
+
+The Bangladesh app displays payment status, transfer reference, and support replies. It reminds
+users with `awaiting_details` or `action_required` once per foreground session. Support tickets
+have their own status lifecycle; replying to or resolving a ticket does not itself complete a payout.
+The app currently collects `recipientInfo.method`, `accountNumber`, and `submittedAt`, not full
+legal names or bank/PayPal details. Any additional provider requirements must be handled separately.
+
+Use the [payment CLI](../tools/update-payment-status/README.md) for status changes rather than raw
+Firestore edits, so transition validation, timestamps, and administrator text are retained.
+Use the [support CLI](../tools/support-tickets/README.md) for ticket replies and resolution.
+Amounts come from the payment allocation; a CLI simulation records workflow events but sends no money.
 
 ### Detailed Payment Service Verification
 
@@ -659,50 +655,46 @@ fresh age, rules, and supported-payout-account declarations. Legacy and non-cash
 valid without the new metadata.
 
 ```javascript
+// Illustrative field layout; monetary values come from the assigned regulation.
 // Collection: tournaments
 {
-  id: "tournament_123",
-  name: "Bangladesh Bi-Monthly Championship March 2026",
-  region: "BD",
+  name: tournamentConfig.name,
+  regulation: tournamentConfig.regulation,
+  visibleInFlavours: tournamentConfig.visibleInFlavours,
   prizePool: {
     enabled: true,
-    currency: "BDT",
-    firstPlacePrize: 2000, // Only 1st place winner receives prize
-    fundedBy: "developer"
-  },
-  ageRestriction: 18,
-  // ... existing fields
+    currency: configuredCurrency,
+    totalAmount: configuredTotal,
+    awards: configuredAwards, // [{ place, amount }, ...]
+    firstPlacePrize: configuredFirstPlaceAward // legacy compatibility
+  }
 }
 
-// Collection: payments
+// Collection: payments (created by the backend, subsequently updated by owner/admin)
 {
-  id: "payment_456",
-  userId: "user_789",
-  tournamentId: "tournament_123",
-  amount: 2000,
-  currency: "BDT",
-  rank: 1,
-  paymentMethod: "bkash", // or "nagad", "rocket", "paypal", "bank" (user-selected)
-  recipientInfo: {
-    fullName: "User Full Legal Name", // Required for international transfers
-    accountNumber: "+8801XXXXXXXXX", // User-provided mobile wallet number
-    phoneNumber: "+8801XXXXXXXXX", // May be same as accountNumber for mobile wallets
-    paypalEmail: "user@email.com", // Optional, if PayPal selected
-    bankDetails: { // Optional, if bank transfer selected
-      accountNumber: "XXXXXXXX",
-      bankName: "Bank Name",
-      branchName: "Branch Name"
-    }
-  },
-  transferService: "wise", // "wise", "western_union", "remitly", "paypal" - service used by developer
-  status: "pending", // pending, processing, completed, failed (manually updated by developer)
-  initiatedAt: Timestamp,
-  completedAt: Timestamp,
-  transactionId: "TXN_123456", // Transaction ID from Wise/WU/Remitly/PayPal
-  transferFee: 0.35, // Actual fee charged by transfer service (in USD)
-  exchangeRate: 110.5, // Exchange rate used for the transfer
-  notes: "March Championship - 1st Place"
+  userId: winnerUserId,
+  tournamentId: tournamentId,
+  amount: allocatedWinnerShare,
+  currency: configuredCurrency,
+  rank: allocatedRank,
+  tied: isSharedPlace,
+  tieCount: numberOfTiedWinners,
+  status: "awaiting_details",
+  createdAt: Timestamp,
+  statusUpdatedAt: Timestamp,
+  updatedAt: Timestamp,
+  // Added on recipient submission:
+  recipientInfo: { method: "bkash", accountNumber: "01XXXXXXXXX", submittedAt: Timestamp },
+  // Added when sent/completed:
+  transfer: { provider: "remitly", providerReference: "PROVIDER_REFERENCE",
+              sentAt: Timestamp, completedAt: Timestamp },
+  // Present only while an issue is outstanding:
+  issue: { code: "invalid_recipient_account", userMessage: "Correct the account number.",
+           createdAt: Timestamp }
 }
+// Payment audit: payments/{id}/statusHistory/{eventId}
+// Support: supportTickets/{id}, with messages and statusHistory subcollections.
+// Optional fields above are not all present on a newly created payment.
 
 // Per-registration audit record:
 // tournaments/{tournamentId}/participants/{userId}
@@ -1519,7 +1511,7 @@ Tournaments now support visibility control across app flavours using the `visibl
 **Tournament Structure**:
 
 **Bi-Monthly Cash Prize Tournaments**
-- **Prize**: ৳2,000 BDT (approximately $18 USD) for 1st place only
+- **Prize**: Amount, currency, and award positions from the assigned regulation and derived `prizePool`; tied winners receive their calculated share
 - **Frequency**: Twice per month (e.g., 1st and 15th of each month)
 - **Participants**: 16-64 players (adjustable based on participation)
 - **Format**: Round-robin or elimination bracket
@@ -2992,12 +2984,13 @@ cd mobile
 
 ## Implementation Roadmap
 
-> **Implementation status (13 September 2026):** The Bangladesh product flavor, regulation importer,
-> prize-aware tournament creation, scheduled tournament lifecycle, final ranking, pending payment
-> creation, and winner notification have been implemented. The complete Variant 1 flow (one
-> `1,000 BDT` first-place prize) was successfully exercised on the `dev` environment with three
-> participants and three completed matches. Eligibility, winner payment-details collection, manual
-> payout completion, and the remaining launch/compliance work are still outstanding.
+> **Implementation status (26 September 2026):** Configuration-driven tournaments and regulations,
+> eligibility confirmation, scheduled lifecycle, ranking/tied prizes, winner notifications, payout
+> details, payment status/reminders, and support tickets are implemented. The tournament flow and
+> manual payout/support simulations through `completed` were exercised on `dev`. Payment,
+> tournament-completion, and support functions plus Firestore rules were deployed to `dev`, `test`,
+> and `prod`. This does not constitute a real remittance or Bangladesh production launch; those,
+> beta testing, and the remaining launch/compliance checks remain outstanding.
 
 ### Phase 1: Planning & Setup (Week 1-2)
 - [x] Game assumptions validated with ChatGPT legal consultation
@@ -3101,11 +3094,15 @@ cd mobile
     - Rocket: 12-digit account number starting with `01`, including the check digit
     - `+880` input is accepted and normalized before storage
   - Shown only to the authenticated 1st-place winner with a server-created payment record
-  - Firestore rules allow updates only to `recipientInfo` on the winner's pending payment and validate the selected method against the regulation
-- [ ] Update tournament UI for cash prizes
-  - "৳2,000 Prize" badge on tournament listings
+  - Firestore rules validate ownership, rank, regulation-supported method, account format, and the transition from `awaiting_details` or `action_required` to `ready_for_processing`
+  - Submission stores `recipientInfo`, `statusUpdatedAt`, and `updatedAt`; corrected submission clears the current `issue`, while history retains the previous details and issue
+- [x] Update tournament UI for cash prizes
+  - Prize amounts and currency come from tournament `prizePool` and the payment allocation, not a fixed badge amount; shared first-place prizes show the winner's share and tie count
   - [x] Winner push notification from the backend
-  - Payment status screen (pending/completed)
+  - [x] Bangladesh prize list and prize-details screen, including notification navigation
+  - [x] Payment lifecycle display: `awaiting_details`, `ready_for_processing`, `processing`, `sent`, `completed`, `action_required`, and `cancelled`; show transfer reference and actionable issue text when present
+  - [x] Reminder for `awaiting_details` and `action_required`, at most once per signed-in user per app launch/foreground session, deferred until an eligible screen can display it
+  - [x] Support ticket submission and display of support replies; correction form remains editable for `action_required`
 - [x] Add Bengali translations for eligibility and winner payment-detail features
 - [ ] **Migration UI Development**:
   - [ ] Add Bangladesh user detection in global app
@@ -3117,23 +3114,32 @@ cd mobile
   - [ ] Add Firebase Analytics events for migration tracking
 
 ### Phase 4: Admin Tools (Week 8)
-- [ ] Create simple admin interface (Firebase Console functions or web panel)
-  - View tournament winners
-  - View payment account details
-  - Update payment status (pending → completed)
-  - Manual payment processing workflow documentation
-- [ ] Test complete workflow (tournament → winner → payment details → manual payment)
+- [x] Implement local administrator CLI tools and trusted Firestore inspection (no separate web panel required)
+  - `tools/update-payment-status/update-payment-status.js <env> list`: list non-completed payments with winner user ID, tournament ID, amount, currency, and status; inspect `recipientInfo` on the payment in Firebase Console for account details
+  - Validated admin transitions through `processing`, `sent`, and `completed`; `sent` requires provider and reference; `action_required` requires issue code and user-facing message; `--dry-run` previews changes
+  - `tools/support-tickets/support-tickets.js <env> list --status open`: table of tickets, references, categories, payment IDs, and original user messages
+  - `reply` and `resolve` preserve administrator text, messages, status history, actor, and server timestamps; support updates notify the user
+  - Payment creation, recipient submissions, and admin changes are recorded under `payments/{id}/statusHistory`; tickets use `supportTickets/{id}/messages` and `statusHistory`
+  - Sort events by `changedAt`; recipient events also carry `recordedAt`. Current records have update/status timestamps; ticket replies and resolutions have their own timestamps. Existing missing history is not backfilled
+  - A support reply alone does not prove payout details were corrected: the current payment issue is cleared on corrected recipient submission, with the old issue preserved in history
+  - [x] Operator instructions: [payment CLI](../tools/update-payment-status/README.md) and [support CLI](../tools/support-tickets/README.md)
+- [x] Deploy backend dependencies to dev, test, and prod via `540-deploy-update-payment-status`, `550-deploy-on-tournament-complete`, and `580-deploy-support-tickets` (including Firestore rules/indexes)
+  - CLI scripts run locally and require no Firebase deployment
+- [x] Test complete workflow on dev (tournament → winner → payment details → simulated manual payment → `completed`, including correction/support handling)
 
 ### Phase 5: Testing & Compliance (Week 9-10)
-- [ ] End-to-end testing (core Variant 1 backend flow completed on `dev`; payout workflow remains)
+- [x] End-to-end dev workflow and manual payout simulation
   - [x] Tournament creation and registration
-  - Eligibility confirmation workflow
+  - [x] Eligibility confirmation workflow
   - [x] Scheduled tournament start and participant notification
   - [x] Match completion and ranking (three participants, full round-robin)
   - [x] Scheduled tournament end and `results` creation
-  - [x] Winner notification and pending `1,000 BDT` payment record
-  - Winner payment details collection
-  - Manual prize payment simulation
+  - [x] Winner notification and `awaiting_details` payment record using the configured award allocation
+  - [x] Shared first-place awards and each winner's allocated share
+  - [x] Winner payment details collection and submission to `ready_for_processing`
+  - [x] Manual prize payment simulation through `processing` → `sent` → `completed` (test provider and unique test references; no funds transferred)
+  - [x] `action_required` correction and resubmission, reminder behavior, support ticket creation/replies/resolution, and chronological payment/support history inspection
+- [ ] Real remittance and receipt confirmation with the payment provider (separate from the dev simulation)
 - [ ] Security audit
   - Payment account data encryption
   - API authentication
@@ -3482,7 +3488,7 @@ developer.
 **If using Remitly:**
 - **Send from**: Poland (PLN or EUR)
 - **Send to**: Bangladesh
-- **Amount to send**: Calculate equivalent of ৳2,000 BDT (approximately $18 USD)
+- **Amount to send**: Use the payment record's allocated `amount` and `currency`, allowing for provider fees separately
 - **Delivery speed**: Choose "Economy" (1-3 days, lower fees ~$0.50-$1.50)
 - **Delivery method**: Select "Mobile Money" or "Cash Pickup to Mobile Wallet"
 - **Service provider**: Select "bKash" or "Nagad" (based on winner's preference)
@@ -3491,7 +3497,7 @@ developer.
 
 **If using Wise:**
 - **You send**: Enter amount in PLN or EUR (your funding currency)
-- **Recipient gets**: ৳2,000 BDT
+- **Recipient gets**: The allocated amount and currency recorded in the payment
 - Wise will show exchange rate and fees
 - Verify total cost (should be ~$18-$19 USD equivalent)
 
@@ -3518,18 +3524,19 @@ developer.
 - Confirm transfer
 - **Save transaction ID** (e.g., "REMITLY-123456789" or "WISE-123456789")
 
-**Step 6: Update Firestore**
-```javascript
-// Update payment record in Firestore
-{
-  status: "processing", // Change from "pending" to "processing"
-  transferService: "remitly", // or "wise" or "western_union"
-  transactionId: "REMITLY-123456789",
-  transferFee: 0.85, // Actual fee (Remitly: ~$0.50-$1.50, Wise: ~$0.20-$0.40)
-  exchangeRate: 110.5, // Rate used
-  processedAt: new Date()
-}
+**Step 6: Record the sent transfer through the CLI**
+
+The payment must already be `processing` before recording the provider transfer.
+Use the actual target environment, payment ID, provider, and reference:
+
+```powershell
+node tools/update-payment-status/update-payment-status.js <env> <paymentId> processing
+# Initiate the transfer with the provider, then record its reference:
+node tools/update-payment-status/update-payment-status.js <env> <paymentId> sent --provider remitly --reference <providerReference>
 ```
+
+The tool writes `transfer.provider`, `transfer.providerReference`, `transfer.sentAt`,
+status/update timestamps, and an audit event. Do not replace it with a raw Firestore status edit.
 
 **Step 7: Monitor Transfer Status**
 - **If using Remitly**: Check Remitly dashboard or app for transfer status
@@ -3540,17 +3547,17 @@ developer.
   - You'll receive email when transfer completes
 
 **Step 8: Confirm Completion**
-- Once service confirms delivery, update Firestore:
-```javascript
-{
-  status: "completed",
-  completedAt: new Date()
-}
+- Once the provider confirms delivery, record completion:
+
+```powershell
+node tools/update-payment-status/update-payment-status.js <env> <paymentId> completed
 ```
+
+The tool records `transfer.completedAt` and the status history event using server timestamps.
 
 **Step 9: Winner Notification**
 - App automatically notifies winner when status changes to "completed"
-- Winner checks their bKash/Nagad/Rocket app and sees ৳2,000
+- Winner checks the supported wallet selected for this payment and verifies the allocated amount
 
 **Troubleshooting Common Issues:**
 
