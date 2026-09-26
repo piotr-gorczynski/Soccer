@@ -297,6 +297,7 @@ public class TournamentResultsActivity extends BaseActivity {
                 || "action_required".equals(paymentStatus);
         paymentMethodSpinner.setEnabled(editable);
         paymentAccountNumber.setEnabled(editable);
+        savePaymentDetailsButton.setEnabled(editable);
         savePaymentDetailsButton.setVisibility(editable ? View.VISIBLE : View.GONE);
         savePaymentDetailsButton.setOnClickListener(view -> savePaymentDetails());
         reportPaymentProblemButton.setOnClickListener(view -> showSupportDialog());
@@ -629,6 +630,8 @@ public class TournamentResultsActivity extends BaseActivity {
         update.put("recipientInfo", recipientInfo);
         update.put("status", "ready_for_processing");
         update.put("statusUpdatedAt", FieldValue.serverTimestamp());
+        update.put("updatedAt", FieldValue.serverTimestamp());
+        update.put("issue", FieldValue.delete());
 
         winnerPayment.getReference().update(update)
                 .addOnSuccessListener(unused -> {

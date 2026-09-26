@@ -86,6 +86,11 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     private boolean appInForeground;
     private Activity currentActivity;
     private boolean tournamentNotificationChecked = false;
+    private final PrizeReminderHelper prizeReminderHelper = new PrizeReminderHelper();
+
+    void checkPrizeReminderAfterWindowFocus(Activity activity) {
+        prizeReminderHelper.onWindowFocusGained(activity);
+    }
 
     /* Creates {state:"online", last_heartbeat:TS} */
     private static Map<String,Object> buildOnline() {
@@ -242,10 +247,12 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
             @Override
             public void onActivityResumed(@NonNull Activity activity) {
                 currentActivity = activity;
+                prizeReminderHelper.onResume(activity);
             }
 
             @Override
             public void onActivityPaused(@NonNull Activity activity) {
+                prizeReminderHelper.onPause(activity);
                 if (currentActivity == activity) {
                     currentActivity = null;
                 }
@@ -259,6 +266,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
 
             @Override
             public void onActivityDestroyed(@NonNull Activity activity) {
+                prizeReminderHelper.onPause(activity);
                 if (currentActivity == activity) {
                     currentActivity = null;
                 }
@@ -460,6 +468,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
 
         appInForeground = true;
         tournamentNotificationChecked = false;  // Reset flag when app returns to foreground
+        prizeReminderHelper.startSession();
 
         // Always apply the saved language when returning to the foreground
         checkLanguagePreference();

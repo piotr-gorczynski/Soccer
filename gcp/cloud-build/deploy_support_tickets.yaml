@@ -1,6 +1,7 @@
 substitutions:
   _ENVIRONMENT: 'dev'
   _FOLDER_NAME: 'soccer'
+  _FIREBASE_TOOLS_VERSION: '15.31.0'
 
 steps:
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
@@ -16,17 +17,18 @@ steps:
           | head -n 1 > /workspace/FIREBASE_PROJECT_ID.txt
         test -s /workspace/FIREBASE_PROJECT_ID.txt
 
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+  - name: 'node:22-slim'
     id: 'install-firebase-cli'
     entrypoint: bash
     args:
       - '-c'
       - |
         set -e
-        curl -sL https://firebase.tools | bash
+        # /workspace persists across steps; global npm installs do not.
+        npm install --prefix /workspace/firebase-cli --no-audit --no-fund firebase-tools@${_FIREBASE_TOOLS_VERSION}
         mkdir -p /workspace/firebase
-        cp /usr/local/bin/firebase /workspace/firebase/
-        chmod +x /workspace/firebase/firebase
+        node --version
+        /workspace/firebase-cli/node_modules/.bin/firebase --version
 
   - name: 'gcr.io/cloud-builders/git'
     id: 'pull-files'
@@ -58,7 +60,7 @@ steps:
         cd /workspace/firebase/functions/support-tickets
         npm install
 
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+  - name: 'node:22-slim'
     id: 'deploy-support-tickets'
     entrypoint: bash
     args:
@@ -67,10 +69,10 @@ steps:
         set -e
         cd /workspace/firebase
         project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
-        ./firebase deploy \
+        /workspace/firebase-cli/node_modules/.bin/firebase deploy \
           --only functions:support-tickets,firestore:rules,firestore:indexes \
           --project="$project_id" \
-          --force
+          --force --non-interactive --debug
 
 options:
   logging: CLOUD_LOGGING_ONLY

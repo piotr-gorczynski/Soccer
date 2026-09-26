@@ -4,7 +4,8 @@ const functions = require('firebase-functions/v1');
 const { getApps, initializeApp } = require('firebase-admin/app');
 const { FieldValue, getFirestore } = require('firebase-admin/firestore');
 const { getMessaging } = require('firebase-admin/messaging');
-const { VALID_STATUSES, NOTIFIABLE_STATUSES, assertTransition, validateTransitionData } = require('./payment-workflow');
+const { VALID_STATUSES, NOTIFIABLE_STATUSES, assertTransition, validateTransitionData,
+  buildAdminHistory, recordRecipientSubmission } = require('./payment-workflow');
 
 if (!getApps().length) initializeApp();
 const db = getFirestore();
@@ -70,14 +71,8 @@ async function updatePayment(paymentId, status, data, actor) {
     assertTransition(currentStatus, status);
     validateTransitionData(status, data);
     transaction.update(paymentRef, buildPaymentUpdate(status, data));
-    transaction.set(historyRef, {
-      from: currentStatus,
-      to: status,
-      changedAt: FieldValue.serverTimestamp(),
-      changedBy: actor,
-      source: 'updatePaymentStatus',
-      ...(data.issueCode ? { reasonCode: data.issueCode.trim() } : {}),
-    });
+    transaction.set(historyRef, buildAdminHistory(currentStatus, status, data, actor,
+      'updatePaymentStatus', FieldValue.serverTimestamp()));
     return { previousStatus: currentStatus };
   });
 }
@@ -105,11 +100,12 @@ exports.updatePaymentStatus = functions.https.onCall(async (data, context) => {
   }
 });
 
-exports.onPaymentStatusChanged = functions.firestore
+exports.onPaymentStatusChanged = functions.runWith({ failurePolicy: true }).firestore
   .document('payments/{paymentId}')
   .onUpdate(async (change, context) => {
     const before = change.before.data();
     const after = change.after.data();
+    await recordRecipientSubmission(db, change.after.ref, before, after, context.eventId, FieldValue);
     if (before.status === after.status || !NOTIFIABLE_STATUSES.has(after.status)) return null;
 
     const eventRef = change.after.ref.collection('notificationEvents').doc(context.eventId);

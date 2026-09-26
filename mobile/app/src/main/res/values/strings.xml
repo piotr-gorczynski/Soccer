@@ -464,4 +464,7 @@
     <string name="prize_unknown_tournament">Tournament prize</string>
     <string name="prize_rank">Place: %1$d</string>
     <string name="prize_list_status">Status: %1$s</string>
+    <string name="prize_reminder_title">You won a tournament prize!</string>
+    <string name="prize_reminder_message">Your prize is waiting. Enter your payout details so we can send your winnings.</string>
+    <string name="prize_reminder_open">Enter payout details</string>
 </resources>
