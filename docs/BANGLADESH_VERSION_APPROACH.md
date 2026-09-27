@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.37
+**Document Version:** 2.38
 **Last Updated:** 2026-09-27
 **Status:** Prize, payment, and support workflows implemented; simulated end-to-end flow tested on dev; Bangladesh launch work remains
 
 **Revision History**:
+- v2.38 (2026-09-27): Recorded the completed manual Bangladesh Email/Password authentication test on dev, including email verification, sign-in, and Firebase Authentication/Firestore checks. Other authentication tests remain pending.
 - v2.37 (2026-09-27): Made the installed-variant gameplay block symmetric. Both variants detect the other installed package and require removing Global; no country detection or migration promotion was restored.
 - v2.36 (2026-09-27): Final decision: abandon Global-app Bangladesh detection and automatic migration promotion, with no Settings/About or other replacement UI. Removed dormant promotion code, resources, analytics, and obsolete tests; retained app-variant tracking and the separate Bangladesh uninstall flow. Google Play country targeting remains the distribution control.
 - v2.35 (2026-09-27): Audited existing migration tracking and disabled promotion UI. Documented the lack of a supported per-account availability check for another Play listing, removed geographic-targeting proposals, and proposed a user-initiated 18+ store link. Automatic migration UI remains incomplete pending a product decision; application behavior is unchanged.
@@ -2845,7 +2846,14 @@ cd mobile
   - [ ] Test migrated user welcome flow
   - [ ] Validate Firebase Analytics tracking
 - [ ] **Authentication Testing**:
-  - [ ] Test Email/Password authentication in Bangladesh app
+  - [x] Test Email/Password authentication in Bangladesh app
+    - PASS (2026-09-27, dev): Manually tested the Bangladesh build end-to-end:
+      - Registered a new user using Email/Password.
+      - Received the Firebase email verification message from the soccer-dev project.
+      - Opened the verification link and received "Your email has been verified".
+      - Successfully signed in with the newly created credentials.
+      - Confirmed the user exists in Firebase Authentication with the Email/Password provider and a successful sign-in timestamp.
+      - Confirmed the Firestore user document was created/updated with `appVariant: "bangladesh"` and the Bangladesh entry under `appVariants`.
   - [ ] Test Google Sign-In in Bangladesh debug build
   - [ ] Test Google Sign-In in Bangladesh release build
   - [ ] Test Facebook Login in Bangladesh debug build
