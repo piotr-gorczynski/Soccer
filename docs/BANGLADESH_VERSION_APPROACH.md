@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.33
-**Last Updated:** 2026-09-26
+**Document Version:** 2.34
+**Last Updated:** 2026-09-27
 **Status:** Prize, payment, and support workflows implemented; simulated end-to-end flow tested on dev; Bangladesh launch work remains
 
 **Revision History**:
+- v2.34 (2026-09-27): Closed the Security audit assessment by project-owner acceptance. Service-account keys intentionally stored in the restricted private `Soccer-private` repository are accepted; broad IAM roles verified in dev, test, and prod are tracked as non-blocking least-privilege hardening, not launch-critical vulnerabilities. No code or IAM configuration changed.
 - v2.33 (2026-09-26): Reconciled implementation changes since 7 September: configuration-driven prizes and tie allocation, prize screens and foreground reminders, payment/support CLI tools, server-timestamped audit history, and completed dev payout/support simulations. Updated Phase 3–5 checklists and recorded deployment of payment, tournament-completion, support functions, and Firestore rules to dev, test, and prod. Real remittance, Bangladesh beta, and launch/compliance checks remain separate.
 - v2.32 (2026-09-19): Added the Bangladesh prize-payment lifecycle and administrator CLI. Payment status changes now use validated transitions and audit history; a Firestore trigger notifies the winner by FCM when processing starts, money is sent, delivery completes, details require correction, or a payout is cancelled. The winner UI displays the stored status and payment notifications open the tournament results screen.
 - v2.31 (2026-09-15): Implemented winner payout-details collection on the tournament results screen. Only the authenticated first-place winner with a server-created payment record sees the form; payout methods are loaded from the assigned regulation. bKash and Nagad require an 11-digit Bangladesh mobile number, while Rocket requires a 12-digit account number including its check digit; local and `+880` input formats are normalized. Firestore rules repeat the validation and restrict writes to the winner's pending payment and regulation-supported methods. Added localized UI text and validation feedback for every supported language.
@@ -3140,10 +3141,16 @@ cd mobile
   - [x] Manual prize payment simulation through `processing` → `sent` → `completed` (test provider and unique test references; no funds transferred)
   - [x] `action_required` correction and resubmission, reminder behavior, support ticket creation/replies/resolution, and chronological payment/support history inspection
 - [ ] Real remittance and receipt confirmation with the payment provider (separate from the dev simulation)
-- [ ] Security audit
-  - Payment account data encryption
-  - API authentication
-  - User data protection
+- [x] Security audit — assessment completed on 2026-09-27 with project-owner acceptance of the findings below
+  - Assessment topics: payment account data encryption, API authentication, and user data protection. Closure records the launch assessment and accepted findings; it does not assert that additional encryption or authentication tests were performed during the IAM review.
+  - IAM roles and deployed payment/support function identities were inspected in `soccer-dev-1744877837`, `soccer-test-1753740291`, and `soccer-prod-1754048346`.
+  - **Accepted key-storage arrangement:** `serviceAccountKey.dev.json`, `serviceAccountKey.test.json`, and `serviceAccountKey.prod.json` are intentionally committed to the private `Soccer-private` repository with restricted access. This is accepted by the project owner and is not an open security issue. The scan of reachable main-repository history found no service-account private keys.
+  - **Accepted launch assessment:** The broad IAM roles below are not considered launch-critical vulnerabilities. Security audit completion does not mean these roles have already been narrowed.
+- [ ] **Non-blocking follow-up: least-privilege IAM hardening** across dev, test, and prod
+  - Runtime: `onTournamentComplete`, `updatePaymentStatus`, `onPaymentStatusChanged`, `createSupportTicket`, and `onSupportTicketUpdated` share `<project-id>@appspot.gserviceaccount.com`, with project-level `roles/firebase.admin` and `roles/firebaseauth.admin`. Evaluate dedicated payment/support identities and narrower roles while preserving other functions that use the shared account.
+  - Local administration: `firebase-adminsdk-fbsvc@<project-id>.iam.gserviceaccount.com` has project-level `roles/iam.serviceAccountTokenCreator` and `roles/serviceusage.apiKeysAdmin` beyond payment/support needs. Review separation of CLI duties and narrow grants where appropriate.
+  - Deployment: `cloud-build-sa@org-service-account-001.iam.gserviceaccount.com` has `roles/owner` and `roles/editor` in all three projects. Review replacement with the permissions needed by the deployment workflows.
+  - Track and validate these changes separately; they do not block the Bangladesh launch. This assessment update changes documentation only.
 - [x] Legal compliance verification
   - Game assumptions validated with ChatGPT legal consultation
   - Terms of Service update
