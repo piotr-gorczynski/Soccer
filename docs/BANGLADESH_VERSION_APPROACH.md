@@ -1,10 +1,12 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.34
+**Document Version:** 2.36
 **Last Updated:** 2026-09-27
 **Status:** Prize, payment, and support workflows implemented; simulated end-to-end flow tested on dev; Bangladesh launch work remains
 
 **Revision History**:
+- v2.36 (2026-09-27): Final decision: abandon Global-app Bangladesh detection and automatic migration promotion, with no Settings/About or other replacement UI. Removed dormant promotion code, resources, analytics, and obsolete tests; retained app-variant tracking and the separate Bangladesh uninstall flow. Google Play country targeting remains the distribution control.
+- v2.35 (2026-09-27): Audited existing migration tracking and disabled promotion UI. Documented the lack of a supported per-account availability check for another Play listing, removed geographic-targeting proposals, and proposed a user-initiated 18+ store link. Automatic migration UI remains incomplete pending a product decision; application behavior is unchanged.
 - v2.34 (2026-09-27): Closed the Security audit assessment by project-owner acceptance. Service-account keys intentionally stored in the restricted private `Soccer-private` repository are accepted; broad IAM roles verified in dev, test, and prod are tracked as non-blocking least-privilege hardening, not launch-critical vulnerabilities. No code or IAM configuration changed.
 - v2.33 (2026-09-26): Reconciled implementation changes since 7 September: configuration-driven prizes and tie allocation, prize screens and foreground reminders, payment/support CLI tools, server-timestamped audit history, and completed dev payout/support simulations. Updated Phase 3–5 checklists and recorded deployment of payment, tournament-completion, support functions, and Firestore rules to dev, test, and prod. Real remittance, Bangladesh beta, and launch/compliance checks remain separate.
 - v2.32 (2026-09-19): Added the Bangladesh prize-payment lifecycle and administrator CLI. Payment status changes now use validated transitions and audit history; a Firestore trigger notifies the winner by FCM when processing starts, money is sent, delivery completes, details require correction, or a payout is cancelled. The winner UI displays the stored status and payment notifications open the tournament results screen.
@@ -1044,19 +1046,14 @@ Google Play Store (Bangladesh region)
 
 #### For Existing Users (13-17) Who Installed Global Version
 
-**Scenario**: Teen user (age 15) has global version installed, sees promotion for Bangladesh version
+**Scenario**: Teen user (age 15) independently finds the Bangladesh version on Google Play
 
 **What happens**:
-1. User sees in-app banner: "Install Bangladesh version for cash prizes!"
-2. User clicks banner → Redirected to Google Play
-3. **Google Play blocks installation**:
-   ```
-   "Gridline Soccer Bangladesh is rated 18+ and is not appropriate for your age."
-   [Cannot Install]
-   ```
-4. User continues using global version with regular tournaments
+1. The user independently opens Google Play; the Global app shows no migration prompt.
+2. Google Play determines whether the listing can be viewed or installed for that account.
+3. The user can continue using the Global version regardless of Bangladesh availability.
 
-**Important**: This is **automatic** and handled by Google Play. You don't need to implement age checks in the promotion logic.
+**Important**: Google Play handles its account restrictions; there is no Global migration-promotion logic.
 
 ---
 
@@ -1119,10 +1116,9 @@ Google Play Store (Bangladesh region)
 
 The age rating difference **DOES affect** the migration strategy outlined in `BANGLADESH_VERSION_APPROACH.md`:
 
-##### Original Migration Plan
-- Show in-app banner to all Bangladesh users in global app
-- Direct them to install Bangladesh version
-- Target: 30% migration in Month 1 (224 users out of 746)
+##### Original Migration Plan (superseded)
+The proposed Global-app banner and country detection were abandoned. Historical conversion targets
+below are estimates only and do not imply a remaining Global UI task.
 
 ##### Adjusted Plan (Accounting for Age Restrictions)
 
@@ -1145,105 +1141,12 @@ From 746 current Bangladesh users:
 - **Month 1 target**: 30% of eligible = **112 users**
 - **Month 6 target**: 60% of eligible = **224 users**
 
-**Step 3: Age-Aware Promotion Strategy**
+**Step 3: Distribution and age information**
 
-**In-App Banner Logic**:
-```kotlin
-// In global app (piotr_gorczynski.soccer2)
-fun shouldShowBDPromotion(): Boolean {
-    // Show to Bangladesh users only
-    if (userRegion != "BD") return false
-    
-    // Show to all users - Google Play will enforce age restriction
-    // We don't need to check age in-app
-    return !hasUserDismissedPromo()
-}
-```
-
-**Banner Message** (age-neutral):
-```
-🎉 NEW: Gridline Soccer Bangladesh!
-
-Win ৳2,000 cash prizes in skill-based tournaments!
-
-✅ Free entry, no payment required
-✅ Same account, all your data preserved
-✅ For players 18 and above
-
-[Install Now]  [Learn More]  [Maybe Later]
-
-Note: You must be 18+ to participate in cash prize tournaments.
-Google Play will verify your age.
-```
-
-**Key Points**:
-- **Don't hide banner from young users**: They need to know about the requirement
-- **Let Google Play enforce**: Google will block installation if user is under 18
-- **Clear messaging**: Banner mentions "18 and above" requirement
-- **No false hopes**: User understands why they might not be able to install
-
-##### What Happens to Users Under 18?
-
-**Scenario**: 13-17 year old user sees banner and clicks "Install Now"
-
-1. User redirected to Google Play Store
-2. Google Play shows Gridline Soccer Bangladesh listing
-3. **Google Play displays age restriction message**
-4. User cannot install the app
-5. User returns to global app and continues playing
-
-**User experience**:
-- Clear why they can't install (age restriction)
-- Can still enjoy global version
-- Will be able to install when they turn 18 (if still interested)
-
-**No negative impact**: Users understand age restrictions (common in gaming)
-
----
-
-### Legal & Compliance Considerations
-
-#### Bangladesh Gaming Law Compliance
-
-**Age Requirement**: Bangladesh skill-based gaming laws require participants to be 18+
-
-**Compliance Approach**:
-1. **Google Play age rating**: 18+ (primary enforcement)
-2. **In-app confirmation**: User self-declaration checkbox
-3. **Terms of Service**: Clear 18+ requirement
-4. **Payment verification**: Age verification at payout (optional)
-
-**Multi-Layer Verification**:
-```
-Layer 1: Google Play Store age restriction (automatic)
-    ↓
-Layer 2: In-app eligibility confirmation (user declares 18+)
-    ↓
-Layer 3: Payment account verification (bKash/Nagad requires 18+)
-    ↓
-Layer 4: Developer can verify at payout if needed
-```
-
-This approach provides **robust age verification** while minimizing user friction.
-
----
-
-#### Google Play Policy Compliance
-
-**Real Money Gaming Policy**: Google Play allows real money gaming apps if:
-- ✅ Properly age-rated (18+ for cash prizes)
-- ✅ Comply with local laws
-- ✅ Clear disclosure of terms
-- ✅ No deceptive practices
-
-**Your App Complies**:
-- ✅ Age-rated 18+
-- ✅ Skill-based (not gambling)
-- ✅ Free entry (no purchase required)
-- ✅ Clear terms and disclosure
-- ✅ Developer-funded prizes
-
-**Potential Policy Concerns**: None identified. Your approach is compliant.
+Global-app promotion has been dropped; there is no country-targeted banner or install prompt.
+The Bangladesh listing and app must explain the 18+ requirement. Google Play country targeting
+controls distribution, and the Bangladesh tournament flow retains its eligibility confirmation.
+The Global app does not infer the user's country or installation eligibility.
 
 ---
 
@@ -1253,39 +1156,8 @@ This approach provides **robust age verification** while minimizing user frictio
 
 ##### In Global Version (`piotr_gorczynski.soccer2`)
 
-**Add Age-Aware Messaging**:
-```kotlin
-// When showing Bangladesh promotion
-fun getBDPromotionMessage(): String {
-    return """
-    🎉 NEW: Gridline Soccer Bangladesh!
-    
-    Win ৳2,000 cash prizes in skill-based tournaments!
-    
-    ✅ Free entry, no payment required
-    ✅ Same account, all your data preserved
-    ✅ Bi-monthly cash prize tournaments
-    
-    ⚠️ REQUIREMENT: You must be 18 years or older to participate
-    in cash prize tournaments as required by Bangladesh law.
-    
-    [Install Bangladesh Version]  [Learn More]  [Maybe Later]
-    """.trimIndent()
-}
-```
-
-**Log Analytics**:
-```kotlin
-// Track banner clicks (regardless of age)
-analytics.logEvent("bd_promotion_clicked", mapOf(
-    "user_id" to userId,
-    "user_region" to "BD",
-    "timestamp" to System.currentTimeMillis()
-))
-
-// Google Play will handle age restriction
-// No need to track install success here
-```
+The Global app contains no Bangladesh migration promotion or replacement Settings/About entry.
+Shared variant tracking continues independently of promotion.
 
 ##### In Bangladesh Version (`piotr_gorczynski.soccer2.bd`)
 
@@ -1389,7 +1261,7 @@ Your multi-layer approach provides adequate protection.
 - "18+ only, compete for ৳2,000 prizes"
 - "Skill-based tournaments for Bangladesh players"
 
-**In-app cross-promotion**: Only show Bangladesh promotion to users in Bangladesh region. Make age requirement clear in every promotion.
+**In-app cross-promotion**: Dropped entirely; no Global-app country detection or migration UI.
 
 ---
 
@@ -1426,7 +1298,7 @@ Your multi-layer approach provides adequate protection.
 - Google Play doesn't provide age information to apps
 - Age verification is handled by Google Play at install time
 
-**Alternative**: Show promotion to all Bangladesh users. Google Play will allow installation when they turn 18.
+**Decision**: No Global migration prompt or age-triggered migration. Users independently access the Play listing, where Google Play determines eligibility.
 
 ---
 
@@ -1438,16 +1310,11 @@ Your multi-layer approach provides adequate protection.
 - Can measure migration from global to Bangladesh version
 - Can segment analytics by app version
 
-**Recommended analytics events**:
-```kotlin
-// In global app
-analytics.logEvent("bd_promotion_shown", mapOf("user_region" to "BD"))
-
-// In Bangladesh app
-analytics.logEvent("bd_app_launched", mapOf("user_age_verified" to true))
-```
+Use the existing `trackAppVariant` metadata for same-UID variant usage. Promotion impression/click
+events were removed with the abandoned UI; do not infer age verification or location from app usage.
 
 ---
+
 
 #### Q10: What about users who have both apps installed?
 
@@ -1719,56 +1586,39 @@ recorded under `tournaments/{tournamentId}/participants/{userId}` for every cash
 
 ### Migration Approaches & Recommendation
 
-#### Option 1: In-App Notification with Deep Link (Recommended)
+#### Final Decision: No Global-App Migration UI
 
-**Description**: Show a prominent notification in the existing `piotr_gorczynski.soccer2` app for Bangladesh users, directing them to install the new Bangladesh version.
+**Intentionally not implemented; removed from scope (27 September 2026).** The Global flavor has
+no reliable, supported mechanism to determine that the current Google Play account is a Bangladesh
+user or that `piotr_gorczynski.soccer2.bd` is available to that account. SIM/network country, locale,
+IP/GPS, and timezone are not reliable indicators of Google Play country and must not be used as proxies.
 
-**Implementation**:
+There will be no automatic migration prompt, country detection, Settings/About entry, or other
+replacement migration UI in Global. This is a final scope decision, not a pending implementation
+or a feature flag to enable at launch. **Google Play production country targeting** controls `.bd`
+availability; Google Play evaluates the account's viewing/installation eligibility.
 
-1. **Detect Bangladesh Users** (in existing global app):
-   - Check device region/locale
-   - Check Google Play Store country from Firebase
-   - Identify users who primarily play in Bangladesh timezone
+The API review found no suitable per-account availability check: Android intent resolution only
+finds a link handler; Play in-app updates apply to the current app; publisher country availability
+reports track configuration rather than consumer eligibility. Play Billing country data cannot be
+used for marketing targeting. References: [Android intent resolution](https://developer.android.com/reference/android/content/pm/PackageManager),
+[Play in-app updates](https://developer.android.com/reference/com/google/android/play/core/appupdate/AppUpdateManager),
+[publisher country availability](https://developers.google.com/android-publisher/api-ref/rest/v3/edits.countryavailability/get),
+and [Billing configuration restrictions](https://developer.android.com/google/play/billing/integrate#query-billing-config).
 
-2. **Show In-App Banner** (one-time or recurring):
-   ```
-   🎉 NEW: Win Cash Prizes in Bangladesh!
-   
-   We've launched a special version of Gridline Soccer for Bangladesh 
-   with bi-monthly cash prize tournaments!
-   
-   • Win ৳2,000 for 1st place
-   • Free entry, skill-based competition
-   • Same account, all your data preserved
-   
-   [Install Bangladesh Version] [Learn More] [Dismiss]
-   ```
+**Cleanup:** Removed the dormant promotion check and dialog from `MenuActivity`; removed the
+promotion flag, geographic detection, Play link, and `bd_promo_*` preference handling from
+`BangladeshMigrationHelper`; removed promotion-only analytics, strings in all 20 resource sets,
+and tests for the abandoned behavior. Old preference values, if present on a device, are inert.
 
-3. **Deep Link to Google Play**:
-   ```kotlin
-   // In existing app (piotr_gorczynski.soccer2)
-   val playStoreUrl = "https://play.google.com/store/apps/details?id=piotr_gorczynski.soccer2.bd"
-   val intent = Intent(Intent.ACTION_VIEW, Uri.parse(playStoreUrl))
-   startActivity(intent)
-   ```
+**Retained functionality:** `SoccerApp.trackAppVariant()` and the authenticated backend continue
+to record variant usage and same-UID migration metadata. They do not infer country or Play
+eligibility. The helper's existing Bangladesh-only Global-app uninstall functions and their tests
+remain separate and unchanged. No replacement migration mechanism was introduced.
 
-**Pros**:
-- Direct communication with existing users through in-app UI
-- Clear call-to-action
-- Preserves user data automatically (shared Firebase backend)
-- Users can keep both apps or uninstall the old one
-- No forced migration
-- Works for all users regardless of account registration status
-
-**Cons**:
-- Requires update to existing app to add notification logic
-- Users must take action (install new app)
-- Some users may ignore the banner
-- Only reaches users who actively use the app
-
-**Note**: Push notifications via FCM are not viable since most Bangladesh users don't have registered accounts and thus no FCM tokens available.
-
----
+**Cleanup verification:** `_devGlobalDebug` and `_devBangladeshDebug` assemble successfully;
+the retained `BangladeshMigrationHelperTest` suite passes. Source checks confirm removal of
+automatic-promotion calls, resources, and country-detection methods. No device UI test was performed.
 
 #### Option 2: Google Play Store Cross-Promotion
 
@@ -1803,90 +1653,13 @@ recorded under `tournaments/{tournamentId}/participants/{userId}` for every cash
 
 ---
 
-#### Option 3: Gradual Sunset of Global App in Bangladesh
+### Migration Scope
 
-**Description**: Gradually phase out the global app for Bangladesh users while promoting the new version.
-
-**Implementation**:
-
-**Phase 1: Soft Promotion (Months 1-2)**
-- Add in-app banners promoting BD version
-- Keep global app fully functional
-
-**Phase 2: Feature Gating (Months 3-4)**
-- Disable new tournament creation in global app for BD users
-- Show message: "Create tournaments in Bangladesh version for cash prizes"
-- Existing functionality still works
-
-**Phase 3: Full Migration (Month 5+)**
-- Show full-screen migration prompt in global app for BD users
-- Require BD users to switch to new app for tournaments
-- Maintain read-only access to old app
-
-**Pros**:
-- Ensures complete migration over time
-- Gives users time to adapt
-- Clear migration timeline
-
-**Cons**:
-- More complex implementation
-- Risk of user frustration
-- May violate Play Store policies if too aggressive
-
----
-
-### Recommended Migration Strategy
-
-**Best Approach: Combination of Option 1 + Option 2**
-
-**Phase 1: Immediate Actions (Week 1-2)**
-
-1. **Launch BD Version on Play Store**
-   - Publish `piotr_gorczynski.soccer2.bd`
-   - Clear app description highlighting cash prizes
-   - Screenshots showing prize tournaments
-   - Localized Bengali description
-
-2. **Update Global App** (piotr_gorczynski.soccer2):
-   ```kotlin
-   // Add to global app codebase
-   if (userRegion == "BD" && !hasSeenBDPromo) {
-       showBangladeshVersionPromotionDialog()
-   }
-   ```
-
-**Phase 2: Ongoing Promotion (Week 3-8)**
-
-1. **In-App Banners**:
-   - Show banner on main menu for BD users in global app
-   - Allow dismissal but show again after 7 days
-   - Track banner impressions and clicks
-
-2. **Play Store Optimization**:
-   - Add "Bangladesh" to global app keywords
-   - Link to BD version in "What's New" section
-   - Use custom Play Store listing experiments
-
-3. **Social Media & Community**:
-   - Announce on any existing social media channels
-   - Encourage users to share in Bangladesh gaming communities
-   - Create viral content about prize winners
-
-**Phase 3: Incentivized Migration (Month 2-3)**
-
-1. **First-Mover Advantage**:
-   - Offer bonus entry into special tournament for early adopters
-   - "Install by [date] to get entry into ৳5,000 inaugural tournament"
-
-2. **Referral Program**:
-   - Users who refer friends to BD version get bonus entries
-   - Track referrals via Firebase Dynamic Links
-
-3. **Email Campaign** (if you have email addresses):
-   - Direct email to Bangladesh users
-   - Personalized message about cash prizes
-
----
+Users may discover the Bangladesh app through Google Play and independently choose to install it.
+No Global-app promotion, geographic targeting, feature gating, forced-migration campaign, or
+replacement entry is planned. The preceding Play Store marketing ideas are outside the Global UI;
+this cleanup does not implement a new discovery mechanism. Shared account/data continuity and
+existing server-managed app-variant tracking remain in place.
 
 ### Data Migration & Continuity
 
@@ -1955,7 +1728,7 @@ recorded under `tournaments/{tournamentId}/participants/{userId}` for every cash
 
 **Scenario 3: User only wants global app**
 - Completely fine, no forced migration
-- User can dismiss BD promotion banner
+- No Global-app migration prompt is shown
 - Global functionality unchanged
 
 ---
@@ -1968,38 +1741,10 @@ recorded under `tournaments/{tournamentId}/participants/{userId}` for every cash
 - **Month 3**: 50-60% of users (373-448 installs)
 - **Month 6**: 60-70% of users (448-522 installs)
 
-**Tracking Metrics**:
-
-```javascript
-// Firebase Analytics Events
-
-// In global app
-logEvent("bd_promotion_shown", {
-  user_id: userId,
-  region: "BD",
-  timestamp: Date.now()
-});
-
-logEvent("bd_promotion_clicked", {
-  user_id: userId,
-  destination: "play_store",
-  timestamp: Date.now()
-});
-
-// In Bangladesh app
-logEvent("bd_app_first_launch", {
-  user_id: userId,
-  migrated_from_global: true, // Check if user exists in Firestore
-  timestamp: Date.now()
-});
-
-logEvent("bd_eligibility_confirmed", {
-  user_id: userId,
-  age_confirmed: true,
-  payment_method: "bkash",
-  timestamp: Date.now()
-});
-```
+**Tracking Metrics**: Use existing server-managed `appVariants` and `migrationStatus` for users
+who sign into both apps with the same Firebase UID. There are no Global promotion impression/click
+events. Historical conversion targets above are planning estimates, not identifiable cohorts based
+on an in-app Google Play country check.
 
 **Success Indicators**:
 1. **Install Rate**: % of global app BD users who install BD app
@@ -2099,81 +1844,19 @@ Download now and start competing for real prizes!
 
 #### Global App Updates (piotr_gorczynski.soccer2)
 
-- [ ] Add Bangladesh user detection logic
-  ```kotlin
-  fun isBangladeshUser(): Boolean {
-      val locale = Locale.getDefault()
-      val playStoreCountry = getPlayStoreCountry() // From Firebase Config
-      return locale.country == "BD" || playStoreCountry == "BD"
-  }
-  ```
+- **Removed from scope:** Global Bangladesh-user detection and automatic migration prompt; intentionally not implemented because reliable country/Play-availability detection is unavailable.
+- [x] Remove dormant automatic-promotion code, localized strings, preference handling, analytics, and obsolete tests
+- No Settings/About entry, replacement banner, or other migration UI is planned.
+- Google Play country targeting remains the control for production `.bd` availability.
 
-- [ ] Create promotion banner UI component
-  ```kotlin
-  class BangladeshPromotionBanner : Fragment() {
-      fun showPromotion() {
-          // Show banner with "Install Bangladesh Version" CTA
-      }
-      
-      fun onInstallClicked() {
-          openPlayStore("piotr_gorczynski.soccer2.bd")
-          logAnalyticsEvent("bd_promotion_clicked")
-      }
-  }
-  ```
-
-- [ ] Implement banner dismissal tracking
-  ```kotlin
-  SharedPreferences.edit {
-      putBoolean("bd_promo_dismissed", true)
-      putLong("bd_promo_dismissed_time", System.currentTimeMillis())
-  }
-  ```
 
 #### Bangladesh App Development (piotr_gorczynski.soccer2.bd)
 
-- [ ] Use shared google-services.json
-  ```bash
-  # File location: secrets/google-services.{env}.json
-  # This file contains client configurations for both package IDs:
-  # - piotr_gorczynski.soccer2 (global)
-  # - piotr_gorczynski.soccer2.bd (bangladesh)
-  ```
-
-- [ ] Detect migrated users on first launch
-  ```kotlin
-  suspend fun detectMigratedUser(): Boolean {
-      val currentUser = FirebaseAuth.getInstance().currentUser ?: return false
-      val userDoc = firestore.collection("users").document(currentUser.uid).get().await()
-      return userDoc.exists() && userDoc.data?.get("region") != "BD"
-  }
-  ```
-
-- [ ] Show migration welcome message
-  ```kotlin
-  if (isMigratedUser) {
-      showWelcomeDialog(
-          title = "Welcome to Gridline Soccer Bangladesh!",
-          message = "All your data has been preserved. Confirm your eligibility to start playing for cash prizes!"
-      )
-  }
-  ```
-
-- [ ] Update user document with BD region
-  ```kotlin
-  suspend fun updateUserRegion(userId: String) {
-      firestore.collection("users").document(userId).update(
-          mapOf(
-              "region" to "BD",
-              "appVariant" to "bangladesh",
-              "migrationStatus" to mapOf(
-                  "migratedFromGlobal" to true,
-                  "migrationDate" to FieldValue.serverTimestamp()
-              )
-          )
-      )
-  }
-  ```
+- [x] Shared environment-specific Google Services configuration contains both package IDs
+- [x] Authenticated app-variant tracking and same-UID migration detection implemented through `trackAppVariant`
+- [ ] Add a migrated-user welcome flow if required, based on existing server-managed migration metadata
+- Do not infer migration from a user region field or write `appVariant`/`migrationStatus` directly from the client.
+- Keep Bangladesh's existing uninstall-global flow separate from the Global promotion; it is not an availability check.
 
 #### Firebase Backend Configuration
 
@@ -2202,10 +1885,9 @@ Download now and start competing for real prizes!
 
 ### Cost & Resource Implications
 
-**Additional Costs for Migration**:
+**Additional Costs for Migration** (historical estimates; Global promotion UI has been removed from scope and totals need re-estimation):
 
 1. **Development Time**:
-   - Global app update (promotion banner): 8-16 hours
    - Firebase configuration (dual app setup): 4-8 hours
    - Testing migration flow: 8-12 hours
    - **Total: 20-36 hours (~$1,000-$1,800)**
@@ -2228,13 +1910,11 @@ Download now and start competing for real prizes!
 ### Timeline for Migration
 
 **Week 1-2: Development**
-- Update global app with promotion banner
 - Configure Bangladesh app in Firebase
 - Test cross-app authentication
 
 **Week 3: Launch**
 - Publish Bangladesh app to Play Store
-- Update global app with promotion banner
 - Monitor initial user response
 
 **Week 4-8: Active Promotion**
@@ -3011,7 +2691,7 @@ cd mobile
 - [x] Create product flavor for Bangladesh variant
 - [ ] **Migration Planning**:
   - [x] Define user migration strategy and communication plan (see [USER_MIGRATION_STRATEGY.md](USER_MIGRATION_STRATEGY.md))
-  - [ ] Prepare promotional materials (banners, notifications, Play Store assets)
+  - [ ] Prepare external promotional materials and Play Store assets (no Global-app UI)
   - [x] Design Firebase dual-app configuration (shared authentication)
 
 ### Phase 2: Backend Development (Week 3-4)
@@ -3105,14 +2785,13 @@ cd mobile
   - [x] Reminder for `awaiting_details` and `action_required`, at most once per signed-in user per app launch/foreground session, deferred until an eligible screen can display it
   - [x] Support ticket submission and display of support replies; correction form remains editable for `action_required`
 - [x] Add Bengali translations for eligibility and winner payment-detail features
-- [ ] **Migration UI Development**:
-  - [ ] Add Bangladesh user detection in global app
-  - [ ] Create promotion banner component for global app
-  - [ ] Implement Play Store deep linking from global to BD app
-  - [ ] Add banner dismissal and tracking logic
-  - [ ] Create migrated user welcome flow in BD app
-  - [ ] Implement auto-detection of existing users in BD app
-  - [ ] Add Firebase Analytics events for migration tracking
+- **Migration UI Development — intentionally dropped (final decision, 2026-09-27)**
+  - Global Bangladesh-user detection and automatic promotion are not remaining TODOs: supported APIs cannot reliably identify the account's Play country or `.bd` availability.
+  - No SIM/network/locale/IP/GPS inference, Settings/About entry, or replacement migration UI.
+  - [x] Remove dormant promotion/detection code and related resources, analytics, and obsolete tests
+  - Existing `trackAppVariant` and same-UID migration metadata remain; these track usage, not country or availability.
+  - Google Play country targeting continues to control production Bangladesh distribution.
+
 
 ### Phase 4: Admin Tools (Week 8)
 - [x] Implement local administrator CLI tools and trusted Firestore inspection (no separate web panel required)
@@ -3159,8 +2838,6 @@ cd mobile
 - [ ] **Migration Testing**:
   - [ ] Test cross-app authentication (same user in both apps)
   - [ ] Verify data sync between global and BD apps
-  - [ ] Test promotion banner in global app
-  - [ ] Verify Play Store deep linking
   - [ ] Test migrated user welcome flow
   - [ ] Validate Firebase Analytics tracking
 - [ ] **Authentication Testing**:
@@ -3183,7 +2860,7 @@ cd mobile
 - [ ] Establish prize fund reserve (৳4,000/month for bi-monthly tournaments)
 - [ ] Create operational runbook
 - [ ] **Migration Campaign Preparation**:
-  - [ ] Finalize promotional banner designs (English + Bengali)
+  - [ ] Finalize external marketing assets (English + Bengali; no Global-app banners)
   - [ ] Prepare social media announcements
   - [ ] Create migration FAQ and support documentation
   - [ ] Design Play Store listing with clear migration benefits
@@ -3195,15 +2872,12 @@ cd mobile
 - [ ] Gather user feedback
 - [ ] Fix critical issues
 - [ ] **Initial Migration Campaign**:
-  - [ ] Deploy updated global app with promotion banner
   - [ ] Monitor installation metrics (target: 75-112 installs in Week 1)
-  - [ ] Track banner impressions and click-through rates
   - [ ] Respond to user questions about migration
   - [ ] Adjust messaging based on early feedback
   - [ ] Update Play Store listing based on user feedback
 
 ### Phase 8: Full Launch & Ongoing Migration (Week 15+)
-> ⚠️ **REMINDER**: Before or at launch, release a new global app version with the promo flag set to **TRUE** so the promotion banner is displayed to global users (see #1240).
 
 - [ ] Public launch in Bangladesh Google Play Store
 - [ ] Marketing campaign
@@ -3212,10 +2886,8 @@ cd mobile
 - [ ] Iterate based on feedback
 - [ ] **Ongoing Migration Activities**:
   - [ ] Monitor migration conversion rates (target: 30% Month 1, 60% Month 6)
-  - [ ] A/B test different promotion messages in banner
   - [ ] Engage with user community in Bangladesh
   - [ ] Share success stories from prize winners
-  - [ ] Periodic promotion banner refresh in global app
   - [ ] Track migration success metrics and adjust strategy
   - [ ] Continue Play Store optimization and keyword updates
 
@@ -3272,7 +2944,6 @@ cd mobile
   - No document upload/verification system
   - Simplified user flow
 - **Migration development**: 20-36 hours (~$1,000-$1,800)
-  - Global app promotion banner
   - Firebase dual-app configuration
   - Migration tracking and analytics
 - **Authentication integration setup**: 5-8 hours (~$250-$400)
@@ -3690,7 +3361,7 @@ This approach document provides a simplified, cost-effective framework for launc
 - **Target conversion**: 30% (224 users) in Month 1, 60% (448 users) by Month 6
 - **Shared Firebase**: Same authentication and database for seamless transition
 - **No separate keys needed**: Same Firebase project, different app registrations
-- **Multi-channel promotion**: In-app banners, Play Store optimization, social media
+- **External discovery**: Google Play listing and external marketing; no Global-app migration UI
 - **User-friendly approach**: Optional migration, data preservation, clear incentives
 - **Note**: Push notifications not viable as most users don't have registered accounts
 
