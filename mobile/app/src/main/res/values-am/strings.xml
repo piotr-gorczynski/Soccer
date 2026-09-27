@@ -392,4 +392,6 @@
     <string name="payment_details_save_failed">የክፍያ ዝርዝሮችን ማስቀመጥ አልተቻለም። እንደገና ይሞክሩ።</string>
     <string name="payment_account_number_error_mobile">በ01 የሚጀምር 11 አሃዝ የባንግላዴሽ ሞባይል ቁጥር (ወይም +880) ያስገቡ።</string>
     <string name="payment_account_number_error_rocket">በ01 የሚጀምር 12 አሃዝ የRocket መለያ ቁጥር፣ የማረጋገጫ አሃዙን ጨምሮ (ወይም +880) ያስገቡ።</string>
+    <string name="bangladesh_installed_title">Gridline Soccer Bangladesh አስቀድሞ ተጭኗል</string>
+    <string name="bangladesh_installed_message">ሁለቱንም የGridline Soccer ስሪቶች በአንድ መሣሪያ ላይ መጠቀም አይችሉም።\n\nየBangladesh ስሪትን መጠቀም ለመቀጠል፣ እባክዎ ይህን የGlobal ስሪት ያራግፉ።</string>
 </resources>

@@ -466,4 +466,6 @@
     <string name="prize_reminder_title">আপনি টুর্নামেন্টে পুরস্কার জিতেছেন!</string>
     <string name="prize_reminder_message">আপনার পুরস্কার অপেক্ষা করছে। পুরস্কারের টাকা পাঠানোর জন্য পেমেন্টের তথ্য পূরণ করুন।</string>
     <string name="prize_reminder_open">পেমেন্টের তথ্য পূরণ করুন</string>
+    <string name="bangladesh_installed_title">Gridline Soccer Bangladesh ইতিমধ্যে ইনস্টল করা আছে</string>
+    <string name="bangladesh_installed_message">একই ডিভাইসে Gridline Soccer-এর দুটি সংস্করণ ব্যবহার করা যাবে না।\n\nBangladesh সংস্করণ ব্যবহার চালিয়ে যেতে এই Global সংস্করণটি আনইনস্টল করুন।</string>
 </resources>

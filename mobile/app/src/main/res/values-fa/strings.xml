@@ -373,4 +373,6 @@
     <string name="payment_details_save_failed">اطلاعات پرداخت ذخیره نشد. دوباره تلاش کنید.</string>
     <string name="payment_account_number_error_mobile">یک شماره موبایل ۱۱ رقمی بنگلادش با شروع 01 (یا +880) وارد کنید.</string>
     <string name="payment_account_number_error_rocket">شماره حساب ۱۲ رقمی Rocket را با شروع 01 و شامل رقم کنترل (یا +880) وارد کنید.</string>
+    <string name="bangladesh_installed_title">Gridline Soccer Bangladesh از قبل نصب شده است</string>
+    <string name="bangladesh_installed_message">نمی‌توانید از هر دو نسخه Gridline Soccer روی یک دستگاه استفاده کنید.\n\nبرای ادامه استفاده از نسخه Bangladesh، لطفاً این نسخه Global را حذف کنید.</string>
 </resources>

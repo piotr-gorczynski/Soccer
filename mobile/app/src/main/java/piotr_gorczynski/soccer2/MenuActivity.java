@@ -559,6 +559,11 @@ public class MenuActivity extends BaseActivity {
             return;
         }
 
+        if (BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(this)) {
+            checkAndShowUninstallGlobalPrompt();
+            return;
+        }
+
         // Check backend availability when activity resumes - this will trigger authentication logic when done
         checkBackendAvailabilityAndContinue();
 
@@ -569,6 +574,10 @@ public class MenuActivity extends BaseActivity {
     @Override
     protected void onPostResume() {
         super.onPostResume();
+        if (BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(this)) {
+            checkAndShowUninstallGlobalPrompt();
+            return;
+        }
         if (!hasAdsConsent()) {
             ((SoccerApp) getApplication()).requestConsent(this);
         }
@@ -610,6 +619,10 @@ public class MenuActivity extends BaseActivity {
      */
     @SuppressLint("ApplySharedPref")
     private void continueOnResumeAfterBackendCheck() {
+        if (BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(this)) {
+            checkAndShowUninstallGlobalPrompt();
+            return;
+        }
         FirebaseAuth auth = FirebaseAuth.getInstance();
 
         SharedPreferences prefs =
@@ -684,8 +697,6 @@ public class MenuActivity extends BaseActivity {
         // Now that all authentication-related checks are done, look for any active match
         checkForActiveMatch();
         
-        // Prompt to uninstall the global app if running in Bangladesh flavor and global app is installed
-        checkAndShowUninstallGlobalPrompt();
 
         Button youVsAndroid = findViewById(R.id.youVsAndroidBtn);
         if (youVsAndroid != null) {
@@ -1401,6 +1412,10 @@ public class MenuActivity extends BaseActivity {
         };
 
         // Check consent before proceeding with ads logic
+        if (BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(this)) {
+            checkAndShowUninstallGlobalPrompt();
+            return;
+        }
         if (!hasAdsConsent()) {
             Log.w("TAG_Soccer", getClass().getSimpleName() + ".showAdThenRun: No ads consent, running action directly");
             showConsentRequiredDialog();
@@ -1486,6 +1501,10 @@ public class MenuActivity extends BaseActivity {
         prefs.edit().putInt(PREF_AD_COUNTER, 0).apply();
 
         // Double-check consent before showing ad
+        if (BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(this)) {
+            checkAndShowUninstallGlobalPrompt();
+            return;
+        }
         if (!hasAdsConsent()) {
             Log.w("TAG_Soccer", getClass().getSimpleName() + ".processAdLogic: Lost ads consent, running action directly");
             showConsentRequiredDialog();
@@ -2231,9 +2250,8 @@ public class MenuActivity extends BaseActivity {
 
     /**
      * Check if the uninstall-global-app prompt should be shown and display it if applicable.
-     * This is only shown in the Bangladesh flavor when the global app is also installed.
-     * If the user does not tap Uninstall, the app is closed to prevent running alongside
-     * the global version.
+     * Both flavors block use while the other variant is installed.
+     * The Close action leaves the app; both messages require removing Global.
      */
     private void checkAndShowUninstallGlobalPrompt() {
         Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: entered with state {isFinishing="
@@ -2287,8 +2305,8 @@ public class MenuActivity extends BaseActivity {
         }
         Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: showing uninstall-required dialog");
         AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle(R.string.uninstall_global_title)
-                .setMessage(R.string.uninstall_global_message)
+                .setTitle(BangladeshMigrationHelper.uninstallTitle(this))
+                .setMessage(BangladeshMigrationHelper.uninstallMessage(this))
                 .setPositiveButton(R.string.uninstall_global_uninstall, (d, which) -> {
                     Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: close clicked -> finishing activity");
                     finish();

@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.36
+**Document Version:** 2.37
 **Last Updated:** 2026-09-27
 **Status:** Prize, payment, and support workflows implemented; simulated end-to-end flow tested on dev; Bangladesh launch work remains
 
 **Revision History**:
+- v2.37 (2026-09-27): Made the installed-variant gameplay block symmetric. Both variants detect the other installed package and require removing Global; no country detection or migration promotion was restored.
 - v2.36 (2026-09-27): Final decision: abandon Global-app Bangladesh detection and automatic migration promotion, with no Settings/About or other replacement UI. Removed dormant promotion code, resources, analytics, and obsolete tests; retained app-variant tracking and the separate Bangladesh uninstall flow. Google Play country targeting remains the distribution control.
 - v2.35 (2026-09-27): Audited existing migration tracking and disabled promotion UI. Documented the lack of a supported per-account availability check for another Play listing, removed geographic-targeting proposals, and proposed a user-initiated 18+ store link. Automatic migration UI remains incomplete pending a product decision; application behavior is unchanged.
 - v2.34 (2026-09-27): Closed the Security audit assessment by project-owner acceptance. Service-account keys intentionally stored in the restricted private `Soccer-private` repository are accepted; broad IAM roles verified in dev, test, and prod are tracked as non-blocking least-privilege hardening, not launch-critical vulnerabilities. No code or IAM configuration changed.
@@ -1035,7 +1036,7 @@ Google Play Store (Bangladesh region)
 3. Can choose to install:
    - **Global version**: For regular play, no cash prizes
    - **Bangladesh version**: For cash prize tournaments
-   - **Both**: Can have both installed simultaneously
+   - **Both**: Installation can coexist, but gameplay is blocked in both until Global is uninstalled
 
 **Choice guidance**:
 - If interested in cash prizes → Install Bangladesh version
@@ -1318,14 +1319,7 @@ events were removed with the abandoned UI; do not infer age verification or loca
 
 #### Q10: What about users who have both apps installed?
 
-**A**: Users can have both apps installed simultaneously:
-- **Use case 1**: User likes having separate apps for different purposes
-- **Use case 2**: User wants global version for casual play, Bangladesh version for tournaments
-- **Use case 3**: User testing both versions
-
-**Impact**: None. Both apps use same Firebase backend, same user account, data stays synced.
-
-**Storage**: Each app ~50-100 MB, total ~100-200 MB. Not a significant concern.
+**A**: Android can install both packages, but both apps block gameplay when the other is installed. The user must uninstall Global and continue in Bangladesh. The shared Firebase account and data remain intact.
 
 ---
 
@@ -1613,12 +1607,23 @@ and tests for the abandoned behavior. Old preference values, if present on a dev
 
 **Retained functionality:** `SoccerApp.trackAppVariant()` and the authenticated backend continue
 to record variant usage and same-UID migration metadata. They do not infer country or Play
-eligibility. The helper's existing Bangladesh-only Global-app uninstall functions and their tests
-remain separate and unchanged. No replacement migration mechanism was introduced.
+eligibility. The helper's installed-package conflict check is shared by both variants. Its uninstall helpers remain separate from promotion. No replacement migration mechanism was introduced.
 
 **Cleanup verification:** `_devGlobalDebug` and `_devBangladeshDebug` assemble successfully;
 the retained `BangladeshMigrationHelperTest` suite passes. Source checks confirm removal of
 automatic-promotion calls, resources, and country-detection methods. No device UI test was performed.
+
+#### Installed-variant gameplay gate (both directions)
+
+This is a local installed-package conflict check, not the abandoned migration promotion:
+
+- Bangladesh checks `piotr_gorczynski.soccer2`; Global checks `piotr_gorczynski.soccer2.bd` using the existing `BangladeshMigrationHelper` and Android `PackageManager.getPackageInfo`.
+- Each flavor manifest declares only the other package in `<queries>`, following [Android package visibility guidance](https://developer.android.com/training/package-visibility/declaring). No `QUERY_ALL_PACKAGES` permission or country detection is needed.
+- Menu resume checks block normal startup before backend-dependent navigation. A non-cancelable dialog offers **Close**; both messages require uninstalling Global. Global explicitly says Bangladesh is already installed and asks the user to uninstall this Global version.
+- Direct game launches and resumed games also recheck the installed package and return to the blocking menu. Package state is not cached, so removing the other package clears the conflict on the next resume.
+- The new Global message is localized in all 20 supported language resource sets. Google Play country targeting remains the distribution control for Bangladesh; this gate makes no claim about account eligibility or country.
+
+**Verification (2026-09-27):** `_devGlobalDebug` and `_devBangladeshDebug` assemble successfully. All 11 `BangladeshMigrationHelperTest` cases pass in each flavor, covering both directions, absent/removed packages, flavor-specific messages, and retained uninstall intents. Both merged manifests contain the required opposite-package query and neither requests `QUERY_ALL_PACKAGES`. Physical-device install/uninstall and dialog testing remains pending. A broader Global unit-test run also reported 49 failures outside this focused suite (including existing resource-check tests); full-suite validation is not claimed.
 
 #### Option 2: Google Play Store Cross-Promotion
 
@@ -1715,11 +1720,10 @@ existing server-managed app-variant tracking remain in place.
 #### Handling Edge Cases
 
 **Scenario 1: User has both apps installed**
-- Both apps work independently
-- Same user account in both
-- User can play regular tournaments in global app
-- User can play cash prize tournaments in BD app
-- No conflicts, data stays in sync
+- Both variants block gameplay and require uninstalling Global.
+- Bangladesh keeps its existing uninstall instructions.
+- Global explains that Bangladesh is already installed and asks the user to remove this Global version.
+- Firebase account data remains shared; installation coexistence does not imply simultaneous gameplay is allowed.
 
 **Scenario 2: User uninstalls global app**
 - No data loss (all data in Firebase)
@@ -1856,7 +1860,7 @@ Download now and start competing for real prizes!
 - [x] Authenticated app-variant tracking and same-UID migration detection implemented through `trackAppVariant`
 - [ ] Add a migrated-user welcome flow if required, based on existing server-managed migration metadata
 - Do not infer migration from a user region field or write `appVariant`/`migrationStatus` directly from the client.
-- Keep Bangladesh's existing uninstall-global flow separate from the Global promotion; it is not an availability check.
+- Keep the symmetric installed-variant gameplay gate separate from the abandoned Global promotion; it is not a Play availability check.
 
 #### Firebase Backend Configuration
 

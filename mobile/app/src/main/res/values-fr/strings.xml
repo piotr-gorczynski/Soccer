@@ -421,4 +421,6 @@
     <string name="payment_details_save_failed">Impossible d’enregistrer les coordonnées. Réessayez.</string>
     <string name="payment_account_number_error_mobile">Saisissez un numéro mobile bangladais à 11 chiffres commençant par 01 (ou +880).</string>
     <string name="payment_account_number_error_rocket">Saisissez un numéro de compte Rocket à 12 chiffres commençant par 01, chiffre de contrôle inclus (ou +880).</string>
+    <string name="bangladesh_installed_title">Gridline Soccer Bangladesh est déjà installé</string>
+    <string name="bangladesh_installed_message">Vous ne pouvez pas utiliser les deux versions de Gridline Soccer sur le même appareil.\n\nPour continuer à utiliser la version Bangladesh, veuillez désinstaller cette version Global.</string>
 </resources>

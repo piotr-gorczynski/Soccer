@@ -9,7 +9,7 @@ import android.util.Log;
 
 
 /**
- * Helpers for the Bangladesh flavor's existing Global-app uninstall flow.
+ * Shared installed-variant conflict check and Global-app uninstall flow.
  * Does not detect country or promote the Bangladesh app in the Global flavor.
  */
 public class BangladeshMigrationHelper {
@@ -19,29 +19,21 @@ public class BangladeshMigrationHelper {
 
     private static final String GLOBAL_APP_PACKAGE = "piotr_gorczynski.soccer2";
 
-    /**
-     * Check if the uninstall-global-app prompt should be shown.
-     * Only shown in the Bangladesh flavor when the Global app is installed.
-     *
-     * @param context Android context
-     * @return true if the prompt should be shown
-     */
+    /** Both variants require removing Global when the other variant is installed. */
     public static boolean shouldShowUninstallGlobalPrompt(Context context) {
-        boolean isBangladeshFlavour = AppFlavourDetector.isBangladeshFlavour(context);
-        Log.d(TAG, "BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt: isBangladeshFlavour=" + isBangladeshFlavour);
-        if (!isBangladeshFlavour) {
-            return false;
-        }
+        String otherPackage = AppFlavourDetector.isBangladeshFlavour(context)
+                ? GLOBAL_APP_PACKAGE : "piotr_gorczynski.soccer2.bd";
+        return isPackageInstalled(context, otherPackage);
+    }
 
-        boolean globalInstalled = isGlobalAppInstalled(context);
-        Log.d(TAG, "BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt: globalInstalled=" + globalInstalled);
-        if (!globalInstalled) {
-            Log.d(TAG, "BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt: Global app not installed");
-            return false;
-        }
+    public static int uninstallTitle(Context context) {
+        return AppFlavourDetector.isBangladeshFlavour(context)
+                ? R.string.uninstall_global_title : R.string.bangladesh_installed_title;
+    }
 
-        Log.d(TAG, "BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt: Showing uninstall prompt");
-        return true;
+    public static int uninstallMessage(Context context) {
+        return AppFlavourDetector.isBangladeshFlavour(context)
+                ? R.string.uninstall_global_message : R.string.bangladesh_installed_message;
     }
 
     /**
@@ -52,12 +44,14 @@ public class BangladeshMigrationHelper {
      * @return true if the Global app (piotr_gorczynski.soccer2) is installed
      */
     public static boolean isGlobalAppInstalled(Context context) {
+        return isPackageInstalled(context, GLOBAL_APP_PACKAGE);
+    }
+
+    private static boolean isPackageInstalled(Context context, String packageName) {
         try {
-            context.getPackageManager().getPackageInfo(GLOBAL_APP_PACKAGE, 0);
-            Log.d(TAG, "BangladeshMigrationHelper.isGlobalAppInstalled: package " + GLOBAL_APP_PACKAGE + " is installed");
+            context.getPackageManager().getPackageInfo(packageName, 0);
             return true;
         } catch (PackageManager.NameNotFoundException e) {
-            Log.d(TAG, "BangladeshMigrationHelper.isGlobalAppInstalled: package " + GLOBAL_APP_PACKAGE + " is NOT installed");
             return false;
         }
     }

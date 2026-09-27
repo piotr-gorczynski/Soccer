@@ -392,4 +392,6 @@
     <string name="payment_details_save_failed">විස්තර සුරැකීමට නොහැකි විය. නැවත උත්සාහ කරන්න.</string>
     <string name="payment_account_number_error_mobile">01 න් ආරම්භ වන ඉලක්කම් 11ක බංග්ලාදේශ ජංගම අංකයක් ඇතුළත් කරන්න (හෝ +880).</string>
     <string name="payment_account_number_error_rocket">පරීක්ෂණ ඉලක්කමද ඇතුළුව 01 න් ආරම්භ වන ඉලක්කම් 12ක Rocket ගිණුම් අංකයක් ඇතුළත් කරන්න (හෝ +880).</string>
+    <string name="bangladesh_installed_title">Gridline Soccer Bangladesh දැනටමත් ස්ථාපනය කර ඇත</string>
+    <string name="bangladesh_installed_message">එකම උපාංගයේ Gridline Soccer අනුවාද දෙකම භාවිත කළ නොහැක.\n\nBangladesh අනුවාදය දිගටම භාවිත කිරීමට, කරුණාකර මෙම Global අනුවාදය අස්ථාපනය කරන්න.</string>
 </resources>

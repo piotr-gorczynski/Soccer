@@ -1,0 +1,6 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Android 11+ visibility for the installed-variant gameplay gate. -->
+    <queries>
+        <package android:name="piotr_gorczynski.soccer2.bd" />
+    </queries>
+</manifest>

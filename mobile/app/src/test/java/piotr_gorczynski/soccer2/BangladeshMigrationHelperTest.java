@@ -82,13 +82,34 @@ public class BangladeshMigrationHelperTest {
     }
 
     @Test
-    public void testShouldShowUninstallGlobalPrompt_GlobalFlavor_ShouldNotShow() {
-        // Setup: Global flavor
+    public void globalBlocksWhenBangladeshInstalled() throws Exception {
         when(mockContext.getPackageName()).thenReturn("piotr_gorczynski.soccer2");
+        PackageManager pm = mock(PackageManager.class);
+        when(mockContext.getPackageManager()).thenReturn(pm);
+        assertTrue(BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(mockContext));
+        verify(pm).getPackageInfo("piotr_gorczynski.soccer2.bd", 0);
+        verify(pm, never()).getPackageInfo("piotr_gorczynski.soccer2", 0);
+        assertEquals(R.string.bangladesh_installed_title, BangladeshMigrationHelper.uninstallTitle(mockContext));
+        assertEquals(R.string.bangladesh_installed_message, BangladeshMigrationHelper.uninstallMessage(mockContext));
+    }
 
-        boolean result = BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(mockContext);
+    @Test
+    public void globalDoesNotBlockWithoutBangladeshAndRechecksAfterRemoval() throws Exception {
+        when(mockContext.getPackageName()).thenReturn("piotr_gorczynski.soccer2");
+        PackageManager pm = mock(PackageManager.class);
+        when(mockContext.getPackageManager()).thenReturn(pm);
+        when(pm.getPackageInfo("piotr_gorczynski.soccer2.bd", 0))
+                .thenReturn(new android.content.pm.PackageInfo())
+                .thenThrow(new PackageManager.NameNotFoundException());
+        assertTrue(BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(mockContext));
+        assertFalse(BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(mockContext));
+    }
 
-        assertFalse("Should not show uninstall prompt in global flavor", result);
+    @Test
+    public void bangladeshKeepsExistingUninstallMessage() {
+        when(mockContext.getPackageName()).thenReturn("piotr_gorczynski.soccer2.bd");
+        assertEquals(R.string.uninstall_global_title, BangladeshMigrationHelper.uninstallTitle(mockContext));
+        assertEquals(R.string.uninstall_global_message, BangladeshMigrationHelper.uninstallMessage(mockContext));
     }
 
     @Test

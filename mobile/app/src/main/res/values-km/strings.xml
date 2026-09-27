@@ -392,4 +392,6 @@
     <string name="payment_details_save_failed">មិនអាចរក្សាទុកព័ត៌មានបានទេ។ សូមព្យាយាមម្តងទៀត។</string>
     <string name="payment_account_number_error_mobile">បញ្ចូលលេខទូរសព្ទបង់ក្លាដែស 11 ខ្ទង់ ដែលចាប់ផ្តើមដោយ 01 (ឬ +880)។</string>
     <string name="payment_account_number_error_rocket">បញ្ចូលលេខគណនី Rocket 12 ខ្ទង់ ដែលចាប់ផ្តើមដោយ 01 និងរួមបញ្ចូលលេខត្រួតពិនិត្យ (ឬ +880)។</string>
+    <string name="bangladesh_installed_title">បានដំឡើង Gridline Soccer Bangladesh រួចហើយ</string>
+    <string name="bangladesh_installed_message">អ្នកមិនអាចប្រើ Gridline Soccer ទាំងពីរកំណែនៅលើឧបករណ៍តែមួយបានទេ។\n\nដើម្បីបន្តប្រើកំណែ Bangladesh សូមលុបកំណែ Global នេះចេញ។</string>
 </resources>
