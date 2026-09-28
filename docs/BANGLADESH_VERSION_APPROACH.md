@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.39
+**Document Version:** 2.40
 **Last Updated:** 2026-09-28
 **Status:** Prize, payment, and support workflows implemented; simulated end-to-end flow tested on dev; Bangladesh launch work remains
 
 **Revision History**:
+- v2.40 (2026-09-28): Recorded the successful manual Facebook Login test in the Bangladesh debug build against prod, supported by Logcat showing Firebase credential authentication, profile retrieval, Bangladesh variant tracking, and authenticated menu/backend access. Release-build and other pending authentication tests remain open.
 - v2.39 (2026-09-28): Recorded the successful manual Google Sign-In test in the Bangladesh debug build against prod, supported by Logcat showing provider authentication, Bangladesh variant tracking, and authenticated menu/backend access. Release-build and other pending authentication tests remain open.
 - v2.38 (2026-09-27): Recorded the completed manual Bangladesh Email/Password authentication test on dev, including email verification, sign-in, and Firebase Authentication/Firestore checks. Other authentication tests remain pending.
 - v2.37 (2026-09-27): Made the installed-variant gameplay block symmetric. Both variants detect the other installed package and require removing Global; no country detection or migration promotion was restored.
@@ -2864,7 +2865,14 @@ cd mobile
       - The authenticated service check against `soccer-prod-1754048346` returned HTTP 200 with `{"status":"active"}`, and the menu resumed successfully.
       - Evidence covers this debug-build sign-in flow; it does not establish release-build/Play App Signing authentication or independent Firebase Console verification.
   - [ ] Test Google Sign-In in Bangladesh release build
-  - [ ] Test Facebook Login in Bangladesh debug build
+  - [x] Test Facebook Login in Bangladesh debug build
+    - PASS (2026-09-28, prod, `_prodBangladeshDebug`): Manual test supported by supplied Logcat (11:45:55–11:46:36) for `piotr_gorczynski.soccer2.bd`:
+      - Selected the Facebook provider (`facebook.com`); `FirebaseAuthManager.loginWithFacebookToken: signInWithCredential success` was logged at 11:46:31.830.
+      - Facebook profile data (ID, name, and photo URL) was retrieved; login completed with a Firebase UID and nickname at 11:46:33.644.
+      - `onLoginSuccess` and `login_success - method=facebook` confirmed the successful login callback and authentication breadcrumb.
+      - `SoccerApp.trackAppVariant: tracked bangladesh` confirmed successful variant tracking; online presence and FCM registration also completed.
+      - The app opened the menu and displayed the signed-in user's nickname. The authenticated service check against `soccer-prod-1754048346` returned HTTP 200 with `{"status":"active"}`.
+      - Evidence covers this debug-build login flow; it does not establish release-build/Play App Signing authentication or independent Firebase Console verification.
   - [ ] Test Facebook Login in Bangladesh release build
   - [ ] Test Anonymous authentication in Bangladesh app
   - [ ] Verify same user can authenticate in both global and Bangladesh apps
