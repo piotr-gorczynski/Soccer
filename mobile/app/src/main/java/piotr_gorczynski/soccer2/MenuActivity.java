@@ -578,9 +578,7 @@ public class MenuActivity extends BaseActivity {
             checkAndShowUninstallGlobalPrompt();
             return;
         }
-        if (!hasAdsConsent()) {
-            ((SoccerApp) getApplication()).requestConsent(this);
-        }
+        requestAdsConsentWhenReady();
     }
 
     @Override
@@ -611,6 +609,19 @@ public class MenuActivity extends BaseActivity {
             globalUninstallDialogOpen = false;
             globalUninstallPending = false;
             checkAndShowUninstallGlobalPrompt();
+        }
+        if (hasFocus) {
+            requestAdsConsentWhenReady();
+        }
+    }
+
+    private void requestAdsConsentWhenReady() {
+        // onPostResume can run before the decor view is attached. Retry when
+        // the window gains focus instead of silently losing the consent request.
+        if (hasWindowFocus()
+                && !BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(this)
+                && !hasAdsConsent()) {
+            ((SoccerApp) getApplication()).requestConsent(this);
         }
     }
 
@@ -1340,12 +1351,6 @@ public class MenuActivity extends BaseActivity {
                 || status == ConsentInformation.ConsentStatus.NOT_REQUIRED;
     }
 
-    private void showConsentRequiredDialog() {
-        showManagedDialog(new AlertDialog.Builder(this)
-                .setMessage(R.string.ads_consent_required)
-                .setPositiveButton(android.R.string.ok, null), "ads_consent_required");
-    }
-
     private void showLoadingOverlay() {
         if (loadingOverlay == null) {
             return;
@@ -1418,7 +1423,6 @@ public class MenuActivity extends BaseActivity {
         }
         if (!hasAdsConsent()) {
             Log.w("TAG_Soccer", getClass().getSimpleName() + ".showAdThenRun: No ads consent, running action directly");
-            showConsentRequiredDialog();
             guardedAction.run();
             return;
         }
@@ -1507,7 +1511,6 @@ public class MenuActivity extends BaseActivity {
         }
         if (!hasAdsConsent()) {
             Log.w("TAG_Soccer", getClass().getSimpleName() + ".processAdLogic: Lost ads consent, running action directly");
-            showConsentRequiredDialog();
             action.run();
             return;
         }
