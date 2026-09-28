@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.43
+**Document Version:** 2.44
 **Last Updated:** 2026-09-28
 **Status:** Prize, payment, and support workflows implemented; simulated end-to-end flow tested on dev; Bangladesh launch work remains
 
 **Revision History**:
+- v2.44 (2026-09-28): Completed the cross-variant friend-list test based on manual addition and removal checks using the same account on two phones. Changes are shared between Global and Bangladesh after refreshing/reopening the list; automatic refresh of an already open list was not observed.
 - v2.43 (2026-09-28): Confirmed shared account/profile data between Global and Bangladesh on prod by comparing manual Google sign-in logs and the server-side profile read path. Recorded the result without personal account identifiers and removed the email address from the earlier test note. Other pending authentication checks remain open.
 - v2.42 (2026-09-28): Marked same-user authentication in Global and Bangladesh complete based on the owner's repeated manual verification with the same account. Separate data-sync and other pending authentication checks remain open.
 - v2.41 (2026-09-28): Recorded the successful manual Anonymous authentication test in the Bangladesh debug build against prod, supported by Logcat showing an anonymous session, nickname validation/save and Firestore retrieval, and authenticated menu/backend access. Other pending authentication tests remain open.
@@ -2398,7 +2399,8 @@ implementation 'com.facebook.android:facebook-android-sdk:18.1.3'
 - [ ] **Test Cross-App Authentication**
   - [ ] Verify same user can be authenticated in both apps simultaneously
   - [ ] Confirm Firestore security rules allow cross-app access
-  - [ ] Test friend connections work across apps
+  - [x] Test friend connections work across apps
+    - PASS (2026-09-28): Shared friend-list addition/removal verified on two phones running Global and Bangladesh with the same account. See Authentication Testing below for details and the list-refresh limitation.
 
 - [ ] **Test Build Variants**
   - [ ] `bangladeshDebug` build with Google Sign-In
@@ -2892,7 +2894,12 @@ cd mobile
     - PASS (2026-09-28, prod): Compared manual Google sign-in logs from Bangladesh and Global. Both sessions used the same Firebase UID and displayed the same saved nickname against the same production backend.
     - Code inspection confirmed that the sign-in flow reads the user profile from Firestore using `users/{UID}` with `Source.SERVER`, supporting access to the same user document in both variants.
     - Verification covers the shared account and nickname/profile read; cross-app friend connections, statistics, and propagation of subsequent edits were not tested here. Personal identifiers and raw account logs are omitted from this public document.
-  - [ ] Test friend connections work across apps
+  - [x] Test friend connections work across apps
+    - PASS (2026-09-28): The owner manually tested the same account signed in on two separate phones, one running Global and the other Bangladesh.
+      - Removed a friend in Bangladesh; the friend disappeared from Global's invite-friend list after closing and reopening it.
+      - Added a friend in Global; the same friend appeared in Bangladesh after refreshing the list.
+      - Confirmed that friend-list changes are shared across variants in both tested directions.
+    - Observed limitation: an already open list on the other phone did not update immediately after removal; refreshing/reopening the list was required. This test confirms persisted changes and subsequent reads, not live list refresh.
   - [ ] Verify authentication with existing global app users
 
 ### Phase 6: Launch Preparation (Week 11-12)
