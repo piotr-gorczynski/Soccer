@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.40
+**Document Version:** 2.41
 **Last Updated:** 2026-09-28
 **Status:** Prize, payment, and support workflows implemented; simulated end-to-end flow tested on dev; Bangladesh launch work remains
 
 **Revision History**:
+- v2.41 (2026-09-28): Recorded the successful manual Anonymous authentication test in the Bangladesh debug build against prod, supported by Logcat showing an anonymous session, nickname validation/save and Firestore retrieval, and authenticated menu/backend access. Other pending authentication tests remain open.
 - v2.40 (2026-09-28): Recorded the successful manual Facebook Login test in the Bangladesh debug build against prod, supported by Logcat showing Firebase credential authentication, profile retrieval, Bangladesh variant tracking, and authenticated menu/backend access. Release-build and other pending authentication tests remain open.
 - v2.39 (2026-09-28): Recorded the successful manual Google Sign-In test in the Bangladesh debug build against prod, supported by Logcat showing provider authentication, Bangladesh variant tracking, and authenticated menu/backend access. Release-build and other pending authentication tests remain open.
 - v2.38 (2026-09-27): Recorded the completed manual Bangladesh Email/Password authentication test on dev, including email verification, sign-in, and Firebase Authentication/Firestore checks. Other authentication tests remain pending.
@@ -2874,7 +2875,14 @@ cd mobile
       - The app opened the menu and displayed the signed-in user's nickname. The authenticated service check against `soccer-prod-1754048346` returned HTTP 200 with `{"status":"active"}`.
       - Evidence covers this debug-build login flow; it does not establish release-build/Play App Signing authentication or independent Firebase Console verification.
   - [ ] Test Facebook Login in Bangladesh release build
-  - [ ] Test Anonymous authentication in Bangladesh app
+  - [x] Test Anonymous authentication in Bangladesh app
+    - PASS (2026-09-28, prod, `_prodBangladeshDebug`): Manual test supported by supplied Logcat (14:14:36–14:15:57) for `piotr_gorczynski.soccer2.bd`:
+      - Continued from the nickname screen with an authenticated anonymous session; `Set user properties: auth=anonymous` was logged at 14:15:50.477 after saving the nickname.
+      - Nickname uniqueness validation passed, and the `checkNickname` callable returned `allowed=true` at 14:15:49.672.
+      - The nickname was saved and subsequently retrieved by `MenuActivity.fetchNicknameFromFirestore`; the menu displayed the saved nickname.
+      - The app fetched an authentication ID token and the service check against `soccer-prod-1754048346` returned HTTP 200 with `{"status":"active"}` at 14:15:56.142. The menu continued with a Firebase UID.
+      - Online presence and FCM registration completed successfully.
+      - The supplied excerpt begins after initial sign-in; it confirms the resulting anonymous session and nickname flow, but does not include the initial `signInAnonymously` callback or confirmation of terms acceptance.
   - [ ] Verify same user can authenticate in both global and Bangladesh apps
   - [ ] Confirm user data syncs correctly (same UID, same Firestore documents)
   - [ ] Test friend connections work across apps
