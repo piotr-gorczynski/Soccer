@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.41
+**Document Version:** 2.42
 **Last Updated:** 2026-09-28
 **Status:** Prize, payment, and support workflows implemented; simulated end-to-end flow tested on dev; Bangladesh launch work remains
 
 **Revision History**:
+- v2.42 (2026-09-28): Marked same-user authentication in Global and Bangladesh complete based on the owner's repeated manual verification with the same account. Separate data-sync and other pending authentication checks remain open.
 - v2.41 (2026-09-28): Recorded the successful manual Anonymous authentication test in the Bangladesh debug build against prod, supported by Logcat showing an anonymous session, nickname validation/save and Firestore retrieval, and authenticated menu/backend access. Other pending authentication tests remain open.
 - v2.40 (2026-09-28): Recorded the successful manual Facebook Login test in the Bangladesh debug build against prod, supported by Logcat showing Firebase credential authentication, profile retrieval, Bangladesh variant tracking, and authenticated menu/backend access. Release-build and other pending authentication tests remain open.
 - v2.39 (2026-09-28): Recorded the successful manual Google Sign-In test in the Bangladesh debug build against prod, supported by Logcat showing provider authentication, Bangladesh variant tracking, and authenticated menu/backend access. Release-build and other pending authentication tests remain open.
@@ -2883,7 +2884,9 @@ cd mobile
       - The app fetched an authentication ID token and the service check against `soccer-prod-1754048346` returned HTTP 200 with `{"status":"active"}` at 14:15:56.142. The menu continued with a Firebase UID.
       - Online presence and FCM registration completed successfully.
       - The supplied excerpt begins after initial sign-in; it confirms the resulting anonymous session and nickname flow, but does not include the initial `signInAnonymously` callback or confirmation of terms acceptance.
-  - [ ] Verify same user can authenticate in both global and Bangladesh apps
+  - [x] Verify same user can authenticate in both global and Bangladesh apps
+    - PASS (confirmed 2026-09-28): The owner reports repeatedly signing in successfully to both Global and Bangladesh using `piotr.gorczynski@gmail.com` during regular manual testing.
+    - This confirms using the same account in either variant; it does not imply simultaneous use on one device or independently verify matching Firebase UIDs and Firestore data synchronization.
   - [ ] Confirm user data syncs correctly (same UID, same Firestore documents)
   - [ ] Test friend connections work across apps
   - [ ] Verify authentication with existing global app users
