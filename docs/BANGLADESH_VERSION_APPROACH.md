@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.42
+**Document Version:** 2.43
 **Last Updated:** 2026-09-28
 **Status:** Prize, payment, and support workflows implemented; simulated end-to-end flow tested on dev; Bangladesh launch work remains
 
 **Revision History**:
+- v2.43 (2026-09-28): Confirmed shared account/profile data between Global and Bangladesh on prod by comparing manual Google sign-in logs and the server-side profile read path. Recorded the result without personal account identifiers and removed the email address from the earlier test note. Other pending authentication checks remain open.
 - v2.42 (2026-09-28): Marked same-user authentication in Global and Bangladesh complete based on the owner's repeated manual verification with the same account. Separate data-sync and other pending authentication checks remain open.
 - v2.41 (2026-09-28): Recorded the successful manual Anonymous authentication test in the Bangladesh debug build against prod, supported by Logcat showing an anonymous session, nickname validation/save and Firestore retrieval, and authenticated menu/backend access. Other pending authentication tests remain open.
 - v2.40 (2026-09-28): Recorded the successful manual Facebook Login test in the Bangladesh debug build against prod, supported by Logcat showing Firebase credential authentication, profile retrieval, Bangladesh variant tracking, and authenticated menu/backend access. Release-build and other pending authentication tests remain open.
@@ -2885,9 +2886,12 @@ cd mobile
       - Online presence and FCM registration completed successfully.
       - The supplied excerpt begins after initial sign-in; it confirms the resulting anonymous session and nickname flow, but does not include the initial `signInAnonymously` callback or confirmation of terms acceptance.
   - [x] Verify same user can authenticate in both global and Bangladesh apps
-    - PASS (confirmed 2026-09-28): The owner reports repeatedly signing in successfully to both Global and Bangladesh using `piotr.gorczynski@gmail.com` during regular manual testing.
-    - This confirms using the same account in either variant; it does not imply simultaneous use on one device or independently verify matching Firebase UIDs and Firestore data synchronization.
-  - [ ] Confirm user data syncs correctly (same UID, same Firestore documents)
+    - PASS (confirmed 2026-09-28): The owner reports repeatedly signing in successfully to both Global and Bangladesh using the same Google account during regular manual testing.
+    - This confirms using the same account in either variant; it does not imply simultaneous use on one device. Shared profile verification is recorded below.
+  - [x] Confirm user data syncs correctly (same UID, same Firestore documents)
+    - PASS (2026-09-28, prod): Compared manual Google sign-in logs from Bangladesh and Global. Both sessions used the same Firebase UID and displayed the same saved nickname against the same production backend.
+    - Code inspection confirmed that the sign-in flow reads the user profile from Firestore using `users/{UID}` with `Source.SERVER`, supporting access to the same user document in both variants.
+    - Verification covers the shared account and nickname/profile read; cross-app friend connections, statistics, and propagation of subsequent edits were not tested here. Personal identifiers and raw account logs are omitted from this public document.
   - [ ] Test friend connections work across apps
   - [ ] Verify authentication with existing global app users
 
