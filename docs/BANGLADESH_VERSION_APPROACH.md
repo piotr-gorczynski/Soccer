@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.38
-**Last Updated:** 2026-09-27
+**Document Version:** 2.39
+**Last Updated:** 2026-09-28
 **Status:** Prize, payment, and support workflows implemented; simulated end-to-end flow tested on dev; Bangladesh launch work remains
 
 **Revision History**:
+- v2.39 (2026-09-28): Recorded the successful manual Google Sign-In test in the Bangladesh debug build against prod, supported by Logcat showing provider authentication, Bangladesh variant tracking, and authenticated menu/backend access. Release-build and other pending authentication tests remain open.
 - v2.38 (2026-09-27): Recorded the completed manual Bangladesh Email/Password authentication test on dev, including email verification, sign-in, and Firebase Authentication/Firestore checks. Other authentication tests remain pending.
 - v2.37 (2026-09-27): Made the installed-variant gameplay block symmetric. Both variants detect the other installed package and require removing Global; no country detection or migration promotion was restored.
 - v2.36 (2026-09-27): Final decision: abandon Global-app Bangladesh detection and automatic migration promotion, with no Settings/About or other replacement UI. Removed dormant promotion code, resources, analytics, and obsolete tests; retained app-variant tracking and the separate Bangladesh uninstall flow. Google Play country targeting remains the distribution control.
@@ -2854,7 +2855,14 @@ cd mobile
       - Successfully signed in with the newly created credentials.
       - Confirmed the user exists in Firebase Authentication with the Email/Password provider and a successful sign-in timestamp.
       - Confirmed the Firestore user document was created/updated with `appVariant: "bangladesh"` and the Bangladesh entry under `appVariants`.
-  - [ ] Test Google Sign-In in Bangladesh debug build
+  - [x] Test Google Sign-In in Bangladesh debug build
+    - PASS (2026-09-28, prod, `_prodBangladeshDebug`): Manual test supported by supplied Logcat (11:40:00–11:40:11) for `piotr_gorczynski.soccer2.bd`:
+      - Selected the Google provider (`google.com`); `signInWithProvider success` was logged at 11:40:06.923.
+      - Login completed with a Firebase UID and nickname; `onLoginSuccess` and `login_success - method=google` were logged at 11:40:09.
+      - `SoccerApp.trackAppVariant: tracked bangladesh` confirmed successful variant tracking; online presence and FCM registration also completed.
+      - The app opened the menu and displayed the signed-in user's nickname.
+      - The authenticated service check against `soccer-prod-1754048346` returned HTTP 200 with `{"status":"active"}`, and the menu resumed successfully.
+      - Evidence covers this debug-build sign-in flow; it does not establish release-build/Play App Signing authentication or independent Firebase Console verification.
   - [ ] Test Google Sign-In in Bangladesh release build
   - [ ] Test Facebook Login in Bangladesh debug build
   - [ ] Test Facebook Login in Bangladesh release build
