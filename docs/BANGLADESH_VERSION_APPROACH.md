@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.44
-**Last Updated:** 2026-09-28
+**Document Version:** 2.45
+**Last Updated:** 2026-09-29
 **Status:** Prize, payment, and support workflows implemented; simulated end-to-end flow tested on dev; Bangladesh launch work remains
 
 **Revision History**:
+- v2.45 (2026-09-29): Recorded successful manual Google Sign-In and Facebook Login tests in the Bangladesh release build. Google verification is based on the owner's report; the supplied Logcat additionally confirms the Facebook flow against prod. Personal account details are omitted; other pending authentication checks remain open.
 - v2.44 (2026-09-28): Completed the cross-variant friend-list test based on manual addition and removal checks using the same account on two phones. Changes are shared between Global and Bangladesh after refreshing/reopening the list; automatic refresh of an already open list was not observed.
 - v2.43 (2026-09-28): Confirmed shared account/profile data between Global and Bangladesh on prod by comparing manual Google sign-in logs and the server-side profile read path. Recorded the result without personal account identifiers and removed the email address from the earlier test note. Other pending authentication checks remain open.
 - v2.42 (2026-09-28): Marked same-user authentication in Global and Bangladesh complete based on the owner's repeated manual verification with the same account. Separate data-sync and other pending authentication checks remain open.
@@ -2869,7 +2870,9 @@ cd mobile
       - The app opened the menu and displayed the signed-in user's nickname.
       - The authenticated service check against `soccer-prod-1754048346` returned HTTP 200 with `{"status":"active"}`, and the menu resumed successfully.
       - Evidence covers this debug-build sign-in flow; it does not establish release-build/Play App Signing authentication or independent Firebase Console verification.
-  - [ ] Test Google Sign-In in Bangladesh release build
+  - [x] Test Google Sign-In in Bangladesh release build
+    - PASS (2026-09-29): The owner confirmed successful manual Google Sign-In in the Bangladesh release build using an existing Google account. The supplied Logcat excerpt covers Facebook rather than the Google login; this result is based on the owner's manual verification.
+    - This verifies the tested release build; installation through Google Play and the Play App Signing certificate were not separately confirmed. Personal account identifiers are omitted.
   - [x] Test Facebook Login in Bangladesh debug build
     - PASS (2026-09-28, prod, `_prodBangladeshDebug`): Manual test supported by supplied Logcat (11:45:55–11:46:36) for `piotr_gorczynski.soccer2.bd`:
       - Selected the Facebook provider (`facebook.com`); `FirebaseAuthManager.loginWithFacebookToken: signInWithCredential success` was logged at 11:46:31.830.
@@ -2878,7 +2881,11 @@ cd mobile
       - `SoccerApp.trackAppVariant: tracked bangladesh` confirmed successful variant tracking; online presence and FCM registration also completed.
       - The app opened the menu and displayed the signed-in user's nickname. The authenticated service check against `soccer-prod-1754048346` returned HTTP 200 with `{"status":"active"}`.
       - Evidence covers this debug-build login flow; it does not establish release-build/Play App Signing authentication or independent Firebase Console verification.
-  - [ ] Test Facebook Login in Bangladesh release build
+  - [x] Test Facebook Login in Bangladesh release build
+    - PASS (2026-09-29, prod): The owner confirmed successful manual Facebook Login in the Bangladesh release build using an existing Facebook account, supported by supplied Logcat for `piotr_gorczynski.soccer2.bd`.
+      - `loginWithFacebookToken: signInWithCredential success` was logged at 08:33:20.629, followed by login success and `login_success - method=facebook` at 08:33:22.
+      - `SoccerApp.trackAppVariant: tracked bangladesh` confirmed successful variant tracking; the service-check endpoint targeted the production backend.
+    - This verifies the tested release build; installation through Google Play and the Play App Signing certificate were not separately confirmed. Personal account identifiers and raw profile data are omitted.
   - [x] Test Anonymous authentication in Bangladesh app
     - PASS (2026-09-28, prod, `_prodBangladeshDebug`): Manual test supported by supplied Logcat (14:14:36–14:15:57) for `piotr_gorczynski.soccer2.bd`:
       - Continued from the nickname screen with an authenticated anonymous session; `Set user properties: auth=anonymous` was logged at 14:15:50.477 after saving the nickname.
