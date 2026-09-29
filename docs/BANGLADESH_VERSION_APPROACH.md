@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.45
+**Document Version:** 2.46
 **Last Updated:** 2026-09-29
 **Status:** Prize, payment, and support workflows implemented; simulated end-to-end flow tested on dev; Bangladesh launch work remains
 
 **Revision History**:
+- v2.46 (2026-09-29): Marked authentication with an existing Global app user as PASS for Google Sign-In, based on the completed cross-variant account, profile, and friend-list checks. Personal account identifiers are omitted.
 - v2.45 (2026-09-29): Recorded successful manual Google Sign-In and Facebook Login tests in the Bangladesh release build. Google verification is based on the owner's report; the supplied Logcat additionally confirms the Facebook flow against prod. Personal account details are omitted; other pending authentication checks remain open.
 - v2.44 (2026-09-28): Completed the cross-variant friend-list test based on manual addition and removal checks using the same account on two phones. Changes are shared between Global and Bangladesh after refreshing/reopening the list; automatic refresh of an already open list was not observed.
 - v2.43 (2026-09-28): Confirmed shared account/profile data between Global and Bangladesh on prod by comparing manual Google sign-in logs and the server-side profile read path. Recorded the result without personal account identifiers and removed the email address from the earlier test note. Other pending authentication checks remain open.
@@ -2907,7 +2908,10 @@ cd mobile
       - Added a friend in Global; the same friend appeared in Bangladesh after refreshing the list.
       - Confirmed that friend-list changes are shared across variants in both tested directions.
     - Observed limitation: an already open list on the other phone did not update immediately after removal; refreshing/reopening the list was required. This test confirms persisted changes and subsequent reads, not live list refresh.
-  - [ ] Verify authentication with existing global app users
+  - [x] Verify authentication with existing global app users
+    - PASS (confirmed 2026-09-29, prod, Google Sign-In): An existing Global app user successfully signed in to Bangladesh with the same Google account without registering again.
+    - The completed cross-variant checks confirmed the same Firebase UID and user document, preserved nickname, and shared friend list. Personal account identifiers are omitted from this public document.
+    - Scope: existing-user continuity was verified for Google Sign-In. The separate Email/Password and Facebook login tests do not establish continuity for pre-existing Global accounts using those providers.
 
 ### Phase 6: Launch Preparation (Week 11-12)
 - [ ] Create Google Play Store listing (Bangladesh)
