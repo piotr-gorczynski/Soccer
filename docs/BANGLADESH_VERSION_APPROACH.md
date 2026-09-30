@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.51
+**Document Version:** 2.52
 **Last Updated:** 2026-09-30
 **Status:** Prize, payment, and support workflows implemented; simulated end-to-end flow tested on dev; Bangladesh launch work remains
 
 **Revision History**:
+- v2.52 (2026-09-30): Marked Migration Testing complete within the documented scope: cross-app authentication, shared-data synchronization, and Firebase Analytics delivery verified; the intentionally excluded welcome flow remains N/A.
 - v2.51 (2026-09-30): Completed Firebase Analytics tracking validation against production Realtime reports, including Bangladesh session, authentication, tournament-list and prize-list events, and variant-conflict events from both variants.
 - v2.50 (2026-09-29): Removed the optional Bangladesh migrated-user welcome flow from scope by product decision. Its test is N/A, not PASS; normal sign-in and shared-profile continuity remain covered by the completed authentication tests.
 - v2.49 (2026-09-29): Marked the Migration Testing data-sync item complete for the verified shared profile and friend-list additions/removals, retaining the requirement to refresh/reopen the list on the other device.
@@ -2854,7 +2855,8 @@ cd mobile
   - Terms of Service update
   - Privacy Policy update
 - [ ] Closed beta testing with Bangladesh users
-- [ ] **Migration Testing**:
+- [x] **Migration Testing**:
+  - Completed (2026-09-30): All three applicable checklist items below are verified within their documented scope. The excluded welcome flow remains N/A; individual notes retain the test limitations and the outstanding manual verification of `prize_details_view` delivery.
   - [x] Test cross-app authentication (same user in both apps)
     - PASS (confirmed 2026-09-29, prod, Google Sign-In): The same account successfully authenticated in Global and Bangladesh with the same Firebase UID and shared profile. See Authentication Testing below for the completed same-user and shared-data checks; personal account identifiers are omitted.
   - [x] Verify data sync between global and BD apps
