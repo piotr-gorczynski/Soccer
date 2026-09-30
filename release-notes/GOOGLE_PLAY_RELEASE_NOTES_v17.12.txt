@@ -1,0 +1,84 @@
+<en-GB>
+🛠️ Improved consent handling and ad loading when the app starts.
+💬 Clearer instructions when both versions of Gridline Soccer are installed.
+</en-GB>
+
+<pl-PL>
+🛠️ Poprawiono obsługę zgody i ładowanie reklam przy uruchamianiu aplikacji.
+💬 Jaśniejsze instrukcje, gdy zainstalowane są obie wersje Gridline Soccer.
+</pl-PL>
+
+<de-DE>
+🛠️ Verbesserte Verarbeitung der Einwilligung und Laden von Werbung beim App-Start.
+💬 Klarere Anweisungen, wenn beide Versionen von Gridline Soccer installiert sind.
+</de-DE>
+
+<fr-FR>
+🛠️ Amélioration de la gestion du consentement et du chargement des publicités au démarrage.
+💬 Instructions plus claires lorsque les deux versions de Gridline Soccer sont installées.
+</fr-FR>
+
+<es-ES>
+🛠️ Mejorada la gestión del consentimiento y la carga de anuncios al iniciar la aplicación.
+💬 Instrucciones más claras cuando están instaladas ambas versiones de Gridline Soccer.
+</es-ES>
+
+<ur>
+🛠️ ایپ شروع ہونے پر رضامندی کی ترتیبات اور اشتہارات لوڈ ہونے کے عمل کو بہتر بنایا گیا ہے۔
+💬 Gridline Soccer کے دونوں ورژن انسٹال ہونے کی صورت میں ہدایات مزید واضح کر دی گئی ہیں۔
+</ur>
+
+<bn-BD>
+🛠️ অ্যাপ চালু হওয়ার সময় সম্মতি পরিচালনা এবং বিজ্ঞাপন লোড করার প্রক্রিয়া উন্নত করা হয়েছে।
+💬 Gridline Soccer-এর দুটি সংস্করণই ইনস্টল থাকলে আরও স্পষ্ট নির্দেশনা দেখানো হয়।
+</bn-BD>
+
+<ne-NP>
+🛠️ एप सुरु हुँदा सहमति व्यवस्थापन र विज्ञापन लोड गर्ने प्रक्रियामा सुधार गरिएको छ।
+💬 Gridline Soccer का दुवै संस्करण इन्स्टल हुँदा देखाइने निर्देशनहरू अझ स्पष्ट बनाइएका छन्।
+</ne-NP>
+
+<hi-IN>
+🛠️ ऐप शुरू होने पर सहमति प्रबंधन और विज्ञापन लोड करने की प्रक्रिया में सुधार किया गया है।
+💬 Gridline Soccer के दोनों संस्करण इंस्टॉल होने पर अब अधिक स्पष्ट निर्देश दिखाए जाते हैं।
+</hi-IN>
+
+<am>
+🛠️ መተግበሪያው ሲጀምር የፈቃድ አያያዝ እና የማስታወቂያ ጭነት ተሻሽሏል።
+💬 ሁለቱም የGridline Soccer ስሪቶች ሲጫኑ የሚታዩ መመሪያዎች ይበልጥ ግልጽ ሆነዋል።
+</am>
+
+<ar>
+🛠️ تحسين إدارة الموافقة وتحميل الإعلانات عند بدء التطبيق.
+💬 تعليمات أوضح عند تثبيت كلا الإصدارين من Gridline Soccer.
+</ar>
+
+<my-MM>
+🛠️ အက်ပ်စတင်ချိန်တွင် သဘောတူညီချက် စီမံခန့်ခွဲမှုနှင့် ကြော်ငြာများ တင်ခြင်းကို ပိုမိုကောင်းမွန်အောင် ပြုလုပ်ထားသည်။
+💬 Gridline Soccer ဗားရှင်းနှစ်ခုလုံး ထည့်သွင်းထားသည့်အခါ ပိုမိုရှင်းလင်းသော ညွှန်ကြားချက်များကို ပြသပေးသည်။
+</my-MM>
+
+<km-KH>
+🛠️ បានកែលម្អការគ្រប់គ្រងការយល់ព្រម និងការផ្ទុកការផ្សាយពាណិជ្ជកម្មនៅពេលចាប់ផ្តើមកម្មវិធី។
+💬 ការណែនាំកាន់តែច្បាស់នៅពេលដំឡើង Gridline Soccer ទាំងពីរកំណែ។
+</km-KH>
+
+<lo-LA>
+🛠️ ປັບປຸງການຈັດການຄວາມຍິນຍອມ ແລະການໂຫຼດໂຄສະນາເມື່ອເປີດແອັບ.
+💬 ຄຳແນະນຳຊັດເຈນຂຶ້ນເມື່ອຕິດຕັ້ງ Gridline Soccer ທັງສອງລຸ້ນ.
+</lo-LA>
+
+<mn-MN>
+🛠️ Апп эхлэх үеийн зөвшөөрлийн удирдлага болон зар ачаалалтыг сайжрууллаа.
+💬 Gridline Soccer-ийн хоёр хувилбар хоёулаа суусан үед илүү ойлгомжтой заавар харуулна.
+</mn-MN>
+
+<fa-IR>
+🛠️ مدیریت رضایت و بارگیری تبلیغات هنگام اجرای برنامه بهبود یافت.
+💬 راهنمای واضح‌تر هنگام نصب بودن هر دو نسخهٔ Gridline Soccer.
+</fa-IR>
+
+<si-LK>
+🛠️ යෙදුම ආරම්භ වන විට කැමැත්ත කළමනාකරණය සහ දැන්වීම් පූරණය වැඩිදියුණු කර ඇත.
+💬 Gridline Soccer අනුවාද දෙකම ස්ථාපනය කර ඇති විට වඩාත් පැහැදිලි උපදෙස් පෙන්වයි.
+</si-LK>
