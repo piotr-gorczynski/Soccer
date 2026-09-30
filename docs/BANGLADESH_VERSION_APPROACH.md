@@ -1,10 +1,30 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.32
-**Last Updated:** 2026-09-19
-**Status:** Implementation in progress - Migration Backend Setup complete on dev, test, and prod
+**Document Version:** 2.52
+**Last Updated:** 2026-09-30
+**Status:** Prize, payment, and support workflows implemented; simulated end-to-end flow tested on dev; Bangladesh launch work remains
 
 **Revision History**:
+- v2.52 (2026-09-30): Marked Migration Testing complete within the documented scope: cross-app authentication, shared-data synchronization, and Firebase Analytics delivery verified; the intentionally excluded welcome flow remains N/A.
+- v2.51 (2026-09-30): Completed Firebase Analytics tracking validation against production Realtime reports, including Bangladesh session, authentication, tournament-list and prize-list events, and variant-conflict events from both variants.
+- v2.50 (2026-09-29): Removed the optional Bangladesh migrated-user welcome flow from scope by product decision. Its test is N/A, not PASS; normal sign-in and shared-profile continuity remain covered by the completed authentication tests.
+- v2.49 (2026-09-29): Marked the Migration Testing data-sync item complete for the verified shared profile and friend-list additions/removals, retaining the requirement to refresh/reopen the list on the other device.
+- v2.48 (2026-09-29): Marked the Migration Testing cross-app authentication item complete by referencing the verified same-account Google sign-in and shared-profile checks in Authentication Testing. Remaining migration checks are unchanged.
+- v2.47 (2026-09-29): Marked Authentication Testing complete after all ten checklist items received PASS results. Retained the documented evidence, tested scope, and limitations for each item.
+- v2.46 (2026-09-29): Marked authentication with an existing Global app user as PASS for Google Sign-In, based on the completed cross-variant account, profile, and friend-list checks. Personal account identifiers are omitted.
+- v2.45 (2026-09-29): Recorded successful manual Google Sign-In and Facebook Login tests in the Bangladesh release build. Google verification is based on the owner's report; the supplied Logcat additionally confirms the Facebook flow against prod. Personal account details are omitted; other pending authentication checks remain open.
+- v2.44 (2026-09-28): Completed the cross-variant friend-list test based on manual addition and removal checks using the same account on two phones. Changes are shared between Global and Bangladesh after refreshing/reopening the list; automatic refresh of an already open list was not observed.
+- v2.43 (2026-09-28): Confirmed shared account/profile data between Global and Bangladesh on prod by comparing manual Google sign-in logs and the server-side profile read path. Recorded the result without personal account identifiers and removed the email address from the earlier test note. Other pending authentication checks remain open.
+- v2.42 (2026-09-28): Marked same-user authentication in Global and Bangladesh complete based on the owner's repeated manual verification with the same account. Separate data-sync and other pending authentication checks remain open.
+- v2.41 (2026-09-28): Recorded the successful manual Anonymous authentication test in the Bangladesh debug build against prod, supported by Logcat showing an anonymous session, nickname validation/save and Firestore retrieval, and authenticated menu/backend access. Other pending authentication tests remain open.
+- v2.40 (2026-09-28): Recorded the successful manual Facebook Login test in the Bangladesh debug build against prod, supported by Logcat showing Firebase credential authentication, profile retrieval, Bangladesh variant tracking, and authenticated menu/backend access. Release-build and other pending authentication tests remain open.
+- v2.39 (2026-09-28): Recorded the successful manual Google Sign-In test in the Bangladesh debug build against prod, supported by Logcat showing provider authentication, Bangladesh variant tracking, and authenticated menu/backend access. Release-build and other pending authentication tests remain open.
+- v2.38 (2026-09-27): Recorded the completed manual Bangladesh Email/Password authentication test on dev, including email verification, sign-in, and Firebase Authentication/Firestore checks. Other authentication tests remain pending.
+- v2.37 (2026-09-27): Made the installed-variant gameplay block symmetric. Both variants detect the other installed package and require removing Global; no country detection or migration promotion was restored.
+- v2.36 (2026-09-27): Final decision: abandon Global-app Bangladesh detection and automatic migration promotion, with no Settings/About or other replacement UI. Removed dormant promotion code, resources, analytics, and obsolete tests; retained app-variant tracking and the separate Bangladesh uninstall flow. Google Play country targeting remains the distribution control.
+- v2.35 (2026-09-27): Audited existing migration tracking and disabled promotion UI. Documented the lack of a supported per-account availability check for another Play listing, removed geographic-targeting proposals, and proposed a user-initiated 18+ store link. Automatic migration UI remains incomplete pending a product decision; application behavior is unchanged.
+- v2.34 (2026-09-27): Closed the Security audit assessment by project-owner acceptance. Service-account keys intentionally stored in the restricted private `Soccer-private` repository are accepted; broad IAM roles verified in dev, test, and prod are tracked as non-blocking least-privilege hardening, not launch-critical vulnerabilities. No code or IAM configuration changed.
+- v2.33 (2026-09-26): Reconciled implementation changes since 7 September: configuration-driven prizes and tie allocation, prize screens and foreground reminders, payment/support CLI tools, server-timestamped audit history, and completed dev payout/support simulations. Updated Phase 3–5 checklists and recorded deployment of payment, tournament-completion, support functions, and Firestore rules to dev, test, and prod. Real remittance, Bangladesh beta, and launch/compliance checks remain separate.
 - v2.32 (2026-09-19): Added the Bangladesh prize-payment lifecycle and administrator CLI. Payment status changes now use validated transitions and audit history; a Firestore trigger notifies the winner by FCM when processing starts, money is sent, delivery completes, details require correction, or a payout is cancelled. The winner UI displays the stored status and payment notifications open the tournament results screen.
 - v2.31 (2026-09-15): Implemented winner payout-details collection on the tournament results screen. Only the authenticated first-place winner with a server-created payment record sees the form; payout methods are loaded from the assigned regulation. bKash and Nagad require an 11-digit Bangladesh mobile number, while Rocket requires a 12-digit account number including its check digit; local and `+880` input formats are normalized. Firestore rules repeat the validation and restrict writes to the winner's pending payment and regulation-supported methods. Added localized UI text and validation feedback for every supported language.
 - v2.30 (2026-09-15): Marked Authentication Integration Setup as complete after verifying Firebase providers, shared Google Services configuration, signing certificates, the shared Meta app configuration, and deployed cross-app Firestore access rules. End-to-end authentication tests and policy/compliance checks remain tracked separately.
@@ -49,7 +69,7 @@ This document outlines a simplified, cost-effective approach for creating a Bang
 **Key Simplifications**:
 - **Technical Approach**: Separate Bangladesh APK using Android Product Flavors (`piotr_gorczynski.soccer2.bd`)
 - **Age Rating**: Global version (13+) and Bangladesh version (18+) will coexist in Bangladesh Play Store
-- **Prize Structure**: ৳2,000 BDT (~$18 USD) for 1st place winners only, bi-monthly tournaments
+- **Prize Structure**: Tournament JSON selects the regulation; its structured `prizeRules` defines currency, total pool, and awards. No fixed amount or tournament frequency is hardcoded into the payout workflow.
 - **Age Verification**: Self-declaration via checkbox + Google Play Store verification (no document upload)
 - **Payment Processing**: Manual processing by developer using **international transfer services** (Remitly recommended for mobile wallets, Wise for bank transfers, Western Union as backup) that send to winners' Bangladesh mobile wallets or bank accounts - NOT direct bKash/Nagad/Rocket access
 - **Total Cost**: ~$8,000-$12,000 initial setup, ~$108-$190/month operational (including transfer fees)
@@ -129,7 +149,7 @@ Based on Bangladesh gaming laws and skill-based game regulations:
 ### 3. Payment Requirements
 - **Services**: Government-approved payment platforms (bKash, Nagad, or Rocket)
 - **Processing**: Manual payment processing outside the app by developer
-- **Status Tracking**: Payment status updated in Firestore (pending, processing, completed)
+- **Status Tracking**: `awaiting_details` → `ready_for_processing` → `processing` → `sent` → `completed`, with correction (`action_required`) and cancellation paths, notifications, and audit history
 - **Timeline**: Prizes distributed within 7 days of tournament completion
 
 ---
@@ -268,18 +288,18 @@ The configuration creates two separate APKs:
 
 ### Prize Structure
 
-**Promotional Prize Pool**:
-```
-1st Place: ৳2,000 BDT (approximately $18 USD)
+**Configuration-driven prize pool (implemented):** `tools/create-tournament` reads tournament JSON
+and its assigned native Firestore regulation ID. The regulation's `prizeRules` supplies currency,
+total amount, and per-place awards; the tool validates them and derives `tournaments/{id}.prizePool`.
+Dates and visibility are tournament configuration, not a fixed bi-monthly schedule.
 
-Frequency: Twice per month (bi-monthly tournaments)
-Note: USD conversions based on December 2025 rates and subject to change
-```
+The completion backend allocates the configured awards. Players tied on a positive final score
+share the awards for the positions occupied by that group, rounded down to whole currency units;
+the total payout never exceeds the advertised pool. The UI shows the stored award and each
+winner's allocated amount, including shared-place information.
 
-This simplified prize structure:
-- Rewards only the tournament winner (1st place)
-- Keeps operational complexity minimal
-- Provides consistent bi-monthly prize opportunities
+Fixed amounts in older marketing and cost examples below are illustrative planning assumptions,
+not application constants. Any launch copy must match the selected tournament and regulation.
 
 ### International Transfer Service Setup Guide (for Polish Developer)
 
@@ -490,44 +510,39 @@ The original approach assumed the developer could directly use bKash, Nagad, or 
 
 ### Payment Flow
 
+```text
+Tournament JSON + assigned regulation → validated prizePool
+    ↓
+Tournament completion → ranking and configured prize allocation (including ties)
+    ↓
+payments/{id}: awaiting_details + payment_created history → winner notification
+    ↓
+Winner submits regulation-supported method and validated account number
+    ↓
+ready_for_processing + recipient_details_submitted history
+    ↓
+Administrator: processing → initiate transfer outside the app
+    ↓
+Administrator: sent (transfer.provider + transfer.providerReference)
+    ↓
+Provider confirms delivery → administrator: completed
 ```
-Tournament Completion
-    ↓
-Winner Determined (1st Place - Firestore: tournaments/{id}/results)
-    ↓
-Payment Record Created (Firestore: payments/{id}, status: "pending")
-    ↓
-Winner Notified via App (In-app notification)
-    ↓
-Winner Provides Payment Details:
-    - Full legal name
-    - bKash/Nagad/Rocket mobile wallet number
-    - Phone number
-    - Alternative: Bank account details or PayPal (if available)
-    ↓
-Developer Uses International Transfer Service:
-    - Remitly (recommended for mobile wallets): Transfer to bKash/Nagad
-    - Wise (if bank transfers accepted): Transfer to bank account
-    - Western Union (backup): Transfer to mobile wallet or cash pickup
-    - PayPal: Direct transfer (if winner has account)
-    ↓
-Developer Initiates Transfer Outside App:
-    - Log into Remitly (primary), Wise (secondary), or Western Union/PayPal (backup)
-    - Enter winner's mobile wallet number, bank account, or PayPal details
-    - Send ৳2,000 BDT (service handles currency conversion)
-    - Save transaction ID/receipt
-    ↓
-Winner Receives Money in Their Mobile Wallet:
-    - Funds appear in winner's bKash/Nagad/Rocket account
-    - Time: Minutes to 2 business days depending on service
-    ↓
-Developer Updates Payment Status in Firestore:
-    - status: "completed"
-    - transactionId: (from transfer service)
-    - completedAt: timestamp
-    ↓
-Winner Notified of Payment Completion
-```
+
+For rejected details, an administrator moves an eligible payment to `action_required` with an
+issue code and user-facing explanation. The winner corrects and resubmits the details, returning
+it to `ready_for_processing` and clearing the current issue. Prior details and the issue remain
+in history. `cancelled` is available only from states allowed by the shared transition model.
+
+The Bangladesh app displays payment status, transfer reference, and support replies. It reminds
+users with `awaiting_details` or `action_required` once per foreground session. Support tickets
+have their own status lifecycle; replying to or resolving a ticket does not itself complete a payout.
+The app currently collects `recipientInfo.method`, `accountNumber`, and `submittedAt`, not full
+legal names or bank/PayPal details. Any additional provider requirements must be handled separately.
+
+Use the [payment CLI](../tools/update-payment-status/README.md) for status changes rather than raw
+Firestore edits, so transition validation, timestamps, and administrator text are retained.
+Use the [support CLI](../tools/support-tickets/README.md) for ticket replies and resolution.
+Amounts come from the payment allocation; a CLI simulation records workflow events but sends no money.
 
 ### Detailed Payment Service Verification
 
@@ -659,50 +674,46 @@ fresh age, rules, and supported-payout-account declarations. Legacy and non-cash
 valid without the new metadata.
 
 ```javascript
+// Illustrative field layout; monetary values come from the assigned regulation.
 // Collection: tournaments
 {
-  id: "tournament_123",
-  name: "Bangladesh Bi-Monthly Championship March 2026",
-  region: "BD",
+  name: tournamentConfig.name,
+  regulation: tournamentConfig.regulation,
+  visibleInFlavours: tournamentConfig.visibleInFlavours,
   prizePool: {
     enabled: true,
-    currency: "BDT",
-    firstPlacePrize: 2000, // Only 1st place winner receives prize
-    fundedBy: "developer"
-  },
-  ageRestriction: 18,
-  // ... existing fields
+    currency: configuredCurrency,
+    totalAmount: configuredTotal,
+    awards: configuredAwards, // [{ place, amount }, ...]
+    firstPlacePrize: configuredFirstPlaceAward // legacy compatibility
+  }
 }
 
-// Collection: payments
+// Collection: payments (created by the backend, subsequently updated by owner/admin)
 {
-  id: "payment_456",
-  userId: "user_789",
-  tournamentId: "tournament_123",
-  amount: 2000,
-  currency: "BDT",
-  rank: 1,
-  paymentMethod: "bkash", // or "nagad", "rocket", "paypal", "bank" (user-selected)
-  recipientInfo: {
-    fullName: "User Full Legal Name", // Required for international transfers
-    accountNumber: "+8801XXXXXXXXX", // User-provided mobile wallet number
-    phoneNumber: "+8801XXXXXXXXX", // May be same as accountNumber for mobile wallets
-    paypalEmail: "user@email.com", // Optional, if PayPal selected
-    bankDetails: { // Optional, if bank transfer selected
-      accountNumber: "XXXXXXXX",
-      bankName: "Bank Name",
-      branchName: "Branch Name"
-    }
-  },
-  transferService: "wise", // "wise", "western_union", "remitly", "paypal" - service used by developer
-  status: "pending", // pending, processing, completed, failed (manually updated by developer)
-  initiatedAt: Timestamp,
-  completedAt: Timestamp,
-  transactionId: "TXN_123456", // Transaction ID from Wise/WU/Remitly/PayPal
-  transferFee: 0.35, // Actual fee charged by transfer service (in USD)
-  exchangeRate: 110.5, // Exchange rate used for the transfer
-  notes: "March Championship - 1st Place"
+  userId: winnerUserId,
+  tournamentId: tournamentId,
+  amount: allocatedWinnerShare,
+  currency: configuredCurrency,
+  rank: allocatedRank,
+  tied: isSharedPlace,
+  tieCount: numberOfTiedWinners,
+  status: "awaiting_details",
+  createdAt: Timestamp,
+  statusUpdatedAt: Timestamp,
+  updatedAt: Timestamp,
+  // Added on recipient submission:
+  recipientInfo: { method: "bkash", accountNumber: "01XXXXXXXXX", submittedAt: Timestamp },
+  // Added when sent/completed:
+  transfer: { provider: "remitly", providerReference: "PROVIDER_REFERENCE",
+              sentAt: Timestamp, completedAt: Timestamp },
+  // Present only while an issue is outstanding:
+  issue: { code: "invalid_recipient_account", userMessage: "Correct the account number.",
+           createdAt: Timestamp }
 }
+// Payment audit: payments/{id}/statusHistory/{eventId}
+// Support: supportTickets/{id}, with messages and statusHistory subcollections.
+// Optional fields above are not all present on a newly created payment.
 
 // Per-registration audit record:
 // tournaments/{tournamentId}/participants/{userId}
@@ -1040,7 +1051,7 @@ Google Play Store (Bangladesh region)
 3. Can choose to install:
    - **Global version**: For regular play, no cash prizes
    - **Bangladesh version**: For cash prize tournaments
-   - **Both**: Can have both installed simultaneously
+   - **Both**: Installation can coexist, but gameplay is blocked in both until Global is uninstalled
 
 **Choice guidance**:
 - If interested in cash prizes → Install Bangladesh version
@@ -1051,19 +1062,14 @@ Google Play Store (Bangladesh region)
 
 #### For Existing Users (13-17) Who Installed Global Version
 
-**Scenario**: Teen user (age 15) has global version installed, sees promotion for Bangladesh version
+**Scenario**: Teen user (age 15) independently finds the Bangladesh version on Google Play
 
 **What happens**:
-1. User sees in-app banner: "Install Bangladesh version for cash prizes!"
-2. User clicks banner → Redirected to Google Play
-3. **Google Play blocks installation**:
-   ```
-   "Gridline Soccer Bangladesh is rated 18+ and is not appropriate for your age."
-   [Cannot Install]
-   ```
-4. User continues using global version with regular tournaments
+1. The user independently opens Google Play; the Global app shows no migration prompt.
+2. Google Play determines whether the listing can be viewed or installed for that account.
+3. The user can continue using the Global version regardless of Bangladesh availability.
 
-**Important**: This is **automatic** and handled by Google Play. You don't need to implement age checks in the promotion logic.
+**Important**: Google Play handles its account restrictions; there is no Global migration-promotion logic.
 
 ---
 
@@ -1126,10 +1132,9 @@ Google Play Store (Bangladesh region)
 
 The age rating difference **DOES affect** the migration strategy outlined in `BANGLADESH_VERSION_APPROACH.md`:
 
-##### Original Migration Plan
-- Show in-app banner to all Bangladesh users in global app
-- Direct them to install Bangladesh version
-- Target: 30% migration in Month 1 (224 users out of 746)
+##### Original Migration Plan (superseded)
+The proposed Global-app banner and country detection were abandoned. Historical conversion targets
+below are estimates only and do not imply a remaining Global UI task.
 
 ##### Adjusted Plan (Accounting for Age Restrictions)
 
@@ -1152,105 +1157,12 @@ From 746 current Bangladesh users:
 - **Month 1 target**: 30% of eligible = **112 users**
 - **Month 6 target**: 60% of eligible = **224 users**
 
-**Step 3: Age-Aware Promotion Strategy**
+**Step 3: Distribution and age information**
 
-**In-App Banner Logic**:
-```kotlin
-// In global app (piotr_gorczynski.soccer2)
-fun shouldShowBDPromotion(): Boolean {
-    // Show to Bangladesh users only
-    if (userRegion != "BD") return false
-    
-    // Show to all users - Google Play will enforce age restriction
-    // We don't need to check age in-app
-    return !hasUserDismissedPromo()
-}
-```
-
-**Banner Message** (age-neutral):
-```
-🎉 NEW: Gridline Soccer Bangladesh!
-
-Win ৳2,000 cash prizes in skill-based tournaments!
-
-✅ Free entry, no payment required
-✅ Same account, all your data preserved
-✅ For players 18 and above
-
-[Install Now]  [Learn More]  [Maybe Later]
-
-Note: You must be 18+ to participate in cash prize tournaments.
-Google Play will verify your age.
-```
-
-**Key Points**:
-- **Don't hide banner from young users**: They need to know about the requirement
-- **Let Google Play enforce**: Google will block installation if user is under 18
-- **Clear messaging**: Banner mentions "18 and above" requirement
-- **No false hopes**: User understands why they might not be able to install
-
-##### What Happens to Users Under 18?
-
-**Scenario**: 13-17 year old user sees banner and clicks "Install Now"
-
-1. User redirected to Google Play Store
-2. Google Play shows Gridline Soccer Bangladesh listing
-3. **Google Play displays age restriction message**
-4. User cannot install the app
-5. User returns to global app and continues playing
-
-**User experience**:
-- Clear why they can't install (age restriction)
-- Can still enjoy global version
-- Will be able to install when they turn 18 (if still interested)
-
-**No negative impact**: Users understand age restrictions (common in gaming)
-
----
-
-### Legal & Compliance Considerations
-
-#### Bangladesh Gaming Law Compliance
-
-**Age Requirement**: Bangladesh skill-based gaming laws require participants to be 18+
-
-**Compliance Approach**:
-1. **Google Play age rating**: 18+ (primary enforcement)
-2. **In-app confirmation**: User self-declaration checkbox
-3. **Terms of Service**: Clear 18+ requirement
-4. **Payment verification**: Age verification at payout (optional)
-
-**Multi-Layer Verification**:
-```
-Layer 1: Google Play Store age restriction (automatic)
-    ↓
-Layer 2: In-app eligibility confirmation (user declares 18+)
-    ↓
-Layer 3: Payment account verification (bKash/Nagad requires 18+)
-    ↓
-Layer 4: Developer can verify at payout if needed
-```
-
-This approach provides **robust age verification** while minimizing user friction.
-
----
-
-#### Google Play Policy Compliance
-
-**Real Money Gaming Policy**: Google Play allows real money gaming apps if:
-- ✅ Properly age-rated (18+ for cash prizes)
-- ✅ Comply with local laws
-- ✅ Clear disclosure of terms
-- ✅ No deceptive practices
-
-**Your App Complies**:
-- ✅ Age-rated 18+
-- ✅ Skill-based (not gambling)
-- ✅ Free entry (no purchase required)
-- ✅ Clear terms and disclosure
-- ✅ Developer-funded prizes
-
-**Potential Policy Concerns**: None identified. Your approach is compliant.
+Global-app promotion has been dropped; there is no country-targeted banner or install prompt.
+The Bangladesh listing and app must explain the 18+ requirement. Google Play country targeting
+controls distribution, and the Bangladesh tournament flow retains its eligibility confirmation.
+The Global app does not infer the user's country or installation eligibility.
 
 ---
 
@@ -1260,39 +1172,8 @@ This approach provides **robust age verification** while minimizing user frictio
 
 ##### In Global Version (`piotr_gorczynski.soccer2`)
 
-**Add Age-Aware Messaging**:
-```kotlin
-// When showing Bangladesh promotion
-fun getBDPromotionMessage(): String {
-    return """
-    🎉 NEW: Gridline Soccer Bangladesh!
-    
-    Win ৳2,000 cash prizes in skill-based tournaments!
-    
-    ✅ Free entry, no payment required
-    ✅ Same account, all your data preserved
-    ✅ Bi-monthly cash prize tournaments
-    
-    ⚠️ REQUIREMENT: You must be 18 years or older to participate
-    in cash prize tournaments as required by Bangladesh law.
-    
-    [Install Bangladesh Version]  [Learn More]  [Maybe Later]
-    """.trimIndent()
-}
-```
-
-**Log Analytics**:
-```kotlin
-// Track banner clicks (regardless of age)
-analytics.logEvent("bd_promotion_clicked", mapOf(
-    "user_id" to userId,
-    "user_region" to "BD",
-    "timestamp" to System.currentTimeMillis()
-))
-
-// Google Play will handle age restriction
-// No need to track install success here
-```
+The Global app contains no Bangladesh migration promotion or replacement Settings/About entry.
+Shared variant tracking continues independently of promotion.
 
 ##### In Bangladesh Version (`piotr_gorczynski.soccer2.bd`)
 
@@ -1396,7 +1277,7 @@ Your multi-layer approach provides adequate protection.
 - "18+ only, compete for ৳2,000 prizes"
 - "Skill-based tournaments for Bangladesh players"
 
-**In-app cross-promotion**: Only show Bangladesh promotion to users in Bangladesh region. Make age requirement clear in every promotion.
+**In-app cross-promotion**: Dropped entirely; no Global-app country detection or migration UI.
 
 ---
 
@@ -1433,7 +1314,7 @@ Your multi-layer approach provides adequate protection.
 - Google Play doesn't provide age information to apps
 - Age verification is handled by Google Play at install time
 
-**Alternative**: Show promotion to all Bangladesh users. Google Play will allow installation when they turn 18.
+**Decision**: No Global migration prompt or age-triggered migration. Users independently access the Play listing, where Google Play determines eligibility.
 
 ---
 
@@ -1445,27 +1326,15 @@ Your multi-layer approach provides adequate protection.
 - Can measure migration from global to Bangladesh version
 - Can segment analytics by app version
 
-**Recommended analytics events**:
-```kotlin
-// In global app
-analytics.logEvent("bd_promotion_shown", mapOf("user_region" to "BD"))
-
-// In Bangladesh app
-analytics.logEvent("bd_app_launched", mapOf("user_age_verified" to true))
-```
+Use the existing `trackAppVariant` metadata for same-UID variant usage. Promotion impression/click
+events were removed with the abandoned UI; do not infer age verification or location from app usage.
 
 ---
 
+
 #### Q10: What about users who have both apps installed?
 
-**A**: Users can have both apps installed simultaneously:
-- **Use case 1**: User likes having separate apps for different purposes
-- **Use case 2**: User wants global version for casual play, Bangladesh version for tournaments
-- **Use case 3**: User testing both versions
-
-**Impact**: None. Both apps use same Firebase backend, same user account, data stays synced.
-
-**Storage**: Each app ~50-100 MB, total ~100-200 MB. Not a significant concern.
+**A**: Android can install both packages, but both apps block gameplay when the other is installed. The user must uninstall Global and continue in Bangladesh. The shared Firebase account and data remain intact.
 
 ---
 
@@ -1519,7 +1388,7 @@ Tournaments now support visibility control across app flavours using the `visibl
 **Tournament Structure**:
 
 **Bi-Monthly Cash Prize Tournaments**
-- **Prize**: ৳2,000 BDT (approximately $18 USD) for 1st place only
+- **Prize**: Amount, currency, and award positions from the assigned regulation and derived `prizePool`; tied winners receive their calculated share
 - **Frequency**: Twice per month (e.g., 1st and 15th of each month)
 - **Participants**: 16-64 players (adjustable based on participation)
 - **Format**: Round-robin or elimination bracket
@@ -1726,56 +1595,50 @@ recorded under `tournaments/{tournamentId}/participants/{userId}` for every cash
 
 ### Migration Approaches & Recommendation
 
-#### Option 1: In-App Notification with Deep Link (Recommended)
+#### Final Decision: No Global-App Migration UI
 
-**Description**: Show a prominent notification in the existing `piotr_gorczynski.soccer2` app for Bangladesh users, directing them to install the new Bangladesh version.
+**Intentionally not implemented; removed from scope (27 September 2026).** The Global flavor has
+no reliable, supported mechanism to determine that the current Google Play account is a Bangladesh
+user or that `piotr_gorczynski.soccer2.bd` is available to that account. SIM/network country, locale,
+IP/GPS, and timezone are not reliable indicators of Google Play country and must not be used as proxies.
 
-**Implementation**:
+There will be no automatic migration prompt, country detection, Settings/About entry, or other
+replacement migration UI in Global. This is a final scope decision, not a pending implementation
+or a feature flag to enable at launch. **Google Play production country targeting** controls `.bd`
+availability; Google Play evaluates the account's viewing/installation eligibility.
 
-1. **Detect Bangladesh Users** (in existing global app):
-   - Check device region/locale
-   - Check Google Play Store country from Firebase
-   - Identify users who primarily play in Bangladesh timezone
+The API review found no suitable per-account availability check: Android intent resolution only
+finds a link handler; Play in-app updates apply to the current app; publisher country availability
+reports track configuration rather than consumer eligibility. Play Billing country data cannot be
+used for marketing targeting. References: [Android intent resolution](https://developer.android.com/reference/android/content/pm/PackageManager),
+[Play in-app updates](https://developer.android.com/reference/com/google/android/play/core/appupdate/AppUpdateManager),
+[publisher country availability](https://developers.google.com/android-publisher/api-ref/rest/v3/edits.countryavailability/get),
+and [Billing configuration restrictions](https://developer.android.com/google/play/billing/integrate#query-billing-config).
 
-2. **Show In-App Banner** (one-time or recurring):
-   ```
-   🎉 NEW: Win Cash Prizes in Bangladesh!
-   
-   We've launched a special version of Gridline Soccer for Bangladesh 
-   with bi-monthly cash prize tournaments!
-   
-   • Win ৳2,000 for 1st place
-   • Free entry, skill-based competition
-   • Same account, all your data preserved
-   
-   [Install Bangladesh Version] [Learn More] [Dismiss]
-   ```
+**Cleanup:** Removed the dormant promotion check and dialog from `MenuActivity`; removed the
+promotion flag, geographic detection, Play link, and `bd_promo_*` preference handling from
+`BangladeshMigrationHelper`; removed promotion-only analytics, strings in all 20 resource sets,
+and tests for the abandoned behavior. Old preference values, if present on a device, are inert.
 
-3. **Deep Link to Google Play**:
-   ```kotlin
-   // In existing app (piotr_gorczynski.soccer2)
-   val playStoreUrl = "https://play.google.com/store/apps/details?id=piotr_gorczynski.soccer2.bd"
-   val intent = Intent(Intent.ACTION_VIEW, Uri.parse(playStoreUrl))
-   startActivity(intent)
-   ```
+**Retained functionality:** `SoccerApp.trackAppVariant()` and the authenticated backend continue
+to record variant usage and same-UID migration metadata. They do not infer country or Play
+eligibility. The helper's installed-package conflict check is shared by both variants. Its uninstall helpers remain separate from promotion. No replacement migration mechanism was introduced.
 
-**Pros**:
-- Direct communication with existing users through in-app UI
-- Clear call-to-action
-- Preserves user data automatically (shared Firebase backend)
-- Users can keep both apps or uninstall the old one
-- No forced migration
-- Works for all users regardless of account registration status
+**Cleanup verification:** `_devGlobalDebug` and `_devBangladeshDebug` assemble successfully;
+the retained `BangladeshMigrationHelperTest` suite passes. Source checks confirm removal of
+automatic-promotion calls, resources, and country-detection methods. No device UI test was performed.
 
-**Cons**:
-- Requires update to existing app to add notification logic
-- Users must take action (install new app)
-- Some users may ignore the banner
-- Only reaches users who actively use the app
+#### Installed-variant gameplay gate (both directions)
 
-**Note**: Push notifications via FCM are not viable since most Bangladesh users don't have registered accounts and thus no FCM tokens available.
+This is a local installed-package conflict check, not the abandoned migration promotion:
 
----
+- Bangladesh checks `piotr_gorczynski.soccer2`; Global checks `piotr_gorczynski.soccer2.bd` using the existing `BangladeshMigrationHelper` and Android `PackageManager.getPackageInfo`.
+- Each flavor manifest declares only the other package in `<queries>`, following [Android package visibility guidance](https://developer.android.com/training/package-visibility/declaring). No `QUERY_ALL_PACKAGES` permission or country detection is needed.
+- Menu resume checks block normal startup before backend-dependent navigation. A non-cancelable dialog offers **Close**; both messages require uninstalling Global. Global explicitly says Bangladesh is already installed and asks the user to uninstall this Global version.
+- Direct game launches and resumed games also recheck the installed package and return to the blocking menu. Package state is not cached, so removing the other package clears the conflict on the next resume.
+- The new Global message is localized in all 20 supported language resource sets. Google Play country targeting remains the distribution control for Bangladesh; this gate makes no claim about account eligibility or country.
+
+**Verification (2026-09-27):** `_devGlobalDebug` and `_devBangladeshDebug` assemble successfully. All 11 `BangladeshMigrationHelperTest` cases pass in each flavor, covering both directions, absent/removed packages, flavor-specific messages, and retained uninstall intents. Both merged manifests contain the required opposite-package query and neither requests `QUERY_ALL_PACKAGES`. Physical-device install/uninstall and dialog testing remains pending. A broader Global unit-test run also reported 49 failures outside this focused suite (including existing resource-check tests); full-suite validation is not claimed.
 
 #### Option 2: Google Play Store Cross-Promotion
 
@@ -1810,90 +1673,13 @@ recorded under `tournaments/{tournamentId}/participants/{userId}` for every cash
 
 ---
 
-#### Option 3: Gradual Sunset of Global App in Bangladesh
+### Migration Scope
 
-**Description**: Gradually phase out the global app for Bangladesh users while promoting the new version.
-
-**Implementation**:
-
-**Phase 1: Soft Promotion (Months 1-2)**
-- Add in-app banners promoting BD version
-- Keep global app fully functional
-
-**Phase 2: Feature Gating (Months 3-4)**
-- Disable new tournament creation in global app for BD users
-- Show message: "Create tournaments in Bangladesh version for cash prizes"
-- Existing functionality still works
-
-**Phase 3: Full Migration (Month 5+)**
-- Show full-screen migration prompt in global app for BD users
-- Require BD users to switch to new app for tournaments
-- Maintain read-only access to old app
-
-**Pros**:
-- Ensures complete migration over time
-- Gives users time to adapt
-- Clear migration timeline
-
-**Cons**:
-- More complex implementation
-- Risk of user frustration
-- May violate Play Store policies if too aggressive
-
----
-
-### Recommended Migration Strategy
-
-**Best Approach: Combination of Option 1 + Option 2**
-
-**Phase 1: Immediate Actions (Week 1-2)**
-
-1. **Launch BD Version on Play Store**
-   - Publish `piotr_gorczynski.soccer2.bd`
-   - Clear app description highlighting cash prizes
-   - Screenshots showing prize tournaments
-   - Localized Bengali description
-
-2. **Update Global App** (piotr_gorczynski.soccer2):
-   ```kotlin
-   // Add to global app codebase
-   if (userRegion == "BD" && !hasSeenBDPromo) {
-       showBangladeshVersionPromotionDialog()
-   }
-   ```
-
-**Phase 2: Ongoing Promotion (Week 3-8)**
-
-1. **In-App Banners**:
-   - Show banner on main menu for BD users in global app
-   - Allow dismissal but show again after 7 days
-   - Track banner impressions and clicks
-
-2. **Play Store Optimization**:
-   - Add "Bangladesh" to global app keywords
-   - Link to BD version in "What's New" section
-   - Use custom Play Store listing experiments
-
-3. **Social Media & Community**:
-   - Announce on any existing social media channels
-   - Encourage users to share in Bangladesh gaming communities
-   - Create viral content about prize winners
-
-**Phase 3: Incentivized Migration (Month 2-3)**
-
-1. **First-Mover Advantage**:
-   - Offer bonus entry into special tournament for early adopters
-   - "Install by [date] to get entry into ৳5,000 inaugural tournament"
-
-2. **Referral Program**:
-   - Users who refer friends to BD version get bonus entries
-   - Track referrals via Firebase Dynamic Links
-
-3. **Email Campaign** (if you have email addresses):
-   - Direct email to Bangladesh users
-   - Personalized message about cash prizes
-
----
+Users may discover the Bangladesh app through Google Play and independently choose to install it.
+No Global-app promotion, geographic targeting, feature gating, forced-migration campaign, or
+replacement entry is planned. The preceding Play Store marketing ideas are outside the Global UI;
+this cleanup does not implement a new discovery mechanism. Shared account/data continuity and
+existing server-managed app-variant tracking remain in place.
 
 ### Data Migration & Continuity
 
@@ -1949,11 +1735,10 @@ recorded under `tournaments/{tournamentId}/participants/{userId}` for every cash
 #### Handling Edge Cases
 
 **Scenario 1: User has both apps installed**
-- Both apps work independently
-- Same user account in both
-- User can play regular tournaments in global app
-- User can play cash prize tournaments in BD app
-- No conflicts, data stays in sync
+- Both variants block gameplay and require uninstalling Global.
+- Bangladesh keeps its existing uninstall instructions.
+- Global explains that Bangladesh is already installed and asks the user to remove this Global version.
+- Firebase account data remains shared; installation coexistence does not imply simultaneous gameplay is allowed.
 
 **Scenario 2: User uninstalls global app**
 - No data loss (all data in Firebase)
@@ -1962,7 +1747,7 @@ recorded under `tournaments/{tournamentId}/participants/{userId}` for every cash
 
 **Scenario 3: User only wants global app**
 - Completely fine, no forced migration
-- User can dismiss BD promotion banner
+- No Global-app migration prompt is shown
 - Global functionality unchanged
 
 ---
@@ -1975,38 +1760,10 @@ recorded under `tournaments/{tournamentId}/participants/{userId}` for every cash
 - **Month 3**: 50-60% of users (373-448 installs)
 - **Month 6**: 60-70% of users (448-522 installs)
 
-**Tracking Metrics**:
-
-```javascript
-// Firebase Analytics Events
-
-// In global app
-logEvent("bd_promotion_shown", {
-  user_id: userId,
-  region: "BD",
-  timestamp: Date.now()
-});
-
-logEvent("bd_promotion_clicked", {
-  user_id: userId,
-  destination: "play_store",
-  timestamp: Date.now()
-});
-
-// In Bangladesh app
-logEvent("bd_app_first_launch", {
-  user_id: userId,
-  migrated_from_global: true, // Check if user exists in Firestore
-  timestamp: Date.now()
-});
-
-logEvent("bd_eligibility_confirmed", {
-  user_id: userId,
-  age_confirmed: true,
-  payment_method: "bkash",
-  timestamp: Date.now()
-});
-```
+**Tracking Metrics**: Use existing server-managed `appVariants` and `migrationStatus` for users
+who sign into both apps with the same Firebase UID. There are no Global promotion impression/click
+events. Historical conversion targets above are planning estimates, not identifiable cohorts based
+on an in-app Google Play country check.
 
 **Success Indicators**:
 1. **Install Rate**: % of global app BD users who install BD app
@@ -2106,81 +1863,19 @@ Download now and start competing for real prizes!
 
 #### Global App Updates (piotr_gorczynski.soccer2)
 
-- [ ] Add Bangladesh user detection logic
-  ```kotlin
-  fun isBangladeshUser(): Boolean {
-      val locale = Locale.getDefault()
-      val playStoreCountry = getPlayStoreCountry() // From Firebase Config
-      return locale.country == "BD" || playStoreCountry == "BD"
-  }
-  ```
+- **Removed from scope:** Global Bangladesh-user detection and automatic migration prompt; intentionally not implemented because reliable country/Play-availability detection is unavailable.
+- [x] Remove dormant automatic-promotion code, localized strings, preference handling, analytics, and obsolete tests
+- No Settings/About entry, replacement banner, or other migration UI is planned.
+- Google Play country targeting remains the control for production `.bd` availability.
 
-- [ ] Create promotion banner UI component
-  ```kotlin
-  class BangladeshPromotionBanner : Fragment() {
-      fun showPromotion() {
-          // Show banner with "Install Bangladesh Version" CTA
-      }
-      
-      fun onInstallClicked() {
-          openPlayStore("piotr_gorczynski.soccer2.bd")
-          logAnalyticsEvent("bd_promotion_clicked")
-      }
-  }
-  ```
-
-- [ ] Implement banner dismissal tracking
-  ```kotlin
-  SharedPreferences.edit {
-      putBoolean("bd_promo_dismissed", true)
-      putLong("bd_promo_dismissed_time", System.currentTimeMillis())
-  }
-  ```
 
 #### Bangladesh App Development (piotr_gorczynski.soccer2.bd)
 
-- [ ] Use shared google-services.json
-  ```bash
-  # File location: secrets/google-services.{env}.json
-  # This file contains client configurations for both package IDs:
-  # - piotr_gorczynski.soccer2 (global)
-  # - piotr_gorczynski.soccer2.bd (bangladesh)
-  ```
-
-- [ ] Detect migrated users on first launch
-  ```kotlin
-  suspend fun detectMigratedUser(): Boolean {
-      val currentUser = FirebaseAuth.getInstance().currentUser ?: return false
-      val userDoc = firestore.collection("users").document(currentUser.uid).get().await()
-      return userDoc.exists() && userDoc.data?.get("region") != "BD"
-  }
-  ```
-
-- [ ] Show migration welcome message
-  ```kotlin
-  if (isMigratedUser) {
-      showWelcomeDialog(
-          title = "Welcome to Gridline Soccer Bangladesh!",
-          message = "All your data has been preserved. Confirm your eligibility to start playing for cash prizes!"
-      )
-  }
-  ```
-
-- [ ] Update user document with BD region
-  ```kotlin
-  suspend fun updateUserRegion(userId: String) {
-      firestore.collection("users").document(userId).update(
-          mapOf(
-              "region" to "BD",
-              "appVariant" to "bangladesh",
-              "migrationStatus" to mapOf(
-                  "migratedFromGlobal" to true,
-                  "migrationDate" to FieldValue.serverTimestamp()
-              )
-          )
-      )
-  }
-  ```
+- [x] Shared environment-specific Google Services configuration contains both package IDs
+- [x] Authenticated app-variant tracking and same-UID migration detection implemented through `trackAppVariant`
+- **Out of scope (decision 2026-09-29):** A dedicated migrated-user welcome flow in Bangladesh is intentionally not planned. Existing Global users use normal sign-in and access their shared profile; no additional welcome screen is required. App-variant and migration tracking remain in place. This is separate from the previously abandoned Global-app migration promotion.
+- Do not infer migration from a user region field or write `appVariant`/`migrationStatus` directly from the client.
+- Keep the symmetric installed-variant gameplay gate separate from the abandoned Global promotion; it is not a Play availability check.
 
 #### Firebase Backend Configuration
 
@@ -2209,10 +1904,9 @@ Download now and start competing for real prizes!
 
 ### Cost & Resource Implications
 
-**Additional Costs for Migration**:
+**Additional Costs for Migration** (historical estimates; Global promotion UI has been removed from scope and totals need re-estimation):
 
 1. **Development Time**:
-   - Global app update (promotion banner): 8-16 hours
    - Firebase configuration (dual app setup): 4-8 hours
    - Testing migration flow: 8-12 hours
    - **Total: 20-36 hours (~$1,000-$1,800)**
@@ -2235,13 +1929,11 @@ Download now and start competing for real prizes!
 ### Timeline for Migration
 
 **Week 1-2: Development**
-- Update global app with promotion banner
 - Configure Bangladesh app in Firebase
 - Test cross-app authentication
 
 **Week 3: Launch**
 - Publish Bangladesh app to Play Store
-- Update global app with promotion banner
 - Monitor initial user response
 
 **Week 4-8: Active Promotion**
@@ -2715,7 +2407,8 @@ implementation 'com.facebook.android:facebook-android-sdk:18.1.3'
 - [ ] **Test Cross-App Authentication**
   - [ ] Verify same user can be authenticated in both apps simultaneously
   - [ ] Confirm Firestore security rules allow cross-app access
-  - [ ] Test friend connections work across apps
+  - [x] Test friend connections work across apps
+    - PASS (2026-09-28): Shared friend-list addition/removal verified on two phones running Global and Bangladesh with the same account. See Authentication Testing below for details and the list-refresh limitation.
 
 - [ ] **Test Build Variants**
   - [ ] `bangladeshDebug` build with Google Sign-In
@@ -2992,12 +2685,13 @@ cd mobile
 
 ## Implementation Roadmap
 
-> **Implementation status (13 September 2026):** The Bangladesh product flavor, regulation importer,
-> prize-aware tournament creation, scheduled tournament lifecycle, final ranking, pending payment
-> creation, and winner notification have been implemented. The complete Variant 1 flow (one
-> `1,000 BDT` first-place prize) was successfully exercised on the `dev` environment with three
-> participants and three completed matches. Eligibility, winner payment-details collection, manual
-> payout completion, and the remaining launch/compliance work are still outstanding.
+> **Implementation status (26 September 2026):** Configuration-driven tournaments and regulations,
+> eligibility confirmation, scheduled lifecycle, ranking/tied prizes, winner notifications, payout
+> details, payment status/reminders, and support tickets are implemented. The tournament flow and
+> manual payout/support simulations through `completed` were exercised on `dev`. Payment,
+> tournament-completion, and support functions plus Firestore rules were deployed to `dev`, `test`,
+> and `prod`. This does not constitute a real remittance or Bangladesh production launch; those,
+> beta testing, and the remaining launch/compliance checks remain outstanding.
 
 ### Phase 1: Planning & Setup (Week 1-2)
 - [x] Game assumptions validated with ChatGPT legal consultation
@@ -3017,7 +2711,7 @@ cd mobile
 - [x] Create product flavor for Bangladesh variant
 - [ ] **Migration Planning**:
   - [x] Define user migration strategy and communication plan (see [USER_MIGRATION_STRATEGY.md](USER_MIGRATION_STRATEGY.md))
-  - [ ] Prepare promotional materials (banners, notifications, Play Store assets)
+  - [ ] Prepare external promotional materials and Play Store assets (no Global-app UI)
   - [x] Design Firebase dual-app configuration (shared authentication)
 
 ### Phase 2: Backend Development (Week 3-4)
@@ -3101,66 +2795,137 @@ cd mobile
     - Rocket: 12-digit account number starting with `01`, including the check digit
     - `+880` input is accepted and normalized before storage
   - Shown only to the authenticated 1st-place winner with a server-created payment record
-  - Firestore rules allow updates only to `recipientInfo` on the winner's pending payment and validate the selected method against the regulation
-- [ ] Update tournament UI for cash prizes
-  - "৳2,000 Prize" badge on tournament listings
+  - Firestore rules validate ownership, rank, regulation-supported method, account format, and the transition from `awaiting_details` or `action_required` to `ready_for_processing`
+  - Submission stores `recipientInfo`, `statusUpdatedAt`, and `updatedAt`; corrected submission clears the current `issue`, while history retains the previous details and issue
+- [x] Update tournament UI for cash prizes
+  - Prize amounts and currency come from tournament `prizePool` and the payment allocation, not a fixed badge amount; shared first-place prizes show the winner's share and tie count
   - [x] Winner push notification from the backend
-  - Payment status screen (pending/completed)
+  - [x] Bangladesh prize list and prize-details screen, including notification navigation
+  - [x] Payment lifecycle display: `awaiting_details`, `ready_for_processing`, `processing`, `sent`, `completed`, `action_required`, and `cancelled`; show transfer reference and actionable issue text when present
+  - [x] Reminder for `awaiting_details` and `action_required`, at most once per signed-in user per app launch/foreground session, deferred until an eligible screen can display it
+  - [x] Support ticket submission and display of support replies; correction form remains editable for `action_required`
 - [x] Add Bengali translations for eligibility and winner payment-detail features
-- [ ] **Migration UI Development**:
-  - [ ] Add Bangladesh user detection in global app
-  - [ ] Create promotion banner component for global app
-  - [ ] Implement Play Store deep linking from global to BD app
-  - [ ] Add banner dismissal and tracking logic
-  - [ ] Create migrated user welcome flow in BD app
-  - [ ] Implement auto-detection of existing users in BD app
-  - [ ] Add Firebase Analytics events for migration tracking
+- **Migration UI Development — intentionally dropped (final decision, 2026-09-27)**
+  - Global Bangladesh-user detection and automatic promotion are not remaining TODOs: supported APIs cannot reliably identify the account's Play country or `.bd` availability.
+  - No SIM/network/locale/IP/GPS inference, Settings/About entry, or replacement migration UI.
+  - [x] Remove dormant promotion/detection code and related resources, analytics, and obsolete tests
+  - Existing `trackAppVariant` and same-UID migration metadata remain; these track usage, not country or availability.
+  - Google Play country targeting continues to control production Bangladesh distribution.
+
 
 ### Phase 4: Admin Tools (Week 8)
-- [ ] Create simple admin interface (Firebase Console functions or web panel)
-  - View tournament winners
-  - View payment account details
-  - Update payment status (pending → completed)
-  - Manual payment processing workflow documentation
-- [ ] Test complete workflow (tournament → winner → payment details → manual payment)
+- [x] Implement local administrator CLI tools and trusted Firestore inspection (no separate web panel required)
+  - `tools/update-payment-status/update-payment-status.js <env> list`: list non-completed payments with winner user ID, tournament ID, amount, currency, and status; inspect `recipientInfo` on the payment in Firebase Console for account details
+  - Validated admin transitions through `processing`, `sent`, and `completed`; `sent` requires provider and reference; `action_required` requires issue code and user-facing message; `--dry-run` previews changes
+  - `tools/support-tickets/support-tickets.js <env> list --status open`: table of tickets, references, categories, payment IDs, and original user messages
+  - `reply` and `resolve` preserve administrator text, messages, status history, actor, and server timestamps; support updates notify the user
+  - Payment creation, recipient submissions, and admin changes are recorded under `payments/{id}/statusHistory`; tickets use `supportTickets/{id}/messages` and `statusHistory`
+  - Sort events by `changedAt`; recipient events also carry `recordedAt`. Current records have update/status timestamps; ticket replies and resolutions have their own timestamps. Existing missing history is not backfilled
+  - A support reply alone does not prove payout details were corrected: the current payment issue is cleared on corrected recipient submission, with the old issue preserved in history
+  - [x] Operator instructions: [payment CLI](../tools/update-payment-status/README.md) and [support CLI](../tools/support-tickets/README.md)
+- [x] Deploy backend dependencies to dev, test, and prod via `540-deploy-update-payment-status`, `550-deploy-on-tournament-complete`, and `580-deploy-support-tickets` (including Firestore rules/indexes)
+  - CLI scripts run locally and require no Firebase deployment
+- [x] Test complete workflow on dev (tournament → winner → payment details → simulated manual payment → `completed`, including correction/support handling)
 
 ### Phase 5: Testing & Compliance (Week 9-10)
-- [ ] End-to-end testing (core Variant 1 backend flow completed on `dev`; payout workflow remains)
+- [x] End-to-end dev workflow and manual payout simulation
   - [x] Tournament creation and registration
-  - Eligibility confirmation workflow
+  - [x] Eligibility confirmation workflow
   - [x] Scheduled tournament start and participant notification
   - [x] Match completion and ranking (three participants, full round-robin)
   - [x] Scheduled tournament end and `results` creation
-  - [x] Winner notification and pending `1,000 BDT` payment record
-  - Winner payment details collection
-  - Manual prize payment simulation
-- [ ] Security audit
-  - Payment account data encryption
-  - API authentication
-  - User data protection
+  - [x] Winner notification and `awaiting_details` payment record using the configured award allocation
+  - [x] Shared first-place awards and each winner's allocated share
+  - [x] Winner payment details collection and submission to `ready_for_processing`
+  - [x] Manual prize payment simulation through `processing` → `sent` → `completed` (test provider and unique test references; no funds transferred)
+  - [x] `action_required` correction and resubmission, reminder behavior, support ticket creation/replies/resolution, and chronological payment/support history inspection
+- [ ] Real remittance and receipt confirmation with the payment provider (separate from the dev simulation)
+- [x] Security audit — assessment completed on 2026-09-27 with project-owner acceptance of the findings below
+  - Assessment topics: payment account data encryption, API authentication, and user data protection. Closure records the launch assessment and accepted findings; it does not assert that additional encryption or authentication tests were performed during the IAM review.
+  - IAM roles and deployed payment/support function identities were inspected in `soccer-dev-1744877837`, `soccer-test-1753740291`, and `soccer-prod-1754048346`.
+  - **Accepted key-storage arrangement:** `serviceAccountKey.dev.json`, `serviceAccountKey.test.json`, and `serviceAccountKey.prod.json` are intentionally committed to the private `Soccer-private` repository with restricted access. This is accepted by the project owner and is not an open security issue. The scan of reachable main-repository history found no service-account private keys.
+  - **Accepted launch assessment:** The broad IAM roles below are not considered launch-critical vulnerabilities. Security audit completion does not mean these roles have already been narrowed.
+- [ ] **Non-blocking follow-up: least-privilege IAM hardening** across dev, test, and prod
+  - Runtime: `onTournamentComplete`, `updatePaymentStatus`, `onPaymentStatusChanged`, `createSupportTicket`, and `onSupportTicketUpdated` share `<project-id>@appspot.gserviceaccount.com`, with project-level `roles/firebase.admin` and `roles/firebaseauth.admin`. Evaluate dedicated payment/support identities and narrower roles while preserving other functions that use the shared account.
+  - Local administration: `firebase-adminsdk-fbsvc@<project-id>.iam.gserviceaccount.com` has project-level `roles/iam.serviceAccountTokenCreator` and `roles/serviceusage.apiKeysAdmin` beyond payment/support needs. Review separation of CLI duties and narrow grants where appropriate.
+  - Deployment: `cloud-build-sa@org-service-account-001.iam.gserviceaccount.com` has `roles/owner` and `roles/editor` in all three projects. Review replacement with the permissions needed by the deployment workflows.
+  - Track and validate these changes separately; they do not block the Bangladesh launch. This assessment update changes documentation only.
 - [x] Legal compliance verification
   - Game assumptions validated with ChatGPT legal consultation
   - Terms of Service update
   - Privacy Policy update
 - [ ] Closed beta testing with Bangladesh users
-- [ ] **Migration Testing**:
-  - [ ] Test cross-app authentication (same user in both apps)
-  - [ ] Verify data sync between global and BD apps
-  - [ ] Test promotion banner in global app
-  - [ ] Verify Play Store deep linking
-  - [ ] Test migrated user welcome flow
-  - [ ] Validate Firebase Analytics tracking
-- [ ] **Authentication Testing**:
-  - [ ] Test Email/Password authentication in Bangladesh app
-  - [ ] Test Google Sign-In in Bangladesh debug build
-  - [ ] Test Google Sign-In in Bangladesh release build
-  - [ ] Test Facebook Login in Bangladesh debug build
-  - [ ] Test Facebook Login in Bangladesh release build
-  - [ ] Test Anonymous authentication in Bangladesh app
-  - [ ] Verify same user can authenticate in both global and Bangladesh apps
-  - [ ] Confirm user data syncs correctly (same UID, same Firestore documents)
-  - [ ] Test friend connections work across apps
-  - [ ] Verify authentication with existing global app users
+- [x] **Migration Testing**:
+  - Completed (2026-09-30): All three applicable checklist items below are verified within their documented scope. The excluded welcome flow remains N/A; individual notes retain the test limitations and the outstanding manual verification of `prize_details_view` delivery.
+  - [x] Test cross-app authentication (same user in both apps)
+    - PASS (confirmed 2026-09-29, prod, Google Sign-In): The same account successfully authenticated in Global and Bangladesh with the same Firebase UID and shared profile. See Authentication Testing below for the completed same-user and shared-data checks; personal account identifiers are omitted.
+  - [x] Verify data sync between global and BD apps
+    - PASS (confirmed 2026-09-29): Completed checks confirmed the same account/profile and saved nickname in both variants, removal of a friend in Bangladesh reflected in Global, and addition of a friend in Global reflected in Bangladesh. See Authentication Testing below for the supporting test details.
+    - Scope: shared profile and friend-list data. The other device required a list refresh/reopen to display changes; live refresh and synchronization of other data such as statistics were not verified. Personal account identifiers are omitted.
+  - **N/A — Test migrated user welcome flow:** No dedicated welcome flow is implemented or planned in Bangladesh (scope decision 2026-09-29). This is not a passed test or remaining implementation task. Normal sign-in and shared-profile continuity are covered by Authentication Testing.
+  - [x] Validate Firebase Analytics tracking
+    - PASS (2026-09-30, prod): Compared manual device tests and logcat with events received in Google Analytics Realtime. Confirmed Bangladesh `session_start`, authentication events (`login`, `sign_up`), `tournament_view` (tournament list), and `prizes_view` (prize list). Verified `app_variant = bangladesh` on session, sign-up, tournament-list and prize-list events.
+    - Confirmed `app_variant_conflict_shown` and `app_variant_conflict_closed` from both Global and Bangladesh, distinguished by the `app_variant` parameter.
+    - Scope: event delivery and variant attribution after Analytics consent was granted. Current authentication naming emits `login` when the login screen opens and `sign_up` after successful authentication, including existing users; these events do not prove new-account registration. `prize_details_view` is implemented but its delivery has not yet been manually verified. Personal account identifiers are omitted.
+- [x] **Authentication Testing**:
+  - Completed (2026-09-29): All ten checklist items below are verified within their documented scope. The individual notes retain the evidence and limitations, including unconfirmed Google Play installation/Play App Signing coverage and existing-user continuity tested with Google.
+  - [x] Test Email/Password authentication in Bangladesh app
+    - PASS (2026-09-27, dev): Manually tested the Bangladesh build end-to-end:
+      - Registered a new user using Email/Password.
+      - Received the Firebase email verification message from the soccer-dev project.
+      - Opened the verification link and received "Your email has been verified".
+      - Successfully signed in with the newly created credentials.
+      - Confirmed the user exists in Firebase Authentication with the Email/Password provider and a successful sign-in timestamp.
+      - Confirmed the Firestore user document was created/updated with `appVariant: "bangladesh"` and the Bangladesh entry under `appVariants`.
+  - [x] Test Google Sign-In in Bangladesh debug build
+    - PASS (2026-09-28, prod, `_prodBangladeshDebug`): Manual test supported by supplied Logcat (11:40:00–11:40:11) for `piotr_gorczynski.soccer2.bd`:
+      - Selected the Google provider (`google.com`); `signInWithProvider success` was logged at 11:40:06.923.
+      - Login completed with a Firebase UID and nickname; `onLoginSuccess` and `login_success - method=google` were logged at 11:40:09.
+      - `SoccerApp.trackAppVariant: tracked bangladesh` confirmed successful variant tracking; online presence and FCM registration also completed.
+      - The app opened the menu and displayed the signed-in user's nickname.
+      - The authenticated service check against `soccer-prod-1754048346` returned HTTP 200 with `{"status":"active"}`, and the menu resumed successfully.
+      - Evidence covers this debug-build sign-in flow; it does not establish release-build/Play App Signing authentication or independent Firebase Console verification.
+  - [x] Test Google Sign-In in Bangladesh release build
+    - PASS (2026-09-29): The owner confirmed successful manual Google Sign-In in the Bangladesh release build using an existing Google account. The supplied Logcat excerpt covers Facebook rather than the Google login; this result is based on the owner's manual verification.
+    - This verifies the tested release build; installation through Google Play and the Play App Signing certificate were not separately confirmed. Personal account identifiers are omitted.
+  - [x] Test Facebook Login in Bangladesh debug build
+    - PASS (2026-09-28, prod, `_prodBangladeshDebug`): Manual test supported by supplied Logcat (11:45:55–11:46:36) for `piotr_gorczynski.soccer2.bd`:
+      - Selected the Facebook provider (`facebook.com`); `FirebaseAuthManager.loginWithFacebookToken: signInWithCredential success` was logged at 11:46:31.830.
+      - Facebook profile data (ID, name, and photo URL) was retrieved; login completed with a Firebase UID and nickname at 11:46:33.644.
+      - `onLoginSuccess` and `login_success - method=facebook` confirmed the successful login callback and authentication breadcrumb.
+      - `SoccerApp.trackAppVariant: tracked bangladesh` confirmed successful variant tracking; online presence and FCM registration also completed.
+      - The app opened the menu and displayed the signed-in user's nickname. The authenticated service check against `soccer-prod-1754048346` returned HTTP 200 with `{"status":"active"}`.
+      - Evidence covers this debug-build login flow; it does not establish release-build/Play App Signing authentication or independent Firebase Console verification.
+  - [x] Test Facebook Login in Bangladesh release build
+    - PASS (2026-09-29, prod): The owner confirmed successful manual Facebook Login in the Bangladesh release build using an existing Facebook account, supported by supplied Logcat for `piotr_gorczynski.soccer2.bd`.
+      - `loginWithFacebookToken: signInWithCredential success` was logged at 08:33:20.629, followed by login success and `login_success - method=facebook` at 08:33:22.
+      - `SoccerApp.trackAppVariant: tracked bangladesh` confirmed successful variant tracking; the service-check endpoint targeted the production backend.
+    - This verifies the tested release build; installation through Google Play and the Play App Signing certificate were not separately confirmed. Personal account identifiers and raw profile data are omitted.
+  - [x] Test Anonymous authentication in Bangladesh app
+    - PASS (2026-09-28, prod, `_prodBangladeshDebug`): Manual test supported by supplied Logcat (14:14:36–14:15:57) for `piotr_gorczynski.soccer2.bd`:
+      - Continued from the nickname screen with an authenticated anonymous session; `Set user properties: auth=anonymous` was logged at 14:15:50.477 after saving the nickname.
+      - Nickname uniqueness validation passed, and the `checkNickname` callable returned `allowed=true` at 14:15:49.672.
+      - The nickname was saved and subsequently retrieved by `MenuActivity.fetchNicknameFromFirestore`; the menu displayed the saved nickname.
+      - The app fetched an authentication ID token and the service check against `soccer-prod-1754048346` returned HTTP 200 with `{"status":"active"}` at 14:15:56.142. The menu continued with a Firebase UID.
+      - Online presence and FCM registration completed successfully.
+      - The supplied excerpt begins after initial sign-in; it confirms the resulting anonymous session and nickname flow, but does not include the initial `signInAnonymously` callback or confirmation of terms acceptance.
+  - [x] Verify same user can authenticate in both global and Bangladesh apps
+    - PASS (confirmed 2026-09-28): The owner reports repeatedly signing in successfully to both Global and Bangladesh using the same Google account during regular manual testing.
+    - This confirms using the same account in either variant; it does not imply simultaneous use on one device. Shared profile verification is recorded below.
+  - [x] Confirm user data syncs correctly (same UID, same Firestore documents)
+    - PASS (2026-09-28, prod): Compared manual Google sign-in logs from Bangladesh and Global. Both sessions used the same Firebase UID and displayed the same saved nickname against the same production backend.
+    - Code inspection confirmed that the sign-in flow reads the user profile from Firestore using `users/{UID}` with `Source.SERVER`, supporting access to the same user document in both variants.
+    - Verification covers the shared account and nickname/profile read; cross-app friend connections, statistics, and propagation of subsequent edits were not tested here. Personal identifiers and raw account logs are omitted from this public document.
+  - [x] Test friend connections work across apps
+    - PASS (2026-09-28): The owner manually tested the same account signed in on two separate phones, one running Global and the other Bangladesh.
+      - Removed a friend in Bangladesh; the friend disappeared from Global's invite-friend list after closing and reopening it.
+      - Added a friend in Global; the same friend appeared in Bangladesh after refreshing the list.
+      - Confirmed that friend-list changes are shared across variants in both tested directions.
+    - Observed limitation: an already open list on the other phone did not update immediately after removal; refreshing/reopening the list was required. This test confirms persisted changes and subsequent reads, not live list refresh.
+  - [x] Verify authentication with existing global app users
+    - PASS (confirmed 2026-09-29, prod, Google Sign-In): An existing Global app user successfully signed in to Bangladesh with the same Google account without registering again.
+    - The completed cross-variant checks confirmed the same Firebase UID and user document, preserved nickname, and shared friend list. Personal account identifiers are omitted from this public document.
+    - Scope: existing-user continuity was verified for Google Sign-In. The separate Email/Password and Facebook login tests do not establish continuity for pre-existing Global accounts using those providers.
 
 ### Phase 6: Launch Preparation (Week 11-12)
 - [ ] Create Google Play Store listing (Bangladesh)
@@ -3170,7 +2935,7 @@ cd mobile
 - [ ] Establish prize fund reserve (৳4,000/month for bi-monthly tournaments)
 - [ ] Create operational runbook
 - [ ] **Migration Campaign Preparation**:
-  - [ ] Finalize promotional banner designs (English + Bengali)
+  - [ ] Finalize external marketing assets (English + Bengali; no Global-app banners)
   - [ ] Prepare social media announcements
   - [ ] Create migration FAQ and support documentation
   - [ ] Design Play Store listing with clear migration benefits
@@ -3182,15 +2947,12 @@ cd mobile
 - [ ] Gather user feedback
 - [ ] Fix critical issues
 - [ ] **Initial Migration Campaign**:
-  - [ ] Deploy updated global app with promotion banner
   - [ ] Monitor installation metrics (target: 75-112 installs in Week 1)
-  - [ ] Track banner impressions and click-through rates
   - [ ] Respond to user questions about migration
   - [ ] Adjust messaging based on early feedback
   - [ ] Update Play Store listing based on user feedback
 
 ### Phase 8: Full Launch & Ongoing Migration (Week 15+)
-> ⚠️ **REMINDER**: Before or at launch, release a new global app version with the promo flag set to **TRUE** so the promotion banner is displayed to global users (see #1240).
 
 - [ ] Public launch in Bangladesh Google Play Store
 - [ ] Marketing campaign
@@ -3199,10 +2961,8 @@ cd mobile
 - [ ] Iterate based on feedback
 - [ ] **Ongoing Migration Activities**:
   - [ ] Monitor migration conversion rates (target: 30% Month 1, 60% Month 6)
-  - [ ] A/B test different promotion messages in banner
   - [ ] Engage with user community in Bangladesh
   - [ ] Share success stories from prize winners
-  - [ ] Periodic promotion banner refresh in global app
   - [ ] Track migration success metrics and adjust strategy
   - [ ] Continue Play Store optimization and keyword updates
 
@@ -3259,7 +3019,6 @@ cd mobile
   - No document upload/verification system
   - Simplified user flow
 - **Migration development**: 20-36 hours (~$1,000-$1,800)
-  - Global app promotion banner
   - Firebase dual-app configuration
   - Migration tracking and analytics
 - **Authentication integration setup**: 5-8 hours (~$250-$400)
@@ -3482,7 +3241,7 @@ developer.
 **If using Remitly:**
 - **Send from**: Poland (PLN or EUR)
 - **Send to**: Bangladesh
-- **Amount to send**: Calculate equivalent of ৳2,000 BDT (approximately $18 USD)
+- **Amount to send**: Use the payment record's allocated `amount` and `currency`, allowing for provider fees separately
 - **Delivery speed**: Choose "Economy" (1-3 days, lower fees ~$0.50-$1.50)
 - **Delivery method**: Select "Mobile Money" or "Cash Pickup to Mobile Wallet"
 - **Service provider**: Select "bKash" or "Nagad" (based on winner's preference)
@@ -3491,7 +3250,7 @@ developer.
 
 **If using Wise:**
 - **You send**: Enter amount in PLN or EUR (your funding currency)
-- **Recipient gets**: ৳2,000 BDT
+- **Recipient gets**: The allocated amount and currency recorded in the payment
 - Wise will show exchange rate and fees
 - Verify total cost (should be ~$18-$19 USD equivalent)
 
@@ -3518,18 +3277,19 @@ developer.
 - Confirm transfer
 - **Save transaction ID** (e.g., "REMITLY-123456789" or "WISE-123456789")
 
-**Step 6: Update Firestore**
-```javascript
-// Update payment record in Firestore
-{
-  status: "processing", // Change from "pending" to "processing"
-  transferService: "remitly", // or "wise" or "western_union"
-  transactionId: "REMITLY-123456789",
-  transferFee: 0.85, // Actual fee (Remitly: ~$0.50-$1.50, Wise: ~$0.20-$0.40)
-  exchangeRate: 110.5, // Rate used
-  processedAt: new Date()
-}
+**Step 6: Record the sent transfer through the CLI**
+
+The payment must already be `processing` before recording the provider transfer.
+Use the actual target environment, payment ID, provider, and reference:
+
+```powershell
+node tools/update-payment-status/update-payment-status.js <env> <paymentId> processing
+# Initiate the transfer with the provider, then record its reference:
+node tools/update-payment-status/update-payment-status.js <env> <paymentId> sent --provider remitly --reference <providerReference>
 ```
+
+The tool writes `transfer.provider`, `transfer.providerReference`, `transfer.sentAt`,
+status/update timestamps, and an audit event. Do not replace it with a raw Firestore status edit.
 
 **Step 7: Monitor Transfer Status**
 - **If using Remitly**: Check Remitly dashboard or app for transfer status
@@ -3540,17 +3300,17 @@ developer.
   - You'll receive email when transfer completes
 
 **Step 8: Confirm Completion**
-- Once service confirms delivery, update Firestore:
-```javascript
-{
-  status: "completed",
-  completedAt: new Date()
-}
+- Once the provider confirms delivery, record completion:
+
+```powershell
+node tools/update-payment-status/update-payment-status.js <env> <paymentId> completed
 ```
+
+The tool records `transfer.completedAt` and the status history event using server timestamps.
 
 **Step 9: Winner Notification**
 - App automatically notifies winner when status changes to "completed"
-- Winner checks their bKash/Nagad/Rocket app and sees ৳2,000
+- Winner checks the supported wallet selected for this payment and verifies the allocated amount
 
 **Troubleshooting Common Issues:**
 
@@ -3676,7 +3436,7 @@ This approach document provides a simplified, cost-effective framework for launc
 - **Target conversion**: 30% (224 users) in Month 1, 60% (448 users) by Month 6
 - **Shared Firebase**: Same authentication and database for seamless transition
 - **No separate keys needed**: Same Firebase project, different app registrations
-- **Multi-channel promotion**: In-app banners, Play Store optimization, social media
+- **External discovery**: Google Play listing and external marketing; no Global-app migration UI
 - **User-friendly approach**: Optional migration, data preservation, clear incentives
 - **Note**: Push notifications not viable as most users don't have registered accounts
 

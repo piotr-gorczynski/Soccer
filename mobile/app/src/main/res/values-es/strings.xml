@@ -411,12 +411,6 @@
     <!-- Tournament notification dialog -->
     <string name="tournament_started_dialog_message">¡El torneo %1$s ha comenzado! ¿Quieres abrir el lobby del torneo?</string>
 
-    <!-- Bangladesh promotion dialog -->
-    <string name="bd_promo_title">🇧🇩 Versión de Bangladesh disponible</string>
-    <string name="bd_promo_message">Una versión especial de Gridline Soccer para Bangladesh ya está disponible.\n\nDisponible para usuarios de 18 años o más en Google Play Store.</string>
-    <string name="bd_promo_install">Instalar</string>
-    <string name="bd_promo_maybe_later">Quizás después</string>
-
     <!-- Uninstall global dialog -->
     <string name="uninstall_global_title">Eliminar aplicación anterior</string>
     <string name="uninstall_global_message">Debe desinstalar la versión global anterior para evitar conflictos con la versión de Bangladesh.\n\nPara desinstalar: abra Ajustes → Aplicaciones → busque \"Gridline Soccer\" (sin bandera) → Desinstalar.</string>
@@ -435,4 +429,6 @@
     <string name="payment_details_save_failed">No se pudieron guardar los datos. Inténtalo de nuevo.</string>
     <string name="payment_account_number_error_mobile">Introduce un número móvil de Bangladesh de 11 dígitos que empiece por 01 (o +880).</string>
     <string name="payment_account_number_error_rocket">Introduce un número de cuenta Rocket de 12 dígitos que empiece por 01 e incluya el dígito de control (o +880).</string>
+    <string name="bangladesh_installed_title">Gridline Soccer Bangladesh ya está instalado</string>
+    <string name="bangladesh_installed_message">No puedes usar ambas versiones de Gridline Soccer en el mismo dispositivo.\n\nPara seguir usando la versión Bangladesh, desinstala esta versión de Gridline Soccer (sin bandera).</string>
 </resources>

@@ -49,6 +49,9 @@ public class MyPrizesActivity extends BaseActivity {
                         .putExtra("paymentId", paymentId)));
         list.setAdapter(adapter);
         loadPrizes();
+        if (savedInstanceState == null && !isFinishing()) {
+            ((SoccerApp) getApplication()).getAnalyticsManager().trackPrizesView();
+        }
     }
 
     private void loadPrizes() {

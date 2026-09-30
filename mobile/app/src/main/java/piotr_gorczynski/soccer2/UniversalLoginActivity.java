@@ -225,7 +225,7 @@ public class UniversalLoginActivity extends BaseActivity {
                 FirebaseAuth auth = FirebaseAuth.getInstance();
                 if (auth.getCurrentUser() != null) {
                     String language = LanguageManager.getCurrentLanguageCode(UniversalLoginActivity.this);
-                    analyticsManager.setUserProperties(authMethod, "9.0", language, false); // will be updated when nickname is set
+                    analyticsManager.setUserProperties(authMethod, language, false); // will be updated when nickname is set
                 }
 
                 SharedPreferences prefs =

@@ -1,118 +1,118 @@
 <en-GB>
-📴 Users with unregistered notification devices are now immediately marked offline.
-🚀 Reduced app size and improved memory usage and performance.
-🔍 Notification registrations for inactive users are now verified automatically.
-🕵️ Accounts inactive for at least 30 days are checked daily with a silent notification.
+📦 Smaller app size thanks to removal of unused resources.
+🔔 Game invitation notifications now use your selected app language.
+🟢 More accurate online status for players with inactive notification devices.
+🛠️ Fixed crashes related to dialogs when switching screens or leaving the app.
 </en-GB>
 
 <pl-PL>
-📴 Użytkownicy z wyrejestrowanymi urządzeniami powiadomień są teraz natychmiast oznaczani jako offline.
-🚀 Zmniejszono rozmiar aplikacji oraz poprawiono wykorzystanie pamięci i wydajność.
-🔍 Rejestracje powiadomień nieaktywnych użytkowników są teraz automatycznie weryfikowane.
-🕵️ Konta nieaktywne od co najmniej 30 dni są codziennie sprawdzane za pomocą cichego powiadomienia.
+📦 Mniejszy rozmiar aplikacji dzięki usunięciu nieużywanych zasobów.
+🔔 Powiadomienia o zaproszeniach do gry są teraz w języku wybranym w aplikacji.
+🟢 Dokładniejszy status online graczy z nieaktywnymi urządzeniami powiadomień.
+🛠️ Naprawiono błędy okien dialogowych powodujące zamykanie aplikacji przy zmianie ekranu lub wyjściu z aplikacji.
 </pl-PL>
 
 <de-DE>
-📴 Nutzer mit nicht mehr registrierten Benachrichtigungsgeräten werden jetzt sofort als offline markiert.
-🚀 Die App-Größe wurde reduziert und Speichernutzung sowie Leistung wurden verbessert.
-🔍 Benachrichtigungsregistrierungen inaktiver Nutzer werden jetzt automatisch überprüft.
-🕵️ Konten, die seit mindestens 30 Tagen inaktiv sind, werden täglich mit einer stillen Benachrichtigung überprüft.
+📦 Kleinere App durch das Entfernen ungenutzter Ressourcen.
+🔔 Spieleinladungen werden jetzt in der ausgewählten App-Sprache angezeigt.
+🟢 Genauerer Online-Status bei Spielern mit inaktiven Benachrichtigungsgeräten.
+🛠️ Abstürze durch Dialogfenster beim Bildschirmwechsel oder Verlassen der App behoben.
 </de-DE>
 
 <fr-FR>
-📴 Les utilisateurs dont l’appareil de notification n’est plus enregistré sont désormais immédiatement marqués hors ligne.
-🚀 Réduction de la taille de l’application et amélioration de l’utilisation de la mémoire et des performances.
-🔍 Les inscriptions aux notifications des utilisateurs inactifs sont désormais vérifiées automatiquement.
-🕵️ Les comptes inactifs depuis au moins 30 jours sont contrôlés chaque jour par une notification silencieuse.
+📦 Application plus légère grâce à la suppression des ressources inutilisées.
+🔔 Les notifications d’invitation à jouer utilisent la langue choisie dans l’application.
+🟢 Statut en ligne plus précis pour les joueurs dont les appareils de notification sont inactifs.
+🛠️ Correction de plantages liés aux boîtes de dialogue lors du changement d’écran ou de la sortie de l’application.
 </fr-FR>
 
 <es-ES>
-📴 Los usuarios cuyos dispositivos de notificación ya no están registrados ahora se marcan inmediatamente como desconectados.
-🚀 Se redujo el tamaño de la aplicación y se mejoraron el uso de memoria y el rendimiento.
-🔍 Ahora se verifican automáticamente los registros de notificaciones de los usuarios inactivos.
-🕵️ Las cuentas inactivas durante al menos 30 días se comprueban a diario mediante una notificación silenciosa.
+📦 Aplicación más pequeña al eliminar recursos sin usar.
+🔔 Las notificaciones de invitación a jugar usan el idioma elegido en la aplicación.
+🟢 Estado en línea más preciso para jugadores con dispositivos de notificación inactivos.
+🛠️ Corregidos cierres inesperados relacionados con diálogos al cambiar de pantalla o salir de la aplicación.
 </es-ES>
 
 <ur>
-📴 جن صارفین کے نوٹیفکیشن آلات رجسٹرڈ نہیں رہے، انہیں اب فوراً آف لائن نشان زد کیا جاتا ہے۔
-🚀 ایپ کا حجم کم کیا گیا اور میموری کے استعمال اور کارکردگی کو بہتر بنایا گیا۔
-🔍 غیر فعال صارفین کی نوٹیفکیشن رجسٹریشن اب خودکار طور پر جانچی جاتی ہے۔
-🕵️ کم از کم 30 دن سے غیر فعال اکاؤنٹس کو روزانہ خاموش نوٹیفکیشن کے ذریعے جانچا جاتا ہے۔
+📦 غیر استعمال شدہ وسائل ہٹانے سے ایپ کا حجم کم ہو گیا ہے۔
+🔔 کھیل کی دعوت کے نوٹیفکیشن اب ایپ میں منتخب کردہ زبان میں دکھائے جاتے ہیں۔
+🟢 غیر فعال نوٹیفکیشن آلات والے کھلاڑیوں کی آن لائن حیثیت زیادہ درست ہے۔
+🛠️ اسکرین بدلنے یا ایپ سے باہر جانے پر ڈائیلاگ کی وجہ سے ہونے والے کریش درست کیے گئے ہیں۔
 </ur>
 
 <bn-BD>
-📴 যেসব ব্যবহারকারীর নোটিফিকেশন ডিভাইস আর নিবন্ধিত নেই, তাদের এখন সঙ্গে সঙ্গে অফলাইন হিসেবে চিহ্নিত করা হয়।
-🚀 অ্যাপের আকার কমানো হয়েছে এবং মেমোরি ব্যবহার ও কর্মক্ষমতা উন্নত করা হয়েছে।
-🔍 নিষ্ক্রিয় ব্যবহারকারীদের নোটিফিকেশন নিবন্ধন এখন স্বয়ংক্রিয়ভাবে যাচাই করা হয়।
-🕵️ অন্তত ৩০ দিন নিষ্ক্রিয় থাকা অ্যাকাউন্টগুলো প্রতিদিন নীরব নোটিফিকেশনের মাধ্যমে পরীক্ষা করা হয়।
+📦 অব্যবহৃত রিসোর্স সরিয়ে অ্যাপের আকার কমানো হয়েছে।
+🔔 খেলার আমন্ত্রণের নোটিফিকেশন এখন অ্যাপে নির্বাচিত ভাষায় দেখানো হয়।
+🟢 নিষ্ক্রিয় নোটিফিকেশন ডিভাইস থাকা খেলোয়াড়দের অনলাইন অবস্থা আরও নির্ভুলভাবে দেখানো হয়।
+🛠️ স্ক্রিন বদলানো বা অ্যাপ থেকে বের হওয়ার সময় ডায়ালগের কারণে অ্যাপ বন্ধ হয়ে যাওয়ার সমস্যা ঠিক করা হয়েছে।
 </bn-BD>
 
 <ne-NP>
-📴 सूचना उपकरण दर्ता नरहेका प्रयोगकर्ताहरूलाई अब तुरुन्तै अफलाइन चिन्ह लगाइन्छ।
-🚀 एपको आकार घटाइएको छ र मेमोरी प्रयोग तथा कार्यसम्पादन सुधार गरिएको छ।
-🔍 निष्क्रिय प्रयोगकर्ताहरूको सूचना दर्ता अब स्वचालित रूपमा जाँच गरिन्छ।
-🕵️ कम्तीमा ३० दिनदेखि निष्क्रिय खाताहरूलाई हरेक दिन मौन सूचनामार्फत जाँच गरिन्छ।
+📦 प्रयोग नभएका स्रोतहरू हटाएर एपको आकार घटाइएको छ।
+🔔 खेल निमन्त्रणाका सूचनाहरू अब एपमा छानिएको भाषामा देखिन्छन्।
+🟢 निष्क्रिय सूचना उपकरण भएका खेलाडीहरूको अनलाइन स्थिति अझ सही देखाइन्छ।
+🛠️ स्क्रिन बदल्दा वा एपबाट बाहिरिँदा संवाद बाकसका कारण हुने क्र्यासहरू समाधान गरिएका छन्।
 </ne-NP>
 
 <hi-IN>
-📴 जिन उपयोगकर्ताओं के नोटिफ़िकेशन डिवाइस अब पंजीकृत नहीं हैं, उन्हें तुरंत ऑफ़लाइन चिह्नित किया जाता है।
-🚀 ऐप का आकार कम किया गया और मेमोरी उपयोग तथा प्रदर्शन में सुधार किया गया।
-🔍 निष्क्रिय उपयोगकर्ताओं के नोटिफ़िकेशन पंजीकरण अब अपने आप सत्यापित किए जाते हैं।
-🕵️ कम से कम 30 दिनों से निष्क्रिय खातों की हर दिन साइलेंट नोटिफ़िकेशन के ज़रिए जाँच की जाती है।
+📦 अनुपयोगी संसाधन हटाकर ऐप का आकार कम किया गया है।
+🔔 खेल के निमंत्रण की सूचनाएँ अब ऐप में चुनी गई भाषा में दिखाई देती हैं।
+🟢 निष्क्रिय सूचना उपकरणों वाले खिलाड़ियों की ऑनलाइन स्थिति अब अधिक सटीक है।
+🛠️ स्क्रीन बदलते या ऐप से बाहर जाते समय डायलॉग के कारण होने वाले क्रैश ठीक किए गए हैं।
 </hi-IN>
 
 <am>
-📴 የማሳወቂያ መሣሪያቸው ያልተመዘገበ ተጠቃሚዎች አሁን ወዲያውኑ ከመስመር ውጭ ተብለው ይመዘገባሉ።
-🚀 የመተግበሪያው መጠን ቀንሷል፣ የማህደረ ትውስታ አጠቃቀምና አፈጻጸምም ተሻሽሏል።
-🔍 የንቁነት ጊዜያቸው ያለፈ ተጠቃሚዎች የማሳወቂያ ምዝገባ አሁን በራስ-ሰር ይረጋገጣል።
-🕵️ ቢያንስ ለ30 ቀናት ያልነበሩ መለያዎች በየቀኑ በዝምታ ማሳወቂያ ይፈተሻሉ።
+📦 ጥቅም ላይ ያልዋሉ ሀብቶችን በማስወገድ የመተግበሪያው መጠን ቀንሷል።
+🔔 የጨዋታ ግብዣ ማሳወቂያዎች አሁን በመተግበሪያው በመረጡት ቋንቋ ይታያሉ።
+🟢 የማሳወቂያ መሣሪያቸው ንቁ ላልሆነ ተጫዋቾች የመስመር ላይ ሁኔታ ይበልጥ ትክክለኛ ሆኗል።
+🛠️ ማያ ገጽ ሲቀይሩ ወይም ከመተግበሪያው ሲወጡ በመገናኛ ሳጥኖች ምክንያት የሚከሰቱ ብልሽቶች ተስተካክለዋል።
 </am>
 
 <ar>
-📴 يتم الآن وضع علامة غير متصل فورًا على المستخدمين الذين لم تعد أجهزة الإشعارات الخاصة بهم مسجلة.
-🚀 تم تقليل حجم التطبيق وتحسين استخدام الذاكرة والأداء.
-🔍 يتم الآن التحقق تلقائيًا من تسجيلات الإشعارات للمستخدمين غير النشطين.
-🕵️ يتم فحص الحسابات غير النشطة منذ 30 يومًا على الأقل يوميًا باستخدام إشعار صامت.
+📦 حجم أصغر للتطبيق بعد إزالة الموارد غير المستخدمة.
+🔔 تظهر إشعارات دعوات اللعب الآن باللغة المختارة في التطبيق.
+🟢 حالة اتصال أدق للاعبين الذين أصبحت أجهزة الإشعارات لديهم غير نشطة.
+🛠️ إصلاح أعطال مرتبطة بمربعات الحوار عند تبديل الشاشات أو مغادرة التطبيق.
 </ar>
 
 <my-MM>
-📴 အသိပေးချက် စက်ပစ္စည်း မှတ်ပုံတင်မှု မရှိတော့သော အသုံးပြုသူများကို ယခု ချက်ချင်း အော့ဖ်လိုင်းအဖြစ် သတ်မှတ်ပါသည်။
-🚀 အက်ပ်အရွယ်အစားကို လျှော့ချပြီး မန်မိုရီအသုံးပြုမှုနှင့် စွမ်းဆောင်ရည်ကို မြှင့်တင်ထားသည်။
-🔍 အသုံးမပြုတော့သော အသုံးပြုသူများ၏ အသိပေးချက် မှတ်ပုံတင်မှုများကို ယခု အလိုအလျောက် စစ်ဆေးပါသည်။
-🕵️ အနည်းဆုံး ရက် ၃၀ ကြာ အသုံးမပြုထားသော အကောင့်များကို အသံတိတ် အသိပေးချက်ဖြင့် နေ့စဉ် စစ်ဆေးပါသည်။
+📦 အသုံးမပြုသော အရင်းအမြစ်များကို ဖယ်ရှား၍ အက်ပ်အရွယ်အစား လျှော့ချထားသည်။
+🔔 ဂိမ်းဖိတ်ကြားချက်များကို အက်ပ်တွင် ရွေးထားသော ဘာသာစကားဖြင့် ပြသသည်။
+🟢 အသိပေးချက်စက်ပစ္စည်း မလှုပ်ရှားတော့သော ကစားသမားများ၏ အွန်လိုင်းအခြေအနေ ပိုမိုတိကျလာသည်။
+🛠️ မျက်နှာပြင်ပြောင်းချိန် သို့မဟုတ် အက်ပ်မှ ထွက်ချိန်တွင် ဒိုင်ယာလော့ဂ်ကြောင့် အက်ပ်ပိတ်သွားခြင်းကို ပြင်ဆင်ထားသည်။
 </my-MM>
 
 <km-KH>
-📴 អ្នកប្រើប្រាស់ដែលឧបករណ៍ជូនដំណឹងលែងបានចុះឈ្មោះ ឥឡូវនេះត្រូវបានសម្គាល់ថាក្រៅបណ្ដាញភ្លាមៗ។
-🚀 បានកាត់បន្ថយទំហំកម្មវិធី និងកែលម្អការប្រើប្រាស់អង្គចងចាំ និងដំណើរការ។
-🔍 ការចុះឈ្មោះការជូនដំណឹងរបស់អ្នកប្រើប្រាស់អសកម្ម ឥឡូវត្រូវបានផ្ទៀងផ្ទាត់ដោយស្វ័យប្រវត្តិ។
-🕵️ គណនីដែលអសកម្មយ៉ាងហោចណាស់ ៣០ ថ្ងៃ ត្រូវបានពិនិត្យរាល់ថ្ងៃដោយការជូនដំណឹងស្ងាត់។
+📦 កាត់បន្ថយទំហំកម្មវិធីដោយលុបធនធានដែលមិនប្រើ។
+🔔 ការជូនដំណឹងអញ្ជើញលេងឥឡូវបង្ហាញជាភាសាដែលបានជ្រើសក្នុងកម្មវិធី។
+🟢 ស្ថានភាពអនឡាញកាន់តែត្រឹមត្រូវសម្រាប់អ្នកលេងដែលឧបករណ៍ជូនដំណឹងអសកម្ម។
+🛠️ ជួសជុលបញ្ហាកម្មវិធីបិទដោយសារប្រអប់សន្ទនា ពេលប្ដូរអេក្រង់ ឬចេញពីកម្មវិធី។
 </km-KH>
 
 <lo-LA>
-📴 ຜູ້ໃຊ້ທີ່ອຸປະກອນຮັບແຈ້ງເຕືອນບໍ່ໄດ້ລົງທະບຽນແລ້ວ ຈະຖືກໝາຍວ່າອອບລາຍທັນທີ.
-🚀 ຫຼຸດຂະໜາດແອັບ ແລະ ປັບປຸງການໃຊ້ຄວາມຈຳ ແລະ ປະສິດທິພາບ.
-🔍 ການລົງທະບຽນແຈ້ງເຕືອນຂອງຜູ້ໃຊ້ທີ່ບໍ່ເຄື່ອນໄຫວ ຈະຖືກກວດສອບອັດຕະໂນມັດແລ້ວ.
-🕵️ ບັນຊີທີ່ບໍ່ເຄື່ອນໄຫວຢ່າງໜ້ອຍ 30 ມື້ ຈະຖືກກວດສອບທຸກມື້ດ້ວຍການແຈ້ງເຕືອນແບບງຽບ.
+📦 ຫຼຸດຂະໜາດແອັບໂດຍລຶບຊັບພະຍາກອນທີ່ບໍ່ໄດ້ໃຊ້.
+🔔 ແຈ້ງເຕືອນຄຳເຊີນຫຼິ້ນເກມໃຊ້ພາສາທີ່ເລືອກໃນແອັບແລ້ວ.
+🟢 ສະຖານະອອນລາຍແມ່ນຍຳຂຶ້ນສຳລັບຜູ້ຫຼິ້ນທີ່ອຸປະກອນແຈ້ງເຕືອນບໍ່ເຮັດວຽກ.
+🛠️ ແກ້ໄຂແອັບປິດຕົວຈາກກ່ອງຂໍ້ຄວາມເມື່ອປ່ຽນໜ້າຈໍ ຫຼືອອກຈາກແອັບ.
 </lo-LA>
 
 <mn-MN>
-📴 Мэдэгдэл хүлээн авах төхөөрөмж нь бүртгэлгүй болсон хэрэглэгчийг одоо шууд офлайн гэж тэмдэглэнэ.
-🚀 Аппын хэмжээг багасгаж, санах ойн ашиглалт болон гүйцэтгэлийг сайжрууллаа.
-🔍 Идэвхгүй хэрэглэгчдийн мэдэгдлийн бүртгэлийг одоо автоматаар шалгана.
-🕵️ Дор хаяж 30 хоног идэвхгүй байсан бүртгэлийг өдөр бүр чимээгүй мэдэгдлээр шалгана.
+📦 Ашигладаггүй нөөцийг хассанаар аппын хэмжээ багаслаа.
+🔔 Тоглох урилгын мэдэгдэл аппад сонгосон хэлээр харагдана.
+🟢 Мэдэгдлийн төхөөрөмж нь идэвхгүй болсон тоглогчдын онлайн төлөв илүү үнэн зөв боллоо.
+🛠️ Дэлгэц солих эсвэл аппаас гарах үед харилцах цонхноос үүдэн апп гацаж хаагдах алдааг заслаа.
 </mn-MN>
 
 <fa-IR>
-📴 کاربرانی که دستگاه اعلان آن‌ها دیگر ثبت‌شده نیست، اکنون بلافاصله آفلاین علامت‌گذاری می‌شوند.
-🚀 حجم برنامه کاهش یافت و مصرف حافظه و عملکرد بهبود پیدا کرد.
-🔍 ثبت اعلان کاربران غیرفعال اکنون به‌طور خودکار بررسی می‌شود.
-🕵️ حساب‌هایی که حداقل ۳۰ روز غیرفعال بوده‌اند، هر روز با یک اعلان بی‌صدا بررسی می‌شوند.
+📦 با حذف منابع بلااستفاده، حجم برنامه کاهش یافت.
+🔔 اعلان دعوت به بازی اکنون به زبان انتخاب‌شده در برنامه نمایش داده می‌شود.
+🟢 وضعیت آنلاین بازیکنانی که دستگاه اعلان آن‌ها غیرفعال است دقیق‌تر شد.
+🛠️ خرابی‌های مربوط به پنجره‌های گفتگو هنگام تغییر صفحه یا خروج از برنامه برطرف شد.
 </fa-IR>
 
 <si-LK>
-📴 දැනුම්දීම් උපාංගය තවදුරටත් ලියාපදිංචි වී නොමැති පරිශීලකයන් දැන් වහාම නොබැඳි ලෙස සලකුණු කෙරේ.
-🚀 යෙදුමේ ප්‍රමාණය අඩු කර මතක භාවිතය සහ කාර්යසාධනය වැඩිදියුණු කරන ලදී.
-🔍 අක්‍රිය පරිශීලකයන්ගේ දැනුම්දීම් ලියාපදිංචි කිරීම් දැන් ස්වයංක්‍රීයව සත්‍යාපනය කෙරේ.
-🕵️ අවම වශයෙන් දින 30ක් අක්‍රියව ඇති ගිණුම් නිහඬ දැනුම්දීමක් මඟින් දිනපතා පරීක්ෂා කෙරේ.
+📦 භාවිත නොවන සම්පත් ඉවත් කර යෙදුමේ ප්‍රමාණය අඩු කර ඇත.
+🔔 ක්‍රීඩා ආරාධනා දැනුම්දීම් දැන් යෙදුමේ තෝරාගත් භාෂාවෙන් පෙන්වයි.
+🟢 දැනුම්දීම් උපාංග අක්‍රිය වූ ක්‍රීඩකයන්ගේ මාර්ගගත තත්ත්වය වඩාත් නිවැරදිව පෙන්වයි.
+🛠️ තිර මාරු කිරීමේදී හෝ යෙදුමෙන් පිටවීමේදී සංවාද කොටු නිසා යෙදුම බිඳවැටීමේ දෝෂ නිවැරදි කර ඇත.
 </si-LK>

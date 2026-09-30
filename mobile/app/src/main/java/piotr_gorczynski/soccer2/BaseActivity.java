@@ -16,7 +16,8 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if (hasFocus && getApplication() instanceof SoccerApp) {
+        if (hasFocus && !BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(this)
+                && getApplication() instanceof SoccerApp) {
             ((SoccerApp) getApplication()).checkPrizeReminderAfterWindowFocus(this);
         }
     }

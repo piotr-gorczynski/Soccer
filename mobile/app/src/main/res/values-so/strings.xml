@@ -374,12 +374,6 @@
     <!-- Tournament notification dialog -->
     <string name="tournament_started_dialog_message">Tartanka %1$s ayaa bilaabmay! Ma rabtaa inaad furto qolka tartanka?</string>
 
-    <!-- Bangladesh promotion dialog -->
-    <string name="bd_promo_title">🇧🇩 Nooca Bangladesh wuu diyaar yahay</string>
-    <string name="bd_promo_message">Nooc gaara oo Gridline Soccer ah oo loogu talagalay Bangladesh waa la heli karaa.\n\nLa heli karo Google Play Store isticmaalayaasha da\'da 18 sano ama ka weyn.</string>
-    <string name="bd_promo_install">Rakib</string>
-    <string name="bd_promo_maybe_later">Laga yaabaa dambe</string>
-
     <!-- Uninstall global dialog -->
     <string name="uninstall_global_title">Ka saar barnaamijkii hore</string>
     <string name="uninstall_global_message">Waa inaad ka saartaa nooca hore ee caalamiga ah si looga fogaado khilaafka nooca Bangladesh.\n\nSi aad u saartid: Aad Goobaha → Codsiyada → raadi \"Gridline Soccer\" (aan calanka lahayn) → Ka saar.</string>
@@ -398,4 +392,6 @@
     <string name="payment_details_save_failed">Faahfaahinta lama kaydin. Mar kale isku day.</string>
     <string name="payment_account_number_error_mobile">Geli lambarka moobilka Bangladesh oo 11 lambar ah kana bilaabma 01 (ama +880).</string>
     <string name="payment_account_number_error_rocket">Geli lambarka koontada Rocket oo 12 lambar ah kana bilaabma 01, kuna jira lambarka hubinta (ama +880).</string>
+    <string name="bangladesh_installed_title">Gridline Soccer Bangladesh hore ayaa loo rakibay</string>
+    <string name="bangladesh_installed_message">Ma isticmaali kartid labada nooc ee Gridline Soccer hal qalab.\n\nSi aad u sii isticmaasho nooca Bangladesh, fadlan ka saar noocan Gridline Soccer (aan calanka lahayn).</string>
 </resources>
