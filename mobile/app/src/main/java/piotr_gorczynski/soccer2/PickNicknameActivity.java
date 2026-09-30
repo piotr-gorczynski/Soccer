@@ -187,7 +187,7 @@ public class PickNicknameActivity extends BaseActivity {
                     if (auth.getCurrentUser() != null) {
                         String authMethod = auth.getCurrentUser().isAnonymous() ? "anonymous" : "registered";
                         String language = LanguageManager.getCurrentLanguageCode(PickNicknameActivity.this);
-                        analyticsManager.setUserProperties(authMethod, "9.0", language, true);
+                        analyticsManager.setUserProperties(authMethod, language, true);
                     }
 
                     // Navigate to MenuActivity

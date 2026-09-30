@@ -427,5 +427,5 @@
     <string name="payment_account_number_error_mobile">01 سے شروع ہونے والا 11 ہندسوں کا بنگلہ دیشی موبائل نمبر درج کریں (یا +880)۔</string>
     <string name="payment_account_number_error_rocket">01 سے شروع ہونے والا 12 ہندسوں کا Rocket اکاؤنٹ نمبر، چیک ہندسے سمیت، درج کریں (یا +880)۔</string>
     <string name="bangladesh_installed_title">Gridline Soccer Bangladesh پہلے سے انسٹال ہے</string>
-    <string name="bangladesh_installed_message">آپ ایک ہی آلے پر Gridline Soccer کے دونوں ورژن استعمال نہیں کر سکتے۔\n\nBangladesh ورژن کا استعمال جاری رکھنے کے لیے براہ کرم یہ Global ورژن اَن انسٹال کریں۔</string>
+    <string name="bangladesh_installed_message">آپ ایک ہی آلے پر Gridline Soccer کے دونوں ورژن استعمال نہیں کر سکتے۔\n\nBangladesh ورژن کا استعمال جاری رکھنے کے لیے براہ کرم Gridline Soccer کا یہ ورژن (بغیر جھنڈے والا) اَن انسٹال کریں۔</string>
 </resources>

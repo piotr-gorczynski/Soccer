@@ -15,6 +15,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <!-- Defaults apply before SDK initialization without resetting persisted user choices. -->
+        <meta-data android:name="google_analytics_default_allow_analytics_storage" android:value="false" />
+        <meta-data android:name="google_analytics_default_allow_ad_storage" android:value="false" />
+
         <meta-data
             android:name="firebase_messaging_installation_id_enabled"
             android:value="true" />

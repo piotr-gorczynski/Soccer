@@ -559,12 +559,16 @@ public class MenuActivity extends BaseActivity {
             return;
         }
 
+        if (!((SoccerApp) getApplication()).isStartupConsentFinished()) {
+            return; // onPostResume/window focus starts UMP before other startup dialogs.
+        }
         if (BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(this)) {
             checkAndShowUninstallGlobalPrompt();
             return;
         }
 
         // Check backend availability when activity resumes - this will trigger authentication logic when done
+        loadInterstitialAd();
         checkBackendAvailabilityAndContinue();
 
         // Ensure the FCM token is stored after login
@@ -574,11 +578,7 @@ public class MenuActivity extends BaseActivity {
     @Override
     protected void onPostResume() {
         super.onPostResume();
-        if (BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(this)) {
-            checkAndShowUninstallGlobalPrompt();
-            return;
-        }
-        requestAdsConsentWhenReady();
+        getWindow().getDecorView().post(this::requestAdsConsentWhenReady);
     }
 
     @Override
@@ -618,11 +618,27 @@ public class MenuActivity extends BaseActivity {
     private void requestAdsConsentWhenReady() {
         // onPostResume can run before the decor view is attached. Retry when
         // the window gains focus instead of silently losing the consent request.
-        if (hasWindowFocus()
-                && !BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(this)
-                && !hasAdsConsent()) {
-            ((SoccerApp) getApplication()).requestConsent(this);
+        if (hasWindowFocus() && canPresentWindow()) {
+            SoccerApp app = (SoccerApp) getApplication();
+            if (app.isStartupConsentFinished()) {
+                if (BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(this)) {
+                    checkAndShowUninstallGlobalPrompt();
+                }
+            } else {
+                app.refreshConsentIfNeeded(this);
+            }
         }
+    }
+
+    public void continueStartupAfterConsent() {
+        if (!canPresentWindow()) return;
+        if (BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(this)) {
+            checkAndShowUninstallGlobalPrompt();
+            return;
+        }
+        loadInterstitialAd();
+        checkBackendAvailabilityAndContinue();
+        ((SoccerApp) getApplication()).syncFcmRegistrationIfNeeded();
     }
 
     /**
@@ -938,6 +954,11 @@ public class MenuActivity extends BaseActivity {
 
     private void loadInterstitialAd() {
         adRetryHandler.removeCallbacks(adRetryRunnable);
+        if (!((SoccerApp) getApplication()).canRequestAds()
+                || BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(this)) {
+            Log.d("TAG_Soccer", "loadInterstitialAd: waiting for UMP and variant check");
+            return;
+        }
 
         if (isFinishing() || isDestroyed()) {
             Log.d(
@@ -947,7 +968,7 @@ public class MenuActivity extends BaseActivity {
             return;
         }
 
-        if (isAdLoading) {
+        if (isAdLoading || mInterstitialAd != null) {
             Log.d(
                     "TAG_Soccer",
                     getClass().getSimpleName() + ".loadInterstitialAd: load already in progress"
@@ -1407,6 +1428,10 @@ public class MenuActivity extends BaseActivity {
     }
 
     public void showAdThenRun(Runnable action) {
+        if (!((SoccerApp) getApplication()).isStartupConsentFinished()) {
+            requestAdsConsentWhenReady();
+            return;
+        }
         showLoadingOverlay();
         Runnable guardedAction = () -> {
             try {
@@ -2257,6 +2282,10 @@ public class MenuActivity extends BaseActivity {
      * The Close action leaves the app; both messages require removing Global.
      */
     private void checkAndShowUninstallGlobalPrompt() {
+        if (!((SoccerApp) getApplication()).isStartupConsentFinished()) {
+            requestAdsConsentWhenReady();
+            return;
+        }
         Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: entered with state {isFinishing="
                 + isFinishing()
                 + ", isDestroyed="
@@ -2311,13 +2340,16 @@ public class MenuActivity extends BaseActivity {
                 .setTitle(BangladeshMigrationHelper.uninstallTitle(this))
                 .setMessage(BangladeshMigrationHelper.uninstallMessage(this))
                 .setPositiveButton(R.string.uninstall_global_uninstall, (d, which) -> {
-                    Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: close clicked -> finishing activity");
-                    finish();
+                    Log.d("TAG_Soccer", "MenuActivity.checkAndShowUninstallGlobalPrompt: close clicked -> finishing task");
+                    ((SoccerApp) getApplication()).getAnalyticsManager().trackAppVariantConflictClosed();
+                    finishAffinity();
                 })
                 .setCancelable(false)
                 .create();
         globalUninstallDialog = dialog;
-        showManagedDialog(dialog, "uninstall_global");
+        if (showManagedDialog(dialog, "uninstall_global") != null) {
+            ((SoccerApp) getApplication()).getAnalyticsManager().trackAppVariantConflictShown();
+        }
     }
 
     private boolean canPresentWindow() {

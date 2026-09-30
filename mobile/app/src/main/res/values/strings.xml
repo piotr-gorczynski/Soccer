@@ -463,5 +463,5 @@
     <string name="prize_reminder_message">Your prize is waiting. Enter your payout details so we can send your winnings.</string>
     <string name="prize_reminder_open">Enter payout details</string>
     <string name="bangladesh_installed_title">Gridline Soccer Bangladesh is already installed</string>
-    <string name="bangladesh_installed_message">You cannot use both versions of Gridline Soccer on the same device.\n\nTo continue using the Bangladesh version, please uninstall this Global version.</string>
+    <string name="bangladesh_installed_message">You cannot use both versions of Gridline Soccer on the same device.\n\nTo continue using the Bangladesh version, please uninstall this version of Gridline Soccer (without the flag).</string>
 </resources>

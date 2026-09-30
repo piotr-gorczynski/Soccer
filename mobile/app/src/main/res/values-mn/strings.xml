@@ -393,5 +393,5 @@
     <string name="payment_account_number_error_mobile">01-ээр эхэлсэн Бангладешийн 11 оронтой гар утасны дугаар оруулна уу (эсвэл +880).</string>
     <string name="payment_account_number_error_rocket">01-ээр эхэлсэн, шалгах оронтой 12 оронтой Rocket дансны дугаар оруулна уу (эсвэл +880).</string>
     <string name="bangladesh_installed_title">Gridline Soccer Bangladesh аль хэдийн суулгасан байна</string>
-    <string name="bangladesh_installed_message">Нэг төхөөрөмж дээр Gridline Soccer-ийн хоёр хувилбарыг зэрэг ашиглах боломжгүй.\n\nBangladesh хувилбарыг үргэлжлүүлэн ашиглахын тулд энэ Global хувилбарыг устгана уу.</string>
+    <string name="bangladesh_installed_message">Нэг төхөөрөмж дээр Gridline Soccer-ийн хоёр хувилбарыг зэрэг ашиглах боломжгүй.\n\nBangladesh хувилбарыг үргэлжлүүлэн ашиглахын тулд Gridline Soccer-ийн энэ хувилбарыг (туггүй) устгана уу.</string>
 </resources>

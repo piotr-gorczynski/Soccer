@@ -393,5 +393,5 @@
     <string name="payment_account_number_error_mobile">ໃສ່ເບີມືຖືບັງກະລາເທດ 11 ຕົວເລກ ທີ່ຂຶ້ນຕົ້ນດ້ວຍ 01 (ຫຼື +880).</string>
     <string name="payment_account_number_error_rocket">ໃສ່ເລກບັນຊີ Rocket 12 ຕົວເລກ ທີ່ຂຶ້ນຕົ້ນດ້ວຍ 01 ພ້ອມເລກກວດສອບ (ຫຼື +880).</string>
     <string name="bangladesh_installed_title">ຕິດຕັ້ງ Gridline Soccer Bangladesh ແລ້ວ</string>
-    <string name="bangladesh_installed_message">ທ່ານບໍ່ສາມາດໃຊ້ Gridline Soccer ທັງສອງລຸ້ນໃນອຸປະກອນດຽວກັນໄດ້.\n\nເພື່ອໃຊ້ລຸ້ນ Bangladesh ຕໍ່ໄປ, ກະລຸນາຖອນການຕິດຕັ້ງລຸ້ນ Global ນີ້.</string>
+    <string name="bangladesh_installed_message">ທ່ານບໍ່ສາມາດໃຊ້ Gridline Soccer ທັງສອງລຸ້ນໃນອຸປະກອນດຽວກັນໄດ້.\n\nເພື່ອໃຊ້ລຸ້ນ Bangladesh ຕໍ່ໄປ, ກະລຸນາຖອນການຕິດຕັ້ງGridline Soccer ລຸ້ນນີ້ (ບໍ່ມີທຸງ).</string>
 </resources>

@@ -16,6 +16,32 @@ public class AnalyticsManager {
     
     private FirebaseAnalytics firebaseAnalytics;
     private FirebaseCrashlytics crashlytics;
+
+    public void trackAppVariantConflictShown() {
+        trackSimpleEvent("app_variant_conflict_shown");
+    }
+
+    public void trackAppVariantConflictClosed() {
+        trackSimpleEvent("app_variant_conflict_closed");
+    }
+
+    public void trackPrizesView() {
+        trackSimpleEvent("prizes_view");
+    }
+
+    public void trackPrizeDetailsView() {
+        trackSimpleEvent("prize_details_view");
+    }
+
+    private void trackSimpleEvent(String event) {
+        if (firebaseAnalytics == null) return;
+        try {
+            firebaseAnalytics.logEvent(event, new Bundle());
+            Log.d(TAG, "Tracked: " + event);
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to log event: " + event, e);
+        }
+    }
     
     public AnalyticsManager(Context context) {
         if (context == null) {
@@ -27,6 +53,16 @@ public class AnalyticsManager {
         
         try {
             this.firebaseAnalytics = FirebaseAnalytics.getInstance(context);
+            // Build metadata is available before login, including for automatic events.
+            Bundle defaults = new Bundle();
+            defaults.putString("app_variant", BuildConfig.FLAVOR_market);
+            defaults.putString("app_environment", BuildConfig.FLAVOR_environment);
+            defaults.putString("app_build_type", BuildConfig.BUILD_TYPE);
+            firebaseAnalytics.setDefaultEventParameters(defaults);
+            firebaseAnalytics.setUserProperty("app_variant", BuildConfig.FLAVOR_market);
+            firebaseAnalytics.setUserProperty("app_environment", BuildConfig.FLAVOR_environment);
+            firebaseAnalytics.setUserProperty("app_build_type", BuildConfig.BUILD_TYPE);
+            firebaseAnalytics.setUserProperty("app_version", BuildConfig.VERSION_NAME);
             this.crashlytics = FirebaseCrashlytics.getInstance();
             Log.d(TAG, "AnalyticsManager initialized successfully");
         } catch (Exception e) {
@@ -449,7 +485,8 @@ public class AnalyticsManager {
     /**
      * Set user properties for segmentation
      */
-    public void setUserProperties(String authMethod, String appVersion, String language, boolean hasNickname) {
+    public void setUserProperties(String authMethod, String language, boolean hasNickname) {
+        String appVersion = BuildConfig.VERSION_NAME;
         Log.d(TAG, "Set user properties: auth=" + authMethod + ", version=" + appVersion + ", lang=" + language);
         
         if (firebaseAnalytics != null) {

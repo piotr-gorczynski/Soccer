@@ -430,5 +430,5 @@
     <string name="payment_account_number_error_mobile">Introduce un número móvil de Bangladesh de 11 dígitos que empiece por 01 (o +880).</string>
     <string name="payment_account_number_error_rocket">Introduce un número de cuenta Rocket de 12 dígitos que empiece por 01 e incluya el dígito de control (o +880).</string>
     <string name="bangladesh_installed_title">Gridline Soccer Bangladesh ya está instalado</string>
-    <string name="bangladesh_installed_message">No puedes usar ambas versiones de Gridline Soccer en el mismo dispositivo.\n\nPara seguir usando la versión Bangladesh, desinstala esta versión Global.</string>
+    <string name="bangladesh_installed_message">No puedes usar ambas versiones de Gridline Soccer en el mismo dispositivo.\n\nPara seguir usando la versión Bangladesh, desinstala esta versión de Gridline Soccer (sin bandera).</string>
 </resources>

@@ -1,10 +1,15 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.46
-**Last Updated:** 2026-09-29
+**Document Version:** 2.51
+**Last Updated:** 2026-09-30
 **Status:** Prize, payment, and support workflows implemented; simulated end-to-end flow tested on dev; Bangladesh launch work remains
 
 **Revision History**:
+- v2.51 (2026-09-30): Completed Firebase Analytics tracking validation against production Realtime reports, including Bangladesh session, authentication, tournament-list and prize-list events, and variant-conflict events from both variants.
+- v2.50 (2026-09-29): Removed the optional Bangladesh migrated-user welcome flow from scope by product decision. Its test is N/A, not PASS; normal sign-in and shared-profile continuity remain covered by the completed authentication tests.
+- v2.49 (2026-09-29): Marked the Migration Testing data-sync item complete for the verified shared profile and friend-list additions/removals, retaining the requirement to refresh/reopen the list on the other device.
+- v2.48 (2026-09-29): Marked the Migration Testing cross-app authentication item complete by referencing the verified same-account Google sign-in and shared-profile checks in Authentication Testing. Remaining migration checks are unchanged.
+- v2.47 (2026-09-29): Marked Authentication Testing complete after all ten checklist items received PASS results. Retained the documented evidence, tested scope, and limitations for each item.
 - v2.46 (2026-09-29): Marked authentication with an existing Global app user as PASS for Google Sign-In, based on the completed cross-variant account, profile, and friend-list checks. Personal account identifiers are omitted.
 - v2.45 (2026-09-29): Recorded successful manual Google Sign-In and Facebook Login tests in the Bangladesh release build. Google verification is based on the owner's report; the supplied Logcat additionally confirms the Facebook flow against prod. Personal account details are omitted; other pending authentication checks remain open.
 - v2.44 (2026-09-28): Completed the cross-variant friend-list test based on manual addition and removal checks using the same account on two phones. Changes are shared between Global and Bangladesh after refreshing/reopening the list; automatic refresh of an already open list was not observed.
@@ -1867,7 +1872,7 @@ Download now and start competing for real prizes!
 
 - [x] Shared environment-specific Google Services configuration contains both package IDs
 - [x] Authenticated app-variant tracking and same-UID migration detection implemented through `trackAppVariant`
-- [ ] Add a migrated-user welcome flow if required, based on existing server-managed migration metadata
+- **Out of scope (decision 2026-09-29):** A dedicated migrated-user welcome flow in Bangladesh is intentionally not planned. Existing Global users use normal sign-in and access their shared profile; no additional welcome screen is required. App-variant and migration tracking remain in place. This is separate from the previously abandoned Global-app migration promotion.
 - Do not infer migration from a user region field or write `appVariant`/`migrationStatus` directly from the client.
 - Keep the symmetric installed-variant gameplay gate separate from the abandoned Global promotion; it is not a Play availability check.
 
@@ -2850,11 +2855,18 @@ cd mobile
   - Privacy Policy update
 - [ ] Closed beta testing with Bangladesh users
 - [ ] **Migration Testing**:
-  - [ ] Test cross-app authentication (same user in both apps)
-  - [ ] Verify data sync between global and BD apps
-  - [ ] Test migrated user welcome flow
-  - [ ] Validate Firebase Analytics tracking
-- [ ] **Authentication Testing**:
+  - [x] Test cross-app authentication (same user in both apps)
+    - PASS (confirmed 2026-09-29, prod, Google Sign-In): The same account successfully authenticated in Global and Bangladesh with the same Firebase UID and shared profile. See Authentication Testing below for the completed same-user and shared-data checks; personal account identifiers are omitted.
+  - [x] Verify data sync between global and BD apps
+    - PASS (confirmed 2026-09-29): Completed checks confirmed the same account/profile and saved nickname in both variants, removal of a friend in Bangladesh reflected in Global, and addition of a friend in Global reflected in Bangladesh. See Authentication Testing below for the supporting test details.
+    - Scope: shared profile and friend-list data. The other device required a list refresh/reopen to display changes; live refresh and synchronization of other data such as statistics were not verified. Personal account identifiers are omitted.
+  - **N/A — Test migrated user welcome flow:** No dedicated welcome flow is implemented or planned in Bangladesh (scope decision 2026-09-29). This is not a passed test or remaining implementation task. Normal sign-in and shared-profile continuity are covered by Authentication Testing.
+  - [x] Validate Firebase Analytics tracking
+    - PASS (2026-09-30, prod): Compared manual device tests and logcat with events received in Google Analytics Realtime. Confirmed Bangladesh `session_start`, authentication events (`login`, `sign_up`), `tournament_view` (tournament list), and `prizes_view` (prize list). Verified `app_variant = bangladesh` on session, sign-up, tournament-list and prize-list events.
+    - Confirmed `app_variant_conflict_shown` and `app_variant_conflict_closed` from both Global and Bangladesh, distinguished by the `app_variant` parameter.
+    - Scope: event delivery and variant attribution after Analytics consent was granted. Current authentication naming emits `login` when the login screen opens and `sign_up` after successful authentication, including existing users; these events do not prove new-account registration. `prize_details_view` is implemented but its delivery has not yet been manually verified. Personal account identifiers are omitted.
+- [x] **Authentication Testing**:
+  - Completed (2026-09-29): All ten checklist items below are verified within their documented scope. The individual notes retain the evidence and limitations, including unconfirmed Google Play installation/Play App Signing coverage and existing-user continuity tested with Google.
   - [x] Test Email/Password authentication in Bangladesh app
     - PASS (2026-09-27, dev): Manually tested the Bangladesh build end-to-end:
       - Registered a new user using Email/Password.
