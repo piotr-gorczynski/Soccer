@@ -1,0 +1,67 @@
+<en-GB>
+🛠️ Fixed an issue preventing the Google ad consent form from appearing.
+</en-GB>
+
+<pl-PL>
+🛠️ Naprawiono błąd, przez który formularz zgody Google na reklamy nie był wyświetlany.
+</pl-PL>
+
+<de-DE>
+🛠️ Ein Fehler wurde behoben, der die Anzeige des Google-Formulars zur Einwilligung in Werbung verhinderte.
+</de-DE>
+
+<fr-FR>
+🛠️ Correction d’un problème empêchant l’affichage du formulaire de consentement publicitaire Google.
+</fr-FR>
+
+<es-ES>
+🛠️ Corregido un error que impedía mostrar el formulario de consentimiento para anuncios de Google.
+</es-ES>
+
+<ur>
+🛠️ وہ خرابی درست کر دی گئی ہے جس کی وجہ سے Google کے اشتہارات کی رضامندی کا فارم ظاہر نہیں ہوتا تھا۔
+</ur>
+
+<bn-BD>
+🛠️ Google-এর বিজ্ঞাপন সংক্রান্ত সম্মতির ফর্ম দেখানো না হওয়ার সমস্যা ঠিক করা হয়েছে।
+</bn-BD>
+
+<ne-NP>
+🛠️ Google को विज्ञापन सहमति फारम नदेखिने समस्या समाधान गरिएको छ।
+</ne-NP>
+
+<hi-IN>
+🛠️ Google के विज्ञापन सहमति फ़ॉर्म के न दिखाई देने की समस्या ठीक कर दी गई है।
+</hi-IN>
+
+<am>
+🛠️ የGoogle የማስታወቂያ ፈቃድ ቅጽ እንዳይታይ ያደረገው ችግር ተስተካክሏል።
+</am>
+
+<ar>
+🛠️ تم إصلاح مشكلة كانت تمنع ظهور نموذج الموافقة على إعلانات Google.
+</ar>
+
+<my-MM>
+🛠️ Google ကြော်ငြာဆိုင်ရာ သဘောတူညီချက်ဖောင် မပေါ်လာသည့် ပြဿနာကို ပြင်ဆင်ထားသည်။
+</my-MM>
+
+<km-KH>
+🛠️ បានជួសជុលបញ្ហាដែលរារាំងការបង្ហាញទម្រង់យល់ព្រមសម្រាប់ការផ្សាយពាណិជ្ជកម្មរបស់ Google។
+</km-KH>
+
+<lo-LA>
+🛠️ ແກ້ໄຂບັນຫາທີ່ເຮັດໃຫ້ແບບຟອມຍິນຍອມກ່ຽວກັບໂຄສະນາຂອງ Google ບໍ່ສະແດງ.
+</lo-LA>
+
+<mn-MN>
+🛠️ Google-ийн зар сурталчилгааны зөвшөөрлийн маягт харагдахгүй байсан алдааг заслаа.
+</mn-MN>
+
+<fa-IR>
+🛠️ مشکلی که مانع نمایش فرم رضایت برای تبلیغات Google می‌شد برطرف شد.
+</fa-IR>
+
+<si-LK>
+🛠️ Google දැන්වීම් සඳහා කැමැත්ත ලබා දීමේ පෝරමය නොපෙන්වීමේ දෝෂය නිවැරදි කර ඇත.
+</si-LK>

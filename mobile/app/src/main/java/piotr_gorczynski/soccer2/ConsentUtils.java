@@ -89,32 +89,14 @@ public class ConsentUtils {
     }
 
     /**
-     * Set default Firebase Analytics consent to DENIED for EEA compliance.
-     * This should be called at app startup before any analytics data is collected.
-     */
-    public static void setDefaultFirebaseAnalyticsConsent(Context ctx) {
-        Log.d("TAG_Soccer", "Setting default Firebase Analytics consent to DENIED for EEA compliance");
-
-        FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(ctx);
-        
-        // Set consent to DENIED by default to ensure no data collection until explicit consent
-        Map<FirebaseAnalytics.ConsentType, FirebaseAnalytics.ConsentStatus> defaultConsentMap = Map.of(
-            FirebaseAnalytics.ConsentType.ANALYTICS_STORAGE, FirebaseAnalytics.ConsentStatus.DENIED,
-            FirebaseAnalytics.ConsentType.AD_STORAGE, FirebaseAnalytics.ConsentStatus.DENIED
-        );
-
-        firebaseAnalytics.setConsent(defaultConsentMap);
-        
-        Log.d("TAG_Soccer", "Default Firebase Analytics consent set to DENIED");
-    }
-
-    /**
      * Update Firebase Analytics consent based on UMP consent choices.
      * This method now supports both EEA regulations (via IAB TCF) and US state regulations (via UMP status).
      */
     public static void updateFirebaseAnalyticsConsent(Context ctx) {
-        boolean analyticsAllowed = isAnalyticsAllowed(ctx);
-        boolean adsPersonalizationAllowed = isPersonalisedAllowed(ctx);
+        // A refreshed REQUIRED/UNKNOWN state must not reuse stale purpose choices.
+        boolean consentResolved = hasUmpConsent(ctx);
+        boolean analyticsAllowed = consentResolved && isAnalyticsAllowed(ctx);
+        boolean adsPersonalizationAllowed = consentResolved && isPersonalisedAllowed(ctx);
 
         Log.d("TAG_Soccer", "Updating Firebase Analytics consent: analytics=" + analyticsAllowed + 
               ", ads_personalization=" + adsPersonalizationAllowed);

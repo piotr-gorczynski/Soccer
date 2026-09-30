@@ -301,11 +301,9 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         // The issue occurs when WebView is first initialized by Google Ads SDK, blocking the main thread
         // WebView initialization must happen on the main thread, so we do it directly here
         // but avoid blocking any thread
-        initializeWebViewAndAds();
+        // Ads initialization starts only after UMP completes.
         
-        // Set Firebase Analytics consent to DENIED by default for privacy compliance
-        // This ensures no data is collected until explicit consent is given (EEA and US regulations)
-        ConsentUtils.setDefaultFirebaseAnalyticsConsent(this);
+        // Analytics defaults live in the manifest; do not overwrite persisted consent on restart.
     }
 
     private void trackAppVariant() {
@@ -797,6 +795,31 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
             Log.e("TAG_Soccer", getClass().getSimpleName() + ".debugTestBackendService: Service checker not initialized");
         }
     }
+    private boolean startupConsentFinished;
+    private boolean adsInitializationScheduled;
+
+    public boolean canRequestAds() {
+        return startupConsentFinished
+                && UserMessagingPlatform.getConsentInformation(this).canRequestAds();
+    }
+
+    public boolean isStartupConsentFinished() {
+        return startupConsentFinished;
+    }
+
+    private void finishStartupConsent(Activity activity) {
+        consentRequestInProgress.set(false);
+        startupConsentFinished = true;
+        if (canRequestAds()) initializeWebViewAndAds();
+        if (activity instanceof MenuActivity) {
+            activity.getWindow().getDecorView().post(
+                    () -> ((MenuActivity) activity).continueStartupAfterConsent());
+        }
+    }
+
+    public void refreshConsentIfNeeded(Activity activity) {
+        if (!startupConsentFinished && !consentRequestInProgress.get()) requestConsent(activity);
+    }
 
     public void requestConsent(Activity activity) {
         if (!isActivityReadyForWindow(activity)) {
@@ -826,17 +849,18 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                             "TAG_Soccer",
                             getClass().getSimpleName() + ".requestConsent: consent info updated. form available=" + consentInformation.isConsentFormAvailable()
                     );
+                    ConsentUtils.updateFirebaseAnalyticsConsent(activity);
                     if (!isActivityReadyForWindow(activity)) {
                         Log.d(TAG, getClass().getSimpleName() + ".requestConsent: activity stopped before form load; deferring");
                         consentRequestInProgress.set(false);
                     } else if (consentInformation.isConsentFormAvailable()) {
                         loadAndShowConsentForm(activity);
                     } else {
-                        consentRequestInProgress.set(false);
+                        finishStartupConsent(activity);
                     }
                 },
                 formError -> {
-                    consentRequestInProgress.set(false);
+                    finishStartupConsent(activity);
                     Log.w("TAG_Soccer", "UMP: Failed to update consent info: " + formError.getMessage());
                 }
         );
@@ -907,7 +931,6 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                         consentForm.show(
                                 activity,
                                 formError -> {
-                                    consentRequestInProgress.set(false);
                                     if (formError != null) {
                                         Log.w("TAG_Soccer", "UMP: Consent form error: " + formError.getMessage());
                                     } else {
@@ -926,9 +949,10 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                                         // Update Firebase Analytics consent (supports both EEA and US regulations)
                                         ConsentUtils.updateFirebaseAnalyticsConsent(activity);
                                     }
+                                    finishStartupConsent(activity);
                                 });
                     } else {
-                        consentRequestInProgress.set(false);
+                        finishStartupConsent(activity);
                         Log.d(
                                 "TAG_Soccer",
                                 getClass().getSimpleName() + ".loadAndShowConsentForm: consent not required"
@@ -936,7 +960,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                     }
                 },
                 formError -> {
-                    consentRequestInProgress.set(false);
+                    finishStartupConsent(activity);
                     Log.w("TAG_Soccer", "UMP: Failed to load consent form: " + formError.getMessage());
                 }
         );
@@ -1022,10 +1046,16 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
      * ContentProvider access can take longer than 2 seconds on slower devices.
      */
     private void initializeWebViewAndAds() {
+        if (adsInitializationScheduled || !canRequestAds()) return;
+        adsInitializationScheduled = true;
         // Delay MobileAds initialization by 5 seconds to avoid blocking app startup
         // This gives time for the splash screen and first activity to render
         // and for the system to settle before heavy SDK initialization
         MAIN_HANDLER.postDelayed(() -> {
+            if (!canRequestAds()) {
+                adsInitializationScheduled = false;
+                return;
+            }
             try {
                 MobileAds.initialize(this, initializationStatus -> {
                     Log.d(TAG, getClass().getSimpleName() + ".initializeWebViewAndAds: MobileAds initialized successfully");

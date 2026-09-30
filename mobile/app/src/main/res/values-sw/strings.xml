@@ -374,12 +374,6 @@
     <!-- Tournament notification dialog -->
     <string name="tournament_started_dialog_message">Mashindano %1$s yameanza! Je, ungependa kufungua ukumbi wa mashindano?</string>
 
-    <!-- Bangladesh promotion dialog -->
-    <string name="bd_promo_title">🇧🇩 Toleo la Bangladesh Linapatikana</string>
-    <string name="bd_promo_message">Toleo maalum la Gridline Soccer kwa Bangladesh sasa linapatikana.\n\nLinapatikana kwa watumiaji wenye umri wa miaka 18 au zaidi kwenye Google Play Store.</string>
-    <string name="bd_promo_install">Sakinisha</string>
-    <string name="bd_promo_maybe_later">Labda Baadaye</string>
-
     <!-- Uninstall global dialog -->
     <string name="uninstall_global_title">Ondoa programu ya zamani</string>
     <string name="uninstall_global_message">Lazima uondoe toleo la zamani la kimataifa ili kuepuka mgongano na toleo la Bangladesh.\n\nIli kuondoa: nenda kwa Mipangilio → Programu → tafuta \"Gridline Soccer\" (bila bendera) → Ondoa.</string>
@@ -398,4 +392,6 @@
     <string name="payment_details_save_failed">Imeshindikana kuhifadhi maelezo. Jaribu tena.</string>
     <string name="payment_account_number_error_mobile">Weka nambari ya simu ya Bangladesh yenye tarakimu 11 inayoanza na 01 (au +880).</string>
     <string name="payment_account_number_error_rocket">Weka nambari ya akaunti ya Rocket yenye tarakimu 12 inayoanza na 01, pamoja na tarakimu ya ukaguzi (au +880).</string>
+    <string name="bangladesh_installed_title">Gridline Soccer Bangladesh tayari imesakinishwa</string>
+    <string name="bangladesh_installed_message">Huwezi kutumia matoleo yote mawili ya Gridline Soccer kwenye kifaa kimoja.\n\nIli kuendelea kutumia toleo la Bangladesh, tafadhali ondoa toleo hili la Gridline Soccer (bila bendera).</string>
 </resources>

@@ -213,6 +213,7 @@ public class GameActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        if (redirectInstalledVariantConflict()) return;
         
         // Get analytics manager from SoccerApp
         analyticsManager = ((SoccerApp) getApplicationContext()).getAnalyticsManager();
@@ -1197,9 +1198,19 @@ public class GameActivity extends BaseActivity {
         }
     }
 
+    // Covers direct launches and a second variant installed while this game is backgrounded.
+    private boolean redirectInstalledVariantConflict() {
+        if (!BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(this)) return false;
+        startActivity(new Intent(this, MenuActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP));
+        finish();
+        return true;
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
+        if (redirectInstalledVariantConflict()) return;
         if (!alertShown && Winner != -1) {
             showWinner(Winner);
         }

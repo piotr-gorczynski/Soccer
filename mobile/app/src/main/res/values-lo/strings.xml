@@ -374,12 +374,6 @@
     <!-- Tournament notification dialog -->
     <string name="tournament_started_dialog_message">ການແຂ່ງຂັນ %1$s ເລີ່ມແລ້ວ! ທ່ານຕ້ອງການເປີດຫ້ອງແຂ່ງຂັນບໍ?</string>
 
-    <!-- Bangladesh promotion dialog -->
-    <string name="bd_promo_title">🇧🇩 ເວີຊັ່ນບັງກລາເທດພ້ອມໃຊ້ງານ</string>
-    <string name="bd_promo_message">ເວີຊັ່ນພິເສດຂອງ Gridline Soccer ສໍາລັບບັງກລາເທດດຽວນີ້ພ້ອມໃຊ້ງານ.\n\nພ້ອມໃຊ້ງານສໍາລັບຜູ້ໃຊ້ທີ່ມີອາຍຸ 18 ປີ ຫຼື ຫຼາຍກວ່ານັ້ນ ຢູ່ Google Play Store.</string>
-    <string name="bd_promo_install">ຕິດຕັ້ງ</string>
-    <string name="bd_promo_maybe_later">ບາງທີຕໍ່ມາ</string>
-
     <!-- Uninstall global dialog -->
     <string name="uninstall_global_title">ລຶບແອັບເກົ່າ</string>
     <string name="uninstall_global_message">ທ່ານຕ້ອງຖອນການຕິດຕັ້ງລຸ້ນສາກົນເກົ່າເພື່ອຫຼີກລ່ຽງຄວາມຂັດແຍ້ງກັບລຸ້ນບັງກາລາເດດ.\n\nເພື່ອຖອນການຕິດຕັ້ງ: ໄປທີ່ ການຕັ້ງຄ່າ → ແອັບ → ຊອກຫາ \"Gridline Soccer\" (ບໍ່ມີທຸງ) → ຖອນການຕິດຕັ້ງ.</string>
@@ -398,4 +392,6 @@
     <string name="payment_details_save_failed">ບັນທຶກບໍ່ສຳເລັດ. ລອງອີກຄັ້ງ.</string>
     <string name="payment_account_number_error_mobile">ໃສ່ເບີມືຖືບັງກະລາເທດ 11 ຕົວເລກ ທີ່ຂຶ້ນຕົ້ນດ້ວຍ 01 (ຫຼື +880).</string>
     <string name="payment_account_number_error_rocket">ໃສ່ເລກບັນຊີ Rocket 12 ຕົວເລກ ທີ່ຂຶ້ນຕົ້ນດ້ວຍ 01 ພ້ອມເລກກວດສອບ (ຫຼື +880).</string>
+    <string name="bangladesh_installed_title">ຕິດຕັ້ງ Gridline Soccer Bangladesh ແລ້ວ</string>
+    <string name="bangladesh_installed_message">ທ່ານບໍ່ສາມາດໃຊ້ Gridline Soccer ທັງສອງລຸ້ນໃນອຸປະກອນດຽວກັນໄດ້.\n\nເພື່ອໃຊ້ລຸ້ນ Bangladesh ຕໍ່ໄປ, ກະລຸນາຖອນການຕິດຕັ້ງGridline Soccer ລຸ້ນນີ້ (ບໍ່ມີທຸງ).</string>
 </resources>

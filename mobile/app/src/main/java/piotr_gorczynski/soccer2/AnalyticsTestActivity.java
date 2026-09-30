@@ -103,7 +103,7 @@ public class AnalyticsTestActivity extends BaseActivity {
         analyticsManager.addTournamentBreadcrumb("test_step", "test_tournament", "test details");
         
         // Test user properties
-        analyticsManager.setUserProperties("test", "9.0", "en", true);
+        analyticsManager.setUserProperties("test", "en", true);
         
         // Test Remote Config values
         Log.d(TAG, "Signup prompt variant: " + remoteConfigHelper.getSignupPromptVariant());
