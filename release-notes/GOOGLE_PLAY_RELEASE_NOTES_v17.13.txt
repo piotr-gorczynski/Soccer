@@ -1,0 +1,67 @@
+<en-GB>
+🛠️ Fixed player animations: both players now remain visible after they stop running, and kicking animations display correctly.
+</en-GB>
+
+<pl-PL>
+🛠️ Naprawiono animacje zawodników: obaj pozostają widoczni po zakończeniu biegu, a animacje kopnięcia wyświetlają się poprawnie.
+</pl-PL>
+
+<de-DE>
+🛠️ Spieleranimationen korrigiert: Beide Spieler bleiben nach dem Laufen sichtbar und Schussanimationen werden korrekt angezeigt.
+</de-DE>
+
+<fr-FR>
+🛠️ Correction des animations des joueurs : les deux joueurs restent visibles après leur course et les animations de frappe s’affichent correctement.
+</fr-FR>
+
+<es-ES>
+🛠️ Corregidas las animaciones de los jugadores: ambos permanecen visibles al dejar de correr y las animaciones de golpeo se muestran correctamente.
+</es-ES>
+
+<ur>
+🛠️ کھلاڑیوں کی اینیمیشن درست کر دی گئی ہے: دوڑ ختم ہونے کے بعد دونوں کھلاڑی نظر آتے رہتے ہیں اور کِک کی اینیمیشن صحیح دکھائی دیتی ہے۔
+</ur>
+
+<bn-BD>
+🛠️ খেলোয়াড়দের অ্যানিমেশন ঠিক করা হয়েছে: দৌড় থামার পরও দুজন খেলোয়াড়ই দৃশ্যমান থাকে এবং কিকের অ্যানিমেশন সঠিকভাবে দেখা যায়।
+</bn-BD>
+
+<ne-NP>
+🛠️ खेलाडीहरूको एनिमेसन सच्याइएको छ: दौड रोकिएपछि पनि दुवै खेलाडी देखिइरहन्छन् र किकको एनिमेसन सही रूपमा देखिन्छ।
+</ne-NP>
+
+<hi-IN>
+🛠️ खिलाड़ियों के एनिमेशन ठीक किए गए हैं: दौड़ रुकने के बाद भी दोनों खिलाड़ी दिखाई देते हैं और किक के एनिमेशन सही ढंग से दिखते हैं।
+</hi-IN>
+
+<am>
+🛠️ የተጫዋቾች እንቅስቃሴ ምስሎች ተስተካክለዋል፦ ሁለቱም ተጫዋቾች መሮጥ ካቆሙ በኋላ መታየታቸውን ይቀጥላሉ፣ የኳስ ምት እንቅስቃሴዎችም በትክክል ይታያሉ።
+</am>
+
+<ar>
+🛠️ تم إصلاح الرسوم المتحركة للاعبين: يظل اللاعبان ظاهرين بعد التوقف عن الجري، وتظهر حركات الركل بشكل صحيح.
+</ar>
+
+<my-MM>
+🛠️ ကစားသမားများ၏ လှုပ်ရှားပုံများကို ပြင်ဆင်ထားသည်။ ပြေးခြင်းရပ်ပြီးနောက် ကစားသမားနှစ်ဦးလုံးကို ဆက်လက်မြင်ရပြီး ဘောလုံးကန်သည့် လှုပ်ရှားပုံများလည်း မှန်ကန်စွာ ပြသသည်။
+</my-MM>
+
+<km-KH>
+🛠️ បានជួសជុលចលនារបស់កីឡាករ៖ កីឡាករទាំងពីរនៅតែមើលឃើញបន្ទាប់ពីឈប់រត់ ហើយចលនាទាត់បាល់បង្ហាញបានត្រឹមត្រូវ។
+</km-KH>
+
+<lo-LA>
+🛠️ ແກ້ໄຂພາບເຄື່ອນໄຫວຂອງນັກເຕະ: ນັກເຕະທັງສອງຍັງຄົງປາກົດຫຼັງຈາກຢຸດແລ່ນ ແລະພາບເຄື່ອນໄຫວການເຕະບານສະແດງຢ່າງຖືກຕ້ອງ.
+</lo-LA>
+
+<mn-MN>
+🛠️ Тоглогчдын хөдөлгөөнт дүрслэлийг заслаа: гүйж дууссаны дараа хоёр тоглогч хоёулаа харагдаж, бөмбөг өшиглөх хөдөлгөөн зөв дүрслэгдэнэ.
+</mn-MN>
+
+<fa-IR>
+🛠️ پویانمایی بازیکنان اصلاح شد: هر دو بازیکن پس از توقف دویدن همچنان دیده می‌شوند و حرکات شوت به‌درستی نمایش داده می‌شوند.
+</fa-IR>
+
+<si-LK>
+🛠️ ක්‍රීඩක සජීවිකරණ නිවැරදි කර ඇත: දිවීම නතර වූ පසුවත් ක්‍රීඩකයන් දෙදෙනාම පෙනෙන අතර පන්දුවට පා පහර දීමේ සජීවිකරණ නිවැරදිව පෙන්වයි.
+</si-LK>
