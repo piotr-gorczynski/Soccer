@@ -65,11 +65,8 @@ final class KickPlayerSprite {
             return cached;
         }
 
-        int spriteSheetResId = context.getResources().getIdentifier(
-                "spritesheet_kick",
-                "drawable",
-                context.getPackageName()
-        );
+        // Direct references keep sprite sheets reachable during release resource shrinking.
+        int spriteSheetResId = R.drawable.spritesheet_kick;
 
         SpriteSheetMetadata metadata = new SpriteSheetMetadata.Builder(spriteSheetResId)
                 .frameWidth(FRAME_WIDTH)
