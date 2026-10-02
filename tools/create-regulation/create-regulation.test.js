@@ -17,7 +17,7 @@ function validCashRegulation() {
     prizeRules: {
       cashPrizesEnabled: true,
       currency: 'BDT',
-      payoutMethods: ['bkash', 'nagad'],
+      payoutMethods: ['bkash', 'rocket'],
       prizePool: {
         totalAmount: 1000,
         awards: [{ place: 1, amount: 1000 }],
@@ -35,7 +35,7 @@ test('validates a Bangladesh cash-prize regulation', () => {
 
   assert.equal(result.root.market, 'BD');
   assert.equal(result.root.minimumAge, 18);
-  assert.deepEqual(result.root.prizeRules.payoutMethods, ['bkash', 'nagad']);
+  assert.deepEqual(result.root.prizeRules.payoutMethods, ['bkash', 'rocket']);
   assert.deepEqual(result.root.prizeRules.prizePool, {
     totalAmount: 1000,
     awards: [{ place: 1, amount: 1000 }],
@@ -175,4 +175,13 @@ test('creates the root and translations in one batch using a native ID', async (
   assert.equal(writes[1].reference.path, 'regulations/nativeFirestoreId/en/rules');
   assert.equal(writes[2].reference.path, 'regulations/nativeFirestoreId/bn/rules');
   assert.equal(writes[1].data.updatedAt, serverTimestamp);
+});
+
+test('rejects retired Bangladesh payout methods but preserves other markets', () => {
+  const input = validCashRegulation();
+  input.prizeRules.payoutMethods = ['nagad'];
+  assert.throws(() => validateRegulation(input), /bkash or rocket/);
+  input.market = 'PL';
+  input.prizeRules.payoutMethods = ['bank_account'];
+  assert.doesNotThrow(() => validateRegulation(input));
 });

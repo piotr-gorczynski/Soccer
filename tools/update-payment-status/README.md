@@ -80,3 +80,15 @@ remain supported by the rules and the submission-history trigger.
 
 The changes record future actions only. Previously overwritten messages and missing
 timestamps cannot be reconstructed reliably and are not backfilled.
+
+## Recipient schema v2 (Bangladesh)
+
+Current recipient details are stored at `payments/{paymentId}/private/recipient` with separate
+`firstName`, `lastName`, `walletProvider` (`BKASH` or `ROCKET`) and `walletNumber` fields.
+The list command intentionally omits sensitive recipient data. Use authorized Console/Admin SDK
+access to the private document when processing manually in Remitly. Do not put recipient names or
+numbers into `--notes` or user messages. All four recipient fields are required before processing; do not invent names from a nickname.
+Bangladesh has not launched in production; old test schemas are not supported.
+
+Real tests: bKash 320 BDT delivered; Rocket 320 BDT sent/in progress (delivery not confirmed).
+Mark `completed` only on delivery evidence. See `docs/BANGLADESH_PAYMENT_FLOW.md` for rollout.

@@ -18,13 +18,25 @@ final class BangladeshPayoutAccountValidator {
         return compact;
     }
 
+    static boolean isSupported(String method) {
+        return method != null && ("bkash".equalsIgnoreCase(method) || "rocket".equalsIgnoreCase(method));
+    }
+
+    static boolean isValidName(String value) {
+        return value != null && !value.trim().isEmpty() && value.trim().length() <= 100;
+    }
+
+    static boolean isValidDetails(String firstName, String lastName, String provider, String number) {
+        return isValidName(firstName) && isValidName(lastName) && isValid(provider, normalize(number));
+    }
+
     static boolean isValid(String method, String accountNumber) {
         String normalizedMethod = method == null ? "" : method.toLowerCase(Locale.ROOT);
         if (accountNumber == null) return false;
         return switch (normalizedMethod) {
-            case "bkash", "nagad" -> accountNumber.matches("01[3-9][0-9]{8}");
+            case "bkash" -> accountNumber.matches("01[3-9][0-9]{8}");
             case "rocket" -> accountNumber.matches("01[3-9][0-9]{9}");
-            default -> accountNumber.matches("[0-9]{10,18}");
+            default -> false;
         };
     }
 }

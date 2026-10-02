@@ -404,7 +404,7 @@ Combine multiple verification layers:
 4. **Localization**
    - Bengali language for all Bangladesh communications
    - Culturally appropriate messaging
-   - Local payment methods (bKash, Nagad, Rocket)
+   - Local payment methods (bKash, Rocket)
 
 ### Communication Channels
 
@@ -489,7 +489,7 @@ To participate in cash prize tournaments, you must:
 
 ☑ Be 18 years of age or older
 ☑ Reside in Bangladesh
-☑ Have a valid payment account (bKash, Nagad, or Rocket)
+☑ Have a valid payment account (bKash or Rocket)
 
 By checking this box, I confirm that I am 18 years of age or older
 and agree to the Terms & Conditions for cash prize tournaments.
@@ -782,7 +782,7 @@ class AgeVerificationActivity : AppCompatActivity() {
     confirmedAt: Timestamp,
     googlePlayVerified: true,
     hasPaymentAccount: true,
-    preferredPaymentMethod: "bkash", // or "nagad", "rocket"
+    preferredPaymentMethod: "bkash", // or "rocket"
     paymentAccountNumber: "01712345678" // stored only when user wins
   },
   
@@ -968,7 +968,7 @@ This journey ensures users under 18 are automatically protected by Play Store ag
 4. In-app notification: "Congratulations! You won ৳2,000!"
    ↓
 5. Prompts for payment details:
-   "Select payment method: bKash / Nagad / Rocket"
+   "Select payment method: bKash / Rocket"
    "Enter mobile number: ___________"
    ↓
 6. User provides payment information

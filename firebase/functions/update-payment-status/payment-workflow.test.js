@@ -50,9 +50,9 @@ test('recipient submissions use event time and survive repeated/out-of-order tri
   assert.equal(records.get('recipient-second'), recorded);
   assert.equal(recorded.changedAt, 'SUBMISSION_TIME');
   assert.equal(recorded.recordedAt, 'RECORDING_TIME');
-  assert.equal(recorded.previousRecipientInfo.accountNumber, 'old');
+  assert.equal('previousRecipientInfo' in recorded, false);
   assert.deepEqual(recorded.previousIssue, before.issue);
-  assert.equal(recorded.recipientInfo.accountNumber, 'new');
+  assert.equal('recipientInfo' in recorded, false);
   assert.equal(recorded.changedBy, 'winner');
   assert.equal(records.get('recipient-first').changedAt, 'EARLIER_TIME');
   assert.equal(records.get('recipient-first').previousIssue, null);
@@ -80,4 +80,19 @@ test('requires provider data for sent and a safe issue for action_required', () 
   assert.doesNotThrow(() => validateTransitionData('action_required', {
     issueCode: 'invalid_recipient_account', userMessage: 'Check your account number.'
   }));
+});
+
+test('v2 submission history does not copy private or legacy recipient details', async () => {
+  let record;
+  const db = { runTransaction: callback => callback({
+    get: async () => ({ exists: false }), set: (_, value) => { record = value; },
+  }) };
+  const ref = { collection: () => ({ doc: () => ({}) }) };
+  await recordRecipientSubmission(db, ref,
+    { status: 'action_required', recipientInfo: { accountNumber: 'legacy' } },
+    { status: 'ready_for_processing', userId: 'owner', recipientDetailsVersion: 2,
+      statusUpdatedAt: 'TIME' }, 'v2', { serverTimestamp: () => 'TIME' });
+  assert.equal(record.recipientDetailsVersion, 2);
+  assert.equal('recipientInfo' in record, false);
+  assert.equal('previousRecipientInfo' in record, false);
 });

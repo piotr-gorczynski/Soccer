@@ -394,4 +394,8 @@
     <string name="payment_account_number_error_rocket">Ampidiro laharan-kaonty Rocket misy tarehimarika 12 manomboka amin’ny 01, miaraka amin’ny tarehimarika fanamarinana (na +880).</string>
     <string name="bangladesh_installed_title">Efa napetraka ny Gridline Soccer Bangladesh</string>
     <string name="bangladesh_installed_message">Tsy afaka mampiasa ireo kinova roa an’ny Gridline Soccer amin’ny fitaovana iray ianao.\n\nRaha hanohy hampiasa ny kinova Bangladesh ianao, esory ity kinova Gridline Soccer ity (tsy misy saina).</string>
+    <string name="payment_first_name">Anarana voalohany</string>
+    <string name="payment_last_name">Anaram-pianakaviana</string>
+    <string name="payment_name_required">Ampidiro ny anarana (tarehintsoratra 1–100).</string>
+    <string name="payment_recipient_instructions">Ny anarana voalohany sy ny anaram-pianakaviana dia tsy maintsy mifanaraka amin’ny mombamomba ny mpandray voasoratra ao amin’ny poketra finday sy Remitly. Mety hanemotra na hisakana ny fandoavam-bola ny vaovao diso.</string>
 </resources>

@@ -47,6 +47,10 @@ public class TournamentResultsActivity extends BaseActivity {
     private LinearLayout paymentDetailsPanel;
     private Spinner paymentMethodSpinner;
     private EditText paymentAccountNumber;
+    private EditText paymentFirstName;
+    private EditText paymentLastName;
+    private ListenerRegistration recipientListener;
+    private Map<String, Object> privateRecipientInfo;
     private TextView paymentPrizeSummary;
     private TextView paymentTieSummary;
     private TextView paymentDetailsStatus;
@@ -78,6 +82,8 @@ public class TournamentResultsActivity extends BaseActivity {
         paymentDetailsPanel = findViewById(R.id.paymentDetailsPanel);
         paymentMethodSpinner = findViewById(R.id.paymentMethodSpinner);
         paymentAccountNumber = findViewById(R.id.paymentAccountNumber);
+        paymentFirstName = findViewById(R.id.paymentFirstName);
+        paymentLastName = findViewById(R.id.paymentLastName);
         paymentPrizeSummary = findViewById(R.id.paymentPrizeSummary);
         paymentTieSummary = findViewById(R.id.paymentTieSummary);
         paymentDetailsStatus = findViewById(R.id.paymentDetailsStatus);
@@ -119,6 +125,7 @@ public class TournamentResultsActivity extends BaseActivity {
                         return;
                     }
                     winnerPayment = payment;
+                    listenForRecipientDetails();
                     listenForSupportTickets(payment.getId(),
                             FirebaseAuth.getInstance().getCurrentUser().getUid());
                     String tournamentId = payment.getString("tournamentId");
@@ -230,6 +237,7 @@ public class TournamentResultsActivity extends BaseActivity {
                         return;
                     }
                     winnerPayment = snapshot.getDocuments().get(0);
+                    listenForRecipientDetails();
                     listenForSupportTickets(winnerPayment.getId(), userId);
                     db.collection("regulations").document(regulationId).get()
                             .addOnSuccessListener(this::showPaymentDetailsForm)
@@ -252,7 +260,7 @@ public class TournamentResultsActivity extends BaseActivity {
         for (Object value : (List<?>) methodsValue) {
             if (!(value instanceof String) || TextUtils.isEmpty((String) value)) continue;
             String code = ((String) value).trim().toLowerCase(java.util.Locale.ROOT);
-            if (!payoutMethodCodes.contains(code)) {
+            if (BangladeshPayoutAccountValidator.isSupported(code) && !payoutMethodCodes.contains(code)) {
                 payoutMethodCodes.add(code);
                 methodLabels.add(formatPayoutMethod(code));
             }
@@ -280,16 +288,7 @@ public class TournamentResultsActivity extends BaseActivity {
         }
 
         String paymentStatus = winnerPayment.getString("status");
-        Map<String, Object> recipientInfo = (Map<String, Object>) winnerPayment.get("recipientInfo");
-        if (recipientInfo != null) {
-            String savedMethod = recipientInfo.get("method") instanceof String
-                    ? (String) recipientInfo.get("method") : null;
-            String savedAccount = recipientInfo.get("accountNumber") instanceof String
-                    ? (String) recipientInfo.get("accountNumber") : null;
-            int selectedIndex = savedMethod == null ? -1 : payoutMethodCodes.indexOf(savedMethod);
-            if (selectedIndex >= 0) paymentMethodSpinner.setSelection(selectedIndex);
-            if (savedAccount != null) paymentAccountNumber.setText(savedAccount);
-        }
+        populateRecipientDetails();
 
         setPaymentStatusMessage(paymentStatus);
 
@@ -297,6 +296,8 @@ public class TournamentResultsActivity extends BaseActivity {
                 || "action_required".equals(paymentStatus);
         paymentMethodSpinner.setEnabled(editable);
         paymentAccountNumber.setEnabled(editable);
+        paymentFirstName.setEnabled(editable);
+        paymentLastName.setEnabled(editable);
         savePaymentDetailsButton.setEnabled(editable);
         savePaymentDetailsButton.setVisibility(editable ? View.VISIBLE : View.GONE);
         savePaymentDetailsButton.setOnClickListener(view -> savePaymentDetails());
@@ -596,6 +597,7 @@ public class TournamentResultsActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         if (paymentListener != null) paymentListener.remove();
+        if (recipientListener != null) recipientListener.remove();
         if (supportTicketListener != null) supportTicketListener.remove();
         super.onDestroy();
     }
@@ -605,12 +607,22 @@ public class TournamentResultsActivity extends BaseActivity {
         int selected = paymentMethodSpinner.getSelectedItemPosition();
         if (selected < 0 || selected >= payoutMethodCodes.size()) return;
 
+        String firstName = paymentFirstName.getText().toString().trim();
+        String lastName = paymentLastName.getText().toString().trim();
+        if (!BangladeshPayoutAccountValidator.isValidName(firstName)) {
+            paymentFirstName.setError(getString(R.string.payment_name_required));
+            return;
+        }
+        if (!BangladeshPayoutAccountValidator.isValidName(lastName)) {
+            paymentLastName.setError(getString(R.string.payment_name_required));
+            return;
+        }
         String method = payoutMethodCodes.get(selected);
         String accountNumber = BangladeshPayoutAccountValidator.normalize(
                 paymentAccountNumber.getText().toString());
         if (!BangladeshPayoutAccountValidator.isValid(method, accountNumber)) {
             int errorResource = switch (method) {
-                case "bkash", "nagad" -> R.string.payment_account_number_error_mobile;
+                case "bkash" -> R.string.payment_account_number_error_mobile;
                 case "rocket" -> R.string.payment_account_number_error_rocket;
                 default -> R.string.payment_account_number_error;
             };
@@ -621,23 +633,31 @@ public class TournamentResultsActivity extends BaseActivity {
         paymentAccountNumber.setText(accountNumber);
 
         Map<String, Object> recipientInfo = new HashMap<>();
-        recipientInfo.put("method", method);
-        recipientInfo.put("accountNumber", accountNumber);
+        recipientInfo.put("firstName", firstName);
+        recipientInfo.put("lastName", lastName);
+        recipientInfo.put("walletProvider", method.toUpperCase(java.util.Locale.ROOT));
+        recipientInfo.put("walletNumber", accountNumber);
         recipientInfo.put("submittedAt", FieldValue.serverTimestamp());
 
         savePaymentDetailsButton.setEnabled(false);
         Map<String, Object> update = new HashMap<>();
-        update.put("recipientInfo", recipientInfo);
+        update.put("recipientInfo", FieldValue.delete());
+        update.put("recipientDetailsVersion", 2);
         update.put("status", "ready_for_processing");
         update.put("statusUpdatedAt", FieldValue.serverTimestamp());
         update.put("updatedAt", FieldValue.serverTimestamp());
         update.put("issue", FieldValue.delete());
 
-        winnerPayment.getReference().update(update)
+        com.google.firebase.firestore.WriteBatch batch = FirebaseFirestore.getInstance().batch();
+        batch.set(winnerPayment.getReference().collection("private").document("recipient"), recipientInfo);
+        batch.update(winnerPayment.getReference(), update);
+        batch.commit()
                 .addOnSuccessListener(unused -> {
                     paymentDetailsStatus.setText(R.string.payment_details_received);
                     paymentMethodSpinner.setEnabled(false);
                     paymentAccountNumber.setEnabled(false);
+                    paymentFirstName.setEnabled(false);
+                    paymentLastName.setEnabled(false);
                     savePaymentDetailsButton.setVisibility(View.GONE);
                     Toast.makeText(this, R.string.payment_details_received, Toast.LENGTH_SHORT).show();
                 })
@@ -647,10 +667,37 @@ public class TournamentResultsActivity extends BaseActivity {
                 });
     }
 
+    private void listenForRecipientDetails() {
+        if (recipientListener != null) recipientListener.remove();
+        privateRecipientInfo = null;
+        recipientListener = winnerPayment.getReference().collection("private").document("recipient")
+                .addSnapshotListener((snapshot, error) -> {
+                    if (error != null) {
+                        savePaymentDetailsButton.setEnabled(false);
+                        return;
+                    }
+                    privateRecipientInfo = snapshot != null && snapshot.exists() ? snapshot.getData() : null;
+                    populateRecipientDetails();
+                });
+    }
+
+    @SuppressWarnings("unchecked")
+    private void populateRecipientDetails() {
+        Map<String, Object> info = privateRecipientInfo;
+        if (info == null) return;
+        Object provider = info.get("walletProvider");
+        int index = provider instanceof String
+                ? payoutMethodCodes.indexOf(((String) provider).toLowerCase(java.util.Locale.ROOT)) : -1;
+        if (index >= 0) paymentMethodSpinner.setSelection(index);
+        Object number = info.get("walletNumber");
+        if (number instanceof String) paymentAccountNumber.setText((String) number);
+        if (info.get("firstName") instanceof String) paymentFirstName.setText((String) info.get("firstName"));
+        if (info.get("lastName") instanceof String) paymentLastName.setText((String) info.get("lastName"));
+    }
+
     private String formatPayoutMethod(String method) {
         return switch (method) {
             case "bkash" -> "bKash";
-            case "nagad" -> "Nagad";
             case "rocket" -> "Rocket";
             case "remitly" -> "Remitly";
             default -> method;

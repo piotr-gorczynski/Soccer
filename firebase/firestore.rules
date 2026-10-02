@@ -159,60 +159,53 @@ service cloud.firestore {
       allow write: if false;
     }
 
-    // 5. Payments: Bangladesh prize payouts.
-    //    - Cloud Functions (Admin SDK) create records and update status/admin fields.
-    //    - The winner (document owner) may update only their own `recipientInfo`
-    //      (bKash/Nagad wallet number, full name, etc.) so they can submit payout details.
+    // Payment audit state is separate from the current recipient's sensitive details.
     match /payments/{paymentId} {
-      function hasValidRecipientInfo() {
-        let tournament = get(
-          /databases/$(database)/documents/tournaments/$(resource.data.tournamentId)
-        ).data;
-        let regulation = get(
-          /databases/$(database)/documents/regulations/$(tournament.regulation)
-        ).data;
-        let info = request.resource.data.recipientInfo;
-        let validAccountNumber =
-            ((info.method == 'bkash' || info.method == 'nagad')
-              && info.accountNumber.matches('^01[3-9][0-9]{8}$'))
-            || (info.method == 'rocket'
-              && info.accountNumber.matches('^01[3-9][0-9]{9}$'))
-            || (!['bkash', 'nagad', 'rocket'].hasAny([info.method])
-              && info.accountNumber.matches('^[0-9]{10,18}$'));
-        return info is map
-            && info.keys().hasAll(['method', 'accountNumber', 'submittedAt'])
-            && info.keys().hasOnly(['method', 'accountNumber', 'submittedAt'])
-            && info.method is string
-            && regulation.prizeRules.payoutMethods.hasAny([info.method])
-            && info.accountNumber is string
-            && validAccountNumber
-            && info.submittedAt == request.time;
+      function ownedEditablePayment(payment) {
+        return request.auth != null && request.auth.uid == payment.userId
+          && payment.rank == 1
+          && payment.status in ['awaiting_details', 'action_required'];
       }
-
-      allow read: if request.auth != null
-               && request.auth.uid == resource.data.userId;
-
-      // Winner submits or corrects payout details and atomically advances the
-      // payment to the administrator's processing queue.
-      allow update: if request.auth != null
-                 && request.auth.uid == resource.data.userId
-                 && resource.data.rank == 1
-                 && ['awaiting_details', 'action_required'].hasAny([resource.data.status])
-                 && request.resource.data.status == 'ready_for_processing'
-                 && request.resource.data.statusUpdatedAt == request.time
-                 // Older clients omit updatedAt. If supplied/changed, it must be server time.
-                 && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['updatedAt'])
-                      || request.resource.data.updatedAt == request.time)
-                 // A valid submission may delete the issue, never create or alter it.
-                 // Older clients may leave the existing issue unchanged.
-                 && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['issue'])
-                      || !request.resource.data.keys().hasAny(['issue']))
-                 && request.resource.data.diff(resource.data).affectedKeys()
-                      .hasOnly(['recipientInfo', 'status', 'statusUpdatedAt', 'updatedAt', 'issue'])
-                 && hasValidRecipientInfo();
-
-      // Creation and deletion are server-side only.
+      function validRecipient(info, payment) {
+        let tournament = get(/databases/$(database)/documents/tournaments/$(payment.tournamentId)).data;
+        let regulation = get(/databases/$(database)/documents/regulations/$(tournament.regulation)).data;
+        return info.keys().hasAll(['firstName', 'lastName', 'walletProvider', 'walletNumber', 'submittedAt'])
+          && info.keys().hasOnly(['firstName', 'lastName', 'walletProvider', 'walletNumber', 'submittedAt'])
+          && info.firstName is string && info.firstName.size() <= 100
+          && info.firstName.matches('.*[^\\s].*')
+          && info.lastName is string && info.lastName.size() <= 100
+          && info.lastName.matches('.*[^\\s].*')
+          && info.walletNumber is string
+          && ((info.walletProvider == 'BKASH' && 'bkash' in regulation.prizeRules.payoutMethods
+                && info.walletNumber.matches('^01[3-9][0-9]{8}$'))
+            || (info.walletProvider == 'ROCKET' && 'rocket' in regulation.prizeRules.payoutMethods
+                && info.walletNumber.matches('^01[3-9][0-9]{9}$')))
+          && info.submittedAt == request.time;
+      }
+      allow read: if request.auth != null && request.auth.uid == resource.data.userId;
+      allow update: if ownedEditablePayment(resource.data)
+        && request.resource.data.status == 'ready_for_processing'
+        && request.resource.data.recipientDetailsVersion == 2
+        && request.resource.data.statusUpdatedAt == request.time
+        && request.resource.data.updatedAt == request.time
+        && !request.resource.data.keys().hasAny(['recipientInfo', 'issue'])
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['recipientInfo', 'recipientDetailsVersion', 'status', 'statusUpdatedAt', 'updatedAt', 'issue'])
+        && validRecipient(getAfter(/databases/$(database)/documents/payments/$(paymentId)/private/recipient).data, resource.data);
       allow create, delete: if false;
+
+      match /private/{documentId} {
+        allow read: if documentId == 'recipient' && request.auth != null
+          && request.auth.uid == get(/databases/$(database)/documents/payments/$(paymentId)).data.userId;
+        // Both documents must change atomically; a standalone recipient write is denied.
+        allow create, update: if documentId == 'recipient'
+          && ownedEditablePayment(get(/databases/$(database)/documents/payments/$(paymentId)).data)
+          && getAfter(/databases/$(database)/documents/payments/$(paymentId)).data.status == 'ready_for_processing'
+          && getAfter(/databases/$(database)/documents/payments/$(paymentId)).data.statusUpdatedAt == request.time
+          && getAfter(/databases/$(database)/documents/payments/$(paymentId)).data.recipientDetailsVersion == 2
+          && validRecipient(request.resource.data, get(/databases/$(database)/documents/payments/$(paymentId)).data);
+        allow delete: if false;
+      }
     }
 
     // Payout support requests are created and administered only by trusted

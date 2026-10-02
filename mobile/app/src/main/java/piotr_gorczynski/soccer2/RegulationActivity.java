@@ -179,9 +179,12 @@ public class RegulationActivity extends BaseActivity {
             if (!(method instanceof String) || TextUtils.isEmpty((String) method)) {
                 return false;
             }
+            if ("BD".equals(regulation.get("market"))
+                    && !BangladeshPayoutAccountValidator.isSupported((String) method)) continue;
             payoutMethods.add(formatPayoutMethod((String) method));
         }
 
+        if (payoutMethods.isEmpty()) return false;
         confirmMinimumAge.setText(getString(R.string.eligibility_confirm_age, minimumAge));
         confirmPayoutAccount.setText(getString(
                 R.string.eligibility_confirm_payout_account,
@@ -194,7 +197,6 @@ public class RegulationActivity extends BaseActivity {
     private String formatPayoutMethod(String method) {
         switch (method.toLowerCase(Locale.ROOT)) {
             case "bkash": return "bKash";
-            case "nagad": return "Nagad";
             case "rocket": return "Rocket";
             default: return method;
         }

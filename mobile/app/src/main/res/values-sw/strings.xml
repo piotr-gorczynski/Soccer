@@ -394,4 +394,8 @@
     <string name="payment_account_number_error_rocket">Weka nambari ya akaunti ya Rocket yenye tarakimu 12 inayoanza na 01, pamoja na tarakimu ya ukaguzi (au +880).</string>
     <string name="bangladesh_installed_title">Gridline Soccer Bangladesh tayari imesakinishwa</string>
     <string name="bangladesh_installed_message">Huwezi kutumia matoleo yote mawili ya Gridline Soccer kwenye kifaa kimoja.\n\nIli kuendelea kutumia toleo la Bangladesh, tafadhali ondoa toleo hili la Gridline Soccer (bila bendera).</string>
+    <string name="payment_first_name">Jina la kwanza</string>
+    <string name="payment_last_name">Jina la ukoo</string>
+    <string name="payment_name_required">Weka jina (herufi 1–100).</string>
+    <string name="payment_recipient_instructions">Jina la kwanza na jina la ukoo lazima yalingane na taarifa za mpokeaji zilizosajiliwa kwenye pochi yako ya simu na Remitly. Taarifa zisizo sahihi zinaweza kuchelewesha au kuzuia malipo.</string>
 </resources>
