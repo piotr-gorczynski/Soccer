@@ -375,4 +375,8 @@
     <string name="payment_account_number_error_rocket">أدخل رقم حساب Rocket من 12 رقمًا يبدأ بـ 01 ويتضمن رقم التحقق (أو +880).</string>
     <string name="bangladesh_installed_title">تطبيق Gridline Soccer Bangladesh مثبت بالفعل</string>
     <string name="bangladesh_installed_message">لا يمكنك استخدام نسختي Gridline Soccer على الجهاز نفسه.\n\nلمتابعة استخدام نسخة Bangladesh، يرجى إلغاء تثبيت نسخة Gridline Soccer هذه (بدون العلم).</string>
+    <string name="payment_first_name">الاسم الأول</string>
+    <string name="payment_last_name">اسم العائلة</string>
+    <string name="payment_name_required">أدخل الاسم (1–100 حرف).</string>
+    <string name="payment_recipient_instructions">يجب أن يتطابق الاسم الأول واسم العائلة مع بيانات المستلم المسجلة في محفظتك المحمولة وRemitly. قد تؤدي البيانات غير الصحيحة إلى تأخير الدفع أو منعه.</string>
 </resources>

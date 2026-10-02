@@ -16,10 +16,14 @@ function getCashEligibilityRequirements(tournament, regulation) {
     throw new Error("Cash-prize tournament regulation has no valid payout methods.");
   }
 
+  const offered = regulation.market === "BD"
+    ? prizeRules.payoutMethods.filter(method => ["bkash", "rocket"].includes(method))
+    : [...prizeRules.payoutMethods];
+  if (!offered.length) throw new Error("Cash-prize tournament has no supported payout methods.");
   return {
     market: regulation.market || null,
     minimumAge: regulation.minimumAge,
-    payoutMethods: [...prizeRules.payoutMethods]
+    payoutMethods: offered
   };
 }
 

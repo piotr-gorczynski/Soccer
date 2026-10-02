@@ -464,4 +464,8 @@
     <string name="prize_reminder_open">Enter payout details</string>
     <string name="bangladesh_installed_title">Gridline Soccer Bangladesh is already installed</string>
     <string name="bangladesh_installed_message">You cannot use both versions of Gridline Soccer on the same device.\n\nTo continue using the Bangladesh version, please uninstall this version of Gridline Soccer (without the flag).</string>
+    <string name="payment_first_name">First name</string>
+    <string name="payment_last_name">Last name</string>
+    <string name="payment_name_required">Enter a name (1–100 characters).</string>
+    <string name="payment_recipient_instructions">First name and last name must match the recipient details registered with your mobile wallet and Remitly. Incorrect details can delay or prevent payment.</string>
 </resources>

@@ -75,6 +75,26 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/payment_recipient_instructions" />
+            <EditText
+                android:id="@+id/paymentFirstName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/payment_first_name"
+                android:inputType="textPersonName"
+                android:importantForAutofill="no"
+                android:maxLength="100" />
+            <EditText
+                android:id="@+id/paymentLastName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/payment_last_name"
+                android:inputType="textPersonName"
+                android:importantForAutofill="no"
+                android:maxLength="100" />
             <EditText
                 android:id="@+id/paymentAccountNumber"
                 android:layout_width="match_parent"

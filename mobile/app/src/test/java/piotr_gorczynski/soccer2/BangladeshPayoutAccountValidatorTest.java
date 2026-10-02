@@ -16,9 +16,9 @@ public class BangladeshPayoutAccountValidatorTest {
     }
 
     @Test
-    public void validatesBkashAndNagadMobileNumbers() {
+    public void validatesBkashMobileNumbers() {
         assertTrue(BangladeshPayoutAccountValidator.isValid("bkash", "01712345678"));
-        assertTrue(BangladeshPayoutAccountValidator.isValid("nagad", "01312345678"));
+        assertFalse(BangladeshPayoutAccountValidator.isValid("nagad", "01312345678"));
         assertFalse(BangladeshPayoutAccountValidator.isValid("bkash", "01212345678"));
         assertFalse(BangladeshPayoutAccountValidator.isValid("nagad", "017123456789"));
     }
@@ -31,8 +31,20 @@ public class BangladeshPayoutAccountValidatorTest {
     }
 
     @Test
-    public void retainsGenericValidationForFutureRegulationMethods() {
-        assertTrue(BangladeshPayoutAccountValidator.isValid("future_wallet", "1234567890"));
+    public void rejectsUnsupportedProviders() {
+        assertFalse(BangladeshPayoutAccountValidator.isValid("future_wallet", "1234567890"));
         assertFalse(BangladeshPayoutAccountValidator.isValid("future_wallet", "123"));
+    }
+    @Test
+    public void requiresEachRecipientField() {
+        assertTrue(BangladeshPayoutAccountValidator.isValidDetails("A", "B", "BKASH", "01712345678"));
+        assertTrue(BangladeshPayoutAccountValidator.isValidDetails("A", "B", "ROCKET", "017123456789"));
+        assertFalse(BangladeshPayoutAccountValidator.isValidDetails(" ", "B", "BKASH", "01712345678"));
+        assertFalse(BangladeshPayoutAccountValidator.isValidDetails("A", null, "BKASH", "01712345678"));
+        assertFalse(BangladeshPayoutAccountValidator.isValidDetails("A", "B", null, "01712345678"));
+        assertFalse(BangladeshPayoutAccountValidator.isValidDetails("A", "B", "BKASH", ""));
+        assertFalse(BangladeshPayoutAccountValidator.isValidDetails("A", "B", "NAGAD", "01712345678"));
+        assertFalse(BangladeshPayoutAccountValidator.isValidName("a".repeat(101)));
+        assertTrue(BangladeshPayoutAccountValidator.isValidName("Łukasz"));
     }
 }

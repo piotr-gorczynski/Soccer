@@ -68,12 +68,12 @@ test('validates eligibility metadata required by a cash-prize regulation', () =>
     minimumAge: 18,
     prizeRules: {
       cashPrizesEnabled: true,
-      payoutMethods: ['bkash', 'nagad']
+      payoutMethods: ['bkash', 'rocket']
     }
   }), {
     market: 'BD',
     minimumAge: 18,
-    payoutMethods: ['bkash', 'nagad']
+    payoutMethods: ['bkash', 'rocket']
   });
 });
 
@@ -90,7 +90,7 @@ test('rejects invalid cash-prize eligibility metadata', () => {
     minimumAge: 18,
     prizeRules: {
       cashPrizesEnabled: true,
-      payoutMethods: ['bkash', 'nagad']
+      payoutMethods: ['bkash', 'rocket']
     }
   };
 

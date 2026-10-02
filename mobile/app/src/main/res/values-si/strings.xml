@@ -394,4 +394,8 @@
     <string name="payment_account_number_error_rocket">පරීක්ෂණ ඉලක්කමද ඇතුළුව 01 න් ආරම්භ වන ඉලක්කම් 12ක Rocket ගිණුම් අංකයක් ඇතුළත් කරන්න (හෝ +880).</string>
     <string name="bangladesh_installed_title">Gridline Soccer Bangladesh දැනටමත් ස්ථාපනය කර ඇත</string>
     <string name="bangladesh_installed_message">එකම උපාංගයේ Gridline Soccer අනුවාද දෙකම භාවිත කළ නොහැක.\n\nBangladesh අනුවාදය දිගටම භාවිත කිරීමට, කරුණාකර මෙම Gridline Soccer අනුවාදය (කොඩිය නොමැති) අස්ථාපනය කරන්න.</string>
+    <string name="payment_first_name">මුල් නම</string>
+    <string name="payment_last_name">අවසන් නම</string>
+    <string name="payment_name_required">නම ඇතුළත් කරන්න (අක්ෂර 1–100).</string>
+    <string name="payment_recipient_instructions">මුල් නම සහ අවසන් නම ඔබේ ජංගම මුදල් පසුම්බියේ සහ Remitly හි ලියාපදිංචි ලබන්නාගේ විස්තරවලට ගැළපිය යුතුය. වැරදි විස්තර ගෙවීම ප්‍රමාද කිරීමට හෝ වැළැක්වීමට හැකිය.</string>
 </resources>

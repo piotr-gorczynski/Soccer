@@ -137,6 +137,9 @@ function validatePrizeRules(prizeRules, market, minimumAge) {
     if (typeof method !== 'string' || !PAYOUT_METHOD_PATTERN.test(method)) {
       fail(`Invalid payout method at \`prizeRules.payoutMethods[${index}]\`.`);
     }
+    if (market === 'BD' && !['bkash', 'rocket'].includes(method)) {
+      throw new Error('Bangladesh payout methods must be bkash or rocket.');
+    }
     return method;
   });
 
