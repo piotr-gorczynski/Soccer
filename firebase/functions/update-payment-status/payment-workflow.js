@@ -87,9 +87,9 @@ async function recordRecipientSubmission(db, paymentRef, before, after, eventId,
       recordedAt: FieldValue.serverTimestamp(),
       changedBy: after.userId, actorType: 'user',
       source: 'onPaymentStatusChanged',
-      previousRecipientInfo: before.recipientInfo || null,
+      // Recipient fields never belong in newly generated audit events.
+      recipientDetailsVersion: 2,
       previousIssue: before.issue || null,
-      recipientInfo: after.recipientInfo || null,
     });
   });
 }

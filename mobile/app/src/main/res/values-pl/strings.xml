@@ -468,4 +468,8 @@
     <string name="prize_reminder_open">Uzupełnij dane do wypłaty</string>
     <string name="bangladesh_installed_title">Gridline Soccer Bangladesh jest już zainstalowany</string>
     <string name="bangladesh_installed_message">Nie możesz korzystać z obu wersji Gridline Soccer na tym samym urządzeniu.\n\nAby nadal korzystać z wersji Bangladesh, odinstaluj tę wersję Gridline Soccer (bez flagi).</string>
+    <string name="payment_first_name">Imię</string>
+    <string name="payment_last_name">Nazwisko</string>
+    <string name="payment_name_required">Wpisz imię lub nazwisko (1–100 znaków).</string>
+    <string name="payment_recipient_instructions">Imię i nazwisko muszą odpowiadać danym odbiorcy zarejestrowanym w portfelu mobilnym i Remitly. Nieprawidłowe dane mogą opóźnić lub uniemożliwić wypłatę.</string>
 </resources>

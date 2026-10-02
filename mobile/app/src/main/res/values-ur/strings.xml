@@ -428,4 +428,8 @@
     <string name="payment_account_number_error_rocket">01 سے شروع ہونے والا 12 ہندسوں کا Rocket اکاؤنٹ نمبر، چیک ہندسے سمیت، درج کریں (یا +880)۔</string>
     <string name="bangladesh_installed_title">Gridline Soccer Bangladesh پہلے سے انسٹال ہے</string>
     <string name="bangladesh_installed_message">آپ ایک ہی آلے پر Gridline Soccer کے دونوں ورژن استعمال نہیں کر سکتے۔\n\nBangladesh ورژن کا استعمال جاری رکھنے کے لیے براہ کرم Gridline Soccer کا یہ ورژن (بغیر جھنڈے والا) اَن انسٹال کریں۔</string>
+    <string name="payment_first_name">پہلا نام</string>
+    <string name="payment_last_name">آخری نام</string>
+    <string name="payment_name_required">نام درج کریں (1–100 حروف)۔</string>
+    <string name="payment_recipient_instructions">پہلا اور آخری نام آپ کے موبائل والیٹ اور Remitly میں درج وصول کنندہ کی معلومات سے ملنے چاہئیں۔ غلط معلومات ادائیگی میں تاخیر یا رکاوٹ کا سبب بن سکتی ہیں۔</string>
 </resources>

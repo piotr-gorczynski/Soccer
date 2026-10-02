@@ -394,4 +394,8 @@
     <string name="payment_account_number_error_rocket">Geli lambarka koontada Rocket oo 12 lambar ah kana bilaabma 01, kuna jira lambarka hubinta (ama +880).</string>
     <string name="bangladesh_installed_title">Gridline Soccer Bangladesh hore ayaa loo rakibay</string>
     <string name="bangladesh_installed_message">Ma isticmaali kartid labada nooc ee Gridline Soccer hal qalab.\n\nSi aad u sii isticmaasho nooca Bangladesh, fadlan ka saar noocan Gridline Soccer (aan calanka lahayn).</string>
+    <string name="payment_first_name">Magaca koowaad</string>
+    <string name="payment_last_name">Magaca qoyska</string>
+    <string name="payment_name_required">Geli magac (1–100 xaraf).</string>
+    <string name="payment_recipient_instructions">Magaca koowaad iyo magaca qoyska waa inay la mid noqdaan xogta qaataha ee ku diiwaangashan jeebkaaga moobilka iyo Remitly. Xog khaldan waxay dib u dhigi kartaa ama hor istaagi kartaa lacag bixinta.</string>
 </resources>

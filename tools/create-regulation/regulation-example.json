@@ -8,7 +8,7 @@
     "currency": "BDT",
     "payoutMethods": [
       "bkash",
-      "nagad"
+      "rocket"
     ],
     "prizePool": {
       "totalAmount": 1000,
@@ -38,7 +38,7 @@
         "13. Rounding — Each payout is rounded down to a whole BDT. Any amount remaining because of rounding is not paid, redistributed, or carried over to another tournament.",
         "14. No eligible winner — If no participant finishes with a final score greater than zero, no prize is awarded. The unclaimed prize is not redistributed or carried over.",
         "15. Payout limit — The combined amount paid to all winners cannot exceed the advertised prize pool of 1,000 BDT.",
-        "16. Receiving the prize — Prize payments are available through bKash or Nagad. A winner must provide correct recipient information required to complete the selected payout method.",
+        "16. Receiving the prize — Prize payments are available through bKash or Rocket. A winner must provide correct recipient information required to complete the selected payout method. First name / Last name / Payout method / Account or wallet number. First name and last name must match the recipient details registered with your mobile wallet and Remitly. Incorrect details can delay or prevent payment.",
         "17. Acceptance of rules — By registering for the tournament, the participant confirms that they meet the eligibility requirements and agrees to these tournament and prize rules."
       ]
     },
@@ -59,7 +59,7 @@
         "13. ማጠጋጋት — እያንዳንዱ ክፍያ ወደ ሙሉ BDT ወደ ታች ይጠጋጋል። በማጠጋጋት ምክንያት የሚቀር ማንኛውም መጠን አይከፈልም፣ እንደገና አይከፋፈልም ወይም ወደ ሌላ ውድድር አይተላለፍም።",
         "14. ብቁ አሸናፊ አለመኖር — ከዜሮ በላይ በሆነ የመጨረሻ ውጤት የሚያጠናቅቅ ተሳታፊ ከሌለ፣ ምንም ሽልማት አይሰጥም። ያልተወሰደው ሽልማት እንደገና አይከፋፈልም ወይም ወደ ሌላ ውድድር አይተላለፍም።",
         "15. የክፍያ ገደብ — ለሁሉም አሸናፊዎች በድምሩ የሚከፈለው መጠን ከተገለጸው 1,000 BDT የሽልማት ገንዘብ መብለጥ አይችልም።",
-        "16. ሽልማቱን መቀበል — የሽልማት ክፍያዎች በbKash ወይም Nagad በኩል ይገኛሉ። አሸናፊው የመረጠውን የክፍያ ዘዴ ለማጠናቀቅ የሚያስፈልገውን ትክክለኛ የተቀባይ መረጃ ማቅረብ አለበት።",
+        "16. ሽልማቱን መቀበል — የሽልማት ክፍያዎች በbKash ወይም Rocket በኩል ይገኛሉ። አሸናፊው የመረጠውን የክፍያ ዘዴ ለማጠናቀቅ የሚያስፈልገውን ትክክለኛ የተቀባይ መረጃ ማቅረብ አለበት። ስም / የአባት ስም / የክፍያ ዘዴ / የመለያ ወይም የዋሌት ቁጥር. ስም እና የአባት ስም በሞባይል ቦርሳዎ እና በRemitly ከተመዘገቡት የተቀባይ መረጃዎች ጋር መዛመድ አለባቸው። የተሳሳተ መረጃ ክፍያን ሊያዘገይ ወይም ሊከለክል ይችላል።",
         "17. ደንቦቹን መቀበል — ተሳታፊው ለውድድሩ በመመዝገብ የብቁነት መስፈርቶቹን እንደሚያሟላ ያረጋግጣል እና በእነዚህ የውድድርና የሽልማት ደንቦች ይስማማል።"
       ]
     },
@@ -80,7 +80,7 @@
         "13. التقريب — يُقرب كل مبلغ مدفوع إلى الأسفل لأقرب وحدة كاملة من BDT. ولا يُدفع أي مبلغ متبقٍ بسبب التقريب، ولا يُعاد توزيعه، ولا يُرحل إلى بطولة أخرى.",
         "14. عدم وجود فائز مؤهل — إذا لم يُنهِ أي مشارك البطولة بنتيجة نهائية أكبر من صفر، فلا تُمنح أي جائزة. ولا تُعاد الجائزة غير المطالب بها إلى التوزيع ولا تُرحل إلى بطولة أخرى.",
         "15. حد المدفوعات — لا يجوز أن يتجاوز إجمالي المبلغ المدفوع لجميع الفائزين صندوق الجوائز المُعلن البالغ 1,000 BDT.",
-        "16. استلام الجائزة — تتوفر مدفوعات الجوائز عبر bKash أو Nagad. يجب على الفائز تقديم بيانات المستلم الصحيحة اللازمة لإتمام طريقة الدفع المختارة.",
+        "16. استلام الجائزة — تتوفر مدفوعات الجوائز عبر bKash أو Rocket. يجب على الفائز تقديم بيانات المستلم الصحيحة اللازمة لإتمام طريقة الدفع المختارة. الاسم الأول / اسم العائلة / طريقة الدفع / رقم الحساب أو المحفظة. يجب أن يتطابق الاسم الأول واسم العائلة مع بيانات المستلم المسجلة في محفظتك المحمولة وRemitly. قد تؤدي البيانات غير الصحيحة إلى تأخير الدفع أو منعه.",
         "17. قبول القواعد — بتسجيله في البطولة، يؤكد المشارك أنه يستوفي متطلبات الأهلية ويوافق على قواعد البطولة والجوائز هذه."
       ]
     },
@@ -101,7 +101,7 @@
         "13. ကိန်းပြည့်ချခြင်း — ပေးချေမှုတစ်ခုစီကို BDT ကိန်းပြည့်အောက်ဘက်သို့ ချသည်။ ကိန်းပြည့်ချမှုကြောင့် ကျန်ရှိသောငွေကို ပေးချေခြင်း၊ ပြန်လည်ခွဲဝေခြင်း သို့မဟုတ် အခြားပြိုင်ပွဲသို့ လွှဲပြောင်းခြင်း မပြုပါ။",
         "14. ဆုရထိုက်သော အနိုင်ရသူမရှိခြင်း — နောက်ဆုံးရမှတ် သုညထက်ပိုသော ပါဝင်သူတစ်ဦးမျှ မရှိပါက မည်သည့်ဆုမျှ မပေးပါ။ မယူရသေးသောဆုကို ပြန်လည်ခွဲဝေခြင်း သို့မဟုတ် အခြားပြိုင်ပွဲသို့ လွှဲပြောင်းခြင်း မပြုပါ။",
         "15. ပေးချေမှုကန့်သတ်ချက် — အနိုင်ရသူအားလုံးကို ပေါင်း၍ ပေးချေသည့်ငွေသည် ကြေညာထားသော ဆုကြေး 1,000 BDT ထက် မကျော်လွန်ရပါ။",
-        "16. ဆုလက်ခံခြင်း — ဆုငွေများကို bKash သို့မဟုတ် Nagad မှတစ်ဆင့် ပေးချေနိုင်သည်။ အနိုင်ရသူသည် ရွေးချယ်ထားသော ပေးချေမှုနည်းလမ်းကို ပြီးမြောက်စေရန် လိုအပ်သည့် မှန်ကန်သော လက်ခံသူအချက်အလက်ကို ပေးရမည်။",
+        "16. ဆုလက်ခံခြင်း — ဆုငွေများကို bKash သို့မဟုတ် Rocket မှတစ်ဆင့် ပေးချေနိုင်သည်။ အနိုင်ရသူသည် ရွေးချယ်ထားသော ပေးချေမှုနည်းလမ်းကို ပြီးမြောက်စေရန် လိုအပ်သည့် မှန်ကန်သော လက်ခံသူအချက်အလက်ကို ပေးရမည်။ အမည်၏ ပထမပိုင်း / အမည်၏ နောက်ဆုံးပိုင်း / ငွေပေးချေမှုနည်းလမ်း / အကောင့် သို့မဟုတ် ပိုက်ဆံအိတ်နံပါတ်. အမည်၏ ပထမပိုင်းနှင့် နောက်ဆုံးပိုင်းသည် သင့်မိုဘိုင်းပိုက်ဆံအိတ်နှင့် Remitly တွင် မှတ်ပုံတင်ထားသော လက်ခံသူအချက်အလက်နှင့် ကိုက်ညီရမည်။ မှားယွင်းသောအချက်အလက်ကြောင့် ငွေပေးချေမှုနှောင့်နှေးခြင်း သို့မဟုတ် မအောင်မြင်ခြင်း ဖြစ်နိုင်သည်။",
         "17. စည်းမျဉ်းများကို လက်ခံခြင်း — ပြိုင်ပွဲတွင် စာရင်းသွင်းခြင်းဖြင့် ပါဝင်သူသည် သတ်မှတ်ထားသော ပါဝင်ခွင့်လိုအပ်ချက်များနှင့် ပြည့်မီကြောင်း အတည်ပြုပြီး ဤပြိုင်ပွဲနှင့် ဆုစည်းမျဉ်းများကို သဘောတူသည်။"
       ]
     },
@@ -122,7 +122,7 @@
         "13. पूर्णांक में करना — प्रत्येक भुगतान को घटाकर पूर्ण BDT में किया जाता है। इस प्रक्रिया से बची हुई कोई भी राशि न तो दी जाती है, न दोबारा बाँटी जाती है और न किसी अन्य टूर्नामेंट में आगे ले जाई जाती है।",
         "14. कोई पात्र विजेता नहीं — यदि किसी भी प्रतिभागी का अंतिम स्कोर शून्य से अधिक नहीं है, तो कोई पुरस्कार नहीं दिया जाता। दावा न की गई पुरस्कार राशि न तो दोबारा बाँटी जाती है और न किसी अन्य टूर्नामेंट में आगे ले जाई जाती है।",
         "15. भुगतान की सीमा — सभी विजेताओं को मिलाकर दी जाने वाली कुल राशि घोषित 1,000 BDT की पुरस्कार राशि से अधिक नहीं हो सकती।",
-        "16. पुरस्कार प्राप्त करना — पुरस्कार का भुगतान bKash या Nagad के माध्यम से उपलब्ध है। विजेता को चुनी गई भुगतान विधि पूरी करने के लिए आवश्यक प्राप्तकर्ता की सही जानकारी देनी होगी।",
+        "16. पुरस्कार प्राप्त करना — पुरस्कार का भुगतान bKash या Rocket के माध्यम से उपलब्ध है। विजेता को चुनी गई भुगतान विधि पूरी करने के लिए आवश्यक प्राप्तकर्ता की सही जानकारी देनी होगी। प्रथम नाम / उपनाम / भुगतान विधि / खाता या वॉलेट नंबर. प्रथम नाम और उपनाम आपके मोबाइल वॉलेट और Remitly में दर्ज प्राप्तकर्ता के विवरण से मेल खाने चाहिए। गलत विवरण से भुगतान में देरी हो सकती है या भुगतान रुक सकता है।",
         "17. नियमों की स्वीकृति — टूर्नामेंट में पंजीकरण करके प्रतिभागी पुष्टि करता है कि वह पात्रता की आवश्यकताएँ पूरी करता है और इन टूर्नामेंट तथा पुरस्कार नियमों से सहमत है।"
       ]
     },
@@ -143,7 +143,7 @@
         "13. ការបង្គត់ចុះ — ការទូទាត់នីមួយៗត្រូវបានបង្គត់ចុះទៅជា BDT ពេញមួយឯកតា។ ចំនួនទឹកប្រាក់ដែលនៅសល់ដោយសារការបង្គត់ មិនត្រូវបានទូទាត់ ចែកចាយឡើងវិញ ឬផ្ទេរទៅការប្រកួតផ្សេងទៀតទេ។",
         "14. គ្មានអ្នកឈ្នះដែលមានសិទ្ធិ — ប្រសិនបើគ្មានអ្នកចូលរួមណាម្នាក់បញ្ចប់ដោយមានពិន្ទុចុងក្រោយលើសពីសូន្យទេ នោះមិនមានរង្វាន់ណាមួយត្រូវបានផ្ដល់ឡើយ។ រង្វាន់ដែលមិនត្រូវបានទាមទារ មិនត្រូវបានចែកចាយឡើងវិញ ឬផ្ទេរទៅការប្រកួតផ្សេងទៀតទេ។",
         "15. ដែនកំណត់ការទូទាត់ — ចំនួនទឹកប្រាក់សរុបដែលបានទូទាត់ដល់អ្នកឈ្នះទាំងអស់ មិនអាចលើសពីមូលនិធិរង្វាន់ 1,000 BDT ដែលបានប្រកាសឡើយ។",
-        "16. ការទទួលរង្វាន់ — ការទូទាត់រង្វាន់អាចធ្វើបានតាមរយៈ bKash ឬ Nagad។ អ្នកឈ្នះត្រូវផ្ដល់ព័ត៌មានអ្នកទទួលដែលត្រឹមត្រូវ និងចាំបាច់សម្រាប់បំពេញវិធីទូទាត់ដែលបានជ្រើសរើស។",
+        "16. ការទទួលរង្វាន់ — ការទូទាត់រង្វាន់អាចធ្វើបានតាមរយៈ bKash ឬ Rocket។ អ្នកឈ្នះត្រូវផ្ដល់ព័ត៌មានអ្នកទទួលដែលត្រឹមត្រូវ និងចាំបាច់សម្រាប់បំពេញវិធីទូទាត់ដែលបានជ្រើសរើស។ នាមខ្លួន / នាមត្រកូល / វិធីទូទាត់ / លេខគណនី ឬកាបូប. នាមខ្លួន និងនាមត្រកូលត្រូវតែត្រូវគ្នានឹងព័ត៌មានអ្នកទទួលដែលបានចុះឈ្មោះក្នុងកាបូបចល័ត និង Remitly របស់អ្នក។ ព័ត៌មានមិនត្រឹមត្រូវអាចពន្យារពេល ឬរារាំងការទូទាត់។",
         "17. ការយល់ព្រមលើវិធាន — ដោយចុះឈ្មោះចូលរួមការប្រកួត អ្នកចូលរួមបញ្ជាក់ថាខ្លួនបំពេញលក្ខខណ្ឌចូលរួម និងយល់ព្រមតាមវិធាននៃការប្រកួត និងរង្វាន់ទាំងនេះ។"
       ]
     },
@@ -164,7 +164,7 @@
         "13. ການປັດລົງ — ການຈ່າຍແຕ່ລະຄັ້ງຈະຖືກປັດລົງເປັນຈຳນວນເຕັມ BDT. ຈຳນວນເງິນທີ່ເຫຼືອຈາກການປັດລົງຈະບໍ່ຖືກຈ່າຍ, ແຈກຢາຍຄືນ ຫຼື ຍົກໄປຫາການແຂ່ງຂັນອື່ນ.",
         "14. ບໍ່ມີຜູ້ຊະນະທີ່ມີສິດ — ຖ້າບໍ່ມີຜູ້ເຂົ້າຮ່ວມຄົນໃດຈົບດ້ວຍຄະແນນສຸດທ້າຍຫຼາຍກວ່າສູນ ຈະບໍ່ມີການມອບລາງວັນ. ລາງວັນທີ່ບໍ່ມີຜູ້ຮັບຈະບໍ່ຖືກແຈກຢາຍຄືນ ຫຼື ຍົກໄປຫາການແຂ່ງຂັນອື່ນ.",
         "15. ຂີດຈຳກັດການຈ່າຍ — ຈຳນວນເງິນລວມທີ່ຈ່າຍໃຫ້ຜູ້ຊະນະທັງໝົດບໍ່ສາມາດເກີນເງິນລາງວັນທີ່ປະກາດໄວ້ 1,000 BDT.",
-        "16. ການຮັບລາງວັນ — ສາມາດຈ່າຍລາງວັນຜ່ານ bKash ຫຼື Nagad. ຜູ້ຊະນະຕ້ອງສະໜອງຂໍ້ມູນຜູ້ຮັບທີ່ຖືກຕ້ອງ ເຊິ່ງຈຳເປັນສຳລັບການດຳເນີນວິທີຈ່າຍທີ່ເລືອກໃຫ້ສຳເລັດ.",
+        "16. ການຮັບລາງວັນ — ສາມາດຈ່າຍລາງວັນຜ່ານ bKash ຫຼື Rocket. ຜູ້ຊະນະຕ້ອງສະໜອງຂໍ້ມູນຜູ້ຮັບທີ່ຖືກຕ້ອງ ເຊິ່ງຈຳເປັນສຳລັບການດຳເນີນວິທີຈ່າຍທີ່ເລືອກໃຫ້ສຳເລັດ. ຊື່ / ນາມສະກຸນ / ວິທີຈ່າຍເງິນ / ເລກບັນຊີ ຫຼື ກະເປົາ. ຊື່ ແລະ ນາມສະກຸນຕ້ອງກົງກັບຂໍ້ມູນຜູ້ຮັບທີ່ລົງທະບຽນໃນກະເປົາເງິນມືຖື ແລະ Remitly. ຂໍ້ມູນທີ່ບໍ່ຖືກຕ້ອງອາດເຮັດໃຫ້ການຈ່າຍເງິນຊ້າ ຫຼື ບໍ່ສຳເລັດ.",
         "17. ການຍອມຮັບກົດ — ໂດຍການລົງທະບຽນເຂົ້າຮ່ວມການແຂ່ງຂັນ ຜູ້ເຂົ້າຮ່ວມຢືນຢັນວ່າຕົນມີຄຸນສົມບັດຕາມຂໍ້ກຳນົດ ແລະ ຍອມຮັບກົດການແຂ່ງຂັນ ແລະ ລາງວັນເຫຼົ່ານີ້."
       ]
     },
@@ -185,7 +185,7 @@
         "13. Fanatonana isa — Ampidinina ho BDT feno ny fandoavam-bola tsirairay. Izay vola sisa tavela noho io fanatonana isa io dia tsy aloa, tsy zaraina indray ary tsy afindra amin'ny fifaninanana hafa.",
         "14. Tsy misy mpandresy mahafeno fepetra — Raha tsy misy mpandray anjara mahavita ny fifaninanana amin'ny isa farany mihoatra ny aotra, dia tsy misy loka omena. Tsy zaraina indray ary tsy afindra amin'ny fifaninanana hafa ny loka tsy nisy naka.",
         "15. Fetran'ny fandoavam-bola — Tsy mahazo mihoatra ny tahirim-bola nambara mitentina 1,000 BDT ny fitambaran'ny vola aloa amin'ireo mpandresy rehetra.",
-        "16. Fandraisana ny loka — Azo aloa amin'ny alalan'ny bKash na Nagad ny loka. Tsy maintsy manome ny mombamomba marina momba ny mpandray vola izay ilaina amin'ny fanatanterahana ny fomba fandoavam-bola nofidina ny mpandresy.",
+        "16. Fandraisana ny loka — Azo aloa amin'ny alalan'ny bKash na Rocket ny loka. Tsy maintsy manome ny mombamomba marina momba ny mpandray vola izay ilaina amin'ny fanatanterahana ny fomba fandoavam-bola nofidina ny mpandresy. Anarana voalohany / Anaram-pianakaviana / Fomba fandoavana / Laharan-kaonty na kitapom-bola. Ny anarana voalohany sy ny anaram-pianakaviana dia tsy maintsy mifanaraka amin’ny mombamomba ny mpandray voasoratra ao amin’ny poketra finday sy Remitly. Mety hanemotra na hisakana ny fandoavam-bola ny vaovao diso.",
         "17. Fanekena ny fitsipika — Amin'ny fisoratana anarana amin'ny fifaninanana, ny mpandray anjara dia manamafy fa mahafeno ny fepetra takiana ary manaiky ireo fitsipiky ny fifaninanana sy ny loka ireo."
       ]
     },
@@ -206,7 +206,7 @@
         "13. Бүхэлчлэх — Төлбөр бүрийг бүтэн BDT хүртэл доош бүхэлчилнэ. Бүхэлчилсний улмаас үлдсэн дүнг төлөхгүй, дахин хуваарилахгүй, мөн өөр тэмцээнд шилжүүлэхгүй.",
         "14. Шагнал авах эрхтэй ялагч байхгүй — Хэрэв нэг ч оролцогч тэгээс их эцсийн оноотой дуусгаагүй бол шагнал олгохгүй. Авагдаагүй шагналыг дахин хуваарилахгүй, өөр тэмцээнд шилжүүлэхгүй.",
         "15. Төлбөрийн дээд хязгаар — Бүх ялагчид нийлүүлэн төлөх нийт дүн зарласан 1,000 BDT шагналын сангаас хэтэрч болохгүй.",
-        "16. Шагнал хүлээн авах — Шагналын төлбөрийг bKash эсвэл Nagad-аар авах боломжтой. Ялагч сонгосон төлбөрийн аргыг гүйцэтгэхэд шаардлагатай хүлээн авагчийн үнэн зөв мэдээллийг өгөх ёстой.",
+        "16. Шагнал хүлээн авах — Шагналын төлбөрийг bKash эсвэл Rocket-аар авах боломжтой. Ялагч сонгосон төлбөрийн аргыг гүйцэтгэхэд шаардлагатай хүлээн авагчийн үнэн зөв мэдээллийг өгөх ёстой. Нэр / Овог / Төлбөрийн арга / Данс эсвэл хэтэвчийн дугаар. Нэр, овог нь таны гар утасны хэтэвч болон Remitly-д бүртгэлтэй хүлээн авагчийн мэдээлэлтэй тохирох ёстой. Буруу мэдээлэл төлбөрийг саатуулах эсвэл боломжгүй болгож болно.",
         "17. Дүрэм зөвшөөрөх — Тэмцээнд бүртгүүлснээр оролцогч өөрийгөө оролцох эрхийн шаардлагыг хангасан гэдгээ баталж, энэхүү тэмцээн болон шагналын дүрмийг зөвшөөрнө."
       ]
     },
@@ -227,7 +227,7 @@
         "13. तलतर्फ पूर्णाङ्क बनाउने — प्रत्येक भुक्तानीलाई पूर्ण BDT सम्म तलतर्फ पूर्णाङ्क बनाइन्छ। यस प्रक्रियाका कारण बाँकी रहेको कुनै रकम भुक्तानी, पुनः वितरण वा अर्को प्रतियोगितामा सारिँदैन।",
         "14. योग्य विजेता नभएको अवस्था — कुनै पनि सहभागीले शून्यभन्दा बढी अन्तिम स्कोर प्राप्त नगरेमा कुनै पुरस्कार दिइँदैन। दाबी नगरिएको पुरस्कार पुनः वितरण वा अर्को प्रतियोगितामा सारिँदैन।",
         "15. भुक्तानी सीमा — सबै विजेतालाई दिइने कुल रकम घोषणा गरिएको 1,000 BDT पुरस्कार कोषभन्दा बढी हुन सक्दैन।",
-        "16. पुरस्कार प्राप्त गर्ने — पुरस्कार भुक्तानी bKash वा Nagad मार्फत उपलब्ध हुन्छ। विजेताले रोजिएको भुक्तानी विधि पूरा गर्न आवश्यक पर्ने प्राप्तकर्ताको सही विवरण उपलब्ध गराउनुपर्छ।",
+        "16. पुरस्कार प्राप्त गर्ने — पुरस्कार भुक्तानी bKash वा Rocket मार्फत उपलब्ध हुन्छ। विजेताले रोजिएको भुक्तानी विधि पूरा गर्न आवश्यक पर्ने प्राप्तकर्ताको सही विवरण उपलब्ध गराउनुपर्छ। पहिलो नाम / थर / भुक्तानी विधि / खाता वा वालेट नम्बर. पहिलो नाम र थर तपाईंको मोबाइल वालेट र Remitly मा दर्ता भएको प्राप्तकर्ताको विवरणसँग मिल्नुपर्छ। गलत विवरणले भुक्तानी ढिलो वा असफल हुन सक्छ।",
         "17. नियमहरूको स्वीकृति — प्रतियोगितामा दर्ता गरेर सहभागीले आफूले योग्यता आवश्यकताहरू पूरा गरेको पुष्टि गर्छ र यी प्रतियोगिता तथा पुरस्कार नियमहरूमा सहमति जनाउँछ।"
       ]
     },
@@ -248,7 +248,7 @@
         "13. گرد کردن — هر پرداخت به پایین و تا یک BDT کامل گرد می‌شود. مبلغ باقی‌مانده بر اثر گرد کردن پرداخت، بازتوزیع یا به مسابقهٔ دیگری منتقل نمی‌شود.",
         "14. نبود برندهٔ واجد شرایط — اگر هیچ شرکت‌کننده‌ای مسابقات را با امتیاز نهایی بیشتر از صفر به پایان نرساند، هیچ جایزه‌ای اعطا نمی‌شود. جایزهٔ مطالبه‌نشده بازتوزیع یا به مسابقهٔ دیگری منتقل نمی‌شود.",
         "15. سقف پرداخت — مجموع مبلغ پرداختی به همهٔ برندگان نمی‌تواند از صندوق جایزهٔ اعلام‌شدهٔ ۱٬۰۰۰ BDT بیشتر باشد.",
-        "16. دریافت جایزه — پرداخت جوایز از طریق bKash یا Nagad امکان‌پذیر است. برنده باید اطلاعات صحیح گیرنده را که برای تکمیل روش پرداخت انتخاب‌شده لازم است، ارائه کند.",
+        "16. دریافت جایزه — پرداخت جوایز از طریق bKash یا Rocket امکان‌پذیر است. برنده باید اطلاعات صحیح گیرنده را که برای تکمیل روش پرداخت انتخاب‌شده لازم است، ارائه کند. نام / نام خانوادگی / روش پرداخت / شماره حساب یا کیف پول. نام و نام خانوادگی باید با مشخصات گیرنده ثبت‌شده در کیف پول موبایل شما و Remitly مطابقت داشته باشد. اطلاعات نادرست ممکن است پرداخت را به تأخیر بیندازد یا مانع آن شود.",
         "17. پذیرش قوانین — شرکت‌کننده با ثبت‌نام در مسابقات تأیید می‌کند که شرایط لازم را دارد و با این قوانین مسابقات و جوایز موافق است."
       ]
     },
@@ -269,7 +269,7 @@
         "13. පහළට වට කිරීම — සෑම ගෙවීමක්ම සම්පූර්ණ BDT ඒකකයකට පහළට වට කරනු ලැබේ. වට කිරීම නිසා ඉතිරි වන මුදල ගෙවීම, නැවත බෙදාහැරීම හෝ වෙනත් තරඟාවලියකට මාරු කිරීම සිදු නොකෙරේ.",
         "14. සුදුසුකම් ඇති ජයග්‍රාහකයෙකු නොමැති වීම — කිසිදු සහභාගීවන්නෙකු බිංදුවට වඩා වැඩි අවසන් ලකුණු සමඟ අවසන් නොකළහොත් කිසිදු ත්‍යාගයක් ලබා නොදේ. හිමිකම් නොකියන ත්‍යාගය නැවත බෙදාහැරීම හෝ වෙනත් තරඟාවලියකට මාරු කිරීම සිදු නොකෙරේ.",
         "15. ගෙවීම් සීමාව — සියලුම ජයග්‍රාහකයන්ට ගෙවන මුළු මුදල ප්‍රකාශිත 1,000 BDT ත්‍යාග අරමුදල ඉක්මවිය නොහැක.",
-        "16. ත්‍යාගය ලබාගැනීම — ත්‍යාග ගෙවීම් bKash හෝ Nagad හරහා ලබාගත හැක. ජයග්‍රාහකයා තෝරාගත් ගෙවීම් ක්‍රමය සම්පූර්ණ කිරීමට අවශ්‍ය නිවැරදි ලබන්නාගේ තොරතුරු සැපයිය යුතුය.",
+        "16. ත්‍යාගය ලබාගැනීම — ත්‍යාග ගෙවීම් bKash හෝ Rocket හරහා ලබාගත හැක. ජයග්‍රාහකයා තෝරාගත් ගෙවීම් ක්‍රමය සම්පූර්ණ කිරීමට අවශ්‍ය නිවැරදි ලබන්නාගේ තොරතුරු සැපයිය යුතුය. මුල් නම / අවසන් නම / ගෙවීම් ක්‍රමය / ගිණුම් හෝ පසුම්බි අංකය. මුල් නම සහ අවසන් නම ඔබේ ජංගම මුදල් පසුම්බියේ සහ Remitly හි ලියාපදිංචි ලබන්නාගේ විස්තරවලට ගැළපිය යුතුය. වැරදි විස්තර ගෙවීම ප්‍රමාද කිරීමට හෝ වැළැක්වීමට හැකිය.",
         "17. නීති පිළිගැනීම — තරඟාවලිය සඳහා ලියාපදිංචි වීමෙන්, සහභාගීවන්නා තමන් සුදුසුකම් අවශ්‍යතා සපුරාලන බව තහවුරු කර මෙම තරඟාවලි සහ ත්‍යාග නීතිවලට එකඟ වේ."
       ]
     },
@@ -290,7 +290,7 @@
         "13. Hoos-u-wareejinta tirada — Lacag-bixin kasta waxaa hoos loogu wareejiyaa BDT buuxa. Lacag kasta oo ka hadha wareejintan lama bixiyo, dib looma qaybiyo, loomana gudbiyo tartan kale.",
         "14. Guulayste u qalma oo aan jirin — Haddii aanu jirin ka qaybgalaha ku dhammeeya dhibco kama dambays ah oo ka badan eber, wax abaalmarin ah lama bixiyo. Abaalmarinta aan la qaadan dib looma qaybiyo, loomana gudbiyo tartan kale.",
         "15. Xadka lacag-bixinta — Wadarta lacagta la siiyo dhammaan guulaystayaasha kama badnaan karto sanduuqa abaalmarinta ee la shaaciyey oo ah 1,000 BDT.",
-        "16. Helitaanka abaalmarinta — Lacagta abaalmarinta waxaa lagu heli karaa bKash ama Nagad. Guulaystuhu waa inuu bixiyo xogta saxda ah ee qaataha ee loo baahan yahay si loo dhammaystiro habka lacag-bixinta ee la doortay.",
+        "16. Helitaanka abaalmarinta — Lacagta abaalmarinta waxaa lagu heli karaa bKash ama Rocket. Guulaystuhu waa inuu bixiyo xogta saxda ah ee qaataha ee loo baahan yahay si loo dhammaystiro habka lacag-bixinta ee la doortay. Magaca koowaad / Magaca qoyska / Habka lacag-bixinta / Lambarka koontada ama jeebka. Magaca koowaad iyo magaca qoyska waa inay la mid noqdaan xogta qaataha ee ku diiwaangashan jeebkaaga moobilka iyo Remitly. Xog khaldan waxay dib u dhigi kartaa ama hor istaagi kartaa lacag bixinta.",
         "17. Oggolaanshaha xeerarka — Marka uu isu diiwaangeliyo tartanka, ka qaybgaluhu wuxuu xaqiijinayaa inuu buuxiyey shuruudaha u-qalmitaanka, wuxuuna oggolaanayaa xeerarkan tartanka iyo abaalmarinta."
       ]
     },
@@ -311,7 +311,7 @@
         "13. Redondeo — Cada pago se redondea hacia abajo a una cantidad entera de BDT. Cualquier importe restante debido al redondeo no se paga, redistribuye ni acumula para otro torneo.",
         "14. Ausencia de un ganador elegible — Si ningún participante termina con una puntuación final superior a cero, no se concede ningún premio. El premio no reclamado no se redistribuye ni se acumula para otro torneo.",
         "15. Límite de pagos — El importe total pagado a todos los ganadores no puede superar el fondo de premios anunciado de 1.000 BDT.",
-        "16. Recepción del premio — Los premios pueden pagarse mediante bKash o Nagad. El ganador debe proporcionar los datos correctos del destinatario necesarios para completar el método de pago seleccionado.",
+        "16. Recepción del premio — Los premios pueden pagarse mediante bKash o Rocket. El ganador debe proporcionar los datos correctos del destinatario necesarios para completar el método de pago seleccionado. Nombre / Apellido / Método de pago / Número de cuenta o monedero. El nombre y el apellido deben coincidir con los datos del destinatario registrados en tu billetera móvil y Remitly. Los datos incorrectos pueden retrasar o impedir el pago.",
         "17. Aceptación de las reglas — Al inscribirse en el torneo, el participante confirma que cumple los requisitos de participación y acepta estas reglas del torneo y de los premios."
       ]
     },
@@ -332,7 +332,7 @@
         "13. Kukadiria kwenda chini — Kila malipo yanakadiriwa kwenda chini hadi BDT kamili. Kiasi chochote kinachobaki kwa sababu ya ukadiriaji hakilipwi, hakigawanywi tena wala kuhamishwa kwenda mashindano mengine.",
         "14. Kutokuwepo kwa mshindi anayestahiki — Ikiwa hakuna mshiriki anayemaliza akiwa na alama ya mwisho iliyo juu ya sufuri, hakuna zawadi inayotolewa. Zawadi ambayo haijachukuliwa haigawanywi tena wala kuhamishwa kwenda mashindano mengine.",
         "15. Kikomo cha malipo — Jumla ya kiasi kinacholipwa kwa washindi wote haiwezi kuzidi mfuko wa zawadi uliotangazwa wa 1,000 BDT.",
-        "16. Kupokea zawadi — Malipo ya zawadi yanapatikana kupitia bKash au Nagad. Mshindi lazima atoe taarifa sahihi za mpokeaji zinazohitajika ili kukamilisha njia ya malipo iliyochaguliwa.",
+        "16. Kupokea zawadi — Malipo ya zawadi yanapatikana kupitia bKash au Rocket. Mshindi lazima atoe taarifa sahihi za mpokeaji zinazohitajika ili kukamilisha njia ya malipo iliyochaguliwa. Jina la kwanza / Jina la ukoo / Njia ya malipo / Nambari ya akaunti au pochi. Jina la kwanza na jina la ukoo lazima yalingane na taarifa za mpokeaji zilizosajiliwa kwenye pochi yako ya simu na Remitly. Taarifa zisizo sahihi zinaweza kuchelewesha au kuzuia malipo.",
         "17. Kukubali kanuni — Kwa kujisajili katika mashindano, mshiriki anathibitisha kwamba anakidhi masharti ya kustahiki na anakubali kanuni hizi za mashindano na zawadi."
       ]
     },
@@ -353,7 +353,7 @@
         "13. نیچے کی طرف گول کرنا — ہر ادائیگی کو نیچے کی طرف مکمل BDT تک گول کیا جاتا ہے۔ گول کرنے کی وجہ سے باقی رہنے والی کوئی رقم نہ ادا کی جاتی ہے، نہ دوبارہ تقسیم کی جاتی ہے اور نہ کسی دوسرے ٹورنامنٹ میں منتقل کی جاتی ہے۔",
         "14. کوئی اہل فاتح نہ ہونا — اگر کوئی شریک صفر سے زیادہ آخری اسکور کے ساتھ مکمل نہ کرے تو کوئی انعام نہیں دیا جاتا۔ غیر دعویٰ شدہ انعام نہ دوبارہ تقسیم کیا جاتا ہے اور نہ کسی دوسرے ٹورنامنٹ میں منتقل کیا جاتا ہے۔",
         "15. ادائیگی کی حد — تمام فاتحین کو دی جانے والی مجموعی رقم اعلان کردہ 1,000 BDT کے انعامی فنڈ سے زیادہ نہیں ہو سکتی۔",
-        "16. انعام وصول کرنا — انعام کی ادائیگی bKash یا Nagad کے ذریعے دستیاب ہے۔ فاتح کو منتخب ادائیگی کے طریقے کو مکمل کرنے کے لیے درکار وصول کنندہ کی درست معلومات فراہم کرنا ہوں گی۔",
+        "16. انعام وصول کرنا — انعام کی ادائیگی bKash یا Rocket کے ذریعے دستیاب ہے۔ فاتح کو منتخب ادائیگی کے طریقے کو مکمل کرنے کے لیے درکار وصول کنندہ کی درست معلومات فراہم کرنا ہوں گی۔ پہلا نام / آخری نام / ادائیگی کا طریقہ / اکاؤنٹ یا والیٹ نمبر. پہلا اور آخری نام آپ کے موبائل والیٹ اور Remitly میں درج وصول کنندہ کی معلومات سے ملنے چاہئیں۔ غلط معلومات ادائیگی میں تاخیر یا رکاوٹ کا سبب بن سکتی ہیں۔",
         "17. قواعد کی منظوری — ٹورنامنٹ میں اندراج کر کے شریک تصدیق کرتا ہے کہ وہ اہلیت کی شرائط پوری کرتا ہے اور ٹورنامنٹ اور انعام کے ان قواعد سے اتفاق کرتا ہے۔"
       ]
     },
@@ -374,7 +374,7 @@
         "13. Rundung — Jede Auszahlung wird auf einen vollen BDT abgerundet. Ein durch die Rundung verbleibender Betrag wird weder ausgezahlt noch neu verteilt oder auf ein anderes Turnier übertragen.",
         "14. Kein berechtigter Gewinner — Beendet kein Teilnehmer das Turnier mit einem Endergebnis von mehr als null, wird kein Preis vergeben. Der nicht beanspruchte Preis wird weder neu verteilt noch auf ein anderes Turnier übertragen.",
         "15. Auszahlungslimit — Der an alle Gewinner zusammen ausgezahlte Betrag darf den angekündigten Preispool von 1.000 BDT nicht überschreiten.",
-        "16. Erhalt des Preises — Preiszahlungen sind über bKash oder Nagad möglich. Ein Gewinner muss die korrekten Empfängerdaten angeben, die zur Durchführung der ausgewählten Auszahlungsmethode erforderlich sind.",
+        "16. Erhalt des Preises — Preiszahlungen sind über bKash oder Rocket möglich. Ein Gewinner muss die korrekten Empfängerdaten angeben, die zur Durchführung der ausgewählten Auszahlungsmethode erforderlich sind. Vorname / Nachname / Auszahlungsmethode / Konto- oder Walletnummer. Vor- und Nachname müssen mit den Empfängerdaten bei deinem mobilen Wallet und Remitly übereinstimmen. Falsche Angaben können die Auszahlung verzögern oder verhindern.",
         "17. Anerkennung der Regeln — Mit der Anmeldung zum Turnier bestätigt der Teilnehmer, dass er die Teilnahmevoraussetzungen erfüllt, und stimmt diesen Turnier- und Preisregeln zu."
       ]
     },
@@ -395,31 +395,30 @@
         "13. Arrondi — Chaque versement est arrondi à l'unité inférieure de BDT. Tout montant restant en raison de l'arrondi n'est ni versé, ni redistribué, ni reporté sur un autre tournoi.",
         "14. Aucun gagnant admissible — Si aucun participant ne termine avec un score final supérieur à zéro, aucun prix n'est attribué. Le prix non réclamé n'est ni redistribué ni reporté sur un autre tournoi.",
         "15. Plafond des versements — Le montant total versé à l'ensemble des gagnants ne peut pas dépasser la dotation annoncée de 1 000 BDT.",
-        "16. Réception du prix — Les prix peuvent être versés par bKash ou Nagad. Un gagnant doit fournir les informations exactes du bénéficiaire nécessaires à l'exécution du mode de versement sélectionné.",
+        "16. Réception du prix — Les prix peuvent être versés par bKash ou Rocket. Un gagnant doit fournir les informations exactes du bénéficiaire nécessaires à l'exécution du mode de versement sélectionné. Prénom / Nom de famille / Mode de versement / Numéro de compte ou de portefeuille. Le prénom et le nom doivent correspondre aux coordonnées du bénéficiaire enregistrées auprès de votre portefeuille mobile et de Remitly. Des données incorrectes peuvent retarder ou empêcher le paiement.",
         "17. Acceptation des règles — En s'inscrivant au tournoi, le participant confirme qu'il remplit les conditions d'admissibilité et accepte les présentes règles du tournoi et d'attribution des prix."
       ]
     },
     "pl": {
-      "rules" :
-[
-"1. Warunki uczestnictwa i zgłoszenia — Udział jest bezpłatny; nie wymaga dokonywania zakupu, wnoszenia opłaty wpisowej, wpłacania depozytu ani stawiania zakładu. Uczestnicy muszą mieć ukończone 18 lat.",
-"2. Format turnieju — Turniej rozgrywany jest w systemie każdy z każdym (round-robin). Pary zawodników są dobierane automatycznie po zakończeniu rejestracji, a turniej kończy się w wyznaczonym terminie.",
-"3. Plansza i ruchy — Mecze rozgrywane są na siatce o wymiarach 6x8 punktów. Piłka zaczyna w punkcie centralnym (3,4). W swojej turze gracz przesuwa piłkę do jednego z ośmiu sąsiednich punktów. Raz narysowana linia nie może zostać użyta ponownie.",
-"4. Odbicia — Przesunięcie piłki do krawędzi planszy lub do punktu odwiedzonego wcześniej uznawane jest za odbicie i daje temu samemu graczowi prawo do kolejnego ruchu.",
-"5. Wygrana w meczu — Gol zostaje zdobyty, gdy piłka trafi do bramki przeciwnika znajdującej się na górnej lub dolnej krawędzi planszy. Gracz przegrywa również natychmiast, jeśli przesunie piłkę do punktu, z którego nie ma możliwości wykonania dozwolonego ruchu.",
-"6. Czas gry — Każdy gracz dysponuje pięciominutowym czasem (zegar szachowy). Czas gracza biegnie tylko podczas jego tury. Gracz, któremu skończy się czas, przegrywa mecz.",
-"7. Rozłączenie i brak aktywności — Jeśli urządzenie gracza zostanie rozłączone przed rozpoczęciem jego tury, system automatycznie uruchamia odliczanie czasu tego gracza po upływie jednej minuty. Mecz, w którym przez ponad pięć minut nie odnotowano żadnej aktywności, może zostać rozstrzygnięty automatycznie na podstawie czasu gry.",
-"8. Opuszczenie meczu — Gracz, który opuści mecz przed jego zakończeniem, oddaje zwycięstwo przeciwnikowi (przegrywa walkowerem).",
-"9. Wynik końcowy i prawo do nagrody — Ranking turniejowy opiera się wyłącznie na wyniku końcowym każdego uczestnika. Aby kwalifikować się do nagrody, uczestnik musi uzyskać wynik końcowy wyższy niż zero. Uczestnicy z wynikiem zero są wykluczeni z podziału nagród.",
-"10. Nagroda — Całkowita pula nagród wynosi 1000 BDT i jest przyznawana wyłącznie za zajęcie pierwszego miejsca. Zdobywcy drugiego i kolejnych miejsc nie otrzymują nagrody pieniężnej. Ogłoszona pula nagród i zasady ich przyznawania nie mogą ulec zmianie po otwarciu rejestracji do turnieju.",
-"11. Wyłonienie zwycięzcy — Kwalifikujący się uczestnicy są szeregowani według wyniku końcowego, od najwyższego do najniższego. Uczestnik z najwyższym wynikiem otrzymuje nagrodę za pierwsze miejsce. Obliczenia dotyczące rankingu i nagród są deterministyczne, nie uwzględniają losowania i nie podlegają ręcznej modyfikacji.",
-"12. Remis na pierwszym miejscu — Jeśli dwóch lub więcej uprawnionych uczestników uzyska taki sam najwyższy wynik końcowy, dzielą oni równo nagrodę za pierwsze miejsce w wysokości 1000 BDT. Nie stosuje się odrębnego kryterium rozstrzygającego remis ani dodatkowej nagrody.",
-"13. Zaokrąglanie — Każda wypłata jest zaokrąglana w dół do pełnej kwoty w BDT. Kwota pozostała w wyniku zaokrąglenia nie jest wypłacana, redystrybuowana ani przenoszona na inny turniej.",
-"14. Brak uprawnionego zwycięzcy — Jeśli żaden uczestnik nie uzyska wyniku końcowego wyższego niż zero, nagroda nie zostanie przyznana. Nieodebrana nagroda nie podlega redystrybucji ani przeniesieniu.",
-"15. Limit wypłat — Łączna kwota wypłacona wszystkim zwycięzcom nie może przekroczyć ogłoszonej puli nagród wynoszącej 1000 BDT.",
-"16. Odbiór nagrody — Wypłaty nagród realizowane są za pośrednictwem serwisów bKash lub Nagad. Zwycięzca musi podać poprawne dane odbiorcy wymagane do realizacji wybranej metody wypłaty.",
-"17. Akceptacja zasad — Rejestrując się w turnieju, uczestnik potwierdza spełnienie wymogów kwalifikacyjnych oraz akceptuje niniejsze zasady turnieju i przyznawania nagród."
-]
+      "rules": [
+        "1. Warunki uczestnictwa i zgłoszenia — Udział jest bezpłatny; nie wymaga dokonywania zakupu, wnoszenia opłaty wpisowej, wpłacania depozytu ani stawiania zakładu. Uczestnicy muszą mieć ukończone 18 lat.",
+        "2. Format turnieju — Turniej rozgrywany jest w systemie każdy z każdym (round-robin). Pary zawodników są dobierane automatycznie po zakończeniu rejestracji, a turniej kończy się w wyznaczonym terminie.",
+        "3. Plansza i ruchy — Mecze rozgrywane są na siatce o wymiarach 6x8 punktów. Piłka zaczyna w punkcie centralnym (3,4). W swojej turze gracz przesuwa piłkę do jednego z ośmiu sąsiednich punktów. Raz narysowana linia nie może zostać użyta ponownie.",
+        "4. Odbicia — Przesunięcie piłki do krawędzi planszy lub do punktu odwiedzonego wcześniej uznawane jest za odbicie i daje temu samemu graczowi prawo do kolejnego ruchu.",
+        "5. Wygrana w meczu — Gol zostaje zdobyty, gdy piłka trafi do bramki przeciwnika znajdującej się na górnej lub dolnej krawędzi planszy. Gracz przegrywa również natychmiast, jeśli przesunie piłkę do punktu, z którego nie ma możliwości wykonania dozwolonego ruchu.",
+        "6. Czas gry — Każdy gracz dysponuje pięciominutowym czasem (zegar szachowy). Czas gracza biegnie tylko podczas jego tury. Gracz, któremu skończy się czas, przegrywa mecz.",
+        "7. Rozłączenie i brak aktywności — Jeśli urządzenie gracza zostanie rozłączone przed rozpoczęciem jego tury, system automatycznie uruchamia odliczanie czasu tego gracza po upływie jednej minuty. Mecz, w którym przez ponad pięć minut nie odnotowano żadnej aktywności, może zostać rozstrzygnięty automatycznie na podstawie czasu gry.",
+        "8. Opuszczenie meczu — Gracz, który opuści mecz przed jego zakończeniem, oddaje zwycięstwo przeciwnikowi (przegrywa walkowerem).",
+        "9. Wynik końcowy i prawo do nagrody — Ranking turniejowy opiera się wyłącznie na wyniku końcowym każdego uczestnika. Aby kwalifikować się do nagrody, uczestnik musi uzyskać wynik końcowy wyższy niż zero. Uczestnicy z wynikiem zero są wykluczeni z podziału nagród.",
+        "10. Nagroda — Całkowita pula nagród wynosi 1000 BDT i jest przyznawana wyłącznie za zajęcie pierwszego miejsca. Zdobywcy drugiego i kolejnych miejsc nie otrzymują nagrody pieniężnej. Ogłoszona pula nagród i zasady ich przyznawania nie mogą ulec zmianie po otwarciu rejestracji do turnieju.",
+        "11. Wyłonienie zwycięzcy — Kwalifikujący się uczestnicy są szeregowani według wyniku końcowego, od najwyższego do najniższego. Uczestnik z najwyższym wynikiem otrzymuje nagrodę za pierwsze miejsce. Obliczenia dotyczące rankingu i nagród są deterministyczne, nie uwzględniają losowania i nie podlegają ręcznej modyfikacji.",
+        "12. Remis na pierwszym miejscu — Jeśli dwóch lub więcej uprawnionych uczestników uzyska taki sam najwyższy wynik końcowy, dzielą oni równo nagrodę za pierwsze miejsce w wysokości 1000 BDT. Nie stosuje się odrębnego kryterium rozstrzygającego remis ani dodatkowej nagrody.",
+        "13. Zaokrąglanie — Każda wypłata jest zaokrąglana w dół do pełnej kwoty w BDT. Kwota pozostała w wyniku zaokrąglenia nie jest wypłacana, redystrybuowana ani przenoszona na inny turniej.",
+        "14. Brak uprawnionego zwycięzcy — Jeśli żaden uczestnik nie uzyska wyniku końcowego wyższego niż zero, nagroda nie zostanie przyznana. Nieodebrana nagroda nie podlega redystrybucji ani przeniesieniu.",
+        "15. Limit wypłat — Łączna kwota wypłacona wszystkim zwycięzcom nie może przekroczyć ogłoszonej puli nagród wynoszącej 1000 BDT.",
+        "16. Odbiór nagrody — Wypłaty nagród realizowane są za pośrednictwem serwisów bKash lub Rocket. Zwycięzca musi podać poprawne dane odbiorcy wymagane do realizacji wybranej metody wypłaty. Imię / Nazwisko / Metoda wypłaty / Numer konta lub portfela. Imię i nazwisko muszą odpowiadać danym odbiorcy zarejestrowanym w portfelu mobilnym i Remitly. Nieprawidłowe dane mogą opóźnić lub uniemożliwić wypłatę.",
+        "17. Akceptacja zasad — Rejestrując się w turnieju, uczestnik potwierdza spełnienie wymogów kwalifikacyjnych oraz akceptuje niniejsze zasady turnieju i przyznawania nagród."
+      ]
     },
     "bn": {
       "rules": [
@@ -438,7 +437,7 @@
         "১৩. রাউন্ডিং — প্রতিটি পরিশোধের পরিমাণ পূর্ণ BDT-তে নিচের দিকে রাউন্ড করা হবে। রাউন্ডিংয়ের কারণে অবশিষ্ট অর্থ প্রদান, পুনর্বণ্টন বা অন্য কোনো টুর্নামেন্টে স্থানান্তর করা হবে না।",
         "১৪. কোনো যোগ্য বিজয়ী নেই — যদি কোনো অংশগ্রহণকারীর চূড়ান্ত স্কোর শূন্যের বেশি না হয়, কোনো পুরস্কার প্রদান করা হবে না। অব্যবহৃত পুরস্কার পুনরায় বিতরণ বা অন্য টুর্নামেন্টে স্থানান্তর করা হবে না।",
         "১৫. পেমেন্টের সীমা — সব বিজয়ীর মোট প্রদেয় অর্থ বিজ্ঞপ্তি অনুযায়ী ১,০০০ BDT-এর পুলের বেশি হতে পারবে না।",
-        "১৬. পুরস্কার গ্রহণ — পুরস্কার প্রদান bKash অথবা Nagad-এর মাধ্যমে করা হবে। একজন বিজয়ীকে নির্বাচিত পেমেন্ট পদ্ধতির জন্য প্রয়োজনীয় সঠিক প্রাপক তথ্য সরবরাহ করতে হবে।",
+        "১৬. পুরস্কার গ্রহণ — পুরস্কার প্রদান bKash অথবা Rocket-এর মাধ্যমে করা হবে। একজন বিজয়ীকে নির্বাচিত পেমেন্ট পদ্ধতির জন্য প্রয়োজনীয় সঠিক প্রাপক তথ্য সরবরাহ করতে হবে। নামের প্রথম অংশ / নামের শেষ অংশ / পেমেন্ট পদ্ধতি / অ্যাকাউন্ট বা ওয়ালেট নম্বর. নামের প্রথম ও শেষ অংশ আপনার মোবাইল ওয়ালেট ও Remitly-তে নিবন্ধিত প্রাপকের তথ্যের সঙ্গে মিলতে হবে। ভুল তথ্যের কারণে পেমেন্ট বিলম্বিত বা ব্যর্থ হতে পারে।",
         "১৭. নিয়ম মেনে চলা — টুর্নামেন্টে নিবন্ধন করার মাধ্যমে অংশগ্রহণকারী নিশ্চিত করে যে সে যোগ্যতার শর্ত পূরণ করে এবং এই টুর্নামেন্ট ও পুরস্কার নিয়মে সম্মতি জানায়।"
       ]
     }

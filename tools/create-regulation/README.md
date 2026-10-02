@@ -84,7 +84,7 @@ unique positive places can be defined, and the awards are normalized in place
 order. The sum of all award amounts must equal `totalAmount`.
 
 Payout methods describe destinations offered to the winner, such as `bkash`,
-`nagad`, or `bank_account`. Transfer operators used administratively, such as
+`rocket` (Bangladesh supports only `bkash` and `rocket`); other markets may define `bank_account`. Transfer operators used administratively, such as
 Remitly or Wise, do not belong in this list.
 
 The root document and all translation documents are written in one Firestore
