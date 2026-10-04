@@ -1,0 +1,38 @@
+const { test, after } = require('node:test');
+const assert = require('node:assert/strict');
+const { initializeApp, deleteApp } = require('firebase-admin/app');
+const { getFirestore, Timestamp, FieldValue } = require('firebase-admin/firestore');
+const { processPayment, setHold, sweep } = require('../../firebase/functions/update-payment-status/retention');
+if (!process.env.FIRESTORE_EMULATOR_HOST) throw new Error('Emulator required');
+const { updateTicket } = require('../support-tickets/support-tickets');
+const app=initializeApp({projectId:'demo-retention'},'retention-tests');
+const db=getFirestore(app);
+after(() => deleteApp(app));
+test('Admin transactions preserve legacy history, honor holds and remove expired raw/audit data', async () => {
+ const ref=db.collection('payments').doc('retention-test');
+ await db.doc('tournaments/t').set({visibleInFlavours:['bangladesh']});
+ await ref.set({status:'completed',statusUpdatedAt:Timestamp.fromDate(new Date('2026-01-01Z')),
+  tournamentId:'t',userId:'winner',amount:100,currency:'BDT',transfer:{provider:'remitly',providerReference:'REF-1'}});
+ const raw=ref.collection('private').doc('recipient');
+ await raw.set({firstName:'Jane',lastName:'Recipient',walletProvider:'BKASH',walletNumber:'01712345678'});
+ const legacy=ref.collection('statusHistory').doc('old');
+ await legacy.set({recipientInfo:{accountNumber:'legacy-untouched'}});
+ await ref.collection('statusHistory').doc('new').set({retentionPolicyVersion:1,from:'sent',to:'completed'});
+ await db.doc('supportTickets/s').set({paymentId:ref.id,status:'open'});
+ assert.equal(await processPayment(db,ref,new Date('2027-01-01Z'),Timestamp),'held');
+ await updateTicket(db, db.doc('supportTickets/s'), 'resolve', '', 'admin', FieldValue);
+ await setHold(db,ref.id,true,'legal_obligation','admin',Timestamp);
+ assert.equal(await processPayment(db,ref,new Date('2027-01-01Z'),Timestamp),'held');
+ await setHold(db,ref.id,false,'released','admin',Timestamp);
+ await sweep(db,new Date('2027-01-01Z'),Timestamp);
+ assert.equal((await raw.get()).exists,false);
+ const record=(await ref.get()).data();
+ assert.equal(record.walletProvider,'BKASH');
+ assert.ok(!JSON.stringify(record).includes('01712345678'));
+ assert.ok(!JSON.stringify(record).includes('firstName'));
+ await sweep(db,new Date('2031-01-01Z'),Timestamp);
+ assert.equal((await ref.get()).exists,false);
+ await assert.rejects(updateTicket(db, db.doc('supportTickets/s'), 'reply', 'Follow-up', 'admin', FieldValue), /no longer exists/);
+ assert.deepEqual((await legacy.get()).data(),{recipientInfo:{accountNumber:'legacy-untouched'}});
+ assert.equal((await ref.collection('statusHistory').doc('new').get()).exists,false);
+});

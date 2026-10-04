@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.54
+**Document Version:** 2.55
 **Last Updated:** 2026-10-02
 **Status:** Prize, payment, and support workflows implemented; simulated end-to-end flow tested on dev; Bangladesh launch work remains
 
 **Revision History**:
+- v2.55 (2026-10-04): Implemented terminal payout retention (180 days raw / five calendar years minimized audit), dispute/legal holds and daily cleanup. Existing statusHistory preserved; no deployment.
 - v2.54 (2026-10-03): Prepared independent English Bangladesh privacy draft and app links; documented operational recipient vs minimized audit retention, deletion limitations and outstanding legal/operational review. No deployment or historical cleanup.
 - v2.53 (2026-10-02): Updated payout implementation after owner-reported real Remitly tests: bKash delivered (320 BDT); Rocket sent/in progress (320 BDT), not delivery-verified. Removed Nagad from current options. Added separate first/last names and private recipient storage. Existing historical records remain unchanged; withholding clarification from NBR remains pending.
 - v2.52 (2026-09-30): Marked Migration Testing complete within the documented scope: cross-app authentication, shared-data synchronization, and Firebase Analytics delivery verified; the intentionally excluded welcome flow remains N/A.
@@ -331,10 +332,10 @@ no Polish or Bangladesh withholding logic is implemented by this change.
 
 ### Payment flow and recipient privacy
 
-Bangladesh privacy draft: `firebase-hosting/public/bangladesh/privacy-en.html` (BD-privacy-2026-10-03).
+Bangladesh privacy draft: `firebase-hosting/public/bangladesh/privacy-en.html` (BD-privacy-2026-10-04).
 Bangladesh-only links are prepared in Account, Terms and payout screens; Global privacy is unchanged.
-Publish the reviewed page before releasing the linked build. Retention automation and historical cleanup
-remain pending; see [privacy review](../firebase-hosting/BANGLADESH_CONTENT_REVIEW.md).
+Publish the reviewed page before releasing the linked build. Retention automation is implemented locally; historical cleanup
+remains excluded; see [privacy review](../firebase-hosting/BANGLADESH_CONTENT_REVIEW.md).
 
 
 The existing statuses remain `awaiting_details`, `ready_for_processing`, `processing`, `sent`,
@@ -354,8 +355,10 @@ Only the new private recipient schema is supported; no legacy read fallback is m
 No existing `statusHistory` document is edited or deleted by this release.
 
 See [Bangladesh payment flow](BANGLADESH_PAYMENT_FLOW.md) for the schema and rollout checklist.
-No numeric retention period or new automatic deletion policy is introduced. Recipient records,
-legacy history and free-text support/admin messages still require the documented retention review.
+The locally implemented retention policy deletes raw recipient details 180 days after completed/cancelled
+and minimized payment/new audit records five calendar years after that terminal date, subject to
+dispute/legal holds. Existing history, support conversations and copied/exported data remain outside
+the cleanup scope. Deployment remains pending.
 
 ### Firestore Schema Extension
 

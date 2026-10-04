@@ -57,19 +57,14 @@ function validateTransitionData(targetStatus, data = {}) {
   }
 }
 
-// Keep the original supplied text, even when the current document uses trimmed values.
-// Explicit fields avoid copying unrelated callable arguments into the audit log.
+// Historical events contain metadata only. Free text may contain recipient PII.
 function buildAdminHistory(from, to, data, actor, source, changedAt) {
   const details = {};
-  for (const key of ['issueCode', 'userMessage', 'notes', 'provider', 'providerReference']) {
-    if (typeof data[key] === 'string') details[key] = data[key];
-  }
   if (typeof data.clearIssue === 'boolean') details.clearIssue = data.clearIssue;
   return {
+    retentionPolicyVersion: 1,
     eventType: 'admin_status_changed', from, to, changedAt,
     changedBy: actor, actorType: 'admin', source, details,
-    ...(typeof data.issueCode === 'string' && data.issueCode
-      ? { reasonCode: data.issueCode.trim() } : {}),
   };
 }
 
@@ -81,6 +76,7 @@ async function recordRecipientSubmission(db, paymentRef, before, after, eventId,
   await db.runTransaction(async transaction => {
     if ((await transaction.get(historyRef)).exists) return;
     transaction.set(historyRef, {
+      retentionPolicyVersion: 1,
       eventType: 'recipient_details_submitted',
       from: before.status, to: after.status,
       changedAt: after.statusUpdatedAt,
@@ -89,7 +85,7 @@ async function recordRecipientSubmission(db, paymentRef, before, after, eventId,
       source: 'onPaymentStatusChanged',
       // Recipient fields never belong in newly generated audit events.
       recipientDetailsVersion: 2,
-      previousIssue: before.issue || null,
+      hadPreviousIssue: Boolean(before.issue),
     });
   });
 }

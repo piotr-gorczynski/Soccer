@@ -34,10 +34,10 @@ test('successive replies preserve all texts, authors, timestamps and same-status
   assert.deepEqual(history.map(h => [h.from, h.to]), [
     ['open', 'waiting_for_user'], ['waiting_for_user', 'waiting_for_user'],
   ]);
-  assert.equal(history[0].message, '  First\nreply  ');
+  assert.equal(history[0].message, undefined);
   assert.equal(history[1].changedBy, 'admin2');
   assert.equal(history[0].changedAt, 'SERVER_TIME');
-  assert.equal(messages[0].message, history[0].message);
+  assert.equal(messages[0].message, '  First\nreply  ');
   assert.equal(messages[0].createdAt, history[0].changedAt);
   assert.equal(f.state().latestSupportReply, 'Second reply');
   assert.equal(f.state().statusUpdatedAt, 'SERVER_TIME');

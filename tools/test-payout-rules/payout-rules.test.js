@@ -65,3 +65,10 @@ test('rejects standalone details, legacy submissions, and edits after submission
   await assertSucceeds(submit(details()));
   await assertFails(submit(details()));
 });
+
+
+test('winner cannot change retention deadlines or hold', async () => {
+  const db = env.authenticatedContext('winner').firestore();
+  await assertFails(updateDoc(doc(db, 'payments/p'), { retentionHold: { active: false } }));
+  await assertFails(updateDoc(doc(db, 'payments/p'), { retention: { policyVersion: 1 } }));
+});

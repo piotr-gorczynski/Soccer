@@ -34,60 +34,61 @@ exports.createSupportTicket = functions.region('us-central1').https.onCall(async
     throw new functions.https.HttpsError('invalid-argument', error.message);
   }
 
-  const paymentRef = db.collection('payments').doc(input.paymentId);
-  const payment = await paymentRef.get();
-  if (!payment.exists || payment.get('userId') !== context.auth.uid) {
-    throw new functions.https.HttpsError('not-found', 'Payment was not found.');
-  }
+  return db.runTransaction(async transaction => {
+    const paymentRef = db.collection('payments').doc(input.paymentId);
+    const payment = await transaction.get(paymentRef);
+    if (!payment.exists || payment.get('userId') !== context.auth.uid) {
+      throw new functions.https.HttpsError('not-found', 'Payment was not found.');
+    }
 
-  const existing = await db.collection('supportTickets')
-    .where('userId', '==', context.auth.uid)
-    .where('paymentId', '==', input.paymentId)
-    .get();
-  const activeCount = existing.docs.filter(ticket =>
-    !['resolved', 'closed'].includes(ticket.get('status'))).length;
-  if (activeCount >= 3) {
-    throw new functions.https.HttpsError(
-      'resource-exhausted', 'You already have open support requests for this payment.');
-  }
+    const existing = await transaction.get(db.collection('supportTickets')
+      .where('userId', '==', context.auth.uid)
+      .where('paymentId', '==', input.paymentId));
+    const activeCount = existing.docs.filter(ticket =>
+      !['resolved', 'closed'].includes(ticket.get('status'))).length;
+    if (activeCount >= 3) {
+      throw new functions.https.HttpsError(
+        'resource-exhausted', 'You already have open support requests for this payment.');
+    }
 
-  const ticketRef = db.collection('supportTickets').doc();
-  const reference = `SUP-${ticketRef.id.slice(0, 8).toUpperCase()}`;
-  const now = FieldValue.serverTimestamp();
-  const batch = db.batch();
-  batch.set(ticketRef, {
-    reference,
-    userId: context.auth.uid,
-    paymentId: payment.id,
-    tournamentId: payment.get('tournamentId') || '',
-    market: payment.get('market') || '',
-    category: input.category,
-    message: input.message,
-    status: 'open',
-    createdAt: now,
-    updatedAt: now,
-    statusUpdatedAt: now,
-    appContext: {
-      appVersion: input.appVersion,
-      appVariant: input.appVariant,
-      locale: input.locale,
-      validationErrorCode: input.validationErrorCode,
+    const ticketRef = db.collection('supportTickets').doc();
+    const reference = `SUP-${ticketRef.id.slice(0, 8).toUpperCase()}`;
+    const now = FieldValue.serverTimestamp();
+    const batch = transaction;
+    batch.set(ticketRef, {
+      reference,
+      userId: context.auth.uid,
+      paymentId: payment.id,
+      tournamentId: payment.get('tournamentId') || '',
+      market: payment.get('market') || '',
+      category: input.category,
+      message: input.message,
+      status: 'open',
+      createdAt: now,
+      updatedAt: now,
+      statusUpdatedAt: now,
+      appContext: {
+        appVersion: input.appVersion,
+        appVariant: input.appVariant,
+        locale: input.locale,
+        validationErrorCode: input.validationErrorCode,
+        paymentStatus: payment.get('status') || '',
+        payoutMethod: payment.get('recipientInfo.method') || '',
+      },
+    });
+    batch.set(ticketRef.collection('statusHistory').doc('created'), {
+      eventType: 'ticket_created', from: null, to: 'open', changedAt: now,
+      changedBy: context.auth.uid, actorType: 'user', source: 'createSupportTicket',
+      category: input.category, messageId: input.message ? 'initial' : null,
       paymentStatus: payment.get('status') || '',
-      payoutMethod: payment.get('recipientInfo.method') || '',
-    },
+    });
+    if (input.message) batch.set(ticketRef.collection('messages').doc('initial'), {
+      authorType: 'user', authorId: context.auth.uid, message: input.message,
+      createdAt: now, source: 'createSupportTicket', historyId: 'created',
+    });
+    transaction.update(paymentRef, { supportActivityAt: now });
+    return { ok: true, ticketId: ticketRef.id, reference };
   });
-  batch.set(ticketRef.collection('statusHistory').doc('created'), {
-    eventType: 'ticket_created', from: null, to: 'open', changedAt: now,
-    changedBy: context.auth.uid, actorType: 'user', source: 'createSupportTicket',
-    category: input.category, message: input.message,
-    paymentStatus: payment.get('status') || '',
-  });
-  if (input.message) batch.set(ticketRef.collection('messages').doc('initial'), {
-    authorType: 'user', authorId: context.auth.uid, message: input.message,
-    createdAt: now, source: 'createSupportTicket', historyId: 'created',
-  });
-  await batch.commit();
-  return { ok: true, ticketId: ticketRef.id, reference };
 });
 
 exports.onSupportTicketUpdated = functions.firestore

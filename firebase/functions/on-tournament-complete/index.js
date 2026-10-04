@@ -172,6 +172,7 @@ exports.onTournamentComplete = functions.firestore
         updatedAt:    paymentCreatedAt,
       });
       paymentBatch.set(paymentRef.collection('statusHistory').doc('created'), {
+        retentionPolicyVersion: 1,
         eventType: 'payment_created', from: null, to: 'awaiting_details',
         changedAt: paymentCreatedAt, changedBy: 'onTournamentComplete', actorType: 'system',
         source: 'onTournamentComplete',

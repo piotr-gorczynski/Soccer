@@ -58,6 +58,7 @@ steps:
         cp /workspace/soccer/firebase/functions/update-payment-status/package.json /workspace/firebase/functions/update-payment-status/
         cp /workspace/soccer/firebase/functions/update-payment-status/index.js /workspace/firebase/functions/update-payment-status/
         cp /workspace/soccer/firebase/functions/update-payment-status/payment-workflow.js /workspace/firebase/functions/update-payment-status/
+        cp /workspace/soccer/firebase/functions/update-payment-status/retention.js /workspace/firebase/functions/update-payment-status/
 
   # Step 4: Install dependencies
   - name: 'node:22-slim'

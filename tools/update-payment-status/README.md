@@ -60,9 +60,9 @@ The tool rejects unknown statuses and transitions that are not allowed by
 Each successful command atomically updates the payment and appends a document to
 `payments/{paymentId}/statusHistory`. The entry includes `from`, `to`, server-side
 `changedAt`, `actorType`, `changedBy` (the CLI service-account email), and `source`.
-`details` preserves the original supplied `issueCode`, `userMessage`, `notes`,
-`provider`, and `providerReference`, including whitespace and newlines. Subsequent
-commands do not overwrite these entries. `--dry-run` does not write history.
+New history retains only metadata and an explicit `clearIssue` flag. It does not copy free-text
+notes, messages, issue codes or provider/reference fields, which may contain personal information.
+Existing history is unchanged. `--dry-run` does not write history.
 The admin callable uses the same format, identifying the authenticated admin UID.
 
 Payment creation records `payment_created`; the payment-status trigger records
@@ -92,3 +92,19 @@ Bangladesh has not launched in production; old test schemas are not supported.
 
 Real tests: bKash 320 BDT delivered; Rocket 320 BDT sent/in progress (delivery not confirmed).
 Mark `completed` only on delivery evidence. See `docs/BANGLADESH_PAYMENT_FLOW.md` for rollout.
+
+
+### Payout retention holds
+
+For an unresolved dispute or legal obligation, suspend payout cleanup:
+
+```powershell
+node tools/update-payment-status/retention-hold.js dev PAYMENT_ID hold legal_obligation
+node tools/update-payment-status/retention-hold.js dev PAYMENT_ID hold dispute
+node tools/update-payment-status/retention-hold.js dev PAYMENT_ID release
+```
+
+Release does not restart the 180-day / five-year deadlines. Open support tickets independently block
+cleanup. History now records status/actor/time metadata without copying free-text notes or references;
+current operational payment fields still store supplied text until minimization.
+See docs/BANGLADESH_PAYMENT_FLOW.md for deployment and legacy-history exclusions.

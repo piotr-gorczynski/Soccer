@@ -145,3 +145,17 @@ No tax logic, Remitly API, Nagad support, data migration, deployment, commit or 
 - An initial Gradle command accidentally ran the full Global suite (320 tests, 49 failures outside
   this change, matching previously documented resource/UI failures). Focused tests and builds above
   passed; full-suite success is not claimed. No device test or deployed-URL verification performed.
+
+
+## Retention implementation supersedes earlier gap notes — 2026-10-04
+
+The owner selected 180 days for raw recipients and five calendar years for minimized payment/audit
+records after completed/cancelled, suspended by unresolved support tickets or an administrator hold.
+This is now implemented in `update-payment-status/retention.js`, with daily cleanup and admin hold
+controls. See BANGLADESH_PAYMENT_FLOW.md for exact boundaries, scope, deployment requirements and
+legacy exceptions. The raw-recipient automatic-deletion gap above is resolved in source code, but
+nothing is deployed. Existing statusHistory is neither removed nor migrated; unmarked old history,
+support conversations, backups and copies remain outside cleanup. New payment history omits free
+text; new support history references messages. Shared Terms and Global privacy are unchanged.
+The policy draft is now BD-privacy-2026-10-04. Retention periods are owner-selected, not a legal
+conclusion that raw wallet numbers must be retained five years.

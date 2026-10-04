@@ -27,7 +27,7 @@ Every `reply` and `resolve` command also appends an immutable event under
 `supportTickets/{ticketId}/statusHistory`, in the same transaction as the current
 status and message. Events contain `from`, `to`, `changedAt` (server time),
 `changedBy` (the CLI service-account email), `actorType`, `source`, `command`,
-the original `message` text, and its `messageId` when present. Repeated replies
+its `messageId` when present, without copying message text into new history. Repeated replies
 are recorded even if the status remains `waiting_for_user`; resolving without
 a message also records an event. `messages` and history entries reference each other.
 
@@ -41,3 +41,5 @@ an initial `ticket_created` history event, `statusUpdatedAt`, and an initial use
 message in `messages`. Sort history by `changedAt` to reconstruct handling order.
 History is only accessible through trusted administration; client permissions remain
 restricted. Existing records are not rewritten or backfilled.
+
+Support writes read/touch the parent payment transactionally to serialize with payout retention. A ticket cannot be reopened after its parent payment was deleted.
