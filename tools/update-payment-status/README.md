@@ -90,7 +90,13 @@ access to the private document when processing manually in Remitly. Do not put r
 numbers into `--notes` or user messages. All four recipient fields are required before processing; do not invent names from a nickname.
 Bangladesh has not launched in production; old test schemas are not supported.
 
-Real tests: bKash 320 BDT delivered; Rocket 320 BDT sent/in progress (delivery not confirmed).
+Real tests (owner confirmation recorded 2026-10-04): bKash and Rocket — VERIFIED / DELIVERED.
+Both real 320 BDT Remitly transfers reached final status Delivered. Rocket was transferred from
+Poland to Bangladesh and received in the recipient account. The earlier Rocket attempt with an
+organization-style name was paused; the successful attempt used the personal name matching the
+Rocket account. This supports separate firstName, lastName, walletProvider and walletNumber fields.
+Nagad remains NOT SUPPORTED / EXCLUDED because Remitly requires a mandatory Reason for Sending
+and the available categories do not accurately describe a tournament prize.
 Mark `completed` only on delivery evidence. See `docs/BANGLADESH_PAYMENT_FLOW.md` for rollout.
 
 

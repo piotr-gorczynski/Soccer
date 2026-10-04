@@ -32,11 +32,16 @@ Each page has a draft banner and `noindex`. These are not access controls. A ful
 
 Relevant Google Play guidance: [User Data policy](https://support.google.com/googleplay/android-developer/answer/10144311?hl=en) and [account deletion requirements](https://support.google.com/googleplay/android-developer/answer/13327111?hl=en). Preparing these pages alone does not establish compliance.
 
-## Remitly testing update — 2026-10-02
+## Remitly testing update — status confirmed 2026-10-04
 
-Owner-reported real tests: bKash 320 BDT delivered (verified); Rocket Personal 320 BDT
-sent/in progress (not verified delivered). Both required firstName and lastName separately.
-Nagad is excluded: Remitly requires a transfer-purpose classification, and the available
+Owner-reported real tests: bKash — VERIFIED / DELIVERED (320 BDT); Rocket — VERIFIED / DELIVERED
+(320 BDT). Both were real successful Remitly transfers reaching final status Delivered. The Rocket
+transfer from Poland to Bangladesh was received in the recipient account, confirming the tested
+flow end-to-end. The earlier unsuccessful Rocket attempt used an organization-style recipient name
+and was paused; the successful test used the recipient's personal name matching the Rocket account.
+Accurate recipient identity is essential and supports separate firstName, lastName, walletProvider
+and walletNumber fields. No recipient names, numbers, transfer references or screenshots are recorded.
+Nagad is NOT SUPPORTED / EXCLUDED: Remitly requires a transfer-purpose classification, and the available
 Family support / Savings / Payment for service choices do not accurately represent a tournament prize.
 These details are internal evidence, not player-facing copy or prize-payment legal approval.
 

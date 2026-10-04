@@ -11,16 +11,21 @@ Transfers are manually processed through Remitly; there is no automated Remitly 
 Supported wallets are **bKash and Rocket**. Regulation codes remain lowercase `bkash` / `rocket`;
 recipient `walletProvider` uses uppercase `BKASH` / `ROCKET`.
 
-Owner-reported real tests (recorded 2026-10-02):
+Owner-reported real tests (status updated 2026-10-04; report date, not the transfer date):
 - bKash: 320 BDT delivered to a public donation wallet. VERIFIED / DELIVERED, supported by Remitly
   In progress and Delivered emails.
-- Rocket: 320 BDT submitted to a public donation Personal wallet. SENT / IN PROGRESS, not verified
-  delivered. Recipient and transfer were accepted without a Reason for Sending prompt.
-- Nagad is excluded. Remitly requires a transfer-purpose classification for Nagad, and the available
+- Rocket: 320 BDT sent from Poland to Bangladesh through Remitly. VERIFIED / DELIVERED: final
+  Remitly status Delivered and receipt in the recipient account confirmed. The tested flow works end-to-end.
+- Nagad: NOT SUPPORTED / EXCLUDED. Remitly requires a transfer-purpose classification for Nagad, and the available
   classifications do not accurately represent a tournament prize (Family support, Savings, Payment
   for service). Never use a false purpose. This explanation is internal, not player-facing copy.
 
-Both tested wallets required separate first and last names matching the wallet/Remitly recipient.
+Both bKash and Rocket have been verified with real successful Remitly transfers reaching final status
+Delivered. The earlier unsuccessful Rocket test used an organization-style recipient name and was
+paused. The successful Rocket test used the recipient's personal name matching the Rocket account.
+Remitly requires accurate recipient identity details, supporting the existing separate `firstName`,
+`lastName`, `walletProvider` and `walletNumber` fields. No real recipient name, number or reference
+is recorded in this document.
 Donation tests are operational evidence, not legal approval for tournament prizes. Bangladesh
 withholding obligations await NBR clarification. No tax withholding is introduced.
 
@@ -193,7 +198,8 @@ remain subject to the source review in BANGLADESH_CONTENT_REVIEW.md.
 - Backend tests: normal lifecycle and correction, existing audit preservation and recipient-data exclusion from new events.
 - Regulation/tournament tools: accepted provider metadata and rejected retired providers.
 - Build and focused test both `_devGlobalDebug` and `_devBangladeshDebug`; manually test the form and
-  real operator workflow before production. Build/test success does not confirm real Rocket delivery.
+  real operator workflow before production. Rocket delivery has separately been verified by the owner
+  with a successful real Remitly transfer; automated tests are not evidence of transfer delivery.
 
 ### Local verification results — 2026-10-02
 
