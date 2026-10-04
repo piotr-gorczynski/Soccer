@@ -398,4 +398,5 @@
     <string name="payment_last_name">Jina la ukoo</string>
     <string name="payment_name_required">Weka jina (herufi 1–100).</string>
     <string name="payment_recipient_instructions">Jina la kwanza na jina la ukoo lazima yalingane na taarifa za mpokeaji zilizosajiliwa kwenye pochi yako ya simu na Remitly. Taarifa zisizo sahihi zinaweza kuchelewesha au kuzuia malipo.</string>
+    <string name="bangladesh_privacy_policy_english">Sera ya faragha ya Bangladesh (Kiingereza)</string>
 </resources>

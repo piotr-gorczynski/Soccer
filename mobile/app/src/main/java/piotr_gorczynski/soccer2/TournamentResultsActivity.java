@@ -68,6 +68,7 @@ public class TournamentResultsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tournament_results);
+        PrivacyPolicyLinks.bind(this, R.id.payoutPrivacyLink);
 
         Toolbar toolbar = findViewById(R.id.results_toolbar);
         setSupportActionBar(toolbar);

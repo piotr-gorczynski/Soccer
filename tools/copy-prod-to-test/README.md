@@ -316,3 +316,9 @@ transactional: failures can leave a partial copy. Review the summary before usin
 
 Run `npm test` in this directory for offline regression tests. Tests use synthetic in-memory data,
 not Firebase credentials or live environments. No schema migration or database copy is run by tests.
+
+### Buffered-write regression fix (2026-10-03)
+
+Every queued write/delete is explicitly flushed before waiting for completion. Waiting for an
+individual operation before flushing a partial batch can let Node exit without a summary. Offline
+tests now model buffered writes that complete only on flush/close, rather than resolving immediately.

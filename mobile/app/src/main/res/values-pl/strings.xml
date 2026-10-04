@@ -472,4 +472,5 @@
     <string name="payment_last_name">Nazwisko</string>
     <string name="payment_name_required">Wpisz imię lub nazwisko (1–100 znaków).</string>
     <string name="payment_recipient_instructions">Imię i nazwisko muszą odpowiadać danym odbiorcy zarejestrowanym w portfelu mobilnym i Remitly. Nieprawidłowe dane mogą opóźnić lub uniemożliwić wypłatę.</string>
+    <string name="bangladesh_privacy_policy_english">Polityka prywatności Bangladesh (po angielsku)</string>
 </resources>

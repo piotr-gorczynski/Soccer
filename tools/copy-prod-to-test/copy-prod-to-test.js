@@ -91,7 +91,9 @@ async function deleteDocumentRecursive(docRef, bulkWriter) {
   }
 
   // Delete the document itself using BulkWriter (works even if document doesn't exist)
-  await bulkWriter.delete(docRef);
+  // A partial BulkWriter batch is not sent until flushed. Await both the
+  // operation (which can reject) and flush (which alone does not report failure).
+  await Promise.all([bulkWriter.delete(docRef), bulkWriter.flush()]);
 
   return { documents: deletedDocs, subcollections: subcollectionsCount };
 }
@@ -105,7 +107,7 @@ async function copyDocumentRecursive(sourceDocRef, targetDocRef, bulkWriter) {
   // Copy the document data
   const sourceDoc = await sourceDocRef.get();
   if (sourceDoc.exists) {
-    await bulkWriter.set(targetDocRef, sourceDoc.data());
+    await Promise.all([bulkWriter.set(targetDocRef, sourceDoc.data()), bulkWriter.flush()]);
     copiedDocs = 1;
   }
 

@@ -108,7 +108,7 @@ Before rollout:
 General Terms and their acceptance are intentionally shared between Global and Bangladesh, as
 confirmed by the owner. Separate Bangladesh general-Terms acceptance is not required by this design.
 Tournament prize rules are accepted before joining; payout privacy information must be available
-before a winner submits recipient details. Do not redirect the app to unapproved review drafts.
+before a winner submits recipient details. Bangladesh-only privacy routing is prepared as of 2026-10-03. Publish the reviewed policy before releasing that build; Hosting is not deployed by this task.
 
 ## Retention and support
 

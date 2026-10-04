@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.53
+**Document Version:** 2.54
 **Last Updated:** 2026-10-02
 **Status:** Prize, payment, and support workflows implemented; simulated end-to-end flow tested on dev; Bangladesh launch work remains
 
 **Revision History**:
+- v2.54 (2026-10-03): Prepared independent English Bangladesh privacy draft and app links; documented operational recipient vs minimized audit retention, deletion limitations and outstanding legal/operational review. No deployment or historical cleanup.
 - v2.53 (2026-10-02): Updated payout implementation after owner-reported real Remitly tests: bKash delivered (320 BDT); Rocket sent/in progress (320 BDT), not delivery-verified. Removed Nagad from current options. Added separate first/last names and private recipient storage. Existing historical records remain unchanged; withholding clarification from NBR remains pending.
 - v2.52 (2026-09-30): Marked Migration Testing complete within the documented scope: cross-app authentication, shared-data synchronization, and Firebase Analytics delivery verified; the intentionally excluded welcome flow remains N/A.
 - v2.51 (2026-09-30): Completed Firebase Analytics tracking validation against production Realtime reports, including Bangladesh session, authentication, tournament-list and prize-list events, and variant-conflict events from both variants.
@@ -329,6 +330,12 @@ Prizes are organizer-funded. Bangladesh withholding obligations await clarificat
 no Polish or Bangladesh withholding logic is implemented by this change.
 
 ### Payment flow and recipient privacy
+
+Bangladesh privacy draft: `firebase-hosting/public/bangladesh/privacy-en.html` (BD-privacy-2026-10-03).
+Bangladesh-only links are prepared in Account, Terms and payout screens; Global privacy is unchanged.
+Publish the reviewed page before releasing the linked build. Retention automation and historical cleanup
+remain pending; see [privacy review](../firebase-hosting/BANGLADESH_CONTENT_REVIEW.md).
+
 
 The existing statuses remain `awaiting_details`, `ready_for_processing`, `processing`, `sent`,
 `completed`, `action_required`, `cancelled`. `sent` is not delivery confirmation.

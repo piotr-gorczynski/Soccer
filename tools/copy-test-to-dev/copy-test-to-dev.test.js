@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { copyFirestoreCollection, clearFirestoreCollection, createConfiguredBulkWriter } = require('./copy-prod-to-test');
+const { copyFirestoreCollection, clearFirestoreCollection, createConfiguredBulkWriter } = require('./copy-test-to-dev');
 const { Timestamp } = require('firebase-admin/firestore');
 
 // In-memory refs include missing ancestors, as Firestore listDocuments does.
