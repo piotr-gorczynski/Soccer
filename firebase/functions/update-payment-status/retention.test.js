@@ -53,14 +53,17 @@ test('raw boundary, repeat runs, safe minimized audit and unchanged legacy histo
   const f = fixture();
   await processPayment(f.db,f.ref,new Date('2026-06-29T23:59:59.999Z'),Timestamp);
   assert.ok(f.values.has('payments/p/private/recipient'));
-  await processPayment(f.db,f.ref,new Date('2026-06-30T00:00:00Z'),Timestamp);
+  assert.equal(await processPayment(f.db,f.ref,new Date('2026-06-30T00:00:00Z'),Timestamp), 'raw-deleted');
   assert.ok(!f.values.has('payments/p/private/recipient'));
   const record = f.values.get('payments/p');
   assert.equal(record.walletProvider,'BKASH');
   assert.equal(record.transfer.providerReference,'REF-1');
   const json = JSON.stringify(record);
   for (const secret of ['firstName','lastName','walletNumber','01712345678','PRIVATE-NAME','PRIVATE-LAST']) assert.ok(!json.includes(secret),secret);
-  await processPayment(f.db,f.ref,new Date('2026-07-01T00:00:00Z'),Timestamp);
+  const writeCount = f.writes.length;
+  assert.equal(await processPayment(f.db,f.ref,new Date('2026-07-01T00:00:00Z'),Timestamp), 'already-raw-deleted');
+  assert.equal(f.writes.length, writeCount);
+  assert.equal(record.retention.rawDeletedAt.toMillis(), at('2026-06-30T00:00:00Z').toMillis());
   assert.equal(f.values.get('payments/p').retention.rawDeletedAt.toMillis(), record.retention.rawDeletedAt.toMillis());
   assert.ok(f.values.has('payments/p/statusHistory/legacy'));
 });
@@ -93,7 +96,8 @@ test('five-year boundary deletes new audit but never existing history', async ()
   const f=fixture();
   await processPayment(f.db,f.ref,new Date('2030-12-31T23:59:59.999Z'),Timestamp);
   assert.ok(f.values.has('payments/p'));
-  await processPayment(f.db,f.ref,new Date('2031-01-01T00:00:00Z'),Timestamp);
+  assert.ok(f.values.get('payments/p').retention.rawDeletedAt);
+  assert.equal(await processPayment(f.db,f.ref,new Date('2031-01-01T00:00:00Z'),Timestamp), 'audit-deleted');
   assert.ok(!f.values.has('payments/p'));
   assert.ok(f.values.has('payments/p/statusHistory/legacy'));
 });
@@ -140,4 +144,17 @@ test('many private attempts are paginated and legacy history is left unchanged',
  assert.equal(await processPayment(f.db,f.ref,new Date('2032-01-01Z'),Timestamp),'audit-deleted');
  assert.ok(![...f.values.keys()].some(k=>k.includes('/private/')));
  assert.ok(f.values.has('payments/p/statusHistory/legacy'));
+});
+
+test('raw idempotency does not strand paginated private attempts before audit expiry', async () => {
+ const f=fixture();
+ for(let i=0;i<105;i++) f.values.set('payments/p/private/transfer-'+i,{recordType:'transfer_attempt'});
+ assert.equal(await processPayment(f.db,f.ref,new Date('2027-01-01Z'),Timestamp),'raw-deleted');
+ const deletedAt=f.values.get('payments/p').retention.rawDeletedAt.toMillis();
+ assert.equal(await processPayment(f.db,f.ref,new Date('2027-01-02Z'),Timestamp),'raw-deleted');
+ assert.ok(![...f.values.keys()].some(k=>k.includes('/private/')));
+ const writes=f.writes.length;
+ assert.equal(await processPayment(f.db,f.ref,new Date('2027-01-03Z'),Timestamp),'already-raw-deleted');
+ assert.equal(f.writes.length,writes);
+ assert.equal(f.values.get('payments/p').retention.rawDeletedAt.toMillis(),deletedAt);
 });

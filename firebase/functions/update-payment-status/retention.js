@@ -75,6 +75,11 @@ async function processPayment(db, ref, now, Timestamp) {
       if (!payment.retention) tx.update(ref, { retention });
       return 'held';
     }
+    // rawDeletedAt can also mark a partial batch: finish remaining private attempts first.
+    // Audit expiry and holds retain priority over this no-write fast path.
+    if (rawDue && !auditDue && retention.rawDeletedAt && !recipient.exists && attempts.size === 0) {
+      return 'already-raw-deleted';
+    }
     if (attempts) for (const attempt of attempts.docs) tx.delete(attempt.ref);
     if (auditDue) {
       for (const doc of history.docs) tx.delete(doc.ref);
