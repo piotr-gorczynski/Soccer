@@ -227,3 +227,30 @@ Ensure the service accounts have the following permissions:
 ### Connection timeouts
 
 For very large collections, you might need to run the script multiple times or increase Node.js timeout limits.
+
+## Bangladesh payout schema (2026-10-03)
+
+The copy preserves the current schema without converting or flattening it:
+- `payments/{id}`: status, amount, transfer metadata and `recipientDetailsVersion`.
+- `payments/{id}/private/recipient`: separate firstName, lastName, walletProvider and walletNumber.
+- Payment statusHistory and notificationEvents, plus supportTickets messages and statusHistory.
+- IDs, timestamps and original field values are preserved. No names or wallet details are invented.
+
+Collection traversal uses listDocuments at every level, including missing parent documents. Both
+clear modes recursively remove private data and orphaned descendants from their selected scope.
+Without a clear option, documents absent from TEST remain in DEV; this is a copy, not a mirror.
+The copy includes sensitive recipient data and does not anonymize it. Logs report paths/counts,
+not recipient field values. Keep DEV access appropriately restricted.
+
+Individual writes/deletes are awaited so failures are counted; transient BulkWriter retries are
+bounded and a failed delete stops repeated scanning of that collection. This does not make copying
+transactional: failures can leave a partial copy. Review the summary before using the resulting data.
+
+Run `npm test` in this directory for offline regression tests. Tests use synthetic in-memory data,
+not Firebase credentials or live environments. No schema migration or database copy is run by tests.
+
+### Buffered-write regression fix (2026-10-03)
+
+Every queued write/delete is explicitly flushed before waiting for completion. Waiting for an
+individual operation before flushing a partial batch can let Node exit without a summary. Offline
+tests now model buffered writes that complete only on flush/close, rather than resolving immediately.

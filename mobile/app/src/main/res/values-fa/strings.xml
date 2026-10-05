@@ -379,4 +379,5 @@
     <string name="payment_last_name">نام خانوادگی</string>
     <string name="payment_name_required">نام را وارد کنید (۱–۱۰۰ نویسه).</string>
     <string name="payment_recipient_instructions">نام و نام خانوادگی باید با مشخصات گیرنده ثبت‌شده در کیف پول موبایل شما و Remitly مطابقت داشته باشد. اطلاعات نادرست ممکن است پرداخت را به تأخیر بیندازد یا مانع آن شود.</string>
+    <string name="bangladesh_privacy_policy_english">سیاست حریم خصوصی بنگلادش (انگلیسی)</string>
 </resources>

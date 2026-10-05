@@ -7,6 +7,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <Button
+        android:id="@+id/termsPrivacyLink"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/bangladesh_privacy_policy_english"
+        android:textAllCaps="false"
+        android:visibility="gone" />
+
     <WebView
         android:id="@+id/termsWebView"
         android:layout_width="match_parent"

@@ -433,4 +433,5 @@
     <string name="payment_last_name">Nachname</string>
     <string name="payment_name_required">Gib einen Namen ein (1–100 Zeichen).</string>
     <string name="payment_recipient_instructions">Vor- und Nachname müssen mit den Empfängerdaten bei deinem mobilen Wallet und Remitly übereinstimmen. Falsche Angaben können die Auszahlung verzögern oder verhindern.</string>
+    <string name="bangladesh_privacy_policy_english">Datenschutzerklärung für Bangladesch (Englisch)</string>
 </resources>

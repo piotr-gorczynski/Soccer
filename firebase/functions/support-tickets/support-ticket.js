@@ -32,3 +32,12 @@ function validateCreateRequest(data) {
 }
 
 module.exports = { VALID_CATEGORIES, validateCreateRequest };
+
+function payoutContext(payment, recipient, tournament) {
+  const provider = recipient?.walletProvider || payment.walletProvider;
+  return {
+    market: payment.market || (tournament?.visibleInFlavours?.includes('bangladesh') ? 'BD' : ''),
+    payoutMethod: ['BKASH', 'ROCKET'].includes(provider) ? provider.toLowerCase() : '',
+  };
+}
+module.exports.payoutContext = payoutContext;

@@ -20,8 +20,21 @@ public class TermsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_terms);
+        PrivacyPolicyLinks.bind(this, R.id.termsPrivacyLink);
 
         WebView webView = findViewById(R.id.termsWebView);
+        if (AppFlavourDetector.isBangladeshFlavour(this)) {
+            webView.setWebViewClient(new android.webkit.WebViewClient() {
+                @Override
+                public boolean shouldOverrideUrlLoading(WebView view, android.webkit.WebResourceRequest request) {
+                    if (request.isForMainFrame() && PrivacyPolicyLinks.isSharedPrivacyUrl(request.getUrl().toString())) {
+                        view.loadUrl(PrivacyPolicyLinks.BANGLADESH_URL);
+                        return true;
+                    }
+                    return false;
+                }
+            });
+        }
         String langCode = LanguageManager.getCurrentLanguageCode(this);
         String url = "https://piotr-gorczynski.com/terms-" + langCode + ".html";
         Log.d("TAG_Soccer", "Loading terms from URL: " + url);

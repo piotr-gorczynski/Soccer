@@ -398,4 +398,5 @@
     <string name="payment_last_name">Magaca qoyska</string>
     <string name="payment_name_required">Geli magac (1–100 xaraf).</string>
     <string name="payment_recipient_instructions">Magaca koowaad iyo magaca qoyska waa inay la mid noqdaan xogta qaataha ee ku diiwaangashan jeebkaaga moobilka iyo Remitly. Xog khaldan waxay dib u dhigi kartaa ama hor istaagi kartaa lacag bixinta.</string>
+    <string name="bangladesh_privacy_policy_english">Siyaasadda asturnaanta Bangladesh (Ingiriisi)</string>
 </resources>

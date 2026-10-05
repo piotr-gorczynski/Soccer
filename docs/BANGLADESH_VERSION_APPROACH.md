@@ -1,11 +1,14 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.53
-**Last Updated:** 2026-10-02
+**Document Version:** 2.56
+**Last Updated:** 2026-10-04
 **Status:** Prize, payment, and support workflows implemented; simulated end-to-end flow tested on dev; Bangladesh launch work remains
 
 **Revision History**:
-- v2.53 (2026-10-02): Updated payout implementation after owner-reported real Remitly tests: bKash delivered (320 BDT); Rocket sent/in progress (320 BDT), not delivery-verified. Removed Nagad from current options. Added separate first/last names and private recipient storage. Existing historical records remain unchanged; withholding clarification from NBR remains pending.
+- v2.56 (2026-10-04): Recorded owner-confirmed Rocket 320 BDT delivery through Remitly from Poland to Bangladesh; bKash and Rocket both VERIFIED / DELIVERED. Documented accurate personal recipient names versus the earlier paused organization-name attempt; no recipient identifiers recorded.
+- v2.55 (2026-10-04): Implemented terminal payout retention (180 days raw / five calendar years minimized audit), dispute/legal holds and daily cleanup. Existing statusHistory preserved; no deployment.
+- v2.54 (2026-10-03): Prepared independent English Bangladesh privacy draft and app links; documented operational recipient vs minimized audit retention, deletion limitations and outstanding legal/operational review. No deployment or historical cleanup.
+- v2.53 (2026-10-02): Updated payout implementation after owner-reported real Remitly tests: bKash delivered (320 BDT); Rocket initially submitted (320 BDT; final VERIFIED / DELIVERED confirmation recorded in v2.56). Removed Nagad from current options. Added separate first/last names and private recipient storage. Existing historical records remain unchanged; withholding clarification from NBR remains pending.
 - v2.52 (2026-09-30): Marked Migration Testing complete within the documented scope: cross-app authentication, shared-data synchronization, and Firebase Analytics delivery verified; the intentionally excluded welcome flow remains N/A.
 - v2.51 (2026-09-30): Completed Firebase Analytics tracking validation against production Realtime reports, including Bangladesh session, authentication, tournament-list and prize-list events, and variant-conflict events from both variants.
 - v2.50 (2026-09-29): Removed the optional Bangladesh migrated-user welcome flow from scope by product decision. Its test is N/A, not PASS; normal sign-in and shared-profile continuity remain covered by the completed authentication tests.
@@ -65,7 +68,7 @@
 
 This document outlines a simplified, cost-effective approach for creating a Bangladesh-specific version of the Soccer (Gridline Soccer) mobile application that enables skill-based tournaments with promotional cash prizes. The implementation uses **Android Product Flavors to create a separate APK variant** and is **intended to align** with Bangladesh gaming regulations, focusing on skill-based competitions with developer-funded prizes for players aged 18 and above. **The game assumptions have been validated with ChatGPT legal consultation** (see “Regulatory Verification Notes” below).
 
-**Current payout decision (2026-10-02):** Manual Remitly transfers to bKash or Rocket. bKash delivered in a real 320 BDT test; Rocket 320 BDT remains sent/in progress. See the payment flow section for evidence, required recipient fields and rollout constraints.
+**Current payout decision (2026-10-04):** Manual Remitly transfers to bKash or Rocket. Both are VERIFIED / DELIVERED in real successful 320 BDT tests from Poland to Bangladesh; Remitly reached final status Delivered and the Rocket recipient account received the transfer. See the payment flow section for evidence, required recipient fields and rollout constraints.
 
 **Key Simplifications**:
 - **Technical Approach**: Separate Bangladesh APK using Android Product Flavors (`piotr_gorczynski.soccer2.bd`)
@@ -308,27 +311,37 @@ Payouts are processed manually through Remitly. There is no Remitly API integrat
 Supported recipient wallets are **bKash and Rocket**, limited further by the assigned regulation.
 These wallet destinations are separate from the administrative transfer provider (`remitly`).
 
-Owner-reported tests, recorded 2026-10-02 (transfer dates not independently established):
+Owner-reported tests, status updated 2026-10-04 (report date, not an independently established transfer date):
 
 | Wallet | Real test | Evidence/status |
 |---|---|---|
 | bKash | 320 BDT to a public donation wallet | VERIFIED / DELIVERED; Remitly emails progressed from In progress to Delivered |
-| Rocket | 320 BDT to a public donation Personal wallet | SENT / IN PROGRESS; recipient and transfer accepted without a Reason for Sending prompt; delivery NOT yet verified |
+| Rocket | 320 BDT via Remitly from Poland to Bangladesh | VERIFIED / DELIVERED; Remitly final status Delivered and receipt in the recipient account confirmed by the owner |
 
 Both flows required separate first name and last name matching the recipient wallet/Remitly details.
+The earlier unsuccessful Rocket attempt used an organization-style recipient name and was paused.
+The successful test used the recipient's personal name matching the Rocket account, confirming the
+tested payout flow end-to-end. This supports separate `firstName`, `lastName`, `walletProvider` and
+`walletNumber` fields; no actual recipient identity or transfer reference is recorded here.
 These donation-wallet tests establish the observed transfer behavior, not approval of prize payments
 or resolution of legal/tax requirements.
 
 **Internal decision — Nagad rejected:** Remitly requires a transfer-purpose classification for Nagad,
 and the available classifications do not accurately represent a tournament prize. Observed options
 were Family support, Savings and Payment for service. Do not select an inaccurate purpose.
-Do not offer Nagad to players. Do not mark Rocket delivered without subsequent confirmation.
+Nagad is NOT SUPPORTED / EXCLUDED. Do not offer Nagad to players. Rocket delivery is now confirmed for the tested flow.
 
 Participation remains free: no entry fee, stake, wager, deposit, purchase or payment is required.
 Prizes are organizer-funded. Bangladesh withholding obligations await clarification from NBR;
 no Polish or Bangladesh withholding logic is implemented by this change.
 
 ### Payment flow and recipient privacy
+
+Bangladesh privacy draft: `firebase-hosting/public/bangladesh/privacy-en.html` (BD-privacy-2026-10-04).
+Bangladesh-only links are prepared in Account, Terms and payout screens; Global privacy is unchanged.
+Publish the reviewed page before releasing the linked build. Retention automation is implemented locally; historical cleanup
+remains excluded; see [privacy review](../firebase-hosting/BANGLADESH_CONTENT_REVIEW.md).
+
 
 The existing statuses remain `awaiting_details`, `ready_for_processing`, `processing`, `sent`,
 `completed`, `action_required`, `cancelled`. `sent` is not delivery confirmation.
@@ -347,8 +360,10 @@ Only the new private recipient schema is supported; no legacy read fallback is m
 No existing `statusHistory` document is edited or deleted by this release.
 
 See [Bangladesh payment flow](BANGLADESH_PAYMENT_FLOW.md) for the schema and rollout checklist.
-No numeric retention period or new automatic deletion policy is introduced. Recipient records,
-legacy history and free-text support/admin messages still require the documented retention review.
+The locally implemented retention policy deletes raw recipient details 180 days after completed/cancelled
+and minimized payment/new audit records five calendar years after that terminal date, subject to
+dispute/legal holds. Existing history, support conversations and copied/exported data remain outside
+the cleanup scope. Deployment remains pending.
 
 ### Firestore Schema Extension
 
@@ -2422,7 +2437,7 @@ cd mobile
   - [ ] **Western Union** (BACKUP - for urgent or failed transfers)
 - [ ] **Test small transfer to Bangladesh mobile wallet** (MANDATORY):
   - [x] Real bKash transfer: 320 BDT delivered (owner reported)
-  - [ ] Real Rocket transfer: 320 BDT sent/in progress; delivery confirmation pending
+  - [x] Real Rocket transfer: 320 BDT — VERIFIED / DELIVERED; Remitly Delivered and recipient receipt confirmed (owner report recorded 2026-10-04)
   - [ ] Verify delivery time and fees
   - [ ] Document the exact process for future reference
   - [ ] If Wise supports mobile wallets from Poland, test that as well
@@ -2980,7 +2995,7 @@ name, supported wallet provider and wallet number corresponding to the receiving
 
 This approach document provides a simplified, cost-effective framework for launching a Bangladesh-specific version of Gridline Soccer with promotional cash prizes. The streamlined implementation minimizes development complexity and operational overhead while maintaining compliance with Bangladesh skill-based gaming regulations.
 
-**Current scope:** Manual Remitly transfers; bKash delivery verified, Rocket delivery pending. Recipient identity is collected in separate firstName and lastName fields. See the current payment-flow document for private data storage and rollout.
+**Current scope:** Manual Remitly transfers; bKash and Rocket both VERIFIED / DELIVERED in real successful transfers. Recipient identity is collected in separate firstName and lastName fields. See the current payment-flow document for private data storage and rollout.
 
 **Key Success Factors**:
 1. **Legal Compliance**: Strict adherence to Bangladesh skill-based gaming regulations
@@ -2998,7 +3013,7 @@ This approach document provides a simplified, cost-effective framework for launc
 - **Lower user friction**: No document upload, immediate eligibility confirmation
 - **Data continuity**: Users keep all progress, friends, and stats when migrating
 - **International accessibility**: Polish developer can send prizes without Bangladesh residency
-- **Reliable mobile wallet support**: bKash delivery was verified; Rocket was submitted and remains in progress
+- **Reliable mobile wallet support**: bKash and Rocket both reached final Remitly status Delivered in real successful tests
 
 **Migration Strategy Highlights**:
 - **Current user base**: 746 active Bangladesh users on `piotr_gorczynski.soccer2`
@@ -3013,7 +3028,7 @@ This approach document provides a simplified, cost-effective framework for launc
 1. Game assumptions validated with ChatGPT legal consultation - skill-based framework confirmed
 2. Age verification approach validated - self-declaration + Google Play verification aligns with legal frameworks
 3. **Set up Remitly account (PRIMARY) and test transfer to Bangladesh mobile wallet** (CRITICAL for Polish developer)
-4. Await Rocket delivery confirmation; review truthful transfer-purpose and NBR requirements.
+4. Rocket delivery is verified; continue reviewing truthful transfer-purpose and NBR requirements.
 5. Set up dual-app Firebase configuration (register both package IDs)
 6. Begin Phase 1 implementation (planning & setup)
 7. Develop migration promotion materials and messaging
@@ -3025,7 +3040,7 @@ This approach document provides a simplified, cost-effective framework for launc
 - **DO NOT attempt to create bKash/Rocket accounts** - these services are geo-locked to Bangladesh
 - **DO create a Remitly account** (https://www.remitly.com) - RECOMMENDED for best mobile wallet support (bKash, Rocket)
 - **DO use only supported bKash/Rocket destinations** and truthful recipient/transfer details.
-- **DO distinguish submitted from delivered**: bKash 320 BDT delivered; Rocket 320 BDT delivery confirmation remains pending.
+- **DO distinguish submitted from delivered**: both bKash and Rocket 320 BDT tests reached Delivered. Continue checking delivery separately for each future payout.
 - **DO budget for transfer fees** - ~$0.50-$1.50 per prize payment with Remitly Economy (covered by developer)
 
 ---

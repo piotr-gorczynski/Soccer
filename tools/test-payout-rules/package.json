@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "test": "firebase emulators:exec --only firestore --project demo-payout --config firebase.json \"node --test payout-rules.test.js\"",
+    "test": "firebase emulators:exec --only firestore --project demo-payout --config firebase.json \"node --test payout-rules.test.js retention-integration.test.js\"",
     "pretest": "node -e \"require('node:fs').copyFileSync('../../firebase/firestore.rules', 'firestore.rules')\""
   },
   "devDependencies": {

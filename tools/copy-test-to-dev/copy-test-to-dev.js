@@ -100,22 +100,26 @@ function isRetryableFirestoreError(error) {
 async function deleteDocumentRecursive(docRef, bulkWriter) {
   let deletedDocs = 1; // Count this document (will be no-op if phantom)
   let subcollectionsCount = 0;
+
+  // Get all subcollections (works for both existing and phantom documents)
   const subcollections = await docRef.listCollections();
   subcollectionsCount += subcollections.length;
 
   // Process all subcollections
   for (const subcollection of subcollections) {
-    const subcollectionDocs = await subcollection.get();
+    const subcollectionDocs = await subcollection.listDocuments();
 
-    for (const doc of subcollectionDocs.docs) {
-      const result = await deleteDocumentRecursive(doc.ref, bulkWriter);
+    for (const doc of subcollectionDocs) {
+      const result = await deleteDocumentRecursive(doc, bulkWriter);
       deletedDocs += result.documents;
       subcollectionsCount += result.subcollections;
     }
   }
 
-  // Delete the document itself using BulkWriter
-  bulkWriter.delete(docRef);
+  // Delete the document itself using BulkWriter (works even if document doesn't exist)
+  // A partial BulkWriter batch is not sent until flushed. Await both the
+  // operation (which can reject) and flush (which alone does not report failure).
+  await Promise.all([bulkWriter.delete(docRef), bulkWriter.flush()]);
 
   return { documents: deletedDocs, subcollections: subcollectionsCount };
 }
@@ -129,7 +133,7 @@ async function copyDocumentRecursive(sourceDocRef, targetDocRef, bulkWriter) {
   // Copy the document data
   const sourceDoc = await sourceDocRef.get();
   if (sourceDoc.exists) {
-    bulkWriter.set(targetDocRef, sourceDoc.data());
+    await Promise.all([bulkWriter.set(targetDocRef, sourceDoc.data()), bulkWriter.flush()]);
     copiedDocs = 1;
   }
 
@@ -137,10 +141,10 @@ async function copyDocumentRecursive(sourceDocRef, targetDocRef, bulkWriter) {
   const subcollections = await sourceDocRef.listCollections();
   subcollectionsCount += subcollections.length;
   for (const subcollection of subcollections) {
-    const subcollectionDocs = await subcollection.get();
-    for (const doc of subcollectionDocs.docs) {
+    const subcollectionDocs = await subcollection.listDocuments();
+    for (const doc of subcollectionDocs) {
       const targetSubcollectionDocRef = targetDocRef.collection(subcollection.id).doc(doc.id);
-      const result = await copyDocumentRecursive(doc.ref, targetSubcollectionDocRef, bulkWriter);
+      const result = await copyDocumentRecursive(doc, targetSubcollectionDocRef, bulkWriter);
       copiedDocs += result.documents;
       subcollectionsCount += result.subcollections;
     }
@@ -161,7 +165,7 @@ async function copyDocumentRecursive(sourceDocRef, targetDocRef, bulkWriter) {
 function processBatchResults(results, successCounter, failedCounter, failedDocs, operationType) {
   let newSuccessCount = successCounter;
   let newFailedCount = failedCounter;
-  
+
   for (const result of results) {
     if (result.success) {
       newSuccessCount++;
@@ -171,7 +175,7 @@ function processBatchResults(results, successCounter, failedCounter, failedDocs,
       newFailedCount++;
     }
   }
-  
+
   return { successCount: newSuccessCount, failedCount: newFailedCount };
 }
 
@@ -182,15 +186,15 @@ function processBatchResults(results, successCounter, failedCounter, failedDocs,
  */
 function createConfiguredBulkWriter(db) {
   const bulkWriter = db.bulkWriter();
-  
+
   // Configure BulkWriter to handle retryable errors
   bulkWriter.onWriteError((error) => {
-    if (isRetryableFirestoreError(error.error)) {
+    if (error.failedAttempts < 5 && isRetryableFirestoreError(error)) {
       return true; // Retry
     }
     return false; // Don't retry
   });
-  
+
   return bulkWriter;
 }
 
@@ -199,21 +203,21 @@ function createConfiguredBulkWriter(db) {
  */
 async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
   console.log(`\n📦 Copying Firestore collection: ${collectionName}`);
-  
+
   try {
     const collectionStart = Date.now();
     const fetchStart = Date.now();
-    const sourceSnapshot = await sourceDb.collection(collectionName).get();
+    const sourceRefs = await sourceDb.collection(collectionName).listDocuments();
     const fetchDuration = Date.now() - fetchStart;
-    
-    if (sourceSnapshot.empty) {
+
+    if (sourceRefs.length === 0) {
       console.log(`   ℹ️  Collection '${collectionName}' is empty in TEST (${formatDuration(fetchDuration)} to read)`);
       return { success: 0, skipped: 0, failed: 0 };
     }
-    
-    console.log(`   📊 Found ${sourceSnapshot.size} document(s) in TEST`);
+
+    console.log(`   📊 Found ${sourceRefs.length} document(s) in TEST`);
     console.log(`   ⏱️  Read collection in ${formatDuration(fetchDuration)}`);
-    
+
     // Create a BulkWriter for efficient batch operations
     const bulkWriter = createConfiguredBulkWriter(targetDb);
 
@@ -225,8 +229,8 @@ async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
     const PARALLEL_BATCH_SIZE = 50;
     const docPromises = [];
 
-    for (let i = 0; i < sourceSnapshot.docs.length; i++) {
-      const doc = sourceSnapshot.docs[i];
+    for (let i = 0; i < sourceRefs.length; i++) {
+      const doc = sourceRefs[i];
       const sourceDocRef = sourceDb.collection(collectionName).doc(doc.id);
       const targetDocRef = targetDb.collection(collectionName).doc(doc.id);
 
@@ -241,17 +245,17 @@ async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
       docPromises.push(promise);
 
       // Process in batches to avoid overwhelming the system
-      if (docPromises.length >= PARALLEL_BATCH_SIZE || i === sourceSnapshot.docs.length - 1) {
+      if (docPromises.length >= PARALLEL_BATCH_SIZE || i === sourceRefs.length - 1) {
         const results = await Promise.all(docPromises);
         const counts = processBatchResults(results, successCount, failedCount, failedDocs, 'copying');
         successCount = counts.successCount;
         failedCount = counts.failedCount;
-        
+
         // Log progress every PARALLEL_BATCH_SIZE documents
-        if (successCount > 0 && (successCount % PARALLEL_BATCH_SIZE === 0 || successCount + failedCount === sourceSnapshot.size)) {
-          console.log(`   📝 Copied ${successCount}/${sourceSnapshot.size} document(s)...`);
+        if (successCount > 0 && (successCount % PARALLEL_BATCH_SIZE === 0 || successCount + failedCount === sourceRefs.length)) {
+          console.log(`   📝 Copied ${successCount}/${sourceRefs.length} document(s)...`);
         }
-        
+
         docPromises.length = 0; // Clear the array
       }
     }
@@ -271,7 +275,7 @@ async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
     const collectionDuration = Date.now() - collectionStart;
     const averageDuration = successCount > 0 ? collectionDuration / successCount : 0;
     console.log(`   ⏱️  Collection copy time: ${formatDuration(collectionDuration)} (avg ${formatDuration(Math.round(averageDuration))}/doc)`);
-    
+
     return { success: successCount, failed: failedCount };
   } catch (error) {
     console.error(`   ❌ Error copying collection '${collectionName}':`, error.message);
@@ -283,92 +287,7 @@ async function copyFirestoreCollection(sourceDb, targetDb, collectionName) {
  * Clear all documents (and their subcollections) from a Firestore collection using BulkWriter
  */
 async function clearFirestoreCollection(targetDb, collectionName) {
-  console.log(`\n🗑️  Clearing DEV collection: ${collectionName}`);
-
-  const collectionRef = targetDb.collection(collectionName);
-
-  let deletedCount = 0;
-  let failedCount = 0;
-  const failedDocs = [];
-  const clearStart = Date.now();
-
-  // Process documents in parallel batches
-  const PARALLEL_BATCH_SIZE = 50;
-
-  // Keep deleting until no more documents are found
-  // Always query from the beginning to avoid pagination issues when deleting.
-  // Using cursor-based pagination (startAfter) while deleting causes document skipping
-  // because document positions shift as deletions occur, resulting in incomplete clearing.
-  while (true) {
-    const query = collectionRef
-      .orderBy(admin.firestore.FieldPath.documentId())
-      .limit(200);
-
-    const snapshot = await query.get();
-
-    if (snapshot.empty) {
-      break;
-    }
-
-    // Create a new BulkWriter for each batch to ensure clean state.
-    // We must commit all deletions before querying again to prevent re-reading
-    // documents that should have been deleted, so we create a fresh BulkWriter
-    // for each iteration after closing the previous one.
-    const bulkWriter = createConfiguredBulkWriter(targetDb);
-
-    const docPromises = [];
-    for (const doc of snapshot.docs) {
-      const promise = deleteDocumentRecursive(doc.ref, bulkWriter)
-        .then(deleteResult => {
-          return { success: true, deleteResult, docId: doc.id };
-        })
-        .catch(error => {
-          return { success: false, error, docId: doc.id };
-        });
-
-      docPromises.push(promise);
-
-      // Process in batches to avoid overwhelming the system
-      if (docPromises.length >= PARALLEL_BATCH_SIZE) {
-        const results = await Promise.all(docPromises);
-        const counts = processBatchResults(results, deletedCount, failedCount, failedDocs, 'deleting');
-        deletedCount = counts.successCount;
-        failedCount = counts.failedCount;
-        
-        // Log progress every PARALLEL_BATCH_SIZE documents
-        if (deletedCount > 0 && deletedCount % PARALLEL_BATCH_SIZE === 0) {
-          console.log(`   🗑️  Deleted ${deletedCount} document(s)...`);
-        }
-        
-        docPromises.length = 0; // Clear the array
-      }
-    }
-
-    // Wait for remaining promises in this batch
-    if (docPromises.length > 0) {
-      const results = await Promise.all(docPromises);
-      const counts = processBatchResults(results, deletedCount, failedCount, failedDocs, 'deleting');
-      deletedCount = counts.successCount;
-      failedCount = counts.failedCount;
-    }
-
-    // Close the BulkWriter and commit all pending deletions before querying again
-    console.log(`   🔄 Committing batch deletions...`);
-    await bulkWriter.close();
-  }
-
-  console.log(`   ✅ Cleared ${deletedCount} document(s) with subcollections from DEV`);
-  if (failedCount > 0) {
-    console.log(`   ⚠️  Failed to delete ${failedCount} document(s)`);
-    failedDocs.forEach(failure => {
-      console.log(`      ❌ ${failure.id}: ${failure.message}`);
-    });
-  }
-
-  const clearDuration = Date.now() - clearStart;
-  console.log(`   ⏱️  Collection clear time: ${formatDuration(clearDuration)} (avg ${formatDuration(Math.round(clearDuration / Math.max(1, deletedCount)))} /doc)`);
-
-  return { deleted: deletedCount, failed: failedCount };
+  return clearFirestoreCollectionRecursive(targetDb, collectionName);
 }
 
 /**
@@ -427,11 +346,11 @@ async function clearFirestoreCollectionRecursive(targetDb, collectionPath) {
   // will get the remaining documents (deleted ones won't be returned anymore).
   while (true) {
     const collectionRef = targetDb.collection(collectionPath);
-    
+
     // Get document references (this includes phantoms)
     // After deletions are committed, the next call should return remaining documents
     const documentRefs = await collectionRef.listDocuments();
-    
+
     if (documentRefs.length === 0) {
       break;
     }
@@ -439,7 +358,7 @@ async function clearFirestoreCollectionRecursive(targetDb, collectionPath) {
     const bulkWriter = createConfiguredBulkWriter(targetDb);
     const docPromises = [];
     const failedDocs = [];
-    
+
     // Process up to BATCH_SIZE documents in this iteration
     // After we commit deletions, next iteration will get remaining documents
     const refsToProcess = documentRefs.slice(0, BATCH_SIZE);
@@ -461,11 +380,11 @@ async function clearFirestoreCollectionRecursive(targetDb, collectionPath) {
         const counts = processBatchResults(results, deletedCount, failedCount, failedDocs, 'deleting');
         deletedCount = counts.successCount;
         failedCount = counts.failedCount;
-        
+
         if (deletedCount > 0 && deletedCount % PARALLEL_BATCH_SIZE === 0) {
           console.log(`      🗑️  Deleted ${deletedCount} document(s)...`);
         }
-        
+
         docPromises.length = 0;
       }
     }
@@ -482,10 +401,11 @@ async function clearFirestoreCollectionRecursive(targetDb, collectionPath) {
     // This ensures deleted documents won't appear in the next listDocuments() call
     console.log(`      🔄 Committing batch deletions...`);
     await bulkWriter.close();
+    if (failedDocs.length > 0) break; // Report failure rather than looping forever.
   }
 
   console.log(`      ✅ Deleted ${deletedCount} document(s) from ${collectionPath}`);
-  
+
   return { deleted: deletedCount, failed: failedCount };
 }
 
@@ -494,12 +414,12 @@ async function clearFirestoreCollectionRecursive(targetDb, collectionPath) {
  */
 async function clearAuthenticationUsers(targetAuth) {
   console.log('\n🗑️  Clearing DEV Authentication users');
-  
+
   try {
     let deletedCount = 0;
     let failedCount = 0;
     let pageToken;
-    
+
     // First pass: Count total users
     console.log('   📊 Counting users in DEV...');
     let totalUsers = 0;
@@ -509,29 +429,29 @@ async function clearAuthenticationUsers(targetAuth) {
       totalUsers += listResult.users.length;
       countPageToken = listResult.pageToken;
     } while (countPageToken);
-    
+
     console.log(`   📊 Found ${totalUsers} user(s) in DEV`);
-    
+
     if (totalUsers === 0) {
       console.log('   ℹ️  No users to delete');
       return { deleted: 0, failed: 0 };
     }
-    
+
     // Second pass: Delete users
     // Keep deleting users until none remain
     while (deletedCount + failedCount < totalUsers) {
       const listResult = await targetAuth.listUsers(AUTH_BATCH_SIZE);
       const users = listResult.users;
-      
+
       if (users.length === 0) {
         break; // No more users to delete
       }
-      
+
       for (const user of users) {
         try {
           await targetAuth.deleteUser(user.uid);
           deletedCount++;
-          
+
           // Log progress every 100 users
           if (deletedCount % 100 === 0) {
             console.log(`   🗑️  Deleted ${deletedCount}/${totalUsers} user(s)...`);
@@ -542,12 +462,12 @@ async function clearAuthenticationUsers(targetAuth) {
         }
       }
     }
-    
+
     console.log(`   ✅ Successfully deleted ${deletedCount} user(s)`);
     if (failedCount > 0) {
       console.log(`   ⚠️  Failed to delete ${failedCount} user(s)`);
     }
-    
+
     return { deleted: deletedCount, failed: failedCount };
   } catch (error) {
     console.error(`   ❌ Error clearing authentication users:`, error.message);
@@ -560,13 +480,13 @@ async function clearAuthenticationUsers(targetAuth) {
  */
 async function copyAuthenticationUsers(sourceAuth, targetAuth) {
   console.log('\n📦 Copying Authentication users');
-  
+
   try {
     let successCount = 0;
     let failedCount = 0;
     let pageToken;
     let totalUsers = 0;
-    
+
     // First pass: Count total users
     console.log('   📊 Counting users in TEST...');
     let countPageToken;
@@ -575,19 +495,19 @@ async function copyAuthenticationUsers(sourceAuth, targetAuth) {
       totalUsers += listResult.users.length;
       countPageToken = listResult.pageToken;
     } while (countPageToken);
-    
+
     console.log(`   📊 Found ${totalUsers} user(s) in TEST`);
-    
+
     if (totalUsers === 0) {
       console.log('   ℹ️  No users to copy');
       return { success: 0, failed: 0 };
     }
-    
+
     // Second pass: Copy users
     do {
       const listResult = await sourceAuth.listUsers(AUTH_BATCH_SIZE, pageToken);
       const users = listResult.users;
-      
+
       if (users.length > 0) {
         const usersToImport = users.map(user => {
           const importUser = {
@@ -603,7 +523,7 @@ async function copyAuthenticationUsers(sourceAuth, targetAuth) {
             },
             providerData: user.providerData,
           };
-          
+
           // Include password hash if available
           if (user.passwordHash) {
             importUser.passwordHash = user.passwordHash;
@@ -611,25 +531,25 @@ async function copyAuthenticationUsers(sourceAuth, targetAuth) {
           if (user.passwordSalt) {
             importUser.passwordSalt = user.passwordSalt;
           }
-          
+
           // Include custom claims if present
           if (user.customClaims && Object.keys(user.customClaims).length > 0) {
             importUser.customClaims = user.customClaims;
           }
-          
+
           // Include phone number if present
           if (user.phoneNumber) {
             importUser.phoneNumber = user.phoneNumber;
           }
-          
+
           return importUser;
         });
-        
+
         try {
           const importResult = await targetAuth.importUsers(usersToImport);
           successCount += importResult.successCount;
           failedCount += importResult.failureCount;
-          
+
           if (importResult.failureCount > 0) {
             console.log(`   ⚠️  Batch: ${importResult.successCount} succeeded, ${importResult.failureCount} failed`);
             importResult.errors.forEach((error, idx) => {
@@ -643,15 +563,15 @@ async function copyAuthenticationUsers(sourceAuth, targetAuth) {
           failedCount += users.length;
         }
       }
-      
+
       pageToken = listResult.pageToken;
     } while (pageToken);
-    
+
     console.log(`   ✅ Successfully copied ${successCount} user(s)`);
     if (failedCount > 0) {
       console.log(`   ⚠️  Failed to copy ${failedCount} user(s)`);
     }
-    
+
     return { success: successCount, failed: failedCount };
   } catch (error) {
     console.error(`   ❌ Error copying authentication users:`, error.message);
@@ -664,22 +584,22 @@ async function copyAuthenticationUsers(sourceAuth, targetAuth) {
  */
 async function copyRtdbPath(sourceRtdb, targetRtdb, pathName) {
   console.log(`\n📦 Copying RTDB path: ${pathName}`);
-  
+
   try {
     const sourceSnapshot = await sourceRtdb.ref(pathName).once('value');
-    
+
     if (!sourceSnapshot.exists()) {
       console.log(`   ℹ️  Path '${pathName}' is empty or doesn't exist in TEST`);
       return { success: 0 };
     }
-    
+
     const data = sourceSnapshot.val();
     const keysCount = typeof data === 'object' && data !== null ? Object.keys(data).length : 1;
     console.log(`   📊 Found ${keysCount} key(s) in TEST`);
-    
+
     await targetRtdb.ref(pathName).set(data);
     console.log(`   ✅ Successfully copied ${keysCount} key(s)`);
-    
+
     return { success: keysCount };
   } catch (error) {
     console.error(`   ❌ Error copying RTDB path '${pathName}':`, error.message);
@@ -692,77 +612,77 @@ async function copyRtdbPath(sourceRtdb, targetRtdb, pathName) {
  */
 async function main() {
   const args = process.argv.slice(2);
-  
+
   // Check for dry-run flag
   const dryRun = args.includes('--dry-run');
   const clearTarget = args.includes('--clear-target');
   const clearDatabase = args.includes('--clear-database');
-  
+
   if (dryRun) {
     console.log('🔍 DRY RUN MODE - No data will be written to DEV\n');
   }
-  
+
   if (clearDatabase && !dryRun) {
     console.log('⚠️  CLEAR DATABASE MODE - ALL data in DEV Firestore will be deleted first\n');
     console.log('   This is more thorough than --clear-target as it handles phantom documents\n');
   } else if (clearTarget && !dryRun) {
     console.log('⚠️  CLEAR TARGET MODE - Existing data in DEV will be deleted first\n');
   }
-  
+
   // Load service account keys
   const testKeyPath = path.join(__dirname, '..', '..', 'secrets', 'serviceAccountKey.test.json');
   const devKeyPath = path.join(__dirname, '..', '..', 'secrets', 'serviceAccountKey.dev.json');
-  
+
   if (!fs.existsSync(testKeyPath)) {
     console.error('❌ TEST service account key not found:', testKeyPath);
     console.error('   Please ensure the file exists at the expected location.');
     process.exit(1);
   }
-  
+
   if (!fs.existsSync(devKeyPath)) {
     console.error('❌ DEV service account key not found:', devKeyPath);
     console.error('   Please ensure the file exists at the expected location.');
     process.exit(1);
   }
-  
+
   const testServiceAccount = require(testKeyPath);
   const devServiceAccount = require(devKeyPath);
-  
+
   // Initialize TEST Firebase app
   const testApp = admin.initializeApp({
     credential: admin.credential.cert(testServiceAccount),
     databaseURL: testServiceAccount.database_url || `https://${testServiceAccount.project_id}-default-rtdb.firebaseio.com`
   }, 'test');
-  
+
   // Initialize DEV Firebase app
   const devApp = admin.initializeApp({
     credential: admin.credential.cert(devServiceAccount),
     databaseURL: devServiceAccount.database_url || `https://${devServiceAccount.project_id}-default-rtdb.firebaseio.com`
   }, 'dev');
-  
+
   const testDb = testApp.firestore();
   const devDb = devApp.firestore();
   const testRtdb = testApp.database();
   const devRtdb = devApp.database();
   const testAuth = testApp.auth();
   const devAuth = devApp.auth();
-  
+
   console.log('🔥 Firebase apps initialized');
   console.log(`   TEST project: ${testServiceAccount.project_id}`);
   console.log(`   DEV project: ${devServiceAccount.project_id}`);
-  
+
   const results = {
     firestore: {},
     rtdb: {},
     authentication: {}
   };
-  
+
   // Clear entire Firestore database if requested
   if (clearDatabase && !dryRun) {
     console.log('\n' + '='.repeat(60));
     console.log('CLEARING ENTIRE FIRESTORE DATABASE');
     console.log('='.repeat(60));
-    
+
     try {
       const clearResult = await clearEntireFirestoreDatabase(devDb);
       results.databaseClear = clearResult;
@@ -771,19 +691,19 @@ async function main() {
       results.databaseClear = { error: error.message };
     }
   }
-  
+
   // Copy Firestore collections
   console.log('\n' + '='.repeat(60));
   console.log('FIRESTORE COLLECTIONS');
   console.log('='.repeat(60));
-  
+
   for (const collectionName of FIRESTORE_COLLECTIONS) {
     if (dryRun) {
       console.log(`\n📦 [DRY RUN] Would copy collection: ${collectionName}`);
       try {
-        const snapshot = await testDb.collection(collectionName).get();
-        console.log(`   📊 Found ${snapshot.size} document(s) in TEST`);
-        results.firestore[collectionName] = { success: snapshot.size, dryRun: true };
+        const refs = await testDb.collection(collectionName).listDocuments();
+        console.log(`   📊 Found ${refs.length} root document path(s), including missing ancestors; subcollections will also be copied`);
+        results.firestore[collectionName] = { success: refs.length, dryRun: true };
       } catch (error) {
         console.error(`   ❌ Error reading collection:`, error.message);
         results.firestore[collectionName] = { error: error.message };
@@ -797,7 +717,7 @@ async function main() {
           console.error(`   ⚠️  Error clearing collection:`, error.message);
         }
       }
-      
+
       results.firestore[collectionName] = await copyFirestoreCollection(
         testDb,
         devDb,
@@ -805,12 +725,12 @@ async function main() {
       );
     }
   }
-  
+
   // Copy RTDB paths
   console.log('\n' + '='.repeat(60));
   console.log('REALTIME DATABASE');
   console.log('='.repeat(60));
-  
+
   for (const pathName of RTDB_PATHS) {
     if (dryRun) {
       console.log(`\n📦 [DRY RUN] Would copy RTDB path: ${pathName}`);
@@ -839,16 +759,16 @@ async function main() {
           console.error(`   ⚠️  Error clearing path:`, error.message);
         }
       }
-      
+
       results.rtdb[pathName] = await copyRtdbPath(testRtdb, devRtdb, pathName);
     }
   }
-  
+
   // Copy Authentication users
   console.log('\n' + '='.repeat(60));
   console.log('AUTHENTICATION');
   console.log('='.repeat(60));
-  
+
   if (dryRun) {
     console.log('\n📦 [DRY RUN] Would copy Authentication users');
     try {
@@ -870,15 +790,15 @@ async function main() {
     if (clearTarget || clearDatabase) {
       results.authentication.cleared = await clearAuthenticationUsers(devAuth);
     }
-    
+
     results.authentication.users = await copyAuthenticationUsers(testAuth, devAuth);
   }
-  
+
   // Summary
   console.log('\n' + '='.repeat(60));
   console.log('SUMMARY');
   console.log('='.repeat(60));
-  
+
   if (results.databaseClear) {
     console.log('\nDatabase Clear:');
     if (results.databaseClear.error) {
@@ -890,7 +810,7 @@ async function main() {
       }
     }
   }
-  
+
   console.log('\nFirestore Collections:');
   for (const [collection, result] of Object.entries(results.firestore)) {
     if (result.error) {
@@ -904,7 +824,7 @@ async function main() {
       }
     }
   }
-  
+
   console.log('\nRealtime Database:');
   for (const [path, result] of Object.entries(results.rtdb)) {
     if (result.error) {
@@ -915,7 +835,7 @@ async function main() {
       console.log(`  ✅ ${path}: ${result.success} key(s) copied`);
     }
   }
-  
+
   console.log('\nAuthentication:');
   for (const [type, result] of Object.entries(results.authentication)) {
     if (result.error) {
@@ -934,16 +854,20 @@ async function main() {
       }
     }
   }
-  
+
   console.log('\n✨ Done!\n');
-  
+
   // Clean up
   await testApp.delete();
   await devApp.delete();
 }
 
-// Run the script
-main().catch(error => {
-  console.error('\n💥 Fatal error:', error);
-  process.exit(1);
-});
+// Importing helpers in tests must never initialize apps or access real credentials.
+if (require.main === module) {
+  main().catch(error => {
+    console.error('\n💥 Fatal error:', error);
+    process.exitCode = 1;
+  });
+}
+module.exports = { copyDocumentRecursive, deleteDocumentRecursive, copyFirestoreCollection,
+  clearFirestoreCollection, createConfiguredBulkWriter, FIRESTORE_COLLECTIONS };
