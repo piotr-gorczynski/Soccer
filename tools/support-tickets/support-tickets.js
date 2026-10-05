@@ -71,12 +71,12 @@ async function updateTicket(db, ticketRef, command, message, actor, FieldValue) 
     const payment = paymentRef ? await transaction.get(paymentRef) : null;
     if (paymentRef && !payment.exists) throw new Error('Payment no longer exists.');
     const previousStatus = ticket.get('status');
+    if (['resolved', 'closed'].includes(previousStatus)) {
+      throw new Error(`Ticket ${ticketRef.id} is ${previousStatus}; reply/resolve cannot modify a finished ticket.`);
+    }
     const update = { status, updatedAt: now };
     if (previousStatus !== status) update.statusUpdatedAt = now;
     if (command === 'resolve') update.resolvedAt = now;
-    else if (previousStatus === 'resolved' || previousStatus === 'closed') {
-      update.resolvedAt = FieldValue.delete();
-    }
     if (message.trim()) {
       update.latestSupportReply = message.trim();
       update.latestSupportReplyAt = now;
