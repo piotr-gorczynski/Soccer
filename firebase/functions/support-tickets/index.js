@@ -4,7 +4,7 @@ const functions = require('firebase-functions/v1');
 const { getApps, initializeApp } = require('firebase-admin/app');
 const { FieldValue, getFirestore } = require('firebase-admin/firestore');
 const { getMessaging } = require('firebase-admin/messaging');
-const { validateCreateRequest } = require('./support-ticket');
+const { validateCreateRequest, payoutContext } = require('./support-ticket');
 
 if (!getApps().length) initializeApp();
 const db = getFirestore();
@@ -41,6 +41,11 @@ exports.createSupportTicket = functions.region('us-central1').https.onCall(async
       throw new functions.https.HttpsError('not-found', 'Payment was not found.');
     }
 
+    const recipient = await transaction.get(paymentRef.collection('private').doc('recipient'));
+    const tournament = payment.get('tournamentId')
+      ? await transaction.get(db.collection('tournaments').doc(payment.get('tournamentId'))) : null;
+    const { market, payoutMethod } = payoutContext(payment.data(), recipient.data(), tournament?.data());
+
     const existing = await transaction.get(db.collection('supportTickets')
       .where('userId', '==', context.auth.uid)
       .where('paymentId', '==', input.paymentId));
@@ -60,7 +65,7 @@ exports.createSupportTicket = functions.region('us-central1').https.onCall(async
       userId: context.auth.uid,
       paymentId: payment.id,
       tournamentId: payment.get('tournamentId') || '',
-      market: payment.get('market') || '',
+      market,
       category: input.category,
       message: input.message,
       status: 'open',
@@ -73,7 +78,7 @@ exports.createSupportTicket = functions.region('us-central1').https.onCall(async
         locale: input.locale,
         validationErrorCode: input.validationErrorCode,
         paymentStatus: payment.get('status') || '',
-        payoutMethod: payment.get('recipientInfo.method') || '',
+        payoutMethod,
       },
     });
     batch.set(ticketRef.collection('statusHistory').doc('created'), {

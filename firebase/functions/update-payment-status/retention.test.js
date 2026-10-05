@@ -122,3 +122,22 @@ test('large new history is paginated while raw data is removed on the first pass
   assert.equal(await processPayment(f.db,f.ref,new Date('2032-01-02Z'),Timestamp),'audit-deleted');
   assert.ok(f.values.has('payments/p/statusHistory/legacy'));
 });
+
+test('support context reads private recipient and server-side tournament flavour', () => {
+ const { payoutContext } = require('../support-tickets/support-ticket');
+ assert.deepEqual(payoutContext({}, {walletProvider:'BKASH'}, {visibleInFlavours:['bangladesh']}),
+  {market:'BD',payoutMethod:'bkash'});
+ assert.deepEqual(payoutContext({walletProvider:'ROCKET'}, undefined, {visibleInFlavours:['bangladesh']}),
+  {market:'BD',payoutMethod:'rocket'});
+ assert.deepEqual(payoutContext({},undefined,{}),{market:'',payoutMethod:''});
+});
+test('many private attempts are paginated and legacy history is left unchanged', async () => {
+ const f=fixture();
+ for(let i=0;i<205;i++) f.values.set('payments/p/private/transfer-'+i,{recordType:'transfer_attempt',providerReference:'ref-'+i});
+ assert.equal(await processPayment(f.db,f.ref,new Date('2032-01-01Z'),Timestamp),'history-page');
+ assert.ok(f.values.has('payments/p'));
+ assert.equal(await processPayment(f.db,f.ref,new Date('2032-01-01Z'),Timestamp),'history-page');
+ assert.equal(await processPayment(f.db,f.ref,new Date('2032-01-01Z'),Timestamp),'audit-deleted');
+ assert.ok(![...f.values.keys()].some(k=>k.includes('/private/')));
+ assert.ok(f.values.has('payments/p/statusHistory/legacy'));
+});

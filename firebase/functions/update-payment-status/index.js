@@ -5,7 +5,7 @@ const { getApps, initializeApp } = require('firebase-admin/app');
 const { FieldValue, Timestamp, getFirestore } = require('firebase-admin/firestore');
 const { getMessaging } = require('firebase-admin/messaging');
 const { VALID_STATUSES, NOTIFIABLE_STATUSES, assertTransition, validateTransitionData,
-  buildAdminHistory, recordRecipientSubmission } = require('./payment-workflow');
+  buildAdminHistory, recordRecipientSubmission, persistTransition } = require('./payment-workflow');
 
 if (!getApps().length) initializeApp();
 const db = getFirestore();
@@ -71,9 +71,9 @@ async function updatePayment(paymentId, status, data, actor) {
     const currentStatus = paymentSnap.get('status');
     assertTransition(currentStatus, status);
     validateTransitionData(status, data);
-    transaction.update(paymentRef, buildPaymentUpdate(status, data));
-    transaction.set(historyRef, buildAdminHistory(currentStatus, status, data, actor,
-      'updatePaymentStatus', FieldValue.serverTimestamp()));
+    await persistTransition(transaction, db, paymentRef, paymentSnap, status, data, historyRef,
+      buildPaymentUpdate(status, data), buildAdminHistory(currentStatus, status, data, actor,
+      'updatePaymentStatus', FieldValue.serverTimestamp()), Timestamp);
     return { previousStatus: currentStatus };
   });
 }

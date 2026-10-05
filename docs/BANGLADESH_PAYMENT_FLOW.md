@@ -117,7 +117,7 @@ before a winner submits recipient details. Bangladesh-only privacy routing is pr
 
 ## Retention and support
 
-Implemented locally, **not deployed**. Policy version 1 uses `completed` and `cancelled` as terminal
+Policy version 1 uses `completed` and `cancelled` as terminal
 statuses. The authoritative anchor is `statusUpdatedAt` when terminal retention is first recorded.
 `sent` and `action_required` do not start retention. Missing terminal dates fail closed: no deletion.
 
@@ -126,15 +126,15 @@ and, after raw deletion, `rawDeletedAt`. Raw expiry is exactly 180 UTC days afte
 Audit expiry is five calendar years later at the same UTC time; February 29 maps to February 28
 when the anniversary year is not leap. Retries, account deletion and hold releases do not reset dates.
 
-`onPaymentStatusChanged` initializes retention for terminal Bangladesh payments, including transitions
-made with the local CLI. Daily `cleanupBangladeshPayouts` (03:00 UTC, in the update-payment-status
+The administrator callable and local CLI now write retention deadlines atomically with terminal
+Bangladesh status transitions. `onPaymentStatusChanged` remains a fallback for other trusted writes. Daily `cleanupBangladeshPayouts` (03:00 UTC, in the update-payment-status
 codebase) also initializes missing metadata and processes overdue records. It scans payments in
 100-document pages without requiring a composite index. Market selection uses the tournament's
 `visibleInFlavours` containing `bangladesh`; once enrolled, `retention.policyVersion == 1` keeps the
 record in scope even if tournament metadata disappears. Missing tournament data before enrollment
 cannot establish Bangladesh scope and is skipped. This task does not migrate live data.
 
-At 180 days the job transactionally deletes `private/recipient` and replaces the parent with an
+At 180 days the job deletes `private/recipient` and private transfer-attempt records and replaces the parent with an
 allowlisted minimal record: userId, tournamentId, amount, currency, rank, status, lifecycle timestamps,
 recipient schema version, retention metadata, wallet provider, safe transfer provider/reference and
 sent/completed dates. Names, full wallet numbers, legacy recipientInfo, admin notes and issue text
@@ -144,12 +144,35 @@ excluded rather than copied into the minimized record. Operators must enter actu
 identifiers only. No full recipient details are copied to a separate audit collection.
 
 At five years, delete the parent, any remaining private recipient document, and **only** new payment
-`statusHistory` entries marked `retentionPolicyVersion: 1`. Up to 400 history entries are removed per
+`statusHistory` entries marked `retentionPolicyVersion: 1`. Up to 300 history entries and 100 private transfer-attempt records are removed per
 transaction/run before final parent deletion, so large histories can require multiple daily runs.
 **Existing unmarked statusHistory is never updated, migrated or deleted.** It may remain as a
 subcollection under a missing parent and can contain legacy personal information. Support records,
 notification bookkeeping, other user/game data, backups/exports and other-environment copies are not
 covered by this job. A separate approved legacy/support/copy cleanup remains necessary.
+
+### Transfer attempts and support completion (2026-10-05)
+
+Each new `sent` transition from the CLI or callable creates
+`payments/{id}/private/transfer-{historyId}` with `recordType: transfer_attempt`, an attempt ID,
+provider, reference and sent timestamp. Retries in the same transaction do not duplicate it.
+`transfer.attemptId` and subsequent history events link to that attempt; a later send does not
+replace the earlier private record. Full attempt references are raw data subject to the same
+180-day expiry and holds, paginated at 100 per cleanup pass. Long-term history stores only
+attempt IDs, not names, wallet numbers or free-text references. Previously overwritten references
+cannot be recovered and are not invented or backfilled.
+
+On `completed`, the same transaction resolves existing active `validation_rejected` and
+`payout_method_unavailable` tickets, recording `resolvedAt`, `resolutionCode: payment_completed`
+and a system history event linked to the payment history. It does not auto-resolve
+`payment_not_received`/`other` tickets, cancel-related complaints, or tickets while a payment
+retention hold is active. New complaints raised after completion remain open for review.
+Support context reads the wallet provider from `private/recipient` (or its minimized parent
+snapshot), and derives BD market from the server-side tournament flavour when absent on the payment.
+
+These lifecycle refinements are local changes pending deployment; running 540/550 from remote
+`dev` does not publish uncommitted edits. Deploy 540 and 580 after committing/pushing them.
+Existing completed payments and tickets are not retroactively resolved by this change.
 
 ### Holds and concurrent support handling
 
@@ -183,7 +206,8 @@ payout retention runs independently and does not imply complete account-data era
 Deploy the updated update-payment-status codebase (including the scheduled job and hold callable),
 support-tickets, and on-tournament-complete before relying on this policy. Cloud Build's 540 recipe
 now copies retention.js. Local support/update-payment scripts must also use this code revision.
-No deployment, commit, push or historical purge was performed by this implementation task.
+The previously committed code was deployed to DEV through 580, 590 and 540/550. The lifecycle
+refinements above still require a new deployment. No historical purge or data migration is performed.
 
 The 180-day/five-year durations are the owner's operational policy, not an assertion of a statutory
 five-year requirement for full wallet numbers. Legal applicability, register scope and exceptions

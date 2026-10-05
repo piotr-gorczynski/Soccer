@@ -31,7 +31,7 @@ function minimized(payment, recipient = {}) {
       .some(secret => typeof secret === 'string' && secret && value.toLowerCase().includes(secret.toLowerCase()));
     if (!hasPrivateData && !/\d{11,}/.test(value.replace(/[^0-9]/g, ''))) result.transfer[field] = value;
   }
-  for (const field of ['sentAt', 'completedAt']) {
+  for (const field of ['sentAt', 'completedAt', 'attemptId']) {
     if (transfer[field]) result.transfer[field] = transfer[field];
   }
   return result;
@@ -66,17 +66,20 @@ async function processPayment(db, ref, now, Timestamp) {
         || typeof retention.auditExpiresAt?.toMillis !== 'function') return 'invalid-retention-metadata';
     const rawDue = now.getTime() >= retention.rawExpiresAt.toMillis();
     const auditDue = now.getTime() >= retention.auditExpiresAt.toMillis();
+    const attempts = rawDue && !held
+      ? await tx.get(ref.collection('private').where('recordType', '==', 'transfer_attempt').limit(100)) : null;
     // Query only new-policy history. Legacy statusHistory is never changed or deleted.
     const history = auditDue && !held
-      ? await tx.get(ref.collection('statusHistory').where('retentionPolicyVersion', '==', 1).limit(400)) : null;
+      ? await tx.get(ref.collection('statusHistory').where('retentionPolicyVersion', '==', 1).limit(300)) : null;
     if (held) {
       if (!payment.retention) tx.update(ref, { retention });
       return 'held';
     }
+    if (attempts) for (const attempt of attempts.docs) tx.delete(attempt.ref);
     if (auditDue) {
       for (const doc of history.docs) tx.delete(doc.ref);
       tx.delete(recipientRef);
-      if (history.size === 400) {
+      if (history.size === 300 || attempts.size === 100) {
         const reduced = minimized({ ...payment, retention }, recipient.exists ? recipient.data() : {});
         reduced.retention.rawDeletedAt = retention.rawDeletedAt || Timestamp.fromDate(now);
         if (payment.retentionHold) reduced.retentionHold = payment.retentionHold;

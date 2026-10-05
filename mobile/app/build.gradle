@@ -219,7 +219,11 @@ dependencies {
     implementation 'com.squareup.okhttp3:okhttp:5.5.0'
 
     // User Messaging Platform SDK
-    implementation 'com.google.android.ump:user-messaging-platform:4.0.0'
+    // UMP 4.0.0 crashes in zzcr.zzl when its metrics error response is empty.
+    // Keep 3.2.0 until upstream fixes this; consent sync (4.x) is not used here.
+    implementation('com.google.android.ump:user-messaging-platform:3.2.0') {
+        version { strictly '3.2.0' }
+    }
 
     // 25.4.0 pulls in HSDP 2.0.1, which crashes on some Android 11 devices
     // (HsdpShimActivity: "targetPackageName is null"). Keep the last known-good
