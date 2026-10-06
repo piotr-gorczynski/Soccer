@@ -784,12 +784,8 @@ public class FirebaseAuthManager {
             return;
         }
 
-        // Use Facebook LoginManager to get access token
-        com.facebook.login.LoginManager.getInstance().logInWithReadPermissions(activity, java.util.Arrays.asList("public_profile"));
-        
-        // Register callback for Facebook login result
-        com.facebook.login.LoginManager.getInstance().registerCallback(
-            callbackManager, 
+        FacebookLoginHelper.logIn(
+            activity, callbackManager,
             new com.facebook.FacebookCallback<com.facebook.login.LoginResult>() {
                 @Override
                 public void onSuccess(com.facebook.login.LoginResult result) {

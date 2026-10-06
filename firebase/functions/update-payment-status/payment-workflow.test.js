@@ -10,7 +10,7 @@ test('allows the normal payout lifecycle', () => {
   assert.doesNotThrow(() => assertTransition('sent', 'completed'));
 });
 
-test('admin history preserves supplied text and transfer metadata independently of later edits', () => {
+test('admin history excludes free text and transfer metadata that may contain recipient PII', () => {
   const input = {
     issueCode: 'invalid_recipient_account', userMessage: '  Popraw konto\nSUP-123  ',
     notes: 'Internal note', provider: 'Remitly', providerReference: 'R-123', clearIssue: false,
@@ -19,10 +19,7 @@ test('admin history preserves supplied text and transfer metadata independently 
   const history = buildAdminHistory('processing', 'action_required', input,
     'admin@example.test', 'test', 'SERVER_TIME');
   input.userMessage = 'Replacement';
-  assert.deepEqual(history.details, {
-    issueCode: 'invalid_recipient_account', userMessage: '  Popraw konto\nSUP-123  ',
-    notes: 'Internal note', provider: 'Remitly', providerReference: 'R-123', clearIssue: false,
-  });
+  assert.deepEqual(history.details, { clearIssue: false });
   assert.equal(history.changedAt, 'SERVER_TIME');
   assert.equal(history.changedBy, 'admin@example.test');
   assert.equal(history.from, 'processing');
@@ -51,11 +48,11 @@ test('recipient submissions use event time and survive repeated/out-of-order tri
   assert.equal(recorded.changedAt, 'SUBMISSION_TIME');
   assert.equal(recorded.recordedAt, 'RECORDING_TIME');
   assert.equal('previousRecipientInfo' in recorded, false);
-  assert.deepEqual(recorded.previousIssue, before.issue);
+  assert.equal(recorded.hadPreviousIssue, true);
   assert.equal('recipientInfo' in recorded, false);
   assert.equal(recorded.changedBy, 'winner');
   assert.equal(records.get('recipient-first').changedAt, 'EARLIER_TIME');
-  assert.equal(records.get('recipient-first').previousIssue, null);
+  assert.equal(records.get('recipient-first').hadPreviousIssue, false);
 });
 
 test('admin transitions are not duplicated by recipient history recorder', async () => {
@@ -95,4 +92,17 @@ test('v2 submission history does not copy private or legacy recipient details', 
   assert.equal(record.recipientDetailsVersion, 2);
   assert.equal('recipientInfo' in record, false);
   assert.equal('previousRecipientInfo' in record, false);
+});
+
+
+test('new history never copies recipient names/numbers hidden in admin free text', () => {
+  const history = buildAdminHistory('sent', 'completed', {
+    firstName: 'PrivateFirst', lastName: 'PrivateLast', walletNumber: '01712345678',
+    notes: 'PrivateFirst PrivateLast 01712345678', userMessage: '01712345678',
+    providerReference: '01712345678', issueCode: 'PrivateFirst',
+  }, 'admin', 'test', 'TIME');
+  const json = JSON.stringify(history);
+  for (const value of ['PrivateFirst', 'PrivateLast', '01712345678', 'firstName', 'lastName', 'walletNumber']) {
+    assert.ok(!json.includes(value));
+  }
 });

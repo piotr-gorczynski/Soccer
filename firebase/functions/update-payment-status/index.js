@@ -2,13 +2,14 @@
 
 const functions = require('firebase-functions/v1');
 const { getApps, initializeApp } = require('firebase-admin/app');
-const { FieldValue, getFirestore } = require('firebase-admin/firestore');
+const { FieldValue, Timestamp, getFirestore } = require('firebase-admin/firestore');
 const { getMessaging } = require('firebase-admin/messaging');
 const { VALID_STATUSES, NOTIFIABLE_STATUSES, assertTransition, validateTransitionData,
-  buildAdminHistory, recordRecipientSubmission } = require('./payment-workflow');
+  buildAdminHistory, recordRecipientSubmission, persistTransition } = require('./payment-workflow');
 
 if (!getApps().length) initializeApp();
 const db = getFirestore();
+const retentionPolicy = require('./retention');
 const messaging = getMessaging();
 
 const PAYMENT_MESSAGES = {
@@ -70,9 +71,9 @@ async function updatePayment(paymentId, status, data, actor) {
     const currentStatus = paymentSnap.get('status');
     assertTransition(currentStatus, status);
     validateTransitionData(status, data);
-    transaction.update(paymentRef, buildPaymentUpdate(status, data));
-    transaction.set(historyRef, buildAdminHistory(currentStatus, status, data, actor,
-      'updatePaymentStatus', FieldValue.serverTimestamp()));
+    await persistTransition(transaction, db, paymentRef, paymentSnap, status, data, historyRef,
+      buildPaymentUpdate(status, data), buildAdminHistory(currentStatus, status, data, actor,
+      'updatePaymentStatus', FieldValue.serverTimestamp()), Timestamp);
     return { previousStatus: currentStatus };
   });
 }
@@ -105,6 +106,9 @@ exports.onPaymentStatusChanged = functions.runWith({ failurePolicy: true }).fire
   .onUpdate(async (change, context) => {
     const before = change.before.data();
     const after = change.after.data();
+    if (['completed', 'cancelled'].includes(after.status)) {
+      await retentionPolicy.processPayment(db, change.after.ref, new Date(), Timestamp);
+    }
     await recordRecipientSubmission(db, change.after.ref, before, after, context.eventId, FieldValue);
     if (before.status === after.status || !NOTIFIABLE_STATUSES.has(after.status)) return null;
 
@@ -160,3 +164,22 @@ exports.onPaymentStatusChanged = functions.runWith({ failurePolicy: true }).fire
   });
 
 exports._test = { buildPaymentUpdate, updatePayment };
+
+// Daily application-managed retention: Firestore TTL cannot respect dispute/legal holds.
+exports.cleanupBangladeshPayouts = functions.runWith({ timeoutSeconds: 540 })
+  .region('us-central1').pubsub.schedule('every day 03:00').timeZone('UTC')
+  .onRun(async () => {
+    console.log('Payout retention summary', await retentionPolicy.sweep(db, new Date(), Timestamp));
+    return null;
+  });
+
+exports.setPayoutRetentionHold = functions.region('us-central1').https.onCall(async (data, context) => {
+  if (context.auth?.token.admin !== true) {
+    throw new functions.https.HttpsError('permission-denied', 'Administrator required.');
+  }
+  if (typeof data?.paymentId !== 'string' || !data.paymentId || data.paymentId.includes('/')) {
+    throw new functions.https.HttpsError('invalid-argument', 'Payment ID required.');
+  }
+  await retentionPolicy.setHold(db, data.paymentId, data.active, data.reasonCode, context.auth.uid, Timestamp);
+  return { ok: true };
+});

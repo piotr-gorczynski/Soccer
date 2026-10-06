@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.View;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 import androidx.annotation.Nullable;
@@ -19,7 +18,6 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
-import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -126,8 +124,7 @@ public class UniversalLoginActivity extends BaseActivity {
             return;
         }
 
-        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList( "public_profile"));
-        LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+        FacebookLoginHelper.logIn(this, callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult result) {
                 authManager.loginWithFacebookToken(result.getAccessToken().getToken(), storedNickname, callback);

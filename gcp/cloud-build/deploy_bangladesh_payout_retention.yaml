@@ -1,3 +1,5 @@
+# Manual trigger 590: targeted retention deployment within the existing payment codebase.
+# First retention rollout also requires updated 540, 550 and 580 deployments.
 substitutions:
   _ENVIRONMENT: 'dev'
   _FOLDER_NAME: 'soccer'
@@ -84,11 +86,11 @@ steps:
         project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
 
         /workspace/firebase-cli/node_modules/.bin/firebase deploy \
-          --only functions:update-payment-status \
+          --only functions:update-payment-status:cleanupBangladeshPayouts,functions:update-payment-status:setPayoutRetentionHold \
           --project="$project_id" \
           --force --non-interactive --debug
 
-        echo "✅ Functions 'updatePaymentStatus' and 'onPaymentStatusChanged' deployed successfully."
+        echo "✅ Functions 'cleanupBangladeshPayouts' and 'setPayoutRetentionHold' deployed successfully."
 
 
 

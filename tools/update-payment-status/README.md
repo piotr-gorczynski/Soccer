@@ -60,9 +60,9 @@ The tool rejects unknown statuses and transitions that are not allowed by
 Each successful command atomically updates the payment and appends a document to
 `payments/{paymentId}/statusHistory`. The entry includes `from`, `to`, server-side
 `changedAt`, `actorType`, `changedBy` (the CLI service-account email), and `source`.
-`details` preserves the original supplied `issueCode`, `userMessage`, `notes`,
-`provider`, and `providerReference`, including whitespace and newlines. Subsequent
-commands do not overwrite these entries. `--dry-run` does not write history.
+New history retains only metadata and an explicit `clearIssue` flag. It does not copy free-text
+notes, messages, issue codes or provider/reference fields, which may contain personal information.
+Existing history is unchanged. `--dry-run` does not write history.
 The admin callable uses the same format, identifying the authenticated admin UID.
 
 Payment creation records `payment_created`; the payment-status trigger records
@@ -90,5 +90,27 @@ access to the private document when processing manually in Remitly. Do not put r
 numbers into `--notes` or user messages. All four recipient fields are required before processing; do not invent names from a nickname.
 Bangladesh has not launched in production; old test schemas are not supported.
 
-Real tests: bKash 320 BDT delivered; Rocket 320 BDT sent/in progress (delivery not confirmed).
+Real tests (owner confirmation recorded 2026-10-04): bKash and Rocket — VERIFIED / DELIVERED.
+Both real 320 BDT Remitly transfers reached final status Delivered. Rocket was transferred from
+Poland to Bangladesh and received in the recipient account. The earlier Rocket attempt with an
+organization-style name was paused; the successful attempt used the personal name matching the
+Rocket account. This supports separate firstName, lastName, walletProvider and walletNumber fields.
+Nagad remains NOT SUPPORTED / EXCLUDED because Remitly requires a mandatory Reason for Sending
+and the available categories do not accurately describe a tournament prize.
 Mark `completed` only on delivery evidence. See `docs/BANGLADESH_PAYMENT_FLOW.md` for rollout.
+
+
+### Payout retention holds
+
+For an unresolved dispute or legal obligation, suspend payout cleanup:
+
+```powershell
+node tools/update-payment-status/retention-hold.js dev PAYMENT_ID hold legal_obligation
+node tools/update-payment-status/retention-hold.js dev PAYMENT_ID hold dispute
+node tools/update-payment-status/retention-hold.js dev PAYMENT_ID release
+```
+
+Release does not restart the 180-day / five-year deadlines. Open support tickets independently block
+cleanup. History now records status/actor/time metadata without copying free-text notes or references;
+current operational payment fields still store supplied text until minimization.
+See docs/BANGLADESH_PAYMENT_FLOW.md for deployment and legacy-history exclusions.

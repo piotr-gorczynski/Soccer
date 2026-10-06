@@ -1,0 +1,19 @@
+{
+  "name": "590-deploy-bangladesh-payout-retention",
+  "description": "Manually deploy Bangladesh payout cleanup and admin retention holds. Defaults to dev; does not deploy Firestore rules. Requires committed deployment YAML.",
+  "gitFileSource": {
+    "path": "gcp/cloud-build/deploy_bangladesh_payout_retention.yaml",
+    "repoType": "GITHUB",
+    "revision": "refs/heads/dev",
+    "uri": "https://github.com/piotr-gorczynski/Soccer"
+  },
+  "sourceToBuild": {
+    "ref": "refs/heads/dev",
+    "repoType": "GITHUB",
+    "uri": "https://github.com/piotr-gorczynski/Soccer"
+  },
+  "serviceAccount": "projects/org-service-account-001/serviceAccounts/cloud-build-sa@org-service-account-001.iam.gserviceaccount.com",
+  "substitutions": {
+    "_ENVIRONMENT": "dev"
+  }
+}

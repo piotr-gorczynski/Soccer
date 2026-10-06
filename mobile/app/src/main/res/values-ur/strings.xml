@@ -432,4 +432,5 @@
     <string name="payment_last_name">آخری نام</string>
     <string name="payment_name_required">نام درج کریں (1–100 حروف)۔</string>
     <string name="payment_recipient_instructions">پہلا اور آخری نام آپ کے موبائل والیٹ اور Remitly میں درج وصول کنندہ کی معلومات سے ملنے چاہئیں۔ غلط معلومات ادائیگی میں تاخیر یا رکاوٹ کا سبب بن سکتی ہیں۔</string>
+    <string name="bangladesh_privacy_policy_english">بنگلہ دیش کی رازداری کی پالیسی (انگریزی)</string>
 </resources>

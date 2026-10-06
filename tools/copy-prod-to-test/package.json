@@ -4,7 +4,8 @@
   "description": "Script to copy data from PROD to TEST Firebase databases",
   "main": "copy-prod-to-test.js",
   "scripts": {
-    "start": "node copy-prod-to-test.js"
+    "start": "node copy-prod-to-test.js",
+    "test": "node --test copy-prod-to-test.test.js"
   },
   "dependencies": {
     "firebase-admin": "^13.4.0"

@@ -66,13 +66,17 @@ async function updateTicket(db, ticketRef, command, message, actor, FieldValue) 
   return db.runTransaction(async transaction => {
     const ticket = await transaction.get(ticketRef);
     if (!ticket.exists) throw new Error(`Ticket ${ticketRef.id} does not exist.`);
+    const paymentId = ticket.get('paymentId');
+    const paymentRef = paymentId ? db.collection('payments').doc(paymentId) : null;
+    const payment = paymentRef ? await transaction.get(paymentRef) : null;
+    if (paymentRef && !payment.exists) throw new Error('Payment no longer exists.');
     const previousStatus = ticket.get('status');
+    if (['resolved', 'closed'].includes(previousStatus)) {
+      throw new Error(`Ticket ${ticketRef.id} is ${previousStatus}; reply/resolve cannot modify a finished ticket.`);
+    }
     const update = { status, updatedAt: now };
     if (previousStatus !== status) update.statusUpdatedAt = now;
     if (command === 'resolve') update.resolvedAt = now;
-    else if (previousStatus === 'resolved' || previousStatus === 'closed') {
-      update.resolvedAt = FieldValue.delete();
-    }
     if (message.trim()) {
       update.latestSupportReply = message.trim();
       update.latestSupportReplyAt = now;
@@ -81,12 +85,13 @@ async function updateTicket(db, ticketRef, command, message, actor, FieldValue) 
         source: 'tools/support-tickets', historyId: historyRef.id,
       });
     }
+    if (paymentRef) transaction.update(paymentRef, { supportActivityAt: now });
     transaction.update(ticketRef, update);
     transaction.set(historyRef, {
       eventType: command === 'reply' ? 'support_reply' : 'ticket_resolved',
       from: previousStatus, to: status, changedAt: now,
       changedBy: actor, actorType: 'admin', source: 'tools/support-tickets',
-      command, message, messageId: message.trim() ? messageRef.id : null,
+      command, messageId: message.trim() ? messageRef.id : null,
     });
     return { status, reference: ticket.get('reference') };
   });

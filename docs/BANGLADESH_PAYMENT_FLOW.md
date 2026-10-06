@@ -1,7 +1,7 @@
 # Bangladesh Prize Payment Flow
 
 **Status:** Implemented recipient schema v2; not deployed by this task
-**Last updated:** 2026-10-02
+**Last updated:** 2026-10-04
 
 ## Product rules and observed transfer results
 
@@ -11,16 +11,21 @@ Transfers are manually processed through Remitly; there is no automated Remitly 
 Supported wallets are **bKash and Rocket**. Regulation codes remain lowercase `bkash` / `rocket`;
 recipient `walletProvider` uses uppercase `BKASH` / `ROCKET`.
 
-Owner-reported real tests (recorded 2026-10-02):
+Owner-reported real tests (status updated 2026-10-04; report date, not the transfer date):
 - bKash: 320 BDT delivered to a public donation wallet. VERIFIED / DELIVERED, supported by Remitly
   In progress and Delivered emails.
-- Rocket: 320 BDT submitted to a public donation Personal wallet. SENT / IN PROGRESS, not verified
-  delivered. Recipient and transfer were accepted without a Reason for Sending prompt.
-- Nagad is excluded. Remitly requires a transfer-purpose classification for Nagad, and the available
+- Rocket: 320 BDT sent from Poland to Bangladesh through Remitly. VERIFIED / DELIVERED: final
+  Remitly status Delivered and receipt in the recipient account confirmed. The tested flow works end-to-end.
+- Nagad: NOT SUPPORTED / EXCLUDED. Remitly requires a transfer-purpose classification for Nagad, and the available
   classifications do not accurately represent a tournament prize (Family support, Savings, Payment
   for service). Never use a false purpose. This explanation is internal, not player-facing copy.
 
-Both tested wallets required separate first and last names matching the wallet/Remitly recipient.
+Both bKash and Rocket have been verified with real successful Remitly transfers reaching final status
+Delivered. The earlier unsuccessful Rocket test used an organization-style recipient name and was
+paused. The successful Rocket test used the recipient's personal name matching the Rocket account.
+Remitly requires accurate recipient identity details, supporting the existing separate `firstName`,
+`lastName`, `walletProvider` and `walletNumber` fields. No real recipient name, number or reference
+is recorded in this document.
 Donation tests are operational evidence, not legal approval for tournament prizes. Bangladesh
 withholding obligations await NBR clarification. No tax withholding is introduced.
 
@@ -79,8 +84,8 @@ Admin SDK/Console access. Other players and unauthenticated callers cannot read 
 
 New recipient submission audit events retain status, actor, timestamps and schema version, but no
 structured names or wallet numbers. The existing trigger remains idempotent. Admin notes and support
-messages are free text: operators must avoid copying recipient data into them. Separate storage
-makes distinct retention possible; it does not itself implement automatic deletion.
+messages are operational free text: operators must avoid copying recipient data into them. New audit
+entries do not duplicate that text. The daily retention job now manages private recipient expiry and minimized payment records.
 
 ## First production rollout
 
@@ -108,15 +113,105 @@ Before rollout:
 General Terms and their acceptance are intentionally shared between Global and Bangladesh, as
 confirmed by the owner. Separate Bangladesh general-Terms acceptance is not required by this design.
 Tournament prize rules are accepted before joining; payout privacy information must be available
-before a winner submits recipient details. Do not redirect the app to unapproved review drafts.
+before a winner submits recipient details. Bangladesh-only privacy routing is prepared as of 2026-10-03. Publish the reviewed policy before releasing that build; Hosting is not deployed by this task.
 
 ## Retention and support
 
-Keep current recipient details separate from longer-lived transfer evidence. No numeric retention
-period is assumed, no new tax rule is inferred, and no historical phone-number purge is performed.
-The current remove-account function does not delete these private records or all associated history.
-Finalize justified retention periods and deletion processes before publishing a final privacy policy.
-Support tickets continue to use their existing lifecycle and access rules.
+Policy version 1 uses `completed` and `cancelled` as terminal
+statuses. The authoritative anchor is `statusUpdatedAt` when terminal retention is first recorded.
+`sent` and `action_required` do not start retention. Missing terminal dates fail closed: no deletion.
+
+`payments/{id}.retention` contains `policyVersion`, `terminalAt`, `rawExpiresAt`, `auditExpiresAt`,
+and, after raw deletion, `rawDeletedAt`. Raw expiry is exactly 180 UTC days after terminal time.
+Audit expiry is five calendar years later at the same UTC time; February 29 maps to February 28
+when the anniversary year is not leap. Retries, account deletion and hold releases do not reset dates.
+
+The administrator callable and local CLI now write retention deadlines atomically with terminal
+Bangladesh status transitions. `onPaymentStatusChanged` remains a fallback for other trusted writes. Daily `cleanupBangladeshPayouts` (03:00 UTC, in the update-payment-status
+codebase) also initializes missing metadata and processes overdue records. It scans payments in
+100-document pages without requiring a composite index. Market selection uses the tournament's
+`visibleInFlavours` containing `bangladesh`; once enrolled, `retention.policyVersion == 1` keeps the
+record in scope even if tournament metadata disappears. Missing tournament data before enrollment
+cannot establish Bangladesh scope and is skipped. This task does not migrate live data.
+
+At 180 days the job deletes `private/recipient` and private transfer-attempt records and replaces the parent with an
+allowlisted minimal record: userId, tournamentId, amount, currency, rank, status, lifecycle timestamps,
+recipient schema version, retention metadata, wallet provider, safe transfer provider/reference and
+sent/completed dates. Names, full wallet numbers, legacy recipientInfo, admin notes and issue text
+are not retained in that minimized parent. The wallet provider is snapshotted before raw deletion.
+Known recipient names/numbers and wallet-like long numbers in free-text transfer metadata are
+excluded rather than copied into the minimized record. Operators must enter actual provider/reference
+identifiers only. No full recipient details are copied to a separate audit collection.
+
+At five years, delete the parent, any remaining private recipient document, and **only** new payment
+`statusHistory` entries marked `retentionPolicyVersion: 1`. Up to 300 history entries and 100 private transfer-attempt records are removed per
+transaction/run before final parent deletion, so large histories can require multiple daily runs.
+**Existing unmarked statusHistory is never updated, migrated or deleted.** It may remain as a
+subcollection under a missing parent and can contain legacy personal information. Support records,
+notification bookkeeping, other user/game data, backups/exports and other-environment copies are not
+covered by this job. A separate approved legacy/support/copy cleanup remains necessary.
+
+### Transfer attempts and support completion (2026-10-05)
+
+Each new `sent` transition from the CLI or callable creates
+`payments/{id}/private/transfer-{historyId}` with `recordType: transfer_attempt`, an attempt ID,
+provider, reference and sent timestamp. Retries in the same transaction do not duplicate it.
+`transfer.attemptId` and subsequent history events link to that attempt; a later send does not
+replace the earlier private record. Full attempt references are raw data subject to the same
+180-day expiry and holds, paginated at 100 per cleanup pass. Long-term history stores only
+attempt IDs, not names, wallet numbers or free-text references. Previously overwritten references
+cannot be recovered and are not invented or backfilled.
+
+On `completed`, the same transaction resolves existing active `validation_rejected` and
+`payout_method_unavailable` tickets, recording `resolvedAt`, `resolutionCode: payment_completed`
+and a system history event linked to the payment history. It does not auto-resolve
+`payment_not_received`/`other` tickets, cancel-related complaints, or tickets while a payment
+retention hold is active. New complaints raised after completion remain open for review.
+Support context reads the wallet provider from `private/recipient` (or its minimized parent
+snapshot), and derives BD market from the server-side tournament flavour when absent on the payment.
+
+These lifecycle refinements are local changes pending deployment; running 540/550 from remote
+`dev` does not publish uncommitted edits. Deploy 540 and 580 after committing/pushing them.
+Existing completed payments and tickets are not retroactively resolved by this change.
+
+### Holds and concurrent support handling
+
+Any linked ticket not `resolved` or `closed` blocks both raw and audit deletion. Independently,
+`payments/{id}.retentionHold.active == true` blocks deletion. Holds use reason codes `dispute` or
+`legal_obligation`, with actor and timestamp, not free-text recipient data. There is no automatic
+legal-hold expiry; an administrator must review and release it. After all blockers end, cleanup uses
+the original dates and removes overdue data on the next successful run. Holds cannot restore data
+already erased. Failed runs retry on subsequent scheduled runs; expiry is not instantaneous.
+
+Admin-only callable: `setPayoutRetentionHold({paymentId, active, reasonCode})`.
+Local operator commands (not executed by this task):
+
+```powershell
+node tools/update-payment-status/retention-hold.js dev PAYMENT_ID hold legal_obligation
+node tools/update-payment-status/retention-hold.js dev PAYMENT_ID hold dispute
+node tools/update-payment-status/retention-hold.js dev PAYMENT_ID release
+```
+
+Client rules already prohibit changing these parent fields and deleting private data; no rule change
+is needed. Admin SDK credentials remain privileged. Cleanup reads the payment, recipient and support
+query in a transaction. Support creation/reopening reads and touches the parent in its transaction,
+so it serializes with cleanup; it cannot create/reopen a ticket for a deleted payment.
+
+New payment history no longer copies administrator free text, provider/reference text or prior issue
+messages. New support history stores message IDs rather than message copies. Operational support
+messages and root previews still contain user/admin text: do not put recipient names/numbers there.
+Old historical content is unchanged. Account removal still deletes Auth and selected profile fields;
+payout retention runs independently and does not imply complete account-data erasure.
+
+Deploy the updated update-payment-status codebase (including the scheduled job and hold callable),
+support-tickets, and on-tournament-complete before relying on this policy. Cloud Build's 540 recipe
+now copies retention.js. Local support/update-payment scripts must also use this code revision.
+The previously committed code was deployed to DEV through 580, 590 and 540/550. The lifecycle
+refinements above still require a new deployment. No historical purge or data migration is performed.
+
+The 180-day/five-year durations are the owner's operational policy, not an assertion of a statutory
+five-year requirement for full wallet numbers. Legal applicability, register scope and exceptions
+remain subject to the source review in BANGLADESH_CONTENT_REVIEW.md.
 
 ## Verification
 
@@ -127,7 +222,8 @@ Support tickets continue to use their existing lifecycle and access rules.
 - Backend tests: normal lifecycle and correction, existing audit preservation and recipient-data exclusion from new events.
 - Regulation/tournament tools: accepted provider metadata and rejected retired providers.
 - Build and focused test both `_devGlobalDebug` and `_devBangladeshDebug`; manually test the form and
-  real operator workflow before production. Build/test success does not confirm real Rocket delivery.
+  real operator workflow before production. Rocket delivery has separately been verified by the owner
+  with a successful real Remitly transfer; automated tests are not evidence of transfer delivery.
 
 ### Local verification results — 2026-10-02
 
@@ -139,3 +235,16 @@ Support tickets continue to use their existing lifecycle and access rules.
   outside the payout validator, including resource/configuration and unrelated UI tests. The full
   suite is not green; those failures were not addressed by this payout change.
 - No on-device form test, live database migration, new remittance or deployment was performed.
+
+
+### Retention verification — 2026-10-04
+
+- Retention/payment-workflow/admin CLI/support unit tests: 25/25 PASS.
+- Firestore emulator rules and retention integration: 12/12 PASS. The integration exercises actual
+  Admin SDK transactions, daily sweep queries, unresolved-ticket and legal holds, raw erasure,
+  five-year cleanup, preserved legacy history and refusal to reopen a deleted payment's ticket.
+- Tests cover exact expiry boundaries, leap-year anniversary, cancellation vs nonterminal status,
+  Global exclusion, retry stability, missing dates, large new-history pages, and exclusion of names
+  and full wallet numbers from minimized records and newly generated admin history.
+- Winner cannot set retention deadlines or release a hold through Firestore rules.
+- Changed JavaScript syntax and git diff whitespace checks: PASS. No deployment/live cleanup performed.

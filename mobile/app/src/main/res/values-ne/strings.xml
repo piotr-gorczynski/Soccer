@@ -432,4 +432,5 @@
     <string name="payment_last_name">थर</string>
     <string name="payment_name_required">नाम लेख्नुहोस् (१–१०० अक्षर)।</string>
     <string name="payment_recipient_instructions">पहिलो नाम र थर तपाईंको मोबाइल वालेट र Remitly मा दर्ता भएको प्राप्तकर्ताको विवरणसँग मिल्नुपर्छ। गलत विवरणले भुक्तानी ढिलो वा असफल हुन सक्छ।</string>
+    <string name="bangladesh_privacy_policy_english">बंगलादेश गोपनीयता नीति (अंग्रेजी)</string>
 </resources>

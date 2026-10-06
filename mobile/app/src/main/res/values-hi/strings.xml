@@ -432,4 +432,5 @@
     <string name="payment_last_name">उपनाम</string>
     <string name="payment_name_required">नाम दर्ज करें (1–100 अक्षर)।</string>
     <string name="payment_recipient_instructions">प्रथम नाम और उपनाम आपके मोबाइल वॉलेट और Remitly में दर्ज प्राप्तकर्ता के विवरण से मेल खाने चाहिए। गलत विवरण से भुगतान में देरी हो सकती है या भुगतान रुक सकता है।</string>
+    <string name="bangladesh_privacy_policy_english">बांग्लादेश गोपनीयता नीति (अंग्रेज़ी)</string>
 </resources>

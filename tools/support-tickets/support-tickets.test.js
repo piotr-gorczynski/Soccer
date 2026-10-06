@@ -34,10 +34,10 @@ test('successive replies preserve all texts, authors, timestamps and same-status
   assert.deepEqual(history.map(h => [h.from, h.to]), [
     ['open', 'waiting_for_user'], ['waiting_for_user', 'waiting_for_user'],
   ]);
-  assert.equal(history[0].message, '  First\nreply  ');
+  assert.equal(history[0].message, undefined);
   assert.equal(history[1].changedBy, 'admin2');
   assert.equal(history[0].changedAt, 'SERVER_TIME');
-  assert.equal(messages[0].message, history[0].message);
+  assert.equal(messages[0].message, '  First\nreply  ');
   assert.equal(messages[0].createdAt, history[0].changedAt);
   assert.equal(f.state().latestSupportReply, 'Second reply');
   assert.equal(f.state().statusUpdatedAt, 'SERVER_TIME');
@@ -56,13 +56,27 @@ test('resolve without text still leaves a dated audit event', async () => {
   assert.equal(f.state().resolvedAt, 'SERVER_TIME');
 });
 
-test('reply after resolution preserves the resolution event while clearing current resolvedAt', async () => {
+test('finished tickets reject reply and resolve without changing messages, history or timestamps', async () => {
+  for (const status of ['resolved', 'closed']) {
+    for (const command of ['reply', 'resolve']) {
+      const f = fixture(status);
+      const before = { ...f.state() };
+      await assert.rejects(updateTicket(f.db, f.ticketRef, command, 'Follow-up', 'admin', f.fields),
+        /cannot modify a finished ticket/);
+      assert.deepEqual(f.state(), before);
+      assert.equal(f.records.size, 0);
+    }
+  }
+});
+
+test('a reply after resolution preserves the resolution timestamp and audit event', async () => {
   const f = fixture();
   await updateTicket(f.db, f.ticketRef, 'resolve', 'Done', 'admin', f.fields);
-  await updateTicket(f.db, f.ticketRef, 'reply', 'Follow-up', 'admin', f.fields);
-  assert.equal(f.state().resolvedAt, 'DELETE');
-  assert.equal(f.state().status, 'waiting_for_user');
-  assert.equal([...f.records.values()].filter(r => r.eventType === 'ticket_resolved').length, 1);
+  const before = { ...f.state() };
+  const records = [...f.records];
+  await assert.rejects(updateTicket(f.db, f.ticketRef, 'reply', 'Follow-up', 'admin', f.fields), /is resolved/);
+  assert.deepEqual(f.state(), before);
+  assert.deepEqual([...f.records], records);
 });
 
 test('missing tickets and invalid commands do not write messages or history', async () => {

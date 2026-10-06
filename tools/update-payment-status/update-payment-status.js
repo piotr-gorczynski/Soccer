@@ -1,7 +1,7 @@
 'use strict';
 
 const path = require('path');
-const { assertTransition, validateTransitionData, buildAdminHistory } = require('../../firebase/functions/update-payment-status/payment-workflow');
+const { assertTransition, validateTransitionData, buildAdminHistory, persistTransition } = require('../../firebase/functions/update-payment-status/payment-workflow');
 
 const ENVIRONMENTS = new Set(['dev', 'test', 'prod']);
 
@@ -134,10 +134,10 @@ async function main() {
     const latest = await transaction.get(paymentRef);
     const latestStatus = latest.get('status');
     assertTransition(latestStatus, args.status);
-    transaction.update(paymentRef, buildUpdate(args.status, args.data, admin.firestore.FieldValue));
-    transaction.set(historyRef, buildAdminHistory(
+    await persistTransition(transaction, db, paymentRef, latest, args.status, args.data, historyRef,
+      buildUpdate(args.status, args.data, admin.firestore.FieldValue), buildAdminHistory(
       latestStatus, args.status, args.data, serviceAccount.client_email,
-      'tools/update-payment-status', admin.firestore.FieldValue.serverTimestamp()));
+      'tools/update-payment-status', admin.firestore.FieldValue.serverTimestamp()), admin.firestore.Timestamp);
   });
   console.log('Payment status updated. A deployed onPaymentStatusChanged trigger will notify the winner.');
 }

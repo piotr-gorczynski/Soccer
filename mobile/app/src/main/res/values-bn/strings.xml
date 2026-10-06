@@ -472,4 +472,5 @@
     <string name="payment_last_name">নামের শেষ অংশ</string>
     <string name="payment_name_required">নাম লিখুন (১–১০০ অক্ষর)।</string>
     <string name="payment_recipient_instructions">নামের প্রথম ও শেষ অংশ আপনার মোবাইল ওয়ালেট ও Remitly-তে নিবন্ধিত প্রাপকের তথ্যের সঙ্গে মিলতে হবে। ভুল তথ্যের কারণে পেমেন্ট বিলম্বিত বা ব্যর্থ হতে পারে।</string>
+    <string name="bangladesh_privacy_policy_english">বাংলাদেশের গোপনীয়তা নীতি (ইংরেজি)</string>
 </resources>
