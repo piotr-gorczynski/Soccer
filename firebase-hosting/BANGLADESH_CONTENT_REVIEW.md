@@ -10,7 +10,7 @@ Prepared 2026-10-01; status updated 2026-10-06. The Bangladesh Privacy Policy is
 - `privacy-en.html`: Bangladesh-specific data handling and current deletion limitations.
 - `support-en.html`: payout help, support contact and deletion requests.
 
-The Privacy Policy has an effective date/version rather than a draft banner. Other pages retain draft banners; `noindex` is not an access control. A full Firebase Hosting deployment publishes the entire public directory, including those drafts, so publication scope must be confirmed. Global pages and hosting configuration remain unchanged.
+The Privacy Policy has an effective date/version rather than a draft banner. Other pages retain draft banners; `noindex` is not an access control. The approved publication scope is only `bangladesh/privacy-en.html` and `bangladesh/styles.css`; the other Bangladesh pages must remain unpublished. Use the existing Firebase Hosting CLI against `soccer-ads-hosting`, with a temporary staging directory preserving the live release files byte-for-byte and adding only those two files. Do not deploy the full repository public directory while it contains unapproved drafts. Global pages and hosting configuration remain unchanged.
 
 ## Implementation used as evidence
 
