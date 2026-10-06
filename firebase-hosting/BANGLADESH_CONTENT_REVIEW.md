@@ -1,6 +1,6 @@
-# Bangladesh English website draft
+# Bangladesh English website content review
 
-Prepared 2026-10-01. The five pages in `public/bangladesh/` are local review drafts, not approved legal documents. No hosting deployment has been performed. The 2026-10-03 change prepares Bangladesh-only privacy links; do not release that build before publishing the reviewed page.
+Prepared 2026-10-01; status updated 2026-10-06. The Bangladesh Privacy Policy is finalized as BD-privacy-2026-10-06, effective 6 October 2026, following owner approval and successful retention deployment and verification. This does not assert external legal approval. The other Bangladesh pages remain review drafts. Historical review notes below describe earlier states and are superseded by this status where applicable.
 
 ## Pages
 
@@ -10,7 +10,7 @@ Prepared 2026-10-01. The five pages in `public/bangladesh/` are local review dra
 - `privacy-en.html`: Bangladesh-specific data handling and current deletion limitations.
 - `support-en.html`: payout help, support contact and deletion requests.
 
-Each page has a draft banner and `noindex`. These are not access controls. A full Firebase Hosting deployment would publish the files; complete the review before deploying them. Existing Global pages and hosting configuration have not been changed.
+The Privacy Policy has an effective date/version rather than a draft banner. Other pages retain draft banners; `noindex` is not an access control. A full Firebase Hosting deployment publishes the entire public directory, including those drafts, so publication scope must be confirmed. Global pages and hosting configuration remain unchanged.
 
 ## Implementation used as evidence
 
@@ -158,9 +158,8 @@ The owner selected 180 days for raw recipients and five calendar years for minim
 records after completed/cancelled, suspended by unresolved support tickets or an administrator hold.
 This is now implemented in `update-payment-status/retention.js`, with daily cleanup and admin hold
 controls. See BANGLADESH_PAYMENT_FLOW.md for exact boundaries, scope, deployment requirements and
-legacy exceptions. The raw-recipient automatic-deletion gap above is resolved in source code, but
-nothing is deployed. Existing statusHistory is neither removed nor migrated; unmarked old history,
+legacy exceptions. Retention is deployed in DEV, TEST and PROD as of 2026-10-06. DEV retention tests and the TEST smoke test passed. PROD functions and the daily 03:00 UTC scheduler were verified active; no manual PROD cleanup test was performed. Existing statusHistory is neither removed nor migrated; unmarked old history,
 support conversations, backups and copies remain outside cleanup. New payment history omits free
 text; new support history references messages. Shared Terms and Global privacy are unchanged.
-The policy draft is now BD-privacy-2026-10-04. Retention periods are owner-selected, not a legal
+The effective policy is BD-privacy-2026-10-06 (6 October 2026). Retention periods are owner-selected, not a legal
 conclusion that raw wallet numbers must be retained five years.
