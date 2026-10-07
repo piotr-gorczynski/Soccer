@@ -139,10 +139,15 @@ exports.onSupportTicketUpdated = functions.firestore
       if (['messaging/registration-token-not-registered',
         'messaging/installation-id-not-registered',
         'messaging/invalid-registration-token'].includes(error.code)) {
-        await userSnap.ref.update({
-          [targetField]: FieldValue.delete(),
-          fcmErrorType: error.code,
-          fcmErrorDate: FieldValue.serverTimestamp(),
+        await userSnap.ref.firestore.runTransaction(async tx => {
+          const current = await tx.get(userSnap.ref);
+          if (!current.exists || current.get('accountDeleted') === true
+              || current.get(targetField) !== userSnap.get(targetField)) return;
+          tx.update(userSnap.ref, {
+            [targetField]: FieldValue.delete(),
+            fcmErrorType: error.code,
+            fcmErrorDate: FieldValue.serverTimestamp(),
+          });
         });
         return null;
       }

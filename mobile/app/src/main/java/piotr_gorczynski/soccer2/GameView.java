@@ -33,6 +33,10 @@ public class GameView extends View {
     private final MyHandler mHandler;
     private final Handler androidMoveDelayHandler = new Handler(Looper.getMainLooper());
     private boolean androidMovePending = false;
+    void setPlayerNames(String player0, String player1) {
+        field.setPlayerNames(player0, player1);
+        invalidate();
+    }
     private final Field field;
     private final GameActivity gameActivity;
     private final int intFieldWidth;

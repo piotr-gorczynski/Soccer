@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 
 public class TournamentResultsActivity extends BaseActivity {
+    private com.google.firebase.firestore.ListenerRegistration profileNamesListener;
 
     private StandingsAdapter adapter;
     private RecyclerView standingsList;
@@ -192,12 +193,15 @@ public class TournamentResultsActivity extends BaseActivity {
                                     return;
                                 }
 
-                                db.collection("users").whereIn(FieldPath.documentId(), uids)
-                                        .get().addOnSuccessListener(userSnap -> {
+                                if (profileNamesListener != null) profileNamesListener.remove();
+
+                                profileNamesListener = db.collection("users").whereIn(FieldPath.documentId(), uids)
+                    .addSnapshotListener((userSnap, error) -> {
+                        if (error != null || userSnap == null || isDestroyed()) return;
                                             for (DocumentSnapshot user : userSnap) {
                                                 StandingEntry e = scoreMap.get(user.getId());
                                                 if (e != null) {
-                                                    e.nickname = user.getString("nickname");
+                                                    e.nickname = UserDisplayName.from(user);
                                                 }
                                             }
 
@@ -597,6 +601,7 @@ public class TournamentResultsActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
+        if (profileNamesListener != null) profileNamesListener.remove();
         if (paymentListener != null) paymentListener.remove();
         if (recipientListener != null) recipientListener.remove();
         if (supportTicketListener != null) supportTicketListener.remove();

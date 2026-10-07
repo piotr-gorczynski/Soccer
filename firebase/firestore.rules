@@ -13,6 +13,25 @@ service cloud.firestore {
       }
     }
 
+    function approvedTerms(d) {
+      return (d.scope == 'bangladesh' && d.version == 'BD-terms-2026-10-06'
+        && d.language == 'en'
+        && d.documentUrl == 'https://piotr-gorczynski.com/bangladesh/terms/BD-terms-2026-10-06.html'
+        && d.documentSha256 == 'e77d67d705baec188e277fe8c1cfdcbbad4d061e0581a64e6c884ede8c76ebcc')
+        || (d.scope == 'global' && d.version == 'GLOBAL-terms-2025-07-30'
+        && d.documentUrl == 'https://piotr-gorczynski.com/terms/GLOBAL-terms-2025-07-30/' + d.language + '.html'
+        && (
+(d.language == 'bn' && d.documentSha256 == 'c37145edf58e83edf1e2c2a487ab41f5712bb0c6f68e240882649edf9a419491')
+          || (d.language == 'de' && d.documentSha256 == '3f0447b1b9269f69ba3b46d7af2484d9d611e5d030b845a98bb53812f705d958')
+          || (d.language == 'en' && d.documentSha256 == '940cb471414a4d0a5e57844e7593cd3b2e61ce78a5169575f3726b09e6d99961')
+          || (d.language == 'es' && d.documentSha256 == 'fc6101ee6d363dcec0c06b7bb435ee1cad54385f3e0f169893a21534625ad02e')
+          || (d.language == 'fr' && d.documentSha256 == '45d94dd921a0df17c8dcee865b194dc3c2582ddd0c1f12dff4bdbe3b85eba495')
+          || (d.language == 'hi' && d.documentSha256 == 'abdecb0a2dcfd45280ac2c3eebaf8b7caaae0a95286866f328f9e4474dc60bd9')
+          || (d.language == 'ne' && d.documentSha256 == '6366c7ff60038c609c2c891a57f6e115844d1c1fb17c5ef35e4e25f24c51fd16')
+          || (d.language == 'pl' && d.documentSha256 == '3f2c0e60ef535e5783ac221eb9b4f3fc10788d1905fb02036f8a90f19a29409b')
+          || (d.language == 'ur' && d.documentSha256 == '99c895f3584bb19aedaccbac5ffddb9cb7ca54c4f3363697e2adc8ad85539289')));
+    }
+
     // 1. Users: anyone signed-in can read any profile,
     //    but only the owner can create or modify their own doc.
     match /users/{userId} {
@@ -22,17 +41,38 @@ service cloud.firestore {
       // and to update it thereafter (e.g. save FCM token).
       allow create: if request.auth.uid == userId
                     && !request.resource.data.keys()
-                         .hasAny(['appVariant', 'appVariants', 'migrationStatus']);
+                         .hasAny(['appVariant', 'appVariants', 'migrationStatus', 'accountDeleted', 'accountDeletedAt']);
       allow update: if request.auth.uid == userId
+                    && resource.data.get('accountDeleted', false) != true
+                    && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['accountDeleted', 'accountDeletedAt'])
                     && !request.resource.data.diff(resource.data).affectedKeys()
-                         .hasAny(['appVariant', 'appVariants', 'migrationStatus']);
+                         .hasAny(['appVariant', 'appVariants', 'migrationStatus', 'accountDeleted', 'accountDeletedAt']);
 
       // No one else may delete or overwrite another’s profile.
       allow delete: if false;
 
+      // Immutable, owner-only legal evidence. Never infer this from legacy profile flags.
+      match /legalAcceptances/{acceptanceId} {
+        allow read: if request.auth != null && request.auth.uid == userId;
+        allow create: if isSignedIn() && request.auth.uid == userId
+          && request.resource.data.keys().hasAll(['documentType','scope','version','acceptedAt','language','documentUrl','documentSha256','appVersionCode','appVersionName','flavor'])
+          && request.resource.data.keys().hasOnly(['documentType','scope','version','acceptedAt','language','documentUrl','documentSha256','appVersionCode','appVersionName','flavor'])
+          && request.resource.data.documentType == 'terms'
+          && request.resource.data.acceptedAt == request.time
+          && request.resource.data.appVersionCode is int && request.resource.data.appVersionCode > 0
+          && request.resource.data.appVersionName is string && request.resource.data.appVersionName.size() < 100
+          && request.resource.data.flavor is string && request.resource.data.flavor.size() < 100
+          && acceptanceId == 'terms_' + request.resource.data.scope + '__' + request.resource.data.version
+          && approvedTerms(request.resource.data);
+        allow update, delete: if false;
+      }
+
       // Friends subcollection: only owner may read/write
       match /friends/{friendId} {
-        allow read, write: if request.auth.uid == userId;
+        allow read, delete: if request.auth.uid == userId;
+        allow create, update: if request.auth.uid == userId
+          && get(/databases/$(database)/documents/users/$(userId)).data.get('accountDeleted', false) != true
+          && get(/databases/$(database)/documents/users/$(friendId)).data.get('accountDeleted', false) != true;
       }
     }
 
@@ -48,7 +88,11 @@ service cloud.firestore {
 
     // 3. Matches: only participants may create/read/update
     /* ── helper ───────────────────────────────────────────── */
-    function isSignedIn() { return request.auth != null; }
+    function isSignedIn() {
+      return request.auth != null
+        && (!exists(/databases/$(database)/documents/users/$(request.auth.uid))
+          || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('accountDeleted', false) != true);
+    }
     function isMatchPlayer(matchId) {
       return request.auth.uid in [
         get(/databases/$(database)/documents/matches/$(matchId)).data.player0,
@@ -162,7 +206,7 @@ service cloud.firestore {
     // Payment audit state is separate from the current recipient's sensitive details.
     match /payments/{paymentId} {
       function ownedEditablePayment(payment) {
-        return request.auth != null && request.auth.uid == payment.userId
+        return isSignedIn() && request.auth.uid == payment.userId
           && payment.rank == 1
           && payment.status in ['awaiting_details', 'action_required'];
       }

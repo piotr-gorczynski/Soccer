@@ -32,6 +32,11 @@ exports.acceptInvite = functions
         throw new functions.https.HttpsError('not-found', 'Invitation not found');
 
       const invite = inviteDoc.data();
+      const sender = await tx.get(db.collection('users').doc(invite.from));
+      const recipient = await tx.get(db.collection('users').doc(uid));
+      if (sender.get('accountDeleted') === true || recipient.get('accountDeleted') === true) {
+        throw new functions.https.HttpsError('failed-precondition', 'Account no longer available');
+      }
 
       /* 1 Ownership */
       if (invite.to !== uid)

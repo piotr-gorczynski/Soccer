@@ -1,6 +1,8 @@
+> **7 October 2026 — unpublished account-deletion revision:** Local `privacy-en.html` now contains proposed `BD-privacy-2026-10-07` wording for profile minimization, stable historical UIDs, pseudonymity, active-state cleanup and separate legal/audit retention. The live policy remains `BD-privacy-2026-10-06`. Do not publish this draft before backend/rules rollout and review of the Terms/regulation retention policy. No numeric legal-acceptance period was invented. See [ACCOUNT_DELETION.md](../docs/ACCOUNT_DELETION.md). Earlier statements below that the local policy is unchanged describe the previous review only.
+
 # Bangladesh English website content review
 
-Prepared 2026-10-01; status updated 2026-10-06. The Bangladesh Privacy Policy is finalized as BD-privacy-2026-10-06, effective 6 October 2026, following owner approval and successful retention deployment and verification. This does not assert external legal approval. The other Bangladesh pages remain review drafts. Historical review notes below describe earlier states and are superseded by this status where applicable.
+Prepared 2026-10-01; status updated 2026-10-07. The Bangladesh Privacy Policy is finalized as BD-privacy-2026-10-06, effective 6 October 2026, following owner approval and successful retention deployment and verification. This does not assert external legal approval. The landing, tournament and support pages are prepared for publication but are not published. Bangladesh Terms remain unpublished. Separate versioned acceptance is now implemented locally; publication, rules deployment, privacy notice review and app release remain pending. Historical review notes below describe earlier states and are superseded by this status where applicable.
 
 ## Pages
 
@@ -10,7 +12,48 @@ Prepared 2026-10-01; status updated 2026-10-06. The Bangladesh Privacy Policy is
 - `privacy-en.html`: Bangladesh-specific data handling and current deletion limitations.
 - `support-en.html`: payout help, support contact and deletion requests.
 
-The Privacy Policy has an effective date/version rather than a draft banner. Other pages retain draft banners; `noindex` is not an access control. The approved publication scope is only `bangladesh/privacy-en.html` and `bangladesh/styles.css`; the other Bangladesh pages must remain unpublished. Use the existing Firebase Hosting CLI against `soccer-ads-hosting`, with a temporary staging directory preserving the live release files byte-for-byte and adding only those two files. Do not deploy the full repository public directory while it contains unapproved drafts. Global pages and hosting configuration remain unchanged.
+The Privacy Policy has an effective date/version rather than a draft banner. Only the proposed Bangladesh Terms retain a draft banner; `noindex` is not an access control. The approved publication scope is only `bangladesh/privacy-en.html` and `bangladesh/styles.css`; the other Bangladesh pages must remain unpublished. Use the existing Firebase Hosting CLI against `soccer-ads-hosting`, with a temporary staging directory preserving the live release files byte-for-byte and adding only those two files. Do not deploy the full repository public directory while it contains unapproved drafts. Global pages and hosting configuration remain unchanged.
+
+## Publication readiness review — 6 October 2026
+
+No Hosting deployment, commit, backend/Android change or data mutation is part of this review. The effective Privacy Policy (`BD-privacy-2026-10-06`) is unchanged. Its limited publication already succeeded; the scope paragraph above describes that previous release, not approval to publish more files now.
+
+| Page | Status | Remaining blocker |
+| --- | --- | --- |
+| `index.html` | READY TO PUBLISH | None for this informational page; Google Play availability is not promised. |
+| `tournaments-en.html` | READY TO PUBLISH | None for this generic guide; each real tournament needs its own active rules. |
+| `support-en.html` | READY TO PUBLISH | None; app labels and deletion limitations match implementation. |
+| `terms-en.html` / `terms/BD-terms-2026-10-06.html` | PREPARED, NOT PUBLISHED | Versioned app acceptance implemented locally. Review text/privacy notice, publish immutable documents and deploy rules before app release. The unversioned page remains a draft. |
+
+### Versioned Terms acceptance — implementation prepared 7 October 2026
+
+The owner chose separate Terms scopes. This supersedes earlier shared-Terms decisions recorded below; it does not publish or make the prepared Terms effective.
+
+- Bangladesh requires **BD-terms-2026-10-06**, English, at `https://piotr-gorczynski.com/bangladesh/terms/BD-terms-2026-10-06.html`. The immutable file is prepared locally; the unversioned editorial draft remains unpublished.
+- Global new acceptance references byte-preserved versioned snapshots of the current documents dated **2025-07-30**, under `/terms/GLOBAL-terms-2025-07-30/{language}.html`. This date does not prove what existing users accepted historically.
+- `TermsPolicy`, `TermsRepository` and `TermsActivity` store immutable owner-only records at `users/{uid}/legalAcceptances/terms_{scope}__{version}` with server time, document language/URL/SHA-256 and app metadata. HTML is hash-verified before acceptance. Failed writes do not permit continuation; checks are server-only.
+- Global retains explicitly bounded legacy eligibility, without fabricating records. Bangladesh never relies on `termsAccepted`. Deprecated compatibility fields remain for old apps. Tournament declarations remain separate.
+- See [TERMS_ACCEPTANCE.md](../docs/TERMS_ACCEPTANCE.md) for the model, hashes, tests, future version bump process and release ordering. Publish the immutable pages and necessary linked assets, then deploy approved rules before releasing the updated app; neither step has happened in this task.
+- The effective Privacy Policy is unchanged. It needs reviewed wording for general-Terms evidence, purpose/retention and the move from shared to Bangladesh Terms. Do not silently apply payout-retention periods to legal acceptance records.
+
+### Content and implementation checks
+
+- bKash and Rocket: both verified by owner-reported successful Remitly deliveries; no personal names, wallet numbers, references or amounts from those tests are included in the pages. Nagad is not offered.
+- `tools/create-regulation/regulation-example.json`: BD, minimum age 18, bKash/Rocket, free entry, skill-based deterministic ranking, tie/prize rules. Prize amounts stay in assigned regulations, not website promises.
+- `tools/create-tournament/tournament-config-bd.json` refers to a regulation that **does not exist in PROD**, and the read-only PROD query found **zero regulations with market BD** on 2026-10-06. Creating an appropriate active PROD regulation is a tournament-launch prerequisite, not a blocker to the generic informational pages. No regulation was created or copied.
+- `payment-workflow.js`: all seven statuses represented; Sent is not confirmed delivery. Manual processing through Remitly is operational practice, not an automatic API transfer or fixed-time promise.
+- Support UI displays `waiting_for_user` as **Support replied**, alongside Open, Resolved and Closed. Resolution is not proof of payout delivery. Users can report a remaining problem again or contact support; no in-ticket reply capability is promised.
+- `retention.js` and `remove-account/index.js`: 180-day raw/five-calendar-year minimized retention, holds and incomplete immediate account erasure reflected consistently; the effective Privacy Policy remains the detailed source, including legacy/support exceptions.
+- Neutral tax clause added only to proposed Terms: participants handle applicable taxes except organizer obligations to withhold/remit. Section 118 applicability and organizer withholding/reporting responsibilities still require external clarification. No 25% rate, exemption or legal approval is asserted. This review does not settle that question.
+
+### Navigation and next publication steps (not executed)
+
+1. Approve publication of the three READY pages. Keep `bangladesh/terms-en.html` excluded while its acceptance blocker remains.
+2. Review/commit only approved website changes to `origin/prod` when requested. Do not include unrelated files.
+3. Use the existing Firebase Hosting CLI and `soccer-ads-hosting` production site. Build a temporary staging directory from the latest live manifest, verify hashes, preserve all live files/configuration, and add only the three approved pages. Keep the live policy and stylesheet unchanged. Never deploy the whole repository `public` directory while the Terms draft is present.
+4. The three prepared pages link to `/terms-en.html` (shared Terms), each other, and the effective Bangladesh policy, so they can be published together independently of the proposed Terms.
+5. The live policy's existing Home/shared-Terms/email navigation remains valid. In a separately approved edit at joint publication, it may gain links to `index.html`, `tournaments-en.html` and `support-en.html`. Do not point it to the proposed Terms until those are approved and effective. No policy navigation change is made now.
+6. Deploy only Hosting with explicit project/account/config; then verify HTTP responses, content and links, unchanged live-policy/Global hashes, and absence of the draft Terms from the release manifest. Do not deploy functions, rules, indexes or Android.
 
 ## Implementation used as evidence
 
@@ -18,7 +61,7 @@ The Privacy Policy has an effective date/version rather than a draft banner. Oth
 - `tools/create-regulation/regulation-example.json`: example rules. Amounts, methods, schedules, eligibility, tie handling and prize allocation must remain defined by each tournament's assigned rules, not a fixed website promise.
 - Payment workflow and support implementation: manual handling, seven payment statuses, provider references, issue messages, recipient changes and handling history. A support reply does not itself confirm receipt of a payment.
 - `firebase/functions/remove-account/index.js`: authentication deletion and selected profile-field removal; associated payment/support/gameplay records are not comprehensively deleted.
-- Android `TermsActivity.java`: currently opens the existing root terms pages and stores shared acceptance fields. These draft Bangladesh pages are not yet connected to that flow.
+- Android Terms implementation: see the 7 October versioned acceptance section above. Deployed older apps still use shared legacy fields until a new release.
 
 ## Resolve before publication
 
@@ -26,7 +69,7 @@ The Privacy Policy has an effective date/version rather than a draft banner. Oth
 2. Confirm actual production transfer providers, their privacy-policy links and the information disclosed to them. Do not promise a provider, payment deadline or support response time that operations cannot guarantee.
 3. Confirm the support mailbox and the external account/data-deletion request process are operational.
 4. Review the terms/privacy text, set effective dates and align Play Console Data safety and deletion declarations with actual behavior.
-5. Keep the shared general Terms URL and acceptance for both flavors (owner decision). Tournament-specific prize rules are accepted when joining. Make payout privacy information available before collecting recipient details; separate Bangladesh general-Terms acceptance is not a launch requirement.
+5. Separate Bangladesh general Terms are now required in the prepared app. Complete the versioned document/rules/app rollout and privacy review described above. Tournament-specific prize rules remain independently accepted when joining.
 6. Verify Google Play country targeting when publishing the Bangladesh app. The draft describes the intended targeting strategy, not an audit of current Console configuration.
 7. Remove draft notices and editorial publication notes only after these decisions are resolved. Decide when indexing should be enabled.
 
@@ -50,7 +93,7 @@ integration and no new tax withholding. Bangladesh withholding clarification fro
 Current recipient data moves to payments/{id}/private/recipient; no historical phone numbers are
 scrubbed. Retention periods and deletion operations remain unresolved, as above.
 
-The shared general Terms URLs and acceptance are intentional: the owner confirmed that general
+Historical note (superseded by the 7 October versioned Terms implementation): the shared general Terms URLs and acceptance were intentional: the owner confirmed that general
 Terms do not differ between flavors. The Bangladesh Terms draft is review material, not a requirement
 for a second general agreement. Tournament rules handle prize conditions; payout privacy information
 must describe the additional data collected from winners. Do not deploy these drafts as final.
@@ -66,7 +109,7 @@ Policy draft: `public/bangladesh/privacy-en.html`, independent version `BD-priva
 Intended URL: https://piotr-gorczynski.com/bangladesh/privacy-en.html . English is explicit;
 no translated policy is implied. Bangladesh Account, Terms and payout screens link to it.
 Root privacy links followed inside the Bangladesh Terms WebView are redirected to it.
-Global URLs/content are unchanged. General Terms acceptance remains intentionally shared
+Historical pre-versioning state (superseded above): Global URLs/content are unchanged. General Terms acceptance was shared
 (`termsAccepted`, `termsAcceptanceDate`, `language`); it is not privacy consent or a versioned
 privacy acceptance. No privacy acknowledgement existed and none is fabricated by opening a link.
 Bangladesh privacy and Global privacy can evolve independently at their separate URLs.

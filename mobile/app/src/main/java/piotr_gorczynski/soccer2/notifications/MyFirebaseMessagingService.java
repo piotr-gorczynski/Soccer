@@ -163,7 +163,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 context,
                 paymentId == null ? tournamentId.hashCode() : paymentId.hashCode(),
-                intent,
+                piotr_gorczynski.soccer2.TermsEntryActivity.wrap(context, intent),
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
@@ -205,7 +205,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 context,
                 tournamentId.hashCode(),
-                intent,
+                piotr_gorczynski.soccer2.TermsEntryActivity.wrap(context, intent),
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
@@ -257,7 +257,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 context,
                 0,
-                inviteIntent,
+                piotr_gorczynski.soccer2.TermsEntryActivity.wrap(context, inviteIntent),
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
@@ -309,7 +309,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         PendingIntent pendingIntent = PendingIntent.getActivity(
                 context,
                 tournamentId.hashCode(), // Use unique request code per tournament
-                tournamentIntent,
+                piotr_gorczynski.soccer2.TermsEntryActivity.wrap(context, tournamentIntent),
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 

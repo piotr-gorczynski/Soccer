@@ -1,8 +1,10 @@
 {
   "private": true,
   "scripts": {
-    "test": "firebase emulators:exec --only firestore --project demo-payout --config firebase.json \"node --test payout-rules.test.js retention-integration.test.js\"",
-    "pretest": "node -e \"require('node:fs').copyFileSync('../../firebase/firestore.rules', 'firestore.rules')\""
+    "test": "firebase emulators:exec --only firestore --project demo-payout --config firebase.json \"node --test payout-rules.test.js retention-integration.test.js terms-rules.test.js\"",
+    "pretest": "node -e \"require('node:fs').copyFileSync('../../firebase/firestore.rules', 'firestore.rules')\"",
+    "test:account-deletion": "firebase emulators:exec --only firestore,database --project demo-account-deletion --config account-deletion.firebase.json \"node --test account-deletion.test.js\"",
+    "pretest:account-deletion": "node -e \"const fs=require('node:fs');fs.copyFileSync('../../firebase/firestore.rules','firestore.rules');fs.copyFileSync('../../gcp/cloud-build/database.rules.json','database.rules.json')\""
   },
   "devDependencies": {
     "@firebase/rules-unit-testing": "^4.0.1",

@@ -622,7 +622,7 @@ public class InvitationsActivity extends BaseActivity {
                                 .addOnSuccessListener(userDoc -> {
                                     String winnerNickname = "Player";
                                     if (userDoc.exists()) {
-                                        winnerNickname = userDoc.getString("nickname");
+                                        winnerNickname = UserDisplayName.from(userDoc);
                                         if (winnerNickname == null || winnerNickname.isEmpty()) {
                                             winnerNickname = "Player";
                                         }

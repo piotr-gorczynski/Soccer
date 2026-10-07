@@ -469,4 +469,5 @@
     <string name="payment_name_required">Enter a name (1–100 characters).</string>
     <string name="payment_recipient_instructions">First name and last name must match the recipient details registered with your mobile wallet and Remitly. Incorrect details can delay or prevent payment.</string>
     <string name="bangladesh_privacy_policy_english">Bangladesh Privacy Policy (English)</string>
+    <string name="terms_acceptance_failed">Could not save your Terms acceptance. Please try again.</string>
 </resources>

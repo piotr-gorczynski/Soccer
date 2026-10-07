@@ -17,6 +17,9 @@ exports.trackAppVariant = functions.region("us-central1").https.onCall(async (da
   try {
     const result = await db.runTransaction(async transaction => {
       const userSnapshot = await transaction.get(userRef);
+      if (userSnapshot.get("accountDeleted") === true) {
+        throw new functions.https.HttpsError("failed-precondition", "Account deleted.");
+      }
       const now = admin.firestore.Timestamp.now();
       const update = buildVariantTrackingUpdate(
         userSnapshot.exists ? userSnapshot.data() : {},

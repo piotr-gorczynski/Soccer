@@ -399,4 +399,5 @@
     <string name="payment_name_required">အမည်ထည့်ပါ (စာလုံး ၁–၁၀၀)။</string>
     <string name="payment_recipient_instructions">အမည်၏ ပထမပိုင်းနှင့် နောက်ဆုံးပိုင်းသည် သင့်မိုဘိုင်းပိုက်ဆံအိတ်နှင့် Remitly တွင် မှတ်ပုံတင်ထားသော လက်ခံသူအချက်အလက်နှင့် ကိုက်ညီရမည်။ မှားယွင်းသောအချက်အလက်ကြောင့် ငွေပေးချေမှုနှောင့်နှေးခြင်း သို့မဟုတ် မအောင်မြင်ခြင်း ဖြစ်နိုင်သည်။</string>
     <string name="bangladesh_privacy_policy_english">ဘင်္ဂလားဒေ့ရှ် ကိုယ်ရေးအချက်အလက် မူဝါဒ (အင်္ဂလိပ်)</string>
+    <string name="terms_acceptance_failed">စည်းကမ်းချက်များကို သဘောတူကြောင်း မသိမ်းဆည်းနိုင်ပါ။ ထပ်မံကြိုးစားပါ။</string>
 </resources>

@@ -50,6 +50,8 @@ class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.VH> {
 
     private final List<DocumentSnapshot> allData = new ArrayList<>();
     private final List<DocumentSnapshot> data = new ArrayList<>();
+    private final Map<String,com.google.firebase.firestore.ListenerRegistration> profileListeners = new HashMap<>();
+    private final Set<String> removedUids = new HashSet<>();
     private final Set<String> resultUids = new HashSet<>();
     private final OnAddClick listener;
     private final OnVisibleResultsChanged resultsChangedListener;
@@ -102,7 +104,7 @@ class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.VH> {
         DocumentSnapshot d = data.get(position);
         String uid = d.getId();
         h.uid = uid;
-        String nick = d.getString("nickname");
+        String nick = UserDisplayName.from(d);
         if (nick == null) nick = uid.substring(0, 6);
         h.nickname.setText(nick);
         
@@ -163,6 +165,7 @@ class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.VH> {
             if (resultUids.add(doc.getId())) {
                 allData.add(doc);
                 subscribeToPresence(doc.getId());
+                subscribeToProfile(doc.getId());
                 addedCount++;
             }
         }
@@ -183,12 +186,29 @@ class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.VH> {
     private void refreshVisibleData() {
         data.clear();
         for (DocumentSnapshot doc : allData) {
-            if (shouldShowPresence(onlineOnly, presCache.get(doc.getId()))) {
+            if (!removedUids.contains(doc.getId()) && !Boolean.TRUE.equals(doc.getBoolean("accountDeleted"))
+                    && shouldShowPresence(onlineOnly, presCache.get(doc.getId()))) {
                 data.add(doc);
             }
         }
         notifyDataSetChanged();
         resultsChangedListener.onChanged(data.size());
+    }
+
+    private void subscribeToProfile(String uid) {
+        if (profileListeners.containsKey(uid)) return;
+        profileListeners.put(uid, com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                .collection("users").document(uid).addSnapshotListener((profile, error) -> {
+                    if (error != null || profile == null) return;
+                    if (!profile.exists() || Boolean.TRUE.equals(profile.getBoolean("accountDeleted"))) {
+                        removedUids.add(uid);
+                    } else {
+                        for (int i = 0; i < allData.size(); i++) {
+                            if (uid.equals(allData.get(i).getId())) allData.set(i, profile);
+                        }
+                    }
+                    refreshVisibleData();
+                }));
     }
 
     private void subscribeToPresence(@NonNull String uid) {
@@ -270,6 +290,8 @@ class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.VH> {
             sub.ref.removeEventListener(sub.l);
         }
         presSubs.clear();
+        for (com.google.firebase.firestore.ListenerRegistration listener : profileListeners.values()) listener.remove();
+        profileListeners.clear();
         for (Runnable timeout : presenceTimeouts.values()) {
             mainHandler.removeCallbacks(timeout);
         }
@@ -277,6 +299,7 @@ class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.VH> {
         presCache.clear();
         hbCache.clear();
         resultUids.clear();
+        removedUids.clear();
         allData.clear();
         data.clear();
         notifyDataSetChanged();
@@ -291,7 +314,10 @@ class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.VH> {
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView rv) {
         super.onAttachedToRecyclerView(rv);
-        for (DocumentSnapshot doc : allData) subscribeToPresence(doc.getId());
+        for (DocumentSnapshot doc : allData) {
+            subscribeToPresence(doc.getId());
+            subscribeToProfile(doc.getId());
+        }
     }
 
     @Override
@@ -301,6 +327,8 @@ class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.VH> {
             sub.ref.removeEventListener(sub.l);
         }
         presSubs.clear();
+        for (com.google.firebase.firestore.ListenerRegistration listener : profileListeners.values()) listener.remove();
+        profileListeners.clear();
         for (Runnable timeout : presenceTimeouts.values()) {
             mainHandler.removeCallbacks(timeout);
         }

@@ -399,4 +399,5 @@
     <string name="payment_name_required">ປ້ອນຊື່ (1–100 ຕົວອັກສອນ).</string>
     <string name="payment_recipient_instructions">ຊື່ ແລະ ນາມສະກຸນຕ້ອງກົງກັບຂໍ້ມູນຜູ້ຮັບທີ່ລົງທະບຽນໃນກະເປົາເງິນມືຖື ແລະ Remitly. ຂໍ້ມູນທີ່ບໍ່ຖືກຕ້ອງອາດເຮັດໃຫ້ການຈ່າຍເງິນຊ້າ ຫຼື ບໍ່ສຳເລັດ.</string>
     <string name="bangladesh_privacy_policy_english">ນະໂຍບາຍຄວາມເປັນສ່ວນຕົວບັງກະລາເທດ (ພາສາອັງກິດ)</string>
+    <string name="terms_acceptance_failed">ບໍ່ສາມາດບັນທຶກການຍອມຮັບເງື່ອນໄຂໄດ້. ກະລຸນາລອງອີກຄັ້ງ.</string>
 </resources>

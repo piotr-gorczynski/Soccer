@@ -55,6 +55,7 @@ steps:
         mkdir -p /workspace/firebase/functions/remove-account
         cp /workspace/soccer/firebase/functions/remove-account/package.json /workspace/firebase/functions/remove-account/
         cp /workspace/soccer/firebase/functions/remove-account/index.js /workspace/firebase/functions/remove-account/
+        cp /workspace/soccer/firebase/functions/remove-account/deletion.js /workspace/firebase/functions/remove-account/
 
   # Step 4: Install dependencies
   - name: 'node:18-slim'

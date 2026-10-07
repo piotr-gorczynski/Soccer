@@ -373,30 +373,47 @@ public class MenuActivity extends BaseActivity {
                 });
     }
 
+    private boolean termsCheckInFlight;
+    private boolean termsScreenOpen;
+    private Runnable pendingTermsAction;
     private void ensureTermsAccepted(@NonNull String uid) {
-        // Skip terms check if backend is unavailable to prevent Firestore errors
-        if (!isBackendAvailable) {
-            Log.d("TAG_Soccer", getClass().getSimpleName() + ".ensureTermsAccepted: Skipping terms check - backend unavailable");
-            return;
+        checkTerms(uid, null);
+    }
+    private void checkTerms(String uid, Runnable allowed) {
+        if (termsScreenOpen || isFinishing() || isDestroyed()) return;
+        if (allowed != null) pendingTermsAction = allowed;
+        if (termsCheckInFlight) return;
+        termsCheckInFlight = true;
+        TermsPolicy policy = TermsPolicy.required(AppFlavourDetector.isBangladeshFlavour(this), LanguageManager.getCurrentLanguageCode(this));
+        new TermsRepository(FirebaseFirestore.getInstance()).accepted(uid, policy)
+            .addOnSuccessListener(ok -> {
+                termsCheckInFlight = false;
+                Runnable action = pendingTermsAction;
+                pendingTermsAction = null;
+                if (!uid.equals(FirebaseAuth.getInstance().getUid()) || isFinishing() || isDestroyed()) return;
+                if (ok) {
+                    if (action != null) action.run();
+                } else openRequiredTerms();
+            }).addOnFailureListener(error -> {
+                termsCheckInFlight = false;
+                pendingTermsAction = null;
+                if (uid.equals(FirebaseAuth.getInstance().getUid()) && !isFinishing() && !isDestroyed())
+                    openRequiredTerms();
+            });
+    }
+    private void openRequiredTerms() {
+        if (termsScreenOpen) return;
+        termsScreenOpen = true;
+        MenuActivity.super.startActivity(new Intent(this, TermsActivity.class));
+    }
+    @Override public void startActivity(Intent intent) {
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null || (intent.getComponent() != null &&
+                TermsActivity.class.getName().equals(intent.getComponent().getClassName()))) {
+            super.startActivity(intent);
+        } else {
+            checkTerms(uid, () -> MenuActivity.super.startActivity(intent));
         }
-        
-        FirebaseFirestore.getInstance()
-                .collection("users")
-                .document(uid)
-                .get(Source.SERVER)
-                .addOnSuccessListener(doc -> {
-                    if (FirebaseAuth.getInstance().getCurrentUser() == null) return;
-                    Boolean accepted = doc.getBoolean("termsAccepted");
-                    if (accepted == null || !accepted) {
-                        startActivity(new Intent(this, TermsActivity.class));
-                    }
-                    // Consent is now requested early in onCreate() for all users
-                })
-                .addOnFailureListener(e -> Log.e(
-                        "TAG_Soccer",
-                        getClass().getSimpleName() + ".ensureTermsAccepted: failed",
-                        e
-                ));
     }
 
     /* ───────────── misc tasks that must always run on launch ───────────── */
@@ -550,6 +567,7 @@ public class MenuActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         recordWindowLifecycle("resumed");
+        termsScreenOpen = false;
 
         String lang = LanguageManager.getCurrentLanguageCode(this);
         if (currentLanguage == null || !currentLanguage.equals(lang)) {

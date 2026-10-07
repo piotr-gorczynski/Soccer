@@ -1,0 +1,3 @@
+# Preserve exact bytes hashed for immutable legal documents.
+firebase-hosting/public/terms/**/*.html -text
+firebase-hosting/public/bangladesh/terms/*.html -text

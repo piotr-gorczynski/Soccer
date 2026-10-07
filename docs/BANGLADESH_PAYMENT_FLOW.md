@@ -200,7 +200,7 @@ so it serializes with cleanup; it cannot create/reopen a ticket for a deleted pa
 New payment history no longer copies administrator free text, provider/reference text or prior issue
 messages. New support history stores message IDs rather than message copies. Operational support
 messages and root previews still contain user/admin text: do not put recipient names/numbers there.
-Old historical content is unchanged. Account removal still deletes Auth and selected profile fields;
+Old historical content is unchanged. Account removal deletes Auth and minimizes the profile to a deleted-user tombstone under the original UID (see ACCOUNT_DELETION.md);
 payout retention runs independently and does not imply complete account-data erasure.
 
 Deploy the updated update-payment-status codebase (including the scheduled job and hold callable),

@@ -2,3 +2,4 @@ node_modules/
 firestore.rules
 *-debug.log
 .firebase/
+database.rules.json

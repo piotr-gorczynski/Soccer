@@ -28,15 +28,16 @@ exports.addFriend = functions
       .collection('users').doc(uid)
       .collection('friends').doc(friendId);
 
-    const existing = await ref.get();
-    if (existing.exists) {
-      throw new functions.https.HttpsError('already-exists', 'Friend already added');
-    }
-
-    await ref.set(
-      { addedAt: admin.firestore.FieldValue.serverTimestamp() },
-      { merge: true }
-    );
+    await admin.firestore().runTransaction(async tx => {
+      const own = await tx.get(admin.firestore().collection('users').doc(uid));
+      const friend = await tx.get(admin.firestore().collection('users').doc(friendId));
+      const existing = await tx.get(ref);
+      if (!own.exists || !friend.exists || own.get('accountDeleted') === true || friend.get('accountDeleted') === true) {
+        throw new functions.https.HttpsError('failed-precondition', 'Account no longer available');
+      }
+      if (existing.exists) throw new functions.https.HttpsError('already-exists', 'Friend already added');
+      tx.set(ref, { addedAt: admin.firestore.FieldValue.serverTimestamp() });
+    });
 
     return { friendId };
   });

@@ -399,4 +399,5 @@
     <string name="payment_name_required">නම ඇතුළත් කරන්න (අක්ෂර 1–100).</string>
     <string name="payment_recipient_instructions">මුල් නම සහ අවසන් නම ඔබේ ජංගම මුදල් පසුම්බියේ සහ Remitly හි ලියාපදිංචි ලබන්නාගේ විස්තරවලට ගැළපිය යුතුය. වැරදි විස්තර ගෙවීම ප්‍රමාද කිරීමට හෝ වැළැක්වීමට හැකිය.</string>
     <string name="bangladesh_privacy_policy_english">බංග්ලාදේශ රහස්‍යතා ප්‍රතිපත්තිය (ඉංග්‍රීසි)</string>
+    <string name="terms_acceptance_failed">කොන්දේසි පිළිගැනීම සුරැකීමට නොහැකි විය. නැවත උත්සාහ කරන්න.</string>
 </resources>

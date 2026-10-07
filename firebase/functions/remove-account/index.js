@@ -1,40 +1,33 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+const { cleanupDeletedAccount } = require('./deletion');
 admin.initializeApp();
-
 const db = admin.firestore();
+const cleanup = uid => cleanupDeletedAccount(db, admin.database(), uid, admin.firestore.FieldValue);
 
-exports.removeAccount = functions
-  .region('us-central1')
-  .https.onCall(async (data, context) => {
-    const uid = context.auth?.uid;
-    if (!uid) {
-      throw new functions.https.HttpsError('unauthenticated', 'Login required');
-    }
-
-    try {
-      await admin.auth().deleteUser(uid);
-    } catch (err) {
-      console.error('removeAccount: auth deletion failed', err);
+exports.removeAccount = functions.region('us-central1').https.onCall(async (data, context) => {
+  const uid = context.auth?.uid;
+  if (!uid) throw new functions.https.HttpsError('unauthenticated', 'Login required');
+  try {
+    await admin.auth().deleteUser(uid);
+  } catch (error) {
+    // Retrying a partially completed deletion must still finish the tombstone/cleanup.
+    if (error.code !== 'auth/user-not-found') {
+      console.error('removeAccount: auth deletion failed', error.code);
       throw new functions.https.HttpsError('internal', 'auth-deletion-failed');
     }
+  }
+  try {
+    await cleanup(uid);
+  } catch (error) {
+    console.error('removeAccount: cleanup pending; Auth deletion handler will retry', error.code);
+    throw new functions.https.HttpsError('internal', 'account-cleanup-pending');
+  }
+  return { uid };
+});
 
-    const updates = {
-      email: admin.firestore.FieldValue.delete(),
-      facebookId: admin.firestore.FieldValue.delete(),
-      facebookName: admin.firestore.FieldValue.delete(),
-      facebookPhotoUrl: admin.firestore.FieldValue.delete(),
-      nickname: '(Account removed)',
-      nicknameLowercase: '(account removed)',
-      accountDeleted: true,
-    };
-
-    try {
-      await db.collection('users').doc(uid).update(updates);
-    } catch (err) {
-      console.error('removeAccount: firestore update failed', err);
-      throw new functions.https.HttpsError('internal', 'firestore-update-failed');
-    }
-
-    return { uid };
-  });
+// Durable retry after Auth removal, including removal by scheduled jobs/console.
+// Repeated delivery is safe; no historical or payout/legal records are deleted.
+exports.onAccountDeleted = functions.region('us-central1')
+  .runWith({ failurePolicy: true, timeoutSeconds: 540 })
+  .auth.user().onDelete(user => cleanup(user.uid));

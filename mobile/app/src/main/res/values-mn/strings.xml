@@ -399,4 +399,5 @@
     <string name="payment_name_required">Нэр оруулна уу (1–100 тэмдэгт).</string>
     <string name="payment_recipient_instructions">Нэр, овог нь таны гар утасны хэтэвч болон Remitly-д бүртгэлтэй хүлээн авагчийн мэдээлэлтэй тохирох ёстой. Буруу мэдээлэл төлбөрийг саатуулах эсвэл боломжгүй болгож болно.</string>
     <string name="bangladesh_privacy_policy_english">Бангладешийн нууцлалын бодлого (англи)</string>
+    <string name="terms_acceptance_failed">Нөхцөлийг зөвшөөрснийг хадгалж чадсангүй. Дахин оролдоно уу.</string>
 </resources>

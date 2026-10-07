@@ -146,6 +146,7 @@
                 android:value=".MenuActivity"/>
         </activity>
 
+        <activity android:name=".TermsEntryActivity" android:exported="false" />
         <activity
             android:name=".TermsActivity"
             android:exported="false" />

@@ -261,7 +261,7 @@ public class FriendsListActivity extends BaseActivity {
                         
                         // Add nicknames to the map (lowercase for case-insensitive sorting)
                         for (DocumentSnapshot userDoc : userSnap.getDocuments()) {
-                            String nickname = userDoc.getString("nickname");
+                            String nickname = UserDisplayName.from(userDoc);
                             if (nickname != null) {
                                 nicknameMap.put(userDoc.getId(), nickname.toLowerCase());
                                 Log.d(TAG, "sortByNickname: User " + userDoc.getId() + " has nickname: " + nickname);
@@ -364,7 +364,7 @@ public class FriendsListActivity extends BaseActivity {
         final Map<String, String> displayNameMap = new HashMap<>();
         for (DocumentSnapshot doc : mutableDocs) {
             String uid = doc.getId();
-            String nickname = doc.getString("nickname");
+            String nickname = UserDisplayName.from(doc);
             if (nickname == null && adapter != null) {
                 nickname = adapter.getCachedNicknameFor(uid);
             }

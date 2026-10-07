@@ -49,7 +49,7 @@ exports.cleanupInactiveUsers = functions
                 const canDelete = await checkUserCanBeDeleted(db, user.uid, user.email, nickname);
                 
                 if (canDelete) {
-                  await deleteUserCompletely(auth, db, rtdb, user.uid, user.email, nickname);
+                  await deleteUserAccount(auth, db, rtdb, user.uid, user.email, nickname);
                   deletedCount++;
                   deletedUsers.push({
                     uid: user.uid,
@@ -77,7 +77,7 @@ exports.cleanupInactiveUsers = functions
                     const canDelete = await checkUserCanBeDeleted(db, user.uid, user.email, nickname);
                     
                     if (canDelete) {
-                      await deleteUserCompletely(auth, db, rtdb, user.uid, user.email, nickname);
+                      await deleteUserAccount(auth, db, rtdb, user.uid, user.email, nickname);
                       deletedCount++;
                       deletedUsers.push({
                         uid: user.uid,
@@ -111,7 +111,7 @@ exports.cleanupInactiveUsers = functions
               const canDelete = await checkUserCanBeDeleted(db, user.uid, user.email, null);
               
               if (canDelete) {
-                await deleteUserCompletely(auth, db, rtdb, user.uid, user.email, null);
+                await deleteUserAccount(auth, db, rtdb, user.uid, user.email, null);
                 deletedCount++;
                 deletedUsers.push({
                   uid: user.uid,
@@ -281,9 +281,9 @@ async function checkUserCanBeDeleted(db, uid, email, nickname) {
 }
 
 /**
- * Completely delete a user from all systems
+ * Remove sign-in; the retrying Auth handler minimizes the profile and active state.
  */
-async function deleteUserCompletely(auth, db, rtdb, uid, email, nickname) {
+async function deleteUserAccount(auth, db, rtdb, uid, email, nickname) {
   // 1. Delete from Firebase Authentication
   try {
     await auth.deleteUser(uid);
@@ -293,19 +293,13 @@ async function deleteUserCompletely(auth, db, rtdb, uid, email, nickname) {
     throw err; // Re-throw to prevent partial cleanup
   }
 
-  // 2. Delete from Firestore users collection
-  try {
-    await db.collection("users").doc(uid).delete();
-    console.log(`   📄 Deleted from Firestore users: ${uid} (nickname: ${nickname || 'N/A'})`);
-  } catch (err) {
-    console.error(`   ❌ Failed to delete from Firestore users: ${uid} (nickname: ${nickname || 'N/A'}): ${err.message}`, err);
-    // Don't throw - user is already deleted from Auth, continue cleanup
-  }
+  // onAccountDeleted owns profile minimization and legacy-consent preservation.
+  // Do not overwrite the profile before that handler reads the legal evidence.
 
-  // 3. Delete from realtime database status
+  // 3. Deactivate presence
   try {
-    await rtdb.ref('status').child(uid).remove();
-    console.log(`   🔄 Deleted from realtime database status: ${uid} (nickname: ${nickname || 'N/A'})`);
+    await rtdb.ref('status').child(uid).set({ accountDeleted: true, state: 'offline' });
+    console.log(`   🔄 Deactivated realtime database status: ${uid} (nickname: ${nickname || 'N/A'})`);
   } catch (err) {
     console.error(`   ❌ Failed to delete from realtime database status: ${uid} (nickname: ${nickname || 'N/A'}): ${err.message}`, err);
     // Don't throw - continue with friends cleanup

@@ -57,6 +57,7 @@ public class MatchAdapter
     }
 
     /* ───── caches ───── */
+    private final Map<String,com.google.firebase.firestore.ListenerRegistration> nameListeners = new HashMap<>();
     private final Map<String,String>  nickCache     = new HashMap<>();
     private final Map<String,String>  presCache     = new HashMap<>();       // uid → "online|active|offline"
 
@@ -216,13 +217,13 @@ public class MatchAdapter
 
         /* ----------- nickname lookup ----------- */
         String nick = nickCache.get(oppUid);
-        if (nick == null) {
+        if (!nameListeners.containsKey(oppUid)) {
             h.opponent.setText(Objects.requireNonNull(oppUid).substring(0, 6));   // temporary stub
 
-            FirebaseFirestore.getInstance()
-                    .collection("users").document(oppUid).get()
-                    .addOnSuccessListener(d -> {
-                        String n = d.getString("nickname");
+            nameListeners.put(oppUid, FirebaseFirestore.getInstance().collection("users").document(oppUid)
+                    .addSnapshotListener((d, error) -> {
+                        if (error != null || d == null) return;
+                        String n = UserDisplayName.from(d);
                         if (n == null) return;
 
                         nickCache.put(oppUid, n);
@@ -230,7 +231,7 @@ public class MatchAdapter
                         if (idx != RecyclerView.NO_POSITION) {
                             notifyItemChanged(idx, "nickname");             // refresh the *right* row
                         }
-                    });
+                    }));
         } else {
             h.opponent.setText(nick);   // nickname already cached
         }
@@ -477,6 +478,9 @@ public class MatchAdapter
         for (RtdbSub sub : presSubs.values())      // remove RTDB listeners
             sub.ref.removeEventListener(sub.l);
         presSubs.clear();
+        for (com.google.firebase.firestore.ListenerRegistration listener : nameListeners.values()) listener.remove();
+        nameListeners.clear();
+        nickCache.clear();
     }
 
     private void fetchInviteStats(@NonNull String targetUid, @NonNull VH h) {

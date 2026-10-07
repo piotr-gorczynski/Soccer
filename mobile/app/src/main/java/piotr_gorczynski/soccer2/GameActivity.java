@@ -63,6 +63,7 @@ public class GameActivity extends BaseActivity {
     private FirebaseFirestore db;
 
     private String player0Name, player1Name;
+    private com.google.firebase.firestore.ListenerRegistration remoteProfileListener;
 
     private String player0Uid, player1Uid;
 
@@ -451,7 +452,7 @@ public class GameActivity extends BaseActivity {
 
                     db.collection("users").document(remoteUid).get()
                             .addOnSuccessListener(remoteDoc -> {
-                                String remoteNickname = remoteDoc.getString("nickname");
+                                String remoteNickname = UserDisplayName.from(remoteDoc);
                                 // after you fetch remoteNickname…
                                 if (localPlayerIndex == 0) {
                                     player0Name = localNickname;
@@ -493,6 +494,15 @@ public class GameActivity extends BaseActivity {
 
                                 // CREATE your GameView exactly once
                                 initGameView();
+                                if (remoteProfileListener != null) remoteProfileListener.remove();
+                                remoteProfileListener = db.collection("users").document(remoteUid)
+                                        .addSnapshotListener((profile, error) -> {
+                                            if (error != null || profile == null || isDestroyed()) return;
+                                            String currentName = UserDisplayName.from(profile);
+                                            if (localPlayerIndex == 0) player1Name = currentName;
+                                            else player0Name = currentName;
+                                            if (gameView != null) gameView.setPlayerNames(player0Name, player1Name);
+                                        });
 
                                 // ── Wire up real‐time “moves” listener ──
                                 movesRef = matchRef.collection("moves");
@@ -1455,6 +1465,7 @@ public class GameActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
+        if (remoteProfileListener != null) remoteProfileListener.remove();
         if (movesListener != null) movesListener.remove();
         if (clockListener != null) clockListener.remove();
         super.onDestroy();

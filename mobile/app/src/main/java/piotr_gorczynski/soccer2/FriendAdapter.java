@@ -55,6 +55,8 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
     private final OnInviteClick listener;
     private final OnRemoveClick removeListener;
     private final List<DocumentSnapshot> docs = new ArrayList<>();
+    private final java.util.Set<String> removedUids = new java.util.HashSet<>();
+    private final Map<String,com.google.firebase.firestore.ListenerRegistration> nameListeners = new HashMap<>();
     private final Map<String,String> nickCache = new HashMap<>();
     private final Map<String,String> presCache = new HashMap<>();
     private final Map<String,Long> hbCache = new HashMap<>();
@@ -125,17 +127,25 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
         h.uid = uid;
 
         String nick = nickCache.get(uid);
-        if (nick == null) {
+        if (!nameListeners.containsKey(uid)) {
             h.nickname.setText(uid.substring(0,6));
-            FirebaseFirestore.getInstance().collection("users").document(uid).get()
-                    .addOnSuccessListener(doc -> {
-                        String n = doc.getString("nickname");
+            nameListeners.put(uid, FirebaseFirestore.getInstance().collection("users").document(uid)
+                    .addSnapshotListener((doc, error) -> {
+                        if (error != null || doc == null) return;
+                        if (!doc.exists() || Boolean.TRUE.equals(doc.getBoolean("accountDeleted"))) {
+                            removedUids.add(uid);
+                            nickCache.put(uid, UserDisplayName.REMOVED);
+                            int idx = indexForUid(uid);
+                            if (idx != RecyclerView.NO_POSITION) { docs.remove(idx); notifyItemRemoved(idx); }
+                            return;
+                        }
+                        String n = UserDisplayName.from(doc);
                         if (n != null) {
                             nickCache.put(uid, n);
                             int idx = indexForUid(uid);
                             if (idx != RecyclerView.NO_POSITION) notifyItemChanged(idx, "nickname");
                         }
-                    });
+                    }));
         } else {
             h.nickname.setText(nick);
         }
@@ -251,7 +261,9 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
         }
         
         docs.clear();
-        docs.addAll(friends);
+        for (DocumentSnapshot friend : friends) {
+            if (!removedUids.contains(friend.getId())) docs.add(friend);
+        }
         notifyDataSetChanged();
         
         android.util.Log.d("TAG_Soccer", "setData: notifyDataSetChanged() called, adapter now has " + docs.size() + " items");
@@ -521,5 +533,8 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
         super.onDetachedFromRecyclerView(rv);
         for (RtdbSub sub : presSubs.values()) sub.ref.removeEventListener(sub.l);
         presSubs.clear();
+        for (com.google.firebase.firestore.ListenerRegistration listener : nameListeners.values()) listener.remove();
+        nameListeners.clear();
+        nickCache.clear();
     }
 }

@@ -191,7 +191,7 @@ class PendingInviteAdapter extends RecyclerView.Adapter<PendingInviteAdapter.VH>
             FirebaseFirestore.getInstance().collection("users").document(uid).get()
                     .addOnSuccessListener(doc -> {
                         if (doc.exists()) {
-                            String n = doc.getString("nickname");
+                            String n = UserDisplayName.from(doc);
                             if (n != null) {
                                 nickCache.put(uid, n);
                                 notifyUidChanged(uid, "nickname");

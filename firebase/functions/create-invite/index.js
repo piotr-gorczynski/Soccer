@@ -78,6 +78,10 @@ exports.createInvite = functions
                          now.toMillis() + TTL_MIN * 60_000);
 
       /* ── Check if target user has blocked invites or account deleted ── */
+      const senderDoc = await tx.get(admin.firestore().collection('users').doc(from));
+      if (senderDoc.get('accountDeleted') === true) {
+        throw new functions.https.HttpsError('failed-precondition', 'User account no longer available');
+      }
       const targetUserDoc = await tx.get(admin.firestore().collection('users').doc(to));
       if (targetUserDoc.exists) {
         const userData = targetUserDoc.data();

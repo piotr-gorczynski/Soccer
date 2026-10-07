@@ -1,10 +1,12 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.56
-**Last Updated:** 2026-10-04
+**Document Version:** 2.58
+**Last Updated:** 2026-10-07
 **Status:** Prize, payment, and support workflows implemented; simulated end-to-end flow tested on dev; Bangladesh launch work remains
 
 **Revision History**:
+- v2.58 (2026-10-07): Implemented minimal deleted-account tombstones with stable historical UIDs, active-state cleanup/retries and pseudonymous-data wording in the unpublished privacy revision. Payout/legal history retention is separate; see ACCOUNT_DELETION.md. No deployment/publication.
+- v2.57 (2026-10-07): Implemented independent versioned Global/Bangladesh Terms acceptance, immutable legal evidence, server-confirmed gating and owner-only immutable rules. Prepared BD-terms-2026-10-06 and current Global snapshots; publication/deployment, privacy amendment and device acceptance checks remain pending. See TERMS_ACCEPTANCE.md.
 - v2.56 (2026-10-04): Recorded owner-confirmed Rocket 320 BDT delivery through Remitly from Poland to Bangladesh; bKash and Rocket both VERIFIED / DELIVERED. Documented accurate personal recipient names versus the earlier paused organization-name attempt; no recipient identifiers recorded.
 - v2.55 (2026-10-04): Implemented terminal payout retention (180 days raw / five calendar years minimized audit), dispute/legal holds and daily cleanup. Existing statusHistory preserved; no deployment.
 - v2.54 (2026-10-03): Prepared independent English Bangladesh privacy draft and app links; documented operational recipient vs minimized audit retention, deletion limitations and outstanding legal/operational review. No deployment or historical cleanup.
@@ -2833,7 +2835,8 @@ While current model is developer-funded with no entry fees, future revenue optio
 - [ ] Confirm whether any prize withholding/tax reporting obligations apply (optional local counsel review)
 - [ ] Update Terms of Service with Bangladesh-specific clauses
 - [ ] Update Privacy Policy (minimal data collection - no ID documents)
-- [ ] Add eligibility confirmation and terms acceptance in app
+- [x] Add eligibility confirmation and terms acceptance in app
+  - Versioned general Terms implemented separately from tournament declarations; see [Terms acceptance](TERMS_ACCEPTANCE.md). Bangladesh requires `BD-terms-2026-10-06`; Global retains explicitly limited legacy compatibility. Immutable documents, rules and updated app are not released yet.
 
 #### Technical Compliance
 - [x] Implement 18+ eligibility confirmation (checkbox + declaration)
@@ -2910,6 +2913,9 @@ bangladesh-specific/
 ```
 
 ### Appendix B: Current player-facing payout terms
+
+Versioned acceptance implementation and rollout: [TERMS_ACCEPTANCE.md](TERMS_ACCEPTANCE.md). The new Bangladesh acceptance URL is `/bangladesh/terms/BD-terms-2026-10-06.html`; it is prepared locally, not published. No existing user is silently assigned this version. The effective Privacy Policy needs a reviewed amendment for general Terms evidence and its retention before release. Existing tournament-specific declarations remain separate.
+
 
 See the English review drafts in `firebase-hosting/public/bangladesh/terms-en.html` and
 `tournaments-en.html`. Awards, eligibility, tie handling and deadlines are tournament-configured.

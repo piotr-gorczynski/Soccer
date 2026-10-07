@@ -94,8 +94,12 @@ public class Field {
     private Bitmap[] activeRunBluePlayerFrames;
     private Bitmap[] activeKickRedPlayerFrames;
     private Bitmap[] activeKickBluePlayerFrames;
-    private final String sPlayer0;
-    private final String sPlayer1;
+    void setPlayerNames(String player0, String player1) {
+        if (player0 != null) sPlayer0 = player0;
+        if (player1 != null) sPlayer1 = player1;
+    }
+    private String sPlayer0;
+    private String sPlayer1;
     private final int gameType;
     private final int localPlayerIndex;
     private final Context context;

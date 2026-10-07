@@ -149,6 +149,7 @@ android {
 
     testOptions {
         unitTests.returnDefaultValues = true
+        unitTests.includeAndroidResources = true // Exercise Terms UI with its real layout/theme.
     }
 
     compileOptions {

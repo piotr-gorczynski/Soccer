@@ -428,4 +428,5 @@
     <string name="payment_name_required">Saisissez un nom (1–100 caractères).</string>
     <string name="payment_recipient_instructions">Le prénom et le nom doivent correspondre aux coordonnées du bénéficiaire enregistrées auprès de votre portefeuille mobile et de Remitly. Des données incorrectes peuvent retarder ou empêcher le paiement.</string>
     <string name="bangladesh_privacy_policy_english">Politique de confidentialité Bangladesh (anglais)</string>
+    <string name="terms_acceptance_failed">Impossible d’enregistrer votre acceptation des conditions. Réessayez.</string>
 </resources>

@@ -38,6 +38,10 @@ exports.joinTournament = functions.https.onCall(async (data, context) => {
   /* ─── 2. Single transaction ─── */
   await db.runTransaction(async tx => {
 
+    const user = await tx.get(db.collection("users").doc(uid));
+    if (user.get("accountDeleted") === true) {
+      throw new functions.https.HttpsError("failed-precondition", "Account no longer available");
+    }
     /* 2-a: already joined? */
     const pSnap = await tx.get(pRef);
     if (pSnap.exists) {

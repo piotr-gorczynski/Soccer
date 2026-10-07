@@ -43,14 +43,15 @@ exports.deleteUnverifiedUsers = functions.pubsub
             await auth.deleteUser(user.uid);
             console.log(`🧹 Deleted unverified user from Auth: ${user.email}`);
 
-            // Also delete from Firestore
-            await db.collection("users").doc(user.uid).delete();
-            console.log(`🧹 Deleted user document from Firestore: users/${user.uid}`);
+            // Retain the UID anchor; never delete historical references.
+            // onAccountDeleted owns profile minimization and legacy-consent preservation.
+            // Do not delete/replace the profile here before that handler reads its legal evidence.
+            console.log(`🧹 Queued profile minimization via Auth deletion: users/${user.uid}`);
 
-            // Delete from realtime database status
+            // Deactivate presence without allowing stale clients to recreate it
             try {
-              await rtdb.ref('status').child(user.uid).remove();
-              console.log(`🧹 Deleted user status from RTDB: status/${user.uid}`);
+              await rtdb.ref('status').child(user.uid).set({ accountDeleted: true, state: 'offline' });
+              console.log(`🧹 Deactivated user status in RTDB: status/${user.uid}`);
             } catch (rtdbErr) {
               console.error(`⚠️ Failed to delete RTDB status for ${user.uid}: ${rtdbErr.message}`);
               // Don't throw - main deletion is complete

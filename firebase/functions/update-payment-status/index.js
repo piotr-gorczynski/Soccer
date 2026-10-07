@@ -151,10 +151,15 @@ exports.onPaymentStatusChanged = functions.runWith({ failurePolicy: true }).fire
       if (error.code === 'messaging/registration-token-not-registered' ||
           error.code === 'messaging/installation-id-not-registered' ||
           error.code === 'messaging/invalid-registration-token') {
-        await userSnap.ref.update({
-          [targetField]: FieldValue.delete(),
-          fcmErrorType: error.code,
-          fcmErrorDate: FieldValue.serverTimestamp(),
+        await userSnap.ref.firestore.runTransaction(async tx => {
+          const current = await tx.get(userSnap.ref);
+          if (!current.exists || current.get('accountDeleted') === true
+              || current.get(targetField) !== userSnap.get(targetField)) return;
+          tx.update(userSnap.ref, {
+            [targetField]: FieldValue.delete(),
+            fcmErrorType: error.code,
+            fcmErrorDate: FieldValue.serverTimestamp(),
+          });
         });
         return null;
       }

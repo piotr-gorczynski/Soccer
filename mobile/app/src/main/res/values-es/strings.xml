@@ -436,4 +436,5 @@
     <string name="payment_name_required">Introduce un nombre (1–100 caracteres).</string>
     <string name="payment_recipient_instructions">El nombre y el apellido deben coincidir con los datos del destinatario registrados en tu billetera móvil y Remitly. Los datos incorrectos pueden retrasar o impedir el pago.</string>
     <string name="bangladesh_privacy_policy_english">Política de privacidad de Bangladesh (inglés)</string>
+    <string name="terms_acceptance_failed">No se pudo guardar la aceptación de los términos. Inténtalo de nuevo.</string>
 </resources>

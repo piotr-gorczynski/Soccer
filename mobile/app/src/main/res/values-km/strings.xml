@@ -399,4 +399,5 @@
     <string name="payment_name_required">បញ្ចូលឈ្មោះ (១–១០០ តួអក្សរ)។</string>
     <string name="payment_recipient_instructions">នាមខ្លួន និងនាមត្រកូលត្រូវតែត្រូវគ្នានឹងព័ត៌មានអ្នកទទួលដែលបានចុះឈ្មោះក្នុងកាបូបចល័ត និង Remitly របស់អ្នក។ ព័ត៌មានមិនត្រឹមត្រូវអាចពន្យារពេល ឬរារាំងការទូទាត់។</string>
     <string name="bangladesh_privacy_policy_english">គោលការណ៍ឯកជនភាពបង់ក្លាដែស (ភាសាអង់គ្លេស)</string>
+    <string name="terms_acceptance_failed">មិនអាចរក្សាទុកការយល់ព្រមលើលក្ខខណ្ឌបានទេ។ សូមព្យាយាមម្តងទៀត។</string>
 </resources>

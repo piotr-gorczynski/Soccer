@@ -24,6 +24,11 @@ import java.util.Map;
 import java.util.Objects;
 
 public class RankingActivity extends BaseActivity {
+    @Override protected void onDestroy() {
+        if (profileNamesListener != null) profileNamesListener.remove();
+        super.onDestroy();
+    }
+    private com.google.firebase.firestore.ListenerRegistration profileNamesListener;
 
     private final List<RankingEntry> ranking = new ArrayList<>();
     private RankingAdapter adapter;
@@ -76,12 +81,15 @@ public class RankingActivity extends BaseActivity {
                 return;
             }
 
-            db.collection("users").whereIn(FieldPath.documentId(), uids)
-                    .get().addOnSuccessListener(userSnap -> {
+            if (profileNamesListener != null) profileNamesListener.remove();
+
+            profileNamesListener = db.collection("users").whereIn(FieldPath.documentId(), uids)
+                    .addSnapshotListener((userSnap, error) -> {
+                        if (error != null || userSnap == null || isDestroyed()) return;
                         for (DocumentSnapshot user : userSnap) {
                             RankingEntry e = scoreMap.get(user.getId());
                             if (e != null) {
-                                e.nickname = user.getString("nickname");
+                                e.nickname = UserDisplayName.from(user);
                             }
                         }
 

@@ -62,7 +62,7 @@ public class WaitingActivity extends BaseActivity {
             if (!TextUtils.isEmpty(toUid)) {
                 db.collection("users").document(toUid).get()
                         .addOnSuccessListener(userDoc -> {
-                            String nick = userDoc.getString("nickname");
+                            String nick = UserDisplayName.from(userDoc);
                             if (!TextUtils.isEmpty(nick)) {
                                 waitingMessage.setText(
                                         SafeStringFormatter.safeGetString(this, R.string.waiting_for_opponent_named, nick));

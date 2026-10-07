@@ -57,6 +57,7 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
     private final OnInviteClick inviteListener;
     private final OnAddFriendClick addFriendListener;
     private final List<DocumentSnapshot> docs = new ArrayList<>();
+    private final Map<String,com.google.firebase.firestore.ListenerRegistration> nameListeners = new HashMap<>();
     private final Map<String,String> nickCache = new HashMap<>();
     private final Map<String,String> presCache = new HashMap<>();
     private final Map<String,Long> hbCache = new HashMap<>();
@@ -65,6 +66,7 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
     private final Map<String,String> tournamentStatusCache = new HashMap<>();
     private final Map<String,String> matchStatusCache = new HashMap<>();
     private final Map<String,String> matchWinnerCache = new HashMap<>();
+    private final Map<String,com.google.firebase.firestore.ListenerRegistration> winnerNameListeners = new HashMap<>();
     private final Map<String,String> winnerNicknameCache = new HashMap<>();
     private static final class RtdbSub { final DatabaseReference ref; final ValueEventListener l; RtdbSub(DatabaseReference r, ValueEventListener l){this.ref=r;this.l=l;}}
     private final Map<String,RtdbSub> presSubs = new HashMap<>();
@@ -288,20 +290,14 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
                                         String winnerId = doc.getString("winner");
                                         if (winnerId != null) {
                                             matchWinnerCache.put(matchPath, winnerId);
-                                            // Fetch winner nickname and cache it if not already cached
-                                            if (!winnerNicknameCache.containsKey(winnerId)) {
-                                                FirebaseFirestore.getInstance().collection("users").document(winnerId).get()
-                                                    .addOnSuccessListener(userDoc -> {
-                                                        if (userDoc.exists()) {
-                                                            String nickname = userDoc.getString("nickname");
-                                                            if (nickname != null && !nickname.isEmpty()) {
-                                                                winnerNicknameCache.put(winnerId, nickname);
-                                                            }
-                                                        }
-                                                    })
-                                                    .addOnFailureListener(e -> {
-                                                        android.util.Log.w("TAG_Soccer", "Failed to load winner nickname for " + winnerId, e);
-                                                    });
+                                            if (!winnerNameListeners.containsKey(winnerId)) {
+                                                winnerNameListeners.put(winnerId, FirebaseFirestore.getInstance()
+                                                    .collection("users").document(winnerId)
+                                                    .addSnapshotListener((userDoc, error) -> {
+                                                        if (error != null || userDoc == null) return;
+                                                        String name = UserDisplayName.from(userDoc);
+                                                        if (name != null) winnerNicknameCache.put(winnerId, name);
+                                                    }));
                                             }
                                         }
                                     }
@@ -317,19 +313,20 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
 
         // Load nickname
         String nick = nickCache.get(uid);
-        if (nick == null) {
+        if (!nameListeners.containsKey(uid)) {
             h.nickname.setText(context.getString(R.string.invite_from_loading));
-            FirebaseFirestore.getInstance().collection("users").document(uid).get()
-                    .addOnSuccessListener(doc -> {
+            nameListeners.put(uid, FirebaseFirestore.getInstance().collection("users").document(uid)
+                    .addSnapshotListener((doc, error) -> {
+                        if (error != null || doc == null) return;
                         if (doc.exists()) {
-                            String n = doc.getString("nickname");
+                            String n = UserDisplayName.from(doc);
                             if (n != null) {
                                 nickCache.put(uid, n);
                                 notifyUidChanged(uid, "nickname");
                             }
 
                             // Check if user is deleted
-                            Boolean deleted = doc.getBoolean("deleted");
+                            Boolean deleted = doc.getBoolean("accountDeleted");
                             userDeletedCache.put(uid, deleted != null && deleted);
                             notifyUidChanged(uid, "presence");
                         } else {
@@ -337,7 +334,7 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
                             userDeletedCache.put(uid, true);
                             notifyUidChanged(uid, "presence");
                         }
-                    });
+                    }));
         } else {
             h.nickname.setText(SafeStringFormatter.safeGetString(context, R.string.invite_from_format, nick));
         }
@@ -537,5 +534,11 @@ public class PastInviteAdapter extends RecyclerView.Adapter<PastInviteAdapter.VH
         super.onDetachedFromRecyclerView(rv);
         for (RtdbSub sub : presSubs.values()) sub.ref.removeEventListener(sub.l);
         presSubs.clear();
+        for (com.google.firebase.firestore.ListenerRegistration listener : nameListeners.values()) listener.remove();
+        nameListeners.clear();
+        for (com.google.firebase.firestore.ListenerRegistration listener : winnerNameListeners.values()) listener.remove();
+        winnerNameListeners.clear();
+        winnerNicknameCache.clear();
+        nickCache.clear();
     }
 }
