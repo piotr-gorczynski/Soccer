@@ -322,7 +322,13 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                         "SoccerApp.trackAppVariant: tracking failed for " + appVariant,
                         error));
     }
-    public synchronized void syncFcmRegistrationIfNeeded() {
+    public void syncFcmRegistrationIfNeeded() {
+        // Firebase Messaging may synchronously await its FID when auto-init is enabled.
+        // Callers and Task callbacks can be on the UI thread: always dispatch here.
+        fcmExecutor.execute(this::syncFcmRegistrationOnWorker);
+    }
+
+    protected synchronized void syncFcmRegistrationOnWorker() {
         String uid = FirebaseAuth.getInstance().getUid();
         if (uid == null) return;
 
@@ -446,9 +452,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     }
 
     public void enableFcmAutoInit() {
-        fcmExecutor.execute(() -> {
-            syncFcmRegistrationIfNeeded();
-        });
+        syncFcmRegistrationIfNeeded();
     }
 
     /* ---------------- central place to start presence tracking ---------- */
