@@ -267,8 +267,8 @@ public class AccountActivity extends BaseActivity {
     }
 
     private void finishAccountRemoval(String uid) {
-        // Force user offline in SoccerApp using known UID since auth is already cleared
-        ((SoccerApp) getApplication()).forceUserOffline(uid);
+        // The backend already wrote the minimal deleted-account presence marker.
+        ((SoccerApp) getApplication()).stopPresenceAfterAccountDeletion();
 
         // Sign out from Firebase Auth
         FirebaseAuth.getInstance().signOut();

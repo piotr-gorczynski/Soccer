@@ -322,10 +322,19 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                         "SoccerApp.trackAppVariant: tracking failed for " + appVariant,
                         error));
     }
-    public void syncFcmRegistrationIfNeeded() {
+    public synchronized void syncFcmRegistrationIfNeeded() {
         String uid = FirebaseAuth.getInstance().getUid();
         if (uid == null) return;
 
+        Task<Void> pending = fcmCleanup.current();
+        if (pending != null && !pending.isSuccessful()) {
+            // Never reuse a previous account's installation while cleanup is outstanding.
+            unregisterFromFcm(); // Coalesces in-flight work; retries a previous failure.
+            fcmCleanup.current().addOnSuccessListener(unused -> syncFcmRegistrationIfNeeded());
+            return;
+        }
+        fcmCleanup.registrationStarted();
+        FirebaseMessaging.getInstance().setAutoInitEnabled(true);
         FirebaseMessaging.getInstance().register()
                 .addOnSuccessListener(unused -> FirebaseInstallations.getInstance().getId()
                         .addOnSuccessListener(installationId ->
@@ -385,10 +394,16 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                         error));
     }
 
-    public void unregisterFromFcm() {
+    private final FcmCleanupGate fcmCleanup = new FcmCleanupGate();
+
+    public synchronized void unregisterFromFcm() {
+        fcmCleanup.run(this::performFcmCleanup);
+    }
+
+    private Task<Void> performFcmCleanup() {
         FirebaseMessaging messaging = FirebaseMessaging.getInstance();
         messaging.setAutoInitEnabled(false);
-        messaging.unregister()
+        Task<Void> cleanup = messaging.unregister()
                 .continueWithTask(unregisterTask -> {
                     if (unregisterTask.isSuccessful()) {
                         Log.d(TAG, "SoccerApp.unregisterFromFcm: FCM unregistered");
@@ -416,6 +431,14 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                 .remove(FCM_INSTALLATION_ID_PREF)
                 .remove("fcmToken")
                 .apply();
+        return cleanup;
+    }
+
+    public void stopPresenceAfterAccountDeletion() {
+        cancelHeartbeat();
+        removeConnectionListener();
+        if (userStatusDbRef != null) userStatusDbRef.onDisconnect().cancel();
+        userStatusDbRef = null; // Backend owns the deleted-account offline marker.
     }
 
     public void disableFcmAutoInit() {
@@ -424,7 +447,6 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
 
     public void enableFcmAutoInit() {
         fcmExecutor.execute(() -> {
-            FirebaseMessaging.getInstance().setAutoInitEnabled(true);
             syncFcmRegistrationIfNeeded();
         });
     }
