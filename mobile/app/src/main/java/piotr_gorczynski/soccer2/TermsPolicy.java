@@ -26,6 +26,8 @@ public final class TermsPolicy {
         this.scope=scope; this.version=version; this.language=language; this.url=url; this.sha256=sha256;
     }
     public static TermsPolicy required(boolean bd, String language) {
+        if (bd && "bn".equals(language)) return new TermsPolicy("bangladesh", BD_VERSION, "bn",
+            "https://piotr-gorczynski.com/bangladesh/terms/" + BD_VERSION + "-bn.html", "7e35810d68cdd8a0115bb526e867a7bd0b584c6b4e37756b47faeddf88caff3d");
         if (bd) return new TermsPolicy("bangladesh", BD_VERSION, "en",
             "https://piotr-gorczynski.com/bangladesh/terms/" + BD_VERSION + ".html", "e77d67d705baec188e277fe8c1cfdcbbad4d061e0581a64e6c884ede8c76ebcc");
         String lang = GLOBAL_HASHES.containsKey(language) ? language : "en";

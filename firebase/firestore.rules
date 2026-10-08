@@ -15,9 +15,11 @@ service cloud.firestore {
 
     function approvedTerms(d) {
       return (d.scope == 'bangladesh' && d.version == 'BD-terms-2026-10-06'
-        && d.language == 'en'
+        && ((d.language == 'bn'
+        && d.documentUrl == 'https://piotr-gorczynski.com/bangladesh/terms/BD-terms-2026-10-06-bn.html'
+        && d.documentSha256 == '7e35810d68cdd8a0115bb526e867a7bd0b584c6b4e37756b47faeddf88caff3d') || (d.language == 'en'
         && d.documentUrl == 'https://piotr-gorczynski.com/bangladesh/terms/BD-terms-2026-10-06.html'
-        && d.documentSha256 == 'e77d67d705baec188e277fe8c1cfdcbbad4d061e0581a64e6c884ede8c76ebcc')
+        && d.documentSha256 == 'e77d67d705baec188e277fe8c1cfdcbbad4d061e0581a64e6c884ede8c76ebcc')))
         || (d.scope == 'global' && d.version == 'GLOBAL-terms-2025-07-30'
         && d.documentUrl == 'https://piotr-gorczynski.com/terms/GLOBAL-terms-2025-07-30/' + d.language + '.html'
         && (

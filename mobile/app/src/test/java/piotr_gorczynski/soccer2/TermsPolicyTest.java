@@ -40,6 +40,18 @@ public class TermsPolicyTest {
         r.put("acceptedAt",new Timestamp(100,0));assertTrue(p.matches(r));
         r.put("documentSha256","wrong");assertFalse(p.matches(r));
     }
+    @Test public void languageRoutingAndAcceptanceAcrossLanguages() {
+        TermsPolicy bn=TermsPolicy.required(true,"bn"), en=TermsPolicy.required(true,"pl");
+        assertEquals("bn",bn.language);
+        assertTrue(bn.url.endsWith("/bangladesh/terms/BD-terms-2026-10-06-bn.html"));
+        assertEquals("en",en.language);
+        assertTrue(en.url.endsWith("/bangladesh/terms/BD-terms-2026-10-06.html"));
+        assertTrue(en.matches(saved(bn))); assertTrue(bn.matches(saved(en)));
+        assertTrue(TermsPolicy.required(false,"bn").url.endsWith("/terms/GLOBAL-terms-2025-07-30/bn.html"));
+        assertTrue(TermsPolicy.required(false,"pl").url.endsWith("/pl.html"));
+        assertTrue(PrivacyPolicyLinks.bangladeshUrl("bn").endsWith("/privacy-bn.html"));
+        assertTrue(PrivacyPolicyLinks.bangladeshUrl("pl").endsWith("/privacy-en.html"));
+    }
     @Test public void hashRejectsChangedHtml() throws Exception {
         byte[] bytes="hello".getBytes(java.nio.charset.StandardCharsets.UTF_8);
         assertEquals("hello",TermsDocumentLoader.verify(bytes,"2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824"));

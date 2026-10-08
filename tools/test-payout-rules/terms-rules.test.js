@@ -14,8 +14,8 @@ beforeEach(async () => { await env.clearFirestore(); });
 function record(scope='bangladesh',language='en') {
   const bd=scope==='bangladesh', version=bd?'BD-terms-2026-10-06':'GLOBAL-terms-2025-07-30';
   return {documentType:'terms',scope,version,acceptedAt:serverTimestamp(),language,
-    documentUrl:'https://piotr-gorczynski.com/'+(bd?'bangladesh/terms/'+version+'.html':'terms/'+version+'/'+language+'.html'),
-    documentSha256:hashes[bd?'bangladesh':language],appVersionCode:100,appVersionName:'TEST',flavor:bd?'_devBangladesh':'_devGlobal'};
+    documentUrl:'https://piotr-gorczynski.com/'+(bd?'bangladesh/terms/'+version+(language==='bn'?'-bn':'')+'.html':'terms/'+version+'/'+language+'.html'),
+    documentSha256:hashes[bd?(language==='bn'?'bangladesh-bn':'bangladesh'):language],appVersionCode:100,appVersionName:'TEST',flavor:bd?'_devBangladesh':'_devGlobal'};
 }
 function ref(db,r=record(),owner='owner') {return doc(db,'users/'+owner+'/legalAcceptances/terms_'+r.scope+'__'+r.version);}
 function db(user='owner') {return env.authenticatedContext(user).firestore();}
@@ -23,14 +23,14 @@ test('exact approved HTML bytes match manifest, app and rules',()=>{
   const app=fs.readFileSync('../../mobile/app/src/main/java/piotr_gorczynski/soccer2/TermsPolicy.java','utf8');
   const rules=fs.readFileSync('../../firebase/firestore.rules','utf8');
   for(const [lang,hash] of Object.entries(hashes)) {
-    const path=lang==='bangladesh'?'bangladesh/terms/BD-terms-2026-10-06.html':'terms/GLOBAL-terms-2025-07-30/'+lang+'.html';
+    const path=lang.startsWith('bangladesh')?'bangladesh/terms/BD-terms-2026-10-06'+(lang==='bangladesh-bn'?'-bn':'')+'.html':'terms/GLOBAL-terms-2025-07-30/'+lang+'.html';
     assert.equal(crypto.createHash('sha256').update(fs.readFileSync('../../firebase-hosting/public/'+path)).digest('hex'),hash);
     assert.ok(app.includes(hash));assert.ok(rules.includes(hash));
   }
 });
 test('BD and all Global language acceptances store server timestamp and independent records',async()=>{
   for(const lang of Object.keys(hashes)) {
-    const r=lang==='bangladesh'?record():record('global',lang), store=db('user-'+lang);
+    const r=lang.startsWith('bangladesh')?record('bangladesh',lang==='bangladesh-bn'?'bn':'en'):record('global',lang), store=db('user-'+lang);
     const target=ref(store,r,'user-'+lang);
     await assertSucceeds(setDoc(target,r));
     const stored=(await getDoc(target)).data();

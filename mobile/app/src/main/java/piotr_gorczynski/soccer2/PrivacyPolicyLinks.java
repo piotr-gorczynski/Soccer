@@ -7,20 +7,24 @@ import android.net.Uri;
 import android.view.View;
 import android.widget.Toast;
 
-/** Bangladesh has an independently maintained English privacy notice. */
+/** Bangladesh privacy documents follow the selected application language. */
 public final class PrivacyPolicyLinks {
     public static final String BANGLADESH_URL = "https://piotr-gorczynski.com/bangladesh/privacy-en.html";
     private PrivacyPolicyLinks() {}
+    public static String bangladeshUrl(String language) {
+        return "https://piotr-gorczynski.com/bangladesh/privacy-" + ("bn".equals(language) ? "bn" : "en") + ".html";
+    }
 
     public static void bind(Activity activity, int viewId) {
         View link = activity.findViewById(viewId);
         boolean bangladesh = AppFlavourDetector.isBangladeshFlavour(activity);
         link.setVisibility(bangladesh ? View.VISIBLE : View.GONE);
         if (bangladesh) link.setOnClickListener(view -> {
+            String url = bangladeshUrl(LanguageManager.getCurrentLanguageCode(activity));
             try {
-                activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(BANGLADESH_URL)));
+                activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
             } catch (ActivityNotFoundException error) {
-                Toast.makeText(activity, BANGLADESH_URL, Toast.LENGTH_LONG).show();
+                Toast.makeText(activity, url, Toast.LENGTH_LONG).show();
             }
         });
     }

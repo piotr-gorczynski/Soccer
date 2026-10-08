@@ -31,7 +31,7 @@ public class TermsActivity extends BaseActivity {
             @Override public void onPageFinished(WebView view,String url){ if(loaded && !saving) accept.setEnabled(true); }
             @Override public boolean shouldOverrideUrlLoading(WebView view,WebResourceRequest request){
                 String url=request.getUrl().toString();
-                if (AppFlavourDetector.isBangladeshFlavour(TermsActivity.this) && PrivacyPolicyLinks.isSharedPrivacyUrl(url)) url=PrivacyPolicyLinks.BANGLADESH_URL;
+                if (AppFlavourDetector.isBangladeshFlavour(TermsActivity.this) && PrivacyPolicyLinks.isSharedPrivacyUrl(url)) url=PrivacyPolicyLinks.bangladeshUrl(LanguageManager.getCurrentLanguageCode(TermsActivity.this));
                 if(url.startsWith("https://") || url.startsWith("mailto:")) {
                     try { startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse(url))); } catch(Exception ignored) {}
                 }
