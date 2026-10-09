@@ -2914,7 +2914,7 @@ bangladesh-specific/
 
 ### Appendix B: Current player-facing payout terms
 
-Versioned acceptance implementation and rollout: [TERMS_ACCEPTANCE.md](TERMS_ACCEPTANCE.md). The new Bangladesh acceptance URL is `/bangladesh/terms/BD-terms-2026-10-06.html`; it is prepared locally, not published. No existing user is silently assigned this version. The effective Privacy Policy needs a reviewed amendment for general Terms evidence and its retention before release. Existing tournament-specific declarations remain separate.
+Versioned acceptance implementation and rollout: [TERMS_ACCEPTANCE.md](TERMS_ACCEPTANCE.md). The new Bangladesh acceptance URL is `/bangladesh/terms/BD-terms-2026-10-06.html`; it is prepared locally, not published. No existing user is silently assigned this version. The effective Bangladesh Privacy Policy is `BD-privacy-2026-10-09`, effective 9 October 2026, in English and Bengali. Finalization changes status/version labels only; the separate review of general Terms evidence and its retention remains open. Existing tournament-specific declarations remain separate.
 
 
 See the English review drafts in `firebase-hosting/public/bangladesh/terms-en.html` and

@@ -61,7 +61,7 @@ No bulk migration, acceptance reset or backfill is required or permitted. Existi
 
 ## Privacy review / release prerequisite
 
-The effective `BD-privacy-2026-10-06` describes tournament eligibility confirmations and timestamps, but does not explicitly describe the new general-Terms evidence: scope/version, immutable URL/hash, accepted document language and app version/flavor. It also still describes shared general Terms. A reviewed amendment should explain the legal/accountability purpose, applicable retention/deletion treatment and the separate Bangladesh Terms before this feature is released. No automatic payout retention period is applied to legal evidence. This task does not change the effective Privacy Policy or decide a legal retention duration.
+The effective Bangladesh Privacy Policy is `BD-privacy-2026-10-09`, effective 9 October 2026, in English and Bengali. The 9 October finalization changes only status/version labels, not substantive content. The earlier review of `BD-privacy-2026-10-06` identified a need to explain general-Terms evidence (scope/version, immutable URL/hash, accepted document language and app version/flavor). Finalizing the policy status does not itself resolve that content-review finding or establish a legal retention duration. No automatic payout retention period is applied to legal evidence.
 
 ## Verification scope
 

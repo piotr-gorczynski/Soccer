@@ -1,8 +1,8 @@
-> **7 October 2026 — unpublished account-deletion revision:** Local `privacy-en.html` now contains proposed `BD-privacy-2026-10-07` wording for profile minimization, stable historical UIDs, pseudonymity, active-state cleanup and separate legal/audit retention. The live policy remains `BD-privacy-2026-10-06`. Do not publish this draft before backend/rules rollout and review of the Terms/regulation retention policy. No numeric legal-acceptance period was invented. See [ACCOUNT_DELETION.md](../docs/ACCOUNT_DELETION.md). Earlier statements below that the local policy is unchanged describe the previous review only.
+> **Current status — 9 October 2026:** `BD-privacy-2026-10-09` is the effective Bangladesh Privacy Policy, effective 9 October 2026, in English and Bengali. This finalizes the status/version of the 7 October revision without changing its substantive content. The owner confirms that the Bangladesh website pages have been published; this status update does not deploy the revised labels. No numeric legal-acceptance retention period is introduced. See [ACCOUNT_DELETION.md](../docs/ACCOUNT_DELETION.md). Earlier dated review notes below are historical and do not override this current status.
 
 # Bangladesh English website content review
 
-Prepared 2026-10-01; status updated 2026-10-07. The Bangladesh Privacy Policy is finalized as BD-privacy-2026-10-06, effective 6 October 2026, following owner approval and successful retention deployment and verification. This does not assert external legal approval. The landing, tournament and support pages are prepared for publication but are not published. Bangladesh Terms remain unpublished. Separate versioned acceptance is now implemented locally; publication, rules deployment, privacy notice review and app release remain pending. Historical review notes below describe earlier states and are superseded by this status where applicable.
+Prepared 2026-10-01; current status updated 2026-10-09. The effective Bangladesh Privacy Policy is BD-privacy-2026-10-09. This does not assert external legal approval. The following publication restrictions and readiness assessments record earlier reviews, not the current publication status.
 
 ## Pages
 
@@ -16,7 +16,7 @@ The Privacy Policy has an effective date/version rather than a draft banner. Onl
 
 ## Publication readiness review — 6 October 2026
 
-No Hosting deployment, commit, backend/Android change or data mutation is part of this review. The effective Privacy Policy (`BD-privacy-2026-10-06`) is unchanged. Its limited publication already succeeded; the scope paragraph above describes that previous release, not approval to publish more files now.
+No Hosting deployment, commit, backend/Android change or data mutation is part of this review. At that review, `BD-privacy-2026-10-06` was the effective Privacy Policy and was unchanged; it has since been superseded by `BD-privacy-2026-10-09`. Its limited publication already succeeded; the scope paragraph above describes that previous release, not approval to publish more files now.
 
 | Page | Status | Remaining blocker |
 | --- | --- | --- |
@@ -204,5 +204,5 @@ controls. See BANGLADESH_PAYMENT_FLOW.md for exact boundaries, scope, deployment
 legacy exceptions. Retention is deployed in DEV, TEST and PROD as of 2026-10-06. DEV retention tests and the TEST smoke test passed. PROD functions and the daily 03:00 UTC scheduler were verified active; no manual PROD cleanup test was performed. Existing statusHistory is neither removed nor migrated; unmarked old history,
 support conversations, backups and copies remain outside cleanup. New payment history omits free
 text; new support history references messages. Shared Terms and Global privacy are unchanged.
-The effective policy is BD-privacy-2026-10-06 (6 October 2026). Retention periods are owner-selected, not a legal
+The effective policy is BD-privacy-2026-10-09 (9 October 2026). Retention periods are owner-selected, not a legal
 conclusion that raw wallet numbers must be retained five years.
