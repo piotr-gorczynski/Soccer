@@ -140,6 +140,7 @@ class PendingInviteAdapter extends RecyclerView.Adapter<PendingInviteAdapter.VH>
 
         String uid = snapshot.getString("from");
         holder.uid = uid;
+        PlayerModeration.bind(holder.itemView, uid, "invitation");
 
         com.google.firebase.Timestamp createdAt = snapshot.getTimestamp("createdAt");
         if (createdAt != null) {

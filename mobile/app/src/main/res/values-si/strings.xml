@@ -400,4 +400,15 @@
     <string name="payment_recipient_instructions">මුල් නම සහ අවසන් නම ඔබේ ජංගම මුදල් පසුම්බියේ සහ Remitly හි ලියාපදිංචි ලබන්නාගේ විස්තරවලට ගැළපිය යුතුය. වැරදි විස්තර ගෙවීම ප්‍රමාද කිරීමට හෝ වැළැක්වීමට හැකිය.</string>
     <string name="bangladesh_privacy_policy_english">බංග්ලාදේශ රහස්‍යතා ප්‍රතිපත්තිය (ඉංග්‍රීසි)</string>
     <string name="terms_acceptance_failed">කොන්දේසි පිළිගැනීම සුරැකීමට නොහැකි විය. නැවත උත්සාහ කරන්න.</string>
+    <string name="moderation_actions">ක්‍රීඩක විකල්ප</string>
+    <string name="moderation_report">ක්‍රීඩකයා / අන්වර්ථ නාමය වාර්තා කරන්න</string>
+    <string name="moderation_block">ක්‍රීඩකයා අවහිර කරන්න</string>
+    <string name="moderation_unblock">ක්‍රීඩකයාගේ අවහිරය ඉවත් කරන්න</string>
+    <string name="moderation_reason">වාර්තා කිරීමට හේතුව</string>
+    <string name="moderation_blocked">ක්‍රීඩකයා අවහිර කර ඇත. දෙපසින්ම නව ආරාධනා සහ මිතුරන් ලෙස එක් කිරීම අවහිර කර ඇත.</string>
+    <string name="moderation_unblocked">ක්‍රීඩකයාගේ අවහිරය ඉවත් කර ඇත.</string>
+    <string name="moderation_blocked_list">අවහිර කළ ක්‍රීඩකයන්</string>
+    <string name="moderation_empty">අවහිර කළ ක්‍රීඩකයන් නැත.</string>
+    <string name="moderation_unknown_player">ඉවත් කළ ක්‍රීඩකයා</string>
+    <string name="moderation_failed">මෙම ක්‍රියාව සම්පූර්ණ කළ නොහැකි විය. නැවත උත්සාහ කරන්න.</string>
 </resources>

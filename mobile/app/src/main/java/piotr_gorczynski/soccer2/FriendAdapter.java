@@ -125,6 +125,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
         h.doc = d;
         String uid = d.getId();
         h.uid = uid;
+        PlayerModeration.bind(h.itemView, uid, "friends");
 
         String nick = nickCache.get(uid);
         if (!nameListeners.containsKey(uid)) {

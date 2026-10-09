@@ -1,3 +1,4 @@
+# Manual targeted deployment; does not deploy Firestore rules or other functions.
 substitutions:
   _ENVIRONMENT: 'dev'
   _FOLDER_NAME: 'soccer'
@@ -40,8 +41,6 @@ steps:
         git clone -b ${_ENVIRONMENT} --single-branch \
           https://github.com/piotr-gorczynski/Soccer.git /workspace/soccer
         cp /workspace/soccer/firebase/firebase.json /workspace/firebase/firebase.json
-        cp /workspace/soccer/firebase/firestore.rules /workspace/firebase/firestore.rules
-        cp /workspace/soccer/firebase/firestore.indexes.json /workspace/firebase/firestore.indexes.json
         mkdir -p /workspace/firebase/functions/support-tickets
         cp /workspace/soccer/firebase/functions/support-tickets/package.json \
           /workspace/firebase/functions/support-tickets/
@@ -62,7 +61,7 @@ steps:
         npm install
 
   - name: 'node:22-slim'
-    id: 'deploy-support-tickets'
+    id: 'deploy-report-player'
     entrypoint: bash
     args:
       - '-c'
@@ -71,7 +70,7 @@ steps:
         cd /workspace/firebase
         project_id=$(cat /workspace/FIREBASE_PROJECT_ID.txt)
         /workspace/firebase-cli/node_modules/.bin/firebase deploy \
-          --only functions:support-tickets,firestore:rules,firestore:indexes \
+          --only functions:support-tickets:reportPlayer \
           --project="$project_id" \
           --force --non-interactive --debug
 

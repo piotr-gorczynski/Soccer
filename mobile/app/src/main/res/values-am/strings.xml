@@ -400,4 +400,15 @@
     <string name="payment_recipient_instructions">ስም እና የአባት ስም በሞባይል ቦርሳዎ እና በRemitly ከተመዘገቡት የተቀባይ መረጃዎች ጋር መዛመድ አለባቸው። የተሳሳተ መረጃ ክፍያን ሊያዘገይ ወይም ሊከለክል ይችላል።</string>
     <string name="bangladesh_privacy_policy_english">የባንግላዴሽ ግላዊነት ፖሊሲ (በእንግሊዝኛ)</string>
     <string name="terms_acceptance_failed">የውሎች ተቀባይነትዎን ማስቀመጥ አልተቻለም። እንደገና ይሞክሩ።</string>
+    <string name="moderation_actions">የተጫዋች አማራጮች</string>
+    <string name="moderation_report">ተጫዋችን / ቅጽል ስምን ሪፖርት አድርግ</string>
+    <string name="moderation_block">ተጫዋችን አግድ</string>
+    <string name="moderation_unblock">የተጫዋች እገዳን አንሳ</string>
+    <string name="moderation_reason">የሪፖርት ምክንያት</string>
+    <string name="moderation_blocked">ተጫዋቹ ታግዷል። አዲስ ግብዣዎች እና ጓደኛ መጨመር በሁለቱም አቅጣጫዎች ታግደዋል።</string>
+    <string name="moderation_unblocked">የተጫዋቹ እገዳ ተነስቷል።</string>
+    <string name="moderation_blocked_list">የታገዱ ተጫዋቾች</string>
+    <string name="moderation_empty">የታገዱ ተጫዋቾች የሉም።</string>
+    <string name="moderation_unknown_player">የተወገደ ተጫዋች</string>
+    <string name="moderation_failed">ይህን እርምጃ ማጠናቀቅ አልተቻለም። እንደገና ይሞክሩ።</string>
 </resources>

@@ -437,4 +437,15 @@
     <string name="payment_recipient_instructions">El nombre y el apellido deben coincidir con los datos del destinatario registrados en tu billetera móvil y Remitly. Los datos incorrectos pueden retrasar o impedir el pago.</string>
     <string name="bangladesh_privacy_policy_english">Política de privacidad de Bangladesh (inglés)</string>
     <string name="terms_acceptance_failed">No se pudo guardar la aceptación de los términos. Inténtalo de nuevo.</string>
+    <string name="moderation_actions">Opciones del jugador</string>
+    <string name="moderation_report">Denunciar jugador / apodo</string>
+    <string name="moderation_block">Bloquear jugador</string>
+    <string name="moderation_unblock">Desbloquear jugador</string>
+    <string name="moderation_reason">Motivo de la denuncia</string>
+    <string name="moderation_blocked">Jugador bloqueado. Se impiden nuevas invitaciones y añadir amigos en ambos sentidos.</string>
+    <string name="moderation_unblocked">Jugador desbloqueado.</string>
+    <string name="moderation_blocked_list">Jugadores bloqueados</string>
+    <string name="moderation_empty">No hay jugadores bloqueados.</string>
+    <string name="moderation_unknown_player">Jugador eliminado</string>
+    <string name="moderation_failed">No se pudo completar esta acción. Inténtalo de nuevo.</string>
 </resources>

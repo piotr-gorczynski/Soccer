@@ -628,4 +628,10 @@ public class FriendsListActivity extends BaseActivity {
         finish();
         return true;
     }
+    @Override public boolean onCreateOptionsMenu(android.view.Menu menu) {
+        menu.add(R.string.moderation_blocked_list).setOnMenuItemClickListener(item -> {
+            PlayerModeration.showBlocked(this); return true;
+        });
+        return true;
+    }
 }

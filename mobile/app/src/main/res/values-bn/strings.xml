@@ -474,4 +474,15 @@
     <string name="payment_recipient_instructions">নামের প্রথম ও শেষ অংশ আপনার মোবাইল ওয়ালেট ও Remitly-তে নিবন্ধিত প্রাপকের তথ্যের সঙ্গে মিলতে হবে। ভুল তথ্যের কারণে পেমেন্ট বিলম্বিত বা ব্যর্থ হতে পারে।</string>
     <string name="bangladesh_privacy_policy_english">বাংলাদেশের গোপনীয়তা নীতি (বাংলা)</string>
     <string name="terms_acceptance_failed">শর্তাবলীতে আপনার সম্মতি সংরক্ষণ করা যায়নি। আবার চেষ্টা করুন।</string>
+    <string name="moderation_actions">খেলোয়াড়ের বিকল্প</string>
+    <string name="moderation_report">খেলোয়াড় / ডাকনাম রিপোর্ট করুন</string>
+    <string name="moderation_block">খেলোয়াড়কে ব্লক করুন</string>
+    <string name="moderation_unblock">খেলোয়াড়কে আনব্লক করুন</string>
+    <string name="moderation_reason">রিপোর্ট করার কারণ</string>
+    <string name="moderation_blocked">খেলোয়াড়কে ব্লক করা হয়েছে। উভয় দিকে নতুন আমন্ত্রণ এবং বন্ধু যোগ করা বন্ধ করা হয়েছে।</string>
+    <string name="moderation_unblocked">খেলোয়াড়কে আনব্লক করা হয়েছে।</string>
+    <string name="moderation_blocked_list">ব্লক করা খেলোয়াড়</string>
+    <string name="moderation_empty">কোনো ব্লক করা খেলোয়াড় নেই।</string>
+    <string name="moderation_unknown_player">মুছে ফেলা খেলোয়াড়</string>
+    <string name="moderation_failed">কাজটি সম্পন্ন করা যায়নি। আবার চেষ্টা করুন।</string>
 </resources>

@@ -35,7 +35,10 @@ async function main() {
       reference: ticket.get('reference') || '',
       status: ticket.get('status') || '',
       category: ticket.get('category') || '',
+      reporterUid: ticket.get('reporterUid') || '',
       paymentId: ticket.get('paymentId') || '',
+      reportedUid: ticket.get('reportedUid') || '',
+      nickname: ticket.get('nickname') || '',
       message: ticket.get('message') || '',
     })));
     console.log(`${tickets.length} ticket(s).`);

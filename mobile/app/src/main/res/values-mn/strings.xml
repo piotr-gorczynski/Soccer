@@ -400,4 +400,15 @@
     <string name="payment_recipient_instructions">Нэр, овог нь таны гар утасны хэтэвч болон Remitly-д бүртгэлтэй хүлээн авагчийн мэдээлэлтэй тохирох ёстой. Буруу мэдээлэл төлбөрийг саатуулах эсвэл боломжгүй болгож болно.</string>
     <string name="bangladesh_privacy_policy_english">Бангладешийн нууцлалын бодлого (англи)</string>
     <string name="terms_acceptance_failed">Нөхцөлийг зөвшөөрснийг хадгалж чадсангүй. Дахин оролдоно уу.</string>
+    <string name="moderation_actions">Тоглогчийн сонголтууд</string>
+    <string name="moderation_report">Тоглогч / хочийг мэдээлэх</string>
+    <string name="moderation_block">Тоглогчийг блоклох</string>
+    <string name="moderation_unblock">Тоглогчийн блокийг цуцлах</string>
+    <string name="moderation_reason">Мэдээлэх шалтгаан</string>
+    <string name="moderation_blocked">Тоглогчийг блоклолоо. Шинэ урилга болон найзаар нэмэх үйлдлийг хоёр чиглэлд хориглосон.</string>
+    <string name="moderation_unblocked">Тоглогчийн блокийг цуцаллаа.</string>
+    <string name="moderation_blocked_list">Блоклосон тоглогчид</string>
+    <string name="moderation_empty">Блоклосон тоглогч байхгүй.</string>
+    <string name="moderation_unknown_player">Устгасан тоглогч</string>
+    <string name="moderation_failed">Энэ үйлдлийг гүйцэтгэж чадсангүй. Дахин оролдоно уу.</string>
 </resources>

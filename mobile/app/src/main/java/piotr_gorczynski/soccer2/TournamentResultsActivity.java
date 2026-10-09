@@ -810,6 +810,7 @@ public class TournamentResultsActivity extends BaseActivity {
                 holder.rank.setText(String.valueOf(entry.rank));
             }
             holder.player.setText(entry.nickname != null ? entry.nickname : entry.uid);
+            PlayerModeration.bind(holder.itemView, entry.uid, "tournament");
             Context context = holder.itemView.getContext();
             String formatted = context.getResources()
                     .getQuantityString(R.plurals.wins_format, entry.wins, entry.wins);

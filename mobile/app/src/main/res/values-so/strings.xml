@@ -400,4 +400,15 @@
     <string name="payment_recipient_instructions">Magaca koowaad iyo magaca qoyska waa inay la mid noqdaan xogta qaataha ee ku diiwaangashan jeebkaaga moobilka iyo Remitly. Xog khaldan waxay dib u dhigi kartaa ama hor istaagi kartaa lacag bixinta.</string>
     <string name="bangladesh_privacy_policy_english">Siyaasadda asturnaanta Bangladesh (Ingiriisi)</string>
     <string name="terms_acceptance_failed">Oggolaanshaha shuruudaha lama kaydin karin. Fadlan mar kale isku day.</string>
+    <string name="moderation_actions">Ikhtiyaarrada ciyaaryahanka</string>
+    <string name="moderation_report">Ka warbixi ciyaaryahan / naanays</string>
+    <string name="moderation_block">Xannib ciyaaryahanka</string>
+    <string name="moderation_unblock">Ka qaad xannibaadda ciyaaryahanka</string>
+    <string name="moderation_reason">Sababta warbixinta</string>
+    <string name="moderation_blocked">Ciyaaryahanka waa la xannibay. Martiqaadyada cusub iyo ku darista saaxiibbada waa laga xannibay labada dhinac.</string>
+    <string name="moderation_unblocked">Xannibaadda ciyaaryahanka waa laga qaaday.</string>
+    <string name="moderation_blocked_list">Ciyaaryahannada la xannibay</string>
+    <string name="moderation_empty">Ma jiraan ciyaaryahanno la xannibay.</string>
+    <string name="moderation_unknown_player">Ciyaaryahan la tirtiray</string>
+    <string name="moderation_failed">Falkan lama dhammaystiri karin. Fadlan isku day mar kale.</string>
 </resources>

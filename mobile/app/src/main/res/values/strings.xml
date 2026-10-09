@@ -470,4 +470,15 @@
     <string name="payment_recipient_instructions">First name and last name must match the recipient details registered with your mobile wallet and Remitly. Incorrect details can delay or prevent payment.</string>
     <string name="bangladesh_privacy_policy_english">Bangladesh Privacy Policy (English)</string>
     <string name="terms_acceptance_failed">Could not save your Terms acceptance. Please try again.</string>
+    <string name="moderation_actions">Player actions</string>
+    <string name="moderation_report">Report player/nickname</string>
+    <string name="moderation_block">Block player</string>
+    <string name="moderation_unblock">Unblock player</string>
+    <string name="moderation_reason">Reason for reporting</string>
+    <string name="moderation_blocked">Player blocked. New invitations and friend additions are blocked in both directions.</string>
+    <string name="moderation_unblocked">Player unblocked.</string>
+    <string name="moderation_blocked_list">Blocked players</string>
+    <string name="moderation_empty">No blocked players.</string>
+    <string name="moderation_unknown_player">Removed player</string>
+    <string name="moderation_failed">Could not complete this action. Please try again.</string>
 </resources>

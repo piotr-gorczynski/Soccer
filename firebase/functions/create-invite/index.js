@@ -108,6 +108,11 @@ exports.createInvite = functions
         }
       }
 
+      // Blocks apply in both directions, including tournament invitations.
+      const blockA = await tx.get(admin.firestore().collection('users').doc(from).collection('blocks').doc(to));
+      const blockB = await tx.get(admin.firestore().collection('users').doc(to).collection('blocks').doc(from));
+      if (blockA.exists || blockB.exists) throw new functions.https.HttpsError('permission-denied', 'player_blocked');
+
       const conflict = await tx.get(
         invitesCol.where('from', '==', from)
                   .where('status', '==', 'pending')

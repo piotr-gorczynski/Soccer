@@ -162,6 +162,7 @@ public class RankingActivity extends BaseActivity {
         @Override
         public void onBindViewHolder(@NonNull VH holder, int position) {
             RankingEntry entry = data.get(position);
+            PlayerModeration.bind(holder.itemView, entry.uid, "ranking");
             String medal = null;
             switch (entry.medalCategory) {
                 case 1 -> medal = "🥇"; // 🥇

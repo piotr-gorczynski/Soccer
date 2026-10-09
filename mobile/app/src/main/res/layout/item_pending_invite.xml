@@ -45,4 +45,8 @@
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
         android:text="@string/accept" />
+    <Button android:id="@+id/playerActions"
+        android:layout_width="48dp" android:layout_height="48dp"
+        android:minWidth="0dp" android:padding="0dp" android:text="⋮"
+        android:contentDescription="@string/moderation_actions" />
 </LinearLayout>

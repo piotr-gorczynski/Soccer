@@ -474,4 +474,15 @@
     <string name="payment_recipient_instructions">Imię i nazwisko muszą odpowiadać danym odbiorcy zarejestrowanym w portfelu mobilnym i Remitly. Nieprawidłowe dane mogą opóźnić lub uniemożliwić wypłatę.</string>
     <string name="bangladesh_privacy_policy_english">Polityka prywatności Bangladesh (po angielsku)</string>
     <string name="terms_acceptance_failed">Nie udało się zapisać akceptacji regulaminu. Spróbuj ponownie.</string>
+    <string name="moderation_actions">Opcje gracza</string>
+    <string name="moderation_report">Zgłoś gracza / pseudonim</string>
+    <string name="moderation_block">Zablokuj gracza</string>
+    <string name="moderation_unblock">Odblokuj gracza</string>
+    <string name="moderation_reason">Powód zgłoszenia</string>
+    <string name="moderation_blocked">Gracz zablokowany. Nowe zaproszenia i dodawanie znajomego są zablokowane w obu kierunkach.</string>
+    <string name="moderation_unblocked">Gracz odblokowany.</string>
+    <string name="moderation_blocked_list">Zablokowani gracze</string>
+    <string name="moderation_empty">Brak zablokowanych graczy.</string>
+    <string name="moderation_unknown_player">Usunięty gracz</string>
+    <string name="moderation_failed">Nie udało się wykonać tej czynności. Spróbuj ponownie.</string>
 </resources>

@@ -400,4 +400,15 @@
     <string name="payment_recipient_instructions">အမည်၏ ပထမပိုင်းနှင့် နောက်ဆုံးပိုင်းသည် သင့်မိုဘိုင်းပိုက်ဆံအိတ်နှင့် Remitly တွင် မှတ်ပုံတင်ထားသော လက်ခံသူအချက်အလက်နှင့် ကိုက်ညီရမည်။ မှားယွင်းသောအချက်အလက်ကြောင့် ငွေပေးချေမှုနှောင့်နှေးခြင်း သို့မဟုတ် မအောင်မြင်ခြင်း ဖြစ်နိုင်သည်။</string>
     <string name="bangladesh_privacy_policy_english">ဘင်္ဂလားဒေ့ရှ် ကိုယ်ရေးအချက်အလက် မူဝါဒ (အင်္ဂလိပ်)</string>
     <string name="terms_acceptance_failed">စည်းကမ်းချက်များကို သဘောတူကြောင်း မသိမ်းဆည်းနိုင်ပါ။ ထပ်မံကြိုးစားပါ။</string>
+    <string name="moderation_actions">ကစားသမား ရွေးချယ်စရာများ</string>
+    <string name="moderation_report">ကစားသမား / အမည်ပြောင်ကို တိုင်ကြားရန်</string>
+    <string name="moderation_block">ကစားသမားကို ပိတ်ဆို့ရန်</string>
+    <string name="moderation_unblock">ကစားသမားကို ပိတ်ဆို့မှုဖယ်ရှားရန်</string>
+    <string name="moderation_reason">တိုင်ကြားရသည့် အကြောင်းရင်း</string>
+    <string name="moderation_blocked">ကစားသမားကို ပိတ်ဆို့ပြီးပါပြီ။ နှစ်ဖက်စလုံးမှ ဖိတ်ကြားချက်အသစ်များနှင့် သူငယ်ချင်းအဖြစ် ထည့်သွင်းခြင်းကို ပိတ်ဆို့ထားသည်။</string>
+    <string name="moderation_unblocked">ကစားသမား၏ ပိတ်ဆို့မှုကို ဖယ်ရှားပြီးပါပြီ။</string>
+    <string name="moderation_blocked_list">ပိတ်ဆို့ထားသော ကစားသမားများ</string>
+    <string name="moderation_empty">ပိတ်ဆို့ထားသော ကစားသမား မရှိပါ။</string>
+    <string name="moderation_unknown_player">ဖယ်ရှားထားသော ကစားသမား</string>
+    <string name="moderation_failed">ဤလုပ်ဆောင်ချက်ကို မပြီးမြောက်နိုင်ပါ။ ထပ်မံကြိုးစားပါ။</string>
 </resources>

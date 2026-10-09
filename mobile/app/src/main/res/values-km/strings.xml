@@ -400,4 +400,15 @@
     <string name="payment_recipient_instructions">នាមខ្លួន និងនាមត្រកូលត្រូវតែត្រូវគ្នានឹងព័ត៌មានអ្នកទទួលដែលបានចុះឈ្មោះក្នុងកាបូបចល័ត និង Remitly របស់អ្នក។ ព័ត៌មានមិនត្រឹមត្រូវអាចពន្យារពេល ឬរារាំងការទូទាត់។</string>
     <string name="bangladesh_privacy_policy_english">គោលការណ៍ឯកជនភាពបង់ក្លាដែស (ភាសាអង់គ្លេស)</string>
     <string name="terms_acceptance_failed">មិនអាចរក្សាទុកការយល់ព្រមលើលក្ខខណ្ឌបានទេ។ សូមព្យាយាមម្តងទៀត។</string>
+    <string name="moderation_actions">ជម្រើសអ្នកលេង</string>
+    <string name="moderation_report">រាយការណ៍អ្នកលេង / ឈ្មោះហៅក្រៅ</string>
+    <string name="moderation_block">ទប់ស្កាត់អ្នកលេង</string>
+    <string name="moderation_unblock">ឈប់ទប់ស្កាត់អ្នកលេង</string>
+    <string name="moderation_reason">មូលហេតុនៃការរាយការណ៍</string>
+    <string name="moderation_blocked">អ្នកលេងត្រូវបានទប់ស្កាត់។ ការអញ្ជើញថ្មី និងការបន្ថែមមិត្តត្រូវបានទប់ស្កាត់ទាំងសងខាង។</string>
+    <string name="moderation_unblocked">បានឈប់ទប់ស្កាត់អ្នកលេង។</string>
+    <string name="moderation_blocked_list">អ្នកលេងដែលបានទប់ស្កាត់</string>
+    <string name="moderation_empty">គ្មានអ្នកលេងដែលបានទប់ស្កាត់ទេ។</string>
+    <string name="moderation_unknown_player">អ្នកលេងដែលបានលុប</string>
+    <string name="moderation_failed">មិនអាចបញ្ចប់សកម្មភាពនេះបានទេ។ សូមព្យាយាមម្តងទៀត។</string>
 </resources>

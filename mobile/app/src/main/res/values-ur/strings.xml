@@ -434,4 +434,15 @@
     <string name="payment_recipient_instructions">پہلا اور آخری نام آپ کے موبائل والیٹ اور Remitly میں درج وصول کنندہ کی معلومات سے ملنے چاہئیں۔ غلط معلومات ادائیگی میں تاخیر یا رکاوٹ کا سبب بن سکتی ہیں۔</string>
     <string name="bangladesh_privacy_policy_english">بنگلہ دیش کی رازداری کی پالیسی (انگریزی)</string>
     <string name="terms_acceptance_failed">شرائط کی قبولیت محفوظ نہیں ہو سکی۔ دوبارہ کوشش کریں۔</string>
+    <string name="moderation_actions">کھلاڑی کے اختیارات</string>
+    <string name="moderation_report">کھلاڑی / عرفی نام کی رپورٹ کریں</string>
+    <string name="moderation_block">کھلاڑی کو بلاک کریں</string>
+    <string name="moderation_unblock">کھلاڑی کو ان بلاک کریں</string>
+    <string name="moderation_reason">رپورٹ کرنے کی وجہ</string>
+    <string name="moderation_blocked">کھلاڑی کو بلاک کر دیا گیا ہے۔ دونوں طرف سے نئی دعوتیں اور دوست بنانا روک دیا گیا ہے۔</string>
+    <string name="moderation_unblocked">کھلاڑی کو ان بلاک کر دیا گیا ہے۔</string>
+    <string name="moderation_blocked_list">بلاک کیے گئے کھلاڑی</string>
+    <string name="moderation_empty">کوئی بلاک کیا گیا کھلاڑی نہیں ہے۔</string>
+    <string name="moderation_unknown_player">ہٹایا گیا کھلاڑی</string>
+    <string name="moderation_failed">یہ کارروائی مکمل نہیں ہو سکی۔ براہ کرم دوبارہ کوشش کریں۔</string>
 </resources>

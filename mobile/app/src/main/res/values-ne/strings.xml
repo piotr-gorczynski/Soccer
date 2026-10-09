@@ -434,4 +434,15 @@
     <string name="payment_recipient_instructions">पहिलो नाम र थर तपाईंको मोबाइल वालेट र Remitly मा दर्ता भएको प्राप्तकर्ताको विवरणसँग मिल्नुपर्छ। गलत विवरणले भुक्तानी ढिलो वा असफल हुन सक्छ।</string>
     <string name="bangladesh_privacy_policy_english">बंगलादेश गोपनीयता नीति (अंग्रेजी)</string>
     <string name="terms_acceptance_failed">सर्तहरूको स्वीकृति सुरक्षित गर्न सकिएन। फेरि प्रयास गर्नुहोस्।</string>
+    <string name="moderation_actions">खेलाडीका विकल्पहरू</string>
+    <string name="moderation_report">खेलाडी / उपनामको रिपोर्ट गर्नुहोस्</string>
+    <string name="moderation_block">खेलाडीलाई ब्लक गर्नुहोस्</string>
+    <string name="moderation_unblock">खेलाडीलाई अनब्लक गर्नुहोस्</string>
+    <string name="moderation_reason">रिपोर्ट गर्नुको कारण</string>
+    <string name="moderation_blocked">खेलाडीलाई ब्लक गरिएको छ। दुवैतर्फ नयाँ निमन्त्रणा र साथी थप्न रोक लगाइएको छ।</string>
+    <string name="moderation_unblocked">खेलाडीलाई अनब्लक गरिएको छ।</string>
+    <string name="moderation_blocked_list">ब्लक गरिएका खेलाडीहरू</string>
+    <string name="moderation_empty">कुनै खेलाडी ब्लक गरिएको छैन।</string>
+    <string name="moderation_unknown_player">हटाइएको खेलाडी</string>
+    <string name="moderation_failed">यो कार्य पूरा गर्न सकिएन। कृपया फेरि प्रयास गर्नुहोस्।</string>
 </resources>

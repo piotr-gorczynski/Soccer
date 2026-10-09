@@ -400,4 +400,15 @@
     <string name="payment_recipient_instructions">Ny anarana voalohany sy ny anaram-pianakaviana dia tsy maintsy mifanaraka amin’ny mombamomba ny mpandray voasoratra ao amin’ny poketra finday sy Remitly. Mety hanemotra na hisakana ny fandoavam-bola ny vaovao diso.</string>
     <string name="bangladesh_privacy_policy_english">Politika momba ny fiainana manokana Bangladesh (anglisy)</string>
     <string name="terms_acceptance_failed">Tsy voatahiry ny fanekenao ny fepetra. Andramo indray.</string>
+    <string name="moderation_actions">Safidin’ny mpilalao</string>
+    <string name="moderation_report">Mitatitra mpilalao / anaram-bositra</string>
+    <string name="moderation_block">Sakano ny mpilalao</string>
+    <string name="moderation_unblock">Esory ny sakana amin’ny mpilalao</string>
+    <string name="moderation_reason">Antony itaterana</string>
+    <string name="moderation_blocked">Voasakana ny mpilalao. Voasakana amin’ny lafiny roa ny fanasana vaovao sy ny fampidirana ho namana.</string>
+    <string name="moderation_unblocked">Nesorina ny sakana amin’ny mpilalao.</string>
+    <string name="moderation_blocked_list">Mpilalao voasakana</string>
+    <string name="moderation_empty">Tsy misy mpilalao voasakana.</string>
+    <string name="moderation_unknown_player">Mpilalao nesorina</string>
+    <string name="moderation_failed">Tsy vita ity hetsika ity. Andramo indray azafady.</string>
 </resources>

@@ -400,4 +400,15 @@
     <string name="payment_recipient_instructions">Jina la kwanza na jina la ukoo lazima yalingane na taarifa za mpokeaji zilizosajiliwa kwenye pochi yako ya simu na Remitly. Taarifa zisizo sahihi zinaweza kuchelewesha au kuzuia malipo.</string>
     <string name="bangladesh_privacy_policy_english">Sera ya faragha ya Bangladesh (Kiingereza)</string>
     <string name="terms_acceptance_failed">Imeshindwa kuhifadhi kukubali kwako masharti. Tafadhali jaribu tena.</string>
+    <string name="moderation_actions">Chaguo za mchezaji</string>
+    <string name="moderation_report">Ripoti mchezaji / jina la utani</string>
+    <string name="moderation_block">Mzuie mchezaji</string>
+    <string name="moderation_unblock">Ondoa kizuizi cha mchezaji</string>
+    <string name="moderation_reason">Sababu ya kuripoti</string>
+    <string name="moderation_blocked">Mchezaji amezuiwa. Mialiko mipya na kuongeza marafiki vimezuiwa pande zote mbili.</string>
+    <string name="moderation_unblocked">Kizuizi cha mchezaji kimeondolewa.</string>
+    <string name="moderation_blocked_list">Wachezaji waliozuiwa</string>
+    <string name="moderation_empty">Hakuna wachezaji waliozuiwa.</string>
+    <string name="moderation_unknown_player">Mchezaji aliyeondolewa</string>
+    <string name="moderation_failed">Imeshindikana kukamilisha kitendo hiki. Tafadhali jaribu tena.</string>
 </resources>

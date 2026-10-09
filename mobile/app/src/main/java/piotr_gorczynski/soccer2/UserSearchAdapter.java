@@ -104,6 +104,7 @@ class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.VH> {
         DocumentSnapshot d = data.get(position);
         String uid = d.getId();
         h.uid = uid;
+        PlayerModeration.bind(h.itemView, uid, "search");
         String nick = UserDisplayName.from(d);
         if (nick == null) nick = uid.substring(0, 6);
         h.nickname.setText(nick);

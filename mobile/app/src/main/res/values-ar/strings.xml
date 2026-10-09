@@ -381,4 +381,15 @@
     <string name="payment_recipient_instructions">يجب أن يتطابق الاسم الأول واسم العائلة مع بيانات المستلم المسجلة في محفظتك المحمولة وRemitly. قد تؤدي البيانات غير الصحيحة إلى تأخير الدفع أو منعه.</string>
     <string name="bangladesh_privacy_policy_english">سياسة الخصوصية لبنغلاديش (بالإنجليزية)</string>
     <string name="terms_acceptance_failed">تعذر حفظ موافقتك على الشروط. حاول مرة أخرى.</string>
+    <string name="moderation_actions">خيارات اللاعب</string>
+    <string name="moderation_report">الإبلاغ عن لاعب / اسم مستعار</string>
+    <string name="moderation_block">حظر اللاعب</string>
+    <string name="moderation_unblock">إلغاء حظر اللاعب</string>
+    <string name="moderation_reason">سبب الإبلاغ</string>
+    <string name="moderation_blocked">تم حظر اللاعب. تم منع الدعوات الجديدة وإضافة الأصدقاء في كلا الاتجاهين.</string>
+    <string name="moderation_unblocked">تم إلغاء حظر اللاعب.</string>
+    <string name="moderation_blocked_list">اللاعبون المحظورون</string>
+    <string name="moderation_empty">لا يوجد لاعبون محظورون.</string>
+    <string name="moderation_unknown_player">لاعب تمت إزالته</string>
+    <string name="moderation_failed">تعذر إكمال هذا الإجراء. يرجى المحاولة مرة أخرى.</string>
 </resources>

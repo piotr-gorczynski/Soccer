@@ -43,6 +43,11 @@ exports.acceptInvite = functions
         throw new functions.https.HttpsError(
           'permission-denied', 'This invitation isn’t addressed to you');
 
+      // Blocks apply in both directions, including tournament invitations.
+      const blockA = await tx.get(admin.firestore().collection('users').doc(invite.from).collection('blocks').doc(uid));
+      const blockB = await tx.get(admin.firestore().collection('users').doc(uid).collection('blocks').doc(invite.from));
+      if (blockA.exists || blockB.exists) throw new functions.https.HttpsError('permission-denied', 'player_blocked');
+
       /* 2 Still pending */
       if (invite.status !== 'pending')
         throw new functions.https.HttpsError(

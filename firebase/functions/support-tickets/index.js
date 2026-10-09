@@ -101,6 +101,8 @@ exports.onSupportTicketUpdated = functions.firestore
   .onUpdate(async (change, context) => {
     const before = change.before.data();
     const after = change.after.data();
+    // Moderation reports do not use payout notification deep links.
+    if (after.type === 'moderation') return null;
     const hasNewReply = after.latestSupportReply &&
       after.latestSupportReply !== before.latestSupportReply;
     const wasResolved = ['resolved', 'closed'].includes(after.status) &&
@@ -155,3 +157,7 @@ exports.onSupportTicketUpdated = functions.firestore
     }
     return null;
   });
+
+const moderation = require('./moderation').handlers(db, FieldValue, functions.https.HttpsError);
+exports.reportPlayer = functions.region('us-central1').https.onCall(moderation.reportPlayer);
+exports.setPlayerBlock = functions.region('us-central1').https.onCall(moderation.setPlayerBlock);

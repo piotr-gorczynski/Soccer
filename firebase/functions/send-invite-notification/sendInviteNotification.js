@@ -73,6 +73,13 @@ exports.sendInviteNotification = functions.firestore
     }
 
     try {
+      // A queued creation event must not notify a player who has since blocked the sender.
+      const [outgoingBlock, incomingBlock, currentInvite] = await Promise.all([
+        db.doc(`users/${from}/blocks/${to}`).get(),
+        db.doc(`users/${to}/blocks/${from}`).get(),
+        snap.ref.get()
+      ]);
+      if (outgoingBlock.exists || incomingBlock.exists || currentInvite.get('status') !== 'pending') return null;
       // Look up both users in parallel
       const [fromDoc, toDoc] = await Promise.all([
         db.doc(`users/${from}`).get(),

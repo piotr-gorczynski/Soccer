@@ -435,4 +435,15 @@
     <string name="payment_recipient_instructions">Vor- und Nachname müssen mit den Empfängerdaten bei deinem mobilen Wallet und Remitly übereinstimmen. Falsche Angaben können die Auszahlung verzögern oder verhindern.</string>
     <string name="bangladesh_privacy_policy_english">Datenschutzerklärung für Bangladesch (Englisch)</string>
     <string name="terms_acceptance_failed">Die Zustimmung zu den Nutzungsbedingungen konnte nicht gespeichert werden. Bitte versuche es erneut.</string>
+    <string name="moderation_actions">Spieleroptionen</string>
+    <string name="moderation_report">Spieler / Spitznamen melden</string>
+    <string name="moderation_block">Spieler blockieren</string>
+    <string name="moderation_unblock">Spieler entsperren</string>
+    <string name="moderation_reason">Grund der Meldung</string>
+    <string name="moderation_blocked">Spieler blockiert. Neue Einladungen und das Hinzufügen als Freund sind in beide Richtungen gesperrt.</string>
+    <string name="moderation_unblocked">Spieler entsperrt.</string>
+    <string name="moderation_blocked_list">Blockierte Spieler</string>
+    <string name="moderation_empty">Keine blockierten Spieler.</string>
+    <string name="moderation_unknown_player">Entfernter Spieler</string>
+    <string name="moderation_failed">Diese Aktion konnte nicht abgeschlossen werden. Bitte versuche es erneut.</string>
 </resources>

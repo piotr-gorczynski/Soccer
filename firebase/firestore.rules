@@ -36,7 +36,15 @@ service cloud.firestore {
 
     // 1. Users: anyone signed-in can read any profile,
     //    but only the owner can create or modify their own doc.
+    function notBlocked(a, b) {
+      return !exists(/databases/$(database)/documents/users/$(a)/blocks/$(b))
+        && !exists(/databases/$(database)/documents/users/$(b)/blocks/$(a));
+    }
     match /users/{userId} {
+      match /blocks/{blockedUid} {
+        allow read: if isSignedIn() && request.auth.uid == userId;
+        allow write: if false; // setPlayerBlock derives owner from auth
+      }
       allow read: if request.auth.uid != null;
 
       // Allow a user to create their own profile document,
@@ -74,7 +82,8 @@ service cloud.firestore {
         allow read, delete: if request.auth.uid == userId;
         allow create, update: if request.auth.uid == userId
           && get(/databases/$(database)/documents/users/$(userId)).data.get('accountDeleted', false) != true
-          && get(/databases/$(database)/documents/users/$(friendId)).data.get('accountDeleted', false) != true;
+          && get(/databases/$(database)/documents/users/$(friendId)).data.get('accountDeleted', false) != true
+            && notBlocked(userId, friendId);
       }
     }
 
@@ -120,13 +129,16 @@ service cloud.firestore {
       allow create: if isSignedIn()
                  && isParticipant()
                  && request.resource.data.player0 is string
-                 && request.resource.data.player1 is string;
+                 && request.resource.data.player1 is string
+                    && notBlocked(request.resource.data.player0, request.resource.data.player1);
 
       /* reads for collection-group queries */
       allow get, list: if isSignedIn();          // anyone logged-in may read
 
       /* writes still restricted to participants */
-      allow update, delete: if isSignedIn() && isParticipant();
+      allow delete: if isSignedIn() && isParticipant();
+      allow update: if isSignedIn() && isParticipant()
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['player0', 'player1']);
 
       // ── moves sub-collection *for nested matches* ─────────────
       match /moves/{moveId} {
@@ -160,13 +172,16 @@ service cloud.firestore {
       /* 2️⃣  allow client-side creation of a match document */
       allow create: if isSignedIn() && isMatchPlayer(matchId)
                     && request.resource.data.player0 is string
-                    && request.resource.data.player1 is string;
+                    && request.resource.data.player1 is string
+                    && notBlocked(request.resource.data.player0, request.resource.data.player1);
 
       /* reads for collection-group queries */
       allow get, list: if isSignedIn();          // top-level friendlies
 
       /* writes still restricted to participants */
-      allow update, delete: if isSignedIn() && isMatchPlayer(matchId);
+      allow delete: if isSignedIn() && isMatchPlayer(matchId);
+      allow update: if isSignedIn() && isMatchPlayer(matchId)
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['player0', 'player1']);
 
       /* ---- moves sub-collection ---- */
       match /moves/{moveId} {

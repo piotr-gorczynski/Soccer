@@ -400,4 +400,15 @@
     <string name="payment_recipient_instructions">ຊື່ ແລະ ນາມສະກຸນຕ້ອງກົງກັບຂໍ້ມູນຜູ້ຮັບທີ່ລົງທະບຽນໃນກະເປົາເງິນມືຖື ແລະ Remitly. ຂໍ້ມູນທີ່ບໍ່ຖືກຕ້ອງອາດເຮັດໃຫ້ການຈ່າຍເງິນຊ້າ ຫຼື ບໍ່ສຳເລັດ.</string>
     <string name="bangladesh_privacy_policy_english">ນະໂຍບາຍຄວາມເປັນສ່ວນຕົວບັງກະລາເທດ (ພາສາອັງກິດ)</string>
     <string name="terms_acceptance_failed">ບໍ່ສາມາດບັນທຶກການຍອມຮັບເງື່ອນໄຂໄດ້. ກະລຸນາລອງອີກຄັ້ງ.</string>
+    <string name="moderation_actions">ຕົວເລືອກຜູ້ຫຼິ້ນ</string>
+    <string name="moderation_report">ລາຍງານຜູ້ຫຼິ້ນ / ຊື່ຫຼິ້ນ</string>
+    <string name="moderation_block">ບລັອກຜູ້ຫຼິ້ນ</string>
+    <string name="moderation_unblock">ປົດບລັອກຜູ້ຫຼິ້ນ</string>
+    <string name="moderation_reason">ເຫດຜົນໃນການລາຍງານ</string>
+    <string name="moderation_blocked">ບລັອກຜູ້ຫຼິ້ນແລ້ວ. ຄຳເຊີນໃໝ່ ແລະ ການເພີ່ມໝູ່ຖືກບລັອກທັງສອງທາງ.</string>
+    <string name="moderation_unblocked">ປົດບລັອກຜູ້ຫຼິ້ນແລ້ວ.</string>
+    <string name="moderation_blocked_list">ຜູ້ຫຼິ້ນທີ່ຖືກບລັອກ</string>
+    <string name="moderation_empty">ບໍ່ມີຜູ້ຫຼິ້ນທີ່ຖືກບລັອກ.</string>
+    <string name="moderation_unknown_player">ຜູ້ຫຼິ້ນທີ່ຖືກລຶບ</string>
+    <string name="moderation_failed">ບໍ່ສາມາດດຳເນີນການນີ້ໃຫ້ສຳເລັດໄດ້. ກະລຸນາລອງອີກຄັ້ງ.</string>
 </resources>

@@ -381,4 +381,15 @@
     <string name="payment_recipient_instructions">نام و نام خانوادگی باید با مشخصات گیرنده ثبت‌شده در کیف پول موبایل شما و Remitly مطابقت داشته باشد. اطلاعات نادرست ممکن است پرداخت را به تأخیر بیندازد یا مانع آن شود.</string>
     <string name="bangladesh_privacy_policy_english">سیاست حریم خصوصی بنگلادش (انگلیسی)</string>
     <string name="terms_acceptance_failed">پذیرش شرایط ذخیره نشد. دوباره تلاش کنید.</string>
+    <string name="moderation_actions">گزینه‌های بازیکن</string>
+    <string name="moderation_report">گزارش بازیکن / نام مستعار</string>
+    <string name="moderation_block">مسدود کردن بازیکن</string>
+    <string name="moderation_unblock">رفع مسدودیت بازیکن</string>
+    <string name="moderation_reason">دلیل گزارش</string>
+    <string name="moderation_blocked">بازیکن مسدود شد. دعوت‌های جدید و افزودن دوست در هر دو جهت مسدود شده‌اند.</string>
+    <string name="moderation_unblocked">مسدودیت بازیکن رفع شد.</string>
+    <string name="moderation_blocked_list">بازیکنان مسدودشده</string>
+    <string name="moderation_empty">هیچ بازیکنی مسدود نشده است.</string>
+    <string name="moderation_unknown_player">بازیکن حذف‌شده</string>
+    <string name="moderation_failed">انجام این کار ممکن نشد. لطفاً دوباره تلاش کنید.</string>
 </resources>
