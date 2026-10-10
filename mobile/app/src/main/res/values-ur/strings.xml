@@ -77,7 +77,7 @@
     <string name="enter_nickname_to_invite">دعوت دینے کے لیے عرفی نام داخل کریں:</string>
     <string name="enter_nickname_to_search">تلاش کرنے کے لیے عرفی نام داخل کریں:</string>
     <string name="friend_s_nickname">دوست کا عرفی نام</string>
-    <string name="send_invitation">دعوت بھیجیں</string>
+    <string name="send_invitation">دعوت دیں</string>
     <string name="invite_a_friend">دوست کو دعوت دیں</string>
     <string name="add_a_friend">دوست شامل کریں</string>
     <string name="add_friend">دوست کامیابی سے شامل ہوا</string>
@@ -445,4 +445,5 @@
     <string name="moderation_empty">کوئی بلاک کیا گیا کھلاڑی نہیں ہے۔</string>
     <string name="moderation_unknown_player">ہٹایا گیا کھلاڑی</string>
     <string name="moderation_failed">یہ کارروائی مکمل نہیں ہو سکی۔ براہ کرم دوبارہ کوشش کریں۔</string>
+    <string name="moderation_user_blocked">🔒 صارف کو بلاک کر دیا گیا ہے</string>
 </resources>

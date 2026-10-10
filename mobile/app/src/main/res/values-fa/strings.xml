@@ -73,7 +73,7 @@
     <string name="enter_nickname_to_invite">نام مستعار را برای دعوت وارد کنید:</string>
     <string name="enter_nickname_to_search">نام مستعار را برای جستجو وارد کنید:</string>
     <string name="friend_s_nickname">نام مستعار دوست</string>
-    <string name="send_invitation">ارسال دعوت</string>
+    <string name="send_invitation">دعوت</string>
     <string name="add_a_friend">افزودن دوست</string>
     <string name="add_friend">دوست با موفقیت اضافه شد</string>
     <string name="no_friends">تا کنون دوستی اضافه نشده است…</string>
@@ -392,4 +392,5 @@
     <string name="moderation_empty">هیچ بازیکنی مسدود نشده است.</string>
     <string name="moderation_unknown_player">بازیکن حذف‌شده</string>
     <string name="moderation_failed">انجام این کار ممکن نشد. لطفاً دوباره تلاش کنید.</string>
+    <string name="moderation_user_blocked">🔒 کاربر مسدود شده است</string>
 </resources>

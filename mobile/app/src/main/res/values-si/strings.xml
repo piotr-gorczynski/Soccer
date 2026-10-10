@@ -92,7 +92,7 @@
     <string name="enter_nickname_to_invite">ආරාධනා කිරීමට අතුරු නාමය ඇතුල් කරන්න:</string>
     <string name="enter_nickname_to_search">සොයීමට අතුරු නාමය ඇතුල් කරන්න:</string>
     <string name="friend_s_nickname">මිතුරගේ අතුරු නාමය</string>
-    <string name="send_invitation">ආරාධනය යවන්න</string>
+    <string name="send_invitation">ආරාධනා කරන්න</string>
     <string name="add_a_friend">මිතුරෙකු එක් කරන්න</string>
     <string name="add_friend">මිතුරා සාර්ථකව එක් කර ඇත</string>
     <string name="no_friends">දැනට තෙක් මිතුරන් කිසිවකු එක් කර නොමැත…</string>
@@ -411,4 +411,5 @@
     <string name="moderation_empty">අවහිර කළ ක්‍රීඩකයන් නැත.</string>
     <string name="moderation_unknown_player">ඉවත් කළ ක්‍රීඩකයා</string>
     <string name="moderation_failed">මෙම ක්‍රියාව සම්පූර්ණ කළ නොහැකි විය. නැවත උත්සාහ කරන්න.</string>
+    <string name="moderation_user_blocked">🔒 පරිශීලකයා අවහිර කර ඇත</string>
 </resources>

@@ -92,7 +92,7 @@
     <string name="enter_nickname_to_invite">ለመጋበዝ ቅጽል ስም ያስገቡ፡</string>
     <string name="enter_nickname_to_search">ለመፈለግ ቅጽል ስም ያስገቡ፡</string>
     <string name="friend_s_nickname">የጓደኛዎ ቅጽል ስም</string>
-    <string name="send_invitation">ግብዣ ላክ</string>
+    <string name="send_invitation">ጋብዝ</string>
     <string name="add_a_friend">ጓደኛ አክል</string>
     <string name="add_friend">ጓደኛው በተሳካ ሁኔታ ታክሏል</string>
     <string name="no_friends">እስካሁን ድረስ ምንም ጓደኛ አልታከለም…</string>
@@ -411,4 +411,5 @@
     <string name="moderation_empty">የታገዱ ተጫዋቾች የሉም።</string>
     <string name="moderation_unknown_player">የተወገደ ተጫዋች</string>
     <string name="moderation_failed">ይህን እርምጃ ማጠናቀቅ አልተቻለም። እንደገና ይሞክሩ።</string>
+    <string name="moderation_user_blocked">🔒 ተጠቃሚው ታግዷል</string>
 </resources>

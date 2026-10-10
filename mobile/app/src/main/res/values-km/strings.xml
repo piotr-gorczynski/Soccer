@@ -92,7 +92,7 @@
     <string name="enter_nickname_to_invite">បញ្ចូលឈ្មោះហៅក្រៅដើម្បីអញ្ជើញ៖</string>
     <string name="enter_nickname_to_search">បញ្ចូលឈ្មោះហៅក្រៅដើម្បីស្វែងរក៖</string>
     <string name="friend_s_nickname">ឈ្មោះហៅក្រៅរបស់មិត្តភក្តិ</string>
-    <string name="send_invitation">ផ្ញើការអញ្ជើញ</string>
+    <string name="send_invitation">អញ្ជើញ</string>
     <string name="add_a_friend">បន្ថែមមិត្តភក្តិ</string>
     <string name="add_friend">បន្ថែមមិត្តភក្តិដោយជោគជ័យ</string>
     <string name="no_friends">មិនទាន់មានមិត្តភក្ត្រទេ…</string>
@@ -411,4 +411,5 @@
     <string name="moderation_empty">គ្មានអ្នកលេងដែលបានទប់ស្កាត់ទេ។</string>
     <string name="moderation_unknown_player">អ្នកលេងដែលបានលុប</string>
     <string name="moderation_failed">មិនអាចបញ្ចប់សកម្មភាពនេះបានទេ។ សូមព្យាយាមម្តងទៀត។</string>
+    <string name="moderation_user_blocked">🔒 អ្នកប្រើប្រាស់ត្រូវបានទប់ស្កាត់</string>
 </resources>

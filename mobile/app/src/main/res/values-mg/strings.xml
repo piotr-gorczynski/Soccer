@@ -92,7 +92,7 @@
     <string name="enter_nickname_to_invite">Ampidiro ny anaram-bositra asaina:</string>
     <string name="enter_nickname_to_search">Ampidiro ny anaram-bositra tadiavina:</string>
     <string name="friend_s_nickname">Anaram-bositr`ilay namana</string>
-    <string name="send_invitation">Alefaso ny fanasana</string>
+    <string name="send_invitation">Asao</string>
     <string name="add_a_friend">Ampio namana</string>
     <string name="add_friend">Vita ny nanampy namana</string>
     <string name="no_friends">Tsy mbola nisy namana nampiana…</string>
@@ -411,4 +411,5 @@
     <string name="moderation_empty">Tsy misy mpilalao voasakana.</string>
     <string name="moderation_unknown_player">Mpilalao nesorina</string>
     <string name="moderation_failed">Tsy vita ity hetsika ity. Andramo indray azafady.</string>
+    <string name="moderation_user_blocked">🔒 Voasakana ny mpampiasa</string>
 </resources>

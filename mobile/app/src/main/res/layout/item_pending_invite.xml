@@ -37,16 +37,30 @@
         android:textSize="12sp"
         android:textColor="@color/colorGrey" />
 
-    <Button
-        android:id="@+id/acceptInviteBtn"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
-        android:text="@string/accept" />
-    <Button android:id="@+id/playerActions"
-        android:layout_width="48dp" android:layout_height="48dp"
-        android:minWidth="0dp" android:padding="0dp" android:text="⋮"
-        android:contentDescription="@string/moderation_actions" />
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/acceptInviteBtn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:text="@string/accept" />
+
+        <Button
+            android:id="@+id/playerActions"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="8dp"
+            android:minWidth="0dp"
+            android:padding="0dp"
+            android:text="⋮"
+            android:contentDescription="@string/moderation_actions" />
+    </LinearLayout>
 </LinearLayout>

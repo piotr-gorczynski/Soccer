@@ -77,7 +77,7 @@
     <string name="enter_nickname_to_invite">Ingresa el apodo a invitar:</string>
     <string name="enter_nickname_to_search">Ingresa el apodo a buscar:</string>
     <string name="friend_s_nickname">Apodo del amigo</string>
-    <string name="send_invitation">Enviar invitación</string>
+    <string name="send_invitation">Invitar</string>
     <string name="invite_a_friend">Invitar un amigo</string>
     <string name="add_a_friend">Agregar un amigo</string>
     <string name="add_friend">Amigo agregado exitosamente</string>
@@ -448,4 +448,5 @@
     <string name="moderation_empty">No hay jugadores bloqueados.</string>
     <string name="moderation_unknown_player">Jugador eliminado</string>
     <string name="moderation_failed">No se pudo completar esta acción. Inténtalo de nuevo.</string>
+    <string name="moderation_user_blocked">🔒 Usuario bloqueado</string>
 </resources>

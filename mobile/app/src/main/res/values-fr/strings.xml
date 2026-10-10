@@ -79,7 +79,7 @@
     <string name="enter_nickname_to_invite">Entrez le pseudonyme à inviter :</string>
     <string name="enter_nickname_to_search">Entrez le pseudonyme à rechercher :</string>
     <string name="friend_s_nickname">Pseudonyme de l’ami</string>
-    <string name="send_invitation">Envoyer l’invitation</string>
+    <string name="send_invitation">Inviter</string>
     <string name="invite_a_friend">Inviter un ami</string>
     <string name="add_a_friend">Ajouter un ami</string>
     <string name="add_friend">Ami ajouté avec succès</string>
@@ -440,4 +440,5 @@
     <string name="moderation_empty">Aucun joueur bloqué.</string>
     <string name="moderation_unknown_player">Joueur supprimé</string>
     <string name="moderation_failed">Impossible de terminer cette action. Veuillez réessayer.</string>
+    <string name="moderation_user_blocked">🔒 Utilisateur bloqué</string>
 </resources>

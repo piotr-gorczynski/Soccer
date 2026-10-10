@@ -77,7 +77,7 @@
     <string name="enter_nickname_to_invite">আমন্ত্রণ জানানোর জন্য ডাকনাম প্রবেশ করান:</string>
     <string name="enter_nickname_to_search">অনুসন্ধানের জন্য ডাকনাম প্রবেশ করান:</string>
     <string name="friend_s_nickname">বন্ধুর ডাকনাম</string>
-    <string name="send_invitation">আমন্ত্রণ পাঠান</string>
+    <string name="send_invitation">আমন্ত্রণ জানান</string>
     <string name="invite_a_friend">একজন বন্ধুকে আমন্ত্রণ জানান</string>
     <string name="add_a_friend">একজন বন্ধু যোগ করুন</string>
     <string name="add_friend">বন্ধু সফলভাবে যোগ করা হয়েছে</string>
@@ -485,4 +485,5 @@
     <string name="moderation_empty">কোনো ব্লক করা খেলোয়াড় নেই।</string>
     <string name="moderation_unknown_player">মুছে ফেলা খেলোয়াড়</string>
     <string name="moderation_failed">কাজটি সম্পন্ন করা যায়নি। আবার চেষ্টা করুন।</string>
+    <string name="moderation_user_blocked">🔒 ব্যবহারকারীকে ব্লক করা হয়েছে</string>
 </resources>

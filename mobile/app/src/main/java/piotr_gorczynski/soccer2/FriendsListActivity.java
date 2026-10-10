@@ -573,7 +573,19 @@ public class FriendsListActivity extends BaseActivity {
                         android.util.Log.d("TAG_Soccer", getClass().getSimpleName() + ".sendInviteViaCF: code=" + code + ", reason=" + reason);
 
                         /* Check for tournament_not_running error across all error codes */
-                        if (reason.startsWith("tournament_not_running:")) {
+                        if (code == com.google.firebase.functions.FirebaseFunctionsException.Code.PERMISSION_DENIED
+                                && "player_blocked".equals(reason)) {
+                            if (adapter != null && adapter.isPlayerBlocked(targetUid)) {
+                                msgId = R.string.moderation_user_blocked;
+                            } else {
+                                String nickname = adapter == null ? null : adapter.getCachedNicknameFor(targetUid);
+                                if (nickname != null && !nickname.isBlank()) {
+                                    customMessage = getString(R.string.invite_blocked, nickname);
+                                } else {
+                                    msgId = R.string.user_blocked_invites;
+                                }
+                            }
+                        } else if (reason.startsWith("tournament_not_running:")) {
                             String tournamentTitle = reason.substring("tournament_not_running:".length());
                             android.util.Log.d("TAG_Soccer", getClass().getSimpleName() + ".sendInviteViaCF: extracted tournamentTitle=" + tournamentTitle);
                             customMessage = SafeStringFormatter.safeGetString(this, R.string.tournament_not_running, tournamentTitle);
@@ -592,7 +604,7 @@ public class FriendsListActivity extends BaseActivity {
                                 };
                             }
                         } else if (code == com.google.firebase.functions.FirebaseFunctionsException.Code.PERMISSION_DENIED) {
-                            msgId = R.string.invite_already_sent;    // inviter cancelled meanwhile
+                            msgId = R.string.failed_to_send_invite;
                         }
                     }
 
@@ -602,8 +614,14 @@ public class FriendsListActivity extends BaseActivity {
                         android.widget.Toast.makeText(this, msgId, android.widget.Toast.LENGTH_LONG).show();
                     }
 
-                    android.util.Log.e("TAG_Soccer", getClass().getSimpleName() + ".sendInviteViaCF"
-                            + ": createInvite failed", e);
+                    if (e instanceof com.google.firebase.functions.FirebaseFunctionsException ffe
+                            && ffe.getCode() == com.google.firebase.functions.FirebaseFunctionsException.Code.PERMISSION_DENIED
+                            && "player_blocked".equals(ffe.getMessage())) {
+                        Log.i(TAG, "sendInviteViaCF: invitation prevented by player block");
+                    } else {
+                        android.util.Log.e("TAG_Soccer", getClass().getSimpleName() + ".sendInviteViaCF"
+                                + ": createInvite failed", e);
+                    }
                 });
     }
 
@@ -628,10 +646,5 @@ public class FriendsListActivity extends BaseActivity {
         finish();
         return true;
     }
-    @Override public boolean onCreateOptionsMenu(android.view.Menu menu) {
-        menu.add(R.string.moderation_blocked_list).setOnMenuItemClickListener(item -> {
-            PlayerModeration.showBlocked(this); return true;
-        });
-        return true;
-    }
+
 }

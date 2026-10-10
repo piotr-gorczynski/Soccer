@@ -77,7 +77,7 @@
     <string name="enter_nickname_to_invite">Spitzname zum Einladen eingeben:</string>
     <string name="enter_nickname_to_search">Spitzname zum Suchen eingeben:</string>
     <string name="friend_s_nickname">Spitzname des Freundes</string>
-    <string name="send_invitation">Einladung senden</string>
+    <string name="send_invitation">Einladen</string>
     <string name="invite_a_friend">Freund einladen</string>
     <string name="add_a_friend">Freund hinzufügen</string>
     <string name="add_friend">Freund erfolgreich hinzugefügt</string>
@@ -446,4 +446,5 @@
     <string name="moderation_empty">Keine blockierten Spieler.</string>
     <string name="moderation_unknown_player">Entfernter Spieler</string>
     <string name="moderation_failed">Diese Aktion konnte nicht abgeschlossen werden. Bitte versuche es erneut.</string>
+    <string name="moderation_user_blocked">🔒 Benutzer blockiert</string>
 </resources>

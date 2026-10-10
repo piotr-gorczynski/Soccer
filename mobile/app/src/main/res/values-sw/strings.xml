@@ -92,7 +92,7 @@
     <string name="enter_nickname_to_invite">Ingiza jina la utani ili kualika:</string>
     <string name="enter_nickname_to_search">Ingiza jina la utani ili kutafuta:</string>
     <string name="friend_s_nickname">Jina la utani la rafiki</string>
-    <string name="send_invitation">Tuma mwaliko</string>
+    <string name="send_invitation">Alika</string>
     <string name="add_a_friend">Ongeza rafiki</string>
     <string name="add_friend">Rafiki ameongezwa kwa mafanikio</string>
     <string name="no_friends">Bado hujaongeza marafiki…</string>
@@ -411,4 +411,5 @@
     <string name="moderation_empty">Hakuna wachezaji waliozuiwa.</string>
     <string name="moderation_unknown_player">Mchezaji aliyeondolewa</string>
     <string name="moderation_failed">Imeshindikana kukamilisha kitendo hiki. Tafadhali jaribu tena.</string>
+    <string name="moderation_user_blocked">🔒 Mtumiaji amezuiwa</string>
 </resources>

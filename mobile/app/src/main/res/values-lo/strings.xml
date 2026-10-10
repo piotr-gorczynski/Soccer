@@ -92,7 +92,7 @@
     <string name="enter_nickname_to_invite">ໃສ່ຊື່ເລັ່ນເພື່ອເຊີນ:</string>
     <string name="enter_nickname_to_search">ໃສ່ຊື່ເລັ່ນເພື່ອຄົ້ນຫາ:</string>
     <string name="friend_s_nickname">ຊື່ເລັ່ນຂອງໝູ່</string>
-    <string name="send_invitation">ສົ່ງຄໍາເຊີນ</string>
+    <string name="send_invitation">ເຊີນ</string>
     <string name="add_a_friend">ເພີ່ມໝູ່</string>
     <string name="add_friend">ເພີ່ມໝູ່ສໍາເລັດ</string>
     <string name="no_friends">ຍັງບໍ່ມີໝູ່ທີ່ຖືກເພີ່ມ...</string>
@@ -411,4 +411,5 @@
     <string name="moderation_empty">ບໍ່ມີຜູ້ຫຼິ້ນທີ່ຖືກບລັອກ.</string>
     <string name="moderation_unknown_player">ຜູ້ຫຼິ້ນທີ່ຖືກລຶບ</string>
     <string name="moderation_failed">ບໍ່ສາມາດດຳເນີນການນີ້ໃຫ້ສຳເລັດໄດ້. ກະລຸນາລອງອີກຄັ້ງ.</string>
+    <string name="moderation_user_blocked">🔒 ບລັອກຜູ້ໃຊ້ແລ້ວ</string>
 </resources>

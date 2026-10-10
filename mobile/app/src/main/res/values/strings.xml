@@ -57,7 +57,7 @@
     <string name="enter_nickname_to_invite">Enter nickname to invite:</string>
     <string name="enter_nickname_to_search">Enter nickname to search:</string>
     <string name="friend_s_nickname">Friend`s nickname</string>
-    <string name="send_invitation">Send Invitation</string>
+    <string name="send_invitation">Invite</string>
     <string name="invite_a_friend">Invite a Friend</string>
     <string name="add_a_friend">Add a Friend</string>
     <string name="add_friend">Friend added successfully</string>
@@ -481,4 +481,5 @@
     <string name="moderation_empty">No blocked players.</string>
     <string name="moderation_unknown_player">Removed player</string>
     <string name="moderation_failed">Could not complete this action. Please try again.</string>
+    <string name="moderation_user_blocked">🔒 User blocked</string>
 </resources>

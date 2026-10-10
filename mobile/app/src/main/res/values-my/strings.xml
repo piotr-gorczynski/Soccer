@@ -92,7 +92,7 @@
     <string name="enter_nickname_to_invite">ဖိတ်ခေါ်ရန် အမည်ပြောင်ကို ထည့်ပါ:</string>
     <string name="enter_nickname_to_search">ရှာဖွေရန် အမည်ပြောင်ကို ထည့်ပါ:</string>
     <string name="friend_s_nickname">သူငယ်ချင်း၏ အမည်ပြောင်</string>
-    <string name="send_invitation">ဖိတ်ကြားချက်ပို့ပါ</string>
+    <string name="send_invitation">ဖိတ်ခေါ်ပါ</string>
     <string name="add_a_friend">သူငယ်ချင်းတစ်ဦးကို ထည့်ပါ</string>
     <string name="add_friend">သူငယ်ချင်းကို အောင်မြင်စွာထည့်ပြီးပါပြီ</string>
     <string name="no_friends">သို့အတိုင် သူငယ်ချင်းများကို မထည့်ရသေးပါ…</string>
@@ -411,4 +411,5 @@
     <string name="moderation_empty">ပိတ်ဆို့ထားသော ကစားသမား မရှိပါ။</string>
     <string name="moderation_unknown_player">ဖယ်ရှားထားသော ကစားသမား</string>
     <string name="moderation_failed">ဤလုပ်ဆောင်ချက်ကို မပြီးမြောက်နိုင်ပါ။ ထပ်မံကြိုးစားပါ။</string>
+    <string name="moderation_user_blocked">🔒 အသုံးပြုသူကို ပိတ်ဆို့ထားသည်</string>
 </resources>

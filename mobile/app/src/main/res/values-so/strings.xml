@@ -92,7 +92,7 @@
     <string name="enter_nickname_to_invite">Geli naanays aad ku casuunto:</string>
     <string name="enter_nickname_to_search">Geli naanays aad ku raadinayso:</string>
     <string name="friend_s_nickname">Naanayska saaxiibka</string>
-    <string name="send_invitation">Dir casuumaad</string>
+    <string name="send_invitation">Casuumi</string>
     <string name="add_a_friend">Ku dar saaxiib</string>
     <string name="add_friend">Saaxiib si guul leh ayaa loo daray</string>
     <string name="no_friends">Saaxiibo weli lama darin…</string>
@@ -411,4 +411,5 @@
     <string name="moderation_empty">Ma jiraan ciyaaryahanno la xannibay.</string>
     <string name="moderation_unknown_player">Ciyaaryahan la tirtiray</string>
     <string name="moderation_failed">Falkan lama dhammaystiri karin. Fadlan isku day mar kale.</string>
+    <string name="moderation_user_blocked">🔒 Isticmaalaha waa la xannibay</string>
 </resources>

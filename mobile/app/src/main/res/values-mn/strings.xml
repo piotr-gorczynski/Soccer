@@ -92,7 +92,7 @@
     <string name="enter_nickname_to_invite">Урилга илгээх хоч нэр оруулна уу:</string>
     <string name="enter_nickname_to_search">Хайх хоч нэр оруулна уу:</string>
     <string name="friend_s_nickname">Найзын хоч нэр</string>
-    <string name="send_invitation">Урилга илгээх</string>
+    <string name="send_invitation">Урих</string>
     <string name="add_a_friend">Найз нэмэх</string>
     <string name="add_friend">Найзыг амжилттай нэмлээ</string>
     <string name="no_friends">Одоогоор найз нэмэгдээгүй байна…</string>
@@ -411,4 +411,5 @@
     <string name="moderation_empty">Блоклосон тоглогч байхгүй.</string>
     <string name="moderation_unknown_player">Устгасан тоглогч</string>
     <string name="moderation_failed">Энэ үйлдлийг гүйцэтгэж чадсангүй. Дахин оролдоно уу.</string>
+    <string name="moderation_user_blocked">🔒 Хэрэглэгчийг блоклосон</string>
 </resources>

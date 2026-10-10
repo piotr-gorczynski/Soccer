@@ -56,6 +56,19 @@ class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.VH> {
     private final OnAddClick listener;
     private final OnVisibleResultsChanged resultsChangedListener;
     private boolean onlineOnly;
+    private boolean blocksLoaded;
+    private final Set<String> blockedUids = new HashSet<>();
+    private com.google.firebase.firestore.ListenerRegistration blocksListener;
+
+    private boolean canAdd(String uid) {
+        return blocksLoaded && !friendUids.contains(uid) && !blockedUids.contains(uid);
+    }
+
+    private void bindAddButton(VH holder) {
+        boolean enabled = canAdd(holder.uid);
+        holder.addBtn.setEnabled(enabled);
+        holder.addBtn.setAlpha(enabled ? 1.0f : 0.3f);
+    }
     private Set<String> friendUids = new HashSet<>();
     private final Map<String,String> presCache = new HashMap<>();
     private final Map<String,Long> hbCache = new HashMap<>();
@@ -77,7 +90,7 @@ class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.VH> {
                 .inflate(R.layout.item_user_search, parent, false);
         VH h = new VH(v);
         h.addBtn.setOnClickListener(btn -> {
-            if (h.uid != null) listener.onAdd(h.uid);
+            if (h.uid != null && canAdd(h.uid)) listener.onAdd(h.uid);
         });
         return h;
     }
@@ -91,7 +104,9 @@ class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.VH> {
             if (uid == null) return;
             
             for (Object payload : payloads) {
-                if ("presence".equals(payload)) {
+                if ("block".equals(payload)) {
+                    bindAddButton(h);
+                } else if ("presence".equals(payload)) {
                     String pState = presCache.get(uid);
                     if (pState != null) bindPresence(h, uid, pState);
                 }
@@ -109,10 +124,8 @@ class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.VH> {
         if (nick == null) nick = uid.substring(0, 6);
         h.nickname.setText(nick);
         
-        // Disable "Add" button if this user is already a friend
-        boolean isAlreadyFriend = friendUids.contains(uid);
-        h.addBtn.setEnabled(!isAlreadyFriend);
-        h.addBtn.setAlpha(isAlreadyFriend ? 0.3f : 1.0f);
+        // Existing friends and players blocked by this user cannot be added.
+        bindAddButton(h);
         
         // Load presence/status info
         String pState = presCache.get(uid);
@@ -315,6 +328,20 @@ class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.VH> {
     @Override
     public void onAttachedToRecyclerView(@NonNull RecyclerView rv) {
         super.onAttachedToRecyclerView(rv);
+        blocksLoaded = false;
+        var user = com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            blocksListener = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                    .collection("users").document(user.getUid()).collection("blocks")
+                    .addSnapshotListener((snapshot, error) -> {
+                        blocksLoaded = error == null && snapshot != null;
+                        if (blocksLoaded) {
+                            blockedUids.clear();
+                            for (DocumentSnapshot block : snapshot.getDocuments()) blockedUids.add(block.getId());
+                        }
+                        notifyItemRangeChanged(0, getItemCount(), "block");
+                    });
+        }
         for (DocumentSnapshot doc : allData) {
             subscribeToPresence(doc.getId());
             subscribeToProfile(doc.getId());
@@ -324,6 +351,10 @@ class UserSearchAdapter extends RecyclerView.Adapter<UserSearchAdapter.VH> {
     @Override
     public void onDetachedFromRecyclerView(@NonNull RecyclerView rv) {
         super.onDetachedFromRecyclerView(rv);
+        if (blocksListener != null) blocksListener.remove();
+        blocksListener = null;
+        blocksLoaded = false;
+        blockedUids.clear();
         for (RtdbSub sub : presSubs.values()) {
             sub.ref.removeEventListener(sub.l);
         }

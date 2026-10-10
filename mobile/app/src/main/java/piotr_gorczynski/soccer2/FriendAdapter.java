@@ -34,6 +34,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
     static class VH extends RecyclerView.ViewHolder {
         final TextView nickname;
         final TextView presence;
+        final TextView blockedCaption;
         final Button inviteBtn;
         final Button removeBtn;
         final TextView inviteStats;
@@ -44,6 +45,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
             super(v);
             nickname = v.findViewById(R.id.nickname);
             presence = v.findViewById(R.id.presence);
+            blockedCaption = v.findViewById(R.id.blockedCaption);
             inviteBtn = v.findViewById(R.id.inviteBtn);
             removeBtn = v.findViewById(R.id.removeBtn);
             inviteStats = v.findViewById(R.id.inviteStats);
@@ -65,6 +67,30 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
     private final Map<String,String> inviteStatsCache = new HashMap<>();
     private final Map<String,String> matchStatsCache = new HashMap<>();
     private String currentUserId;
+    private final java.util.Set<String> blockedUids = new java.util.HashSet<>();
+    private boolean blocksLoaded;
+    private com.google.firebase.firestore.ListenerRegistration blocksListener;
+
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView rv) {
+        super.onAttachedToRecyclerView(rv);
+        blocksLoaded = false;
+        if (currentUserId == null) return;
+        blocksListener = FirebaseFirestore.getInstance().collection("users")
+                .document(currentUserId).collection("blocks").addSnapshotListener((snapshot, error) -> {
+                    blocksLoaded = error == null && snapshot != null;
+                    if (blocksLoaded) {
+                        blockedUids.clear();
+                        for (DocumentSnapshot block : snapshot.getDocuments()) blockedUids.add(block.getId());
+                    }
+                    notifyItemRangeChanged(0, getItemCount(), "block");
+                });
+    }
+
+    private void bindBlock(@NonNull VH h) {
+        h.inviteBtn.setEnabled(blocksLoaded && !blockedUids.contains(h.uid));
+        h.blockedCaption.setVisibility(blockedUids.contains(h.uid) ? View.VISIBLE : View.GONE);
+    }
 
     FriendAdapter(Context context, OnInviteClick listener, OnRemoveClick removeListener, String currentUserId) {
         this.context = context;
@@ -80,7 +106,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_friend, parent, false);
         VH h = new VH(v);
         h.inviteBtn.setOnClickListener(btn -> {
-            if (h.uid != null) listener.onInvite(h.uid);
+            if (h.uid != null && blocksLoaded && !blockedUids.contains(h.uid)) listener.onInvite(h.uid);
         });
         h.removeBtn.setOnClickListener(btn -> {
             if (h.uid != null) removeListener.onRemove(h.uid);
@@ -102,7 +128,9 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
             if (uid == null) return;
             
             for (Object payload : payloads) {
-                if ("nickname".equals(payload)) {
+                if ("block".equals(payload)) {
+                    bindBlock(h);
+                } else if ("nickname".equals(payload)) {
                     String nick = nickCache.get(uid);
                     if (nick != null) h.nickname.setText(nick);
                 } else if ("presence".equals(payload)) {
@@ -125,6 +153,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
         h.doc = d;
         String uid = d.getId();
         h.uid = uid;
+        bindBlock(h);
         PlayerModeration.bind(h.itemView, uid, "friends");
 
         String nick = nickCache.get(uid);
@@ -231,6 +260,10 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
 
     private int indexForUid(@NonNull String uid) {
         for (int i=0;i<docs.size();i++) if (uid.equals(docs.get(i).getId())) return i; return -1;
+    }
+
+    boolean isPlayerBlocked(@NonNull String uid) {
+        return blockedUids.contains(uid);
     }
 
     @Nullable
@@ -532,6 +565,10 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
     @Override
     public void onDetachedFromRecyclerView(@NonNull RecyclerView rv) {
         super.onDetachedFromRecyclerView(rv);
+        if (blocksListener != null) blocksListener.remove();
+        blocksListener = null;
+        blocksLoaded = false;
+        blockedUids.clear();
         for (RtdbSub sub : presSubs.values()) sub.ref.removeEventListener(sub.l);
         presSubs.clear();
         for (com.google.firebase.firestore.ListenerRegistration listener : nameListeners.values()) listener.remove();

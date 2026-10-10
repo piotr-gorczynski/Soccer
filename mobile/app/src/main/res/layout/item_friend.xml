@@ -40,7 +40,25 @@
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
             android:text="@string/remove" />
+
+        <Button
+            android:id="@+id/playerActions"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="8dp"
+            android:minWidth="0dp"
+            android:padding="0dp"
+            android:text="⋮"
+            android:contentDescription="@string/moderation_actions" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/blockedCaption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="@string/moderation_user_blocked"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/inviteStats"
@@ -59,8 +77,5 @@
         android:textColor="@color/colorGrey"
         android:layout_marginTop="2dp"
         android:text="" />
-    <Button android:id="@+id/playerActions"
-        android:layout_width="48dp" android:layout_height="48dp"
-        android:minWidth="0dp" android:padding="0dp" android:text="⋮"
-        android:contentDescription="@string/moderation_actions" />
+
 </LinearLayout>

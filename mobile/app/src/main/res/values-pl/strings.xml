@@ -77,7 +77,7 @@
     <string name="enter_nickname_to_invite">Wprowadź pseudonim do zaproszenia:</string>
     <string name="enter_nickname_to_search">Wprowadź pseudonim do wyszukania:</string>
     <string name="friend_s_nickname">Pseudonim znajomego</string>
-    <string name="send_invitation">Wyślij zaproszenie</string>
+    <string name="send_invitation">Zaproś</string>
     <string name="invite_a_friend">Zaproś znajomego</string>
     <string name="add_a_friend">Dodaj znajomego</string>
     <string name="add_friend">Znajomy dodany pomyślnie</string>
@@ -485,4 +485,5 @@
     <string name="moderation_empty">Brak zablokowanych graczy.</string>
     <string name="moderation_unknown_player">Usunięty gracz</string>
     <string name="moderation_failed">Nie udało się wykonać tej czynności. Spróbuj ponownie.</string>
+    <string name="moderation_user_blocked">🔒 Użytkownik zablokowany</string>
 </resources>
