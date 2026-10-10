@@ -161,3 +161,12 @@ exports.onSupportTicketUpdated = functions.firestore
 const moderation = require('./moderation').handlers(db, FieldValue, functions.https.HttpsError);
 exports.reportPlayer = functions.region('us-central1').https.onCall(moderation.reportPlayer);
 exports.setPlayerBlock = functions.region('us-central1').https.onCall(moderation.setPlayerBlock);
+
+// Independent of payout retention.
+exports.cleanupModerationAndLegalData = functions.region('us-central1')
+  .runWith({ timeoutSeconds: 540, memory: '512MB' })
+  .pubsub.schedule('30 3 * * *').timeZone('UTC').onRun(async () => {
+    const summary = await require('./retention').sweep(db, new Date(), FieldValue);
+    console.log('cleanupModerationAndLegalData summary', summary);
+    return summary;
+  });

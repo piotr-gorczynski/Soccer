@@ -76,15 +76,20 @@ async function cleanupDeletedAccount(db, rtdb, uid, FieldValue) {
   await removePendingInvitations(db, uid, 'from');
   await removePendingInvitations(db, uid, 'to');
   await deletePages(db, db.collection('users').doc(uid).collection('friends'));
+  await db.recursiveDelete(db.collection('users').doc(uid).collection('blocks'));
+  await db.recursiveDelete(db.collection('users').doc(uid).collection('moderationState'));
   // Friend IDs are document IDs, not queryable fields; page user IDs only, without profiles.
   let last;
   for (;;) {
-    let query = db.collection('users').orderBy('__name__').select().limit(300);
+    let query = db.collection('users').orderBy('__name__').select().limit(200);
     if (last) query = query.startAfter(last);
     const page = await query.get();
     if (page.empty) break;
     const batch = db.batch();
-    page.docs.forEach(user => batch.delete(user.ref.collection('friends').doc(uid)));
+    page.docs.forEach(user => {
+      batch.delete(user.ref.collection('friends').doc(uid));
+      batch.delete(user.ref.collection('blocks').doc(uid));
+    });
     await batch.commit();
     last = page.docs[page.docs.length - 1];
   }

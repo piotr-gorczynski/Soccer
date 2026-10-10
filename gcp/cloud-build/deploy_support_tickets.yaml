@@ -58,6 +58,7 @@ steps:
       - |
         set -ex
         cp /workspace/soccer/firebase/functions/support-tickets/moderation.js /workspace/firebase/functions/support-tickets/
+        cp /workspace/soccer/firebase/functions/support-tickets/retention.js /workspace/firebase/functions/support-tickets/
         cd /workspace/firebase/functions/support-tickets
         npm install
 

@@ -17,7 +17,7 @@ The same UID remains in matches, moves, tournament participants/results, ranking
 
 If an unversioned legacy acceptance flag exists, its available timestamp/language are archived as `legalAcceptances/legacy_terms_unversioned` with unknown scope and null version, before the profile is replaced. No historical document version, URL or hash is invented. When a modern acceptance has overwritten the old timestamp, the archived legacy timestamp stays null. This archive is server-only and is never a valid current Terms acceptance.
 
-New versioned Terms evidence remains under `users/{uid}/legalAcceptances`. Tournament eligibility/regulation acceptance remains in participant records. Payout retention is unchanged: 180 days raw and five calendar years minimized audit after completed/cancelled, subject to existing holds; account removal never resets deadlines. There is no approved numeric Terms/regulation retention duration identifiable in the repository, so no period is invented and no automatic deletion of that evidence is added. Confirm the legal retention policy before publishing claims of a specific period.
+New versioned Terms evidence remains under `users/{uid}/legalAcceptances`. Tournament eligibility/regulation acceptance remains in participant records. Payout retention is unchanged: 180 days raw and five calendar years minimized audit after completed/cancelled, subject to existing holds; account removal never resets deadlines. Legal acceptance records under `users/{uid}/legalAcceptances` are retained for five UTC calendar years from `accountDeletedAt`, then recursively deleted without changing the records themselves. February 29 expires on February 28 in a non-leap anniversary year. Missing/invalid deletion timestamps fail closed. Tournament regulation evidence in participant records is outside this cleanup and remains unchanged.
 
 ## Active state and retries
 
@@ -43,3 +43,23 @@ Deploy remove-account codebase including **both** `removeAccount` and `onAccount
 `npm run test:account-deletion` in tools/test-payout-rules uses only local demo Firestore/RTDB emulators. It checks minimal replacement, preserved game/UID/legal/payment data, both-direction friends, pending-vs-historical invitations, retry/idempotency, missing profiles and stale-token security rules. Run the existing payout/retention/Terms suite as a regression check. Android UserDisplayName tests check that a deleted marker wins over a former nickname.
 
 Local verification (2026-10-07): Auth/callable orchestration 4/4; Firestore/RTDB deletion integration 5/5 (including more than 300 incoming friend relationships); existing payout/retention/Terms emulator tests 19/19. Android Global and Bangladesh debug builds passed, with 19 focused tests per flavor. No real account deletion was executed; on-device multi-account/offline verification remains a release check.
+
+## Moderation and legal retention — 10 October 2026
+
+Account deletion recursively removes the user's `blocks` and `moderationState`
+collections and removes the deleted UID from other users' block lists, alongside
+existing friend cleanup. Active-account checks prevent new blocks involving a deleted
+account. Historical gameplay UIDs and the root tombstone remain intact.
+
+`cleanupModerationAndLegalData` in the support-tickets codebase runs daily at 03:30 UTC
+in us-central1. It removes `legalAcceptances` (including descendants) five calendar
+years after the retained deletion timestamp, with no changes to acceptance evidence
+before expiry. It never deletes the user tombstone, participant records or gameplay.
+Retries of account removal do not reset `accountDeletedAt`.
+
+The same scheduler independently deletes resolved/closed moderation reports 180 days
+after resolution/closure; see PLAYER_MODERATION.md. Account deletion itself does not
+delete open reports. No payout retention semantics are changed.
+
+Deployment required later: existing 480 remove-account and 580 support-tickets
+triggers. No deployment was performed for this change.

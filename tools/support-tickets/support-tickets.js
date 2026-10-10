@@ -10,6 +10,7 @@ function usage() {
     '  node support-tickets.js <env> list [--status open]',
     '  node support-tickets.js <env> reply <ticketId> <message>',
     '  node support-tickets.js <env> resolve <ticketId> [message]',
+    '  node support-tickets.js <env> moderation-hold <ticketId> <on|off> <reason>',
   ].join('\n');
 }
 
@@ -21,6 +22,16 @@ async function main() {
     __dirname, '..', '..', 'secrets', `serviceAccountKey.${env}.json`));
   admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
   const db = admin.firestore();
+
+  if (command === 'moderation-hold') {
+    const [id, state, ...reason] = args;
+    if (!id || !['on', 'off'].includes(state)) throw Error(usage());
+    await require('../../firebase/functions/support-tickets/retention').setModerationHold(
+      db, db.collection('supportTickets').doc(id), state === 'on', reason.join(' '),
+      serviceAccount.client_email, admin.firestore.FieldValue);
+    console.log('Moderation retention hold updated. Original resolution deadline unchanged.');
+    return;
+  }
 
   if (command === 'list') {
     const statusIndex = args.indexOf('--status');
@@ -73,6 +84,7 @@ async function updateTicket(db, ticketRef, command, message, actor, FieldValue) 
     const paymentRef = paymentId ? db.collection('payments').doc(paymentId) : null;
     const payment = paymentRef ? await transaction.get(paymentRef) : null;
     if (paymentRef && !payment.exists) throw new Error('Payment no longer exists.');
+    if (ticket.get('retentionDeletionStartedAt')) throw Error('Report deletion already started.');
     const previousStatus = ticket.get('status');
     if (['resolved', 'closed'].includes(previousStatus)) {
       throw new Error(`Ticket ${ticketRef.id} is ${previousStatus}; reply/resolve cannot modify a finished ticket.`);

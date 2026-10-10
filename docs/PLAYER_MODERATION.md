@@ -6,8 +6,7 @@ Implementation prepared locally; not deployed by this change.
 
 The player menu (three dots) is available in friends, player search, pending invitations,
 rankings and tournament results. Signed-in players can report another player/nickname
-with a reason, block that player, or unblock them. Friends screen also has a Blocked
-players menu so users can unblock someone after removing them from friends.
+with a reason, block that player, or unblock them. Players can unblock through the per-player menu, including player search. The Friends toolbar has no separate blocked-players menu.
 
 All 11 new moderation strings are localized in all 20 supported application languages.
 
@@ -39,8 +38,7 @@ Only the reporter and authorized admins can read the report. One unresolved repo
 reporter/target is accepted; repeated submissions return its reference. A reporter can
 have at most ten open moderation reports. A fresh report after resolution preserves the
 previous report and its history. This is basic queue protection, not a comprehensive
-anti-abuse system. Reports and blocks are personal data; this change does not invent a
-new retention period or silently apply payout retention to moderation records.
+anti-abuse system. Reports and blocks are personal data; their approved retention is described below and is independent of payout retention.
 
 ## Admin handling
 
@@ -120,3 +118,33 @@ policy requirements (including applicable Terms and moderation operations).
 - `tools/support-tickets/support-tickets.js`
 - `tools/test-payout-rules/moderation.test.js`
 - `tools/test-payout-rules/package.json`
+
+## Retention — approved 10 October 2026
+
+- Block lists exist until unblock/account deletion. Account deletion removes outgoing
+  blocks, incoming block references and all own moderationState documents.
+- Open moderation reports remain until resolved/closed. Terminal reports expire after
+  180 elapsed days from `resolvedAt` / `closedAt`, falling back to `statusUpdatedAt`
+  for existing terminal records. Missing timestamps are reported and retained; no
+  invented/backfilled dates. Reopening is not supported by the admin tool.
+- `retentionHold.active=true` postpones deletion for legal/security obligations.
+  Releasing a hold never changes the resolution/closure timestamp or expiry.
+- Use `node tools/support-tickets/support-tickets.js <env> moderation-hold <id> on "reason"`
+  and `off "reason"` to release. This admin-only CLI records actor, time and reason.
+  Client writes remain denied. Do not mutate holds directly during cleanup.
+- A transaction claims eligible reports via `retentionDeletionStartedAt`, serializing
+  with the hold command. Once claimed, new holds and admin replies/resolution are
+  rejected. All descendant collections (including nested/orphaned history) are
+  recursively removed before deleting the parent. Partial failures leave the parent
+  for the next scheduled retry. No TTL is used.
+- New function `cleanupModerationAndLegalData`: daily `30 3 * * *`, UTC,
+  us-central1, existing deployment trigger 580. It also purges deleted accounts'
+  legalAcceptances after five calendar years; see ACCOUNT_DELETION.md.
+- Payout reports, payment data and historical game UIDs are not cleanup targets.
+
+The owner confirmed on 10 October 2026 that reports will be regularly reviewed and
+appropriate moderation action taken. This is an ongoing operational responsibility.
+
+Verification for this change: Firestore emulator suite 28/28, account-deletion
+Firestore/RTDB emulator suite 5/5, support-ticket unit tests 2/2 passed.
+No deployment, publication or live data changes.

@@ -1,3 +1,5 @@
+> **Retention update — 10 October 2026:** moderation reports: 180 days after resolved/closed, subject to legal/security holds; legalAcceptances: five calendar years after account deletion. Block lists and moderationState are removed on account deletion, including incoming block references. Code and privacy wording prepared; not deployed/published by this task. Earlier unresolved-retention notes are superseded for these categories only.
+
 > **Current status — 9 October 2026:** `BD-privacy-2026-10-09` is the effective Bangladesh Privacy Policy, effective 9 October 2026, in English and Bengali. This finalizes the status/version of the 7 October revision without changing its substantive content. The owner confirms that the Bangladesh website pages have been published; this status update does not deploy the revised labels. No numeric legal-acceptance retention period is introduced. See [ACCOUNT_DELETION.md](../docs/ACCOUNT_DELETION.md). Earlier dated review notes below are historical and do not override this current status.
 
 # Bangladesh English website content review

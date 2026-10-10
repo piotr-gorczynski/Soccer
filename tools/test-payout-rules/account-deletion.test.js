@@ -24,6 +24,9 @@ test('minimizes root, preserves historical UIDs/legal/payout data, removes only 
  await db.doc('users/gone/friends/other').set({addedAt:Timestamp.now()});
  await db.doc('users/other/friends/gone').set({addedAt:Timestamp.now()});
  await db.doc('users/other/friends/keep').set({test:true});
+ for (const path of ['users/gone/blocks/other', 'users/gone/moderationState/reports', 'users/other/blocks/gone'])
+  await db.doc(path).set({test:true});
+ await db.doc('users/other/blocks/keep').set({test:true});
  await db.doc('invitations/out').set({from:'gone',to:'other',status:'pending'});
  await db.doc('invitations/in').set({from:'other',to:'gone',status:'pending'});
  const retained={
@@ -46,9 +49,10 @@ test('minimizes root, preserves historical UIDs/legal/payout data, removes only 
  assert.equal(tombstone.accountDeleted,true);assert.equal(tombstone.nickname,'(Account removed)');assert.equal(tombstone.nicknameLowercase,'(account removed)');assert.ok(tombstone.accountDeletedAt instanceof Timestamp);
  const legacy=(await db.doc('users/gone/legalAcceptances/legacy_terms_unversioned').get()).data();
  assert.equal(legacy.version,null);assert.equal(legacy.scope,'unknown');assert.equal(legacy.acceptedAt.toMillis(),123456);assert.equal(legacy.language,'pl');
- for(const path of ['users/gone/friends/other','users/other/friends/gone','invitations/out','invitations/in'])assert.equal((await db.doc(path).get()).exists,false,path);
+ for(const path of ['users/gone/friends/other','users/other/friends/gone','invitations/out','invitations/in','users/gone/blocks/other','users/gone/moderationState/reports','users/other/blocks/gone'])assert.equal((await db.doc(path).get()).exists,false,path);
  for(const [path,value] of Object.entries(retained))assert.deepEqual((await db.doc(path).get()).data(),value,path);
  assert.equal((await db.doc('users/other/friends/keep').get()).exists,true);
+ assert.equal((await db.doc('users/other/blocks/keep').get()).exists,true);
  assert.deepEqual((await rtdb.ref('status/gone').get()).val(),{accountDeleted:true,state:'offline'});
  await cleanup();assert.deepEqual((await db.doc('users/gone').get()).data(),tombstone);
  assert.ok((await db.doc('users/gone').get()).updateTime.isEqual(snapshot.updateTime));

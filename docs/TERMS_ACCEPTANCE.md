@@ -69,4 +69,13 @@ Focused Android tests cover scope isolation, current/old versions, legacy compat
 
 Verified locally on 2026-10-07: `_devGlobalDebug` and `_devBangladeshDebug` builds succeeded; 17 focused Terms/filter tests passed in each flavor (34 executions). The payout/retention/Terms Firestore emulator suite passed 19/19. `git diff --check` passed. Gradle reports pre-existing deprecated features incompatible with Gradle 10; no deployment was performed.
 
-Account-deletion follow-up (2026-10-07): `ACCOUNT_DELETION.md` now defines profile replacement without deleting legalAcceptances. A separate unpublished privacy revision documents this design; retention durations for legal evidence still require approval. Earlier statements above about the effective policy remain true for the live website.
+Account-deletion follow-up (2026-10-07): `ACCOUNT_DELETION.md` now defines profile replacement without deleting legalAcceptances. A separate unpublished privacy revision documents this design; The approved 10 October retention for legalAcceptances is five calendar years from accountDeletedAt; the scheduled implementation is described in ACCOUNT_DELETION.md. Tournament participant evidence is unchanged. Earlier statements above about the effective policy remain true for the live website.
+
+## Legal acceptance retention — 10 October 2026
+
+Superseding earlier unresolved-retention notes: immutable `legalAcceptances` survive
+account deletion for five calendar years from the tombstone's `accountDeletedAt`.
+The daily 03:30 UTC `cleanupModerationAndLegalData` then recursively removes that
+collection. Acceptance records are never updated to add expiry fields. Active users,
+missing deletion timestamps, tombstones and tournament/game history are not deleted.
+This implementation is not deployed by this change.
