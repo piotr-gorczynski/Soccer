@@ -89,8 +89,11 @@ public class ConsentUtils {
     }
 
     /**
-     * Update Firebase Analytics consent based on UMP consent choices.
-     * This method now supports both EEA regulations (via IAB TCF) and US state regulations (via UMP status).
+     * Preserve the application's existing storage consent policy.
+     * AD_USER_DATA and AD_PERSONALIZATION are interpreted by UMP 3.2+ with
+     * Consent Mode enabled in AdMob, not inferred from purpose 1/4 or OBTAINED.
+     * Their denied defaults are in AndroidManifest.xml. Omitting them here is
+     * intentional: setConsent only updates the specified types.
      */
     public static void updateFirebaseAnalyticsConsent(Context ctx) {
         // A refreshed REQUIRED/UNKNOWN state must not reuse stale purpose choices.
@@ -98,12 +101,13 @@ public class ConsentUtils {
         boolean analyticsAllowed = consentResolved && isAnalyticsAllowed(ctx);
         boolean adsPersonalizationAllowed = consentResolved && isPersonalisedAllowed(ctx);
 
-        Log.d("TAG_Soccer", "Updating Firebase Analytics consent: analytics=" + analyticsAllowed + 
-              ", ads_personalization=" + adsPersonalizationAllowed);
+        Log.d("TAG_Soccer", "Updating Firebase Analytics storage consent: analytics_storage=" + analyticsAllowed +
+              ", ad_storage=" + adsPersonalizationAllowed +
+              "; ad_user_data/ad_personalization managed by UMP (requires AdMob Consent Mode)");
 
         FirebaseAnalytics firebaseAnalytics = FirebaseAnalytics.getInstance(ctx);
         
-        // Set consent for Firebase Analytics
+        // Do not override UMP's advertiser consent with the legacy storage policy.
         Map<FirebaseAnalytics.ConsentType, FirebaseAnalytics.ConsentStatus> consentMap = Map.of(
             FirebaseAnalytics.ConsentType.ANALYTICS_STORAGE,
             analyticsAllowed ? FirebaseAnalytics.ConsentStatus.GRANTED : FirebaseAnalytics.ConsentStatus.DENIED,

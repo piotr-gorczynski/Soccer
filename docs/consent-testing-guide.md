@@ -1,5 +1,22 @@
 # ConsentUtils Enhanced Framework - Testing Guide
 
+## Current real-device verification — PASS (2026-10-11)
+
+The user verified `piotr_gorczynski.soccer2.bd` after enabling **Consent mode for
+advertising purposes** in AdMob:
+
+- [x] Reject all: all four consent types DENIED; `_npa=1`.
+- [x] Accept all: all four consent types GRANTED; `_npa=0`.
+- [x] Withdraw consent: all four consent types DENIED; `_npa=1`.
+- [x] UMP updates AD_STORAGE, AD_USER_DATA and AD_PERSONALIZATION in Firebase;
+  ConsentUtils updates ANALYTICS_STORAGE / AD_STORAGE.
+
+See [the integration record](firebase-analytics-consent.md#real-device-verification--pass-2026-10-11)
+for the complete result matrix and scope. The legacy helper scenarios below
+are not evidence of effective advertiser consent; use all four Firebase signals
+for verification, rather than the application's PERSONALISED log alone.
+
+
 This document demonstrates how the enhanced ConsentUtils framework handles different consent scenarios for both EEA and US state regulations.
 
 ## Test Scenario 1: EEA User with IAB TCF Consent

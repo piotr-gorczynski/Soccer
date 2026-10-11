@@ -18,6 +18,10 @@
         <!-- Defaults apply before SDK initialization without resetting persisted user choices. -->
         <meta-data android:name="google_analytics_default_allow_analytics_storage" android:value="false" />
         <meta-data android:name="google_analytics_default_allow_ad_storage" android:value="false" />
+        <!-- UMP 3.2+ updates these when Consent Mode is enabled in AdMob.
+             Do not infer these choices from individual TCF purpose bits. -->
+        <meta-data android:name="google_analytics_default_allow_ad_user_data" android:value="false" />
+        <meta-data android:name="google_analytics_default_allow_ad_personalization_signals" android:value="false" />
 
         <meta-data
             android:name="firebase_messaging_installation_id_enabled"

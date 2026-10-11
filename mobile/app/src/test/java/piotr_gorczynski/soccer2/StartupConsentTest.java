@@ -10,10 +10,12 @@ import org.junit.runner.RunWith;
 import org.mockito.MockedStatic;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 @RunWith(RobolectricTestRunner.class)
+@Config(application = android.app.Application.class, sdk = 36)
 public class StartupConsentTest {
     @Test public void startupWaitsForUmpAndContinuesWhenNoFormIsRequired() {
         checkCompletion(false);
