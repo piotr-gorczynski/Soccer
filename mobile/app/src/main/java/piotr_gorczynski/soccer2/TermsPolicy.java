@@ -5,32 +5,32 @@ import com.google.firebase.firestore.FieldValue;
 
 /** Required legal documents. Never edit bytes at a published versioned URL. */
 public final class TermsPolicy {
-    public static final String GLOBAL_VERSION = "GLOBAL-terms-2025-07-30";
+    public static final String GLOBAL_VERSION = "GLOBAL-terms-2026-10-13";
     public static final String BD_VERSION = "BD-terms-2026-10-06";
     // Fixed migration boundary: changing GLOBAL_VERSION disables legacy grandfathering.
     private static final String LEGACY_GLOBAL_BOUNDARY = "GLOBAL-terms-2025-07-30";
     private static final Map<String, String> GLOBAL_HASHES = new HashMap<>();
     static {
-        GLOBAL_HASHES.put("sw", "c12355475a714d4437facb1c5730df7d22c1b5dabb8391881a3ed7292d19216b");
-        GLOBAL_HASHES.put("so", "9ffc0fb10b72d3a2092cb6b7ed8071d56e3e04c6982a6a3d3686c7bbc86b581a");
-        GLOBAL_HASHES.put("si", "a7b0854fc56167449984bf95e0ed7c228ebb5631ceec0a33663f6cb36856d600");
-        GLOBAL_HASHES.put("my", "41261796572b3b909a57bdbc0f70420f5a223cabf6d23fbb42f9ea24a33cf5ac");
-        GLOBAL_HASHES.put("mn", "d2412e2add43ff23b344769d76d30b93d99eee222d6cde34c146b7c732eb8ef5");
-        GLOBAL_HASHES.put("mg", "44b4747c1b720a45ec086898a87539eb04b82c1934c13370be2599cf7632d868");
-        GLOBAL_HASHES.put("lo", "3ed6ecb70995b4e56a92c83898a9137d94a2bb5494508603bae8019070f0ff55");
-        GLOBAL_HASHES.put("km", "2486c36d8d8cd613273d38c34230739da205c39f216108bdcd2c830e2ab88169");
-        GLOBAL_HASHES.put("fa", "fc5d1ee479140778776ca0e82cd52d57277a1b0cb5182e7fbbbb95121ef93536");
-        GLOBAL_HASHES.put("ar", "4f4fce9b97a5715959a0427edad03452aba270e0f7e18ef1060052372bab5ac2");
-        GLOBAL_HASHES.put("am", "0bed30cad106fe1455d62ed6aacba84891cd95409bd7ee87925d79fa60a08b41");
-        GLOBAL_HASHES.put("bn", "c37145edf58e83edf1e2c2a487ab41f5712bb0c6f68e240882649edf9a419491");
-        GLOBAL_HASHES.put("de", "3f0447b1b9269f69ba3b46d7af2484d9d611e5d030b845a98bb53812f705d958");
-        GLOBAL_HASHES.put("en", "940cb471414a4d0a5e57844e7593cd3b2e61ce78a5169575f3726b09e6d99961");
-        GLOBAL_HASHES.put("es", "fc6101ee6d363dcec0c06b7bb435ee1cad54385f3e0f169893a21534625ad02e");
-        GLOBAL_HASHES.put("fr", "45d94dd921a0df17c8dcee865b194dc3c2582ddd0c1f12dff4bdbe3b85eba495");
-        GLOBAL_HASHES.put("hi", "abdecb0a2dcfd45280ac2c3eebaf8b7caaae0a95286866f328f9e4474dc60bd9");
-        GLOBAL_HASHES.put("ne", "6366c7ff60038c609c2c891a57f6e115844d1c1fb17c5ef35e4e25f24c51fd16");
-        GLOBAL_HASHES.put("pl", "3f2c0e60ef535e5783ac221eb9b4f3fc10788d1905fb02036f8a90f19a29409b");
-        GLOBAL_HASHES.put("ur", "99c895f3584bb19aedaccbac5ffddb9cb7ca54c4f3363697e2adc8ad85539289");
+        GLOBAL_HASHES.put("sw", "28e4ce1915f56d915141cc4bd5a1a53c8b778a1c4563b1e913cd36bf99d87911");
+        GLOBAL_HASHES.put("so", "1b64b4b1d4c6e719fe6b6af2d730ce496ab36f2bd3a79c5466dc47f19a36f4e9");
+        GLOBAL_HASHES.put("si", "7a1f3fa4ae94d93e6abba92e9f70571cc341cd589a78d7987f4b89012691de08");
+        GLOBAL_HASHES.put("my", "cabea8e8fe3da7badb5f64e256e35dbc2d0e14c90649a937563beacd75b33a94");
+        GLOBAL_HASHES.put("mn", "dae202cac4f190f513937de3eef984a62ab3f980af853ea9337ac271baa77445");
+        GLOBAL_HASHES.put("mg", "4ee7bc7118925ee89cea9304745ba331e84dec98e2a29482d86b078042d9b4bb");
+        GLOBAL_HASHES.put("lo", "757aa960aab745a64e1ea0503fdaa51f6692114d7a59b380970801701141b2e3");
+        GLOBAL_HASHES.put("km", "fea35e844d5c87d0770b7761fa8d8493e1a3a24e000aaac95981cbfb6f2ec25a");
+        GLOBAL_HASHES.put("fa", "914e1dbfa9d59d7f6b8a5eec83a73a31474e769fce5dc06c19b3b82be8af8f11");
+        GLOBAL_HASHES.put("ar", "ee0f6587db4e5058efdb4861eb26072fa05100b34184ce3196a250f3493a3c6d");
+        GLOBAL_HASHES.put("am", "4acecd36d517bf9e1d72332c73cd199add69e17c8f4bba1b67d7691b9c7b64b6");
+        GLOBAL_HASHES.put("bn", "70f0a8955890324c375111ed62ff6305b7c534c8067725b5dad4a2e1a7757189");
+        GLOBAL_HASHES.put("de", "0473ff6a4e8fe0215975b2dfe5a716aea91bf349205c5f8f6dbf8f2ff3ca291b");
+        GLOBAL_HASHES.put("en", "50c67e0ef90a613ab8b3bc02ec92bede977762169c2efdfdece6526a5a00ec73");
+        GLOBAL_HASHES.put("es", "07f268b06d91834167512e7059daf60db7a2b57615a5bf64556740d6905b4fd1");
+        GLOBAL_HASHES.put("fr", "c82e9784f25f851d81931685eeb861056348f8aa2369377358eaf4f47df98d42");
+        GLOBAL_HASHES.put("hi", "17de2970b534321dd0d979daf23e52ae89c6ae66b2642c5d5e615a10ca8cb61d");
+        GLOBAL_HASHES.put("ne", "e20232619fb921d1e017e22d621571b32438ac9a765ded3c258d5329c893788e");
+        GLOBAL_HASHES.put("pl", "b4054f58584ccf732681d45ddc46bfdeb31f1a1cf0dfd6dd99e3925fad7216d7");
+        GLOBAL_HASHES.put("ur", "70a7e680ba517b25a237f1256c82843cd6a73387bbfa324e65bcd9c930829d3d");
     }
     public final String scope, version, language, url, sha256;
     TermsPolicy(String scope, String version, String language, String url, String sha256) {

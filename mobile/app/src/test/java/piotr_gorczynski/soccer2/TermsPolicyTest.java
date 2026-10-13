@@ -34,11 +34,11 @@ public class TermsPolicyTest {
     }
     @Test public void globalLegacyAndScopeAreIndependent() {
         TermsPolicy global=TermsPolicy.required(false,"pl");
-        assertTrue(global.accepts(Collections.singletonMap("termsAccepted",true),null));
+        assertFalse(global.accepts(Collections.singletonMap("termsAccepted",true),null));
         assertFalse(global.matches(saved(TermsPolicy.required(true,"en"))));
         Map<String,Object> newBd=new HashMap<>();newBd.put("termsAccepted",true);newBd.put("termsAcceptanceModel",2);
         assertFalse(global.accepts(newBd,null));
-        newBd.put("legacyGlobalTermsAccepted",true);assertTrue(global.accepts(newBd,null));
+        newBd.put("legacyGlobalTermsAccepted",true);assertFalse(global.accepts(newBd,null));
     }
     @Test public void futureGlobalVersionCannotUseLegacy() {
         TermsPolicy future=new TermsPolicy("global","GLOBAL-terms-2027-01-15","en","unused","unused");
@@ -47,7 +47,7 @@ public class TermsPolicyTest {
     }
     @Test public void exactMetadataAndServerTimestamp() {
         TermsPolicy p=TermsPolicy.required(false,"pl");Map<String,Object> r=p.newRecord();
-        assertEquals("terms_global__GLOBAL-terms-2025-07-30",p.id());
+        assertEquals("terms_global__GLOBAL-terms-2026-10-13",p.id());
         assertEquals("global",r.get("scope"));assertEquals(p.version,r.get("version"));
         assertEquals("pl",r.get("language"));assertEquals(p.url,r.get("documentUrl"));
         assertEquals(p.sha256,r.get("documentSha256"));assertEquals(FieldValue.serverTimestamp(),r.get("acceptedAt"));
@@ -62,7 +62,7 @@ public class TermsPolicyTest {
         assertEquals("en",en.language);
         assertTrue(en.url.endsWith("/bangladesh/terms/BD-terms-2026-10-06.html"));
         assertTrue(en.matches(saved(bn))); assertTrue(bn.matches(saved(en)));
-        assertTrue(TermsPolicy.required(false,"bn").url.endsWith("/terms/GLOBAL-terms-2025-07-30/bn.html"));
+        assertTrue(TermsPolicy.required(false,"bn").url.endsWith("/terms/GLOBAL-terms-2026-10-13/bn.html"));
         assertTrue(TermsPolicy.required(false,"pl").url.endsWith("/pl.html"));
         assertTrue(PrivacyPolicyLinks.bangladeshUrl("bn").endsWith("/privacy-bn.html"));
         assertTrue(PrivacyPolicyLinks.bangladeshUrl("pl").endsWith("/privacy-en.html"));

@@ -12,7 +12,7 @@ before(async () => { env = await initializeTestEnvironment({ projectId:'demo-ter
 after(async () => { if(env) await env.cleanup(); });
 beforeEach(async () => { await env.clearFirestore(); });
 function record(scope='bangladesh',language='en') {
-  const bd=scope==='bangladesh', version=bd?'BD-terms-2026-10-06':'GLOBAL-terms-2025-07-30';
+  const bd=scope==='bangladesh', version=bd?'BD-terms-2026-10-06':'GLOBAL-terms-2026-10-13';
   return {documentType:'terms',scope,version,acceptedAt:serverTimestamp(),language,
     documentUrl:'https://piotr-gorczynski.com/'+(bd?'bangladesh/terms/'+version+(language==='bn'?'-bn':'')+'.html':'terms/'+version+'/'+language+'.html'),
     documentSha256:hashes[bd?(language==='bn'?'bangladesh-bn':'bangladesh'):language],appVersionCode:100,appVersionName:'TEST',flavor:bd?'_devBangladesh':'_devGlobal'};
@@ -26,15 +26,17 @@ test('exact approved HTML bytes match manifest, app and rules',()=>{
   const app=fs.readFileSync('../../mobile/app/src/main/java/piotr_gorczynski/soccer2/TermsPolicy.java','utf8');
   const rules=fs.readFileSync('../../firebase/firestore.rules','utf8');
   for(const [lang,hash] of Object.entries(hashes)) {
-    const path=lang.startsWith('bangladesh')?'bangladesh/terms/BD-terms-2026-10-06'+(lang==='bangladesh-bn'?'-bn':'')+'.html':'terms/GLOBAL-terms-2025-07-30/'+lang+'.html';
+    const path=lang.startsWith('bangladesh')?'bangladesh/terms/BD-terms-2026-10-06'+(lang==='bangladesh-bn'?'-bn':'')+'.html':'terms/GLOBAL-terms-2026-10-13/'+lang+'.html';
     assert.equal(crypto.createHash('sha256').update(fs.readFileSync('../../firebase-hosting/public/'+path)).digest('hex'),hash);
     assert.ok(app.includes(hash));assert.ok(rules.includes(hash));
     if(!lang.startsWith('bangladesh')) {
       const html=fs.readFileSync('../../firebase-hosting/public/'+path,'utf8');
       assert.ok(html.includes('lang="'+lang+'"'));
-      assert.equal((html.match(/<h2>/g)||[]).length,6);
+      assert.equal((html.match(/<h2(?: id="tournaments")?>/g)||[]).length,7);
+      assert.ok(html.includes('id="tournaments"'));
+      assert.equal(fs.readFileSync('../../firebase-hosting/public/terms-'+lang+'.html','utf8'),html);
       assert.equal((html.match(/<li>/g)||[]).length,6);
-      assert.ok(html.includes('2025-07-30'));
+      assert.ok(html.includes('2026-10-13'));
       if(['ar','fa','ur'].includes(lang)) assert.ok(html.includes('dir="rtl"'));
       assert.ok(fs.readFileSync('../../firebase-hosting/public/index.html','utf8').includes('href="'+path+'"'));
     }
@@ -86,4 +88,15 @@ test('view alone creates nothing; denied atomic write leaves no acceptance or le
   await assertFails(batch.commit());
   assert.equal((await getDoc(target)).exists(),false);
   assert.equal((await getDoc(doc(store,'users/owner'))).exists(),false);
+});
+
+test('historical Global acceptances remain valid for older clients and HTML is unchanged',async()=>{
+  const old=require('../../firebase-hosting/terms-document-hashes-2025-07-30.json');
+  for(const [language,hash] of Object.entries(old).filter(([k])=>!k.startsWith('bangladesh'))) {
+    const version='GLOBAL-terms-2025-07-30';
+    const path='terms/'+version+'/'+language+'.html';
+    assert.equal(crypto.createHash('sha256').update(fs.readFileSync('../../firebase-hosting/public/'+path)).digest('hex'),hash);
+    const r={...record('global',language),version,documentUrl:'https://piotr-gorczynski.com/'+path,documentSha256:hash};
+    await assertSucceeds(setDoc(ref(db('old-'+language),r,'old-'+language),r));
+  }
 });
