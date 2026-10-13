@@ -32,14 +32,17 @@ test('Global privacy covers every application language', () => {
 
 test('all privacy translations are discoverable and local navigation resolves', () => {
   const home = read('index.html');
+  assert.ok(home.includes('href="privacy-en.html"'));
+  assert.ok(home.includes('href="terms-en.html"'));
   for (const lang of languages) {
-    assert.ok(home.includes(`href="privacy-${lang}.html"`), lang);
     const html = read(`privacy-${lang}.html`);
     const selector = html.match(/<p class="policy-languages">([\s\S]*?)<\/p>/)[1];
     const destinations = [...selector.matchAll(/href="privacy-([a-z]+)\.html"/g)]
       .map(match => match[1]).sort();
     assert.deepEqual(destinations, languages, lang);
     for (const page of [html, read(`terms-${lang}.html`)]) {
+      const languageLinks = page.match(/<p class="policy-languages">([\s\S]*?)<\/p>/)[1];
+      assert.equal((languageLinks.match(/<a /g) || []).length, languages.length);
       const nav = page.match(/<nav>[\s\S]*?<\/nav>/)[0];
       assert.ok(nav.includes(`href="privacy-${lang}.html"`), lang);
     }

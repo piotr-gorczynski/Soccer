@@ -1,146 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Gridline Soccer by Piotr Górczyński</title>
-  <style>
-    body { 
-      background:#ECEFF1; 
-      color:rgba(0,0,0,0.87); 
-      font-family:Roboto,Helvetica,Arial,sans-serif; 
-      margin:0; 
-      padding:0; 
-    }
-    #content { 
-      background:white; 
-      max-width:680px; 
-      margin:40px auto; 
-      padding:32px 24px; 
-      border-radius:3px; 
-      text-align:center;
-    }
-    .app-icon {
-      width: 128px;
-      height: 128px;
-      margin: 0 auto 24px auto;
-      border-radius: 16px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
-    h1 { 
-      font-size:32px; 
-      font-weight:300; 
-      margin:24px 0; 
-      color:#1976D2;
-    }
-    p { 
-      line-height:140%; 
-      margin:16px 0; 
-      font-size:16px; 
-    }
-    .download-section {
-      margin: 32px 0;
-    }
-    .download-text {
-      font-size: 18px;
-      margin-bottom: 16px;
-      font-weight: 500;
-    }
-    .play-store-link {
-      display: inline-block;
-      background: #01875f;
-      color: white;
-      padding: 12px 24px;
-      text-decoration: none;
-      border-radius: 8px;
-      font-weight: 500;
-      font-size: 16px;
-      transition: background-color 0.3s;
-    }
-    .play-store-link:hover {
-      background: #016f4d;
-    }
-    .privacy-link {
-      display: inline-block;
-      color: #16462a;
-      text-decoration: none;
-      margin-top: 24px;
-      font-size: 14px;
-    }
-    .privacy-link:hover {
-      text-decoration: underline;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gridline Soccer</title>
 <link rel="stylesheet" href="global-styles.css">
+<style>
+.hero { text-align: center; }
+.app-icon { width: 128px; height: 128px; border-radius: 16px; box-shadow: 0 4px 8px rgba(0,0,0,.2); }
+.download-section { margin: 32px 0; }
+.download-text { font-size: 18px; font-weight: 500; }
+</style>
 </head>
 <body>
 <header><a href="index.html">Gridline Soccer</a></header>
 <nav><a href="index.html" aria-current="page">Home</a><a href="terms-en.html">Terms</a><a href="privacy-en.html">Privacy</a><a href="support.html">Support</a></nav>
-
-  <div id="content">
-    <img src="ic_launcher.webp" alt="Gridline Soccer App Icon" class="app-icon">
-    
-    <h1>Gridline Soccer by Piotr Górczyński</h1>
-    
-    <div class="download-section">
-      <p class="download-text">Available at</p>
-      <a href="https://play.google.com/store/apps/details?id=piotr_gorczynski.soccer2" 
-         target="_blank" 
-         class="play-store-link">
-        Download on Google Play
-      </a>
-    </div>
-    
-    <!-- Privacy Policy Links -->
-    <div style="margin-top: 32px;">
-      <h3 style="font-size: 18px; font-weight: 500; margin-bottom: 16px; color: #16462a;">Privacy Policy</h3>
-      <div><a href="privacy-en.html" class="privacy-link">Privacy Policy (English)</a></div>
-      <div><a href="privacy-pl.html" class="privacy-link">Polityka Prywatności (Polski)</a></div>
-      <div><a href="privacy-de.html" class="privacy-link">Datenschutzrichtlinie (Deutsch)</a></div>
-      <div><a href="privacy-fr.html" class="privacy-link">Politique de confidentialité (Français)</a></div>
-      <div><a href="privacy-es.html" class="privacy-link">Política de Privacidad (Español)</a></div>
-      <div><a href="privacy-ur.html" class="privacy-link">رازداری کی پالیسی (اردو)</a></div>
-      <div><a href="privacy-bn.html" class="privacy-link">গোপনীয়তা নীতি (বাংলা)</a></div>
-      <div><a href="privacy-ne.html" class="privacy-link">गोपनीयता नीति (नेपाली)</a></div>
-      <div><a href="privacy-hi.html" class="privacy-link">गोपनीयता नीति (हिन्दी)</a></div>
-      <div><a href="privacy-am.html" class="privacy-link" lang="am" hreflang="am">አማርኛ</a></div>
-      <div><a href="privacy-ar.html" class="privacy-link" lang="ar" hreflang="ar">العربية</a></div>
-      <div><a href="privacy-fa.html" class="privacy-link" lang="fa" hreflang="fa">فارسی</a></div>
-      <div><a href="privacy-km.html" class="privacy-link" lang="km" hreflang="km">ខ្មែរ</a></div>
-      <div><a href="privacy-lo.html" class="privacy-link" lang="lo" hreflang="lo">ລາວ</a></div>
-      <div><a href="privacy-mg.html" class="privacy-link" lang="mg" hreflang="mg">Malagasy</a></div>
-      <div><a href="privacy-mn.html" class="privacy-link" lang="mn" hreflang="mn">Монгол</a></div>
-      <div><a href="privacy-my.html" class="privacy-link" lang="my" hreflang="my">မြန်မာ</a></div>
-      <div><a href="privacy-si.html" class="privacy-link" lang="si" hreflang="si">සිංහල</a></div>
-      <div><a href="privacy-so.html" class="privacy-link" lang="so" hreflang="so">Soomaali</a></div>
-      <div><a href="privacy-sw.html" class="privacy-link" lang="sw" hreflang="sw">Kiswahili</a></div>
-    </div>
-
-    <!-- Terms of Service Links -->
-    <div style="margin-top: 32px;">
-      <h3 style="font-size: 18px; font-weight: 500; margin-bottom: 16px; color: #16462a;">Terms of Service</h3>
-      <div><a href="terms-en.html" class="privacy-link">Terms of Service (English)</a></div>
-      <div><a href="terms-pl.html" class="privacy-link">Regulamin (Polski)</a></div>
-      <div><a href="terms-de.html" class="privacy-link">Nutzungsbedingungen (Deutsch)</a></div>
-      <div><a href="terms-fr.html" class="privacy-link">Conditions d'utilisation (Français)</a></div>
-      <div><a href="terms-es.html" class="privacy-link">Términos de servicio (Español)</a></div>
-      <div><a href="terms-ur.html" class="privacy-link">سروس کی شرائط (اردو)</a></div>
-      <div><a href="terms-bn.html" class="privacy-link">সেবার শর্তাবলী (বাংলা)</a></div>
-      <div><a href="terms-ne.html" class="privacy-link">सेवाका सर्तहरू (नेपाली)</a></div>
-      <div><a href="terms-hi.html" class="privacy-link">सेवा की शर्तें (हिन्दी)</a></div>
-      <div><a href="terms-am.html" class="privacy-link" lang="am">Terms of Service (አማርኛ)</a></div>
-      <div><a href="terms-ar.html" class="privacy-link" lang="ar">Terms of Service (العربية)</a></div>
-      <div><a href="terms-fa.html" class="privacy-link" lang="fa">Terms of Service (فارسی)</a></div>
-      <div><a href="terms-km.html" class="privacy-link" lang="km">Terms of Service (ខ្មែរ)</a></div>
-      <div><a href="terms-lo.html" class="privacy-link" lang="lo">Terms of Service (ລາວ)</a></div>
-      <div><a href="terms-mg.html" class="privacy-link" lang="mg">Terms of Service (Malagasy)</a></div>
-      <div><a href="terms-mn.html" class="privacy-link" lang="mn">Terms of Service (Монгол)</a></div>
-      <div><a href="terms-my.html" class="privacy-link" lang="my">Terms of Service (မြန်မာ)</a></div>
-      <div><a href="terms-si.html" class="privacy-link" lang="si">Terms of Service (සිංහල)</a></div>
-      <div><a href="terms-so.html" class="privacy-link" lang="so">Terms of Service (Soomaali)</a></div>
-      <div><a href="terms-sw.html" class="privacy-link" lang="sw">Terms of Service (Kiswahili)</a></div>
-    </div>
-  </div>
+<main>
+<section class="hero" aria-labelledby="game-title">
+<img src="ic_launcher.webp" alt="Gridline Soccer App Icon" class="app-icon" width="128" height="128">
+<h1 id="game-title">Gridline Soccer</h1>
+<div class="download-section">
+<p class="download-text">Available at</p>
+<a class="button" href="https://play.google.com/store/apps/details?id=piotr_gorczynski.soccer2" target="_blank" rel="noopener noreferrer">Download on Google Play</a>
+</div>
+</section>
+<p class="lead">Paper soccer, friends and skill-based tournaments.</p>
+<h2>Play and compete</h2>
+<p>Play against Android, challenge friends and join available tournaments. Plan your moves, follow the game rules and work your way up the rankings.</p>
+<h2>Tournaments</h2>
+<p>Read and accept the assigned tournament rules before joining. Each event's rules describe eligibility, gameplay, deadlines and scoring. Results are determined by gameplay and the assigned rules. Entry is free, without a purchase, entry fee, deposit, stake, wager or payment from players. Available events and schedules may vary.</p>
+<h2>Already have an account?</h2>
+<p>Sign in with your existing Gridline Soccer account to access your profile and friend list. Global and Bangladesh share account and profile data. You cannot use both editions on the same device. Uninstalling an app is different from deleting your shared account.</p>
+<h2>Play respectfully</h2>
+<p>Choose an appropriate nickname and respect other players. You can report a player or nickname and block individual players using the player menu in the app.</p>
+<h2>Availability and support</h2>
+<p>Download Gridline Soccer from Google Play. Availability depends on your Google Play account and device. For help, visit <a href="support.html">Support</a>.</p>
+</main>
 <footer>Gridline Soccer · Piotr Górczyński · <a href="mailto:support@piotr-gorczynski.com">Support</a></footer>
 </body>
 </html>

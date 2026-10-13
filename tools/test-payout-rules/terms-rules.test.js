@@ -36,11 +36,11 @@ test('exact approved HTML bytes match manifest, app and rules',()=>{
       assert.ok(html.includes('id="tournaments"'));
       const publicHtml=fs.readFileSync('../../firebase-hosting/public/terms-'+lang+'.html','utf8');
       const content=page=>page.match(/<div id="content">([\s\S]*?)<\/div>/)[1];
-      assert.equal(content(publicHtml),content(html));
+      assert.equal(content(publicHtml).replace(/\s*<p class="policy-languages">[\s\S]*?<\/p>/,''),content(html));
       assert.equal((html.match(/<li>/g)||[]).length,6);
       assert.ok(html.includes('2026-10-13'));
       if(['ar','fa','ur'].includes(lang)) assert.ok(html.includes('dir="rtl"'));
-      assert.ok(fs.readFileSync('../../firebase-hosting/public/index.html','utf8').includes('href="terms-'+lang+'.html"'));
+      assert.ok(fs.readFileSync('../../firebase-hosting/public/terms-en.html','utf8').includes('href="terms-'+lang+'.html"'));
     }
   }
 });
