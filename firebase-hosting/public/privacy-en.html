@@ -18,16 +18,18 @@
 <nav><a href="index.html">Home</a><a href="terms-en.html">Terms</a><a href="privacy-en.html" aria-current="page">Privacy</a><a href="support.html">Support</a></nav>
 
   <div id="content">
+    <p class="policy-languages"><a href="privacy-en.html" lang="en" hreflang="en" aria-current="page">English</a> · <a href="privacy-pl.html" lang="pl" hreflang="pl">Polski</a> · <a href="privacy-de.html" lang="de" hreflang="de">Deutsch</a> · <a href="privacy-fr.html" lang="fr" hreflang="fr">Français</a> · <a href="privacy-es.html" lang="es" hreflang="es">Español</a> · <a href="privacy-bn.html" lang="bn" hreflang="bn">বাংলা</a> · <a href="privacy-hi.html" lang="hi" hreflang="hi">हिन्दी</a> · <a href="privacy-ne.html" lang="ne" hreflang="ne">नेपाली</a> · <a href="privacy-ur.html" lang="ur" hreflang="ur">اردو</a></p>
     <h1>Privacy Policy</h1>
-    <p>Last Updated: 2025-08-30</p>
+    <p>Last updated: 2026-10-13 · GLOBAL-privacy-2026-10-13</p>
 
     <h2>Introduction</h2>
-    <p>This policy describes how the Soccer mobile application (the "Service") collects and uses information. The app displays advertising using Google AdMob and offers sign-in via Firebase Authentication (email, Gmail, Facebook and other providers).</p>
+    <p>This policy covers Gridline Soccer Global (piotr_gorczynski.soccer2), operated by Piotr Górczyński in Poland. Bangladesh has a separate <a href="bangladesh/privacy-en.html">Privacy Policy</a>. We use Google AdMob for advertising and Firebase for authentication and operation of the service.</p>
+
 
     <h2>Information We Collect</h2>
-    <p>When you create an account or sign in, we collect your email address and a nickname. If you choose to sign in with Gmail, Facebook or another provider, we may receive basic profile information such as your name and profile picture from that provider.</p>
+    <p>Depending on the sign-in method, we process an internal account identifier (UID), nickname, email address and available provider profile information such as name and picture. Anonymous sign-in has a UID but does not require an email address.</p>
     <p>We store your game statistics, tournament participation and presence status (online/offline) in Firebase Firestore and Realtime Database. The app also saves a Firebase Cloud Messaging token on your device and in Firestore to deliver push notifications.</p>
-    <p>We also collect analytical data and breadcrumbs (non-sensitive navigation events) for analysis purposes in order to improve user experience and eliminate bugs. This includes tracking user interactions, app usage patterns, authentication flows, and tournament participation to help us identify and fix issues. We do not collect the content of messages or sensitive personal information in these analytics events.</p>
+    <p>Usage events and diagnostic breadcrumbs can describe navigation, authentication, tournament activity, app variant, environment and version. We use these to understand usage, investigate faults and improve the service.</p>
     <p>Additionally, the app uses Google Analytics for Firebase (GA4) and Firebase Crashlytics. GA4 helps us understand how users engage with the app, while Crashlytics collects crash reports and diagnostic data (such as device type, operating system, app version, and crash details) to help us improve stability and fix problems. These services are provided by Google LLC in accordance with their <a href="https://policies.google.com/privacy">Privacy Policy</a>.</p>
 
     <h2>How We Use Information</h2>
@@ -41,13 +43,29 @@
     <p>We rely on Firebase services (Authentication, Firestore, Realtime Database, Cloud Messaging, Analytics and Crashlytics) provided by Google LLC. Authentication providers (e.g. Google or Facebook) may process your data according to their own privacy policies.</p>
 
     <h2>Data Sharing</h2>
-    <p>We do not sell your personal information. We only share data with the services listed above to operate the application.</p>
+    <p>We do not sell personal information. Google Firebase and AdMob, and your chosen sign-in provider, process information to operate the service; authorized administrators handle reports and support. Nicknames and gameplay results are visible to other players. Information may also be disclosed when required by law or necessary to handle a legal claim. Provider infrastructure may process information outside your country.</p>
+
+
+    <h2 id="shared-account">Shared accounts and legal evidence</h2>
+    <p>Email/password, Google, Facebook and anonymous sign-in use an internal UID. Available profile data depends on the provider; anonymous sign-in does not require email. Global and Bangladesh share an account/profile. We record variants used, first/latest use and whether Bangladesh use followed Global; this does not establish location or Google Play country. We also check whether the other Gridline Soccer package is installed.</p>
+    <p>Terms acceptance records contain UID, scope, version, document URL/hash, language, timestamp and app context. Tournament-rule acceptance is stored with participation records. These document accepted rules and are separate from advertising consent.</p>
+
+    <h2 id="moderation">Player reporting and blocking</h2>
+    <p>A per-user block list stores blocked UIDs and creation timestamps to prevent direct invitations and friend additions involving a blocked player. Its owner and authorized administrators can access it. Reports contain reporter UID, reported UID, nickname snapshot, reason, context, status, timestamps and handling history. Only the reporter and authorized administrators can access the report. The purpose is abuse prevention, moderation and dispute handling; reporting does not automatically ban or punish anyone. Avoid unnecessary personal data in reports.</p>
+
+    <h2 id="retention">Moderation and legal-record retention</h2>
+    <p>Blocks remain until unblock/account deletion. Open reports remain until resolved/closed. Scheduled cleanup deletes moderation reports and all their history/subcollections 180 days after resolution/closure. A legal/security hold can postpone deletion; releasing it does not reset deadlines. Overdue records are deleted on a successful cleanup run.</p>
+    <p>General Terms acceptance evidence is preserved for five calendar years from account deletion, then deleted with its subcollections by scheduled cleanup. The evidence itself is not modified to set expiry. The minimal user record and historical gameplay UIDs remain. Tournament-rule evidence in participation records is outside this cleanup and is not assigned the same five-year deadline. Bangladesh payout retention does not apply to Global moderation or legal acceptance data.</p>
 
     <h2>Your Choices</h2>
-    <p>You may update or delete your account information by contacting us. You can opt out of personalized ads through your device settings (for example, by resetting or removing the advertising ID on Android). For analytics, you may also disable tracking in your device settings.</p>
+    <p>Where available, use the app’s privacy/consent options to reject, accept or withdraw analytics and advertising consent. Settings cover analytics storage, ad storage, advertising user data and ad personalization. Withdrawal does not undo earlier lawful processing and does not necessarily disable separate crash diagnostics. Android also provides advertising and notification settings. Contact us to request access, correction or deletion, or exercise other applicable rights. We may need proportionate information to verify a request; never send passwords or verification codes.</p>
+
 
     <h2>Account Deletion</h2>
-    <p>The app includes a built-in option to permanently remove your account. Open the account screen in the application, tap <em>Remove Account</em>, and follow the prompts to confirm deletion. This process will erase your account data from our systems.</p>
+    <p>Choose Remove Account on the account screen or request deletion at <a href="mailto:support@piotr-gorczynski.com">support@piotr-gorczynski.com</a>. We delete the Firebase Authentication account and remove direct profile identifiers, including email, provider IDs/names/photos and notification tokens. The shared account is removed from both editions; uninstalling the app does not delete it.</p>
+    <p>A minimal record remains with the same UID, deletion marker/date and “(Account removed)” display name. Historical matches, tournament participation/results and rankings retain UID references for integrity. These data are pseudonymous, not necessarily anonymous. Screens resolve the removed-account name; offline devices update after reconnecting. This does not erase every historical record or previously captured information.</p>
+    <p>We deactivate presence and remove pending invitations, active friendships in both directions, the account’s blocks and internal moderation state, and its UID from others’ block lists. A minimal offline/deleted marker prevents old sessions restoring presence. Cleanup may require retries and is not simultaneous across services. Reports and legal evidence follow the periods below; other necessary game history remains. Contact us to review remaining information no longer needed.</p>
+
 
     <h2>Children's Privacy</h2>
     <p>The Service is not directed to children under 13. We do not knowingly collect personal data from children. If you are a parent or guardian and believe your child has provided personal data, please contact us so we can take action.</p>

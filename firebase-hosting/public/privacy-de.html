@@ -18,16 +18,18 @@
 <nav><a href="index.html">Startseite</a><a href="terms-de.html">Nutzungsbedingungen</a><a href="privacy-de.html" aria-current="page">Datenschutz</a><a href="support.html" hreflang="en">Hilfe</a></nav>
 
   <div id="content">
+    <p class="policy-languages"><a href="privacy-en.html" lang="en" hreflang="en">English</a> · <a href="privacy-pl.html" lang="pl" hreflang="pl">Polski</a> · <a href="privacy-de.html" lang="de" hreflang="de" aria-current="page">Deutsch</a> · <a href="privacy-fr.html" lang="fr" hreflang="fr">Français</a> · <a href="privacy-es.html" lang="es" hreflang="es">Español</a> · <a href="privacy-bn.html" lang="bn" hreflang="bn">বাংলা</a> · <a href="privacy-hi.html" lang="hi" hreflang="hi">हिन्दी</a> · <a href="privacy-ne.html" lang="ne" hreflang="ne">नेपाली</a> · <a href="privacy-ur.html" lang="ur" hreflang="ur">اردو</a></p>
     <h1>Datenschutzrichtlinie</h1>
-    <p>Zuletzt aktualisiert: 2025-08-30</p>
+    <p>Letzte Aktualisierung: 2026-10-13 · GLOBAL-privacy-2026-10-13</p>
 
     <h2>Einführung</h2>
-    <p>Diese Richtlinie beschreibt, wie die Soccer-Mobilanwendung (der "Dienst") Informationen sammelt und verwendet. Die App zeigt Werbung mit Google AdMob an und bietet Anmeldung über Firebase Authentication (E-Mail, Gmail, Facebook und andere Anbieter).</p>
+    <p>Diese Richtlinie gilt für Gridline Soccer Global (piotr_gorczynski.soccer2), betrieben von Piotr Górczyński in Polen. Bangladesh hat eine eigene <a href="bangladesh/privacy-en.html" hreflang="en">Datenschutzerklärung</a>. Wir nutzen Google AdMob für Werbung und Firebase für Anmeldung und Betrieb.</p>
+
 
     <h2>Informationen, die wir sammeln</h2>
-    <p>Wenn Sie ein Konto erstellen oder sich anmelden, sammeln wir Ihre E-Mail-Adresse und einen Spitznamen. Wenn Sie sich mit Gmail, Facebook oder einem anderen Anbieter anmelden, erhalten wir möglicherweise grundlegende Profilinformationen wie Ihren Namen und Ihr Profilbild von diesem Anbieter.</p>
+    <p>Je nach Anmeldemethode verarbeiten wir eine interne Kontokennung (UID), Spitznamen, E-Mail und verfügbare Anbieterprofildaten wie Name und Foto. Anonyme Anmeldung hat eine UID, benötigt aber keine E-Mail.</p>
     <p>Wir speichern Ihre Spielstatistiken, Turnierteilnahme und Anwesenheitsstatus (online/offline) in Firebase Firestore und Realtime Database. Die App speichert auch ein Firebase Cloud Messaging-Token auf Ihrem Gerät und in Firestore, um Push-Benachrichtigungen zu liefern.</p>
-    <p>Wir sammeln auch analytische Daten und Breadcrumbs (nicht-sensible Navigationsereignisse) für Analysezwecke, um die Benutzererfahrung zu verbessern und Fehler zu eliminieren. Dies umfasst die Verfolgung von Benutzerinteraktionen, App-Nutzungsmustern, Authentifizierungsabläufen und Turnierteilnahme, um uns zu helfen, Probleme zu identifizieren und zu beheben. Wir sammeln nicht den Inhalt von Nachrichten oder sensible persönliche Informationen in diesen Analyseereignissen.</p>
+    <p>Nutzungsereignisse und diagnostische Breadcrumbs können Navigation, Anmeldung, Turnieraktivität, App-Variante, Umgebung und Version beschreiben. Sie helfen, Nutzung zu verstehen, Fehler zu untersuchen und den Dienst zu verbessern.</p>
     <p>Zusätzlich verwendet die App Google Analytics für Firebase (GA4) und Firebase Crashlytics. GA4 hilft uns zu verstehen, wie Benutzer mit der App interagieren, während Crashlytics Absturzberichte und Diagnosedaten (wie Gerätetyp, Betriebssystem, App-Version und Absturzdetails) sammelt, um uns zu helfen, die Stabilität zu verbessern und Probleme zu beheben. Diese Dienste werden von Google LLC gemäß ihrer <a href="https://policies.google.com/privacy">Datenschutzrichtlinie</a> bereitgestellt.</p>
 
     <h2>Wie wir Informationen verwenden</h2>
@@ -41,13 +43,29 @@
     <p>Wir verlassen uns auf Firebase-Dienste (Authentication, Firestore, Realtime Database, Cloud Messaging, Analytics und Crashlytics), die von Google LLC bereitgestellt werden. Authentifizierungsanbieter (z.B. Google oder Facebook) können Ihre Daten gemäß ihren eigenen Datenschutzrichtlinien verarbeiten.</p>
 
     <h2>Datenweitergabe</h2>
-    <p>Wir verkaufen Ihre persönlichen Informationen nicht. Wir teilen Daten nur mit den oben genannten Diensten, um die Anwendung zu betreiben.</p>
+    <p>Wir verkaufen keine personenbezogenen Daten. Google Firebase, AdMob und Ihr Anmeldeanbieter verarbeiten Daten für den Dienst; berechtigte Administratoren bearbeiten Meldungen und Support. Spitznamen und Ergebnisse sind anderen Spielern sichtbar. Daten können aufgrund gesetzlicher Pflichten oder zur Bearbeitung von Rechtsansprüchen offengelegt werden. Anbieter können Daten außerhalb Ihres Landes verarbeiten.</p>
+
+
+    <h2 id="shared-account">Gemeinsame Konten und Annahmenachweise</h2>
+    <p>E-Mail/Passwort-, Google-, Facebook- und anonyme Anmeldung verwenden eine UID. Profildaten hängen vom Anbieter ab; anonyme Anmeldung benötigt keine E-Mail. Global und Bangladesh teilen Konto/Profil. Wir speichern Varianten, erste/letzte Nutzung und ob Bangladesh nach Global genutzt wurde; dies bestimmt weder Standort noch Google-Play-Land. Wir prüfen auch das andere installierte Gridline-Soccer-Paket.</p>
+    <p>Annahmen der Bedingungen enthalten UID, Geltungsbereich, Version, Dokument-URL/Hash, Sprache, Zeitpunkt und App-Kontext. Angenommene Turnierregeln werden mit Teilnahmen gespeichert. Diese Nachweise sind von Werbeeinwilligungen getrennt.</p>
+
+    <h2 id="moderation">Spieler melden und sperren</h2>
+    <p>Die persönliche Sperrliste speichert gesperrte UIDs und Erstellungszeiten, um direkte Einladungen und Freundschaftsergänzungen mit gesperrten Spielern zu verhindern. Eigentümer und berechtigte Administratoren haben Zugriff. Meldungen enthalten meldende/gemeldete UID, Spitznamenkopie, Grund, Kontext, Status, Zeitpunkte und Verlauf. Nur Meldende und berechtigte Administratoren können die Meldung lesen. Sie dienen Missbrauchsprävention, Moderation und Streitklärung; sie bewirken keine automatische Sperre oder Strafe. Vermeiden Sie unnötige personenbezogene Angaben.</p>
+
+    <h2 id="retention">Aufbewahrung von Moderations- und Rechtsnachweisen</h2>
+    <p>Sperren bleiben bis Entsperrung/Kontolöschung. Offene Meldungen bleiben bis Erledigung/Schließung. Geplante Bereinigung löscht Moderationsmeldungen samt Verlauf/Unterkollektionen 180 Tage danach. Eine rechtliche/Sicherheits-Aufbewahrungssperre kann die Löschung verschieben; ihre Aufhebung setzt Fristen nicht zurück. Überfälliges wird im erfolgreichen Bereinigungslauf gelöscht.</p>
+    <p>Allgemeine Annahmenachweise bleiben fünf Kalenderjahre ab Kontolöschung und werden dann samt Unterkollektionen planmäßig gelöscht. Die Nachweise selbst erhalten keine Ablaufänderung. Minimaler Kontodatensatz und historische Spiel-UIDs bleiben. Turnierregelnachweise in Teilnahmen fallen nicht unter diese Bereinigung oder dieselbe Fünfjahresfrist. Bangladesh-Auszahlungsfristen gelten nicht für Global-Moderation oder Annahmenachweise.</p>
 
     <h2>Ihre Wahlmöglichkeiten</h2>
-    <p>Sie können Ihre Kontoinformationen aktualisieren oder löschen, indem Sie uns kontaktieren. Sie können personalisierte Werbung über Ihre Geräteeinstellungen deaktivieren (zum Beispiel durch Zurücksetzen oder Entfernen der Werbe-ID auf Android). Für Analysen können Sie auch die Verfolgung in Ihren Geräteeinstellungen deaktivieren.</p>
+    <p>Über verfügbare Datenschutz-/Einwilligungsoptionen der App können Sie Analyse- und Werbeeinwilligungen ablehnen, erteilen oder widerrufen. Sie betreffen Analyse-/Werbespeicherung, Werbenutzerdaten und Personalisierung. Der Widerruf berührt vorherige rechtmäßige Verarbeitung nicht und deaktiviert nicht unbedingt separate Absturzdiagnosen. Android bietet Werbe- und Benachrichtigungseinstellungen. Kontaktieren Sie uns für Auskunft, Berichtigung, Löschung oder andere anwendbare Rechte. Zur Prüfung können angemessene Angaben nötig sein; senden Sie keine Passwörter oder Bestätigungscodes.</p>
+
 
     <h2>Kontolöschung</h2>
-    <p>Die App enthält eine integrierte Option zum dauerhaften Entfernen Ihres Kontos. Öffnen Sie den Kontobildschirm in der Anwendung, tippen Sie auf <em>Konto entfernen</em> und folgen Sie den Aufforderungen zur Bestätigung der Löschung. Dieser Prozess löscht Ihre Kontodaten aus unseren Systemen.</p>
+    <p>Wählen Sie Konto entfernen oder schreiben Sie an <a href="mailto:support@piotr-gorczynski.com">support@piotr-gorczynski.com</a>. Wir löschen Firebase Authentication und direkte Profilkennungen einschließlich E-Mail, Anbieterkennungen/-namen/-fotos und Benachrichtigungstoken. Die Löschung betrifft beide Ausgaben des gemeinsamen Kontos; Deinstallieren löscht es nicht.</p>
+    <p>Ein minimaler Datensatz mit derselben UID, Löschkennzeichen/-datum und „(Account removed)“ bleibt. Historische Spiele, Turnierteilnahmen/-ergebnisse und Ranglisten behalten UID-Verweise zur Konsistenz. Die Daten sind pseudonym, nicht unbedingt anonym. Bildschirme zeigen den entfernten Kontonamen; Offlinegeräte aktualisieren nach Verbindung. Nicht jeder historische Datensatz oder zuvor erfasste Inhalt wird gelöscht.</p>
+    <p>Wir deaktivieren Präsenz und entfernen ausstehende Einladungen, aktive Freundschaften beider Richtungen, eigene Sperren und internen Moderationsstatus sowie die UID aus fremden Sperrlisten. Ein minimaler Offline-/Gelöscht-Marker verhindert Wiederherstellung durch alte Sitzungen. Bereinigung kann Wiederholungen benötigen und erfolgt nicht überall gleichzeitig. Meldungen und Nachweise folgen den Fristen unten; notwendige Spielhistorie bleibt. Sie können die Prüfung unnötiger Restdaten anfordern.</p>
+
 
     <h2>Datenschutz für Kinder</h2>
     <p>Der Dienst richtet sich nicht an Kinder unter 13 Jahren. Wir sammeln wissentlich keine persönlichen Daten von Kindern. Wenn Sie Elternteil oder Erziehungsberechtigter sind und glauben, dass Ihr Kind persönliche Daten bereitgestellt hat, kontaktieren Sie uns bitte, damit wir Maßnahmen ergreifen können.</p>

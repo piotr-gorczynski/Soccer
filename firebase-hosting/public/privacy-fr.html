@@ -18,16 +18,18 @@
 <nav><a href="index.html">Accueil</a><a href="terms-fr.html">Conditions</a><a href="privacy-fr.html" aria-current="page">Confidentialité</a><a href="support.html" hreflang="en">Assistance</a></nav>
 
   <div id="content">
+    <p class="policy-languages"><a href="privacy-en.html" lang="en" hreflang="en">English</a> · <a href="privacy-pl.html" lang="pl" hreflang="pl">Polski</a> · <a href="privacy-de.html" lang="de" hreflang="de">Deutsch</a> · <a href="privacy-fr.html" lang="fr" hreflang="fr" aria-current="page">Français</a> · <a href="privacy-es.html" lang="es" hreflang="es">Español</a> · <a href="privacy-bn.html" lang="bn" hreflang="bn">বাংলা</a> · <a href="privacy-hi.html" lang="hi" hreflang="hi">हिन्दी</a> · <a href="privacy-ne.html" lang="ne" hreflang="ne">नेपाली</a> · <a href="privacy-ur.html" lang="ur" hreflang="ur">اردو</a></p>
     <h1>Politique de confidentialité</h1>
-    <p>Dernière mise à jour : 2025-08-30</p>
+    <p>Dernière mise à jour : 2026-10-13 · GLOBAL-privacy-2026-10-13</p>
 
     <h2>Introduction</h2>
-    <p>Cette politique décrit comment l'application mobile Soccer (le "Service") collecte et utilise les informations. L'application affiche de la publicité en utilisant Google AdMob et propose une connexion via Firebase Authentication (email, Gmail, Facebook et d'autres fournisseurs).</p>
+    <p>Cette politique concerne Gridline Soccer Global (piotr_gorczynski.soccer2), exploité par Piotr Górczyński en Pologne. Bangladesh a sa propre <a href="bangladesh/privacy-en.html" hreflang="en">politique de confidentialité</a>. Nous utilisons Google AdMob pour la publicité et Firebase pour la connexion et le fonctionnement.</p>
+
 
     <h2>Informations que nous collectons</h2>
-    <p>Lorsque vous créez un compte ou vous connectez, nous collectons votre adresse email et un pseudonyme. Si vous choisissez de vous connecter avec Gmail, Facebook ou un autre fournisseur, nous pouvons recevoir des informations de profil de base telles que votre nom et votre photo de profil de ce fournisseur.</p>
+    <p>Selon la connexion, nous traitons un identifiant interne (UID), un pseudonyme, une adresse e-mail et les données de profil disponibles du fournisseur, comme le nom et la photo. La connexion anonyme possède un UID sans nécessiter d’e-mail.</p>
     <p>Nous stockons vos statistiques de jeu, votre participation aux tournois et votre statut de présence (en ligne/hors ligne) dans Firebase Firestore et Realtime Database. L'application enregistre également un token Firebase Cloud Messaging sur votre appareil et dans Firestore pour livrer les notifications push.</p>
-    <p>Nous collectons également des données analytiques et des breadcrumbs (événements de navigation non sensibles) à des fins d'analyse afin d'améliorer l'expérience utilisateur et d'éliminer les bogues. Cela inclut le suivi des interactions utilisateur, des modèles d'utilisation de l'application, des flux d'authentification et de la participation aux tournois pour nous aider à identifier et corriger les problèmes. Nous ne collectons pas le contenu des messages ou des informations personnelles sensibles dans ces événements analytiques.</p>
+    <p>Les événements d’utilisation et traces diagnostiques peuvent décrire navigation, connexion, activité de tournoi, édition, environnement et version. Ils permettent de comprendre l’usage, examiner les défauts et améliorer le service.</p>
     <p>De plus, l'application utilise Google Analytics pour Firebase (GA4) et Firebase Crashlytics. GA4 nous aide à comprendre comment les utilisateurs interagissent avec l'application, tandis que Crashlytics collecte des rapports de plantage et des données de diagnostic (comme le type d'appareil, le système d'exploitation, la version de l'application et les détails de plantage) pour nous aider à améliorer la stabilité et résoudre les problèmes. Ces services sont fournis par Google LLC conformément à leur <a href="https://policies.google.com/privacy">Politique de confidentialité</a>.</p>
 
     <h2>Comment nous utilisons les informations</h2>
@@ -41,13 +43,29 @@
     <p>Nous nous appuyons sur les services Firebase (Authentication, Firestore, Realtime Database, Cloud Messaging, Analytics et Crashlytics) fournis par Google LLC. Les fournisseurs d'authentification (par exemple Google ou Facebook) peuvent traiter vos données selon leurs propres politiques de confidentialité.</p>
 
     <h2>Partage de données</h2>
-    <p>Nous ne vendons pas vos informations personnelles. Nous ne partageons des données qu'avec les services listés ci-dessus pour faire fonctionner l'application.</p>
+    <p>Nous ne vendons pas de données personnelles. Google Firebase, AdMob et votre fournisseur de connexion traitent les données pour le service ; les administrateurs autorisés gèrent les signalements et le support. Pseudonymes et résultats sont visibles aux autres joueurs. Des données peuvent être divulguées pour une obligation légale ou une réclamation juridique. Les fournisseurs peuvent traiter les données hors de votre pays.</p>
+
+
+    <h2 id="shared-account">Comptes partagés et preuves d’acceptation</h2>
+    <p>Les connexions e-mail/mot de passe, Google, Facebook et anonyme utilisent un UID. Le profil dépend du fournisseur ; la connexion anonyme ne nécessite pas d’e-mail. Global et Bangladesh partagent compte/profil. Nous enregistrons les éditions utilisées, première/dernière utilisation et si Bangladesh a suivi Global ; cela n’établit ni localisation ni pays Google Play. Nous vérifions aussi l’installation de l’autre paquet Gridline Soccer.</p>
+    <p>Les acceptations des conditions contiennent UID, portée, version, URL/empreinte du document, langue, date et contexte. Les règles de tournoi acceptées sont enregistrées avec la participation. Ces preuves sont distinctes du consentement publicitaire.</p>
+
+    <h2 id="moderation">Signalement et blocage de joueurs</h2>
+    <p>La liste individuelle conserve les UID bloqués et dates de création pour empêcher les invitations directes et ajouts d’amis impliquant un joueur bloqué. Son propriétaire et les administrateurs autorisés y accèdent. Les signalements contiennent les UID du déclarant et du joueur signalé, une copie du pseudonyme, motif, contexte, statut, dates et historique. Seuls le déclarant et les administrateurs autorisés accèdent au signalement. Ils servent à prévenir les abus, modérer et traiter les litiges ; ils ne provoquent aucune sanction automatique. Évitez les données personnelles inutiles.</p>
+
+    <h2 id="retention">Conservation de la modération et des preuves juridiques</h2>
+    <p>Les blocages durent jusqu’au déblocage/suppression du compte. Les signalements ouverts restent jusqu’à résolution/clôture. Le nettoyage planifié supprime les signalements de modération et tout historique/sous-collections 180 jours après. Une suspension juridique/de sécurité peut différer la suppression ; sa levée ne réinitialise pas le délai. Les données échues sont supprimées lors d’un nettoyage réussi.</p>
+    <p>Les preuves d’acceptation des conditions générales restent cinq années civiles après suppression du compte, puis sont supprimées avec leurs sous-collections. Les preuves elles-mêmes ne sont pas modifiées pour fixer l’échéance. Le compte minimal et les UID historiques restent. Les preuves des règles de tournoi dans les participations ne relèvent pas de ce nettoyage ni du même délai de cinq ans. La rétention des paiements Bangladesh ne régit pas la modération ou les acceptations Global.</p>
 
     <h2>Vos choix</h2>
-    <p>Vous pouvez mettre à jour ou supprimer les informations de votre compte en nous contactant. Vous pouvez désactiver les publicités personnalisées via les paramètres de votre appareil (par exemple, en réinitialisant ou supprimant l'identifiant publicitaire sur Android). Pour l'analyse, vous pouvez également désactiver le suivi dans les paramètres de votre appareil.</p>
+    <p>Les options de confidentialité/consentement disponibles permettent de refuser, accepter ou retirer le consentement aux analyses et publicités. Elles couvrent le stockage analytique/publicitaire, les données utilisateur publicitaires et la personnalisation. Le retrait ne remet pas en cause le traitement licite antérieur ni ne désactive nécessairement les diagnostics de panne distincts. Android propose des réglages publicitaires et de notifications. Contactez-nous pour accéder, rectifier, supprimer ou exercer d’autres droits applicables. Des informations proportionnées peuvent être nécessaires pour vérifier la demande ; ne transmettez jamais de mots de passe ou codes.</p>
+
 
     <h2>Suppression de compte</h2>
-    <p>L'application inclut une option intégrée pour supprimer définitivement votre compte. Ouvrez l'écran de compte dans l'application, appuyez sur <em>Supprimer le compte</em>, et suivez les instructions pour confirmer la suppression. Ce processus effacera les données de votre compte de nos systèmes.</p>
+    <p>Choisissez Supprimer le compte ou écrivez à <a href="mailto:support@piotr-gorczynski.com">support@piotr-gorczynski.com</a>. Nous supprimons le compte Firebase Authentication et les identifiants directs : e-mail, identifiants/noms/photos des fournisseurs et jetons de notification. La suppression concerne les deux éditions du compte partagé ; désinstaller ne le supprime pas.</p>
+    <p>Un enregistrement minimal garde le même UID, l’indicateur/date de suppression et « (Account removed) ». Les matchs, participations/résultats et classements historiques gardent les UID pour leur cohérence. Ces données sont pseudonymes, pas nécessairement anonymes. Les écrans affichent le nom du compte supprimé ; les appareils hors ligne s’actualisent à la reconnexion. Cela n’efface pas chaque information historique ou précédemment enregistrée.</p>
+    <p>Nous désactivons la présence et supprimons les invitations en attente, amitiés actives dans les deux sens, blocages et état interne de modération propres et l’UID des listes de blocage d’autrui. Un marqueur minimal hors ligne/supprimé empêche les anciennes sessions de rétablir la présence. Le nettoyage peut nécessiter des reprises et n’est pas simultané. Signalements et preuves suivent les délais ci-dessous ; l’historique nécessaire reste. Vous pouvez demander l’examen des informations devenues inutiles.</p>
+
 
     <h2>Confidentialité des enfants</h2>
     <p>Le Service n'est pas destiné aux enfants de moins de 13 ans. Nous ne collectons pas sciemment de données personnelles d'enfants. Si vous êtes parent ou tuteur et pensez que votre enfant a fourni des données personnelles, veuillez nous contacter afin que nous puissions prendre des mesures.</p>

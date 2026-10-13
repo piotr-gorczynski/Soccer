@@ -18,16 +18,18 @@
 <nav><a href="index.html">Inicio</a><a href="terms-es.html">Condiciones</a><a href="privacy-es.html" aria-current="page">Privacidad</a><a href="support.html" hreflang="en">Ayuda</a></nav>
 
   <div id="content">
+    <p class="policy-languages"><a href="privacy-en.html" lang="en" hreflang="en">English</a> · <a href="privacy-pl.html" lang="pl" hreflang="pl">Polski</a> · <a href="privacy-de.html" lang="de" hreflang="de">Deutsch</a> · <a href="privacy-fr.html" lang="fr" hreflang="fr">Français</a> · <a href="privacy-es.html" lang="es" hreflang="es" aria-current="page">Español</a> · <a href="privacy-bn.html" lang="bn" hreflang="bn">বাংলা</a> · <a href="privacy-hi.html" lang="hi" hreflang="hi">हिन्दी</a> · <a href="privacy-ne.html" lang="ne" hreflang="ne">नेपाली</a> · <a href="privacy-ur.html" lang="ur" hreflang="ur">اردو</a></p>
     <h1>Política de Privacidad</h1>
-    <p>Última actualización: 2025-08-30</p>
+    <p>Última actualización: 2026-10-13 · GLOBAL-privacy-2026-10-13</p>
 
     <h2>Introducción</h2>
-    <p>Esta política describe cómo la aplicación móvil Soccer (el "Servicio") recopila y utiliza información. La aplicación muestra publicidad usando Google AdMob y ofrece inicio de sesión a través de Firebase Authentication (email, Gmail, Facebook y otros proveedores).</p>
+    <p>Esta política cubre Gridline Soccer Global (piotr_gorczynski.soccer2), gestionado por Piotr Górczyński en Polonia. Bangladesh tiene su propia <a href="bangladesh/privacy-en.html" hreflang="en">política de privacidad</a>. Usamos Google AdMob para publicidad y Firebase para acceso y funcionamiento.</p>
+
 
     <h2>Información que recopilamos</h2>
-    <p>Cuando creas una cuenta o inicias sesión, recopilamos tu dirección de email y un apodo. Si eliges iniciar sesión con Gmail, Facebook u otro proveedor, podemos recibir información básica del perfil como tu nombre y foto de perfil de ese proveedor.</p>
+    <p>Según el acceso, tratamos un identificador interno (UID), apodo, correo y datos disponibles del proveedor como nombre y foto. El acceso anónimo tiene UID pero no requiere correo.</p>
     <p>Almacenamos tus estadísticas de juego, participación en torneos y estado de presencia (en línea/fuera de línea) en Firebase Firestore y Realtime Database. La aplicación también guarda un token de Firebase Cloud Messaging en tu dispositivo y en Firestore para entregar notificaciones push.</p>
-    <p>También recopilamos datos analíticos y breadcrumbs (eventos de navegación no sensibles) con fines de análisis para mejorar la experiencia del usuario y eliminar errores. Esto incluye el seguimiento de interacciones del usuario, patrones de uso de la aplicación, flujos de autenticación y participación en torneos para ayudarnos a identificar y corregir problemas. No recopilamos el contenido de mensajes o información personal sensible en estos eventos analíticos.</p>
+    <p>Los eventos de uso y rastros diagnósticos pueden describir navegación, acceso, actividad de torneo, variante, entorno y versión. Ayudan a entender el uso, investigar fallos y mejorar el servicio.</p>
     <p>Además, la aplicación utiliza Google Analytics para Firebase (GA4) y Firebase Crashlytics. GA4 nos ayuda a entender cómo los usuarios interactúan con la aplicación, mientras que Crashlytics recopila informes de fallos y datos de diagnóstico (como tipo de dispositivo, sistema operativo, versión de la aplicación y detalles de fallos) para ayudarnos a mejorar la estabilidad y solucionar problemas. Estos servicios son proporcionados por Google LLC de acuerdo con su <a href="https://policies.google.com/privacy">Política de Privacidad</a>.</p>
 
     <h2>Cómo utilizamos la información</h2>
@@ -41,13 +43,29 @@
     <p>Dependemos de los servicios de Firebase (Authentication, Firestore, Realtime Database, Cloud Messaging, Analytics y Crashlytics) proporcionados por Google LLC. Los proveedores de autenticación (ej. Google o Facebook) pueden procesar tus datos según sus propias políticas de privacidad.</p>
 
     <h2>Compartir datos</h2>
-    <p>No vendemos tu información personal. Solo compartimos datos con los servicios listados anteriormente para operar la aplicación.</p>
+    <p>No vendemos datos personales. Google Firebase, AdMob y el proveedor de acceso tratan datos para prestar el servicio; administradores autorizados gestionan reportes y soporte. Apodos y resultados son visibles para otros jugadores. Podemos revelar datos por obligación legal o reclamación jurídica. Los proveedores pueden tratar datos fuera de tu país.</p>
+
+
+    <h2 id="shared-account">Cuentas compartidas y pruebas de aceptación</h2>
+    <p>El acceso por correo/contraseña, Google, Facebook y anónimo usa UID. El perfil depende del proveedor; el acceso anónimo no requiere correo. Global y Bangladesh comparten cuenta/perfil. Registramos variantes, primer/último uso y si Bangladesh se usó después de Global; no determina ubicación ni país Google Play. También comprobamos la instalación del otro paquete Gridline Soccer.</p>
+    <p>Las aceptaciones contienen UID, ámbito, versión, URL/hash del documento, idioma, fecha y contexto. Las reglas de torneo aceptadas se guardan con la participación. Estas pruebas son separadas del consentimiento publicitario.</p>
+
+    <h2 id="moderation">Reportar y bloquear jugadores</h2>
+    <p>La lista individual guarda UID bloqueados y fechas de creación para impedir invitaciones directas y nuevas amistades con jugadores bloqueados. Acceden su propietario y administradores autorizados. Los reportes contienen UID del denunciante y denunciado, copia del apodo, motivo, contexto, estado, fechas e historial. Solo el denunciante y administradores autorizados acceden al reporte. Previenen abusos, permiten moderar y resolver disputas; no generan sanciones automáticas. Evita datos personales innecesarios.</p>
+
+    <h2 id="retention">Conservación de moderación y pruebas legales</h2>
+    <p>Los bloqueos duran hasta desbloquear/eliminar la cuenta. Los reportes abiertos permanecen hasta resolución/cierre. La limpieza programada elimina reportes de moderación y todo historial/subcolecciones 180 días después. Una retención legal/de seguridad puede posponerlo; levantarla no reinicia el plazo. Los datos vencidos se eliminan en una ejecución correcta.</p>
+    <p>Las pruebas de aceptación de condiciones generales permanecen cinco años naturales desde eliminar la cuenta y luego se eliminan con sus subcolecciones. No modificamos las pruebas para fijar caducidad. Quedan el registro mínimo y los UID históricos. Las pruebas de reglas de torneo en participaciones no están sujetas a esta limpieza ni al mismo plazo de cinco años. La retención de pagos Bangladesh no rige la moderación ni las aceptaciones Global.</p>
 
     <h2>Tus opciones</h2>
-    <p>Puedes actualizar o eliminar la información de tu cuenta contactándonos. Puedes optar por no recibir anuncios personalizados a través de la configuración de tu dispositivo (por ejemplo, restableciendo o eliminando el ID de publicidad en Android). Para análisis, también puedes desactivar el seguimiento en la configuración de tu dispositivo.</p>
+    <p>Las opciones disponibles de privacidad/consentimiento permiten rechazar, aceptar o retirar el consentimiento analítico y publicitario. Cubren almacenamiento analítico/publicitario, datos de usuario publicitarios y personalización. La retirada no afecta al tratamiento lícito anterior ni necesariamente desactiva diagnósticos de fallos separados. Android tiene ajustes de publicidad y notificaciones. Contáctanos para acceso, corrección, eliminación u otros derechos aplicables. Podemos necesitar información proporcionada para verificar la solicitud; nunca envíes contraseñas o códigos.</p>
+
 
     <h2>Eliminación de cuenta</h2>
-    <p>La aplicación incluye una opción integrada para eliminar permanentemente tu cuenta. Abre la pantalla de cuenta en la aplicación, toca <em>Eliminar Cuenta</em>, y sigue las instrucciones para confirmar la eliminación. Este proceso borrará los datos de tu cuenta de nuestros sistemas.</p>
+    <p>Selecciona Eliminar cuenta o escribe a <a href="mailto:support@piotr-gorczynski.com">support@piotr-gorczynski.com</a>. Eliminamos Firebase Authentication y los identificadores directos del perfil: correo, identificadores/nombres/fotos de proveedores y tokens de notificación. Afecta a ambas ediciones de la cuenta compartida; desinstalar no la elimina.</p>
+    <p>Queda un registro mínimo con el mismo UID, marca/fecha de eliminación y «(Account removed)». Partidas, participaciones/resultados y clasificaciones históricas mantienen UID por coherencia. Son datos seudónimos, no necesariamente anónimos. Las pantallas muestran el nombre de cuenta eliminada; los dispositivos sin conexión se actualizan al reconectarse. No se borra toda información histórica o previamente registrada.</p>
+    <p>Desactivamos la presencia y eliminamos invitaciones pendientes, amistades activas en ambos sentidos, bloqueos y estado de moderación propios y el UID de bloqueos ajenos. Un marcador mínimo desconectado/eliminado impide restaurar la presencia desde sesiones antiguas. La limpieza puede requerir reintentos y no es simultánea. Reportes y pruebas siguen los plazos siguientes; el historial necesario permanece. Puedes pedir revisión de datos innecesarios.</p>
+
 
     <h2>Privacidad de menores</h2>
     <p>El Servicio no está dirigido a niños menores de 13 años. No recopilamos conscientemente datos personales de niños. Si eres padre o tutor y crees que tu hijo ha proporcionado datos personales, por favor contáctanos para que podamos tomar medidas.</p>
