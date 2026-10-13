@@ -11,6 +11,17 @@ public final class TermsPolicy {
     private static final String LEGACY_GLOBAL_BOUNDARY = "GLOBAL-terms-2025-07-30";
     private static final Map<String, String> GLOBAL_HASHES = new HashMap<>();
     static {
+        GLOBAL_HASHES.put("sw", "c12355475a714d4437facb1c5730df7d22c1b5dabb8391881a3ed7292d19216b");
+        GLOBAL_HASHES.put("so", "9ffc0fb10b72d3a2092cb6b7ed8071d56e3e04c6982a6a3d3686c7bbc86b581a");
+        GLOBAL_HASHES.put("si", "a7b0854fc56167449984bf95e0ed7c228ebb5631ceec0a33663f6cb36856d600");
+        GLOBAL_HASHES.put("my", "41261796572b3b909a57bdbc0f70420f5a223cabf6d23fbb42f9ea24a33cf5ac");
+        GLOBAL_HASHES.put("mn", "d2412e2add43ff23b344769d76d30b93d99eee222d6cde34c146b7c732eb8ef5");
+        GLOBAL_HASHES.put("mg", "44b4747c1b720a45ec086898a87539eb04b82c1934c13370be2599cf7632d868");
+        GLOBAL_HASHES.put("lo", "3ed6ecb70995b4e56a92c83898a9137d94a2bb5494508603bae8019070f0ff55");
+        GLOBAL_HASHES.put("km", "2486c36d8d8cd613273d38c34230739da205c39f216108bdcd2c830e2ab88169");
+        GLOBAL_HASHES.put("fa", "fc5d1ee479140778776ca0e82cd52d57277a1b0cb5182e7fbbbb95121ef93536");
+        GLOBAL_HASHES.put("ar", "4f4fce9b97a5715959a0427edad03452aba270e0f7e18ef1060052372bab5ac2");
+        GLOBAL_HASHES.put("am", "0bed30cad106fe1455d62ed6aacba84891cd95409bd7ee87925d79fa60a08b41");
         GLOBAL_HASHES.put("bn", "c37145edf58e83edf1e2c2a487ab41f5712bb0c6f68e240882649edf9a419491");
         GLOBAL_HASHES.put("de", "3f0447b1b9269f69ba3b46d7af2484d9d611e5d030b845a98bb53812f705d958");
         GLOBAL_HASHES.put("en", "940cb471414a4d0a5e57844e7593cd3b2e61ce78a5169575f3726b09e6d99961");

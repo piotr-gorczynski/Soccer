@@ -7,6 +7,21 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.FieldValue;
 
 public class TermsPolicyTest {
+    @Test public void allGlobalLanguagesRequireCurrentTermsForNewUsers() {
+        String[] languages={"am","ar","bn","my","en","fr","de","hi","km","lo","mg","mn","ne","fa","pl","si","so","es","sw","ur"};
+        for(String language:languages) {
+            TermsPolicy p=TermsPolicy.required(false,language);
+            assertEquals(language,p.language);
+            assertEquals("https://piotr-gorczynski.com/terms/"+TermsPolicy.GLOBAL_VERSION+"/"+language+".html",p.url);
+            assertFalse(p.accepts(null,null));
+            assertFalse(p.accepts(Collections.emptyMap(),null));
+            assertTrue(p.accepts(Collections.emptyMap(),saved(p)));
+            assertTrue(p.matches(saved(TermsPolicy.required(false,"en"))));
+            Map<String,Object> old=saved(p);old.put("version","GLOBAL-terms-old");
+            assertFalse(p.accepts(Collections.emptyMap(),old));
+        }
+        assertEquals("en",TermsPolicy.required(false,"unsupported").language);
+    }
     private Map<String,Object> saved(TermsPolicy p) {
         Map<String,Object> r=p.newRecord(); r.put("acceptedAt",new Timestamp(100,0)); return r;
     }

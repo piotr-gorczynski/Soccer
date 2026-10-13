@@ -20,12 +20,24 @@ function record(scope='bangladesh',language='en') {
 function ref(db,r=record(),owner='owner') {return doc(db,'users/'+owner+'/legalAcceptances/terms_'+r.scope+'__'+r.version);}
 function db(user='owner') {return env.authenticatedContext(user).firestore();}
 test('exact approved HTML bytes match manifest, app and rules',()=>{
+  const manager=fs.readFileSync('../../mobile/app/src/main/java/piotr_gorczynski/soccer2/LanguageManager.java','utf8');
+  const supported=[...manager.matchAll(/LANGUAGE_NAME_RES_IDS\.put\("([a-z]+)"/g)].map(m=>m[1]).sort();
+  assert.deepEqual(Object.keys(hashes).filter(k=>!k.startsWith('bangladesh')).sort(),supported);
   const app=fs.readFileSync('../../mobile/app/src/main/java/piotr_gorczynski/soccer2/TermsPolicy.java','utf8');
   const rules=fs.readFileSync('../../firebase/firestore.rules','utf8');
   for(const [lang,hash] of Object.entries(hashes)) {
     const path=lang.startsWith('bangladesh')?'bangladesh/terms/BD-terms-2026-10-06'+(lang==='bangladesh-bn'?'-bn':'')+'.html':'terms/GLOBAL-terms-2025-07-30/'+lang+'.html';
     assert.equal(crypto.createHash('sha256').update(fs.readFileSync('../../firebase-hosting/public/'+path)).digest('hex'),hash);
     assert.ok(app.includes(hash));assert.ok(rules.includes(hash));
+    if(!lang.startsWith('bangladesh')) {
+      const html=fs.readFileSync('../../firebase-hosting/public/'+path,'utf8');
+      assert.ok(html.includes('lang="'+lang+'"'));
+      assert.equal((html.match(/<h2>/g)||[]).length,6);
+      assert.equal((html.match(/<li>/g)||[]).length,6);
+      assert.ok(html.includes('2025-07-30'));
+      if(['ar','fa','ur'].includes(lang)) assert.ok(html.includes('dir="rtl"'));
+      assert.ok(fs.readFileSync('../../firebase-hosting/public/index.html','utf8').includes('href="'+path+'"'));
+    }
   }
 });
 test('BD and all Global language acceptances store server timestamp and independent records',async()=>{

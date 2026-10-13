@@ -21,6 +21,7 @@ import static org.junit.Assert.*;
 public class TermsActivityTest {
     public static class TestActivity extends TermsActivity {
         int writes;
+        TermsPolicy displayedPolicy;
         TaskCompletionSource<Void> write = new TaskCompletionSource<>();
         @Override protected void onCreate(Bundle state) {
             setTheme(R.style.AppTheme);super.onCreate(state);
@@ -28,6 +29,7 @@ public class TermsActivityTest {
         @Override protected String currentUid() { return "test-user"; }
         @Override protected void loadDocument(TermsPolicy policy, java.util.function.Consumer<String> success,
                                               java.util.function.Consumer<Exception> failure) {
+            displayedPolicy=policy;
             if(getIntent().getBooleanExtra("load_failure",false)) {
                 failure.accept(new java.io.IOException("hash mismatch"));return;
             }
@@ -41,6 +43,29 @@ public class TermsActivityTest {
         WebView web=activity.findViewById(R.id.termsWebView);
         web.getWebViewClient().onPageFinished(web,"https://example.test");
         return activity;
+    }
+    @Test public void newGlobalUserSeesSelectedLanguageAndCanAcceptLoadedTerms() {
+        org.junit.Assume.assumeFalse(BuildConfig.APPLICATION_ID.endsWith(".bd"));
+        android.content.SharedPreferences prefs=org.robolectric.RuntimeEnvironment.getApplication()
+            .getSharedPreferences(LanguageManager.PREFS_FILE,android.content.Context.MODE_PRIVATE);
+        try {
+            for(String language:new String[]{"am","ar","bn","my","en","fr","de","hi","km","lo","mg","mn","ne","fa","pl","si","so","es","sw","ur"}) {
+                prefs.edit().putString(LanguageManager.PREF_LANGUAGE_CODE,language).commit();
+                org.robolectric.android.controller.ActivityController<TestActivity> controller=
+                    Robolectric.buildActivity(TestActivity.class,new Intent()).create();
+                TestActivity activity=controller.get();
+                assertEquals(language,activity.displayedPolicy.language);
+                assertEquals(TermsPolicy.GLOBAL_VERSION,activity.displayedPolicy.version);
+                Button accept=activity.findViewById(R.id.acceptTerms);
+                assertFalse(accept.isEnabled());
+                WebView web=activity.findViewById(R.id.termsWebView);
+                web.getWebViewClient().onPageFinished(web,activity.displayedPolicy.url);
+                assertTrue(accept.isEnabled());accept.performClick();
+                assertEquals(1,activity.writes);
+                activity.write.setResult(null);Shadows.shadowOf(Looper.getMainLooper()).idle();
+                assertTrue(activity.isFinishing());controller.destroy();
+            }
+        } finally { prefs.edit().remove(LanguageManager.PREF_LANGUAGE_CODE).commit(); }
     }
     @Test public void unavailableDocumentCannotBeAccepted() {
         TestActivity activity=Robolectric.buildActivity(TestActivity.class,

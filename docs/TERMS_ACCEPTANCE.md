@@ -1,6 +1,6 @@
 # Versioned Terms acceptance
 
-Implementation prepared 2026-10-07. Not deployed or published; an Android release must wait for the documents and rules below. This is an implementation record, not legal approval of the text.
+Implementation originally prepared 2026-10-07. The dated verification and release notes below distinguish repository changes from deployment/publication. This is an implementation record, not legal approval of the text.
 
 ## Required documents
 
@@ -11,7 +11,7 @@ Implementation prepared 2026-10-07. Not deployed or published; an Android releas
 | Bangladesh | `BD-terms-2026-10-06` | `https://piotr-gorczynski.com/bangladesh/terms/BD-terms-2026-10-06.html` |
 | Global | `GLOBAL-terms-2025-07-30` | `https://piotr-gorczynski.com/terms/GLOBAL-terms-2025-07-30/{language}.html` |
 
-The current Global documents in the repository say 2025-07-30. The snapshots preserve those bytes; this identifies new acceptances only, not the text previously accepted by legacy users. Existing translations: bn, de, en, es, fr, hi, ne, pl, ur. Global falls back to English for other UI languages; Bangladesh displays Bengali for UI language `bn` (`BD-terms-2026-10-06-bn.html`) and English otherwise (`BD-terms-2026-10-06.html`). Its privacy links use `bangladesh/privacy-bn.html` or `bangladesh/privacy-en.html` by the same rule. Both translations share the Terms version; changing UI language does not invalidate an existing valid acceptance or overwrite its original document language. Publish the Bengali document and deploy its Firestore URL/hash allowlist before releasing this app change. The recorded language is the document language, not necessarily the UI language. Existing profile notification-language preferences are preserved.
+The current Global documents in the repository say 2025-07-30. The snapshots preserve those bytes; this identifies new acceptances only, not the text previously accepted by legacy users. Translations now cover all 20 supported UI languages: am, ar, bn, de, en, es, fa, fr, hi, km, lo, mg, mn, my, ne, pl, si, so, sw, ur. Global falls back to English only for unsupported language codes; Bangladesh displays Bengali for UI language `bn` (`BD-terms-2026-10-06-bn.html`) and English otherwise (`BD-terms-2026-10-06.html`). Its privacy links use `bangladesh/privacy-bn.html` or `bangladesh/privacy-en.html` by the same rule. Both translations share the Terms version; changing UI language does not invalidate an existing valid acceptance or overwrite its original document language. Publish the Bengali document and deploy its Firestore URL/hash allowlist before releasing this app change. The recorded language is the document language, not necessarily the UI language. Existing profile notification-language preferences are preserved.
 
 Exact SHA-256 values are in `firebase-hosting/terms-document-hashes.json`, `TermsPolicy`, and the Firestore allowlist. `.gitattributes` preserves immutable HTML bytes across checkouts. Only HTML is hashed, not CSS. `TermsDocumentLoader` downloads HTTPS HTML without redirects and verifies the exact hash before enabling acceptance. An HTTP error, missing page, captive portal or changed HTML fails closed. The versioned Bangladesh HTML is prepared without a draft banner for future publication but is not effective or public merely because it exists locally. The unversioned `bangladesh/terms-en.html` remains an unpublished editorial draft; it is not an acceptance target.
 
@@ -79,3 +79,13 @@ The daily 03:30 UTC `cleanupModerationAndLegalData` then recursively removes tha
 collection. Acceptance records are never updated to add expiry fields. Active users,
 missing deletion timestamps, tombstones and tournament/game history are not deleted.
 This implementation is not deployed by this change.
+
+## Global Terms verification — 13 October 2026 (issue #1293)
+
+- The current required Global version remains `GLOBAL-terms-2025-07-30`. Added translations of the same terms for am, ar, fa, km, lo, mg, mn, my, si, so and sw; no existing immutable HTML or Bangladesh Terms were changed. This is language coverage, not a new substantive Terms version or a reset of existing consent.
+- Existing text includes nickname impersonation, abuse, discrimination and moderation restrictions. No Bangladesh age/prize provisions are imported into Global. This technical/content consistency check is not a legal certification.
+- The website homepage now links directly to the immutable Global documents in all 20 languages. Android chooses the selected UI language and verifies exact HTML bytes before enabling acceptance. The manifest, Android hashes and Firestore approved-document allowlist include every translation.
+- PASS: 16 focused Android Terms tests, including the new-user Terms screen and successful acceptance for all 20 Global languages, language changes, outdated version rejection, failed loads/writes, read-only mode and legacy compatibility. `_devGlobalDebug` APK build succeeded.
+- PASS: 6 Firestore emulator tests, including acceptance of every translation, server timestamps, owner-only access, immutability and rejection of incorrect document metadata. Language coverage and HTML hashes are checked against the actual Android language registry.
+- No Hosting or Firestore deployment was performed. Publication is assigned to the repository owner. Publish the new HTML and deploy the updated Firestore rules before distributing an Android build that selects the new translations. Hosting publication alone does not update already-installed Android clients or the rules allowlist.
+- After publication, verify the live new document hashes against `firebase-hosting/terms-document-hashes.json` and smoke-test acceptance with a new account in the released app. These live checks are not claimed as completed by the local tests.
