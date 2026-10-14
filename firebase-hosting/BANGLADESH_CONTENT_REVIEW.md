@@ -25,7 +25,11 @@ No Hosting deployment, commit, backend/Android change or data mutation is part o
 | `index.html` | READY TO PUBLISH | None for this informational page; Google Play availability is not promised. |
 | `tournaments-en.html` | READY TO PUBLISH | None for this generic guide; each real tournament needs its own active rules. |
 | `support-en.html` | READY TO PUBLISH | None; app labels and deletion limitations match implementation. |
-| `terms-en.html` / `terms/BD-terms-2026-10-06.html` | PREPARED, NOT PUBLISHED | Versioned app acceptance implemented locally. Review text/privacy notice, publish immutable documents and deploy rules before app release. The unversioned page remains a draft. |
+| `terms/BD-terms-2026-10-14.html` / `terms/BD-terms-2026-10-14-bn.html` | PREPARED, NOT PUBLISHED | Versioned app acceptance implemented locally. Review text/privacy notice, publish immutable documents and deploy rules before app release. The historical 2026-10-06 files remain unchanged. |
+
+### Current Bangladesh Terms — prepared 14 October 2026
+
+The current required version is **BD-terms-2026-10-14**, with English and Bengali translations of the same legal version. Both include the expanded tax clause and language selector. The new documents and additive Firestore allowlist are prepared locally, not published/deployed. The 2026-10-06 files remain unchanged and allowed for older clients; their acceptance does not satisfy the updated Android requirement. See `docs/TERMS_ACCEPTANCE.md`.
 
 ### Versioned Terms acceptance — implementation prepared 7 October 2026
 

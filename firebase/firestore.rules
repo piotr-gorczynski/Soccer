@@ -20,6 +20,12 @@ service cloud.firestore {
         && d.documentSha256 == '7e35810d68cdd8a0115bb526e867a7bd0b584c6b4e37756b47faeddf88caff3d') || (d.language == 'en'
         && d.documentUrl == 'https://piotr-gorczynski.com/bangladesh/terms/BD-terms-2026-10-06.html'
         && d.documentSha256 == 'e77d67d705baec188e277fe8c1cfdcbbad4d061e0581a64e6c884ede8c76ebcc')))
+        || (d.scope == 'bangladesh' && d.version == 'BD-terms-2026-10-14'
+        && ((d.language == 'bn'
+        && d.documentUrl == 'https://piotr-gorczynski.com/bangladesh/terms/BD-terms-2026-10-14-bn.html'
+        && d.documentSha256 == 'a604f71f569eb270942c28fdde9ad646e75571e1d19cfcba2e82e80c06403b6f') || (d.language == 'en'
+        && d.documentUrl == 'https://piotr-gorczynski.com/bangladesh/terms/BD-terms-2026-10-14.html'
+        && d.documentSha256 == 'a488c2942881a6de3eceaa5e426a6c9989a47d33358c79ce4aadddbe7b50e3e7')))
         || (d.scope == 'global' && d.version == 'GLOBAL-terms-2025-07-30'
         && d.documentUrl == 'https://piotr-gorczynski.com/terms/GLOBAL-terms-2025-07-30/' + d.language + '.html'
         && (

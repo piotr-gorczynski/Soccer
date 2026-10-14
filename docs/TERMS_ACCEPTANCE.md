@@ -8,12 +8,16 @@ Implementation originally prepared 2026-10-07. The dated verification and releas
 
 | Scope | Required version | Immutable URL |
 | --- | --- | --- |
-| Bangladesh | `BD-terms-2026-10-06` | `https://piotr-gorczynski.com/bangladesh/terms/BD-terms-2026-10-06.html` |
+| Bangladesh | `BD-terms-2026-10-14` | `https://piotr-gorczynski.com/bangladesh/terms/BD-terms-2026-10-14.html` |
 | Global | `GLOBAL-terms-2026-10-13` | `https://piotr-gorczynski.com/terms/GLOBAL-terms-2026-10-13/{language}.html` |
 
-The current Global documents are dated 2026-10-13 and include tournament participation and fair-play terms. The 2025-07-30 snapshots remain unchanged for historical evidence and older clients. Translations now cover all 20 supported UI languages: am, ar, bn, de, en, es, fa, fr, hi, km, lo, mg, mn, my, ne, pl, si, so, sw, ur. Global falls back to English only for unsupported language codes; Bangladesh displays Bengali for UI language `bn` (`BD-terms-2026-10-06-bn.html`) and English otherwise (`BD-terms-2026-10-06.html`). Its privacy links use `bangladesh/privacy-bn.html` or `bangladesh/privacy-en.html` by the same rule. Both translations share the Terms version; changing UI language does not invalidate an existing valid acceptance or overwrite its original document language. Publish the Bengali document and deploy its Firestore URL/hash allowlist before releasing this app change. The recorded language is the document language, not necessarily the UI language. Existing profile notification-language preferences are preserved.
+The current Global documents are dated 2026-10-13 and include tournament participation and fair-play terms. The 2025-07-30 snapshots remain unchanged for historical evidence and older clients. Translations now cover all 20 supported UI languages: am, ar, bn, de, en, es, fa, fr, hi, km, lo, mg, mn, my, ne, pl, si, so, sw, ur. Global falls back to English only for unsupported language codes; Bangladesh displays Bengali for UI language `bn` (`BD-terms-2026-10-14-bn.html`) and English otherwise (`BD-terms-2026-10-14.html`). Its privacy links use `bangladesh/privacy-bn.html` or `bangladesh/privacy-en.html` by the same rule. Both translations share the Terms version; changing UI language does not invalidate an existing valid acceptance or overwrite its original document language. Publish the Bengali document and deploy its Firestore URL/hash allowlist before releasing this app change. The recorded language is the document language, not necessarily the UI language. Existing profile notification-language preferences are preserved.
 
-Exact SHA-256 values are in `firebase-hosting/terms-document-hashes.json`, `TermsPolicy`, and the Firestore allowlist. `.gitattributes` preserves immutable HTML bytes across checkouts. Only HTML is hashed, not CSS. `TermsDocumentLoader` downloads HTTPS HTML without redirects and verifies the exact hash before enabling acceptance. An HTTP error, missing page, captive portal or changed HTML fails closed. The versioned Bangladesh HTML is prepared without a draft banner for future publication but is not effective or public merely because it exists locally. The unversioned `bangladesh/terms-en.html` remains an unpublished editorial draft; it is not an acceptance target.
+Exact SHA-256 values are in `firebase-hosting/terms-document-hashes.json`, `TermsPolicy`, and the Firestore allowlist. `.gitattributes` preserves immutable HTML bytes across checkouts. Only HTML is hashed, not CSS. `TermsDocumentLoader` downloads HTTPS HTML without redirects and verifies the exact hash before enabling acceptance. An HTTP error, missing page, captive portal or changed HTML fails closed. The versioned Bangladesh HTML is prepared without a draft banner for future publication but is not effective or public merely because it exists locally. The obsolete unversioned `bangladesh/terms-en.html` is not used.
+
+## Bangladesh revision 2026-10-14 (prepared, not deployed)
+
+The current required version in this checkout is `BD-terms-2026-10-14`. English and Bengali are translations of the same legal version; switching language does not create a different version. Both new documents include a language selector and the expanded tax clause. Acceptance of `BD-terms-2026-10-06` remains historical evidence but does not satisfy the current Android requirement. The old immutable HTML bytes remain unchanged, and Firestore continues to allow exact EN/BN acceptance records for that version from older clients. Historical hashes are recorded in `firebase-hosting/terms-document-hashes-bangladesh-2026-10-06.json`. Publish both new documents and deploy the additive rules before releasing the updated app. No deployment or publication is performed by this change.
 
 ## Evidence model
 
@@ -25,11 +29,11 @@ Example (illustrative app metadata; timestamp is stored as Firestore Timestamp, 
 {
   "documentType": "terms",
   "scope": "bangladesh",
-  "version": "BD-terms-2026-10-06",
+  "version": "BD-terms-2026-10-14",
   "acceptedAt": "<server timestamp>",
   "language": "en",
-  "documentUrl": "https://piotr-gorczynski.com/bangladesh/terms/BD-terms-2026-10-06.html",
-  "documentSha256": "e77d67d705baec188e277fe8c1cfdcbbad4d061e0581a64e6c884ede8c76ebcc",
+  "documentUrl": "https://piotr-gorczynski.com/bangladesh/terms/BD-terms-2026-10-14.html",
+  "documentSha256": "a488c2942881a6de3eceaa5e426a6c9989a47d33358c79ce4aadddbe7b50e3e7",
   "appVersionCode": 100,
   "appVersionName": "example",
   "flavor": "_devBangladesh"

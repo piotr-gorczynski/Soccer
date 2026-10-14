@@ -2836,7 +2836,7 @@ While current model is developer-funded with no entry fees, future revenue optio
 - [ ] Update Terms of Service with Bangladesh-specific clauses
 - [ ] Update Privacy Policy (minimal data collection - no ID documents)
 - [x] Add eligibility confirmation and terms acceptance in app
-  - Versioned general Terms implemented separately from tournament declarations; see [Terms acceptance](TERMS_ACCEPTANCE.md). Bangladesh requires `BD-terms-2026-10-06`; Global retains explicitly limited legacy compatibility. Immutable documents, rules and updated app are not released yet.
+  - Versioned general Terms implemented separately from tournament declarations; see [Terms acceptance](TERMS_ACCEPTANCE.md). Bangladesh requires `BD-terms-2026-10-14`; Global retains explicitly limited legacy compatibility. Immutable documents, rules and updated app are not released yet.
 
 #### Technical Compliance
 - [x] Implement 18+ eligibility confirmation (checkbox + declaration)
@@ -2914,7 +2914,7 @@ bangladesh-specific/
 
 ### Appendix B: Current player-facing payout terms
 
-Versioned acceptance implementation and rollout: [TERMS_ACCEPTANCE.md](TERMS_ACCEPTANCE.md). The new Bangladesh acceptance URL is `/bangladesh/terms/BD-terms-2026-10-06.html`; it is prepared locally, not published. No existing user is silently assigned this version. The effective Bangladesh Privacy Policy is `BD-privacy-2026-10-09`, effective 9 October 2026, in English and Bengali. Finalization changes status/version labels only; the separate review of general Terms evidence and its retention remains open. Existing tournament-specific declarations remain separate.
+Versioned acceptance implementation and rollout: [TERMS_ACCEPTANCE.md](TERMS_ACCEPTANCE.md). The new Bangladesh acceptance URL is `/bangladesh/terms/BD-terms-2026-10-14.html`; it is prepared locally, not published. No existing user is silently assigned this version. The effective Bangladesh Privacy Policy is `BD-privacy-2026-10-09`, effective 9 October 2026, in English and Bengali. Finalization changes status/version labels only; the separate review of general Terms evidence and its retention remains open. Existing tournament-specific declarations remain separate.
 
 
 See the English review drafts in `firebase-hosting/public/bangladesh/terms-en.html` and

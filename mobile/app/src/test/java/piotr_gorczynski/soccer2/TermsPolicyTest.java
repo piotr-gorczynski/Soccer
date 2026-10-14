@@ -57,15 +57,32 @@ public class TermsPolicyTest {
     }
     @Test public void languageRoutingAndAcceptanceAcrossLanguages() {
         TermsPolicy bn=TermsPolicy.required(true,"bn"), en=TermsPolicy.required(true,"pl");
+        assertEquals("BD-terms-2026-10-14",TermsPolicy.BD_VERSION);
+        assertEquals(en.version,bn.version);
+        assertEquals(en.id(),bn.id());
+        for(String language:new String[]{"am","ar","my","en","fr","de","hi","km","lo","mg","mn","ne","fa","pl","si","so","es","sw","ur","unsupported"}) {
+            TermsPolicy routed=TermsPolicy.required(true,language);
+            assertEquals(en.url,routed.url);assertEquals(en.sha256,routed.sha256);
+        }
         assertEquals("bn",bn.language);
-        assertTrue(bn.url.endsWith("/bangladesh/terms/BD-terms-2026-10-06-bn.html"));
+        assertTrue(bn.url.endsWith("/bangladesh/terms/BD-terms-2026-10-14-bn.html"));
         assertEquals("en",en.language);
-        assertTrue(en.url.endsWith("/bangladesh/terms/BD-terms-2026-10-06.html"));
+        assertTrue(en.url.endsWith("/bangladesh/terms/BD-terms-2026-10-14.html"));
         assertTrue(en.matches(saved(bn))); assertTrue(bn.matches(saved(en)));
         assertTrue(TermsPolicy.required(false,"bn").url.endsWith("/terms/GLOBAL-terms-2026-10-13/bn.html"));
         assertTrue(TermsPolicy.required(false,"pl").url.endsWith("/pl.html"));
         assertTrue(PrivacyPolicyLinks.bangladeshUrl("bn").endsWith("/privacy-bn.html"));
         assertTrue(PrivacyPolicyLinks.bangladeshUrl("pl").endsWith("/privacy-en.html"));
+    }
+    @Test public void historicalBangladeshAcceptanceDoesNotSatisfyCurrentPolicy() {
+        String version="BD-terms-2026-10-06";
+        for(String language:new String[]{"en","bn"}) {
+            TermsPolicy old=new TermsPolicy("bangladesh",version,language,
+                "https://piotr-gorczynski.com/bangladesh/terms/"+version+(language.equals("bn")?"-bn":"")+".html",
+                language.equals("bn")?"7e35810d68cdd8a0115bb526e867a7bd0b584c6b4e37756b47faeddf88caff3d":"e77d67d705baec188e277fe8c1cfdcbbad4d061e0581a64e6c884ede8c76ebcc");
+            assertFalse(TermsPolicy.required(true,"en").accepts(Collections.emptyMap(),saved(old)));
+            assertFalse(TermsPolicy.required(true,"bn").accepts(Collections.emptyMap(),saved(old)));
+        }
     }
     @Test public void hashRejectsChangedHtml() throws Exception {
         byte[] bytes="hello".getBytes(java.nio.charset.StandardCharsets.UTF_8);

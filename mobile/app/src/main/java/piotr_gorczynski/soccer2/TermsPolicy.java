@@ -6,7 +6,7 @@ import com.google.firebase.firestore.FieldValue;
 /** Required legal documents. Never edit bytes at a published versioned URL. */
 public final class TermsPolicy {
     public static final String GLOBAL_VERSION = "GLOBAL-terms-2026-10-13";
-    public static final String BD_VERSION = "BD-terms-2026-10-06";
+    public static final String BD_VERSION = "BD-terms-2026-10-14";
     // Fixed migration boundary: changing GLOBAL_VERSION disables legacy grandfathering.
     private static final String LEGACY_GLOBAL_BOUNDARY = "GLOBAL-terms-2025-07-30";
     private static final Map<String, String> GLOBAL_HASHES = new HashMap<>();
@@ -38,9 +38,9 @@ public final class TermsPolicy {
     }
     public static TermsPolicy required(boolean bd, String language) {
         if (bd && "bn".equals(language)) return new TermsPolicy("bangladesh", BD_VERSION, "bn",
-            "https://piotr-gorczynski.com/bangladesh/terms/" + BD_VERSION + "-bn.html", "7e35810d68cdd8a0115bb526e867a7bd0b584c6b4e37756b47faeddf88caff3d");
+            "https://piotr-gorczynski.com/bangladesh/terms/" + BD_VERSION + "-bn.html", "a604f71f569eb270942c28fdde9ad646e75571e1d19cfcba2e82e80c06403b6f");
         if (bd) return new TermsPolicy("bangladesh", BD_VERSION, "en",
-            "https://piotr-gorczynski.com/bangladesh/terms/" + BD_VERSION + ".html", "e77d67d705baec188e277fe8c1cfdcbbad4d061e0581a64e6c884ede8c76ebcc");
+            "https://piotr-gorczynski.com/bangladesh/terms/" + BD_VERSION + ".html", "a488c2942881a6de3eceaa5e426a6c9989a47d33358c79ce4aadddbe7b50e3e7");
         String lang = GLOBAL_HASHES.containsKey(language) ? language : "en";
         return new TermsPolicy("global", GLOBAL_VERSION, lang,
             "https://piotr-gorczynski.com/terms/" + GLOBAL_VERSION + "/" + lang + ".html", GLOBAL_HASHES.get(lang));

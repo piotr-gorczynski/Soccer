@@ -12,7 +12,7 @@ before(async () => { env = await initializeTestEnvironment({ projectId:'demo-ter
 after(async () => { if(env) await env.cleanup(); });
 beforeEach(async () => { await env.clearFirestore(); });
 function record(scope='bangladesh',language='en') {
-  const bd=scope==='bangladesh', version=bd?'BD-terms-2026-10-06':'GLOBAL-terms-2026-10-13';
+  const bd=scope==='bangladesh', version=bd?'BD-terms-2026-10-14':'GLOBAL-terms-2026-10-13';
   return {documentType:'terms',scope,version,acceptedAt:serverTimestamp(),language,
     documentUrl:'https://piotr-gorczynski.com/'+(bd?'bangladesh/terms/'+version+(language==='bn'?'-bn':'')+'.html':'terms/'+version+'/'+language+'.html'),
     documentSha256:hashes[bd?(language==='bn'?'bangladesh-bn':'bangladesh'):language],appVersionCode:100,appVersionName:'TEST',flavor:bd?'_devBangladesh':'_devGlobal'};
@@ -26,7 +26,7 @@ test('exact approved HTML bytes match manifest, app and rules',()=>{
   const app=fs.readFileSync('../../mobile/app/src/main/java/piotr_gorczynski/soccer2/TermsPolicy.java','utf8');
   const rules=fs.readFileSync('../../firebase/firestore.rules','utf8');
   for(const [lang,hash] of Object.entries(hashes)) {
-    const path=lang.startsWith('bangladesh')?'bangladesh/terms/BD-terms-2026-10-06'+(lang==='bangladesh-bn'?'-bn':'')+'.html':'terms/GLOBAL-terms-2026-10-13/'+lang+'.html';
+    const path=lang.startsWith('bangladesh')?'bangladesh/terms/BD-terms-2026-10-14'+(lang==='bangladesh-bn'?'-bn':'')+'.html':'terms/GLOBAL-terms-2026-10-13/'+lang+'.html';
     assert.equal(crypto.createHash('sha256').update(fs.readFileSync('../../firebase-hosting/public/'+path)).digest('hex'),hash);
     assert.ok(app.includes(hash));assert.ok(rules.includes(hash));
     if(!lang.startsWith('bangladesh')) {
@@ -100,5 +100,48 @@ test('historical Global acceptances remain valid for older clients and HTML is u
     assert.equal(crypto.createHash('sha256').update(fs.readFileSync('../../firebase-hosting/public/'+path)).digest('hex'),hash);
     const r={...record('global',language),version,documentUrl:'https://piotr-gorczynski.com/'+path,documentSha256:hash};
     await assertSucceeds(setDoc(ref(db('old-'+language),r,'old-'+language),r));
+  }
+});
+
+test('historical Bangladesh bytes and exact EN/BN acceptances remain valid for older clients',async()=>{
+  const old=require('../../firebase-hosting/terms-document-hashes-bangladesh-2026-10-06.json');
+  const version='BD-terms-2026-10-06';
+  for(const language of ['en','bn']) {
+    const hash=old[language==='bn'?'bangladesh-bn':'bangladesh'];
+    const path='bangladesh/terms/'+version+(language==='bn'?'-bn':'')+'.html';
+    assert.equal(crypto.createHash('sha256').update(fs.readFileSync('../../firebase-hosting/public/'+path)).digest('hex'),hash);
+    const r={...record('bangladesh',language),version,documentUrl:'https://piotr-gorczynski.com/'+path,documentSha256:hash};
+    await assertSucceeds(setDoc(ref(db(),r),r));
+    await env.clearFirestore();
+  }
+});
+
+test('Bangladesh rejects mixed version, language, URL and hash combinations',async()=>{
+  const en=record('bangladesh','en'),bn=record('bangladesh','bn');
+  const old=require('../../firebase-hosting/terms-document-hashes-bangladesh-2026-10-06.json');
+  for(const base of [en,bn]) {
+    const other=base.language==='en'?bn:en;
+    for(const change of [
+      {language:other.language}, {documentUrl:other.documentUrl}, {documentSha256:other.documentSha256},
+      {version:'BD-terms-2026-10-06'}, {version:'BD-terms-2099-01-01'},
+      {documentSha256:old[base.language==='bn'?'bangladesh-bn':'bangladesh']},
+      {documentUrl:base.documentUrl.replace('2026-10-14','2026-10-06')}
+    ]) {
+      const r={...base,...change};await assertFails(setDoc(ref(db(),r),r));
+    }
+  }
+});
+
+test('new Bangladesh translations share version and link to each other before metadata',()=>{
+  for(const language of ['en','bn']) {
+    const r=record('bangladesh',language);
+    assert.equal(r.version,'BD-terms-2026-10-14');
+    const html=fs.readFileSync('../../firebase-hosting/public/bangladesh/terms/'+r.version+(language==='bn'?'-bn':'')+'.html','utf8');
+    assert.match(html,/<main>\s*<p class="policy-languages">/);
+    assert.ok(html.includes('href="BD-terms-2026-10-14.html" lang="en"'));
+    assert.ok(html.includes('href="BD-terms-2026-10-14-bn.html" lang="bn"'));
+    const section=html.match(language==='en'?/<h2>Taxes<\/h2>([\s\S]*?)(?=<h2>)/:/<h2>কর<\/h2>([\s\S]*?)(?=<h2>)/)[1];
+    assert.equal((section.match(/<p>/g)||[]).length,6);
+    assert.ok(!section.includes('25%'));
   }
 });
