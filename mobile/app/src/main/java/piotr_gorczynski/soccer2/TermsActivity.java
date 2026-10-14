@@ -39,19 +39,22 @@ public class TermsActivity extends BaseActivity {
             }
         });
         executor=java.util.concurrent.Executors.newSingleThreadExecutor();
+        Button retry=new Button(this);retry.setText(R.string.retry);
+        ((android.view.ViewGroup)web.getParent()).addView(retry,0);
         Runnable load=()->{
             loaded=false; accept.setEnabled(false);
+            retry.setVisibility(android.view.View.GONE);retry.setEnabled(false);
             loadDocument(policy, html -> {
                 if(isFinishing()||isDestroyed()) return;
                 loaded=true;
                 web.loadDataWithBaseURL(policy.url,html,"text/html","UTF-8",policy.url);
             }, error -> {
-                if(!isFinishing()&&!isDestroyed())
+                if(!isFinishing()&&!isDestroyed()) {
+                    retry.setVisibility(android.view.View.VISIBLE);retry.setEnabled(true);
                     Toast.makeText(this,R.string.failed_to_load_terms,Toast.LENGTH_LONG).show();
+                }
             });
         };
-        Button retry=new Button(this);retry.setText(R.string.retry);
-        ((android.view.ViewGroup)web.getParent()).addView(retry,0);
         retry.setOnClickListener(v->load.run());
         accept.setOnClickListener(v->{
             if(readOnly||!loaded||saving||uid==null||!uid.equals(currentUid()))return;

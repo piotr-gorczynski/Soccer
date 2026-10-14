@@ -22,6 +22,7 @@ public class TermsActivityTest {
     public static class TestActivity extends TermsActivity {
         int writes;
         TermsPolicy displayedPolicy;
+        java.util.function.Consumer<String> pendingLoad;
         TaskCompletionSource<Void> write = new TaskCompletionSource<>();
         @Override protected void onCreate(Bundle state) {
             setTheme(R.style.AppTheme);super.onCreate(state);
@@ -30,6 +31,9 @@ public class TermsActivityTest {
         @Override protected void loadDocument(TermsPolicy policy, java.util.function.Consumer<String> success,
                                               java.util.function.Consumer<Exception> failure) {
             displayedPolicy=policy;
+            if(getIntent().getBooleanExtra("defer_load",false)) {
+                pendingLoad=success;return;
+            }
             if(getIntent().getBooleanExtra("load_failure",false)) {
                 failure.accept(new java.io.IOException("hash mismatch"));return;
             }
@@ -73,6 +77,29 @@ public class TermsActivityTest {
         Button accept=activity.findViewById(R.id.acceptTerms);
         assertFalse(accept.isEnabled());accept.performClick();assertEquals(0,activity.writes);
         assertFalse(activity.isFinishing());
+    }
+    @Test public void retryOnlyAppearsAfterLoadFailureAndHidesDuringRetryAndSuccess() {
+        TestActivity activity=Robolectric.buildActivity(TestActivity.class,
+            new Intent().putExtra("load_failure",true)).create().get();
+        WebView web=activity.findViewById(R.id.termsWebView);
+        Button retry=(Button)((android.view.ViewGroup)web.getParent()).getChildAt(0);
+        assertEquals(android.view.View.VISIBLE,retry.getVisibility());
+        assertTrue(retry.isEnabled());
+        activity.getIntent().putExtra("defer_load",true);
+        retry.performClick();
+        assertEquals(android.view.View.GONE,retry.getVisibility());
+        assertFalse(retry.isEnabled());
+        assertFalse(activity.findViewById(R.id.acceptTerms).isEnabled());
+        activity.pendingLoad.accept("<html><body>Verified terms</body></html>");
+        web.getWebViewClient().onPageFinished(web,activity.displayedPolicy.url);
+        assertEquals(android.view.View.GONE,retry.getVisibility());
+        assertTrue(activity.findViewById(R.id.acceptTerms).isEnabled());
+    }
+    @Test public void successfulInitialLoadDoesNotShowRetry() {
+        TestActivity activity=open(false);
+        WebView web=activity.findViewById(R.id.termsWebView);
+        assertEquals(android.view.View.GONE,
+            ((android.view.ViewGroup)web.getParent()).getChildAt(0).getVisibility());
     }
     @Test public void readOnlyNeverWritesOrFinishesAsAccepted() {
         TestActivity activity=open(true);
