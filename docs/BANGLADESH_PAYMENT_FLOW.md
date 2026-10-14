@@ -1,7 +1,7 @@
 # Bangladesh Prize Payment Flow
 
 **Status:** Implemented recipient schema v2; not deployed by this task
-**Last updated:** 2026-10-04
+**Last updated:** 2026-10-14
 
 ## Product rules and observed transfer results
 
@@ -28,6 +28,58 @@ Remitly requires accurate recipient identity details, supporting the existing se
 is recorded in this document.
 Donation tests are operational evidence, not legal approval for tournament prizes. Bangladesh
 withholding obligations await NBR clarification. No tax withholding is introduced.
+
+## Verified Remitly delivery time, fees and operator procedure
+
+The owner confirmed successful real transfers from Poland to Bangladesh for both supported
+wallets. These are observed test results, not quotes for future payouts:
+
+| Observation | bKash | Rocket |
+|---|---|---|
+| Recipient received | 320 BDT | 320 BDT |
+| Transfer amount | Approximately 10.07 PLN | Approximately 10.18 PLN |
+| Remitly fee | Standard 4.99 PLN fee shown, waived in this promotional/first-transfer flow | 4.99 PLN charged |
+| Total charged | No separate total retained here | 15.17 PLN |
+| Exchange rate | No rate retained here | 1 PLN = 31.46 BDT |
+| Final result | VERIFIED / DELIVERED; In progress and Delivered observed, delivery confirmed | VERIFIED / DELIVERED; recipient confirmed actual wallet receipt |
+| Timing evidence | Express described as "within minutes"; owner confirms completion within minutes, but exact send-to-delivery timestamps were not retained | Corrected transfer completed within minutes; Delivered confirmation observed on 2026-10-04 at approximately 13:14 CEST |
+
+Both successful tested flows completed within minutes. This is practical evidence, **not a
+guaranteed SLA**; no exact elapsed time is claimed. Fees, exchange rates and delivery estimates
+are transaction-specific. Promotions may waive a fee: the tested bKash fee was waived, whereas
+the tested Rocket fee was charged. Future bKash transfers are not assumed to be free. Always
+use the current Remitly quote before submitting each payout.
+
+The earlier Rocket attempt using an organization-style recipient name was paused. The successful
+transfer used the recipient's actual personal first and last name matching the Rocket account.
+Never infer a legal name from a game nickname or guess recipient information.
+
+### Repeatable manual operator procedure
+
+1. The winner provides separate `firstName`, `lastName`, `walletProvider` and `walletNumber`
+   in Gridline Soccer Bangladesh. Names must be the real personal names registered for the wallet.
+2. Use only **bKash or Rocket**, subject to the assigned regulation. **Nagad is excluded**.
+   Wise is no longer planned or scheduled for testing; the supported approach is Remitly → bKash / Rocket.
+3. The administrator reads the current protected recipient details from the payout record
+   (`payments/{paymentId}/private/recipient`) using authorized administrative access.
+4. Open Remitly and create a transfer from Poland to Bangladesh. Select the matching mobile-money
+   provider, bKash or Rocket.
+5. Enter the exact recipient first name, last name, wallet/mobile number and required BDT amount.
+   Do not substitute a nickname or invent missing information.
+6. Before submission, verify the recipient's BDT amount, PLN/BDT exchange rate, transfer fee,
+   total PLN cost and estimated delivery time in the current quote. All are transaction-specific.
+7. Submit the transfer and track it until Remitly reports **Delivered**. **Sent** or **In progress**
+   is not confirmed prize delivery. Where practicable, also confirm actual receipt with the recipient.
+8. Only after confirmed delivery, move the Gridline Soccer payment to `completed` through the
+   existing administrative payment workflow.
+9. If Remitly requests correction, request accurate corrected details from the winner through the
+   existing payout/support process. Do not guess; retry only with accurate information.
+10. Preserve appropriate operational evidence through the existing payment workflow and its
+    retention/access controls. Do not copy recipient names, full wallet numbers or other private
+    recipient data into public documentation, public Git history or long-term free-text notes.
+
+Remitly processing remains manual; this procedure does not describe an automated integration.
+No additional real transfer is needed to complete these verification checklist items.
 
 ## Status and owner actions
 

@@ -2435,14 +2435,13 @@ cd mobile
 - [ ] Register business entity in Bangladesh (if required)
 - [ ] **Set up international money transfer service accounts**:
   - [x] **Remitly** account used for real bKash and Rocket tests
-  - [ ] **Wise** (SECONDARY - for bank transfers if needed, verify mobile wallet support)
   - [ ] **Western Union** (BACKUP - for urgent or failed transfers)
 - [ ] **Test small transfer to Bangladesh mobile wallet** (MANDATORY):
   - [x] Real bKash transfer: 320 BDT delivered (owner reported)
   - [x] Real Rocket transfer: 320 BDT — VERIFIED / DELIVERED; Remitly Delivered and recipient receipt confirmed (owner report recorded 2026-10-04)
-  - [ ] Verify delivery time and fees
-  - [ ] Document the exact process for future reference
-  - [ ] If Wise supports mobile wallets from Poland, test that as well
+  - [x] Verify delivery time and fees
+  - [x] Document the exact process for future reference
+  - Both items verified through real successful 320 BDT bKash and Rocket transfers. Observed fees, timing limitations and the repeatable manual procedure are recorded in [BANGLADESH_PAYMENT_FLOW.md](BANGLADESH_PAYMENT_FLOW.md#verified-remitly-delivery-time-fees-and-operator-procedure). Current approach: Remitly → bKash / Rocket; Nagad excluded. Wise is no longer planned or scheduled for testing.
 - [ ] ~~Set up personal bKash or Rocket accounts for manual prize distribution~~ ❌ NOT POSSIBLE from Poland
 - [x] Define detailed prize structure (see [PRIZE_STRATEGY.md](PRIZE_STRATEGY.md))
 - [x] Create product flavor for Bangladesh variant

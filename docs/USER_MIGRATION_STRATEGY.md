@@ -975,7 +975,7 @@ This journey ensures users under 18 are automatically protected by Play Store ag
    ↓
 7. Firebase Cloud Function notifies developer
    ↓
-8. Developer processes payment via Remitly/Wise
+8. Developer manually processes payment via Remitly to bKash or Rocket; Nagad is excluded.
    ↓
 9. User receives funds within 7 days
    ↓
@@ -1142,7 +1142,6 @@ This journey ensures users under 18 are automatically protected by Play Store ag
 **Mitigation Strategies:**
 1. **Service Redundancy:**
    - Primary: Remitly (mobile wallet transfers)
-   - Backup: Wise (bank transfers)
    - Fallback: Western Union
 
 2. **Payment Testing:**
@@ -1176,7 +1175,7 @@ This journey ensures users under 18 are automatically protected by Play Store ag
 **Week -1:**
 - ✓ Internal testing with 5-10 users
 - ✓ Verify age verification flow
-- ✓ Test payment provider integrations (Remitly/Wise)
+- ✓ Manual Remitly payouts to bKash and Rocket verified through real delivered transfers; see [BANGLADESH_PAYMENT_FLOW.md](BANGLADESH_PAYMENT_FLOW.md#verified-remitly-delivery-time-fees-and-operator-procedure).
 - ✓ Finalize all promotional materials
 - ✓ Legal review of terms and conditions
 
