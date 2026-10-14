@@ -49,6 +49,7 @@ public class TermsActivity extends BaseActivity {
                 loaded=true;
                 web.loadDataWithBaseURL(policy.url,html,"text/html","UTF-8",policy.url);
             }, error -> {
+                logFailure("loadDocument", error);
                 if(!isFinishing()&&!isDestroyed()) {
                     retry.setVisibility(android.view.View.VISIBLE);retry.setEnabled(true);
                     Toast.makeText(this,R.string.failed_to_load_terms,Toast.LENGTH_LONG).show();
@@ -64,6 +65,7 @@ public class TermsActivity extends BaseActivity {
                     if(!uid.equals(currentUid())){finish();return;}
                     accepted=true;finish();
                 }).addOnFailureListener(error->{saving=false;accept.setEnabled(loaded);retry.setEnabled(true);
+                    logFailure("saveAcceptance", error);
                     Toast.makeText(this,R.string.terms_acceptance_failed,Toast.LENGTH_LONG).show();});
         });
         if(readOnly) ((Button)findViewById(R.id.declineTerms)).setText(R.string.close);
@@ -74,8 +76,20 @@ public class TermsActivity extends BaseActivity {
         load.run();
     }
     protected String currentUid() { return FirebaseAuth.getInstance().getUid(); }
+    private void logFailure(String stage, Exception error) {
+        String code = error instanceof com.google.firebase.firestore.FirebaseFirestoreException
+            ? ((com.google.firebase.firestore.FirebaseFirestoreException) error).getCode().name() : "N/A";
+        // Exception messages/stack traces can contain account or document identifiers.
+        android.util.Log.e("TAG_Soccer", "TermsActivity." + stage + " failed: scope=" + policy.scope
+            + ", version=" + policy.version + ", language=" + policy.language
+            + ", errorType=" + error.getClass().getSimpleName() + ", firestoreCode=" + code);
+    }
     protected com.google.android.gms.tasks.Task<Void> saveAcceptance(String uid, TermsPolicy policy) {
-        return new TermsRepository(FirebaseFirestore.getInstance()).accept(uid,policy);
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        android.util.Log.d("TAG_Soccer", "TermsActivity.saveAcceptance: project="
+            + db.getApp().getOptions().getProjectId() + ", version=" + policy.version
+            + ", language=" + policy.language);
+        return new TermsRepository(db).accept(uid,policy);
     }
     protected void loadDocument(TermsPolicy policy, java.util.function.Consumer<String> success,
                                 java.util.function.Consumer<Exception> failure) {

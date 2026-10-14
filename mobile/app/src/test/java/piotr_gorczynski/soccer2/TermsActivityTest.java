@@ -120,4 +120,19 @@ public class TermsActivityTest {
         assertFalse(activity.isFinishing());activity.write.setResult(null);
         Shadows.shadowOf(Looper.getMainLooper()).idle();assertTrue(activity.isFinishing());
     }
+    @Test public void deniedWriteLogsPolicyAndCodeWithoutPrivateExceptionDetails() {
+        org.robolectric.shadows.ShadowLog.clear();
+        TestActivity activity=open(false);
+        activity.findViewById(R.id.acceptTerms).performClick();
+        activity.write.setException(new com.google.firebase.firestore.FirebaseFirestoreException(
+            "private-account-identifier", com.google.firebase.firestore.FirebaseFirestoreException.Code.PERMISSION_DENIED));
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+        String logs=org.robolectric.shadows.ShadowLog.getLogsForTag("TAG_Soccer").stream()
+            .map(item -> item.msg).collect(java.util.stream.Collectors.joining("\n"));
+        assertTrue(logs.contains("saveAcceptance failed"));
+        assertTrue(logs.contains("firestoreCode=PERMISSION_DENIED"));
+        assertTrue(logs.contains(activity.displayedPolicy.version));
+        assertFalse(logs.contains("private-account-identifier"));
+        assertFalse(logs.contains("test-user"));
+    }
 }
