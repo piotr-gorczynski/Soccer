@@ -1,0 +1,84 @@
+<en-GB>
+🛠️ Reduced menu animation memory usage and fixed crashes on devices with limited memory.
+📄 Updated Terms in all supported languages, with clearer tournament rules and improved Terms loading.
+</en-GB>
+
+<pl-PL>
+🛠️ Zmniejszono zużycie pamięci animacji menu i naprawiono awarie na urządzeniach z małą ilością pamięci.
+📄 Zaktualizowano regulamin we wszystkich wspieranych językach, doprecyzowano zasady turniejów i poprawiono wczytywanie regulaminu.
+</pl-PL>
+
+<de-DE>
+🛠️ Speicherbedarf der Menüanimation reduziert und Abstürze auf Geräten mit wenig Speicher behoben.
+📄 Nutzungsbedingungen in allen unterstützten Sprachen aktualisiert, Turnierregeln präzisiert und das Laden der Bedingungen verbessert.
+</de-DE>
+
+<fr-FR>
+🛠️ Réduction de la mémoire utilisée par l’animation du menu et correction des plantages sur les appareils disposant de peu de mémoire.
+📄 Conditions mises à jour dans toutes les langues prises en charge, règles des tournois clarifiées et chargement des conditions amélioré.
+</fr-FR>
+
+<es-ES>
+🛠️ Reducido el uso de memoria de la animación del menú y corregidos cierres inesperados en dispositivos con poca memoria.
+📄 Condiciones actualizadas en todos los idiomas compatibles, reglas de torneos más claras y mejoras en la carga de las condiciones.
+</es-ES>
+
+<ur>
+🛠️ مینو کی اینیمیشن میں میموری کا استعمال کم کیا گیا اور کم میموری والے آلات پر کریش درست کیے گئے۔
+📄 تمام معاون زبانوں میں شرائط اپ ڈیٹ، ٹورنامنٹ کے قواعد واضح اور شرائط کی لوڈنگ بہتر کی گئی۔
+</ur>
+
+<bn-BD>
+🛠️ মেনুর অ্যানিমেশনের মেমরি ব্যবহার কমানো হয়েছে এবং কম মেমরির ডিভাইসে ক্র্যাশ ঠিক করা হয়েছে।
+📄 সব সমর্থিত ভাষায় শর্তাবলি হালনাগাদ, টুর্নামেন্টের নিয়ম আরও স্পষ্ট এবং শর্তাবলি লোড করা উন্নত করা হয়েছে।
+</bn-BD>
+
+<ne-NP>
+🛠️ मेनुको एनिमेसनले प्रयोग गर्ने मेमोरी घटाइयो र कम मेमोरी भएका उपकरणमा हुने क्र्यास सच्याइयो।
+📄 सबै समर्थित भाषामा सर्तहरू अद्यावधिक गरियो, प्रतियोगिताका नियम स्पष्ट पारियो र सर्तहरू लोड गर्ने प्रक्रिया सुधारियो।
+</ne-NP>
+
+<hi-IN>
+🛠️ मेनू एनिमेशन का मेमोरी उपयोग घटाया गया और कम मेमोरी वाले डिवाइस पर क्रैश ठीक किए गए।
+📄 सभी समर्थित भाषाओं में शर्तें अपडेट की गईं, टूर्नामेंट नियम स्पष्ट किए गए और शर्तों की लोडिंग सुधारी गई।
+</hi-IN>
+
+<am>
+🛠️ የምናሌ አኒሜሽን የማህደረ ትውስታ አጠቃቀም ቀንሷል፤ አነስተኛ ማህደረ ትውስታ ባላቸው መሣሪያዎች ላይ የሚከሰቱ መቋረጦች ተስተካክለዋል።
+📄 ሁሉንም የሚደገፉ ቋንቋዎች የሚሸፍኑ ውሎች ተዘምነዋል፣ የውድድር ደንቦች ግልጽ ሆነዋል፣ ውሎችን መጫንም ተሻሽሏል።
+</am>
+
+<ar>
+🛠️ تقليل استهلاك ذاكرة الرسوم المتحركة في القائمة وإصلاح الأعطال على الأجهزة ذات الذاكرة المحدودة.
+📄 تحديث الشروط بجميع اللغات المدعومة، وتوضيح قواعد البطولات وتحسين تحميل الشروط.
+</ar>
+
+<my-MM>
+🛠️ မီနူးအန်နီမေးရှင်း၏ မမ်မိုရီအသုံးပြုမှုကို လျှော့ချပြီး မမ်မိုရီနည်းသော စက်များတွင် အက်ပ်ပျက်ကျမှုများကို ပြင်ဆင်ထားသည်။
+📄 ပံ့ပိုးထားသော ဘာသာစကားအားလုံးတွင် စည်းကမ်းချက်များကို အပ်ဒိတ်လုပ်ပြီး ပြိုင်ပွဲစည်းမျဉ်းများကို ရှင်းလင်းစေကာ စည်းကမ်းချက်များ ဖွင့်ပြခြင်းကို မြှင့်တင်ထားသည်။
+</my-MM>
+
+<km-KH>
+🛠️ កាត់បន្ថយការប្រើអង្គចងចាំរបស់ចលនាម៉ឺនុយ និងជួសជុលការគាំងលើឧបករណ៍ដែលមានអង្គចងចាំតិច។
+📄 ធ្វើបច្ចុប្បន្នភាពលក្ខខណ្ឌគ្រប់ភាសាដែលគាំទ្រ បញ្ជាក់ច្បាប់ការប្រកួតឱ្យច្បាស់ និងកែលម្អការផ្ទុកលក្ខខណ្ឌ។
+</km-KH>
+
+<lo-LA>
+🛠️ ຫຼຸດການໃຊ້ໜ່ວຍຄວາມຈຳຂອງພາບເຄື່ອນໄຫວເມນູ ແລະແກ້ໄຂແອັບປິດຕົວໃນອຸປະກອນທີ່ມີໜ່ວຍຄວາມຈຳນ້ອຍ.
+📄 ອັບເດດຂໍ້ກຳນົດໃນທຸກພາສາທີ່ຮອງຮັບ, ເຮັດໃຫ້ກົດການແຂ່ງຂັນຊັດເຈນ ແລະປັບປຸງການໂຫຼດຂໍ້ກຳນົດ.
+</lo-LA>
+
+<mn-MN>
+🛠️ Цэсийн хөдөлгөөнт дүрсний санах ойн хэрэглээг бууруулж, санах ой багатай төхөөрөмж дээрх гацаж хаагдах алдааг заслаа.
+📄 Дэмждэг бүх хэлээр нөхцөлийг шинэчилж, тэмцээний дүрмийг тодруулан, нөхцөл ачаалах ажиллагааг сайжрууллаа.
+</mn-MN>
+
+<fa-IR>
+🛠️ مصرف حافظه پویانمایی منو کاهش یافت و خرابی برنامه در دستگاه‌های دارای حافظه کم برطرف شد.
+📄 شرایط در تمام زبان‌های پشتیبانی‌شده به‌روز شد، قوانین مسابقات روشن‌تر شد و بارگذاری شرایط بهبود یافت.
+</fa-IR>
+
+<si-LK>
+🛠️ මෙනු සජීවිකරණයේ මතක භාවිතය අඩු කර, මතකය අඩු උපාංගවල යෙදුම බිඳවැටීම් නිවැරදි කරන ලදී.
+📄 සහාය දක්වන සියලු භාෂාවල කොන්දේසි යාවත්කාලීන කර, තරඟාවලි නීති පැහැදිලි කර කොන්දේසි පූරණය වැඩිදියුණු කරන ලදී.
+</si-LK>
