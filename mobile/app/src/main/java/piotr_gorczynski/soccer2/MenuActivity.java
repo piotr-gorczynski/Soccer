@@ -51,7 +51,6 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.widget.Toast;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import androidx.appcompat.app.AlertDialog;
@@ -91,9 +90,6 @@ public class MenuActivity extends BaseActivity {
     private static final String PREF_LAST_ACTIVE_TIMESTAMP = "lastActiveTimestamp";
     private static final String PREF_ANIMATION_INFO_SHOWN = "animationInfoDialogShown";
 
-    private static final int RUNNING_PLAYER_FRAME_COUNT = 22;
-    private static final int RUNNING_PLAYER_FRAME_WIDTH = 128;
-    private static final int RUNNING_PLAYER_FRAME_HEIGHT = 128;
     private static final long RUNNING_PLAYER_FRAME_DURATION_MS = 125L;
 
     private boolean isBackendAvailable = true; // Track backend availability
@@ -148,6 +144,8 @@ public class MenuActivity extends BaseActivity {
 
     private ImageView runningPlayerView;
     private Bitmap[][] runningPlayerFrames;
+    private boolean runningPlayerLoading, runningPlayerLoadFailed;
+    private volatile boolean runningPlayerReleased;
     private int runningPlayerFrameIndex = 0;
     private int runningPlayerRowIndex = 0;
     private boolean isRunningPlayerAnimationStarted = false;
@@ -258,16 +256,7 @@ public class MenuActivity extends BaseActivity {
         }
     }
 
-    private void recycleBitmapList(List<Bitmap> bitmaps) {
-        if (bitmaps == null) {
-            return;
-        }
-        for (Bitmap bitmap : bitmaps) {
-            if (bitmap != null && !bitmap.isRecycled()) {
-                bitmap.recycle();
-            }
-        }
-    }
+
 
     private void recycleBitmapArray(Bitmap[] frames) {
         if (frames == null) {
@@ -280,14 +269,7 @@ public class MenuActivity extends BaseActivity {
         }
     }
 
-    private void recycleBitmapRows(List<Bitmap[]> rows) {
-        if (rows == null) {
-            return;
-        }
-        for (Bitmap[] row : rows) {
-            recycleBitmapArray(row);
-        }
-    }
+
 
     /**
      * Helper to fetch user details from Firestore and update prefs/UI. This is
@@ -1106,219 +1088,43 @@ public class MenuActivity extends BaseActivity {
             }
         }
 
-        int spriteSheetResId = R.drawable.spritesheet_run;
-
-        // Move heavy bitmap operations to background thread to prevent ANR
-        // See: docs/MENUACTIVITY_ANR_FIX.md for ANR prevention patterns
+        if (runningPlayerLoading || runningPlayerLoadFailed || runningPlayerReleased) return;
+        runningPlayerLoading = true;
+        // One loader per Activity; use half-resolution frames for this small menu decoration.
         new Thread(() -> {
+            Bitmap[][] result = null;
             try {
-                Bitmap spriteSheet;
-                try {
-                    BitmapFactory.Options decodeOptions = new BitmapFactory.Options();
-                    decodeOptions.inScaled = false;
-                    spriteSheet = BitmapFactory.decodeResource(getResources(), spriteSheetResId, decodeOptions);
-                } catch (Exception e) {
-                    Log.e(
-                            "TAG_Soccer",
-                            getClass().getSimpleName() + ".setupRunningPlayerAnimation: Failed to decode sprite sheet",
-                            e
-                    );
-                    return;
-                }
-
-                if (spriteSheet == null) {
-                    Log.w(
-                            "TAG_Soccer",
-                            getClass().getSimpleName() + ".setupRunningPlayerAnimation: spritesheet_run resource missing"
-                    );
-                    runOnUiThread(() -> {
-                        if (runningPlayerView != null) {
-                            runningPlayerView.setVisibility(View.GONE);
-                        }
-                    });
-                    return;
-                }
-
-                int sheetWidth = spriteSheet.getWidth();
-                int sheetHeight = spriteSheet.getHeight();
-                if (sheetWidth <= 0 || sheetHeight <= 0) {
-                    Log.w(
-                            "TAG_Soccer",
-                            getClass().getSimpleName() + ".setupRunningPlayerAnimation: spritesheet has invalid dimensions"
-                    );
-                    spriteSheet.recycle();
-                    runOnUiThread(() -> {
-                        if (runningPlayerView != null) {
-                            runningPlayerView.setVisibility(View.GONE);
-                        }
-                        runningPlayerFrames = null;
-                    });
-                    return;
-                }
-
-                int framesAvailable = Math.min(RUNNING_PLAYER_FRAME_COUNT, sheetWidth / RUNNING_PLAYER_FRAME_WIDTH);
-                if (framesAvailable == 0) {
-                    Log.w(
-                            "TAG_Soccer",
-                            getClass().getSimpleName() + ".setupRunningPlayerAnimation: No frames available in spritesheet"
-                    );
-                    spriteSheet.recycle();
-                    runOnUiThread(() -> {
-                        if (runningPlayerView != null) {
-                            runningPlayerView.setVisibility(View.GONE);
-                        }
-                        runningPlayerFrames = null;
-                    });
-                    return;
-                }
-
-                int rowsAvailable = sheetHeight / RUNNING_PLAYER_FRAME_HEIGHT;
-                if (rowsAvailable == 0) {
-                    Log.w(
-                            "TAG_Soccer",
-                            getClass().getSimpleName() + ".setupRunningPlayerAnimation: No rows available in spritesheet"
-                    );
-                    spriteSheet.recycle();
-                    runOnUiThread(() -> {
-                        if (runningPlayerView != null) {
-                            runningPlayerView.setVisibility(View.GONE);
-                        }
-                        runningPlayerFrames = null;
-                    });
-                    return;
-                }
-
-                // Use default frame dimensions for bitmap processing
-                // Layout-specific sizing can be handled by ImageView's scaleType
-                // This avoids the complexity of synchronizing layout param reads from UI thread
-                int targetWidthPx = RUNNING_PLAYER_FRAME_WIDTH;
-                int targetHeightPx = RUNNING_PLAYER_FRAME_HEIGHT;
-
-                ArrayList<Bitmap[]> frameRows = new ArrayList<>();
-                for (int row = 0; row < rowsAvailable; row++) {
-                    ArrayList<Bitmap> rowFrames = new ArrayList<>();
-                    for (int col = 0; col < framesAvailable; col++) {
-                        int sourceX = col * RUNNING_PLAYER_FRAME_WIDTH;
-                        if (sourceX >= sheetWidth) {
-                            break;
-                        }
-                        int frameWidth = Math.min(RUNNING_PLAYER_FRAME_WIDTH, sheetWidth - sourceX);
-
-                        int sourceY = row * RUNNING_PLAYER_FRAME_HEIGHT;
-                        if (sourceY >= sheetHeight) {
-                            break;
-                        }
-                        int frameHeight = Math.min(RUNNING_PLAYER_FRAME_HEIGHT, sheetHeight - sourceY);
-
-                        try {
-                            Bitmap frame = Bitmap.createBitmap(
-                                    spriteSheet,
-                                    sourceX,
-                                    sourceY,
-                                    frameWidth,
-                                    frameHeight
-                            );
-
-                            if (frame.getWidth() != targetWidthPx || frame.getHeight() != targetHeightPx) {
-                                try {
-                                    Bitmap scaledFrame = Bitmap.createScaledBitmap(frame, targetWidthPx, targetHeightPx, true);
-                                    if (scaledFrame != frame) {
-                                        frame.recycle();
-                                    }
-                                    frame = scaledFrame;
-                                } catch (IllegalArgumentException scaleException) {
-                                    Log.e(
-                                            "TAG_Soccer",
-                                            getClass().getSimpleName()
-                                                    + ".setupRunningPlayerAnimation: Failed to scale frame at row "
-                                                    + row
-                                                    + ", index "
-                                                    + col,
-                                            scaleException
-                                    );
-                                }
-                            }
-
-                            rowFrames.add(frame);
-                        } catch (IllegalArgumentException e) {
-                            Log.e(
-                                    "TAG_Soccer",
-                                    getClass().getSimpleName()
-                                            + ".setupRunningPlayerAnimation: Failed to create frame at row "
-                                            + row
-                                            + ", index "
-                                            + col,
-                                    e
-                            );
-                            recycleBitmapRows(frameRows);
-                            recycleBitmapList(rowFrames);
-                            spriteSheet.recycle();
-                            runOnUiThread(() -> {
-                                runningPlayerFrames = null;
-                                if (runningPlayerView != null) {
-                                    runningPlayerView.setVisibility(View.GONE);
-                                }
-                            });
-                            return;
-                        }
-                    }
-
-                    if (!rowFrames.isEmpty()) {
-                        frameRows.add(rowFrames.toArray(new Bitmap[0]));
-                    }
-                }
-
-                spriteSheet.recycle();
-
-                if (frameRows.isEmpty()) {
-                    runOnUiThread(() -> {
-                        runningPlayerFrames = null;
-                        if (runningPlayerView != null) {
-                            runningPlayerView.setVisibility(View.GONE);
-                        }
-                    });
-                    return;
-                }
-
-                // Update UI on main thread
-                final Bitmap[][] loadedFrames = frameRows.toArray(new Bitmap[0][]);
-                runOnUiThread(() -> {
-                    if (isFinishing() || isDestroyed()) {
-                        // Activity is finishing, recycle bitmaps
-                        for (Bitmap[] row : loadedFrames) {
-                            recycleBitmapArray(row);
-                        }
-                        return;
-                    }
-                    
-                    runningPlayerFrames = loadedFrames;
-                    runningPlayerRowIndex = 0;
-                    runningPlayerFrameIndex = 0;
-                    
-                    if (runningPlayerView != null) {
-                        runningPlayerView.setVisibility(View.VISIBLE);
-                        Bitmap[] initialRow = getCurrentRunningPlayerRowFrames();
-                        if (initialRow != null && initialRow.length > 0) {
-                            runningPlayerView.setImageBitmap(initialRow[0]);
-                        }
-                        configureRunningPlayerClickListener();
-                        
-                        // If activity is already started, begin animation immediately
-                        // This handles the case where onCreate->setupRunningPlayerAnimation starts
-                        // the background thread, then onStart is called before frames are loaded
-                        if (shouldStartRunningPlayerAnimation()) {
-                            startRunningPlayerAnimation();
-                        }
-                    }
-                });
-            } catch (Exception e) {
-                Log.e(
-                        "TAG_Soccer",
-                        getClass().getSimpleName() + ".setupRunningPlayerAnimation: Unexpected error in background thread",
-                        e
-                );
+                result = MenuPlayerFrames.load(getResources(), () -> runningPlayerReleased);
+            } catch (RuntimeException | OutOfMemoryError error) {
+                Log.w("TAG_Soccer", "Menu animation unavailable; continuing without it", error);
             }
-        }).start();
+            final Bitmap[][] loadedFrames = result;
+            runOnUiThread(() -> {
+                runningPlayerLoading = false;
+                if (runningPlayerReleased || isFinishing() || isDestroyed()) {
+                    MenuPlayerFrames.recycle(loadedFrames);
+                    return;
+                }
+                if (loadedFrames == null) {
+                    runningPlayerLoadFailed = true;
+                    runningPlayerView.setImageDrawable(null);
+                    runningPlayerView.setVisibility(View.GONE);
+                    return;
+                }
+                runningPlayerFrames = loadedFrames;
+                runningPlayerRowIndex = 0;
+                runningPlayerFrameIndex = 0;
+                if (areAnimationsDisabled()) {
+                    runningPlayerView.setVisibility(View.GONE);
+                    return;
+                }
+                runningPlayerView.setVisibility(View.VISIBLE);
+                runningPlayerView.setImageBitmap(loadedFrames[0][0]);
+                configureRunningPlayerClickListener();
+                if (getLifecycle().getCurrentState().isAtLeast(androidx.lifecycle.Lifecycle.State.STARTED)
+                        && shouldStartRunningPlayerAnimation()) startRunningPlayerAnimation();
+            });
+        }, "menu-player-loader").start();
     }
 
     private void startRunningPlayerAnimation() {
@@ -1367,10 +1173,12 @@ public class MenuActivity extends BaseActivity {
     }
 
     private void releaseRunningPlayerResources() {
+        runningPlayerReleased = true;
         stopRunningPlayerAnimation();
         if (runningPlayerView != null) {
             runningPlayerView.setOnClickListener(null);
             runningPlayerView.setClickable(false);
+            runningPlayerView.setImageDrawable(null);
         }
         if (runningPlayerFrames != null) {
             for (Bitmap[] rowFrames : runningPlayerFrames) {
