@@ -23,3 +23,15 @@ This document tracks YouTube videos used to showcase and promote the Bangladesh 
 **Description:** Promotional video for Gridline Soccer Bangladesh, a strategic football board game for Android. The video is intended to introduce the game to prospective players and support discovery of the Bangladesh edition.
 
 **Note:** Exact scenes, duration, language and audio rights have not yet been independently verified.
+
+## Gridline Soccer Bangladesh – Promotional Short (7GiDhm9pC2I)
+
+- **YouTube:** https://youtube.com/shorts/7GiDhm9pC2I
+- **Format:** YouTube Shorts
+- **Purpose:** Additional video creative for Gridline Soccer Bangladesh marketing
+- **Status:** YouTube link provided; video content and publication status not independently verified
+- **Duration:** To be confirmed
+
+**Description:** Additional short-form video associated with the Gridline Soccer Bangladesh promotional campaign. It is catalogued here for future reference, campaign planning and comparison with other YouTube Shorts.
+
+**Note:** The video's actual content, duration, language and audio rights have not been verified. Update this description after reviewing the source video.
