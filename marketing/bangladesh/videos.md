@@ -35,3 +35,15 @@ This document tracks YouTube videos used to showcase and promote the Bangladesh 
 **Description:** Additional short-form video associated with the Gridline Soccer Bangladesh promotional campaign. It is catalogued here for future reference, campaign planning and comparison with other YouTube Shorts.
 
 **Note:** The video's actual content, duration, language and audio rights have not been verified. Update this description after reviewing the source video.
+
+## Gridline Soccer Bangladesh – Promotional Short (ElUSM9-dy5E)
+
+- **YouTube:** https://youtube.com/shorts/ElUSM9-dy5E
+- **Format:** YouTube Shorts
+- **Purpose:** Additional short-form promotional material for Gridline Soccer Bangladesh
+- **Status:** YouTube link provided; content not independently verified
+- **Duration:** To be confirmed
+
+**Description:** Additional YouTube Short in the Gridline Soccer Bangladesh promotional video collection. Linked here for marketing reference and potential campaign use.
+
+**Note:** Actual scenes, duration, language and audio rights have not been verified.
