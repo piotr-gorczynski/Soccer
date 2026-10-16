@@ -1,0 +1,71 @@
+{
+  "name": "Bangladesh Cash Tournament Rules",
+  "status": "active",
+  "market": "BD",
+  "minimumAge": 18,
+  "prizeRules": {
+    "cashPrizesEnabled": true,
+    "currency": "BDT",
+    "payoutMethods": [
+      "bkash",
+      "rocket"
+    ],
+    "prizePool": {
+      "totalAmount": 1000,
+      "awards": [
+        {
+          "place": 1,
+          "amount": 1000
+        }
+      ]
+    }
+  },
+  "translations": {
+    "en": {
+      "rules": [
+        "1. Eligibility and free entry — Participation is free and no purchase, entry fee, deposit, stake, wager, or other payment is required. Participants must be at least 18 years old and meet the eligibility conditions shown for the tournament.",
+        "2. Tournament format and skill basis — The tournament is skill-based and is played in a round-robin format. Pairings are generated automatically after registration closes, and the tournament ends at the announced deadline.",
+        "3. Match board and movement — Matches are played on a 6x8 grid. The ball starts at the center point (3,4). On a turn, a player moves the ball to one of the eight adjacent points. A line that has already been drawn cannot be used again.",
+        "4. Bounces — Moving the ball to the border or to a previously visited point counts as a bounce and gives the same player another move.",
+        "5. Winning a match — A goal is scored when the ball enters the opponent's goal at the top or bottom edge. A player also loses immediately if they move the ball to a point from which no legal move is available.",
+        "6. Match clock — Each player has a five-minute chess clock. A player's time runs only during that player's turn. A player who runs out of time loses the match.",
+        "7. Disconnections and inactivity — If a player's device disconnects before their turn begins, the backend starts that player's clock automatically after one minute. A match with no activity for more than five minutes may be decided automatically on time.",
+        "8. Leaving a match — A player who leaves a match before it is completed forfeits that match to the opponent.",
+        "9. Final score and eligibility for the prize — Tournament ranking is based only on each participant's final score. A participant must have a final score greater than zero to be eligible for the prize. Participants with a score of zero are excluded from the prize calculation.",
+        "10. Prize — The total prize pool is 1,000 BDT and is assigned only to first place. Second place and all lower places receive no cash prize. The announced prize pool and allocation cannot be changed after tournament registration opens.",
+        "11. Determining first place — Eligible participants are ranked from the highest final score to the lowest. The highest-ranked eligible participant receives the first-place prize. Ranking and prize calculations are deterministic, contain no random selection, and cannot be manually overridden.",
+        "12. Tie for first place — If two or more eligible participants have the same highest final score, they share the 1,000 BDT first-place prize equally. No separate tie-breaker or additional prize is used.",
+        "13. Rounding — Each payout is rounded down to a whole BDT. Any amount remaining because of rounding is not paid, redistributed, or carried over to another tournament.",
+        "14. No eligible winner — If no participant finishes with a final score greater than zero, no prize is awarded. The unclaimed prize is not redistributed or carried over.",
+        "15. Payout limit — The combined amount paid to all winners cannot exceed the advertised prize pool of 1,000 BDT.",
+        "16. Receiving the prize — Prize payments are available through bKash or Rocket. A winner must provide their first name, last name, selected wallet provider, and wallet number separately. The first and last name must match the recipient details registered with the receiving wallet and Remitly. Incorrect details can delay or prevent payment. Never provide a wallet PIN, password, or one-time code.",
+        "17. Payout processing — Prize payouts are currently processed manually by the administrator through Remitly. Saving payout details does not itself send money. A Sent status is not confirmation that the prize has been received; delivery is complete only when the payout is marked Completed. No fixed transfer completion time is guaranteed.",
+        "18. Taxes — Prize amounts shown in these tournament rules and in the app are gross prize amounts unless expressly stated otherwise. Unless a tax deduction is expressly shown in the payout details, the Organizer currently pays prizes without deducting Bangladesh income tax from the prize amount. Participants are responsible for determining, declaring, and paying any taxes that apply to prizes they receive under the laws applicable to them. Bangladesh tax law currently provides for taxation of winnings from online games and may require tax to be paid directly by the recipient where tax has not been deducted at source. The Organizer may deduct, withhold, report, or remit tax from a prize where required by applicable law or by a competent tax authority. Nothing in these rules excludes or transfers any tax obligation that applicable law imposes directly on the Organizer.",
+        "19. Acceptance of rules — By registering for the tournament, the participant confirms that they meet the eligibility requirements and agrees to these tournament and prize rules. The current Gridline Soccer Bangladesh Terms of Service and Privacy Policy also apply separately."
+      ]
+    },
+    "bn": {
+      "rules": [
+        "১. যোগ্যতা ও বিনামূল্যে অংশগ্রহণ — অংশগ্রহণ সম্পূর্ণ বিনামূল্যে এবং কোনো ক্রয়, প্রবেশ ফি, আমানত, পণ, বাজি বা অন্য কোনো অর্থপ্রদানের প্রয়োজন নেই। অংশগ্রহণকারীদের বয়স কমপক্ষে ১৮ বছর হতে হবে এবং টুর্নামেন্টে দেখানো যোগ্যতার শর্ত পূরণ করতে হবে।",
+        "২. টুর্নামেন্টের ফরম্যাট ও দক্ষতাভিত্তিক খেলা — টুর্নামেন্টটি দক্ষতাভিত্তিক এবং রাউন্ড-রবিন ফরম্যাটে খেলা হয়। নিবন্ধন বন্ধ হওয়ার পরে জুটি স্বয়ংক্রিয়ভাবে তৈরি করা হয় এবং ঘোষিত শেষ সময়ে টুর্নামেন্ট শেষ হয়।",
+        "৩. ম্যাচের বোর্ড ও চলাচল — ম্যাচ ৬x৮ গ্রিডে খেলা হয়। বল কেন্দ্রীয় বিন্দু (৩,৪) থেকে শুরু হয়। প্রতিটি পালায় একজন খেলোয়াড় বলকে আটটি সংলগ্ন বিন্দুর যেকোনো একটিতে সরিয়ে নিয়ে যায়। ইতিমধ্যে আঁকা হয়েছে এমন কোনো রেখা আবার ব্যবহার করা যাবে না।",
+        "৪. বাউন্স — বলকে সীমানায় বা আগে পরিদর্শন করা কোনো বিন্দুতে নিয়ে যাওয়া বাউন্স হিসেবে গণ্য হবে এবং একই খেলোয়াড়কে আরেকটি চালের সুযোগ দেওয়া হবে।",
+        "৫. ম্যাচ জেতা — বল উপরের বা নিচের সীমানায় প্রতিপক্ষের গোলে প্রবেশ করলে গোল হবে। এছাড়া কোনো খেলোয়াড় এমন একটি বিন্দুতে বল নিয়ে গেলে যেখানে কোনো বৈধ চাল অবশিষ্ট নেই, সে সঙ্গে সঙ্গে ম্যাচ হারাবে।",
+        "৬. ম্যাচের ঘড়ি — প্রতিটি খেলোয়াড়ের পাঁচ মিনিটের দাবা ঘড়ি থাকে। একজন খেলোয়াড়ের সময় কেবল তার পালার সময়েই চলে। সময় শেষ হলে খেলোয়াড় ম্যাচ হারায়।",
+        "৭. সংযোগ বিচ্ছিন্নতা ও নিষ্ক্রিয়তা — কোনো খেলোয়াড়ের পালা শুরু হওয়ার আগে তার ডিভাইসের সংযোগ বিচ্ছিন্ন হলে, ব্যাকএন্ড এক মিনিট পরে স্বয়ংক্রিয়ভাবে সেই খেলোয়াড়ের ঘড়ি চালু করে। পাঁচ মিনিটের বেশি সময় কোনো কার্যকলাপ না থাকলে সময়ের ভিত্তিতে ম্যাচের ফল স্বয়ংক্রিয়ভাবে নির্ধারণ করা হতে পারে।",
+        "৮. ম্যাচ ছেড়ে যাওয়া — কোনো খেলোয়াড় ম্যাচ সম্পূর্ণ হওয়ার আগে ম্যাচ ছেড়ে গেলে, সে সেই ম্যাচটি প্রতিপক্ষের কাছে হারবে।",
+        "৯. চূড়ান্ত স্কোর ও পুরস্কারের যোগ্যতা — টুর্নামেন্টের র‌্যাঙ্কিং কেবল প্রতিটি অংশগ্রহণকারীর চূড়ান্ত স্কোরের ওপর ভিত্তি করে হবে। পুরস্কারের যোগ্য হতে একজন অংশগ্রহণকারীর চূড়ান্ত স্কোর শূন্যের বেশি হতে হবে। শূন্য স্কোরধারী অংশগ্রহণকারীদের পুরস্কারের হিসাব থেকে বাদ দেওয়া হবে।",
+        "১০. পুরস্কার — মোট পুরস্কার তহবিল ১,০০০ BDT এবং তা কেবল প্রথম স্থানের জন্য বরাদ্দ করা হবে। দ্বিতীয় স্থান ও তার নিচের সব স্থান কোনো নগদ পুরস্কার পাবে না। টুর্নামেন্টের নিবন্ধন শুরু হওয়ার পরে ঘোষিত পুরস্কার তহবিল ও তার বণ্টন পরিবর্তন করা যাবে না।",
+        "১১. প্রথম স্থান নির্ধারণ — যোগ্য অংশগ্রহণকারীদের সর্বোচ্চ চূড়ান্ত স্কোর থেকে সর্বনিম্ন চূড়ান্ত স্কোরের ক্রমে র‌্যাঙ্ক করা হবে। সর্বোচ্চ র‌্যাঙ্কধারী যোগ্য অংশগ্রহণকারী প্রথম স্থানের পুরস্কার পাবে। র‌্যাঙ্কিং ও পুরস্কারের হিসাব পূর্বনির্ধারিত নিয়মে করা হবে, এতে কোনো দৈব নির্বাচন থাকবে না এবং তা হাতে পরিবর্তন করা যাবে না।",
+        "১২. প্রথম স্থানে টাই — যদি দুই বা তার বেশি যোগ্য অংশগ্রহণকারীর সর্বোচ্চ চূড়ান্ত স্কোর সমান হয়, তারা প্রথম স্থানের ১,০০০ BDT পুরস্কার সমানভাবে ভাগ করে নেবে। কোনো পৃথক টাই-ব্রেকার বা অতিরিক্ত পুরস্কার ব্যবহার করা হবে না।",
+        "১৩. রাউন্ডিং — প্রতিটি পেমেন্টের পরিমাণ পূর্ণ BDT-তে নিচের দিকে রাউন্ড করা হবে। রাউন্ডিংয়ের কারণে অবশিষ্ট অর্থ প্রদান, পুনর্বণ্টন বা অন্য কোনো টুর্নামেন্টে স্থানান্তর করা হবে না।",
+        "১৪. কোনো যোগ্য বিজয়ী নেই — যদি কোনো অংশগ্রহণকারীর চূড়ান্ত স্কোর শূন্যের বেশি না হয়, কোনো পুরস্কার প্রদান করা হবে না। অব্যবহৃত পুরস্কার পুনরায় বিতরণ বা অন্য টুর্নামেন্টে স্থানান্তর করা হবে না।",
+        "১৫. পেমেন্টের সীমা — সব বিজয়ীর মোট প্রদেয় অর্থ বিজ্ঞাপিত ১,০০০ BDT পুরস্কার তহবিলের বেশি হতে পারবে না।",
+        "১৬. পুরস্কার গ্রহণ — পুরস্কার প্রদান bKash অথবা Rocket-এর মাধ্যমে করা হবে। বিজয়ীকে নামের প্রথম অংশ, নামের শেষ অংশ, নির্বাচিত ওয়ালেট সেবাদাতা এবং ওয়ালেট নম্বর আলাদাভাবে দিতে হবে। নামের প্রথম ও শেষ অংশ গ্রহণকারী মোবাইল ওয়ালেট এবং Remitly-তে নিবন্ধিত প্রাপকের তথ্যের সঙ্গে মিলতে হবে। ভুল তথ্যের কারণে পেমেন্ট বিলম্বিত বা ব্যর্থ হতে পারে। কখনও ওয়ালেট PIN, পাসওয়ার্ড বা একবার ব্যবহারযোগ্য কোড দেবেন না।",
+        "১৭. পুরস্কারের অর্থপ্রদান প্রক্রিয়া — বর্তমানে প্রশাসক Remitly-এর মাধ্যমে পুরস্কারের অর্থপ্রদান হাতে প্রক্রিয়া করেন। পেমেন্টের তথ্য সংরক্ষণ করলেই অর্থ পাঠানো হয় না। Sent status-এর অর্থ পুরস্কার পৌঁছেছে বলে নিশ্চিত হওয়া নয়; payout Completed হিসেবে চিহ্নিত হলে তবেই delivery সম্পন্ন বলে গণ্য হবে। অর্থপ্রদান সম্পন্ন হওয়ার কোনো নির্দিষ্ট সময়ের নিশ্চয়তা দেওয়া হয় না।",
+        "১৮. কর — স্পষ্টভাবে অন্য কিছু বলা না থাকলে, এই টুর্নামেন্টের rules এবং app-এ দেখানো পুরস্কারের পরিমাণ হলো কর কাটার আগের মোট পুরস্কারের পরিমাণ। Payout details-এ কর কর্তনের কথা স্পষ্টভাবে দেখানো না থাকলে, আয়োজক বর্তমানে পুরস্কারের পরিমাণ থেকে বাংলাদেশের আয়কর না কেটে পুরস্কার প্রদান করেন। অংশগ্রহণকারীদের ক্ষেত্রে প্রযোজ্য আইন অনুযায়ী তাঁদের প্রাপ্ত পুরস্কারের ওপর কোনো কর প্রযোজ্য কি না তা নির্ধারণ করা এবং প্রযোজ্য কর ঘোষণা ও পরিশোধ করার দায়িত্ব তাঁদের। বাংলাদেশের কর আইনে বর্তমানে অনলাইন গেম থেকে প্রাপ্ত জয়ের অর্থের ওপর কর আরোপের বিধান রয়েছে এবং উৎসে কর কাটা না হলে প্রাপককে সরাসরি কর পরিশোধ করতে হতে পারে। প্রযোজ্য আইন বা ক্ষমতাপ্রাপ্ত কর কর্তৃপক্ষের নির্দেশে প্রয়োজন হলে আয়োজক পুরস্কার থেকে কর কাটতে বা আটকে রাখতে, কর-সংক্রান্ত তথ্য জানাতে অথবা কর জমা দিতে পারেন। প্রযোজ্য আইন সরাসরি আয়োজকের ওপর যে কর-সংক্রান্ত বাধ্যবাধকতা আরোপ করে, এই নিয়মগুলোর কোনো কিছুই তা বাদ দেয় না বা অন্য কারও ওপর স্থানান্তর করে না।",
+        "১৯. নিয়ম মেনে চলা — টুর্নামেন্টে নিবন্ধন করার মাধ্যমে অংশগ্রহণকারী নিশ্চিত করে যে সে যোগ্যতার শর্ত পূরণ করে এবং এই টুর্নামেন্ট ও পুরস্কার নিয়মে সম্মতি জানায়। Gridline Soccer Bangladesh-এর বর্তমান ব্যবহারের শর্তাবলি এবং গোপনীয়তা নীতিও আলাদাভাবে প্রযোজ্য।"
+      ]
+    }
+  }
+}
