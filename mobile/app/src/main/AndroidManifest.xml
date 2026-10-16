@@ -183,7 +183,7 @@
         <!-- In AndroidManifest.xml -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-9113152787055223~3266191463"/>
+            android:value="${admobAppId}"/>
 
         <!-- Disable ProfileInstaller to prevent ANR during app startup -->
         <provider

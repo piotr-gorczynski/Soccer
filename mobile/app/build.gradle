@@ -56,8 +56,8 @@ android {
         applicationId = "piotr_gorczynski.soccer2"
         minSdk = 24
         targetSdk = 37
-        versionCode = 50
-        versionName = '17.15'
+        versionCode = 51
+        versionName = '17.16'
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         
@@ -124,17 +124,22 @@ android {
         }
         _prod {
             dimension "environment"
-            buildConfigField "String", "AD_UNIT_ID", '"ca-app-pub-9113152787055223/9306362927"'
+            // Production ad units come from the market flavor. Dev/test override
+            // them with Google's sample unit via the higher-priority environment dimension.
         }
         
         // Market flavors for Bangladesh variant
         global {
             dimension "market"
             isDefault = true
+            manifestPlaceholders = [admobAppId: "ca-app-pub-9113152787055223~3266191463"]
+            buildConfigField "String", "AD_UNIT_ID", '"ca-app-pub-9113152787055223/9306362927"'
             // Base applicationId from defaultConfig: piotr_gorczynski.soccer2
         }
         bangladesh {
             dimension "market"
+            manifestPlaceholders = [admobAppId: "ca-app-pub-9113152787055223~6764582760"]
+            buildConfigField "String", "AD_UNIT_ID", '"ca-app-pub-9113152787055223/5484958987"'
             applicationIdSuffix ".bd"
             versionNameSuffix "-BD"
         }
