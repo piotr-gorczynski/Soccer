@@ -1,11 +1,12 @@
 # Support email alerts — initial DEV rollout
 
 Cloud Build config: `gcp/cloud-build/deploy_support_alerts.yaml`.
-Configure a manual trigger in `org-service-account-001` against branch `dev`,
-using the existing deployment service account and `_ENVIRONMENT=dev`.
+Manual trigger `600-deploy-support-alerts` in `org-service-account-001` uses branch
+`dev`, the existing deployment service account and `_ENVIRONMENT=dev`.
 The YAML runs the checked-out source (no clone of a moving branch).
 It rejects other branches/environments and targets only `soccer-dev-1744877837`.
-The trigger itself has not been created by this change.
+DEV configuration deployed successfully on 18 October 2026 (build
+`b048fe9e-a1e6-4e04-9357-bafb3f766da9`). Email delivery has not yet been tested.
 
 The script creates/updates one labelled email channel and one log-based alert policy.
 Run deployments serially: concurrent first runs could create duplicate resources.
@@ -23,20 +24,26 @@ Notifications are rate-limited to one per 5 minutes, with incident auto-close af
 30 minutes. This is an attention alert, not a durable one-email-per-ticket queue.
 Always inspect the support list for all outstanding work.
 
-## Required backend follow-up (not implemented by this configuration)
+## Backend events (deploy through 580)
 
-Current support functions do not emit the matching event yet. Deploying this YAML
-alone will NOT enable end-to-end notifications. Add structured server logs after a
-successful ticket/report creation or user reply, then deploy with trigger 580:
+The support codebase now includes two first-generation Firestore creation handlers:
+`onSupportTicketCreated` for `supportTickets/{ticketId}` and
+`onSupportMessageCreated` for `supportTickets/{ticketId}/messages/{messageId}`.
+Deploy them with trigger 580. They emit structured server logs after commit:
 
 ```json
 {"event":"support_attention_required","reason":"ticket_created"}
 ```
 
-Use `reason=user_reply` for a new user reply. Do not emit for admin replies, block
-actions, failed submissions, or automatic status/retention updates. Cover payout
-tickets AND moderation reports. Emit after transaction commit, not inside a retried
-transaction. Do not log message bodies, names, wallet numbers or profile data.
+New open payout tickets AND moderation reports emit `reason=ticket_created`.
+Subsequent messages with `authorType=user` and the ticket owner's `authorId` emit
+`reason=user_reply`. The current app has no subsequent-user-reply write path;
+this handler supports future trusted message creation without changing app behavior.
+Initial messages (`initial`), admin replies, closed/resolved tickets, block actions,
+failed submissions and automatic status/retention updates do not emit alerts.
+Only event/reason, ticket ID and Firestore event ID are logged; no message bodies,
+names, wallet numbers or profile data. Firestore event delivery is at least once;
+the event ID permits tracing duplicates, but no exactly-once email guarantee is made.
 The filter targets the current first-generation `cloud_function` resource; review
 it if support functions migrate to another generation.
 
@@ -45,9 +52,9 @@ it if support functions migrate to another generation.
 Offline preview (no authentication/network/mutations):
 `python gcp/monitoring/configure_support_alerts.py --environment dev --dry-run`
 
-After backend logging is implemented and deployed, test a synthetic new ticket and
+After backend logging is deployed, test a synthetic new ticket and
 user reply in DEV, verify mail delivery, and confirm admin replies do not alert.
-No end-to-end delivery test or deployment has been performed for this change.
+The new backend handlers have not yet been deployed or tested for email delivery.
 TEST/PROD support must be added explicitly after the DEV test succeeds.
 
 API reference: https://docs.cloud.google.com/logging/docs/alerting/log-based-alerts

@@ -10,6 +10,12 @@ if (!getApps().length) initializeApp();
 const db = getFirestore();
 const messaging = getMessaging();
 
+const attention = require('./attention').handlers(require('firebase-functions/logger'));
+exports.onSupportTicketCreated = functions.region('us-central1').firestore
+  .document('supportTickets/{ticketId}').onCreate(attention.ticketCreated);
+exports.onSupportMessageCreated = functions.region('us-central1').firestore
+  .document('supportTickets/{ticketId}/messages/{messageId}').onCreate(attention.messageCreated);
+
 const SUPPORT_MESSAGES = {
   en: {
     reply: ['Support replied', 'You have a new reply to your payout support request.'],
