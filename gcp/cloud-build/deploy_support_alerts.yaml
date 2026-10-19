@@ -1,18 +1,18 @@
-# Manual Cloud Build configuration, run in org-service-account-001 from dev.
-# DEV only for the initial rollout. Does not deploy functions or modify IAM.
+# Manual Cloud Build configuration, run in org-service-account-001 from the target environment branch.
+# DEV and TEST only; PROD remains blocked. Does not deploy functions or modify IAM.
 substitutions:
   _ENVIRONMENT: 'dev'
 
 steps:
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    id: 'configure-dev-support-alerts'
+    id: 'configure-support-alerts'
     entrypoint: bash
     args:
       - '-c'
       - |
         set -euo pipefail
-        test '${_ENVIRONMENT}' = 'dev'
-        test '$BRANCH_NAME' = 'dev'
+        case '${_ENVIRONMENT}' in dev|test) ;; *) exit 1 ;; esac
+        test '$BRANCH_NAME' = '${_ENVIRONMENT}'
         python3 gcp/monitoring/configure_support_alerts.py --environment '${_ENVIRONMENT}'
 
 options:
