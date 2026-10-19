@@ -393,4 +393,5 @@
     <string name="moderation_unknown_player">لاعب تمت إزالته</string>
     <string name="moderation_failed">تعذر إكمال هذا الإجراء. يرجى المحاولة مرة أخرى.</string>
     <string name="moderation_user_blocked">🔒 تم حظر المستخدم</string>
+    <string name="moderation_report_already_open">لديك بالفعل بلاغ مفتوح بشأن هذا اللاعب. الرقم المرجعي: %1$s</string>
 </resources>

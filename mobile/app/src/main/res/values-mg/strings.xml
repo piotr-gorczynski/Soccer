@@ -412,4 +412,5 @@
     <string name="moderation_unknown_player">Mpilalao nesorina</string>
     <string name="moderation_failed">Tsy vita ity hetsika ity. Andramo indray azafady.</string>
     <string name="moderation_user_blocked">🔒 Voasakana ny mpampiasa</string>
+    <string name="moderation_report_already_open">Efa manana fitarainana mbola misokatra momba ity mpilalao ity ianao. Laharana: %1$s</string>
 </resources>

@@ -412,4 +412,5 @@
     <string name="moderation_unknown_player">Ciyaaryahan la tirtiray</string>
     <string name="moderation_failed">Falkan lama dhammaystiri karin. Fadlan isku day mar kale.</string>
     <string name="moderation_user_blocked">🔒 Isticmaalaha waa la xannibay</string>
+    <string name="moderation_report_already_open">Waxaad hore u leedahay cabasho furan oo ku saabsan ciyaartoygan. Tixraac: %1$s</string>
 </resources>

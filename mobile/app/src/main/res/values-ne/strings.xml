@@ -446,4 +446,5 @@
     <string name="moderation_unknown_player">हटाइएको खेलाडी</string>
     <string name="moderation_failed">यो कार्य पूरा गर्न सकिएन। कृपया फेरि प्रयास गर्नुहोस्।</string>
     <string name="moderation_user_blocked">🔒 प्रयोगकर्ता ब्लक गरिएको छ</string>
+    <string name="moderation_report_already_open">यस खेलाडीको बारेमा तपाईंको एउटा उजुरी पहिले नै खुला छ। सन्दर्भ: %1$s</string>
 </resources>

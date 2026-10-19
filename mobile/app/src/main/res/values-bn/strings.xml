@@ -486,4 +486,5 @@
     <string name="moderation_unknown_player">মুছে ফেলা খেলোয়াড়</string>
     <string name="moderation_failed">কাজটি সম্পন্ন করা যায়নি। আবার চেষ্টা করুন।</string>
     <string name="moderation_user_blocked">🔒 ব্যবহারকারীকে ব্লক করা হয়েছে</string>
+    <string name="moderation_report_already_open">এই খেলোয়াড় সম্পর্কে আপনার একটি অভিযোগ ইতিমধ্যেই খোলা আছে। রেফারেন্স: %1$s</string>
 </resources>

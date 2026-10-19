@@ -34,7 +34,8 @@ test('report derives identity/nickname/time on server; rejects forged fields, un
  await db.doc('users/deleted').set({accountDeleted:true});
  await assert.rejects(handlers.reportPlayer({...input,reportedUid:'deleted'},auth('a')));
  const result=await handlers.reportPlayer(input,auth('a'));
- assert.deepEqual(await handlers.reportPlayer(input,auth('a')),result);
+ assert.equal(result.alreadyExists,false);
+ assert.deepEqual(await handlers.reportPlayer(input,auth('a')),{reference:result.reference,alreadyExists:true});
  const reports=await db.collection('supportTickets').get();assert.equal(reports.size,1);
  const r=reports.docs[0].data();assert.equal(r.reporterUid,'a');assert.equal(r.reportedUid,'b');assert.equal(r.nickname,'Bob');assert.ok(r.createdAt instanceof Timestamp);
  const a=env.authenticatedContext('a').firestore(),b=env.authenticatedContext('b').firestore();
@@ -77,11 +78,14 @@ test('concurrent reports deduplicate, limit open reports and preserve resolved h
  const input={reportedUid:'c',reason:'Harassment',context:'search'};
  const results=await Promise.all(Array.from({length:3},()=>handlers.reportPlayer(input,auth('a'))));
  assert.equal(new Set(results.map(r=>r.reference)).size,1);
+ assert.equal(results.filter(r=>r.alreadyExists===false).length,1);
+ assert.equal(results.filter(r=>r.alreadyExists===true).length,2);
  const reports=await db.collection('supportTickets').where('reportedUid','==','c').get();
  assert.equal(reports.size,1);
  await reports.docs[0].ref.update({status:'resolved'});
  const next=await handlers.reportPlayer(input,auth('a'));
  assert.notEqual(next.reference,results[0].reference);
+ assert.equal(next.alreadyExists,false);
  assert.equal((await reports.docs[0].ref.get()).get('status'),'resolved');
  const a=env.authenticatedContext('a').firestore();
  await assertFails(setDoc(doc(a,'users/a/moderationState/reports'),{}));

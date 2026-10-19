@@ -412,4 +412,5 @@
     <string name="moderation_unknown_player">ဖယ်ရှားထားသော ကစားသမား</string>
     <string name="moderation_failed">ဤလုပ်ဆောင်ချက်ကို မပြီးမြောက်နိုင်ပါ။ ထပ်မံကြိုးစားပါ။</string>
     <string name="moderation_user_blocked">🔒 အသုံးပြုသူကို ပိတ်ဆို့ထားသည်</string>
+    <string name="moderation_report_already_open">ဤကစားသမားနှင့်ပတ်သက်၍ သင့်တွင် မပိတ်ရသေးသော တိုင်ကြားချက်တစ်ခု ရှိပြီးဖြစ်သည်။ ရည်ညွှန်းနံပါတ်: %1$s</string>
 </resources>

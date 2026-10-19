@@ -482,4 +482,5 @@
     <string name="moderation_unknown_player">Removed player</string>
     <string name="moderation_failed">Could not complete this action. Please try again.</string>
     <string name="moderation_user_blocked">🔒 User blocked</string>
+    <string name="moderation_report_already_open">You already have an open report about this player. Reference: %1$s</string>
 </resources>

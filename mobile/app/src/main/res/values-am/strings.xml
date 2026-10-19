@@ -412,4 +412,5 @@
     <string name="moderation_unknown_player">የተወገደ ተጫዋች</string>
     <string name="moderation_failed">ይህን እርምጃ ማጠናቀቅ አልተቻለም። እንደገና ይሞክሩ።</string>
     <string name="moderation_user_blocked">🔒 ተጠቃሚው ታግዷል</string>
+    <string name="moderation_report_already_open">ስለዚህ ተጫዋች እስካሁን ያልተዘጋ ሪፖርት አስቀድመው አቅርበዋል። የማጣቀሻ ቁጥር፦ %1$s</string>
 </resources>

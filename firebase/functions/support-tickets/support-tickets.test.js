@@ -5,6 +5,31 @@ const assert = require('node:assert/strict');
 const { validateCreateRequest } = require('./support-ticket');
 const { handlers } = require('./attention');
 
+test('report response distinguishes an existing open report without writing a duplicate', async () => {
+  const writes = [];
+  let existing = [];
+  const ref = path => ({ id: path.split('/').pop(), path,
+    collection: name => ref(path + '/' + name),
+    doc: (id = 'new-ticket') => ref(path + '/' + id), where() { return this; } });
+  const db = { collection: ref, runTransaction: fn => fn({
+    get: async r => r.path === 'supportTickets' ? { docs: existing }
+      : { exists: true, id: r.id, get: key => key === 'nickname' ? 'Player' : undefined },
+    set: (r, data) => writes.push({ path: r.path, data }),
+  }) };
+  const moderation = require('./moderation').handlers(db, { serverTimestamp: () => 123 }, Error);
+  const request = { reportedUid: 'target', reason: 'Report', context: 'friends' };
+  const auth = { auth: { uid: 'reporter' } };
+  const created = await moderation.reportPlayer(request, auth);
+  assert.equal(created.alreadyExists, false);
+  assert.equal(writes.filter(w => w.path === 'supportTickets/new-ticket').length, 1);
+  existing = [{ get: key => ({ status: 'open', reportedUid: 'target', reference: created.reference })[key] }];
+  writes.length = 0;
+  assert.deepEqual(await moderation.reportPlayer(request, auth), {
+    reference: created.reference, alreadyExists: true,
+  });
+  assert.equal(writes.length, 0);
+});
+
 function snapshot(data, parent) {
   return { exists: data != null, get: key => data?.[key],
     ref: { parent: { parent: { get: async () => snapshot(parent) } } } };

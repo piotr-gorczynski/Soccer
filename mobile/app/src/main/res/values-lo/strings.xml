@@ -412,4 +412,5 @@
     <string name="moderation_unknown_player">ຜູ້ຫຼິ້ນທີ່ຖືກລຶບ</string>
     <string name="moderation_failed">ບໍ່ສາມາດດຳເນີນການນີ້ໃຫ້ສຳເລັດໄດ້. ກະລຸນາລອງອີກຄັ້ງ.</string>
     <string name="moderation_user_blocked">🔒 ບລັອກຜູ້ໃຊ້ແລ້ວ</string>
+    <string name="moderation_report_already_open">ທ່ານມີລາຍງານທີ່ຍັງເປີດຢູ່ກ່ຽວກັບຜູ້ຫຼິ້ນນີ້ແລ້ວ. ເລກອ້າງອີງ: %1$s</string>
 </resources>

@@ -412,4 +412,5 @@
     <string name="moderation_unknown_player">Устгасан тоглогч</string>
     <string name="moderation_failed">Энэ үйлдлийг гүйцэтгэж чадсангүй. Дахин оролдоно уу.</string>
     <string name="moderation_user_blocked">🔒 Хэрэглэгчийг блоклосон</string>
+    <string name="moderation_report_already_open">Энэ тоглогчийн талаар таны нээлттэй гомдол аль хэдийн байна. Лавлах дугаар: %1$s</string>
 </resources>

@@ -61,7 +61,9 @@ final class PlayerModeration {
                 .call(Map.of("reportedUid", uid, "reason", text, "context", screen))
                 .addOnSuccessListener(result -> {
                     Map<?, ?> data = (Map<?, ?>) result.getData();
-                    Toast.makeText(context, context.getString(R.string.payment_support_sent, data.get("reference")), Toast.LENGTH_LONG).show();
+                    int messageId = Boolean.TRUE.equals(data.get("alreadyExists"))
+                        ? R.string.moderation_report_already_open : R.string.payment_support_sent;
+                    Toast.makeText(context, context.getString(messageId, data.get("reference")), Toast.LENGTH_LONG).show();
                     dialog.dismiss();
                 }).addOnFailureListener(e -> { v.setEnabled(true); fail(context); });
         }));

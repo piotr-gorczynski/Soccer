@@ -412,4 +412,5 @@
     <string name="moderation_unknown_player">អ្នកលេងដែលបានលុប</string>
     <string name="moderation_failed">មិនអាចបញ្ចប់សកម្មភាពនេះបានទេ។ សូមព្យាយាមម្តងទៀត។</string>
     <string name="moderation_user_blocked">🔒 អ្នកប្រើប្រាស់ត្រូវបានទប់ស្កាត់</string>
+    <string name="moderation_report_already_open">អ្នកមានរបាយការណ៍ដែលនៅបើកអំពីអ្នកលេងនេះរួចហើយ។ លេខយោង៖ %1$s</string>
 </resources>

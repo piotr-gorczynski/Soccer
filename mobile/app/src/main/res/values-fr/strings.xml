@@ -441,4 +441,5 @@
     <string name="moderation_unknown_player">Joueur supprimé</string>
     <string name="moderation_failed">Impossible de terminer cette action. Veuillez réessayer.</string>
     <string name="moderation_user_blocked">🔒 Utilisateur bloqué</string>
+    <string name="moderation_report_already_open">Vous avez déjà un signalement ouvert concernant ce joueur. Référence : %1$s</string>
 </resources>

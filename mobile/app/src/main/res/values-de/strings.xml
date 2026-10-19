@@ -447,4 +447,5 @@
     <string name="moderation_unknown_player">Entfernter Spieler</string>
     <string name="moderation_failed">Diese Aktion konnte nicht abgeschlossen werden. Bitte versuche es erneut.</string>
     <string name="moderation_user_blocked">🔒 Benutzer blockiert</string>
+    <string name="moderation_report_already_open">Du hast bereits eine offene Meldung zu diesem Spieler. Referenz: %1$s</string>
 </resources>

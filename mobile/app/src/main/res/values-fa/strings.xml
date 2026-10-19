@@ -393,4 +393,5 @@
     <string name="moderation_unknown_player">بازیکن حذف‌شده</string>
     <string name="moderation_failed">انجام این کار ممکن نشد. لطفاً دوباره تلاش کنید.</string>
     <string name="moderation_user_blocked">🔒 کاربر مسدود شده است</string>
+    <string name="moderation_report_already_open">شما از قبل یک گزارش باز دربارهٔ این بازیکن دارید. شماره پیگیری: %1$s</string>
 </resources>

@@ -42,7 +42,7 @@ function handlers(db, FieldValue, HttpsError) {
       const reports = await tx.get(db.collection('supportTickets').where('reporterUid', '==', uid));
       const active = reports.docs.filter(d => !['resolved', 'closed'].includes(d.get('status')));
       const duplicate = active.find(d => d.get('reportedUid') === data.reportedUid);
-      if (duplicate) return { reference: duplicate.get('reference') };
+      if (duplicate) return { reference: duplicate.get('reference'), alreadyExists: true };
       if (active.length >= 10) throw new HttpsError('resource-exhausted', 'Too many open reports.');
       const ticket = db.collection('supportTickets').doc();
       const reference = 'MOD-' + ticket.id.slice(-12).toUpperCase();
@@ -54,7 +54,7 @@ function handlers(db, FieldValue, HttpsError) {
         createdAt: now, updatedAt: now, statusUpdatedAt: now });
       tx.set(ticket.collection('statusHistory').doc('created'), { eventType: 'ticket_created',
         from: null, to: 'open', changedAt: now, changedBy: uid, actorType: 'user', source: 'reportPlayer' });
-      return { reference };
+      return { reference, alreadyExists: false };
     });
   }
   return { reportPlayer: (data, context) => act(data, context, true),

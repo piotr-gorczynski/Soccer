@@ -449,4 +449,5 @@
     <string name="moderation_unknown_player">Jugador eliminado</string>
     <string name="moderation_failed">No se pudo completar esta acción. Inténtalo de nuevo.</string>
     <string name="moderation_user_blocked">🔒 Usuario bloqueado</string>
+    <string name="moderation_report_already_open">Ya tienes una denuncia abierta sobre este jugador. Referencia: %1$s</string>
 </resources>
