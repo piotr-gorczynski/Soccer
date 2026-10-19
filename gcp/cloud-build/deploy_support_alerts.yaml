@@ -1,5 +1,5 @@
 # Manual Cloud Build configuration, run in org-service-account-001 from the target environment branch.
-# DEV and TEST only; PROD remains blocked. Does not deploy functions or modify IAM.
+# Explicit DEV, TEST and PROD targets. Does not deploy functions or modify IAM.
 substitutions:
   _ENVIRONMENT: 'dev'
 
@@ -11,7 +11,7 @@ steps:
       - '-c'
       - |
         set -euo pipefail
-        case '${_ENVIRONMENT}' in dev|test) ;; *) exit 1 ;; esac
+        case '${_ENVIRONMENT}' in dev|test|prod) ;; *) exit 1 ;; esac
         test '$BRANCH_NAME' = '${_ENVIRONMENT}'
         python3 gcp/monitoring/configure_support_alerts.py --environment '${_ENVIRONMENT}'
 

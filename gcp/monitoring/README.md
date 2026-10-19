@@ -5,7 +5,7 @@ Manual trigger `600-deploy-support-alerts` in `org-service-account-001` uses bra
 `dev`, the existing deployment service account and `_ENVIRONMENT=dev`.
 The YAML runs the checked-out source (no clone of a moving branch).
 Branch must match `_ENVIRONMENT`. Explicit targets: DEV `soccer-dev-1744877837`,
-TEST `soccer-test-1753740291`. PROD remains blocked.
+TEST `soccer-test-1753740291`, PROD `soccer-prod-1754048346`.
 DEV configuration deployed successfully on 18 October 2026 (build
 `b048fe9e-a1e6-4e04-9357-bafb3f766da9`). DEV email delivery was confirmed by the user (the message initially landed in spam).
 
@@ -57,6 +57,6 @@ After backend logging is deployed, test a synthetic new ticket and
 user reply in DEV, verify mail delivery, and confirm admin replies do not alert.
 The backend handlers are deployed on DEV and TEST. DEV email delivery passed;
 TEST delivery must be verified after configuring its Monitoring channel.
-Run 600 with branch `test` and `_ENVIRONMENT=test` for TEST. PROD is not enabled.
+Run 600 with branch `test` and `_ENVIRONMENT=test` for TEST. For PROD use branch `prod` and `_ENVIRONMENT=prod`.
 
 API reference: https://docs.cloud.google.com/logging/docs/alerting/log-based-alerts

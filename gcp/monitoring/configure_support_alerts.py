@@ -1,4 +1,4 @@
-"""Configure DEV/TEST support alerts using the build service account, without changing IAM."""
+"""Configure DEV/TEST/PROD support alerts using the build service account, without changing IAM."""
 import argparse
 import json
 import subprocess
@@ -6,7 +6,8 @@ import urllib.error
 import urllib.parse
 import urllib.request
 
-PROJECTS = {"dev": "soccer-dev-1744877837", "test": "soccer-test-1753740291"}
+PROJECTS = {"dev": "soccer-dev-1744877837", "test": "soccer-test-1753740291",
+            "prod": "soccer-prod-1754048346"}
 EMAIL = "support@piotr-gorczynski.com"
 OWNER = "soccer-support-alerts-v1"
 
