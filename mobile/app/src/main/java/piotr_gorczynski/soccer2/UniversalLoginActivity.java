@@ -104,7 +104,7 @@ public class UniversalLoginActivity extends BaseActivity {
         String nickname = storedNickname; // may be null
         Log.d("TAG_Soccer", getClass().getSimpleName() + ".handleProviderLogin: Calling authManager.loginWithProvider");
 
-        FirebaseAuthManager.LoginCallback callback = createLoginCallback();
+        FirebaseAuthManager.LoginCallback callback = createLoginCallback(provider.replace(".com", ""));
 
         if ("facebook.com".equals(provider)) {
             handleFacebookLogin(callback);
@@ -120,6 +120,7 @@ public class UniversalLoginActivity extends BaseActivity {
                     "TAG_Soccer",
                     getClass().getSimpleName() + ".handleFacebookLogin: Facebook SDK not initialized"
             );
+            analyticsManager.trackAuthFailure("facebook", "sdk_unavailable", null);
             callback.onLoginFailure("facebook_unavailable");
             return;
         }
@@ -132,11 +133,13 @@ public class UniversalLoginActivity extends BaseActivity {
 
             @Override
             public void onCancel() {
+                analyticsManager.trackAuthFailure("facebook", "cancelled", null);
                 callback.onLoginFailure("cancelled");
             }
 
             @Override
             public void onError(FacebookException error) {
+                analyticsManager.trackAuthFailure("facebook", "provider_ui", error);
                 String errorMessage = error.getMessage();
                 Log.e("TAG_Soccer", getClass().getSimpleName() + ".handleFacebookLogin: Facebook login error", error);
                 
@@ -170,7 +173,7 @@ public class UniversalLoginActivity extends BaseActivity {
                     setLoginButtonsEnabled(false);
                     Toast.makeText(this, getString(R.string.login_in_progress), Toast.LENGTH_SHORT).show();
                     
-                    FirebaseAuthManager.LoginCallback callback = createLoginCallback();
+                    FirebaseAuthManager.LoginCallback callback = createLoginCallback("anonymous");
                     authManager.loginAnonymously(callback);
                 })
                 .setNegativeButton(R.string.cancel, (dialog, which) -> {
@@ -200,7 +203,7 @@ public class UniversalLoginActivity extends BaseActivity {
         }
     }
 
-    private FirebaseAuthManager.LoginCallback createLoginCallback() {
+    private FirebaseAuthManager.LoginCallback createLoginCallback(String authMethod) {
         return new FirebaseAuthManager.LoginCallback() {
             @Override
             public void onLoginSuccess() {
@@ -214,7 +217,6 @@ public class UniversalLoginActivity extends BaseActivity {
                 );
 
                 // Track successful signup/login
-                String authMethod = determineAuthMethod();
                 analyticsManager.trackSignupSuccess(authMethod);
                 analyticsManager.addAuthBreadcrumb("login_success", "method=" + authMethod);
                 
@@ -272,36 +274,11 @@ public class UniversalLoginActivity extends BaseActivity {
                         ": onLoginFailure: " + message);
                 
                 // Track login/signup error
-                String authMethod = determineAuthMethod();
-                analyticsManager.trackSignupError(authMethod, "login_failure", message, "authentication");
-                analyticsManager.addAuthBreadcrumb("login_failure", "method=" + authMethod + ", error=" + message);
+                // Failures are reported at their source with the original SDK code.
                 
                 Toast.makeText(UniversalLoginActivity.this, SafeStringFormatter.safeGetString(UniversalLoginActivity.this, R.string.login_failed, message), Toast.LENGTH_LONG).show();
             }
         };
-    }
-
-    /**
-     * Helper method to determine the authentication method used
-     */
-    private String determineAuthMethod() {
-        // This is a simple way to track which method was used
-        // In a more sophisticated implementation, we could track this per-call
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        if (auth.getCurrentUser() != null) {
-            if (auth.getCurrentUser().isAnonymous()) {
-                return "anonymous";
-            }
-            // Check provider data to determine method
-            for (var userInfo : auth.getCurrentUser().getProviderData()) {
-                String providerId = userInfo.getProviderId();
-                if ("google.com".equals(providerId)) return "google";
-                if ("facebook.com".equals(providerId)) return "facebook";
-                if ("microsoft.com".equals(providerId)) return "microsoft";
-                if ("password".equals(providerId)) return "email";
-            }
-        }
-        return "unknown";
     }
 
     @Override

@@ -171,6 +171,35 @@ public class AnalyticsManager {
             Log.w(TAG, "Firebase Analytics not available, skipping analytics for signup error");
         }
     }
+
+    /** Reports one failed auth operation without sending SDK messages or causes. */
+    public void trackAuthFailure(String method, String step, Exception error) {
+        if ("google.com".equals(method)) method = "google";
+        if ("facebook.com".equals(method)) method = "facebook";
+        if ("microsoft.com".equals(method)) method = "microsoft";
+        AuthFailureException diagnostic = new AuthFailureException(method, step, error);
+        boolean cancelled = "ERROR_WEB_CONTEXT_CANCELED".equals(diagnostic.code)
+                || error instanceof com.facebook.FacebookOperationCanceledException
+                || "cancelled".equals(step);
+        if (firebaseAnalytics != null) {
+            try {
+                Bundle params = new Bundle();
+                params.putString("method", method);
+                params.putString("step", step);
+                params.putString("code", diagnostic.code);
+                firebaseAnalytics.logEvent(cancelled ? "auth_cancelled" : "sign_up_error", params);
+            } catch (Exception ignored) {
+                Log.w(TAG, "Could not report auth analytics");
+            }
+        }
+        if (!cancelled && crashlytics != null) {
+            try {
+                crashlytics.recordException(diagnostic);
+            } catch (Exception ignored) {
+                Log.w(TAG, "Could not report auth non-fatal");
+            }
+        }
+    }
     
     /**
      * Track when user declines to register with reason

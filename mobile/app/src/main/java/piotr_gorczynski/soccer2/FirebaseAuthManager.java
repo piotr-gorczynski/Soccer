@@ -58,6 +58,16 @@ public class FirebaseAuthManager {
         }
     }
 
+    private void reportAuthFailure(String method, String step, Exception error) {
+        if (analyticsManager != null) analyticsManager.trackAuthFailure(method, step, error);
+    }
+
+    private void notifyLoginFailure(LoginCallback callback, String message,
+                                    String method, String step, Exception error) {
+        reportAuthFailure(method, step, error);
+        callback.onLoginFailure(message);
+    }
+
     public interface LoginCallback {
         void onLoginSuccess();
 
@@ -144,6 +154,10 @@ public class FirebaseAuthManager {
                                 if (doc.exists()) {
                                     db.collection("users").document(uid).set(data, SetOptions.merge())
                                             .addOnCompleteListener(task -> {
+                                                if (!task.isSuccessful()) {
+                                                    notifyLoginFailure(callback, "Could not save user profile", providerId, "profile_write", task.getException());
+                                                    return;
+                                                }
                                                 storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId, finalFacebookId, finalFacebookName, finalFacebookPhotoUrl);
                                                 ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
                                                 Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginWithProvider" +
@@ -155,6 +169,10 @@ public class FirebaseAuthManager {
                                     // Create-or-update without wiping existing fields like `nickname`
                                     db.collection("users").document(uid).set(data, SetOptions.merge())
                                             .addOnCompleteListener(task -> {
+                                                if (!task.isSuccessful()) {
+                                                    notifyLoginFailure(callback, "Could not save user profile", providerId, "profile_write", task.getException());
+                                                    return;
+                                                }
                                                 storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId, finalFacebookId, finalFacebookName, finalFacebookPhotoUrl);
                                                 ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
                                                 Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginWithProvider" +
@@ -167,7 +185,7 @@ public class FirebaseAuthManager {
                             .addOnFailureListener(e -> {
                                 Log.e("TAG_Soccer", getClass().getSimpleName() + ".loginWithProvider" +
                                         ": failed to read user data", e);
-                                callback.onLoginFailure(e.getMessage());
+                                notifyLoginFailure(callback, e.getMessage(), providerId, "profile_read", e);
                             });
                 })
                 .addOnFailureListener(e -> {
@@ -182,7 +200,7 @@ public class FirebaseAuthManager {
                                 "SHA-256 certificate hashes in Firebase for package " +
                                 context.getPackageName() + ".";
                     }
-                    callback.onLoginFailure(errorMessage);
+                    notifyLoginFailure(callback, errorMessage, providerId, "authentication", e);
                 });
     }
 
@@ -379,6 +397,10 @@ public class FirebaseAuthManager {
                                     if (doc.exists()) {
                                         db.collection("users").document(uid).set(data, SetOptions.merge())
                                                 .addOnCompleteListener(task -> {
+                                                    if (!task.isSuccessful()) {
+                                                        notifyLoginFailure(callback, "Could not save user profile", providerId, "profile_write", task.getException());
+                                                        return;
+                                                    }
                                                     storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId, finalFacebookId, finalFacebookName, finalFacebookPhotoUrl);
                                                     ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
                                                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginWithFacebookToken" +
@@ -389,6 +411,10 @@ public class FirebaseAuthManager {
                                     } else {
                                         db.collection("users").document(uid).set(data, SetOptions.merge())
                                                 .addOnCompleteListener(task -> {
+                                                    if (!task.isSuccessful()) {
+                                                        notifyLoginFailure(callback, "Could not save user profile", providerId, "profile_write", task.getException());
+                                                        return;
+                                                    }
                                                     storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId, finalFacebookId, finalFacebookName, finalFacebookPhotoUrl);
                                                     ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
                                                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginWithFacebookToken" +
@@ -401,7 +427,7 @@ public class FirebaseAuthManager {
                                 .addOnFailureListener(e -> {
                                     Log.e("TAG_Soccer", getClass().getSimpleName() + ".loginWithFacebookToken" +
                                             ": failed to read user data", e);
-                                    callback.onLoginFailure(e.getMessage());
+                                    notifyLoginFailure(callback, e.getMessage(), "facebook", "profile_read", e);
                                 });
                     }).exceptionally(ex -> {
                         Log.e("TAG_Soccer", getClass().getSimpleName() + ".loginWithFacebookToken: Failed to fetch Facebook photo URL", ex);
@@ -440,6 +466,10 @@ public class FirebaseAuthManager {
                                     if (doc.exists()) {
                                         db.collection("users").document(uid).set(data, SetOptions.merge())
                                                 .addOnCompleteListener(task -> {
+                                                    if (!task.isSuccessful()) {
+                                                        notifyLoginFailure(callback, "Could not save user profile", providerId, "profile_write", task.getException());
+                                                        return;
+                                                    }
                                                     storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId, finalFacebookId, finalFacebookName, finalFacebookPhotoUrl);
                                                     ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
                                                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginWithFacebookToken" +
@@ -450,6 +480,10 @@ public class FirebaseAuthManager {
                                     } else {
                                         db.collection("users").document(uid).set(data, SetOptions.merge())
                                                 .addOnCompleteListener(task -> {
+                                                    if (!task.isSuccessful()) {
+                                                        notifyLoginFailure(callback, "Could not save user profile", providerId, "profile_write", task.getException());
+                                                        return;
+                                                    }
                                                     storeUserData(uid, email != null ? email : "", finalNickname != null ? finalNickname : "", providerId, finalFacebookId, finalFacebookName, finalFacebookPhotoUrl);
                                                     ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
                                                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginWithFacebookToken" +
@@ -462,7 +496,7 @@ public class FirebaseAuthManager {
                                 .addOnFailureListener(e -> {
                                     Log.e("TAG_Soccer", getClass().getSimpleName() + ".loginWithFacebookToken" +
                                             ": failed to read user data", e);
-                                    callback.onLoginFailure(e.getMessage());
+                                    notifyLoginFailure(callback, e.getMessage(), "facebook", "profile_read", e);
                                 });
                         return null;
                     });
@@ -470,7 +504,7 @@ public class FirebaseAuthManager {
                 .addOnFailureListener(e -> {
                     Log.e("TAG_Soccer", getClass().getSimpleName() + ".loginWithFacebookToken" +
                             ": signInWithCredential FAILED", e);
-                    callback.onLoginFailure(e.getMessage());
+                    notifyLoginFailure(callback, e.getMessage(), "facebook", "credential_exchange", e);
                 });
     }
 
@@ -532,7 +566,8 @@ public class FirebaseAuthManager {
                                             if (email != null) data.put("email", email);
                                             String langCode = LanguageManager.getCurrentLanguageCode(context);
                                             data.put("language", langCode);
-                                            db.collection("users").document(uid).set(data, SetOptions.merge());
+                                            db.collection("users").document(uid).set(data, SetOptions.merge())
+                                                    .addOnFailureListener(e -> reportAuthFailure("email", "profile_write", e));
 
                                             // Preserve any previously-saved nickname instead of overwriting it
                                             SharedPreferences p = context.getSharedPreferences(
@@ -564,14 +599,14 @@ public class FirebaseAuthManager {
                             } else {
                                 Log.e("TAG_Soccer", getClass().getSimpleName() + ".loginUser" + ": Email is NOT verified, signing out...");
                                 firebaseAuth.signOut();
-                                callback.onLoginFailure(context.getString(R.string.please_verify_email_before_login));
+                                notifyLoginFailure(callback, context.getString(R.string.please_verify_email_before_login), "email", "email_not_verified", null);
                             }
                         } else {
                             Log.e("TAG_Soccer", getClass().getSimpleName() + ".loginUser" + ": firebaseAuth.getCurrentUser() is NULL after signIn!");
-                            callback.onLoginFailure(context.getString(R.string.authentication_failed));
+                            notifyLoginFailure(callback, context.getString(R.string.authentication_failed), "email", "missing_user", null);
                         }
                     } else {
-                        callback.onLoginFailure(Objects.requireNonNull(task.getException()).getMessage());
+                        notifyLoginFailure(callback, Objects.requireNonNull(task.getException()).getMessage(), "email", "authentication", task.getException());
                     }
                 });
     }
@@ -600,9 +635,10 @@ public class FirebaseAuthManager {
                         userData.put("language", langCode);
 
                         db.collection("users").document(uid).set(userData, SetOptions.merge())
-                                .addOnFailureListener(e ->
-                                        Log.e("TAG_Soccer", getClass().getSimpleName() + ".registerUser" + ": Failed to save user data: " + e.getMessage())
-                                );
+                                .addOnFailureListener(e -> {
+                                    reportAuthFailure("email", "registration_profile_write", e);
+                                    Log.e("TAG_Soccer", getClass().getSimpleName() + ".registerUser" + ": Failed to save user data: " + e.getMessage());
+                                });
 
 
                         // Send verification email
@@ -619,6 +655,7 @@ public class FirebaseAuthManager {
                                                 })
                                                 .show();
                                     } else {
+                                        reportAuthFailure("email", "verification_email", verifyTask.getException());
                                         String error = verifyTask.getException() != null
                                                 ? verifyTask.getException().getMessage()
                                                 : "Unknown error";
@@ -632,6 +669,7 @@ public class FirebaseAuthManager {
 
                     } else {
                         String errorMsg = task.getException() != null ? task.getException().getMessage() : "Unknown error occurred";
+                        reportAuthFailure("email", "registration", task.getException());
                         Log.e("TAG_Soccer", getClass().getSimpleName() + ".registerUser" + ": Registration failed: " + errorMsg);
                         new AlertDialog.Builder(context)
                                 .setTitle(R.string.registration_failed_title)
@@ -656,6 +694,7 @@ public class FirebaseAuthManager {
                         String errorMsg = task.getException() != null ? task.getException().getMessage() : "Unknown error occurred";
                         Log.e("TAG_Soccer", getClass().getSimpleName() + ".resetPassword" +
                                 ": Password reset failed for: " + email + ", error: " + errorMsg);
+                        reportAuthFailure("email", "password_reset", task.getException());
                         callback.onResetPasswordFailure(errorMsg);
                     }
                 });
@@ -687,7 +726,7 @@ public class FirebaseAuthManager {
 
                                         // Create-or-update without wiping existing fields like `nickname`
                                         db.collection("users").document(uid).set(data, SetOptions.merge())
-                                                .addOnCompleteListener(updateTask -> {
+                                                .addOnSuccessListener(unused -> {
                                                     ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
                                                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginAnonymously" +
                                                             ": Anonymous user document created/updated successfully");
@@ -696,24 +735,24 @@ public class FirebaseAuthManager {
                                                 .addOnFailureListener(e -> {
                                                     Log.e("TAG_Soccer", getClass().getSimpleName() + ".loginAnonymously" +
                                                             ": Failed to create/update anonymous user document: " + e.getMessage());
-                                                    callback.onLoginFailure("Failed to setup user profile: " + e.getMessage());
+                                                    notifyLoginFailure(callback, "Failed to setup user profile: " + e.getMessage(), "anonymous", "profile_write", e);
                                                 });
                                     })
                                     .addOnFailureListener(e -> {
                                         Log.e("TAG_Soccer", getClass().getSimpleName() + ".loginAnonymously" +
                                                 ": Failed to check existing user document: " + e.getMessage());
-                                        callback.onLoginFailure("Failed to verify user profile: " + e.getMessage());
+                                        notifyLoginFailure(callback, "Failed to verify user profile: " + e.getMessage(), "anonymous", "profile_read", e);
                                     });
                         } else {
                             Log.e("TAG_Soccer", getClass().getSimpleName() + ".loginAnonymously" +
                                     ": Anonymous login succeeded but user is null");
-                            callback.onLoginFailure("Authentication failed - user is null");
+                            notifyLoginFailure(callback, "Authentication failed - user is null", "anonymous", "missing_user", null);
                         }
                     } else {
                         String errorMsg = task.getException() != null ? task.getException().getMessage() : "Unknown error occurred";
                         Log.e("TAG_Soccer", getClass().getSimpleName() + ".loginAnonymously" +
                                 ": Anonymous login failed: " + errorMsg);
-                        callback.onLoginFailure(errorMsg);
+                        notifyLoginFailure(callback, errorMsg, "anonymous", "authentication", task.getException());
                     }
                 });
     }
