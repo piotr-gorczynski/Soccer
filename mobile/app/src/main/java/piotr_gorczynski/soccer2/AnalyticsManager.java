@@ -100,6 +100,26 @@ public class AnalyticsManager {
             }
         }
     }
+
+    /** A completed sign-in, distinct from opening the login screen or creating an account. */
+    public void trackLoginSuccess(String method) {
+        if (firebaseAnalytics == null) return;
+        String normalized = switch (method == null ? "unknown" : method) {
+            case "google.com", "google" -> "google";
+            case "facebook.com", "facebook" -> "facebook";
+            case "microsoft.com", "microsoft" -> "microsoft";
+            case "password", "email" -> "email";
+            case "anonymous" -> "anonymous";
+            default -> "unknown";
+        };
+        try {
+            Bundle params = new Bundle();
+            params.putString(FirebaseAnalytics.Param.METHOD, normalized);
+            firebaseAnalytics.logEvent("login_success", params);
+        } catch (Exception ignored) {
+            Log.w(TAG, "Could not report successful login");
+        }
+    }
     
     /**
      * Track successful signup with method

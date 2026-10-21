@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Gridline Soccer 🇧🇩</string>
+    <string name="anonymous_login_warning_message">Kuingia bila utambulisho hukuruhusu kushiriki katika mashindano, yakiwemo mashindano fulani yenye zawadi za pesa, kwa mujibu wa kanuni zake. Hata hivyo, ukipoteza kifaa chako, ukaweka upya programu, ukapata simu mpya, au ukatoka, uhusiano na akaunti yako isiyo na utambulisho utapotea na hutaweza kuingia tena kwenye akaunti hiyo hiyo. Unataka kuendelea?</string>
 </resources>

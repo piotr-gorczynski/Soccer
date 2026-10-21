@@ -28,3 +28,18 @@ Do not deliberately crash or change production accounts to test this feature.
 Analytics event counts are not account counts: the existing `sign_up` event is
 also emitted by successful returning-provider logins. These diagnostics do not
 change that historical event definition or identify the cause of past failures.
+
+## Successful sign-ins (17.18)
+
+`login_success` is emitted once when an explicit sign-in operation succeeds,
+before notifying its UI callback, for OAuth providers, Facebook token exchange,
+verified email/password, and anonymous sign-in. It is not emitted on screen open,
+failure, cancellation, unverified email, account creation awaiting verification,
+or merely restoring an existing session on app launch. A successful email sign-in
+still counts when the existing profile-read fallback is used.
+
+The `method` parameter is `google`, `facebook`, `microsoft`, `email`, or `anonymous`.
+Build/market metadata uses the existing default Analytics parameters. This event
+does not include user-entered values. Repeat successful sign-ins generate repeat
+events; the event count is not a count of new accounts or unique people.
+No Google Ads conversion or bidding configuration is changed by this code.

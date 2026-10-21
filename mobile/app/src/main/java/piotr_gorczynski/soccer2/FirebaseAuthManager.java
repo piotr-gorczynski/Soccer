@@ -68,6 +68,11 @@ public class FirebaseAuthManager {
         callback.onLoginFailure(message);
     }
 
+    private void notifyLoginSuccess(LoginCallback callback, String method) {
+        if (analyticsManager != null) analyticsManager.trackLoginSuccess(method);
+        callback.onLoginSuccess();
+    }
+
     public interface LoginCallback {
         void onLoginSuccess();
 
@@ -163,7 +168,7 @@ public class FirebaseAuthManager {
                                                 Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginWithProvider" +
                                                         ": login success uid=" + uid + ", nickname=" +
                                                         (finalNickname != null ? finalNickname : "null"));
-                                                callback.onLoginSuccess();
+                                                notifyLoginSuccess(callback, providerId);
                                             });
                                 } else {
                                     // Create-or-update without wiping existing fields like `nickname`
@@ -178,7 +183,7 @@ public class FirebaseAuthManager {
                                                 Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginWithProvider" +
                                                         ": login success uid=" + uid + ", nickname=" +
                                                         (finalNickname != null ? finalNickname : "null"));
-                                                callback.onLoginSuccess();
+                                                notifyLoginSuccess(callback, providerId);
                                             });
                                 }
                             })
@@ -406,7 +411,7 @@ public class FirebaseAuthManager {
                                                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginWithFacebookToken" +
                                                             ": login success uid=" + uid + ", nickname=" +
                                                             (finalNickname != null ? finalNickname : "null"));
-                                                    callback.onLoginSuccess();
+                                                    notifyLoginSuccess(callback, "facebook");
                                                 });
                                     } else {
                                         db.collection("users").document(uid).set(data, SetOptions.merge())
@@ -420,7 +425,7 @@ public class FirebaseAuthManager {
                                                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginWithFacebookToken" +
                                                             ": login success uid=" + uid + ", nickname=" +
                                                             (finalNickname != null ? finalNickname : "null"));
-                                                    callback.onLoginSuccess();
+                                                    notifyLoginSuccess(callback, "facebook");
                                                 });
                                     }
                                 })
@@ -475,7 +480,7 @@ public class FirebaseAuthManager {
                                                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginWithFacebookToken" +
                                                             ": login success uid=" + uid + ", nickname=" +
                                                             (finalNickname != null ? finalNickname : "null"));
-                                                    callback.onLoginSuccess();
+                                                    notifyLoginSuccess(callback, "facebook");
                                                 });
                                     } else {
                                         db.collection("users").document(uid).set(data, SetOptions.merge())
@@ -489,7 +494,7 @@ public class FirebaseAuthManager {
                                                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginWithFacebookToken" +
                                                             ": login success uid=" + uid + ", nickname=" +
                                                             (finalNickname != null ? finalNickname : "null"));
-                                                    callback.onLoginSuccess();
+                                                    notifyLoginSuccess(callback, "facebook");
                                                 });
                                     }
                                 })
@@ -586,7 +591,7 @@ public class FirebaseAuthManager {
                                             Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginUser" +
                                                     ": login success uid=" + uid + ", nickname=" +
                                                     (nickname != null ? nickname : "null"));
-                                            callback.onLoginSuccess();
+                                            notifyLoginSuccess(callback, "email");
                                         })
                                         .addOnFailureListener(e -> {
                                             Log.e("TAG_Soccer", getClass().getSimpleName() + ".loginUser" + ": ⚠️ Failed to load nickname from Firestore", e);
@@ -594,7 +599,7 @@ public class FirebaseAuthManager {
                                             // Keep existing prefs; MenuActivity will do a fresh fetch.
                                             Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginUser" +
                                                     ": login success uid=" + uid + ", nickname=null");
-                                            callback.onLoginSuccess();
+                                            notifyLoginSuccess(callback, "email");
                                         });
                             } else {
                                 Log.e("TAG_Soccer", getClass().getSimpleName() + ".loginUser" + ": Email is NOT verified, signing out...");
@@ -730,7 +735,7 @@ public class FirebaseAuthManager {
                                                     ((SoccerApp) context.getApplicationContext()).enableFcmAutoInit();
                                                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginAnonymously" +
                                                             ": Anonymous user document created/updated successfully");
-                                                    callback.onLoginSuccess();
+                                                    notifyLoginSuccess(callback, "anonymous");
                                                 })
                                                 .addOnFailureListener(e -> {
                                                     Log.e("TAG_Soccer", getClass().getSimpleName() + ".loginAnonymously" +

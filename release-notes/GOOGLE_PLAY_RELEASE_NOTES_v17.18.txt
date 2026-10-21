@@ -1,0 +1,67 @@
+<en-GB>
+📊 Added tracking of successful logins, including anonymous login, to better understand how players use online features.
+</en-GB>
+
+<pl-PL>
+📊 Dodano pomiar udanych logowań, także anonimowych, aby lepiej rozumieć korzystanie z funkcji online.
+</pl-PL>
+
+<de-DE>
+📊 Erfassung erfolgreicher Anmeldungen, auch anonymer, hinzugefügt, um die Nutzung der Online-Funktionen besser zu verstehen.
+</de-DE>
+
+<fr-FR>
+📊 Ajout du suivi des connexions réussies, y compris anonymes, pour mieux comprendre l’utilisation des fonctions en ligne.
+</fr-FR>
+
+<es-ES>
+📊 Añadida la medición de inicios de sesión correctos, incluidos los anónimos, para comprender mejor el uso de las funciones en línea.
+</es-ES>
+
+<ur>
+📊 آن لائن خصوصیات کے استعمال کو بہتر سمجھنے کے لیے کامیاب لاگ اِن، بشمول گمنام لاگ اِن، کی پیمائش شامل کی گئی۔
+</ur>
+
+<bn-BD>
+📊 অনলাইন সুবিধার ব্যবহার আরও ভালোভাবে বুঝতে বেনামী লগইনসহ সফল লগইন পরিমাপ যোগ করা হয়েছে।
+</bn-BD>
+
+<ne-NP>
+📊 अनलाइन सुविधाको प्रयोग राम्रोसँग बुझ्न गुमनाम लगइनसहित सफल लगइनको मापन थपियो।
+</ne-NP>
+
+<hi-IN>
+📊 ऑनलाइन सुविधाओं के उपयोग को बेहतर समझने के लिए गुमनाम लॉगिन सहित सफल लॉगिन का मापन जोड़ा गया।
+</hi-IN>
+
+<am>
+📊 የመስመር ላይ ተግባሮች አጠቃቀምን በተሻለ ለመረዳት፣ ስም-አልባ መግቢያን ጨምሮ የተሳኩ መግቢያዎችን መለካት ታክሏል።
+</am>
+
+<ar>
+📊 إضافة قياس عمليات تسجيل الدخول الناجحة، بما فيها المجهولة، لفهم استخدام الميزات عبر الإنترنت بشكل أفضل.
+</ar>
+
+<my-MM>
+📊 အွန်လိုင်းလုပ်ဆောင်ချက်များ အသုံးပြုပုံကို ပိုမိုနားလည်ရန် အမည်မပါ ဝင်ရောက်ခြင်းအပါအဝင် အောင်မြင်သော အကောင့်ဝင်ရောက်မှုများကို တိုင်းတာခြင်း ထည့်သွင်းထားသည်။
+</my-MM>
+
+<km-KH>
+📊 បន្ថែមការវាស់វែងការចូលគណនីដោយជោគជ័យ រួមទាំងការចូលដោយអនាមិក ដើម្បីយល់កាន់តែច្បាស់អំពីការប្រើមុខងារអនឡាញ។
+</km-KH>
+
+<lo-LA>
+📊 ເພີ່ມການວັດແທກການເຂົ້າລະບົບທີ່ສຳເລັດ ລວມທັງແບບນິລະນາມ ເພື່ອເຂົ້າໃຈການໃຊ້ຟັງຊັນອອນລາຍໄດ້ດີຂຶ້ນ.
+</lo-LA>
+
+<mn-MN>
+📊 Онлайн боломжуудын хэрэглээг илүү сайн ойлгохын тулд нэргүй нэвтрэлтийг оролцуулан амжилттай нэвтрэлтийг хэмжих боломж нэмлээ.
+</mn-MN>
+
+<fa-IR>
+📊 سنجش ورودهای موفق، از جمله ورود ناشناس، برای درک بهتر استفاده از قابلیت‌های آنلاین اضافه شد.
+</fa-IR>
+
+<si-LK>
+📊 සබැඳි විශේෂාංග භාවිතය වඩා හොඳින් තේරුම් ගැනීමට අනන්‍ය පිවිසුම් ඇතුළු සාර්ථක පිවිසුම් මැනීම එක් කර ඇත.
+</si-LK>

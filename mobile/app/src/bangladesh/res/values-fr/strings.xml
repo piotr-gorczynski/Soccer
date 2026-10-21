@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Gridline Soccer 🇧🇩</string>
+    <string name="anonymous_login_warning_message">La connexion anonyme permet de participer à des tournois, dont certains avec des prix en argent, conformément à leurs règles. Cependant, si vous perdez votre appareil, réinstallez l`application, obtenez un nouveau téléphone ou vous déconnectez, le lien vers votre compte anonyme sera perdu et il ne sera pas possible de vous reconnecter au même compte anonyme. Voulez-vous continuer ?</string>
 </resources>

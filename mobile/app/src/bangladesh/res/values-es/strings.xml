@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Gridline Soccer 🇧🇩</string>
+    <string name="anonymous_login_warning_message">El inicio de sesión anónimo permite participar en torneos, incluidos algunos con premios en efectivo, sujetos a sus reglas. Sin embargo, si pierdes tu dispositivo, reinstalas la aplicación, obtienes un teléfono nuevo o cierras sesión, se perderá el enlace a tu cuenta anónima y no será posible iniciar sesión en la misma cuenta anónima. ¿Quieres continuar?</string>
 </resources>
