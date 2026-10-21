@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.59
-**Last Updated:** 2026-10-18
-**Status:** Bangladesh production live: 17.16-BD (versionCode 51); backend and Hosting deployed; production tournament operational; Google Ads enabled and learning; NBR clarification remains open
+**Document Version:** 2.60
+**Last Updated:** 2026-10-21
+**Status:** Last confirmed Bangladesh production release: 17.16-BD (versionCode 51); Global 17.18 and Bangladesh 17.18-BD (versionCode 53) submitted for Google Play review; Google Ads acquiring installs; authentication and journey observability improvements awaiting release; NBR clarification remains open
 
 **Revision History**:
+- v2.60 (2026-10-21): Recorded campaign results and qualified Bengali prize messaging, Bangladesh Analytics journey findings and their attribution limits, authentication diagnostics and login_success semantics, localized Bangladesh anonymous-login notice, and owner-confirmed submission of both 17.18 variants for Google Play review. Submission is not approval or production rollout.
 - v2.59 (2026-10-18): Reconciled owner-confirmed production release, reviewer authentication/tournament join, published EN/BN Terms/privacy/regulation, real payout verification, deployed retention and enabled Google Ads campaign. Separated completed delivery from operational monitoring and unresolved NBR clarification. Earlier entries below describe status at the time, not current deployment blockers.
 - v2.58 (2026-10-07): Implemented minimal deleted-account tombstones with stable historical UIDs, active-state cleanup/retries and pseudonymous-data wording in the unpublished privacy revision. Payout/legal history retention is separate; see ACCOUNT_DELETION.md. No deployment/publication.
 - v2.57 (2026-10-07): Implemented independent versioned Global/Bangladesh Terms acceptance, immutable legal evidence, server-confirmed gating and owner-only immutable rules. Prepared BD-terms-2026-10-06 and current Global snapshots; publication/deployment, privacy amendment and device acceptance checks remain pending. See TERMS_ACCEPTANCE.md.
@@ -93,7 +94,65 @@ This streamlined approach significantly reduces development complexity, time to 
 
 **⚠️ AGE RATING STRATEGY**: The global app is rated 13+ (suitable for teens), while the Bangladesh version with cash prizes must be rated 18+ (adults only). Both versions will coexist in the Bangladesh Google Play Store. Users under 18 can continue using the global version, while users 18+ can choose to install the Bangladesh version for cash prize tournaments. See the comprehensive "Age Rating Strategy" section below for full details.
 
+## Acquisition and user journey update (21 October 2026)
+
+### Release status
+
+The owner submitted **Global 17.18** and **Bangladesh 17.18-BD**, both **versionCode 53**, to Google Play review on 21 October. Approval and production rollout have not been confirmed. The last confirmed public Bangladesh build remains **17.16-BD / 51**; the authentication diagnostics originally prepared for 17.17 are included in the submitted 17.18 release. Tests on a locally installed PROD build do not establish availability to campaign users.
+
+### Google Ads acquisition and messaging
+
+Campaign **Gridline Soccer Bangladesh - Installs** (`24360439893`) targets Bangladesh in English and Bengali. At the latest inspection it was **Eligible (Learning)**, with a **PLN 5 daily budget** and **PLN 0.10 target cost per install**.
+
+Latest supplied campaign export, **19–21 October 2026**:
+
+| Metric | Reported result |
+|--------|-----------------|
+| Impressions | 6,311 |
+| Clicks / CTR | 247 / 3.91% |
+| Spend | PLN 8.29 |
+| Installations | 21 |
+| Cost per installation | PLN 0.39 |
+| Conversions | 21 |
+
+These are a dated reporting snapshot, subject to reporting delays. The earlier 19–20 October export showed 17 installations for PLN 5.70. Acquisition is producing installations, but installation counts alone do not demonstrate successful authentication or tournament participation. The owner had not observed new Bangladesh tournament registrations at this checkpoint; reviewer participation remains separate evidence.
+
+The primary conversion action **Conv1** measures Google Play installations of `piotr_gorczynski.soccer2.bd`; the imported Firebase `first_open` action is secondary. Consequently, the Installations and Conversions columns currently describe the same acquisition objective. Their matching values are not two separate stages of the journey. **No conversion-goal or bidding change was made as part of the app changes below.** Importing and validating `login_success`, initially as a secondary conversion, remains a separate Ads configuration task; optimization toward it has not been enabled.
+
+The Bengali headline for competing in Bangladesh was replaced, with owner authorization, by **কিছু আসরে সেরার পুরস্কার** (a prize for the best in selected competitions; 24 of 30 characters). It was saved and pending review when verified; later approval is not established here. The existing description also qualifies that selected tournaments may offer organizer-provided cash prizes. Messaging must not imply that every tournament or participant receives money.
+
+### What the existing Analytics data shows
+
+Use an explicit **Bangladesh app stream filter** (`15866019828`) together with **Country = Bangladesh** in property `503154947`. Opening Analytics through the Firebase Bangladesh app URL alone did not reliably scope the report to that app.
+
+For the inspected **19–21 October** report, these filters showed **5 users and 99 events**:
+
+- `screen_view`: 61 events / 5 users; `user_engagement`: 11 / 5.
+- `login`: 7 / 3; `sign_up_error`: 4 / 1.
+- `time_to_first_game`: 5 / 5; `first_game_win`: 5 / 5.
+- `ad_impression`: 2 / 2; `app_remove`: 2 / 2.
+- One `signup_decline_reason` event had reason `just_playing_offline`.
+- The event table contained no `sign_up`, `first_open`, or `tournament_view` rows for that report.
+
+Screen activity included Menu (23 views / 5 users), Game (12 / 5), UniversalLogin (12 / 3), and Login (2 / 1), plus provider and registration screens. This supports investigating the transition from offline play to authentication and tournaments. One user explicitly preferred offline play, and one generated authentication errors; it does not prove a common cause for every player's departure.
+
+**Interpretation limits:** historical `login` means opening the login screen, while `sign_up` can also describe a returning provider/anonymous sign-in and is not a new-account count. Despite its name, `first_game_win` is emitted on first game completion; inspect its win parameter before treating it as a victory. Standard reports were still incomplete for 21 October. The 5 Analytics users are not an identified cohort of the 21 Ads installations, country is not campaign attribution, and aggregated screen/event counts do not establish an ordered individual funnel. Uninstalls cannot be causally assigned to the observed authentication errors. A separate Firestore check found a new anonymous Bangladesh account; anonymous access must be included when assessing online adoption, rather than counting only named/provider accounts.
+
+### Changes implemented to make behavior observable
+
+**Both variants — authentication diagnostics:** authentication failures now generate a Crashlytics non-fatal `AuthFailureException` and an Analytics `sign_up_error` with safe provider, stage and error-code metadata. Stages distinguish provider UI, credential exchange/authentication, profile operations, registration, verification email and password reset. Reports include app/version/build/environment context, without credentials, entered form values or raw SDK messages. User cancellation produces **`auth_cancelled` in Analytics only**, not a Crashlytics error. Failure paths were also corrected to avoid reporting successful login after failed profile writes or issuing conflicting anonymous-login callbacks. See [Authentication failure diagnostics](AUTH_FAILURE_DIAGNOSTICS.md).
+
+**Both variants — successful authentication:** new **`login_success`** is emitted once per completed explicit sign-in, with a normalized `method` parameter, including anonymous sign-in. Screen opens, failures, cancellations, unverified-email attempts, registration awaiting verification, and restoring a session on app launch do not emit it. Repeated successful sign-ins remain repeated events, not unique users or registrations. Existing historical event definitions remain unchanged. This gives a separate signal for successful access to online features, which can later be compared with tournament activity.
+
+**Bangladesh only — clearer anonymous-login notice:** the notice now explains that anonymous login permits tournament participation, including selected tournaments with cash prizes subject to their rules, and retains the warning that device loss, reinstall, phone replacement or logout can permanently lose access to that anonymous account. The term **Anonymous login** is retained. The override is translated into all 20 supported app locales; the Global notice remains unchanged. This clarifies existing access rather than introducing new tournament eligibility: age confirmation, rules acceptance and payout requirements still apply.
+
+**Validation and rollout limits:** authentication-reporting tests passed for both variants, and resource processing/merging verified the Bangladesh override and unchanged Global notice. Manual testing on a locally installed Bangladesh PROD release build delivered a Facebook cancellation to Analytics and an invalid-credential non-fatal to Crashlytics. That non-fatal was a controlled test, not evidence of a campaign user's failure. The inspected Crashlytics period showed no crashes; older authentication paths only logged messages and cannot supply the new diagnostic detail retrospectively. Include non-fatals when inspecting Crashlytics, since a crashes-only filter hides these reports.
+
+After Google Play approval and rollout, verify events against the installed **17.18-BD / 53** version, compare successful sign-ins (including anonymous) with tournament views and actual participant records, and investigate failures by provider/stage/code. Keep test devices and reviewer activity separate from acquisition conclusions. Release notes are available for [Global 17.18](../release-notes/GOOGLE_PLAY_RELEASE_NOTES_v17.18.txt) and [Bangladesh 17.18-BD](../release-notes/GOOGLE_PLAY_RELEASE_NOTES_v17.18-BD.txt).
+
 ## Table of Contents
+
+- [Acquisition and user journey update (21 October 2026)](#acquisition-and-user-journey-update-21-october-2026)
 
 1. [Legal & Regulatory Framework](#legal--regulatory-framework)
 2. [Key Requirements](#key-requirements)
@@ -2407,8 +2466,11 @@ cd mobile
 
 ## Implementation Roadmap
 
-> **Implementation status (18 October 2026):** Bangladesh is live on Google Play production as
-> **17.16-BD / versionCode 51**. Backend/privacy/retention changes are deployed to DEV/TEST/PROD,
+> **Implementation status (21 October 2026):** The last confirmed Bangladesh production release is
+> **17.16-BD / versionCode 51**. Both **Global 17.18 and Bangladesh 17.18-BD / versionCode 53**
+> have been submitted for Google Play review; approval/rollout is not yet confirmed.
+> See the [acquisition and user journey update](#acquisition-and-user-journey-update-21-october-2026).
+> Backend/privacy/retention changes are deployed to DEV/TEST/PROD,
 > Hosting is published, and the production reviewer authenticated and joined the real tournament.
 > Real bKash and Rocket Remitly transfers both reached Delivered. Google Ads is enabled and learning.
 > Checked items mean completed within their stated scope; unchecked monitoring items are ongoing,
@@ -2684,7 +2746,7 @@ cd mobile
 - [x] Configure and enable Google Ads App Campaign **Gridline Soccer Bangladesh - Installs**
   - Bangladesh; English and Bengali; no longer a draft
 - [ ] **In progress:** Google Ads learning/optimisation — **Eligible (Learning) / Bid strategy learning**.
-- [ ] **Monitoring:** Impressions, installs, conversions and CPA once learning produces traffic; no performance metrics are claimed yet.
+- [ ] **Monitoring:** Impressions, installs, conversions, successful sign-ins and tournament participation. Latest 19–21 October snapshot: 21 installations / PLN 8.29 / PLN 0.39 per install; installation conversions are not successful-login conversions. See the dated acquisition update above for reporting limits.
   - Do not attribute reviewer activity to Ads: no campaign impressions/clicks attributable to that activity were shown when it was observed.
 - [ ] **Ongoing:** Monitor participation, payout success and user satisfaction; improve campaign/store messaging using actual results.
 - [ ] **Ongoing:** Community/support operations and regulatory/tax monitoring.
@@ -3038,8 +3100,8 @@ This approach document provides a simplified, cost-effective framework for launc
 - **Note**: Push notifications not viable as most users don't have registered accounts
 
 **Next Steps**:
-1. Monitor the enabled Google Ads campaign through learning and measure actual acquisition performance.
-2. Monitor first non-reviewer Bangladesh participants and production stability.
+1. Track Google Play review and rollout of both 17.18 variants; verify the new authentication signals on the released Bangladesh build.
+2. Monitor Google Ads acquisition alongside Bangladesh successful sign-ins, authentication failures and first non-reviewer tournament participants. Validate `login_success` before separately configuring any Ads conversion/optimization change.
 3. Operate the current production tournament through its configured deadlines, results and payout.
 4. Follow `BANGLADESH_PAYMENT_FLOW.md`; mark completed only after confirmed delivery.
 5. Continue NBR withholding/reporting clarification and regulatory monitoring without asserting a 25% obligation.
@@ -3143,6 +3205,6 @@ operation, stability monitoring and external NBR clarification.
 ---
 
 
-**Status**: ✅ Product Flavor Setup Complete; production 17.16-BD / versionCode 51 live
+**Status**: ✅ Product Flavor Setup Complete; last confirmed production 17.16-BD / versionCode 51; both 17.18 variants / versionCode 53 submitted for review
 **Current Phase**: Production operations and monitoring (see Implementation Roadmap)
-**Status reconciled**: 2026-10-18 (original flavor setup details retained)
+**Status reconciled**: 2026-10-21 (original flavor setup details retained)
