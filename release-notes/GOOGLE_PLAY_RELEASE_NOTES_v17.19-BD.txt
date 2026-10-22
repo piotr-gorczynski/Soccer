@@ -1,0 +1,67 @@
+<en-GB>
+📊 Improved login measurement: successful logins are now counted only after accepting the required Terms and saving a nickname.
+</en-GB>
+
+<pl-PL>
+📊 Poprawiono pomiar logowania: udane logowanie jest teraz zliczane dopiero po akceptacji wymaganych warunków korzystania i zapisaniu nicku.
+</pl-PL>
+
+<de-DE>
+📊 Anmeldemessung verbessert: Erfolgreiche Anmeldungen werden erst nach Annahme der erforderlichen Nutzungsbedingungen und Speichern eines Spitznamens gezählt.
+</de-DE>
+
+<fr-FR>
+📊 Mesure des connexions améliorée : les connexions réussies sont comptées uniquement après acceptation des conditions requises et enregistrement d’un pseudonyme.
+</fr-FR>
+
+<es-ES>
+📊 Mejorada la medición de inicios de sesión: solo se cuentan como correctos tras aceptar las condiciones requeridas y guardar un apodo.
+</es-ES>
+
+<ur>
+📊 لاگ ان کی پیمائش بہتر بنائی گئی: کامیاب لاگ ان اب صرف مطلوبہ شرائط قبول کرنے اور عرفی نام محفوظ کرنے کے بعد شمار ہوتا ہے۔
+</ur>
+
+<bn-BD>
+📊 লগইন পরিমাপ উন্নত করা হয়েছে: প্রয়োজনীয় শর্তাবলি গ্রহণ এবং ডাকনাম সংরক্ষণের পরেই সফল লগইন গণনা করা হয়।
+</bn-BD>
+
+<ne-NP>
+📊 लगइनको मापन सुधारियो: आवश्यक सर्तहरू स्वीकार गरी उपनाम सुरक्षित गरेपछि मात्र सफल लगइन गणना गरिन्छ।
+</ne-NP>
+
+<hi-IN>
+📊 लॉगिन का मापन बेहतर किया गया: सफल लॉगिन अब आवश्यक शर्तें स्वीकार करने और उपनाम सहेजने के बाद ही गिना जाता है।
+</hi-IN>
+
+<am>
+📊 የመግቢያ መለኪያ ተሻሽሏል፦ የተሳካ መግቢያ አሁን የሚቆጠረው አስፈላጊዎቹን የአጠቃቀም ውሎች ከተቀበሉና ቅጽል ስም ካስቀመጡ በኋላ ብቻ ነው።
+</am>
+
+<ar>
+📊 تحسين قياس تسجيل الدخول: لا يُحتسب تسجيل الدخول الناجح إلا بعد قبول شروط الاستخدام المطلوبة وحفظ اسم مستعار.
+</ar>
+
+<my-MM>
+📊 အကောင့်ဝင်ရောက်မှု တိုင်းတာခြင်းကို မြှင့်တင်ထားသည်။ လိုအပ်သော စည်းကမ်းချက်များကို လက်ခံပြီး အမည်ပြောင်ကို သိမ်းဆည်းပြီးမှသာ အောင်မြင်သော အကောင့်ဝင်ရောက်မှုအဖြစ် ရေတွက်ပါသည်။
+</my-MM>
+
+<km-KH>
+📊 កែលម្អការវាស់វែងការចូលគណនី៖ ការចូលដោយជោគជ័យត្រូវបានរាប់តែបន្ទាប់ពីទទួលយកលក្ខខណ្ឌតម្រូវ និងរក្សាទុកឈ្មោះហៅក្រៅ។
+</km-KH>
+
+<lo-LA>
+📊 ປັບປຸງການວັດແທກການເຂົ້າລະບົບ: ຈະນັບວ່າເຂົ້າລະບົບສຳເລັດຫຼັງຈາກຍອມຮັບເງື່ອນໄຂທີ່ກຳນົດ ແລະບັນທຶກຊື່ຫຼິ້ນແລ້ວເທົ່ານັ້ນ.
+</lo-LA>
+
+<mn-MN>
+📊 Нэвтрэлтийн хэмжилтийг сайжрууллаа: шаардлагатай ашиглалтын нөхцөлийг зөвшөөрч, хочоо хадгалсны дараа л амжилттай нэвтрэлтэд тооцно.
+</mn-MN>
+
+<fa-IR>
+📊 سنجش ورود بهبود یافت: ورود موفق اکنون فقط پس از پذیرش شرایط استفاده لازم و ذخیره نام مستعار شمرده می‌شود.
+</fa-IR>
+
+<si-LK>
+📊 පිවිසුම් මැනීම වැඩිදියුණු කර ඇත: අවශ්‍ය භාවිත නියමයන් පිළිගෙන අන්වර්ථ නාමයක් සුරැකීමෙන් පසුව පමණක් සාර්ථක පිවිසුමක් ලෙස ගණන් කරයි.
+</si-LK>

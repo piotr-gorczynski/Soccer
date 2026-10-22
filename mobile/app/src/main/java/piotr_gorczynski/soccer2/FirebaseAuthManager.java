@@ -69,7 +69,7 @@ public class FirebaseAuthManager {
     }
 
     private void notifyLoginSuccess(LoginCallback callback, String method) {
-        if (analyticsManager != null) analyticsManager.trackLoginSuccess(method);
+        PendingLoginSuccess.begin(context, firebaseAuth.getUid(), method);
         callback.onLoginSuccess();
     }
 

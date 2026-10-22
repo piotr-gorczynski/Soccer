@@ -366,6 +366,7 @@ public class MenuActivity extends BaseActivity {
         if (allowed != null) pendingTermsAction = allowed;
         if (termsCheckInFlight) return;
         termsCheckInFlight = true;
+        String loginAttempt = PendingLoginSuccess.attempt(this, uid);
         TermsPolicy policy = TermsPolicy.required(AppFlavourDetector.isBangladeshFlavour(this), LanguageManager.getCurrentLanguageCode(this));
         new TermsRepository(FirebaseFirestore.getInstance()).accepted(uid, policy)
             .addOnSuccessListener(ok -> {
@@ -374,6 +375,18 @@ public class MenuActivity extends BaseActivity {
                 pendingTermsAction = null;
                 if (!uid.equals(FirebaseAuth.getInstance().getUid()) || isFinishing() || isDestroyed()) return;
                 if (ok) {
+                    if (loginAttempt != null) {
+                        FirebaseFirestore.getInstance().collection("users").document(uid)
+                            .get(com.google.firebase.firestore.Source.SERVER)
+                            .addOnSuccessListener(profile -> {
+                                if (uid.equals(FirebaseAuth.getInstance().getUid())
+                                        && !isFinishing() && !isDestroyed()) {
+                                    PendingLoginSuccess.complete(this, uid, loginAttempt, true,
+                                            profile.getString("nickname"),
+                                            ((SoccerApp) getApplication()).getAnalyticsManager());
+                                }
+                            });
+                    }
                     if (action != null) action.run();
                 } else openRequiredTerms();
             }).addOnFailureListener(error -> {
@@ -656,6 +669,7 @@ public class MenuActivity extends BaseActivity {
                 getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
         String nickname = prefs.getString("nickname", null);
         if (auth.getCurrentUser() == null) {
+            PendingLoginSuccess.clear(this);
             // Remove only user-specific data, preserve language preferences and other device settings
             SharedPreferences.Editor ed = prefs.edit();
             ed.remove("uid")

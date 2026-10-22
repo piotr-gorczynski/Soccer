@@ -101,7 +101,7 @@ public class AnalyticsManager {
         }
     }
 
-    /** A completed sign-in, distinct from opening the login screen or creating an account. */
+    /** Explicit sign-in completed through the required Terms and saved nickname gates. */
     public void trackLoginSuccess(String method) {
         if (firebaseAnalytics == null) return;
         String normalized = switch (method == null ? "unknown" : method) {

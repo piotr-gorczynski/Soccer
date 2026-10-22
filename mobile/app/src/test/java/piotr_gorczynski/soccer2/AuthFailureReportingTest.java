@@ -91,7 +91,7 @@ public class AuthFailureReportingTest {
         }
     }
 
-    @Test public void verifiedEmailSignInReportsSuccessOnceEvenWithProfileReadFallback() {
+    @Test public void verifiedEmailSignInDefersEventEvenWithProfileReadFallback() {
         Context context = mock(Context.class);
         SoccerApp app = mock(SoccerApp.class);
         AnalyticsManager analytics = mock(AnalyticsManager.class);
@@ -105,16 +105,19 @@ public class AuthFailureReportingTest {
                 .thenReturn(Tasks.forResult(null));
         when(auth.getCurrentUser()).thenReturn(user);
         when(user.getUid()).thenReturn("test-uid");
+        when(auth.getUid()).thenReturn("test-uid");
         when(user.isEmailVerified()).thenReturn(true);
         when(db.collection("users").document("test-uid").get(Source.SERVER))
                 .thenReturn(Tasks.forException(new RuntimeException("offline")));
         try (MockedStatic<FirebaseAuth> sdk = mockStatic(FirebaseAuth.class);
-             MockedStatic<FirebaseFirestore> store = mockStatic(FirebaseFirestore.class)) {
+             MockedStatic<FirebaseFirestore> store = mockStatic(FirebaseFirestore.class);
+             MockedStatic<PendingLoginSuccess> pending = mockStatic(PendingLoginSuccess.class)) {
             sdk.when(FirebaseAuth::getInstance).thenReturn(auth);
             store.when(FirebaseFirestore::getInstance).thenReturn(db);
             new FirebaseAuthManager(context).loginUser("test@example.com", "test-password", callback);
             Shadows.shadowOf(Looper.getMainLooper()).idle();
-            verify(analytics).trackLoginSuccess("email");
+            verify(analytics, never()).trackLoginSuccess(anyString());
+            pending.verify(() -> PendingLoginSuccess.begin(context, "test-uid", "email"));
             verify(callback).onLoginSuccess();
             verify(callback, never()).onLoginFailure(anyString());
         }

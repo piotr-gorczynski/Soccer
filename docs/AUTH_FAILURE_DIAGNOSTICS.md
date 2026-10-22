@@ -31,12 +31,20 @@ change that historical event definition or identify the cause of past failures.
 
 ## Successful sign-ins (17.18)
 
-`login_success` is emitted once when an explicit sign-in operation succeeds,
-before notifying its UI callback, for OAuth providers, Facebook token exchange,
+The submitted 17.18 build emits `login_success` after authentication, before
+Terms/nickname completion. In the subsequent source change, an explicit successful
+sign-in creates a pending attempt instead. Menu emits `login_success` only after
+server-confirmed acceptance of the required variant-specific Terms and a nonblank
+nickname read from the server. This covers OAuth providers, Facebook token exchange,
 verified email/password, and anonymous sign-in. It is not emitted on screen open,
 failure, cancellation, unverified email, account creation awaiting verification,
-or merely restoring an existing session on app launch. A successful email sign-in
-still counts when the existing profile-read fallback is used.
+or merely restoring an existing session on app launch. A pending attempt survives
+process recreation while completing onboarding; completion consumes it once.
+An existing account with Terms and nickname already in place counts after those
+checks succeed. Failed/offline checks do not count until a later successful check.
+The original provider is retained across Terms/nickname screens; account changes
+and stale callbacks cannot complete another attempt. This source change requires
+a new build and does not alter the already submitted 17.18 artifacts.
 
 The `method` parameter is `google`, `facebook`, `microsoft`, `email`, or `anonymous`.
 Build/market metadata uses the existing default Analytics parameters. This event
