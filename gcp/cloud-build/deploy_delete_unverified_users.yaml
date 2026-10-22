@@ -55,6 +55,7 @@ steps:
         mkdir -p /workspace/firebase/functions/delete-unverified-users
         cp /workspace/soccer/firebase/functions/delete-unverified-users/package.json /workspace/firebase/functions/delete-unverified-users/
         cp /workspace/soccer/firebase/functions/delete-unverified-users/index.js /workspace/firebase/functions/delete-unverified-users/
+        cp /workspace/soccer/firebase/functions/delete-unverified-users/eligibility.js /workspace/firebase/functions/delete-unverified-users/
 
   # Step 4: Install Node dependencies
   - name: 'node:18-slim'
