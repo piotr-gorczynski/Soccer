@@ -19,6 +19,34 @@ import static org.junit.Assert.*;
 @RunWith(RobolectricTestRunner.class)
 @Config(application=Application.class,sdk=34)
 public class TermsActivityTest {
+    public static class InstrumentedActivity extends TestActivity {
+        final AnalyticsManager analytics = org.mockito.Mockito.mock(AnalyticsManager.class);
+        @Override protected AnalyticsManager resolveAnalytics() { return analytics; }
+    }
+
+    @Test public void analyticsAcceptRequiresSuccessfulWriteAndReadOnlyDoesNotCount() {
+        InstrumentedActivity activity=Robolectric.buildActivity(InstrumentedActivity.class,new Intent()).create().get();
+        org.mockito.Mockito.verify(activity.analytics).trackOnboardingStep("terms_load","success","none");
+        WebView web=activity.findViewById(R.id.termsWebView);
+        web.getWebViewClient().onPageFinished(web,activity.displayedPolicy.url);
+        Button accept=activity.findViewById(R.id.acceptTerms);
+        accept.performClick();accept.performClick();
+        org.mockito.Mockito.verify(activity.analytics,org.mockito.Mockito.times(1))
+            .trackOnboardingStep("terms_save","submit","none");
+        org.mockito.Mockito.verify(activity.analytics,org.mockito.Mockito.never())
+            .trackOnboardingStep("terms_save","success","none");
+        activity.write.setException(new IllegalStateException("private account"));
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+        org.mockito.Mockito.verify(activity.analytics).trackOnboardingStep("terms_save","failure","unknown");
+        activity.write=new TaskCompletionSource<>();accept.performClick();
+        activity.write.setResult(null);Shadows.shadowOf(Looper.getMainLooper()).idle();
+        org.mockito.Mockito.verify(activity.analytics).trackOnboardingStep("terms_save","success","none");
+
+        InstrumentedActivity readOnly=Robolectric.buildActivity(InstrumentedActivity.class,
+            new Intent().putExtra(TermsActivity.READ_ONLY,true)).create().get();
+        readOnly.findViewById(R.id.declineTerms).performClick();
+        org.mockito.Mockito.verifyNoInteractions(readOnly.analytics);
+    }
     public static class TestActivity extends TermsActivity {
         int writes;
         TermsPolicy displayedPolicy;

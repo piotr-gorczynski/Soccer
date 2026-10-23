@@ -95,6 +95,7 @@ public class UniversalLoginActivity extends BaseActivity {
     }
 
     private void handleProviderLogin(String provider) {
+        analyticsManager.trackLoginAttempt(provider);
         Log.d("TAG_Soccer", getClass().getSimpleName() + ".handleProviderLogin: Provider selected = " + provider);
 
         // Disable all login buttons and show toast to prevent multiple clicks
@@ -218,7 +219,7 @@ public class UniversalLoginActivity extends BaseActivity {
 
                 // Track successful signup/login
                 analyticsManager.trackSignupSuccess(authMethod);
-                analyticsManager.addAuthBreadcrumb("login_success", "method=" + authMethod);
+                analyticsManager.addAuthBreadcrumb("authentication_success", "method=" + authMethod);
                 
                 // Set user properties for segmentation
                 FirebaseAuth auth = FirebaseAuth.getInstance();

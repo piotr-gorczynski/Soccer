@@ -9,9 +9,70 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics;
 
 /**
  * Centralized analytics manager for tracking user research events
- * Implements GA4 recommended events for auth and tournament funnels
+ * BD funnel schema 2 corrects legacy auth meanings; see docs/BANGLADESH_ANALYTICS_FUNNEL.md.
  */
 public class AnalyticsManager {
+
+    static boolean isBangladesh() { return "bangladesh".equals(BuildConfig.FLAVOR_market); }
+
+    static String normalizeMethod(String method) {
+        return switch (method == null ? "" : method) {
+            case "google", "google.com" -> "google";
+            case "facebook", "facebook.com" -> "facebook";
+            case "microsoft", "microsoft.com" -> "microsoft";
+            case "email", "password" -> "email";
+            case "anonymous" -> "anonymous";
+            default -> "unknown";
+        };
+    }
+
+    public void trackLoginAttempt(String method) {
+        if (isBangladesh()) trackControlledOutcome("login_attempt", "authentication", "submit", "none", normalizeMethod(method));
+    }
+
+    public void trackAuthenticationSucceeded(String method, boolean newAccount) {
+        if (!isBangladesh() || firebaseAnalytics == null) return;
+        Bundle params = new Bundle();
+        params.putString("method", normalizeMethod(method));
+        try {
+            firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, params);
+            if (newAccount) firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SIGN_UP, params);
+        } catch (Exception ignored) { Log.w(TAG, "Could not report authentication result"); }
+    }
+
+    public void trackAccountCreated() {
+        if (!isBangladesh() || firebaseAnalytics == null) return;
+        Bundle params = new Bundle();
+        params.putString("method", "email");
+        try { firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SIGN_UP, params); }
+        catch (Exception ignored) { Log.w(TAG, "Could not report account creation"); }
+    }
+
+    /** Fixed vocabularies only. Views reuse automatic screen_view; no field contents. */
+    public void trackOnboardingStep(String stage, String outcome, String reason) {
+        if (isBangladesh()) trackControlledOutcome("onboarding_step", stage, outcome, reason, null);
+    }
+
+    private void trackControlledOutcome(String event, String stage, String outcome, String reason, String method) {
+        if (firebaseAnalytics == null) return;
+        Bundle params = new Bundle();
+        params.putString("stage", allowed(stage, "nickname", "uniqueness", "content", "profile_write", "terms_load", "terms_save", "authentication", "join", "readiness"));
+        params.putString("outcome", allowed(outcome, "submit", "success", "failure", "declined"));
+        params.putString("reason", allowed(reason, "none", "empty", "too_long", "taken", "rejected", "network", "permission", "capacity", "not_eligible", "unknown"));
+        if (method != null) params.putString("method", normalizeMethod(method));
+        try { firebaseAnalytics.logEvent(event, params); }
+        catch (Exception ignored) { Log.w(TAG, "Could not report funnel event"); }
+    }
+
+    private static String allowed(String value, String... values) {
+        for (String candidate : values) if (candidate.equals(value)) return candidate;
+        return "unknown";
+    }
+
+    public void trackTournamentJoinSubmit() {
+        if (isBangladesh()) trackSimpleEvent("tournament_join_submit");
+    }
+
     private static final String TAG = "TAG_Soccer";
     
     private FirebaseAnalytics firebaseAnalytics;
@@ -56,6 +117,7 @@ public class AnalyticsManager {
             // Build metadata is available before login, including for automatic events.
             Bundle defaults = new Bundle();
             defaults.putString("app_variant", BuildConfig.FLAVOR_market);
+            defaults.putLong("funnel_schema", isBangladesh() ? 2 : 1);
             defaults.putString("app_environment", BuildConfig.FLAVOR_environment);
             defaults.putString("app_build_type", BuildConfig.BUILD_TYPE);
             firebaseAnalytics.setDefaultEventParameters(defaults);
@@ -75,7 +137,7 @@ public class AnalyticsManager {
     }
     
     // ═══════════════════════════════════════════════════════════════════
-    // AUTH FUNNEL EVENTS (GA4 Recommended)
+    // AUTH FUNNEL EVENTS (recommended login/sign_up plus documented legacy events)
     // ═══════════════════════════════════════════════════════════════════
     
     /**
@@ -94,7 +156,7 @@ public class AnalyticsManager {
         
         if (firebaseAnalytics != null) {
             try {
-                firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, new Bundle());
+                if (!isBangladesh()) firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, new Bundle());
             } catch (Exception e) {
                 Log.e(TAG, "Failed to log to Firebase Analytics", e);
             }
@@ -126,6 +188,7 @@ public class AnalyticsManager {
      * @param method "google", "email", "facebook", "anonymous"
      */
     public void trackSignupSuccess(String method) {
+        if (isBangladesh()) return; // BD sign_up is emitted from Auth new-user evidence.
         String safeMethod = method != null ? method : "unknown";
         Log.d(TAG, "Tracked: signup success with method=" + safeMethod);
         
@@ -156,40 +219,7 @@ public class AnalyticsManager {
      * @param step Step in the authentication flow where error occurred
      */
     public void trackSignupError(String method, String errorCode, String errorMessage, String step) {
-        // Null-safe parameter handling to prevent NullPointerExceptions
-        String safeMethod = method != null ? method : "unknown";
-        String safeErrorCode = errorCode != null ? errorCode : "unknown_error";
-        String safeErrorMessage = errorMessage != null ? errorMessage : "Unknown error occurred";
-        String safeStep = step != null ? step : "unknown_step";
-        
-        // Always log locally for debugging, even if Firebase is unavailable
-        Log.d(TAG, "Tracked: signup error - " + safeMethod + " at " + safeStep + ": " + safeErrorMessage);
-        
-        // Check if Firebase services are available before using them
-        if (crashlytics != null) {
-            try {
-                crashlytics.log("Signup error - Method: " + safeMethod + ", Step: " + safeStep + ", Error: " + safeErrorMessage);
-            } catch (Exception e) {
-                Log.e(TAG, "Failed to log crash analytics for signup error", e);
-            }
-        } else {
-            Log.w(TAG, "Crashlytics not available, skipping crash analytics for signup error");
-        }
-        
-        if (firebaseAnalytics != null) {
-            try {
-                Bundle params = new Bundle();
-                params.putString("method", safeMethod);
-                params.putString("code", safeErrorCode);
-                params.putString("message", safeErrorMessage);
-                params.putString("step", safeStep);
-                firebaseAnalytics.logEvent("sign_up_error", params);
-            } catch (Exception e) {
-                Log.e(TAG, "Failed to log Firebase analytics for signup error", e);
-            }
-        } else {
-            Log.w(TAG, "Firebase Analytics not available, skipping analytics for signup error");
-        }
+        trackControlledOutcome("sign_up_error", "authentication", "failure", "unknown", normalizeMethod(method));
     }
 
     /** Reports one failed auth operation without sending SDK messages or causes. */
@@ -207,6 +237,10 @@ public class AnalyticsManager {
                 params.putString("method", method);
                 params.putString("step", step);
                 params.putString("code", diagnostic.code);
+                params.putString("reason", cancelled ? "cancelled" :
+                    "UNKNOWN".equals(diagnostic.code) ? "unknown" :
+                    error instanceof com.google.firebase.FirebaseNetworkException || diagnostic.code.contains("NETWORK") || diagnostic.code.contains("UNAVAILABLE") ? "network" :
+                    diagnostic.code.contains("INVALID_CREDENTIAL") || diagnostic.code.contains("WRONG_PASSWORD") ? "invalid_credentials" : "provider_error");
                 firebaseAnalytics.logEvent(cancelled ? "auth_cancelled" : "sign_up_error", params);
             } catch (Exception ignored) {
                 Log.w(TAG, "Could not report auth analytics");
@@ -227,7 +261,7 @@ public class AnalyticsManager {
      */
     public void trackSignupDeclineReason(String reason) {
         // Null-safe parameter handling
-        String safeReason = reason != null ? reason : "no_reason_provided";
+        String safeReason = allowed(reason, "just_playing_offline", "privacy_concerns", "too_complicated", "dont_use_google_email", "other", "no_reason_provided");
         
         Log.d(TAG, "Tracked: signup decline reason=" + safeReason);
         
@@ -301,7 +335,7 @@ public class AnalyticsManager {
             try {
                 Bundle params = new Bundle();
                 params.putString("tournament_id", tournamentId);
-                params.putBoolean("is_authenticated", isUserAuthenticated);
+                params.putLong("is_authenticated", isUserAuthenticated ? 1 : 0);
                 firebaseAnalytics.logEvent("tournament_join_start", params);
             } catch (Exception e) {
                 Log.e(TAG, "Failed to log to Firebase Analytics", e);
@@ -341,34 +375,16 @@ public class AnalyticsManager {
      * @param errorMessage Human-readable error message
      */
     public void trackTournamentJoinError(String tournamentId, String errorCode, String errorMessage) {
-        // Null-safe parameter handling to prevent NullPointerExceptions
-        String safeTournamentId = tournamentId != null ? tournamentId : "unknown_tournament";
-        String safeErrorCode = errorCode != null ? errorCode : "unknown_error";
-        String safeErrorMessage = errorMessage != null ? errorMessage : "Unknown error occurred";
-        
-        Log.d(TAG, "Tracked: tournament join error for " + safeTournamentId + ": " + safeErrorMessage);
-        
-        if (crashlytics != null) {
-            try {
-                crashlytics.log("Tournament join error: " + safeTournamentId + " - " + safeErrorMessage);
-            } catch (Exception e) {
-                Log.e(TAG, "Failed to log to Crashlytics", e);
-            }
-        }
-        
-        if (firebaseAnalytics != null) {
-            try {
-                Bundle params = new Bundle();
-                params.putString("tournament_id", safeTournamentId);
-                params.putString("error_code", safeErrorCode);
-                params.putString("error_message", safeErrorMessage);
-                firebaseAnalytics.logEvent("tournament_join_error", params);
-            } catch (Exception e) {
-                Log.e(TAG, "Failed to log to Firebase Analytics", e);
-            }
-        }
+        String reason = switch (errorCode == null ? "" : errorCode.toUpperCase(java.util.Locale.ROOT)) {
+            case "UNAVAILABLE", "DEADLINE_EXCEEDED", "NETWORK_ERROR" -> "network";
+            case "PERMISSION_DENIED", "UNAUTHENTICATED" -> "permission";
+            case "RESOURCE_EXHAUSTED" -> "capacity";
+            case "FAILED_PRECONDITION", "ALREADY_EXISTS", "NOT_FOUND", "INVALID_ARGUMENT" -> "not_eligible";
+            default -> "unknown";
+        };
+        trackControlledOutcome("tournament_join_error", "join", "failure", reason, null);
     }
-    
+
     // ═══════════════════════════════════════════════════════════════════
     // NICKNAME CHECK EVENTS
     // ═══════════════════════════════════════════════════════════════════
@@ -379,32 +395,10 @@ public class AnalyticsManager {
      * @param errorMessage Error message from the check
      */
     public void trackNicknameCheckError(String nickname, String errorMessage) {
-        // Null-safe parameter handling
-        String safeNickname = nickname != null ? nickname : "unknown_nickname";
-        String safeErrorMessage = errorMessage != null ? errorMessage : "Unknown error occurred";
-        
-        Log.d(TAG, "Tracked: nickname check error for " + safeNickname + ": " + safeErrorMessage);
-        
-        if (crashlytics != null) {
-            try {
-                crashlytics.log("Nickname AI check error: " + safeNickname + " - " + safeErrorMessage);
-            } catch (Exception e) {
-                Log.e(TAG, "Failed to log to Crashlytics", e);
-            }
-        }
-        
-        if (firebaseAnalytics != null) {
-            try {
-                Bundle params = new Bundle();
-                params.putString("nickname", safeNickname);
-                params.putString("error_message", safeErrorMessage);
-                firebaseAnalytics.logEvent("nickname_check_error", params);
-            } catch (Exception e) {
-                Log.e(TAG, "Failed to log to Firebase Analytics", e);
-            }
-        }
+        // Compatibility entry point: never transmit the nickname or the message.
+        trackControlledOutcome("nickname_check_error", "content", "failure", "unknown", null);
     }
-    
+
     // ═══════════════════════════════════════════════════════════════════
     // ANONYMOUS USER FLOW EVENTS
     // ═══════════════════════════════════════════════════════════════════
@@ -489,9 +483,9 @@ public class AnalyticsManager {
         if (firebaseAnalytics != null) {
             try {
                 Bundle params = new Bundle();
-                params.putBoolean("won", won);
+                params.putLong("won", won ? 1 : 0);
                 params.putInt("game_type", gameType);
-                params.putBoolean("is_anonymous", isAnonymous);
+                params.putLong("is_anonymous", isAnonymous ? 1 : 0);
                 firebaseAnalytics.logEvent("first_game_win", params);
             } catch (Exception e) {
                 Log.e(TAG, "Failed to log to Firebase Analytics", e);

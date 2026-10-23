@@ -29,6 +29,7 @@ import java.util.Objects;
 public class TournamentsActivity extends BaseActivity {
 
     private AnalyticsManager analyticsManager;
+    private boolean listViewReported;
     private RemoteConfigHelper remoteConfigHelper;
 
     @SuppressLint("NotifyDataSetChanged")
@@ -186,11 +187,14 @@ public class TournamentsActivity extends BaseActivity {
             emptyText.setVisibility(any ? View.GONE : View.VISIBLE);
 
             // Track tournament list viewed with analytics
-            analyticsManager.trackTournamentListViewed(
+            if (!AnalyticsManager.isBangladesh() || !listViewReported) {
+                listViewReported = true;
+                analyticsManager.trackTournamentListViewed(
                     registeringAdapter.getItemCount(),
                     runningAdapter.getItemCount(),
                     endedAdapter.getItemCount()
-            );
+                );
+            }
 
         });
     }

@@ -229,6 +229,7 @@ public class RegulationActivity extends BaseActivity {
             return;
         }
 
+        analyticsManager.trackTournamentJoinSubmit();
         acceptBtn.setEnabled(false);
         Toast.makeText(this, R.string.registration_in_progress, Toast.LENGTH_SHORT).show();
 
@@ -293,7 +294,7 @@ public class RegulationActivity extends BaseActivity {
                         
                         // Track tournament join error
                         analyticsManager.trackTournamentJoinError(tournamentId, errorCode, errorMessage);
-                        analyticsManager.addTournamentBreadcrumb("join_error", tournamentId, "error=" + errorCode + ", msg=" + errorMessage);
+                        analyticsManager.addTournamentBreadcrumb("join_error", tournamentId, "join_request_failed");
                         
                         Log.e("TAG_Soccer", getClass().getSimpleName() + ".acceptAndJoin" +
                                 ": joinTournament failed", e);
@@ -303,6 +304,7 @@ public class RegulationActivity extends BaseActivity {
         }).addOnFailureListener(e -> {
             Log.e("TAG_Soccer", getClass().getSimpleName() + ".acceptAndJoin" +
                     ": token refresh failed", e);
+            analyticsManager.trackTournamentJoinError(tournamentId, "token_refresh", null);
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
             acceptBtn.setEnabled(true);
         });

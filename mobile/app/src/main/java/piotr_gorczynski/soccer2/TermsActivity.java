@@ -13,12 +13,14 @@ public class TermsActivity extends BaseActivity {
     public static final String READ_ONLY = "terms_read_only";
     private boolean readOnly, accepted, loaded, saving;
     private String uid;
+    private AnalyticsManager analytics;
     private TermsPolicy policy;
     private Button accept;
     private java.util.concurrent.ExecutorService executor;
     @Override protected void onCreate(Bundle state) {
         super.onCreate(state); setContentView(R.layout.activity_terms);
         PrivacyPolicyLinks.bind(this,R.id.termsPrivacyLink);
+        analytics=resolveAnalytics();
         uid=currentUid(); readOnly=getIntent().getBooleanExtra(READ_ONLY,false);
         policy=TermsPolicy.required(AppFlavourDetector.isBangladeshFlavour(this),LanguageManager.getCurrentLanguageCode(this));
         accept=findViewById(R.id.acceptTerms); accept.setEnabled(false);
@@ -46,6 +48,7 @@ public class TermsActivity extends BaseActivity {
             retry.setVisibility(android.view.View.GONE);retry.setEnabled(false);
             loadDocument(policy, html -> {
                 if(isFinishing()||isDestroyed()) return;
+                trackTerms("terms_load", "success", "none");
                 loaded=true;
                 web.loadDataWithBaseURL(policy.url,html,"text/html","UTF-8",policy.url);
             }, error -> {
@@ -59,10 +62,12 @@ public class TermsActivity extends BaseActivity {
         retry.setOnClickListener(v->load.run());
         accept.setOnClickListener(v->{
             if(readOnly||!loaded||saving||uid==null||!uid.equals(currentUid()))return;
+            trackTerms("terms_save", "submit", "none");
             saving=true;accept.setEnabled(false);retry.setEnabled(false);
             saveAcceptance(uid,policy)
                 .addOnSuccessListener(unused->{
                     if(!uid.equals(currentUid())){finish();return;}
+                    trackTerms("terms_save", "success", "none");
                     accepted=true;finish();
                 }).addOnFailureListener(error->{saving=false;accept.setEnabled(loaded);retry.setEnabled(true);
                     logFailure("saveAcceptance", error);
@@ -76,7 +81,14 @@ public class TermsActivity extends BaseActivity {
         load.run();
     }
     protected String currentUid() { return FirebaseAuth.getInstance().getUid(); }
+    protected AnalyticsManager resolveAnalytics() {
+        return getApplication() instanceof SoccerApp app ? app.getAnalyticsManager() : null;
+    }
     private void logFailure(String stage, Exception error) {
+        trackTerms("loadDocument".equals(stage) ? "terms_load" : "terms_save", "failure",
+                error instanceof java.net.SocketTimeoutException
+                    || error instanceof java.net.UnknownHostException
+                    || error instanceof java.net.ConnectException ? "network" : "unknown");
         String code = error instanceof com.google.firebase.firestore.FirebaseFirestoreException
             ? ((com.google.firebase.firestore.FirebaseFirestoreException) error).getCode().name() : "N/A";
         // Exception messages/stack traces can contain account or document identifiers.
@@ -100,6 +112,9 @@ public class TermsActivity extends BaseActivity {
             } catch(Exception error) { runOnUiThread(() -> failure.accept(error)); }
         });
     }
-    private void leave(){if(!readOnly&&!accepted&&uid!=null&&uid.equals(currentUid()))FirebaseAuth.getInstance().signOut();finish();}
+    private void trackTerms(String stage, String outcome, String reason) {
+        if (!readOnly && analytics != null) analytics.trackOnboardingStep(stage, outcome, reason);
+    }
+    private void leave(){if(!readOnly&&!accepted)trackTerms("terms_save","declined","none");if(!readOnly&&!accepted&&uid!=null&&uid.equals(currentUid()))FirebaseAuth.getInstance().signOut();finish();}
     @Override protected void onDestroy(){if(executor!=null)executor.shutdownNow();super.onDestroy();}
 }

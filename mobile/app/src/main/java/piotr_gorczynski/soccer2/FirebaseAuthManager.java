@@ -99,6 +99,8 @@ public class FirebaseAuthManager {
                 .addOnSuccessListener(authResult -> {
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginWithProvider" +
                             ": signInWithProvider success");
+                    if (analyticsManager != null) analyticsManager.trackAuthenticationSucceeded(
+                            providerId, authResult.getAdditionalUserInfo() != null && authResult.getAdditionalUserInfo().isNewUser());
                     String uid = authResult.getUser().getUid();
                     String email = authResult.getUser().getEmail();
                     
@@ -332,6 +334,8 @@ public class FirebaseAuthManager {
                     String providerId = "facebook.com";
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginWithFacebookToken" +
                             ": signInWithCredential success");
+                    if (analyticsManager != null) analyticsManager.trackAuthenticationSucceeded(
+                            providerId, authResult.getAdditionalUserInfo() != null && authResult.getAdditionalUserInfo().isNewUser());
                     String uid = authResult.getUser().getUid();
                     String email = authResult.getUser().getEmail();
                     
@@ -547,6 +551,7 @@ public class FirebaseAuthManager {
     }
 
     public void loginUser(String email, String password, LoginCallback callback) {
+        if (analyticsManager != null) analyticsManager.trackLoginAttempt("email");
         firebaseAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -557,6 +562,7 @@ public class FirebaseAuthManager {
                             Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginUser" + ": Email Verified: " + isVerified);
 
                             if (isVerified) {
+                                if (analyticsManager != null) analyticsManager.trackAuthenticationSucceeded("email", false);
                                 FirebaseFirestore db = FirebaseFirestore.getInstance();
                                 // Always fetch the latest data directly from the server so that
                                 // a stale or missing cache entry doesn't cause us to miss an
@@ -621,6 +627,7 @@ public class FirebaseAuthManager {
         firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
+                        if (analyticsManager != null) analyticsManager.trackAccountCreated();
                         Log.d("TAG_Soccer", getClass().getSimpleName() + ".registerUser" + ": User registered: " + Objects.requireNonNull(firebaseAuth.getCurrentUser()).getEmail());
                         Toast.makeText(context, SafeStringFormatter.safeGetString(context, R.string.registered_as, firebaseAuth.getCurrentUser().getEmail()), Toast.LENGTH_SHORT).show();
 
@@ -706,6 +713,7 @@ public class FirebaseAuthManager {
     }
 
     public void loginAnonymously(LoginCallback callback) {
+        if (analyticsManager != null) analyticsManager.trackLoginAttempt("anonymous");
         Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginAnonymously" +
                 ": Starting anonymous login");
 
@@ -714,6 +722,9 @@ public class FirebaseAuthManager {
                     if (task.isSuccessful()) {
                         FirebaseUser user = firebaseAuth.getCurrentUser();
                         if (user != null) {
+                            if (analyticsManager != null) analyticsManager.trackAuthenticationSucceeded("anonymous",
+                                    task.getResult() != null && task.getResult().getAdditionalUserInfo() != null
+                                            && task.getResult().getAdditionalUserInfo().isNewUser());
                             String uid = user.getUid();
                             Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginAnonymously" +
                                     ": Anonymous login successful, UID: " + uid);

@@ -31,6 +31,9 @@ change that historical event definition or identify the cause of past failures.
 
 ## Successful sign-ins (17.18)
 
+For the subsequent Bangladesh schema-2 recommended `login`/`sign_up` definitions,
+privacy fixes and full funnel audit, see [Bangladesh analytics funnel](BANGLADESH_ANALYTICS_FUNNEL.md).
+
 The submitted 17.18 build emits `login_success` after authentication, before
 Terms/nickname completion. In the subsequent source change, an explicit successful
 sign-in creates a pending attempt instead. Menu emits `login_success` only after

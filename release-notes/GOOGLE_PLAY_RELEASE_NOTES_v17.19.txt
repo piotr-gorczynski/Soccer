@@ -1,67 +1,84 @@
 <en-GB>
 📊 Improved login measurement: successful logins are now counted only after accepting the required Terms and saving a nickname.
+🔧 Improved login error diagnostics, including network failures.
 </en-GB>
 
 <pl-PL>
 📊 Poprawiono pomiar logowania: udane logowanie jest teraz zliczane dopiero po akceptacji wymaganych warunków korzystania i zapisaniu nicku.
+🔧 Ulepszono diagnostykę błędów logowania, w tym problemów z siecią.
 </pl-PL>
 
 <de-DE>
 📊 Anmeldemessung verbessert: Erfolgreiche Anmeldungen werden erst nach Annahme der erforderlichen Nutzungsbedingungen und Speichern eines Spitznamens gezählt.
+🔧 Verbesserte Diagnose von Anmeldefehlern, einschließlich Netzwerkproblemen.
 </de-DE>
 
 <fr-FR>
 📊 Mesure des connexions améliorée : les connexions réussies sont comptées uniquement après acceptation des conditions requises et enregistrement d’un pseudonyme.
+🔧 Diagnostic amélioré des erreurs de connexion, notamment des problèmes réseau.
 </fr-FR>
 
 <es-ES>
 📊 Mejorada la medición de inicios de sesión: solo se cuentan como correctos tras aceptar las condiciones requeridas y guardar un apodo.
+🔧 Mejorado el diagnóstico de errores de inicio de sesión, incluidos los fallos de red.
 </es-ES>
 
 <ur>
 📊 لاگ ان کی پیمائش بہتر بنائی گئی: کامیاب لاگ ان اب صرف مطلوبہ شرائط قبول کرنے اور عرفی نام محفوظ کرنے کے بعد شمار ہوتا ہے۔
+🔧 لاگ ان کی خرابیوں، بشمول نیٹ ورک کے مسائل، کی تشخیص بہتر بنائی گئی۔
 </ur>
 
 <bn-BD>
 📊 লগইন পরিমাপ উন্নত করা হয়েছে: প্রয়োজনীয় শর্তাবলি গ্রহণ এবং ডাকনাম সংরক্ষণের পরেই সফল লগইন গণনা করা হয়।
+🔧 নেটওয়ার্ক সমস্যাসহ লগইন ত্রুটি শনাক্তকরণ উন্নত করা হয়েছে।
 </bn-BD>
 
 <ne-NP>
 📊 लगइनको मापन सुधारियो: आवश्यक सर्तहरू स्वीकार गरी उपनाम सुरक्षित गरेपछि मात्र सफल लगइन गणना गरिन्छ।
+🔧 नेटवर्क समस्यासहित लगइन त्रुटिहरूको निदान सुधारियो।
 </ne-NP>
 
 <hi-IN>
 📊 लॉगिन का मापन बेहतर किया गया: सफल लॉगिन अब आवश्यक शर्तें स्वीकार करने और उपनाम सहेजने के बाद ही गिना जाता है।
+🔧 नेटवर्क समस्याओं सहित लॉगिन त्रुटियों की जाँच बेहतर की गई।
 </hi-IN>
 
 <am>
 📊 የመግቢያ መለኪያ ተሻሽሏል፦ የተሳካ መግቢያ አሁን የሚቆጠረው አስፈላጊዎቹን የአጠቃቀም ውሎች ከተቀበሉና ቅጽል ስም ካስቀመጡ በኋላ ብቻ ነው።
+🔧 የኔትወርክ ችግሮችን ጨምሮ የመግቢያ ስህተቶችን መለየት ተሻሽሏል።
 </am>
 
 <ar>
 📊 تحسين قياس تسجيل الدخول: لا يُحتسب تسجيل الدخول الناجح إلا بعد قبول شروط الاستخدام المطلوبة وحفظ اسم مستعار.
+🔧 تحسين تشخيص أخطاء تسجيل الدخول، بما فيها مشاكل الشبكة.
 </ar>
 
 <my-MM>
 📊 အကောင့်ဝင်ရောက်မှု တိုင်းတာခြင်းကို မြှင့်တင်ထားသည်။ လိုအပ်သော စည်းကမ်းချက်များကို လက်ခံပြီး အမည်ပြောင်ကို သိမ်းဆည်းပြီးမှသာ အောင်မြင်သော အကောင့်ဝင်ရောက်မှုအဖြစ် ရေတွက်ပါသည်။
+🔧 ကွန်ရက်ပြဿနာများအပါအဝင် အကောင့်ဝင်ရောက်မှု အမှားများကို စစ်ဆေးဖော်ထုတ်ခြင်း ပိုမိုကောင်းမွန်လာသည်။
 </my-MM>
 
 <km-KH>
 📊 កែលម្អការវាស់វែងការចូលគណនី៖ ការចូលដោយជោគជ័យត្រូវបានរាប់តែបន្ទាប់ពីទទួលយកលក្ខខណ្ឌតម្រូវ និងរក្សាទុកឈ្មោះហៅក្រៅ។
+🔧 កែលម្អការវិនិច្ឆ័យកំហុសចូលគណនី រួមទាំងបញ្ហាបណ្ដាញ។
 </km-KH>
 
 <lo-LA>
 📊 ປັບປຸງການວັດແທກການເຂົ້າລະບົບ: ຈະນັບວ່າເຂົ້າລະບົບສຳເລັດຫຼັງຈາກຍອມຮັບເງື່ອນໄຂທີ່ກຳນົດ ແລະບັນທຶກຊື່ຫຼິ້ນແລ້ວເທົ່ານັ້ນ.
+🔧 ປັບປຸງການວິນິດໄສຂໍ້ຜິດພາດໃນການເຂົ້າລະບົບ ລວມທັງບັນຫາເຄືອຂ່າຍ.
 </lo-LA>
 
 <mn-MN>
 📊 Нэвтрэлтийн хэмжилтийг сайжрууллаа: шаардлагатай ашиглалтын нөхцөлийг зөвшөөрч, хочоо хадгалсны дараа л амжилттай нэвтрэлтэд тооцно.
+🔧 Сүлжээний асуудал зэрэг нэвтрэх үеийн алдааны оношилгоог сайжрууллаа.
 </mn-MN>
 
 <fa-IR>
 📊 سنجش ورود بهبود یافت: ورود موفق اکنون فقط پس از پذیرش شرایط استفاده لازم و ذخیره نام مستعار شمرده می‌شود.
+🔧 تشخیص خطاهای ورود، از جمله مشکلات شبکه، بهبود یافت.
 </fa-IR>
 
 <si-LK>
 📊 පිවිසුම් මැනීම වැඩිදියුණු කර ඇත: අවශ්‍ය භාවිත නියමයන් පිළිගෙන අන්වර්ථ නාමයක් සුරැකීමෙන් පසුව පමණක් සාර්ථක පිවිසුමක් ලෙස ගණන් කරයි.
+🔧 ජාල ගැටලු ඇතුළු පිවිසුම් දෝෂ හඳුනාගැනීම වැඩිදියුණු කර ඇත.
 </si-LK>

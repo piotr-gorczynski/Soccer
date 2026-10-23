@@ -139,6 +139,7 @@ public class AuthFailureReportingTest {
             new FirebaseAuthManager(context).loginUser("test@example.com", "test-password", callback);
             Shadows.shadowOf(Looper.getMainLooper()).idle();
             verify(analytics).trackAuthFailure("email", "authentication", failure);
+            verify(analytics).trackLoginAttempt("email");
             verify(callback).onLoginFailure("UI message");
             verify(callback, never()).onLoginSuccess();
             verifyNoMoreInteractions(analytics, callback);

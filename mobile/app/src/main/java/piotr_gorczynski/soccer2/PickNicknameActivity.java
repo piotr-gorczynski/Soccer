@@ -81,11 +81,14 @@ public class PickNicknameActivity extends BaseActivity {
 
     private void saveNickname() {
         final String nickname = editNickname.getText().toString().trim();
+        analyticsManager.trackOnboardingStep("nickname", "submit", "none");
         if (nickname.isEmpty()) {
+                analyticsManager.trackOnboardingStep("nickname", "failure", "empty");
             Toast.makeText(this, R.string.nickname_required, Toast.LENGTH_SHORT).show();
             return;
         }
         if (nickname.length() > NICK_MAX) {
+                analyticsManager.trackOnboardingStep("nickname", "failure", "too_long");
             Toast.makeText(this, R.string.nickname_too_long, Toast.LENGTH_SHORT).show();
             return;
         }
@@ -99,11 +102,12 @@ public class PickNicknameActivity extends BaseActivity {
         btnConfirm.setEnabled(false);
         showNicknameCheckProgress(true);
         
-        Log.d("TAG_Soccer", "PickNicknameActivity.saveNickname: Checking uniqueness for nickname: " + nickname);
+        Log.d("TAG_Soccer", "Nickname setup operation");
         
         // Step 1: Check uniqueness first
         checkNicknameUniqueness(nickname, (isUnique, hadError) -> {
             if (hadError) {
+                analyticsManager.trackOnboardingStep("uniqueness", "failure", "unknown");
                 showNicknameCheckProgress(false);
                 btnConfirm.setEnabled(true);
                 Toast.makeText(PickNicknameActivity.this,
@@ -112,9 +116,10 @@ public class PickNicknameActivity extends BaseActivity {
                 return;
             }
             if (!isUnique) {
+                analyticsManager.trackOnboardingStep("uniqueness", "failure", "taken");
                 showNicknameCheckProgress(false);
                 btnConfirm.setEnabled(true);
-                Log.d("TAG_Soccer", "PickNicknameActivity.saveNickname: Nickname already taken: " + nickname);
+                Log.d("TAG_Soccer", "Nickname setup operation");
                 Toast.makeText(PickNicknameActivity.this,
                         R.string.nickname_taken,
                         Toast.LENGTH_SHORT).show();
@@ -122,7 +127,7 @@ public class PickNicknameActivity extends BaseActivity {
             }
             
             // Step 2: Check content appropriateness via AI
-            Log.d("TAG_Soccer", "PickNicknameActivity.saveNickname: Nickname is unique, checking content appropriateness via AI for: " + nickname);
+            Log.d("TAG_Soccer", "Nickname setup operation");
             checkNicknameContent(nickname, (allowed, reason, hadContentError) -> {
                 showNicknameCheckProgress(false);
                 if (hadContentError) {
@@ -135,15 +140,16 @@ public class PickNicknameActivity extends BaseActivity {
                     return;
                 }
                 if (!allowed) {
+                analyticsManager.trackOnboardingStep("content", "failure", "rejected");
                     btnConfirm.setEnabled(true);
-                    Log.d("TAG_Soccer", "PickNicknameActivity.saveNickname: Nickname flagged as inappropriate: " + nickname + ", reason: " + reason);
+                    Log.d("TAG_Soccer", "Nickname setup operation");
                     Toast.makeText(PickNicknameActivity.this,
                             R.string.nickname_inappropriate,
                             Toast.LENGTH_SHORT).show();
                     return;
                 }
                 
-                Log.d("TAG_Soccer", "PickNicknameActivity.saveNickname: Nickname passed all checks, proceeding to save: " + nickname);
+                Log.d("TAG_Soccer", "Nickname setup operation");
                 proceedWithSavingNickname(uid, nickname);
             });
         });
@@ -157,7 +163,7 @@ public class PickNicknameActivity extends BaseActivity {
                 .get()
                 .addOnCompleteListener(this, task -> {
                     if (!task.isSuccessful()) {
-                        Log.e("TAG_Soccer", "PickNicknameActivity.checkNicknameUniqueness: Uniqueness check failed", task.getException());
+                        Log.e("TAG_Soccer", "Nickname uniqueness check failed");
                         callback.onComplete(false, true);
                         return;
                     }
@@ -174,6 +180,7 @@ public class PickNicknameActivity extends BaseActivity {
         db.collection("users").document(uid)
                 .set(data, SetOptions.merge())
                 .addOnSuccessListener(v -> {
+                    analyticsManager.trackOnboardingStep("nickname", "success", "none");
                     getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
                             .edit()
                             .putString("nickname", nickname)
@@ -199,6 +206,7 @@ public class PickNicknameActivity extends BaseActivity {
                     finish();
                 })
                 .addOnFailureListener(e -> {
+                    analyticsManager.trackOnboardingStep("profile_write", "failure", "unknown");
                     btnConfirm.setEnabled(true);
                     Toast.makeText(PickNicknameActivity.this,
                             R.string.nickname_save_failed,
@@ -213,7 +221,7 @@ public class PickNicknameActivity extends BaseActivity {
     }
 
     private void checkNicknameContent(String nickname, ContentCheckCallback callback) {
-        Log.d("TAG_Soccer", "PickNicknameActivity.checkNicknameContent: Calling cloud function for: " + nickname);
+        Log.d("TAG_Soccer", "Nickname setup operation");
         functions
                 .getHttpsCallable("checkNickname")
                 .call(Collections.singletonMap("nickname", nickname))
@@ -225,16 +233,16 @@ public class PickNicknameActivity extends BaseActivity {
                         Object reasonValue = dataMap.get("reason");
                         if (allowedValue instanceof Boolean) {
                             String reason = reasonValue != null ? reasonValue.toString() : "";
-                            Log.d("TAG_Soccer", "PickNicknameActivity.checkNicknameContent: Response - allowed=" + allowedValue + ", reason=" + reason);
+                            Log.d("TAG_Soccer", "Nickname setup operation");
                             callback.onComplete((Boolean) allowedValue, reason, false);
                             return;
                         }
                     }
-                    Log.e("TAG_Soccer", "PickNicknameActivity.checkNicknameContent: Invalid response from checkNickname function: " + data);
+                    Log.e("TAG_Soccer", "Nickname check returned an invalid response");
                     callback.onComplete(false, "", true);
                 })
                 .addOnFailureListener(this, e -> {
-                    Log.e("TAG_Soccer", "PickNicknameActivity.checkNicknameContent: checkNickname callable failed", e);
+                    Log.e("TAG_Soccer", "Nickname content check failed");
                     callback.onComplete(false, "", true);
                 });
     }

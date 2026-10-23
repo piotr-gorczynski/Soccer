@@ -385,6 +385,12 @@ public class MenuActivity extends BaseActivity {
                                             profile.getString("nickname"),
                                             ((SoccerApp) getApplication()).getAnalyticsManager());
                                 }
+                            }).addOnFailureListener(error -> {
+                                if (uid.equals(FirebaseAuth.getInstance().getUid())
+                                        && loginAttempt.equals(PendingLoginSuccess.attempt(this, uid))) {
+                                    ((SoccerApp) getApplication()).getAnalyticsManager()
+                                        .trackOnboardingStep("readiness", "failure", "unknown");
+                                }
                             });
                     }
                     if (action != null) action.run();
