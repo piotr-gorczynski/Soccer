@@ -99,6 +99,7 @@ public class FirebaseAuthManager {
                 .addOnSuccessListener(authResult -> {
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginWithProvider" +
                             ": signInWithProvider success");
+                    AnalyticsUserIdentity.sync(context);
                     if (analyticsManager != null) analyticsManager.trackAuthenticationSucceeded(
                             providerId, authResult.getAdditionalUserInfo() != null && authResult.getAdditionalUserInfo().isNewUser());
                     String uid = authResult.getUser().getUid();
@@ -334,6 +335,7 @@ public class FirebaseAuthManager {
                     String providerId = "facebook.com";
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginWithFacebookToken" +
                             ": signInWithCredential success");
+                    AnalyticsUserIdentity.sync(context);
                     if (analyticsManager != null) analyticsManager.trackAuthenticationSucceeded(
                             providerId, authResult.getAdditionalUserInfo() != null && authResult.getAdditionalUserInfo().isNewUser());
                     String uid = authResult.getUser().getUid();
@@ -562,6 +564,7 @@ public class FirebaseAuthManager {
                             Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginUser" + ": Email Verified: " + isVerified);
 
                             if (isVerified) {
+                                AnalyticsUserIdentity.sync(context);
                                 if (analyticsManager != null) analyticsManager.trackAuthenticationSucceeded("email", false);
                                 FirebaseFirestore db = FirebaseFirestore.getInstance();
                                 // Always fetch the latest data directly from the server so that
@@ -627,6 +630,7 @@ public class FirebaseAuthManager {
         firebaseAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
+                        AnalyticsUserIdentity.sync(context);
                         if (analyticsManager != null) analyticsManager.trackAccountCreated();
                         Log.d("TAG_Soccer", getClass().getSimpleName() + ".registerUser" + ": User registered: " + Objects.requireNonNull(firebaseAuth.getCurrentUser()).getEmail());
                         Toast.makeText(context, SafeStringFormatter.safeGetString(context, R.string.registered_as, firebaseAuth.getCurrentUser().getEmail()), Toast.LENGTH_SHORT).show();
@@ -722,6 +726,7 @@ public class FirebaseAuthManager {
                     if (task.isSuccessful()) {
                         FirebaseUser user = firebaseAuth.getCurrentUser();
                         if (user != null) {
+                            AnalyticsUserIdentity.sync(context);
                             if (analyticsManager != null) analyticsManager.trackAuthenticationSucceeded("anonymous",
                                     task.getResult() != null && task.getResult().getAdditionalUserInfo() != null
                                             && task.getResult().getAdditionalUserInfo().isNewUser());

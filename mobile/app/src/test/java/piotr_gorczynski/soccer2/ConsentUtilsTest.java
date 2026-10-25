@@ -9,6 +9,7 @@ import androidx.preference.PreferenceManager;
 import com.google.android.ump.ConsentInformation;
 import com.google.android.ump.UserMessagingPlatform;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.auth.FirebaseAuth;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
@@ -45,10 +46,14 @@ public class ConsentUtilsTest {
         SharedPreferences prefs = mock(SharedPreferences.class);
         ConsentInformation consent = mock(ConsentInformation.class);
         FirebaseAnalytics firebase = mock(FirebaseAnalytics.class);
+        FirebaseAuth auth = mock(FirebaseAuth.class);
+        when(auth.getUid()).thenReturn("consent-test-account");
         when(consent.getConsentStatus()).thenReturn(status);
         try (MockedStatic<PreferenceManager> preferences = mockStatic(PreferenceManager.class);
              MockedStatic<UserMessagingPlatform> ump = mockStatic(UserMessagingPlatform.class);
-             MockedStatic<FirebaseAnalytics> sdk = mockStatic(FirebaseAnalytics.class)) {
+             MockedStatic<FirebaseAnalytics> sdk = mockStatic(FirebaseAnalytics.class);
+             MockedStatic<FirebaseAuth> authentication = mockStatic(FirebaseAuth.class)) {
+            authentication.when(FirebaseAuth::getInstance).thenReturn(auth);
             preferences.when(() -> PreferenceManager.getDefaultSharedPreferences(context)).thenReturn(prefs);
             ump.when(() -> UserMessagingPlatform.getConsentInformation(context)).thenReturn(consent);
             sdk.when(() -> FirebaseAnalytics.getInstance(context)).thenReturn(firebase);
@@ -60,7 +65,9 @@ public class ConsentUtilsTest {
                                 ? FirebaseAnalytics.ConsentStatus.GRANTED : FirebaseAnalytics.ConsentStatus.DENIED,
                         FirebaseAnalytics.ConsentType.AD_STORAGE, expected[i][1]
                                 ? FirebaseAnalytics.ConsentStatus.GRANTED : FirebaseAnalytics.ConsentStatus.DENIED));
-                // Exact map and no other calls: never replace UMP's AD_USER_DATA /
+                verify(firebase).setUserId(expected[i][0]
+                        ? AnalyticsUserIdentity.forUid("consent-test-account") : null);
+                // Exact map and identity only: never replace UMP's AD_USER_DATA /
                 // AD_PERSONALIZATION choices or force allow_ad_personalization_signals.
                 verifyNoMoreInteractions(firebase);
                 clearInvocations(firebase);

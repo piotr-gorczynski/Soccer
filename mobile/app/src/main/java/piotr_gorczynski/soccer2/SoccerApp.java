@@ -286,6 +286,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
         auth.addAuthStateListener(a -> {
+            AnalyticsUserIdentity.sync(this);
             if (a.getCurrentUser() != null) {
                 startPresence(a.getCurrentUser().getUid());
                 enableFcmAutoInit();

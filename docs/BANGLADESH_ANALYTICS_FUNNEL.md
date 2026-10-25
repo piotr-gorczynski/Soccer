@@ -1,5 +1,8 @@
 # Bangladesh acquisition and onboarding instrumentation
 
+Follow-up account correlation: [Analytics User-ID](ANALYTICS_USER_ID.md) describes
+the consent-gated pseudonymous identity added after 17.19 was submitted.
+
 Audit and source changes: 23 October 2026. Prepared for 17.19 (54), not a claim of
 store rollout, production collection, Ads import or GA4 configuration changes.
 

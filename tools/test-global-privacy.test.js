@@ -23,7 +23,9 @@ test('Global privacy covers every application language', () => {
   for (const lang of languages) {
     const html = read(`privacy-${lang}.html`);
     assert.ok(html.includes(`lang="${lang}"`), lang);
-    assert.ok(html.includes('GLOBAL-privacy-2026-10-13'), lang);
+    assert.ok(html.includes('GLOBAL-privacy-2026-10-25'), lang);
+    assert.equal((html.match(/id="account-linked-diagnostics"/g) || []).length, 1, lang);
+    assert.ok(html.includes('Analytics User-ID'), lang);
     assert.ok(!html.includes('\uFFFD'), lang);
     assert.deepEqual(sectionShape(html), sectionShape(read('privacy-en.html')), lang);
     if (['ar', 'fa', 'ur'].includes(lang)) assert.ok(html.includes('dir="rtl"'), lang);
@@ -59,5 +61,18 @@ test('privacy.html remains the current English destination for immutable Terms',
   for (const lang of languages) {
     assert.ok(read(`terms/GLOBAL-terms-2026-10-13/${lang}.html`)
       .includes('https://piotr-gorczynski.com/privacy.html'), lang);
+  }
+});
+
+test('Bangladesh privacy has current dated identity disclosures in both supported languages', () => {
+  for (const lang of ['en', 'bn']) {
+    const html = read(`bangladesh/privacy-${lang}.html`);
+    assert.ok(html.includes(`lang="${lang}"`), lang);
+    assert.ok(html.includes('BD-privacy-2026-10-25'), lang);
+    assert.ok(!html.includes('BD-privacy-2026-10-10'), lang);
+    assert.ok(html.includes(lang === 'bn' ? '২৫ অক্টোবর ২০২৬' : '25 October 2026'), lang);
+    assert.equal((html.match(/id="account-linked-diagnostics"/g) || []).length, 1, lang);
+    assert.ok(html.includes('Analytics User-ID'), lang);
+    assert.ok(!html.includes('\uFFFD'), lang);
   }
 });

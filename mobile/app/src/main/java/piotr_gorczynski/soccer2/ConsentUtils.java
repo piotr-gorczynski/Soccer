@@ -116,6 +116,8 @@ public class ConsentUtils {
         );
 
         firebaseAnalytics.setConsent(consentMap);
+        // Consent may change without an auth transition, including withdrawal.
+        AnalyticsUserIdentity.sync(ctx);
         
         Log.d("TAG_Soccer", "Firebase Analytics consent updated successfully");
     }
