@@ -1,0 +1,84 @@
+<en-GB>
+🔧 Improved account-linked analytics and error diagnostics using pseudonymous identifiers, with consent and sign-out handling.
+📄 Updated the Privacy Policy to explain account-linked analytics and diagnostics.
+</en-GB>
+
+<pl-PL>
+🔧 Ulepszono analitykę i diagnostykę błędów powiązane z kontem za pomocą pseudonimowych identyfikatorów, z obsługą zgód i wylogowania.
+📄 Zaktualizowano politykę prywatności, opisując powiązanie analityki i diagnostyki z kontem.
+</pl-PL>
+
+<de-DE>
+🔧 Kontobezogene Analyse und Fehlerdiagnose mit pseudonymen Kennungen sowie Berücksichtigung von Einwilligung und Abmeldung verbessert.
+📄 Datenschutzerklärung um Informationen zur kontobezogenen Analyse und Diagnose aktualisiert.
+</de-DE>
+
+<fr-FR>
+🔧 Analyses et diagnostics associés au compte améliorés grâce à des identifiants pseudonymes, avec gestion du consentement et de la déconnexion.
+📄 Politique de confidentialité mise à jour pour expliquer ces traitements liés au compte.
+</fr-FR>
+
+<es-ES>
+🔧 Mejoradas la analítica y el diagnóstico de errores vinculados a la cuenta mediante identificadores seudónimos, con gestión del consentimiento y cierre de sesión.
+📄 Actualizada la política de privacidad para explicar estos tratamientos vinculados a la cuenta.
+</es-ES>
+
+<ur>
+🔧 مستعار شناختی کوڈز کے ذریعے اکاؤنٹ سے منسلک تجزیات اور خرابی کی تشخیص بہتر بنائی گئی، رضامندی اور لاگ آؤٹ کی سہولت کے ساتھ۔
+📄 اکاؤنٹ سے منسلک تجزیات اور تشخیص کی وضاحت کے لیے رازداری کی پالیسی اپ ڈیٹ کی گئی۔
+</ur>
+
+<bn-BD>
+🔧 সম্মতি ও লগআউটের ব্যবস্থা বজায় রেখে ছদ্মনামযুক্ত শনাক্তকারীর মাধ্যমে অ্যাকাউন্ট-সংযুক্ত বিশ্লেষণ ও ত্রুটি নির্ণয় উন্নত করা হয়েছে।
+📄 অ্যাকাউন্ট-সংযুক্ত বিশ্লেষণ ও ত্রুটি নির্ণয় ব্যাখ্যা করতে গোপনীয়তা নীতি হালনাগাদ করা হয়েছে।
+</bn-BD>
+
+<ne-NP>
+🔧 सहमति र लगआउटको व्यवस्थासहित छद्मनाम पहिचानकर्ताद्वारा खातासँग जोडिएको विश्लेषण र त्रुटि निदान सुधारियो।
+📄 खातासँग जोडिएको विश्लेषण र निदान स्पष्ट पार्न गोपनीयता नीति अद्यावधिक गरियो।
+</ne-NP>
+
+<hi-IN>
+🔧 सहमति और लॉगआउट प्रबंधन के साथ छद्मनाम पहचानकर्ताओं द्वारा खाते से जुड़ी विश्लेषिकी और त्रुटि निदान बेहतर किए गए।
+📄 खाते से जुड़ी विश्लेषिकी और निदान समझाने के लिए गोपनीयता नीति अपडेट की गई।
+</hi-IN>
+
+<am>
+🔧 የፈቃድና የመውጫ አያያዝን በማካተት፣ በቅጽል መለያዎች የሚጠቀሙ ከመለያ ጋር የተያያዙ ትንታኔዎችና የስህተት ምርመራዎች ተሻሽለዋል።
+📄 ከመለያ ጋር የተያያዙ ትንታኔዎችንና ምርመራዎችን ለማብራራት የግላዊነት ፖሊሲው ተዘምኗል።
+</am>
+
+<ar>
+🔧 تحسين التحليلات وتشخيص الأخطاء المرتبطين بالحساب باستخدام معرّفات مستعارة، مع مراعاة الموافقة وتسجيل الخروج.
+📄 تحديث سياسة الخصوصية لشرح التحليلات والتشخيص المرتبطين بالحساب.
+</ar>
+
+<my-MM>
+🔧 သဘောတူညီချက်နှင့် အကောင့်ထွက်ခြင်းကို ထည့်သွင်းစီမံပြီး အမည်ဝှက်သတ်မှတ်ချက်များဖြင့် အကောင့်ဆိုင်ရာ ခွဲခြမ်းစိတ်ဖြာမှုနှင့် အမှားရှာဖွေမှုကို မြှင့်တင်ထားသည်။
+📄 အကောင့်နှင့်ချိတ်ဆက်သော ခွဲခြမ်းစိတ်ဖြာမှုနှင့် အမှားရှာဖွေမှုကို ရှင်းပြရန် ကိုယ်ရေးအချက်အလက်မူဝါဒကို အပ်ဒိတ်လုပ်ထားသည်။
+</my-MM>
+
+<km-KH>
+🔧 កែលម្អការវិភាគ និងការវិនិច្ឆ័យកំហុសដែលភ្ជាប់នឹងគណនី ដោយប្រើលេខសម្គាល់ក្លែងឈ្មោះ ជាមួយការគ្រប់គ្រងការយល់ព្រម និងការចេញពីគណនី។
+📄 ធ្វើបច្ចុប្បន្នភាពគោលការណ៍ឯកជនភាព ដើម្បីពន្យល់ការវិភាគ និងរោគវិនិច្ឆ័យដែលភ្ជាប់នឹងគណនី។
+</km-KH>
+
+<lo-LA>
+🔧 ປັບປຸງການວິເຄາະ ແລະວິນິດໄສຂໍ້ຜິດພາດທີ່ເຊື່ອມກັບບັນຊີ ໂດຍໃຊ້ລະຫັດນາມແຝງ ພ້ອມການຈັດການຄວາມຍິນຍອມ ແລະການອອກລະບົບ.
+📄 ອັບເດດນະໂຍບາຍຄວາມເປັນສ່ວນຕົວ ເພື່ອອະທິບາຍການວິເຄາະ ແລະວິນິດໄສທີ່ເຊື່ອມກັບບັນຊີ.
+</lo-LA>
+
+<mn-MN>
+🔧 Зөвшөөрөл болон гарах үйлдлийг харгалзан нууц нэр бүхий танигчаар бүртгэлтэй холбосон шинжилгээ, алдааны оношилгоог сайжрууллаа.
+📄 Бүртгэлтэй холбосон шинжилгээ, оношилгоог тайлбарлан нууцлалын бодлогыг шинэчиллээ.
+</mn-MN>
+
+<fa-IR>
+🔧 تحلیل و عیب‌یابی مرتبط با حساب با شناسه‌های مستعار و مدیریت رضایت و خروج بهبود یافت.
+📄 سیاست حریم خصوصی برای توضیح تحلیل و عیب‌یابی مرتبط با حساب به‌روز شد.
+</fa-IR>
+
+<si-LK>
+🔧 කැමැත්ත සහ පිටවීම කළමනාකරණය සමඟ අන්වර්ථ හඳුනාගැනීම් භාවිතයෙන් ගිණුමට සම්බන්ධ විශ්ලේෂණ සහ දෝෂ නිර්ණය වැඩිදියුණු කර ඇත.
+📄 ගිණුමට සම්බන්ධ විශ්ලේෂණ සහ දෝෂ නිර්ණය පැහැදිලි කිරීමට පෞද්ගලිකත්ව ප්‍රතිපත්තිය යාවත්කාලීන කර ඇත.
+</si-LK>
