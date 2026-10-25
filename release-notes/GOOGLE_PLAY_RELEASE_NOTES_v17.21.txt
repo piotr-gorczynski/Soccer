@@ -1,0 +1,79 @@
+<en-GB>
+Fixed tournament player lists: nicknames and activity status now refresh together as data loads, without reopening the screen. Loading indicators replace temporary technical IDs.
+</en-GB>
+
+<pl-PL>
+Poprawiono listy graczy w turniejach: nicki i status aktywności odświeżają się podczas pobierania danych, bez ponownego otwierania ekranu. Zamiast tymczasowych identyfikatorów technicznych pojawia się informacja o ładowaniu.
+</pl-PL>
+
+<de-DE>
+Turnier-Spielerlisten korrigiert: Spitznamen und Aktivitätsstatus werden beim Laden gemeinsam aktualisiert, ohne den Bildschirm erneut zu öffnen. Ladeanzeigen ersetzen vorläufige technische IDs.
+</de-DE>
+
+<fr-FR>
+Correction des listes de joueurs des tournois : les pseudos et le statut d’activité se mettent à jour ensemble pendant le chargement, sans rouvrir l’écran. Les identifiants techniques temporaires sont remplacés par une indication de chargement.
+</fr-FR>
+
+<es-ES>
+Corregidas las listas de jugadores de torneos: los apodos y el estado de actividad se actualizan juntos al cargar los datos, sin volver a abrir la pantalla. Los identificadores técnicos temporales se sustituyen por indicadores de carga.
+</es-ES>
+
+<ur>
+ٹورنامنٹ کے کھلاڑیوں کی فہرست درست کر دی گئی: ڈیٹا لوڈ ہوتے ہی عرفی نام اور سرگرمی کی حالت ایک ساتھ تازہ ہوتے ہیں، اسکرین دوبارہ کھولنے کی ضرورت نہیں۔ عارضی تکنیکی شناختی کوڈز کی جگہ لوڈنگ کا پیغام دکھایا جاتا ہے۔
+</ur>
+
+<bn-BD>
+টুর্নামেন্টের খেলোয়াড় তালিকা ঠিক করা হয়েছে: ডেটা লোড হওয়ার সঙ্গে সঙ্গে ডাকনাম ও সক্রিয়তার অবস্থা একসঙ্গে হালনাগাদ হয়, স্ক্রিন আবার খুলতে হয় না। অস্থায়ী প্রযুক্তিগত আইডির বদলে লোড হওয়ার বার্তা দেখানো হয়।
+</bn-BD>
+
+<ne-NP>
+प्रतियोगिताका खेलाडी सूची सुधारियो: डेटा लोड हुँदा उपनाम र सक्रियताको स्थिति सँगै अद्यावधिक हुन्छन्, स्क्रिन फेरि खोल्नु पर्दैन। अस्थायी प्राविधिक आईडीको सट्टा लोड हुँदै गरेको सन्देश देखाइन्छ।
+</ne-NP>
+
+<hi-IN>
+टूर्नामेंट की खिलाड़ी सूची सुधारी गई: डेटा लोड होते ही उपनाम और सक्रियता की स्थिति साथ अपडेट होते हैं, स्क्रीन दोबारा खोलने की ज़रूरत नहीं। अस्थायी तकनीकी आईडी की जगह लोड होने का संदेश दिखता है।
+</hi-IN>
+
+<am>
+የውድድር ተጫዋቾች ዝርዝር ተስተካክሏል፦ ውሂብ ሲጫን ቅጽል ስሞችና የእንቅስቃሴ ሁኔታ ማያ ገጹን እንደገና መክፈት ሳያስፈልግ አብረው ይዘምናሉ። ጊዜያዊ ቴክኒካዊ መለያዎች በመጫን መልዕክት ተተክተዋል።
+</am>
+
+<ar>
+إصلاح قوائم لاعبي البطولات: تُحدَّث الأسماء المستعارة وحالة النشاط معًا عند تحميل البيانات دون إعادة فتح الشاشة. تظهر مؤشرات التحميل بدلًا من المعرّفات التقنية المؤقتة.
+</ar>
+
+<my-MM>
+ပြိုင်ပွဲကစားသမားစာရင်းကို ပြင်ဆင်ထားသည်။ ဒေတာတင်နေစဉ် အမည်ပြောင်နှင့် လှုပ်ရှားမှုအခြေအနေကို တစ်ပြိုင်နက် အပ်ဒိတ်လုပ်ပေးသဖြင့် မျက်နှာပြင်ကို ပြန်ဖွင့်ရန် မလိုတော့ပါ။ ယာယီနည်းပညာဆိုင်ရာ ID များအစား ဒေတာတင်နေကြောင်း ပြသပေးသည်။
+</my-MM>
+
+<km-KH>
+បានកែសម្រួលបញ្ជីអ្នកលេងក្នុងការប្រកួត៖ ឈ្មោះហៅក្រៅ និងស្ថានភាពសកម្មភាពធ្វើបច្ចុប្បន្នភាពជាមួយគ្នាពេលទិន្នន័យផ្ទុក ដោយមិនចាំបាច់បើកអេក្រង់ឡើងវិញ។ សារកំពុងផ្ទុកជំនួសលេខសម្គាល់បច្ចេកទេសបណ្ដោះអាសន្ន។
+</km-KH>
+
+<lo-LA>
+ແກ້ໄຂລາຍຊື່ຜູ້ຫຼິ້ນໃນການແຂ່ງຂັນ: ຊື່ຫຼິ້ນ ແລະສະຖານະການໃຊ້ງານອັບເດດພ້ອມກັນເມື່ອໂຫຼດຂໍ້ມູນ ໂດຍບໍ່ຕ້ອງເປີດໜ້າຈໍຄືນ. ສະແດງຂໍ້ຄວາມກຳລັງໂຫຼດແທນລະຫັດເຕັກນິກຊົ່ວຄາວ.
+</lo-LA>
+
+<mn-MN>
+Тэмцээний тоглогчдын жагсаалтыг заслаа: өгөгдөл ачаалагдахад хоч болон идэвхийн төлөв хамт шинэчлэгдэнэ. Дэлгэцийг дахин нээх шаардлагагүй. Түр техникийн ID-ийн оронд ачаалж буйг харуулна.
+</mn-MN>
+
+<fa-IR>
+فهرست بازیکنان مسابقات اصلاح شد: نام‌های مستعار و وضعیت فعالیت هنگام بارگیری داده‌ها با هم به‌روز می‌شوند و نیازی به باز کردن دوباره صفحه نیست. پیام بارگیری جایگزین شناسه‌های فنی موقت شده است.
+</fa-IR>
+
+<si-LK>
+තරගාවලි ක්‍රීඩක ලැයිස්තු නිවැරදි කරන ලදී: දත්ත පූරණය වන විට අන්වර්ථ නාම සහ ක්‍රියාකාරී තත්ත්වය එකවර යාවත්කාලීන වේ. තිරය නැවත විවෘත කිරීම අවශ්‍ය නොවේ. තාවකාලික තාක්ෂණික හැඳුනුම් වෙනුවට පූරණය වන බව පෙන්වයි.
+</si-LK>
+
+<mg-MG>
+Nohatsaraina ny lisitry ny mpilalao amin’ny fifaninanana: havaozina miaraka ny solon’anarana sy ny satan’ny hetsika rehefa tonga ny angona, tsy mila manokatra indray ny efijery. Hafatra mampiseho ny fampidirana angona no misolo ny ID teknika vonjimaika.
+</mg-MG>
+
+<so-SO>
+Liiska ciyaartoyda tartanka waa la saxay: naanaysyada iyo xaaladda firfircoonida ayaa wada cusboonaada marka xogtu soo degto, iyada oo aan shaashadda dib loo furin. Farriinta soo dejinta ayaa beddesha aqoonsiyada farsamo ee ku meel gaarka ah.
+</so-SO>
+
+<sw>
+Orodha za wachezaji wa mashindano zimerekebishwa: majina ya utani na hali ya shughuli husasishwa pamoja data inapopakiwa, bila kufungua skrini tena. Ujumbe wa kupakia unaonyeshwa badala ya vitambulisho vya muda vya kiufundi.
+</sw>

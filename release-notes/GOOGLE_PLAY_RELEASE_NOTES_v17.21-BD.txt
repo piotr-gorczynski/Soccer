@@ -1,0 +1,7 @@
+<en-GB>
+Fixed tournament player lists: nicknames and activity status now refresh together as data loads, without reopening the screen. Loading indicators replace temporary technical IDs.
+</en-GB>
+
+<bn-BD>
+টুর্নামেন্টের খেলোয়াড় তালিকা ঠিক করা হয়েছে: ডেটা লোড হওয়ার সঙ্গে সঙ্গে ডাকনাম ও সক্রিয়তার অবস্থা একসঙ্গে হালনাগাদ হয়, স্ক্রিন আবার খুলতে হয় না। অস্থায়ী প্রযুক্তিগত আইডির বদলে লোড হওয়ার বার্তা দেখানো হয়।
+</bn-BD>

@@ -218,13 +218,13 @@ public class MatchAdapter
         /* ----------- nickname lookup ----------- */
         String nick = nickCache.get(oppUid);
         if (!nameListeners.containsKey(oppUid)) {
-            h.opponent.setText(Objects.requireNonNull(oppUid).substring(0, 6));   // temporary stub
+            h.opponent.setText(nick != null ? nick : context.getString(R.string.menu_loading_message));
 
             nameListeners.put(oppUid, FirebaseFirestore.getInstance().collection("users").document(oppUid)
                     .addSnapshotListener((d, error) -> {
-                        if (error != null || d == null) return;
-                        String n = UserDisplayName.from(d);
-                        if (n == null) return;
+                        String n = error != null || d == null
+                                ? null : UserDisplayName.from(d);
+                        if (n == null || n.trim().isEmpty()) n = context.getString(R.string.player_label);
 
                         nickCache.put(oppUid, n);
                         int idx = indexForUid(oppUid);          // or use the doc-id instead of UID
@@ -233,63 +233,63 @@ public class MatchAdapter
                         }
                     }));
         } else {
-            h.opponent.setText(nick);   // nickname already cached
+            h.opponent.setText(nick != null ? nick : context.getString(R.string.menu_loading_message));
         }
 
         /* ---------- PRESENCE (now from RTDB) ---------- */
         String pState = presCache.get(oppUid);
-        if (pState == null) {                       // first time we see this UID
-            h.presence.setText("…");                // quick placeholder
+        if (pState == null) {
+            h.presence.setText(context.getString(R.string.menu_loading_message));                // quick placeholder
 
-            DatabaseReference ref = FirebaseDatabase.getInstance()
-                    .getReference("status").child(Objects.requireNonNull(oppUid));
+            if (!presSubs.containsKey(oppUid)) {
+                DatabaseReference ref = FirebaseDatabase.getInstance()
+                        .getReference("status").child(Objects.requireNonNull(oppUid));
 
-            // one ValueEventListener per UID
-            ValueEventListener l = new ValueEventListener() {
-                @Override public void onDataChange(@NonNull DataSnapshot snap) {
-                    if (!snap.exists()) return;
+                // one ValueEventListener per UID
+                ValueEventListener l = new ValueEventListener() {
+                    @Override public void onDataChange(@NonNull DataSnapshot snap) {
+                        String stateStr   = snap.child("state").getValue(String.class);
+                        Long   lastHbBox  = snap.child("last_heartbeat").getValue(Long.class);
+                        long   lastHb     = lastHbBox != null ? lastHbBox : 0L;
 
-                    String stateStr   = snap.child("state").getValue(String.class);
-                    Long   lastHbBox  = snap.child("last_heartbeat").getValue(Long.class);
-                    long   lastHb     = lastHbBox != null ? lastHbBox : 0L;
+                        String state = "offline";
+                        if ("online".equals(stateStr)) {
+                            state = "online";
+                        } else if (lastHb > 0L) {
+                            state = "active";
+                        }
 
-                    String state = "offline";
-                    if ("online".equals(stateStr)) {
-                        state = "online";
-                    } else if (lastHb > 0L) {
-                        state = "active";
+                        presCache.put(oppUid, state);
+                        hbCache.put(oppUid, lastHb);    // for “Last seen …”
+
+                        int idx = indexForUid(oppUid);
+                        if (idx != RecyclerView.NO_POSITION) {
+                            notifyItemChanged(idx, "presence");   // 🔄 partial update
+                        }
                     }
+                    @Override public void onCancelled(@NonNull DatabaseError e) { }
+                };
 
-                    presCache.put(oppUid, state);
-                    hbCache.put(oppUid, lastHb);    // for “Last seen …”
-
-                    int idx = indexForUid(oppUid);
-                    if (idx != RecyclerView.NO_POSITION) {
-                        notifyItemChanged(idx, "presence");   // 🔄 partial update
-                    }
-                }
-                @Override public void onCancelled(@NonNull DatabaseError e) { }
-            };
-
-            ref.addValueEventListener(l);
-            presSubs.put(oppUid, new RtdbSub(ref, l));   // ✅ now types match
+                presSubs.put(oppUid, new RtdbSub(ref, l));
+                ref.addValueEventListener(l);
+            }
         } else {                                    // we already have cached data
             String label;
             int colour = switch (pState) {
                 case "online" -> {
-                    label  = "Online";
+                    label  = context.getString(R.string.presence_online);
                     yield ContextCompat.getColor(
                             h.itemView.getContext(), R.color.colorGreenDark);
                 }
                 case "active" -> {
                     Long cached = hbCache.get(oppUid);   // may be null
                     long lastHb = cached != null ? cached : 0L;
-                    label = "Last seen " + englishRelative(lastHb);
+                    label = context.getString(R.string.presence_last_seen, englishRelative(lastHb));
                     yield ContextCompat.getColor(
                             h.itemView.getContext(), R.color.colorGreenDark);
                 }
                 default -> {
-                    label  = "Offline";
+                    label  = context.getString(R.string.presence_offline);
                     yield ContextCompat.getColor(
                             h.itemView.getContext(), R.color.colorGrey);
                 }
@@ -357,67 +357,72 @@ public class MatchAdapter
                                  @NonNull List<Object> payloads) {
 
         if (!payloads.isEmpty()) {
-            Object tag = payloads.get(0);
+            // RecyclerView may merge independent asynchronous updates into one bind.
+            for (Object tag : payloads) {
 
-            // --- presence only ---
-            if ("presence".equals(tag)) {
-                // ---- inside the payload branch for "presence" ----
-                String pState = Objects.requireNonNullElse(
-                        presCache.get(h.oppUid),        // may be null
-                        "offline");                     // safe fallback
+                // --- presence only ---
+                if ("presence".equals(tag)) {
+                    // ---- inside the payload branch for "presence" ----
+                    String pState = Objects.requireNonNullElse(
+                            presCache.get(h.oppUid),        // may be null
+                            "offline");                     // safe fallback
 
-                long lastHb = 0L;
-                Long boxed   = hbCache.get(h.oppUid);   // could be null
-                if (boxed != null) lastHb = boxed;
+                    long lastHb = 0L;
+                    Long boxed   = hbCache.get(h.oppUid);   // could be null
+                    if (boxed != null) lastHb = boxed;
 
-                // build label / colour safely
-                String label;
-                int colour = switch (pState) {
-                    case "online"  -> {
-                        label = "Online";
-                        yield ContextCompat.getColor(
-                                h.itemView.getContext(), R.color.colorGreenDark);
-                    }
-                    case "active"  -> {
-                        label = "Last seen " + englishRelative(lastHb);
-                        yield ContextCompat.getColor(
-                                h.itemView.getContext(), R.color.colorGreenDark);
-                    }
-                    default        -> {
-                        label = "Offline";
-                        yield ContextCompat.getColor(
-                                h.itemView.getContext(), R.color.colorGrey);
-                    }
-                };
-                h.presence.setText(label);
-                h.presence.setTextColor(colour);
+                    // build label / colour safely
+                    String label;
+                    int colour = switch (pState) {
+                        case "online"  -> {
+                            label = context.getString(R.string.presence_online);
+                            yield ContextCompat.getColor(
+                                    h.itemView.getContext(), R.color.colorGreenDark);
+                        }
+                        case "active"  -> {
+                            label = context.getString(R.string.presence_last_seen, englishRelative(lastHb));
+                            yield ContextCompat.getColor(
+                                    h.itemView.getContext(), R.color.colorGreenDark);
+                        }
+                        default        -> {
+                            label = context.getString(R.string.presence_offline);
+                            yield ContextCompat.getColor(
+                                    h.itemView.getContext(), R.color.colorGrey);
+                        }
+                    };
+                    h.presence.setText(label);
+                    h.presence.setTextColor(colour);
 
-                // 🧠 Also update invite button visibility here!
-                String status = h.snap.getString("status");
-                boolean isActiveOrCompleted = "playing".equals(status) || "completed".equals(status);
+                    // 🧠 Also update invite button visibility here!
+                    String status = h.snap.getString("status");
+                    boolean isActiveOrCompleted = "playing".equals(status) || "completed".equals(status);
                 
-                // Show invite button for all users except those with no heartbeat data
-                boolean isTrulyOffline = "offline".equalsIgnoreCase(pState) && lastHb == 0L;
+                    // Show invite button for all users except those with no heartbeat data
+                    boolean isTrulyOffline = "offline".equalsIgnoreCase(pState) && lastHb == 0L;
                         
-                h.inviteBtn.setVisibility((isActiveOrCompleted || isTrulyOffline)
-                        ? View.GONE : View.VISIBLE);
-                return;
-            }
+                    h.inviteBtn.setVisibility((isActiveOrCompleted || isTrulyOffline)
+                            ? View.GONE : View.VISIBLE);
+                    continue;
+                }
 
-            // --- nickname only (optional) ---
-            if ("nickname".equals(tag)) {
-                String nick = nickCache.get(h.oppUid);
-                h.opponent.setText(nick != null ? nick
-                        : h.oppUid.substring(0, 6));
-                return;
-            }
+                // --- nickname only (optional) ---
+                if ("nickname".equals(tag)) {
+                    String nick = nickCache.get(h.oppUid);
+                    h.opponent.setText(nick != null ? nick
+                            : context.getString(R.string.player_label));
+                    continue;
+                }
 
-            // --- inviteStats only ---
-            if ("inviteStats".equals(tag)) {
-                String stats = inviteStatsCache.get(h.oppUid);
-                if (stats != null) h.inviteStats.setText(stats);
+                // --- inviteStats only ---
+                if ("inviteStats".equals(tag)) {
+                    String stats = inviteStatsCache.get(h.oppUid);
+                    if (stats != null) h.inviteStats.setText(stats);
+                    continue;
+                }
+                onBindViewHolder(h, position);
                 return;
             }
+            return;
         }
 
         // No payload (or unknown) → do the full bind
@@ -481,6 +486,8 @@ public class MatchAdapter
         for (com.google.firebase.firestore.ListenerRegistration listener : nameListeners.values()) listener.remove();
         nameListeners.clear();
         nickCache.clear();
+        presCache.clear();
+        hbCache.clear();
     }
 
     private void fetchInviteStats(@NonNull String targetUid, @NonNull VH h) {
