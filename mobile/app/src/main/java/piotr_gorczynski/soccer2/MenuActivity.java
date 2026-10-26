@@ -92,6 +92,8 @@ public class MenuActivity extends BaseActivity {
 
     private static final long RUNNING_PLAYER_FRAME_DURATION_MS = 125L;
 
+    private Task<DocumentSnapshot> nicknameProfileTask;
+    private String nicknameProfileUid;
     private boolean isBackendAvailable = true; // Track backend availability
     // Track whether we've already shown the offline toast while the
     // backend is unavailable to avoid spamming the user on every resume
@@ -283,19 +285,22 @@ public class MenuActivity extends BaseActivity {
         // Skip nickname fetch if backend is unavailable to prevent Firestore errors
         if (!isBackendAvailable) {
             Log.d("TAG_Soccer", getClass().getSimpleName() + ".fetchNicknameFromFirestore: Skipping nickname fetch - backend unavailable");
-            // If we have no local nickname and backend is unavailable, run onMissing callback
-            String localNickname = prefs.getString("nickname", null);
-            if (localNickname == null || localNickname.trim().isEmpty()) {
-                onMissing.run();
-            }
+            // Unavailable is not evidence that a profile has no nickname.
             return;
         }
 
-        FirebaseFirestore.getInstance()
-                .collection("users")
-                .document(uid)
-                .get(Source.SERVER)
-                .addOnSuccessListener(doc -> {
+        if (nicknameProfileTask == null || nicknameProfileTask.isComplete() || !uid.equals(nicknameProfileUid)) {
+            nicknameProfileUid = uid;
+            nicknameProfileTask = NicknameProfileLoader.load(FirebaseFirestore.getInstance().collection("users").document(uid));
+        }
+        TextView loadingLabel = findViewById(R.id.nicknameLabel);
+        if (loadingLabel != null && (prefs.getString("nickname", "").trim().isEmpty()
+                || !uid.equals(prefs.getString("uid", null)))) {
+            loadingLabel.setText(R.string.menu_loading_message);
+        }
+        updateUiForAuthState();
+        nicknameProfileTask.addOnSuccessListener(doc -> {
+                    if (isFinishing() || isDestroyed() || !uid.equals(FirebaseAuth.getInstance().getUid())) return;
                     String remoteNick = doc.getString("nickname");
                     String remoteEmail = doc.getString("email");
                     String remoteMethod = doc.getString("method");
@@ -305,7 +310,7 @@ public class MenuActivity extends BaseActivity {
                         if (!uid.equals(prefs.getString("uid", null))) {
                             ed.putString("uid", uid);
                         }
-                        if (local == null || !local.equals(remoteNick)) {
+                        if (local == null || !local.equals(remoteNick) || !uid.equals(prefs.getString("uid", null))) {
                             ed.putString("nickname", remoteNick);
                             TextView nicknameLabel = findViewById(R.id.nicknameLabel);
                             String labelText = SafeStringFormatter.safeGetString(this, R.string.hello_nickname, remoteNick);
@@ -335,6 +340,7 @@ public class MenuActivity extends BaseActivity {
                         updateUiForAuthState();
                         checkAndUpdateBlockedInviteWarning();
                     } else {
+                        updateUiForAuthState();
                         if (uid.equals(FirebaseAuth.getInstance().getUid())) {
                             onMissing.run();
                         } else {
@@ -343,15 +349,9 @@ public class MenuActivity extends BaseActivity {
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Log.w(
-                            "TAG_Soccer",
-                            getClass().getSimpleName() + ".fetchNicknameFromFirestore: failed", e
-                    );
-                    Toast.makeText(
-                            this,
-                            R.string.failed_to_load_nickname,
-                            Toast.LENGTH_SHORT
-                    ).show();
+                    if (isFinishing() || isDestroyed() || !uid.equals(FirebaseAuth.getInstance().getUid())) return;
+                    Log.w("TAG_Soccer", "MenuActivity: server profile unavailable", e);
+                    showBackendUnavailable();
                 });
     }
 
@@ -362,18 +362,23 @@ public class MenuActivity extends BaseActivity {
         checkTerms(uid, null);
     }
     private void checkTerms(String uid, Runnable allowed) {
+        if (!isBackendAvailable) {
+            pendingTermsAction = null;
+            return;
+        }
         if (termsScreenOpen || isFinishing() || isDestroyed()) return;
         if (allowed != null) pendingTermsAction = allowed;
         if (termsCheckInFlight) return;
         termsCheckInFlight = true;
         String loginAttempt = PendingLoginSuccess.attempt(this, uid);
         TermsPolicy policy = TermsPolicy.required(AppFlavourDetector.isBangladeshFlavour(this), LanguageManager.getCurrentLanguageCode(this));
-        new TermsRepository(FirebaseFirestore.getInstance()).accepted(uid, policy)
+        readTermsAcceptance(uid, policy)
             .addOnSuccessListener(ok -> {
                 termsCheckInFlight = false;
                 Runnable action = pendingTermsAction;
                 pendingTermsAction = null;
-                if (!uid.equals(FirebaseAuth.getInstance().getUid()) || isFinishing() || isDestroyed()) return;
+                if (!uid.equals(FirebaseAuth.getInstance().getUid()) || isFinishing() || isDestroyed()
+                        || !isBackendAvailable) return;
                 if (ok) {
                     if (loginAttempt != null) {
                         FirebaseFirestore.getInstance().collection("users").document(uid)
@@ -399,11 +404,14 @@ public class MenuActivity extends BaseActivity {
                 termsCheckInFlight = false;
                 pendingTermsAction = null;
                 if (uid.equals(FirebaseAuth.getInstance().getUid()) && !isFinishing() && !isDestroyed())
-                    openRequiredTerms();
+                    showBackendUnavailable();
             });
     }
+    protected Task<Boolean> readTermsAcceptance(String uid, TermsPolicy policy) {
+        return new TermsRepository(FirebaseFirestore.getInstance()).accepted(uid, policy);
+    }
     private void openRequiredTerms() {
-        if (termsScreenOpen) return;
+        if (termsScreenOpen || !isBackendAvailable) return;
         termsScreenOpen = true;
         MenuActivity.super.startActivity(new Intent(this, TermsActivity.class));
     }
@@ -753,6 +761,8 @@ public class MenuActivity extends BaseActivity {
 
     private void updateUiForAuthState() {
         boolean loggedIn = FirebaseAuth.getInstance().getCurrentUser() != null;
+        boolean nicknameLoading = nicknameProfileTask != null && !nicknameProfileTask.isComplete()
+                && java.util.Objects.equals(nicknameProfileUid, FirebaseAuth.getInstance().getUid());
 
         Button inviteBtn = findViewById(R.id.InviteFriend);
         Button pendingBtn = findViewById(R.id.ShowInvites);
@@ -765,7 +775,7 @@ public class MenuActivity extends BaseActivity {
         }
 
         // Check if backend is available - if not, disable ALL buttons
-        if (!isBackendAvailable) {
+        if (!isBackendAvailable || nicknameLoading) {
             // Disable all buttons when backend is unavailable
             if (inviteBtn != null) {
                 inviteBtn.setEnabled(false);
@@ -1655,9 +1665,35 @@ public class MenuActivity extends BaseActivity {
         super.onDestroy();
     }
 
-    /**
-     * Check backend service availability and continue with onResume logic when complete
-     */
+    /** Use the same offline UI for service-check failures and unavailable profile reads. */
+    protected void showBackendUnavailable() {
+        SharedPreferences prefs = getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
+        TextView label = findViewById(R.id.nicknameLabel);
+        if (label != null && prefs.getString("nickname", "").trim().isEmpty()) {
+            label.setText(R.string.server_unavailable);
+        }
+        isBackendAvailable = false;
+        ((SoccerApp) getApplication()).setBackendAvailable(false);
+        updateUiForAuthState();
+        if (optionsMenu != null) {
+            MenuItem offlineItem = optionsMenu.findItem(R.id.action_offline);
+            if (offlineItem != null) {
+                offlineItem.setVisible(true);
+            }
+            if (accountMenuItem != null && accountMenuItem.getIcon() != null) {
+                accountMenuItem.getIcon().setAlpha(130);
+            }
+        }
+        // Show toast notification once when the backend becomes unavailable
+        if (!backendUnavailableToastShown) {
+            Toast.makeText(MenuActivity.this,
+                    R.string.server_unavailable_message,
+                    Toast.LENGTH_LONG).show();
+            backendUnavailableToastShown = true;
+        }
+    }
+
+    /** Check backend availability before continuing authentication and UI setup. */
     private void checkBackendAvailabilityAndContinue() {
         if (isBackendCheckInProgress) {
             Log.d(
@@ -1726,25 +1762,7 @@ public class MenuActivity extends BaseActivity {
                     getClass().getSimpleName() + ".checkBackendAvailabilityAndContinue: Backend is unavailable: " + reason + " - continuing onResume"
                 );
                 runOnUiThread(() -> {
-                    isBackendAvailable = false;
-                    ((SoccerApp) getApplication()).setBackendAvailable(false);
-                    updateUiForAuthState();
-                    if (optionsMenu != null) {
-                        MenuItem offlineItem = optionsMenu.findItem(R.id.action_offline);
-                        if (offlineItem != null) {
-                            offlineItem.setVisible(true);
-                        }
-                        if (accountMenuItem != null && accountMenuItem.getIcon() != null) {
-                            accountMenuItem.getIcon().setAlpha(130);
-                        }
-                    }
-                    // Show toast notification once when the backend becomes unavailable
-                    if (!backendUnavailableToastShown) {
-                        Toast.makeText(MenuActivity.this,
-                                R.string.server_unavailable_message,
-                                Toast.LENGTH_LONG).show();
-                        backendUnavailableToastShown = true;
-                    }
+                    showBackendUnavailable();
 
                     // Continue with the rest of onResume logic even when backend is unavailable
                     // (the safeguards in ensureTermsAccepted and fetchNicknameFromFirestore will handle this)

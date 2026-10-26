@@ -1,7 +1,9 @@
 <en-GB>
 Fixed tournament player lists: nicknames and activity status now refresh together as data loads, without reopening the screen. Loading indicators replace temporary technical IDs.
+Improved handling of connection errors: profile loading is retried, and network failures no longer reopen nickname setup or consent screens for existing accounts.
 </en-GB>
 
 <bn-BD>
 টুর্নামেন্টের খেলোয়াড় তালিকা ঠিক করা হয়েছে: ডেটা লোড হওয়ার সঙ্গে সঙ্গে ডাকনাম ও সক্রিয়তার অবস্থা একসঙ্গে হালনাগাদ হয়, স্ক্রিন আবার খুলতে হয় না। অস্থায়ী প্রযুক্তিগত আইডির বদলে লোড হওয়ার বার্তা দেখানো হয়।
+সংযোগের ত্রুটি সামলানো উন্নত হয়েছে: প্রোফাইল লোড করার চেষ্টা আবার করা হয়। নেটওয়ার্কের সমস্যায় বিদ্যমান অ্যাকাউন্টের ডাকনাম নির্বাচন বা সম্মতির স্ক্রিন আর খোলে না।
 </bn-BD>

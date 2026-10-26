@@ -570,8 +570,7 @@ public class FirebaseAuthManager {
                                 // Always fetch the latest data directly from the server so that
                                 // a stale or missing cache entry doesn't cause us to miss an
                                 // existing nickname and prompt the user unnecessarily.
-                                db.collection("users").document(uid)
-                                        .get(Source.SERVER)
+                                NicknameProfileLoader.load(db.collection("users").document(uid))
                                         .addOnSuccessListener(doc -> {
                                             String nickname = doc.getString("nickname");
                                             // Always record the login method as email when using this path

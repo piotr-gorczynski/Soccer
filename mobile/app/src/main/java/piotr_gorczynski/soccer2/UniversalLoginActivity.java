@@ -20,8 +20,6 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Source;
 
 public class UniversalLoginActivity extends BaseActivity {
 
@@ -228,42 +226,9 @@ public class UniversalLoginActivity extends BaseActivity {
                     analyticsManager.setUserProperties(authMethod, language, false); // will be updated when nickname is set
                 }
 
-                SharedPreferences prefs =
-                        getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
-
-                String uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
-
-                FirebaseFirestore.getInstance()
-                        .collection("users")
-                        .document(uid)
-                        .get(Source.SERVER)
-                        .addOnSuccessListener(doc -> {
-                            String nick = doc.getString("nickname");
-                            if (nick != null && !nick.isEmpty()) {
-                                prefs.edit().putString("nickname", nick).apply();
-                            } else {
-                                Intent intent = new Intent(UniversalLoginActivity.this, PickNicknameActivity.class);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                startActivity(intent);
-                            }
-                            Toast.makeText(UniversalLoginActivity.this, getString(R.string.login_success), Toast.LENGTH_SHORT).show();
-                            finish();
-                        })
-                        .addOnFailureListener(e -> {
-                            Log.w(
-                                    "TAG_Soccer",
-                                    getClass().getSimpleName() + ".onLoginSuccess: failed to verify nickname",
-                                    e
-                            );
-                            String nick = prefs.getString("nickname", null);
-                            if (nick == null || nick.isEmpty()) {
-                                Intent intent = new Intent(UniversalLoginActivity.this, PickNicknameActivity.class);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                startActivity(intent);
-                            }
-                            Toast.makeText(UniversalLoginActivity.this, getString(R.string.login_success), Toast.LENGTH_SHORT).show();
-                            finish();
-                        });
+                // MenuActivity owns the server-confirmed profile gate and offline UI.
+                // Do not infer a missing nickname from local preferences or failed reads here.
+                finish();
             }
 
             @Override
