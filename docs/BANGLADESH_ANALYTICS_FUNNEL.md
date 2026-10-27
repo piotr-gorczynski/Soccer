@@ -195,3 +195,10 @@ reserved prefixes. New events have at most five short scalar parameters plus
 four default metadata parameters, below GA4 limits. No custom event uses a
 reserved automatic name. No Google Ads goal, bidding, budget, or Analytics admin
 configuration was changed by this implementation.
+
+## Start Playing warning
+
+The existing account-access warning remains before anonymous authentication in both flavours.
+Event: anonymous_login_warning; method: anonymous; action: shown, proceed, cancel, or dismiss.
+Crashlytics breadcrumb: AUTH: anonymous_warning - <action>. Dismiss covers Back/outside dismissal.
+Only proceed starts authentication; no nickname, email, or other field contents are recorded.

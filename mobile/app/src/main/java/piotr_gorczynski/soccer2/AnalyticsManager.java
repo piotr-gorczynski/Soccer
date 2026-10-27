@@ -30,6 +30,21 @@ public class AnalyticsManager {
         if (isBangladesh()) trackControlledOutcome("login_attempt", "authentication", "submit", "none", normalizeMethod(method));
     }
 
+    public void trackAnonymousWarning(String action) {
+        String choice = allowed(action, "shown", "proceed", "cancel", "dismiss");
+        if (crashlytics != null) {
+            try { crashlytics.log("AUTH: anonymous_warning - " + choice); }
+            catch (Exception ignored) { Log.w(TAG, "Could not report warning breadcrumb"); }
+        }
+        if (firebaseAnalytics != null) {
+            Bundle params = new Bundle();
+            params.putString("action", choice);
+            params.putString("method", "anonymous");
+            try { firebaseAnalytics.logEvent("anonymous_login_warning", params); }
+            catch (Exception ignored) { Log.w(TAG, "Could not report warning choice"); }
+        }
+    }
+
     public void trackAuthenticationSucceeded(String method, boolean newAccount) {
         if (!isBangladesh() || firebaseAnalytics == null) return;
         Bundle params = new Bundle();

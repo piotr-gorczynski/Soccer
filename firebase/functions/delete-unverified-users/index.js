@@ -19,7 +19,7 @@ exports.deleteUnverifiedUsers = functions.pubsub
       for (const user of listUsersResult.users) {
         if (shouldDeleteUnverifiedUser(user, now)) {
           try {
-            if (!await deleteIfStillEligible(auth, user.uid, Date.now())) continue;
+            if (!await deleteIfStillEligible(auth, user.uid, Date.now(), admin.firestore())) continue;
             console.log(`🧹 Deleted unverified user from Auth: ${user.email}`);
 
             // Retain the UID anchor; never delete historical references.

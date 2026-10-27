@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Gridline Soccer 🇧🇩</string>
     <string name="anonymous_login_warning_message">Anonymous login allows you to participate in tournaments, including selected tournaments with cash prizes, subject to their rules. However, if you lose your device, reinstall the app, get a new phone, or log out, you will lose access to your anonymous account and will not be able to log back into the same account. Do you want to proceed?</string>
+    <string name="bd_start_playing">Start Playing</string>
+    <string name="bd_start_supporting">No account details required.</string>
+    <string name="bd_start_payout_help">You only provide payout details if you win a prize.</string>
 </resources>

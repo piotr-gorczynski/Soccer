@@ -161,24 +161,31 @@ public class UniversalLoginActivity extends BaseActivity {
     private void handleAnonymousLogin() {
         Log.d("TAG_Soccer", getClass().getSimpleName() + ".handleAnonymousLogin: Starting anonymous login process");
         
-        // Show warning dialog
+        if (analyticsManager != null) analyticsManager.trackAnonymousWarning("shown");
         new AlertDialog.Builder(this)
                 .setTitle(R.string.anonymous_login_warning_title)
                 .setMessage(R.string.anonymous_login_warning_message)
                 .setPositiveButton(R.string.proceed_anonymous_login, (dialog, which) -> {
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".handleAnonymousLogin: User accepted warning, proceeding with anonymous login");
                     
-                    // Disable all login buttons and show toast to prevent multiple clicks
-                    setLoginButtonsEnabled(false);
-                    Toast.makeText(this, getString(R.string.login_in_progress), Toast.LENGTH_SHORT).show();
-                    
-                    FirebaseAuthManager.LoginCallback callback = createLoginCallback("anonymous");
-                    authManager.loginAnonymously(callback);
+                    if (analyticsManager != null) analyticsManager.trackAnonymousWarning("proceed");
+                    startAnonymousLogin();
                 })
                 .setNegativeButton(R.string.cancel, (dialog, which) -> {
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".handleAnonymousLogin: User cancelled anonymous login");
+                    if (analyticsManager != null) analyticsManager.trackAnonymousWarning("cancel");
+                })
+                .setOnCancelListener(dialog -> {
+                    if (analyticsManager != null) analyticsManager.trackAnonymousWarning("dismiss");
                 })
                 .show();
+    }
+
+    private void startAnonymousLogin() {
+        setLoginButtonsEnabled(false);
+        Toast.makeText(this, getString(R.string.login_in_progress), Toast.LENGTH_SHORT).show();
+        FirebaseAuthManager.LoginCallback callback = createLoginCallback("anonymous");
+        authManager.loginAnonymously(callback);
     }
 
     /**

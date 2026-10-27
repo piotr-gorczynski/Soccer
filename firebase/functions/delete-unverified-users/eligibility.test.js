@@ -2,6 +2,7 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const { shouldDeleteUnverifiedUser, deleteIfStillEligible } = require('./eligibility');
 
+const firestore = profile => ({ collection: () => ({ doc: () => ({ get: async () => ({ exists: !!profile, data: () => profile }) }) }) });
 const now = Date.parse('2026-10-22T10:00:00Z');
 const user = overrides => ({
   uid: 'test-user', email: 'test@example.invalid', emailVerified: false,
@@ -47,10 +48,27 @@ test('rechecks Auth before deletion and preserves newly verified or linked accou
   const deleted = [];
   for (const current of [user({ emailVerified: true }), user({ providerData: [{ providerId: 'google.com' }] }), user({ providerData: [] })]) {
     const auth = { getUser: async () => current, deleteUser: async uid => deleted.push(uid) };
-    assert.equal(await deleteIfStillEligible(auth, current.uid, now), false);
+    assert.equal(await deleteIfStillEligible(auth, current.uid, now, firestore(null)), false);
   }
   assert.deepEqual(deleted, []);
   const auth = { getUser: async () => user(), deleteUser: async uid => deleted.push(uid) };
-  assert.equal(await deleteIfStillEligible(auth, 'test-user', now), true);
+  assert.equal(await deleteIfStillEligible(auth, 'test-user', now, firestore(null)), true);
   assert.deepEqual(deleted, ['test-user']);
+});
+
+test('established profiles survive email linking regardless of the original Auth creation date', async () => {
+  const deleted=[];
+  const auth={ getUser: async () => user(), deleteUser: async uid => deleted.push(uid) };
+  for(const profile of [{nickname:'guest-player'}, {termsAccepted:true}, {legacyGlobalTermsAccepted:true}]) {
+    assert.equal(await deleteIfStillEligible(auth,'test-user',now,firestore(profile)),false);
+  }
+  assert.deepEqual(deleted,[]);
+});
+
+test('profile read failure never deletes an account', async () => {
+  let deleted=false;
+  const auth={ getUser: async () => user(), deleteUser: async () => { deleted=true; } };
+  const db={ collection: () => ({doc: () => ({get: async () => {throw new Error('unavailable');}})}) };
+  await assert.rejects(deleteIfStillEligible(auth,'test-user',now,db));
+  assert.equal(deleted,false);
 });

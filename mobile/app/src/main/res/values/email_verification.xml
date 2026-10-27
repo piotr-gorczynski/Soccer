@@ -1,0 +1,12 @@
+<resources>
+    <string name="link_email_sent_keep_session">A verification link was sent to %1$s. You remain signed in. Open Account to resend the link, correct the address, or check verification. Verify your address before signing out to keep access to this account.</string>
+    <string name="email_verification_pending">Verify your email: %1$s. You remain signed in. If the address is wrong, correct it below. After opening the link, tap Check verification.</string>
+    <string name="email_verification_resend">Resend verification</string>
+    <string name="email_verification_correct">Correct email address</string>
+    <string name="email_verification_check">Check verification</string>
+    <string name="email_verification_done">Email verified.</string>
+    <string name="email_verification_not_yet">Email is not verified yet. Open the link in your inbox, then check again.</string>
+    <string name="email_verification_action_failed">Could not complete this request. Check your connection and try again.</string>
+    <string name="email_verification_logout_warning">Your email is not verified. Signing out may prevent you from accessing this account again, especially if the address contains a typo. Verify or correct your email in Account before signing out. Sign out anyway?</string>
+    <string name="email_verification_invalid_email">Enter a valid email address.</string>
+</resources>

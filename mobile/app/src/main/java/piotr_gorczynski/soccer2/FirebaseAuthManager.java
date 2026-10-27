@@ -782,8 +782,17 @@ public class FirebaseAuthManager {
      */
     public void linkWithEmailPassword(String email, String password, LinkCallback callback) {
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-        if (currentUser == null || !currentUser.isAnonymous()) {
-            callback.onLinkFailure("User must be signed in anonymously to link account");
+        if (currentUser == null) {
+            callback.onLinkFailure(context.getString(R.string.not_logged_in));
+            return;
+        }
+        if (!currentUser.isAnonymous()) {
+            // Linking already succeeded before a failed email send. Retry delivery, not linking.
+            if (!currentUser.isEmailVerified() && email.equalsIgnoreCase(currentUser.getEmail())) {
+                sendLinkedVerificationEmail(currentUser, callback);
+            } else {
+                callback.onLinkFailure(context.getString(R.string.credential_already_associated));
+            }
             return;
         }
 
@@ -796,7 +805,14 @@ public class FirebaseAuthManager {
                     Log.d("TAG_Soccer", getClass().getSimpleName() + ".linkWithEmailPassword: Link successful");
                     
                     // Update user document with new method and email
-                    updateUserDocumentAfterLink("email", email, null, null, null, callback);
+                    updateUserDocumentAfterLink("email", email, null, null, null, new LinkCallback() {
+                        @Override public void onLinkSuccess() {
+                            sendLinkedVerificationEmail(currentUser, callback);
+                        }
+                        @Override public void onLinkFailure(String message) {
+                            callback.onLinkFailure(message);
+                        }
+                    });
                 })
                 .addOnFailureListener(e -> {
                     Log.e("TAG_Soccer", getClass().getSimpleName() + ".linkWithEmailPassword: Link failed", e);
@@ -808,6 +824,30 @@ public class FirebaseAuthManager {
                         callback.onLinkFailure(e.getMessage() != null ? e.getMessage() : "Unknown error occurred");
                     }
                 });
+    }
+
+    private void sendLinkedVerificationEmail(FirebaseUser user, LinkCallback callback) {
+        FirebaseUser active = firebaseAuth.getCurrentUser();
+        if (active == null || !active.getUid().equals(user.getUid())) {
+            callback.onLinkFailure(context.getString(R.string.not_logged_in));
+            return;
+        }
+        user.sendEmailVerification().addOnCompleteListener(task -> {
+            FirebaseUser current = firebaseAuth.getCurrentUser();
+            if (current == null || !current.getUid().equals(user.getUid())) {
+                callback.onLinkFailure(context.getString(R.string.not_logged_in));
+                return;
+            }
+            if (task.isSuccessful()) {
+                callback.onLinkSuccess();
+            } else {
+                reportAuthFailure("email", "verification_email", task.getException());
+                String error = task.getException() != null ? task.getException().getMessage()
+                        : context.getString(R.string.email_verification_failed);
+                callback.onLinkFailure(SafeStringFormatter.safeGetString(context,
+                        R.string.could_not_send_verification_email, error));
+            }
+        });
     }
 
     /**

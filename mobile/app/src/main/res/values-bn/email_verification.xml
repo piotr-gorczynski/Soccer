@@ -1,0 +1,12 @@
+<resources>
+    <string name="link_email_sent_keep_session">%1$s ঠিকানায় যাচাইয়ের লিংক পাঠানো হয়েছে। আপনি লগইন অবস্থায় থাকবেন। লিংক আবার পাঠাতে, ঠিকানা সংশোধন করতে বা যাচাই হয়েছে কি না দেখতে Account খুলুন। এই অ্যাকাউন্টে প্রবেশের সুযোগ বজায় রাখতে লগআউট করার আগে ইমেইল যাচাই করুন।</string>
+    <string name="email_verification_pending">ইমেইল যাচাই করুন: %1$s। আপনি লগইন অবস্থায় আছেন। ঠিকানা ভুল হলে নিচে সংশোধন করুন। লিংক খোলার পর যাচাই পরীক্ষা করুন।</string>
+    <string name="email_verification_resend">যাচাইয়ের লিংক আবার পাঠান</string>
+    <string name="email_verification_correct">ইমেইল ঠিকানা সংশোধন করুন</string>
+    <string name="email_verification_check">যাচাই হয়েছে কি না দেখুন</string>
+    <string name="email_verification_done">ইমেইল যাচাই হয়েছে।</string>
+    <string name="email_verification_not_yet">ইমেইল এখনও যাচাই হয়নি। ইনবক্সের লিংক খুলে আবার পরীক্ষা করুন।</string>
+    <string name="email_verification_action_failed">অনুরোধটি সম্পন্ন করা যায়নি। ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।</string>
+    <string name="email_verification_logout_warning">আপনার ইমেইল যাচাই হয়নি। এখন লগআউট করলে এই অ্যাকাউন্টে আর প্রবেশ করতে নাও পারেন, বিশেষ করে ঠিকানায় বানান ভুল থাকলে। লগআউট করার আগে Account থেকে ইমেইল যাচাই বা সংশোধন করুন। তবুও লগআউট করবেন?</string>
+    <string name="email_verification_invalid_email">সঠিক ইমেইল ঠিকানা লিখুন।</string>
+</resources>

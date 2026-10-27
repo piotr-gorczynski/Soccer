@@ -29,6 +29,17 @@ import java.util.Objects;
 
 public class AccountActivity extends BaseActivity {
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (!isFinishing() && FirebaseAuth.getInstance().getCurrentUser() == null) {
+            finishLogoutUi();
+        } else if (!isFinishing()) {
+            setVerificationBusy(false);
+            updateEmailVerificationUi();
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account);
@@ -131,6 +142,17 @@ public class AccountActivity extends BaseActivity {
     }
 
     private void performLogout() {
+        if (verificationManager().needsAttention(FirebaseAuth.getInstance().getCurrentUser())) {
+            new AlertDialog.Builder(this)
+                    .setMessage(R.string.email_verification_logout_warning)
+                    .setPositiveButton(R.string.logout, (dialog, which) -> performConfirmedLogout())
+                    .setNegativeButton(R.string.cancel, null).show();
+            return;
+        }
+        performConfirmedLogout();
+    }
+
+    private void performConfirmedLogout() {
         String uid = FirebaseAuth.getInstance().getUid();
 
         // Attempt to mark the user offline before signing out so permissions work
@@ -313,6 +335,12 @@ public class AccountActivity extends BaseActivity {
      * Called after successful account linking to reflect the new account state.
      */
     private void refreshAccountData() {
+        // Email linking signs out before returning its successful result.
+        // Never render the previous account from cached preferences after that.
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            if (!isFinishing()) finishLogoutUi();
+            return;
+        }
         // Re-read data from SharedPreferences
         String nickname = getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
                 .getString("nickname", "-");
@@ -390,6 +418,112 @@ public class AccountActivity extends BaseActivity {
         
         // Update method display
         methodView.setText(SafeStringFormatter.safeGetString(this, R.string.login_method_label, method));
+        updateEmailVerificationUi();
+    }
+
+    private EmailVerificationManager verificationManager() {
+        return new EmailVerificationManager(FirebaseAuth.getInstance(),
+                com.google.firebase.firestore.FirebaseFirestore.getInstance(),
+                getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE));
+    }
+
+    private void updateEmailVerificationUi() {
+        View panel=findViewById(R.id.emailVerificationPanel);
+        if(panel==null) return;
+        FirebaseUser user=FirebaseAuth.getInstance().getCurrentUser();
+        boolean pending=verificationManager().needsAttention(user);
+        panel.setVisibility(pending ? View.VISIBLE : View.GONE);
+        if(!pending) return;
+        ((TextView)findViewById(R.id.emailVerificationStatus)).setText(
+                getString(R.string.email_verification_pending,verificationManager().target(user)));
+        findViewById(R.id.emailVerificationResend).setOnClickListener(v -> {
+            setVerificationBusy(true);
+            verificationManager().resend(user).addOnCompleteListener(this, task -> {
+                if (!isActiveVerificationUser(user)) return;
+                setVerificationBusy(false);
+                if(task.isSuccessful()) showVerificationSent(user);
+                else verificationFailed();
+            });
+        });
+        findViewById(R.id.emailVerificationCorrect).setOnClickListener(v -> showCorrectEmail(user));
+        findViewById(R.id.emailVerificationCheck).setOnClickListener(v -> {
+            setVerificationBusy(true);
+            verificationManager().check(user).addOnCompleteListener(this, task -> {
+                if (!isActiveVerificationUser(user)) return;
+                setVerificationBusy(false);
+                if(!task.isSuccessful()) { verificationFailed(); return; }
+                if(Boolean.TRUE.equals(task.getResult())) refreshAccountData();
+                Toast.makeText(this, Boolean.TRUE.equals(task.getResult()) ? R.string.email_verification_done
+                        : R.string.email_verification_not_yet,Toast.LENGTH_LONG).show();
+            });
+        });
+    }
+
+    private void setVerificationBusy(boolean busy) {
+        for(int id : new int[]{R.id.emailVerificationResend,R.id.emailVerificationCorrect,R.id.emailVerificationCheck}) {
+            View button=findViewById(id);
+            if(button!=null) button.setEnabled(!busy);
+        }
+    }
+
+    private boolean isActiveVerificationUser(FirebaseUser user) {
+        FirebaseUser current=FirebaseAuth.getInstance().getCurrentUser();
+        return !isFinishing() && !isDestroyed() && current!=null && user.getUid().equals(current.getUid());
+    }
+
+    private void verificationFailed() {
+        Toast.makeText(this,R.string.email_verification_action_failed,Toast.LENGTH_LONG).show();
+    }
+
+    private void showVerificationSent(FirebaseUser user) {
+        updateEmailVerificationUi();
+        new AlertDialog.Builder(this).setTitle(R.string.verification_email_sent)
+                .setMessage(getString(R.string.link_email_sent_keep_session,verificationManager().target(user)))
+                .setPositiveButton(R.string.ok,null).show();
+    }
+
+    private void showCorrectEmail(FirebaseUser user) {
+        EditText input=new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        input.setText(verificationManager().target(user));
+        AlertDialog dialog=new AlertDialog.Builder(this).setTitle(R.string.email_verification_correct)
+                .setView(input).setPositiveButton(R.string.ok,null)
+                .setNegativeButton(R.string.cancel,null).create();
+        dialog.setOnShowListener(unused -> dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            String email=input.getText().toString().trim();
+            if(!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                input.setError(getString(R.string.email_verification_invalid_email)); return;
+            }
+            dialog.dismiss();
+            correctEmail(user,email);
+        }));
+        dialog.show();
+    }
+
+    private void correctEmail(FirebaseUser user,String email) {
+        setVerificationBusy(true);
+        verificationManager().correctEmail(user,email).addOnCompleteListener(this, task -> {
+            if (!isActiveVerificationUser(user)) return;
+            setVerificationBusy(false);
+            if(task.isSuccessful()) showVerificationSent(user);
+            else if(task.getException() instanceof FirebaseAuthRecentLoginRequiredException) {
+                EditText password=new EditText(this);
+                password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                new AlertDialog.Builder(this).setTitle(R.string.reauth_title).setMessage(R.string.reauth_message)
+                        .setView(password).setNegativeButton(R.string.cancel,null)
+                        .setPositiveButton(R.string.confirm,(dialog,which) -> {
+                            setVerificationBusy(true);
+                            user.reauthenticate(EmailAuthProvider.getCredential(
+                                    Objects.requireNonNull(user.getEmail()),password.getText().toString()))
+                                    .addOnCompleteListener(this, auth -> {
+                                        if (!isActiveVerificationUser(user)) return;
+                                        setVerificationBusy(false);
+                                        if(auth.isSuccessful()) correctEmail(user,email);
+                                        else verificationFailed();
+                                    });
+                        }).show();
+            } else verificationFailed();
+        });
     }
 
     /**

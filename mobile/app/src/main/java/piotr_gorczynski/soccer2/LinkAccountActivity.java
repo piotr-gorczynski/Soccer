@@ -67,32 +67,55 @@ public class LinkAccountActivity extends BaseActivity {
         layout.setOrientation(android.widget.LinearLayout.VERTICAL);
 
         final EditText emailInput = new EditText(this);
+        emailInput.setId(R.id.editEmail);
         emailInput.setHint(R.string.email);
-        emailInput.setInputType(android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        emailInput.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
         layout.addView(emailInput);
 
         final EditText passwordInput = new EditText(this);
+        passwordInput.setId(R.id.editPassword);
         passwordInput.setHint(R.string.password);
         passwordInput.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
         layout.addView(passwordInput);
 
+        final EditText confirmPasswordInput = new EditText(this);
+        confirmPasswordInput.setId(R.id.editConfirmPassword);
+        confirmPasswordInput.setHint(R.string.confirm_password);
+        confirmPasswordInput.setInputType(android.text.InputType.TYPE_CLASS_TEXT | android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        layout.addView(confirmPasswordInput);
+
         builder.setView(layout);
-
-        builder.setPositiveButton(R.string.link_account_title, (dialog, which) -> {
-            String email = emailInput.getText().toString().trim();
-            String password = passwordInput.getText().toString();
-
-            if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, R.string.all_fields_required, Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            // Link with email credentials
-            authManager.linkWithEmailPassword(email, password, createLinkCallback());
-        });
-
+        builder.setPositiveButton(R.string.link_account_title, null);
         builder.setNegativeButton(R.string.cancel, null);
-        builder.show();
+        android.app.AlertDialog linkDialog = builder.create();
+        linkDialog.setOnShowListener(unused -> linkDialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE)
+                .setOnClickListener(view -> {
+                    String email = emailInput.getText().toString().trim();
+                    String password = passwordInput.getText().toString().trim();
+                    String confirmPassword = confirmPasswordInput.getText().toString().trim();
+                    if (email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+                        Toast.makeText(this, R.string.all_fields_required, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    if (!password.equals(confirmPassword)) {
+                        Toast.makeText(this, R.string.passwords_do_not_match, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    Button submit = linkDialog.getButton(android.app.AlertDialog.BUTTON_POSITIVE);
+                    submit.setEnabled(false);
+                    FirebaseAuthManager.LinkCallback result = createLinkCallback(true);
+                    authManager.linkWithEmailPassword(email, password, new FirebaseAuthManager.LinkCallback() {
+                        @Override public void onLinkSuccess() {
+                            linkDialog.dismiss();
+                            result.onLinkSuccess();
+                        }
+                        @Override public void onLinkFailure(String message) {
+                            submit.setEnabled(true);
+                            result.onLinkFailure(message);
+                        }
+                    });
+                }));
+        linkDialog.show();
     }
 
     private void handleProviderLink(String providerId) {
@@ -113,6 +136,10 @@ public class LinkAccountActivity extends BaseActivity {
     }
 
     private FirebaseAuthManager.LinkCallback createLinkCallback() {
+        return createLinkCallback(false);
+    }
+
+    private FirebaseAuthManager.LinkCallback createLinkCallback(boolean emailLink) {
         return new FirebaseAuthManager.LinkCallback() {
             @Override
             public void onLinkSuccess() {
@@ -120,6 +147,20 @@ public class LinkAccountActivity extends BaseActivity {
                         "TAG_Soccer",
                         getClass().getSimpleName() + ".onLinkSuccess: Account linked successfully"
                 );
+
+                if (emailLink) {
+                    new androidx.appcompat.app.AlertDialog.Builder(LinkAccountActivity.this)
+                            .setTitle(R.string.verification_email_sent)
+                            .setMessage(getString(R.string.link_email_sent_keep_session,
+                                    Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getEmail()))
+                            .setPositiveButton(R.string.ok, (dialog, which) -> {
+                                setResult(RESULT_OK);
+                                finish();
+                            })
+                            .setCancelable(false)
+                            .show();
+                    return;
+                }
 
                 SharedPreferences prefs = getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
                 String uid = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getUid();
