@@ -1,0 +1,14 @@
+<resources>
+    <string name="link_email_sent_keep_session">Se ha enviado un enlace de verificación a %1$s. Sigues con la sesión iniciada. Abre Cuenta para reenviar el enlace, corregir la dirección o comprobar la verificación. Verifica tu dirección antes de cerrar sesión para conservar el acceso a esta cuenta.</string>
+    <string name="email_verification_pending">Verifica tu correo: %1$s. Sigues con la sesión iniciada. Si la dirección es incorrecta, corrígela abajo. Tras abrir el enlace, pulsa Comprobar verificación.</string>
+    <string name="email_verification_resend">Reenviar verificación</string>
+    <string name="email_verification_correct">Corregir correo</string>
+    <string name="email_verification_check">Comprobar verificación</string>
+    <string name="email_verification_done">Correo verificado.</string>
+    <string name="email_verification_not_yet">El correo aún no está verificado. Abre el enlace de tu bandeja de entrada y vuelve a comprobarlo.</string>
+    <string name="email_verification_action_failed">No se pudo completar la solicitud. Comprueba tu conexión e inténtalo de nuevo.</string>
+    <string name="email_verification_logout_warning">Tu correo no está verificado. Si cierras sesión, podrías perder el acceso a esta cuenta, sobre todo si la dirección tiene un error. Verifica o corrige tu correo en Cuenta antes de cerrar sesión. ¿Cerrar sesión de todos modos?</string>
+    <string name="email_verification_invalid_email">Introduce una dirección de correo válida.</string>
+    <string name="email_verification_session_ended">Vuelve a iniciar sesión</string>
+    <string name="email_verification_sign_in_again">Tu sesión ha finalizado. Inicia sesión de nuevo con %1$s y la contraseña que estableciste para esta cuenta. Si corregiste la dirección, abre el enlace de verificación enviado a esa dirección antes de iniciar sesión. Tu apodo y tu progreso permanecen en la misma cuenta.</string>
+</resources>

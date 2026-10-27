@@ -1,0 +1,14 @@
+<resources>
+    <string name="link_email_sent_keep_session">ສົ່ງລິ້ງຢືນຢັນໄປທີ່ %1$s ແລ້ວ. ທ່ານຍັງຄົງເຂົ້າລະບົບຢູ່. ເປີດບັນຊີເພື່ອສົ່ງລິ້ງອີກຄັ້ງ, ແກ້ໄຂທີ່ຢູ່ ຫຼືກວດສອບການຢືນຢັນ. ກະລຸນາຢືນຢັນທີ່ຢູ່ກ່ອນອອກຈາກລະບົບ ເພື່ອຮັກສາການເຂົ້າໃຊ້ບັນຊີນີ້.</string>
+    <string name="email_verification_pending">ຢືນຢັນອີເມວຂອງທ່ານ: %1$s. ທ່ານຍັງເຂົ້າລະບົບຢູ່. ຖ້າທີ່ຢູ່ບໍ່ຖືກຕ້ອງ, ໃຫ້ແກ້ໄຂຢູ່ດ້ານລຸ່ມ. ຫຼັງຈາກເປີດລິ້ງແລ້ວ ໃຫ້ກົດ ກວດສອບການຢືນຢັນ.</string>
+    <string name="email_verification_resend">ສົ່ງລິ້ງອີກຄັ້ງ</string>
+    <string name="email_verification_correct">ແກ້ໄຂທີ່ຢູ່ອີເມວ</string>
+    <string name="email_verification_check">ກວດສອບການຢືນຢັນ</string>
+    <string name="email_verification_done">ຢືນຢັນອີເມວແລ້ວ.</string>
+    <string name="email_verification_not_yet">ອີເມວຍັງບໍ່ໄດ້ຮັບການຢືນຢັນ. ເປີດລິ້ງໃນກ່ອງຈົດໝາຍເຂົ້າຂອງທ່ານ ແລ້ວກວດສອບອີກຄັ້ງ.</string>
+    <string name="email_verification_action_failed">ບໍ່ສາມາດດຳເນີນຄຳຂໍນີ້ໃຫ້ສຳເລັດໄດ້. ກວດສອບການເຊື່ອມຕໍ່ ແລ້ວລອງອີກຄັ້ງ.</string>
+    <string name="email_verification_logout_warning">ອີເມວຂອງທ່ານຍັງບໍ່ໄດ້ຢືນຢັນ. ການອອກຈາກລະບົບອາດເຮັດໃຫ້ທ່ານເຂົ້າໃຊ້ບັນຊີນີ້ອີກບໍ່ໄດ້, ໂດຍສະເພາະຖ້າພິມທີ່ຢູ່ຜິດ. ກະລຸນາຢືນຢັນ ຫຼືແກ້ໄຂອີເມວໃນບັນຊີກ່ອນອອກ. ຍັງຕ້ອງການອອກຈາກລະບົບບໍ?</string>
+    <string name="email_verification_invalid_email">ກະລຸນາໃສ່ທີ່ຢູ່ອີເມວທີ່ຖືກຕ້ອງ.</string>
+    <string name="email_verification_session_ended">ກະລຸນາເຂົ້າລະບົບອີກຄັ້ງ</string>
+    <string name="email_verification_sign_in_again">ເຊດຊັນຂອງທ່ານໝົດອາຍຸແລ້ວ. ເຂົ້າລະບົບອີກຄັ້ງດ້ວຍ %1$s ແລະລະຫັດຜ່ານທີ່ທ່ານຕັ້ງໄວ້ສຳລັບບັນຊີນີ້. ຖ້າແກ້ໄຂທີ່ຢູ່ແລ້ວ, ໃຫ້ເປີດລິ້ງຢືນຢັນທີ່ສົ່ງໄປທີ່ຢູ່ນັ້ນກ່ອນເຂົ້າລະບົບ. ຊື່ຫຼິ້ນ ແລະຄວາມຄືບໜ້າຂອງທ່ານຈະຍັງຢູ່ໃນບັນຊີເດີມ.</string>
+</resources>

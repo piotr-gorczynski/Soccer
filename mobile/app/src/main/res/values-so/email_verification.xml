@@ -1,0 +1,14 @@
+<resources>
+    <string name="link_email_sent_keep_session">Xiriiriyaha xaqiijinta waxaa loo diray %1$s. Weli waad ku jiraysaa akoonka. Fur Akoonka si aad mar kale u dirto xiriiriyaha, u saxdo cinwaanka ama u hubiso xaqiijinta. Xaqiiji cinwaankaaga ka hor intaadan ka bixin si aad u ilaaliso gelitaanka akoonkan.</string>
+    <string name="email_verification_pending">Xaqiiji iimaylkaaga: %1$s. Weli waxaad ku jirtaa akoonka. Haddii cinwaanku qaldan yahay, hoos ku sax. Markaad furto xiriiriyaha, taabo Hubi xaqiijinta.</string>
+    <string name="email_verification_resend">Dib u dir xiriiriyaha</string>
+    <string name="email_verification_correct">Sax cinwaanka iimaylka</string>
+    <string name="email_verification_check">Hubi xaqiijinta</string>
+    <string name="email_verification_done">Iimaylka waa la xaqiijiyey.</string>
+    <string name="email_verification_not_yet">Iimaylka weli lama xaqiijin. Fur xiriiriyaha ku jira sanduuqaaga fariimaha, dabadeed mar kale hubi.</string>
+    <string name="email_verification_action_failed">Codsigan lama dhammaystiri karin. Hubi xiriirkaaga oo mar kale isku day.</string>
+    <string name="email_verification_logout_warning">Iimaylkaaga lama xaqiijin. Haddii aad ka baxdo, waxaa dhici karta inaadan mar kale geli karin akoonkan, gaar ahaan haddii cinwaanka si qaldan loo qoray. Ku xaqiiji ama ku sax iimaylkaaga qaybta Akoonka ka hor intaadan ka bixin. Ma doonaysaa inaad haddana ka baxdo?</string>
+    <string name="email_verification_invalid_email">Geli cinwaan iimayl oo sax ah.</string>
+    <string name="email_verification_session_ended">Fadlan mar kale gal</string>
+    <string name="email_verification_sign_in_again">Fadhigaagu wuu dhammaaday. Mar kale ku gal %1$s iyo erayga sirta ah ee aad u samaysay akoonkan. Haddii aad saxday cinwaanka, fur xiriiriyaha xaqiijinta ee loo diray cinwaankaas ka hor intaadan gelin. Naanaystaada iyo horumarkaagu waxay ku sii jiraan isla akoonka.</string>
+</resources>

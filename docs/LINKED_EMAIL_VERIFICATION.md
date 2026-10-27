@@ -4,18 +4,20 @@ Anonymous-to-email linking preserves the same UID, nickname, legal acceptances
 and active Firebase session. Successful delivery displays the destination and
 keeps the user signed in; ordinary email registration keeps its existing flow.
 
+After a fresh sign-in confirms the pending destination as verified, Account automatically clears the pending local state and hides/disables verification actions without a manual check. A verified old address never clears a different pending correction.
+
 Account exposes resend, correct email and check verification while an email is
 unverified or a corrected address is pending. Correction uses Firebase
 verifyBeforeUpdateEmail: the destination is stored locally per UID only after
 successful delivery, and Auth changes the address only after link redemption.
 Resend uses that pending destination. If Firebase requires recent credentials,
-the user reauthenticates without signing out before retrying correction.
-Check reloads Auth, confirms verification of the pending destination, refreshes
+both resend and correction prompt for the existing account password, then retry once without signing out. Cancelling or entering a wrong password preserves the session and pending destination.
+Redeeming an email-change link can revoke the Firebase session. If that happens during an action, Account shows a sign-in notice with the pending destination, restores the controls and returns to the signed-out menu on OK. The user signs in with the corrected, verified email and the same password; the UID and server profile are preserved. Check reloads Auth, confirms verification of the pending destination, refreshes
 the ID token, and merges only the confirmed email into the existing profile.
 Failures retain the session and pending recovery state. Explicit logout warns
 about losing access while verification is pending.
 
-Strings are Android resources with English defaults and Bengali translations.
+All 12 verification strings use Android resources and are localized in all 20 languages supported by LanguageManager, including Bengali for Bangladesh.
 No email address, password or verification-link token is added to telemetry.
 
 ## Deployment and manual DEV test

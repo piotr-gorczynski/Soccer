@@ -1,0 +1,14 @@
+<resources>
+    <string name="link_email_sent_keep_session">የማረጋገጫ አገናኝ ወደ %1$s ተልኳል። በመለያዎ ውስጥ እንደገቡ ይቆያሉ። አገናኙን እንደገና ለመላክ፣ አድራሻውን ለማስተካከል ወይም ማረጋገጫውን ለመፈተሽ መለያን ይክፈቱ። ወደዚህ መለያ መዳረሻዎን ለማስጠበቅ ከመውጣትዎ በፊት አድራሻዎን ያረጋግጡ።</string>
+    <string name="email_verification_pending">ኢሜይልዎን ያረጋግጡ፦ %1$s። በመለያዎ ውስጥ እንደገቡ ነው። አድራሻው የተሳሳተ ከሆነ ከታች ያስተካክሉት። አገናኙን ከከፈቱ በኋላ ማረጋገጫን ፈትሽ የሚለውን ይጫኑ።</string>
+    <string name="email_verification_resend">አገናኙን እንደገና ላክ</string>
+    <string name="email_verification_correct">የኢሜይል አድራሻ አስተካክል</string>
+    <string name="email_verification_check">ማረጋገጫን ፈትሽ</string>
+    <string name="email_verification_done">ኢሜይሉ ተረጋግጧል።</string>
+    <string name="email_verification_not_yet">ኢሜይሉ ገና አልተረጋገጠም። በገቢ መልእክት ሳጥንዎ ያለውን አገናኝ ይክፈቱና እንደገና ይፈትሹ።</string>
+    <string name="email_verification_action_failed">ይህን ጥያቄ ማጠናቀቅ አልተቻለም። ግንኙነትዎን ይፈትሹና እንደገና ይሞክሩ።</string>
+    <string name="email_verification_logout_warning">ኢሜይልዎ አልተረጋገጠም። ከመለያው ከወጡ ወደዚህ መለያ እንደገና መግባት ላይችሉ ይችላሉ፣ በተለይም አድራሻው ሲጻፍ ስህተት ካለበት። ከመውጣትዎ በፊት በመለያ ክፍል ኢሜይልዎን ያረጋግጡ ወይም ያስተካክሉ። ቢሆንም መውጣት ይፈልጋሉ?</string>
+    <string name="email_verification_invalid_email">ትክክለኛ የኢሜይል አድራሻ ያስገቡ።</string>
+    <string name="email_verification_session_ended">እባክዎ እንደገና ይግቡ</string>
+    <string name="email_verification_sign_in_again">ክፍለ ጊዜዎ አብቅቷል። በ%1$s እና ለዚህ መለያ ባዘጋጁት የይለፍ ቃል እንደገና ይግቡ። አድራሻውን ካስተካከሉ፣ ከመግባትዎ በፊት ወደዚያ አድራሻ የተላከውን የማረጋገጫ አገናኝ ይክፈቱ። ቅጽል ስምዎ እና እድገትዎ በዚያው መለያ ውስጥ ይቆያሉ።</string>
+</resources>

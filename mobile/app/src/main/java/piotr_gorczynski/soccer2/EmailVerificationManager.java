@@ -27,7 +27,19 @@ final class EmailVerificationManager {
     private String key(FirebaseUser user) { return "verification_target_"+user.getUid(); }
     String target(FirebaseUser user) { return prefs.getString(key(user),user.getEmail()); }
     boolean needsAttention(FirebaseUser user) {
-        return needsVerification(user) || (user != null && prefs.contains(key(user)));
+        if (user == null) return false;
+        String pending = prefs.getString(key(user), null);
+        return needsVerification(user) || (pending != null
+                && (!user.isEmailVerified() || !pending.equalsIgnoreCase(user.getEmail())));
+    }
+    boolean reconcileConfirmedAddress(FirebaseUser user) {
+        // A fresh sign-in already supplies authoritative verification state.
+        // Do not ask the user to check the same confirmed address again.
+        if (user == null || !active(user) || !user.isEmailVerified()) return false;
+        String pending = prefs.getString(key(user), null);
+        if (pending == null || !pending.equalsIgnoreCase(user.getEmail())) return false;
+        prefs.edit().remove(key(user)).putString("email", user.getEmail()).apply();
+        return true;
     }
     Task<Void> resend(FirebaseUser user) {
         if(!active(user)) return Tasks.forException(new IllegalStateException("Session changed"));

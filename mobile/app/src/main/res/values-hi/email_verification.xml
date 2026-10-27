@@ -1,0 +1,14 @@
+<resources>
+    <string name="link_email_sent_keep_session">पुष्टि करने का लिंक %1$s पर भेज दिया गया है। आप लॉग इन रहेंगे। लिंक दोबारा भेजने, पता सुधारने या पुष्टि की स्थिति जाँचने के लिए खाता खोलें। इस खाते तक पहुँच बनाए रखने के लिए लॉग आउट करने से पहले अपना पता सत्यापित करें।</string>
+    <string name="email_verification_pending">अपना ईमेल सत्यापित करें: %1$s। आप लॉग इन हैं। यदि पता गलत है, तो उसे नीचे सुधारें। लिंक खोलने के बाद पुष्टि जाँचें पर टैप करें।</string>
+    <string name="email_verification_resend">लिंक दोबारा भेजें</string>
+    <string name="email_verification_correct">ईमेल पता सुधारें</string>
+    <string name="email_verification_check">पुष्टि जाँचें</string>
+    <string name="email_verification_done">ईमेल सत्यापित हो गया।</string>
+    <string name="email_verification_not_yet">ईमेल अभी सत्यापित नहीं हुआ है। अपने इनबॉक्स में आया लिंक खोलें, फिर दोबारा जाँचें।</string>
+    <string name="email_verification_action_failed">यह अनुरोध पूरा नहीं हो सका। अपना कनेक्शन जाँचें और फिर से कोशिश करें।</string>
+    <string name="email_verification_logout_warning">आपका ईमेल सत्यापित नहीं है। लॉग आउट करने पर इस खाते में फिर से प्रवेश करना संभव नहीं हो सकता, खासकर यदि पते में टाइपिंग की गलती हो। लॉग आउट करने से पहले खाता अनुभाग में ईमेल सत्यापित करें या सुधारें। क्या फिर भी लॉग आउट करना है?</string>
+    <string name="email_verification_invalid_email">मान्य ईमेल पता दर्ज करें।</string>
+    <string name="email_verification_session_ended">कृपया फिर से लॉग इन करें</string>
+    <string name="email_verification_sign_in_again">आपका सत्र समाप्त हो गया है। %1$s और इस खाते के लिए तय किए गए पासवर्ड से फिर से लॉग इन करें। यदि आपने पता सुधारा है, तो लॉग इन करने से पहले उस पते पर भेजा गया पुष्टि लिंक खोलें। आपका उपनाम और प्रगति उसी खाते में सुरक्षित रहेंगे।</string>
+</resources>

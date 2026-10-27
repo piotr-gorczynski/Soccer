@@ -1,0 +1,14 @@
+<resources>
+    <string name="link_email_sent_keep_session">තහවුරු කිරීමේ සබැඳියක් %1$s වෙත යවා ඇත. ඔබ ගිණුමට ඇතුළු වී සිටිනු ඇත. සබැඳිය නැවත යැවීමට, ලිපිනය නිවැරදි කිරීමට හෝ තහවුරු වීම පරීක්ෂා කිරීමට ගිණුම විවෘත කරන්න. මෙම ගිණුමට ප්‍රවේශය රැක ගැනීමට පිටවීමට පෙර ඔබේ ලිපිනය තහවුරු කරන්න.</string>
+    <string name="email_verification_pending">ඔබේ ඊමේල් ලිපිනය තහවුරු කරන්න: %1$s. ඔබ තවමත් ගිණුමට ඇතුළු වී සිටී. ලිපිනය වැරදි නම් පහතින් නිවැරදි කරන්න. සබැඳිය විවෘත කළ පසු තහවුරු වීම පරීක්ෂා කරන්න ඔබන්න.</string>
+    <string name="email_verification_resend">සබැඳිය නැවත යවන්න</string>
+    <string name="email_verification_correct">ඊමේල් ලිපිනය නිවැරදි කරන්න</string>
+    <string name="email_verification_check">තහවුරු වීම පරීක්ෂා කරන්න</string>
+    <string name="email_verification_done">ඊමේල් ලිපිනය තහවුරු කර ඇත.</string>
+    <string name="email_verification_not_yet">ඊමේල් ලිපිනය තවම තහවුරු කර නැත. ඔබේ ලැබුණු තැපැල් තුළ ඇති සබැඳිය විවෘත කර නැවත පරීක්ෂා කරන්න.</string>
+    <string name="email_verification_action_failed">මෙම ඉල්ලීම සම්පූර්ණ කළ නොහැකි විය. ඔබේ සම්බන්ධතාව පරීක්ෂා කර නැවත උත්සාහ කරන්න.</string>
+    <string name="email_verification_logout_warning">ඔබේ ඊමේල් ලිපිනය තහවුරු කර නැත. පිටවීමෙන් පසු මෙම ගිණුමට නැවත පිවිසීමට නොහැකි විය හැකිය, විශේෂයෙන් ලිපිනයේ අකුරු දෝෂයක් ඇත්නම්. පිටවීමට පෙර ගිණුම තුළ ඔබේ ඊමේල් ලිපිනය තහවුරු කරන්න හෝ නිවැරදි කරන්න. එසේ වුවත් පිටවීමට අවශ්‍යද?</string>
+    <string name="email_verification_invalid_email">වලංගු ඊමේල් ලිපිනයක් ඇතුළත් කරන්න.</string>
+    <string name="email_verification_session_ended">කරුණාකර නැවත ඇතුළු වන්න</string>
+    <string name="email_verification_sign_in_again">ඔබේ සැසිය අවසන් වී ඇත. %1$s සහ මෙම ගිණුම සඳහා ඔබ සැකසූ මුරපදය භාවිතයෙන් නැවත ඇතුළු වන්න. ලිපිනය නිවැරදි කළේ නම් ඇතුළු වීමට පෙර එම ලිපිනයට යැවූ තහවුරු කිරීමේ සබැඳිය විවෘත කරන්න. ඔබේ අන්වර්ථ නාමය සහ ප්‍රගතිය එම ගිණුමේම පවතී.</string>
+</resources>

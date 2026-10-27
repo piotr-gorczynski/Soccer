@@ -72,12 +72,18 @@
             android:layout_marginTop="8dp"
             android:textColor="@color/colorGreenDark" />
 
-        <Button
+        <TextView
             android:id="@+id/accountPrivacyLink"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:padding="12dp"
+            android:gravity="center"
             android:text="@string/bangladesh_privacy_policy_english"
-            android:textAllCaps="false"
+            android:textColor="?android:attr/textColorLink"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground"
             android:visibility="gone" />
 
         <LinearLayout
@@ -95,20 +101,32 @@
                 android:gravity="center" />
             <Button
                 android:id="@+id/emailVerificationResend"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="20dp"
+                android:background="@color/colorGreenDark"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold"
                 android:text="@string/email_verification_resend"
                 android:textAllCaps="false" />
             <Button
                 android:id="@+id/emailVerificationCorrect"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="20dp"
+                android:background="@color/colorGreenDark"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold"
                 android:text="@string/email_verification_correct"
                 android:textAllCaps="false" />
             <Button
                 android:id="@+id/emailVerificationCheck"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="200dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="20dp"
+                android:background="@color/colorGreenDark"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold"
                 android:text="@string/email_verification_check"
                 android:textAllCaps="false" />
         </LinearLayout>

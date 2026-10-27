@@ -100,5 +100,19 @@ public class EmailVerificationManagerTest {
         Task<Boolean> result=manager.check(user);idle();assertFalse(result.isSuccessful());
         assertTrue(prefs.contains("verification_target_owner"));verify(auth,never()).signOut();
     }
+    @Test public void freshSignInReconcilesConfirmedTargetWithoutAnotherVerificationRequest() {
+        prefs.edit().putString("verification_target_owner","correct@example.invalid").commit();
+        when(user.isEmailVerified()).thenReturn(true);when(user.getEmail()).thenReturn("correct@example.invalid");
+        assertFalse(manager.needsAttention(user));assertTrue(manager.reconcileConfirmedAddress(user));
+        assertFalse(prefs.contains("verification_target_owner"));assertEquals("correct@example.invalid",prefs.getString("email",null));
+        verify(user,never()).reload();verify(user,never()).sendEmailVerification();verify(auth,never()).signOut();
+    }
+    @Test public void oldVerifiedAddressOrAnotherSessionCannotClearPendingCorrection() {
+        prefs.edit().putString("verification_target_owner","correct@example.invalid").commit();
+        when(user.isEmailVerified()).thenReturn(true);
+        assertTrue(manager.needsAttention(user));assertFalse(manager.reconcileConfirmedAddress(user));
+        when(user.getEmail()).thenReturn("correct@example.invalid");when(auth.getCurrentUser()).thenReturn(null);
+        assertFalse(manager.reconcileConfirmedAddress(user));assertTrue(prefs.contains("verification_target_owner"));
+    }
     private void idle() { shadowOf(Looper.getMainLooper()).idle(); }
 }

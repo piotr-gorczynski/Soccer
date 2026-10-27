@@ -431,27 +431,25 @@ public class AccountActivity extends BaseActivity {
         View panel=findViewById(R.id.emailVerificationPanel);
         if(panel==null) return;
         FirebaseUser user=FirebaseAuth.getInstance().getCurrentUser();
-        boolean pending=verificationManager().needsAttention(user);
+        EmailVerificationManager verification=verificationManager();
+        if (verification.reconcileConfirmedAddress(user)) {
+            ((TextView)findViewById(R.id.accountEmail)).setText(
+                    getString(R.string.email_label,user.getEmail()));
+        }
+        boolean pending=verification.needsAttention(user);
+        setVerificationBusy(!pending);
         panel.setVisibility(pending ? View.VISIBLE : View.GONE);
         if(!pending) return;
         ((TextView)findViewById(R.id.emailVerificationStatus)).setText(
                 getString(R.string.email_verification_pending,verificationManager().target(user)));
-        findViewById(R.id.emailVerificationResend).setOnClickListener(v -> {
-            setVerificationBusy(true);
-            verificationManager().resend(user).addOnCompleteListener(this, task -> {
-                if (!isActiveVerificationUser(user)) return;
-                setVerificationBusy(false);
-                if(task.isSuccessful()) showVerificationSent(user);
-                else verificationFailed();
-            });
-        });
+        findViewById(R.id.emailVerificationResend).setOnClickListener(v -> resendVerification(user, true));
         findViewById(R.id.emailVerificationCorrect).setOnClickListener(v -> showCorrectEmail(user));
         findViewById(R.id.emailVerificationCheck).setOnClickListener(v -> {
             setVerificationBusy(true);
             verificationManager().check(user).addOnCompleteListener(this, task -> {
-                if (!isActiveVerificationUser(user)) return;
+                if (!continueVerificationFor(user)) return;
                 setVerificationBusy(false);
-                if(!task.isSuccessful()) { verificationFailed(); return; }
+                if(!task.isSuccessful()) { verificationFailed("verification_check", task.getException()); return; }
                 if(Boolean.TRUE.equals(task.getResult())) refreshAccountData();
                 Toast.makeText(this, Boolean.TRUE.equals(task.getResult()) ? R.string.email_verification_done
                         : R.string.email_verification_not_yet,Toast.LENGTH_LONG).show();
@@ -466,12 +464,40 @@ public class AccountActivity extends BaseActivity {
         }
     }
 
+    private boolean verificationSessionNoticeShown;
+
+    private boolean continueVerificationFor(FirebaseUser user) {
+        if (isFinishing() || isDestroyed()) return false;
+        FirebaseUser current=FirebaseAuth.getInstance().getCurrentUser();
+        if (current!=null) return user.getUid().equals(current.getUid());
+        // Firebase can revoke the session when a verified email change is redeemed.
+        // Do not silently discard the result and leave disabled controls on screen.
+        setVerificationBusy(false);
+        if (!verificationSessionNoticeShown) {
+            verificationSessionNoticeShown=true;
+            Log.w("TAG_Soccer", "Email verification: session_ended");
+            new AlertDialog.Builder(this).setTitle(R.string.email_verification_session_ended)
+                    .setMessage(getString(R.string.email_verification_sign_in_again,verificationManager().target(user)))
+                    .setCancelable(false)
+                    .setPositiveButton(R.string.ok,(dialog,which) -> {
+                        if (FirebaseAuth.getInstance().getCurrentUser()==null) finishLogoutUi();
+                        else finish();
+                    }).show();
+        }
+        return false;
+    }
     private boolean isActiveVerificationUser(FirebaseUser user) {
         FirebaseUser current=FirebaseAuth.getInstance().getCurrentUser();
         return !isFinishing() && !isDestroyed() && current!=null && user.getUid().equals(current.getUid());
     }
 
-    private void verificationFailed() {
+    private void verificationFailed(String step, Exception error) {
+        // Do not log SDK messages, addresses, credentials or verification links.
+        Log.w("TAG_Soccer", "Email verification: step=" + step + ", code=" + AuthFailureException.codeOf(error));
+        if (getApplication() instanceof SoccerApp) {
+            AnalyticsManager analytics=((SoccerApp)getApplication()).getAnalyticsManager();
+            if (analytics!=null) analytics.trackAuthFailure("email",step,error);
+        }
         Toast.makeText(this,R.string.email_verification_action_failed,Toast.LENGTH_LONG).show();
     }
 
@@ -500,32 +526,62 @@ public class AccountActivity extends BaseActivity {
         dialog.show();
     }
 
-    private void correctEmail(FirebaseUser user,String email) {
+    private void resendVerification(FirebaseUser user, boolean allowReauthentication) {
         setVerificationBusy(true);
-        verificationManager().correctEmail(user,email).addOnCompleteListener(this, task -> {
-            if (!isActiveVerificationUser(user)) return;
+        verificationManager().resend(user).addOnCompleteListener(this, task -> {
+            if (!continueVerificationFor(user)) return;
             setVerificationBusy(false);
-            if(task.isSuccessful()) showVerificationSent(user);
-            else if(task.getException() instanceof FirebaseAuthRecentLoginRequiredException) {
-                EditText password=new EditText(this);
-                password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                new AlertDialog.Builder(this).setTitle(R.string.reauth_title).setMessage(R.string.reauth_message)
-                        .setView(password).setNegativeButton(R.string.cancel,null)
-                        .setPositiveButton(R.string.confirm,(dialog,which) -> {
-                            setVerificationBusy(true);
-                            user.reauthenticate(EmailAuthProvider.getCredential(
-                                    Objects.requireNonNull(user.getEmail()),password.getText().toString()))
-                                    .addOnCompleteListener(this, auth -> {
-                                        if (!isActiveVerificationUser(user)) return;
-                                        setVerificationBusy(false);
-                                        if(auth.isSuccessful()) correctEmail(user,email);
-                                        else verificationFailed();
-                                    });
-                        }).show();
-            } else verificationFailed();
+            if (task.isSuccessful()) showVerificationSent(user);
+            else if (allowReauthentication && task.getException() instanceof FirebaseAuthRecentLoginRequiredException)
+                reauthenticateForVerification(user, () -> resendVerification(user, false));
+            else verificationFailed("verification_resend", task.getException());
         });
     }
 
+    private void correctEmail(FirebaseUser user,String email) {
+        correctEmail(user,email,true);
+    }
+
+    private void correctEmail(FirebaseUser user,String email,boolean allowReauthentication) {
+        setVerificationBusy(true);
+        verificationManager().correctEmail(user,email).addOnCompleteListener(this, task -> {
+            if (!continueVerificationFor(user)) return;
+            setVerificationBusy(false);
+            if(task.isSuccessful()) showVerificationSent(user);
+            else if(allowReauthentication && task.getException() instanceof FirebaseAuthRecentLoginRequiredException)
+                reauthenticateForVerification(user, () -> correctEmail(user,email,false));
+            else verificationFailed("verification_correct",task.getException());
+        });
+    }
+
+    private void reauthenticateForVerification(FirebaseUser user,Runnable retry) {
+        EditText password=new EditText(this);
+        password.setId(R.id.editPassword);
+        password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        AlertDialog dialog=new AlertDialog.Builder(this).setTitle(R.string.reauth_title)
+                .setMessage(R.string.reauth_message).setView(password)
+                .setNegativeButton(R.string.cancel,null).setPositiveButton(R.string.confirm,null).create();
+        dialog.setOnShowListener(unused -> dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            if(!isActiveVerificationUser(user)) { dialog.dismiss(); return; }
+            if(password.getText().toString().isEmpty()) {
+                password.setError(getString(R.string.all_fields_required)); return;
+            }
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+            user.reauthenticate(EmailAuthProvider.getCredential(
+                    Objects.requireNonNull(user.getEmail()),password.getText().toString()))
+                    .addOnCompleteListener(this, task -> {
+                        if(!isActiveVerificationUser(user)) { dialog.dismiss(); return; }
+                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                        if(task.isSuccessful()) { dialog.dismiss(); retry.run(); }
+                        else {
+                            Log.w("TAG_Soccer", "Email verification: step=verification_reauthenticate, code="
+                                    + AuthFailureException.codeOf(task.getException()));
+                            password.setError(getString(R.string.reauth_failed));
+                        }
+                    });
+        }));
+        dialog.show();
+    }
     /**
      * Starts the link account activity to allow anonymous users to link their account
      * with email, Google, or Facebook credentials.

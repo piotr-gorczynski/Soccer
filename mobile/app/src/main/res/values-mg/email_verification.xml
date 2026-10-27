@@ -1,0 +1,14 @@
+<resources>
+    <string name="link_email_sent_keep_session">Nalefa tany amin’ny %1$s ny rohy fanamarinana. Mbola tafiditra ao amin’ny kaonty ianao. Sokafy ny Kaonty mba handefasana indray ny rohy, hanitsiana ny adiresy, na hijerena ny fanamarinana. Hamarino ny adiresinao alohan’ny hivoahana mba hitazonana ny fidirana amin’ity kaonty ity.</string>
+    <string name="email_verification_pending">Hamarino ny mailakao: %1$s. Mbola tafiditra ao amin’ny kaonty ianao. Raha diso ny adiresy dia ahitsio eto ambany. Rehefa nosokafanao ny rohy dia tsindrio Jereo ny fanamarinana.</string>
+    <string name="email_verification_resend">Alefaso indray ny rohy</string>
+    <string name="email_verification_correct">Ahitsio ny adiresy mailaka</string>
+    <string name="email_verification_check">Jereo ny fanamarinana</string>
+    <string name="email_verification_done">Voamarina ny mailaka.</string>
+    <string name="email_verification_not_yet">Mbola tsy voamarina ny mailaka. Sokafy ny rohy ao amin’ny boaty fandraisanao hafatra, dia jereo indray.</string>
+    <string name="email_verification_action_failed">Tsy vita ity fangatahana ity. Jereo ny fifandraisanao ary andramo indray.</string>
+    <string name="email_verification_logout_warning">Tsy voamarina ny mailakao. Raha mivoaka ianao dia mety tsy ho afaka hiditra amin’ity kaonty ity intsony, indrindra raha misy diso fanoratra ny adiresy. Hamarino na ahitsio ao amin’ny Kaonty ny mailakao alohan’ny hivoahana. Hivoaka ihany ve?</string>
+    <string name="email_verification_invalid_email">Ampidiro ny adiresy mailaka manan-kery.</string>
+    <string name="email_verification_session_ended">Midira indray azafady</string>
+    <string name="email_verification_sign_in_again">Tapitra ny fotoam-pidiranao. Midira indray amin’ny %1$s sy ny tenimiafina napetrakao ho an’ity kaonty ity. Raha nanitsy ny adiresy ianao dia sokafy ny rohy fanamarinana nalefa tany amin’io adiresy io alohan’ny hidirana. Mijanona ao amin’ilay kaonty ihany ny solonanaranao sy ny fandrosoanao.</string>
+</resources>

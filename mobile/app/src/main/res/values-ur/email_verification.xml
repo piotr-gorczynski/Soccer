@@ -1,0 +1,14 @@
+<resources>
+    <string name="link_email_sent_keep_session">تصدیقی لنک %1$s پر بھیج دیا گیا ہے۔ آپ لاگ اِن رہیں گے۔ لنک دوبارہ بھیجنے، پتہ درست کرنے یا تصدیق کی حالت جانچنے کے لیے اکاؤنٹ کھولیں۔ اس اکاؤنٹ تک رسائی برقرار رکھنے کے لیے لاگ آؤٹ کرنے سے پہلے اپنے پتے کی تصدیق کریں۔</string>
+    <string name="email_verification_pending">اپنی ای میل کی تصدیق کریں: %1$s۔ آپ لاگ اِن ہیں۔ اگر پتہ غلط ہے تو اسے نیچے درست کریں۔ لنک کھولنے کے بعد تصدیق جانچیں دبائیں۔</string>
+    <string name="email_verification_resend">لنک دوبارہ بھیجیں</string>
+    <string name="email_verification_correct">ای میل پتہ درست کریں</string>
+    <string name="email_verification_check">تصدیق جانچیں</string>
+    <string name="email_verification_done">ای میل کی تصدیق ہو گئی۔</string>
+    <string name="email_verification_not_yet">ای میل کی ابھی تصدیق نہیں ہوئی۔ اپنے اِن باکس میں موجود لنک کھولیں، پھر دوبارہ جانچیں۔</string>
+    <string name="email_verification_action_failed">یہ درخواست مکمل نہیں ہو سکی۔ اپنا کنکشن جانچیں اور دوبارہ کوشش کریں۔</string>
+    <string name="email_verification_logout_warning">آپ کی ای میل کی تصدیق نہیں ہوئی۔ لاگ آؤٹ کرنے کے بعد ممکن ہے آپ اس اکاؤنٹ تک دوبارہ رسائی حاصل نہ کر سکیں، خاص طور پر اگر پتے میں ٹائپنگ کی غلطی ہو۔ لاگ آؤٹ کرنے سے پہلے اکاؤنٹ میں اپنی ای میل کی تصدیق کریں یا پتہ درست کریں۔ پھر بھی لاگ آؤٹ کریں؟</string>
+    <string name="email_verification_invalid_email">درست ای میل پتہ درج کریں۔</string>
+    <string name="email_verification_session_ended">براہِ کرم دوبارہ لاگ اِن کریں</string>
+    <string name="email_verification_sign_in_again">آپ کا سیشن ختم ہو گیا ہے۔ %1$s اور اس اکاؤنٹ کے لیے مقرر کردہ پاس ورڈ سے دوبارہ لاگ اِن کریں۔ اگر آپ نے پتہ درست کیا ہے تو لاگ اِن کرنے سے پہلے اس پتے پر بھیجا گیا تصدیقی لنک کھولیں۔ آپ کا عرفی نام اور پیش رفت اسی اکاؤنٹ میں برقرار رہیں گے۔</string>
+</resources>

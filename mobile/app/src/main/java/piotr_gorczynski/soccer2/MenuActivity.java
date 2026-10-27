@@ -117,8 +117,25 @@ public class MenuActivity extends BaseActivity {
     private final Set<AlertDialog> managedDialogs = Collections.newSetFromMap(new IdentityHashMap<>());
     private final Runnable showAnimationInfoRunnable = this::showAnimationInfoDialog;
     private View loadingOverlay;
+    private boolean menuInitializationPending = true;
+    private boolean menuResumeWorkPending = true;
+    private boolean nicknameScreenOpen;
+    private boolean actionOverlayPending;
+    private int menuCheckGeneration;
+    private static final long MENU_INITIALIZATION_TIMEOUT_MS = 20_000L;
     private final Handler overlayHandler = new Handler(Looper.getMainLooper());
     private final Runnable hideOverlayRunnable = this::hideLoadingOverlayImmediate;
+    private final Runnable menuInitializationTimeout = () -> {
+        if (!menuInitializationPending || isFinishing() || isDestroyed()) return;
+        // Ignore late results from the timed-out check instead of flashing online again.
+        menuCheckGeneration++;
+        isBackendCheckInProgress = false;
+        termsCheckInFlight = false;
+        pendingTermsAction = null;
+        menuResumeWorkPending = false;
+        showBackendUnavailable();
+        maybeRevealResolvedMenu();
+    };
     private final ActivityResultLauncher<Intent> uninstallGlobalAppLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                 awaitingGlobalUninstallResult = false;
@@ -291,7 +308,7 @@ public class MenuActivity extends BaseActivity {
 
         if (nicknameProfileTask == null || nicknameProfileTask.isComplete() || !uid.equals(nicknameProfileUid)) {
             nicknameProfileUid = uid;
-            nicknameProfileTask = NicknameProfileLoader.load(FirebaseFirestore.getInstance().collection("users").document(uid));
+            nicknameProfileTask = loadMenuProfile(uid);
         }
         TextView loadingLabel = findViewById(R.id.nicknameLabel);
         if (loadingLabel != null && (prefs.getString("nickname", "").trim().isEmpty()
@@ -299,8 +316,9 @@ public class MenuActivity extends BaseActivity {
             loadingLabel.setText(R.string.menu_loading_message);
         }
         updateUiForAuthState();
+        final int profileGeneration = menuCheckGeneration;
         nicknameProfileTask.addOnSuccessListener(doc -> {
-                    if (isFinishing() || isDestroyed() || !uid.equals(FirebaseAuth.getInstance().getUid())) return;
+                    if (profileGeneration != menuCheckGeneration || isFinishing() || isDestroyed() || !uid.equals(FirebaseAuth.getInstance().getUid())) return;
                     String remoteNick = doc.getString("nickname");
                     String remoteEmail = doc.getString("email");
                     String remoteMethod = doc.getString("method");
@@ -349,10 +367,15 @@ public class MenuActivity extends BaseActivity {
                     }
                 })
                 .addOnFailureListener(e -> {
-                    if (isFinishing() || isDestroyed() || !uid.equals(FirebaseAuth.getInstance().getUid())) return;
+                    if (profileGeneration != menuCheckGeneration || isFinishing() || isDestroyed() || !uid.equals(FirebaseAuth.getInstance().getUid())) return;
                     Log.w("TAG_Soccer", "MenuActivity: server profile unavailable", e);
                     showBackendUnavailable();
-                });
+                })
+                .addOnCompleteListener(task -> maybeRevealResolvedMenu());
+    }
+
+    protected Task<DocumentSnapshot> loadMenuProfile(String uid) {
+        return NicknameProfileLoader.load(FirebaseFirestore.getInstance().collection("users").document(uid));
     }
 
     private boolean termsCheckInFlight;
@@ -370,10 +393,12 @@ public class MenuActivity extends BaseActivity {
         if (allowed != null) pendingTermsAction = allowed;
         if (termsCheckInFlight) return;
         termsCheckInFlight = true;
+        final int termsGeneration = menuCheckGeneration;
         String loginAttempt = PendingLoginSuccess.attempt(this, uid);
         TermsPolicy policy = TermsPolicy.required(AppFlavourDetector.isBangladeshFlavour(this), LanguageManager.getCurrentLanguageCode(this));
         readTermsAcceptance(uid, policy)
             .addOnSuccessListener(ok -> {
+                if (termsGeneration != menuCheckGeneration) return;
                 termsCheckInFlight = false;
                 Runnable action = pendingTermsAction;
                 pendingTermsAction = null;
@@ -401,11 +426,12 @@ public class MenuActivity extends BaseActivity {
                     if (action != null) action.run();
                 } else openRequiredTerms();
             }).addOnFailureListener(error -> {
+                if (termsGeneration != menuCheckGeneration) return;
                 termsCheckInFlight = false;
                 pendingTermsAction = null;
                 if (uid.equals(FirebaseAuth.getInstance().getUid()) && !isFinishing() && !isDestroyed())
                     showBackendUnavailable();
-            });
+            }).addOnCompleteListener(task -> maybeRevealResolvedMenu());
     }
     protected Task<Boolean> readTermsAcceptance(String uid, TermsPolicy policy) {
         return new TermsRepository(FirebaseFirestore.getInstance()).accepted(uid, policy);
@@ -413,6 +439,7 @@ public class MenuActivity extends BaseActivity {
     private void openRequiredTerms() {
         if (termsScreenOpen || !isBackendAvailable) return;
         termsScreenOpen = true;
+        overlayHandler.removeCallbacks(menuInitializationTimeout);
         MenuActivity.super.startActivity(new Intent(this, TermsActivity.class));
     }
     @Override public void startActivity(Intent intent) {
@@ -421,7 +448,13 @@ public class MenuActivity extends BaseActivity {
                 TermsActivity.class.getName().equals(intent.getComponent().getClassName()))) {
             super.startActivity(intent);
         } else {
-            checkTerms(uid, () -> MenuActivity.super.startActivity(intent));
+            checkTerms(uid, () -> {
+                if (intent.getComponent()!=null && PickNicknameActivity.class.getName().equals(intent.getComponent().getClassName())) {
+                    nicknameScreenOpen = true;
+                    overlayHandler.removeCallbacks(menuInitializationTimeout);
+                }
+                MenuActivity.super.startActivity(intent);
+            });
         }
     }
 
@@ -577,6 +610,8 @@ public class MenuActivity extends BaseActivity {
         super.onResume();
         recordWindowLifecycle("resumed");
         termsScreenOpen = false;
+        nicknameScreenOpen = false;
+        coverMenuWhileResolving();
 
         String lang = LanguageManager.getCurrentLanguageCode(this);
         if (currentLanguage == null || !currentLanguage.equals(lang)) {
@@ -618,6 +653,7 @@ public class MenuActivity extends BaseActivity {
     @Override
     protected void onStop() {
         recordWindowLifecycle("stopped");
+        overlayHandler.removeCallbacks(menuInitializationTimeout);
         runningPlayerHandler.removeCallbacks(showAnimationInfoRunnable);
         dismissManagedDialogs();
         unregisterNetworkCallback();
@@ -673,89 +709,94 @@ public class MenuActivity extends BaseActivity {
      */
     @SuppressLint("ApplySharedPref")
     private void continueOnResumeAfterBackendCheck() {
-        if (BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(this)) {
-            checkAndShowUninstallGlobalPrompt();
-            return;
-        }
-        FirebaseAuth auth = FirebaseAuth.getInstance();
+        try {
+            if (BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(this)) {
+                checkAndShowUninstallGlobalPrompt();
+                return;
+            }
+            FirebaseAuth auth = FirebaseAuth.getInstance();
 
-        SharedPreferences prefs =
-                getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
-        String nickname = prefs.getString("nickname", null);
-        if (auth.getCurrentUser() == null) {
-            PendingLoginSuccess.clear(this);
-            // Remove only user-specific data, preserve language preferences and other device settings
-            SharedPreferences.Editor ed = prefs.edit();
-            ed.remove("uid")
-              .remove("email")
-              .remove("nickname")
-              .remove("method")
-              .remove("facebookId")
-              .remove("facebookName")
-              .remove("facebookPhotoUrl")
-              .remove("fcmToken")
-              .remove(SoccerApp.FCM_INSTALLATION_ID_PREF);
-            // Use apply() instead of commit() to prevent fsync ANR
-            ed.apply();
+            SharedPreferences prefs =
+                    getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
+            String nickname = prefs.getString("nickname", null);
+            if (auth.getCurrentUser() == null) {
+                PendingLoginSuccess.clear(this);
+                // Remove only user-specific data, preserve language preferences and other device settings
+                SharedPreferences.Editor ed = prefs.edit();
+                ed.remove("uid")
+                  .remove("email")
+                  .remove("nickname")
+                  .remove("method")
+                  .remove("facebookId")
+                  .remove("facebookName")
+                  .remove("facebookPhotoUrl")
+                  .remove("fcmToken")
+                  .remove(SoccerApp.FCM_INSTALLATION_ID_PREF);
+                // Use apply() instead of commit() to prevent fsync ANR
+                ed.apply();
 
-            ((SoccerApp) getApplication()).unregisterFromFcm();
-            // Removed Firestore terminate/clearPersistence to prevent AsyncQueue threading crash
-            nickname = null;
-        } else {
-            String uid = auth.getUid();
-            if (uid != null) {
-                ensureTermsAccepted(uid);
-                Runnable pickNick = () -> {
-                    if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-                        startActivity(new Intent(this, PickNicknameActivity.class));
+                ((SoccerApp) getApplication()).unregisterFromFcm();
+                // Removed Firestore terminate/clearPersistence to prevent AsyncQueue threading crash
+                nickname = null;
+            } else {
+                String uid = auth.getUid();
+                if (uid != null) {
+                    ensureTermsAccepted(uid);
+                    Runnable pickNick = () -> {
+                        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+                            startActivity(new Intent(this, PickNicknameActivity.class));
+                        }
+                    };
+                    if (nickname == null || nickname.isEmpty()) {
+                        fetchNicknameFromFirestore(uid, prefs, pickNick);
+                        return;
+                    } else {
+                        // Refresh nickname in the background to keep prefs in sync
+                        fetchNicknameFromFirestore(uid, prefs, () -> {});
                     }
-                };
-                if (nickname == null || nickname.isEmpty()) {
-                    fetchNicknameFromFirestore(uid, prefs, pickNick);
-                    return;
-                } else {
-                    // Refresh nickname in the background to keep prefs in sync
-                    fetchNicknameFromFirestore(uid, prefs, () -> {});
                 }
             }
-        }
 
-        TextView nicknameLabel = findViewById(R.id.nicknameLabel);
-        String labelText;
-        if (nickname != null && !nickname.isEmpty()) {
+            TextView nicknameLabel = findViewById(R.id.nicknameLabel);
+            String labelText;
+            if (nickname != null && !nickname.isEmpty()) {
+                Log.d(
+                        "TAG_Soccer",
+                        getClass().getSimpleName()
+                                + ".continueOnResumeAfterBackendCheck"
+                                + ": Nickname: "
+                                + nickname
+                );
+                labelText = SafeStringFormatter.safeGetString(this, R.string.hello_nickname, nickname);
+            } else {
+                labelText = getString(R.string.welcome_to_soccer);
+            }
+            if (nicknameLabel != null) {
+                nicknameLabel.setText(labelText);
+            } else {
+                Log.e("TAG_Soccer", getClass().getSimpleName() + ".continueOnResumeAfterBackendCheck: nicknameLabel is null, layout may not be properly inflated");
+            }
             Log.d(
                     "TAG_Soccer",
                     getClass().getSimpleName()
-                            + ".continueOnResumeAfterBackendCheck"
-                            + ": Nickname: "
-                            + nickname
+                            + ".continueOnResumeAfterBackendCheck: nicknameLabel=\""
+                            + labelText
+                            + "\""
             );
-            labelText = SafeStringFormatter.safeGetString(this, R.string.hello_nickname, nickname);
-        } else {
-            labelText = getString(R.string.welcome_to_soccer);
-        }
-        if (nicknameLabel != null) {
-            nicknameLabel.setText(labelText);
-        } else {
-            Log.e("TAG_Soccer", getClass().getSimpleName() + ".continueOnResumeAfterBackendCheck: nicknameLabel is null, layout may not be properly inflated");
-        }
-        Log.d(
-                "TAG_Soccer",
-                getClass().getSimpleName()
-                        + ".continueOnResumeAfterBackendCheck: nicknameLabel=\""
-                        + labelText
-                        + "\""
-        );
-        updateUiForAuthState();
-        checkAndUpdateBlockedInviteWarning(); // Also check on resume
+            updateUiForAuthState();
+            checkAndUpdateBlockedInviteWarning(); // Also check on resume
 
-        // Now that all authentication-related checks are done, look for any active match
-        checkForActiveMatch();
+            // Now that all authentication-related checks are done, look for any active match
+            checkForActiveMatch();
         
 
-        Button youVsAndroid = findViewById(R.id.youVsAndroidBtn);
-        if (youVsAndroid != null) {
-            Log.d("TAG_Soccer", getClass().getSimpleName() + ".continueOnResumeAfterBackendCheck: youVsAndroid=" + youVsAndroid.getText());
+            Button youVsAndroid = findViewById(R.id.youVsAndroidBtn);
+            if (youVsAndroid != null) {
+                Log.d("TAG_Soccer", getClass().getSimpleName() + ".continueOnResumeAfterBackendCheck: youVsAndroid=" + youVsAndroid.getText());
+            }
+        } finally {
+            menuResumeWorkPending = false;
+            maybeRevealResolvedMenu();
         }
     }
 
@@ -911,6 +952,8 @@ public class MenuActivity extends BaseActivity {
                 // consume clicks while loading to avoid double taps
             });
         }
+
+        coverMenuWhileResolving();
 
         // Setup toolbar with defensive error handling
         try {
@@ -1228,26 +1271,49 @@ public class MenuActivity extends BaseActivity {
                 || status == ConsentInformation.ConsentStatus.NOT_REQUIRED;
     }
 
+    private void coverMenuWhileResolving() {
+        menuInitializationPending = true;
+        menuResumeWorkPending = true;
+        showOverlayImmediately();
+    }
+
+    private void maybeRevealResolvedMenu() {
+        if (loadingOverlay == null || !menuInitializationPending || menuResumeWorkPending
+                || isBackendCheckInProgress || termsScreenOpen || nicknameScreenOpen) return;
+        boolean profilePending = nicknameProfileTask != null && !nicknameProfileTask.isComplete()
+                && java.util.Objects.equals(nicknameProfileUid,FirebaseAuth.getInstance().getUid());
+        if (isBackendAvailable && (termsCheckInFlight || profilePending)) return;
+        menuInitializationPending = false;
+        overlayHandler.removeCallbacks(menuInitializationTimeout);
+        updateUiForAuthState();
+        if (actionOverlayPending) showOverlayImmediately();
+        else scheduleOverlayHide();
+    }
+
     private void showLoadingOverlay() {
-        if (loadingOverlay == null) {
-            return;
-        }
+        actionOverlayPending = true;
+        showOverlayImmediately();
+    }
+
+    private void showOverlayImmediately() {
+        if (loadingOverlay == null) return;
         overlayHandler.removeCallbacks(hideOverlayRunnable);
+        loadingOverlay.animate().cancel();
         loadingOverlayShownAtMs = SystemClock.elapsedRealtime();
-        if (loadingOverlay.getVisibility() != View.VISIBLE) {
-            loadingOverlay.setAlpha(0f);
-            loadingOverlay.setVisibility(View.VISIBLE);
-            loadingOverlay.animate().alpha(1f).setDuration(150L).start();
-        } else {
-            loadingOverlay.animate().cancel();
-            loadingOverlay.setAlpha(1f);
-        }
+        loadingOverlay.setBackgroundColor(getColor(menuInitializationPending ? R.color.colorWhite : R.color.colorDimOverlay));
+        loadingOverlay.setAlpha(1f);
+        loadingOverlay.setVisibility(View.VISIBLE);
+        View content=findViewById(R.id.menu_content);
+        if (content!=null) content.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS);
     }
 
     private void hideLoadingOverlayWithMinimumDuration() {
-        if (loadingOverlay == null) {
-            return;
-        }
+        actionOverlayPending = false;
+        if (!menuInitializationPending) scheduleOverlayHide();
+    }
+
+    private void scheduleOverlayHide() {
+        if (loadingOverlay == null || menuInitializationPending || actionOverlayPending) return;
         long elapsed = SystemClock.elapsedRealtime() - loadingOverlayShownAtMs;
         long delay = Math.max(0L, MIN_LOADING_OVERLAY_DURATION_MS - elapsed);
         overlayHandler.removeCallbacks(hideOverlayRunnable);
@@ -1255,21 +1321,13 @@ public class MenuActivity extends BaseActivity {
     }
 
     private void hideLoadingOverlayImmediate() {
-        if (loadingOverlay == null) {
-            return;
-        }
-        if (loadingOverlay.getVisibility() != View.VISIBLE) {
-            return;
-        }
+        if (loadingOverlay == null || menuInitializationPending || actionOverlayPending) return;
         loadingOverlay.animate().cancel();
-        loadingOverlay.animate().alpha(0f).setDuration(150L).withEndAction(() -> {
-            if (loadingOverlay != null) {
-                loadingOverlay.setVisibility(View.GONE);
-                loadingOverlay.setAlpha(1f);
-            }
-        }).start();
+        loadingOverlay.setVisibility(View.GONE);
+        loadingOverlay.setAlpha(1f);
+        View content=findViewById(R.id.menu_content);
+        if (content!=null) content.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_AUTO);
     }
-
     private void showRegistrationDialog() {
         showManagedDialog(new AlertDialog.Builder(this)
                 .setMessage(R.string.register_dialog_message)
@@ -1659,6 +1717,7 @@ public class MenuActivity extends BaseActivity {
         recordWindowLifecycle("destroying");
         adRetryHandler.removeCallbacks(adRetryRunnable);
         overlayHandler.removeCallbacks(hideOverlayRunnable);
+        overlayHandler.removeCallbacks(menuInitializationTimeout);
         runningPlayerHandler.removeCallbacks(showAnimationInfoRunnable);
         dismissManagedDialogs();
         releaseRunningPlayerResources();
@@ -1691,97 +1750,69 @@ public class MenuActivity extends BaseActivity {
                     Toast.LENGTH_LONG).show();
             backendUnavailableToastShown = true;
         }
+        maybeRevealResolvedMenu();
     }
 
     /** Check backend availability before continuing authentication and UI setup. */
     private void checkBackendAvailabilityAndContinue() {
-        if (isBackendCheckInProgress) {
-            Log.d(
-                "TAG_Soccer",
-                getClass().getSimpleName() + ".checkBackendAvailabilityAndContinue: Check already in progress - skipping"
-            );
-            return;
-        }
-
-        if (serviceChecker == null) {
-            Log.w(
-                "TAG_Soccer",
-                getClass().getSimpleName() + ".checkBackendAvailabilityAndContinue: Service checker not available, assuming backend is available"
-            );
-            isBackendAvailable = true;
-            // Continue with the rest of onResume logic
-            continueOnResumeAfterBackendCheck();
-            return;
-        }
-
+        coverMenuWhileResolving();
+        overlayHandler.removeCallbacks(menuInitializationTimeout);
+        overlayHandler.postDelayed(menuInitializationTimeout,MENU_INITIALIZATION_TIMEOUT_MS);
+        if (isBackendCheckInProgress) return;
+        final int generation=++menuCheckGeneration;
+        termsCheckInFlight = false;
+        pendingTermsAction = null;
         isBackendCheckInProgress = true;
-
-        Log.d(
-            "TAG_Soccer",
-            getClass().getSimpleName() + ".checkBackendAvailabilityAndContinue: Checking backend availability before continuing onResume"
-        );
-
+        if (serviceChecker == null) {
+            isBackendAvailable = true;
+            try { continueOnResumeAfterBackendCheck(); }
+            finally { finishBackendUiCheck(generation); }
+            return;
+        }
         try {
             serviceChecker.checkServiceAvailability(new BackendServiceChecker.ServiceCheckCallback() {
-                @Override
-                public void onServiceAvailable() {
-                    Log.d(
-                        "TAG_Soccer",
-                        getClass().getSimpleName() + ".checkBackendAvailabilityAndContinue: Backend is available - continuing onResume"
-                );
-                runOnUiThread(() -> {
-                    isBackendAvailable = true;
-
-                    // Reset flag so next outage will display a toast again
-                    backendUnavailableToastShown = false;
-
-                    ((SoccerApp) getApplication()).setBackendAvailable(true);
-
-                    updateUiForAuthState();
-                    if (optionsMenu != null) {
-                        MenuItem offlineItem = optionsMenu.findItem(R.id.action_offline);
-                        if (offlineItem != null) {
-                            offlineItem.setVisible(false);
-                        }
-                        if (accountMenuItem != null && accountMenuItem.getIcon() != null) {
-                            accountMenuItem.getIcon().setAlpha(255);
-                        }
-                    }
-
-                    // Continue with the rest of onResume logic now that backend availability is confirmed
-                    continueOnResumeAfterBackendCheck();
-
-                    isBackendCheckInProgress = false;
-                });
-            }
-
-            @Override
-            public void onServiceUnavailable(String reason) {
-                Log.w(
-                    "TAG_Soccer",
-                    getClass().getSimpleName() + ".checkBackendAvailabilityAndContinue: Backend is unavailable: " + reason + " - continuing onResume"
-                );
-                runOnUiThread(() -> {
-                    showBackendUnavailable();
-
-                    // Continue with the rest of onResume logic even when backend is unavailable
-                    // (the safeguards in ensureTermsAccepted and fetchNicknameFromFirestore will handle this)
-                    continueOnResumeAfterBackendCheck();
-
-                    isBackendCheckInProgress = false;
-                });
-            }
+                @Override public void onServiceAvailable() {
+                    runOnUiThread(() -> {
+                        if (generation != menuCheckGeneration || isFinishing() || isDestroyed()) return;
+                        try {
+                            isBackendAvailable = true;
+                            backendUnavailableToastShown = false;
+                            ((SoccerApp)getApplication()).setBackendAvailable(true);
+                            if (optionsMenu != null) {
+                                MenuItem offlineItem=optionsMenu.findItem(R.id.action_offline);
+                                if (offlineItem!=null) offlineItem.setVisible(false);
+                                if (accountMenuItem!=null && accountMenuItem.getIcon()!=null)
+                                    accountMenuItem.getIcon().setAlpha(255);
+                            }
+                            // Resolve profile and Terms before revealing the final button state.
+                            continueOnResumeAfterBackendCheck();
+                        } finally { finishBackendUiCheck(generation); }
+                    });
+                }
+                @Override public void onServiceUnavailable(String reason) {
+                    runOnUiThread(() -> {
+                        if (generation != menuCheckGeneration || isFinishing() || isDestroyed()) return;
+                        try {
+                            showBackendUnavailable();
+                            continueOnResumeAfterBackendCheck();
+                        } finally { finishBackendUiCheck(generation); }
+                    });
+                }
             });
-        } catch (Exception e) {
-            isBackendCheckInProgress = false;
-            Log.e(
-                "TAG_Soccer",
-                getClass().getSimpleName() + ".checkBackendAvailabilityAndContinue: Service check failed to start",
-                e
-            );
+        } catch (Exception error) {
+            Log.w("TAG_Soccer","Menu service check could not start",error);
+            try {
+                showBackendUnavailable();
+                continueOnResumeAfterBackendCheck();
+            } finally { finishBackendUiCheck(generation); }
         }
     }
 
+    private void finishBackendUiCheck(int generation) {
+        if (generation != menuCheckGeneration) return;
+        isBackendCheckInProgress = false;
+        maybeRevealResolvedMenu();
+    }
     private void registerNetworkCallback() {
         if (networkCallbackRegistered) {
             return;

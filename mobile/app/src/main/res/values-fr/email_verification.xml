@@ -1,0 +1,14 @@
+<resources>
+    <string name="link_email_sent_keep_session">Un lien de vérification a été envoyé à %1$s. Tu restes connecté. Ouvre Compte pour renvoyer le lien, corriger l’adresse ou vérifier la confirmation. Confirme ton adresse avant de te déconnecter pour conserver l’accès à ce compte.</string>
+    <string name="email_verification_pending">Confirme ton adresse e-mail : %1$s. Tu restes connecté. Si l’adresse est incorrecte, corrige-la ci-dessous. Après avoir ouvert le lien, appuie sur Vérifier la confirmation.</string>
+    <string name="email_verification_resend">Renvoyer le lien</string>
+    <string name="email_verification_correct">Corriger l’adresse e-mail</string>
+    <string name="email_verification_check">Vérifier la confirmation</string>
+    <string name="email_verification_done">Adresse e-mail confirmée.</string>
+    <string name="email_verification_not_yet">L’adresse e-mail n’est pas encore confirmée. Ouvre le lien reçu dans ta boîte de réception, puis vérifie à nouveau.</string>
+    <string name="email_verification_action_failed">Impossible de terminer cette demande. Vérifie ta connexion et réessaie.</string>
+    <string name="email_verification_logout_warning">Ton adresse e-mail n’est pas confirmée. En te déconnectant, tu risques de perdre l’accès à ce compte, surtout si l’adresse contient une faute de frappe. Confirme ou corrige ton adresse dans Compte avant de te déconnecter. Te déconnecter quand même ?</string>
+    <string name="email_verification_invalid_email">Saisis une adresse e-mail valide.</string>
+    <string name="email_verification_session_ended">Reconnecte-toi</string>
+    <string name="email_verification_sign_in_again">Ta session est terminée. Reconnecte-toi avec %1$s et le mot de passe défini pour ce compte. Si tu as corrigé l’adresse, ouvre le lien de vérification envoyé à cette adresse avant de te connecter. Ton pseudo et ta progression restent sur le même compte.</string>
+</resources>

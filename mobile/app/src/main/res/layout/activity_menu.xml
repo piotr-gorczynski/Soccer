@@ -6,6 +6,7 @@
     android:background="@color/colorWhite">
 
     <LinearLayout
+        android:id="@+id/menu_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -138,10 +139,10 @@
         android:id="@+id/menu_loading_overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorDimOverlay"
+        android:background="@color/colorWhite"
         android:clickable="true"
         android:focusable="true"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <LinearLayout
             android:layout_width="wrap_content"

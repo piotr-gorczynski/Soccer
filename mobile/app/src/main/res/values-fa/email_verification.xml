@@ -1,0 +1,14 @@
+<resources>
+    <string name="link_email_sent_keep_session">پیوند تأیید به %1$s فرستاده شد. همچنان وارد حساب می‌مانید. برای ارسال دوباره پیوند، اصلاح نشانی یا بررسی تأیید، بخش حساب را باز کنید. برای حفظ دسترسی به این حساب، پیش از خروج نشانی خود را تأیید کنید.</string>
+    <string name="email_verification_pending">ایمیل خود را تأیید کنید: %1$s. همچنان وارد حساب هستید. اگر نشانی اشتباه است، آن را در پایین اصلاح کنید. پس از باز کردن پیوند، بررسی تأیید را بزنید.</string>
+    <string name="email_verification_resend">ارسال دوباره پیوند</string>
+    <string name="email_verification_correct">اصلاح نشانی ایمیل</string>
+    <string name="email_verification_check">بررسی تأیید</string>
+    <string name="email_verification_done">ایمیل تأیید شد.</string>
+    <string name="email_verification_not_yet">ایمیل هنوز تأیید نشده است. پیوند موجود در صندوق ورودی را باز کنید و دوباره بررسی کنید.</string>
+    <string name="email_verification_action_failed">این درخواست انجام نشد. اتصال خود را بررسی کنید و دوباره تلاش کنید.</string>
+    <string name="email_verification_logout_warning">ایمیل شما تأیید نشده است. خروج ممکن است مانع دسترسی دوباره به این حساب شود، به‌ویژه اگر نشانی اشتباه تایپی داشته باشد. پیش از خروج، ایمیل خود را در بخش حساب تأیید یا اصلاح کنید. با این حال خارج می‌شوید؟</string>
+    <string name="email_verification_invalid_email">یک نشانی ایمیل معتبر وارد کنید.</string>
+    <string name="email_verification_session_ended">لطفاً دوباره وارد شوید</string>
+    <string name="email_verification_sign_in_again">نشست شما پایان یافته است. با %1$s و گذرواژه‌ای که برای این حساب تعیین کردید دوباره وارد شوید. اگر نشانی را اصلاح کرده‌اید، پیش از ورود پیوند تأیید فرستاده‌شده به آن نشانی را باز کنید. نام مستعار و پیشرفت شما در همان حساب باقی می‌ماند.</string>
+</resources>

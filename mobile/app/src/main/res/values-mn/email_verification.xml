@@ -1,0 +1,14 @@
+<resources>
+    <string name="link_email_sent_keep_session">Баталгаажуулах холбоосыг %1$s хаяг руу илгээлээ. Та бүртгэлдээ нэвтэрсэн хэвээр байна. Холбоосыг дахин илгээх, хаягаа засах эсвэл баталгаажуулалтыг шалгахын тулд Бүртгэл хэсгийг нээнэ үү. Энэ бүртгэлд нэвтрэх боломжоо хадгалахын тулд гарахаасаа өмнө хаягаа баталгаажуулна уу.</string>
+    <string name="email_verification_pending">Имэйлээ баталгаажуулна уу: %1$s. Та нэвтэрсэн хэвээр байна. Хаяг буруу бол доор засна уу. Холбоосыг нээсний дараа Баталгаажуулалтыг шалгах товчийг дарна уу.</string>
+    <string name="email_verification_resend">Холбоос дахин илгээх</string>
+    <string name="email_verification_correct">Имэйл хаяг засах</string>
+    <string name="email_verification_check">Баталгаажуулалт шалгах</string>
+    <string name="email_verification_done">Имэйл баталгаажлаа.</string>
+    <string name="email_verification_not_yet">Имэйл хараахан баталгаажаагүй байна. Ирсэн имэйл дэх холбоосыг нээгээд дахин шалгана уу.</string>
+    <string name="email_verification_action_failed">Энэ хүсэлтийг гүйцэтгэж чадсангүй. Холболтоо шалгаад дахин оролдоно уу.</string>
+    <string name="email_verification_logout_warning">Таны имэйл баталгаажаагүй байна. Бүртгэлээс гарвал, ялангуяа хаягаа алдаатай бичсэн бол энэ бүртгэлд дахин нэвтэрч чадахгүй байж магадгүй. Гарахаасаа өмнө Бүртгэл хэсэгт имэйлээ баталгаажуулах эсвэл засна уу. Гэсэн ч гарах уу?</string>
+    <string name="email_verification_invalid_email">Зөв имэйл хаяг оруулна уу.</string>
+    <string name="email_verification_session_ended">Дахин нэвтэрнэ үү</string>
+    <string name="email_verification_sign_in_again">Таны нэвтрэх хугацаа дууссан. %1$s хаяг болон энэ бүртгэлд тохируулсан нууц үгээрээ дахин нэвтэрнэ үү. Хаягаа зассан бол нэвтрэхээсээ өмнө тэр хаяг руу илгээсэн баталгаажуулах холбоосыг нээнэ үү. Таны хоч болон ахиц дэвшил тухайн бүртгэлд хэвээр хадгалагдана.</string>
+</resources>

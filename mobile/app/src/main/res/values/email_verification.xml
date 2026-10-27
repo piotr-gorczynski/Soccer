@@ -9,4 +9,6 @@
     <string name="email_verification_action_failed">Could not complete this request. Check your connection and try again.</string>
     <string name="email_verification_logout_warning">Your email is not verified. Signing out may prevent you from accessing this account again, especially if the address contains a typo. Verify or correct your email in Account before signing out. Sign out anyway?</string>
     <string name="email_verification_invalid_email">Enter a valid email address.</string>
+    <string name="email_verification_session_ended">Please sign in again</string>
+    <string name="email_verification_sign_in_again">Your session has ended. Sign in again with %1$s and the password you set for this account. If you corrected your address, verify the link sent to that address before signing in. Your nickname and progress remain on the same account.</string>
 </resources>

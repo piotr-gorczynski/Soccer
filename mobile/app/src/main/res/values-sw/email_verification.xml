@@ -1,0 +1,14 @@
+<resources>
+    <string name="link_email_sent_keep_session">Kiungo cha uthibitishaji kimetumwa kwa %1$s. Utaendelea kuwa umeingia. Fungua Akaunti ili kutuma kiungo tena, kusahihisha anwani au kuangalia uthibitishaji. Thibitisha anwani yako kabla ya kutoka ili uendelee kuweza kufikia akaunti hii.</string>
+    <string name="email_verification_pending">Thibitisha barua pepe yako: %1$s. Bado umeingia. Ikiwa anwani si sahihi, isahihishe hapa chini. Baada ya kufungua kiungo, bonyeza Angalia uthibitishaji.</string>
+    <string name="email_verification_resend">Tuma kiungo tena</string>
+    <string name="email_verification_correct">Sahihisha barua pepe</string>
+    <string name="email_verification_check">Angalia uthibitishaji</string>
+    <string name="email_verification_done">Barua pepe imethibitishwa.</string>
+    <string name="email_verification_not_yet">Barua pepe bado haijathibitishwa. Fungua kiungo katika kisanduku chako cha ujumbe, kisha uangalie tena.</string>
+    <string name="email_verification_action_failed">Ombi hili halikuweza kukamilishwa. Angalia muunganisho wako na ujaribu tena.</string>
+    <string name="email_verification_logout_warning">Barua pepe yako haijathibitishwa. Ukitoka, huenda usiweze kufikia akaunti hii tena, hasa ikiwa anwani ina kosa la kuandika. Thibitisha au usahihishe barua pepe yako katika Akaunti kabla ya kutoka. Unataka kutoka hata hivyo?</string>
+    <string name="email_verification_invalid_email">Weka anwani sahihi ya barua pepe.</string>
+    <string name="email_verification_session_ended">Tafadhali ingia tena</string>
+    <string name="email_verification_sign_in_again">Kipindi chako cha kuingia kimeisha. Ingia tena kwa %1$s na nenosiri uliloweka kwa akaunti hii. Ikiwa ulisahihisha anwani, fungua kiungo cha uthibitishaji kilichotumwa kwa anwani hiyo kabla ya kuingia. Jina lako la utani na maendeleo yako yatabaki katika akaunti hiyo hiyo.</string>
+</resources>

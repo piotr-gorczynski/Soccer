@@ -1,0 +1,14 @@
+<resources>
+    <string name="link_email_sent_keep_session">តំណផ្ទៀងផ្ទាត់ត្រូវបានផ្ញើទៅ %1$s។ អ្នកនៅតែចូលគណនី។ បើកគណនី ដើម្បីផ្ញើតំណម្តងទៀត កែអាសយដ្ឋាន ឬពិនិត្យការផ្ទៀងផ្ទាត់។ សូមផ្ទៀងផ្ទាត់អាសយដ្ឋានមុនពេលចេញពីគណនី ដើម្បីរក្សាសិទ្ធិចូលប្រើគណនីនេះ។</string>
+    <string name="email_verification_pending">ផ្ទៀងផ្ទាត់អ៊ីមែលរបស់អ្នក៖ %1$s។ អ្នកនៅតែចូលគណនី។ បើអាសយដ្ឋានខុស សូមកែវាខាងក្រោម។ បន្ទាប់ពីបើកតំណ សូមចុច ពិនិត្យការផ្ទៀងផ្ទាត់។</string>
+    <string name="email_verification_resend">ផ្ញើតំណម្តងទៀត</string>
+    <string name="email_verification_correct">កែអាសយដ្ឋានអ៊ីមែល</string>
+    <string name="email_verification_check">ពិនិត្យការផ្ទៀងផ្ទាត់</string>
+    <string name="email_verification_done">អ៊ីមែលត្រូវបានផ្ទៀងផ្ទាត់។</string>
+    <string name="email_verification_not_yet">អ៊ីមែលមិនទាន់ត្រូវបានផ្ទៀងផ្ទាត់ទេ។ បើកតំណក្នុងប្រអប់សារចូលរបស់អ្នក រួចពិនិត្យម្តងទៀត។</string>
+    <string name="email_verification_action_failed">មិនអាចបញ្ចប់សំណើនេះបានទេ។ ពិនិត្យការតភ្ជាប់របស់អ្នក រួចព្យាយាមម្តងទៀត។</string>
+    <string name="email_verification_logout_warning">អ៊ីមែលរបស់អ្នកមិនទាន់ត្រូវបានផ្ទៀងផ្ទាត់ទេ។ ការចេញពីគណនីអាចធ្វើឱ្យអ្នកមិនអាចចូលប្រើគណនីនេះវិញបាន ជាពិសេសបើអាសយដ្ឋានមានកំហុសវាយអក្សរ។ សូមផ្ទៀងផ្ទាត់ ឬកែអ៊ីមែលក្នុងគណនី មុនពេលចេញ។ តើនៅតែចង់ចេញពីគណនីឬ?</string>
+    <string name="email_verification_invalid_email">បញ្ចូលអាសយដ្ឋានអ៊ីមែលត្រឹមត្រូវ។</string>
+    <string name="email_verification_session_ended">សូមចូលគណនីម្តងទៀត</string>
+    <string name="email_verification_sign_in_again">សម័យចូលប្រើរបស់អ្នកបានបញ្ចប់។ សូមចូលម្តងទៀតដោយប្រើ %1$s និងពាក្យសម្ងាត់ដែលអ្នកបានកំណត់សម្រាប់គណនីនេះ។ បើអ្នកបានកែអាសយដ្ឋាន សូមបើកតំណផ្ទៀងផ្ទាត់ដែលបានផ្ញើទៅអាសយដ្ឋាននោះ មុនពេលចូល។ ឈ្មោះហៅក្រៅ និងវឌ្ឍនភាពរបស់អ្នកនៅតែរក្សាទុកក្នុងគណនីដដែល។</string>
+</resources>

@@ -1,0 +1,14 @@
+<resources>
+    <string name="link_email_sent_keep_session">Ein Bestätigungslink wurde an %1$s gesendet. Du bleibst angemeldet. Unter Konto kannst du den Link erneut senden, die Adresse korrigieren oder die Bestätigung prüfen. Bestätige deine Adresse vor dem Abmelden, um den Zugriff auf dein Konto zu behalten.</string>
+    <string name="email_verification_pending">Bestätige deine E-Mail-Adresse: %1$s. Du bleibst angemeldet. Ist die Adresse falsch, korrigiere sie unten. Öffne den Link und tippe dann auf Bestätigung prüfen.</string>
+    <string name="email_verification_resend">Link erneut senden</string>
+    <string name="email_verification_correct">E-Mail-Adresse korrigieren</string>
+    <string name="email_verification_check">Bestätigung prüfen</string>
+    <string name="email_verification_done">E-Mail-Adresse bestätigt.</string>
+    <string name="email_verification_not_yet">Die E-Mail-Adresse ist noch nicht bestätigt. Öffne den Link in deinem Posteingang und prüfe dann erneut.</string>
+    <string name="email_verification_action_failed">Die Anfrage konnte nicht abgeschlossen werden. Prüfe deine Verbindung und versuche es erneut.</string>
+    <string name="email_verification_logout_warning">Deine E-Mail-Adresse ist nicht bestätigt. Nach dem Abmelden kannst du möglicherweise nicht mehr auf dieses Konto zugreifen, besonders bei einem Tippfehler in der Adresse. Bestätige oder korrigiere die Adresse vor dem Abmelden unter Konto. Trotzdem abmelden?</string>
+    <string name="email_verification_invalid_email">Gib eine gültige E-Mail-Adresse ein.</string>
+    <string name="email_verification_session_ended">Bitte erneut anmelden</string>
+    <string name="email_verification_sign_in_again">Deine Sitzung wurde beendet. Melde dich mit %1$s und dem für dieses Konto festgelegten Passwort erneut an. Falls du die Adresse korrigiert hast, öffne vor dem Anmelden den Bestätigungslink für diese Adresse. Dein Nickname und dein Fortschritt bleiben im selben Konto erhalten.</string>
+</resources>

@@ -19,6 +19,10 @@ public final class PrivacyPolicyLinks {
         View link = activity.findViewById(viewId);
         boolean bangladesh = AppFlavourDetector.isBangladeshFlavour(activity);
         link.setVisibility(bangladesh ? View.VISIBLE : View.GONE);
+        if (link instanceof android.widget.TextView && !(link instanceof android.widget.Button)) {
+            android.widget.TextView textLink = (android.widget.TextView) link;
+            textLink.setPaintFlags(textLink.getPaintFlags() | android.graphics.Paint.UNDERLINE_TEXT_FLAG);
+        }
         if (bangladesh) link.setOnClickListener(view -> {
             String url = bangladeshUrl(LanguageManager.getCurrentLanguageCode(activity));
             try {

@@ -1,0 +1,14 @@
+<resources>
+    <string name="link_email_sent_keep_session">تم إرسال رابط التحقق إلى %1$s. ستبقى مسجلاً الدخول. افتح الحساب لإعادة إرسال الرابط أو تصحيح العنوان أو التحقق من التأكيد. أكّد عنوانك قبل تسجيل الخروج للحفاظ على إمكانية الوصول إلى هذا الحساب.</string>
+    <string name="email_verification_pending">أكّد بريدك الإلكتروني: %1$s. ما زلت مسجلاً الدخول. إذا كان العنوان غير صحيح، فصححه أدناه. بعد فتح الرابط، اضغط على التحقق من التأكيد.</string>
+    <string name="email_verification_resend">إعادة إرسال الرابط</string>
+    <string name="email_verification_correct">تصحيح البريد الإلكتروني</string>
+    <string name="email_verification_check">التحقق من التأكيد</string>
+    <string name="email_verification_done">تم تأكيد البريد الإلكتروني.</string>
+    <string name="email_verification_not_yet">لم يتم تأكيد البريد الإلكتروني بعد. افتح الرابط في بريدك الوارد، ثم تحقق مرة أخرى.</string>
+    <string name="email_verification_action_failed">تعذر إكمال هذا الطلب. تحقق من اتصالك وحاول مرة أخرى.</string>
+    <string name="email_verification_logout_warning">لم يتم تأكيد بريدك الإلكتروني. قد يمنعك تسجيل الخروج من الوصول إلى هذا الحساب مجددًا، خاصة إذا كان العنوان يحتوي على خطأ إملائي. أكّد بريدك أو صححه في الحساب قبل تسجيل الخروج. هل تريد تسجيل الخروج رغم ذلك؟</string>
+    <string name="email_verification_invalid_email">أدخل عنوان بريد إلكتروني صالحًا.</string>
+    <string name="email_verification_session_ended">يرجى تسجيل الدخول مجددًا</string>
+    <string name="email_verification_sign_in_again">انتهت جلستك. سجّل الدخول مجددًا باستخدام %1$s وكلمة المرور التي حددتها لهذا الحساب. إذا صححت العنوان، فافتح رابط التحقق المرسل إليه قبل تسجيل الدخول. سيبقى اسمك المستعار وتقدمك في الحساب نفسه.</string>
+</resources>

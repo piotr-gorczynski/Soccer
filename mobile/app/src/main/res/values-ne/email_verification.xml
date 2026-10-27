@@ -1,0 +1,14 @@
+<resources>
+    <string name="link_email_sent_keep_session">प्रमाणीकरण लिङ्क %1$s मा पठाइएको छ। तपाईं लगइन अवस्थामै रहनुहुनेछ। लिङ्क फेरि पठाउन, ठेगाना सच्याउन वा प्रमाणीकरण जाँच्न खाता खोल्नुहोस्। यस खातामा पहुँच कायम राख्न लगआउट गर्नुअघि आफ्नो ठेगाना प्रमाणित गर्नुहोस्।</string>
+    <string name="email_verification_pending">आफ्नो इमेल प्रमाणित गर्नुहोस्: %1$s। तपाईं लगइन अवस्थामै हुनुहुन्छ। ठेगाना गलत भए तल सच्याउनुहोस्। लिङ्क खोलेपछि प्रमाणीकरण जाँच्नुहोस् थिच्नुहोस्।</string>
+    <string name="email_verification_resend">लिङ्क फेरि पठाउनुहोस्</string>
+    <string name="email_verification_correct">इमेल ठेगाना सच्याउनुहोस्</string>
+    <string name="email_verification_check">प्रमाणीकरण जाँच्नुहोस्</string>
+    <string name="email_verification_done">इमेल प्रमाणित भयो।</string>
+    <string name="email_verification_not_yet">इमेल अझै प्रमाणित भएको छैन। इनबक्समा आएको लिङ्क खोल्नुहोस् र फेरि जाँच्नुहोस्।</string>
+    <string name="email_verification_action_failed">यो अनुरोध पूरा गर्न सकिएन। आफ्नो जडान जाँच्नुहोस् र फेरि प्रयास गर्नुहोस्।</string>
+    <string name="email_verification_logout_warning">तपाईंको इमेल प्रमाणित भएको छैन। लगआउट गर्दा यस खातामा फेरि पहुँच नपाउन सक्नुहुन्छ, विशेष गरी ठेगानामा टाइप गर्ने गल्ती भएमा। लगआउट गर्नुअघि खाता खण्डमा इमेल प्रमाणित गर्नुहोस् वा सच्याउनुहोस्। तैपनि लगआउट गर्ने?</string>
+    <string name="email_verification_invalid_email">मान्य इमेल ठेगाना लेख्नुहोस्।</string>
+    <string name="email_verification_session_ended">कृपया फेरि लगइन गर्नुहोस्</string>
+    <string name="email_verification_sign_in_again">तपाईंको सत्र समाप्त भएको छ। %1$s र यस खाताका लागि राखेको पासवर्ड प्रयोग गरी फेरि लगइन गर्नुहोस्। ठेगाना सच्याउनुभएको भए लगइन गर्नुअघि त्यस ठेगानामा पठाइएको प्रमाणीकरण लिङ्क खोल्नुहोस्। तपाईंको उपनाम र प्रगति उही खातामा रहनेछन्।</string>
+</resources>

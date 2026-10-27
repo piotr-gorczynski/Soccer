@@ -1,0 +1,14 @@
+<resources>
+    <string name="link_email_sent_keep_session">Link weryfikacyjny został wysłany na adres %1$s. Nadal jesteś zalogowany. W sekcji Konto możesz ponownie wysłać link, poprawić adres lub sprawdzić weryfikację. Zweryfikuj adres przed wylogowaniem, aby zachować dostęp do konta.</string>
+    <string name="email_verification_pending">Zweryfikuj e-mail: %1$s. Nadal jesteś zalogowany. Jeśli adres jest błędny, popraw go poniżej. Po otwarciu linku naciśnij Sprawdź weryfikację.</string>
+    <string name="email_verification_resend">Wyślij ponownie link</string>
+    <string name="email_verification_correct">Popraw adres e-mail</string>
+    <string name="email_verification_check">Sprawdź weryfikację</string>
+    <string name="email_verification_done">Adres e-mail zweryfikowany.</string>
+    <string name="email_verification_not_yet">Adres e-mail nie został jeszcze zweryfikowany. Otwórz link z wiadomości, a następnie sprawdź ponownie.</string>
+    <string name="email_verification_action_failed">Nie udało się wykonać tej operacji. Sprawdź połączenie i spróbuj ponownie.</string>
+    <string name="email_verification_logout_warning">Twój adres e-mail nie jest zweryfikowany. Wylogowanie może uniemożliwić ponowny dostęp do konta, zwłaszcza jeśli w adresie jest literówka. Przed wylogowaniem zweryfikuj lub popraw adres w sekcji Konto. Mimo to wylogować?</string>
+    <string name="email_verification_invalid_email">Wpisz prawidłowy adres e-mail.</string>
+    <string name="email_verification_session_ended">Zaloguj się ponownie</string>
+    <string name="email_verification_sign_in_again">Twoja sesja się zakończyła. Zaloguj się ponownie adresem %1$s i hasłem ustawionym dla tego konta. Jeśli adres został poprawiony, przed logowaniem otwórz link weryfikacyjny wysłany na ten adres. Twój nick i postępy pozostają na tym samym koncie.</string>
+</resources>
