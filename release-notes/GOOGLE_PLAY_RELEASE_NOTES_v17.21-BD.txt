@@ -1,7 +1,16 @@
 <en-GB>
-Clearer Start Playing screen and account options. Safer email linking lets you stay signed in while verifying, resend links or correct the address. Smoother menu loading with less button flicker. Improved tournament nicknames and activity status; connection errors no longer restart nickname or consent setup.
+🎮 Clearer Start Playing screen.
+🏆 Improved tournament nicknames and activity status, with smoother menu loading and less button flicker.
+📶 Connection errors no longer reopen nickname or consent setup.
+📧 Safer email linking: stay signed in while verifying, resend links or correct the address.
+🔧 Refreshed Account layout and translations.
 </en-GB>
 
 <bn-BD>
-খেলা শুরু করুন পর্দা ও অ্যাকাউন্টের অপশন আরও স্পষ্ট করা হয়েছে। ইমেইল যুক্ত করা আরও নিরাপদ: যাচাই চলাকালে লগইন থাকুন, লিংক আবার পাঠান বা ঠিকানা সংশোধন করুন। মেনু লোডের সময় বোতামের ঝলকানি কমানো হয়েছে। টুর্নামেন্টে ডাকনাম ও সক্রিয়তার অবস্থা উন্নত হয়েছে; সংযোগের ত্রুটিতে ডাকনাম বা সম্মতির ধাপ আবার শুরু হয় না।
+🎮 খেলা শুরু করুন পর্দা আরও স্পষ্ট করা হয়েছে।
+🏆 টুর্নামেন্টে ডাকনাম ও সক্রিয়তার অবস্থা আরও নির্ভরযোগ্যভাবে দেখানো হয়।
+⏳ মেনু লোডের সময় বোতামের ঝলকানি কমানো হয়েছে।
+📶 সংযোগের ত্রুটিতে ডাকনাম বা সম্মতির ধাপ আবার খোলে না।
+📧 ইমেইল যুক্ত করা আরও নিরাপদ: যাচাই চলাকালে লগইন থাকুন, লিংক আবার পাঠান বা ঠিকানা সংশোধন করুন।
+🔧 অ্যাকাউন্টের পর্দা ও অনুবাদ উন্নত হয়েছে।
 </bn-BD>

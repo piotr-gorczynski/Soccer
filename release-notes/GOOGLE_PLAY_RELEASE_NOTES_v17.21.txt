@@ -1,119 +1,155 @@
 <en-GB>
-Improved tournament nicknames and activity status, with smoother menu loading and less button flicker.
-Connection errors no longer reopen nickname or consent setup.
-Safer email linking: stay signed in while verifying, resend links or correct the address. Refreshed Account layout and translations.
+🏆 Improved tournament nicknames and activity status, with smoother menu loading and less button flicker.
+📶 Connection errors no longer reopen nickname or consent setup.
+📧 Safer email linking: stay signed in while verifying, resend links or correct the address.
+🔧 Refreshed Account layout and translations.
 </en-GB>
 
 <pl-PL>
-Poprawiono nicki i status aktywności graczy w turniejach oraz ładowanie menu, ograniczając migotanie przycisków.
-Błędy połączenia nie otwierają ponownie wyboru nicku ani zgód.
-Bezpieczniejsze łączenie konta z e-mailem: zachowanie sesji podczas weryfikacji, ponowne wysyłanie linku i poprawianie adresu. Odświeżono ekran konta i tłumaczenia.
+🏆 Poprawiono nicki i status aktywności graczy w turniejach oraz ładowanie menu, ograniczając migotanie przycisków.
+📶 Błędy połączenia nie otwierają ponownie wyboru nicku ani zgód.
+📧 Bezpieczniejsze łączenie konta z e-mailem: zachowanie sesji podczas weryfikacji, ponowne wysyłanie linku i poprawianie adresu.
+🔧 Odświeżono ekran konta i tłumaczenia.
 </pl-PL>
 
 <de-DE>
-Verbesserte Spielernamen und Aktivitätsanzeigen in Turnieren. Das Menü lädt ruhiger, mit weniger flackernden Schaltflächen.
-Verbindungsfehler öffnen Namenswahl und Zustimmung nicht erneut.
-Sicherere E-Mail-Verknüpfung: während der Bestätigung angemeldet bleiben, Links erneut senden und die Adresse korrigieren. Kontoansicht und Übersetzungen überarbeitet.
+🏆 Verbesserte Spielernamen und Aktivitätsanzeigen in Turnieren.
+⏳ Das Menü lädt ruhiger, mit weniger flackernden Schaltflächen.
+📶 Verbindungsfehler öffnen Namenswahl und Zustimmung nicht erneut.
+📧 Sicherere E-Mail-Verknüpfung: während der Bestätigung angemeldet bleiben, Links erneut senden und die Adresse korrigieren.
+🔧 Kontoansicht und Übersetzungen überarbeitet.
 </de-DE>
 
 <fr-FR>
-Amélioration des pseudos et du statut d’activité dans les tournois. Chargement du menu plus fluide, avec moins de clignotements.
-Les erreurs de connexion ne rouvrent plus le choix du pseudo ni le consentement.
-Liaison e-mail plus sûre : restez connecté pendant la vérification, renvoyez le lien ou corrigez l’adresse. Écran Compte et traductions actualisés.
+🏆 Amélioration des pseudos et du statut d’activité dans les tournois.
+⏳ Chargement du menu plus fluide, avec moins de clignotements.
+📶 Les erreurs de connexion ne rouvrent plus le choix du pseudo ni le consentement.
+📧 Liaison e-mail plus sûre : restez connecté pendant la vérification, renvoyez le lien ou corrigez l’adresse.
+🔧 Écran Compte et traductions actualisés.
 </fr-FR>
 
 <es-ES>
-Mejorados los apodos y el estado de actividad en torneos. El menú carga con menos parpadeos en los botones.
-Los errores de conexión ya no reabren la configuración del apodo ni del consentimiento.
-Vinculación de correo más segura: mantén la sesión durante la verificación, reenvía enlaces o corrige la dirección. Pantalla Cuenta y traducciones renovadas.
+🏆 Mejorados los apodos y el estado de actividad en torneos.
+⏳ El menú carga con menos parpadeos en los botones.
+📶 Los errores de conexión ya no reabren la configuración del apodo ni del consentimiento.
+📧 Vinculación de correo más segura: mantén la sesión durante la verificación, reenvía enlaces o corrige la dirección.
+🔧 Pantalla Cuenta y traducciones renovadas.
 </es-ES>
 
 <ur>
-ٹورنامنٹ میں عرفی نام اور سرگرمی کی حالت بہتر بنائی گئی۔ مینو لوڈ ہوتے وقت بٹن کم جھلملاتے ہیں۔
-کنکشن کی خرابی پر عرفی نام یا رضامندی کی اسکرین دوبارہ نہیں کھلتی۔
-ای میل سے اکاؤنٹ جوڑنا زیادہ محفوظ: تصدیق کے دوران لاگ اِن رہیں، لنک دوبارہ بھیجیں یا پتہ درست کریں۔ اکاؤنٹ اسکرین اور ترجمے بہتر کیے گئے۔
+🏆 ٹورنامنٹ میں عرفی نام اور سرگرمی کی حالت بہتر بنائی گئی۔ مینو لوڈ ہوتے وقت بٹن کم جھلملاتے ہیں۔
+📶 کنکشن کی خرابی پر عرفی نام یا رضامندی کی اسکرین دوبارہ نہیں کھلتی۔
+📧 ای میل سے اکاؤنٹ جوڑنا زیادہ محفوظ: تصدیق کے دوران لاگ اِن رہیں، لنک دوبارہ بھیجیں یا پتہ درست کریں۔ اکاؤنٹ اسکرین اور ترجمے بہتر کیے گئے۔
 </ur>
 
 <bn-BD>
-টুর্নামেন্টে ডাকনাম ও সক্রিয়তার অবস্থা আরও নির্ভরযোগ্যভাবে দেখানো হয়। মেনু লোডের সময় বোতামের ঝলকানি কমানো হয়েছে।
-সংযোগের ত্রুটিতে ডাকনাম বা সম্মতির ধাপ আবার খোলে না।
-ইমেইল যুক্ত করা আরও নিরাপদ: যাচাই চলাকালে লগইন থাকুন, লিংক আবার পাঠান বা ঠিকানা সংশোধন করুন। অ্যাকাউন্টের পর্দা ও অনুবাদ উন্নত হয়েছে।
+🏆 টুর্নামেন্টে ডাকনাম ও সক্রিয়তার অবস্থা আরও নির্ভরযোগ্যভাবে দেখানো হয়।
+⏳ মেনু লোডের সময় বোতামের ঝলকানি কমানো হয়েছে।
+📶 সংযোগের ত্রুটিতে ডাকনাম বা সম্মতির ধাপ আবার খোলে না।
+📧 ইমেইল যুক্ত করা আরও নিরাপদ: যাচাই চলাকালে লগইন থাকুন, লিংক আবার পাঠান বা ঠিকানা সংশোধন করুন।
+🔧 অ্যাকাউন্টের পর্দা ও অনুবাদ উন্নত হয়েছে।
 </bn-BD>
 
 <ne-NP>
-प्रतियोगितामा उपनाम र सक्रियता स्थिति सुधारियो। मेनु लोड हुँदा बटन झिलमिलाउने समस्या घटाइयो।
-जडान त्रुटिले उपनाम वा सहमतिको चरण फेरि खोल्दैन।
-इमेल जोड्ने प्रक्रिया थप सुरक्षित: प्रमाणीकरणको समयमा लगइन रहनुहोस्, लिङ्क फेरि पठाउनुहोस् वा ठेगाना सच्याउनुहोस्। खाता स्क्रिन र अनुवाद सुधारिए।
+🏆 प्रतियोगितामा उपनाम र सक्रियता स्थिति सुधारियो।
+⏳ मेनु लोड हुँदा बटन झिलमिलाउने समस्या घटाइयो।
+📶 जडान त्रुटिले उपनाम वा सहमतिको चरण फेरि खोल्दैन।
+📧 इमेल जोड्ने प्रक्रिया थप सुरक्षित: प्रमाणीकरणको समयमा लगइन रहनुहोस्, लिङ्क फेरि पठाउनुहोस् वा ठेगाना सच्याउनुहोस्।
+🔧 खाता स्क्रिन र अनुवाद सुधारिए।
 </ne-NP>
 
 <hi-IN>
-टूर्नामेंट में उपनाम और सक्रियता की स्थिति बेहतर हुई। मेनु लोड होते समय बटन कम झिलमिलाते हैं।
-कनेक्शन की त्रुटियाँ उपनाम या सहमति का चरण दोबारा नहीं खोलतीं।
-ईमेल जोड़ना अधिक सुरक्षित: पुष्टि के दौरान लॉग इन रहें, लिंक फिर भेजें या पता सुधारें। खाता स्क्रीन और अनुवाद बेहतर हुए।
+🏆 टूर्नामेंट में उपनाम और सक्रियता की स्थिति बेहतर हुई।
+⏳ मेनु लोड होते समय बटन कम झिलमिलाते हैं।
+📶 कनेक्शन की त्रुटियाँ उपनाम या सहमति का चरण दोबारा नहीं खोलतीं।
+📧 ईमेल जोड़ना अधिक सुरक्षित: पुष्टि के दौरान लॉग इन रहें, लिंक फिर भेजें या पता सुधारें।
+🔧 खाता स्क्रीन और अनुवाद बेहतर हुए।
 </hi-IN>
 
 <am>
-በውድድሮች የተጫዋቾች ቅጽል ስምና የእንቅስቃሴ ሁኔታ ማሳያ ተሻሽሏል። የምናሌ መጫን የተረጋጋ ሆኗል፣ የአዝራሮችም መብረቅረቅ ቀንሷል።
-የግንኙነት ስህተቶች የቅጽል ስም ወይም የስምምነት ደረጃን እንደገና አይከፍቱም።
-መለያን ከኢሜይል ጋር ማገናኘት የበለጠ ደህንነት አለው፦ ሲያረጋግጡ እንደገቡ ይቆዩ፣ አገናኙን እንደገና ይላኩ ወይም አድራሻውን ያስተካክሉ። የመለያ ማያ ገጽና ትርጉሞች ተሻሽለዋል።
+🏆 በውድድሮች የተጫዋቾች ቅጽል ስምና የእንቅስቃሴ ሁኔታ ማሳያ ተሻሽሏል።
+⏳ የምናሌ መጫን የተረጋጋ ሆኗል፣ የአዝራሮችም መብረቅረቅ ቀንሷል።
+📶 የግንኙነት ስህተቶች የቅጽል ስም ወይም የስምምነት ደረጃን እንደገና አይከፍቱም።
+📧 መለያን ከኢሜይል ጋር ማገናኘት የበለጠ ደህንነት አለው፦ ሲያረጋግጡ እንደገቡ ይቆዩ፣ አገናኙን እንደገና ይላኩ ወይም አድራሻውን ያስተካክሉ።
+🔧 የመለያ ማያ ገጽና ትርጉሞች ተሻሽለዋል።
 </am>
 
 <ar>
-تحسين الأسماء المستعارة وحالة النشاط في البطولات، وتحميل القائمة بسلاسة أكبر مع تقليل وميض الأزرار.
-لم تعد أخطاء الاتصال تفتح إعداد الاسم المستعار أو الموافقة مجددًا.
-ربط البريد أكثر أمانًا: ابقَ مسجلاً أثناء التحقق، وأعد إرسال الرابط أو صحّح العنوان. تحسين شاشة الحساب والترجمات.
+🏆 تحسين الأسماء المستعارة وحالة النشاط في البطولات، وتحميل القائمة بسلاسة أكبر مع تقليل وميض الأزرار.
+📶 لم تعد أخطاء الاتصال تفتح إعداد الاسم المستعار أو الموافقة مجددًا.
+📧 ربط البريد أكثر أمانًا: ابقَ مسجلاً أثناء التحقق، وأعد إرسال الرابط أو صحّح العنوان.
+🔧 تحسين شاشة الحساب والترجمات.
 </ar>
 
 <my-MM>
-ပြိုင်ပွဲရှိ အမည်ပြောင်နှင့် လှုပ်ရှားမှုအခြေအနေ ပြသမှု ပိုကောင်းလာသည်။ မီနူးတင်ချိန် ခလုတ်များ လင်းလိုက်မှိန်လိုက်ဖြစ်မှု လျော့နည်းလာသည်။
-ကွန်ရက်အမှားကြောင့် အမည်ပြောင်နှင့် သဘောတူညီချက်ကို ပြန်မတောင်းတော့ပါ။
-အီးမေးလ်ချိတ်ဆက်မှု ပိုလုံခြုံလာသည်။ အတည်ပြုနေစဉ် အကောင့်ထဲတွင် ဆက်ရှိနေပြီး လင့်ခ်ထပ်ပို့ခြင်း၊ လိပ်စာပြင်ခြင်းတို့ လုပ်နိုင်သည်။ အကောင့်မျက်နှာပြင်နှင့် ဘာသာပြန်များကို ပြင်ဆင်ထားသည်။
+🏆 ပြိုင်ပွဲရှိ အမည်ပြောင်နှင့် လှုပ်ရှားမှုအခြေအနေ ပြသမှု ပိုကောင်းလာသည်။
+⏳ မီနူးတင်ချိန် ခလုတ်များ လင်းလိုက်မှိန်လိုက်ဖြစ်မှု လျော့နည်းလာသည်။
+📶 ကွန်ရက်အမှားကြောင့် အမည်ပြောင်နှင့် သဘောတူညီချက်ကို ပြန်မတောင်းတော့ပါ။
+📧 အီးမေးလ်ချိတ်ဆက်မှု ပိုလုံခြုံလာသည်။
+📧 အတည်ပြုနေစဉ် အကောင့်ထဲတွင် ဆက်ရှိနေပြီး လင့်ခ်ထပ်ပို့ခြင်း၊ လိပ်စာပြင်ခြင်းတို့ လုပ်နိုင်သည်။
+🔧 အကောင့်မျက်နှာပြင်နှင့် ဘာသာပြန်များကို ပြင်ဆင်ထားသည်။
 </my-MM>
 
 <km-KH>
-កែលម្អឈ្មោះហៅក្រៅ និងស្ថានភាពសកម្មក្នុងការប្រកួត។ ម៉ឺនុយផ្ទុកកាន់តែរលូន និងកាត់បន្ថយការភ្លឹបភ្លែតនៃប៊ូតុង។
-កំហុសភ្ជាប់មិនបើកការជ្រើសឈ្មោះ ឬការយល់ព្រមឡើងវិញទេ។
-ភ្ជាប់អ៊ីមែលកាន់តែមានសុវត្ថិភាព៖ នៅតែចូលគណនីពេលផ្ទៀងផ្ទាត់ ផ្ញើតំណម្តងទៀត ឬកែអាសយដ្ឋាន។ កែលម្អអេក្រង់គណនី និងការបកប្រែ។
+🏆 កែលម្អឈ្មោះហៅក្រៅ និងស្ថានភាពសកម្មក្នុងការប្រកួត។
+⏳ ម៉ឺនុយផ្ទុកកាន់តែរលូន និងកាត់បន្ថយការភ្លឹបភ្លែតនៃប៊ូតុង។
+📶 កំហុសភ្ជាប់មិនបើកការជ្រើសឈ្មោះ ឬការយល់ព្រមឡើងវិញទេ។
+📧 ភ្ជាប់អ៊ីមែលកាន់តែមានសុវត្ថិភាព៖ នៅតែចូលគណនីពេលផ្ទៀងផ្ទាត់ ផ្ញើតំណម្តងទៀត ឬកែអាសយដ្ឋាន។
+🔧 កែលម្អអេក្រង់គណនី និងការបកប្រែ។
 </km-KH>
 
 <lo-LA>
-ປັບປຸງຊື່ຫຼິ້ນ ແລະສະຖານະຜູ້ຫຼິ້ນໃນການແຂ່ງຂັນ. ເມນູໂຫຼດໄດ້ລື່ນໄຫຼ ແລະປຸ່ມກະພິບໜ້ອຍລົງ.
-ບັນຫາການເຊື່ອມຕໍ່ບໍ່ເປີດຂັ້ນຕອນຊື່ຫຼິ້ນ ຫຼືການຍິນຍອມຄືນ.
-ຜູກອີເມວໄດ້ປອດໄພຂຶ້ນ: ຍັງເຂົ້າລະບົບຢູ່ລະຫວ່າງຢືນຢັນ, ສົ່ງລິ້ງຄືນ ຫຼືແກ້ໄຂທີ່ຢູ່. ປັບປຸງໜ້າບັນຊີ ແລະຄຳແປ.
+🏆 ປັບປຸງຊື່ຫຼິ້ນ ແລະສະຖານະຜູ້ຫຼິ້ນໃນການແຂ່ງຂັນ.
+⏳ ເມນູໂຫຼດໄດ້ລື່ນໄຫຼ ແລະປຸ່ມກະພິບໜ້ອຍລົງ.
+📶 ບັນຫາການເຊື່ອມຕໍ່ບໍ່ເປີດຂັ້ນຕອນຊື່ຫຼິ້ນ ຫຼືການຍິນຍອມຄືນ.
+📧 ຜູກອີເມວໄດ້ປອດໄພຂຶ້ນ: ຍັງເຂົ້າລະບົບຢູ່ລະຫວ່າງຢືນຢັນ, ສົ່ງລິ້ງຄືນ ຫຼືແກ້ໄຂທີ່ຢູ່.
+🔧 ປັບປຸງໜ້າບັນຊີ ແລະຄຳແປ.
 </lo-LA>
 
 <mn-MN>
-Тэмцээний хоч, идэвхийн төлөвийг сайжрууллаа. Цэс илүү жигд ачаалж, товчнуудын анивчих нь багассан.
-Холболтын алдаа хоч сонгох болон зөвшөөрлийн алхмыг дахин нээхгүй.
-Имэйл холбох нь илүү аюулгүй боллоо: баталгаажуулах явцад нэвтэрсэн хэвээр байж, холбоосыг дахин илгээх эсвэл хаягаа засах боломжтой. Бүртгэлийн дэлгэц болон орчуулгыг шинэчлэв.
+🏆 Тэмцээний хоч, идэвхийн төлөвийг сайжрууллаа.
+⏳ Цэс илүү жигд ачаалж, товчнуудын анивчих нь багассан.
+📶 Холболтын алдаа хоч сонгох болон зөвшөөрлийн алхмыг дахин нээхгүй.
+📧 Имэйл холбох нь илүү аюулгүй боллоо: баталгаажуулах явцад нэвтэрсэн хэвээр байж, холбоосыг дахин илгээх эсвэл хаягаа засах боломжтой.
+🔧 Бүртгэлийн дэлгэц болон орчуулгыг шинэчлэв.
 </mn-MN>
 
 <fa-IR>
-نمایش نام مستعار و وضعیت فعالیت در مسابقات بهتر شد. بارگذاری منو روان‌تر شده و چشمک زدن دکمه‌ها کاهش یافته است.
-خطاهای اتصال دیگر مراحل نام مستعار یا رضایت را دوباره باز نمی‌کنند.
-اتصال ایمیل ایمن‌تر شد: هنگام تأیید وارد حساب بمانید، پیوند را دوباره بفرستید یا نشانی را اصلاح کنید. صفحه حساب و ترجمه‌ها بهبود یافتند.
+🏆 نمایش نام مستعار و وضعیت فعالیت در مسابقات بهتر شد.
+⏳ بارگذاری منو روان‌تر شده و چشمک زدن دکمه‌ها کاهش یافته است.
+📶 خطاهای اتصال دیگر مراحل نام مستعار یا رضایت را دوباره باز نمی‌کنند.
+📧 اتصال ایمیل ایمن‌تر شد: هنگام تأیید وارد حساب بمانید، پیوند را دوباره بفرستید یا نشانی را اصلاح کنید.
+🔧 صفحه حساب و ترجمه‌ها بهبود یافتند.
 </fa-IR>
 
 <si-LK>
-තරගාවලි අන්වර්ථ නාම හා ක්‍රියාකාරී තත්ත්වය වැඩිදියුණු කළා. මෙනුව වඩා සුමටව පූරණය වන අතර බොත්තම් දැල්වීම අඩු කළා.
-සම්බන්ධතා දෝෂ නිසා නාම තේරීම හෝ කැමැත්ත නැවත විවෘත නොවේ.
-ඊමේල් සම්බන්ධ කිරීම වඩා ආරක්ෂිතයි: තහවුරු කරන අතරතුර ඇතුළු වී සිටින්න, සබැඳි නැවත යවන්න හෝ ලිපිනය නිවැරදි කරන්න. ගිණුම් තිරය හා පරිවර්තන යාවත්කාලීන කළා.
+🏆 තරගාවලි අන්වර්ථ නාම හා ක්‍රියාකාරී තත්ත්වය වැඩිදියුණු කළා.
+⏳ මෙනුව වඩා සුමටව පූරණය වන අතර බොත්තම් දැල්වීම අඩු කළා.
+📶 සම්බන්ධතා දෝෂ නිසා නාම තේරීම හෝ කැමැත්ත නැවත විවෘත නොවේ.
+📧 ඊමේල් සම්බන්ධ කිරීම වඩා ආරක්ෂිතයි: තහවුරු කරන අතරතුර ඇතුළු වී සිටින්න, සබැඳි නැවත යවන්න හෝ ලිපිනය නිවැරදි කරන්න.
+🔧 ගිණුම් තිරය හා පරිවර්තන යාවත්කාලීන කළා.
 </si-LK>
 
 <mg-MG>
-Nohatsaraina ny solon’anarana sy ny satan’ny hetsika amin’ny fifaninanana. Milamina kokoa ny fampidirana ny menio ary mihena ny fitselatselatry ny bokotra.
-Tsy manokatra indray ny fisafidianana anarana na fanekena ny olana amin’ny fifandraisana.
-Azo antoka kokoa ny fampifandraisana mailaka: mijanona ho tafiditra mandritra ny fanamarinana, mandefa rohy indray na manitsy adiresy. Nohavaozina ny efijery Kaonty sy ny dikanteny.
+🏆 Nohatsaraina ny solon’anarana sy ny satan’ny hetsika amin’ny fifaninanana.
+⏳ Milamina kokoa ny fampidirana ny menio ary mihena ny fitselatselatry ny bokotra.
+📶 Tsy manokatra indray ny fisafidianana anarana na fanekena ny olana amin’ny fifandraisana.
+📧 Azo antoka kokoa ny fampifandraisana mailaka: mijanona ho tafiditra mandritra ny fanamarinana, mandefa rohy indray na manitsy adiresy.
+🔧 Nohavaozina ny efijery Kaonty sy ny dikanteny.
 </mg-MG>
 
 <so-SO>
-Naanaysyada iyo xaaladda firfircoonida tartamada waa la hagaajiyey. Liiska ayaa si deggan u soo baxa, badhamaduna way ka yar yihiin biligleynta.
-Khaladaadka xiriirku dib uma furaan magaca ama oggolaanshaha.
-Ku xiridda iimaylka ayaa ammaan badan: ku jir akoonka inta la xaqiijinayo, dib u dir xiriiriyaha ama sax cinwaanka. Shaashadda Akoonka iyo turjumaadaha waa la hagaajiyey.
+🏆 Naanaysyada iyo xaaladda firfircoonida tartamada waa la hagaajiyey.
+⏳ Liiska ayaa si deggan u soo baxa, badhamaduna way ka yar yihiin biligleynta.
+📶 Khaladaadka xiriirku dib uma furaan magaca ama oggolaanshaha.
+📧 Ku xiridda iimaylka ayaa ammaan badan: ku jir akoonka inta la xaqiijinayo, dib u dir xiriiriyaha ama sax cinwaanka.
+🔧 Shaashadda Akoonka iyo turjumaadaha waa la hagaajiyey.
 </so-SO>
 
 <sw>
-Majina ya utani na hali ya shughuli kwenye mashindano zimeboreshwa. Menyu inapakia vizuri zaidi na vitufe havimeremeti sana.
-Hitilafu za muunganisho hazifungui tena hatua za jina la utani au idhini.
-Kuunganisha barua pepe ni salama zaidi: endelea kuingia wakati wa kuthibitisha, tuma kiungo tena au sahihisha anwani. Skrini ya Akaunti na tafsiri zimeboreshwa.
+🏆 Majina ya utani na hali ya shughuli kwenye mashindano zimeboreshwa.
+⏳ Menyu inapakia vizuri zaidi na vitufe havimeremeti sana.
+📶 Hitilafu za muunganisho hazifungui tena hatua za jina la utani au idhini.
+📧 Kuunganisha barua pepe ni salama zaidi: endelea kuingia wakati wa kuthibitisha, tuma kiungo tena au sahihisha anwani.
+🔧 Skrini ya Akaunti na tafsiri zimeboreshwa.
 </sw>
