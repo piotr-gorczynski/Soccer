@@ -7,6 +7,12 @@
     android:orientation="vertical"
     android:padding="20dp">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:labelFor="@id/editNickname"
+        android:text="@string/nickname" />
+
     <EditText
         android:id="@+id/editNickname"
         android:layout_width="match_parent"
@@ -14,8 +20,17 @@
         android:hint="@string/nickname"
         android:inputType="textPersonName" />
 
+    <TextView
+        android:id="@+id/nicknameEntryHelp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:labelFor="@id/editNickname"
+        android:text="@string/nickname_suggestion_help" />
+
     <Button
         android:id="@+id/btnConfirmNickname"
+        android:enabled="false"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_marginTop="20dp"

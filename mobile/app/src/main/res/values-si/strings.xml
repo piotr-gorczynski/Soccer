@@ -413,4 +413,7 @@
     <string name="moderation_failed">මෙම ක්‍රියාව සම්පූර්ණ කළ නොහැකි විය. නැවත උත්සාහ කරන්න.</string>
     <string name="moderation_user_blocked">🔒 පරිශීලකයා අවහිර කර ඇත</string>
     <string name="moderation_report_already_open">මෙම ක්‍රීඩකයා පිළිබඳ ඔබගේ පැමිණිල්ලක් දැනටමත් විවෘතව පවතී. යොමු අංකය: %1$s</string>
+    <string name="nickname_entry_help">ඉදිරියට යාමට අන්වර්ථ නාමයක් ඇතුළත් කරන්න.</string>
+    <string name="nickname_suggestion_help">යෝජිත අන්වර්ථ නාමය භාවිත කරන්න හෝ ඔබ කැමති නමක් ඇතුළත් කරන්න.</string>
+    <string name="presence_unavailable">ක්‍රියාකාරී තත්ත්වය ලබා ගත නොහැක</string>
 </resources>

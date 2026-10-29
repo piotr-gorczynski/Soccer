@@ -7,6 +7,9 @@ import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.SystemClock;
 import android.view.View;
 import android.widget.Toast;
 import android.content.Context;
@@ -28,6 +31,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.ref.WeakReference;
 
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
@@ -823,6 +827,14 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
         }
     }
     private boolean startupConsentFinished;
+    // Three retries per process, independent of whether the offline menu is usable.
+    private static final long[] CONSENT_RETRY_DELAYS_MS = {5_000L, 15_000L, 45_000L};
+    private final Handler consentRetryHandler = new Handler(Looper.getMainLooper());
+    private boolean consentRetryPending;
+    private int consentRetriesStarted;
+    private long consentRetryAt;
+    private Runnable consentRetryRunnable;
+    private WeakReference<Activity> consentRetryHost = new WeakReference<>(null);
     private boolean adsInitializationScheduled;
 
     public boolean canRequestAds() {
@@ -835,21 +847,73 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     }
 
     private void finishStartupConsent(Activity activity) {
+        boolean firstCompletion = !startupConsentFinished;
+        consentRetryPending = false;
+        cancelConsentRetry();
         consentRequestInProgress.set(false);
         startupConsentFinished = true;
         if (canRequestAds()) initializeWebViewAndAds();
-        if (activity instanceof MenuActivity) {
+        if (firstCompletion && activity instanceof MenuActivity) {
             activity.getWindow().getDecorView().post(
                     () -> ((MenuActivity) activity).continueStartupAfterConsent());
         }
     }
 
     public void refreshConsentIfNeeded(Activity activity) {
-        if (!startupConsentFinished && !consentRequestInProgress.get()) requestConsent(activity);
+        if (consentRequestInProgress.get()) return;
+        if (!startupConsentFinished) {
+            requestConsent(activity);
+            return;
+        }
+        if (!consentRetryPending || consentRetriesStarted >= CONSENT_RETRY_DELAYS_MS.length
+                || !canRetryConsent(activity)) return;
+        cancelConsentRetry();
+        long remaining = consentRetryAt - SystemClock.elapsedRealtime();
+        if (remaining > 0) {
+            consentRetryHost = new WeakReference<>(activity);
+            consentRetryRunnable = () -> {
+                Activity host = consentRetryHost.get();
+                consentRetryRunnable = null;
+                consentRetryHost.clear();
+                refreshConsentIfNeeded(host);
+            };
+            consentRetryHandler.postDelayed(consentRetryRunnable, remaining);
+        } else {
+            consentRetriesStarted++;
+            Log.d(TAG, "UMP: retrying startup consent, attempt=" + consentRetriesStarted);
+            requestConsent(activity);
+        }
+    }
+
+    protected boolean canRetryConsent(Activity activity) {
+        return isActivityReadyForWindow(activity) && activity.hasWindowFocus()
+                && isNetworkAvailable(activity);
+    }
+
+    public void onConsentHostStopped(Activity activity) {
+        if (consentRetryHost.get() == activity) cancelConsentRetry();
+    }
+
+    private void cancelConsentRetry() {
+        if (consentRetryRunnable != null) consentRetryHandler.removeCallbacks(consentRetryRunnable);
+        consentRetryRunnable = null;
+        consentRetryHost.clear();
+    }
+
+    private void failStartupConsent(Activity activity, FormError error) {
+        // Continue offline without changing consent. A failure is not a user decision.
+        finishStartupConsent(activity);
+        consentRetryPending = error.getErrorCode() == FormError.ErrorCode.INTERNET_ERROR
+                || error.getErrorCode() == FormError.ErrorCode.TIME_OUT;
+        if (consentRetryPending && consentRetriesStarted < CONSENT_RETRY_DELAYS_MS.length) {
+            consentRetryAt = SystemClock.elapsedRealtime()
+                    + CONSENT_RETRY_DELAYS_MS[consentRetriesStarted];
+            refreshConsentIfNeeded(activity);
+        }
     }
 
     public void requestConsent(Activity activity) {
-        if (!isActivityReadyForWindow(activity)) {
+        if (!isStartupConsentWindowReady(activity)) {
             Log.d(TAG, getClass().getSimpleName() + ".requestConsent: activity is not ready; deferring");
             return;
         }
@@ -877,7 +941,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                             getClass().getSimpleName() + ".requestConsent: consent info updated. form available=" + consentInformation.isConsentFormAvailable()
                     );
                     ConsentUtils.updateFirebaseAnalyticsConsent(activity);
-                    if (!isActivityReadyForWindow(activity)) {
+                    if (!isStartupConsentWindowReady(activity)) {
                         Log.d(TAG, getClass().getSimpleName() + ".requestConsent: activity stopped before form load; deferring");
                         consentRequestInProgress.set(false);
                     } else if (consentInformation.isConsentFormAvailable()) {
@@ -887,7 +951,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                     }
                 },
                 formError -> {
-                    finishStartupConsent(activity);
+                    failStartupConsent(activity, formError);
                     Log.w("TAG_Soccer", "UMP: Failed to update consent info: " + formError.getMessage());
                 }
         );
@@ -938,7 +1002,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
     }
 
     private void loadAndShowConsentForm(Activity activity) {
-        if (!isActivityReadyForWindow(activity)) {
+        if (!isStartupConsentWindowReady(activity)) {
             consentRequestInProgress.set(false);
             Log.d(TAG, getClass().getSimpleName() + ".loadAndShowConsentForm: activity is not ready; deferring");
             return;
@@ -950,7 +1014,7 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                             "TAG_Soccer",
                             getClass().getSimpleName() + ".loadAndShowConsentForm: form loaded"
                     );
-                    if (!isActivityReadyForWindow(activity)) {
+                    if (!isStartupConsentWindowReady(activity)) {
                         consentRequestInProgress.set(false);
                         Log.d(TAG, getClass().getSimpleName() + ".loadAndShowConsentForm: activity stopped before form show; deferring");
                     } else if (UserMessagingPlatform.getConsentInformation(activity).getConsentStatus()
@@ -960,6 +1024,8 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                                 formError -> {
                                     if (formError != null) {
                                         Log.w("TAG_Soccer", "UMP: Consent form error: " + formError.getMessage());
+                                        failStartupConsent(activity, formError);
+                                        return;
                                     } else {
                                         Log.d("TAG_Soccer", getClass().getSimpleName() + ".loadAndShowConsentForm: form dismissed");
                                         Log.d(
@@ -987,10 +1053,15 @@ public class SoccerApp extends Application implements DefaultLifecycleObserver {
                     }
                 },
                 formError -> {
-                    finishStartupConsent(activity);
+                    failStartupConsent(activity, formError);
                     Log.w("TAG_Soccer", "UMP: Failed to load consent form: " + formError.getMessage());
                 }
         );
+    }
+
+    private boolean isStartupConsentWindowReady(Activity activity) {
+        return isActivityReadyForWindow(activity)
+                && (consentRetriesStarted == 0 || activity.hasWindowFocus());
     }
 
     private static boolean isActivityReadyForWindow(Activity activity) {

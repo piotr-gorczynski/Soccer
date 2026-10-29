@@ -413,4 +413,7 @@
     <string name="moderation_failed">ບໍ່ສາມາດດຳເນີນການນີ້ໃຫ້ສຳເລັດໄດ້. ກະລຸນາລອງອີກຄັ້ງ.</string>
     <string name="moderation_user_blocked">🔒 ບລັອກຜູ້ໃຊ້ແລ້ວ</string>
     <string name="moderation_report_already_open">ທ່ານມີລາຍງານທີ່ຍັງເປີດຢູ່ກ່ຽວກັບຜູ້ຫຼິ້ນນີ້ແລ້ວ. ເລກອ້າງອີງ: %1$s</string>
+    <string name="nickname_entry_help">ປ້ອນຊື່ຫຼິ້ນເພື່ອດຳເນີນການຕໍ່.</string>
+    <string name="nickname_suggestion_help">ໃຊ້ຊື່ຫຼິ້ນທີ່ແນະນຳ ຫຼືປ້ອນຊື່ທີ່ທ່ານຕ້ອງການ.</string>
+    <string name="presence_unavailable">ບໍ່ມີຂໍ້ມູນສະຖານະການໃຊ້ງານ</string>
 </resources>

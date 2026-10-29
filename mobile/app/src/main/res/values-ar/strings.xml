@@ -394,4 +394,7 @@
     <string name="moderation_failed">تعذر إكمال هذا الإجراء. يرجى المحاولة مرة أخرى.</string>
     <string name="moderation_user_blocked">🔒 تم حظر المستخدم</string>
     <string name="moderation_report_already_open">لديك بالفعل بلاغ مفتوح بشأن هذا اللاعب. الرقم المرجعي: %1$s</string>
+    <string name="nickname_entry_help">أدخل اسمًا مستعارًا للمتابعة.</string>
+    <string name="nickname_suggestion_help">استخدم الاسم المستعار المقترح أو أدخل اسمًا من اختيارك.</string>
+    <string name="presence_unavailable">حالة النشاط غير متاحة</string>
 </resources>

@@ -22,6 +22,7 @@ import com.google.firebase.functions.FirebaseFunctions;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.security.SecureRandom;
 
 public class PickNicknameActivity extends BaseActivity {
 
@@ -29,9 +30,11 @@ public class PickNicknameActivity extends BaseActivity {
     private Button btnConfirm;
     private Toast nickToast;
     private static final int NICK_MAX = 20;
+    private static final String NICKNAME_DRAFT = "nickname_draft";
     private AnalyticsManager analyticsManager;
     private View nicknameCheckProgress;
     private FirebaseFunctions functions;
+    private boolean nicknameSubmissionInProgress;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,6 +50,41 @@ public class PickNicknameActivity extends BaseActivity {
         nicknameCheckProgress = findViewById(R.id.nicknameCheckProgress);
         functions = FirebaseFunctions.getInstance();
 
+        initializeNicknameInput();
+        initializeNicknameSuggestion(savedInstanceState);
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override public void handleOnBackPressed() {
+                // Disable back button to enforce nickname entry
+            }
+        });
+    }
+
+    private void initializeNicknameSuggestion(@Nullable Bundle savedState) {
+        // Preserve even an intentionally cleared draft when the screen is recreated.
+        String draft = savedState != null && savedState.containsKey(NICKNAME_DRAFT)
+                ? savedState.getString(NICKNAME_DRAFT, "") : generateNicknameSuggestion();
+        editNickname.setText(draft);
+        editNickname.selectAll();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(NICKNAME_DRAFT, editNickname.getText().toString());
+        super.onSaveInstanceState(outState);
+    }
+
+    static String generateNicknameSuggestion() {
+        final String alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+        SecureRandom random = new SecureRandom();
+        StringBuilder suggestion = new StringBuilder("Player");
+        for (int i = 0; i < 6; i++) {
+            suggestion.append(alphabet.charAt(random.nextInt(alphabet.length())));
+        }
+        return suggestion.toString();
+    }
+
+    private void initializeNicknameInput() {
         editNickname.setFilters(new InputFilter[]{
                 new InputFilter.LengthFilter(NICK_MAX),
                 NO_LEADING_SPACE
@@ -55,6 +93,7 @@ public class PickNicknameActivity extends BaseActivity {
             @Override public void beforeTextChanged(CharSequence s, int st, int c, int a) {}
             @Override public void onTextChanged(CharSequence s, int st, int b, int c) {}
             @Override public void afterTextChanged(Editable s) {
+                updateConfirmButton();
                 int len = s.length();
                 editNickname.setHint(len + " / " + NICK_MAX);
                     if (len == NICK_MAX) {
@@ -71,15 +110,12 @@ public class PickNicknameActivity extends BaseActivity {
         });
 
         btnConfirm.setOnClickListener(v -> saveNickname());
+        updateConfirmButton();
 
-        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
-            @Override public void handleOnBackPressed() {
-                // Disable back button to enforce nickname entry
-            }
-        });
     }
 
     private void saveNickname() {
+        if (nicknameSubmissionInProgress) return;
         final String nickname = editNickname.getText().toString().trim();
         analyticsManager.trackOnboardingStep("nickname", "submit", "none");
         if (nickname.isEmpty()) {
@@ -99,7 +135,7 @@ public class PickNicknameActivity extends BaseActivity {
             return;
         }
 
-        btnConfirm.setEnabled(false);
+        setNicknameSubmissionInProgress(true);
         showNicknameCheckProgress(true);
         
         Log.d("TAG_Soccer", "Nickname setup operation");
@@ -109,7 +145,7 @@ public class PickNicknameActivity extends BaseActivity {
             if (hadError) {
                 analyticsManager.trackOnboardingStep("uniqueness", "failure", "unknown");
                 showNicknameCheckProgress(false);
-                btnConfirm.setEnabled(true);
+                setNicknameSubmissionInProgress(false);
                 Toast.makeText(PickNicknameActivity.this,
                         R.string.network_error_checking_nickname,
                         Toast.LENGTH_SHORT).show();
@@ -118,7 +154,7 @@ public class PickNicknameActivity extends BaseActivity {
             if (!isUnique) {
                 analyticsManager.trackOnboardingStep("uniqueness", "failure", "taken");
                 showNicknameCheckProgress(false);
-                btnConfirm.setEnabled(true);
+                setNicknameSubmissionInProgress(false);
                 Log.d("TAG_Soccer", "Nickname setup operation");
                 Toast.makeText(PickNicknameActivity.this,
                         R.string.nickname_taken,
@@ -131,7 +167,7 @@ public class PickNicknameActivity extends BaseActivity {
             checkNicknameContent(nickname, (allowed, reason, hadContentError) -> {
                 showNicknameCheckProgress(false);
                 if (hadContentError) {
-                    btnConfirm.setEnabled(true);
+                    setNicknameSubmissionInProgress(false);
                     // Report error to Crashlytics
                     analyticsManager.trackNicknameCheckError(nickname, "AI content check failed");
                     Toast.makeText(PickNicknameActivity.this,
@@ -141,7 +177,7 @@ public class PickNicknameActivity extends BaseActivity {
                 }
                 if (!allowed) {
                 analyticsManager.trackOnboardingStep("content", "failure", "rejected");
-                    btnConfirm.setEnabled(true);
+                    setNicknameSubmissionInProgress(false);
                     Log.d("TAG_Soccer", "Nickname setup operation");
                     Toast.makeText(PickNicknameActivity.this,
                             R.string.nickname_inappropriate,
@@ -207,11 +243,22 @@ public class PickNicknameActivity extends BaseActivity {
                 })
                 .addOnFailureListener(e -> {
                     analyticsManager.trackOnboardingStep("profile_write", "failure", "unknown");
-                    btnConfirm.setEnabled(true);
+                    setNicknameSubmissionInProgress(false);
                     Toast.makeText(PickNicknameActivity.this,
                             R.string.nickname_save_failed,
                             Toast.LENGTH_SHORT).show();
                 });
+    }
+
+    private void updateConfirmButton() {
+        btnConfirm.setEnabled(!nicknameSubmissionInProgress
+                && !editNickname.getText().toString().trim().isEmpty());
+        btnConfirm.setAlpha(btnConfirm.isEnabled() ? 1f : 0.5f);
+    }
+
+    private void setNicknameSubmissionInProgress(boolean inProgress) {
+        nicknameSubmissionInProgress = inProgress;
+        updateConfirmButton();
     }
 
     private void showNicknameCheckProgress(boolean show) {

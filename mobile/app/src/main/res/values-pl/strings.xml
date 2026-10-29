@@ -487,4 +487,7 @@
     <string name="moderation_failed">Nie udało się wykonać tej czynności. Spróbuj ponownie.</string>
     <string name="moderation_user_blocked">🔒 Użytkownik zablokowany</string>
     <string name="moderation_report_already_open">Masz już otwarte zgłoszenie dotyczące tego gracza. Numer: %1$s</string>
+    <string name="nickname_entry_help">Wpisz pseudonim, aby kontynuować.</string>
+    <string name="nickname_suggestion_help">Użyj proponowanego pseudonimu lub wpisz własny.</string>
+    <string name="presence_unavailable">Status aktywności niedostępny</string>
 </resources>

@@ -447,4 +447,7 @@
     <string name="moderation_failed">यो कार्य पूरा गर्न सकिएन। कृपया फेरि प्रयास गर्नुहोस्।</string>
     <string name="moderation_user_blocked">🔒 प्रयोगकर्ता ब्लक गरिएको छ</string>
     <string name="moderation_report_already_open">यस खेलाडीको बारेमा तपाईंको एउटा उजुरी पहिले नै खुला छ। सन्दर्भ: %1$s</string>
+    <string name="nickname_entry_help">अगाडि बढ्न एउटा उपनाम लेख्नुहोस्।</string>
+    <string name="nickname_suggestion_help">सुझाइएको उपनाम प्रयोग गर्नुहोस् वा आफ्नो रोजाइको उपनाम लेख्नुहोस्।</string>
+    <string name="presence_unavailable">सक्रियताको स्थिति उपलब्ध छैन</string>
 </resources>

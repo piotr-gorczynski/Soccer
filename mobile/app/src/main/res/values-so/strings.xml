@@ -413,4 +413,7 @@
     <string name="moderation_failed">Falkan lama dhammaystiri karin. Fadlan isku day mar kale.</string>
     <string name="moderation_user_blocked">🔒 Isticmaalaha waa la xannibay</string>
     <string name="moderation_report_already_open">Waxaad hore u leedahay cabasho furan oo ku saabsan ciyaartoygan. Tixraac: %1$s</string>
+    <string name="nickname_entry_help">Geli naanays si aad u sii waddo.</string>
+    <string name="nickname_suggestion_help">Isticmaal naanaysta la soo jeediyey ama geli mid aad dooratay.</string>
+    <string name="presence_unavailable">Xaaladda firfircoonida lama heli karo</string>
 </resources>

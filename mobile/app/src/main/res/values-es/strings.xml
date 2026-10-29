@@ -450,4 +450,7 @@
     <string name="moderation_failed">No se pudo completar esta acción. Inténtalo de nuevo.</string>
     <string name="moderation_user_blocked">🔒 Usuario bloqueado</string>
     <string name="moderation_report_already_open">Ya tienes una denuncia abierta sobre este jugador. Referencia: %1$s</string>
+    <string name="nickname_entry_help">Introduce un apodo para continuar.</string>
+    <string name="nickname_suggestion_help">Usa el apodo sugerido o escribe el tuyo.</string>
+    <string name="presence_unavailable">Estado de actividad no disponible</string>
 </resources>

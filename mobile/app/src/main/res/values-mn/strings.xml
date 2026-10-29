@@ -413,4 +413,7 @@
     <string name="moderation_failed">Энэ үйлдлийг гүйцэтгэж чадсангүй. Дахин оролдоно уу.</string>
     <string name="moderation_user_blocked">🔒 Хэрэглэгчийг блоклосон</string>
     <string name="moderation_report_already_open">Энэ тоглогчийн талаар таны нээлттэй гомдол аль хэдийн байна. Лавлах дугаар: %1$s</string>
+    <string name="nickname_entry_help">Үргэлжлүүлэхийн тулд хоч нэрээ оруулна уу.</string>
+    <string name="nickname_suggestion_help">Санал болгосон хоч нэрийг ашиглах эсвэл өөрийн хүссэн нэрийг оруулна уу.</string>
+    <string name="presence_unavailable">Идэвхийн төлөв боломжгүй</string>
 </resources>

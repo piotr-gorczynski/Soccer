@@ -394,4 +394,7 @@
     <string name="moderation_failed">انجام این کار ممکن نشد. لطفاً دوباره تلاش کنید.</string>
     <string name="moderation_user_blocked">🔒 کاربر مسدود شده است</string>
     <string name="moderation_report_already_open">شما از قبل یک گزارش باز دربارهٔ این بازیکن دارید. شماره پیگیری: %1$s</string>
+    <string name="nickname_entry_help">برای ادامه یک نام مستعار وارد کنید.</string>
+    <string name="nickname_suggestion_help">از نام مستعار پیشنهادی استفاده کنید یا نام دلخواه خود را وارد کنید.</string>
+    <string name="presence_unavailable">وضعیت فعالیت در دسترس نیست</string>
 </resources>

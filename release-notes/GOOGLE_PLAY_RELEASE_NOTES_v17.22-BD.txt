@@ -1,0 +1,13 @@
+<en-GB>
+🎮 Start faster with an editable suggested nickname and clearer guidance.
+📶 Privacy consent can load after connectivity returns, without restarting the app.
+🏆 Tournament activity status handles connection errors more clearly.
+🔎 Improved diagnostics for Start Playing failures without collecting nickname values or exception messages.
+</en-GB>
+
+<bn-BD>
+🎮 প্রস্তাবিত ডাকনাম ব্যবহার করুন বা বদলে নিন—আরও স্পষ্ট নির্দেশনায় দ্রুত শুরু করুন।
+📶 সংযোগ ফিরে এলে অ্যাপ আবার চালু না করেই গোপনীয়তার সম্মতির পর্দা লোড হতে পারে।
+🏆 টুর্নামেন্টে সংযোগের ত্রুটি হলে সক্রিয়তার অবস্থা আরও স্পষ্টভাবে দেখানো হয়।
+🔎 ডাকনাম বা ত্রুটির মূল বার্তা সংগ্রহ না করেই খেলা শুরু করার ব্যর্থতা শনাক্তের ব্যবস্থা উন্নত হয়েছে।
+</bn-BD>

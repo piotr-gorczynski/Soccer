@@ -447,4 +447,7 @@
     <string name="moderation_failed">यह कार्रवाई पूरी नहीं हो सकी। कृपया फिर से कोशिश करें।</string>
     <string name="moderation_user_blocked">🔒 उपयोगकर्ता ब्लॉक है</string>
     <string name="moderation_report_already_open">इस खिलाड़ी के बारे में आपकी एक रिपोर्ट पहले से खुली है। संदर्भ: %1$s</string>
+    <string name="nickname_entry_help">आगे बढ़ने के लिए एक उपनाम दर्ज करें।</string>
+    <string name="nickname_suggestion_help">सुझाया गया उपनाम इस्तेमाल करें या अपनी पसंद का उपनाम दर्ज करें।</string>
+    <string name="presence_unavailable">गतिविधि की स्थिति उपलब्ध नहीं है</string>
 </resources>

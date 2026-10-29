@@ -413,4 +413,7 @@
     <string name="moderation_failed">Imeshindikana kukamilisha kitendo hiki. Tafadhali jaribu tena.</string>
     <string name="moderation_user_blocked">🔒 Mtumiaji amezuiwa</string>
     <string name="moderation_report_already_open">Tayari una ripoti iliyo wazi kuhusu mchezaji huyu. Nambari ya kumbukumbu: %1$s</string>
+    <string name="nickname_entry_help">Weka jina la utani ili kuendelea.</string>
+    <string name="nickname_suggestion_help">Tumia jina la utani lililopendekezwa au weka lako mwenyewe.</string>
+    <string name="presence_unavailable">Hali ya shughuli haipatikani</string>
 </resources>

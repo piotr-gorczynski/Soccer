@@ -442,4 +442,7 @@
     <string name="moderation_failed">Impossible de terminer cette action. Veuillez réessayer.</string>
     <string name="moderation_user_blocked">🔒 Utilisateur bloqué</string>
     <string name="moderation_report_already_open">Vous avez déjà un signalement ouvert concernant ce joueur. Référence : %1$s</string>
+    <string name="nickname_entry_help">Saisissez un pseudonyme pour continuer.</string>
+    <string name="nickname_suggestion_help">Utilisez le pseudonyme proposé ou saisissez le vôtre.</string>
+    <string name="presence_unavailable">Statut d’activité indisponible</string>
 </resources>

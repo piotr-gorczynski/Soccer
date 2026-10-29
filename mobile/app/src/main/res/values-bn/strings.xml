@@ -487,4 +487,7 @@
     <string name="moderation_failed">কাজটি সম্পন্ন করা যায়নি। আবার চেষ্টা করুন।</string>
     <string name="moderation_user_blocked">🔒 ব্যবহারকারীকে ব্লক করা হয়েছে</string>
     <string name="moderation_report_already_open">এই খেলোয়াড় সম্পর্কে আপনার একটি অভিযোগ ইতিমধ্যেই খোলা আছে। রেফারেন্স: %1$s</string>
+    <string name="nickname_entry_help">এগিয়ে যেতে একটি ডাকনাম লিখুন।</string>
+    <string name="nickname_suggestion_help">প্রস্তাবিত ডাকনামটি ব্যবহার করুন অথবা নিজের পছন্দের ডাকনাম লিখুন।</string>
+    <string name="presence_unavailable">সক্রিয়তার তথ্য পাওয়া যাচ্ছে না</string>
 </resources>

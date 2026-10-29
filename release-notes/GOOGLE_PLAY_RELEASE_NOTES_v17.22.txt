@@ -1,0 +1,107 @@
+<en-GB>
+🎮 Start faster with an editable suggested nickname and clearer guidance.
+📶 Privacy consent can load after connectivity returns, without restarting the app.
+🏆 Tournament activity status handles connection errors more clearly.
+</en-GB>
+
+<pl-PL>
+🎮 Zacznij szybciej dzięki proponowanemu nickowi, który możesz edytować, i czytelnym wskazówkom.
+📶 Zgoda dotycząca prywatności może się wczytać po powrocie połączenia, bez restartu aplikacji.
+🏆 Czytelniejszy status aktywności w turniejach przy błędach połączenia.
+</pl-PL>
+
+<de-DE>
+🎮 Schneller starten mit einem bearbeitbaren Spitznamenvorschlag und klareren Hinweisen.
+📶 Die Datenschutzeinwilligung kann nach Wiederherstellung der Verbindung ohne App-Neustart geladen werden.
+🏆 Klarerer Aktivitätsstatus bei Verbindungsfehlern in Turnieren.
+</de-DE>
+
+<fr-FR>
+🎮 Démarrez plus vite avec un pseudonyme proposé et modifiable et des indications plus claires.
+📶 Le consentement peut se charger au retour de la connexion, sans redémarrer l’application.
+🏆 Le statut d’activité des tournois signale plus clairement les erreurs de connexion.
+</fr-FR>
+
+<es-ES>
+🎮 Empieza más rápido con un apodo sugerido que puedes editar e indicaciones más claras.
+📶 El consentimiento puede cargarse al recuperar la conexión, sin reiniciar la aplicación.
+🏆 El estado de actividad en torneos muestra mejor los errores de conexión.
+</es-ES>
+
+<ur>
+🎮 تجویز کردہ نام میں ترمیم اور واضح ہدایات کے ساتھ جلد کھیل شروع کریں۔
+📶 رابطہ بحال ہونے پر ایپ دوبارہ کھولے بغیر رازداری کی رضامندی لوڈ ہو سکتی ہے۔
+🏆 ٹورنامنٹ میں رابطے کی خرابی پر سرگرمی کی کیفیت زیادہ واضح ہے۔
+</ur>
+
+<bn-BD>
+🎮 প্রস্তাবিত ডাকনাম ব্যবহার করুন বা বদলে নিন—আরও স্পষ্ট নির্দেশনায় দ্রুত শুরু করুন।
+📶 সংযোগ ফিরে এলে অ্যাপ আবার চালু না করেই গোপনীয়তার সম্মতির পর্দা লোড হতে পারে।
+🏆 টুর্নামেন্টে সংযোগের ত্রুটি হলে সক্রিয়তার অবস্থা আরও স্পষ্টভাবে দেখানো হয়।
+</bn-BD>
+
+<ne-NP>
+🎮 सम्पादन गर्न मिल्ने सुझाइएको उपनाम र स्पष्ट निर्देशनसहित छिटो सुरु गर्नुहोस्।
+📶 जडान फर्किएपछि एप पुनः सुरु नगरी गोपनीयताको सहमति लोड हुन सक्छ।
+🏆 टुर्नामेन्टमा जडान त्रुटि हुँदा सक्रियताको स्थिति अझ स्पष्ट हुन्छ।
+</ne-NP>
+
+<hi-IN>
+🎮 सुझाया गया उपनाम बदलें या अपनाएँ और स्पष्ट निर्देशों के साथ जल्दी शुरू करें।
+📶 कनेक्शन लौटने पर ऐप दोबारा शुरू किए बिना गोपनीयता की सहमति लोड हो सकती है।
+🏆 टूर्नामेंट में कनेक्शन की त्रुटि होने पर गतिविधि की स्थिति अधिक स्पष्ट है।
+</hi-IN>
+
+<am>
+🎮 ሊቀየር በሚችል የቅጽል ስም ሃሳብና ግልጽ መመሪያ በፍጥነት ይጀምሩ።
+📶 ግንኙነቱ ሲመለስ መተግበሪያውን ዳግም ሳይከፍቱ የግላዊነት ፈቃድ ሊጫን ይችላል።
+🏆 በውድድር ውስጥ የግንኙነት ስህተት ሲኖር የእንቅስቃሴ ሁኔታ ይበልጥ ግልጽ ነው።
+</am>
+
+<ar>
+🎮 ابدأ أسرع باسم مستعار مقترح قابل للتعديل وإرشادات أوضح.
+📶 يمكن تحميل موافقة الخصوصية بعد عودة الاتصال دون إعادة تشغيل التطبيق.
+🏆 عرض أوضح لحالة النشاط في البطولات عند حدوث أخطاء في الاتصال.
+</ar>
+
+<my-MM>
+🎮 အကြံပြုအမည်ပြောင်ကို ပြင်ဆင်နိုင်ပြီး ပိုရှင်းသော လမ်းညွှန်ချက်များဖြင့် အမြန်စတင်ပါ။
+📶 အင်တာနက်ပြန်ရချိန်တွင် အက်ပ်ပြန်ဖွင့်စရာမလိုဘဲ ကိုယ်ရေးအချက်အလက်ဆိုင်ရာ သဘောတူညီချက်ကို ဖွင့်နိုင်ပါသည်။
+🏆 ပြိုင်ပွဲတွင် ချိတ်ဆက်မှုအမှားရှိပါက လှုပ်ရှားမှုအခြေအနေကို ပိုရှင်းစွာ ပြသသည်။
+</my-MM>
+
+<km-KH>
+🎮 ចាប់ផ្តើមលឿនជាងមុនជាមួយឈ្មោះហៅក្រៅដែលបានណែនាំ និងអាចកែបាន ព្រមទាំងការណែនាំកាន់តែច្បាស់។
+📶 ពេលមានអ៊ីនធឺណិតវិញ អាចផ្ទុកការយល់ព្រមឯកជនភាពដោយមិនបាច់បើកកម្មវិធីឡើងវិញ។
+🏆 បង្ហាញស្ថានភាពសកម្មភាពក្នុងការប្រកួតកាន់តែច្បាស់ ពេលមានបញ្ហាតភ្ជាប់។
+</km-KH>
+
+<lo-LA>
+🎮 ເລີ່ມໄດ້ໄວຂຶ້ນດ້ວຍຊື່ຫຼິ້ນທີ່ແນະນຳ ແລະແກ້ໄຂໄດ້ ພ້ອມຄຳແນະນຳທີ່ຊັດເຈນ.
+📶 ເມື່ອອິນເຕີເນັດກັບມາ ສາມາດໂຫຼດການຍິນຍອມຄວາມເປັນສ່ວນຕົວໄດ້ ໂດຍບໍ່ຕ້ອງເປີດແອັບໃໝ່.
+🏆 ສະແດງສະຖານະການໃຊ້ງານໃນການແຂ່ງຂັນຊັດເຈນຂຶ້ນເມື່ອການເຊື່ອມຕໍ່ມີບັນຫາ.
+</lo-LA>
+
+<mn-MN>
+🎮 Засаж болох санал болгосон хоч нэр, илүү ойлгомжтой заавартайгаар хурдан эхлээрэй.
+📶 Холболт сэргэхэд аппыг дахин асаахгүйгээр нууцлалын зөвшөөрлийг ачаалах боломжтой.
+🏆 Холболтын алдаа гарвал тэмцээний идэвхийн төлөвийг илүү тодорхой харуулна.
+</mn-MN>
+
+<fa-IR>
+🎮 با نام مستعار پیشنهادیِ قابل ویرایش و راهنمای روشن‌تر، سریع‌تر شروع کنید.
+📶 پس از بازگشت اتصال، رضایت حریم خصوصی بدون راه‌اندازی دوباره برنامه بارگیری می‌شود.
+🏆 نمایش روشن‌تر وضعیت فعالیت در مسابقات هنگام خطای اتصال.
+</fa-IR>
+
+<si-LK>
+🎮 සංස්කරණය කළ හැකි යෝජිත අන්වර්ථ නාමයක් සහ පැහැදිලි උපදෙස් සමඟ ඉක්මනින් අරඹන්න.
+📶 සම්බන්ධතාව නැවත ලැබුණු විට යෙදුම යළි නොඅරඹා රහස්‍යතා කැමැත්ත පූරණය කළ හැක.
+🏆 සම්බන්ධතා දෝෂ ඇති විට තරගාවලියේ ක්‍රියාකාරී තත්ත්වය වඩා පැහැදිලිව පෙන්වයි.
+</si-LK>
+
+<sw>
+🎮 Anza haraka kwa jina la utani lililopendekezwa unaloweza kuhariri na maelekezo wazi zaidi.
+📶 Ridhaa ya faragha inaweza kupakiwa muunganisho ukirudi bila kuanzisha programu upya.
+🏆 Hali ya shughuli kwenye mashindano inaonyesha hitilafu za muunganisho kwa uwazi zaidi.
+</sw>

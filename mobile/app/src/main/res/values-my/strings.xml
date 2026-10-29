@@ -413,4 +413,7 @@
     <string name="moderation_failed">ဤလုပ်ဆောင်ချက်ကို မပြီးမြောက်နိုင်ပါ။ ထပ်မံကြိုးစားပါ။</string>
     <string name="moderation_user_blocked">🔒 အသုံးပြုသူကို ပိတ်ဆို့ထားသည်</string>
     <string name="moderation_report_already_open">ဤကစားသမားနှင့်ပတ်သက်၍ သင့်တွင် မပိတ်ရသေးသော တိုင်ကြားချက်တစ်ခု ရှိပြီးဖြစ်သည်။ ရည်ညွှန်းနံပါတ်: %1$s</string>
+    <string name="nickname_entry_help">ရှေ့ဆက်ရန် အမည်ပြောင်တစ်ခု ထည့်ပါ။</string>
+    <string name="nickname_suggestion_help">အကြံပြုထားသော အမည်ပြောင်ကို သုံးပါ သို့မဟုတ် မိမိနှစ်သက်သော အမည်ပြောင်ကို ထည့်ပါ။</string>
+    <string name="presence_unavailable">လှုပ်ရှားမှုအခြေအနေကို မရနိုင်ပါ</string>
 </resources>

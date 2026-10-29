@@ -413,4 +413,7 @@
     <string name="moderation_failed">មិនអាចបញ្ចប់សកម្មភាពនេះបានទេ។ សូមព្យាយាមម្តងទៀត។</string>
     <string name="moderation_user_blocked">🔒 អ្នកប្រើប្រាស់ត្រូវបានទប់ស្កាត់</string>
     <string name="moderation_report_already_open">អ្នកមានរបាយការណ៍ដែលនៅបើកអំពីអ្នកលេងនេះរួចហើយ។ លេខយោង៖ %1$s</string>
+    <string name="nickname_entry_help">បញ្ចូលឈ្មោះហៅក្រៅ ដើម្បីបន្ត។</string>
+    <string name="nickname_suggestion_help">ប្រើឈ្មោះហៅក្រៅដែលបានណែនាំ ឬបញ្ចូលឈ្មោះដែលអ្នកចង់បាន។</string>
+    <string name="presence_unavailable">មិនមានព័ត៌មានអំពីសកម្មភាពទេ</string>
 </resources>

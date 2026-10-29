@@ -413,4 +413,7 @@
     <string name="moderation_failed">Tsy vita ity hetsika ity. Andramo indray azafady.</string>
     <string name="moderation_user_blocked">🔒 Voasakana ny mpampiasa</string>
     <string name="moderation_report_already_open">Efa manana fitarainana mbola misokatra momba ity mpilalao ity ianao. Laharana: %1$s</string>
+    <string name="nickname_entry_help">Ampidiro ny anaram-bositra hanohizana.</string>
+    <string name="nickname_suggestion_help">Ampiasao ny anaram-bositra atolotra na ampidiro izay tianao.</string>
+    <string name="presence_unavailable">Tsy misy ny mombamomba ny fahavitrihana</string>
 </resources>

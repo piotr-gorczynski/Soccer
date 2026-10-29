@@ -250,7 +250,7 @@ public class MatchAdapter
                     @Override public void onDataChange(@NonNull DataSnapshot snap) {
                         String stateStr   = snap.child("state").getValue(String.class);
                         Long   lastHbBox  = snap.child("last_heartbeat").getValue(Long.class);
-                        long   lastHb     = lastHbBox != null ? lastHbBox : 0L;
+                        long   lastHb     = usableHeartbeat(lastHbBox) ? lastHbBox : 0L;
 
                         String state = "offline";
                         if ("online".equals(stateStr)) {
@@ -267,7 +267,10 @@ public class MatchAdapter
                             notifyItemChanged(idx, "presence");   // 🔄 partial update
                         }
                     }
-                    @Override public void onCancelled(@NonNull DatabaseError e) { }
+                    @Override public void onCancelled(@NonNull DatabaseError e) {
+                        handlePresenceReadFailure(oppUid);
+                        Log.w("TAG_Soccer", "Tournament presence read cancelled; code=" + e.getCode());
+                    }
                 };
 
                 presSubs.put(oppUid, new RtdbSub(ref, l));
@@ -284,12 +287,12 @@ public class MatchAdapter
                 case "active" -> {
                     Long cached = hbCache.get(oppUid);   // may be null
                     long lastHb = cached != null ? cached : 0L;
-                    label = context.getString(R.string.presence_last_seen, englishRelative(lastHb));
+                    label = presenceLabel("active", lastHb);
                     yield ContextCompat.getColor(
                             h.itemView.getContext(), R.color.colorGreenDark);
                 }
                 default -> {
-                    label  = context.getString(R.string.presence_offline);
+                    label  = presenceLabel(pState, 0L);
                     yield ContextCompat.getColor(
                             h.itemView.getContext(), R.color.colorGrey);
                 }
@@ -342,7 +345,7 @@ public class MatchAdapter
         
         // Show invite button for all users except those with no heartbeat data
         long lastHeartbeat = hbCache.getOrDefault(oppUid, 0L);
-        boolean isTrulyOffline = (pState == null || "offline".equalsIgnoreCase(pState)) && lastHeartbeat == 0L;
+        boolean isTrulyOffline = (pState == null || "unknown".equals(pState) || "offline".equalsIgnoreCase(pState)) && lastHeartbeat == 0L;
 
         if (isActiveOrCompleted || isTrulyOffline) {
             h.inviteBtn.setVisibility(View.GONE);
@@ -380,12 +383,12 @@ public class MatchAdapter
                                     h.itemView.getContext(), R.color.colorGreenDark);
                         }
                         case "active"  -> {
-                            label = context.getString(R.string.presence_last_seen, englishRelative(lastHb));
+                            label = presenceLabel("active", lastHb);
                             yield ContextCompat.getColor(
                                     h.itemView.getContext(), R.color.colorGreenDark);
                         }
                         default        -> {
-                            label = context.getString(R.string.presence_offline);
+                            label = presenceLabel(pState, 0L);
                             yield ContextCompat.getColor(
                                     h.itemView.getContext(), R.color.colorGrey);
                         }
@@ -398,7 +401,7 @@ public class MatchAdapter
                     boolean isActiveOrCompleted = "playing".equals(status) || "completed".equals(status);
                 
                     // Show invite button for all users except those with no heartbeat data
-                    boolean isTrulyOffline = "offline".equalsIgnoreCase(pState) && lastHb == 0L;
+                    boolean isTrulyOffline = ("unknown".equals(pState) || "offline".equalsIgnoreCase(pState)) && lastHb == 0L;
                         
                     h.inviteBtn.setVisibility((isActiveOrCompleted || isTrulyOffline)
                             ? View.GONE : View.VISIBLE);
@@ -563,6 +566,27 @@ public class MatchAdapter
                     }
                     Log.e("TAG_Soccer", getClass().getSimpleName() + ".fetchInviteStats: Failed to fetch sent invites", e);
                 });
+    }
+
+    private void handlePresenceReadFailure(String uid) {
+        presCache.put(uid, "unknown");
+        hbCache.remove(uid);
+        int idx = indexForUid(uid);
+        if (idx != RecyclerView.NO_POSITION) notifyItemChanged(idx, "presence");
+    }
+
+    static boolean usableHeartbeat(Long timestamp) {
+        return timestamp != null && timestamp > 0 && timestamp <= System.currentTimeMillis();
+    }
+
+    private String presenceLabel(String state, long heartbeat) {
+        if ("active".equals(state)) {
+            return usableHeartbeat(heartbeat)
+                    ? context.getString(R.string.presence_last_seen, englishRelative(heartbeat))
+                    : context.getString(R.string.presence_unavailable);
+        }
+        return context.getString("unknown".equals(state)
+                ? R.string.presence_unavailable : R.string.presence_offline);
     }
 
     /** English relative time: "just now", "4 mins ago", "2 h ago", "yesterday", "5 days ago". */

@@ -239,6 +239,10 @@ public class AnalyticsManager {
 
     /** Reports one failed auth operation without sending SDK messages or causes. */
     public void trackAuthFailure(String method, String step, Exception error) {
+        if (isBangladesh() && "anonymous".equals(method)) {
+            trackAnonymousAuthFailure(step, error);
+            return;
+        }
         if ("google.com".equals(method)) method = "google";
         if ("facebook.com".equals(method)) method = "facebook";
         if ("microsoft.com".equals(method)) method = "microsoft";
@@ -267,6 +271,25 @@ public class AnalyticsManager {
             } catch (Exception ignored) {
                 Log.w(TAG, "Could not report auth non-fatal");
             }
+        }
+    }
+
+    private void trackAnonymousAuthFailure(String step, Exception error) {
+        AnonymousAuthDiagnostic diagnostic = AnonymousAuthDiagnostic.from(step, error);
+        if (firebaseAnalytics != null) {
+            Bundle params = new Bundle();
+            params.putString("method", "anonymous");
+            params.putString("stage", diagnostic.step);
+            params.putString("step", diagnostic.step);
+            params.putString("outcome", "failure");
+            params.putString("reason", diagnostic.reason);
+            params.putString("code", diagnostic.code);
+            try { firebaseAnalytics.logEvent("sign_up_error", params); }
+            catch (Exception ignored) { Log.w(TAG, "Could not report anonymous auth analytics"); }
+        }
+        if (crashlytics != null) {
+            try { crashlytics.log(diagnostic.breadcrumb()); }
+            catch (Exception ignored) { Log.w(TAG, "Could not report anonymous auth breadcrumb"); }
         }
     }
     

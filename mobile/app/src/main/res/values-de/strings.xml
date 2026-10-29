@@ -448,4 +448,7 @@
     <string name="moderation_failed">Diese Aktion konnte nicht abgeschlossen werden. Bitte versuche es erneut.</string>
     <string name="moderation_user_blocked">🔒 Benutzer blockiert</string>
     <string name="moderation_report_already_open">Du hast bereits eine offene Meldung zu diesem Spieler. Referenz: %1$s</string>
+    <string name="nickname_entry_help">Gib einen Spitznamen ein, um fortzufahren.</string>
+    <string name="nickname_suggestion_help">Verwende den vorgeschlagenen Spitznamen oder gib einen eigenen ein.</string>
+    <string name="presence_unavailable">Aktivitätsstatus nicht verfügbar</string>
 </resources>

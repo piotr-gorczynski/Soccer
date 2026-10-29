@@ -652,6 +652,7 @@ public class MenuActivity extends BaseActivity {
 
     @Override
     protected void onStop() {
+        ((SoccerApp) getApplication()).onConsentHostStopped(this);
         recordWindowLifecycle("stopped");
         overlayHandler.removeCallbacks(menuInitializationTimeout);
         runningPlayerHandler.removeCallbacks(showAnimationInfoRunnable);
@@ -684,6 +685,7 @@ public class MenuActivity extends BaseActivity {
         if (hasWindowFocus() && canPresentWindow()) {
             SoccerApp app = (SoccerApp) getApplication();
             if (app.isStartupConsentFinished()) {
+                app.refreshConsentIfNeeded(this);
                 if (BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(this)) {
                     checkAndShowUninstallGlobalPrompt();
                 }
@@ -1834,6 +1836,7 @@ public class MenuActivity extends BaseActivity {
             networkCallback = new ConnectivityManager.NetworkCallback() {
                 @Override
                 public void onAvailable(@NonNull Network network) {
+                    runOnUiThread(() -> requestAdsConsentWhenReady());
                     if (!isBackendAvailable) {
                         Log.d(
                             "TAG_Soccer",
@@ -1841,6 +1844,12 @@ public class MenuActivity extends BaseActivity {
                         );
                         runOnUiThread(() -> checkBackendAvailabilityAndContinue());
                     }
+                }
+
+                @Override
+                public void onCapabilitiesChanged(@NonNull Network network,
+                                                  @NonNull NetworkCapabilities capabilities) {
+                    runOnUiThread(() -> requestAdsConsentWhenReady());
                 }
 
                 @Override
