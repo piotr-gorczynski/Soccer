@@ -239,7 +239,7 @@ public class AnalyticsManager {
 
     /** Reports one failed auth operation without sending SDK messages or causes. */
     public void trackAuthFailure(String method, String step, Exception error) {
-        if (isBangladesh() && "anonymous".equals(method)) {
+        if ("anonymous".equals(method)) {
             trackAnonymousAuthFailure(step, error);
             return;
         }

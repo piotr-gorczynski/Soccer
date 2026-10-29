@@ -2,106 +2,124 @@
 🎮 Start faster with an editable suggested nickname and clearer guidance.
 📶 Privacy consent can load after connectivity returns, without restarting the app.
 🏆 Tournament activity status handles connection errors more clearly.
+🔎 Improved anonymous login diagnostics without collecting nickname values or exception messages.
 </en-GB>
 
 <pl-PL>
 🎮 Zacznij szybciej dzięki proponowanemu nickowi, który możesz edytować, i czytelnym wskazówkom.
 📶 Zgoda dotycząca prywatności może się wczytać po powrocie połączenia, bez restartu aplikacji.
 🏆 Czytelniejszy status aktywności w turniejach przy błędach połączenia.
+🔎 Dokładniejsza diagnostyka logowania anonimowego bez zbierania nicków i treści wyjątków.
 </pl-PL>
 
 <de-DE>
 🎮 Schneller starten mit einem bearbeitbaren Spitznamenvorschlag und klareren Hinweisen.
 📶 Die Datenschutzeinwilligung kann nach Wiederherstellung der Verbindung ohne App-Neustart geladen werden.
 🏆 Klarerer Aktivitätsstatus bei Verbindungsfehlern in Turnieren.
+🔎 Verbesserte Diagnose der anonymen Anmeldung ohne Erfassung von Spitznamen oder Ausnahmemeldungen.
 </de-DE>
 
 <fr-FR>
 🎮 Démarrez plus vite avec un pseudonyme proposé et modifiable et des indications plus claires.
 📶 Le consentement peut se charger au retour de la connexion, sans redémarrer l’application.
 🏆 Le statut d’activité des tournois signale plus clairement les erreurs de connexion.
+🔎 Diagnostic amélioré de la connexion anonyme sans collecte des pseudonymes ni des messages d’exception.
 </fr-FR>
 
 <es-ES>
 🎮 Empieza más rápido con un apodo sugerido que puedes editar e indicaciones más claras.
 📶 El consentimiento puede cargarse al recuperar la conexión, sin reiniciar la aplicación.
 🏆 El estado de actividad en torneos muestra mejor los errores de conexión.
+🔎 Mejor diagnóstico del acceso anónimo sin recopilar apodos ni mensajes de excepción.
 </es-ES>
 
 <ur>
 🎮 تجویز کردہ نام میں ترمیم اور واضح ہدایات کے ساتھ جلد کھیل شروع کریں۔
 📶 رابطہ بحال ہونے پر ایپ دوبارہ کھولے بغیر رازداری کی رضامندی لوڈ ہو سکتی ہے۔
 🏆 ٹورنامنٹ میں رابطے کی خرابی پر سرگرمی کی کیفیت زیادہ واضح ہے۔
+🔎 عرفی نام یا استثنائی خرابیوں کے پیغامات جمع کیے بغیر گمنام لاگ ان کی بہتر تشخیص۔
 </ur>
 
 <bn-BD>
 🎮 প্রস্তাবিত ডাকনাম ব্যবহার করুন বা বদলে নিন—আরও স্পষ্ট নির্দেশনায় দ্রুত শুরু করুন।
 📶 সংযোগ ফিরে এলে অ্যাপ আবার চালু না করেই গোপনীয়তার সম্মতির পর্দা লোড হতে পারে।
 🏆 টুর্নামেন্টে সংযোগের ত্রুটি হলে সক্রিয়তার অবস্থা আরও স্পষ্টভাবে দেখানো হয়।
+🔎 ডাকনাম বা ত্রুটির মূল বার্তা সংগ্রহ না করেই বেনামি লগইনের সমস্যা শনাক্তের ব্যবস্থা উন্নত হয়েছে।
 </bn-BD>
 
 <ne-NP>
 🎮 सम्पादन गर्न मिल्ने सुझाइएको उपनाम र स्पष्ट निर्देशनसहित छिटो सुरु गर्नुहोस्।
 📶 जडान फर्किएपछि एप पुनः सुरु नगरी गोपनीयताको सहमति लोड हुन सक्छ।
 🏆 टुर्नामेन्टमा जडान त्रुटि हुँदा सक्रियताको स्थिति अझ स्पष्ट हुन्छ।
+🔎 उपनाम वा अपवादका सन्देश सङ्कलन नगरी अज्ञात लगइनको सुधारिएको निदान।
 </ne-NP>
 
 <hi-IN>
 🎮 सुझाया गया उपनाम बदलें या अपनाएँ और स्पष्ट निर्देशों के साथ जल्दी शुरू करें।
 📶 कनेक्शन लौटने पर ऐप दोबारा शुरू किए बिना गोपनीयता की सहमति लोड हो सकती है।
 🏆 टूर्नामेंट में कनेक्शन की त्रुटि होने पर गतिविधि की स्थिति अधिक स्पष्ट है।
+🔎 उपनाम या अपवाद संदेश एकत्र किए बिना गुमनाम लॉगिन की बेहतर जाँच।
 </hi-IN>
 
 <am>
 🎮 ሊቀየር በሚችል የቅጽል ስም ሃሳብና ግልጽ መመሪያ በፍጥነት ይጀምሩ።
 📶 ግንኙነቱ ሲመለስ መተግበሪያውን ዳግም ሳይከፍቱ የግላዊነት ፈቃድ ሊጫን ይችላል።
 🏆 በውድድር ውስጥ የግንኙነት ስህተት ሲኖር የእንቅስቃሴ ሁኔታ ይበልጥ ግልጽ ነው።
+🔎 ቅጽል ስሞችን ወይም የስህተት መልዕክቶችን ሳይሰበስብ የማይታወቅ ተጠቃሚ መግቢያ ምርመራ ተሻሽሏል።
 </am>
 
 <ar>
 🎮 ابدأ أسرع باسم مستعار مقترح قابل للتعديل وإرشادات أوضح.
 📶 يمكن تحميل موافقة الخصوصية بعد عودة الاتصال دون إعادة تشغيل التطبيق.
 🏆 عرض أوضح لحالة النشاط في البطولات عند حدوث أخطاء في الاتصال.
+🔎 تشخيص أفضل لتسجيل الدخول المجهول دون جمع الأسماء المستعارة أو رسائل الاستثناءات.
 </ar>
 
 <my-MM>
 🎮 အကြံပြုအမည်ပြောင်ကို ပြင်ဆင်နိုင်ပြီး ပိုရှင်းသော လမ်းညွှန်ချက်များဖြင့် အမြန်စတင်ပါ။
 📶 အင်တာနက်ပြန်ရချိန်တွင် အက်ပ်ပြန်ဖွင့်စရာမလိုဘဲ ကိုယ်ရေးအချက်အလက်ဆိုင်ရာ သဘောတူညီချက်ကို ဖွင့်နိုင်ပါသည်။
 🏆 ပြိုင်ပွဲတွင် ချိတ်ဆက်မှုအမှားရှိပါက လှုပ်ရှားမှုအခြေအနေကို ပိုရှင်းစွာ ပြသသည်။
+🔎 အမည်ပြောင်နှင့် ခြွင်းချက်အမှားစာသားများကို မစုဆောင်းဘဲ အမည်မဖော်သော ဝင်ရောက်မှုကို ပိုကောင်းစွာ စစ်ဆေးနိုင်သည်။
 </my-MM>
 
 <km-KH>
 🎮 ចាប់ផ្តើមលឿនជាងមុនជាមួយឈ្មោះហៅក្រៅដែលបានណែនាំ និងអាចកែបាន ព្រមទាំងការណែនាំកាន់តែច្បាស់។
 📶 ពេលមានអ៊ីនធឺណិតវិញ អាចផ្ទុកការយល់ព្រមឯកជនភាពដោយមិនបាច់បើកកម្មវិធីឡើងវិញ។
 🏆 បង្ហាញស្ថានភាពសកម្មភាពក្នុងការប្រកួតកាន់តែច្បាស់ ពេលមានបញ្ហាតភ្ជាប់។
+🔎 កែលម្អការរកមូលហេតុបញ្ហាចូលប្រើអនាមិក ដោយមិនប្រមូលឈ្មោះហៅក្រៅ ឬសារកំហុស។
 </km-KH>
 
 <lo-LA>
 🎮 ເລີ່ມໄດ້ໄວຂຶ້ນດ້ວຍຊື່ຫຼິ້ນທີ່ແນະນຳ ແລະແກ້ໄຂໄດ້ ພ້ອມຄຳແນະນຳທີ່ຊັດເຈນ.
 📶 ເມື່ອອິນເຕີເນັດກັບມາ ສາມາດໂຫຼດການຍິນຍອມຄວາມເປັນສ່ວນຕົວໄດ້ ໂດຍບໍ່ຕ້ອງເປີດແອັບໃໝ່.
 🏆 ສະແດງສະຖານະການໃຊ້ງານໃນການແຂ່ງຂັນຊັດເຈນຂຶ້ນເມື່ອການເຊື່ອມຕໍ່ມີບັນຫາ.
+🔎 ປັບປຸງການກວດຫາບັນຫາການເຂົ້າໃຊ້ແບບບໍ່ລະບຸຊື່ ໂດຍບໍ່ເກັບຊື່ຫຼິ້ນ ຫຼືຂໍ້ຄວາມຂໍ້ຜິດພາດ.
 </lo-LA>
 
 <mn-MN>
 🎮 Засаж болох санал болгосон хоч нэр, илүү ойлгомжтой заавартайгаар хурдан эхлээрэй.
 📶 Холболт сэргэхэд аппыг дахин асаахгүйгээр нууцлалын зөвшөөрлийг ачаалах боломжтой.
 🏆 Холболтын алдаа гарвал тэмцээний идэвхийн төлөвийг илүү тодорхой харуулна.
+🔎 Хоч нэр болон алдааны мессеж цуглуулахгүйгээр нэргүй нэвтрэлтийн оношилгоог сайжруулав.
 </mn-MN>
 
 <fa-IR>
 🎮 با نام مستعار پیشنهادیِ قابل ویرایش و راهنمای روشن‌تر، سریع‌تر شروع کنید.
 📶 پس از بازگشت اتصال، رضایت حریم خصوصی بدون راه‌اندازی دوباره برنامه بارگیری می‌شود.
 🏆 نمایش روشن‌تر وضعیت فعالیت در مسابقات هنگام خطای اتصال.
+🔎 بهبود عیب‌یابی ورود ناشناس، بدون جمع‌آوری نام مستعار یا پیام‌های استثنا.
 </fa-IR>
 
 <si-LK>
 🎮 සංස්කරණය කළ හැකි යෝජිත අන්වර්ථ නාමයක් සහ පැහැදිලි උපදෙස් සමඟ ඉක්මනින් අරඹන්න.
 📶 සම්බන්ධතාව නැවත ලැබුණු විට යෙදුම යළි නොඅරඹා රහස්‍යතා කැමැත්ත පූරණය කළ හැක.
 🏆 සම්බන්ධතා දෝෂ ඇති විට තරගාවලියේ ක්‍රියාකාරී තත්ත්වය වඩා පැහැදිලිව පෙන්වයි.
+🔎 අන්වර්ථ නාම හෝ දෝෂ පණිවිඩ රැස් නොකර නිර්නාමික පිවිසුමේ ගැටලු හඳුනාගැනීම වැඩිදියුණු කර ඇත.
 </si-LK>
 
 <sw>
 🎮 Anza haraka kwa jina la utani lililopendekezwa unaloweza kuhariri na maelekezo wazi zaidi.
 📶 Ridhaa ya faragha inaweza kupakiwa muunganisho ukirudi bila kuanzisha programu upya.
 🏆 Hali ya shughuli kwenye mashindano inaonyesha hitilafu za muunganisho kwa uwazi zaidi.
+🔎 Uchunguzi bora wa kuingia bila utambulisho bila kukusanya majina ya utani au ujumbe wa hitilafu.
 </sw>

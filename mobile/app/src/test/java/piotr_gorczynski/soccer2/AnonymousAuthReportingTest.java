@@ -44,7 +44,7 @@ public class AnonymousAuthReportingTest {
     }
     @After public void cleanup() { crashSdk.close();sdk.close(); }
 
-    @Test public void oneSafeEventAndBreadcrumbForBdOrUnchangedGlobalDiagnostic() {
+    @Test public void oneSafeEventAndBreadcrumbForBothFlavours() {
         FirebaseTooManyRequestsException failure=new FirebaseTooManyRequestsException("private@example.com UID=secret response-text");
         failure.setStackTrace(new StackTraceElement[]{new StackTraceElement("PrivateClass", "secret", "private.java", 1)});
         manager.trackAuthFailure("anonymous","authentication",failure);
@@ -52,7 +52,6 @@ public class AnonymousAuthReportingTest {
         verify(analytics).logEvent(eq("sign_up_error"),params.capture());
         verifyNoMoreInteractions(analytics);
         Bundle p=params.getValue();
-        if(AnalyticsManager.isBangladesh()) {
             assertEquals(6,p.size());
             assertEquals("authentication",p.getString("stage"));
             assertEquals("authentication",p.getString("step"));
@@ -66,13 +65,6 @@ public class AnonymousAuthReportingTest {
             String sent=p.toString()+breadcrumb.getValue();
             for(String forbidden:new String[]{"private@example.com","UID=secret","response-text","PrivateClass","private.java","FirebaseTooManyRequestsException"})
                 assertFalse(forbidden,sent.contains(forbidden));
-        } else {
-            assertEquals(4,p.size());
-            assertEquals("FirebaseTooManyRequestsException",p.getString("code"));
-            assertEquals("provider_error",p.getString("reason"));
-            verify(crashes).recordException(any(AuthFailureException.class));
-            verifyNoMoreInteractions(crashes);
-        }
     }
 
     @Test public void otherProvidersKeepExistingDiagnostics() {
@@ -93,7 +85,7 @@ public class AnonymousAuthReportingTest {
             ArgumentCaptor<Bundle> params=ArgumentCaptor.forClass(Bundle.class);
             verify(analytics).logEvent(eq("sign_up_error"),params.capture());
             assertEquals(step,params.getValue().getString("step"));
-            if(AnalyticsManager.isBangladesh()) assertEquals(step,params.getValue().getString("stage"));
+            assertEquals(step,params.getValue().getString("stage"));
         }
     }
 
@@ -196,10 +188,9 @@ public class AnonymousAuthReportingTest {
             verify(analytics).logEvent(eq("sign_up_error"),params.capture());
             assertEquals("profile_read",params.getValue().getString("step"));
             assertEquals("FIRESTORE_PERMISSION_DENIED",params.getValue().getString("code"));
-            if(AnalyticsManager.isBangladesh()) {
-                assertEquals("profile_read",params.getValue().getString("stage"));
-                verify(analytics).logEvent(eq("login"),any());
-            }
+            assertEquals("profile_read",params.getValue().getString("stage"));
+            if (AnalyticsManager.isBangladesh()) verify(analytics).logEvent(eq("login"),any());
+            else verify(analytics,never()).logEvent(eq("login"),any());
         }
     }
 }

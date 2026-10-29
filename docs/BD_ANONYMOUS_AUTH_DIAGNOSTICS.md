@@ -1,8 +1,8 @@
-# BD anonymous authentication diagnostics
+# Anonymous authentication diagnostics
 
-Implemented for 17.22 (57), 28 October 2026. Applies only when the market is
-Bangladesh and method is `anonymous`. Global and other providers retain their
-existing event payloads and Crashlytics behaviour.
+Implemented for 17.22 (57), 28 October 2026. Extended to Global on 29 October 2026. Applies to method `anonymous` in both
+Bangladesh and Global. Other providers retain their existing event payloads and
+Crashlytics behaviour.
 
 ## Event contract
 
@@ -64,7 +64,7 @@ from generic errors. Relevant configuration is not modified.
 
 This path bypasses construction/reporting of AuthFailureException and does not
 call Crashlytics.recordException. It writes a controlled breadcrumb with the same
-six diagnostic fields. BD anonymous logcat messages contain no exception message,
+six diagnostic fields. Anonymous logcat messages contain no exception message,
 UID or original stack. Existing UI messages/callbacks are preserved; UI display is
 not a new telemetry field. No raw throwable/cause/stack is attached to diagnostics.
 Uncaught programming defects still follow normal application crash handling.
@@ -92,8 +92,8 @@ was created. The existing reason definition was not modified.
 Final UI lists exactly six definitions (1-6 of 6). Screenshot evidence:
 C:/Users/Dom/.codex/visualizations/2026/10/19/01a1555d-eec9-7072-a0a7-d75845d5ebab/ga4-auth-custom-definitions.png
 Registration is configuration, not retroactive reclassification. The two historical
-provider_error events are not reinterpreted. Existing Global/other-provider code
-parameters are legacy values; the new code allow-list is specific to BD anonymous.
+provider_error events are not reinterpreted. Existing other-provider code
+parameters retain legacy values; the code allow-list now applies to anonymous in both flavours.
 
 ## Verification
 
@@ -102,7 +102,7 @@ AnonymousLoginPresentationTest, AnalyticsFunnelTest. Passed 26 tests for DEV BD
 and 26 for DEV Global, zero failures/errors. Coverage includes known mappings,
 unknown exceptions/codes, no message parsing, privacy, a single failure event,
 Auth versus profile failures, unchanged SDK success/profile/callback behaviour,
-unchanged Global and unchanged other-provider diagnostics.
+the same safe anonymous diagnostics in Global and BD, and unchanged other-provider diagnostics.
 DEV Bangladesh Debug and DEV Global Debug APK builds passed.
 PROD Bangladesh Release and PROD Global Release APK builds passed (BUILD SUCCESSFUL).
 No store upload, installation or production authentication test performed.

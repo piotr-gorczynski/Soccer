@@ -731,8 +731,7 @@ public class FirebaseAuthManager {
                                             && task.getResult().getAdditionalUserInfo().isNewUser());
                             String uid = user.getUid();
                             Log.d("TAG_Soccer", getClass().getSimpleName() + ".loginAnonymously" +
-                                    (AnalyticsManager.isBangladesh() ? ": Anonymous login successful"
-                                            : ": Anonymous login successful, UID: " + uid));
+                                    ": Anonymous login successful");
 
                             FirebaseFirestore db = FirebaseFirestore.getInstance();
                             
@@ -755,17 +754,13 @@ public class FirebaseAuthManager {
                                                 })
                                                 .addOnFailureListener(e -> {
                                                     Log.e("TAG_Soccer", getClass().getSimpleName() + ".loginAnonymously" +
-                                                            (AnalyticsManager.isBangladesh()
-                                                                    ? ": " + AnonymousAuthDiagnostic.from("profile_write", e).breadcrumb()
-                                                                    : ": Failed to create/update anonymous user document: " + e.getMessage()));
+                                                            ": " + AnonymousAuthDiagnostic.from("profile_write", e).breadcrumb());
                                                     notifyLoginFailure(callback, "Failed to setup user profile: " + e.getMessage(), "anonymous", "profile_write", e);
                                                 });
                                     })
                                     .addOnFailureListener(e -> {
                                         Log.e("TAG_Soccer", getClass().getSimpleName() + ".loginAnonymously" +
-                                                (AnalyticsManager.isBangladesh()
-                                                        ? ": " + AnonymousAuthDiagnostic.from("profile_read", e).breadcrumb()
-                                                        : ": Failed to check existing user document: " + e.getMessage()));
+                                                ": " + AnonymousAuthDiagnostic.from("profile_read", e).breadcrumb());
                                         notifyLoginFailure(callback, "Failed to verify user profile: " + e.getMessage(), "anonymous", "profile_read", e);
                                     });
                         } else {
@@ -776,9 +771,7 @@ public class FirebaseAuthManager {
                     } else {
                         String errorMsg = task.getException() != null ? task.getException().getMessage() : "Unknown error occurred";
                         Log.e("TAG_Soccer", getClass().getSimpleName() + ".loginAnonymously" +
-                                (AnalyticsManager.isBangladesh()
-                                        ? ": " + AnonymousAuthDiagnostic.from("authentication", task.getException()).breadcrumb()
-                                        : ": Anonymous login failed: " + errorMsg));
+                                ": " + AnonymousAuthDiagnostic.from("authentication", task.getException()).breadcrumb());
                         notifyLoginFailure(callback, errorMsg, "anonymous", "authentication", task.getException());
                     }
                 });

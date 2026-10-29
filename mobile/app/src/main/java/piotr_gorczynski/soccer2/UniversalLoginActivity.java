@@ -244,7 +244,7 @@ public class UniversalLoginActivity extends BaseActivity {
                 setLoginButtonsEnabled(true);
                 
                 Log.e("TAG_Soccer", getClass().getSimpleName() + ".onLoginFailure" +
-                        (AnalyticsManager.isBangladesh() && "anonymous".equals(authMethod)
+                        ("anonymous".equals(authMethod)
                                 ? ": Anonymous login failed; controlled diagnostics recorded at source"
                                 : ": onLoginFailure: " + message));
                 
