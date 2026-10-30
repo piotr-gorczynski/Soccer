@@ -1,10 +1,11 @@
 # Bangladesh Version Approach
 
-**Document Version:** 2.60
-**Last Updated:** 2026-10-21
-**Status:** Last confirmed Bangladesh production release: 17.16-BD (versionCode 51); Global 17.18 and Bangladesh 17.18-BD (versionCode 53) submitted for Google Play review; Google Ads acquiring installs; authentication and journey observability improvements awaiting release; NBR clarification remains open
+**Document Version:** 2.61
+**Last Updated:** 2026-10-30
+**Status:** Global 17.22 and Bangladesh 17.22-BD (versionCode 57) are in production, as confirmed by the owner. Acquisition is inexpensive, but completed onboarding and tournament participation remain the main unresolved conversion problem. Daily GA4 BigQuery export is configured; NBR clarification remains open.
 
 **Revision History**:
+- v2.61 (2026-10-30): Reconciled production 17.22, onboarding/account-linking/consent/presence fixes, controlled anonymous-auth diagnostics in both markets, pseudonymous user correlation, GA4 custom definitions and daily BigQuery export. Recorded the 19–30 October campaign snapshot, incomplete-registration evidence and limits, backend rollout verification, and extended tournament deadlines. Earlier dated updates remain historical snapshots.
 - v2.60 (2026-10-21): Recorded campaign results and qualified Bengali prize messaging, Bangladesh Analytics journey findings and their attribution limits, authentication diagnostics and login_success semantics, localized Bangladesh anonymous-login notice, and owner-confirmed submission of both 17.18 variants for Google Play review. Submission is not approval or production rollout.
 - v2.59 (2026-10-18): Reconciled owner-confirmed production release, reviewer authentication/tournament join, published EN/BN Terms/privacy/regulation, real payout verification, deployed retention and enabled Google Ads campaign. Separated completed delivery from operational monitoring and unresolved NBR clarification. Earlier entries below describe status at the time, not current deployment blockers.
 - v2.58 (2026-10-07): Implemented minimal deleted-account tombstones with stable historical UIDs, active-state cleanup/retries and pseudonymous-data wording in the unpublished privacy revision. Payout/legal history retention is separate; see ACCOUNT_DELETION.md. No deployment/publication.
@@ -74,12 +75,12 @@ This document outlines a simplified, cost-effective approach for operating the r
 
 **Current payout decision (2026-10-04):** Manual Remitly transfers to bKash or Rocket. Both are VERIFIED / DELIVERED in real successful 320 BDT tests from Poland to Bangladesh; Remitly reached final status Delivered and the Rocket recipient account received the transfer. See the payment flow section for evidence, required recipient fields and rollout constraints.
 
-**Current production status (owner-confirmed, recorded 2026-10-18):**
-- Android package `piotr_gorczynski.soccer2.bd` is live on Google Play production as **17.16-BD / versionCode 51**, for adults **18+**.
+**Current production status (owner-confirmed, updated 2026-10-30):**
+- Android package `piotr_gorczynski.soccer2.bd` is live on Google Play production as **17.22-BD / versionCode 57**, for adults **18+**. Global 17.22 is also in production. Installed older versions still contribute data.
 - Authentication works in PROD. A Google Play reviewer authenticated, entered the app and joined the real production Bangladesh tournament; its Firestore `participants` collection contains the reviewer. This verifies the path Google Play install/review → authentication → app → tournament → join tournament, not completion or payout. No reviewer credentials or personal identifiers are recorded here.
 - Bangladesh Terms `BD-terms-2026-10-14` and Bangladesh-specific Privacy Policy are published in English/Bengali, with language-specific app routing. Backend/privacy/retention changes are deployed across DEV/TEST/PROD and production Hosting is published.
 - The real production tournament and assigned EN/BN regulation are recorded under [Tournament Structure](#tournament-structure).
-- Google Ads **Gridline Soccer Bangladesh - Installs** is configured and enabled for Bangladesh, English and Bengali: **Eligible (Learning) / Bid strategy learning**. Rejected images flagged **Misleading Ad Design** were removed. Optimisation and acquisition monitoring remain in progress.
+- Google Ads **Gridline Soccer Bangladesh - Installs** targets Bangladesh, English and Bengali. Target CPI was raised to **0.30 PLN** on 27 October; the latest supplied report shows **Eligible (Limited), limited by budget**. Rejected/misleading assets were removed. See the dated campaign snapshot below.
 - Reviewer participation is not attributed to Google Ads: when observed, Ads showed no impressions/clicks attributable to that activity. No acquisition metrics or exact deployment dates are inferred.
 
 **Key Simplifications**:
@@ -94,7 +95,83 @@ This streamlined approach significantly reduces development complexity, time to 
 
 **⚠️ AGE RATING STRATEGY**: The global app is rated 13+ (suitable for teens), while the Bangladesh version with cash prizes must be rated 18+ (adults only). Both versions will coexist in the Bangladesh Google Play Store. Users under 18 can continue using the global version, while users 18+ can choose to install the Bangladesh version for cash prize tournaments. See the comprehensive "Age Rating Strategy" section below for full details.
 
+## Acquisition and onboarding update (30 October 2026)
+
+This section supersedes the dated 21 October snapshot below. Metrics come from the previously inspected **Campaign report (12).xml** and account/Analytics checks on 30 October; this documentation update does not perform a new live audit. The 30 October reporting day is incomplete, and Ads can revise earlier counts.
+
+### Campaign results after the Target CPI change
+
+Campaign ID: `24360439893`; advertised package: `piotr_gorczynski.soccer2.bd`; configured daily budget: **5 PLN**. Target CPI increased from **0.10 to 0.30 PLN** on 27 October.
+
+| Reporting period | Impressions | Clicks | Google Play installs | Cost (PLN) | Actual CPI (PLN) |
+|---|---:|---:|---:|---:|---:|
+| 19–26 October | 8,083 | 438 | 41 | 11.11 | 0.271 |
+| 27–30 October (30th partial) | 10,002 | 1,641 | 178 | 35.56 | 0.200 |
+| Total 19–30 October | 18,085 | 2,079 | 219 | 46.67 | 0.213 |
+
+| Day | Installs | Cost (PLN) | Actual CPI (PLN, rounded) |
+|---|---:|---:|---:|
+| 27 October | 35 | 9.24 | 0.26 |
+| 28 October | 50 | 9.98 | 0.20 |
+| 29 October | 67 | 10.01 | 0.15 |
+| 30 October (partial) | 26 | 6.33 | 0.24 |
+
+Delivery increased after the bid change, while aggregate CPI decreased. This is an observed association, not a controlled experiment. The latest status indicates a budget constraint rather than the earlier bid constraint; it is not evidence of each historical day's status. Installations and the installation conversion objective are not two funnel stages. No switch to bidding for completed onboarding is recorded here.
+
+**Business conclusion:** cheap installs are not yet demonstrated successful acquisition. Do not raise spend solely on CPI. The historical worldwide Global campaign (13+) and this Bangladesh-only campaign (18+) have different audiences and cannot provide a like-for-like performance benchmark.
+
+### Delivered UX and reliability changes through 17.22
+
+- **Bangladesh entry:** “Start Playing”, “No account details required.” and “You only provide payout details if you win a prize.” use localized EN/BN resources. The existing Firebase anonymous sign-in mechanism remains unchanged. Its confirmation warning still explains loss of access after uninstall and the Bangladesh prize context; warning choices retain diagnostics.
+- **Nickname entry, both markets:** an editable `Player` plus six random characters is suggested, not automatically saved. Clear guidance and disabled confirmation for empty/whitespace-only input prevent repeated empty submissions. Existing length, character, uniqueness, content/AI and backend validation remain in place; typed drafts survive screen recreation. No nickname is logged in Analytics.
+- **Profile/Terms loading:** failed or offline reads are not evidence of a missing nickname or unaccepted Terms. Loading/retry handling and session cache preserve the existing identity; the menu resolves its state under a loading overlay instead of flashing enabled/disabled controls. Device regressions covered offline restart, connectivity recovery and returning-account login without reopening nickname/consent screens unnecessarily.
+- **Email linking:** password confirmation and verification guidance were added. An unverified linked account keeps its current session, with resend, correct-address and verification-check actions. Sensitive operations can request reauthentication; verified state removes the pending controls. Email correction can invalidate the session and require login with the corrected address. Device tests covered typo correction, delivery, verification and successful login; automatic logout immediately after sending the first verification email was superseded.
+- **Consent recovery, both markets:** an initial UMP network failure can retry in the same process when the active menu regains connectivity, with bounded 5/15/45-second backoff and no overlapping requests. Consent rejection is preserved. The DEV test showed automatic `first_open` could upload after connectivity recovery even before this fix: consent retry is not a proven explanation or cure for the Ads/GA4 discrepancy. See [consent recovery](CONSENT_RECOVERY.md).
+- **Tournament participants:** asynchronous nickname/presence updates and merged RecyclerView payloads no longer leave technical placeholders or stale loading text. Presence read failures show an unavailable state and hide invitations. Logout intentionally clears the heartbeat: “Offline” is correct there, not historical “Last seen”. Scheduled presence/FCM cleanup remains in place; no fabricated timestamp is introduced.
+
+Release notes: [Global 17.22](../release-notes/GOOGLE_PLAY_RELEASE_NOTES_v17.22.txt), [Bangladesh 17.22-BD](../release-notes/GOOGLE_PLAY_RELEASE_NOTES_v17.22-BD.txt). Global notes contain 18 Play-supported language sections (excluding `so-SO` and `mg-MG`); BD notes contain EN/BN. Shared app localization remains separate from Play release-note locale support.
+
+### Funnel, diagnostics and account correlation
+
+- Production mapping remains project `soccer-prod-1754048346`, Firebase app `1:249008569891:android:76386af0099ba9ba91bb96`, GA4 property `503154947`, Bangladesh stream `15866019828` (Global: `12096448577`). Filter by stream and installed app version; country alone does not identify a flavour.
+- `first_open` remains automatic. `login_attempt`, schema-2 recommended `login`/`sign_up`, `onboarding_step` and tournament join start/submit/result signals distinguish authentication, nickname, Terms and tournament milestones. See [funnel definitions](BANGLADESH_ANALYTICS_FUNNEL.md).
+- **Version boundary:** 17.18 `login_success` preceded completed onboarding; from 17.19 it requires both server-confirmed required Terms and a nonblank saved nickname for a pending explicit login. Session restoration alone does not emit it. Never combine those meanings without a version split; neither event counts nor Auth account creation prove completed registration.
+- Since 17.20, consent-gated `FirebaseAnalytics.setUserId` and Crashlytics user identification use the project's pseudonymous hashed account identifier, not email/nickname/raw UID. Anonymous warning events before account creation cannot already carry the eventual account identity. Raw export may connect preceding events through the same available pseudonymous app-instance identity; linkage is not guaranteed. See [Analytics User-ID](ANALYTICS_USER_ID.md).
+- 17.22 anonymous failures in **both BD and Global** emit exactly one `sign_up_error`, with controlled `method`, `stage`, `step`, `outcome`, `reason`, `code`. Auth and profile read/write failures are distinct. Network, throttling, quota, disabled operation, unauthorized app, unavailable API, internal, provider and unknown cases are mapped without parsing exception text. Expected anonymous failures use controlled breadcrumbs, not uploaded exception stacks. Other providers retain their existing policy. Historical `provider_error` events cannot be reclassified. See [exact diagnostic mapping](BD_ANONYMOUS_AUTH_DIAGNOSTICS.md).
+- PROD GA4 event-scoped custom dimensions verified: **method, stage, step, outcome, code**, plus the existing **reason** definition; no duplicates created. These registrations do not backfill historical parameter reporting.
+- Privacy wording was updated and published in existing **20 Global + 2 Bangladesh** policies; the Bangladesh current version is **BD-privacy-2026-10-25**. Pseudonymisation is not a claim that account-linked analytics is anonymous.
+
+### BigQuery export and evidence limits
+
+Configured on 29 October: daily event export from property `503154947` to `soccer-prod-1754048346.analytics_503154947`, **us-central1**, both streams, no event exclusions. Streaming, advertising identifiers and separate user-data export are disabled. Event export can still include the consent-permitted `user_id`; user-data export being disabled does not remove it.
+
+At the latest 30 October check, only **events_20261029** existed (**580 events**, approximately 645 KB logical data); no 30 October table was available. Daily export does not provide immediate same-day per-account traces or historical backfill before the link. Use bounded date/table queries and a per-query bytes limit. A project/BigQuery-filtered **10 PLN monthly alert** is configured at 1/5/10 PLN; it is an alert, not a spending cap. No project query-quota override was applied.
+
+The four new Auth accounts inspected on 30 October illustrate the remaining gap:
+
+| Observed state | Accounts | What is confirmed |
+|---|---:|---|
+| BD profile, saved nickname, no recorded Terms acceptance | 2 | Reached nickname save; not completed onboarding |
+| BD profile, accepted Terms, no saved nickname | 1 | Reached Terms acceptance; not completed onboarding |
+| Auth account only, no Firestore profile | 1 | Flavour and onboarding progress not established |
+
+None of these four had a participant record in the 28 tournaments checked. These findings do not prove that no non-test BD account has ever completed registration. Reviewer/developer test accounts must be excluded from acquisition conclusions. Similar account names and close creation times are insufficient to prove distinct people or the same person.
+
+The same-day BD GA4 snapshot contained **110 events / 9 users**, including one user's authentication/onboarding signals, but no `login_success` or tournament events in that report. It is not a UID-linked trace for all four accounts. Absence of a nickname does not prove no typing; absence of an AI validation call does not prove no local validation attempt. The reason for accepting only Terms or saving only a nickname remains unresolved until correlated, version-specific event sequences are available. Do not attribute generic errors to Bangladesh connectivity, App Check or an individual without supporting evidence.
+
+Ads installs, automatic first launches, consent-sensitive GA4 users and Auth accounts measure different things. Reporting delays, version mix, filtering and installs without launches remain competing explanations for the apparent install/first_open gap; tests have not established one exclusive cause. A VPN test routed through Singapore did not reproduce a real Bangladesh network and cannot rule out regional conditions.
+
+### Tournament and deployment operations
+
+The owner extended the production Kickoff Cup: registration **16 November 2026 17:59:59 UTC**, matches **30 November 2026 17:59:59 UTC**, still **20 participants maximum**, first prize **1000 BDT**. Matching source: [BD-2026-11-16-kickoff-cup.json](../tools/create-tournament/BD-2026-11-16-kickoff-cup.json). Changing/renaming this local JSON does not itself update an existing Firestore tournament; the owner separately updated the database.
+
+The corrected unverified-user cleanup was deployed through trigger **210** to TEST and PROD on 28 October and verified active. Deployment source and configuration must come from the target branch (`test/test`, `prod/prod`); the trigger was restored to `dev/dev`. The 17.22 changes reviewed afterwards did not require another Cloud Functions rollout. Anonymous users must not be treated as unverified email accounts merely because they have no email.
+
+**Next diagnostic priorities:** wait for the relevant daily export, correlate the consent-permitted hashed account identity with version and ordered events, inspect Terms/nickname failure stages, and verify actual tournament participant records. Keep CPI/budget decisions tied to completed onboarding and joins, not installation totals alone. No new acquisition success or error cause is asserted by this documentation update.
+
 ## Acquisition and user journey update (21 October 2026)
+
+> Historical snapshot. Release status, login_success semantics and operating figures below describe 21 October; use the 30 October update above for current status.
 
 ### Release status
 
@@ -152,7 +229,8 @@ After Google Play approval and rollout, verify events against the installed **17
 
 ## Table of Contents
 
-- [Acquisition and user journey update (21 October 2026)](#acquisition-and-user-journey-update-21-october-2026)
+- [Acquisition and onboarding update (30 October 2026)](#acquisition-and-onboarding-update-30-october-2026)
+- [Historical acquisition and user journey update (21 October 2026)](#acquisition-and-user-journey-update-21-october-2026)
 
 1. [Legal & Regulatory Framework](#legal--regulatory-framework)
 2. [Key Requirements](#key-requirements)
@@ -408,7 +486,7 @@ no Polish or Bangladesh withholding logic is implemented by this change.
 ### Payment flow and recipient privacy
 
 Published Bangladesh privacy: `firebase-hosting/public/bangladesh/privacy-en.html` and
-`privacy-bn.html` (`BD-privacy-2026-10-10`). Bangladesh-specific links and language routing are
+`privacy-bn.html` (`BD-privacy-2026-10-25`). Bangladesh-specific links and language routing are
 implemented in the app. Production Hosting and retention backend deployment are complete;
 see [privacy review](../firebase-hosting/BANGLADESH_CONTENT_REVIEW.md).
 
@@ -425,7 +503,7 @@ writes that document and advances the owned payment to `ready_for_processing`. F
 validate all required fields, the regulation-supported provider, ownership, timestamps and status.
 The parent stores `recipientDetailsVersion: 2`; new submission history omits names and wallet numbers.
 The pre-launch schema decision (2026-10-02) required no backward-compatible recipient fallback.
-The Bangladesh flavor is now released to production as 17.16-BD.
+The Bangladesh flavor is now released to production as 17.22-BD (versionCode 57); 17.16-BD was the earlier production baseline.
 Only the new private recipient schema is supported; no legacy read fallback is maintained.
 Legacy `statusHistory` is not migrated or removed; new-policy history follows the audit retention below.
 
@@ -1192,8 +1270,8 @@ Tournaments now support visibility control across app flavours using the `visibl
 **Current production tournament (owner-confirmed):**
 - Name: **🇧🇩 Bangladesh Kickoff Cup — 1st Prize 1000 BDT**
 - `maxParticipants: 20`
-- `registrationDeadline: 2026-10-26T17:59:59Z`
-- `matchesDeadline: 2026-11-09T17:59:59Z`
+- `registrationDeadline: 2026-11-16T17:59:59Z`
+- `matchesDeadline: 2026-11-30T17:59:59Z`
 - `visibleInFlavours: ["bangladesh"]`
 - `regulation: CRiNESlvbx8of5g1L495`
 
@@ -2466,13 +2544,12 @@ cd mobile
 
 ## Implementation Roadmap
 
-> **Implementation status (21 October 2026):** The last confirmed Bangladesh production release is
-> **17.16-BD / versionCode 51**. Both **Global 17.18 and Bangladesh 17.18-BD / versionCode 53**
-> have been submitted for Google Play review; approval/rollout is not yet confirmed.
-> See the [acquisition and user journey update](#acquisition-and-user-journey-update-21-october-2026).
+> **Implementation status (30 October 2026):** Global **17.22** and Bangladesh
+> **17.22-BD / versionCode 57** are in production (owner-confirmed).
+> See the [current acquisition and onboarding update](#acquisition-and-onboarding-update-30-october-2026).
 > Backend/privacy/retention changes are deployed to DEV/TEST/PROD,
 > Hosting is published, and the production reviewer authenticated and joined the real tournament.
-> Real bKash and Rocket Remitly transfers both reached Delivered. Google Ads is enabled and learning.
+> Real bKash and Rocket Remitly transfers both reached Delivered. Google Ads is enabled; the latest report is budget-limited.
 > Checked items mean completed within their stated scope; unchecked monitoring items are ongoing,
 > not launch blockers. Phase/week labels retain the original plan, not actual deployment dates.
 
@@ -2642,7 +2719,7 @@ cd mobile
   - Deployment: `cloud-build-sa@org-service-account-001.iam.gserviceaccount.com` has `roles/owner` and `roles/editor` in all three projects. Review replacement with the permissions needed by the deployment workflows.
   - Track and validate these changes separately; they do not block the Bangladesh launch. This assessment update changes documentation only.
 - [x] Publish Bangladesh-specific Terms and Privacy Policy in EN/BN
-  - Terms `BD-terms-2026-10-14`; privacy `BD-privacy-2026-10-10`, with app routing
+  - Terms `BD-terms-2026-10-14`; privacy `BD-privacy-2026-10-25`, with app routing
   - Publication is complete; NBR/legal clarification is separately open, not a completed legal clearance.
 - **Historical beta milestone:** A separate closed-beta completion is not asserted; production is already live. Monitor first real non-reviewer participants below.
 - [x] **Migration Testing**:
@@ -2729,14 +2806,14 @@ cd mobile
 - [ ] **Ongoing operation:** Ensure prize funding and support capacity for each configured event; no fixed monthly reserve is asserted as funded.
 
 ### Phase 7: Soft Launch (Week 13-14)
-- [x] Google Play production release: **17.16-BD / versionCode 51**
+- [x] Google Play production release: **17.22-BD / versionCode 57** (owner-confirmed current release)
 - [x] Production Bangladesh authentication verified
 - [x] Google Play reviewer authenticated and joined the real PROD tournament
   - Reviewer membership confirmed in Firestore `participants`; credentials and personal identifiers omitted.
   - This verifies access and registration, not a completed tournament or prize payout.
 - [x] Create and operate the visible PROD tournament **🇧🇩 Bangladesh Kickoff Cup — 1st Prize 1000 BDT**
   - 20 participants maximum; Bangladesh-only visibility
-  - Registration deadline: `2026-10-26T17:59:59Z`; matches deadline: `2026-11-09T17:59:59Z`
+  - Registration deadline: `2026-11-16T17:59:59Z`; matches deadline: `2026-11-30T17:59:59Z`
 - [ ] **In progress:** Operate the event through registration, matches, winner determination and confirmed prize delivery.
 - [ ] **Monitoring:** First real non-reviewer Bangladesh participants and user feedback.
 - [ ] **Monitoring:** Google Play production stability and any newly reported issues.
@@ -2981,7 +3058,7 @@ Published Bangladesh Terms version **BD-terms-2026-10-14**:
 
 Both include the EN/BN switch, gross-prize and participant-tax wording, and provision for legally
 required organizer withholding/reporting. NBR clarification remains open. Bangladesh Privacy
-Policy **BD-privacy-2026-10-10** is published in English and Bengali with Bangladesh-specific routing.
+Policy **BD-privacy-2026-10-25** is published in English and Bengali with Bangladesh-specific routing.
 General Terms evidence and tournament regulation acceptance remain separate. Legal acceptances
 are retained for five years from account deletion under the implemented policy; see
 [ACCOUNT_DELETION.md](ACCOUNT_DELETION.md).
@@ -3100,7 +3177,7 @@ This approach document provides a simplified, cost-effective framework for launc
 - **Note**: Push notifications not viable as most users don't have registered accounts
 
 **Next Steps**:
-1. Track Google Play review and rollout of both 17.18 variants; verify the new authentication signals on the released Bangladesh build.
+1. Monitor adoption of production 17.22-BD and correlate the daily BigQuery export with nickname/Terms outcomes, separating reviewer/test activity and older versions.
 2. Monitor Google Ads acquisition alongside Bangladesh successful sign-ins, authentication failures and first non-reviewer tournament participants. Validate `login_success` before separately configuring any Ads conversion/optimization change.
 3. Operate the current production tournament through its configured deadlines, results and payout.
 4. Follow `BANGLADESH_PAYMENT_FLOW.md`; mark completed only after confirmed delivery.
@@ -3205,6 +3282,6 @@ operation, stability monitoring and external NBR clarification.
 ---
 
 
-**Status**: ✅ Product Flavor Setup Complete; last confirmed production 17.16-BD / versionCode 51; both 17.18 variants / versionCode 53 submitted for review
+**Status**: ✅ Product Flavor Setup Complete; Global 17.22 and Bangladesh 17.22-BD / versionCode 57 confirmed in production
 **Current Phase**: Production operations and monitoring (see Implementation Roadmap)
-**Status reconciled**: 2026-10-21 (original flavor setup details retained)
+**Status reconciled**: 2026-10-30 (original flavor setup details retained)
