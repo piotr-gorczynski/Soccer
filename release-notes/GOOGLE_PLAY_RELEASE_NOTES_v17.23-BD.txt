@@ -1,0 +1,7 @@
+<en-GB>
+🛠️ Fixed nickname setup losing progress when the app moves to the background; checking and saving now continue when you leave the screen.
+</en-GB>
+
+<bn-BD>
+🛠️ অ্যাপ ব্যাকগ্রাউন্ডে গেলে ডাকনাম সেট করার অগ্রগতি হারিয়ে যাওয়ার সমস্যা ঠিক করা হয়েছে; পর্দা ছেড়ে গেলেও যাচাই ও সংরক্ষণ চলতে থাকে।
+</bn-BD>

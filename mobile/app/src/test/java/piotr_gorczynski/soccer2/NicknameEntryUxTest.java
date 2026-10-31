@@ -36,6 +36,7 @@ public class NicknameEntryUxTest {
         confirm=layout.findViewById(R.id.btnConfirmNickname);
         analytics=mock(AnalyticsManager.class);
         field("editNickname",input);field("btnConfirm",confirm);field("analyticsManager",analytics);
+        field("submission",new NicknameSubmission(NicknameSubmission.firebaseBackend(),analytics));
         call("initializeNicknameInput");
     }
     void field(String name,Object value) throws Exception {

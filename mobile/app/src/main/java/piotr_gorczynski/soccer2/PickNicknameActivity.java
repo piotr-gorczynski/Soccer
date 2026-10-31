@@ -13,15 +13,11 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.activity.OnBackPressedCallback;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SetOptions;
-import com.google.firebase.functions.FirebaseFunctions;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.security.SecureRandom;
 
 public class PickNicknameActivity extends BaseActivity {
@@ -33,7 +29,7 @@ public class PickNicknameActivity extends BaseActivity {
     private static final String NICKNAME_DRAFT = "nickname_draft";
     private AnalyticsManager analyticsManager;
     private View nicknameCheckProgress;
-    private FirebaseFunctions functions;
+    private NicknameSubmission submission;
     private boolean nicknameSubmissionInProgress;
 
     @Override
@@ -48,7 +44,12 @@ public class PickNicknameActivity extends BaseActivity {
         editNickname = findViewById(R.id.editNickname);
         btnConfirm = findViewById(R.id.btnConfirmNickname);
         nicknameCheckProgress = findViewById(R.id.nicknameCheckProgress);
-        functions = FirebaseFunctions.getInstance();
+        submission = new ViewModelProvider(this, new ViewModelProvider.Factory() {
+            @Override public <T extends ViewModel> T create(Class<T> modelClass) {
+                return modelClass.cast(new NicknameSubmission(
+                        NicknameSubmission.firebaseBackend(), analyticsManager));
+            }
+        }).get(NicknameSubmission.class);
 
         initializeNicknameInput();
         initializeNicknameSuggestion(savedInstanceState);
@@ -115,7 +116,7 @@ public class PickNicknameActivity extends BaseActivity {
     }
 
     private void saveNickname() {
-        if (nicknameSubmissionInProgress) return;
+        if (nicknameSubmissionInProgress || (submission != null && submission.hasPendingResult())) return;
         final String nickname = editNickname.getText().toString().trim();
         analyticsManager.trackOnboardingStep("nickname", "submit", "none");
         if (nickname.isEmpty()) {
@@ -135,119 +136,55 @@ public class PickNicknameActivity extends BaseActivity {
             return;
         }
 
+        // The model survives Activity recreation and owns all SDK callbacks.
         setNicknameSubmissionInProgress(true);
         showNicknameCheckProgress(true);
-        
-        Log.d("TAG_Soccer", "Nickname setup operation");
-        
-        // Step 1: Check uniqueness first
-        checkNicknameUniqueness(nickname, (isUnique, hadError) -> {
-            if (hadError) {
-                analyticsManager.trackOnboardingStep("uniqueness", "failure", "unknown");
-                showNicknameCheckProgress(false);
-                setNicknameSubmissionInProgress(false);
-                Toast.makeText(PickNicknameActivity.this,
-                        R.string.network_error_checking_nickname,
-                        Toast.LENGTH_SHORT).show();
-                return;
-            }
-            if (!isUnique) {
-                analyticsManager.trackOnboardingStep("uniqueness", "failure", "taken");
-                showNicknameCheckProgress(false);
-                setNicknameSubmissionInProgress(false);
-                Log.d("TAG_Soccer", "Nickname setup operation");
-                Toast.makeText(PickNicknameActivity.this,
-                        R.string.nickname_taken,
-                        Toast.LENGTH_SHORT).show();
-                return;
-            }
-            
-            // Step 2: Check content appropriateness via AI
-            Log.d("TAG_Soccer", "Nickname setup operation");
-            checkNicknameContent(nickname, (allowed, reason, hadContentError) -> {
-                showNicknameCheckProgress(false);
-                if (hadContentError) {
-                    setNicknameSubmissionInProgress(false);
-                    // Report error to Crashlytics
-                    analyticsManager.trackNicknameCheckError(nickname, "AI content check failed");
-                    Toast.makeText(PickNicknameActivity.this,
-                            R.string.network_error_checking_nickname,
-                            Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                if (!allowed) {
-                analyticsManager.trackOnboardingStep("content", "failure", "rejected");
-                    setNicknameSubmissionInProgress(false);
-                    Log.d("TAG_Soccer", "Nickname setup operation");
-                    Toast.makeText(PickNicknameActivity.this,
-                            R.string.nickname_inappropriate,
-                            Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                
-                Log.d("TAG_Soccer", "Nickname setup operation");
-                proceedWithSavingNickname(uid, nickname);
-            });
-        });
+        submission.submit(uid, nickname);
     }
 
-
-    private void checkNicknameUniqueness(String nickname, UniquenessCheckCallback callback) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("users")
-                .whereEqualTo("nicknameLowercase", nickname.toLowerCase())
-                .get()
-                .addOnCompleteListener(this, task -> {
-                    if (!task.isSuccessful()) {
-                        Log.e("TAG_Soccer", "Nickname uniqueness check failed");
-                        callback.onComplete(false, true);
-                        return;
-                    }
-                    boolean isUnique = task.getResult().isEmpty();
-                    callback.onComplete(isUnique, false);
-                });
+    @Override protected void onResume() {
+        super.onResume();
+        if (submission != null) submission.observe(this::renderSubmission);
     }
 
-    private void proceedWithSavingNickname(String uid, String nickname) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        Map<String, Object> data = new HashMap<>();
-        data.put("nickname", nickname);
-        data.put("nicknameLowercase", nickname.toLowerCase());
-        db.collection("users").document(uid)
-                .set(data, SetOptions.merge())
-                .addOnSuccessListener(v -> {
-                    analyticsManager.trackOnboardingStep("nickname", "success", "none");
-                    getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE)
-                            .edit()
-                            .putString("nickname", nickname)
-                            .apply();
-                    Toast.makeText(PickNicknameActivity.this,
-                            R.string.nickname_saved,
-                            Toast.LENGTH_SHORT).show();
+    @Override protected void onPause() {
+        if (submission != null) submission.observe(null);
+        super.onPause();
+    }
 
-                    // Update user properties now that nickname is set
-                    FirebaseAuth auth = FirebaseAuth.getInstance();
-                    if (auth.getCurrentUser() != null) {
-                        String authMethod = auth.getCurrentUser().isAnonymous() ? "anonymous" : "registered";
-                        String language = LanguageManager.getCurrentLanguageCode(PickNicknameActivity.this);
-                        analyticsManager.setUserProperties(authMethod, language, true);
-                    }
+    private void renderSubmission(NicknameSubmission.Result result) {
+        boolean busy = result == NicknameSubmission.Result.BUSY;
+        setNicknameSubmissionInProgress(busy);
+        showNicknameCheckProgress(busy);
+        if (result == NicknameSubmission.Result.IDLE || busy) return;
 
-                    // Navigate to MenuActivity
-                    if (isTaskRoot()) {
-                        startActivity(new Intent(
-                                PickNicknameActivity.this,
-                                MenuActivity.class));
-                    }
-                    finish();
-                })
-                .addOnFailureListener(e -> {
-                    analyticsManager.trackOnboardingStep("profile_write", "failure", "unknown");
-                    setNicknameSubmissionInProgress(false);
-                    Toast.makeText(PickNicknameActivity.this,
-                            R.string.nickname_save_failed,
-                            Toast.LENGTH_SHORT).show();
-                });
+        // A result from an old account must never update the new account's local session.
+        if (!submission.isCurrentAccount()) {
+            submission.consumeResult();
+            finish();
+            return;
+        }
+        String savedNickname = submission.nickname();
+        submission.consumeResult();
+        if (result == NicknameSubmission.Result.SAVED) {
+            getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE).edit()
+                    .putString("nickname", savedNickname).apply();
+            FirebaseAuth auth = FirebaseAuth.getInstance();
+            if (auth.getCurrentUser() != null) {
+                analyticsManager.setUserProperties(
+                        auth.getCurrentUser().isAnonymous() ? "anonymous" : "registered",
+                        LanguageManager.getCurrentLanguageCode(this), true);
+            }
+            Toast.makeText(this, R.string.nickname_saved, Toast.LENGTH_SHORT).show();
+            if (isTaskRoot()) startActivity(new Intent(this, MenuActivity.class));
+            finish();
+            return;
+        }
+        int message = result == NicknameSubmission.Result.TAKEN ? R.string.nickname_taken
+                : result == NicknameSubmission.Result.REJECTED ? R.string.nickname_inappropriate
+                : result == NicknameSubmission.Result.WRITE_ERROR ? R.string.nickname_save_failed
+                : R.string.network_error_checking_nickname;
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     private void updateConfirmButton() {
@@ -266,42 +203,6 @@ public class PickNicknameActivity extends BaseActivity {
             nicknameCheckProgress.setVisibility(show ? View.VISIBLE : View.GONE);
         }
     }
-
-    private void checkNicknameContent(String nickname, ContentCheckCallback callback) {
-        Log.d("TAG_Soccer", "Nickname setup operation");
-        functions
-                .getHttpsCallable("checkNickname")
-                .call(Collections.singletonMap("nickname", nickname))
-                .addOnSuccessListener(this, result -> {
-                    Object data = result.getData();
-                    if (data instanceof Map) {
-                        Map<?, ?> dataMap = (Map<?, ?>) data;
-                        Object allowedValue = dataMap.get("allowed");
-                        Object reasonValue = dataMap.get("reason");
-                        if (allowedValue instanceof Boolean) {
-                            String reason = reasonValue != null ? reasonValue.toString() : "";
-                            Log.d("TAG_Soccer", "Nickname setup operation");
-                            callback.onComplete((Boolean) allowedValue, reason, false);
-                            return;
-                        }
-                    }
-                    Log.e("TAG_Soccer", "Nickname check returned an invalid response");
-                    callback.onComplete(false, "", true);
-                })
-                .addOnFailureListener(this, e -> {
-                    Log.e("TAG_Soccer", "Nickname content check failed");
-                    callback.onComplete(false, "", true);
-                });
-    }
-
-    private interface UniquenessCheckCallback {
-        void onComplete(boolean isUnique, boolean hadError);
-    }
-
-    private interface ContentCheckCallback {
-        void onComplete(boolean allowed, String reason, boolean hadError);
-    }
-
 
     private static final InputFilter NO_LEADING_SPACE = (source, start, end, dest, dstart, dend) -> {
         if (dstart == 0 && start < end && Character.isWhitespace(source.charAt(start))) {

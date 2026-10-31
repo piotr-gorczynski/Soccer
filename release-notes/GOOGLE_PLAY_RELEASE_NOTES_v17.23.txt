@@ -1,0 +1,71 @@
+<en-GB>
+🛠️ Fixed nickname setup losing progress when the app moves to the background; checking and saving now continue when you leave the screen.
+</en-GB>
+
+<pl-PL>
+🛠️ Naprawiono utratę postępu wyboru nicku po przejściu aplikacji w tło; sprawdzanie i zapis są teraz kontynuowane po opuszczeniu ekranu.
+</pl-PL>
+
+<de-DE>
+🛠️ Die Einrichtung des Spitznamens verliert im Hintergrund keinen Fortschritt mehr; Prüfung und Speicherung laufen beim Verlassen des Bildschirms weiter.
+</de-DE>
+
+<fr-FR>
+🛠️ La configuration du pseudonyme ne perd plus sa progression en arrière-plan ; la vérification et l’enregistrement continuent lorsque vous quittez l’écran.
+</fr-FR>
+
+<es-ES>
+🛠️ Corregida la pérdida de progreso al elegir un apodo y pasar la app a segundo plano; la comprobación y el guardado continúan al salir de la pantalla.
+</es-ES>
+
+<ur>
+🛠️ ایپ پس منظر میں جانے پر عرفی نام کے اندراج کی پیش رفت ضائع ہونے کا مسئلہ حل کر دیا گیا؛ اسکرین چھوڑنے کے بعد بھی جانچ اور محفوظ کرنے کا عمل جاری رہتا ہے۔
+</ur>
+
+<bn-BD>
+🛠️ অ্যাপ ব্যাকগ্রাউন্ডে গেলে ডাকনাম সেট করার অগ্রগতি হারিয়ে যাওয়ার সমস্যা ঠিক করা হয়েছে; পর্দা ছেড়ে গেলেও যাচাই ও সংরক্ষণ চলতে থাকে।
+</bn-BD>
+
+<ne-NP>
+🛠️ एप पृष्ठभूमिमा जाँदा उपनाम सेट गर्ने प्रगति हराउने समस्या समाधान गरियो; स्क्रिन छोडेपछि पनि जाँच र सुरक्षित गर्ने काम जारी रहन्छ।
+</ne-NP>
+
+<hi-IN>
+🛠️ ऐप बैकग्राउंड में जाने पर उपनाम सेट करने की प्रगति खोने की समस्या ठीक की गई; स्क्रीन छोड़ने पर भी जाँच और सहेजने की प्रक्रिया जारी रहती है।
+</hi-IN>
+
+<am>
+🛠️ መተግበሪያው ወደ ዳራ ሲሄድ የቅጽል ስም ማዘጋጀት ሂደት የሚቋረጥበት ችግር ተስተካክሏል፤ ማያ ገጹን ሲለቁም ማረጋገጥና ማስቀመጥ ይቀጥላሉ።
+</am>
+
+<ar>
+🛠️ تم إصلاح فقدان تقدم إعداد الاسم المستعار عند انتقال التطبيق إلى الخلفية؛ يستمر التحقق والحفظ عند مغادرة الشاشة.
+</ar>
+
+<my-MM>
+🛠️ အက်ပ်ကို နောက်ခံသို့ ပို့လိုက်သည့်အခါ အမည်ပြောင်သတ်မှတ်မှု ရပ်တန့်သွားသည့် ပြဿနာကို ပြင်ဆင်ထားပါသည်၊ မျက်နှာပြင်မှ ထွက်သွားလည်း စစ်ဆေးခြင်းနှင့် သိမ်းဆည်းခြင်း ဆက်လုပ်ပါမည်။
+</my-MM>
+
+<km-KH>
+🛠️ បានជួសជុលបញ្ហាបាត់បង់ដំណើរការកំណត់ឈ្មោះហៅក្រៅ ពេលកម្មវិធីទៅផ្ទៃខាងក្រោយ៖ ការត្រួតពិនិត្យ និងរក្សាទុកបន្តដំណើរការ ពេលអ្នកចាកចេញពីអេក្រង់។
+</km-KH>
+
+<lo-LA>
+🛠️ ແກ້ໄຂການສູນເສຍຄວາມຄືບໜ້າໃນການຕັ້ງຊື່ຫຼິ້ນເມື່ອແອັບໄປຢູ່ພື້ນຫຼັງ; ການກວດສອບ ແລະບັນທຶກຈະສືບຕໍ່ເມື່ອອອກຈາກໜ້າຈໍ.
+</lo-LA>
+
+<mn-MN>
+🛠️ Аппыг арын горимд шилжүүлэхэд хоч нэр тохируулах явц алдагддаг асуудлыг заслаа; дэлгэцээс гарсан ч шалгах, хадгалах ажиллагаа үргэлжилнэ.
+</mn-MN>
+
+<fa-IR>
+🛠️ مشکل از دست رفتن پیشرفت تنظیم نام مستعار هنگام رفتن برنامه به پس‌زمینه برطرف شد؛ بررسی و ذخیره پس از ترک صفحه ادامه می‌یابد.
+</fa-IR>
+
+<si-LK>
+🛠️ යෙදුම පසුබිමට ගිය විට අන්වර්ථ නාමය සැකසීමේ ප්‍රගතිය නැති වීම නිවැරදි කරන ලදී; තිරයෙන් ඉවත් වූ පසුවත් පරීක්ෂා කිරීම සහ සුරැකීම දිගටම සිදු වේ.
+</si-LK>
+
+<sw>
+🛠️ Tumerekebisha kupotea kwa maendeleo ya kuweka jina la utani programu ikienda chinichini; ukaguzi na uhifadhi huendelea unapoondoka kwenye skrini.
+</sw>
