@@ -21,8 +21,11 @@ exports.getBangladeshTournamentPromotion = onCall({
       await refresh;
     }
     const serverTimeMillis = Date.now();
+    const tournaments=cached.filter(offer => offer.registrationDeadlineMillis > serverTimeMillis);
     return {
-      tournament: cached && cached.registrationDeadlineMillis > serverTimeMillis ? cached : null,
+      // Keep the single-offer field for already installed clients.
+      tournament: tournaments[0] || null,
+      tournaments,
       serverTimeMillis
     };
   } catch (_) {

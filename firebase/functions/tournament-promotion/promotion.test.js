@@ -32,16 +32,17 @@ test("no cash prize, invalid currency and missing first-place award cannot adver
     assert.equal(projectTournament("cup",tournament({prizePool:pool}),now),null);
   }
 });
-test("earliest eligible deadline wins and invalid regulation is skipped", async () => {
+test("all eligible tournaments are returned in deadline order and invalid regulation is skipped", async () => {
   const docs=[{id:"later",data:()=>tournament({regulation:"good",registrationDeadline:{toMillis:()=>now+3000}})},
-    {id:"earlier",data:()=>tournament({regulation:"invalid"})}];
+    {id:"earlier",data:()=>tournament({regulation:"invalid"})},
+    {id:"first",data:()=>tournament({regulation:"good",registrationDeadline:{toMillis:()=>now+2000}})}];
   const db={collection:name=>name==="tournaments" ? {where:(field,op,value)=>{
     assert.deepEqual([field,op,value],["visibleInFlavours","array-contains","bangladesh"]);
     return {get:async()=>({docs})};
   }} : {doc:id=>({get:async()=>({data:()=>({status:"active",market:id==="good"?"BD":"US",minimumAge:18,prizeRules:{cashPrizesEnabled:true}})})})}};
-  assert.equal((await findPromotion(db,now)).id,"later");
+  assert.deepEqual((await findPromotion(db,now)).map(t=>t.id),["first","later"]);
 });
 test("empty collection returns no promotion", async () => {
   const db={collection:()=>({where:()=>({get:async()=>({docs:[]})})})};
-  assert.equal(await findPromotion(db,now),null);
+  assert.deepEqual(await findPromotion(db,now),[]);
 });

@@ -24,15 +24,20 @@ async function findPromotion(db, now) {
   const snap = await db.collection("tournaments").where("visibleInFlavours", "array-contains", "bangladesh").get();
   const eligible = snap.docs.map(d => projectTournament(d.id, d.data(), now)).filter(Boolean)
       .sort((a, b) => a.registrationDeadlineMillis - b.registrationDeadlineMillis || a.id.localeCompare(b.id));
+  const promotions=[];
+  const regulations=new Map();
   for (const candidate of eligible) {
-    const regulation = await db.collection("regulations").doc(candidate.regulationId).get();
+    if (!regulations.has(candidate.regulationId)) {
+      regulations.set(candidate.regulationId,await db.collection("regulations").doc(candidate.regulationId).get());
+    }
+    const regulation = regulations.get(candidate.regulationId);
     const rules = regulation.data();
     if (rules?.status === "active" && rules.market === "BD"
         && Number.isSafeInteger(rules.minimumAge) && rules.minimumAge >= 18
         && rules.prizeRules?.cashPrizesEnabled === true) {
-      return { ...candidate, minimumAge: rules.minimumAge };
+      promotions.push({ ...candidate, minimumAge: rules.minimumAge });
     }
   }
-  return null;
+  return promotions;
 }
 module.exports = { projectTournament, findPromotion };
