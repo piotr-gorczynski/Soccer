@@ -1,71 +1,107 @@
 <en-GB>
 🛠️ Fixed nickname setup losing progress when the app moves to the background; checking and saving now continue when you leave the screen.
+👥 Fixed Load more when hiding offline users in Add Friend.
+📺 Closing an ad now opens the selected menu screen instead of returning to the menu.
 </en-GB>
 
 <pl-PL>
 🛠️ Naprawiono utratę postępu wyboru nicku po przejściu aplikacji w tło; sprawdzanie i zapis są teraz kontynuowane po opuszczeniu ekranu.
+👥 Naprawiono „Załaduj więcej” przy ukrywaniu użytkowników offline w Dodaj znajomego.
+📺 Po zamknięciu reklamy otwiera się wybrany ekran zamiast powrotu do menu.
 </pl-PL>
 
 <de-DE>
 🛠️ Die Einrichtung des Spitznamens verliert im Hintergrund keinen Fortschritt mehr; Prüfung und Speicherung laufen beim Verlassen des Bildschirms weiter.
+👥 „Mehr laden“ funktioniert jetzt auch beim Ausblenden von Offline-Nutzern in „Freund hinzufügen“.
+📺 Nach dem Schließen einer Anzeige öffnet sich der gewählte Bildschirm statt des Hauptmenüs.
 </de-DE>
 
 <fr-FR>
 🛠️ La configuration du pseudonyme ne perd plus sa progression en arrière-plan ; la vérification et l’enregistrement continuent lorsque vous quittez l’écran.
+👥 Correction de « Charger plus » lorsque les utilisateurs hors ligne sont masqués dans Ajouter un ami.
+📺 Fermer une publicité ouvre désormais l’écran choisi au lieu de revenir au menu.
 </fr-FR>
 
 <es-ES>
 🛠️ Corregida la pérdida de progreso al elegir un apodo y pasar la app a segundo plano; la comprobación y el guardado continúan al salir de la pantalla.
+👥 Corregido «Cargar más» al ocultar usuarios sin conexión en Añadir amigo.
+📺 Al cerrar un anuncio se abre la pantalla elegida, en lugar de volver al menú.
 </es-ES>
 
 <ur>
 🛠️ ایپ پس منظر میں جانے پر عرفی نام کے اندراج کی پیش رفت ضائع ہونے کا مسئلہ حل کر دیا گیا؛ اسکرین چھوڑنے کے بعد بھی جانچ اور محفوظ کرنے کا عمل جاری رہتا ہے۔
+👥 دوست شامل کرتے وقت آف لائن صارفین چھپانے پر مزید نتائج لوڈ کرنے کا مسئلہ حل کر دیا گیا۔
+📺 اشتہار بند کرنے کے بعد اب مینو پر واپس جانے کے بجائے منتخب اسکرین کھلتی ہے۔
 </ur>
 
 <bn-BD>
 🛠️ অ্যাপ ব্যাকগ্রাউন্ডে গেলে ডাকনাম সেট করার অগ্রগতি হারিয়ে যাওয়ার সমস্যা ঠিক করা হয়েছে; পর্দা ছেড়ে গেলেও যাচাই ও সংরক্ষণ চলতে থাকে।
+👥 বন্ধু যোগ করার সময় অফলাইন ব্যবহারকারীদের লুকালেও আরও ফলাফল লোড করা যায়।
+📺 বিজ্ঞাপন বন্ধ করলে এখন মেনুতে ফিরে না গিয়ে নির্বাচিত পর্দা খোলে।
 </bn-BD>
 
 <ne-NP>
 🛠️ एप पृष्ठभूमिमा जाँदा उपनाम सेट गर्ने प्रगति हराउने समस्या समाधान गरियो; स्क्रिन छोडेपछि पनि जाँच र सुरक्षित गर्ने काम जारी रहन्छ।
+👥 साथी थप्दा अफलाइन प्रयोगकर्ता लुकाएपछि पनि थप नतिजा लोड गर्न मिल्ने गरी सुधार गरियो।
+📺 विज्ञापन बन्द गरेपछि मेनुमा फर्कनुको सट्टा रोजिएको स्क्रिन खुल्छ।
 </ne-NP>
 
 <hi-IN>
 🛠️ ऐप बैकग्राउंड में जाने पर उपनाम सेट करने की प्रगति खोने की समस्या ठीक की गई; स्क्रीन छोड़ने पर भी जाँच और सहेजने की प्रक्रिया जारी रहती है।
+👥 मित्र जोड़ते समय ऑफलाइन उपयोगकर्ताओं को छिपाने पर और परिणाम लोड करने की समस्या ठीक की गई।
+📺 विज्ञापन बंद करने के बाद अब मेनू पर लौटने के बजाय चुनी गई स्क्रीन खुलती है।
 </hi-IN>
 
 <am>
 🛠️ መተግበሪያው ወደ ዳራ ሲሄድ የቅጽል ስም ማዘጋጀት ሂደት የሚቋረጥበት ችግር ተስተካክሏል፤ ማያ ገጹን ሲለቁም ማረጋገጥና ማስቀመጥ ይቀጥላሉ።
+👥 ጓደኛ ሲጨምሩ ከመስመር ውጭ ያሉ ተጠቃሚዎችን ቢደብቁም ተጨማሪ ውጤቶችን መጫን ይችላሉ።
+📺 ማስታወቂያን ሲዘጉ ወደ ምናሌው ከመመለስ ይልቅ የመረጡት ማያ ገጽ ይከፈታል።
 </am>
 
 <ar>
 🛠️ تم إصلاح فقدان تقدم إعداد الاسم المستعار عند انتقال التطبيق إلى الخلفية؛ يستمر التحقق والحفظ عند مغادرة الشاشة.
+👥 إصلاح «تحميل المزيد» عند إخفاء المستخدمين غير المتصلين في إضافة صديق.
+📺 بعد إغلاق الإعلان، تُفتح الشاشة المختارة بدلًا من العودة إلى القائمة.
 </ar>
 
 <my-MM>
 🛠️ အက်ပ်ကို နောက်ခံသို့ ပို့လိုက်သည့်အခါ အမည်ပြောင်သတ်မှတ်မှု ရပ်တန့်သွားသည့် ပြဿနာကို ပြင်ဆင်ထားပါသည်၊ မျက်နှာပြင်မှ ထွက်သွားလည်း စစ်ဆေးခြင်းနှင့် သိမ်းဆည်းခြင်း ဆက်လုပ်ပါမည်။
+👥 သူငယ်ချင်းထည့်ရာတွင် အော့ဖ်လိုင်းအသုံးပြုသူများကို ဖျောက်ထားလည်း နောက်ထပ်ရလဒ်များကို ဖွင့်နိုင်ပါပြီ။
+📺 ကြော်ငြာပိတ်ပြီးနောက် မီနူးသို့ ပြန်သွားမည့်အစား ရွေးထားသည့် မျက်နှာပြင်ကို ဖွင့်ပေးပါသည်။
 </my-MM>
 
 <km-KH>
 🛠️ បានជួសជុលបញ្ហាបាត់បង់ដំណើរការកំណត់ឈ្មោះហៅក្រៅ ពេលកម្មវិធីទៅផ្ទៃខាងក្រោយ៖ ការត្រួតពិនិត្យ និងរក្សាទុកបន្តដំណើរការ ពេលអ្នកចាកចេញពីអេក្រង់។
+👥 បានជួសជុលការផ្ទុកលទ្ធផលបន្ថែម ពេលលាក់អ្នកប្រើក្រៅបណ្ដាញក្នុងការបន្ថែមមិត្ត។
+📺 បិទការផ្សាយពាណិជ្ជកម្មរួច នឹងបើកអេក្រង់ដែលបានជ្រើស ជំនួសឱ្យត្រឡប់ទៅម៉ឺនុយ។
 </km-KH>
 
 <lo-LA>
 🛠️ ແກ້ໄຂການສູນເສຍຄວາມຄືບໜ້າໃນການຕັ້ງຊື່ຫຼິ້ນເມື່ອແອັບໄປຢູ່ພື້ນຫຼັງ; ການກວດສອບ ແລະບັນທຶກຈະສືບຕໍ່ເມື່ອອອກຈາກໜ້າຈໍ.
+👥 ແກ້ໄຂການໂຫຼດຜົນເພີ່ມເມື່ອເຊື່ອງຜູ້ໃຊ້ອອບລາຍໃນໜ້າເພີ່ມໝູ່.
+📺 ເມື່ອປິດໂຄສະນາ ຈະເປີດໜ້າທີ່ເລືອກ ແທນການກັບໄປທີ່ເມນູ.
 </lo-LA>
 
 <mn-MN>
 🛠️ Аппыг арын горимд шилжүүлэхэд хоч нэр тохируулах явц алдагддаг асуудлыг заслаа; дэлгэцээс гарсан ч шалгах, хадгалах ажиллагаа үргэлжилнэ.
+👥 Найз нэмэхэд офлайн хэрэглэгчдийг нуусан үед дараагийн үр дүнг ачаалах асуудлыг заслаа.
+📺 Зар хаасны дараа цэс рүү буцахын оронд сонгосон дэлгэц нээгдэнэ.
 </mn-MN>
 
 <fa-IR>
 🛠️ مشکل از دست رفتن پیشرفت تنظیم نام مستعار هنگام رفتن برنامه به پس‌زمینه برطرف شد؛ بررسی و ذخیره پس از ترک صفحه ادامه می‌یابد.
+👥 مشکل بارگیری نتایج بیشتر هنگام پنهان کردن کاربران آفلاین در افزودن دوست برطرف شد.
+📺 پس از بستن تبلیغ، صفحه انتخاب‌شده باز می‌شود و برنامه به منو برنمی‌گردد.
 </fa-IR>
 
 <si-LK>
 🛠️ යෙදුම පසුබිමට ගිය විට අන්වර්ථ නාමය සැකසීමේ ප්‍රගතිය නැති වීම නිවැරදි කරන ලදී; තිරයෙන් ඉවත් වූ පසුවත් පරීක්ෂා කිරීම සහ සුරැකීම දිගටම සිදු වේ.
+👥 මිතුරෙකු එක් කිරීමේදී නොබැඳි පරිශීලකයන් සැඟවූ විට තවත් ප්‍රතිඵල පූරණය වීම නිවැරදි කරන ලදී.
+📺 දැන් දැන්වීම වැසූ පසු මෙනුවට ආපසු යාම වෙනුවට තෝරාගත් තිරය විවෘත වේ.
 </si-LK>
 
 <sw>
 🛠️ Tumerekebisha kupotea kwa maendeleo ya kuweka jina la utani programu ikienda chinichini; ukaguzi na uhifadhi huendelea unapoondoka kwenye skrini.
+👥 Tumerekebisha kupakia matokeo zaidi unapoficha watumiaji wasio mtandaoni katika Ongeza rafiki.
+📺 Ukifunga tangazo, skrini uliyochagua hufunguka badala ya kurudi kwenye menyu.
 </sw>

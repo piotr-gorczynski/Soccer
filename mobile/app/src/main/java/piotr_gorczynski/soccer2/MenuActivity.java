@@ -76,6 +76,8 @@ import com.google.android.ump.UserMessagingPlatform;
 
 public class MenuActivity extends BaseActivity {
     private InterstitialAd mInterstitialAd;
+    private Runnable pendingAdContinuation;
+    private boolean adFlowInProgress;
 
     private static final String PREF_AD_COUNTER = "adsCounter";
     private static final String PREF_AD_FREQUENCY = "adsFrequency";
@@ -390,7 +392,11 @@ public class MenuActivity extends BaseActivity {
             return;
         }
         if (termsScreenOpen || isFinishing() || isDestroyed()) return;
-        if (allowed != null) pendingTermsAction = allowed;
+        if (allowed != null) pendingTermsAction = () -> {
+            // A resume may restart the Terms read, but must not carry a previous
+            // account's navigation into a newly authenticated session.
+            if (uid.equals(FirebaseAuth.getInstance().getUid())) allowed.run();
+        };
         if (termsCheckInFlight) return;
         termsCheckInFlight = true;
         final int termsGeneration = menuCheckGeneration;
@@ -641,6 +647,7 @@ public class MenuActivity extends BaseActivity {
     protected void onPostResume() {
         super.onPostResume();
         getWindow().getDecorView().post(this::requestAdsConsentWhenReady);
+        getWindow().getDecorView().post(this::runPendingAdContinuation);
     }
 
     @Override
@@ -676,6 +683,7 @@ public class MenuActivity extends BaseActivity {
         }
         if (hasFocus) {
             requestAdsConsentWhenReady();
+            runPendingAdContinuation();
         }
     }
 
@@ -1344,6 +1352,7 @@ public class MenuActivity extends BaseActivity {
     }
 
     public void showAdThenRun(Runnable action) {
+        if (adFlowInProgress || pendingAdContinuation != null || isFinishing() || isDestroyed()) return;
         if (!((SoccerApp) getApplication()).isStartupConsentFinished()) {
             requestAdsConsentWhenReady();
             return;
@@ -1353,6 +1362,7 @@ public class MenuActivity extends BaseActivity {
             try {
                 action.run();
             } finally {
+                adFlowInProgress = false;
                 hideLoadingOverlayWithMinimumDuration();
             }
         };
@@ -1362,6 +1372,7 @@ public class MenuActivity extends BaseActivity {
             checkAndShowUninstallGlobalPrompt();
             return;
         }
+        adFlowInProgress = true;
         if (!hasAdsConsent()) {
             Log.w("TAG_Soccer", getClass().getSimpleName() + ".showAdThenRun: No ads consent, running action directly");
             guardedAction.run();
@@ -1430,6 +1441,7 @@ public class MenuActivity extends BaseActivity {
     }
 
     private void processAdLogic(Runnable action, SharedPreferences prefs, int frequency) {
+        if (isFinishing() || isDestroyed()) return;
         int counter = prefs.getInt(PREF_AD_COUNTER, 0) + 1;
         
         Log.d("TAG_Soccer", getClass().getSimpleName() + ".processAdLogic: counter=" + counter + 
@@ -1447,6 +1459,8 @@ public class MenuActivity extends BaseActivity {
 
         // Double-check consent before showing ad
         if (BangladeshMigrationHelper.shouldShowUninstallGlobalPrompt(this)) {
+            adFlowInProgress = false;
+            hideLoadingOverlayWithMinimumDuration();
             checkAndShowUninstallGlobalPrompt();
             return;
         }
@@ -1463,15 +1477,29 @@ public class MenuActivity extends BaseActivity {
         );
         
         if (mInterstitialAd != null) {
-            mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+            InterstitialAd ad = mInterstitialAd;
+            // An interstitial is single-use; a resumed menu may already preload
+            // the next one before the old ad's final callback arrives.
+            mInterstitialAd = null;
+            ad.setFullScreenContentCallback(new FullScreenContentCallback() {
+                private boolean completed;
+
+                private void continueOnce() {
+                    if (completed) return;
+                    completed = true;
+                    if (isFinishing() || isDestroyed()) return;
+                    pendingAdContinuation = action;
+                    runPendingAdContinuation();
+                    loadInterstitialAd();
+                }
+
                 @Override
                 public void onAdDismissedFullScreenContent() {
                     Log.d(
                             "TAG_Soccer",
                             getClass().getSimpleName() + ".onAdDismissedFullScreenContent"
                     );
-                    action.run();
-                    loadInterstitialAd();
+                    continueOnce();
                 }
 
                 @Override
@@ -1480,7 +1508,7 @@ public class MenuActivity extends BaseActivity {
                             "TAG_Soccer",
                             getClass().getSimpleName() + ".onAdFailedToShowFullScreenContent: " + adError.getMessage()
                     );
-                    action.run();
+                    continueOnce();
                 }
 
                 @Override
@@ -1489,12 +1517,11 @@ public class MenuActivity extends BaseActivity {
                             "TAG_Soccer",
                             getClass().getSimpleName() + ".onAdShowedFullScreenContent: Ad displayed successfully"
                     );
-                    mInterstitialAd = null;
                 }
             });
 
             Log.d("TAG_Soccer", getClass().getSimpleName() + ".processAdLogic: Showing interstitial ad");
-            mInterstitialAd.show(this);
+            ad.show(this);
         } else {
             Log.d(
                     "TAG_Soccer",
@@ -1506,6 +1533,18 @@ public class MenuActivity extends BaseActivity {
             }
             action.run();
         }
+    }
+
+    protected boolean canContinueAfterAd() {
+        return !isFinishing() && !isDestroyed() && hasWindowFocus()
+                && getLifecycle().getCurrentState().isAtLeast(androidx.lifecycle.Lifecycle.State.RESUMED);
+    }
+
+    private void runPendingAdContinuation() {
+        if (pendingAdContinuation == null || !canContinueAfterAd()) return;
+        Runnable action = pendingAdContinuation;
+        pendingAdContinuation = null;
+        action.run();
     }
     /* helper: launch GameActivity then finish this MenuActivity */
     private void startGame(String matchPath, SharedPreferences prefs) {
@@ -1661,7 +1700,7 @@ public class MenuActivity extends BaseActivity {
             showRegistrationDialog();
             return;
         }
-        startActivity(new Intent(this, MyPrizesActivity.class));
+        showAdThenRun(() -> startActivity(new Intent(this, MyPrizesActivity.class)));
     }
 
     @Override
@@ -1716,6 +1755,8 @@ public class MenuActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
+        pendingAdContinuation = null;
+        adFlowInProgress = false;
         recordWindowLifecycle("destroying");
         adRetryHandler.removeCallbacks(adRetryRunnable);
         overlayHandler.removeCallbacks(hideOverlayRunnable);
@@ -1763,7 +1804,8 @@ public class MenuActivity extends BaseActivity {
         if (isBackendCheckInProgress) return;
         final int generation=++menuCheckGeneration;
         termsCheckInFlight = false;
-        pendingTermsAction = null;
+        // Keep the selected destination while restarting a stale Terms read.
+        // In particular, an interstitial's dismissal and menu resume can race.
         isBackendCheckInProgress = true;
         if (serviceChecker == null) {
             isBackendAvailable = true;

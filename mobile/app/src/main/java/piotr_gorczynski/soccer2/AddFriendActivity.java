@@ -79,9 +79,17 @@ public class AddFriendActivity extends BaseActivity {
                 revealLoadMoreIfAtEnd();
             }
         });
+        // Filtering can shorten the list without a scroll event. Recheck after
+        // RecyclerView has laid out the changed data, not just before that layout.
+        resultsList.getViewTreeObserver().addOnGlobalLayoutListener(this::revealLoadMoreIfAtEnd);
 
-        onlineOnlyCheckbox.setOnCheckedChangeListener((buttonView, isChecked) ->
-                adapter.setOnlineOnly(isChecked));
+        onlineOnlyCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            loadMoreRevealedForCurrentPage = false;
+            loadMoreButton.setVisibility(View.GONE);
+            adapter.setOnlineOnly(isChecked);
+            revealLoadMoreIfAtEnd();
+            resultsList.post(this::revealLoadMoreIfAtEnd);
+        });
 
         searchButton.setOnClickListener(v ->
                 startSearch(nicknameInput.getText().toString().trim()));
@@ -122,7 +130,7 @@ public class AddFriendActivity extends BaseActivity {
 
     private void updateEmptyState(int visibleResultCount) {
         if (!searchFeedbackActive) return;
-        if (shouldShowEmptyState(visibleResultCount, currentQuery)) {
+        if (shouldShowEmptyState(visibleResultCount, currentQuery) && !hasMoreResults) {
             resultText.setText(R.string.user_not_found);
         } else {
             resultText.setText("");
@@ -136,6 +144,7 @@ public class AddFriendActivity extends BaseActivity {
         }
         lastKnownVisibleResultCount = visibleResultCount;
         updateEmptyState(visibleResultCount);
+        revealLoadMoreIfAtEnd();
         resultsList.post(this::revealLoadMoreIfAtEnd);
     }
 
@@ -294,18 +303,24 @@ public class AddFriendActivity extends BaseActivity {
                 + ", visibleCount=" + adapter.getItemCount()
                 + ", hasMore=" + hasMore
                 + ", loadMoreVisible=false");
+        revealLoadMoreIfAtEnd();
         resultsList.post(this::revealLoadMoreIfAtEnd);
     }
 
     private void revealLoadMoreIfAtEnd() {
         if (loadMoreRevealedForCurrentPage || !hasMoreResults || isPageLoading) return;
 
-        RecyclerView.LayoutManager manager = resultsList.getLayoutManager();
-        if (!(manager instanceof LinearLayoutManager linearLayoutManager)) return;
-
         int itemCount = adapter.getItemCount();
-        int lastVisiblePosition = linearLayoutManager.findLastVisibleItemPosition();
-        if (shouldRevealLoadMore(hasMoreResults, isPageLoading, itemCount, lastVisiblePosition)) {
+        int lastVisiblePosition = RecyclerView.NO_POSITION;
+        boolean filtered = onlineOnlyCheckbox.isChecked();
+        if (!filtered && itemCount > 0) {
+            RecyclerView.LayoutManager manager = resultsList.getLayoutManager();
+            if (!(manager instanceof LinearLayoutManager linearLayoutManager)) return;
+            lastVisiblePosition = linearLayoutManager.findLastVisibleItemPosition();
+        }
+        // Presence is filtered locally and arrives asynchronously. Never make
+        // access to the next Firestore page depend on filtered rows or scrolling.
+        if (filtered || shouldRevealLoadMore(hasMoreResults, isPageLoading, itemCount, lastVisiblePosition)) {
             loadMoreRevealedForCurrentPage = true;
             loadMoreButton.setVisibility(View.VISIBLE);
             Log.d(TAG, "AddFriendActivity.pagination: Load more revealed at end of list"
@@ -328,7 +343,8 @@ public class AddFriendActivity extends BaseActivity {
 
     static boolean shouldRevealLoadMore(boolean hasMore, boolean isLoading,
                                         int itemCount, int lastVisiblePosition) {
-        return hasMore && !isLoading && itemCount > 0 && lastVisiblePosition >= itemCount - 1;
+        return hasMore && !isLoading
+                && (itemCount == 0 || lastVisiblePosition >= itemCount - 1);
     }
 
     private void searchAndAdd(String uid) {

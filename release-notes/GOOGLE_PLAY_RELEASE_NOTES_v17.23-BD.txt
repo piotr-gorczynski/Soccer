@@ -1,7 +1,11 @@
 <en-GB>
 🛠️ Fixed nickname setup losing progress when the app moves to the background; checking and saving now continue when you leave the screen.
+👥 Fixed Load more when hiding offline users in Add Friend.
+📺 Closing an ad now opens the selected screen; My Prizes uses the same ad frequency as other menu buttons.
 </en-GB>
 
 <bn-BD>
 🛠️ অ্যাপ ব্যাকগ্রাউন্ডে গেলে ডাকনাম সেট করার অগ্রগতি হারিয়ে যাওয়ার সমস্যা ঠিক করা হয়েছে; পর্দা ছেড়ে গেলেও যাচাই ও সংরক্ষণ চলতে থাকে।
+👥 বন্ধু যোগ করার সময় অফলাইন ব্যবহারকারীদের লুকালেও আরও ফলাফল লোড করা যায়।
+📺 বিজ্ঞাপন বন্ধ করলে নির্বাচিত পর্দা খোলে; আমার পুরস্কারেও অন্য মেনু বোতামের মতো একই নিয়মে বিজ্ঞাপন দেখানো হয়।
 </bn-BD>

@@ -44,7 +44,8 @@ public class AddFriendPaginationTest {
     }
 
     @Test
-    public void loadMoreStaysHiddenForEmptyResults() {
-        assertFalse(AddFriendActivity.shouldRevealLoadMore(true, false, 0, -1));
+    public void emptyFilteredPageStillAllowsReachingLaterPages() {
+        assertTrue(AddFriendActivity.shouldRevealLoadMore(true, false, 0, -1));
+        assertFalse(AddFriendActivity.shouldRevealLoadMore(false, false, 0, -1));
     }
 }
