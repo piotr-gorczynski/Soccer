@@ -1,0 +1,44 @@
+substitutions:
+  _ENVIRONMENT: 'dev'
+
+steps:
+  - name: 'gcr.io/cloud-builders/git'
+    id: 'read-target-branch'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -euo pipefail
+        case '${_ENVIRONMENT}' in dev|test|prod) ;; *) exit 1 ;; esac
+        git clone --branch '${_ENVIRONMENT}' --single-branch https://github.com/piotr-gorczynski/Soccer.git /workspace/soccer
+
+  - name: 'node:22-slim'
+    id: 'test-and-install'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -euo pipefail
+        cd /workspace/soccer/firebase/functions/tournament-promotion
+        npm install
+        npm test
+        npm install --prefix /workspace/firebase-cli firebase-tools
+
+  - name: 'node:22-slim'
+    id: 'deploy-public-projection-only'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -euo pipefail
+        case '${_ENVIRONMENT}' in
+          dev) project='soccer-dev-1744877837' ;;
+          test) project='soccer-test-1753740291' ;;
+          prod) project='soccer-prod-1754048346' ;;
+          *) exit 1 ;;
+        esac
+        cd /workspace/soccer/firebase
+        /workspace/firebase-cli/node_modules/.bin/firebase deploy --only functions:tournament-promotion --project="$$project" --non-interactive --force
+
+options:
+  logging: CLOUD_LOGGING_ONLY

@@ -1,0 +1,6 @@
+<resources>
+    <string name="tournament_promo_prize">🏆 የመጀመሪያ ደረጃ ሽልማት፦ %1$s %2$s</string>
+    <string name="tournament_promo_eligibility">ነፃ ተሳትፎ · %1$d+</string>
+    <string name="tournament_promo_deadline">የምዝገባ መጨረሻ፦ %1$s</string>
+    <string name="tournament_promo_join">ውድድሩን ይቀላቀሉ →</string>
+</resources>

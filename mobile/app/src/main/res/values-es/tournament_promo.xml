@@ -1,0 +1,6 @@
+<resources>
+    <string name="tournament_promo_prize">🏆 Primer premio: %1$s %2$s</string>
+    <string name="tournament_promo_eligibility">Participación gratuita · %1$d+</string>
+    <string name="tournament_promo_deadline">Inscripciones hasta: %1$s</string>
+    <string name="tournament_promo_join">Unirse al torneo →</string>
+</resources>

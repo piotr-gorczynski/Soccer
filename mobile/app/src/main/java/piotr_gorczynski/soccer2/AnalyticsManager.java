@@ -30,6 +30,14 @@ public class AnalyticsManager {
         if (isBangladesh()) trackControlledOutcome("login_attempt", "authentication", "submit", "none", normalizeMethod(method));
     }
 
+    public void trackTournamentPromotionClick(String tournamentId) {
+        if (!isBangladesh() || firebaseAnalytics==null || !TournamentPromotion.validId(tournamentId)) return;
+        Bundle params=new Bundle();
+        params.putString("tournament_id",tournamentId);
+        try { firebaseAnalytics.logEvent("tournament_promo_click",params); }
+        catch (Exception ignored) { Log.w(TAG,"Could not report tournament card click"); }
+    }
+
     public void trackAnonymousWarning(String action) {
         String choice = allowed(action, "shown", "proceed", "cancel", "dismiss");
         if (crashlytics != null) {

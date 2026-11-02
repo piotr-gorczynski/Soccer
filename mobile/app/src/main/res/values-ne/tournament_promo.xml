@@ -1,0 +1,6 @@
+<resources>
+    <string name="tournament_promo_prize">🏆 प्रथम पुरस्कार: %1$s %2$s</string>
+    <string name="tournament_promo_eligibility">निःशुल्क सहभागिता · %1$d+</string>
+    <string name="tournament_promo_deadline">दर्ताको अन्तिम मिति: %1$s</string>
+    <string name="tournament_promo_join">टुर्नामेन्टमा सहभागी हुनुहोस् →</string>
+</resources>

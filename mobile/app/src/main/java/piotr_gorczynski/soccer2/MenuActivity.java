@@ -78,6 +78,15 @@ public class MenuActivity extends BaseActivity {
     private InterstitialAd mInterstitialAd;
     private Runnable pendingAdContinuation;
     private boolean adFlowInProgress;
+    private TournamentPromotionCard tournamentPromotionCard;
+    private boolean tournamentPromotionOpening;
+    private boolean tournamentPromotionLoginOpening;
+    private String confirmedTermsUid;
+    private final ActivityResultLauncher<Intent> tournamentPromoLoginLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                tournamentPromotionLoginOpening=false;
+                if (FirebaseAuth.getInstance().getUid()==null) PendingTournamentPromotion.clear(this);
+            });
 
     private static final String PREF_AD_COUNTER = "adsCounter";
     private static final String PREF_AD_FREQUENCY = "adsFrequency";
@@ -411,6 +420,7 @@ public class MenuActivity extends BaseActivity {
                 if (!uid.equals(FirebaseAuth.getInstance().getUid()) || isFinishing() || isDestroyed()
                         || !isBackendAvailable) return;
                 if (ok) {
+                    confirmedTermsUid=uid;
                     if (loginAttempt != null) {
                         FirebaseFirestore.getInstance().collection("users").document(uid)
                             .get(com.google.firebase.firestore.Source.SERVER)
@@ -430,7 +440,10 @@ public class MenuActivity extends BaseActivity {
                             });
                     }
                     if (action != null) action.run();
-                } else openRequiredTerms();
+                } else {
+                    confirmedTermsUid=null;
+                    openRequiredTerms();
+                }
             }).addOnFailureListener(error -> {
                 if (termsGeneration != menuCheckGeneration) return;
                 termsCheckInFlight = false;
@@ -618,6 +631,9 @@ public class MenuActivity extends BaseActivity {
         termsScreenOpen = false;
         nicknameScreenOpen = false;
         coverMenuWhileResolving();
+        if (AppFlavourDetector.isBangladeshFlavour(this)) {
+            PendingTournamentPromotion.forUser(this,FirebaseAuth.getInstance().getUid(),System.currentTimeMillis());
+        }
 
         String lang = LanguageManager.getCurrentLanguageCode(this);
         if (currentLanguage == null || !currentLanguage.equals(lang)) {
@@ -648,6 +664,7 @@ public class MenuActivity extends BaseActivity {
         super.onPostResume();
         getWindow().getDecorView().post(this::requestAdsConsentWhenReady);
         getWindow().getDecorView().post(this::runPendingAdContinuation);
+        getWindow().getDecorView().post(this::continueTournamentPromotion);
     }
 
     @Override
@@ -655,10 +672,12 @@ public class MenuActivity extends BaseActivity {
         super.onStart();
         registerNetworkCallback();
         startRunningPlayerAnimation();
+        if (tournamentPromotionCard!=null) tournamentPromotionCard.start();
     }
 
     @Override
     protected void onStop() {
+        if (tournamentPromotionCard!=null) tournamentPromotionCard.stop();
         ((SoccerApp) getApplication()).onConsentHostStopped(this);
         recordWindowLifecycle("stopped");
         overlayHandler.removeCallbacks(menuInitializationTimeout);
@@ -684,6 +703,7 @@ public class MenuActivity extends BaseActivity {
         if (hasFocus) {
             requestAdsConsentWhenReady();
             runPendingAdContinuation();
+            continueTournamentPromotion();
         }
     }
 
@@ -984,6 +1004,11 @@ public class MenuActivity extends BaseActivity {
         
         // Get analytics manager for user research
         analyticsManager = app.getAnalyticsManager();
+        View promotion=findViewById(R.id.tournamentPromoCard);
+        if (AppFlavourDetector.isBangladeshFlavour(this) && promotion!=null) {
+            tournamentPromotionCard=new TournamentPromotionCard(promotion,
+                    TournamentPromotionCard.firebaseLoader(),this::openTournamentPromotion);
+        }
         
         // Check and show in-app messaging for v7/v8 users
         InAppMessagingHelper.checkAndShowVersionMessage(this, analyticsManager);
@@ -1298,6 +1323,7 @@ public class MenuActivity extends BaseActivity {
         updateUiForAuthState();
         if (actionOverlayPending) showOverlayImmediately();
         else scheduleOverlayHide();
+        continueTournamentPromotion();
     }
 
     private void showLoadingOverlay() {
@@ -1694,6 +1720,84 @@ public class MenuActivity extends BaseActivity {
         showAdThenRun(() -> startActivity(new Intent(this, RankingActivity.class)));
     }
 
+    private void openTournamentPromotion(TournamentPromotion offer) {
+        if (!AppFlavourDetector.isBangladeshFlavour(this) || tournamentPromotionOpening || tournamentPromotionLoginOpening) return;
+        String uid=FirebaseAuth.getInstance().getUid();
+        PendingTournamentPromotion.select(this,offer.id,uid,System.currentTimeMillis());
+        analyticsManager.trackTournamentPromotionClick(offer.id);
+        // This acquisition path deliberately has no interstitial or extra auth provider.
+        if (uid==null) {
+            tournamentPromotionLoginOpening=true;
+            launchTournamentPromotionLogin();
+        } else if (!isBackendAvailable) {
+            Toast.makeText(this,R.string.server_unavailable_message,Toast.LENGTH_LONG).show();
+        } else continueTournamentPromotion();
+    }
+
+    protected void launchTournamentPromotionLogin() {
+        tournamentPromoLoginLauncher.launch(new Intent(this,UniversalLoginActivity.class));
+    }
+
+    private void continueTournamentPromotion() {
+        if (!AppFlavourDetector.isBangladeshFlavour(this) || tournamentPromotionOpening
+                || !canContinueAfterAd() || menuInitializationPending || menuResumeWorkPending
+                || isBackendCheckInProgress || !isBackendAvailable || termsCheckInFlight
+                || termsScreenOpen || nicknameScreenOpen || adFlowInProgress || pendingAdContinuation!=null) return;
+        String uid=FirebaseAuth.getInstance().getUid();
+        if (uid==null || !uid.equals(confirmedTermsUid) || !uid.equals(nicknameProfileUid)
+                || nicknameProfileTask==null || !nicknameProfileTask.isSuccessful()) return;
+        DocumentSnapshot profile=nicknameProfileTask.getResult();
+        String nickname=profile==null ? null : profile.getString("nickname");
+        if (nickname==null || nickname.isBlank()) return;
+        String id=PendingTournamentPromotion.forUser(this,uid,System.currentTimeMillis());
+        if (id==null) return;
+        tournamentPromotionOpening=true;
+        int generation=menuCheckGeneration;
+        FirebaseFirestore.getInstance().collection("tournaments").document(id).get(Source.SERVER)
+                .addOnCompleteListener(task -> {
+                    tournamentPromotionOpening=false;
+                    if (generation!=menuCheckGeneration || !uid.equals(FirebaseAuth.getInstance().getUid())
+                            || !canContinueAfterAd()) {
+                        getWindow().getDecorView().post(this::continueTournamentPromotion);
+                        return;
+                    }
+                    if (!task.isSuccessful()) {
+                        Toast.makeText(this,R.string.server_unavailable_message,Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    DocumentSnapshot tournament=task.getResult();
+                    if (!TournamentPromotion.isOpen(tournament,System.currentTimeMillis())) {
+                        PendingTournamentPromotion.clear(this);
+                        if (tournamentPromotionCard!=null) tournamentPromotionCard.start();
+                        Toast.makeText(this,R.string.registration_closed,Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    tournamentPromotionOpening=true;
+                    tournament.getReference().collection("participants").document(uid).get(Source.SERVER)
+                            .addOnCompleteListener(participant -> {
+                                tournamentPromotionOpening=false;
+                                if (generation!=menuCheckGeneration || !uid.equals(FirebaseAuth.getInstance().getUid())
+                                        || !canContinueAfterAd()) {
+                                    getWindow().getDecorView().post(this::continueTournamentPromotion);
+                                    return;
+                                }
+                                if (!participant.isSuccessful()) {
+                                    Toast.makeText(this,R.string.server_unavailable_message,Toast.LENGTH_LONG).show();
+                                    return;
+                                }
+                                boolean joined=participant.getResult().exists();
+                                Intent destination=new Intent(this,joined ? TournamentLobbyActivity.class : RegulationActivity.class)
+                                        .putExtra("tournamentId",id);
+                                if (!joined) destination.putExtra("regulationId",tournament.getString("regulation"));
+                                checkTerms(uid,() -> {
+                                    PendingTournamentPromotion.clear(this);
+                                    if (!joined) analyticsManager.trackTournamentJoinStart(id,true);
+                                    MenuActivity.super.startActivity(destination);
+                                });
+                            });
+                });
+    }
+
     public void OpenMyPrizes(View view) {
         if (!AppFlavourDetector.supportsPrizeFeatures(this)) return;
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
@@ -1755,6 +1859,7 @@ public class MenuActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
+        if (tournamentPromotionCard!=null) tournamentPromotionCard.stop();
         pendingAdContinuation = null;
         adFlowInProgress = false;
         recordWindowLifecycle("destroying");
@@ -1803,6 +1908,7 @@ public class MenuActivity extends BaseActivity {
         overlayHandler.postDelayed(menuInitializationTimeout,MENU_INITIALIZATION_TIMEOUT_MS);
         if (isBackendCheckInProgress) return;
         final int generation=++menuCheckGeneration;
+        confirmedTermsUid=null;
         termsCheckInFlight = false;
         // Keep the selected destination while restarting a stale Terms read.
         // In particular, an interstitial's dismissal and menu resume can race.

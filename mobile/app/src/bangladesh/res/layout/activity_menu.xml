@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite">
+
+    <LinearLayout
+        android:id="@+id/menu_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/menu_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            android:title="@string/app_name"
+            app:titleTextColor="@android:color/white" />
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fillViewport="true">
+        <LinearLayout
+            android:id="@+id/menu_center_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="12dp"
+            android:orientation="vertical"
+            android:gravity="center">
+
+        <ImageView
+            android:id="@+id/menu_running_player"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginBottom="8dp"
+            android:contentDescription="@string/menu_running_player_content_description"
+            android:importantForAccessibility="no"
+            android:scaleType="fitCenter" />
+
+        <TextView
+            android:id="@+id/nicknameLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/hello"
+            android:textColor="@color/colorGreenDark"
+            android:textStyle="bold" />
+
+
+
+        <LinearLayout
+            android:id="@+id/tournamentPromoCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/tournament_promo_background"
+            android:foreground="?attr/selectableItemBackground"
+            android:padding="12dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="vertical"
+            android:visibility="gone">
+            <TextView android:id="@+id/tournamentPromoName"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:textColor="@color/colorGreenDark" android:textSize="14sp"
+                android:textStyle="bold" android:maxLines="2" android:ellipsize="end" />
+            <TextView android:id="@+id/tournamentPromoPrize"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:textColor="@color/colorGreenDark" android:textSize="14sp" android:textStyle="bold" />
+            <TextView android:id="@+id/tournamentPromoEligibility"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:textColor="@color/colorGreenDark" android:textSize="14sp" />
+            <TextView android:id="@+id/tournamentPromoDeadline"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:textColor="@color/colorGreenDark" android:textSize="14sp" />
+            <TextView android:id="@+id/tournamentPromoAction"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="4dp" android:text="@string/tournament_promo_join"
+                android:textColor="@color/colorGreenDark" android:textSize="14sp" android:textStyle="bold" />
+        </LinearLayout>
+
+    <Button
+        android:id="@+id/youVsAndroidBtn"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/colorGreenDark"
+        android:onClick="OpenGamePlayerVsAndroid"
+        android:text="@string/menu_YouvsAndroid"
+        android:textAllCaps="false"
+        android:textColor="@color/colorWhite"
+        android:textStyle="bold" />
+
+    <Button
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/colorGreenDark"
+        android:onClick="OpenGamePlayerVsPlayer"
+        android:text="@string/menu_Player1vsPlayer2"
+        android:textAllCaps="false"
+        android:textColor="@color/colorWhite"
+        android:textStyle="bold"/>
+
+    <Button
+        android:id="@+id/InviteFriend"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/colorGreenDark"
+        android:onClick="OpenInviteFriend"
+        android:text="@string/invite_a_friend"
+        android:textAllCaps="false"
+        android:textColor="@color/colorWhite"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/ShowInvites"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/colorGreenDark"
+        android:onClick="OpenInvites"
+        android:text="@string/pending_invites"
+        android:textAllCaps="false"
+        android:textColor="@color/colorWhite"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/openTournamentsBtn"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/colorGreenDark"
+        android:onClick="OpenTournaments"
+        android:text="@string/tournaments"
+        android:textAllCaps="false"
+        android:textColor="@color/colorWhite"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/openRankingBtn"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/colorGreenDark"
+        android:onClick="OpenRanking"
+        android:text="@string/ranking"
+        android:textAllCaps="false"
+        android:textColor="@color/colorWhite"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/openMyPrizesBtn"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/colorGreenDark"
+        android:onClick="OpenMyPrizes"
+        android:text="@string/my_prizes"
+        android:textAllCaps="false"
+        android:textColor="@color/colorWhite"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+        </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/menu_loading_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorWhite"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="visible">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/loading_overlay_background"
+            android:orientation="horizontal"
+            android:padding="24dp"
+            android:gravity="center_vertical">
+
+            <ProgressBar
+                style="@android:style/Widget.ProgressBar.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:indeterminate="true" />
+
+            <TextView
+                android:id="@+id/menu_loading_message"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/menu_loading_message"
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </FrameLayout>
+
+</FrameLayout>

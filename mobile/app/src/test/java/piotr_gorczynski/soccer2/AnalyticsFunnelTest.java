@@ -16,6 +16,20 @@ import static org.mockito.Mockito.*;
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk=34, application=android.app.Application.class)
 public class AnalyticsFunnelTest {
+    @Test public void tournamentCardClickReportsOnlyPublicIdAndOnlyInBangladesh() {
+        withManager((manager,sdk)->{
+            manager.trackTournamentPromotionClick(null);
+            manager.trackTournamentPromotionClick("private@example.com");
+            manager.trackTournamentPromotionClick("bad/path");
+            manager.trackTournamentPromotionClick("cup-123");
+            if (!AnalyticsManager.isBangladesh()) { verifyNoInteractions(sdk); return; }
+            ArgumentCaptor<Bundle> params=ArgumentCaptor.forClass(Bundle.class);
+            verify(sdk).logEvent(eq("tournament_promo_click"),params.capture());
+            assertEquals(1,params.getValue().size());
+            assertEquals("cup-123",params.getValue().getString("tournament_id"));
+            verifyNoMoreInteractions(sdk);
+        });
+    }
     @Test public void firebaseNetworkExceptionIsReportedAsNetworkFailure() {
         withManager((manager,sdk)->{
             manager.trackAuthFailure("anonymous", "authentication",

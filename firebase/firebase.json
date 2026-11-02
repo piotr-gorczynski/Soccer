@@ -121,6 +121,11 @@
       "codebase": "support-tickets",
       "runtime": "nodejs22",
       "region": "us-central1"
+    },
+    {
+      "source": "functions/tournament-promotion",
+      "codebase": "tournament-promotion",
+      "runtime": "nodejs22"
     }
   ],
   "firestore": {

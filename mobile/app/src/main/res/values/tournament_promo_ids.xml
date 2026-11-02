@@ -1,0 +1,9 @@
+<resources>
+    <!-- IDs exist in Global for shared Java code; only the BD layout contains the card. -->
+    <item name="tournamentPromoCard" type="id" />
+    <item name="tournamentPromoName" type="id" />
+    <item name="tournamentPromoPrize" type="id" />
+    <item name="tournamentPromoEligibility" type="id" />
+    <item name="tournamentPromoDeadline" type="id" />
+    <item name="tournamentPromoAction" type="id" />
+</resources>
