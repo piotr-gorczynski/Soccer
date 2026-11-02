@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Gridline Soccer 🇧🇩</string>
     <string name="anonymous_login_warning_message">Gelitaanka qarsoon wuxuu kuu oggolaanayaa inaad ka qayb gasho tartamada, oo ay ku jiraan tartamo gaar ah oo leh abaalmarin lacageed, iyadoo la raacayo xeerarkooda. Hase yeeshee, haddii aad lumiso qalabka, dib u rakibto app-ka, telefoon cusub iibsato ama aad ka baxdo, xidhiidhka akoonkaaga qarsoon waa lumi doona oo dib looma geli karo isla akoonkaas. Ma rabtaa inaad sii waddo?</string>
+    <string name="bd_start_playing">Bilow ciyaarta</string>
+    <string name="bd_start_supporting">Looma baahna faahfaahinta akoonka.</string>
+    <string name="bd_start_payout_help">Faahfaahinta lacagta laguugu soo dirayo waxaad bixisaa oo keliya haddii aad abaalmarin ku guulaysato.</string>
 </resources>

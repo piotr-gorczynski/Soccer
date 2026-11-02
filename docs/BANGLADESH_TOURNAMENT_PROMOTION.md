@@ -2,7 +2,7 @@
 
 Implemented 2 November 2026; Global layout and authentication providers are unchanged.
 
-The BD layout shows a compact clickable card below the greeting and above the game
+The BD layout shows a list of compact clickable cards below the greeting and above the game
 buttons. It uses a scrollable menu on small screens. All four UI strings have
 translations in the existing 20 app languages (independent of Play release-note
 locale support). The card says **first prize**, not a guaranteed registration award.
@@ -29,8 +29,12 @@ Caller input is ignored. No user/profile, participant, wallet or payout records
 are queried or returned. Eligible tournaments explicitly include `bangladesh`,
 have status `registering`, a future deadline, spare capacity, an enabled BDT cash
 pool and a positive first-place award. The assigned regulation must be active,
-for market BD, cash-enabled and age 18+. The earliest eligible registration
-deadline wins; ties use tournament ID. Missing/invalid data yields no card.
+for market BD, cash-enabled and age 18+. All eligible offers are returned in
+registration-deadline order; ties use tournament ID. The response adds a
+`tournaments` array and retains `tournament` (the first offer or null) for older
+installed clients. The new client accepts both response formats. Missing/invalid
+offers are skipped. Membership is checked per offer, so joining one tournament
+does not hide another. Each card expires independently and opens its own event.
 
 The endpoint has a 60-second per-instance projection cache, coalesces concurrent
 refreshes and caps instances at two. Its response filters expired offers again.
@@ -63,7 +67,7 @@ there are no Auth, Firestore rules, payout or existing tournament-function chang
 
 Prepared Cloud Build configuration:
 `gcp/cloud-build/deploy_tournament_promotion.yaml` and manual trigger definition
-`gcp/cloud-build/trigger_tournament_promotion.json` (`600-deploy-tournament-promotion`).
+`gcp/cloud-build/trigger_tournament_promotion.json` (`610-deploy-tournament-promotion`).
 The YAML reads function source from the selected environment's branch. Configure
 **both** `gitFileSource.revision` and `sourceToBuild.ref` to the target branch and
 set `_ENVIRONMENT` to the same value (`dev`, `test`, `prod`). Restore dev/dev after
@@ -105,5 +109,17 @@ DEV deployment confirmed on 2 November 2026 after administrator CLI reauthentica
 `soccer-dev-1744877837`. An unauthenticated callable HTTP request returned the
 eligible DEV tournament `Rcqd3z41uTTV9n9Ttaxj`, first prize 1000 BDT, minimum age 18,
 registration deadline 1794333599000, and server time. No user data was returned.
-No IAM changes were made and TEST/PROD were not deployed. The prepared Cloud Build
-trigger definition has not been registered. Phone acceptance remains to be tested.
+No IAM changes were made and TEST/PROD were not deployed. On 2 November 2026,
+manual Cloud Build trigger `610-deploy-tournament-promotion` was registered in
+`org-service-account-001` (global), ID `312bd3e2-69d7-4ed7-9455-4282568fc78b`.
+It uses the standard Branch selector (`dev`) and `_ENVIRONMENT=dev`, with both
+configuration and source refs set to `refs/heads/dev`. Creating it did not run a
+build or deploy any environment. Phone acceptance remains to be tested.
+
+Multi-offer update on 2 November 2026: 34 focused Android tests (17 per market)
+and both DEV debug builds passed; six backend tests passed locally and in Cloud
+Build. Backend commit `f8f05654` was deployed through trigger 610 on dev/dev,
+build `ff8acbe9-a854-4231-95f0-e226ecadd6ed` (SUCCESS). An unauthenticated request
+confirmed both new events `l0v5ljSVvFPckvii7PqA` and `8pthz6C5ho8hnlGn5GSG`
+in the array, plus the earlier eligible DEV event. Client list changes require a
+new APK; TEST/PROD remain unchanged.

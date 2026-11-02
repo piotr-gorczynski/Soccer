@@ -3,6 +3,8 @@ package piotr_gorczynski.soccer2;
 import com.google.firebase.firestore.DocumentSnapshot;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 /** Strict, small public offer; names/amounts never come from hard-coded campaign copy. */
 final class TournamentPromotion {
@@ -17,6 +19,22 @@ final class TournamentPromotion {
     }
 
     static boolean validId(String id) { return id != null && id.matches("[A-Za-z0-9_-]{1,128}"); }
+
+    static List<TournamentPromotion> parseAll(Object response) {
+        if (!(response instanceof Map<?,?> envelope)) return List.of();
+        if (!(envelope.get("tournaments") instanceof List<?> values)) {
+            TournamentPromotion legacy=parse(response);
+            return legacy==null ? List.of() : List.of(legacy);
+        }
+        Map<String,TournamentPromotion> unique=new LinkedHashMap<>();
+        for (Object value:values) {
+            Map<String,Object> item=new java.util.HashMap<>();
+            item.put("tournament",value); item.put("serverTimeMillis",envelope.get("serverTimeMillis"));
+            TournamentPromotion offer=parse(item);
+            if (offer!=null) unique.putIfAbsent(offer.id,offer);
+        }
+        return new ArrayList<>(unique.values());
+    }
 
     static TournamentPromotion parse(Object response) {
         if (!(response instanceof Map<?, ?> envelope) || !(envelope.get("tournament") instanceof Map<?, ?> m)) return null;

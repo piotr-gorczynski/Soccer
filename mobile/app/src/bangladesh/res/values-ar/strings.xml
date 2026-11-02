@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Gridline Soccer 🇧🇩</string>
     <string name="anonymous_login_warning_message">يتيح تسجيل الدخول المجهول المشاركة في البطولات، بما فيها بطولات مختارة بجوائز نقدية، وفقًا لقواعدها. ولكن إذا فقدت جهازك أو أعدت تثبيت التطبيق أو حصلت على هاتف جديد أو سجّلت الخروج، فسيُفقد الارتباط بحسابك المجهول ولن يكون من الممكن تسجيل الدخول مرة أخرى إلى الحساب نفسه. هل تريد المتابعة؟</string>
+    <string name="bd_start_playing">ابدأ اللعب</string>
+    <string name="bd_start_supporting">لا حاجة إلى تقديم بيانات حساب.</string>
+    <string name="bd_start_payout_help">لن تُطلب منك بيانات استلام الجائزة إلا إذا فزت بها.</string>
 </resources>

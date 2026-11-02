@@ -56,8 +56,22 @@ public class AnonymousLoginPresentationTest {
     @Test public void otherBangladeshLocalesCannotFallBackToInternalLoginLabel() {
         Context context=context("pl");
         View layout=LayoutInflater.from(context).inflate(R.layout.activity_universal_login,null);
-        assertEquals(bd ? "Start Playing" : context.getString(R.string.login_anonymous),
+        assertEquals(bd ? "Zacznij grać" : context.getString(R.string.login_anonymous),
                 ((TextView)layout.findViewById(R.id.btnUniversalAnonymous)).getText().toString());
+    }
+    @Test public void allSupportedBangladeshLanguagesHaveLocalizedStartCopy() {
+        for(String language:new String[]{"en","bn","pl","de","fr","es","ar","fa","hi","ur",
+                "ne","si","am","sw","so","mg","mn","my","km","lo"}) {
+            Context localized=context(language);
+            for(String key:new String[]{"bd_start_playing","bd_start_supporting","bd_start_payout_help"}) {
+                int id=localized.getResources().getIdentifier(key,"string",BuildConfig.APPLICATION_ID);
+                if(!bd) { assertEquals(0,id); continue; }
+                assertNotEquals(0,id);
+                String value=localized.getString(id);
+                assertFalse(value.isBlank());
+                if(!language.equals("en")) assertNotEquals(language+": "+key,context("en").getString(id),value);
+            }
+        }
     }
     @Test public void proceedReportsChoiceAndStartsAuthentication() throws Exception {
         checkWarning(AlertDialog.BUTTON_POSITIVE, "proceed", true);

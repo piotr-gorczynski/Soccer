@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Gridline Soccer 🇧🇩</string>
     <string name="anonymous_login_warning_message">ስም-አልባ መግቢያ በውድድሮች ውስጥ፣ እንደ ደንቦቻቸው የገንዘብ ሽልማት የሚሰጡ የተመረጡ ውድድሮችን ጨምሮ፣ እንዲሳተፉ ያስችላል። ሆኖም መሣሪያዎን ካጡ፣ መተግበሪያውን እንደገና ከጫኑ፣ ስልክዎን ከቀየሩ ወይም ከመለያዎ ከወጡ፣ ወደ ስም-አልባ መለያዎ ያለዎትን መዳረሻ ያጣሉ፣ ወደዚያው መለያም እንደገና መግባት አይችሉም። መቀጠል ይፈልጋሉ?</string>
+    <string name="bd_start_playing">መጫወት ይጀምሩ</string>
+    <string name="bd_start_supporting">የመለያ ዝርዝሮች አያስፈልጉም።</string>
+    <string name="bd_start_payout_help">ሽልማት ካሸነፉ ብቻ ክፍያ ለመቀበል የሚያስፈልጉ ዝርዝሮችን ይሰጣሉ።</string>
 </resources>

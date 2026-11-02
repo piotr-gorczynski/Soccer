@@ -1,5 +1,5 @@
 {
-  "name": "600-deploy-tournament-promotion",
+  "name": "610-deploy-tournament-promotion",
   "description": "Public read-only projection of open BD cash tournaments for the menu card. No Firestore rules or Auth changes. Match configuration/source branch and environment before running.",
   "gitFileSource": {
     "path": "gcp/cloud-build/deploy_tournament_promotion.yaml",

@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Gridline Soccer 🇧🇩</string>
     <string name="anonymous_login_warning_message">Die anonyme Anmeldung ermöglicht die Teilnahme an Turnieren, darunter ausgewählte Turniere mit Geldpreisen, gemäß den jeweiligen Regeln. Allerdings gilt: wenn Sie Ihr Gerät verlieren, die App neu installieren, ein neues Telefon bekommen oder sich abmelden, geht die Verbindung zu Ihrem anonymen Konto verloren und es ist nicht möglich, sich wieder in dasselbe anonyme Konto einzuloggen. Möchten Sie fortfahren?</string>
+    <string name="bd_start_playing">Jetzt spielen</string>
+    <string name="bd_start_supporting">Keine Kontodaten erforderlich.</string>
+    <string name="bd_start_payout_help">Angaben zur Auszahlung machst du nur, wenn du einen Preis gewinnst.</string>
 </resources>

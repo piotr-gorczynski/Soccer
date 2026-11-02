@@ -6,6 +6,7 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.LinearLayout;
 import androidx.core.widget.NestedScrollView;
 import com.google.android.gms.tasks.TaskCompletionSource;
 import com.google.android.gms.tasks.Tasks;
@@ -91,6 +92,7 @@ public class TournamentPromotionTest {
         View card=root.findViewById(R.id.tournamentPromoCard);
         if(!AnalyticsManager.isBangladesh()) { assertNull(card); return; }
         assertNotNull(card); card.setVisibility(View.VISIBLE);
+        ((LinearLayout)card).addView(LayoutInflater.from(context).inflate(R.layout.item_tournament_promotion,(LinearLayout)card,false));
         float titleSize=((TextView)root.findViewById(R.id.tournamentPromoName)).getTextSize();
         assertEquals(titleSize,((TextView)root.findViewById(R.id.tournamentPromoPrize)).getTextSize(),0.01f);
         assertEquals(titleSize,((TextView)root.findViewById(R.id.tournamentPromoAction)).getTextSize(),0.01f);
@@ -112,10 +114,12 @@ public class TournamentPromotionTest {
         AtomicInteger clicks=new AtomicInteger();
         controller=new TournamentPromotionCard(card,()->response.getTask(),offer->{assertEquals("cup",offer.id);clicks.incrementAndGet();});
         controller.start(); response.setResult(response()); shadowOf(Looper.getMainLooper()).idle();
-        assertEquals(View.VISIBLE,card.getVisibility()); card.performClick(); assertEquals(1,clicks.get());
+        assertEquals(View.VISIBLE,card.getVisibility());
+        View item=((LinearLayout)card).getChildAt(0);
+        item.performClick(); assertEquals(1,clicks.get());
         assertTrue(((TextView)root.findViewById(R.id.tournamentPromoPrize)).getText().toString().contains("BDT"));
         shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(4));
-        assertEquals(View.GONE,card.getVisibility()); card.performClick(); assertEquals(1,clicks.get());
+        assertEquals(View.GONE,card.getVisibility()); item.performClick(); assertEquals(1,clicks.get());
     }
     @Test public void stoppedOrFailedRequestCannotShowStaleCard() {
         if(!AnalyticsManager.isBangladesh()) return;
@@ -138,12 +142,54 @@ public class TournamentPromotionTest {
         when(participant.get(Source.SERVER)).thenReturn(Tasks.forResult(snapshot));
         when(snapshot.exists()).thenReturn(true);
         var joined=TournamentPromotionCard.excludeParticipant(offer,"owner",db);
-        shadowOf(Looper.getMainLooper()).idle(); assertNull(joined.getResult());
+        shadowOf(Looper.getMainLooper()).idle(); assertTrue(TournamentPromotion.parseAll(joined.getResult()).isEmpty());
         when(snapshot.exists()).thenReturn(false);
         var notJoined=TournamentPromotionCard.excludeParticipant(offer,"owner",db);
-        shadowOf(Looper.getMainLooper()).idle(); assertSame(offer,notJoined.getResult());
+        shadowOf(Looper.getMainLooper()).idle(); assertEquals("cup",TournamentPromotion.parseAll(notJoined.getResult()).get(0).id);
         when(participant.get(Source.SERVER)).thenReturn(Tasks.forException(new IllegalStateException("unavailable")));
         var failed=TournamentPromotionCard.excludeParticipant(offer,"owner",db);
-        shadowOf(Looper.getMainLooper()).idle(); assertNull(failed.getResult());
+        shadowOf(Looper.getMainLooper()).idle(); assertTrue(TournamentPromotion.parseAll(failed.getResult()).isEmpty());
+    }
+    @SuppressWarnings("unchecked")
+    static Map<String,Object> multipleResponse() {
+        Map<String,Object> first=(Map<String,Object>)response().get("tournament");
+        Map<String,Object> second=new HashMap<>(first);
+        second.put("id","second"); second.put("name","Second Cup");
+        second.put("registrationDeadlineMillis",1010000L);
+        return Map.of("serverTimeMillis",1000000L,"tournaments",java.util.List.of(first,second));
+    }
+    @Test public void multipleCardsNavigateIndependentlyAndExpireIndividually() {
+        if(!AnalyticsManager.isBangladesh()) return;
+        LinearLayout cards=(LinearLayout)LayoutInflater.from(context).inflate(R.layout.activity_menu,null).findViewById(R.id.tournamentPromoCard);
+        java.util.List<String> clicked=new java.util.ArrayList<>();
+        controller=new TournamentPromotionCard(cards,()->Tasks.forResult(multipleResponse()),offer->clicked.add(offer.id));
+        controller.start(); shadowOf(Looper.getMainLooper()).idle();
+        assertEquals(2,cards.getChildCount());
+        cards.getChildAt(0).performClick(); cards.getChildAt(1).performClick();
+        assertEquals(java.util.List.of("cup","second"),clicked);
+        shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(4));
+        assertEquals(1,cards.getChildCount()); assertEquals(View.VISIBLE,cards.getVisibility());
+        assertEquals("Second Cup",((TextView)cards.getChildAt(0).findViewById(R.id.tournamentPromoName)).getText().toString());
+    }
+    @Test public void joiningFirstTournamentDoesNotHideSecondTournament() {
+        FirebaseFirestore db=mock(FirebaseFirestore.class,RETURNS_DEEP_STUBS);
+        DocumentSnapshot joined=mock(DocumentSnapshot.class),notJoined=mock(DocumentSnapshot.class);
+        when(joined.exists()).thenReturn(true); when(notJoined.exists()).thenReturn(false);
+        when(db.collection("tournaments").document("cup").collection("participants").document("owner").get(Source.SERVER))
+                .thenReturn(Tasks.forResult(joined));
+        when(db.collection("tournaments").document("second").collection("participants").document("owner").get(Source.SERVER))
+                .thenReturn(Tasks.forResult(notJoined));
+        var result=TournamentPromotionCard.excludeParticipant(multipleResponse(),"owner",db);
+        shadowOf(Looper.getMainLooper()).idle();
+        assertEquals(1,TournamentPromotion.parseAll(result.getResult()).size());
+        assertEquals("second",TournamentPromotion.parseAll(result.getResult()).get(0).id);
+    }
+    @Test public void listResponsePreservesLegacyFallbackAndIgnoresMalformedOrDuplicateOffers() {
+        assertEquals(1,TournamentPromotion.parseAll(response()).size());
+        assertEquals(2,TournamentPromotion.parseAll(multipleResponse()).size());
+        assertTrue(TournamentPromotion.parseAll(Map.of("serverTimeMillis",1000000L,"tournaments",java.util.List.of())).isEmpty());
+        var first=((java.util.List<?>)multipleResponse().get("tournaments")).get(0);
+        assertEquals(1,TournamentPromotion.parseAll(Map.of("serverTimeMillis",1000000L,
+                "tournaments",java.util.List.of(first,Map.of("id","invalid"),first))).size());
     }
 }

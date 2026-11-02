@@ -58,34 +58,8 @@
             android:id="@+id/tournamentPromoCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/tournament_promo_background"
-            android:foreground="?attr/selectableItemBackground"
-            android:padding="12dp"
-            android:clickable="true"
-            android:focusable="true"
             android:orientation="vertical"
-            android:visibility="gone">
-            <TextView android:id="@+id/tournamentPromoName"
-                android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:textColor="@color/colorGreenDark" android:textSize="14sp"
-                android:textStyle="bold" android:maxLines="2" android:ellipsize="end" />
-            <TextView android:id="@+id/tournamentPromoPrize"
-                android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:textColor="@color/colorGreenDark" android:textSize="14sp" android:textStyle="bold" />
-            <TextView android:id="@+id/tournamentPromoEligibility"
-                android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:textColor="@color/colorGreenDark" android:textSize="14sp" />
-            <TextView android:id="@+id/tournamentPromoDeadline"
-                android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:textColor="@color/colorGreenDark" android:textSize="14sp" />
-            <TextView android:id="@+id/tournamentPromoAction"
-                android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:layout_marginTop="4dp" android:text="@string/tournament_promo_join"
-                android:textColor="@color/colorGreenDark" android:textSize="14sp" android:textStyle="bold" />
-        </LinearLayout>
+            android:visibility="gone" />
 
     <Button
         android:id="@+id/youVsAndroidBtn"

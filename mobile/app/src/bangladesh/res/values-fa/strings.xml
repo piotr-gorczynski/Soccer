@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Gridline Soccer 🇧🇩</string>
     <string name="anonymous_login_warning_message">ورود ناشناس به شما امکان شرکت در مسابقات، از جمله مسابقات منتخب با جوایز نقدی، طبق قوانین آن‌ها را می‌دهد. اما اگر دستگاه خود را از دست بدهید، برنامه را دوباره نصب کنید، گوشی جدید بگیرید یا خارج شوید، ارتباط با حساب ناشناس شما از بین می‌رود و دیگر نمی‌توانید دوباره وارد همان حساب ناشناس شوید. آیا می‌خواهید ادامه دهید؟</string>
+    <string name="bd_start_playing">بازی را شروع کنید</string>
+    <string name="bd_start_supporting">نیازی به ارائه اطلاعات حساب نیست.</string>
+    <string name="bd_start_payout_help">فقط در صورت برنده شدن جایزه، اطلاعات دریافت وجه را ارائه می‌کنید.</string>
 </resources>

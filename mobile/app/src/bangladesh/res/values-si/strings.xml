@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Gridline Soccer 🇧🇩</string>
     <string name="anonymous_login_warning_message">අනන්‍ය පිවිසුම මඟින් අදාළ නීතිවලට යටත්ව මුදල් ත්‍යාග සහිත තෝරාගත් තරඟාවලි ඇතුළු තරඟාවලිවලට සහභාගී විය හැක. නමුත් ඔබේ උපකරණය නැති වුවහොත්, යෙදුම නැවත ස්ථාපනය කළහොත්, නව දුරකතනයක් ගත්හොත්, හෝ පිටවුවහොත්, ඔබේ අනන්‍ය ගිණුමට තිබෙන සම්බන්ධය නැතිවෙයි සහ එම අනන්‍ය ගිණුමට නැවත පිවිසීමට නොහැකි වේ. ඔබ ඉදිරියට යාමට කැමතිද?</string>
+    <string name="bd_start_playing">ක්‍රීඩා කිරීම අරඹන්න</string>
+    <string name="bd_start_supporting">ගිණුම් විස්තර ලබා දීම අවශ්‍ය නැත.</string>
+    <string name="bd_start_payout_help">ත්‍යාගයක් දිනා ගත්තොත් පමණක් මුදල් ලබා ගැනීමට අවශ්‍ය විස්තර ලබා දෙන්න.</string>
 </resources>
