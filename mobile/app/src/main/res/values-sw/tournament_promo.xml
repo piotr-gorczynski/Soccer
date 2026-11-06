@@ -3,4 +3,5 @@
     <string name="tournament_promo_eligibility">Ushiriki bila malipo · %1$d+</string>
     <string name="tournament_promo_deadline">Mwisho wa usajili: %1$s</string>
     <string name="tournament_promo_join">Jiunge na mashindano →</string>
+    <string name="tournament_promo_payout">Zawadi inalipwa kupitia %1$s</string>
 </resources>

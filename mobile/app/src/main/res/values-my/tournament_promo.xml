@@ -3,4 +3,5 @@
     <string name="tournament_promo_eligibility">အခမဲ့ပါဝင်နိုင်သည် · %1$d+</string>
     <string name="tournament_promo_deadline">စာရင်းသွင်းနောက်ဆုံးရက်: %1$s</string>
     <string name="tournament_promo_join">ပြိုင်ပွဲတွင် ပါဝင်ရန် →</string>
+    <string name="tournament_promo_payout">ဆုငွေကို %1$s မှတစ်ဆင့် ပေးချေမည်</string>
 </resources>

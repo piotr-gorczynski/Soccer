@@ -3,4 +3,7 @@
     <string name="tournament_promo_eligibility">Free entry · %1$d+</string>
     <string name="tournament_promo_deadline">Registration ends: %1$s</string>
     <string name="tournament_promo_join">Join tournament →</string>
+    <string name="tournament_promo_payout">Prize paid via %1$s</string>
+    <string name="tournament_payout_bkash" translatable="false">bKash</string>
+    <string name="tournament_payout_rocket" translatable="false">Rocket</string>
 </resources>

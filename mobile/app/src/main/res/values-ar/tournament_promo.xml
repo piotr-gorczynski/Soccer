@@ -3,4 +3,5 @@
     <string name="tournament_promo_eligibility">المشاركة مجانية · %1$d+</string>
     <string name="tournament_promo_deadline">آخر موعد للتسجيل: %1$s</string>
     <string name="tournament_promo_join">انضم إلى البطولة →</string>
+    <string name="tournament_promo_payout">تُدفع الجائزة عبر %1$s</string>
 </resources>

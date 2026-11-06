@@ -3,4 +3,5 @@
     <string name="tournament_promo_eligibility">Fandraisana anjara maimaimpoana · %1$d+</string>
     <string name="tournament_promo_deadline">Faran’ny fisoratana anarana: %1$s</string>
     <string name="tournament_promo_join">Hiditra amin’ny fifaninanana →</string>
+    <string name="tournament_promo_payout">Aloa amin’ny alalan’ny %1$s ny loka</string>
 </resources>

@@ -11,11 +11,14 @@ final class TournamentPromotion {
     final String id, name, regulationId, currency;
     final long firstPrize, deadline, serverTime;
     final int minimumAge;
+    final List<String> payoutMethods;
 
     private TournamentPromotion(String id, String name, String regulationId, String currency,
-                                long prize, long deadline, long serverTime, int minimumAge) {
+                                long prize, long deadline, long serverTime, int minimumAge,
+                                List<String> payoutMethods) {
         this.id=id; this.name=name; this.regulationId=regulationId; this.currency=currency;
         this.firstPrize=prize; this.deadline=deadline; this.serverTime=serverTime; this.minimumAge=minimumAge;
+        this.payoutMethods = java.util.Collections.unmodifiableList(payoutMethods);
     }
 
     static boolean validId(String id) { return id != null && id.matches("[A-Za-z0-9_-]{1,128}"); }
@@ -44,7 +47,16 @@ final class TournamentPromotion {
         if (!validId(id) || !validId(regulation) || name == null || name.isBlank() || name.length()>200
                 || !"BDT".equals(m.get("currency")) || prize<=0 || now<=0 || deadline<=now
                 || age<18 || age>120) return null;
-        return new TournamentPromotion(id,name,regulation,"BDT",prize,deadline,now,(int)age);
+        List<String> payoutMethods = new ArrayList<>();
+        if (m.get("payoutMethods") instanceof List<?> methods) {
+            for (Object method : methods) {
+                if (method instanceof String idValue && ("bkash".equals(idValue) || "rocket".equals(idValue))
+                        && !payoutMethods.contains(idValue)) {
+                    payoutMethods.add(idValue);
+                }
+            }
+        }
+        return new TournamentPromotion(id,name,regulation,"BDT",prize,deadline,now,(int)age,payoutMethods);
     }
 
     static boolean isOpen(DocumentSnapshot doc, long now) {

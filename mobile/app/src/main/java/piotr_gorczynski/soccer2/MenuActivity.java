@@ -1007,7 +1007,9 @@ public class MenuActivity extends BaseActivity {
         View promotion=findViewById(R.id.tournamentPromoCard);
         if (AppFlavourDetector.isBangladeshFlavour(this) && promotion!=null) {
             tournamentPromotionCard=new TournamentPromotionCard(promotion,
-                    TournamentPromotionCard.firebaseLoader(),this::openTournamentPromotion);
+                    TournamentPromotionCard.firebaseLoader(), this::openTournamentPromotion,
+                    () -> hasWindowFocus() && (loadingOverlay == null || loadingOverlay.getVisibility() == View.GONE),
+                    analyticsManager::trackTournamentCardImpression);
         }
         
         // Check and show in-app messaging for v7/v8 users

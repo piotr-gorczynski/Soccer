@@ -1,10 +1,12 @@
 package piotr_gorczynski.soccer2;
 
+import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.google.android.gms.tasks.Task;
@@ -17,9 +19,12 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 
 /** Activity-owned offer list; stopped requests and expired cards cannot navigate. */
@@ -28,6 +33,11 @@ final class TournamentPromotionCard {
     private final LinearLayout container;
     private final Loader loader;
     private final Consumer<TournamentPromotion> click;
+    private final Consumer<TournamentPromotion> impression;
+    private final BooleanSupplier menuVisible;
+    private final Set<String> impressedIds = new HashSet<>();
+    private final Rect visibleBounds = new Rect();
+    private final ViewTreeObserver.OnPreDrawListener visibilityListener = this::recordVisibleCards;
     private final Handler handler=new Handler(Looper.getMainLooper());
     private final Runnable expire=this::hideExpired;
     private final Runnable refresh=this::refresh;
@@ -37,11 +47,19 @@ final class TournamentPromotionCard {
     private static final class Entry {
         final View view;
         final long expiresAt;
-        Entry(View view,long expiresAt) { this.view=view; this.expiresAt=expiresAt; }
+        final TournamentPromotion offer;
+        Entry(View view, long expiresAt, TournamentPromotion offer) {
+            this.view = view;
+            this.expiresAt = expiresAt;
+            this.offer = offer;
+        }
     }
 
-    TournamentPromotionCard(View container, Loader loader, Consumer<TournamentPromotion> click) {
+    TournamentPromotionCard(View container, Loader loader, Consumer<TournamentPromotion> click,
+                            BooleanSupplier menuVisible, Consumer<TournamentPromotion> impression) {
         this.container=(LinearLayout)container; this.loader=loader; this.click=click;
+        this.menuVisible = menuVisible;
+        this.impression = impression;
     }
     static Loader firebaseLoader() {
         return () -> {
@@ -71,7 +89,8 @@ final class TournamentPromotionCard {
                     TournamentPromotion offer=offers.get(i);
                     visible.add(Map.of("id",offer.id,"name",offer.name,"regulationId",offer.regulationId,
                             "currency",offer.currency,"firstPrize",offer.firstPrize,
-                            "registrationDeadlineMillis",offer.deadline,"minimumAge",offer.minimumAge));
+                            "registrationDeadlineMillis",offer.deadline,"minimumAge",offer.minimumAge,
+                            "payoutMethods",offer.payoutMethods));
                 }
             }
             Map<String,Object> result=new HashMap<>();
@@ -81,9 +100,26 @@ final class TournamentPromotionCard {
         });
     }
     void start() {
-        active=true;
+        if (!active) {
+            active = true;
+            container.getViewTreeObserver().addOnPreDrawListener(visibilityListener);
+        }
         hide();
         refresh();
+    }
+
+    private boolean recordVisibleCards() {
+        if (!active || entries.isEmpty() || !container.isShown() || !menuVisible.getAsBoolean()) return true;
+        long now = SystemClock.elapsedRealtime();
+        for (Entry entry : entries) {
+            if (entry.expiresAt > now && !impressedIds.contains(entry.offer.id)
+                    && entry.view.isAttachedToWindow() && entry.view.isShown()
+                    && entry.view.getGlobalVisibleRect(visibleBounds) && !visibleBounds.isEmpty()) {
+                impressedIds.add(entry.offer.id);
+                impression.accept(entry.offer);
+            }
+        }
+        return true;
     }
     private void hide() {
         entries.clear(); container.removeAllViews(); container.setVisibility(View.GONE);
@@ -105,7 +141,7 @@ final class TournamentPromotionCard {
     private void addCard(TournamentPromotion offer) {
         View card=LayoutInflater.from(container.getContext()).inflate(R.layout.item_tournament_promotion,container,false);
         long expiresAt=SystemClock.elapsedRealtime()+offer.deadline-offer.serverTime;
-        Entry entry=new Entry(card,expiresAt);
+        Entry entry=new Entry(card,expiresAt,offer);
         entries.add(entry);
         card.setOnClickListener(v -> {
             if (active && entries.contains(entry) && SystemClock.elapsedRealtime()<expiresAt) click.accept(offer);
@@ -117,6 +153,17 @@ final class TournamentPromotionCard {
                         context.getResources().getConfiguration().getLocales().get(0)).format(offer.firstPrize),offer.currency));
         ((TextView)card.findViewById(R.id.tournamentPromoEligibility)).setText(context.getString(
                 R.string.tournament_promo_eligibility,offer.minimumAge));
+        if (!offer.payoutMethods.isEmpty()) {
+            List<String> labels = new ArrayList<>();
+            for (String method : offer.payoutMethods) {
+                labels.add(context.getString("bkash".equals(method)
+                        ? R.string.tournament_payout_bkash : R.string.tournament_payout_rocket));
+            }
+            TextView payout = card.findViewById(R.id.tournamentPromoPayout);
+            payout.setText(context.getString(R.string.tournament_promo_payout,
+                    android.text.TextUtils.join(" / ", labels)));
+            payout.setVisibility(View.VISIBLE);
+        }
         ((TextView)card.findViewById(R.id.tournamentPromoDeadline)).setText(context.getString(
                 R.string.tournament_promo_deadline,android.text.format.DateFormat.getMediumDateFormat(context).format(new Date(offer.deadline))));
         container.addView(card);
@@ -134,6 +181,8 @@ final class TournamentPromotionCard {
         if (!entries.isEmpty()) handler.postDelayed(expire,next);
     }
     void stop() {
+        container.getViewTreeObserver().removeOnPreDrawListener(visibilityListener);
+        impressedIds.clear();
         active=false; generation++;
         handler.removeCallbacks(refresh);
         hide();

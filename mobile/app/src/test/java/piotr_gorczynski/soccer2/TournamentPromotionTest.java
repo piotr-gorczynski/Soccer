@@ -78,7 +78,8 @@ public class TournamentPromotionTest {
             Configuration c=new Configuration(context.getResources().getConfiguration());
             c.setLocale(Locale.forLanguageTag(lang)); Context localized=context.createConfigurationContext(c);
             for(int id:new int[]{R.string.tournament_promo_join,R.string.tournament_promo_prize,
-                    R.string.tournament_promo_eligibility,R.string.tournament_promo_deadline}) {
+                    R.string.tournament_promo_eligibility,R.string.tournament_promo_deadline,
+                    R.string.tournament_promo_payout}) {
                 assertFalse(localized.getString(id).isBlank());
                 if(!lang.equals("en")) assertNotEquals("Missing "+lang,context.getString(id),localized.getString(id));
             }
@@ -112,7 +113,7 @@ public class TournamentPromotionTest {
         View card=root.findViewById(R.id.tournamentPromoCard);
         TaskCompletionSource<Object> response=new TaskCompletionSource<>();
         AtomicInteger clicks=new AtomicInteger();
-        controller=new TournamentPromotionCard(card,()->response.getTask(),offer->{assertEquals("cup",offer.id);clicks.incrementAndGet();});
+        controller=new TournamentPromotionCard(card,()->response.getTask(),offer->{assertEquals("cup",offer.id);clicks.incrementAndGet();},()->false,offer->fail());
         controller.start(); response.setResult(response()); shadowOf(Looper.getMainLooper()).idle();
         assertEquals(View.VISIBLE,card.getVisibility());
         View item=((LinearLayout)card).getChildAt(0);
@@ -125,10 +126,10 @@ public class TournamentPromotionTest {
         if(!AnalyticsManager.isBangladesh()) return;
         View card=LayoutInflater.from(context).inflate(R.layout.activity_menu,null).findViewById(R.id.tournamentPromoCard);
         TaskCompletionSource<Object> response=new TaskCompletionSource<>();
-        controller=new TournamentPromotionCard(card,()->response.getTask(),offer->fail());
+        controller=new TournamentPromotionCard(card,()->response.getTask(),offer->fail(),()->true,offer->fail());
         controller.start(); controller.stop(); response.setResult(response()); shadowOf(Looper.getMainLooper()).idle();
         assertEquals(View.GONE,card.getVisibility());
-        controller=new TournamentPromotionCard(card,()->com.google.android.gms.tasks.Tasks.forException(new IllegalStateException("network")),offer->fail());
+        controller=new TournamentPromotionCard(card,()->Tasks.forException(new IllegalStateException("network")),offer->fail(),()->true,offer->fail());
         controller.start(); shadowOf(Looper.getMainLooper()).idle(); assertEquals(View.GONE,card.getVisibility());
     }
     @Test public void participantIsHiddenNonParticipantShownAndGuestDoesNotReadMembership() {
@@ -162,7 +163,7 @@ public class TournamentPromotionTest {
         if(!AnalyticsManager.isBangladesh()) return;
         LinearLayout cards=(LinearLayout)LayoutInflater.from(context).inflate(R.layout.activity_menu,null).findViewById(R.id.tournamentPromoCard);
         java.util.List<String> clicked=new java.util.ArrayList<>();
-        controller=new TournamentPromotionCard(cards,()->Tasks.forResult(multipleResponse()),offer->clicked.add(offer.id));
+        controller=new TournamentPromotionCard(cards,()->Tasks.forResult(multipleResponse()),offer->clicked.add(offer.id),()->false,offer->fail());
         controller.start(); shadowOf(Looper.getMainLooper()).idle();
         assertEquals(2,cards.getChildCount());
         cards.getChildAt(0).performClick(); cards.getChildAt(1).performClick();
@@ -191,5 +192,84 @@ public class TournamentPromotionTest {
         var first=((java.util.List<?>)multipleResponse().get("tournaments")).get(0);
         assertEquals(1,TournamentPromotion.parseAll(Map.of("serverTimeMillis",1000000L,
                 "tournaments",java.util.List.of(first,Map.of("id","invalid"),first))).size());
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test public void payoutLineUsesOnlySupportedMethodsAndHidesWhenMissing() {
+        if (!AnalyticsManager.isBangladesh()) return;
+        var payload = response();
+        var offer = (Map<String,Object>) payload.get("tournament");
+        var cards = new LinearLayout(context);
+        controller = new TournamentPromotionCard(cards, () -> Tasks.forResult(payload),
+                ignored -> fail(), () -> false, ignored -> fail());
+        for (var methods : java.util.List.of(java.util.List.of("bkash"),
+                java.util.List.of("bkash", "nagad", "rocket"), java.util.List.of("nagad"))) {
+            offer.put("payoutMethods", methods);
+            controller.start();
+            shadowOf(Looper.getMainLooper()).idle();
+            TextView payout = cards.getChildAt(0).findViewById(R.id.tournamentPromoPayout);
+            if (methods.contains("bkash")) {
+                assertEquals(View.VISIBLE, payout.getVisibility());
+                assertEquals("Prize paid via " + (methods.contains("rocket") ? "bKash / Rocket" : "bKash"),
+                        payout.getText().toString());
+            } else {
+                assertEquals(View.GONE, payout.getVisibility());
+            }
+        }
+        Configuration bn = new Configuration(context.getResources().getConfiguration());
+        bn.setLocale(Locale.forLanguageTag("bn"));
+        assertEquals("পুরস্কারের টাকা bKash / Rocket-এর মাধ্যমে দেওয়া হবে",
+                context.createConfigurationContext(bn).getString(R.string.tournament_promo_payout, "bKash / Rocket"));
+    }
+
+    @Test public void onlyVisibleCardsCountOnceUntilMenuStops() {
+        if (!AnalyticsManager.isBangladesh()) return;
+        var activity = org.robolectric.Robolectric.buildActivity(android.app.Activity.class).setup();
+        try {
+            var cards = new LinearLayout(context);
+            cards.setOrientation(LinearLayout.VERTICAL);
+            activity.get().setContentView(cards);
+            var visible = new java.util.concurrent.atomic.AtomicBoolean(false);
+            var impressions = new java.util.ArrayList<String>();
+            var result = new java.util.concurrent.atomic.AtomicReference<>(
+                    Tasks.<Object>forResult(Map.of("tournaments", java.util.List.of())));
+            controller = new TournamentPromotionCard(cards, result::get, ignored -> fail(),
+                    visible::get, offer -> impressions.add(offer.id));
+            controller.start();
+            shadowOf(Looper.getMainLooper()).idle();
+            drawCards(cards);
+            assertTrue(impressions.isEmpty());
+            result.set(Tasks.forException(new IllegalStateException("unavailable")));
+            shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(60));
+            drawCards(cards);
+            assertTrue(impressions.isEmpty());
+            result.set(Tasks.forResult(response()));
+            shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(60));
+            drawCards(cards);
+            assertTrue(impressions.isEmpty());
+            visible.set(true);
+            drawCards(cards);
+            drawCards(cards);
+            assertEquals(java.util.List.of("cup"), impressions);
+            result.set(Tasks.forResult(multipleResponse()));
+            shadowOf(Looper.getMainLooper()).idleFor(Duration.ofSeconds(60));
+            drawCards(cards);
+            assertEquals(java.util.List.of("cup", "second"), impressions);
+            controller.stop();
+            controller.start();
+            shadowOf(Looper.getMainLooper()).idle();
+            drawCards(cards);
+            assertEquals(java.util.List.of("cup", "second", "cup", "second"), impressions);
+        } finally {
+            controller.stop();
+            activity.pause().stop().destroy();
+        }
+    }
+
+    private void drawCards(LinearLayout cards) {
+        cards.measure(View.MeasureSpec.makeMeasureSpec(450, View.MeasureSpec.EXACTLY),
+                View.MeasureSpec.makeMeasureSpec(700, View.MeasureSpec.EXACTLY));
+        cards.layout(0, 0, 450, 700);
+        cards.getViewTreeObserver().dispatchOnPreDraw();
     }
 }

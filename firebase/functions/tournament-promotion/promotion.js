@@ -35,7 +35,13 @@ async function findPromotion(db, now) {
     if (rules?.status === "active" && rules.market === "BD"
         && Number.isSafeInteger(rules.minimumAge) && rules.minimumAge >= 18
         && rules.prizeRules?.cashPrizesEnabled === true) {
-      promotions.push({ ...candidate, minimumAge: rules.minimumAge });
+      // Match the supported Bangladesh methods in join-tournament/eligibility.js.
+      // The regulation decides which of those methods this tournament offers.
+      const configured = rules.prizeRules.payoutMethods;
+      const payoutMethods = Array.isArray(configured)
+        ? [...new Set(configured.filter(method => method === "bkash" || method === "rocket"))]
+        : [];
+      promotions.push({ ...candidate, minimumAge: rules.minimumAge, payoutMethods });
     }
   }
   return promotions;

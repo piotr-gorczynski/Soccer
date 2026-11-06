@@ -22,6 +22,10 @@
             <TextView android:id="@+id/tournamentPromoEligibility"
                 android:layout_width="match_parent" android:layout_height="wrap_content"
                 android:textColor="@color/colorGreenDark" android:textSize="14sp" />
+            <TextView android:id="@+id/tournamentPromoPayout"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:textColor="@color/colorGreenDark" android:textSize="14sp"
+                android:visibility="gone" />
             <TextView android:id="@+id/tournamentPromoDeadline"
                 android:layout_width="match_parent" android:layout_height="wrap_content"
                 android:textColor="@color/colorGreenDark" android:textSize="14sp" />

@@ -3,4 +3,5 @@
     <string name="tournament_promo_eligibility">ເຂົ້າຮ່ວມຟຣີ · %1$d+</string>
     <string name="tournament_promo_deadline">ມື້ສຸດທ້າຍລົງທະບຽນ: %1$s</string>
     <string name="tournament_promo_join">ເຂົ້າຮ່ວມການແຂ່ງຂັນ →</string>
+    <string name="tournament_promo_payout">ຈ່າຍເງິນລາງວັນຜ່ານ %1$s</string>
 </resources>

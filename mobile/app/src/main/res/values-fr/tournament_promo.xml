@@ -3,4 +3,5 @@
     <string name="tournament_promo_eligibility">Participation gratuite · %1$d+</string>
     <string name="tournament_promo_deadline">Fin des inscriptions : %1$s</string>
     <string name="tournament_promo_join">Rejoindre le tournoi →</string>
+    <string name="tournament_promo_payout">Prix versé via %1$s</string>
 </resources>

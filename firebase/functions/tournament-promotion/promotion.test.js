@@ -46,3 +46,22 @@ test("empty collection returns no promotion", async () => {
   const db={collection:()=>({where:()=>({get:async()=>({docs:[]})})})};
   assert.deepEqual(await findPromotion(db,now),[]);
 });
+
+test("payout projection returns only configured supported identifiers without changing eligibility", async () => {
+  for (const [configured, expected] of [
+    [["bkash"], ["bkash"]],
+    [["rocket", "bkash", "rocket", "nagad", { account: "private" }], ["rocket", "bkash"]],
+    [["nagad"], []],
+    [undefined, []]
+  ]) {
+    const db = { collection: name => name === "tournaments"
+      ? { where: () => ({ get: async () => ({ docs: [{ id: "cup", data: tournament }] }) }) }
+      : { doc: () => ({ get: async () => ({ data: () => ({
+        status: "active", market: "BD", minimumAge: 18,
+        prizeRules: { cashPrizesEnabled: true, payoutMethods: configured, wallet: "private" }
+      }) }) }) } };
+    assert.deepEqual(await findPromotion(db, now), [{
+      ...projectTournament("cup", tournament(), now), minimumAge: 18, payoutMethods: expected
+    }]);
+  }
+});

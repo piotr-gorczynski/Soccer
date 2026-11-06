@@ -3,4 +3,5 @@
     <string name="tournament_promo_eligibility">ចូលរួមដោយឥតគិតថ្លៃ · %1$d+</string>
     <string name="tournament_promo_deadline">ថ្ងៃផុតកំណត់ចុះឈ្មោះ៖ %1$s</string>
     <string name="tournament_promo_join">ចូលរួមការប្រកួត →</string>
+    <string name="tournament_promo_payout">ប្រាក់រង្វាន់បើកជូនតាមរយៈ %1$s</string>
 </resources>

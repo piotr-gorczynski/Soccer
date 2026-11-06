@@ -3,4 +3,5 @@
     <string name="tournament_promo_eligibility">නොමිලේ සහභාගී වන්න · %1$d+</string>
     <string name="tournament_promo_deadline">ලියාපදිංචිය අවසන් වන දිනය: %1$s</string>
     <string name="tournament_promo_join">තරගාවලියට එක්වන්න →</string>
+    <string name="tournament_promo_payout">ත්‍යාග මුදල %1$s හරහා ගෙවනු ලැබේ</string>
 </resources>

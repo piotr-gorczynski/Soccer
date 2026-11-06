@@ -30,6 +30,26 @@ public class AnalyticsFunnelTest {
             verifyNoMoreInteractions(sdk);
         });
     }
+    @Test public void tournamentImpressionReportsOnlyPublicFieldsAndOnlyInBangladesh() {
+        withManager((manager, sdk) -> {
+            manager.trackTournamentCardImpression(TournamentPromotion.parse(TournamentPromotionTest.response()));
+            if (!AnalyticsManager.isBangladesh()) {
+                verifyNoInteractions(sdk);
+                return;
+            }
+            ArgumentCaptor<Bundle> params = ArgumentCaptor.forClass(Bundle.class);
+            verify(sdk).logEvent(eq("tournament_card_impression"), params.capture());
+            Bundle value = params.getValue();
+            assertEquals(5, value.size());
+            assertEquals("cup", value.getString("tournament_id"));
+            assertEquals(2300L, value.getLong("prize_bdt"));
+            assertEquals("BDT", value.getString("currency"));
+            assertEquals(1L, value.getLong("free_entry"));
+            assertEquals(1L, value.getLong("registration_open"));
+            verifyNoMoreInteractions(sdk);
+        });
+    }
+
     @Test public void firebaseNetworkExceptionIsReportedAsNetworkFailure() {
         withManager((manager,sdk)->{
             manager.trackAuthFailure("anonymous", "authentication",

@@ -3,4 +3,5 @@
     <string name="tournament_promo_eligibility">निःशुल्क प्रवेश · %1$d+</string>
     <string name="tournament_promo_deadline">पंजीकरण की अंतिम तिथि: %1$s</string>
     <string name="tournament_promo_join">टूर्नामेंट में शामिल हों →</string>
+    <string name="tournament_promo_payout">इनाम का भुगतान %1$s के ज़रिए होगा</string>
 </resources>

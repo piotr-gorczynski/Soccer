@@ -3,4 +3,5 @@
     <string name="tournament_promo_eligibility">ነፃ ተሳትፎ · %1$d+</string>
     <string name="tournament_promo_deadline">የምዝገባ መጨረሻ፦ %1$s</string>
     <string name="tournament_promo_join">ውድድሩን ይቀላቀሉ →</string>
+    <string name="tournament_promo_payout">ሽልማቱ በ%1$s ይከፈላል</string>
 </resources>

@@ -38,6 +38,19 @@ public class AnalyticsManager {
         catch (Exception ignored) { Log.w(TAG,"Could not report tournament card click"); }
     }
 
+    void trackTournamentCardImpression(TournamentPromotion offer) {
+        if (!isBangladesh() || firebaseAnalytics == null) return;
+        Bundle params = new Bundle();
+        params.putString("tournament_id", offer.id);
+        params.putLong("prize_bdt", offer.firstPrize);
+        params.putString("currency", offer.currency);
+        // The advertised registration flow has no entry fee, and expired cards cannot report.
+        params.putLong("free_entry", 1);
+        params.putLong("registration_open", 1);
+        try { firebaseAnalytics.logEvent("tournament_card_impression", params); }
+        catch (Exception ignored) { Log.w(TAG, "Could not report tournament card impression"); }
+    }
+
     public void trackAnonymousWarning(String action) {
         String choice = allowed(action, "shown", "proceed", "cancel", "dismiss");
         if (crashlytics != null) {
