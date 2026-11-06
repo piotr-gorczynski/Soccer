@@ -1,7 +1,7 @@
 <en-GB>
-
+🏆 Tournament cards now show which payment methods winners can use to receive their prizes, such as bKash and Rocket.
 </en-GB>
 
 <bn-BD>
-
+🏆 বিজয়ীরা বিকাশ বা রকেটের মতো কোন মাধ্যমে পুরস্কারের টাকা নিতে পারবেন, তা এখন টুর্নামেন্টের কার্ডেই দেখা যায়।
 </bn-BD>
