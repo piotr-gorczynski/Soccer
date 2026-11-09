@@ -1,0 +1,71 @@
+<en-GB>
+🌐 Fixed the Settings screen not immediately updating to the selected language.
+</en-GB>
+
+<pl-PL>
+🌐 Naprawiono odświeżanie ekranu ustawień po zmianie języka — wybrany język jest widoczny od razu.
+</pl-PL>
+
+<de-DE>
+🌐 Die Einstellungen werden nach einem Sprachwechsel jetzt sofort in der gewählten Sprache angezeigt.
+</de-DE>
+
+<fr-FR>
+🌐 L’écran des paramètres s’affiche désormais immédiatement dans la langue sélectionnée.
+</fr-FR>
+
+<es-ES>
+🌐 La pantalla de ajustes ahora se actualiza inmediatamente al idioma seleccionado.
+</es-ES>
+
+<ur>
+🌐 زبان تبدیل کرنے کے بعد ترتیبات کی اسکرین اب فوراً منتخب کردہ زبان میں دکھائی دیتی ہے۔
+</ur>
+
+<bn-BD>
+🌐 ভাষা বদলানোর পর সেটিংসের পর্দা এখন সঙ্গে সঙ্গে নির্বাচিত ভাষায় দেখা যায়।
+</bn-BD>
+
+<ne-NP>
+🌐 भाषा परिवर्तन गरेपछि सेटिङको स्क्रिन अब तुरुन्तै चयन गरिएको भाषामा देखिन्छ।
+</ne-NP>
+
+<hi-IN>
+🌐 भाषा बदलने के बाद सेटिंग्स की स्क्रीन अब तुरंत चुनी गई भाषा में दिखाई देती है।
+</hi-IN>
+
+<am>
+🌐 ቋንቋ ከቀየሩ በኋላ የቅንብሮች ማያ ገጽ አሁን ወዲያውኑ በተመረጠው ቋንቋ ይታያል።
+</am>
+
+<ar>
+🌐 تظهر شاشة الإعدادات الآن باللغة المختارة فور تغيير اللغة.
+</ar>
+
+<my-MM>
+🌐 ဘာသာစကားပြောင်းပြီးနောက် ဆက်တင်မျက်နှာပြင်ကို ရွေးချယ်ထားသော ဘာသာစကားဖြင့် ချက်ချင်းပြသပေးပါသည်။
+</my-MM>
+
+<km-KH>
+🌐 បន្ទាប់ពីប្ដូរភាសា អេក្រង់ការកំណត់នឹងបង្ហាញជាភាសាដែលបានជ្រើសរើសភ្លាមៗ។
+</km-KH>
+
+<lo-LA>
+🌐 ຫຼັງຈາກປ່ຽນພາສາ ໜ້າການຕັ້ງຄ່າຈະສະແດງເປັນພາສາທີ່ເລືອກທັນທີ.
+</lo-LA>
+
+<mn-MN>
+🌐 Хэл сольсны дараа тохиргооны дэлгэц сонгосон хэлээр шууд харагддаг боллоо.
+</mn-MN>
+
+<fa-IR>
+🌐 پس از تغییر زبان، صفحه تنظیمات اکنون بلافاصله به زبان انتخاب‌شده نمایش داده می‌شود.
+</fa-IR>
+
+<si-LK>
+🌐 භාෂාව වෙනස් කළ පසු සැකසුම් තිරය දැන් තෝරාගත් භාෂාවෙන් වහාම පෙන්වයි.
+</si-LK>
+
+<sw>
+🌐 Baada ya kubadilisha lugha, skrini ya mipangilio sasa inaonekana mara moja katika lugha iliyochaguliwa.
+</sw>

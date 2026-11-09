@@ -336,19 +336,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             String selectedLocalizedLanguage = languages[which];
             String languageCode = LanguageManager.getLanguageCodeFromLocalizedName(requireContext(), selectedLocalizedLanguage);
             
-            // Set the language
-            LanguageManager.setLanguage(requireContext(), languageCode);
-            
-            // Update the preference summary
-            Preference languagePref = findPreference("language_preference");
-            if (languagePref != null) {
-                updateLanguagePreferenceSummary(languagePref);
-            }
-            
+            SettingsActivity activity = (SettingsActivity) requireActivity();
             dialog.dismiss();
-            
-            // Restart the activity to apply the language change
-            requireActivity().recreate();
+            activity.changeLanguage(languageCode);
         });
         builder.setNegativeButton(android.R.string.cancel, null);
         builder.show();

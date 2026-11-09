@@ -1,0 +1,9 @@
+<en-GB>
+🌐 Fixed the Settings screen not immediately updating to the selected language.
+🔐 Fixed Google sign-in for the Bangladesh app distributed through Google Play by registering its missing signing certificates in Firebase.
+</en-GB>
+
+<bn-BD>
+🌐 ভাষা বদলানোর পর সেটিংসের পর্দা এখন সঙ্গে সঙ্গে নির্বাচিত ভাষায় দেখা যায়।
+🔐 Firebase-এ অনুপস্থিত সাইনিং সার্টিফিকেট যোগ করে Google Play থেকে ইনস্টল করা বাংলাদেশ সংস্করণে Google দিয়ে লগইন করার সমস্যা ঠিক করা হয়েছে।
+</bn-BD>

@@ -1,5 +1,6 @@
 package piotr_gorczynski.soccer2;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import androidx.appcompat.widget.Toolbar;
@@ -30,6 +31,18 @@ public class SettingsActivity extends BaseActivity {
                 .beginTransaction()
                 .replace(R.id.settings_container, new SettingsFragment())
                 .commit();
+    }
+
+    void changeLanguage(String languageCode) {
+        if (languageCode.equals(LanguageManager.getCurrentLanguageCode(this))) return;
+
+        // Finish before changing AppCompat locales, so this Activity is not also
+        // scheduled for recreation. A fresh Activity gets the selected locale in
+        // BaseActivity.attachBaseContext, including on Android 11 devices where
+        // recreating the existing Settings screen can restore English resources.
+        finish();
+        LanguageManager.setLanguage(this, languageCode);
+        startActivity(new Intent(this, SettingsActivity.class));
     }
 
     @Override
