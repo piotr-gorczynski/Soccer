@@ -356,5 +356,10 @@ steps:
           attempt=$((attempt + 1))
         done
 
+  # Bangladesh has its own Play signing key; copying Global certificates is insufficient.
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    entrypoint: 'python3'
+    args: ['gcp/cloud-build/register_bd_play_certificates.py']
+
 options:
   logging: CLOUD_LOGGING_ONLY

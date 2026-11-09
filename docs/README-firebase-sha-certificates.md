@@ -6,6 +6,21 @@ The SHA certificate copy automation now lives in the dedicated Cloud Build confi
 
 ## Why This Feature Exists
 
+### Production Bangladesh Play signing key
+
+The Bangladesh app has its own Google Play signing key. Since 2026-11-09,
+`sha_copy.yaml` also runs `register_bd_play_certificates.py` to register and verify
+its SHA-1 and SHA-256 in `soccer-prod-1754048346`, specifically for
+`piotr_gorczynski.soccer2.bd`. The fingerprints are public and were read directly
+from that app's Play Console signing page. Existing certificates are preserved;
+repeated runs add no duplicates. Other Firebase projects are skipped by this step.
+When the Play signing key changes, update these fingerprints from the Bangladesh
+Play Console, rather than copying the Global app's signing key.
+
+Run the existing `065-sha-copy` trigger with the updated source branch and
+`_ENVIRONMENT=prod`. Its normal default remains `dev`. This configuration fix does
+not require publishing a new APK.
+
 When creating multiple package variants (product flavors) of the same Android app in Firebase, each variant needs the same SHA certificates for features like:
 - Google Sign-In
 - Facebook Login
