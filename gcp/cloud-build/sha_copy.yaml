@@ -148,7 +148,7 @@ steps:
         target_sha_file=/workspace/target_sha.json
         missing_file=/workspace/sha_missing.txt
 
-        python3 - <<'PY'
+        "$(gcloud info --format='value(basic.python_location)')" - <<'PY'
         import json
         from pathlib import Path
 
@@ -300,7 +300,7 @@ steps:
             exit 1
           fi
 
-          if python3 - <<'PY'
+          if "$(gcloud info --format='value(basic.python_location)')" - <<'PY'
         import json
         from pathlib import Path
 
@@ -358,8 +358,10 @@ steps:
 
   # Bangladesh has its own Play signing key; copying Global certificates is insufficient.
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
-    entrypoint: 'python3'
-    args: ['gcp/cloud-build/register_bd_play_certificates.py']
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - 'exec "$(gcloud info --format=''value(basic.python_location)'')" gcp/cloud-build/register_bd_play_certificates.py'
 
 options:
   logging: CLOUD_LOGGING_ONLY
