@@ -4,6 +4,15 @@ from register_bd_play_certificates import APP_ID, CERTIFICATES, PACKAGE, PROJECT
 
 
 class RegisterCertificatesTest(unittest.TestCase):
+    def test_fingerprints_match_play_console(self):
+        expected = {
+            ("SHA_1", "94:A9:A2:4A:56:CC:C3:E5:0B:29:5F:CF:F2:D4:40:93:CD:DD:FD:CF"),
+            ("SHA_256", "45:1A:D5:81:33:F6:8D:4C:51:E2:C3:7E:8E:E2:D3:95:2C:A0:81:60:C2:58:02:3E:8D:D1:1C:51:3E:DA:50:02"),
+        }
+        self.assertEqual(CERTIFICATES, {(k, v.replace(":", "").lower()) for k, v in expected})
+        for kind, value in CERTIFICATES:
+            self.assertEqual(len(bytes.fromhex(value)), {"SHA_1": 20, "SHA_256": 32}[kind])
+
     def fake_api(self, existing=None, package=PACKAGE):
         certs = set(existing or [])
         calls = []

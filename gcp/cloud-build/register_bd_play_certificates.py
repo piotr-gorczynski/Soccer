@@ -11,7 +11,7 @@ APP_ID = "1:249008569891:android:76386af0099ba9ba91bb96"
 PACKAGE = "piotr_gorczynski.soccer2.bd"
 # Read from this app's Play Console signing page on 2026-11-09.
 CERTIFICATES = {
-    ("SHA_1", "94a9a24a56ccc3e50b295fcff2d44093cddddfdcf"),
+    ("SHA_1", "94a9a24a56ccc3e50b295fcff2d44093cdddfdcf"),
     ("SHA_256", "451ad58133f68d4c51e2c37e8ee2d3952ca08160c258023e8dd11c513eda5002"),
 }
 
@@ -20,6 +20,11 @@ def reconcile(project, request):
     if project != PROJECT:
         print("Skipping production Bangladesh Play certificates for another project.")
         return
+    for cert_type, fingerprint in CERTIFICATES:
+        expected_length = {"SHA_1": 40, "SHA_256": 64}[cert_type]
+        if len(fingerprint) != expected_length:
+            raise ValueError("Invalid certificate fingerprint length")
+        bytes.fromhex(fingerprint)
     path = f"projects/{PROJECT}/androidApps/{APP_ID}"
     app = request("GET", path)
     if app.get("packageName") != PACKAGE or app.get("appId") != APP_ID:
