@@ -3,6 +3,7 @@
 📋 Clearer tournament rules instructions and a Retry option when loading fails.
 🔎 Improved diagnostics for tournament registration.
 ✨ Removed the outdated animation announcement.
+📱 Improved screen layouts around system bars and camera cutouts.
 </en-GB>
 
 <pl-PL>
@@ -10,6 +11,7 @@
 📋 Czytelniejsze wskazówki w regulaminie turnieju i możliwość ponowienia nieudanego wczytywania.
 🔎 Ulepszono diagnostykę rejestracji do turniejów.
 ✨ Usunięto nieaktualne okienko o wprowadzeniu animacji.
+📱 Poprawiono układ ekranów przy paskach systemowych i wycięciu aparatu.
 </pl-PL>
 
 <de-DE>
@@ -17,6 +19,7 @@
 📋 Klarere Hinweise zu den Turnierregeln und erneutes Laden bei Ladefehlern.
 🔎 Verbesserte Diagnose der Turnieranmeldung.
 ✨ Der veraltete Hinweis zu Animationen wurde entfernt.
+📱 Verbesserte Bildschirmdarstellung an Systemleisten und Kameraaussparungen.
 </de-DE>
 
 <fr-FR>
@@ -24,6 +27,7 @@
 📋 Des consignes plus claires pour le règlement du tournoi et une option pour réessayer en cas d’échec du chargement.
 🔎 Diagnostic amélioré de l’inscription aux tournois.
 ✨ Suppression de l’annonce obsolète sur les animations.
+📱 Meilleur affichage près des barres système et des découpes de caméra.
 </fr-FR>
 
 <es-ES>
@@ -31,6 +35,7 @@
 📋 Instrucciones más claras en el reglamento del torneo y una opción para reintentar si falla la carga.
 🔎 Mejor diagnóstico de la inscripción en torneos.
 ✨ Se ha eliminado el aviso obsoleto sobre las animaciones.
+📱 Mejor diseño junto a las barras del sistema y los recortes de cámara.
 </es-ES>
 
 <ur>
@@ -38,6 +43,7 @@
 📋 ٹورنامنٹ کے قواعد میں واضح ہدایات اور لوڈ نہ ہونے پر دوبارہ کوشش کا اختیار۔
 🔎 ٹورنامنٹ میں اندراج کی تشخیص بہتر بنائی گئی ہے۔
 ✨ اینیمیشن کے بارے میں پرانا اعلان ہٹا دیا گیا ہے۔
+📱 سسٹم بارز اور کیمرے کے کٹ آؤٹ کے قریب اسکرین کی ترتیب بہتر بنائی گئی ہے۔
 </ur>
 
 <bn-BD>
@@ -45,6 +51,7 @@
 📋 টুর্নামেন্টের নিয়মে আরও স্পষ্ট নির্দেশনা এবং লোড না হলে আবার চেষ্টা করার সুবিধা।
 🔎 টুর্নামেন্টে নিবন্ধনের সমস্যা শনাক্ত করার ব্যবস্থা উন্নত করা হয়েছে।
 ✨ অ্যানিমেশন চালু করার পুরোনো ঘোষণাটি সরিয়ে দেওয়া হয়েছে।
+📱 সিস্টেম বার ও ক্যামেরার কাটআউটের পাশে পর্দার বিন্যাস উন্নত করা হয়েছে।
 </bn-BD>
 
 <ne-NP>
@@ -52,6 +59,7 @@
 📋 प्रतियोगिताका नियममा स्पष्ट निर्देशन र लोड हुन नसके फेरि प्रयास गर्ने विकल्प।
 🔎 प्रतियोगिता दर्ताका समस्या पहिचान गर्ने व्यवस्था सुधारिएको छ।
 ✨ एनिमेसनबारे पुरानो सूचना हटाइएको छ।
+📱 सिस्टम बार र क्यामेराको कटआउट वरिपरि स्क्रिनको ढाँचा सुधारिएको छ।
 </ne-NP>
 
 <hi-IN>
@@ -59,6 +67,7 @@
 📋 टूर्नामेंट के नियमों में स्पष्ट निर्देश और लोड न होने पर फिर से कोशिश करने का विकल्प।
 🔎 टूर्नामेंट में पंजीकरण की समस्याओं की जाँच बेहतर की गई है।
 ✨ ऐनिमेशन के बारे में पुरानी सूचना हटा दी गई है।
+📱 सिस्टम बार और कैमरे के कटआउट के पास स्क्रीन का लेआउट बेहतर किया गया है।
 </hi-IN>
 
 <am>
@@ -66,6 +75,7 @@
 📋 የውድድር ደንቦች መመሪያ ግልጽ ሆኗል፤ መጫን ሳይሳካ ሲቀር እንደገና መሞከር ይቻላል።
 🔎 የውድድር ምዝገባ ችግሮችን የመለየት ሂደት ተሻሽሏል።
 ✨ ስለ አኒሜሽን የነበረው የቆየ ማስታወቂያ ተወግዷል።
+📱 በስርዓት አሞሌዎችና በካሜራ ቁርጥ አካባቢ የማያ ገጽ አቀማመጥ ተሻሽሏል።
 </am>
 
 <ar>
@@ -73,6 +83,7 @@
 📋 تعليمات أوضح لقواعد البطولة وخيار لإعادة المحاولة عند فشل التحميل.
 🔎 تحسين تشخيص مشكلات التسجيل في البطولات.
 ✨ إزالة الإعلان القديم عن إضافة الرسوم المتحركة.
+📱 تحسين تخطيط الشاشات حول أشرطة النظام وفتحات الكاميرا.
 </ar>
 
 <my-MM>
@@ -80,6 +91,7 @@
 📋 ပြိုင်ပွဲစည်းမျဉ်းများတွင် ပိုမိုရှင်းလင်းသော လမ်းညွှန်ချက်များနှင့် မတင်နိုင်ပါက ပြန်လည်ကြိုးစားရန် ရွေးချယ်မှု ထည့်ထားပါသည်။
 🔎 ပြိုင်ပွဲစာရင်းသွင်းမှု ပြဿနာများ ရှာဖွေစစ်ဆေးခြင်းကို မြှင့်တင်ထားပါသည်။
 ✨ အန်နီမေးရှင်းအကြောင်း ကြေညာချက်ဟောင်းကို ဖယ်ရှားထားပါသည်။
+📱 စနစ်ဘားများနှင့် ကင်မရာအပေါက်အနီး မျက်နှာပြင်အပြင်အဆင်ကို မြှင့်တင်ထားပါသည်။
 </my-MM>
 
 <km-KH>
@@ -87,6 +99,7 @@
 📋 ការណែនាំអំពីបទបញ្ជាប្រកួតកាន់តែច្បាស់ និងជម្រើសសាកល្បងម្តងទៀតពេលផ្ទុកមិនបាន។
 🔎 កែលម្អការរកមូលហេតុបញ្ហាចុះឈ្មោះប្រកួត។
 ✨ បានលុបសារចាស់អំពីការបន្ថែមចលនាគំនូរ។
+📱 កែលម្អប្លង់អេក្រង់ជុំវិញរបារប្រព័ន្ធ និងចន្លោះកាមេរ៉ា។
 </km-KH>
 
 <lo-LA>
@@ -94,6 +107,7 @@
 📋 ຄຳແນະນຳກົດລະບຽບການແຂ່ງຂັນຊັດເຈນຂຶ້ນ ແລະລອງໃໝ່ໄດ້ເມື່ອໂຫຼດບໍ່ສຳເລັດ.
 🔎 ປັບປຸງການກວດຫາບັນຫາການລົງທະບຽນແຂ່ງຂັນ.
 ✨ ລຶບແຈ້ງການເກົ່າກ່ຽວກັບພາບເຄື່ອນໄຫວແລ້ວ.
+📱 ປັບປຸງການຈັດໜ້າຈໍບໍລິເວນແຖບລະບົບ ແລະຮອຍບາກກ້ອງ.
 </lo-LA>
 
 <mn-MN>
@@ -101,6 +115,7 @@
 📋 Тэмцээний дүрмийн зааврыг тодруулж, ачаалж чадаагүй үед дахин оролдох боломж нэмлээ.
 🔎 Тэмцээний бүртгэлийн алдааг оношлох ажиллагааг сайжрууллаа.
 ✨ Хөдөлгөөнт дүрсний тухай хуучирсан мэдэгдлийг хаслаа.
+📱 Системийн мөр болон камерын ухлаадасны орчмын дэлгэцийн байрлалыг сайжрууллаа.
 </mn-MN>
 
 <fa-IR>
@@ -108,6 +123,7 @@
 📋 راهنمای روشن‌تر برای قوانین مسابقه و امکان تلاش دوباره در صورت بارگیری ناموفق.
 🔎 تشخیص مشکلات ثبت‌نام در مسابقات بهبود یافته است.
 ✨ اعلان قدیمی درباره اضافه شدن انیمیشن حذف شد.
+📱 چیدمان صفحه‌ها در اطراف نوارهای سیستم و بریدگی دوربین بهبود یافت.
 </fa-IR>
 
 <si-LK>
@@ -115,6 +131,7 @@
 📋 තරගාවලි නීති සඳහා වඩා පැහැදිලි උපදෙස් සහ පූරණය අසාර්ථක වූ විට නැවත උත්සාහ කිරීමේ විකල්පයක්.
 🔎 තරගාවලි ලියාපදිංචියේ ගැටලු හඳුනාගැනීම වැඩිදියුණු කර ඇත.
 ✨ සජීවීකරණ පිළිබඳ පැරණි නිවේදනය ඉවත් කර ඇත.
+📱 පද්ධති තීරු සහ කැමරා කැපුම් අවට තිර සැකැස්ම වැඩිදියුණු කර ඇත.
 </si-LK>
 
 <sw>
@@ -122,4 +139,5 @@
 📋 Maelekezo ya sheria za mashindano yamewekwa wazi zaidi na unaweza kujaribu tena upakiaji ukishindikana.
 🔎 Uchunguzi wa matatizo ya kujisajili kwenye mashindano umeboreshwa.
 ✨ Tangazo la zamani kuhusu uhuishaji limeondolewa.
+📱 Mpangilio wa skrini karibu na pau za mfumo na nafasi ya kamera umeboreshwa.
 </sw>

@@ -4,6 +4,7 @@
 📋 Clearer tournament rules instructions and a Retry option when loading fails.
 🔎 Improved diagnostics for tournament registration.
 ✨ Removed the outdated animation announcement.
+📱 Improved screen layouts around system bars and camera cutouts.
 </en-GB>
 
 <bn-BD>
@@ -12,4 +13,5 @@
 📋 টুর্নামেন্টের নিয়মে আরও স্পষ্ট নির্দেশনা এবং লোড না হলে আবার চেষ্টা করার সুবিধা।
 🔎 টুর্নামেন্টে নিবন্ধনের সমস্যা শনাক্ত করার ব্যবস্থা উন্নত করা হয়েছে।
 ✨ অ্যানিমেশন চালু করার পুরোনো ঘোষণাটি সরিয়ে দেওয়া হয়েছে।
+📱 সিস্টেম বার ও ক্যামেরার কাটআউটের পাশে পর্দার বিন্যাস উন্নত করা হয়েছে।
 </bn-BD>
