@@ -10,6 +10,12 @@ if (!getApps().length) initializeApp();
 const db = getFirestore();
 const messaging = getMessaging();
 
+const conversation = require('./conversation').handlers(db, FieldValue, functions.https.HttpsError);
+for (const name of ['listSupportConversations', 'getSupportConversation',
+  'sendSupportMessage', 'markSupportConversationRead']) {
+  exports[name] = functions.region('us-central1').https.onCall(conversation[name]);
+}
+
 const attention = require('./attention').handlers(require('firebase-functions/logger'));
 exports.onSupportTicketCreated = functions.region('us-central1').firestore
   .document('supportTickets/{ticketId}').onCreate(attention.ticketCreated);
@@ -110,7 +116,8 @@ exports.onSupportTicketUpdated = functions.firestore
     // Moderation reports do not use payout notification deep links.
     if (after.type === 'moderation') return null;
     const hasNewReply = after.latestSupportReply &&
-      after.latestSupportReply !== before.latestSupportReply;
+      (after.latestSupportReply !== before.latestSupportReply
+        || after.supportReplyVersion !== before.supportReplyVersion);
     const wasResolved = ['resolved', 'closed'].includes(after.status) &&
       after.status !== before.status;
     if (!hasNewReply && !wasResolved) return null;

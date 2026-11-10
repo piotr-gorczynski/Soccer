@@ -18,7 +18,7 @@ function handlers(logger) {
       return emit('ticket_created', context);
     },
     messageCreated: async (snapshot, context) => {
-      // The initial payout message is already covered by ticketCreated.
+      // Initial payout and moderation messages are covered by ticketCreated.
       if (!snapshot.exists || context.params.messageId === 'initial'
           || snapshot.get('authorType') !== 'user') return null;
       const ticket = await snapshot.ref.parent.parent.get();

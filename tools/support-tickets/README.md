@@ -11,6 +11,7 @@ List open tickets, reply, or resolve a ticket:
 
 ```powershell
 node support-tickets.js dev list --status open
+node support-tickets.js dev view TICKET_ID
 node support-tickets.js dev reply TICKET_ID "Please try again with an 11-digit number."
 node support-tickets.js dev resolve TICKET_ID "The issue has been resolved."
 ```
@@ -18,6 +19,26 @@ node support-tickets.js dev resolve TICKET_ID "The issue has been resolved."
 The list prints a table with the ticket ID, reference, status, category, payment ID,
 and the user's original message. Tickets are ordered newest first; `--status`
 filters the rows as before.
+After the table, `list` also prints the latest support reply for each ticket that
+has one, with its reference and reply timestamp in UTC. Long replies are shown
+as separate text blocks instead of widening the table. This is the latest reply,
+not the full conversation history.
+Reply text wraps to the terminal width (at most 80 columns, including indentation)
+and preserves existing line breaks. When output is redirected, it uses 80 columns.
+
+`view` prints the whole available conversation chronologically (user/support and
+UTC dates). It also includes the original body of legacy player reports and old
+last replies which predate the messages collection. It does not mark replies read
+for the player. Only data actually stored can be recovered.
+
+Every new support reply increments `supportReplyVersion` in the same transaction
+as its message and status history, including identical reply text. This is used
+by the Help Centre unread counter. A legacy last reply without a version counts
+as version 1 and is preserved before the next response replaces its summary.
+Deploying only the new server does not update old copies of this operator tool;
+administrators must use this updated CLI before enabling the Help Centre UI.
+Moderation push notifications remain disabled until the app routing is released;
+the CLI explicitly distinguishes this from payout notifications.
 
 Replies are stored under `supportTickets/{ticketId}/messages` and mirrored in
 `latestSupportReply` for the current mobile UI. Updating a ticket triggers an

@@ -53,7 +53,10 @@ function handlers(db, FieldValue, HttpsError) {
         appContext: { screen: data.context, source: 'client-reported' },
         createdAt: now, updatedAt: now, statusUpdatedAt: now });
       tx.set(ticket.collection('statusHistory').doc('created'), { eventType: 'ticket_created',
-        from: null, to: 'open', changedAt: now, changedBy: uid, actorType: 'user', source: 'reportPlayer' });
+        from: null, to: 'open', changedAt: now, changedBy: uid, actorType: 'user',
+        source: 'reportPlayer', messageId: 'initial' });
+      tx.set(ticket.collection('messages').doc('initial'), { authorType: 'user', authorId: uid,
+        message: data.reason.trim(), createdAt: now, source: 'reportPlayer', historyId: 'created' });
       return { reference, alreadyExists: false };
     });
   }

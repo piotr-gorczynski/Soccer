@@ -39,7 +39,13 @@ test('report derives identity/nickname/time on server; rejects forged fields, un
  const reports=await db.collection('supportTickets').get();assert.equal(reports.size,1);
  const r=reports.docs[0].data();assert.equal(r.reporterUid,'a');assert.equal(r.reportedUid,'b');assert.equal(r.nickname,'Bob');assert.ok(r.createdAt instanceof Timestamp);
  const a=env.authenticatedContext('a').firestore(),b=env.authenticatedContext('b').firestore();
- await assertSucceeds(getDoc(doc(a,reports.docs[0].ref.path)));
+ // Raw moderation documents contain internal notes. The conversation callable
+ // exposes only the reporter's public message view.
+ await assertFails(getDoc(doc(a,reports.docs[0].ref.path)));
+ const conversation=require('../../firebase/functions/support-tickets/conversation').handlers(db,FieldValue,HttpsError);
+ const thread=await conversation.getSupportConversation({ticketId:reports.docs[0].id},auth('a'));
+ assert.equal(thread.messages[0].message,'Offensive name');
+ assert.equal(thread.messages[0].authorId,undefined);
  await assertFails(getDoc(doc(b,reports.docs[0].ref.path)));
  await assertFails(setDoc(doc(a,'supportTickets/forged'),{...r,createdAt:new Date(),updatedAt:new Date(),statusUpdatedAt:new Date()}));
  await assertFails(updateDoc(doc(a,reports.docs[0].ref.path),{status:'resolved'}));

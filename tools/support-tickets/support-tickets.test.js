@@ -4,12 +4,12 @@ const test = require('node:test');
 const assert = require('node:assert/strict');
 const { updateTicket } = require('./support-tickets');
 
-function fixture(status = 'open', exists = true) {
+function fixture(status = 'open', exists = true, initial = {}) {
   let nextId = 0;
-  let state = { status, reference: 'SUP-TEST' };
+  let state = { status, reference: 'SUP-TEST', ...initial };
   const records = new Map();
-  const ticketRef = { id: 'ticket', collection: name => ({ doc: () => ({
-    id: String(++nextId), path: `${name}/${nextId}`,
+  const ticketRef = { id: 'ticket', collection: name => ({ doc: (id = String(++nextId)) => ({
+    id, path: `${name}/${id}`,
   }) }) };
   const fields = { serverTimestamp: () => 'SERVER_TIME', delete: () => 'DELETE' };
   const db = { runTransaction: async callback => {
@@ -42,6 +42,8 @@ test('successive replies preserve all texts, authors, timestamps and same-status
   assert.equal(f.state().latestSupportReply, 'Second reply');
   assert.equal(f.state().statusUpdatedAt, 'SERVER_TIME');
   assert.equal(f.state().updatedAt, 'SERVER_TIME');
+  assert.equal(f.state().supportReplyVersion, 2);
+  assert.deepEqual(messages.map(m => m.supportReplyVersion), [1, 2]);
 });
 
 test('resolve without text still leaves a dated audit event', async () => {
@@ -54,6 +56,25 @@ test('resolve without text still leaves a dated audit event', async () => {
   assert.equal(history.messageId, null);
   assert.equal(history.command, 'resolve');
   assert.equal(f.state().resolvedAt, 'SERVER_TIME');
+  assert.equal(f.state().supportReplyVersion, undefined);
+});
+
+test('identical administrator replies remain distinct unread message versions', async () => {
+  const f = fixture();
+  await updateTicket(f.db, f.ticketRef, 'reply', 'Same reply', 'admin', f.fields);
+  await updateTicket(f.db, f.ticketRef, 'reply', 'Same reply', 'admin', f.fields);
+  assert.equal(f.state().supportReplyVersion, 2);
+  assert.equal([...f.records.keys()].filter(key => key.startsWith('messages/')).length, 2);
+});
+
+test('a legacy last response survives the first versioned reply without invented author or date', async () => {
+  const f = fixture('open', true, { latestSupportReply: 'Earlier response' });
+  await updateTicket(f.db, f.ticketRef, 'reply', 'New response', 'admin', f.fields);
+  assert.equal(f.state().supportReplyVersion, 2);
+  const old = f.records.get('messages/legacy_reply');
+  assert.equal(old.message, 'Earlier response');
+  assert.equal(old.createdAt, null);
+  assert.equal(old.authorId, undefined);
 });
 
 test('finished tickets reject reply and resolve without changing messages, history or timestamps', async () => {

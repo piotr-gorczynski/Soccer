@@ -51,6 +51,18 @@ steps:
           /workspace/firebase/functions/support-tickets/
 
   - name: 'node:22-slim'
+    id: 'test-support-conversations'
+    entrypoint: bash
+    args:
+      - '-c'
+      - |
+        set -e
+        cd /workspace/soccer
+        node --test firebase/functions/support-tickets/support-tickets.test.js \
+          firebase/functions/support-tickets/conversation.test.js \
+          tools/support-tickets/support-tickets.test.js
+
+  - name: 'node:22-slim'
     id: 'install-dependencies'
     entrypoint: bash
     args:
@@ -59,6 +71,7 @@ steps:
         set -ex
         cp /workspace/soccer/firebase/functions/support-tickets/moderation.js /workspace/firebase/functions/support-tickets/
         cp /workspace/soccer/firebase/functions/support-tickets/attention.js /workspace/firebase/functions/support-tickets/
+        cp /workspace/soccer/firebase/functions/support-tickets/conversation.js /workspace/firebase/functions/support-tickets/
         cp /workspace/soccer/firebase/functions/support-tickets/retention.js /workspace/firebase/functions/support-tickets/
         cd /workspace/firebase/functions/support-tickets
         npm install
