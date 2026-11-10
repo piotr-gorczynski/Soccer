@@ -416,4 +416,6 @@
     <string name="nickname_entry_help">Ampidiro ny anaram-bositra hanohizana.</string>
     <string name="nickname_suggestion_help">Ampiasao ny anaram-bositra atolotra na ampidiro izay tianao.</string>
     <string name="presence_unavailable">Tsy misy ny mombamomba ny fahavitrihana</string>
+    <string name="eligibility_confirmation_hint">Vakio ny fitsipika, ary asio marika ireo fanamafisana telo any amin’ny farany mba handraisana anjara.</string>
+    <string name="regulation_retry_message">Tsy afaka nampiditra ny fitsipiky ny fifaninanana. Hamarino ny fifandraisana Internet ary andramo indray.</string>
 </resources>

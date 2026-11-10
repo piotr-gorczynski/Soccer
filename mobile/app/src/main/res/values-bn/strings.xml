@@ -490,4 +490,6 @@
     <string name="nickname_entry_help">এগিয়ে যেতে একটি ডাকনাম লিখুন।</string>
     <string name="nickname_suggestion_help">প্রস্তাবিত ডাকনামটি ব্যবহার করুন অথবা নিজের পছন্দের ডাকনাম লিখুন।</string>
     <string name="presence_unavailable">সক্রিয়তার তথ্য পাওয়া যাচ্ছে না</string>
+    <string name="eligibility_confirmation_hint">নিয়মাবলি পড়ুন, তারপর যোগ দিতে শেষে থাকা তিনটি নিশ্চিতকরণে টিক দিন।</string>
+    <string name="regulation_retry_message">টুর্নামেন্টের নিয়মাবলি লোড করা যায়নি। ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।</string>
 </resources>

@@ -416,4 +416,6 @@
     <string name="nickname_entry_help">Үргэлжлүүлэхийн тулд хоч нэрээ оруулна уу.</string>
     <string name="nickname_suggestion_help">Санал болгосон хоч нэрийг ашиглах эсвэл өөрийн хүссэн нэрийг оруулна уу.</string>
     <string name="presence_unavailable">Идэвхийн төлөв боломжгүй</string>
+    <string name="eligibility_confirmation_hint">Дүрмийг уншаад, оролцохын тулд төгсгөлд байгаа гурван баталгаажуулалтыг бүгдийг нь чагтална уу.</string>
+    <string name="regulation_retry_message">Тэмцээний дүрмийг ачаалж чадсангүй. Интернэт холболтоо шалгаад дахин оролдоно уу.</string>
 </resources>

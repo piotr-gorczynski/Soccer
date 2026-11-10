@@ -450,4 +450,6 @@
     <string name="nickname_entry_help">अगाडि बढ्न एउटा उपनाम लेख्नुहोस्।</string>
     <string name="nickname_suggestion_help">सुझाइएको उपनाम प्रयोग गर्नुहोस् वा आफ्नो रोजाइको उपनाम लेख्नुहोस्।</string>
     <string name="presence_unavailable">सक्रियताको स्थिति उपलब्ध छैन</string>
+    <string name="eligibility_confirmation_hint">नियम पढ्नुहोस्, त्यसपछि सहभागी हुन अन्त्यमा रहेका तीनवटै पुष्टिमा चिन्ह लगाउनुहोस्।</string>
+    <string name="regulation_retry_message">प्रतियोगिताका नियम लोड गर्न सकिएन। इन्टरनेट जडान जाँचेर फेरि प्रयास गर्नुहोस्।</string>
 </resources>

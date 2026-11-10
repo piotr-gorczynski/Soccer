@@ -416,4 +416,6 @@
     <string name="nickname_entry_help">ປ້ອນຊື່ຫຼິ້ນເພື່ອດຳເນີນການຕໍ່.</string>
     <string name="nickname_suggestion_help">ໃຊ້ຊື່ຫຼິ້ນທີ່ແນະນຳ ຫຼືປ້ອນຊື່ທີ່ທ່ານຕ້ອງການ.</string>
     <string name="presence_unavailable">ບໍ່ມີຂໍ້ມູນສະຖານະການໃຊ້ງານ</string>
+    <string name="eligibility_confirmation_hint">ອ່ານກົດລະບຽບ ແລ້ວໝາຍຕິກການຢືນຢັນທັງສາມຂໍ້ຢູ່ທ້າຍໜ້າເພື່ອເຂົ້າຮ່ວມ.</string>
+    <string name="regulation_retry_message">ບໍ່ສາມາດໂຫຼດກົດລະບຽບການແຂ່ງຂັນໄດ້. ກະລຸນາກວດສອບການເຊື່ອມຕໍ່ອິນເຕີເນັດ ແລ້ວລອງໃໝ່.</string>
 </resources>

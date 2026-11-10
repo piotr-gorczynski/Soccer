@@ -99,7 +99,6 @@ public class MenuActivity extends BaseActivity {
     private static final String PREF_FCM_TOKEN = "fcmToken";
     static final String PREF_LAST_INVITES_SEEN_TIMESTAMP = "lastInvitesSeenTimestamp";
     private static final String PREF_LAST_ACTIVE_TIMESTAMP = "lastActiveTimestamp";
-    private static final String PREF_ANIMATION_INFO_SHOWN = "animationInfoDialogShown";
 
     private static final long RUNNING_PLAYER_FRAME_DURATION_MS = 125L;
 
@@ -126,7 +125,6 @@ public class MenuActivity extends BaseActivity {
     private boolean awaitingGlobalUninstallResult = false;
     private AlertDialog globalUninstallDialog; // reference to the currently-showing uninstall dialog
     private final Set<AlertDialog> managedDialogs = Collections.newSetFromMap(new IdentityHashMap<>());
-    private final Runnable showAnimationInfoRunnable = this::showAnimationInfoDialog;
     private View loadingOverlay;
     private boolean menuInitializationPending = true;
     private boolean menuResumeWorkPending = true;
@@ -681,7 +679,6 @@ public class MenuActivity extends BaseActivity {
         ((SoccerApp) getApplication()).onConsentHostStopped(this);
         recordWindowLifecycle("stopped");
         overlayHandler.removeCallbacks(menuInitializationTimeout);
-        runningPlayerHandler.removeCallbacks(showAnimationInfoRunnable);
         dismissManagedDialogs();
         unregisterNetworkCallback();
         stopRunningPlayerAnimation();
@@ -1272,9 +1269,6 @@ public class MenuActivity extends BaseActivity {
         configureRunningPlayerClickListener();
         runningPlayerAnimator.run();
         
-        // Show animation info dialog after a short delay to ensure UI is fully loaded
-        runningPlayerHandler.removeCallbacks(showAnimationInfoRunnable);
-        runningPlayerHandler.postDelayed(showAnimationInfoRunnable, 500);
     }
 
     private void stopRunningPlayerAnimation() {
@@ -1868,7 +1862,6 @@ public class MenuActivity extends BaseActivity {
         adRetryHandler.removeCallbacks(adRetryRunnable);
         overlayHandler.removeCallbacks(hideOverlayRunnable);
         overlayHandler.removeCallbacks(menuInitializationTimeout);
-        runningPlayerHandler.removeCallbacks(showAnimationInfoRunnable);
         dismissManagedDialogs();
         releaseRunningPlayerResources();
         super.onDestroy();
@@ -2302,32 +2295,6 @@ public class MenuActivity extends BaseActivity {
     private void updateLastActiveTimestamp() {
         SharedPreferences prefs = getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
         prefs.edit().putLong(PREF_LAST_ACTIVE_TIMESTAMP, System.currentTimeMillis()).apply();
-    }
-
-    /**
-     * Show one-time information dialog about animation feature
-     */
-    private void showAnimationInfoDialog() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean dialogShown = prefs.getBoolean(PREF_ANIMATION_INFO_SHOWN, false);
-        
-        // Only show dialog if it hasn't been shown before and animations are enabled
-        if (dialogShown || areAnimationsDisabled()) {
-            return;
-        }
-        
-        // Check if activity is still valid before showing dialog
-        if (isFinishing() || isDestroyed()) {
-            return;
-        }
-        
-        showManagedDialog(new AlertDialog.Builder(this)
-                .setMessage(R.string.animation_info_message)
-                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                    // Mark dialog as shown
-                    prefs.edit().putBoolean(PREF_ANIMATION_INFO_SHOWN, true).apply();
-                })
-                .setCancelable(false), "animation_info");
     }
 
     /**

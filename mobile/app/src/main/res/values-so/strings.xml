@@ -416,4 +416,6 @@
     <string name="nickname_entry_help">Geli naanays si aad u sii waddo.</string>
     <string name="nickname_suggestion_help">Isticmaal naanaysta la soo jeediyey ama geli mid aad dooratay.</string>
     <string name="presence_unavailable">Xaaladda firfircoonida lama heli karo</string>
+    <string name="eligibility_confirmation_hint">Akhri xeerarka, dabadeed sax saddexda sanduuq ee xaqiijinta ee dhammaadka si aad ugu biirto.</string>
+    <string name="regulation_retry_message">Xeerarka tartanka lama soo dejin karin. Hubi xiriirka internetka oo mar kale isku day.</string>
 </resources>

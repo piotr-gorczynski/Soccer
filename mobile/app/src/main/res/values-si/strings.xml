@@ -416,4 +416,6 @@
     <string name="nickname_entry_help">ඉදිරියට යාමට අන්වර්ථ නාමයක් ඇතුළත් කරන්න.</string>
     <string name="nickname_suggestion_help">යෝජිත අන්වර්ථ නාමය භාවිත කරන්න හෝ ඔබ කැමති නමක් ඇතුළත් කරන්න.</string>
     <string name="presence_unavailable">ක්‍රියාකාරී තත්ත්වය ලබා ගත නොහැක</string>
+    <string name="eligibility_confirmation_hint">නීති කියවා, එක් වීමට අවසානයේ ඇති තහවුරු කිරීම් තුනම සලකුණු කරන්න.</string>
+    <string name="regulation_retry_message">තරගාවලියේ නීති පූරණය කළ නොහැකි විය. අන්තර්ජාල සම්බන්ධතාව පරීක්ෂා කර නැවත උත්සාහ කරන්න.</string>
 </resources>

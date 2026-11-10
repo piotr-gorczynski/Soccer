@@ -490,4 +490,6 @@
     <string name="nickname_entry_help">Wpisz pseudonim, aby kontynuować.</string>
     <string name="nickname_suggestion_help">Użyj proponowanego pseudonimu lub wpisz własny.</string>
     <string name="presence_unavailable">Status aktywności niedostępny</string>
+    <string name="eligibility_confirmation_hint">Przeczytaj regulamin, a następnie zaznacz trzy potwierdzenia na końcu, aby dołączyć.</string>
+    <string name="regulation_retry_message">Nie udało się wczytać regulaminu turnieju. Sprawdź połączenie i spróbuj ponownie.</string>
 </resources>

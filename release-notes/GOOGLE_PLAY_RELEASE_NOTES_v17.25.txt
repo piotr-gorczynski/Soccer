@@ -1,71 +1,125 @@
 <en-GB>
 🌐 Fixed the Settings screen not immediately updating to the selected language.
+📋 Clearer tournament rules instructions and a Retry option when loading fails.
+🔎 Improved diagnostics for tournament registration.
+✨ Removed the outdated animation announcement.
 </en-GB>
 
 <pl-PL>
 🌐 Naprawiono odświeżanie ekranu ustawień po zmianie języka — wybrany język jest widoczny od razu.
+📋 Czytelniejsze wskazówki w regulaminie turnieju i możliwość ponowienia nieudanego wczytywania.
+🔎 Ulepszono diagnostykę rejestracji do turniejów.
+✨ Usunięto nieaktualne okienko o wprowadzeniu animacji.
 </pl-PL>
 
 <de-DE>
 🌐 Die Einstellungen werden nach einem Sprachwechsel jetzt sofort in der gewählten Sprache angezeigt.
+📋 Klarere Hinweise zu den Turnierregeln und erneutes Laden bei Ladefehlern.
+🔎 Verbesserte Diagnose der Turnieranmeldung.
+✨ Der veraltete Hinweis zu Animationen wurde entfernt.
 </de-DE>
 
 <fr-FR>
 🌐 L’écran des paramètres s’affiche désormais immédiatement dans la langue sélectionnée.
+📋 Des consignes plus claires pour le règlement du tournoi et une option pour réessayer en cas d’échec du chargement.
+🔎 Diagnostic amélioré de l’inscription aux tournois.
+✨ Suppression de l’annonce obsolète sur les animations.
 </fr-FR>
 
 <es-ES>
 🌐 La pantalla de ajustes ahora se actualiza inmediatamente al idioma seleccionado.
+📋 Instrucciones más claras en el reglamento del torneo y una opción para reintentar si falla la carga.
+🔎 Mejor diagnóstico de la inscripción en torneos.
+✨ Se ha eliminado el aviso obsoleto sobre las animaciones.
 </es-ES>
 
 <ur>
 🌐 زبان تبدیل کرنے کے بعد ترتیبات کی اسکرین اب فوراً منتخب کردہ زبان میں دکھائی دیتی ہے۔
+📋 ٹورنامنٹ کے قواعد میں واضح ہدایات اور لوڈ نہ ہونے پر دوبارہ کوشش کا اختیار۔
+🔎 ٹورنامنٹ میں اندراج کی تشخیص بہتر بنائی گئی ہے۔
+✨ اینیمیشن کے بارے میں پرانا اعلان ہٹا دیا گیا ہے۔
 </ur>
 
 <bn-BD>
 🌐 ভাষা বদলানোর পর সেটিংসের পর্দা এখন সঙ্গে সঙ্গে নির্বাচিত ভাষায় দেখা যায়।
+📋 টুর্নামেন্টের নিয়মে আরও স্পষ্ট নির্দেশনা এবং লোড না হলে আবার চেষ্টা করার সুবিধা।
+🔎 টুর্নামেন্টে নিবন্ধনের সমস্যা শনাক্ত করার ব্যবস্থা উন্নত করা হয়েছে।
+✨ অ্যানিমেশন চালু করার পুরোনো ঘোষণাটি সরিয়ে দেওয়া হয়েছে।
 </bn-BD>
 
 <ne-NP>
 🌐 भाषा परिवर्तन गरेपछि सेटिङको स्क्रिन अब तुरुन्तै चयन गरिएको भाषामा देखिन्छ।
+📋 प्रतियोगिताका नियममा स्पष्ट निर्देशन र लोड हुन नसके फेरि प्रयास गर्ने विकल्प।
+🔎 प्रतियोगिता दर्ताका समस्या पहिचान गर्ने व्यवस्था सुधारिएको छ।
+✨ एनिमेसनबारे पुरानो सूचना हटाइएको छ।
 </ne-NP>
 
 <hi-IN>
 🌐 भाषा बदलने के बाद सेटिंग्स की स्क्रीन अब तुरंत चुनी गई भाषा में दिखाई देती है।
+📋 टूर्नामेंट के नियमों में स्पष्ट निर्देश और लोड न होने पर फिर से कोशिश करने का विकल्प।
+🔎 टूर्नामेंट में पंजीकरण की समस्याओं की जाँच बेहतर की गई है।
+✨ ऐनिमेशन के बारे में पुरानी सूचना हटा दी गई है।
 </hi-IN>
 
 <am>
 🌐 ቋንቋ ከቀየሩ በኋላ የቅንብሮች ማያ ገጽ አሁን ወዲያውኑ በተመረጠው ቋንቋ ይታያል።
+📋 የውድድር ደንቦች መመሪያ ግልጽ ሆኗል፤ መጫን ሳይሳካ ሲቀር እንደገና መሞከር ይቻላል።
+🔎 የውድድር ምዝገባ ችግሮችን የመለየት ሂደት ተሻሽሏል።
+✨ ስለ አኒሜሽን የነበረው የቆየ ማስታወቂያ ተወግዷል።
 </am>
 
 <ar>
 🌐 تظهر شاشة الإعدادات الآن باللغة المختارة فور تغيير اللغة.
+📋 تعليمات أوضح لقواعد البطولة وخيار لإعادة المحاولة عند فشل التحميل.
+🔎 تحسين تشخيص مشكلات التسجيل في البطولات.
+✨ إزالة الإعلان القديم عن إضافة الرسوم المتحركة.
 </ar>
 
 <my-MM>
 🌐 ဘာသာစကားပြောင်းပြီးနောက် ဆက်တင်မျက်နှာပြင်ကို ရွေးချယ်ထားသော ဘာသာစကားဖြင့် ချက်ချင်းပြသပေးပါသည်။
+📋 ပြိုင်ပွဲစည်းမျဉ်းများတွင် ပိုမိုရှင်းလင်းသော လမ်းညွှန်ချက်များနှင့် မတင်နိုင်ပါက ပြန်လည်ကြိုးစားရန် ရွေးချယ်မှု ထည့်ထားပါသည်။
+🔎 ပြိုင်ပွဲစာရင်းသွင်းမှု ပြဿနာများ ရှာဖွေစစ်ဆေးခြင်းကို မြှင့်တင်ထားပါသည်။
+✨ အန်နီမေးရှင်းအကြောင်း ကြေညာချက်ဟောင်းကို ဖယ်ရှားထားပါသည်။
 </my-MM>
 
 <km-KH>
 🌐 បន្ទាប់ពីប្ដូរភាសា អេក្រង់ការកំណត់នឹងបង្ហាញជាភាសាដែលបានជ្រើសរើសភ្លាមៗ។
+📋 ការណែនាំអំពីបទបញ្ជាប្រកួតកាន់តែច្បាស់ និងជម្រើសសាកល្បងម្តងទៀតពេលផ្ទុកមិនបាន។
+🔎 កែលម្អការរកមូលហេតុបញ្ហាចុះឈ្មោះប្រកួត។
+✨ បានលុបសារចាស់អំពីការបន្ថែមចលនាគំនូរ។
 </km-KH>
 
 <lo-LA>
 🌐 ຫຼັງຈາກປ່ຽນພາສາ ໜ້າການຕັ້ງຄ່າຈະສະແດງເປັນພາສາທີ່ເລືອກທັນທີ.
+📋 ຄຳແນະນຳກົດລະບຽບການແຂ່ງຂັນຊັດເຈນຂຶ້ນ ແລະລອງໃໝ່ໄດ້ເມື່ອໂຫຼດບໍ່ສຳເລັດ.
+🔎 ປັບປຸງການກວດຫາບັນຫາການລົງທະບຽນແຂ່ງຂັນ.
+✨ ລຶບແຈ້ງການເກົ່າກ່ຽວກັບພາບເຄື່ອນໄຫວແລ້ວ.
 </lo-LA>
 
 <mn-MN>
 🌐 Хэл сольсны дараа тохиргооны дэлгэц сонгосон хэлээр шууд харагддаг боллоо.
+📋 Тэмцээний дүрмийн зааврыг тодруулж, ачаалж чадаагүй үед дахин оролдох боломж нэмлээ.
+🔎 Тэмцээний бүртгэлийн алдааг оношлох ажиллагааг сайжрууллаа.
+✨ Хөдөлгөөнт дүрсний тухай хуучирсан мэдэгдлийг хаслаа.
 </mn-MN>
 
 <fa-IR>
 🌐 پس از تغییر زبان، صفحه تنظیمات اکنون بلافاصله به زبان انتخاب‌شده نمایش داده می‌شود.
+📋 راهنمای روشن‌تر برای قوانین مسابقه و امکان تلاش دوباره در صورت بارگیری ناموفق.
+🔎 تشخیص مشکلات ثبت‌نام در مسابقات بهبود یافته است.
+✨ اعلان قدیمی درباره اضافه شدن انیمیشن حذف شد.
 </fa-IR>
 
 <si-LK>
 🌐 භාෂාව වෙනස් කළ පසු සැකසුම් තිරය දැන් තෝරාගත් භාෂාවෙන් වහාම පෙන්වයි.
+📋 තරගාවලි නීති සඳහා වඩා පැහැදිලි උපදෙස් සහ පූරණය අසාර්ථක වූ විට නැවත උත්සාහ කිරීමේ විකල්පයක්.
+🔎 තරගාවලි ලියාපදිංචියේ ගැටලු හඳුනාගැනීම වැඩිදියුණු කර ඇත.
+✨ සජීවීකරණ පිළිබඳ පැරණි නිවේදනය ඉවත් කර ඇත.
 </si-LK>
 
 <sw>
 🌐 Baada ya kubadilisha lugha, skrini ya mipangilio sasa inaonekana mara moja katika lugha iliyochaguliwa.
+📋 Maelekezo ya sheria za mashindano yamewekwa wazi zaidi na unaweza kujaribu tena upakiaji ukishindikana.
+🔎 Uchunguzi wa matatizo ya kujisajili kwenye mashindano umeboreshwa.
+✨ Tangazo la zamani kuhusu uhuishaji limeondolewa.
 </sw>

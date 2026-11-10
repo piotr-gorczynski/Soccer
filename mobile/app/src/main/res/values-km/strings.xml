@@ -416,4 +416,6 @@
     <string name="nickname_entry_help">បញ្ចូលឈ្មោះហៅក្រៅ ដើម្បីបន្ត។</string>
     <string name="nickname_suggestion_help">ប្រើឈ្មោះហៅក្រៅដែលបានណែនាំ ឬបញ្ចូលឈ្មោះដែលអ្នកចង់បាន។</string>
     <string name="presence_unavailable">មិនមានព័ត៌មានអំពីសកម្មភាពទេ</string>
+    <string name="eligibility_confirmation_hint">អានបទបញ្ជា រួចធីកការបញ្ជាក់ទាំងបីនៅខាងចុង ដើម្បីចូលរួម។</string>
+    <string name="regulation_retry_message">មិនអាចផ្ទុកបទបញ្ជាការប្រកួតបានទេ។ សូមពិនិត្យការតភ្ជាប់អ៊ីនធឺណិត ហើយព្យាយាមម្ដងទៀត។</string>
 </resources>

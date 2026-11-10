@@ -450,4 +450,6 @@
     <string name="nickname_entry_help">आगे बढ़ने के लिए एक उपनाम दर्ज करें।</string>
     <string name="nickname_suggestion_help">सुझाया गया उपनाम इस्तेमाल करें या अपनी पसंद का उपनाम दर्ज करें।</string>
     <string name="presence_unavailable">गतिविधि की स्थिति उपलब्ध नहीं है</string>
+    <string name="eligibility_confirmation_hint">नियम पढ़ें, फिर शामिल होने के लिए अंत में दी गई तीनों पुष्टियों पर टिक करें।</string>
+    <string name="regulation_retry_message">टूर्नामेंट के नियम लोड नहीं हो सके। अपना इंटरनेट कनेक्शन जाँचें और फिर से कोशिश करें।</string>
 </resources>

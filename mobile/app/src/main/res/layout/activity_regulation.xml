@@ -15,7 +15,48 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <LinearLayout
+        android:id="@+id/regulationStatus"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <ProgressBar
+            android:id="@+id/regulationLoading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/regulationLoadingMessage"
+            android:text="@string/menu_loading_message"
+            android:gravity="center"
+            android:layout_marginTop="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/regulationErrorMessage"
+            android:text="@string/regulation_retry_message"
+            android:gravity="center"
+            android:visibility="gone"
+            android:accessibilityLiveRegion="polite"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/retryRegulation"
+            android:text="@string/retry"
+            android:visibility="gone"
+            android:layout_marginTop="12dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
     <ScrollView
+        android:id="@+id/regulationScroll"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
@@ -66,6 +107,15 @@
 
         </LinearLayout>
     </ScrollView>
+
+    <TextView
+        android:id="@+id/eligibilityConfirmationHint"
+        android:text="@string/eligibility_confirmation_hint"
+        android:textColor="@color/colorGreenDark"
+        android:visibility="gone"
+        android:layout_marginTop="12dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <LinearLayout
         android:orientation="horizontal"

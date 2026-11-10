@@ -397,4 +397,6 @@
     <string name="nickname_entry_help">أدخل اسمًا مستعارًا للمتابعة.</string>
     <string name="nickname_suggestion_help">استخدم الاسم المستعار المقترح أو أدخل اسمًا من اختيارك.</string>
     <string name="presence_unavailable">حالة النشاط غير متاحة</string>
+    <string name="eligibility_confirmation_hint">اقرأ القواعد، ثم حدّد التأكيدات الثلاثة في النهاية للانضمام.</string>
+    <string name="regulation_retry_message">تعذّر تحميل قواعد البطولة. تحقّق من اتصالك بالإنترنت وحاول مجددًا.</string>
 </resources>

@@ -416,4 +416,6 @@
     <string name="nickname_entry_help">ရှေ့ဆက်ရန် အမည်ပြောင်တစ်ခု ထည့်ပါ။</string>
     <string name="nickname_suggestion_help">အကြံပြုထားသော အမည်ပြောင်ကို သုံးပါ သို့မဟုတ် မိမိနှစ်သက်သော အမည်ပြောင်ကို ထည့်ပါ။</string>
     <string name="presence_unavailable">လှုပ်ရှားမှုအခြေအနေကို မရနိုင်ပါ</string>
+    <string name="eligibility_confirmation_hint">စည်းမျဉ်းများကို ဖတ်ပြီးနောက် ပါဝင်ရန် အဆုံးရှိ အတည်ပြုချက်သုံးခုလုံးကို အမှန်ခြစ်ပါ။</string>
+    <string name="regulation_retry_message">ပြိုင်ပွဲစည်းမျဉ်းများကို ဖွင့်၍မရပါ။ အင်တာနက်ချိတ်ဆက်မှုကို စစ်ဆေးပြီး ထပ်မံကြိုးစားပါ။</string>
 </resources>

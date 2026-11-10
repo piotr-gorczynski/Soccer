@@ -1,9 +1,11 @@
 package piotr_gorczynski.soccer2;
 
 import android.os.Bundle;
+import android.graphics.Rect;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
@@ -31,23 +33,44 @@ public class RegulationActivity extends BaseActivity {
     private AnalyticsManager analyticsManager;
     private Button acceptBtn;
     private LinearLayout eligibilityConfirmation;
+    private TextView eligibilityConfirmationHint;
     private CheckBox confirmMinimumAge;
     private CheckBox confirmPayoutAccount;
     private CheckBox confirmTournamentTerms;
     private boolean regulationContentLoaded;
     private boolean eligibilityConfigurationValid;
     private boolean requiresEligibilityConfirmation;
+    private TextView nameTv;
+    private TextView bodyTv;
+    private TextView regulationErrorMessage;
+    private View regulationStatus;
+    private View regulationScroll;
+    private View regulationLoading;
+    private View regulationLoadingMessage;
+    private Button retryRegulation;
+    private boolean loadInFlight;
+    private int loadGeneration;
+    private TournamentRegulationDiagnostics diagnostics;
+    private final ViewTreeObserver.OnScrollChangedListener diagnosticScrollListener = this::inspectConfirmationVisibility;
+    private final ViewTreeObserver.OnGlobalLayoutListener diagnosticLayoutListener = this::inspectConfirmationVisibility;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_regulation);
 
-        TextView nameTv = findViewById(R.id.regulationName);
-        TextView bodyTv = findViewById(R.id.regulationBody);
+        nameTv = findViewById(R.id.regulationName);
+        bodyTv = findViewById(R.id.regulationBody);
+        regulationStatus = findViewById(R.id.regulationStatus);
+        regulationScroll = findViewById(R.id.regulationScroll);
+        regulationLoading = findViewById(R.id.regulationLoading);
+        regulationLoadingMessage = findViewById(R.id.regulationLoadingMessage);
+        regulationErrorMessage = findViewById(R.id.regulationErrorMessage);
+        retryRegulation = findViewById(R.id.retryRegulation);
         acceptBtn = findViewById(R.id.acceptRegulation);
         Button declineBtn = findViewById(R.id.declineRegulation);
         eligibilityConfirmation = findViewById(R.id.eligibilityConfirmation);
+        eligibilityConfirmationHint = findViewById(R.id.eligibilityConfirmationHint);
         confirmMinimumAge = findViewById(R.id.confirmMinimumAge);
         confirmPayoutAccount = findViewById(R.id.confirmPayoutAccount);
         confirmTournamentTerms = findViewById(R.id.confirmTournamentTerms);
@@ -62,91 +85,205 @@ public class RegulationActivity extends BaseActivity {
         
         // Get analytics manager from SoccerApp  
         analyticsManager = ((SoccerApp) getApplicationContext()).getAnalyticsManager();
+        diagnostics = new TournamentRegulationDiagnostics(savedInstanceState == null ? null
+                : savedInstanceState.getBundle("regulation_diagnostics"), parameters -> {
+            if (analyticsManager != null) analyticsManager.trackTournamentRegulationStep(tournamentId, parameters);
+        });
+        eligibilityConfirmation.getViewTreeObserver().addOnScrollChangedListener(diagnosticScrollListener);
+        eligibilityConfirmation.getViewTreeObserver().addOnGlobalLayoutListener(diagnosticLayoutListener);
+        declineBtn.setOnClickListener(v -> {
+            snapshotDiagnosticControls();
+            diagnostics.exit(true);
+            finish();
+        });
 
         Log.d("TAG_Soccer", getClass().getSimpleName() + ".onCreate" +
                 ": tournamentId=" + tournamentId + " regulationId=" + regulationId);
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        if (!TextUtils.isEmpty(regulationId)) {
-            FirebaseUser authUser = FirebaseAuth.getInstance().getCurrentUser();
-            Log.d("TAG_Soccer", getClass().getSimpleName() + ".onCreate" +
-                    ": querying regulation from Firestore, currentUser=" +
-                    (authUser != null ? authUser.getUid() : "null"));
-
-            if (authUser == null) {
-                Log.e("TAG_Soccer", getClass().getSimpleName() + ".onCreate" +
-                        ": user not authenticated – cannot load regulation");
-                Toast.makeText(this, R.string.regulation_auth_required, Toast.LENGTH_LONG).show();
-                return;
-            }
-            db.collection("regulations").document(regulationId).get()
-                    .addOnSuccessListener(doc -> {
-                        if (doc.exists()) {
-                            Log.d("TAG_Soccer", getClass().getSimpleName() + ".onCreate" +
-                                    ": document found");
-                            nameTv.setText(doc.getString("name"));
-
-                            eligibilityConfigurationValid = configureEligibilityConfirmation(doc.getData());
-                            if (!eligibilityConfigurationValid) {
-                                Toast.makeText(this, R.string.eligibility_configuration_error, Toast.LENGTH_LONG).show();
-                            }
-
-                            String langCode = LanguageManager.getCurrentLanguageCode(this);
-                            doc.getReference().collection(langCode).document("rules").get()
-                                    .addOnSuccessListener(ruleDoc -> {
-                                        if (ruleDoc.exists()) {
-                                            List<?> rules = (List<?>) ruleDoc.get("rules");
-                                            if (rules != null) {
-                                                StringBuilder sb = new StringBuilder();
-                                                for (Object r : rules) {
-                                                    sb.append("• ").append(r.toString()).append("\n\n");
-                                                }
-                                                bodyTv.setText(sb.toString().trim());
-                                            } else {
-                                                bodyTv.setText(R.string.regulation_not_found);
-                                                }
-                                                markRegulationContentLoaded();
-                                            } else {
-                                            String body = doc.getString("body");
-                                            if (!TextUtils.isEmpty(body)) {
-                                                bodyTv.setText(body);
-                                            } else {
-                                                    bodyTv.setText(R.string.regulation_not_found);
-                                                }
-                                                markRegulationContentLoaded();
-                                            }
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        Log.e("TAG_Soccer", getClass().getSimpleName() + ".onCreate" +
-                                                ": Failed to load regulation", e);
-                                        String body = doc.getString("body");
-                                        if (!TextUtils.isEmpty(body)) {
-                                            bodyTv.setText(body);
-                                        } else {
-                                            Toast.makeText(this, R.string.regulation_load_error, Toast.LENGTH_LONG).show();
-                                        }
-                                        markRegulationContentLoaded();
-                                    });
-                        } else {
-                            Log.d("TAG_Soccer", getClass().getSimpleName() + ".onCreate" +
-                                    ": regulation document not found");
-                            bodyTv.setText(R.string.regulation_not_found);
-                        }
-                    })
-                    .addOnFailureListener(e -> {
-                        Log.e("TAG_Soccer", getClass().getSimpleName() + ".onCreate" +
-                                ": Failed to load regulation", e);
-                        Toast.makeText(this, R.string.regulation_load_error, Toast.LENGTH_LONG).show();
-                    });
-        } else {
-            Log.e("TAG_Soccer", getClass().getSimpleName() + ".onCreate" +
-                    ": empty regulationId");
-            bodyTv.setText(R.string.regulation_not_found);
-        }
-
-        declineBtn.setOnClickListener(v -> finish());
-
+        retryRegulation.setOnClickListener(v -> loadRegulation(true));
         acceptBtn.setOnClickListener(v -> acceptAndJoin());
+        loadRegulation(false);
+    }
+
+    private void loadRegulation(boolean retry) {
+        if (loadInFlight || isFinishing() || isDestroyed()) return;
+        loadInFlight = true;
+        int generation = ++loadGeneration;
+        diagnostics.beginLoad(retry);
+        regulationContentLoaded = false;
+        eligibilityConfigurationValid = false;
+        requiresEligibilityConfirmation = false;
+        confirmMinimumAge.setChecked(false);
+        confirmPayoutAccount.setChecked(false);
+        confirmTournamentTerms.setChecked(false);
+        eligibilityConfirmation.setVisibility(View.GONE);
+        bodyTv.setText("");
+        regulationScroll.setVisibility(View.GONE);
+        regulationStatus.setVisibility(View.VISIBLE);
+        regulationLoading.setVisibility(View.VISIBLE);
+        regulationLoadingMessage.setVisibility(View.VISIBLE);
+        regulationErrorMessage.setVisibility(View.GONE);
+        retryRegulation.setVisibility(View.GONE);
+        retryRegulation.setEnabled(false);
+        updateAcceptButtonState();
+
+        if (TextUtils.isEmpty(regulationId)) {
+            showRegulationError(generation, R.string.regulation_not_found, "missing_regulation", false);
+            return;
+        }
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+            showRegulationError(generation, R.string.regulation_auth_required, "missing_user", false);
+            return;
+        }
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("regulations").document(regulationId).get()
+                .addOnSuccessListener(doc -> {
+                    if (!isCurrentLoad(generation)) return;
+                    if (!doc.exists()) {
+                        showRegulationError(generation, R.string.regulation_not_found, "not_found", false);
+                        return;
+                    }
+                    nameTv.setText(doc.getString("name"));
+                    eligibilityConfigurationValid = configureEligibilityConfirmation(doc.getData());
+                    String langCode = LanguageManager.getCurrentLanguageCode(this);
+                    doc.getReference().collection(langCode).document("rules").get()
+                            .addOnSuccessListener(ruleDoc -> {
+                                if (!isCurrentLoad(generation)) return;
+                                Object rulesValue = ruleDoc.exists() ? ruleDoc.get("rules") : null;
+                                StringBuilder content = new StringBuilder();
+                                if (rulesValue instanceof List<?> rules) {
+                                    for (Object rule : rules) {
+                                        if (rule instanceof String text && !text.trim().isEmpty())
+                                            content.append("• ").append(text).append("\n\n");
+                                    }
+                                }
+                                if (content.length() > 0) {
+                                    showRegulationContent(generation, content.toString().trim(), "none");
+                                } else {
+                                    showFallbackOrError(generation, doc.getString("body"), "missing_content");
+                                }
+                            })
+                            .addOnFailureListener(error -> {
+                                if (isCurrentLoad(generation))
+                                    showFallbackOrError(generation, doc.getString("body"), regulationFailureReason(error));
+                            });
+                })
+                .addOnFailureListener(error -> {
+                    if (isCurrentLoad(generation))
+                        showRegulationError(generation, R.string.regulation_retry_message,
+                                regulationFailureReason(error), false);
+                });
+    }
+
+    private boolean isCurrentLoad(int generation) {
+        return generation == loadGeneration && loadInFlight && !isFinishing() && !isDestroyed();
+    }
+
+    private void showFallbackOrError(int generation, String fallback, String failureReason) {
+        if (!TextUtils.isEmpty(fallback) && !fallback.trim().isEmpty()) {
+            showRegulationContent(generation, fallback, "fallback");
+        } else {
+            showRegulationError(generation, R.string.regulation_retry_message, failureReason, false);
+        }
+    }
+
+    private void showRegulationContent(int generation, String content, String reason) {
+        if (!isCurrentLoad(generation)) return;
+        if (!eligibilityConfigurationValid) {
+            showRegulationError(generation, R.string.eligibility_configuration_error,
+                    "invalid_configuration", true);
+            return;
+        }
+        loadInFlight = false;
+        bodyTv.setText(content);
+        regulationContentLoaded = true;
+        regulationStatus.setVisibility(View.GONE);
+        regulationScroll.setVisibility(View.VISIBLE);
+        reportRegulationLoad(true, reason);
+        updateAcceptButtonState();
+    }
+
+    private void showRegulationError(int generation, int message, String reason, boolean contentDownloaded) {
+        if (!isCurrentLoad(generation)) return;
+        loadInFlight = false;
+        regulationContentLoaded = false;
+        regulationScroll.setVisibility(View.GONE);
+        eligibilityConfirmation.setVisibility(View.GONE);
+        regulationStatus.setVisibility(View.VISIBLE);
+        regulationLoading.setVisibility(View.GONE);
+        regulationLoadingMessage.setVisibility(View.GONE);
+        regulationErrorMessage.setText(message);
+        regulationErrorMessage.setVisibility(View.VISIBLE);
+        retryRegulation.setVisibility(View.VISIBLE);
+        retryRegulation.setEnabled(true);
+        reportRegulationLoad(contentDownloaded, reason);
+        updateAcceptButtonState();
+    }
+
+    private void reportRegulationLoad(boolean loaded, String reason) {
+        diagnostics.load(loaded, eligibilityConfigurationValid, requiresEligibilityConfirmation,
+                loaded && !eligibilityConfigurationValid ? "invalid_configuration" : reason);
+    }
+
+    static String regulationFailureReason(Exception error) {
+        if (error instanceof com.google.firebase.FirebaseNetworkException) return "network";
+        if (error instanceof com.google.firebase.firestore.FirebaseFirestoreException firestore) {
+            return switch (firestore.getCode()) {
+                case UNAVAILABLE, DEADLINE_EXCEEDED -> "network";
+                case PERMISSION_DENIED, UNAUTHENTICATED -> "permission";
+                case NOT_FOUND -> "not_found";
+                default -> "unknown";
+            };
+        }
+        return "unknown";
+    }
+
+    private void snapshotDiagnosticControls() {
+        if (diagnostics == null) return;
+        int checked = (confirmMinimumAge.isChecked() ? 1 : 0)
+                + (confirmPayoutAccount.isChecked() ? 1 : 0)
+                + (confirmTournamentTerms.isChecked() ? 1 : 0);
+        diagnostics.controls(checked, acceptBtn.isEnabled());
+    }
+
+    private void inspectConfirmationVisibility() {
+        if (diagnostics == null || !hasWindowFocus() || isFinishing()
+                || eligibilityConfirmation.getVisibility() != View.VISIBLE) return;
+        snapshotDiagnosticControls();
+        CheckBox[] boxes = {confirmMinimumAge, confirmPayoutAccount, confirmTournamentTerms};
+        for (int i = 0; i < boxes.length; i++) {
+            Rect visible = new Rect();
+            if (boxes[i].isShown() && boxes[i].getGlobalVisibleRect(visible)
+                    && visible.width() > 0 && visible.height() > 0) diagnostics.checkboxVisible(i);
+        }
+    }
+
+    @Override public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) inspectConfirmationVisibility();
+    }
+
+    @Override protected void onSaveInstanceState(Bundle outState) {
+        if (diagnostics != null) outState.putBundle("regulation_diagnostics", diagnostics.save());
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override protected void onStop() {
+        if (diagnostics != null && isFinishing() && !isChangingConfigurations()) {
+            snapshotDiagnosticControls();
+            diagnostics.exit(false);
+        }
+        super.onStop();
+    }
+
+    @Override protected void onDestroy() {
+        loadGeneration++;
+        loadInFlight = false;
+        if (eligibilityConfirmation != null && eligibilityConfirmation.getViewTreeObserver().isAlive()) {
+            eligibilityConfirmation.getViewTreeObserver().removeOnScrollChangedListener(diagnosticScrollListener);
+            eligibilityConfirmation.getViewTreeObserver().removeOnGlobalLayoutListener(diagnosticLayoutListener);
+        }
+        super.onDestroy();
     }
 
     @SuppressWarnings("unchecked")
@@ -202,12 +339,10 @@ public class RegulationActivity extends BaseActivity {
         }
     }
 
-    private void markRegulationContentLoaded() {
-        regulationContentLoaded = true;
-        updateAcceptButtonState();
-    }
-
     private void updateAcceptButtonState() {
+        eligibilityConfirmationHint.setVisibility(regulationContentLoaded
+                && eligibilityConfigurationValid && requiresEligibilityConfirmation
+                ? View.VISIBLE : View.GONE);
         boolean confirmationsComplete = !requiresEligibilityConfirmation
                 || (confirmMinimumAge.isChecked()
                 && confirmPayoutAccount.isChecked()
@@ -215,9 +350,12 @@ public class RegulationActivity extends BaseActivity {
         acceptBtn.setEnabled(regulationContentLoaded
                 && eligibilityConfigurationValid
                 && confirmationsComplete);
+        snapshotDiagnosticControls();
+        eligibilityConfirmation.post(this::inspectConfirmationVisibility);
     }
 
     private void acceptAndJoin() {
+        if (loadInFlight || !regulationContentLoaded || !eligibilityConfigurationValid) return;
         Log.d("TAG_Soccer", getClass().getSimpleName() + ".acceptAndJoin" +
                 ": starting acceptAndJoin");
 
@@ -230,6 +368,7 @@ public class RegulationActivity extends BaseActivity {
         }
 
         analyticsManager.trackTournamentJoinSubmit();
+        diagnostics.submitted();
         acceptBtn.setEnabled(false);
         Toast.makeText(this, R.string.registration_in_progress, Toast.LENGTH_SHORT).show();
 

@@ -486,4 +486,6 @@
     <string name="nickname_entry_help">Enter a nickname to continue.</string>
     <string name="nickname_suggestion_help">Use the suggested nickname or enter your own.</string>
     <string name="presence_unavailable">Activity status unavailable</string>
+    <string name="eligibility_confirmation_hint">Read the rules, then select the three confirmations at the end to join.</string>
+    <string name="regulation_retry_message">Could not load the tournament rules. Check your connection and try again.</string>
 </resources>

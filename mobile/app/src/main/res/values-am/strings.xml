@@ -416,4 +416,6 @@
     <string name="nickname_entry_help">ለመቀጠል ቅጽል ስም ያስገቡ።</string>
     <string name="nickname_suggestion_help">የተጠቆመውን ቅጽል ስም ይጠቀሙ ወይም የራስዎን ያስገቡ።</string>
     <string name="presence_unavailable">የእንቅስቃሴ ሁኔታ አይገኝም</string>
+    <string name="eligibility_confirmation_hint">ደንቦቹን ያንብቡ፣ ከዚያም ለመቀላቀል በመጨረሻው ያሉትን ሦስቱን ማረጋገጫዎች ይምረጡ።</string>
+    <string name="regulation_retry_message">የውድድሩን ደንቦች መጫን አልተቻለም። የበይነመረብ ግንኙነትዎን ያረጋግጡና እንደገና ይሞክሩ።</string>
 </resources>

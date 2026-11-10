@@ -453,4 +453,6 @@
     <string name="nickname_entry_help">Introduce un apodo para continuar.</string>
     <string name="nickname_suggestion_help">Usa el apodo sugerido o escribe el tuyo.</string>
     <string name="presence_unavailable">Estado de actividad no disponible</string>
+    <string name="eligibility_confirmation_hint">Lee las reglas y marca las tres confirmaciones al final para participar.</string>
+    <string name="regulation_retry_message">No se pudieron cargar las reglas del torneo. Comprueba tu conexión e inténtalo de nuevo.</string>
 </resources>

@@ -416,4 +416,6 @@
     <string name="nickname_entry_help">Weka jina la utani ili kuendelea.</string>
     <string name="nickname_suggestion_help">Tumia jina la utani lililopendekezwa au weka lako mwenyewe.</string>
     <string name="presence_unavailable">Hali ya shughuli haipatikani</string>
+    <string name="eligibility_confirmation_hint">Soma kanuni, kisha tia alama kwenye visanduku vyote vitatu vya uthibitisho mwishoni ili kujiunga.</string>
+    <string name="regulation_retry_message">Imeshindikana kupakia kanuni za mashindano. Angalia muunganisho wako wa intaneti kisha ujaribu tena.</string>
 </resources>

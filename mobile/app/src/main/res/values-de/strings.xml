@@ -451,4 +451,6 @@
     <string name="nickname_entry_help">Gib einen Spitznamen ein, um fortzufahren.</string>
     <string name="nickname_suggestion_help">Verwende den vorgeschlagenen Spitznamen oder gib einen eigenen ein.</string>
     <string name="presence_unavailable">Aktivitätsstatus nicht verfügbar</string>
+    <string name="eligibility_confirmation_hint">Lies die Regeln und markiere anschließend die drei Bestätigungen am Ende, um teilzunehmen.</string>
+    <string name="regulation_retry_message">Die Turnierregeln konnten nicht geladen werden. Prüfe deine Verbindung und versuche es erneut.</string>
 </resources>

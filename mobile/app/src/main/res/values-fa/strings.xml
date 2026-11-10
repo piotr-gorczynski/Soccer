@@ -397,4 +397,6 @@
     <string name="nickname_entry_help">برای ادامه یک نام مستعار وارد کنید.</string>
     <string name="nickname_suggestion_help">از نام مستعار پیشنهادی استفاده کنید یا نام دلخواه خود را وارد کنید.</string>
     <string name="presence_unavailable">وضعیت فعالیت در دسترس نیست</string>
+    <string name="eligibility_confirmation_hint">قوانین را بخوانید، سپس برای پیوستن، هر سه تأییدیه انتهای صفحه را علامت بزنید.</string>
+    <string name="regulation_retry_message">بارگیری قوانین مسابقات ممکن نشد. اتصال اینترنت را بررسی کنید و دوباره تلاش کنید.</string>
 </resources>

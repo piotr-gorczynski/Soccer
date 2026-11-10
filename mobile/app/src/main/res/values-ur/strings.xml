@@ -450,4 +450,6 @@
     <string name="nickname_entry_help">آگے بڑھنے کے لیے ایک عرفی نام درج کریں۔</string>
     <string name="nickname_suggestion_help">تجویز کردہ عرفی نام استعمال کریں یا اپنی پسند کا نام درج کریں۔</string>
     <string name="presence_unavailable">سرگرمی کی کیفیت دستیاب نہیں</string>
+    <string name="eligibility_confirmation_hint">قواعد پڑھیں، پھر شامل ہونے کے لیے آخر میں موجود تینوں تصدیقات پر نشان لگائیں۔</string>
+    <string name="regulation_retry_message">ٹورنامنٹ کے قواعد لوڈ نہیں ہو سکے۔ اپنا انٹرنیٹ کنکشن چیک کریں اور دوبارہ کوشش کریں۔</string>
 </resources>

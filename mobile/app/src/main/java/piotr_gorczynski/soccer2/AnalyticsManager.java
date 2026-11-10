@@ -109,6 +109,14 @@ public class AnalyticsManager {
         if (isBangladesh()) trackSimpleEvent("tournament_join_submit");
     }
 
+    void trackTournamentRegulationStep(String tournamentId, Bundle diagnostic) {
+        if (firebaseAnalytics == null) return;
+        Bundle params = new Bundle(diagnostic);
+        if (TournamentPromotion.validId(tournamentId)) params.putString("tournament_id", tournamentId);
+        try { firebaseAnalytics.logEvent("tournament_regulation_step", params); }
+        catch (Exception ignored) { Log.w(TAG, "Could not report regulation milestone"); }
+    }
+
     private static final String TAG = "TAG_Soccer";
     
     private FirebaseAnalytics firebaseAnalytics;
