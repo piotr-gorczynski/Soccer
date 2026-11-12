@@ -86,10 +86,15 @@ public class RankingActivity extends BaseActivity {
             profileNamesListener = db.collection("users").whereIn(FieldPath.documentId(), uids)
                     .addSnapshotListener((userSnap, error) -> {
                         if (error != null || userSnap == null || isDestroyed()) return;
+                        for (RankingEntry entry : scoreMap.values()) {
+                            entry.nickname = UserDisplayName.REMOVED;
+                            entry.activeProfile = false;
+                        }
                         for (DocumentSnapshot user : userSnap) {
                             RankingEntry e = scoreMap.get(user.getId());
                             if (e != null) {
                                 e.nickname = UserDisplayName.from(user);
+                                e.activeProfile = !UserDisplayName.isRemoved(user);
                             }
                         }
 
@@ -127,6 +132,7 @@ public class RankingActivity extends BaseActivity {
     static class RankingEntry {
         final String uid;
         String nickname;
+        boolean activeProfile;
         int wins = 0;
         int medalCategory = 0; // 0=none,1=gold,2=silver,3=bronze
 
@@ -162,7 +168,7 @@ public class RankingActivity extends BaseActivity {
         @Override
         public void onBindViewHolder(@NonNull VH holder, int position) {
             RankingEntry entry = data.get(position);
-            PlayerModeration.bind(holder.itemView, entry.uid, "ranking");
+            PlayerModeration.bind(holder.itemView, entry.uid, "ranking", entry.activeProfile);
             String medal = null;
             switch (entry.medalCategory) {
                 case 1 -> medal = "🥇"; // 🥇

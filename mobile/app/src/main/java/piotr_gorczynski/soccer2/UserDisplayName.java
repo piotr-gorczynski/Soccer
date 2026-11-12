@@ -6,9 +6,11 @@ import com.google.firebase.firestore.DocumentSnapshot;
 public final class UserDisplayName {
     public static final String REMOVED = "(Account removed)";
     private UserDisplayName() {}
+    public static boolean isRemoved(DocumentSnapshot user) {
+        return user == null || !user.exists() || Boolean.TRUE.equals(user.getBoolean("accountDeleted"));
+    }
     public static String from(DocumentSnapshot user) {
-        if (user == null || !user.exists()) return REMOVED;
-        if (Boolean.TRUE.equals(user.getBoolean("accountDeleted"))) return REMOVED;
+        if (isRemoved(user)) return REMOVED;
         return user.getString("nickname");
     }
 }

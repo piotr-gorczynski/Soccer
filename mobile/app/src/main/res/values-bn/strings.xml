@@ -492,4 +492,32 @@
     <string name="presence_unavailable">সক্রিয়তার তথ্য পাওয়া যাচ্ছে না</string>
     <string name="eligibility_confirmation_hint">নিয়মাবলি পড়ুন, তারপর যোগ দিতে শেষে থাকা তিনটি নিশ্চিতকরণে টিক দিন।</string>
     <string name="regulation_retry_message">টুর্নামেন্টের নিয়মাবলি লোড করা যায়নি। ইন্টারনেট সংযোগ পরীক্ষা করে আবার চেষ্টা করুন।</string>
+
+    <!-- Help Centre -->
+    <string name="help_centre">সহায়তা কেন্দ্র</string>
+    <string name="help_empty">সহায়তা দলের সঙ্গে আপনার এখনও কোনো কথোপকথন নেই। আপনার অভিযোগগুলো এখানে দেখা যাবে।</string>
+    <string name="help_topic_player">খেলোয়াড় সম্পর্কে অভিযোগ</string>
+    <string name="help_topic_payment">পুরস্কারের টাকা নিয়ে প্রশ্ন</string>
+    <string name="help_topic_other">সহায়তার অনুরোধ</string>
+    <string name="help_wait_support">সহায়তা দলের উত্তরের অপেক্ষায়</string>
+    <string name="help_wait_user">আপনার উত্তরের অপেক্ষায়</string>
+    <string name="help_unread_count">না-পড়া উত্তর: %1$d</string>
+    <string name="help_mail_description">সহায়তা কেন্দ্র, না-পড়া বার্তা: %1$d</string>
+    <string name="help_message_hint">বার্তা লিখুন (সর্বোচ্চ ২০০০ অক্ষর)</string>
+    <string name="help_send">বার্তা পাঠান</string>
+    <string name="help_retry_send">আবার পাঠানোর চেষ্টা করুন</string>
+    <string name="help_reopen">সমস্যা এখনও রয়ে গেছে</string>
+    <string name="help_reopen_confirm">এই কথোপকথন আবার খুলে সহায়তা দলকে বার্তা পাঠাবেন?</string>
+    <string name="help_pending_message">বার্তা পৌঁছেছে কি না নিশ্চিত হওয়া যায়নি। আবার পাঠানোর চেষ্টা করুন; একই বার্তা দুবার পাঠানো হবে না।</string>
+    <string name="help_sent">বার্তা পাঠানো হয়েছে</string>
+    <string name="help_you">আপনি</string>
+    <string name="help_support">সহায়তা দল</string>
+    <string name="help_load_failed">অনুরোধটি সম্পন্ন করা যায়নি। আবার চেষ্টা করুন।</string>
+    <string name="help_rate_limit">অনেক বেশি বার্তা পাঠানো হয়েছে। একটু অপেক্ষা করে আবার চেষ্টা করুন।</string>
+    <string name="help_message_invalid">বার্তাটি দেখে আবার চেষ্টা করুন (১–২০০০ অক্ষর)।</string>
+    <string name="help_signin_required">এই অ্যাকাউন্ট থেকে কথোপকথনটি দেখা যাবে না। মেনুতে ফিরে যান।</string>
+    <string name="help_guest_warning">লগ আউট করলে বা অ্যাপ আবার ইনস্টল করলে প্রবেশাধিকার রাখতে অ্যাকাউন্ট অংশে আপনার অ্যাকাউন্ট লিঙ্ক করুন।</string>
+    <string name="help_load_older">আগের বার্তাগুলো দেখুন</string>
+    <string name="help_refresh">রিফ্রেশ করুন</string>
+    <string name="help_unknown_date">তারিখ পাওয়া যায়নি</string>
 </resources>

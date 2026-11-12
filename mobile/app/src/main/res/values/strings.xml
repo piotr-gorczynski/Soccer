@@ -488,4 +488,32 @@
     <string name="presence_unavailable">Activity status unavailable</string>
     <string name="eligibility_confirmation_hint">Read the rules, then select the three confirmations at the end to join.</string>
     <string name="regulation_retry_message">Could not load the tournament rules. Check your connection and try again.</string>
+
+    <!-- Help Centre -->
+    <string name="help_centre">Help Centre</string>
+    <string name="help_empty">You have no support conversations yet. Your reports will appear here.</string>
+    <string name="help_topic_player">Player report</string>
+    <string name="help_topic_payment">Payout enquiry</string>
+    <string name="help_topic_other">Support request</string>
+    <string name="help_wait_support">Waiting for support</string>
+    <string name="help_wait_user">Waiting for your reply</string>
+    <string name="help_unread_count">Unread replies: %1$d</string>
+    <string name="help_mail_description">Help Centre, unread messages: %1$d</string>
+    <string name="help_message_hint">Write a message (up to 2000 characters)</string>
+    <string name="help_send">Send message</string>
+    <string name="help_retry_send">Retry sending</string>
+    <string name="help_reopen">Problem still unresolved</string>
+    <string name="help_reopen_confirm">Reopen this conversation and send your message to support?</string>
+    <string name="help_pending_message">Delivery is not confirmed. Retry sending; your message will not be duplicated.</string>
+    <string name="help_sent">Message sent</string>
+    <string name="help_you">You</string>
+    <string name="help_support">Support</string>
+    <string name="help_load_failed">Could not complete the request. Please try again.</string>
+    <string name="help_rate_limit">Too many messages. Please wait and try again.</string>
+    <string name="help_message_invalid">Check your message and try again (1–2000 characters).</string>
+    <string name="help_signin_required">This account cannot access the conversation. Return to the menu.</string>
+    <string name="help_guest_warning">Link your account in Account to keep access if you log out or reinstall the app.</string>
+    <string name="help_load_older">Load earlier messages</string>
+    <string name="help_refresh">Refresh</string>
+    <string name="help_unknown_date">Date unavailable</string>
 </resources>

@@ -452,4 +452,32 @@
     <string name="presence_unavailable">सक्रियताको स्थिति उपलब्ध छैन</string>
     <string name="eligibility_confirmation_hint">नियम पढ्नुहोस्, त्यसपछि सहभागी हुन अन्त्यमा रहेका तीनवटै पुष्टिमा चिन्ह लगाउनुहोस्।</string>
     <string name="regulation_retry_message">प्रतियोगिताका नियम लोड गर्न सकिएन। इन्टरनेट जडान जाँचेर फेरि प्रयास गर्नुहोस्।</string>
+
+    <!-- Help Centre -->
+    <string name="help_centre">सहायता केन्द्र</string>
+    <string name="help_empty">सहायता टोलीसँग तपाईंको कुनै कुराकानी छैन। तपाईंका उजुरीहरू यहाँ देखिनेछन्।</string>
+    <string name="help_topic_player">खेलाडीको उजुरी</string>
+    <string name="help_topic_payment">पुरस्कार भुक्तानीबारे प्रश्न</string>
+    <string name="help_topic_other">सहायताको अनुरोध</string>
+    <string name="help_wait_support">सहायता टोलीको जवाफ पर्खँदै</string>
+    <string name="help_wait_user">तपाईंको जवाफ पर्खँदै</string>
+    <string name="help_unread_count">नपढिएका जवाफहरू: %1$d</string>
+    <string name="help_mail_description">सहायता केन्द्र, नपढिएका सन्देशहरू: %1$d</string>
+    <string name="help_message_hint">सन्देश लेख्नुहोस् (बढीमा २००० अक्षर)</string>
+    <string name="help_send">सन्देश पठाउनुहोस्</string>
+    <string name="help_retry_send">फेरि पठाउने प्रयास गर्नुहोस्</string>
+    <string name="help_reopen">समस्या अझै छ</string>
+    <string name="help_reopen_confirm">यो कुराकानी फेरि खोलेर सहायता टोलीलाई सन्देश पठाउने?</string>
+    <string name="help_pending_message">सन्देश पुगेको पुष्टि भएको छैन। फेरि पठाउनुहोस्; सन्देश दोहोरिने छैन।</string>
+    <string name="help_sent">सन्देश पठाइयो</string>
+    <string name="help_you">तपाईं</string>
+    <string name="help_support">सहायता टोली</string>
+    <string name="help_load_failed">अनुरोध पूरा हुन सकेन। फेरि प्रयास गर्नुहोस्।</string>
+    <string name="help_rate_limit">धेरै सन्देशहरू पठाइयो। केही बेर पर्खेर फेरि प्रयास गर्नुहोस्।</string>
+    <string name="help_message_invalid">सन्देश जाँचेर फेरि प्रयास गर्नुहोस् (१–२००० अक्षर)।</string>
+    <string name="help_signin_required">यो खाताबाट कुराकानी खोल्न मिल्दैन। मेनुमा फर्कनुहोस्।</string>
+    <string name="help_guest_warning">लगआउट वा एप पुनः स्थापना गरेपछि पनि पहुँच राख्न खाता खण्डमा आफ्नो खाता लिङ्क गर्नुहोस्।</string>
+    <string name="help_load_older">अघिल्ला सन्देशहरू लोड गर्नुहोस्</string>
+    <string name="help_refresh">ताजा गर्नुहोस्</string>
+    <string name="help_unknown_date">मिति उपलब्ध छैन</string>
 </resources>

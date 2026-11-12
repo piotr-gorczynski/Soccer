@@ -54,6 +54,7 @@ class PendingInviteAdapter extends RecyclerView.Adapter<PendingInviteAdapter.VH>
     private final Map<String, String> presCache = new HashMap<>();
     private final Map<String, Long> hbCache = new HashMap<>();
     private final Map<String, Boolean> userDeletedCache = new HashMap<>();
+    private final Map<String, Boolean> activeProfiles = new HashMap<>();
     private final Map<String, String> tournamentNameCache = new HashMap<>();
 
     private static final class RtdbSub {
@@ -108,6 +109,7 @@ class PendingInviteAdapter extends RecyclerView.Adapter<PendingInviteAdapter.VH>
         }
         for (Object payload : payloads) {
             if ("nickname".equals(payload)) {
+                PlayerModeration.bind(holder.itemView, uid, "invitation", Boolean.TRUE.equals(activeProfiles.get(uid)));
                 String nick = nickCache.get(uid);
                 if (nick != null) {
                     holder.nickname.setText(SafeStringFormatter.safeGetString(context, R.string.invite_from_format, nick));
@@ -140,7 +142,7 @@ class PendingInviteAdapter extends RecyclerView.Adapter<PendingInviteAdapter.VH>
 
         String uid = snapshot.getString("from");
         holder.uid = uid;
-        PlayerModeration.bind(holder.itemView, uid, "invitation");
+        PlayerModeration.bind(holder.itemView, uid, "invitation", Boolean.TRUE.equals(activeProfiles.get(uid)));
 
         com.google.firebase.Timestamp createdAt = snapshot.getTimestamp("createdAt");
         if (createdAt != null) {
@@ -191,12 +193,10 @@ class PendingInviteAdapter extends RecyclerView.Adapter<PendingInviteAdapter.VH>
             holder.nickname.setText(context.getString(R.string.invite_from_loading));
             FirebaseFirestore.getInstance().collection("users").document(uid).get()
                     .addOnSuccessListener(doc -> {
+                        activeProfiles.put(uid, !UserDisplayName.isRemoved(doc));
+                        nickCache.put(uid, UserDisplayName.from(doc));
+                        notifyUidChanged(uid, "nickname");
                         if (doc.exists()) {
-                            String n = UserDisplayName.from(doc);
-                            if (n != null) {
-                                nickCache.put(uid, n);
-                                notifyUidChanged(uid, "nickname");
-                            }
                             Boolean deleted = doc.getBoolean("deleted");
                             userDeletedCache.put(uid, deleted != null && deleted);
                             notifyUidChanged(uid, "presence");
@@ -342,6 +342,7 @@ class PendingInviteAdapter extends RecyclerView.Adapter<PendingInviteAdapter.VH>
                 presCache.remove(uid);
                 hbCache.remove(uid);
                 userDeletedCache.remove(uid);
+                activeProfiles.remove(uid);
             }
             break;
         }

@@ -447,4 +447,32 @@
     <string name="presence_unavailable">Statut d’activité indisponible</string>
     <string name="eligibility_confirmation_hint">Lisez le règlement, puis cochez les trois confirmations à la fin pour participer.</string>
     <string name="regulation_retry_message">Impossible de charger le règlement du tournoi. Vérifiez votre connexion et réessayez.</string>
+
+    <!-- Help Centre -->
+    <string name="help_centre">Centre d’aide</string>
+    <string name="help_empty">Vous n’avez pas encore de conversation avec l’assistance. Vos signalements apparaîtront ici.</string>
+    <string name="help_topic_player">Signalement d’un joueur</string>
+    <string name="help_topic_payment">Question sur un versement</string>
+    <string name="help_topic_other">Demande d’assistance</string>
+    <string name="help_wait_support">En attente de l’assistance</string>
+    <string name="help_wait_user">En attente de votre réponse</string>
+    <string name="help_unread_count">Réponses non lues : %1$d</string>
+    <string name="help_mail_description">Centre d’aide, messages non lus : %1$d</string>
+    <string name="help_message_hint">Écrire un message (2000 caractères maximum)</string>
+    <string name="help_send">Envoyer le message</string>
+    <string name="help_retry_send">Réessayer l’envoi</string>
+    <string name="help_reopen">Le problème persiste</string>
+    <string name="help_reopen_confirm">Rouvrir cette conversation et envoyer votre message à l’assistance ?</string>
+    <string name="help_pending_message">La réception n’est pas confirmée. Réessayez l’envoi ; votre message ne sera pas envoyé en double.</string>
+    <string name="help_sent">Message envoyé</string>
+    <string name="help_you">Vous</string>
+    <string name="help_support">Assistance</string>
+    <string name="help_load_failed">Impossible de terminer la demande. Veuillez réessayer.</string>
+    <string name="help_rate_limit">Trop de messages. Patientez avant de réessayer.</string>
+    <string name="help_message_invalid">Vérifiez votre message et réessayez (1 à 2000 caractères).</string>
+    <string name="help_signin_required">Ce compte ne peut pas accéder à la conversation. Retournez au menu.</string>
+    <string name="help_guest_warning">Associez votre compte dans Compte pour conserver l’accès après une déconnexion ou une réinstallation.</string>
+    <string name="help_load_older">Charger les messages précédents</string>
+    <string name="help_refresh">Actualiser</string>
+    <string name="help_unknown_date">Date indisponible</string>
 </resources>

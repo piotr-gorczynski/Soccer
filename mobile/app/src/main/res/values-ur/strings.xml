@@ -452,4 +452,32 @@
     <string name="presence_unavailable">سرگرمی کی کیفیت دستیاب نہیں</string>
     <string name="eligibility_confirmation_hint">قواعد پڑھیں، پھر شامل ہونے کے لیے آخر میں موجود تینوں تصدیقات پر نشان لگائیں۔</string>
     <string name="regulation_retry_message">ٹورنامنٹ کے قواعد لوڈ نہیں ہو سکے۔ اپنا انٹرنیٹ کنکشن چیک کریں اور دوبارہ کوشش کریں۔</string>
+
+    <!-- Help Centre -->
+    <string name="help_centre">مدد کا مرکز</string>
+    <string name="help_empty">ابھی مدد کی ٹیم کے ساتھ آپ کی کوئی گفتگو نہیں ہے۔ آپ کی شکایات یہاں نظر آئیں گی۔</string>
+    <string name="help_topic_player">کھلاڑی کی شکایت</string>
+    <string name="help_topic_payment">انعام کی ادائیگی کے بارے میں سوال</string>
+    <string name="help_topic_other">مدد کی درخواست</string>
+    <string name="help_wait_support">مدد کی ٹیم کے جواب کا انتظار</string>
+    <string name="help_wait_user">آپ کے جواب کا انتظار</string>
+    <string name="help_unread_count">بغیر پڑھے جوابات: %1$d</string>
+    <string name="help_mail_description">مدد کا مرکز، بغیر پڑھے پیغامات: %1$d</string>
+    <string name="help_message_hint">پیغام لکھیں (زیادہ سے زیادہ ۲۰۰۰ حروف)</string>
+    <string name="help_send">پیغام بھیجیں</string>
+    <string name="help_retry_send">دوبارہ بھیجنے کی کوشش کریں</string>
+    <string name="help_reopen">مسئلہ ابھی باقی ہے</string>
+    <string name="help_reopen_confirm">یہ گفتگو دوبارہ کھول کر اپنا پیغام مدد کی ٹیم کو بھیجیں؟</string>
+    <string name="help_pending_message">پیغام پہنچنے کی تصدیق نہیں ہوئی۔ دوبارہ بھیجیں؛ پیغام دو بار نہیں بھیجا جائے گا۔</string>
+    <string name="help_sent">پیغام بھیج دیا گیا</string>
+    <string name="help_you">آپ</string>
+    <string name="help_support">مدد کی ٹیم</string>
+    <string name="help_load_failed">درخواست مکمل نہیں ہو سکی۔ دوبارہ کوشش کریں۔</string>
+    <string name="help_rate_limit">بہت زیادہ پیغامات ہیں۔ کچھ دیر بعد دوبارہ کوشش کریں۔</string>
+    <string name="help_message_invalid">اپنا پیغام دیکھ کر دوبارہ کوشش کریں (۱–۲۰۰۰ حروف)۔</string>
+    <string name="help_signin_required">اس اکاؤنٹ کو گفتگو تک رسائی نہیں ہے۔ مینو پر واپس جائیں۔</string>
+    <string name="help_guest_warning">لاگ آؤٹ یا ایپ دوبارہ انسٹال کرنے کے بعد بھی رسائی رکھنے کے لیے اکاؤنٹ کے حصے میں اپنا اکاؤنٹ لنک کریں۔</string>
+    <string name="help_load_older">پرانے پیغامات دکھائیں</string>
+    <string name="help_refresh">تازہ کریں</string>
+    <string name="help_unknown_date">تاریخ دستیاب نہیں</string>
 </resources>

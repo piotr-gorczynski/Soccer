@@ -418,4 +418,32 @@
     <string name="presence_unavailable">មិនមានព័ត៌មានអំពីសកម្មភាពទេ</string>
     <string name="eligibility_confirmation_hint">អានបទបញ្ជា រួចធីកការបញ្ជាក់ទាំងបីនៅខាងចុង ដើម្បីចូលរួម។</string>
     <string name="regulation_retry_message">មិនអាចផ្ទុកបទបញ្ជាការប្រកួតបានទេ។ សូមពិនិត្យការតភ្ជាប់អ៊ីនធឺណិត ហើយព្យាយាមម្ដងទៀត។</string>
+
+    <!-- Help Centre -->
+    <string name="help_centre">មជ្ឈមណ្ឌលជំនួយ</string>
+    <string name="help_empty">អ្នកមិនទាន់មានការសន្ទនាជាមួយក្រុមជំនួយទេ។ របាយការណ៍របស់អ្នកនឹងបង្ហាញនៅទីនេះ។</string>
+    <string name="help_topic_player">រាយការណ៍អំពីអ្នកលេង</string>
+    <string name="help_topic_payment">សំណួរអំពីការបើកប្រាក់រង្វាន់</string>
+    <string name="help_topic_other">សំណើជំនួយ</string>
+    <string name="help_wait_support">កំពុងរង់ចាំចម្លើយពីក្រុមជំនួយ</string>
+    <string name="help_wait_user">កំពុងរង់ចាំចម្លើយរបស់អ្នក</string>
+    <string name="help_unread_count">ចម្លើយមិនទាន់អាន៖ %1$d</string>
+    <string name="help_mail_description">មជ្ឈមណ្ឌលជំនួយ សារមិនទាន់អាន៖ %1$d</string>
+    <string name="help_message_hint">សរសេរសារ (ច្រើនបំផុត ២០០០ តួអក្សរ)</string>
+    <string name="help_send">ផ្ញើសារ</string>
+    <string name="help_retry_send">ព្យាយាមផ្ញើម្តងទៀត</string>
+    <string name="help_reopen">បញ្ហានៅតែមាន</string>
+    <string name="help_reopen_confirm">បើកការសន្ទនានេះឡើងវិញ ហើយផ្ញើសាររបស់អ្នកទៅក្រុមជំនួយ?</string>
+    <string name="help_pending_message">មិនទាន់បញ្ជាក់ថាសារបានទៅដល់ទេ។ សូមផ្ញើម្តងទៀត សារនឹងមិនត្រូវផ្ញើស្ទួនទេ។</string>
+    <string name="help_sent">បានផ្ញើសារ</string>
+    <string name="help_you">អ្នក</string>
+    <string name="help_support">ក្រុមជំនួយ</string>
+    <string name="help_load_failed">មិនអាចបំពេញសំណើបានទេ។ សូមព្យាយាមម្តងទៀត។</string>
+    <string name="help_rate_limit">សារច្រើនពេក។ សូមរង់ចាំ ហើយព្យាយាមម្តងទៀត។</string>
+    <string name="help_message_invalid">ពិនិត្យសាររបស់អ្នក ហើយព្យាយាមម្តងទៀត (១–២០០០ តួអក្សរ)។</string>
+    <string name="help_signin_required">គណនីនេះមិនអាចចូលមើលការសន្ទនាបានទេ។ សូមត្រឡប់ទៅម៉ឺនុយ។</string>
+    <string name="help_guest_warning">ភ្ជាប់គណនីរបស់អ្នកនៅផ្នែកគណនី ដើម្បីរក្សាសិទ្ធិចូលប្រើ បន្ទាប់ពីចាកចេញ ឬដំឡើងកម្មវិធីឡើងវិញ។</string>
+    <string name="help_load_older">ផ្ទុកសារចាស់ៗ</string>
+    <string name="help_refresh">ផ្ទុកឡើងវិញ</string>
+    <string name="help_unknown_date">មិនមានកាលបរិច្ឆេទ</string>
 </resources>

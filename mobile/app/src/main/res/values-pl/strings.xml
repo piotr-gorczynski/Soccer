@@ -492,4 +492,32 @@
     <string name="presence_unavailable">Status aktywności niedostępny</string>
     <string name="eligibility_confirmation_hint">Przeczytaj regulamin, a następnie zaznacz trzy potwierdzenia na końcu, aby dołączyć.</string>
     <string name="regulation_retry_message">Nie udało się wczytać regulaminu turnieju. Sprawdź połączenie i spróbuj ponownie.</string>
+
+    <!-- Help Centre -->
+    <string name="help_centre">Centrum pomocy</string>
+    <string name="help_empty">Nie masz jeszcze rozmów z obsługą. Tutaj pojawią się Twoje zgłoszenia.</string>
+    <string name="help_topic_player">Zgłoszenie gracza</string>
+    <string name="help_topic_payment">Pytanie o wypłatę</string>
+    <string name="help_topic_other">Zgłoszenie do obsługi</string>
+    <string name="help_wait_support">Czekamy na odpowiedź obsługi</string>
+    <string name="help_wait_user">Czekamy na Twoją odpowiedź</string>
+    <string name="help_unread_count">Nieprzeczytane odpowiedzi: %1$d</string>
+    <string name="help_mail_description">Centrum pomocy, nieprzeczytane wiadomości: %1$d</string>
+    <string name="help_message_hint">Napisz wiadomość (do 2000 znaków)</string>
+    <string name="help_send">Wyślij wiadomość</string>
+    <string name="help_retry_send">Ponów wysyłkę</string>
+    <string name="help_reopen">Problem nadal występuje</string>
+    <string name="help_reopen_confirm">Otworzyć ponownie tę rozmowę i wysłać wiadomość do obsługi?</string>
+    <string name="help_pending_message">Nie potwierdzono dostarczenia. Ponów wysyłkę — wiadomość nie zostanie powielona.</string>
+    <string name="help_sent">Wiadomość wysłana</string>
+    <string name="help_you">Ty</string>
+    <string name="help_support">Obsługa</string>
+    <string name="help_load_failed">Nie udało się wykonać operacji. Spróbuj ponownie.</string>
+    <string name="help_rate_limit">Zbyt wiele wiadomości. Poczekaj i spróbuj ponownie.</string>
+    <string name="help_message_invalid">Sprawdź wiadomość i spróbuj ponownie (1–2000 znaków).</string>
+    <string name="help_signin_required">To konto nie ma dostępu do rozmowy. Wróć do menu.</string>
+    <string name="help_guest_warning">Powiąż konto w sekcji Konto, aby zachować dostęp po wylogowaniu lub ponownej instalacji aplikacji.</string>
+    <string name="help_load_older">Wczytaj wcześniejsze wiadomości</string>
+    <string name="help_refresh">Odśwież</string>
+    <string name="help_unknown_date">Data niedostępna</string>
 </resources>

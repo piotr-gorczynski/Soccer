@@ -399,4 +399,32 @@
     <string name="presence_unavailable">وضعیت فعالیت در دسترس نیست</string>
     <string name="eligibility_confirmation_hint">قوانین را بخوانید، سپس برای پیوستن، هر سه تأییدیه انتهای صفحه را علامت بزنید.</string>
     <string name="regulation_retry_message">بارگیری قوانین مسابقات ممکن نشد. اتصال اینترنت را بررسی کنید و دوباره تلاش کنید.</string>
+
+    <!-- Help Centre -->
+    <string name="help_centre">مرکز پشتیبانی</string>
+    <string name="help_empty">هنوز گفت‌وگویی با پشتیبانی ندارید. گزارش‌های شما اینجا نمایش داده می‌شوند.</string>
+    <string name="help_topic_player">گزارش بازیکن</string>
+    <string name="help_topic_payment">پرسش درباره پرداخت جایزه</string>
+    <string name="help_topic_other">درخواست پشتیبانی</string>
+    <string name="help_wait_support">در انتظار پاسخ پشتیبانی</string>
+    <string name="help_wait_user">در انتظار پاسخ شما</string>
+    <string name="help_unread_count">پاسخ‌های خوانده‌نشده: %1$d</string>
+    <string name="help_mail_description">مرکز پشتیبانی، پیام‌های خوانده‌نشده: %1$d</string>
+    <string name="help_message_hint">پیام بنویسید (حداکثر ۲۰۰۰ نویسه)</string>
+    <string name="help_send">ارسال پیام</string>
+    <string name="help_retry_send">تلاش دوباره برای ارسال</string>
+    <string name="help_reopen">مشکل همچنان وجود دارد</string>
+    <string name="help_reopen_confirm">این گفت‌وگو دوباره باز شود و پیام شما به پشتیبانی ارسال شود؟</string>
+    <string name="help_pending_message">تحویل تأیید نشده است. دوباره ارسال کنید؛ پیام شما تکراری ارسال نخواهد شد.</string>
+    <string name="help_sent">پیام ارسال شد</string>
+    <string name="help_you">شما</string>
+    <string name="help_support">پشتیبانی</string>
+    <string name="help_load_failed">درخواست انجام نشد. دوباره تلاش کنید.</string>
+    <string name="help_rate_limit">تعداد پیام‌ها بیش از حد است. کمی صبر کنید و دوباره تلاش کنید.</string>
+    <string name="help_message_invalid">پیام خود را بررسی کنید و دوباره تلاش کنید (۱ تا ۲۰۰۰ نویسه).</string>
+    <string name="help_signin_required">این حساب به گفت‌وگو دسترسی ندارد. به منو برگردید.</string>
+    <string name="help_guest_warning">برای حفظ دسترسی پس از خروج یا نصب مجدد برنامه، حساب خود را در بخش حساب پیوند دهید.</string>
+    <string name="help_load_older">بارگیری پیام‌های قدیمی‌تر</string>
+    <string name="help_refresh">تازه‌سازی</string>
+    <string name="help_unknown_date">تاریخ در دسترس نیست</string>
 </resources>

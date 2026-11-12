@@ -455,4 +455,32 @@
     <string name="presence_unavailable">Estado de actividad no disponible</string>
     <string name="eligibility_confirmation_hint">Lee las reglas y marca las tres confirmaciones al final para participar.</string>
     <string name="regulation_retry_message">No se pudieron cargar las reglas del torneo. Comprueba tu conexión e inténtalo de nuevo.</string>
+
+    <!-- Help Centre -->
+    <string name="help_centre">Centro de ayuda</string>
+    <string name="help_empty">Aún no tienes conversaciones con soporte. Tus informes aparecerán aquí.</string>
+    <string name="help_topic_player">Denuncia de un jugador</string>
+    <string name="help_topic_payment">Consulta sobre el pago</string>
+    <string name="help_topic_other">Solicitud de ayuda</string>
+    <string name="help_wait_support">Esperando a soporte</string>
+    <string name="help_wait_user">Esperando tu respuesta</string>
+    <string name="help_unread_count">Respuestas sin leer: %1$d</string>
+    <string name="help_mail_description">Centro de ayuda, mensajes sin leer: %1$d</string>
+    <string name="help_message_hint">Escribe un mensaje (hasta 2000 caracteres)</string>
+    <string name="help_send">Enviar mensaje</string>
+    <string name="help_retry_send">Reintentar envío</string>
+    <string name="help_reopen">El problema continúa</string>
+    <string name="help_reopen_confirm">¿Reabrir esta conversación y enviar tu mensaje a soporte?</string>
+    <string name="help_pending_message">La entrega no está confirmada. Reintenta el envío; tu mensaje no se duplicará.</string>
+    <string name="help_sent">Mensaje enviado</string>
+    <string name="help_you">Tú</string>
+    <string name="help_support">Soporte</string>
+    <string name="help_load_failed">No se pudo completar la solicitud. Inténtalo de nuevo.</string>
+    <string name="help_rate_limit">Demasiados mensajes. Espera e inténtalo de nuevo.</string>
+    <string name="help_message_invalid">Revisa tu mensaje e inténtalo de nuevo (1–2000 caracteres).</string>
+    <string name="help_signin_required">Esta cuenta no puede acceder a la conversación. Vuelve al menú.</string>
+    <string name="help_guest_warning">Vincula tu cuenta en Cuenta para conservar el acceso si cierras sesión o reinstalas la aplicación.</string>
+    <string name="help_load_older">Cargar mensajes anteriores</string>
+    <string name="help_refresh">Actualizar</string>
+    <string name="help_unknown_date">Fecha no disponible</string>
 </resources>

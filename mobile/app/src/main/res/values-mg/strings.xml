@@ -418,4 +418,32 @@
     <string name="presence_unavailable">Tsy misy ny mombamomba ny fahavitrihana</string>
     <string name="eligibility_confirmation_hint">Vakio ny fitsipika, ary asio marika ireo fanamafisana telo any amin’ny farany mba handraisana anjara.</string>
     <string name="regulation_retry_message">Tsy afaka nampiditra ny fitsipiky ny fifaninanana. Hamarino ny fifandraisana Internet ary andramo indray.</string>
+
+    <!-- Help Centre -->
+    <string name="help_centre">Foibe fanampiana</string>
+    <string name="help_empty">Mbola tsy manana resaka amin’ny ekipa mpanampy ianao. Hiseho eto ny tatitrao.</string>
+    <string name="help_topic_player">Tatitra momba ny mpilalao</string>
+    <string name="help_topic_payment">Fanontaniana momba ny fandoavana loka</string>
+    <string name="help_topic_other">Fangatahana fanampiana</string>
+    <string name="help_wait_support">Miandry valin’ny ekipa mpanampy</string>
+    <string name="help_wait_user">Miandry ny valinteninao</string>
+    <string name="help_unread_count">Valiny mbola tsy novakina: %1$d</string>
+    <string name="help_mail_description">Foibe fanampiana, hafatra mbola tsy novakina: %1$d</string>
+    <string name="help_message_hint">Manorata hafatra (hatramin’ny tarehintsoratra 2000)</string>
+    <string name="help_send">Alefaso ny hafatra</string>
+    <string name="help_retry_send">Andramo alefa indray</string>
+    <string name="help_reopen">Mbola misy ilay olana</string>
+    <string name="help_reopen_confirm">Sokafana indray ve ity resaka ity ary alefa amin’ny ekipa mpanampy ny hafatrao?</string>
+    <string name="help_pending_message">Tsy voamarina ny fahatongavan’ny hafatra. Alefaso indray; tsy halefa indroa ny hafatrao.</string>
+    <string name="help_sent">Lasa ny hafatra</string>
+    <string name="help_you">Ianao</string>
+    <string name="help_support">Ekipa mpanampy</string>
+    <string name="help_load_failed">Tsy vita ny fangatahana. Andramo indray azafady.</string>
+    <string name="help_rate_limit">Be loatra ny hafatra. Miandrasa kely ary andramo indray.</string>
+    <string name="help_message_invalid">Hamarino ny hafatrao ary andramo indray (tarehintsoratra 1–2000).</string>
+    <string name="help_signin_required">Tsy afaka manokatra ity resaka ity ity kaonty ity. Miverena amin’ny menio.</string>
+    <string name="help_guest_warning">Ampifandraiso ao amin’ny Kaonty ny kaontinao mba hitazonana ny fidirana rehefa mivoaka na mametraka indray ny rindranasa.</string>
+    <string name="help_load_older">Asehoy ny hafatra taloha</string>
+    <string name="help_refresh">Havaozy</string>
+    <string name="help_unknown_date">Tsy misy daty</string>
 </resources>

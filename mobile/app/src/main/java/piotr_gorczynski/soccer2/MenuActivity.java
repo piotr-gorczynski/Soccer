@@ -115,6 +115,8 @@ public class MenuActivity extends BaseActivity {
     private BackendServiceChecker serviceChecker;
     private Menu optionsMenu; // Hold reference to menu for updating warning icon
     private MenuItem accountMenuItem; // Reference to account menu item
+    private SupportInboxController supportInbox;
+    private boolean supportMenuStarted;
     private String currentLanguage;
     private AnalyticsManager analyticsManager;
     private final Handler adRetryHandler = new Handler(Looper.getMainLooper());
@@ -668,6 +670,8 @@ public class MenuActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        supportMenuStarted = true;
+        if (supportInbox != null) supportInbox.start();
         registerNetworkCallback();
         startRunningPlayerAnimation();
         if (tournamentPromotionCard!=null) tournamentPromotionCard.start();
@@ -675,6 +679,8 @@ public class MenuActivity extends BaseActivity {
 
     @Override
     protected void onStop() {
+        supportMenuStarted = false;
+        if (supportInbox != null) supportInbox.stop();
         if (tournamentPromotionCard!=null) tournamentPromotionCard.stop();
         ((SoccerApp) getApplication()).onConsentHostStopped(this);
         recordWindowLifecycle("stopped");
@@ -828,6 +834,7 @@ public class MenuActivity extends BaseActivity {
     }
 
     private void updateUiForAuthState() {
+        if (supportInbox != null) supportInbox.refresh(false);
         boolean loggedIn = FirebaseAuth.getInstance().getCurrentUser() != null;
         boolean nicknameLoading = nicknameProfileTask != null && !nicknameProfileTask.isComplete()
                 && java.util.Objects.equals(nicknameProfileUid, FirebaseAuth.getInstance().getUid());
@@ -1820,8 +1827,37 @@ public class MenuActivity extends BaseActivity {
         if (offlineItem != null) {
             offlineItem.setVisible(!isBackendAvailable);
         }
+        attachHelpCentre(menu.findItem(R.id.action_help_centre));
         checkAndUpdateBlockedInviteWarning(); // Check blocked invite status
         return true;
+    }
+
+    private void attachHelpCentre(MenuItem item) {
+        if (item == null || item.getActionView() == null) return;
+        if (supportInbox != null) supportInbox.stop();
+        View action = item.getActionView();
+        TextView badge = action.findViewById(R.id.help_unread_badge);
+        action.setOnClickListener(view -> {
+            if (FirebaseAuth.getInstance().getCurrentUser() != null)
+                startActivity(new Intent(this, HelpCentreActivity.class));
+        });
+        supportInbox = new SupportInboxController(FirebaseAuth.getInstance(), SupportGateway.firebase(),
+                () -> isBackendAvailable && !isBackendCheckInProgress && SupportScreenActivity.deviceOnline(this),
+                new SupportInboxController.Listener() {
+                    @Override public void show(boolean signedIn, long unread, boolean online) {
+                        item.setVisible(signedIn);
+                        action.setAlpha(online ? 1f : 0.5f);
+                        java.text.NumberFormat numbers = java.text.NumberFormat.getIntegerInstance(
+                                getResources().getConfiguration().getLocales().get(0));
+                        badge.setText(unread > 99 ? numbers.format(99) + "+" : numbers.format(unread));
+                        badge.setVisibility(unread > 0 ? View.VISIBLE : View.GONE);
+                        action.setContentDescription(unread > 0
+                                ? getString(R.string.help_mail_description, unread) : getString(R.string.help_centre));
+                    }
+                    @Override public void accountChanged(String previousUid) { SupportDraft.clearOwner(MenuActivity.this, previousUid); }
+                });
+        item.setVisible(FirebaseAuth.getInstance().getCurrentUser() != null);
+        if (supportMenuStarted) supportInbox.start();
     }
 
     @Override
@@ -1855,6 +1891,7 @@ public class MenuActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
+        if (supportInbox != null) supportInbox.stop();
         if (tournamentPromotionCard!=null) tournamentPromotionCard.stop();
         pendingAdContinuation = null;
         adFlowInProgress = false;
@@ -1956,6 +1993,7 @@ public class MenuActivity extends BaseActivity {
     private void finishBackendUiCheck(int generation) {
         if (generation != menuCheckGeneration) return;
         isBackendCheckInProgress = false;
+        if (supportInbox != null) supportInbox.refresh(false);
         maybeRevealResolvedMenu();
     }
     private void registerNetworkCallback() {

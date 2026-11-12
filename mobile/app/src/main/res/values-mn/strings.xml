@@ -418,4 +418,32 @@
     <string name="presence_unavailable">Идэвхийн төлөв боломжгүй</string>
     <string name="eligibility_confirmation_hint">Дүрмийг уншаад, оролцохын тулд төгсгөлд байгаа гурван баталгаажуулалтыг бүгдийг нь чагтална уу.</string>
     <string name="regulation_retry_message">Тэмцээний дүрмийг ачаалж чадсангүй. Интернэт холболтоо шалгаад дахин оролдоно уу.</string>
+
+    <!-- Help Centre -->
+    <string name="help_centre">Тусламжийн төв</string>
+    <string name="help_empty">Тусламжийн багтай хийсэн харилцан яриа одоогоор алга. Таны илгээсэн хүсэлтүүд энд харагдана.</string>
+    <string name="help_topic_player">Тоглогчийн тухай гомдол</string>
+    <string name="help_topic_payment">Шагналын төлбөрийн асуулт</string>
+    <string name="help_topic_other">Тусламжийн хүсэлт</string>
+    <string name="help_wait_support">Тусламжийн хариуг хүлээж байна</string>
+    <string name="help_wait_user">Таны хариуг хүлээж байна</string>
+    <string name="help_unread_count">Уншаагүй хариу: %1$d</string>
+    <string name="help_mail_description">Тусламжийн төв, уншаагүй зурвас: %1$d</string>
+    <string name="help_message_hint">Зурвас бичих (2000 хүртэл тэмдэгт)</string>
+    <string name="help_send">Зурвас илгээх</string>
+    <string name="help_retry_send">Дахин илгээх</string>
+    <string name="help_reopen">Асуудал хэвээр байна</string>
+    <string name="help_reopen_confirm">Энэ харилцан яриаг дахин нээж, тусламжийн багт зурвасаа илгээх үү?</string>
+    <string name="help_pending_message">Хүргэлт баталгаажаагүй байна. Дахин илгээнэ үү; таны зурвас давхар илгээгдэхгүй.</string>
+    <string name="help_sent">Зурвас илгээгдлээ</string>
+    <string name="help_you">Та</string>
+    <string name="help_support">Тусламжийн баг</string>
+    <string name="help_load_failed">Хүсэлтийг гүйцэтгэж чадсангүй. Дахин оролдоно уу.</string>
+    <string name="help_rate_limit">Хэт олон зурвас илгээлээ. Түр хүлээгээд дахин оролдоно уу.</string>
+    <string name="help_message_invalid">Зурвасаа шалгаад дахин оролдоно уу (1–2000 тэмдэгт).</string>
+    <string name="help_signin_required">Энэ бүртгэл харилцан ярианд хандах боломжгүй. Цэс рүү буцна уу.</string>
+    <string name="help_guest_warning">Гарах эсвэл аппыг дахин суулгасны дараа ч хандахын тулд Бүртгэл хэсэгт бүртгэлээ холбоно уу.</string>
+    <string name="help_load_older">Өмнөх зурвасуудыг ачаалах</string>
+    <string name="help_refresh">Шинэчлэх</string>
+    <string name="help_unknown_date">Огноо байхгүй</string>
 </resources>

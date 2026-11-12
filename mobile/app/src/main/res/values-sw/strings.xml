@@ -418,4 +418,32 @@
     <string name="presence_unavailable">Hali ya shughuli haipatikani</string>
     <string name="eligibility_confirmation_hint">Soma kanuni, kisha tia alama kwenye visanduku vyote vitatu vya uthibitisho mwishoni ili kujiunga.</string>
     <string name="regulation_retry_message">Imeshindikana kupakia kanuni za mashindano. Angalia muunganisho wako wa intaneti kisha ujaribu tena.</string>
+
+    <!-- Help Centre -->
+    <string name="help_centre">Kituo cha msaada</string>
+    <string name="help_empty">Bado huna mazungumzo na timu ya msaada. Ripoti zako zitaonekana hapa.</string>
+    <string name="help_topic_player">Ripoti kuhusu mchezaji</string>
+    <string name="help_topic_payment">Swali kuhusu malipo ya zawadi</string>
+    <string name="help_topic_other">Ombi la msaada</string>
+    <string name="help_wait_support">Inasubiri jibu la timu ya msaada</string>
+    <string name="help_wait_user">Inasubiri jibu lako</string>
+    <string name="help_unread_count">Majibu ambayo hayajasomwa: %1$d</string>
+    <string name="help_mail_description">Kituo cha msaada, ujumbe ambao haujasomwa: %1$d</string>
+    <string name="help_message_hint">Andika ujumbe (hadi herufi 2000)</string>
+    <string name="help_send">Tuma ujumbe</string>
+    <string name="help_retry_send">Jaribu kutuma tena</string>
+    <string name="help_reopen">Tatizo bado lipo</string>
+    <string name="help_reopen_confirm">Fungua mazungumzo haya tena na utume ujumbe wako kwa timu ya msaada?</string>
+    <string name="help_pending_message">Ufikishaji haujathibitishwa. Jaribu kutuma tena; ujumbe wako hautatumwa mara mbili.</string>
+    <string name="help_sent">Ujumbe umetumwa</string>
+    <string name="help_you">Wewe</string>
+    <string name="help_support">Timu ya msaada</string>
+    <string name="help_load_failed">Ombi halijakamilika. Tafadhali jaribu tena.</string>
+    <string name="help_rate_limit">Ujumbe ni mwingi mno. Tafadhali subiri na ujaribu tena.</string>
+    <string name="help_message_invalid">Kagua ujumbe wako na ujaribu tena (herufi 1–2000).</string>
+    <string name="help_signin_required">Akaunti hii haiwezi kufungua mazungumzo. Rudi kwenye menyu.</string>
+    <string name="help_guest_warning">Unganisha akaunti yako kwenye sehemu ya Akaunti ili uendelee kuifikia ukitoka au kusakinisha programu tena.</string>
+    <string name="help_load_older">Pakia ujumbe wa awali</string>
+    <string name="help_refresh">Onyesha upya</string>
+    <string name="help_unknown_date">Tarehe haipatikani</string>
 </resources>

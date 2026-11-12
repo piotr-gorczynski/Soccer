@@ -13,12 +13,13 @@ import java.util.Map;
 
 /** Shared player actions. Identity and nickname are validated/read by the server. */
 final class PlayerModeration {
-    static void bind(View row, String uid, String screen) {
+    static void bind(View row, String uid, String screen, boolean activeProfile) {
         View button = row.findViewById(R.id.playerActions);
         if (button == null) return;
         var user = FirebaseAuth.getInstance().getCurrentUser();
-        button.setVisibility(user == null || uid == null || uid.equals(user.getUid()) ? View.GONE : View.VISIBLE);
-        button.setOnClickListener(v -> show(row.getContext(), uid, screen));
+        boolean available = activeProfile && user != null && uid != null && !uid.equals(user.getUid());
+        button.setVisibility(available ? View.VISIBLE : View.GONE);
+        button.setOnClickListener(available ? v -> show(row.getContext(), uid, screen) : null);
     }
     private static boolean active(Context context) {
         while (context instanceof android.content.ContextWrapper) {

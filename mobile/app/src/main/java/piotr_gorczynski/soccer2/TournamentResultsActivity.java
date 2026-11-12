@@ -198,10 +198,15 @@ public class TournamentResultsActivity extends BaseActivity {
                                 profileNamesListener = db.collection("users").whereIn(FieldPath.documentId(), uids)
                     .addSnapshotListener((userSnap, error) -> {
                         if (error != null || userSnap == null || isDestroyed()) return;
+                                            for (StandingEntry entry : scoreMap.values()) {
+                                                entry.nickname = UserDisplayName.REMOVED;
+                                                entry.activeProfile = false;
+                                            }
                                             for (DocumentSnapshot user : userSnap) {
                                                 StandingEntry e = scoreMap.get(user.getId());
                                                 if (e != null) {
                                                     e.nickname = UserDisplayName.from(user);
+                                                    e.activeProfile = !UserDisplayName.isRemoved(user);
                                                 }
                                             }
 
@@ -757,6 +762,7 @@ public class TournamentResultsActivity extends BaseActivity {
     static class StandingEntry {
         final String uid;
         String nickname;
+        boolean activeProfile;
         int wins = 0;
         int medalCategory = 0; // 0=none,1=gold,2=silver,3=bronze
         int rank = 0; // actual rank position (1, 2, 3, etc.)
@@ -810,7 +816,7 @@ public class TournamentResultsActivity extends BaseActivity {
                 holder.rank.setText(String.valueOf(entry.rank));
             }
             holder.player.setText(entry.nickname != null ? entry.nickname : entry.uid);
-            PlayerModeration.bind(holder.itemView, entry.uid, "tournament");
+            PlayerModeration.bind(holder.itemView, entry.uid, "tournament", entry.activeProfile);
             Context context = holder.itemView.getContext();
             String formatted = context.getResources()
                     .getQuantityString(R.plurals.wins_format, entry.wins, entry.wins);

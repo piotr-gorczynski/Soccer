@@ -418,4 +418,32 @@
     <string name="presence_unavailable">ບໍ່ມີຂໍ້ມູນສະຖານະການໃຊ້ງານ</string>
     <string name="eligibility_confirmation_hint">ອ່ານກົດລະບຽບ ແລ້ວໝາຍຕິກການຢືນຢັນທັງສາມຂໍ້ຢູ່ທ້າຍໜ້າເພື່ອເຂົ້າຮ່ວມ.</string>
     <string name="regulation_retry_message">ບໍ່ສາມາດໂຫຼດກົດລະບຽບການແຂ່ງຂັນໄດ້. ກະລຸນາກວດສອບການເຊື່ອມຕໍ່ອິນເຕີເນັດ ແລ້ວລອງໃໝ່.</string>
+
+    <!-- Help Centre -->
+    <string name="help_centre">ສູນຊ່ວຍເຫຼືອ</string>
+    <string name="help_empty">ທ່ານຍັງບໍ່ມີການສົນທະນາກັບທີມຊ່ວຍເຫຼືອ. ລາຍງານຂອງທ່ານຈະສະແດງຢູ່ທີ່ນີ້.</string>
+    <string name="help_topic_player">ລາຍງານຜູ້ຫຼິ້ນ</string>
+    <string name="help_topic_payment">ສອບຖາມການຈ່າຍເງິນລາງວັນ</string>
+    <string name="help_topic_other">ຄຳຮ້ອງຂໍຄວາມຊ່ວຍເຫຼືອ</string>
+    <string name="help_wait_support">ລໍຖ້າຄຳຕອບຈາກທີມຊ່ວຍເຫຼືອ</string>
+    <string name="help_wait_user">ລໍຖ້າຄຳຕອບຂອງທ່ານ</string>
+    <string name="help_unread_count">ຄຳຕອບທີ່ຍັງບໍ່ໄດ້ອ່ານ: %1$d</string>
+    <string name="help_mail_description">ສູນຊ່ວຍເຫຼືອ, ຂໍ້ຄວາມທີ່ຍັງບໍ່ໄດ້ອ່ານ: %1$d</string>
+    <string name="help_message_hint">ຂຽນຂໍ້ຄວາມ (ສູງສຸດ 2000 ຕົວອັກສອນ)</string>
+    <string name="help_send">ສົ່ງຂໍ້ຄວາມ</string>
+    <string name="help_retry_send">ລອງສົ່ງອີກຄັ້ງ</string>
+    <string name="help_reopen">ບັນຫາຍັງຄົງຢູ່</string>
+    <string name="help_reopen_confirm">ເປີດການສົນທະນານີ້ອີກຄັ້ງ ແລະສົ່ງຂໍ້ຄວາມໃຫ້ທີມຊ່ວຍເຫຼືອບໍ?</string>
+    <string name="help_pending_message">ຍັງບໍ່ໄດ້ຢືນຢັນການຈັດສົ່ງ. ລອງສົ່ງອີກຄັ້ງ; ຂໍ້ຄວາມຈະບໍ່ຖືກສົ່ງຊ້ຳ.</string>
+    <string name="help_sent">ສົ່ງຂໍ້ຄວາມແລ້ວ</string>
+    <string name="help_you">ທ່ານ</string>
+    <string name="help_support">ທີມຊ່ວຍເຫຼືອ</string>
+    <string name="help_load_failed">ບໍ່ສາມາດດຳເນີນການໄດ້. ກະລຸນາລອງອີກຄັ້ງ.</string>
+    <string name="help_rate_limit">ສົ່ງຂໍ້ຄວາມຫຼາຍເກີນໄປ. ກະລຸນາລໍຖ້າ ແລະລອງອີກຄັ້ງ.</string>
+    <string name="help_message_invalid">ກວດຂໍ້ຄວາມ ແລ້ວລອງອີກຄັ້ງ (1–2000 ຕົວອັກສອນ).</string>
+    <string name="help_signin_required">ບັນຊີນີ້ບໍ່ສາມາດເຂົ້າເບິ່ງການສົນທະນາໄດ້. ກັບໄປທີ່ເມນູ.</string>
+    <string name="help_guest_warning">ເຊື່ອມບັນຊີໃນພາກບັນຊີ ເພື່ອຮັກສາການເຂົ້າໃຊ້ຫຼັງອອກຈາກລະບົບ ຫຼືຕິດຕັ້ງແອັບໃໝ່.</string>
+    <string name="help_load_older">ໂຫຼດຂໍ້ຄວາມເກົ່າ</string>
+    <string name="help_refresh">ໂຫຼດໃໝ່</string>
+    <string name="help_unknown_date">ບໍ່ມີວັນທີ</string>
 </resources>

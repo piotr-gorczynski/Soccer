@@ -399,4 +399,32 @@
     <string name="presence_unavailable">حالة النشاط غير متاحة</string>
     <string name="eligibility_confirmation_hint">اقرأ القواعد، ثم حدّد التأكيدات الثلاثة في النهاية للانضمام.</string>
     <string name="regulation_retry_message">تعذّر تحميل قواعد البطولة. تحقّق من اتصالك بالإنترنت وحاول مجددًا.</string>
+
+    <!-- Help Centre -->
+    <string name="help_centre">مركز المساعدة</string>
+    <string name="help_empty">ليس لديك محادثات مع الدعم بعد. ستظهر بلاغاتك هنا.</string>
+    <string name="help_topic_player">بلاغ عن لاعب</string>
+    <string name="help_topic_payment">استفسار عن صرف الجائزة</string>
+    <string name="help_topic_other">طلب مساعدة</string>
+    <string name="help_wait_support">بانتظار رد الدعم</string>
+    <string name="help_wait_user">بانتظار ردك</string>
+    <string name="help_unread_count">ردود غير مقروءة: %1$d</string>
+    <string name="help_mail_description">مركز المساعدة، رسائل غير مقروءة: %1$d</string>
+    <string name="help_message_hint">اكتب رسالة (حتى ٢٠٠٠ حرف)</string>
+    <string name="help_send">إرسال الرسالة</string>
+    <string name="help_retry_send">إعادة محاولة الإرسال</string>
+    <string name="help_reopen">المشكلة ما زالت قائمة</string>
+    <string name="help_reopen_confirm">هل تريد إعادة فتح هذه المحادثة وإرسال رسالتك إلى الدعم؟</string>
+    <string name="help_pending_message">لم يتم تأكيد التسليم. أعد محاولة الإرسال؛ لن يتم إرسال رسالتك مرتين.</string>
+    <string name="help_sent">تم إرسال الرسالة</string>
+    <string name="help_you">أنت</string>
+    <string name="help_support">الدعم</string>
+    <string name="help_load_failed">تعذر إكمال الطلب. حاول مرة أخرى.</string>
+    <string name="help_rate_limit">عدد الرسائل كبير جدًا. انتظر ثم حاول مرة أخرى.</string>
+    <string name="help_message_invalid">راجع رسالتك وحاول مرة أخرى (١–٢٠٠٠ حرف).</string>
+    <string name="help_signin_required">لا يمكن لهذا الحساب الوصول إلى المحادثة. عد إلى القائمة.</string>
+    <string name="help_guest_warning">اربط حسابك في قسم الحساب للاحتفاظ بإمكانية الوصول بعد تسجيل الخروج أو إعادة تثبيت التطبيق.</string>
+    <string name="help_load_older">تحميل الرسائل السابقة</string>
+    <string name="help_refresh">تحديث</string>
+    <string name="help_unknown_date">التاريخ غير متاح</string>
 </resources>

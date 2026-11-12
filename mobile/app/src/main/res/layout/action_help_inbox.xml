@@ -1,0 +1,15 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="48dp" android:layout_height="48dp" android:minWidth="48dp"
+    android:clickable="true" android:focusable="true" android:contentDescription="@string/help_centre"
+    android:foreground="?attr/selectableItemBackgroundBorderless">
+    <ImageView android:layout_width="24dp" android:layout_height="24dp"
+        android:layout_gravity="center" android:src="@drawable/ic_help_mail"
+        android:importantForAccessibility="no" />
+    <TextView android:id="@+id/help_unread_badge" android:layout_width="wrap_content"
+        android:layout_height="wrap_content" android:minWidth="20dp" android:minHeight="20dp"
+        android:layout_gravity="top|end" android:layout_marginTop="2dp" android:layout_marginEnd="1dp"
+        android:paddingHorizontal="4dp" android:gravity="center" android:background="@drawable/help_badge"
+        android:textColor="#FFFFFF" android:textSize="12sp" android:textStyle="bold"
+        android:includeFontPadding="false" android:maxLines="1" android:ellipsize="end"
+        android:importantForAccessibility="no" android:visibility="gone" />
+</FrameLayout>

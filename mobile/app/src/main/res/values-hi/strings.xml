@@ -452,4 +452,32 @@
     <string name="presence_unavailable">गतिविधि की स्थिति उपलब्ध नहीं है</string>
     <string name="eligibility_confirmation_hint">नियम पढ़ें, फिर शामिल होने के लिए अंत में दी गई तीनों पुष्टियों पर टिक करें।</string>
     <string name="regulation_retry_message">टूर्नामेंट के नियम लोड नहीं हो सके। अपना इंटरनेट कनेक्शन जाँचें और फिर से कोशिश करें।</string>
+
+    <!-- Help Centre -->
+    <string name="help_centre">सहायता केंद्र</string>
+    <string name="help_empty">अभी सहायता टीम के साथ आपकी कोई बातचीत नहीं है। आपकी शिकायतें यहाँ दिखेंगी।</string>
+    <string name="help_topic_player">खिलाड़ी की शिकायत</string>
+    <string name="help_topic_payment">पुरस्कार के भुगतान का सवाल</string>
+    <string name="help_topic_other">सहायता का अनुरोध</string>
+    <string name="help_wait_support">सहायता टीम के जवाब का इंतज़ार</string>
+    <string name="help_wait_user">आपके जवाब का इंतज़ार</string>
+    <string name="help_unread_count">बिना पढ़े जवाब: %1$d</string>
+    <string name="help_mail_description">सहायता केंद्र, बिना पढ़े संदेश: %1$d</string>
+    <string name="help_message_hint">संदेश लिखें (अधिकतम 2000 अक्षर)</string>
+    <string name="help_send">संदेश भेजें</string>
+    <string name="help_retry_send">फिर से भेजें</string>
+    <string name="help_reopen">समस्या अभी भी है</string>
+    <string name="help_reopen_confirm">यह बातचीत फिर से खोलकर अपना संदेश सहायता टीम को भेजें?</string>
+    <string name="help_pending_message">संदेश पहुँचने की पुष्टि नहीं हुई है। फिर से भेजें; आपका संदेश दो बार नहीं भेजा जाएगा।</string>
+    <string name="help_sent">संदेश भेज दिया गया</string>
+    <string name="help_you">आप</string>
+    <string name="help_support">सहायता टीम</string>
+    <string name="help_load_failed">अनुरोध पूरा नहीं हो सका। फिर से कोशिश करें।</string>
+    <string name="help_rate_limit">बहुत ज़्यादा संदेश भेजे गए हैं। थोड़ा इंतज़ार करके फिर कोशिश करें।</string>
+    <string name="help_message_invalid">अपना संदेश जाँचकर फिर से कोशिश करें (1–2000 अक्षर)।</string>
+    <string name="help_signin_required">इस खाते से बातचीत नहीं खोली जा सकती। मेन्यू पर वापस जाएँ।</string>
+    <string name="help_guest_warning">लॉग आउट या ऐप फिर से इंस्टॉल करने के बाद भी पहुँच बनाए रखने के लिए खाता अनुभाग में अपना खाता लिंक करें।</string>
+    <string name="help_load_older">पुराने संदेश लोड करें</string>
+    <string name="help_refresh">रीफ़्रेश करें</string>
+    <string name="help_unknown_date">तारीख उपलब्ध नहीं</string>
 </resources>

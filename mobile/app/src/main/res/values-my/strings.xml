@@ -418,4 +418,32 @@
     <string name="presence_unavailable">လှုပ်ရှားမှုအခြေအနေကို မရနိုင်ပါ</string>
     <string name="eligibility_confirmation_hint">စည်းမျဉ်းများကို ဖတ်ပြီးနောက် ပါဝင်ရန် အဆုံးရှိ အတည်ပြုချက်သုံးခုလုံးကို အမှန်ခြစ်ပါ။</string>
     <string name="regulation_retry_message">ပြိုင်ပွဲစည်းမျဉ်းများကို ဖွင့်၍မရပါ။ အင်တာနက်ချိတ်ဆက်မှုကို စစ်ဆေးပြီး ထပ်မံကြိုးစားပါ။</string>
+
+    <!-- Help Centre -->
+    <string name="help_centre">အကူအညီစင်တာ</string>
+    <string name="help_empty">အကူအညီအဖွဲ့နှင့် စကားပြောထားခြင်း မရှိသေးပါ။ သင်ပို့ထားသော တိုင်ကြားချက်များကို ဤနေရာတွင် မြင်ရပါမည်။</string>
+    <string name="help_topic_player">ကစားသမားတိုင်ကြားချက်</string>
+    <string name="help_topic_payment">ဆုကြေးပေးချေမှုအကြောင်း မေးခွန်း</string>
+    <string name="help_topic_other">အကူအညီတောင်းဆိုမှု</string>
+    <string name="help_wait_support">အကူအညီအဖွဲ့၏ အဖြေကို စောင့်နေသည်</string>
+    <string name="help_wait_user">သင့်အဖြေကို စောင့်နေသည်</string>
+    <string name="help_unread_count">မဖတ်ရသေးသော အဖြေများ: %1$d</string>
+    <string name="help_mail_description">အကူအညီစင်တာ၊ မဖတ်ရသေးသော စာများ: %1$d</string>
+    <string name="help_message_hint">စာရေးပါ (စာလုံးရေ ၂၀၀၀ အထိ)</string>
+    <string name="help_send">စာပို့ရန်</string>
+    <string name="help_retry_send">ထပ်ပို့ကြည့်ရန်</string>
+    <string name="help_reopen">ပြဿနာရှိနေဆဲ</string>
+    <string name="help_reopen_confirm">ဤစကားဝိုင်းကို ပြန်ဖွင့်ပြီး အကူအညီအဖွဲ့သို့ စာပို့မလား။</string>
+    <string name="help_pending_message">စာရောက်ရှိမှုကို အတည်မပြုနိုင်သေးပါ။ ထပ်ပို့ကြည့်ပါ၊ သင့်စာကို နှစ်ခါပို့မည်မဟုတ်ပါ။</string>
+    <string name="help_sent">စာပို့ပြီးပါပြီ</string>
+    <string name="help_you">သင်</string>
+    <string name="help_support">အကူအညီအဖွဲ့</string>
+    <string name="help_load_failed">တောင်းဆိုမှုကို မဆောင်ရွက်နိုင်ပါ။ ထပ်ကြိုးစားပါ။</string>
+    <string name="help_rate_limit">စာအရေအတွက် များလွန်းပါသည်။ ခဏစောင့်ပြီး ထပ်ကြိုးစားပါ။</string>
+    <string name="help_message_invalid">သင့်စာကို စစ်ဆေးပြီး ထပ်ကြိုးစားပါ (စာလုံးရေ ၁–၂၀၀၀)။</string>
+    <string name="help_signin_required">ဤအကောင့်ဖြင့် စကားဝိုင်းကို ဖွင့်မရပါ။ မီနူးသို့ ပြန်သွားပါ။</string>
+    <string name="help_guest_warning">အကောင့်မှထွက်ခြင်း သို့မဟုတ် အက်ပ်ကို ပြန်တင်ခြင်းနောက်တွင်လည်း ဝင်သုံးနိုင်ရန် အကောင့်ကဏ္ဍတွင် အကောင့်ကို ချိတ်ဆက်ပါ။</string>
+    <string name="help_load_older">အစောပိုင်းစာများကို ဖွင့်ရန်</string>
+    <string name="help_refresh">ပြန်လည်ဖွင့်ရန်</string>
+    <string name="help_unknown_date">ရက်စွဲမရှိပါ</string>
 </resources>

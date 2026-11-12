@@ -453,4 +453,32 @@
     <string name="presence_unavailable">Aktivitätsstatus nicht verfügbar</string>
     <string name="eligibility_confirmation_hint">Lies die Regeln und markiere anschließend die drei Bestätigungen am Ende, um teilzunehmen.</string>
     <string name="regulation_retry_message">Die Turnierregeln konnten nicht geladen werden. Prüfe deine Verbindung und versuche es erneut.</string>
+
+    <!-- Help Centre -->
+    <string name="help_centre">Hilfe-Center</string>
+    <string name="help_empty">Du hast noch keine Unterhaltungen mit dem Support. Deine Meldungen erscheinen hier.</string>
+    <string name="help_topic_player">Spielermeldung</string>
+    <string name="help_topic_payment">Frage zur Auszahlung</string>
+    <string name="help_topic_other">Supportanfrage</string>
+    <string name="help_wait_support">Warten auf den Support</string>
+    <string name="help_wait_user">Warten auf deine Antwort</string>
+    <string name="help_unread_count">Ungelesene Antworten: %1$d</string>
+    <string name="help_mail_description">Hilfe-Center, ungelesene Nachrichten: %1$d</string>
+    <string name="help_message_hint">Nachricht schreiben (bis zu 2000 Zeichen)</string>
+    <string name="help_send">Nachricht senden</string>
+    <string name="help_retry_send">Senden erneut versuchen</string>
+    <string name="help_reopen">Problem besteht weiterhin</string>
+    <string name="help_reopen_confirm">Diese Unterhaltung erneut öffnen und deine Nachricht an den Support senden?</string>
+    <string name="help_pending_message">Die Zustellung ist nicht bestätigt. Versuche es erneut; deine Nachricht wird nicht doppelt gesendet.</string>
+    <string name="help_sent">Nachricht gesendet</string>
+    <string name="help_you">Du</string>
+    <string name="help_support">Support</string>
+    <string name="help_load_failed">Die Anfrage konnte nicht abgeschlossen werden. Bitte versuche es erneut.</string>
+    <string name="help_rate_limit">Zu viele Nachrichten. Bitte warte und versuche es erneut.</string>
+    <string name="help_message_invalid">Prüfe deine Nachricht und versuche es erneut (1–2000 Zeichen).</string>
+    <string name="help_signin_required">Dieses Konto kann nicht auf die Unterhaltung zugreifen. Kehre zum Menü zurück.</string>
+    <string name="help_guest_warning">Verknüpfe dein Konto unter Konto, um nach dem Abmelden oder einer Neuinstallation Zugriff zu behalten.</string>
+    <string name="help_load_older">Ältere Nachrichten laden</string>
+    <string name="help_refresh">Aktualisieren</string>
+    <string name="help_unknown_date">Datum nicht verfügbar</string>
 </resources>

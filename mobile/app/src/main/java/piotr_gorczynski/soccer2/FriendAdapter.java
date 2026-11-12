@@ -133,6 +133,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
                 } else if ("nickname".equals(payload)) {
                     String nick = nickCache.get(uid);
                     if (nick != null) h.nickname.setText(nick);
+                    PlayerModeration.bind(h.itemView, uid, "friends", nick != null && !removedUids.contains(uid));
                 } else if ("presence".equals(payload)) {
                     String pState = presCache.get(uid);
                     if (pState != null) bindPresence(h, uid, pState);
@@ -154,7 +155,7 @@ public class FriendAdapter extends RecyclerView.Adapter<FriendAdapter.VH> {
         String uid = d.getId();
         h.uid = uid;
         bindBlock(h);
-        PlayerModeration.bind(h.itemView, uid, "friends");
+        PlayerModeration.bind(h.itemView, uid, "friends", nickCache.containsKey(uid) && !removedUids.contains(uid));
 
         String nick = nickCache.get(uid);
         if (!nameListeners.containsKey(uid)) {

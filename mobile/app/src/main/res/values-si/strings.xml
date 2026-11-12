@@ -418,4 +418,32 @@
     <string name="presence_unavailable">ක්‍රියාකාරී තත්ත්වය ලබා ගත නොහැක</string>
     <string name="eligibility_confirmation_hint">නීති කියවා, එක් වීමට අවසානයේ ඇති තහවුරු කිරීම් තුනම සලකුණු කරන්න.</string>
     <string name="regulation_retry_message">තරගාවලියේ නීති පූරණය කළ නොහැකි විය. අන්තර්ජාල සම්බන්ධතාව පරීක්ෂා කර නැවත උත්සාහ කරන්න.</string>
+
+    <!-- Help Centre -->
+    <string name="help_centre">උදවු මධ්‍යස්ථානය</string>
+    <string name="help_empty">උදවු කණ්ඩායම සමඟ තවම සංවාද නැත. ඔබේ පැමිණිලි මෙහි දිස්වනු ඇත.</string>
+    <string name="help_topic_player">ක්‍රීඩකයෙකු පිළිබඳ පැමිණිල්ල</string>
+    <string name="help_topic_payment">ත්‍යාග ගෙවීම පිළිබඳ විමසීම</string>
+    <string name="help_topic_other">උදවු ඉල්ලීම</string>
+    <string name="help_wait_support">උදවු කණ්ඩායමේ පිළිතුර බලාපොරොත්තුවෙන්</string>
+    <string name="help_wait_user">ඔබේ පිළිතුර බලාපොරොත්තුවෙන්</string>
+    <string name="help_unread_count">නොකියවූ පිළිතුරු: %1$d</string>
+    <string name="help_mail_description">උදවු මධ්‍යස්ථානය, නොකියවූ පණිවිඩ: %1$d</string>
+    <string name="help_message_hint">පණිවිඩයක් ලියන්න (අක්ෂර 2000 දක්වා)</string>
+    <string name="help_send">පණිවිඩය යවන්න</string>
+    <string name="help_retry_send">නැවත යැවීමට උත්සාහ කරන්න</string>
+    <string name="help_reopen">ගැටලුව තවම පවතී</string>
+    <string name="help_reopen_confirm">මෙම සංවාදය නැවත විවෘත කර ඔබේ පණිවිඩය උදවු කණ්ඩායමට යවන්නද?</string>
+    <string name="help_pending_message">පණිවිඩය ලැබුණු බව තහවුරු වී නැත. නැවත යවන්න; පණිවිඩය දෙවරක් යැවෙන්නේ නැත.</string>
+    <string name="help_sent">පණිවිඩය යවන ලදි</string>
+    <string name="help_you">ඔබ</string>
+    <string name="help_support">උදවු කණ්ඩායම</string>
+    <string name="help_load_failed">ඉල්ලීම සම්පූර්ණ කළ නොහැකි විය. නැවත උත්සාහ කරන්න.</string>
+    <string name="help_rate_limit">පණිවිඩ ගණන වැඩියි. මඳක් රැඳී නැවත උත්සාහ කරන්න.</string>
+    <string name="help_message_invalid">පණිවිඩය පරීක්ෂා කර නැවත උත්සාහ කරන්න (අක්ෂර 1–2000).</string>
+    <string name="help_signin_required">මෙම ගිණුමට සංවාදය විවෘත කළ නොහැක. මෙනුවට ආපසු යන්න.</string>
+    <string name="help_guest_warning">ඉවත් වූ පසු හෝ යෙදුම නැවත ස්ථාපනය කළ පසු ප්‍රවේශය තබා ගැනීමට ගිණුම කොටසින් ඔබේ ගිණුම සම්බන්ධ කරන්න.</string>
+    <string name="help_load_older">පැරණි පණිවිඩ පූරණය කරන්න</string>
+    <string name="help_refresh">නැවුම් කරන්න</string>
+    <string name="help_unknown_date">දිනය නොමැත</string>
 </resources>

@@ -418,4 +418,32 @@
     <string name="presence_unavailable">Xaaladda firfircoonida lama heli karo</string>
     <string name="eligibility_confirmation_hint">Akhri xeerarka, dabadeed sax saddexda sanduuq ee xaqiijinta ee dhammaadka si aad ugu biirto.</string>
     <string name="regulation_retry_message">Xeerarka tartanka lama soo dejin karin. Hubi xiriirka internetka oo mar kale isku day.</string>
+
+    <!-- Help Centre -->
+    <string name="help_centre">Xarunta caawinta</string>
+    <string name="help_empty">Weli wax wada hadal ah lama lihid kooxda caawinta. Warbixinnadaadu halkan ayay ka muuqan doonaan.</string>
+    <string name="help_topic_player">Warbixin ciyaaryahan</string>
+    <string name="help_topic_payment">Su’aal ku saabsan bixinta abaalmarinta</string>
+    <string name="help_topic_other">Codsi caawimaad</string>
+    <string name="help_wait_support">Waxaa la sugayaa jawaabta kooxda caawinta</string>
+    <string name="help_wait_user">Waxaa la sugayaa jawaabtaada</string>
+    <string name="help_unread_count">Jawaabaha aan la akhrin: %1$d</string>
+    <string name="help_mail_description">Xarunta caawinta, farriimaha aan la akhrin: %1$d</string>
+    <string name="help_message_hint">Qor farriin (ugu badnaan 2000 xaraf)</string>
+    <string name="help_send">Dir farriinta</string>
+    <string name="help_retry_send">Mar kale isku day dirista</string>
+    <string name="help_reopen">Dhibaatadu weli way jirtaa</string>
+    <string name="help_reopen_confirm">Dib ma loo furaa wada hadalkan oo farriintaada ma loo diraa kooxda caawinta?</string>
+    <string name="help_pending_message">Lama xaqiijin inay farriintu gaartay. Mar kale dir; farriintaada laba jeer lama diri doono.</string>
+    <string name="help_sent">Farriinta waa la diray</string>
+    <string name="help_you">Adiga</string>
+    <string name="help_support">Kooxda caawinta</string>
+    <string name="help_load_failed">Codsiga lama dhammaystiri karin. Fadlan mar kale isku day.</string>
+    <string name="help_rate_limit">Farriimo aad u badan. Fadlan sug oo mar kale isku day.</string>
+    <string name="help_message_invalid">Hubi farriintaada oo mar kale isku day (1–2000 xaraf).</string>
+    <string name="help_signin_required">Akoonkan ma furi karo wada hadalka. Ku noqo liiska.</string>
+    <string name="help_guest_warning">Akoonkaaga ku xir qaybta Akoonka si aad u sii geli karto haddii aad ka baxdo ama abka dib u rakibto.</string>
+    <string name="help_load_older">Soo geli farriimihii hore</string>
+    <string name="help_refresh">Cusboonaysii</string>
+    <string name="help_unknown_date">Taariikh lama hayo</string>
 </resources>
