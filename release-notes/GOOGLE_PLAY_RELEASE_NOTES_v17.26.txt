@@ -1,0 +1,107 @@
+<en-GB>
+✉️ New Help Centre: view support replies, follow your requests and reply in the app.
+🔴 The envelope badge shows unread support messages.
+👤 Removed accounts no longer show report or block actions.
+</en-GB>
+
+<pl-PL>
+✉️ Nowe centrum pomocy: czytaj odpowiedzi supportu, śledź zgłoszenia i odpowiadaj w aplikacji.
+🔴 Licznik na kopercie pokazuje nieprzeczytane wiadomości od supportu.
+👤 Usunięte konta nie mają już opcji zgłaszania ani blokowania.
+</pl-PL>
+
+<de-DE>
+✉️ Neues Hilfe-Center: Supportantworten lesen, Anfragen verfolgen und direkt in der App antworten.
+🔴 Die Zahl am Briefumschlag zeigt ungelesene Supportnachrichten.
+👤 Bei gelöschten Konten werden Melden und Blockieren nicht mehr angezeigt.
+</de-DE>
+
+<fr-FR>
+✉️ Nouveau centre d’aide : consultez les réponses du support, suivez vos demandes et répondez dans l’application.
+🔴 Le compteur sur l’enveloppe indique les messages du support non lus.
+👤 Les comptes supprimés n’affichent plus les options de signalement ou de blocage.
+</fr-FR>
+
+<es-ES>
+✉️ Nuevo centro de ayuda: consulta las respuestas del soporte, sigue tus solicitudes y responde desde la aplicación.
+🔴 El contador del sobre muestra los mensajes del soporte sin leer.
+👤 Las cuentas eliminadas ya no muestran las opciones de denunciar o bloquear.
+</es-ES>
+
+<ur>
+✉️ نیا مرکزِ مدد: سپورٹ کے جواب پڑھیں، اپنی درخواستوں کی صورتِ حال دیکھیں اور ایپ میں جواب دیں۔
+🔴 لفافے پر موجود گنتی سپورٹ کے بغیر پڑھے پیغامات دکھاتی ہے۔
+👤 حذف شدہ اکاؤنٹس کے لیے رپورٹ یا بلاک کرنے کے اختیارات اب نہیں دکھائے جاتے۔
+</ur>
+
+<bn-BD>
+✉️ নতুন সহায়তা কেন্দ্র: সহায়তা দলের উত্তর পড়ুন, আপনার অনুরোধের অবস্থা দেখুন এবং অ্যাপ থেকেই উত্তর দিন।
+🔴 খামের ওপরের সংখ্যায় সহায়তা দলের অপঠিত বার্তার সংখ্যা দেখা যায়।
+👤 মুছে ফেলা অ্যাকাউন্টের জন্য রিপোর্ট বা ব্লক করার বিকল্প আর দেখানো হয় না।
+</bn-BD>
+
+<ne-NP>
+✉️ नयाँ सहायता केन्द्र: सहायता टोलीका जवाफ पढ्नुहोस्, आफ्ना अनुरोधको स्थिति हेर्नुहोस् र एपबाटै जवाफ दिनुहोस्।
+🔴 खाममा देखिने सङ्ख्याले सहायता टोलीका नपढिएका सन्देश जनाउँछ।
+👤 मेटाइएका खातामा रिपोर्ट वा ब्लक गर्ने विकल्प अब देखिँदैन।
+</ne-NP>
+
+<hi-IN>
+✉️ नया सहायता केंद्र: सहायता टीम के जवाब पढ़ें, अपने अनुरोधों की स्थिति देखें और ऐप में ही जवाब दें।
+🔴 लिफ़ाफ़े पर दिखने वाली संख्या सहायता टीम के अपठित संदेश बताती है।
+👤 हटाए गए खातों के लिए रिपोर्ट या ब्लॉक करने के विकल्प अब नहीं दिखते।
+</hi-IN>
+
+<am>
+✉️ አዲስ የእገዛ ማዕከል፦ የድጋፍ ቡድኑን ምላሾች ያንብቡ፣ ጥያቄዎችዎን ይከታተሉ እና በመተግበሪያው ውስጥ ምላሽ ይስጡ።
+🔴 በፖስታ ምልክቱ ላይ ያለው ቁጥር ያልተነበቡ የድጋፍ መልዕክቶችን ያሳያል።
+👤 የተሰረዙ መለያዎች ሪፖርት የማድረግ ወይም የማገድ አማራጮችን ከእንግዲህ አያሳዩም።
+</am>
+
+<ar>
+✉️ مركز مساعدة جديد: اقرأ ردود الدعم، وتابع طلباتك، وردّ من داخل التطبيق.
+🔴 يعرض العداد على رمز الظرف عدد رسائل الدعم غير المقروءة.
+👤 لم تعد خيارات الإبلاغ أو الحظر تظهر للحسابات المحذوفة.
+</ar>
+
+<my-MM>
+✉️ အကူအညီစင်တာအသစ်တွင် ပံ့ပိုးရေးအဖွဲ့၏ အကြောင်းပြန်စာများကို ဖတ်ရှုနိုင်ပြီး သင့်တောင်းဆိုချက်များကို စောင့်ကြည့်ကာ အက်ပ်ထဲမှ ပြန်စာပို့နိုင်ပါပြီ။
+🔴 စာအိတ်ပေါ်ရှိ အရေအတွက်သည် မဖတ်ရသေးသော ပံ့ပိုးရေးစာများကို ပြသသည်။
+👤 ဖျက်ထားသောအကောင့်များအတွက် တိုင်ကြားရန် သို့မဟုတ် ပိတ်ပင်ရန် ရွေးချယ်စရာများကို မပြတော့ပါ။
+</my-MM>
+
+<km-KH>
+✉️ មជ្ឈមណ្ឌលជំនួយថ្មី៖ អានការឆ្លើយតបពីក្រុមជំនួយ តាមដានសំណើរបស់អ្នក និងឆ្លើយតបក្នុងកម្មវិធី។
+🔴 លេខនៅលើរូបស្រោមសំបុត្របង្ហាញចំនួនសារពីក្រុមជំនួយដែលមិនទាន់បានអាន។
+👤 គណនីដែលបានលុបលែងបង្ហាញជម្រើសរាយការណ៍ ឬទប់ស្កាត់ទៀតហើយ។
+</km-KH>
+
+<lo-LA>
+✉️ ສູນຊ່ວຍເຫຼືອໃໝ່: ອ່ານຄຳຕອບຈາກທີມຊ່ວຍເຫຼືອ, ຕິດຕາມຄຳຮ້ອງຂໍ ແລະຕອບກັບໃນແອັບ.
+🔴 ຕົວເລກເທິງຮູບຊອງຈົດໝາຍສະແດງຈຳນວນຂໍ້ຄວາມຈາກທີມຊ່ວຍເຫຼືອທີ່ຍັງບໍ່ໄດ້ອ່ານ.
+👤 ບັນຊີທີ່ຖືກລຶບຈະບໍ່ສະແດງຕົວເລືອກລາຍງານ ຫຼືບລັອກອີກຕໍ່ໄປ.
+</lo-LA>
+
+<mn-MN>
+✉️ Шинэ тусламжийн төв: дэмжлэгийн багийн хариуг уншиж, хүсэлтийнхээ явцыг хянаж, апп дотроос хариу бичээрэй.
+🔴 Дугтуйн дээрх тоо дэмжлэгийн багаас ирсэн уншаагүй зурвасын тоог харуулна.
+👤 Устгасан бүртгэлд мэдээлэх болон хориглох сонголтууд харагдахаа болилоо.
+</mn-MN>
+
+<fa-IR>
+✉️ مرکز راهنمای جدید: پاسخ‌های پشتیبانی را بخوانید، درخواست‌های خود را پیگیری کنید و در برنامه پاسخ دهید.
+🔴 شمارنده روی پاکت، تعداد پیام‌های خوانده‌نشده پشتیبانی را نشان می‌دهد.
+👤 گزینه‌های گزارش یا مسدود کردن دیگر برای حساب‌های حذف‌شده نمایش داده نمی‌شوند.
+</fa-IR>
+
+<si-LK>
+✉️ නව උපකාරක මධ්‍යස්ථානය: සහාය කණ්ඩායමේ පිළිතුරු කියවන්න, ඔබේ ඉල්ලීම්වල තත්ත්වය බලන්න සහ යෙදුම තුළින් පිළිතුරු දෙන්න.
+🔴 ලියුම් කවරයේ අංකයෙන් සහාය කණ්ඩායමේ නොකියවූ පණිවිඩ ගණන පෙන්වයි.
+👤 මකා දැමූ ගිණුම් සඳහා වාර්තා කිරීමේ හෝ අවහිර කිරීමේ විකල්ප තවදුරටත් නොපෙන්වයි.
+</si-LK>
+
+<sw>
+✉️ Kituo kipya cha usaidizi: soma majibu ya usaidizi, fuatilia maombi yako na ujibu ndani ya programu.
+🔴 Nambari kwenye bahasha inaonyesha ujumbe wa usaidizi ambao haujasomwa.
+👤 Akaunti zilizofutwa hazionyeshi tena chaguo za kuripoti au kuzuia.
+</sw>

@@ -3,6 +3,32 @@
 Shared by Global and Bangladesh. Work is phased so the backend can be tested
 before introducing a new user-facing screen or enabling moderation pushes.
 
+## 17.26 release preparation (2026-11-14)
+
+Android versionName is 17.26 (17.26-BD for Bangladesh), versionCode 61.
+Google Play release notes are in release-notes/GOOGLE_PLAY_RELEASE_NOTES_v17.26.txt
+and release-notes/GOOGLE_PLAY_RELEASE_NOTES_v17.26-BD.txt. They describe the inbox,
+unread badge, in-app replies and removal of player actions for deleted accounts.
+They do not advertise push deep links, which remain Phase 3 below.
+
+Both production release bundles built successfully on 14 November using
+`:app:bundle_prodGlobalRelease :app:bundle_prodBangladeshRelease`; lintVital passed
+for both markets. Generated manifests confirm versionCode 61 and the respective
+17.26 / 17.26-BD names. All 18 Global and 2 Bangladesh release-note sections pass
+the 500-character limit and emoji-prefix checks.
+
+DEV phone checks on 12–13 November confirmed operator replies, player replies,
+status transitions, read acknowledgements and an unread badge increment from
+1 to 2. The badge refresh can lag behind an existing payout support push.
+
+Production readiness check on 14 November found the existing createSupportTicket
+and support triggers, but none of listSupportConversations,
+getSupportConversation, sendSupportMessage or markSupportConversationRead.
+Deploy the conversation backend/rules through trigger 580 after the normal
+DEV-to-TEST and TEST-to-PROD branch synchronization, and verify all four callables
+before publishing Android 17.26. No production deployment was performed by this
+release-preparation task.
+
 ## Phase 1 — conversation backend and operator tools
 
 Deployed to DEV through trigger 580, build

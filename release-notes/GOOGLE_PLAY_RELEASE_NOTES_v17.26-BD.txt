@@ -1,0 +1,11 @@
+<en-GB>
+✉️ New Help Centre: view support replies, follow your requests and reply in the app.
+🔴 The envelope badge shows unread support messages.
+👤 Removed accounts no longer show report or block actions.
+</en-GB>
+
+<bn-BD>
+✉️ নতুন সহায়তা কেন্দ্র: সহায়তা দলের উত্তর পড়ুন, আপনার অনুরোধের অবস্থা দেখুন এবং অ্যাপ থেকেই উত্তর দিন।
+🔴 খামের ওপরের সংখ্যায় সহায়তা দলের অপঠিত বার্তার সংখ্যা দেখা যায়।
+👤 মুছে ফেলা অ্যাকাউন্টের জন্য রিপোর্ট বা ব্লক করার বিকল্প আর দেখানো হয় না।
+</bn-BD>
