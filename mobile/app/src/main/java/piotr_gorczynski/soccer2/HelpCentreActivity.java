@@ -20,6 +20,7 @@ public class HelpCentreActivity extends SupportScreenActivity {
     private Button more;
     private String next;
     private boolean loading, replacePage = true;
+    private boolean refreshPending;
     @Override protected void onCreate(Bundle state) {
         super.onCreate(state); if (isFinishing()) return;
         rows = findViewById(R.id.help_rows); scroll = findViewById(R.id.help_scroll);
@@ -33,6 +34,9 @@ public class HelpCentreActivity extends SupportScreenActivity {
     }
     @Override protected void onStart() { replacePage = true; super.onStart(); }
     @Override protected void refresh() { load(null); }
+    @Override protected void supportUpdated(String ticketId) {
+        if (loading) refreshPending = true; else refresh();
+    }
     private void load(String cursor) {
         if (loading || rows == null || !sessionActive()) return;
         loading = true; more.setEnabled(false);
@@ -42,6 +46,7 @@ public class HelpCentreActivity extends SupportScreenActivity {
             gateway.inbox(cursor).addOnCompleteListener(task -> {
                 if (!accepts(token)) return;
                 loading = false; more.setEnabled(true);
+                if (refreshPending) { refreshPending = false; refresh(); return; }
                 if (!isDeviceOnline()) { connectionFailed(); return; }
                 if (!task.isSuccessful()) { showStatus(errorText(task.getException()), false, true); return; }
                 try {

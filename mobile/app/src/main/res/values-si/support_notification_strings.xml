@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_support_reply">උපකාර මධ්‍යස්ථානයේ ඔබට නව පිළිතුරක් ලැබී ඇත.</string>
+    <string name="notification_support_unread_conversations">උපකාර මධ්‍යස්ථානය, නොකියවූ සංවාද: %1$d</string>
+</resources>

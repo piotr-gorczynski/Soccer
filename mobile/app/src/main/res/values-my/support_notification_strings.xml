@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_support_reply">အကူအညီစင်တာတွင် သင့်အတွက် အကြောင်းပြန်စာအသစ် ရောက်ရှိနေပါသည်။</string>
+    <string name="notification_support_unread_conversations">အကူအညီစင်တာ၊ မဖတ်ရသေးသော စကားဝိုင်းများ: %1$d</string>
+</resources>

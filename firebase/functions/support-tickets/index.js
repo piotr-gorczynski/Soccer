@@ -22,21 +22,6 @@ exports.onSupportTicketCreated = functions.region('us-central1').firestore
 exports.onSupportMessageCreated = functions.region('us-central1').firestore
   .document('supportTickets/{ticketId}/messages/{messageId}').onCreate(attention.messageCreated);
 
-const SUPPORT_MESSAGES = {
-  en: {
-    reply: ['Support replied', 'You have a new reply to your payout support request.'],
-    resolved: ['Support request resolved', 'Your payout support request has been resolved.'],
-  },
-  bn: {
-    reply: ['সহায়তা দল উত্তর দিয়েছে', 'আপনার পেআউট সহায়তা অনুরোধে একটি নতুন উত্তর এসেছে।'],
-    resolved: ['সহায়তা অনুরোধ সমাধান হয়েছে', 'আপনার পেআউট সহায়তা অনুরোধ সমাধান করা হয়েছে।'],
-  },
-  pl: {
-    reply: ['Odpowiedź pomocy', 'Masz nową odpowiedź dotyczącą zgłoszenia wypłaty.'],
-    resolved: ['Zgłoszenie rozwiązane', 'Twoje zgłoszenie dotyczące wypłaty zostało rozwiązane.'],
-  },
-};
-
 exports.createSupportTicket = functions.region('us-central1').https.onCall(async (data, context) => {
   if (!context.auth) throw new functions.https.HttpsError('unauthenticated', 'Authentication required.');
   let input;
@@ -110,66 +95,8 @@ exports.createSupportTicket = functions.region('us-central1').https.onCall(async
 
 exports.onSupportTicketUpdated = functions.firestore
   .document('supportTickets/{ticketId}')
-  .onUpdate(async (change, context) => {
-    const before = change.before.data();
-    const after = change.after.data();
-    // Moderation reports do not use payout notification deep links.
-    if (after.type === 'moderation') return null;
-    const hasNewReply = after.latestSupportReply &&
-      (after.latestSupportReply !== before.latestSupportReply
-        || after.supportReplyVersion !== before.supportReplyVersion);
-    const wasResolved = ['resolved', 'closed'].includes(after.status) &&
-      after.status !== before.status;
-    if (!hasNewReply && !wasResolved) return null;
-
-    const eventType = wasResolved ? 'resolved' : 'reply';
-    const eventRef = change.after.ref.collection('notificationEvents')
-      .doc(`${context.eventId}-${eventType}`);
-    if ((await eventRef.get()).exists) return null;
-
-    const userSnap = await db.collection('users').doc(after.userId).get();
-    if (!userSnap.exists || userSnap.get('accountDeleted') === true) return null;
-    const targetField = userSnap.get('fcmInstallationId') ? 'fcmInstallationId' : 'fcmToken';
-    const targetValue = userSnap.get(targetField);
-    if (!targetValue) return null;
-    const language = userSnap.get('language') || 'en';
-    const [title, body] = (SUPPORT_MESSAGES[language] || SUPPORT_MESSAGES.en)[eventType];
-
-    try {
-      await messaging.send({
-        token: targetValue,
-        data: {
-          type: 'support_ticket_updated',
-          ticketId: context.params.ticketId,
-          paymentId: after.paymentId || '',
-          tournamentId: after.tournamentId || '',
-          status: after.status || '',
-          title,
-          body,
-        },
-        android: { priority: 'high' },
-      });
-      await eventRef.set({ type: eventType, sent: true, sentAt: FieldValue.serverTimestamp() });
-    } catch (error) {
-      if (['messaging/registration-token-not-registered',
-        'messaging/installation-id-not-registered',
-        'messaging/invalid-registration-token'].includes(error.code)) {
-        await userSnap.ref.firestore.runTransaction(async tx => {
-          const current = await tx.get(userSnap.ref);
-          if (!current.exists || current.get('accountDeleted') === true
-              || current.get(targetField) !== userSnap.get(targetField)) return;
-          tx.update(userSnap.ref, {
-            [targetField]: FieldValue.delete(),
-            fcmErrorType: error.code,
-            fcmErrorDate: FieldValue.serverTimestamp(),
-          });
-        });
-        return null;
-      }
-      throw error;
-    }
-    return null;
-  });
+  .onUpdate(require('./notifications').handler(db, messaging, FieldValue,
+    require('firebase-functions/logger')));
 
 const moderation = require('./moderation').handlers(db, FieldValue, functions.https.HttpsError);
 exports.reportPlayer = functions.region('us-central1').https.onCall(moderation.reportPlayer);

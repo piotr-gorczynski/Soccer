@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_support_reply">در مرکز راهنمایی پاسخ جدیدی برای شما آمده است.</string>
+    <string name="notification_support_unread_conversations">مرکز راهنمایی، گفتگوهای خوانده‌نشده: %1$d</string>
+</resources>

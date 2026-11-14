@@ -30,6 +30,7 @@ abstract class SupportScreenActivity extends BaseActivity {
     private ConnectivityManager connectivity;
     private ConnectivityManager.NetworkCallback networkCallback;
     private boolean lastOnline;
+    private final SupportUpdates.Listener updates = ticket -> { if (sessionActive()) supportUpdated(ticket); };
     private final FirebaseAuth.AuthStateListener authListener = ignored -> verifyOwner();
     private final Runnable poll = new Runnable() {
         @Override public void run() { if (sessionActive()) { refresh(); ui.postDelayed(this, 30000); } }
@@ -68,6 +69,7 @@ abstract class SupportScreenActivity extends BaseActivity {
         started = true; generation++; serverReady = false; checkingService = false;
         if (!verifyOwner()) return;
         auth.addAuthStateListener(authListener);
+        SupportUpdates.add(updates);
         lastOnline = isDeviceOnline();
         connectivity = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
         networkCallback = new ConnectivityManager.NetworkCallback() {
@@ -89,6 +91,7 @@ abstract class SupportScreenActivity extends BaseActivity {
     }
     @Override protected void onStop() {
         started = false; generation++; checkingService = false; serverReady = false;
+        SupportUpdates.remove(updates);
         ui.removeCallbacks(poll); if (auth != null) auth.removeAuthStateListener(authListener);
         if (networkCallback != null && connectivity != null) {
             try { connectivity.unregisterNetworkCallback(networkCallback); } catch (RuntimeException ignored) { }
@@ -166,6 +169,7 @@ abstract class SupportScreenActivity extends BaseActivity {
         }
     }
     protected abstract void refresh();
+    protected void supportUpdated(String ticket) { refresh(); }
     protected abstract void requestsInvalidated();
     @Override public boolean onSupportNavigateUp() { finish(); return true; }
 }

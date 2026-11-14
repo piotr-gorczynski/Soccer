@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_support_reply">সহায়তা কেন্দ্রে আপনার জন্য একটি নতুন উত্তর এসেছে।</string>
+    <string name="notification_support_unread_conversations">সহায়তা কেন্দ্র, অপঠিত কথোপকথন: %1$d</string>
+</resources>

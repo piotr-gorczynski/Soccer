@@ -37,8 +37,10 @@ by the Help Centre unread counter. A legacy last reply without a version counts
 as version 1 and is preserved before the next response replaces its summary.
 Deploying only the new server does not update old copies of this operator tool;
 administrators must use this updated CLI before enabling the Help Centre UI.
-Moderation push notifications remain disabled until the app routing is released;
-the CLI explicitly distinguishes this from payout notifications.
+Reply notifications for all categories are implemented in the Phase 3 backend and
+Android update (17.27); deploy through trigger 580 before testing. A reply with
+resolution notifies once; a status-only resolution does not notify. FCM acceptance
+is not proof of device delivery.
 
 Replies are stored under `supportTickets/{ticketId}/messages` and mirrored in
 `latestSupportReply` for the current mobile UI. Updating a ticket triggers an

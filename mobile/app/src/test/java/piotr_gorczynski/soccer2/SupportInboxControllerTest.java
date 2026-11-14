@@ -29,6 +29,25 @@ public class SupportInboxControllerTest {
         when(auth.getUid()).thenAnswer(ignored -> uid.get());
         return new SupportInboxController(auth, gateway, online::get, listener);
     }
+    @Test public void pushInvalidatesBadgeImmediatelyWithoutMarkingRead() {
+        gateway.inboxResult = Tasks.forResult(SupportTestData.inbox(1));
+        SupportInboxController controller = controller(); controller.start(); shadowOf(Looper.getMainLooper()).idle();
+        gateway.inboxResult = Tasks.forResult(SupportTestData.inbox(2));
+        SupportUpdates.received("ticket"); shadowOf(Looper.getMainLooper()).idle();
+        assertEquals(2,gateway.inboxCalls); verify(listener).show(true,2,true);
+        assertEquals(0,gateway.readCalls); controller.stop();
+        SupportUpdates.received("ticket"); shadowOf(Looper.getMainLooper()).idle();
+        assertEquals(2,gateway.inboxCalls);
+    }
+    @Test public void pushDuringRequestRefetchesInsteadOfDisplayingStaleCount() {
+        TaskCompletionSource<Object> pending = new TaskCompletionSource<>(); gateway.inboxResult=pending.getTask();
+        SupportInboxController controller=controller(); controller.start();
+        SupportUpdates.received("ticket"); shadowOf(Looper.getMainLooper()).idle();
+        gateway.inboxResult=Tasks.forResult(SupportTestData.inbox(2));
+        pending.setResult(SupportTestData.inbox(0)); shadowOf(Looper.getMainLooper()).idle();
+        assertEquals(2,gateway.inboxCalls); verify(listener).show(true,2,true);
+        assertEquals(0,gateway.readCalls); controller.stop();
+    }
     @Test public void signedOutHasNoBadgeAndMakesNoRequest() {
         uid.set(null);
         SupportInboxController controller = controller(); controller.start();

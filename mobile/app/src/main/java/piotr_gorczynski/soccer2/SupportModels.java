@@ -85,7 +85,8 @@ final class SupportModels {
         final long unread;
         final String next;
         Inbox(Object raw) {
-            Map<?, ?> data = map(raw); next = cursor(data); unread = number(data, "unreadCount");
+            Map<?, ?> data = map(raw); next = cursor(data);
+            unread = number(data, data.containsKey("unreadConversationCount") ? "unreadConversationCount" : "unreadCount");
             if (!(data.get("conversations") instanceof List)) throw new IllegalArgumentException("Invalid inbox");
             for (Object ticket : (List<?>) data.get("conversations")) tickets.add(new Ticket(ticket));
         }

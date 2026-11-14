@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_support_reply">Waxaad jawaab cusub ku haysaa Xarunta Caawinta.</string>
+    <string name="notification_support_unread_conversations">Xarunta Caawinta, wada sheekaysiyada aan la akhrin: %1$d</string>
+</resources>

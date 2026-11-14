@@ -86,6 +86,7 @@ function handlers(db, FieldValue, HttpsError, clock = Date.now) {
     if (data.cursor && position < 0) fail('invalid-argument', 'Invalid cursor.');
     const page = docs.slice(position + 1, position + 26);
     return { conversations: page.map(publicTicket), unreadCount,
+      unreadConversationCount: docs.filter(doc => replyVersion(doc.data()) > readVersion(doc.data())).length,
       nextCursor: position + 26 < docs.length ? page[page.length - 1].id : null };
   }
 

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_support_reply">Du hast eine neue Antwort im Hilfecenter.</string>
+    <string name="notification_support_unread_conversations">Hilfecenter, ungelesene Unterhaltungen: %1$d</string>
+</resources>

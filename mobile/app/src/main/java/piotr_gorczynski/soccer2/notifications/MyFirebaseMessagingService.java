@@ -32,6 +32,9 @@ import piotr_gorczynski.soccer2.MyPrizesActivity;
 import piotr_gorczynski.soccer2.TournamentLobbyActivity;
 import piotr_gorczynski.soccer2.TournamentResultsActivity;
 import piotr_gorczynski.soccer2.PrizeDetailsActivity;
+import piotr_gorczynski.soccer2.SupportUpdates;
+import piotr_gorczynski.soccer2.SupportConversationActivity;
+import piotr_gorczynski.soccer2.SupportNotificationEntryActivity;
 
 /**
  * Firebase Cloud Messaging service for handling push notifications.
@@ -95,7 +98,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // Get data early to minimize processing time and reduce risk of CannotDeliverBroadcastException
         Map<String, String> data = remoteMessage.getData();
         
-        Log.d(TAG, getClass().getSimpleName() + ".handleMessageReceived: 📨 Message received: " + data);
+        Log.d(TAG, getClass().getSimpleName() + ".handleMessageReceived: type=" + data.get("type"));
         
         if ("start".equals(data.get("type"))) {
             Log.d(TAG, getClass().getSimpleName() + ".handleMessageReceived: start message ignored (no auto-launch)");
@@ -128,12 +131,45 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             showTournamentNotification(context, data);
         } else if ("tournament_winner".equals(notificationType)) {
             showTournamentWinnerNotification(context, data);
-        } else if ("payment_status_changed".equals(notificationType)
-                || "support_ticket_updated".equals(notificationType)) {
+        } else if ("support_ticket_updated".equals(notificationType)) {
+            showSupportReplyNotification(context, data);
+        } else if ("payment_status_changed".equals(notificationType)) {
             showPaymentStatusNotification(context, data);
         } else {
             showInviteNotification(context, data);
         }
+    }
+
+    private void showSupportReplyNotification(Context context, Map<String, String> data) {
+        String ticket = data.get("ticketId");
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null || !SupportUpdates.validTicket(ticket)) return;
+        long version = 0;
+        if (data.containsKey("replyVersion")) {
+            try { version = Long.parseLong(data.get("replyVersion")); }
+            catch (NumberFormatException ignored) { return; }
+            if (version < 1) return;
+        }
+        // Always invalidate the inbox; receiving a push never acknowledges a reply.
+        SupportUpdates.received(ticket);
+        if (version > 0 && !SupportUpdates.firstDelivery(context, uid, ticket, version)) return;
+        if (SupportUpdates.isVisible(uid, ticket)) return;
+        Context localized = LanguageManager.applyLanguage(context, LanguageManager.getCurrentLanguageCode(context));
+        if (!ensureNotificationChannel(context, "support_channel", localized.getString(R.string.help_centre))) return;
+        Intent intent = new Intent(context, SupportNotificationEntryActivity.class)
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .setData(new android.net.Uri.Builder().scheme("soccer-support").authority(context.getPackageName())
+                        .appendPath(ticket).build())
+                .putExtra(SupportConversationActivity.TICKET_ID, ticket);
+        PendingIntent pending = PendingIntent.getActivity(context, 0, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "support_channel")
+                .setSmallIcon(R.drawable.ic_notifications)
+                .setContentTitle(localized.getString(R.string.help_centre))
+                .setContentText(localized.getString(R.string.notification_support_reply))
+                .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
+                .setPriority(NotificationCompat.PRIORITY_HIGH).setAutoCancel(true).setContentIntent(pending);
+        displayNotification(context, ("support:" + ticket).hashCode(), builder);
     }
 
     private void showPaymentStatusNotification(@NonNull Context context,

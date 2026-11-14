@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_support_reply">អ្នកមានការឆ្លើយតបថ្មីនៅក្នុងមជ្ឈមណ្ឌលជំនួយ។</string>
+    <string name="notification_support_unread_conversations">មជ្ឈមណ្ឌលជំនួយ ការសន្ទនាមិនទាន់អាន៖ %1$d</string>
+</resources>

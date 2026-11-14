@@ -18,7 +18,9 @@ import java.util.List;
 import java.util.Map;
 
 public class SupportConversationActivity extends SupportScreenActivity {
-    static final String TICKET_ID = "supportTicketId";
+    public static final String TICKET_ID = "supportTicketId";
+    private boolean refreshPending;
+    private boolean resumed;
     private String ticketId, next;
     private SupportModels.Ticket ticket;
     private final Map<String, SupportModels.Message> messages = new LinkedHashMap<>();
@@ -52,6 +54,24 @@ public class SupportConversationActivity extends SupportScreenActivity {
         rows.getViewTreeObserver().addOnGlobalLayoutListener(this::scheduleRead);
     }
     @Override protected void refresh() { load(null); }
+    @Override protected void supportUpdated(String changedTicket) {
+        if (!changedTicket.equals(ticketId)) return;
+        if (loading || sending) refreshPending = true; else refresh();
+    }
+    @Override protected void onResume() {
+        super.onResume(); resumed = true; updateVisibleConversation();
+    }
+    private void updateVisibleConversation() {
+        if (resumed && sessionActive() && hasWindowFocus() && ticketId != null)
+            SupportUpdates.visible(this, ownerUid, ticketId);
+        else SupportUpdates.hidden(this);
+    }
+    @Override protected void onPause() {
+        resumed = false; SupportUpdates.hidden(this); super.onPause();
+    }
+    @Override protected void onStop() {
+        SupportUpdates.hidden(this); super.onStop();
+    }
     private void load(String cursor) {
         if (loading || sending || rows == null || !sessionActive()) return;
         loading = true; canAcknowledge = false; updateComposer(); more.setEnabled(false);
@@ -61,6 +81,7 @@ public class SupportConversationActivity extends SupportScreenActivity {
             gateway.conversation(ticketId, cursor).addOnCompleteListener(task -> {
                 if (!accepts(token)) return;
                 loading = false; more.setEnabled(true);
+                if (refreshPending) { refreshPending = false; refresh(); return; }
                 if (!isDeviceOnline()) { connectionFailed(); return; }
                 if (!task.isSuccessful()) { showStatus(errorText(task.getException()), false, true); updateComposer(); return; }
                 try {
@@ -196,7 +217,7 @@ public class SupportConversationActivity extends SupportScreenActivity {
         });
     }
     @Override public void onWindowFocusChanged(boolean focused) {
-        super.onWindowFocusChanged(focused); if (focused) scheduleRead();
+        super.onWindowFocusChanged(focused); updateVisibleConversation(); if (focused) scheduleRead();
     }
     @Override protected void requestsInvalidated() {
         loading = false; sending = false; readInFlight = false; readScheduled = false; canAcknowledge = false;

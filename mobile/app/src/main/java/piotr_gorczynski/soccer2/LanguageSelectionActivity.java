@@ -29,6 +29,36 @@ public class LanguageSelectionActivity extends BaseActivity {
     }
 
     private void showLanguageSelectionDialog() {
+        if (AppFlavourDetector.isBangladeshFlavour(this)) {
+            showBangladeshLanguageSelectionDialog();
+            return;
+        }
+        showAllLanguagesDialog(false);
+    }
+
+    private void showBangladeshLanguageSelectionDialog() {
+        if (isFinishing() || isDestroyed()) return;
+        String[] choices = {
+                getString(R.string.bd_language_bengali),
+                getString(R.string.bd_language_english),
+                getString(R.string.bd_language_other)
+        };
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.bd_select_language)
+                .setCancelable(false)
+                .setItems(choices, (dialog, which) -> {
+                    dialog.dismiss();
+                    if (which == 2) {
+                        showAllLanguagesDialog(true);
+                    } else {
+                        LanguageManager.setLanguage(this, which == 0 ? "bn" : "en");
+                        proceedToMainActivity();
+                    }
+                })
+                .show();
+    }
+
+    private void showAllLanguagesDialog(boolean bangladesh) {
         // Check if activity is still valid before showing dialog
         if (isFinishing() || isDestroyed()) {
             Log.w("TAG_Soccer", getClass().getSimpleName() + ".showLanguageSelectionDialog: Activity finishing or destroyed, skipping dialog");
@@ -40,7 +70,7 @@ public class LanguageSelectionActivity extends BaseActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.select_language);
         builder.setCancelable(false); // Force user to select a language
-        builder.setSingleChoiceItems(languages, 0, (dialog, which) -> {
+        builder.setSingleChoiceItems(languages, bangladesh ? -1 : 0, (dialog, which) -> {
             // Get the selected localized language name
             String selectedLocalizedLanguage = languages[which];
             String languageCode = LanguageManager.getLanguageCodeFromLocalizedName(this, selectedLocalizedLanguage);
@@ -60,6 +90,10 @@ public class LanguageSelectionActivity extends BaseActivity {
             dialog.dismiss();
             proceedToMainActivity();
         });
+        if (bangladesh) {
+            builder.setNegativeButton(android.R.string.cancel, (dialog, which) ->
+                    showBangladeshLanguageSelectionDialog());
+        }
         builder.show();
     }
 

@@ -3,13 +3,59 @@
 Shared by Global and Bangladesh. Work is phased so the backend can be tested
 before introducing a new user-facing screen or enabling moderation pushes.
 
+## Phase 3 — support reply pushes (17.27, implementation)
+
+Implemented for both markets. Deployment uses existing
+trigger 580 (`gcp/cloud-build/deploy_support_tickets.yaml`) after commit/promotion,
+and install the updated Android app for the conversation notification route.
+TEST/PROD deployment requires the normal branch promotion process.
+
+The Phase 1 backend was subsequently deployed successfully on 14 November:
+TEST build `5fb2a492-9308-4c45-b06a-510f61f88622`, PROD build
+`256d9383-c77d-4f5b-9f71-1f242bdaf5dc`. The earlier readiness check below is
+historical, not the current production deployment state.
+
+Every new versioned support reply can notify its owner, including moderation,
+general and payout conversations. Reply plus resolution is one notification;
+a status-only change, user reply or read receipt does not notify. The trigger
+claims a per-ticket/reply-version record transactionally, deduplicates concurrent
+invocations, releases failed sends and compares attempted tokens before cleanup.
+A five-minute lease permits recovery of abandoned claims on event redelivery.
+The `sent` outcome means FCM accepted the request, not that the device displayed it.
+Firestore and FCM cannot commit atomically: a process crash after FCM acceptance
+can cause a repeated send on retry. The new client also suppresses duplicate or
+older versioned pushes, using account/ticket-scoped private preferences.
+
+The payload contains only a generic notice and routing metadata; no reply text,
+reported nickname, account identity or wallet details. Controlled logs record
+`support_reply_notification`, outcome, ticket ID and reply version, without
+recipient tokens or message text. Existing payout IDs remain only for older
+payout clients; old moderation clients safely ignore the missing tournament ID.
+There is no replay of historical replies or synthetic production notification.
+
+The new app renders the generic notice in all 20 supported languages, uses a
+separate Help Centre channel and opens Menu > Help Centre > the specific thread.
+No payout or Terms gate is used for Help Centre access. Signed-out notification
+entry goes to Menu; normal backend ownership checks still protect the thread.
+Receiving a push invalidates the active inbox/badge and conversation, even if
+Android notification permission is denied. It never marks a reply read. Existing
+visibility/focus/server acknowledgement checks remain authoritative. When that
+same conversation is resumed and focused, the update is fetched without an OS
+notification; another conversation still alerts. A pending fetch is invalidated
+by a subsequent push so its stale count cannot win.
+
+The new `unreadConversationCount` inbox field counts threads with an unread reply,
+including resolved threads; existing `unreadCount` and per-thread reply counts
+remain compatible with older clients. The envelope uses the new count when
+available and remains refreshed by foreground polling even without push delivery.
+
 ## 17.26 release preparation (2026-11-14)
 
 Android versionName is 17.26 (17.26-BD for Bangladesh), versionCode 61.
 Google Play release notes are in release-notes/GOOGLE_PLAY_RELEASE_NOTES_v17.26.txt
 and release-notes/GOOGLE_PLAY_RELEASE_NOTES_v17.26-BD.txt. They describe the inbox,
 unread badge, in-app replies and removal of player actions for deleted accounts.
-They do not advertise push deep links, which remain Phase 3 below.
+They do not advertise push deep links, which were deferred to Phase 3.
 
 Both production release bundles built successfully on 14 November using
 `:app:bundle_prodGlobalRelease :app:bundle_prodBangladeshRelease`; lintVital passed
@@ -114,8 +160,8 @@ reply/resolve/list commands remain. Upgrade operator checkouts before enabling
 the app badge: old copies do not increment the new version field. Arbitrary
 manual Firestore edits are not a supported operator workflow.
 
-Existing attention alerts handle new user messages after commit. Moderation push
-notifications remain disabled until Phase 3. Existing payout pushes also detect
+Existing attention alerts handle new user messages after commit. At the Phase 1 release, moderation push
+notifications remained disabled pending Phase 3. Existing payout pushes also detect
 a changed reply version, so repeated identical text can still notify.
 
 Deployment later uses existing trigger **580** / deploy_support_tickets.yaml,
@@ -199,10 +245,11 @@ remain required. Production retains the actual window-visibility check.
 Push routing remains Phase 3. Phase 2 receives changes by foreground refresh,
 not by newly enabled moderation notifications.
 
-## Phase 3 — notifications and end-to-end device validation
+## Phase 3 — end-to-end device validation checklist
 
-Not implemented yet. Route neutral support notifications to the correct Help
-Centre conversation; do not route moderation to payout screens. Keep bodies free
+The implementation is described at the top of this document. After deploying
+to DEV and installing the new app, verify that neutral support notifications open
+the correct Help Centre conversation rather than a payout screen. Keep bodies free
 of report content and reported-player identity. The inbox is authoritative if
 push is disabled or lost. Recheck signed-in ownership after authentication and
 when following a stale link. Consider compatibility gating for released clients

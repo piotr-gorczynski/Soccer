@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_support_reply">Tienes una nueva respuesta en el centro de ayuda.</string>
+    <string name="notification_support_unread_conversations">Centro de ayuda, conversaciones sin leer: %1$d</string>
+</resources>

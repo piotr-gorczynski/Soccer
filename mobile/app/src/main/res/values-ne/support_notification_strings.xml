@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_support_reply">सहायता केन्द्रमा तपाईंका लागि नयाँ जवाफ आएको छ।</string>
+    <string name="notification_support_unread_conversations">सहायता केन्द्र, नपढिएका कुराकानी: %1$d</string>
+</resources>

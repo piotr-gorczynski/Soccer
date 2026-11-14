@@ -1,0 +1,13 @@
+<en-GB>
+🔔 Get notified when support replies, then tap to open the right conversation.
+✉️ The envelope badge counts conversations with unread replies.
+💬 An open conversation refreshes without an extra notification.
+🌐 First launch now offers বাংলা and English first, with other languages still available.
+</en-GB>
+
+<bn-BD>
+🔔 সহায়তা দলের উত্তরের বিজ্ঞপ্তিতে ট্যাপ করে সংশ্লিষ্ট কথোপকথন খুলুন।
+✉️ খামের সংখ্যাটি অপঠিত উত্তর থাকা কথোপকথনের সংখ্যা দেখায়।
+💬 কথোপকথন খোলা থাকলে বাড়তি বিজ্ঞপ্তি ছাড়াই নতুন উত্তর দেখা যায়।
+🌐 প্রথমবার চালু করলে বাংলা ও English আগে দেখানো হয়, অন্য ভাষাও বেছে নেওয়া যায়।
+</bn-BD>

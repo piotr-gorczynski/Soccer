@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_support_reply">مرکزِ مدد میں آپ کے لیے ایک نیا جواب آیا ہے۔</string>
+    <string name="notification_support_unread_conversations">مرکزِ مدد، بغیر پڑھی گفتگوئیں: %1$d</string>
+</resources>

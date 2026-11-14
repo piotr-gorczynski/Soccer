@@ -1852,7 +1852,7 @@ public class MenuActivity extends BaseActivity {
                         badge.setText(unread > 99 ? numbers.format(99) + "+" : numbers.format(unread));
                         badge.setVisibility(unread > 0 ? View.VISIBLE : View.GONE);
                         action.setContentDescription(unread > 0
-                                ? getString(R.string.help_mail_description, unread) : getString(R.string.help_centre));
+                                ? getString(R.string.notification_support_unread_conversations, unread) : getString(R.string.help_centre));
                     }
                     @Override public void accountChanged(String previousUid) { SupportDraft.clearOwner(MenuActivity.this, previousUid); }
                 });

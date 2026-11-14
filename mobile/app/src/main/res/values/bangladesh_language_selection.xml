@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- First-run choices deliberately use native labels before a language is selected. -->
+    <string name="bd_select_language" translatable="false">ভাষা নির্বাচন করুন / Select language</string>
+    <string name="bd_language_bengali" translatable="false">বাংলা</string>
+    <string name="bd_language_english" translatable="false">English</string>
+    <string name="bd_language_other" translatable="false">অন্যান্য ভাষা / Other languages</string>
+</resources>

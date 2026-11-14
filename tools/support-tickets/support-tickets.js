@@ -121,9 +121,7 @@ async function main() {
   const result = await updateTicket(db, ticketRef, command, message,
     serviceAccount.client_email, admin.firestore.FieldValue);
   console.log(`${result.reference || ticketId} updated to ${result.status}.`);
-  console.log(result.type === 'moderation'
-    ? 'Ticket updated. Player-report notifications require the Help Centre app update.'
-    : 'The deployed support notification trigger will attempt to notify the user.');
+  console.log('The deployed support notification trigger will attempt to notify the user when a reply was added.');
 }
 
 async function updateTicket(db, ticketRef, command, message, actor, FieldValue) {

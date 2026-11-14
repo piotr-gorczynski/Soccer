@@ -26,16 +26,23 @@ final class SupportInboxController {
     private long unread, fetchedAt = -60000;
     private int generation;
     private boolean started, loading;
+    private boolean pushPending;
+    private final SupportUpdates.Listener updates = ticket -> {
+        if (!started) return;
+        if (loading) pushPending = true; else refresh(true);
+    };
     SupportInboxController(FirebaseAuth auth, SupportGateway gateway, BooleanSupplier online, Listener listener) {
         this.auth = auth; this.gateway = gateway; this.online = online; this.listener = listener;
     }
     void start() {
         if (started) return;
         started = true; bind(); auth.addAuthStateListener(authListener);
+        SupportUpdates.add(updates);
         refresh(true); handler.postDelayed(poll, 60000);
     }
     void stop() {
         started = false; generation++; loading = false;
+        pushPending = false; SupportUpdates.remove(updates);
         handler.removeCallbacks(poll); auth.removeAuthStateListener(authListener);
     }
     private void bind() {
@@ -63,6 +70,7 @@ final class SupportInboxController {
         gateway.inbox(null).addOnCompleteListener(task -> {
             if (!started || request != generation || !Objects.equals(owner, auth.getUid())) return;
             loading = false;
+            if (pushPending) { pushPending = false; refresh(true); return; }
             if (!online.getAsBoolean() || !task.isSuccessful()) return;
             try {
                 unread = new SupportModels.Inbox(task.getResult()).unread;

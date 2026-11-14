@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notification_support_reply">لديك رد جديد في مركز المساعدة.</string>
+    <string name="notification_support_unread_conversations">مركز المساعدة، المحادثات غير المقروءة: %1$d</string>
+</resources>

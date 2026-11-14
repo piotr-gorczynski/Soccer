@@ -74,6 +74,7 @@
         <activity android:name=".AccountActivity" />
         <activity android:name=".HelpCentreActivity" android:exported="false" />
         <activity android:name=".SupportConversationActivity" android:exported="false" />
+        <activity android:name=".SupportNotificationEntryActivity" android:exported="false" />
         <activity android:name=".LinkAccountActivity" />
         <activity android:name=".AddFriendActivity" />
         <activity android:name=".FriendsListActivity" />
