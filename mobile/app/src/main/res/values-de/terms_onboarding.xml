@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_terms_intro_title">Noch ein Schritt, um dein Konto einzurichten</string>
+    <string name="bd_terms_intro_body">Bitte lies und akzeptiere die Nutzungsbedingungen der App und die Datenschutzerklärung, um fortzufahren.</string>
+    <string name="bd_terms_tournament_context">Noch ein Schritt, um am Turnier teilzunehmen</string>
+    <string name="bd_terms_accept_continue">Akzeptieren und weiter</string>
+</resources>

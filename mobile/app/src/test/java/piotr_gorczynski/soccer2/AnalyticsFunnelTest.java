@@ -60,6 +60,24 @@ public class AnalyticsFunnelTest {
             verify(sdk,never()).logEvent(eq("login_success"),any(Bundle.class));
         });
     }
+    @Test public void termsDiagnosticsOnlyForwardControlledFieldsInBangladesh() {
+        withManager((manager,sdk)->{
+            Bundle input=new Bundle();
+            input.putString("stage","terms_save");input.putString("outcome","failure");
+            input.putString("reason","private nickname");input.putString("code","private exception");
+            input.putString("entry_source","private uid");input.putString("action","private email");
+            input.putString("message","secret");input.putLong("duration_ms",-1);
+            manager.trackTermsStep(input);
+            if(!AnalyticsManager.isBangladesh()){verifyNoInteractions(sdk);return;}
+            ArgumentCaptor<Bundle> params=ArgumentCaptor.forClass(Bundle.class);
+            verify(sdk).logEvent(eq("onboarding_step"),params.capture());
+            Bundle value=params.getValue();assertEquals(7,value.size());
+            assertEquals("unknown",value.getString("reason"));assertEquals("UNKNOWN",value.getString("code"));
+            assertEquals("onboarding",value.getString("entry_source"));assertEquals(0,value.getLong("duration_ms"));
+            assertFalse(value.containsKey("message"));assertFalse(value.toString().contains("private"));
+            verifyNoMoreInteractions(sdk);
+        });
+    }
     private void withManager(java.util.function.BiConsumer<AnalyticsManager,FirebaseAnalytics> action) {
         Context context=mock(Context.class);
         FirebaseAnalytics sdk=mock(FirebaseAnalytics.class);

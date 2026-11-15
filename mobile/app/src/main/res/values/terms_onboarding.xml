@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_terms_intro_title">One more step to finish setting up your account</string>
+    <string name="bd_terms_intro_body">Please read and accept the application Terms and Privacy Policy to continue.</string>
+    <string name="bd_terms_tournament_context">One more step to join the tournament</string>
+    <string name="bd_terms_accept_continue">Accept &amp; continue</string>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_terms_intro_title">आफ्नो खाता सेटअप पूरा गर्न अब एक चरण बाँकी</string>
+    <string name="bd_terms_intro_body">अगाडि बढ्न कृपया एपका सर्तहरू र गोपनीयता नीति पढेर स्वीकार गर्नुहोस्।</string>
+    <string name="bd_terms_tournament_context">प्रतियोगितामा सामेल हुन अब एक चरण बाँकी</string>
+    <string name="bd_terms_accept_continue">स्वीकार गरी अगाडि बढ्नुहोस्</string>
+</resources>

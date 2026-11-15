@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_terms_intro_title">Jeszcze jeden krok, aby zakończyć konfigurację konta</string>
+    <string name="bd_terms_intro_body">Aby kontynuować, przeczytaj i zaakceptuj regulamin aplikacji oraz politykę prywatności.</string>
+    <string name="bd_terms_tournament_context">Jeszcze jeden krok, aby dołączyć do turnieju</string>
+    <string name="bd_terms_accept_continue">Akceptuję i kontynuuję</string>
+</resources>

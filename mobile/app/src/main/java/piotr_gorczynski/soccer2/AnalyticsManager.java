@@ -89,6 +89,20 @@ public class AnalyticsManager {
         if (isBangladesh()) trackControlledOutcome("onboarding_step", stage, outcome, reason, null);
     }
 
+    void trackTermsStep(Bundle diagnostic) {
+        if (!isBangladesh() || firebaseAnalytics==null) return;
+        Bundle params=new Bundle();
+        params.putString("stage",allowed(diagnostic.getString("stage"),"terms_screen","terms_load","terms_save"));
+        params.putString("outcome",allowed(diagnostic.getString("outcome"),"shown","paused","submit","success","failure","declined"));
+        params.putString("reason",TermsFailureDiagnostics.safeReason(diagnostic.getString("reason")));
+        params.putString("code",TermsFailureDiagnostics.safeCode(diagnostic.getString("code")));
+        params.putString("entry_source","tournament".equals(diagnostic.getString("entry_source")) ? "tournament" : "onboarding");
+        params.putString("action",allowed(diagnostic.getString("action"),"none","accept","decline","back"));
+        params.putLong("duration_ms",Math.max(0,Math.min(86400000L,diagnostic.getLong("duration_ms"))));
+        try { firebaseAnalytics.logEvent("onboarding_step",params); }
+        catch (Exception ignored) { Log.w(TAG,"Could not report Terms milestone"); }
+    }
+
     private void trackControlledOutcome(String event, String stage, String outcome, String reason, String method) {
         if (firebaseAnalytics == null) return;
         Bundle params = new Bundle();

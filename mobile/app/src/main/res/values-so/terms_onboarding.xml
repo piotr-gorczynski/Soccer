@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_terms_intro_title">Hal tallaabo oo kale si aad u dhammaystirto dejinta akoonkaaga</string>
+    <string name="bd_terms_intro_body">Si aad u sii waddo, fadlan akhri oo aqbal shuruudaha abka iyo siyaasadda asturnaanta.</string>
+    <string name="bd_terms_tournament_context">Hal tallaabo oo kale si aad ugu biirto tartanka</string>
+    <string name="bd_terms_accept_continue">Aqbal oo sii wad</string>
+</resources>

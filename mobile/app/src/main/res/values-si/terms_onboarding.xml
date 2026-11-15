@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_terms_intro_title">ඔබේ ගිණුම සැකසීම අවසන් කිරීමට තවත් එක් පියවරක්</string>
+    <string name="bd_terms_intro_body">ඉදිරියට යාමට කරුණාකර යෙදුමේ කොන්දේසි සහ පෞද්ගලිකත්ව ප්‍රතිපත්තිය කියවා පිළිගන්න.</string>
+    <string name="bd_terms_tournament_context">තරගාවලියට එක්වීමට තවත් එක් පියවරක්</string>
+    <string name="bd_terms_accept_continue">පිළිගෙන ඉදිරියට යන්න</string>
+</resources>

@@ -26,26 +26,88 @@ public class TermsActivityTest {
 
     @Test public void analyticsAcceptRequiresSuccessfulWriteAndReadOnlyDoesNotCount() {
         InstrumentedActivity activity=Robolectric.buildActivity(InstrumentedActivity.class,new Intent()).create().get();
-        org.mockito.Mockito.verify(activity.analytics).trackOnboardingStep("terms_load","success","none");
+        verifyStep(activity,"terms_load","success","none",1);
         WebView web=activity.findViewById(R.id.termsWebView);
         web.getWebViewClient().onPageFinished(web,activity.displayedPolicy.url);
         Button accept=activity.findViewById(R.id.acceptTerms);
         accept.performClick();accept.performClick();
-        org.mockito.Mockito.verify(activity.analytics,org.mockito.Mockito.times(1))
-            .trackOnboardingStep("terms_save","submit","none");
-        org.mockito.Mockito.verify(activity.analytics,org.mockito.Mockito.never())
-            .trackOnboardingStep("terms_save","success","none");
+        verifyStep(activity,"terms_save","submit","none",1);
+        verifyStep(activity,"terms_save","success","none",0);
         activity.write.setException(new IllegalStateException("private account"));
         Shadows.shadowOf(Looper.getMainLooper()).idle();
-        org.mockito.Mockito.verify(activity.analytics).trackOnboardingStep("terms_save","failure","unknown");
+        verifyStep(activity,"terms_save","failure","unknown",1);
         activity.write=new TaskCompletionSource<>();accept.performClick();
         activity.write.setResult(null);Shadows.shadowOf(Looper.getMainLooper()).idle();
-        org.mockito.Mockito.verify(activity.analytics).trackOnboardingStep("terms_save","success","none");
+        verifyStep(activity,"terms_save","success","none",1);
 
         InstrumentedActivity readOnly=Robolectric.buildActivity(InstrumentedActivity.class,
             new Intent().putExtra(TermsActivity.READ_ONLY,true)).create().get();
         readOnly.findViewById(R.id.declineTerms).performClick();
         org.mockito.Mockito.verifyNoInteractions(readOnly.analytics);
+    }
+    @Test public void bdShownAndExplicitBackOrDeclineAreSeparateWithoutChangingSignOut() {
+        org.junit.Assume.assumeTrue(BuildConfig.FLAVOR_market.equals("bangladesh"));
+        for(String action:new String[]{"back","decline"}) {
+            com.google.firebase.auth.FirebaseAuth auth=org.mockito.Mockito.mock(com.google.firebase.auth.FirebaseAuth.class);
+            try(org.mockito.MockedStatic<com.google.firebase.auth.FirebaseAuth> mocked=
+                    org.mockito.Mockito.mockStatic(com.google.firebase.auth.FirebaseAuth.class)) {
+                mocked.when(com.google.firebase.auth.FirebaseAuth::getInstance).thenReturn(auth);
+                var controller=Robolectric.buildActivity(InstrumentedActivity.class,new Intent()
+                    .putExtra(TermsActivity.ENTRY_SOURCE,"tournament")).create().start().resume();
+                InstrumentedActivity activity=controller.get();
+                org.mockito.Mockito.verify(activity.analytics).trackTermsStep(org.mockito.ArgumentMatchers.argThat(
+                    b -> "terms_screen".equals(b.getString("stage")) && "shown".equals(b.getString("outcome"))
+                        && "tournament".equals(b.getString("entry_source"))));
+                if(action.equals("back"))activity.getOnBackPressedDispatcher().onBackPressed();
+                else activity.findViewById(R.id.declineTerms).performClick();
+                org.mockito.Mockito.verify(activity.analytics).trackTermsStep(org.mockito.ArgumentMatchers.argThat(
+                    b -> "declined".equals(b.getString("outcome")) && action.equals(b.getString("action"))));
+                org.mockito.Mockito.verify(auth).signOut();assertTrue(activity.isFinishing());
+                controller.pause().stop().destroy();
+            }
+        }
+    }
+    @Test public void tournamentContextClassifiesOnlyKnownDestinations() {
+        android.content.Context c=org.robolectric.RuntimeEnvironment.getApplication();
+        assertTrue(TermsActivity.isTournamentDestination(new Intent(c,RegulationActivity.class)));
+        assertFalse(TermsActivity.isTournamentDestination(new Intent(c,TournamentsActivity.class)));
+        assertFalse(TermsActivity.isTournamentDestination(new Intent(c,AccountActivity.class)));
+        assertFalse(TermsActivity.isTournamentDestination(new Intent(c,TournamentResultsActivity.class)));
+        assertFalse(TermsActivity.isTournamentDestination(new Intent(c,TournamentLobbyActivity.class)));
+        assertFalse(TermsActivity.isTournamentDestination(new Intent(c,PrizeDetailsActivity.class)));
+        assertFalse(TermsActivity.isTournamentDestination(null));
+    }
+    private void verifyStep(InstrumentedActivity activity,String stage,String outcome,String reason,int count) {
+        if (BuildConfig.FLAVOR_market.equals("bangladesh")) {
+            org.mockito.Mockito.verify(activity.analytics,org.mockito.Mockito.times(count)).trackTermsStep(
+                org.mockito.ArgumentMatchers.argThat(b -> stage.equals(b.getString("stage"))
+                    && outcome.equals(b.getString("outcome")) && reason.equals(b.getString("reason"))));
+        } else org.mockito.Mockito.verify(activity.analytics,org.mockito.Mockito.times(count))
+                .trackOnboardingStep(stage,outcome,reason);
+    }
+    @Test public void contextualCopyIsBangladeshOnlyAndReadOnlyUnchanged() {
+        boolean bd=BuildConfig.FLAVOR_market.equals("bangladesh");
+        for(String source:new String[]{null,"onboarding","tournament","unrecognized"}) {
+            Intent intent=new Intent();
+            if(source!=null)intent.putExtra(TermsActivity.ENTRY_SOURCE,source);
+            var controller=Robolectric.buildActivity(TestActivity.class,intent).create();
+            TestActivity activity=controller.get();
+            assertEquals(bd ? android.view.View.VISIBLE : android.view.View.GONE,
+                    activity.findViewById(R.id.bdTermsIntro).getVisibility());
+            assertEquals(activity.getString(bd ? R.string.bd_terms_accept_continue : R.string.accept),
+                    ((Button)activity.findViewById(R.id.acceptTerms)).getText().toString());
+            if(bd) {
+                assertEquals(activity.getString("tournament".equals(source)
+                        ? R.string.bd_terms_tournament_context : R.string.bd_terms_intro_title),
+                        ((android.widget.TextView)activity.findViewById(R.id.bdTermsTitle)).getText().toString());
+                assertEquals(activity.getString(R.string.bd_terms_intro_body),
+                        ((android.widget.TextView)activity.findViewById(R.id.bdTermsExplanation)).getText().toString());
+            }
+            assertFalse(activity.findViewById(R.id.acceptTerms).isEnabled());
+            controller.destroy();
+        }
+        TestActivity readOnly=open(true);
+        assertEquals(android.view.View.GONE,readOnly.findViewById(R.id.bdTermsIntro).getVisibility());
     }
     public static class TestActivity extends TermsActivity {
         int writes;

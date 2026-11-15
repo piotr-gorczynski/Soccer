@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_terms_intro_title">আপনার অ্যাকাউন্টের সেটআপ শেষ করতে আর একটি ধাপ</string>
+    <string name="bd_terms_intro_body">এগিয়ে যেতে অ্যাপের শর্তাবলি ও গোপনীয়তা নীতি পড়ে সম্মতি দিন।</string>
+    <string name="bd_terms_tournament_context">টুর্নামেন্টে যোগ দিতে আর একটি ধাপ</string>
+    <string name="bd_terms_accept_continue">সম্মতি দিয়ে এগিয়ে যান</string>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_terms_intro_title">Hatua moja zaidi kukamilisha kusanidi akaunti yako</string>
+    <string name="bd_terms_intro_body">Ili kuendelea, tafadhali soma na ukubali masharti ya programu na sera ya faragha.</string>
+    <string name="bd_terms_tournament_context">Hatua moja zaidi kujiunga na mashindano</string>
+    <string name="bd_terms_accept_continue">Kubali na uendelee</string>
+</resources>

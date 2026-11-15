@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_terms_intro_title">የመለያዎን ዝግጅት ለማጠናቀቅ አንድ ተጨማሪ እርምጃ</string>
+    <string name="bd_terms_intro_body">ለመቀጠል እባክዎ የመተግበሪያውን ውሎች እና የግላዊነት ፖሊሲ ያንብቡ እና ይቀበሉ።</string>
+    <string name="bd_terms_tournament_context">ውድድሩን ለመቀላቀል አንድ ተጨማሪ እርምጃ</string>
+    <string name="bd_terms_accept_continue">ተቀብለው ይቀጥሉ</string>
+</resources>

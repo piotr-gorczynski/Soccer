@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_terms_intro_title">ອີກໜຶ່ງຂັ້ນຕອນເພື່ອຕັ້ງຄ່າບັນຊີຂອງທ່ານໃຫ້ສຳເລັດ</string>
+    <string name="bd_terms_intro_body">ເພື່ອສືບຕໍ່ ກະລຸນາອ່ານ ແລະຍອມຮັບຂໍ້ກຳນົດຂອງແອັບ ແລະນະໂຍບາຍຄວາມເປັນສ່ວນຕົວ.</string>
+    <string name="bd_terms_tournament_context">ອີກໜຶ່ງຂັ້ນຕອນເພື່ອເຂົ້າຮ່ວມການແຂ່ງຂັນ</string>
+    <string name="bd_terms_accept_continue">ຍອມຮັບ ແລະສືບຕໍ່</string>
+</resources>

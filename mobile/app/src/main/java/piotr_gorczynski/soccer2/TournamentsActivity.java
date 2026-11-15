@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
@@ -15,7 +14,11 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.Timestamp;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.Source;
+import com.google.firebase.firestore.ListenerRegistration;
+import android.widget.Button;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.functions.FirebaseFunctions;
@@ -31,6 +34,30 @@ public class TournamentsActivity extends BaseActivity {
     private AnalyticsManager analyticsManager;
     private boolean listViewReported;
     private RemoteConfigHelper remoteConfigHelper;
+    private TournamentArchivePager archive;
+    private ListenerRegistration activeListener;
+    private boolean started;
+    private int generation;
+    private final List<DocumentSnapshot> registeringDocs = new ArrayList<>();
+    private final List<DocumentSnapshot> runningDocs = new ArrayList<>();
+    private TournamentAdapter registeringAdapter, runningAdapter, endedAdapter;
+    private Button loadMoreEnded;
+
+    protected AnalyticsManager tournamentAnalytics() { return ((SoccerApp)getApplicationContext()).getAnalyticsManager(); }
+    protected RemoteConfigHelper tournamentRemoteConfig() { return ((SoccerApp)getApplicationContext()).getRemoteConfigHelper(); }
+    protected Query activeTournamentsQuery() {
+        return FirebaseFirestore.getInstance().collection("tournaments")
+                .whereIn("status", java.util.Arrays.asList("registering", "running"));
+    }
+    protected Task<List<DocumentSnapshot>> fetchArchivePage(DocumentSnapshot cursor) {
+        // A single-field deadline index preserves chronological paging without a
+        // new composite index or changing legacy market visibility semantics.
+        // Status/market filtering happens on each bounded page in the pager.
+        Query query = FirebaseFirestore.getInstance().collection("tournaments")
+                .orderBy("matchesDeadline", Query.Direction.DESCENDING).limit(TournamentArchivePager.PAGE_SIZE);
+        if (cursor != null) query = query.startAfter(cursor);
+        return query.get(Source.SERVER).continueWith(task -> task.getResult().getDocuments());
+    }
 
     @SuppressLint("NotifyDataSetChanged")
     @Override
@@ -43,31 +70,38 @@ public class TournamentsActivity extends BaseActivity {
         getSupportActionBar().setTitle(R.string.tournaments);
 
         // Get analytics manager from SoccerApp
-        analyticsManager = ((SoccerApp) getApplicationContext()).getAnalyticsManager();
+        analyticsManager = tournamentAnalytics();
         
         // Get Remote Config helper
-        remoteConfigHelper = ((SoccerApp) getApplicationContext()).getRemoteConfigHelper();
+        remoteConfigHelper = tournamentRemoteConfig();
 
         // ── RecyclerView ─────────────────────────────────────────────
         RecyclerView registeringList = findViewById(R.id.registeringList);
         RecyclerView runningList = findViewById(R.id.runningList);
         RecyclerView endedList = findViewById(R.id.endedList);
-        TextView emptyText = findViewById(R.id.emptyTournaments);
+        loadMoreEnded = findViewById(R.id.loadMoreEnded);
 
         registeringList.setLayoutManager(new LinearLayoutManager(this));
         runningList.setLayoutManager(new LinearLayoutManager(this));
         endedList.setLayoutManager(new LinearLayoutManager(this));
 
-        List<DocumentSnapshot> registeringDocs = new ArrayList<>();
-        List<DocumentSnapshot> runningDocs = new ArrayList<>();
-        List<DocumentSnapshot> endedDocs = new ArrayList<>();
+        archive = new TournamentArchivePager(this::fetchArchivePage, new TournamentArchivePager.Listener() {
+            @Override public void changed() {
+                if (endedAdapter == null) return;
+                endedAdapter.notifyDataSetChanged(); updateSections();
+            }
+            @Override public void failed() {
+                Toast.makeText(TournamentsActivity.this, R.string.help_load_failed, Toast.LENGTH_LONG).show();
+            }
+        }, AppFlavourDetector.getCurrentFlavour(this));
+        loadMoreEnded.setOnClickListener(view -> archive.loadMore());
 
-        TournamentAdapter registeringAdapter = new TournamentAdapter(
+        registeringAdapter = new TournamentAdapter(
                 registeringDocs,
                 this::joinTournament,
                 this::leaveTournament
         );
-        TournamentAdapter runningAdapter = new TournamentAdapter(
+        runningAdapter = new TournamentAdapter(
                 runningDocs,
                 this::joinTournament,
                 this::leaveTournament,
@@ -77,126 +111,67 @@ public class TournamentsActivity extends BaseActivity {
                     startActivity(i);
                 }
         );
-        TournamentAdapter endedAdapter = new TournamentAdapter(
-                endedDocs,
+        endedAdapter = new TournamentAdapter(
+                archive.documents,
                 doc -> {
                     Intent i = new Intent(this, TournamentResultsActivity.class)
                             .putExtra("tournamentId", doc.getId());
                     startActivity(i);
                 }
         );
-        endedList.setAdapter(endedAdapter);
-
         registeringList.setAdapter(registeringAdapter);
         runningList.setAdapter(runningAdapter);
         endedList.setAdapter(endedAdapter);
 
-        // Hide sections if empty
-        findViewById(R.id.registeringList).setVisibility(
-                registeringAdapter.getItemCount() == 0 ? View.GONE : View.VISIBLE);
-        findViewById(R.id.runningList).setVisibility(
-                runningAdapter.getItemCount() == 0 ? View.GONE : View.VISIBLE);
-        findViewById(R.id.endedList).setVisibility(
-                endedAdapter.getItemCount() == 0 ? View.GONE : View.VISIBLE);
+        updateSections();
+    }
 
-        // Also hide the headers
-        findViewById(R.id.registeringHeader).setVisibility(
-                registeringAdapter.getItemCount() == 0 ? View.GONE : View.VISIBLE);
-        findViewById(R.id.runningHeader).setVisibility(
-                runningAdapter.getItemCount() == 0 ? View.GONE : View.VISIBLE);
-        findViewById(R.id.endedHeader).setVisibility(
-                endedAdapter.getItemCount() == 0 ? View.GONE : View.VISIBLE);
+    private void updateSections() {
+        boolean registering = !registeringDocs.isEmpty(), running = !runningDocs.isEmpty();
+        boolean ended = archive != null && !archive.documents.isEmpty();
+        boolean more = archive != null && archive.hasMore();
+        findViewById(R.id.registeringList).setVisibility(registering ? View.VISIBLE : View.GONE);
+        findViewById(R.id.registeringHeader).setVisibility(registering ? View.VISIBLE : View.GONE);
+        findViewById(R.id.runningList).setVisibility(running ? View.VISIBLE : View.GONE);
+        findViewById(R.id.runningHeader).setVisibility(running ? View.VISIBLE : View.GONE);
+        findViewById(R.id.endedList).setVisibility(ended ? View.VISIBLE : View.GONE);
+        findViewById(R.id.endedHeader).setVisibility(ended || more ? View.VISIBLE : View.GONE);
+        loadMoreEnded.setVisibility(more ? View.VISIBLE : View.GONE);
+        loadMoreEnded.setEnabled(started && !archive.isLoading());
+        loadMoreEnded.setText(archive.isLoading() ? R.string.menu_loading_message : R.string.load_more);
+        findViewById(R.id.emptyTournaments).setVisibility(!registering && !running && !ended && !more
+                ? View.VISIBLE : View.GONE);
+    }
 
-        boolean anyInitial = registeringAdapter.getItemCount() > 0
-                || runningAdapter.getItemCount() > 0
-                || endedAdapter.getItemCount() > 0;
-        emptyText.setVisibility(anyInitial ? View.GONE : View.VISIBLE);
-
-
-        // ── Firestore ────────────────────────────────────────────────
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        // Get current app flavour to filter tournaments
-        final String currentFlavour = AppFlavourDetector.getCurrentFlavour(this);
-
-        db.collection("tournaments")
-                .addSnapshotListener((snap, e) -> {
-            if (e != null || snap == null) return;
-
-            // Clear and repopulate each list (simpler than tracking diffs for 3 views)
-            registeringDocs.clear();
-            runningDocs.clear();
-            endedDocs.clear();
-
+    @Override protected void onStart() {
+        super.onStart();
+        if (started) return;
+        started = true; archive.start();
+        final int request = ++generation;
+        activeListener = activeTournamentsQuery().addSnapshotListener((snap, error) -> {
+            if (!started || request != generation || isFinishing() || isDestroyed()) return;
+            if (error != null || snap == null) return;
+            registeringDocs.clear(); runningDocs.clear();
             for (DocumentSnapshot doc : snap.getDocuments()) {
-                // Filter tournaments based on visibleInFlavours field
-                // "global" means visible in every flavour. If the field doesn't exist,
-                // show the tournament for backward compatibility.
-                Object visibleInFlavoursObj = doc.get("visibleInFlavours");
-                if (!TournamentVisibility.isVisible(visibleInFlavoursObj, currentFlavour)) {
-                    continue;
-                }
-
-                String status = doc.getString("status");
-                if (status != null) status = status.trim().toLowerCase();
-
-                if ("registering".equals(status)) {
-                    registeringDocs.add(doc);
-                } else if ("running".equals(status)) {
-                    runningDocs.add(doc);
-                } else if ("ended".equals(status)) {
-                    endedDocs.add(doc);
-                }
+                if (!TournamentVisibility.isVisible(doc.get("visibleInFlavours"),
+                        AppFlavourDetector.getCurrentFlavour(this))) continue;
+                String status = TournamentArchivePager.status(doc);
+                if ("registering".equals(status)) registeringDocs.add(doc);
+                else if ("running".equals(status)) runningDocs.add(doc);
             }
-
-            // Sort ended tournaments by their matches deadline so the most recently
-            // finished tournaments appear first in the list shown to the user.
-            endedDocs.sort((left, right) -> {
-                Timestamp leftDeadline = left.getTimestamp("matchesDeadline");
-                Timestamp rightDeadline = right.getTimestamp("matchesDeadline");
-
-                long leftMillis = leftDeadline != null ? leftDeadline.toDate().getTime() : Long.MIN_VALUE;
-                long rightMillis = rightDeadline != null ? rightDeadline.toDate().getTime() : Long.MIN_VALUE;
-
-                return Long.compare(rightMillis, leftMillis);
-            });
-
-            registeringAdapter.notifyDataSetChanged();
-            runningAdapter.notifyDataSetChanged();
-            endedAdapter.notifyDataSetChanged();
-
-            // Hide sections if empty
-            findViewById(R.id.registeringList).setVisibility(
-                    registeringAdapter.getItemCount() == 0 ? View.GONE : View.VISIBLE);
-            findViewById(R.id.runningList).setVisibility(
-                    runningAdapter.getItemCount() == 0 ? View.GONE : View.VISIBLE);
-            findViewById(R.id.endedList).setVisibility(
-                    endedAdapter.getItemCount() == 0 ? View.GONE : View.VISIBLE);
-
-            // Also hide the headers
-            findViewById(R.id.registeringHeader).setVisibility(
-                    registeringAdapter.getItemCount() == 0 ? View.GONE : View.VISIBLE);
-            findViewById(R.id.runningHeader).setVisibility(
-                    runningAdapter.getItemCount() == 0 ? View.GONE : View.VISIBLE);
-            findViewById(R.id.endedHeader).setVisibility(
-                    endedAdapter.getItemCount() == 0 ? View.GONE : View.VISIBLE);
-
-            boolean any = registeringAdapter.getItemCount() > 0
-                    || runningAdapter.getItemCount() > 0
-                    || endedAdapter.getItemCount() > 0;
-            emptyText.setVisibility(any ? View.GONE : View.VISIBLE);
-
-            // Track tournament list viewed with analytics
+            registeringAdapter.notifyDataSetChanged(); runningAdapter.notifyDataSetChanged(); updateSections();
             if (!AnalyticsManager.isBangladesh() || !listViewReported) {
                 listViewReported = true;
-                analyticsManager.trackTournamentListViewed(
-                    registeringAdapter.getItemCount(),
-                    runningAdapter.getItemCount(),
-                    endedAdapter.getItemCount()
-                );
+                analyticsManager.trackTournamentListViewed(registeringDocs.size(), runningDocs.size(), archive.documents.size());
             }
-
         });
+    }
+
+    @Override protected void onStop() {
+        started = false; generation++;
+        if (activeListener != null) { activeListener.remove(); activeListener = null; }
+        if (archive != null) archive.stop();
+        super.onStop();
     }
 
     /** Calls your Cloud Function `joinTournament` (see blueprint) */

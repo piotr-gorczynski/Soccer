@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_terms_intro_title">Dingana iray sisa hamitana ny fanamboarana ny kaontinao</string>
+    <string name="bd_terms_intro_body">Raha hanohy, vakio sy ekeo ny fepetran’ny rindranasa sy ny politika momba ny fiainana manokana.</string>
+    <string name="bd_terms_tournament_context">Dingana iray sisa hidirana amin’ny fifaninanana</string>
+    <string name="bd_terms_accept_continue">Ekeo ary tohizo</string>
+</resources>

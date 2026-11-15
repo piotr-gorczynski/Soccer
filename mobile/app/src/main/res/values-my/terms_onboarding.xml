@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_terms_intro_title">သင့်အကောင့် ပြင်ဆင်မှုကို အပြီးသတ်ရန် နောက်တစ်ဆင့်</string>
+    <string name="bd_terms_intro_body">ဆက်လက်ရန် အက်ပ်၏ စည်းမျဉ်းများနှင့် ကိုယ်ရေးအချက်အလက် မူဝါဒကို ဖတ်ရှုပြီး သဘောတူပါ။</string>
+    <string name="bd_terms_tournament_context">ပြိုင်ပွဲတွင် ပါဝင်ရန် နောက်တစ်ဆင့်</string>
+    <string name="bd_terms_accept_continue">သဘောတူပြီး ဆက်သွားရန်</string>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_terms_intro_title">خطوة أخرى لإكمال إعداد حسابك</string>
+    <string name="bd_terms_intro_body">للمتابعة، يُرجى قراءة شروط التطبيق وسياسة الخصوصية والموافقة عليهما.</string>
+    <string name="bd_terms_tournament_context">خطوة أخرى للانضمام إلى البطولة</string>
+    <string name="bd_terms_accept_continue">الموافقة والمتابعة</string>
+</resources>

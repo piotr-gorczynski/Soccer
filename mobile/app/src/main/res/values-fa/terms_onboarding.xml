@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_terms_intro_title">یک گام دیگر تا تکمیل راه‌اندازی حساب شما</string>
+    <string name="bd_terms_intro_body">برای ادامه، لطفاً شرایط برنامه و سیاست حریم خصوصی را بخوانید و بپذیرید.</string>
+    <string name="bd_terms_tournament_context">یک گام دیگر تا پیوستن به مسابقه</string>
+    <string name="bd_terms_accept_continue">پذیرش و ادامه</string>
+</resources>

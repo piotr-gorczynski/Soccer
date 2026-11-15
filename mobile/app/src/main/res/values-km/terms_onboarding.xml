@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_terms_intro_title">នៅសល់មួយជំហានទៀតដើម្បីបញ្ចប់ការរៀបចំគណនីរបស់អ្នក</string>
+    <string name="bd_terms_intro_body">ដើម្បីបន្ត សូមអាន និងយល់ព្រមតាមលក្ខខណ្ឌរបស់កម្មវិធី និងគោលការណ៍ឯកជនភាព។</string>
+    <string name="bd_terms_tournament_context">នៅសល់មួយជំហានទៀតដើម្បីចូលរួមការប្រកួត</string>
+    <string name="bd_terms_accept_continue">យល់ព្រម និងបន្ត</string>
+</resources>

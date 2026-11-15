@@ -12,6 +12,15 @@ final class PendingTournamentPromotion {
         if (!TournamentPromotion.validId(id)) return;
         prefs(c).edit().putString(ID,id).putString(UID,uid).putLong(TIME,now).apply();
     }
+    /** Read-only context for presentation/diagnostics; does not bind or clear a selection. */
+    static boolean hasSelectionForUser(Context c,String uid,long now) {
+        if(uid==null)return false;
+        SharedPreferences p=prefs(c);
+        long age=now-p.getLong(TIME,0);
+        String owner=p.getString(UID,null);
+        return TournamentPromotion.validId(p.getString(ID,null)) && age>=0 && age<=MAX_AGE
+                && (owner==null || owner.equals(uid));
+    }
     static String forUser(Context c, String uid, long now) {
         SharedPreferences p=prefs(c);
         String id=p.getString(ID,null);

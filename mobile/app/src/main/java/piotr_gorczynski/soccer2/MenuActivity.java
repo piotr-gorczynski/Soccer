@@ -455,11 +455,18 @@ public class MenuActivity extends BaseActivity {
     protected Task<Boolean> readTermsAcceptance(String uid, TermsPolicy policy) {
         return new TermsRepository(FirebaseFirestore.getInstance()).accepted(uid, policy);
     }
+    private String termsTournamentSourceUid;
     private void openRequiredTerms() {
         if (termsScreenOpen || !isBackendAvailable) return;
         termsScreenOpen = true;
         overlayHandler.removeCallbacks(menuInitializationTimeout);
-        MenuActivity.super.startActivity(new Intent(this, TermsActivity.class));
+        Intent termsIntent=new Intent(this, TermsActivity.class);
+        if (AppFlavourDetector.isBangladeshFlavour(this)) termsIntent.putExtra(TermsActivity.ENTRY_SOURCE,
+                (FirebaseAuth.getInstance().getUid()!=null && FirebaseAuth.getInstance().getUid().equals(termsTournamentSourceUid))
+                        || PendingTournamentPromotion.hasSelectionForUser(this,FirebaseAuth.getInstance().getUid(),System.currentTimeMillis())
+                        ? "tournament" : "onboarding");
+        termsTournamentSourceUid=null;
+        MenuActivity.super.startActivity(termsIntent);
     }
     @Override public void startActivity(Intent intent) {
         String uid = FirebaseAuth.getInstance().getUid();
@@ -467,7 +474,10 @@ public class MenuActivity extends BaseActivity {
                 TermsActivity.class.getName().equals(intent.getComponent().getClassName()))) {
             super.startActivity(intent);
         } else {
+            if (AppFlavourDetector.isBangladeshFlavour(this))
+                termsTournamentSourceUid=TermsActivity.isTournamentDestination(intent) ? uid : null;
             checkTerms(uid, () -> {
+                termsTournamentSourceUid=null;
                 if (intent.getComponent()!=null && PickNicknameActivity.class.getName().equals(intent.getComponent().getClassName())) {
                     nicknameScreenOpen = true;
                     overlayHandler.removeCallbacks(menuInitializationTimeout);

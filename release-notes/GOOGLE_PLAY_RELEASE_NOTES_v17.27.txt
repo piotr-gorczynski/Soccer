@@ -2,106 +2,124 @@
 🔔 Get notified when support replies, then tap to open the right conversation.
 ✉️ The envelope badge counts conversations with unread replies.
 💬 An open conversation refreshes without an extra notification.
+📚 Load ended tournaments on demand with Load More.
 </en-GB>
 
 <pl-PL>
 🔔 Powiadomienie o odpowiedzi supportu otwiera właściwą rozmowę po dotknięciu.
 ✉️ Licznik koperty pokazuje rozmowy z nieprzeczytanymi odpowiedziami.
 💬 Otwarta rozmowa odświeża się bez dodatkowego powiadomienia.
+📚 Zakończone turnieje doładujesz przyciskiem Załaduj więcej.
 </pl-PL>
 
 <de-DE>
 🔔 Erhalte Benachrichtigungen zu Supportantworten und öffne die passende Unterhaltung per Fingertipp.
 ✉️ Die Zahl am Briefumschlag zählt Unterhaltungen mit ungelesenen Antworten.
 💬 Eine geöffnete Unterhaltung wird ohne zusätzliche Benachrichtigung aktualisiert.
+📚 Lade beendete Turniere bei Bedarf mit Mehr laden.
 </de-DE>
 
 <fr-FR>
 🔔 Recevez une notification lorsque le support répond et touchez-la pour ouvrir la bonne conversation.
 ✉️ Le compteur de l’enveloppe indique les conversations avec des réponses non lues.
 💬 Une conversation ouverte s’actualise sans notification supplémentaire.
+📚 Chargez les tournois terminés à la demande avec Charger plus.
 </fr-FR>
 
 <es-ES>
 🔔 Recibe avisos cuando el soporte responda y tócalos para abrir la conversación correspondiente.
 ✉️ El contador del sobre indica las conversaciones con respuestas sin leer.
 💬 Una conversación abierta se actualiza sin otra notificación.
+📚 Carga los torneos finalizados cuando quieras con Cargar más.
 </es-ES>
 
 <ur>
 🔔 سپورٹ کے جواب کی اطلاع پائیں اور اسے چھو کر متعلقہ گفتگو کھولیں۔
 ✉️ لفافے کی گنتی ان گفتگوؤں کو دکھاتی ہے جن کے جواب ابھی نہیں پڑھے گئے۔
 💬 کھلی گفتگو اضافی اطلاع کے بغیر تازہ ہو جاتی ہے۔
+📚 ختم شدہ ٹورنامنٹس ضرورت کے مطابق مزید لوڈ کریں کے بٹن سے دیکھیں۔
 </ur>
 
 <bn-BD>
 🔔 সহায়তা দলের উত্তরের বিজ্ঞপ্তিতে ট্যাপ করে সংশ্লিষ্ট কথোপকথন খুলুন।
 ✉️ খামের সংখ্যাটি অপঠিত উত্তর থাকা কথোপকথনের সংখ্যা দেখায়।
 💬 কথোপকথন খোলা থাকলে বাড়তি বিজ্ঞপ্তি ছাড়াই নতুন উত্তর দেখা যায়।
+📚 আরও লোড করুন বোতামে চাপ দিয়ে শেষ হওয়া টুর্নামেন্টগুলো দেখুন।
 </bn-BD>
 
 <ne-NP>
 🔔 सहायता टोलीको जवाफ आउँदा सूचना पाउनुहोस् र त्यसमा ट्याप गरेर सम्बन्धित कुराकानी खोल्नुहोस्।
 ✉️ खामको सङ्ख्याले नपढिएका जवाफ भएका कुराकानी जनाउँछ।
 💬 खुला कुराकानी अतिरिक्त सूचनाबिना अद्यावधिक हुन्छ।
+📚 थप लोड गर्नुहोस् बटनबाट आवश्यक पर्दा सकिएका प्रतियोगिताहरू हेर्नुहोस्।
 </ne-NP>
 
 <hi-IN>
 🔔 सहायता टीम के जवाब की सूचना पाएँ और उस पर टैप करके संबंधित बातचीत खोलें।
 ✉️ लिफ़ाफ़े की संख्या अपठित जवाबों वाली बातचीत दिखाती है।
 💬 खुली बातचीत बिना अतिरिक्त सूचना के अपडेट होती है।
+📚 और लोड करें बटन से ज़रूरत पड़ने पर समाप्त टूर्नामेंट देखें।
 </hi-IN>
 
 <am>
 🔔 የድጋፍ ቡድኑ ሲመልስ ማሳወቂያ ያግኙ፣ ከዚያም ተገቢውን ውይይት ለመክፈት ይንኩት።
 ✉️ የፖስታ ቆጣሪው ያልተነበቡ ምላሾች ያሏቸውን ውይይቶች ያሳያል።
 💬 ክፍት ውይይት ያለ ተጨማሪ ማሳወቂያ ይታደሳል።
+📚 ያለቁ ውድድሮችን ሲፈልጉ ተጨማሪ ጫን በሚለው አዝራር ያሳዩ።
 </am>
 
 <ar>
 🔔 تلقَّ إشعارًا عند رد الدعم، واضغط عليه لفتح المحادثة المناسبة.
 ✉️ يعرض عداد الظرف عدد المحادثات التي تحتوي على ردود غير مقروءة.
 💬 تتحدث المحادثة المفتوحة دون إشعار إضافي.
+📚 اعرض البطولات المنتهية عند الحاجة باستخدام زر تحميل المزيد.
 </ar>
 
 <my-MM>
 🔔 ပံ့ပိုးရေးအဖွဲ့ အကြောင်းပြန်သည့်အခါ အသိပေးချက်ကို နှိပ်၍ သက်ဆိုင်ရာစကားဝိုင်းကို ဖွင့်ပါ။
 ✉️ စာအိတ်ပေါ်ရှိ အရေအတွက်သည် မဖတ်ရသေးသော အကြောင်းပြန်စာရှိသည့် စကားဝိုင်းများကို ပြသည်။
 💬 ဖွင့်ထားသော စကားဝိုင်းသည် အပိုအသိပေးချက်မပါဘဲ အပ်ဒိတ်ဖြစ်သည်။
+📚 ပြီးဆုံးသွားသော ပြိုင်ပွဲများကို လိုအပ်သည့်အခါ ထပ်မံဖွင့်ရန် ခလုတ်ဖြင့် ကြည့်ပါ။
 </my-MM>
 
 <km-KH>
 🔔 ទទួលការជូនដំណឹងពេលក្រុមជំនួយឆ្លើយតប ហើយចុចលើវាដើម្បីបើកការសន្ទនាត្រឹមត្រូវ។
 ✉️ លេខលើស្រោមសំបុត្ររាប់ការសន្ទនាដែលមានចម្លើយមិនទាន់អាន។
 💬 ការសន្ទនាដែលកំពុងបើកធ្វើបច្ចុប្បន្នភាពដោយគ្មានការជូនដំណឹងបន្ថែម។
+📚 មើលការប្រកួតដែលបានបញ្ចប់នៅពេលត្រូវការ ដោយចុចផ្ទុកបន្ថែម។
 </km-KH>
 
 <lo-LA>
 🔔 ຮັບແຈ້ງເຕືອນເມື່ອທີມຊ່ວຍເຫຼືອຕອບ ແລ້ວແຕະເພື່ອເປີດການສົນທະນາທີ່ກ່ຽວຂ້ອງ.
 ✉️ ຕົວເລກເທິງຊອງຈົດໝາຍນັບການສົນທະນາທີ່ມີຄຳຕອບຍັງບໍ່ໄດ້ອ່ານ.
 💬 ການສົນທະນາທີ່ເປີດຢູ່ຈະອັບເດດໂດຍບໍ່ແຈ້ງເຕືອນເພີ່ມ.
+📚 ໂຫຼດການແຂ່ງຂັນທີ່ຈົບແລ້ວເມື່ອຕ້ອງການ ດ້ວຍປຸ່ມໂຫຼດເພີ່ມ.
 </lo-LA>
 
 <mn-MN>
 🔔 Дэмжлэгийн баг хариулахад мэдэгдэл авч, товшоод холбогдох харилцан яриаг нээнэ үү.
 ✉️ Дугтуйн тоолуур уншаагүй хариутай харилцан ярианы тоог харуулна.
 💬 Нээлттэй харилцан яриа нэмэлт мэдэгдэлгүйгээр шинэчлэгдэнэ.
+📚 Дууссан тэмцээнүүдийг шаардлагатай үед Нэмж ачаалах товчоор харна уу.
 </mn-MN>
 
 <fa-IR>
 🔔 هنگام پاسخ پشتیبانی اعلان دریافت کنید و با لمس آن گفتگوی مربوط را باز کنید.
 ✉️ شمارنده پاکت، گفتگوهای دارای پاسخ خوانده‌نشده را نشان می‌دهد.
 💬 گفتگوی باز بدون اعلان اضافی به‌روز می‌شود.
+📚 مسابقات پایان‌یافته را در صورت نیاز با دکمه بارگیری بیشتر ببینید.
 </fa-IR>
 
 <si-LK>
 🔔 සහාය කණ්ඩායම පිළිතුරු දුන් විට දැනුම්දීම ලැබෙන අතර එය තට්ටු කර අදාළ සංවාදය විවෘත කරන්න.
 ✉️ ලියුම් කවරයේ අංකය නොකියවූ පිළිතුරු ඇති සංවාද ගණන පෙන්වයි.
 💬 විවෘත සංවාදයක් අමතර දැනුම්දීමකින් තොරව යාවත්කාලීන වේ.
+📚 තවත් පූරණය කරන්න බොත්තමෙන් අවශ්‍ය විට අවසන් වූ තරගාවලි බලන්න.
 </si-LK>
 
 <sw>
 🔔 Pokea arifa usaidizi unapojibu, kisha uiguse kufungua mazungumzo husika.
 ✉️ Nambari kwenye bahasha huhesabu mazungumzo yenye majibu ambayo hayajasomwa.
 💬 Mazungumzo yaliyo wazi husasishwa bila arifa ya ziada.
+📚 Pakia mashindano yaliyomalizika unapohitaji kwa kitufe cha Pakia zaidi.
 </sw>

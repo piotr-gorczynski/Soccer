@@ -83,6 +83,13 @@
             android:layout_marginBottom="16dp"
             android:nestedScrollingEnabled="false" />
 
+        <Button
+            android:id="@+id/loadMoreEnded"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/load_more"
+            android:layout_marginBottom="16dp" />
+
         <TextView
             android:id="@+id/emptyTournaments"
             android:layout_width="wrap_content"

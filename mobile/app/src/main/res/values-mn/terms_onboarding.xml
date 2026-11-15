@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_terms_intro_title">Бүртгэлээ тохируулж дуусгахад нэг алхам үлдлээ</string>
+    <string name="bd_terms_intro_body">Үргэлжлүүлэхийн тулд аппын нөхцөл болон нууцлалын бодлогыг уншиж зөвшөөрнө үү.</string>
+    <string name="bd_terms_tournament_context">Тэмцээнд нэгдэхэд нэг алхам үлдлээ</string>
+    <string name="bd_terms_accept_continue">Зөвшөөрөөд үргэлжлүүлэх</string>
+</resources>

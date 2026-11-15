@@ -7,6 +7,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:id="@+id/bdTermsIntro"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:visibility="gone">
+        <TextView
+            android:id="@+id/bdTermsTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/bd_terms_intro_title"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+        <TextView
+            android:id="@+id/bdTermsExplanation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="@string/bd_terms_intro_body"
+            android:textSize="16sp" />
+    </LinearLayout>
+
     <Button
         android:id="@+id/termsPrivacyLink"
         android:layout_width="match_parent"

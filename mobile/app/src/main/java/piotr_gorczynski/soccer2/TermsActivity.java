@@ -10,6 +10,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class TermsActivity extends BaseActivity {
+    public static final String ENTRY_SOURCE = "terms_entry_source";
+    static boolean isTournamentDestination(Intent intent) {
+        if(intent==null || intent.getComponent()==null)return false;
+        String name=intent.getComponent().getClassName();
+        return name.equals(RegulationActivity.class.getName());
+    }
+    private boolean bangladesh;
+    private TermsScreenDiagnostics diagnostics;
     public static final String READ_ONLY = "terms_read_only";
     private boolean readOnly, accepted, loaded, saving;
     private String uid;
@@ -22,8 +30,18 @@ public class TermsActivity extends BaseActivity {
         PrivacyPolicyLinks.bind(this,R.id.termsPrivacyLink);
         analytics=resolveAnalytics();
         uid=currentUid(); readOnly=getIntent().getBooleanExtra(READ_ONLY,false);
+        bangladesh=AppFlavourDetector.isBangladeshFlavour(this);
+        if (bangladesh && !readOnly) {
+            diagnostics=new TermsScreenDiagnostics(state==null ? null : state.getBundle("terms_diagnostics"),
+                    getIntent().getStringExtra(ENTRY_SOURCE), android.os.SystemClock::elapsedRealtime,
+                    params -> { if (analytics!=null) analytics.trackTermsStep(params); });
+            findViewById(R.id.bdTermsIntro).setVisibility(android.view.View.VISIBLE);
+            if ("tournament".equals(getIntent().getStringExtra(ENTRY_SOURCE)))
+                ((android.widget.TextView)findViewById(R.id.bdTermsTitle)).setText(R.string.bd_terms_tournament_context);
+        }
         policy=TermsPolicy.required(AppFlavourDetector.isBangladeshFlavour(this),LanguageManager.getCurrentLanguageCode(this));
         accept=findViewById(R.id.acceptTerms); accept.setEnabled(false);
+        if (bangladesh && !readOnly) { accept.setText(R.string.bd_terms_accept_continue); accept.setAllCaps(false); }
         if(readOnly) accept.setVisibility(android.view.View.GONE);
         WebView web=findViewById(R.id.termsWebView);
         web.getSettings().setJavaScriptEnabled(false);
@@ -74,9 +92,9 @@ public class TermsActivity extends BaseActivity {
                     Toast.makeText(this,R.string.terms_acceptance_failed,Toast.LENGTH_LONG).show();});
         });
         if(readOnly) ((Button)findViewById(R.id.declineTerms)).setText(R.string.close);
-        findViewById(R.id.declineTerms).setOnClickListener(v->leave());
+        findViewById(R.id.declineTerms).setOnClickListener(v->leave("decline"));
         getOnBackPressedDispatcher().addCallback(this,new androidx.activity.OnBackPressedCallback(true){
-            @Override public void handleOnBackPressed(){leave();}
+            @Override public void handleOnBackPressed(){leave("back");}
         });
         load.run();
     }
@@ -85,6 +103,15 @@ public class TermsActivity extends BaseActivity {
         return getApplication() instanceof SoccerApp app ? app.getAnalyticsManager() : null;
     }
     private void logFailure(String stage, Exception error) {
+        if (bangladesh) {
+            TermsFailureDiagnostics failure=TermsFailureDiagnostics.from(error);
+            if (diagnostics!=null) diagnostics.step("loadDocument".equals(stage) ? "terms_load" : "terms_save",
+                    "failure",failure.reason,failure.code,"none");
+            android.util.Log.e("TAG_Soccer", "TermsActivity."+stage+" failed: scope="+policy.scope
+                    +", version="+policy.version+", language="+policy.language
+                    +", reason="+failure.reason+", firestoreCode="+failure.code);
+            return;
+        }
         trackTerms("loadDocument".equals(stage) ? "terms_load" : "terms_save", "failure",
                 error instanceof java.net.SocketTimeoutException
                     || error instanceof java.net.UnknownHostException
@@ -113,8 +140,16 @@ public class TermsActivity extends BaseActivity {
         });
     }
     private void trackTerms(String stage, String outcome, String reason) {
-        if (!readOnly && analytics != null) analytics.trackOnboardingStep(stage, outcome, reason);
+        if (diagnostics!=null) diagnostics.step(stage,outcome,reason,"NONE",
+                "terms_save".equals(stage) ? "accept" : "none");
+        else if (!readOnly && analytics != null) analytics.trackOnboardingStep(stage, outcome, reason);
     }
-    private void leave(){if(!readOnly&&!accepted)trackTerms("terms_save","declined","none");if(!readOnly&&!accepted&&uid!=null&&uid.equals(currentUid()))FirebaseAuth.getInstance().signOut();finish();}
+    @Override protected void onResume(){super.onResume();if(diagnostics!=null)diagnostics.resume();}
+    @Override protected void onPause(){if(diagnostics!=null)diagnostics.pause();super.onPause();}
+    @Override protected void onSaveInstanceState(Bundle out){if(diagnostics!=null)out.putBundle("terms_diagnostics",diagnostics.save());super.onSaveInstanceState(out);}
+    private void leave(String action){if(!readOnly&&!accepted){
+        if(diagnostics!=null)diagnostics.step("terms_save","declined","none","NONE",action);
+        else trackTerms("terms_save","declined","none");
+    }if(!readOnly&&!accepted&&uid!=null&&uid.equals(currentUid()))FirebaseAuth.getInstance().signOut();finish();}
     @Override protected void onDestroy(){if(executor!=null)executor.shutdownNow();super.onDestroy();}
 }

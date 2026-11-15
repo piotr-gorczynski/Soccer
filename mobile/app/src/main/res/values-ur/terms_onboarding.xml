@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_terms_intro_title">آپ کے اکاؤنٹ کا سیٹ اپ مکمل کرنے کے لیے ایک اور مرحلہ</string>
+    <string name="bd_terms_intro_body">آگے بڑھنے کے لیے براہ کرم ایپ کی شرائط اور رازداری کی پالیسی پڑھ کر قبول کریں۔</string>
+    <string name="bd_terms_tournament_context">ٹورنامنٹ میں شامل ہونے کے لیے ایک اور مرحلہ</string>
+    <string name="bd_terms_accept_continue">قبول کریں اور آگے بڑھیں</string>
+</resources>
