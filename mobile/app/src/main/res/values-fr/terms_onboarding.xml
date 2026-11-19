@@ -4,4 +4,5 @@
     <string name="bd_terms_intro_body">Pour continuer, veuillez lire et accepter les conditions de l’application et la politique de confidentialité.</string>
     <string name="bd_terms_tournament_context">Encore une étape pour rejoindre le tournoi</string>
     <string name="bd_terms_accept_continue">Accepter et continuer</string>
+    <string name="bd_terms_saving">Enregistrement de votre accord. Veuillez patienter.</string>
 </resources>

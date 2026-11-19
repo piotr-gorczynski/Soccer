@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_tournament_login_title">प्रतियोगितामा सामेल हुनुहोस्</string>
+    <string name="bd_tournament_login_message">छानिएको प्रतियोगितामा अगाडि बढ्न साइन इन गर्नुहोस् वा खेल्न सुरु गर्नुहोस्।</string>
+</resources>

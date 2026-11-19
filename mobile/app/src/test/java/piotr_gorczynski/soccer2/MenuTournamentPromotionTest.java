@@ -123,4 +123,18 @@ public class MenuTournamentPromotionTest {
         assertEquals("cup",PendingTournamentPromotion.forUser(menu,"owner",System.currentTimeMillis()));
         assertNull(shadowOf(menu).getNextStartedActivity());
     }
+    @Test public void cardSelectionSurvivesAuthenticationTermsAndNicknameUntilExistingContinuationRuns()throws Exception {
+        when(auth.getUid()).thenReturn(null);click();
+        if(!AnalyticsManager.isBangladesh()){assertEquals(0,menu.loginLaunches);verifyNoInteractions(db);return;}
+        assertTrue(PendingTournamentPromotion.isLoginEntry(menu,PendingTournamentPromotion.loginIntent(menu),System.currentTimeMillis()));
+        when(auth.getUid()).thenReturn("owner");set("confirmedTermsUid",null);resume();
+        assertEquals("cup",PendingTournamentPromotion.forUser(menu,"owner",System.currentTimeMillis()));verifyNoInteractions(db);
+        set("confirmedTermsUid","owner");set("nicknameProfileTask",Tasks.forResult(mock(DocumentSnapshot.class)));resume();
+        assertEquals("cup",PendingTournamentPromotion.forUser(menu,"owner",System.currentTimeMillis()));verifyNoInteractions(db);
+        DocumentSnapshot profile=mock(DocumentSnapshot.class);when(profile.getString("nickname")).thenReturn("saved");
+        set("nicknameProfileTask",Tasks.forResult(profile));resume();tournamentResponse.setResult(tournament);drain();participant(false);
+        menu.terms.setResult(true);drain();Intent target=shadowOf(menu).getNextStartedActivity();
+        assertEquals(RegulationActivity.class.getName(),target.getComponent().getClassName());assertEquals("cup",target.getStringExtra("tournamentId"));
+        assertNull(PendingTournamentPromotion.forUser(menu,"owner",System.currentTimeMillis()));verify(analytics).trackTournamentJoinStart("cup",true);
+    }
 }

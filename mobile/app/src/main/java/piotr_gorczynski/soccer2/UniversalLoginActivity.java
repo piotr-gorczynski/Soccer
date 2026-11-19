@@ -34,6 +34,7 @@ public class UniversalLoginActivity extends BaseActivity {
     private Button btnFacebook;
     private Button btnMicrosoft;
     private Button btnAnonymous;
+    private View loginProgressOverlay;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,9 +51,13 @@ public class UniversalLoginActivity extends BaseActivity {
         
         // Get analytics manager from SoccerApp
         analyticsManager = ((SoccerApp) getApplicationContext()).getAnalyticsManager();
+
+        boolean tournamentLogin=AppFlavourDetector.isBangladeshFlavour(this)
+                && PendingTournamentPromotion.isLoginEntry(this,getIntent(),System.currentTimeMillis());
+        if(tournamentLogin) findViewById(R.id.tournamentLoginContext).setVisibility(View.VISIBLE);
         
         // Track that login screen was opened
-        analyticsManager.trackLoginScreenOpened();
+        analyticsManager.trackLoginScreenOpened(tournamentLogin ? "tournament" : "account");
 
         SharedPreferences prefs =
                 getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE);
@@ -63,6 +68,12 @@ public class UniversalLoginActivity extends BaseActivity {
         btnFacebook = findViewById(R.id.btnUniversalFacebook);
         btnMicrosoft = findViewById(R.id.btnUniversalMicrosoft);
         btnAnonymous = findViewById(R.id.btnUniversalAnonymous);
+        {
+            loginProgressOverlay=findViewById(R.id.loginProgressOverlay);
+            android.widget.TextView message=loginProgressOverlay.findViewById(R.id.game_loading_message);
+            message.setText(R.string.login_in_progress);
+            message.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE);
+        }
 
         btnEmail.setOnClickListener(v -> {
             startActivity(new Intent(this, LoginActivity.class));
@@ -96,9 +107,8 @@ public class UniversalLoginActivity extends BaseActivity {
         analyticsManager.trackLoginAttempt(provider);
         Log.d("TAG_Soccer", getClass().getSimpleName() + ".handleProviderLogin: Provider selected = " + provider);
 
-        // Disable all login buttons and show toast to prevent multiple clicks
+        // Disable all login buttons and show progress to prevent multiple clicks.
         setLoginButtonsEnabled(false);
-        Toast.makeText(this, getString(R.string.login_in_progress), Toast.LENGTH_SHORT).show();
 
         String nickname = storedNickname; // may be null
         Log.d("TAG_Soccer", getClass().getSimpleName() + ".handleProviderLogin: Calling authManager.loginWithProvider");
@@ -183,7 +193,6 @@ public class UniversalLoginActivity extends BaseActivity {
 
     private void startAnonymousLogin() {
         setLoginButtonsEnabled(false);
-        Toast.makeText(this, getString(R.string.login_in_progress), Toast.LENGTH_SHORT).show();
         FirebaseAuthManager.LoginCallback callback = createLoginCallback("anonymous");
         authManager.loginAnonymously(callback);
     }
@@ -192,6 +201,9 @@ public class UniversalLoginActivity extends BaseActivity {
      * Helper method to enable/disable all login buttons to prevent multiple clicks during login process
      */
     private void setLoginButtonsEnabled(boolean enabled) {
+        if (loginProgressOverlay != null) {
+            loginProgressOverlay.setVisibility(enabled ? View.GONE : View.VISIBLE);
+        }
         if (btnEmail != null) {
             btnEmail.setEnabled(enabled);
         }
@@ -208,6 +220,7 @@ public class UniversalLoginActivity extends BaseActivity {
             btnAnonymous.setEnabled(enabled);
         }
     }
+
 
     private FirebaseAuthManager.LoginCallback createLoginCallback(String authMethod) {
         return new FirebaseAuthManager.LoginCallback() {

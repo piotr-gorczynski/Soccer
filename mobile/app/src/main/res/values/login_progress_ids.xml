@@ -1,0 +1,4 @@
+<resources>
+    <!-- Shared controller references this ID; the overlay is present only in BD. -->
+    <item name="loginProgressOverlay" type="id" />
+</resources>

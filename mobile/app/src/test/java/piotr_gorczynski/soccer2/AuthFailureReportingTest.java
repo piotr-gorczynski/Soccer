@@ -115,7 +115,8 @@ public class AuthFailureReportingTest {
             sdk.when(FirebaseAuth::getInstance).thenReturn(auth);
             store.when(FirebaseFirestore::getInstance).thenReturn(db);
             new FirebaseAuthManager(context).loginUser("test@example.com", "test-password", callback);
-            Shadows.shadowOf(Looper.getMainLooper()).idle();
+            // The existing profile loader retries before reporting a read failure.
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(NicknameProfileLoader.TIMEOUT_MS));
             verify(analytics, never()).trackLoginSuccess(anyString());
             pending.verify(() -> PendingLoginSuccess.begin(context, "test-uid", "email"));
             verify(callback).onLoginSuccess();

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_tournament_login_title">Únete al torneo</string>
+    <string name="bd_tournament_login_message">Inicia sesión o empieza a jugar para continuar al torneo seleccionado.</string>
+</resources>

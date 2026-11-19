@@ -83,10 +83,7 @@ public class MenuActivity extends BaseActivity {
     private boolean tournamentPromotionLoginOpening;
     private String confirmedTermsUid;
     private final ActivityResultLauncher<Intent> tournamentPromoLoginLauncher =
-            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-                tournamentPromotionLoginOpening=false;
-                if (FirebaseAuth.getInstance().getUid()==null) PendingTournamentPromotion.clear(this);
-            });
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> onTournamentPromotionLoginReturned());
 
     private static final String PREF_AD_COUNTER = "adsCounter";
     private static final String PREF_AD_FREQUENCY = "adsFrequency";
@@ -1747,8 +1744,13 @@ public class MenuActivity extends BaseActivity {
         } else continueTournamentPromotion();
     }
 
+    void onTournamentPromotionLoginReturned() {
+        tournamentPromotionLoginOpening=false;
+        if (FirebaseAuth.getInstance().getUid()==null) PendingTournamentPromotion.clear(this);
+    }
+
     protected void launchTournamentPromotionLogin() {
-        tournamentPromoLoginLauncher.launch(new Intent(this,UniversalLoginActivity.class));
+        tournamentPromoLoginLauncher.launch(PendingTournamentPromotion.loginIntent(this));
     }
 
     private void continueTournamentPromotion() {

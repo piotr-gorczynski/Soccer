@@ -4,4 +4,5 @@
     <string name="bd_terms_intro_body">Bitte lies und akzeptiere die Nutzungsbedingungen der App und die Datenschutzerklärung, um fortzufahren.</string>
     <string name="bd_terms_tournament_context">Noch ein Schritt, um am Turnier teilzunehmen</string>
     <string name="bd_terms_accept_continue">Akzeptieren und weiter</string>
+    <string name="bd_terms_saving">Deine Zustimmung wird gespeichert. Bitte warten.</string>
 </resources>

@@ -44,6 +44,11 @@ public class PickNicknameActivity extends BaseActivity {
         editNickname = findViewById(R.id.editNickname);
         btnConfirm = findViewById(R.id.btnConfirmNickname);
         nicknameCheckProgress = findViewById(R.id.nicknameCheckProgress);
+        android.widget.TextView progressMessage=nicknameCheckProgress.findViewById(R.id.game_loading_message);
+        if (progressMessage != null) {
+            progressMessage.setText(R.string.checking_nickname);
+            progressMessage.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE);
+        }
         submission = new ViewModelProvider(this, new ViewModelProvider.Factory() {
             @Override public <T extends ViewModel> T create(Class<T> modelClass) {
                 return modelClass.cast(new NicknameSubmission(

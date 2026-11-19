@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_tournament_login_title">Jiunge na mashindano</string>
+    <string name="bd_tournament_login_message">Ingia au anza kucheza ili kuendelea kwenye mashindano uliyochagua.</string>
+</resources>

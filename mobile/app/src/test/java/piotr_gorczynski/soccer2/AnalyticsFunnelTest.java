@@ -97,13 +97,40 @@ public class AnalyticsFunnelTest {
             if (!AnalyticsManager.isBangladesh()) {
                 verify(sdk).logEvent(eq("login"),any(Bundle.class)); return;
             }
-            verifyNoInteractions(sdk);
+            ArgumentCaptor<Bundle> opened=ArgumentCaptor.forClass(Bundle.class);
+            verify(sdk).logEvent(eq("onboarding_step"),opened.capture());
+            assertEquals("authentication",opened.getValue().getString("stage"));
+            assertEquals("shown",opened.getValue().getString("outcome"));
+            assertEquals("account",opened.getValue().getString("source"));
+            verify(sdk,never()).logEvent(eq("login"),any(Bundle.class));
             manager.trackAuthenticationSucceeded("google.com",false);
             ArgumentCaptor<Bundle> params=ArgumentCaptor.forClass(Bundle.class);
             verify(sdk).logEvent(eq("login"),params.capture());
             assertEquals("google",params.getValue().getString("method"));
             verify(sdk,never()).logEvent(eq("sign_up"),any(Bundle.class));
             verify(sdk,never()).logEvent(eq("login_success"),any(Bundle.class));
+        });
+    }
+
+    @Test public void loginOpenSourceIsControlledAndGlobalKeepsLegacyEvent() {
+        withManager((manager,sdk)->{
+            manager.trackLoginScreenOpened("tournament");
+            manager.trackLoginScreenOpened("private@example.com");
+            ArgumentCaptor<Bundle> values=ArgumentCaptor.forClass(Bundle.class);
+            if(!AnalyticsManager.isBangladesh()) {
+                verify(sdk,times(2)).logEvent(eq("login"),values.capture());
+                for(Bundle value:values.getAllValues())assertTrue(value.isEmpty());
+            } else {
+                verify(sdk,times(2)).logEvent(eq("onboarding_step"),values.capture());
+                assertEquals("tournament",values.getAllValues().get(0).getString("source"));
+                assertEquals("account",values.getAllValues().get(1).getString("source"));
+                for(Bundle value:values.getAllValues()) {
+                    assertEquals(4,value.size());assertEquals("authentication",value.getString("stage"));
+                    assertEquals("shown",value.getString("outcome"));assertEquals("none",value.getString("reason"));
+                    assertFalse(value.toString().contains("private"));
+                }
+            }
+            verifyNoMoreInteractions(sdk);
         });
     }
 

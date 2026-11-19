@@ -104,3 +104,32 @@ This verifies the exercised success/refusal/background paths. It does not claim
 manual device verification of Terms load/write failures, all SDK error mappings,
 or arrival in delayed BigQuery exports; controlled error mapping is covered by
 the automated tests.
+
+## 17.28 — protect an in-flight acceptance write (Bangladesh only)
+
+After explicit acceptance, show the shared game/menu loading overlay (dimmed
+background, centered loading panel and indeterminate progress indicator) with:
+
+- EN: **Saving your acceptance. Please wait.**
+- BN: **আপনার সম্মতি সংরক্ষণ করা হচ্ছে। অনুগ্রহ করে অপেক্ষা করুন।**
+- PL: **Zapisywanie Twojej zgody. Proszę czekać.**
+
+This resource is translated into all 20 supported application languages.
+Accept and Decline are disabled while the existing write is pending. Back stays
+on the screen and repeats the saving message, without signing out or emitting a
+false declined event. A failure hides progress and restores retry/refusal;
+success advances only after server acknowledgment for the same account/policy.
+No timeout pretends that an unfinished write was cancelled or successful.
+
+A screen-scoped ViewModel retains the single request across recreation. It owns
+no Activity; the current screen observes results while active. Background
+completion waits for return. A result for a different account cannot acknowledge
+the new account. Existing submit/success/failure events and controlled error
+mapping are reused; no additional analytics event or user data is added.
+
+Legal content, consent requirements, repository transaction, RegulationActivity,
+and Global UI/navigation behavior are unchanged. The shared Gradle version moves
+to 17.28 (code 63), producing 17.28-BD for Bangladesh. This change needs an Android
+release, not a backend deployment. The 17.28 phone smoke-test results are in
+BANGLADESH_TOURNAMENT_LOGIN_CONTEXT.md. Those screenshots precede this visual
+overlay adjustment; the write behavior is unchanged.

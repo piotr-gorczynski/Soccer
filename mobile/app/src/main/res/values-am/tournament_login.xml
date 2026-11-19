@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_tournament_login_title">ውድድሩን ይቀላቀሉ</string>
+    <string name="bd_tournament_login_message">ወደ ተመረጠው ውድድር ለመቀጠል ይግቡ ወይም መጫወት ይጀምሩ።</string>
+</resources>

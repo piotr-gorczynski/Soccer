@@ -4,4 +4,5 @@
     <string name="bd_terms_intro_body">Please read and accept the application Terms and Privacy Policy to continue.</string>
     <string name="bd_terms_tournament_context">One more step to join the tournament</string>
     <string name="bd_terms_accept_continue">Accept &amp; continue</string>
+    <string name="bd_terms_saving">Saving your acceptance. Please wait.</string>
 </resources>

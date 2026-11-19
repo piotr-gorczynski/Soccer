@@ -4,4 +4,5 @@
     <string name="bd_terms_intro_body">ដើម្បីបន្ត សូមអាន និងយល់ព្រមតាមលក្ខខណ្ឌរបស់កម្មវិធី និងគោលការណ៍ឯកជនភាព។</string>
     <string name="bd_terms_tournament_context">នៅសល់មួយជំហានទៀតដើម្បីចូលរួមការប្រកួត</string>
     <string name="bd_terms_accept_continue">យល់ព្រម និងបន្ត</string>
+    <string name="bd_terms_saving">កំពុងរក្សាទុកការយល់ព្រមរបស់អ្នក។ សូមរង់ចាំ។</string>
 </resources>

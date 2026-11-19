@@ -1,0 +1,89 @@
+<en-GB>
+⏳ Consistent loading screens while signing in, checking your nickname and saving Terms acceptance.
+🌐 Localized progress messages.
+</en-GB>
+
+<pl-PL>
+⏳ Spójne ekrany ładowania podczas logowania, sprawdzania nicku i zapisywania akceptacji regulaminu.
+🌐 Przetłumaczone komunikaty postępu.
+</pl-PL>
+
+<de-DE>
+⏳ Einheitliche Ladeanzeigen beim Anmelden, Prüfen des Spitznamens und Speichern der Zustimmung zu den Nutzungsbedingungen.
+🌐 Übersetzte Fortschrittsmeldungen.
+</de-DE>
+
+<fr-FR>
+⏳ Écrans de chargement harmonisés pendant la connexion, la vérification du pseudo et l’enregistrement de l’acceptation des conditions.
+🌐 Messages de progression traduits.
+</fr-FR>
+
+<es-ES>
+⏳ Pantallas de carga uniformes al iniciar sesión, comprobar el apodo y guardar la aceptación de las condiciones.
+🌐 Mensajes de progreso traducidos.
+</es-ES>
+
+<ur>
+⏳ لاگ ان، عرفی نام کی جانچ اور شرائط کی منظوری محفوظ کرتے وقت یکساں لوڈنگ اسکرینیں۔
+🌐 پیش رفت کے پیغامات کے ترجمے۔
+</ur>
+
+<bn-BD>
+⏳ লগইন, ডাকনাম যাচাই এবং শর্তাবলিতে সম্মতি সংরক্ষণের সময় একই ধরনের লোডিং পর্দা।
+🌐 অগ্রগতির বার্তা বিভিন্ন ভাষায় দেখানো হয়।
+</bn-BD>
+
+<ne-NP>
+⏳ लगइन गर्दा, उपनाम जाँच्दा र सर्तहरूको स्वीकृति सुरक्षित गर्दा एकरूप लोडिङ स्क्रिन।
+🌐 प्रगतिका सन्देशहरू अनुवाद गरिएका छन्।
+</ne-NP>
+
+<hi-IN>
+⏳ लॉगिन, उपनाम की जाँच और शर्तों की स्वीकृति सहेजते समय एक जैसी लोडिंग स्क्रीन।
+🌐 प्रगति के संदेशों का अनुवाद।
+</hi-IN>
+
+<am>
+⏳ ሲገቡ፣ ቅጽል ስም ሲፈተሽ እና የውሎች ስምምነት ሲቀመጥ ተመሳሳይ የመጫኛ ማያዎች።
+🌐 የሂደት መልዕክቶች ተተርጉመዋል።
+</am>
+
+<ar>
+⏳ شاشات تحميل موحّدة أثناء تسجيل الدخول والتحقق من الاسم المستعار وحفظ قبول الشروط.
+🌐 رسائل تقدم مترجمة.
+</ar>
+
+<my-MM>
+⏳ အကောင့်ဝင်ခြင်း၊ အမည်ပြောင်စစ်ဆေးခြင်းနှင့် စည်းကမ်းချက်လက်ခံမှု သိမ်းဆည်းခြင်းတို့တွင် တူညီသော လုပ်ဆောင်နေဆဲမျက်နှာပြင်။
+🌐 လုပ်ဆောင်မှုအခြေအနေစာသားများကို ဘာသာပြန်ထားသည်။
+</my-MM>
+
+<km-KH>
+⏳ ផ្ទាំងកំពុងផ្ទុកមានរូបរាងដូចគ្នាពេលចូលគណនី ពិនិត្យឈ្មោះហៅក្រៅ និងរក្សាទុកការយល់ព្រមតាមលក្ខខណ្ឌ។
+🌐 សារបង្ហាញដំណើរការត្រូវបានបកប្រែ។
+</km-KH>
+
+<lo-LA>
+⏳ ໜ້າຈໍກຳລັງໂຫຼດແບບດຽວກັນເມື່ອເຂົ້າລະບົບ, ກວດຊື່ຫຼິ້ນ ແລະບັນທຶກການຍອມຮັບຂໍ້ກຳນົດ.
+🌐 ແປຂໍ້ຄວາມຄວາມຄືບໜ້າແລ້ວ.
+</lo-LA>
+
+<mn-MN>
+⏳ Нэвтрэх, хоч шалгах, нөхцөлийн зөвшөөрлийг хадгалах үед ижил загварын ачаалах дэлгэц харагдана.
+🌐 Явцын мэдэгдлүүдийг орчуулсан.
+</mn-MN>
+
+<fa-IR>
+⏳ نمایش یکسان بارگذاری هنگام ورود، بررسی نام مستعار و ذخیره پذیرش شرایط.
+🌐 پیام‌های پیشرفت ترجمه شده‌اند.
+</fa-IR>
+
+<si-LK>
+⏳ පිවිසීමේදී, අන්වර්ථ නාමය පරීක්ෂා කිරීමේදී සහ කොන්දේසි පිළිගැනීම සුරැකීමේදී එකම ආකාරයේ පූරණ තිර.
+🌐 ප්‍රගති පණිවිඩ පරිවර්තනය කර ඇත.
+</si-LK>
+
+<sw>
+⏳ Skrini zinazofanana za kupakia wakati wa kuingia, kukagua jina la utani na kuhifadhi ukubali wa masharti.
+🌐 Ujumbe wa maendeleo umetafsiriwa.
+</sw>

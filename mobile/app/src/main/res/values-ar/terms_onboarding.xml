@@ -4,4 +4,5 @@
     <string name="bd_terms_intro_body">للمتابعة، يُرجى قراءة شروط التطبيق وسياسة الخصوصية والموافقة عليهما.</string>
     <string name="bd_terms_tournament_context">خطوة أخرى للانضمام إلى البطولة</string>
     <string name="bd_terms_accept_continue">الموافقة والمتابعة</string>
+    <string name="bd_terms_saving">جارٍ حفظ موافقتك. يُرجى الانتظار.</string>
 </resources>

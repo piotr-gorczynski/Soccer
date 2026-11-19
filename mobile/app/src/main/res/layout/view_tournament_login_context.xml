@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tournamentLoginContext"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginBottom="16dp"
+    android:visibility="gone">
+    <TextView
+        android:id="@+id/tournamentLoginTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/bd_tournament_login_title"
+        android:textColor="@color/colorBlack"
+        android:textAppearance="?android:attr/textAppearanceButton"
+        android:textAllCaps="false" />
+    <TextView
+        android:id="@+id/tournamentLoginMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:gravity="center"
+        android:text="@string/bd_tournament_login_message"
+        android:textColor="#595959"
+        android:textAppearance="?android:attr/textAppearanceButton"
+        android:textAllCaps="false" />
+</LinearLayout>

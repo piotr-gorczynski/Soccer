@@ -202,6 +202,10 @@ public class AnalyticsManager {
      * Track when login screen is opened
      */
     public void trackLoginScreenOpened() {
+        trackLoginScreenOpened("account");
+    }
+
+    public void trackLoginScreenOpened(String source) {
         Log.d(TAG, "Tracked: login screen opened");
         
         if (crashlytics != null) {
@@ -215,6 +219,14 @@ public class AnalyticsManager {
         if (firebaseAnalytics != null) {
             try {
                 if (!isBangladesh()) firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, new Bundle());
+                else {
+                    Bundle params=new Bundle();
+                    params.putString("stage","authentication");
+                    params.putString("outcome","shown");
+                    params.putString("reason","none");
+                    params.putString("source","tournament".equals(source) ? "tournament" : "account");
+                    firebaseAnalytics.logEvent("onboarding_step",params);
+                }
             } catch (Exception e) {
                 Log.e(TAG, "Failed to log to Firebase Analytics", e);
             }

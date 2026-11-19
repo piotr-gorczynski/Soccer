@@ -1,0 +1,15 @@
+<en-GB>
+⏳ Consistent loading screens while signing in, checking your nickname and saving Terms acceptance.
+🌐 Localized progress messages.
+🏆 Tournament guidance on login keeps your selected tournament through account setup.
+✅ Clear saving status and protection against leaving while Terms acceptance is being saved.
+🔗 Consistent privacy links and button text.
+</en-GB>
+
+<bn-BD>
+⏳ লগইন, ডাকনাম যাচাই এবং শর্তাবলিতে সম্মতি সংরক্ষণের সময় একই ধরনের লোডিং পর্দা।
+🌐 অগ্রগতির বার্তা বিভিন্ন ভাষায় দেখানো হয়।
+🏆 লগইন পর্দায় টুর্নামেন্টের নির্দেশনা; অ্যাকাউন্ট তৈরি শেষে বেছে নেওয়া টুর্নামেন্টে ফিরে যান।
+✅ শর্তাবলিতে সম্মতি সংরক্ষণের অবস্থা স্পষ্ট; সংরক্ষণ চলাকালে পর্দা ছেড়ে যাওয়া রোধ করা হয়েছে।
+🔗 গোপনীয়তা নীতির লিংক ও বোতামের লেখায় সামঞ্জস্য।
+</bn-BD>

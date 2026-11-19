@@ -24,9 +24,15 @@ public class TermsActivity extends BaseActivity {
     private AnalyticsManager analytics;
     private TermsPolicy policy;
     private Button accept;
+    private Button retry;
+    private TermsAcceptanceSubmission submission;
+    private final TermsAcceptanceSubmission.Observer submissionObserver=this::renderSubmission;
     private java.util.concurrent.ExecutorService executor;
     @Override protected void onCreate(Bundle state) {
         super.onCreate(state); setContentView(R.layout.activity_terms);
+        android.widget.TextView savingMessage=findViewById(R.id.game_loading_message);
+        savingMessage.setText(R.string.bd_terms_saving);
+        savingMessage.setAccessibilityLiveRegion(android.view.View.ACCESSIBILITY_LIVE_REGION_POLITE);
         PrivacyPolicyLinks.bind(this,R.id.termsPrivacyLink);
         analytics=resolveAnalytics();
         uid=currentUid(); readOnly=getIntent().getBooleanExtra(READ_ONLY,false);
@@ -40,8 +46,20 @@ public class TermsActivity extends BaseActivity {
                 ((android.widget.TextView)findViewById(R.id.bdTermsTitle)).setText(R.string.bd_terms_tournament_context);
         }
         policy=TermsPolicy.required(AppFlavourDetector.isBangladeshFlavour(this),LanguageManager.getCurrentLanguageCode(this));
+        if(bangladesh && !readOnly) {
+            submission=new androidx.lifecycle.ViewModelProvider(this,new androidx.lifecycle.ViewModelProvider.Factory() {
+                @Override public <T extends androidx.lifecycle.ViewModel> T create(Class<T> modelClass) {
+                    return modelClass.cast(new TermsAcceptanceSubmission());
+                }
+            }).get(TermsAcceptanceSubmission.class);
+            saving=submission.isSaving();
+        }
         accept=findViewById(R.id.acceptTerms); accept.setEnabled(false);
-        if (bangladesh && !readOnly) { accept.setText(R.string.bd_terms_accept_continue); accept.setAllCaps(false); }
+        if (bangladesh && !readOnly) {
+            accept.setText(R.string.bd_terms_accept_continue);
+            accept.setAllCaps(false);
+            ((Button)findViewById(R.id.declineTerms)).setAllCaps(false);
+        }
         if(readOnly) accept.setVisibility(android.view.View.GONE);
         WebView web=findViewById(R.id.termsWebView);
         web.getSettings().setJavaScriptEnabled(false);
@@ -59,7 +77,7 @@ public class TermsActivity extends BaseActivity {
             }
         });
         executor=java.util.concurrent.Executors.newSingleThreadExecutor();
-        Button retry=new Button(this);retry.setText(R.string.retry);
+        retry=new Button(this);retry.setText(R.string.retry);
         ((android.view.ViewGroup)web.getParent()).addView(retry,0);
         Runnable load=()->{
             loaded=false; accept.setEnabled(false);
@@ -80,14 +98,21 @@ public class TermsActivity extends BaseActivity {
         retry.setOnClickListener(v->load.run());
         accept.setOnClickListener(v->{
             if(readOnly||!loaded||saving||uid==null||!uid.equals(currentUid()))return;
+            if(submission!=null && submission.hasPendingResult()) return;
             trackTerms("terms_save", "submit", "none");
+            if(submission!=null) {
+                submission.submit(uid,policy.id(),()->saveAcceptance(uid,policy));
+                return;
+            }
             saving=true;accept.setEnabled(false);retry.setEnabled(false);
+            findViewById(R.id.termsSavingStatus).setVisibility(android.view.View.VISIBLE);
             saveAcceptance(uid,policy)
                 .addOnSuccessListener(unused->{
                     if(!uid.equals(currentUid())){finish();return;}
                     trackTerms("terms_save", "success", "none");
                     accepted=true;finish();
                 }).addOnFailureListener(error->{saving=false;accept.setEnabled(loaded);retry.setEnabled(true);
+                    findViewById(R.id.termsSavingStatus).setVisibility(android.view.View.GONE);
                     logFailure("saveAcceptance", error);
                     Toast.makeText(this,R.string.terms_acceptance_failed,Toast.LENGTH_LONG).show();});
         });
@@ -97,6 +122,32 @@ public class TermsActivity extends BaseActivity {
             @Override public void handleOnBackPressed(){leave("back");}
         });
         load.run();
+        if(submission!=null) submission.observe(submissionObserver);
+    }
+    private void setAcceptanceSaving(boolean busy) {
+        saving=busy;
+        findViewById(R.id.termsSavingStatus).setVisibility(busy ? android.view.View.VISIBLE : android.view.View.GONE);
+        findViewById(R.id.declineTerms).setEnabled(!busy);
+        accept.setEnabled(loaded && !busy);
+        retry.setEnabled(!busy);
+    }
+    private void renderSubmission(TermsAcceptanceSubmission.Result result) {
+        if(result==TermsAcceptanceSubmission.Result.IDLE) return;
+        if(isFinishing() || isDestroyed()) return;
+        setAcceptanceSaving(result==TermsAcceptanceSubmission.Result.SAVING);
+        if(result==TermsAcceptanceSubmission.Result.SAVING) return;
+        if(!submission.belongsTo(currentUid(),policy.id())) {
+            submission.consumeResult(); finish(); return;
+        }
+        Exception error=submission.error();
+        submission.consumeResult();
+        if(result==TermsAcceptanceSubmission.Result.SAVED) {
+            trackTerms("terms_save","success","none");
+            accepted=true; finish();
+        } else {
+            logFailure("saveAcceptance",error);
+            Toast.makeText(this,R.string.terms_acceptance_failed,Toast.LENGTH_LONG).show();
+        }
     }
     protected String currentUid() { return FirebaseAuth.getInstance().getUid(); }
     protected AnalyticsManager resolveAnalytics() {
@@ -144,12 +195,17 @@ public class TermsActivity extends BaseActivity {
                 "terms_save".equals(stage) ? "accept" : "none");
         else if (!readOnly && analytics != null) analytics.trackOnboardingStep(stage, outcome, reason);
     }
-    @Override protected void onResume(){super.onResume();if(diagnostics!=null)diagnostics.resume();}
-    @Override protected void onPause(){if(diagnostics!=null)diagnostics.pause();super.onPause();}
+    @Override protected void onResume(){super.onResume();if(diagnostics!=null)diagnostics.resume();if(submission!=null)submission.observe(submissionObserver);}
+    @Override protected void onPause(){if(submission!=null)submission.unobserve(submissionObserver);if(diagnostics!=null)diagnostics.pause();super.onPause();}
     @Override protected void onSaveInstanceState(Bundle out){if(diagnostics!=null)out.putBundle("terms_diagnostics",diagnostics.save());super.onSaveInstanceState(out);}
-    private void leave(String action){if(!readOnly&&!accepted){
+    private void leave(String action){
+        if(bangladesh && !readOnly && saving) {
+            Toast.makeText(this,R.string.bd_terms_saving,Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if(!readOnly&&!accepted){
         if(diagnostics!=null)diagnostics.step("terms_save","declined","none","NONE",action);
         else trackTerms("terms_save","declined","none");
     }if(!readOnly&&!accepted&&uid!=null&&uid.equals(currentUid()))FirebaseAuth.getInstance().signOut();finish();}
-    @Override protected void onDestroy(){if(executor!=null)executor.shutdownNow();super.onDestroy();}
+    @Override protected void onDestroy(){if(submission!=null)submission.unobserve(submissionObserver);if(executor!=null)executor.shutdownNow();super.onDestroy();}
 }

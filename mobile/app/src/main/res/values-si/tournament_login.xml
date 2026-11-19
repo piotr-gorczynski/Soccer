@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_tournament_login_title">තරගාවලියට එක්වන්න</string>
+    <string name="bd_tournament_login_message">තෝරාගත් තරගාවලිය වෙත ඉදිරියට යාමට පුරනය වන්න හෝ ක්‍රීඩා කිරීම අරඹන්න.</string>
+</resources>

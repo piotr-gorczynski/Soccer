@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_tournament_login_title">টুর্নামেন্টে যোগ দিন</string>
+    <string name="bd_tournament_login_message">নির্বাচিত টুর্নামেন্টে এগিয়ে যেতে লগইন করুন অথবা খেলা শুরু করুন।</string>
+</resources>
