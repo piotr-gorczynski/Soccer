@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_regulation_scroll_hint">සුදුසුකම් තහවුරු කිරීමට පහළට අනුචලනය කරන්න ↓</string>
+    <string name="bd_regulation_confirmations_count">තහවුරු කිරීම්: %1$d/3</string>
+    <string name="bd_regulation_accept_join">පිළිගෙන තරඟාවලියට එක්වන්න</string>
+    <string name="bd_regulation_last_step">තරඟාවලියට එක්වීමේ අවසන් පියවර</string>
+</resources>

@@ -1,0 +1,71 @@
+<en-GB>
+⏳ Immediate progress feedback when sending a player invitation, with protection against repeated taps.
+</en-GB>
+
+<pl-PL>
+⏳ Natychmiastowy wskaźnik wysyłania zaproszenia do gracza i ochrona przed wielokrotnym naciśnięciem.
+</pl-PL>
+
+<de-DE>
+⏳ Sofortige Fortschrittsanzeige beim Senden einer Spielereinladung und Schutz vor wiederholtem Tippen.
+</de-DE>
+
+<fr-FR>
+⏳ Indication immédiate de l’envoi d’une invitation à un joueur et protection contre les appuis répétés.
+</fr-FR>
+
+<es-ES>
+⏳ Indicador inmediato al enviar una invitación a un jugador y protección contra pulsaciones repetidas.
+</es-ES>
+
+<ur>
+⏳ کھلاڑی کو دعوت بھیجتے وقت فوری پیش رفت کا اشارہ اور بار بار دبانے سے تحفظ۔
+</ur>
+
+<bn-BD>
+⏳ খেলোয়াড়কে আমন্ত্রণ পাঠানোর অগ্রগতি সঙ্গে সঙ্গে দেখা যায় এবং বারবার চাপা থেকে সুরক্ষা।
+</bn-BD>
+
+<ne-NP>
+⏳ खेलाडीलाई निमन्त्रणा पठाउँदा तत्काल प्रगति संकेत र बारम्बार थिच्नबाट सुरक्षा।
+</ne-NP>
+
+<hi-IN>
+⏳ खिलाड़ी को निमंत्रण भेजते समय तुरंत प्रगति संकेत और बार-बार टैप करने से सुरक्षा।
+</hi-IN>
+
+<am>
+⏳ ለተጫዋች ግብዣ ሲላክ ወዲያውኑ የሂደት ማሳያ እና ተደጋጋሚ መጫንን መከላከል።
+</am>
+
+<ar>
+⏳ مؤشر تقدم فوري عند إرسال دعوة للاعب، مع الحماية من النقر المتكرر.
+</ar>
+
+<my-MM>
+⏳ ကစားသမားထံ ဖိတ်ကြားချက်ပို့နေစဉ် အခြေအနေကို ချက်ချင်းပြသပြီး ထပ်ခါတလဲလဲ နှိပ်ခြင်းကို ကာကွယ်ပေးသည်။
+</my-MM>
+
+<km-KH>
+⏳ បង្ហាញដំណើរការភ្លាមៗពេលផ្ញើការអញ្ជើញទៅអ្នកលេង និងការពារការចុចដដែលៗ។
+</km-KH>
+
+<lo-LA>
+⏳ ສະແດງຄວາມຄືບໜ້າທັນທີເມື່ອສົ່ງຄຳເຊີນຫາຜູ້ຫຼິ້ນ ແລະປ້ອງກັນການກົດຊ້ຳ.
+</lo-LA>
+
+<mn-MN>
+⏳ Тоглогчид урилга илгээх явцыг шууд харуулж, давтан дарахаас хамгаална.
+</mn-MN>
+
+<fa-IR>
+⏳ نمایش فوری پیشرفت هنگام ارسال دعوت به بازیکن و جلوگیری از لمس‌های تکراری.
+</fa-IR>
+
+<si-LK>
+⏳ ක්‍රීඩකයෙකුට ආරාධනයක් යවන විට වහාම ප්‍රගතිය පෙන්වීම සහ නැවත නැවත තට්ටු කිරීම වැළැක්වීම.
+</si-LK>
+
+<sw>
+⏳ Onyesho la maendeleo mara moja unapotuma mwaliko kwa mchezaji na ulinzi dhidi ya kubonyeza mara kwa mara.
+</sw>

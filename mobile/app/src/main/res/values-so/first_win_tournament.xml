@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="first_win_tournament_title">Waad guulaysatay! 🏆</string>
+    <string name="first_win_tournament_message">Ma ku guulaysan kartaa tartanka Bangladesh?</string>
+    <string name="first_win_tournament_join">Ku biir tartanka</string>
+    <string name="first_win_tournament_not_now">Hadda maya</string>
+</resources>

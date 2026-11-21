@@ -27,6 +27,8 @@ function formatReply(text, columns = process.stdout.columns || 80) {
 function usage() {
   return [
     'Usage:',
+    '  node support-tickets.js <env> send-post-payout-feedback-message <paymentId> [--dry-run] [--force] [--language en|bn]',
+    '  node support-tickets.js <env> set-feedback-facebook-post <tournamentId> <https-post-url|clear>',
     '  node support-tickets.js <env> list [--status open]',
     '  node support-tickets.js <env> view <ticketId>',
     '  node support-tickets.js <env> reply <ticketId> <message>',
@@ -43,6 +45,28 @@ async function main() {
     __dirname, '..', '..', 'secrets', `serviceAccountKey.${env}.json`));
   admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
   const db = admin.firestore();
+
+  if (command === 'send-post-payout-feedback-message') {
+    const [paymentId, ...flags] = args;
+    const options = {};
+    for (let i = 0; i < flags.length; i++) {
+      if (flags[i] === '--force') options.force = true;
+      else if (flags[i] === '--dry-run') options.dryRun = true;
+      else if (flags[i] === '--language' && ['en', 'bn'].includes(flags[i + 1])) options.language = flags[++i];
+      else throw Error(usage());
+    }
+    const result = await require('./post-payout-feedback').send(db, paymentId,
+      serviceAccount.client_email, admin.firestore.FieldValue, options);
+    console.log(JSON.stringify(result, null, 2));
+    return;
+  }
+  if (command === 'set-feedback-facebook-post') {
+    if (args.length !== 2) throw Error(usage());
+    await require('./post-payout-feedback').configure(db, args[0], args[1],
+      serviceAccount.client_email, admin.firestore.FieldValue);
+    console.log('Feedback destination configured. No message sent.');
+    return;
+  }
 
   if (command === 'moderation-hold') {
     const [id, state, ...reason] = args;

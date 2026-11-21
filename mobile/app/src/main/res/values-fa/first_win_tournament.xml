@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="first_win_tournament_title">شما برنده شدید! 🏆</string>
+    <string name="first_win_tournament_message">فکر می‌کنید می‌توانید در مسابقات بنگلادش برنده شوید؟</string>
+    <string name="first_win_tournament_join">پیوستن به مسابقات</string>
+    <string name="first_win_tournament_not_now">فعلاً نه</string>
+</resources>

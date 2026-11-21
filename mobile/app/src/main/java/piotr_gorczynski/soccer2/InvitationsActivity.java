@@ -53,6 +53,8 @@ public class InvitationsActivity extends BaseActivity {
 
     private ListenerRegistration invitesSub;   // keep handle so we can remove it later
     private ListenerRegistration pastInvitesSub;
+    private boolean sendingInvite;
+    private View inviteSendingOverlay;
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -72,6 +74,15 @@ public class InvitationsActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_invitations);
+        inviteSendingOverlay = findViewById(R.id.inviteSendingOverlay);
+        TextView sendingMessage = inviteSendingOverlay.findViewById(R.id.game_loading_message);
+        sendingMessage.setText(R.string.sending_invitation);
+        sendingMessage.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE);
+        getOnBackPressedDispatcher().addCallback(this, new androidx.activity.OnBackPressedCallback(true) {
+            @Override public void handleOnBackPressed() {
+                if (!sendingInvite) finish();
+            }
+        });
 
         Toolbar toolbar = findViewById(R.id.invitations_toolbar);
         setSupportActionBar(toolbar);
@@ -574,6 +585,9 @@ public class InvitationsActivity extends BaseActivity {
     }
 
     private void sendInviteViaCF(@NonNull String targetUid, String tournamentId, String matchPath, String tournamentName) {
+        if (sendingInvite) return;
+        setSendingInvite(true);
+        final long requestStartedAt = android.os.SystemClock.elapsedRealtime();
         Map<String,Object> inviteParams = new HashMap<>();
         inviteParams.put("toUid", targetUid);
         if (tournamentId != null && !tournamentId.isEmpty()) {
@@ -587,13 +601,23 @@ public class InvitationsActivity extends BaseActivity {
                 .getHttpsCallable("createInvite")
                 .call(inviteParams)
                 .addOnSuccessListener(res -> {
+                    Log.d("TAG_Soccer", "createInvite response: success, elapsedMs="
+                            + (android.os.SystemClock.elapsedRealtime() - requestStartedAt));
+                    setSendingInvite(false);
+                    if (isFinishing() || isDestroyed()) return;
                     @SuppressWarnings("unchecked")
                     String inviteId = (String)((Map<String,Object>)Objects.requireNonNull(res.getData())).get("inviteId");
                     if (inviteId != null) {
                         startActivity(new Intent(this, WaitingActivity.class).putExtra("inviteId", inviteId));
+                    } else {
+                        Toast.makeText(this, R.string.failed_to_send_invite, Toast.LENGTH_LONG).show();
                     }
                 })
                 .addOnFailureListener(e -> {
+                    Log.d("TAG_Soccer", "createInvite response: failure, elapsedMs="
+                            + (android.os.SystemClock.elapsedRealtime() - requestStartedAt));
+                    setSendingInvite(false);
+                    if (isFinishing() || isDestroyed()) return;
                     /* default fallback */
                     int msgId = R.string.failed_to_send_invite;
                     String customMessage = null;
@@ -667,8 +691,14 @@ public class InvitationsActivity extends BaseActivity {
                             + ": createInvite failed", e);
                 });
     }
+    private void setSendingInvite(boolean sending) {
+        sendingInvite = sending;
+        inviteSendingOverlay.setVisibility(sending ? View.VISIBLE : View.GONE);
+    }
+
     @Override
     public boolean onSupportNavigateUp() {
+        if (sendingInvite) return true;
         finish();
         return true;
     }

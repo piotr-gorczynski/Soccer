@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_regulation_scroll_hint">योग्यता पुष्टि गर्न तल स्क्रोल गर्नुहोस् ↓</string>
+    <string name="bd_regulation_confirmations_count">पुष्टिहरू: %1$d/3</string>
+    <string name="bd_regulation_accept_join">स्वीकार गरी प्रतियोगितामा सहभागी हुनुहोस्</string>
+    <string name="bd_regulation_last_step">प्रतियोगितामा सहभागी हुने अन्तिम चरण</string>
+</resources>

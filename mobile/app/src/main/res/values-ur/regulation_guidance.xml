@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_regulation_scroll_hint">اہلیت کی تصدیق کے لیے نیچے اسکرول کریں ↓</string>
+    <string name="bd_regulation_confirmations_count">تصدیقات: %1$d/۳</string>
+    <string name="bd_regulation_accept_join">قبول کریں اور ٹورنامنٹ میں شامل ہوں</string>
+    <string name="bd_regulation_last_step">ٹورنامنٹ میں شامل ہونے کا آخری مرحلہ</string>
+</resources>

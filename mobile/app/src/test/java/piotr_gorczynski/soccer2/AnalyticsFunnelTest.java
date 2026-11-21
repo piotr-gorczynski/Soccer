@@ -16,6 +16,55 @@ import static org.mockito.Mockito.*;
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk=34, application=android.app.Application.class)
 public class AnalyticsFunnelTest {
+    @Test public void firstWinPromptReportsActionsWithoutEverReportingAJoin() {
+        withManager((manager,sdk)->{
+            var offer=TournamentPromotion.parse(TournamentPromotionTest.response());
+            manager.trackFirstWinTournamentPrompt(offer,"shown");
+            manager.trackFirstWinTournamentPrompt(offer,"join");
+            manager.trackFirstWinTournamentPrompt(offer,"not_now");
+            manager.trackFirstWinTournamentPrompt(offer,"private user input");
+            if(!AnalyticsManager.isBangladesh()) {verifyNoInteractions(sdk);return;}
+            ArgumentCaptor<Bundle> params=ArgumentCaptor.forClass(Bundle.class);
+            verify(sdk,times(3)).logEvent(eq("first_win_tournament_prompt"),params.capture());
+            for(Bundle b:params.getAllValues()) {
+                assertEquals("first_win",b.getString("source"));assertEquals("cup",b.getString("tournament_id"));
+                assertEquals(5,b.size());assertEquals(2300L,b.getLong("prize_bdt"));
+            }
+            verify(sdk,never()).logEvent(eq("tournament_join_success"),any());
+        });
+    }
+    @Test public void successfulJoinKeepsFirstWinAttributionAfterOnboardingOnlyInBangladesh() {
+        var context=org.robolectric.RuntimeEnvironment.getApplication();
+        context.getSharedPreferences(LanguageManager.PREFS_FILE,0).edit().clear().commit();
+        long now=System.currentTimeMillis();
+        PendingTournamentPromotion.select(context,"cup",null,now,"first_win");
+        assertEquals("cup",PendingTournamentPromotion.forUser(context,"owner",now));
+        PendingTournamentPromotion.clear(context);
+        try(var auth=mockStatic(com.google.firebase.auth.FirebaseAuth.class)) {
+            var instance=mock(com.google.firebase.auth.FirebaseAuth.class);
+            auth.when(com.google.firebase.auth.FirebaseAuth::getInstance).thenReturn(instance);
+            when(instance.getUid()).thenReturn("owner");
+            withManager((manager,sdk)->{
+                manager.trackTournamentJoinSuccess("cup");
+                ArgumentCaptor<Bundle> params=ArgumentCaptor.forClass(Bundle.class);
+                verify(sdk).logEvent(eq("tournament_join_success"),params.capture());
+                assertEquals(AnalyticsManager.isBangladesh()?"first_win":null,params.getValue().getString("source"));
+            });
+        } finally {context.getSharedPreferences(LanguageManager.PREFS_FILE,0).edit().clear().commit();}
+    }
+    @Test public void feedbackClickContainsOnlyControlledValuesAndGlobalIsUnchanged() {
+        withManager((manager,sdk)->{
+            manager.trackPostPayoutFeedbackLinkClick("private-user-entered-value");
+            if (!AnalyticsManager.isBangladesh()) { verifyNoInteractions(sdk); return; }
+            ArgumentCaptor<Bundle> params=ArgumentCaptor.forClass(Bundle.class);
+            verify(sdk).logEvent(eq("post_payout_feedback_link_click"),params.capture());
+            Bundle b=params.getValue();assertEquals(3,b.size());
+            assertEquals("facebook",b.getString("destination"));
+            assertEquals("post_payout_message",b.getString("source"));
+            assertEquals("community",b.getString("destination_type"));
+            verifyNoMoreInteractions(sdk);
+        });
+    }
     @Test public void tournamentCardClickReportsOnlyPublicIdAndOnlyInBangladesh() {
         withManager((manager,sdk)->{
             manager.trackTournamentPromotionClick(null);
@@ -80,6 +129,7 @@ public class AnalyticsFunnelTest {
     }
     private void withManager(java.util.function.BiConsumer<AnalyticsManager,FirebaseAnalytics> action) {
         Context context=mock(Context.class);
+        when(context.getApplicationContext()).thenReturn(org.robolectric.RuntimeEnvironment.getApplication());
         FirebaseAnalytics sdk=mock(FirebaseAnalytics.class);
         try (MockedStatic<FirebaseAnalytics> analytics=mockStatic(FirebaseAnalytics.class);
              MockedStatic<FirebaseCrashlytics> crashes=mockStatic(FirebaseCrashlytics.class)) {

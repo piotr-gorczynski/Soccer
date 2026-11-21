@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_regulation_scroll_hint">पात्रता की पुष्टि करने के लिए नीचे स्क्रॉल करें ↓</string>
+    <string name="bd_regulation_confirmations_count">पुष्टियाँ: %1$d/3</string>
+    <string name="bd_regulation_accept_join">स्वीकार करें और टूर्नामेंट में शामिल हों</string>
+    <string name="bd_regulation_last_step">टूर्नामेंट में शामिल होने का अंतिम चरण</string>
+</resources>

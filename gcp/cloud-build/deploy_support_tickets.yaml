@@ -61,7 +61,8 @@ steps:
         node --test firebase/functions/support-tickets/support-tickets.test.js \
           firebase/functions/support-tickets/conversation.test.js \
           tools/support-tickets/support-tickets.test.js \
-          firebase/functions/support-tickets/notifications.test.js
+          firebase/functions/support-tickets/notifications.test.js \
+          tools/support-tickets/post-payout-feedback.test.js
 
   - name: 'node:22-slim'
     id: 'install-dependencies'
@@ -75,6 +76,9 @@ steps:
         cp /workspace/soccer/firebase/functions/support-tickets/conversation.js /workspace/firebase/functions/support-tickets/
         cp /workspace/soccer/firebase/functions/support-tickets/retention.js /workspace/firebase/functions/support-tickets/
         cp /workspace/soccer/firebase/functions/support-tickets/notifications.js /workspace/firebase/functions/support-tickets/
+        cp /workspace/soccer/firebase/functions/support-tickets/feedback-links.js /workspace/firebase/functions/support-tickets/
+        cp /workspace/soccer/firebase/functions/support-tickets/community.json /workspace/firebase/functions/support-tickets/
+        cp /workspace/soccer/firebase/functions/support-tickets/feedback-templates.json /workspace/firebase/functions/support-tickets/
         cd /workspace/firebase/functions/support-tickets
         npm install
 

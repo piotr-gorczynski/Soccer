@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_regulation_scroll_hint">អូសចុះក្រោមដើម្បីបញ្ជាក់លក្ខខណ្ឌចូលរួម ↓</string>
+    <string name="bd_regulation_confirmations_count">ការបញ្ជាក់៖ %1$d/3</string>
+    <string name="bd_regulation_accept_join">យល់ព្រម និងចូលរួមការប្រកួត</string>
+    <string name="bd_regulation_last_step">ជំហានចុងក្រោយដើម្បីចូលរួមការប្រកួត</string>
+</resources>

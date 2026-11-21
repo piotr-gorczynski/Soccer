@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_regulation_scroll_hint">مرّر لأسفل لتأكيد الأهلية ↓</string>
+    <string name="bd_regulation_confirmations_count">التأكيدات: %1$d/٣</string>
+    <string name="bd_regulation_accept_join">الموافقة والانضمام إلى البطولة</string>
+    <string name="bd_regulation_last_step">الخطوة الأخيرة للانضمام إلى البطولة</string>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="first_win_tournament_title">আপনি জিতেছেন! 🏆</string>
+    <string name="first_win_tournament_message">বাংলাদেশের টুর্নামেন্টেও জিততে পারবেন?</string>
+    <string name="first_win_tournament_join">টুর্নামেন্টে যোগ দিন</string>
+    <string name="first_win_tournament_not_now">এখন নয়</string>
+</resources>

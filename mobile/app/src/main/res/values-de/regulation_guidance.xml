@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_regulation_scroll_hint">Nach unten scrollen, um die Teilnahmeberechtigung zu bestätigen ↓</string>
+    <string name="bd_regulation_confirmations_count">Bestätigungen: %1$d/3</string>
+    <string name="bd_regulation_accept_join">Akzeptieren und am Turnier teilnehmen</string>
+    <string name="bd_regulation_last_step">Letzter Schritt zur Turnierteilnahme</string>
+</resources>

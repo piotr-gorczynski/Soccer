@@ -57,8 +57,8 @@ public class TermsActivity extends BaseActivity {
         accept=findViewById(R.id.acceptTerms); accept.setEnabled(false);
         if (bangladesh && !readOnly) {
             accept.setText(R.string.bd_terms_accept_continue);
-            accept.setAllCaps(false);
-            ((Button)findViewById(R.id.declineTerms)).setAllCaps(false);
+            accept.setAllCaps(true);
+            ((Button)findViewById(R.id.declineTerms)).setAllCaps(true);
         }
         if(readOnly) accept.setVisibility(android.view.View.GONE);
         WebView web=findViewById(R.id.termsWebView);

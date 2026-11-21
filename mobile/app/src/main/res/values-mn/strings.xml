@@ -446,4 +446,5 @@
     <string name="help_load_older">Өмнөх зурвасуудыг ачаалах</string>
     <string name="help_refresh">Шинэчлэх</string>
     <string name="help_unknown_date">Огноо байхгүй</string>
+    <string name="sending_invitation">Урилга илгээж байна…</string>
 </resources>

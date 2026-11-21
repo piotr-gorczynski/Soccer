@@ -132,9 +132,41 @@ public class AnalyticsManager {
     }
 
     private static final String TAG = "TAG_Soccer";
+
+    public void trackPostPayoutFeedbackLinkClick(String destinationType) {
+        if (!isBangladesh() || firebaseAnalytics == null) return;
+        Bundle params = new Bundle();
+        params.putString("destination", "facebook");
+        params.putString("source", "post_payout_message");
+        params.putString("destination_type", "tournament_post".equals(destinationType) ? "tournament_post" : "community");
+        try { firebaseAnalytics.logEvent("post_payout_feedback_link_click", params); }
+        catch (Exception ignored) { Log.w(TAG, "Could not report feedback link click"); }
+    }
     
     private FirebaseAnalytics firebaseAnalytics;
     private FirebaseCrashlytics crashlytics;
+    private Context analyticsContext;
+
+    void trackFirstWinTournamentPrompt(TournamentPromotion offer,String action) {
+        if (!isBangladesh() || firebaseAnalytics==null || offer==null || action==null
+                || !java.util.Set.of("shown","join","not_now").contains(action)) return;
+        Bundle params=new Bundle();
+        params.putString("source","first_win");
+        params.putString("action",action);
+        params.putString("tournament_id",offer.id);
+        params.putLong("prize_bdt",offer.firstPrize);
+        params.putString("currency",offer.currency);
+        try { firebaseAnalytics.logEvent("first_win_tournament_prompt",params); }
+        catch(Exception ignored) { Log.w(TAG,"Could not report first win prompt"); }
+    }
+
+    private void addTournamentJoinSource(Bundle params,String tournamentId) {
+        if (!isBangladesh() || analyticsContext==null
+                || !PendingTournamentPromotion.hasFirstWinAttribution(analyticsContext,tournamentId,System.currentTimeMillis())) return;
+        String source=PendingTournamentPromotion.joinSource(analyticsContext,tournamentId,
+                com.google.firebase.auth.FirebaseAuth.getInstance().getUid(),System.currentTimeMillis());
+        if(source!=null) params.putString("source",source);
+    }
 
     public void trackAppVariantConflictShown() {
         trackSimpleEvent("app_variant_conflict_shown");
@@ -163,6 +195,7 @@ public class AnalyticsManager {
     }
     
     public AnalyticsManager(Context context) {
+        analyticsContext=context==null?null:context.getApplicationContext();
         if (context == null) {
             Log.e(TAG, "AnalyticsManager: Context is null, Firebase services will be disabled");
             this.firebaseAnalytics = null;
@@ -429,6 +462,7 @@ public class AnalyticsManager {
                 Bundle params = new Bundle();
                 params.putString("tournament_id", tournamentId);
                 params.putLong("is_authenticated", isUserAuthenticated ? 1 : 0);
+                addTournamentJoinSource(params,tournamentId);
                 firebaseAnalytics.logEvent("tournament_join_start", params);
             } catch (Exception e) {
                 Log.e(TAG, "Failed to log to Firebase Analytics", e);
@@ -454,6 +488,7 @@ public class AnalyticsManager {
             try {
                 Bundle params = new Bundle();
                 params.putString("tournament_id", tournamentId);
+                addTournamentJoinSource(params,tournamentId);
                 firebaseAnalytics.logEvent("tournament_join_success", params);
             } catch (Exception e) {
                 Log.e(TAG, "Failed to log to Firebase Analytics", e);

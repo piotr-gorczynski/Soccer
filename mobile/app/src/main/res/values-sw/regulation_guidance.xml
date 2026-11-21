@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_regulation_scroll_hint">Sogeza chini ili kuthibitisha ustahiki ↓</string>
+    <string name="bd_regulation_confirmations_count">Uthibitisho: %1$d/3</string>
+    <string name="bd_regulation_accept_join">Kubali na ujiunge na mashindano</string>
+    <string name="bd_regulation_last_step">Hatua ya mwisho ya kujiunga na mashindano</string>
+</resources>

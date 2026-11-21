@@ -520,4 +520,5 @@
     <string name="help_load_older">Wczytaj wcześniejsze wiadomości</string>
     <string name="help_refresh">Odśwież</string>
     <string name="help_unknown_date">Data niedostępna</string>
+    <string name="sending_invitation">Wysyłanie zaproszenia…</string>
 </resources>

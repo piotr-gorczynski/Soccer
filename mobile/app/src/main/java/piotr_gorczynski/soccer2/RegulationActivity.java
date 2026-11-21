@@ -51,6 +51,11 @@ public class RegulationActivity extends BaseActivity {
     private boolean loadInFlight;
     private int loadGeneration;
     private TournamentRegulationDiagnostics diagnostics;
+    private boolean bangladeshGuidance, confirmationsReached;
+    private boolean restoreConfirmationState;
+    private boolean restoreGuidanceScrollPending;
+    private int restoredCheckedMask, restoredScrollY;
+    private android.animation.ObjectAnimator guidancePulse;
     private final ViewTreeObserver.OnScrollChangedListener diagnosticScrollListener = this::inspectConfirmationVisibility;
     private final ViewTreeObserver.OnGlobalLayoutListener diagnosticLayoutListener = this::inspectConfirmationVisibility;
 
@@ -76,12 +81,24 @@ public class RegulationActivity extends BaseActivity {
         confirmTournamentTerms = findViewById(R.id.confirmTournamentTerms);
 
         View.OnClickListener confirmationListener = v -> updateAcceptButtonState();
-        confirmMinimumAge.setOnClickListener(confirmationListener);
-        confirmPayoutAccount.setOnClickListener(confirmationListener);
-        confirmTournamentTerms.setOnClickListener(confirmationListener);
+        for(CheckBox box:new CheckBox[]{confirmMinimumAge,confirmPayoutAccount,confirmTournamentTerms}) {
+            if(AnalyticsManager.isBangladesh()) {
+                // Restore only after the same regulation has loaded; hierarchy restore can precede the network response.
+                box.setSaveEnabled(false);
+                box.setOnCheckedChangeListener((button,checked)->updateAcceptButtonState());
+            } else box.setOnClickListener(confirmationListener);
+        }
 
         tournamentId = getIntent().getStringExtra("tournamentId");
         regulationId = getIntent().getStringExtra("regulationId");
+        if(AnalyticsManager.isBangladesh() && savedInstanceState!=null
+                && java.util.Objects.equals(tournamentId,savedInstanceState.getString("guidance_tournament"))
+                && java.util.Objects.equals(regulationId,savedInstanceState.getString("guidance_regulation"))) {
+            restoreConfirmationState=true;
+            restoredCheckedMask=savedInstanceState.getInt("guidance_checked_mask") & 7;
+            restoredScrollY=savedInstanceState.getInt("guidance_scroll_y");
+            confirmationsReached=savedInstanceState.getBoolean("guidance_reached");
+        }
         
         // Get analytics manager from SoccerApp  
         analyticsManager = ((SoccerApp) getApplicationContext()).getAnalyticsManager();
@@ -199,6 +216,14 @@ public class RegulationActivity extends BaseActivity {
         regulationContentLoaded = true;
         regulationStatus.setVisibility(View.GONE);
         regulationScroll.setVisibility(View.VISIBLE);
+        if(bangladeshGuidance && restoreConfirmationState) {
+            confirmMinimumAge.setChecked((restoredCheckedMask & 1)!=0);
+            confirmPayoutAccount.setChecked((restoredCheckedMask & 2)!=0);
+            confirmTournamentTerms.setChecked((restoredCheckedMask & 4)!=0);
+            restoreConfirmationState=false;
+            restoreGuidanceScrollPending=true;
+            regulationScroll.post(this::inspectConfirmationVisibility);
+        }
         reportRegulationLoad(true, reason);
         updateAcceptButtonState();
     }
@@ -247,6 +272,7 @@ public class RegulationActivity extends BaseActivity {
     }
 
     private void inspectConfirmationVisibility() {
+        restoreGuidanceScrollAfterLayout();
         if (diagnostics == null || !hasWindowFocus() || isFinishing()
                 || eligibilityConfirmation.getVisibility() != View.VISIBLE) return;
         snapshotDiagnosticControls();
@@ -254,21 +280,35 @@ public class RegulationActivity extends BaseActivity {
         for (int i = 0; i < boxes.length; i++) {
             Rect visible = new Rect();
             if (boxes[i].isShown() && boxes[i].getGlobalVisibleRect(visible)
-                    && visible.width() > 0 && visible.height() > 0) diagnostics.checkboxVisible(i);
+                    && visible.width() > 0 && visible.height() > 0) {
+                diagnostics.checkboxVisible(i);
+                if(bangladeshGuidance) confirmationsReached=true;
+            }
         }
+        renderEligibilityGuidance();
     }
 
     @Override public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus) inspectConfirmationVisibility();
+        else stopGuidancePulse();
     }
 
     @Override protected void onSaveInstanceState(Bundle outState) {
         if (diagnostics != null) outState.putBundle("regulation_diagnostics", diagnostics.save());
+        if(AnalyticsManager.isBangladesh()) {
+            outState.putString("guidance_tournament",tournamentId);
+            outState.putString("guidance_regulation",regulationId);
+            outState.putInt("guidance_checked_mask",restoreConfirmationState?restoredCheckedMask:checkedMask());
+            outState.putInt("guidance_scroll_y",restoreConfirmationState || restoreGuidanceScrollPending
+                    ?restoredScrollY:regulationScroll.getScrollY());
+            outState.putBoolean("guidance_reached",confirmationsReached);
+        }
         super.onSaveInstanceState(outState);
     }
 
     @Override protected void onStop() {
+        stopGuidancePulse();
         if (diagnostics != null && isFinishing() && !isChangingConfigurations()) {
             snapshotDiagnosticControls();
             diagnostics.exit(false);
@@ -277,6 +317,7 @@ public class RegulationActivity extends BaseActivity {
     }
 
     @Override protected void onDestroy() {
+        stopGuidancePulse();
         loadGeneration++;
         loadInFlight = false;
         if (eligibilityConfirmation != null && eligibilityConfirmation.getViewTreeObserver().isAlive()) {
@@ -294,6 +335,21 @@ public class RegulationActivity extends BaseActivity {
                 : null;
         requiresEligibilityConfirmation = prizeRules != null
                 && Boolean.TRUE.equals(prizeRules.get("cashPrizesEnabled"));
+        bangladeshGuidance=AnalyticsManager.isBangladesh() && requiresEligibilityConfirmation
+                && "BD".equals(regulation.get("market"));
+        findViewById(R.id.regulationJoinHeading).setVisibility(bangladeshGuidance?View.VISIBLE:View.GONE);
+        if(bangladeshGuidance) {
+            regulationScroll.setSaveEnabled(false);
+            acceptBtn.setText(R.string.bd_regulation_accept_join);
+            acceptBtn.setAllCaps(true);
+            eligibilityConfirmationHint.setMinHeight((int)(48*getResources().getDisplayMetrics().density));
+            eligibilityConfirmationHint.setGravity(android.view.Gravity.CENTER_VERTICAL);
+            eligibilityConfirmationHint.setAccessibilityLiveRegion(View.ACCESSIBILITY_LIVE_REGION_POLITE);
+            eligibilityConfirmationHint.setOnClickListener(v->{
+                if(regulationContentLoaded && !confirmationsReached)
+                    ((android.widget.ScrollView)regulationScroll).smoothScrollTo(0,eligibilityConfirmation.getTop());
+            });
+        }
 
         if (!requiresEligibilityConfirmation) {
             eligibilityConfirmation.setVisibility(View.GONE);
@@ -351,7 +407,52 @@ public class RegulationActivity extends BaseActivity {
                 && eligibilityConfigurationValid
                 && confirmationsComplete);
         snapshotDiagnosticControls();
+        renderEligibilityGuidance();
         eligibilityConfirmation.post(this::inspectConfirmationVisibility);
+    }
+
+    private int checkedMask() {
+        return (confirmMinimumAge.isChecked()?1:0) | (confirmPayoutAccount.isChecked()?2:0)
+                | (confirmTournamentTerms.isChecked()?4:0);
+    }
+
+    private void restoreGuidanceScrollAfterLayout() {
+        if(!restoreGuidanceScrollPending || regulationScroll==null || regulationScroll.isLayoutRequested()
+                || regulationScroll.getHeight()==0) return;
+        android.widget.ScrollView scroll=(android.widget.ScrollView)regulationScroll;
+        if(scroll.getChildCount()==0 || scroll.getChildAt(0).getHeight()==0) return;
+        restoreGuidanceScrollPending=false;
+        scroll.scrollTo(0,Math.max(0,restoredScrollY));
+    }
+
+    private void renderEligibilityGuidance() {
+        if(!bangladeshGuidance || eligibilityConfirmationHint==null) return;
+        boolean visible=eligibilityConfirmationHint.getVisibility()==View.VISIBLE;
+        int checked=Integer.bitCount(checkedMask());
+        if(checked>0)confirmationsReached=true;
+        CharSequence text=confirmationsReached?getString(R.string.bd_regulation_confirmations_count,checked)
+                :getString(R.string.bd_regulation_scroll_hint);
+        if(!TextUtils.equals(eligibilityConfirmationHint.getText(),text))eligibilityConfirmationHint.setText(text);
+        eligibilityConfirmationHint.setClickable(visible && !confirmationsReached);
+        eligibilityConfirmationHint.setFocusable(visible && !confirmationsReached);
+        if(!visible || confirmationsReached) {stopGuidancePulse();return;}
+        if(!hasWindowFocus() || guidancePulse!=null) return;
+        android.view.accessibility.AccessibilityManager accessibility=
+                (android.view.accessibility.AccessibilityManager)getSystemService(ACCESSIBILITY_SERVICE);
+        if((accessibility!=null && accessibility.isEnabled())
+                || android.provider.Settings.Global.getFloat(getContentResolver(),
+                        android.provider.Settings.Global.ANIMATOR_DURATION_SCALE,1f)==0f
+                || (android.os.Build.VERSION.SDK_INT>=26 && !android.animation.ValueAnimator.areAnimatorsEnabled())) return;
+        // Gentle repeating downward guidance until confirmations enter the viewport. No flashing.
+        guidancePulse=android.animation.ObjectAnimator.ofFloat(eligibilityConfirmationHint,View.TRANSLATION_Y,
+                0f,3*getResources().getDisplayMetrics().density,0f);
+        guidancePulse.setDuration(1600);
+        guidancePulse.setRepeatCount(android.animation.ValueAnimator.INFINITE);guidancePulse.start();
+    }
+
+    private void stopGuidancePulse() {
+        if(guidancePulse!=null) {guidancePulse.cancel();guidancePulse=null;}
+        if(eligibilityConfirmationHint!=null)eligibilityConfirmationHint.setTranslationY(0f);
     }
 
     private void acceptAndJoin() {

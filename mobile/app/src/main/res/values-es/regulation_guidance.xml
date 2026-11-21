@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_regulation_scroll_hint">Desplázate hacia abajo para confirmar que cumples los requisitos ↓</string>
+    <string name="bd_regulation_confirmations_count">Confirmaciones: %1$d/3</string>
+    <string name="bd_regulation_accept_join">Aceptar y unirse al torneo</string>
+    <string name="bd_regulation_last_step">Último paso para unirse al torneo</string>
+</resources>

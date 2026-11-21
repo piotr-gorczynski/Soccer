@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_regulation_scroll_hint">Оролцох эрхээ баталгаажуулахын тулд доош гүйлгэнэ үү ↓</string>
+    <string name="bd_regulation_confirmations_count">Баталгаажуулалт: %1$d/3</string>
+    <string name="bd_regulation_accept_join">Зөвшөөрч тэмцээнд оролцох</string>
+    <string name="bd_regulation_last_step">Тэмцээнд оролцох сүүлийн алхам</string>
+</resources>

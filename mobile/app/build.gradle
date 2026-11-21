@@ -53,11 +53,15 @@ android {
     compileSdk = 37 // Set the compile SDK version
 
     defaultConfig {
+        // The support CLI and Settings share this single authoritative destination.
+        def communityConfig = new groovy.json.JsonSlurper().parse(
+                new File(rootProject.rootDir.parentFile, 'firebase/functions/support-tickets/community.json'))
+        resValue 'string', 'facebook_community_url', communityConfig.facebookCommunityUrl
         applicationId = "piotr_gorczynski.soccer2"
         minSdk = 24
         targetSdk = 37
-        versionCode = 64
-        versionName = '17.29'
+        versionCode = 65
+        versionName = '17.30'
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         
@@ -68,6 +72,7 @@ android {
     }
 
     buildFeatures {
+        resValues true
         buildConfig true          // <- make sure this is present or omit the block
     }
 

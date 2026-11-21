@@ -427,4 +427,5 @@
     <string name="help_load_older">بارگیری پیام‌های قدیمی‌تر</string>
     <string name="help_refresh">تازه‌سازی</string>
     <string name="help_unknown_date">تاریخ در دسترس نیست</string>
+    <string name="sending_invitation">در حال ارسال دعوت…</string>
 </resources>

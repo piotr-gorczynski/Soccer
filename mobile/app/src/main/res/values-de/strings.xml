@@ -481,4 +481,5 @@
     <string name="help_load_older">Ältere Nachrichten laden</string>
     <string name="help_refresh">Aktualisieren</string>
     <string name="help_unknown_date">Datum nicht verfügbar</string>
+    <string name="sending_invitation">Einladung wird gesendet…</string>
 </resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="first_win_tournament_title">ඔබ ජය ගත්තා! 🏆</string>
+    <string name="first_win_tournament_message">බංග්ලාදේශ තරඟාවලියත් ජය ගත හැකිද?</string>
+    <string name="first_win_tournament_join">තරඟාවලියට එක්වන්න</string>
+    <string name="first_win_tournament_not_now">දැන් එපා</string>
+</resources>

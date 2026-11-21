@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_regulation_scroll_hint">ເລື່ອນລົງເພື່ອຢືນຢັນຄຸນສົມບັດ ↓</string>
+    <string name="bd_regulation_confirmations_count">ການຢືນຢັນ: %1$d/3</string>
+    <string name="bd_regulation_accept_join">ຍອມຮັບ ແລະເຂົ້າຮ່ວມການແຂ່ງຂັນ</string>
+    <string name="bd_regulation_last_step">ຂັ້ນຕອນສຸດທ້າຍເພື່ອເຂົ້າຮ່ວມການແຂ່ງຂັນ</string>
+</resources>

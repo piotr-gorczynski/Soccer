@@ -1759,6 +1759,12 @@ public class MenuActivity extends BaseActivity {
                 || isBackendCheckInProgress || !isBackendAvailable || termsCheckInFlight
                 || termsScreenOpen || nicknameScreenOpen || adFlowInProgress || pendingAdContinuation!=null) return;
         String uid=FirebaseAuth.getInstance().getUid();
+        if (uid==null && !tournamentPromotionLoginOpening
+                && PendingTournamentPromotion.isFirstWinSelection(this,null,System.currentTimeMillis())) {
+            tournamentPromotionLoginOpening=true;
+            launchTournamentPromotionLogin();
+            return;
+        }
         if (uid==null || !uid.equals(confirmedTermsUid) || !uid.equals(nicknameProfileUid)
                 || nicknameProfileTask==null || !nicknameProfileTask.isSuccessful()) return;
         DocumentSnapshot profile=nicknameProfileTask.getResult();

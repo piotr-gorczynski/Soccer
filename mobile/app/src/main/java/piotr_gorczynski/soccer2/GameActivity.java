@@ -84,6 +84,7 @@ public class GameActivity extends BaseActivity {
     private volatile boolean gameEnded = false;
     
     private AnalyticsManager analyticsManager;
+    private FirstWinTournamentPrompt firstWinTournamentPrompt;
 
     /**
      * Return millis still left right now, given the seconds stored in
@@ -218,6 +219,19 @@ public class GameActivity extends BaseActivity {
         
         // Get analytics manager from SoccerApp
         analyticsManager = ((SoccerApp) getApplicationContext()).getAnalyticsManager();
+        if (AnalyticsManager.isBangladesh()) {
+            firstWinTournamentPrompt=FirstWinTournamentPrompt.create(this,analyticsManager,
+                    () -> getLifecycle().getCurrentState().isAtLeast(androidx.lifecycle.Lifecycle.State.RESUMED)
+                            && gameEnded && dialogWinner!=null,
+                    () -> { hideLoadingOverlay(); if(dialogWinner!=null) dialogWinner.dismiss(); },
+                    offer -> {
+                        PendingTournamentPromotion.select(this,offer.id,FirebaseAuth.getInstance().getUid(),
+                                System.currentTimeMillis(),"first_win");
+                        startActivity(new Intent(this,MenuActivity.class)
+                                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP));
+                        finish();
+                    }, this::finish);
+        }
         
         // Early validation: ensure we have a valid Intent
         if (getIntent() == null) {
@@ -1311,6 +1325,9 @@ public class GameActivity extends BaseActivity {
             }
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             DocumentReference matchRef = this.matchRef;    // already points to the right doc
+            com.google.android.gms.tasks.TaskCompletionSource<Boolean> winConfirmation=
+                    firstWinTournamentPrompt!=null && FirstWinTournamentPrompt.playerWon(GameType,Winner,localPlayerIndex)
+                            ? new com.google.android.gms.tasks.TaskCompletionSource<>() : null;
 
             db.runTransaction(transaction -> {
                         DocumentSnapshot snap = transaction.get(matchRef);
@@ -1333,13 +1350,22 @@ public class GameActivity extends BaseActivity {
                         } else {
                             Log.d("TAG_Soccer", getClass().getSimpleName() + ".showWinner" + ": 🏆 Match result already recorded by other client");
                         }
+                        if (winConfirmation!=null) {
+                            // A remote result is eligible only after a confirmed completed match write/read.
+                            matchRef.get(com.google.firebase.firestore.Source.SERVER).addOnSuccessListener(result -> {
+                                String uid=FirebaseAuth.getInstance().getUid();
+                                winConfirmation.trySetResult(uid!=null && "completed".equals(result.getString("status"))
+                                        && uid.equals(result.getString("winner")));
+                            }).addOnFailureListener(winConfirmation::trySetException);
+                        }
                     })
-                    .addOnFailureListener(e ->
-                            Log.e("TAG_Soccer", getClass().getSimpleName() + ".showWinner" + ": ❌ Failed to record match result", e));
+                    .addOnFailureListener(e -> {
+                        if(winConfirmation!=null)winConfirmation.trySetException(e);
+                        Log.e("TAG_Soccer", getClass().getSimpleName() + ".showWinner" + ": ❌ Failed to record match result", e);
+                    });
 
 
-            // Show dialog immediately with default message to avoid ANR
-            // This prevents blocking the main thread while waiting for Firestore data
+            // Global/non-winning results are immediate; BD first wins select one result window asynchronously.
             String defaultMsg = SafeStringFormatter.safeGetString(this, R.string.winner_is, sWinner);
             defaultMsg = prependTutorialMessageIfNeeded(defaultMsg);
             
@@ -1349,8 +1375,8 @@ public class GameActivity extends BaseActivity {
             // make sure we're still alive before showing dialog
             if (!isFinishing() && !isDestroyed()) {
                 dialogWinner = builder.create();
-                Log.d("TAG_Soccer", getClass().getSimpleName() + ".showWinner" + ": dialogWinner show (immediate): "+defaultMsg);
-                dialogWinner.show();
+                Log.d("TAG_Soccer", getClass().getSimpleName() + ".showWinner" + ": result window prepared: "+defaultMsg);
+                presentWinnerDialog(winConfirmation==null?null:winConfirmation.getTask());
             } else {
                 Log.w("TAG_Soccer", getClass().getSimpleName() + ".showWinner" + ": Tried to show dialog when activity is finishing or destroyed");
                 return;
@@ -1396,10 +1422,32 @@ public class GameActivity extends BaseActivity {
         builder.setMessage(defaultMsg);
         builder.setPositiveButton(R.string.close, (dialog, which) -> finish());
         dialogWinner = builder.create();
-        dialogWinner.show();
+        if (firstWinTournamentPrompt==null) {
+            dialogWinner.show();
+            trackFirstGameWinMetric(Winner);
+            return;
+        }
         
         // Track first game win metric
         trackFirstGameWinMetric(Winner);
+        presentWinnerDialog(null);
+    }
+
+    private void presentWinnerDialog(com.google.android.gms.tasks.Task<Boolean> confirmation) {
+        Runnable standard=()->{
+            if (isFinishing() || isDestroyed()) return;
+            hideLoadingOverlay();
+            if(dialogWinner!=null && !dialogWinner.isShowing()) dialogWinner.show();
+        };
+        if (firstWinTournamentPrompt==null
+                || !FirstWinTournamentPrompt.playerWon(GameType,Winner,localPlayerIndex)) {
+            // Global and non-winning results retain their immediate standard result window.
+            standard.run();return;
+        }
+        if (loadingMessageView!=null)loadingMessageView.setText(R.string.menu_loading_message);
+        if (loadingOverlay!=null)loadingOverlay.setVisibility(View.VISIBLE);
+        firstWinTournamentPrompt.completedWin(confirmation==null
+                ? com.google.android.gms.tasks.Tasks.forResult(true):confirmation,standard);
     }
     
     /**
@@ -1465,6 +1513,7 @@ public class GameActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
+        if(firstWinTournamentPrompt!=null) firstWinTournamentPrompt.stop();
         if (remoteProfileListener != null) remoteProfileListener.remove();
         if (movesListener != null) movesListener.remove();
         if (clockListener != null) clockListener.remove();

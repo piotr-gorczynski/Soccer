@@ -475,4 +475,5 @@
     <string name="help_load_older">Charger les messages précédents</string>
     <string name="help_refresh">Actualiser</string>
     <string name="help_unknown_date">Date indisponible</string>
+    <string name="sending_invitation">Envoi de l’invitation…</string>
 </resources>

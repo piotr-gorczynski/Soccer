@@ -202,3 +202,61 @@ The existing account-access warning remains before anonymous authentication in b
 Event: anonymous_login_warning; method: anonymous; action: shown, proceed, cancel, or dismiss.
 Crashlytics breadcrumb: AUTH: anonymous_warning - <action>. Dismiss covers Back/outside dismissal.
 Only proceed starts authentication; no nickname, email, or other field contents are recorded.
+
+## Bangladesh first-win tournament experiment
+
+`first_win_tournament_prompt` uses `source=first_win`, controlled `action=shown|join|not_now`,
+`tournament_id`, `prize_bdt` and `currency`. Shown means a dialog successfully opened on the
+visible game-result screen. Join means the CTA was clicked, never a successful registration.
+Back/outside dismissal is counted as not_now. No prompt event changes the Menu card events.
+
+The real first completed win is tracked separately from legacy `first_game_win`, which reports
+the first completed game's outcome (including a loss). A loss after experiment initialization
+does not consume the opportunity. The first-win opportunity is persisted per installation;
+shown tournament IDs are persisted as well, including after not_now, account changes and restarts.
+Clearing application data/reinstalling resets these local device records. There is no cross-device
+frequency synchronization. Older installations with an already-completed game and no experiment
+history are excluded conservatively because their historical first win cannot be reconstructed.
+
+Promotions come from the existing public endpoint and membership-filtering loader. The loader is
+prefetched while playing; a same-user result/in-flight request younger than 60 seconds can be reused
+at the win, otherwise it is refreshed. Signed-in membership is rechecked when using a prefetch.
+Registration expiry is checked at display and click. Failed
+promotion/membership requests, expired registration and existing participants do not show a prompt.
+Before opening either result dialog, BD first wins resolve the promotion/online result confirmation
+for at most 1.5 seconds, using the existing loading overlay. An eligible prompt replaces the standard
+result entirely: the standard dialog is never shown underneath it. Failure/no offer/timeout shows
+only the standard result. Late callbacks cannot replace it or emit a prompt impression.
+No offer at the first win means no delayed prompt on subsequent wins or on Menu. Multiple offers
+produce at most one dialog. Online wins require a confirmed completed match belonging to the player;
+local wins use the existing player-zero convention. No tournament rules or win calculations change.
+
+Join selects the tournament in `PendingTournamentPromotion` and returns to the existing Menu,
+login, Terms, nickname and RegulationActivity continuation. Auth screen source remains tournament.
+`tournament_join_start` and the existing actual `tournament_join_success` additionally include
+`source=first_win` for the selected tournament/user within 24 hours of that CTA. Attribution survives
+the Menu consuming its pending selection, is not shared with other users/tournaments, and is replaced
+by a later Menu-card selection. Global does not show the experiment or add these parameters.
+No new GA4 custom dimensions, Ads goals or campaign settings are needed; parameters export to BigQuery.
+
+## Bangladesh cash-tournament regulation guidance
+
+The existing hint outside the rules ScrollView now reads "Scroll down to confirm eligibility ↓".
+It scrolls smoothly to the existing confirmation section below the unchanged regulation text.
+Once a checkbox has actually entered the viewport, it becomes "Confirmations: N/3" and remains
+a counter even after scrolling back up. All three original confirmations remain required; the
+Bangladesh cash-tournament CTA displays "ACCEPT & JOIN TOURNAMENT". A short heading reads
+"Last step to join the tournament". Global keeps its original wording and presentation.
+
+The hint repeats a small downward movement every 1.6 seconds until confirmations become visible,
+without flashing. Motion is disabled with accessibility services or disabled system
+animations, and is cancelled when the window loses focus/stops or the confirmations are reached.
+Saved instance state retains the reached state, checked mask and scroll position for the same
+tournament/regulation. Checkboxes are restored only after the regulation loads successfully;
+fresh entries do not preselect consent. After recreation, motion resumes only before confirmations are reached.
+
+No new events or parameters were added. Existing TournamentRegulationDiagnostics still emits
+confirmations_visible only after all three checkboxes have been observed, and preserves its
+checked_count, accept_ready and recreation deduplication semantics. UI counter changes and hint
+taps do not emit extra events. Compare load -> confirmations_visible -> accept_ready -> actual
+tournament_join_success, keeping the first-win source cohort separate where available.

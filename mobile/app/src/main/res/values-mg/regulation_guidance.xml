@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_regulation_scroll_hint">Mikorisa midina hanamarina ny fepetra fandraisana anjara ↓</string>
+    <string name="bd_regulation_confirmations_count">Fanamarinana: %1$d/3</string>
+    <string name="bd_regulation_accept_join">Manaiky sy miditra amin’ny fifaninanana</string>
+    <string name="bd_regulation_last_step">Dingana farany hidirana amin’ny fifaninanana</string>
+</resources>

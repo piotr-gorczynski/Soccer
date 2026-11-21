@@ -18,7 +18,13 @@ for (const name of ['listSupportConversations', 'getSupportConversation',
 
 const attention = require('./attention').handlers(require('firebase-functions/logger'));
 exports.onSupportTicketCreated = functions.region('us-central1').firestore
-  .document('supportTickets/{ticketId}').onCreate(attention.ticketCreated);
+  .document('supportTickets/{ticketId}').onCreate(async (snapshot, context) => {
+    if (snapshot.get('type') === 'post_payout_feedback') {
+      return require('./notifications').handler(db, messaging, FieldValue,
+        require('firebase-functions/logger'))({ before: { data: () => ({}) }, after: snapshot }, context);
+    }
+    return attention.ticketCreated(snapshot, context);
+  });
 exports.onSupportMessageCreated = functions.region('us-central1').firestore
   .document('supportTickets/{ticketId}/messages/{messageId}').onCreate(attention.messageCreated);
 

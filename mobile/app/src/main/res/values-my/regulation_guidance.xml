@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_regulation_scroll_hint">ပါဝင်ခွင့်အရည်အချင်းကို အတည်ပြုရန် အောက်သို့ရွှေ့ပါ ↓</string>
+    <string name="bd_regulation_confirmations_count">အတည်ပြုချက်များ: %1$d/3</string>
+    <string name="bd_regulation_accept_join">လက်ခံပြီး ပြိုင်ပွဲဝင်မည်</string>
+    <string name="bd_regulation_last_step">ပြိုင်ပွဲဝင်ရန် နောက်ဆုံးအဆင့်</string>
+</resources>

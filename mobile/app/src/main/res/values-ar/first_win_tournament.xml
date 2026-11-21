@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="first_win_tournament_title">لقد فزت! 🏆</string>
+    <string name="first_win_tournament_message">هل يمكنك الفوز ببطولة بنغلاديش؟</string>
+    <string name="first_win_tournament_join">انضم إلى البطولة</string>
+    <string name="first_win_tournament_not_now">ليس الآن</string>
+</resources>

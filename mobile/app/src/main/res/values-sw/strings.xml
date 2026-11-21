@@ -446,4 +446,5 @@
     <string name="help_load_older">Pakia ujumbe wa awali</string>
     <string name="help_refresh">Onyesha upya</string>
     <string name="help_unknown_date">Tarehe haipatikani</string>
+    <string name="sending_invitation">Inatuma mwaliko…</string>
 </resources>

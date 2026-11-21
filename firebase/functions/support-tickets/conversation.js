@@ -32,7 +32,8 @@ function publicMessage(snapshot) {
   const data = snapshot.data();
   if (!['user', 'support'].includes(data.authorType) || typeof data.message !== 'string') return null;
   return { messageId: snapshot.id, authorType: data.authorType,
-    message: data.message, createdAt: iso(data.createdAt) };
+    message: data.message, createdAt: iso(data.createdAt),
+    ...require('./feedback-links').publicFeedback(data) };
 }
 
 function handlers(db, FieldValue, HttpsError, clock = Date.now) {

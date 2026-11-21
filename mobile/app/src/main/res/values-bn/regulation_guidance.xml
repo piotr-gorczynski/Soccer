@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_regulation_scroll_hint">যোগ্যতা নিশ্চিত করতে নিচে স্ক্রল করুন ↓</string>
+    <string name="bd_regulation_confirmations_count">নিশ্চিতকরণ: %1$d/৩</string>
+    <string name="bd_regulation_accept_join">সম্মতি দিয়ে টুর্নামেন্টে যোগ দিন</string>
+    <string name="bd_regulation_last_step">টুর্নামেন্টে যোগ দেওয়ার শেষ ধাপ</string>
+</resources>

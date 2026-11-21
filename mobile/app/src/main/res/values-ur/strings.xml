@@ -480,4 +480,5 @@
     <string name="help_load_older">پرانے پیغامات دکھائیں</string>
     <string name="help_refresh">تازہ کریں</string>
     <string name="help_unknown_date">تاریخ دستیاب نہیں</string>
+    <string name="sending_invitation">دعوت بھیجی جا رہی ہے…</string>
 </resources>

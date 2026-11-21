@@ -71,11 +71,13 @@ final class SupportModels {
         }
     }
     static final class Message {
-        final String id, author, body, createdAt;
+        final String id, author, body, createdAt, kind, feedbackUrl, destinationType;
         Message(Object raw) {
             Map<?, ?> data = map(raw);
             id = text(data, "messageId"); author = text(data, "authorType");
             body = text(data, "message"); createdAt = text(data, "createdAt");
+            kind = text(data, "kind"); feedbackUrl = text(data, "feedbackUrl");
+            destinationType = text(data, "destinationType");
             if (!validId(id) || !("user".equals(author) || "support".equals(author)))
                 throw new IllegalArgumentException("Invalid conversation message");
         }

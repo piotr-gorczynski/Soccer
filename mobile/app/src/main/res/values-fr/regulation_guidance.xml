@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_regulation_scroll_hint">Faites défiler pour confirmer votre éligibilité ↓</string>
+    <string name="bd_regulation_confirmations_count">Confirmations : %1$d/3</string>
+    <string name="bd_regulation_accept_join">Accepter et rejoindre le tournoi</string>
+    <string name="bd_regulation_last_step">Dernière étape pour rejoindre le tournoi</string>
+</resources>

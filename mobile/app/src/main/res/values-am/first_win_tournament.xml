@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="first_win_tournament_title">አሸንፈዋል! 🏆</string>
+    <string name="first_win_tournament_message">የባንግላዴሽ ውድድርንም ማሸነፍ ይችላሉ?</string>
+    <string name="first_win_tournament_join">ውድድሩን ይቀላቀሉ</string>
+    <string name="first_win_tournament_not_now">አሁን አይደለም</string>
+</resources>

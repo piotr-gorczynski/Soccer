@@ -1,0 +1,13 @@
+<en-GB>
+🏆 A tournament invitation after your first win, shown once per tournament.
+✅ Clear guidance to the required confirmations, a confirmation counter and clearer tournament buttons.
+⏳ Immediate progress feedback when sending a player invitation.
+🔗 Open supported links in Help Centre replies, including optional feedback messages after a prize payout.
+</en-GB>
+
+<bn-BD>
+🏆 প্রথম জয়ের পর টুর্নামেন্টে যোগ দেওয়ার আমন্ত্রণ; প্রতি টুর্নামেন্টে একবার।
+✅ প্রয়োজনীয় নিশ্চিতকরণে পৌঁছানোর নির্দেশনা, নিশ্চিতকরণের সংখ্যা এবং আরও স্পষ্ট বোতাম।
+⏳ খেলোয়াড়কে আমন্ত্রণ পাঠানোর অগ্রগতি সঙ্গে সঙ্গে দেখা যায়।
+🔗 সহায়তা কেন্দ্রের উত্তরে থাকা সমর্থিত লিংক খুলুন, পুরস্কার পাওয়ার পর ঐচ্ছিক মতামত দেওয়ার বার্তাসহ।
+</bn-BD>

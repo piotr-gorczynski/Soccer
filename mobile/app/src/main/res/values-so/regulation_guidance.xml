@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_regulation_scroll_hint">Hoos u rog si aad u xaqiijiso u-qalmitaanka ↓</string>
+    <string name="bd_regulation_confirmations_count">Xaqiijinnada: %1$d/3</string>
+    <string name="bd_regulation_accept_join">Aqbal oo ku biir tartanka</string>
+    <string name="bd_regulation_last_step">Tallaabada ugu dambaysa ee ku biirista tartanka</string>
+</resources>

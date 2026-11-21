@@ -446,4 +446,5 @@
     <string name="help_load_older">የቀድሞ መልዕክቶችን ጫን</string>
     <string name="help_refresh">አድስ</string>
     <string name="help_unknown_date">ቀን አልተገኘም</string>
+    <string name="sending_invitation">ግብዣ በመላክ ላይ…</string>
 </resources>

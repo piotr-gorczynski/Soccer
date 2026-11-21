@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="first_win_tournament_title">ທ່ານຊະນະແລ້ວ! 🏆</string>
+    <string name="first_win_tournament_message">ທ່ານຄິດວ່າຈະຊະນະການແຂ່ງຂັນບັງກະລາເທດໄດ້ບໍ?</string>
+    <string name="first_win_tournament_join">ເຂົ້າຮ່ວມການແຂ່ງຂັນ</string>
+    <string name="first_win_tournament_not_now">ຍັງບໍ່ແມ່ນຕອນນີ້</string>
+</resources>

@@ -446,4 +446,5 @@
     <string name="help_load_older">ផ្ទុកសារចាស់ៗ</string>
     <string name="help_refresh">ផ្ទុកឡើងវិញ</string>
     <string name="help_unknown_date">មិនមានកាលបរិច្ឆេទ</string>
+    <string name="sending_invitation">កំពុងផ្ញើការអញ្ជើញ…</string>
 </resources>

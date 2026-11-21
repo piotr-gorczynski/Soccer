@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="first_win_tournament_title">អ្នកឈ្នះហើយ! 🏆</string>
+    <string name="first_win_tournament_message">តើអ្នកអាចឈ្នះការប្រកួតបង់ក្លាដែសដែរទេ?</string>
+    <string name="first_win_tournament_join">ចូលរួមការប្រកួត</string>
+    <string name="first_win_tournament_not_now">មិនមែនឥឡូវទេ</string>
+</resources>

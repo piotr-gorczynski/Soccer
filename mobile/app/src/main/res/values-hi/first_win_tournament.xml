@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="first_win_tournament_title">आप जीत गए! 🏆</string>
+    <string name="first_win_tournament_message">क्या आप बांग्लादेश टूर्नामेंट भी जीत सकते हैं?</string>
+    <string name="first_win_tournament_join">टूर्नामेंट में शामिल हों</string>
+    <string name="first_win_tournament_not_now">अभी नहीं</string>
+</resources>

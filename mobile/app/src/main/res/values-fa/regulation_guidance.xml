@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_regulation_scroll_hint">برای تأیید شرایط شرکت به پایین بروید ↓</string>
+    <string name="bd_regulation_confirmations_count">تأییدها: %1$d/۳</string>
+    <string name="bd_regulation_accept_join">پذیرش و پیوستن به مسابقات</string>
+    <string name="bd_regulation_last_step">آخرین مرحله برای پیوستن به مسابقات</string>
+</resources>

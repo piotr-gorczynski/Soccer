@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="bd_regulation_scroll_hint">ብቁነትዎን ለማረጋገጥ ወደ ታች ያንሸራትቱ ↓</string>
+    <string name="bd_regulation_confirmations_count">ማረጋገጫዎች፦ %1$d/3</string>
+    <string name="bd_regulation_accept_join">ተቀብለው ውድድሩን ይቀላቀሉ</string>
+    <string name="bd_regulation_last_step">ውድድሩን ለመቀላቀል የመጨረሻ ደረጃ</string>
+</resources>

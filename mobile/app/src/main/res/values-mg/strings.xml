@@ -446,4 +446,5 @@
     <string name="help_load_older">Asehoy ny hafatra taloha</string>
     <string name="help_refresh">Havaozy</string>
     <string name="help_unknown_date">Tsy misy daty</string>
+    <string name="sending_invitation">Mandefa fanasana…</string>
 </resources>

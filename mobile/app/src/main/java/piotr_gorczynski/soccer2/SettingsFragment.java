@@ -115,7 +115,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
             fbPref.setOnPreferenceClickListener(pref -> {
                 Intent intent = new Intent(
                         Intent.ACTION_VIEW,
-                        Uri.parse("https://www.facebook.com/profile.php?id=61578949554301")
+                        Uri.parse(getString(R.string.facebook_community_url))
                 );
                 startActivity(intent);
                 return true;

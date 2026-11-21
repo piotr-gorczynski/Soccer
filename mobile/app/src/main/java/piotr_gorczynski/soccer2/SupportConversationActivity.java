@@ -130,7 +130,9 @@ public class SupportConversationActivity extends SupportScreenActivity {
             String author = getString("support".equals(message.author) ? R.string.help_support : R.string.help_you);
             SupportUi.text(this, panel, getString(R.string.payment_support_ticket_summary,
                     author, SupportModels.date(this, message.createdAt)), true).setTextSize(14);
-            SupportUi.text(this, panel, message.body, false).setTextIsSelectable(true);
+            android.widget.TextView body=SupportUi.text(this, panel, message.body, false);
+            body.setTextIsSelectable(true);
+            SupportMessageLinks.bind(body, message);
             if ("support".equals(message.author) && message.body.trim().equals(ticket.latestReply.trim())
                     && message.createdAt.equals(ticket.latestReplyAt)) latestSupportView = panel;
         }

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="first_win_tournament_title">You won! 🏆</string>
+    <string name="first_win_tournament_message">Think you can win the Bangladesh tournament?</string>
+    <string name="first_win_tournament_join">Join tournament</string>
+    <string name="first_win_tournament_not_now">Not now</string>
+</resources>

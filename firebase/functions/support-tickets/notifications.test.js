@@ -37,6 +37,16 @@ test('moderation reply plus resolution sends one generic conversation push', asy
   for (const secret of ['private reply', 'secret-user', 'secret-token']) assert(!publicData.includes(secret));
   assert.equal(f.records.get('reply-1').sent, true);
 });
+
+test('new outbound feedback conversation reuses generic push with idempotent reply lease', async () => {
+  const f = fixture();
+  const after = { ...f.after, type:'post_payout_feedback', market:'BD', status:'resolved' };
+  await f.run(f.change(after, {}), f.context);
+  await f.run(f.change(after, {}), f.context);
+  assert.equal(f.sends.length, 1);
+  assert.equal(f.sends[0].data.destination, 'help_centre');
+  assert(!JSON.stringify(f.sends[0]).includes('private reply'));
+});
 test('payout and general replies use the same notification path', async () => {
   for (const type of [undefined, 'support']) {
     const f = fixture(); await f.run(f.change({ ...f.after, type, paymentId: 'payment', tournamentId: 'cup' }), f.context);

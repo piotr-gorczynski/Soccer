@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="first_win_tournament_title">သင်နိုင်ပါပြီ! 🏆</string>
+    <string name="first_win_tournament_message">ဘင်္ဂလားဒေ့ရှ်ပြိုင်ပွဲမှာလည်း နိုင်နိုင်မလား။</string>
+    <string name="first_win_tournament_join">ပြိုင်ပွဲဝင်မည်</string>
+    <string name="first_win_tournament_not_now">ယခုမဟုတ်သေးပါ</string>
+</resources>

@@ -85,6 +85,35 @@ public class MenuTournamentPromotionTest {
         if(AnalyticsManager.isBangladesh())verify(analytics,times(1)).trackTournamentPromotionClick("cup");
         else verifyNoInteractions(analytics);
     }
+    @Test public void firstWinGuestHandoffUsesExistingLoginOnceAndCancellationReturnsSafely()throws Exception {
+        when(auth.getUid()).thenReturn(null);
+        PendingTournamentPromotion.select(menu,"cup",null,System.currentTimeMillis(),"first_win");
+        resume();resume();
+        assertEquals(AnalyticsManager.isBangladesh()?1:0,menu.loginLaunches);
+        assertEquals(0,menu.adCalls);verifyNoInteractions(db);verifyNoInteractions(analytics);
+        if(!AnalyticsManager.isBangladesh())return;
+        menu.onTournamentPromotionLoginReturned();resume();
+        assertFalse(PendingTournamentPromotion.isFirstWinSelection(menu,null,System.currentTimeMillis()));
+        assertEquals(1,menu.loginLaunches);assertNull(shadowOf(menu).getNextStartedActivity());
+    }
+    @Test public void firstWinSelectionResumesExistingRegulationAfterAuthenticationTermsAndNickname()throws Exception {
+        when(auth.getUid()).thenReturn(null);
+        PendingTournamentPromotion.select(menu,"cup",null,System.currentTimeMillis(),"first_win");resume();
+        if(!AnalyticsManager.isBangladesh()){verifyNoInteractions(db);return;}
+        when(auth.getUid()).thenReturn("owner");
+        PendingTournamentPromotion.forUser(menu,"owner",System.currentTimeMillis());
+        menu.onTournamentPromotionLoginReturned();
+        set("confirmedTermsUid",null);resume();verifyNoInteractions(db);
+        set("confirmedTermsUid","owner");resume();tournamentResponse.setResult(tournament);drain();participant(false);
+        menu.terms.setResult(true);drain();
+        Intent target=shadowOf(menu).getNextStartedActivity();
+        assertEquals(RegulationActivity.class.getName(),target.getComponent().getClassName());
+        assertEquals("cup",target.getStringExtra("tournamentId"));
+        assertNull(PendingTournamentPromotion.forUser(menu,"owner",System.currentTimeMillis()));
+        assertEquals("first_win",PendingTournamentPromotion.joinSource(menu,"cup","owner",System.currentTimeMillis()));
+        verify(analytics).trackTournamentJoinStart("cup",true);
+        verify(analytics,never()).trackTournamentJoinSuccess(any());assertEquals(0,menu.adCalls);
+    }
     @Test public void completedProfileAndTermsResumeSelectedTournamentWithoutJoiningAutomatically()throws Exception {
         select();resume();
         if(!AnalyticsManager.isBangladesh()){verifyNoInteractions(db);return;}
