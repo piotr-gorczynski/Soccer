@@ -592,7 +592,7 @@ public class AnalyticsManager {
     }
     
     /**
-     * Track first game completion and outcome
+     * Legacy first game completion and outcome (including a loss); never redefine as a victory.
      * @param won Whether the user won their first game
      * @param gameType Type of game (1=PvP local, 2=vs Android, 3=PvP online)
      * @param isAnonymous Whether the user is anonymous
@@ -619,6 +619,24 @@ public class AnalyticsManager {
                 Log.e(TAG, "Failed to log to Firebase Analytics", e);
             }
         }
+    }
+
+    public void trackFirstGameCompleted(boolean won, int gameType, boolean isAnonymous) {
+        if (firebaseAnalytics == null || gameType < 1 || gameType > 3) return;
+        Bundle params = new Bundle();
+        params.putLong("won", won ? 1 : 0);
+        params.putInt("game_type", gameType);
+        params.putLong("is_anonymous", isAnonymous ? 1 : 0);
+        try { firebaseAnalytics.logEvent("first_game_completed", params); }
+        catch (RuntimeException error) { Log.w(TAG, "Could not record first game completion"); }
+    }
+
+    public void trackFirstWin(int gameType) {
+        if (firebaseAnalytics == null || gameType < 1 || gameType > 3) return;
+        Bundle params = new Bundle();
+        params.putInt("game_type", gameType);
+        try { firebaseAnalytics.logEvent("first_win", params); }
+        catch (RuntimeException error) { Log.w(TAG, "Could not record first victory"); }
     }
     
     /**

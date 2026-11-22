@@ -68,7 +68,7 @@ public class FirstWinTournamentPromptTest {
         prompt.completedWin();prompt.completedWin();
         if(!AnalyticsManager.isBangladesh()) {
             assertEquals(0,loads.get());assertFalse(prefs.contains("first_win_prompt_win_recorded"));
-            verifyNoInteractions(analytics);return;
+            verify(analytics,never()).trackFirstWinTournamentPrompt(any(),anyString());return;
         }
         assertEquals(1,loads.get());complete(response("bkash","rocket"));
         assertTrue(dialog().isShowing());assertEquals(1,replacements.get());
@@ -90,9 +90,30 @@ public class FirstWinTournamentPromptTest {
         assertNull(PendingTournamentPromotion.joinSource(activity,"cup","new-user",now+86400001L));
         verify(analytics).trackFirstWinTournamentPrompt(any(),eq("join"));
     }
+    @Test public void actualFirstWinIsRecordedWithoutAnyActiveTournamentAndDoesNotRepeatAfterRecreation() {
+        bd();create();prompt.completedWin();
+        complete(Map.of("serverTimeMillis",1000000L,"tournaments",List.of()));
+        verify(analytics).trackFirstWin(2);
+        verify(analytics,never()).trackFirstWinTournamentPrompt(any(),anyString());
+        prompt.stop();request=new TaskCompletionSource<>();create();prompt.completedWin();
+        verify(analytics,times(1)).trackFirstWin(2);assertEquals(1,loads.get());
+    }
+    @Test public void rejectedOrFailedOnlineResultCannotRecordFirstWin() {
+        bd();create();var confirmation=new TaskCompletionSource<Boolean>();
+        prompt.completedWin(confirmation.getTask(),()->{},3);
+        confirmation.setException(new IllegalStateException("controlled test failure"));
+        Shadows.shadowOf(Looper.getMainLooper()).idle();
+        verify(analytics,never()).trackFirstWin(anyInt());assertEquals(0,loads.get());
+    }
+    @Test public void firstWinPrecedesPromptAndKeepsSeparateAnalytics() {
+        bd();create();prompt.completedWin();complete(response());
+        var ordered=inOrder(analytics);
+        ordered.verify(analytics).trackFirstWin(2);
+        ordered.verify(analytics).trackFirstWinTournamentPrompt(any(),eq("shown"));
+    }
     @Test public void freshPrefetchIsReusedWithoutDelayingTheWinAndStalePrefetchIsRefreshed() {
         bd();create();prompt.prefetch();assertEquals(1,loads.get());complete(response());
-        assertEquals(0,replacements.get());verifyNoInteractions(analytics);
+        assertEquals(0,replacements.get());verify(analytics,never()).trackFirstWinTournamentPrompt(any(),anyString());
         prompt.completedWin();Shadows.shadowOf(Looper.getMainLooper()).idle();
         assertEquals(1,loads.get());assertEquals(1,replacements.get());
         prompt.stop();prefs.edit().clear().commit();request=new TaskCompletionSource<>();create();
@@ -119,7 +140,7 @@ public class FirstWinTournamentPromptTest {
         try(var firestore=mockStatic(com.google.firebase.firestore.FirebaseFirestore.class)) {
             firestore.when(com.google.firebase.firestore.FirebaseFirestore::getInstance).thenReturn(db);
             prompt.completedWin();Shadows.shadowOf(Looper.getMainLooper()).idle();
-            assertEquals(0,replacements.get());verifyNoInteractions(analytics);
+            assertEquals(0,replacements.get());verify(analytics,never()).trackFirstWinTournamentPrompt(any(),anyString());
         }
     }
     @Test public void eligibleWinShowsOnlyTournamentDialogWithoutShowingStandardResultFirst() {
@@ -136,17 +157,17 @@ public class FirstWinTournamentPromptTest {
         prompt.completedWin(com.google.android.gms.tasks.Tasks.forResult(true),standard::incrementAndGet);
         Shadows.shadowOf(Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(1501));
         assertEquals(1,standard.get());complete(response());
-        assertEquals(1,standard.get());assertEquals(0,replacements.get());verifyNoInteractions(analytics);
+        assertEquals(1,standard.get());assertEquals(0,replacements.get());verify(analytics,never()).trackFirstWinTournamentPrompt(any(),anyString());
         assertFalse(prefs.getBoolean("first_win_prompt_shown_cup",false));
     }
     @Test public void noOfferOrFailedConfirmationShowsOnlyStandardResult() {
         bd();create();AtomicInteger standard=new AtomicInteger();
         prompt.completedWin(com.google.android.gms.tasks.Tasks.forResult(false),standard::incrementAndGet);
-        assertEquals(1,standard.get());assertEquals(0,loads.get());verifyNoInteractions(analytics);
+        assertEquals(1,standard.get());assertEquals(0,loads.get());verify(analytics,never()).trackFirstWinTournamentPrompt(any(),anyString());
         prompt.stop();prefs.edit().clear().commit();create();
         prompt.completedWin(com.google.android.gms.tasks.Tasks.forResult(true),standard::incrementAndGet);
         complete(Map.of("serverTimeMillis",1000000L,"tournaments",List.of()));
-        assertEquals(2,standard.get());assertEquals(0,replacements.get());verifyNoInteractions(analytics);
+        assertEquals(2,standard.get());assertEquals(0,replacements.get());verify(analytics,never()).trackFirstWinTournamentPrompt(any(),anyString());
     }
     @Test public void lateOnlineWinConfirmationNeverReplacesStandardButConsumesTheRealFirstWin() {
         bd();create();AtomicInteger standard=new AtomicInteger();var confirmation=new TaskCompletionSource<Boolean>();
@@ -154,14 +175,14 @@ public class FirstWinTournamentPromptTest {
         Shadows.shadowOf(Looper.getMainLooper()).idleFor(java.time.Duration.ofMillis(1501));
         assertEquals(1,standard.get());confirmation.setResult(true);Shadows.shadowOf(Looper.getMainLooper()).idle();
         assertEquals(0,loads.get());assertEquals(0,replacements.get());assertEquals(1,standard.get());
-        assertTrue(prefs.getBoolean("first_win_prompt_win_recorded",false));verifyNoInteractions(analytics);
+        assertTrue(prefs.getBoolean("first_win_prompt_win_recorded",false));verify(analytics,never()).trackFirstWinTournamentPrompt(any(),anyString());
     }
     @Test public void loadFailureAndNoActiveOfferNeverShowAnInvitation() {
         bd();create();prompt.completedWin();request.setException(new IllegalStateException("offline"));
-        Shadows.shadowOf(Looper.getMainLooper()).idle();verifyNoInteractions(analytics);assertEquals(0,replacements.get());
+        Shadows.shadowOf(Looper.getMainLooper()).idle();verify(analytics,never()).trackFirstWinTournamentPrompt(any(),anyString());assertEquals(0,replacements.get());
         prefs.edit().clear().commit();request=new TaskCompletionSource<>();create();prompt.completedWin();
         complete(Map.of("serverTimeMillis",1000000L,"tournaments",List.of()));
-        verifyNoInteractions(analytics);assertEquals(0,replacements.get());
+        verify(analytics,never()).trackFirstWinTournamentPrompt(any(),anyString());assertEquals(0,replacements.get());
     }
     @Test public void expiredOfferStoppedScreenAndChangedAccountDoNotShow() {
         bd();
@@ -174,11 +195,11 @@ public class FirstWinTournamentPromptTest {
             if(scenario.equals("hidden"))visible=false;
             complete(response());assertEquals(0,replacements.get());
         }
-        verifyNoInteractions(analytics);
+        verify(analytics,never()).trackFirstWinTournamentPrompt(any(),anyString());
     }
     @Test public void alreadyShownTournamentIsExcludedEvenWithFreshWinFlagAndMultipleOffersShowOne() {
         bd();prefs.edit().putBoolean("first_win_prompt_shown_cup",true).commit();create();prompt.completedWin();complete(response());
-        verifyNoInteractions(analytics);
+        verify(analytics,never()).trackFirstWinTournamentPrompt(any(),anyString());
         prefs.edit().clear().commit();request=new TaskCompletionSource<>();create();prompt.completedWin();
         @SuppressWarnings("unchecked") var first=(Map<String,Object>)((Map<?,?>)response()).get("tournament");
         var second=new HashMap<>(first);second.put("id","cup2");
@@ -200,7 +221,7 @@ public class FirstWinTournamentPromptTest {
     }
     @Test public void legacyPlayersAreNotMislabelledAsFirstWinAndMenuClicksReplaceAttribution() {
         bd();prefs.edit().putBoolean("first_game_completed",true).commit();create();prompt.completedWin();
-        assertEquals(0,loads.get());verifyNoInteractions(analytics);
+        assertEquals(0,loads.get());verify(analytics,never()).trackFirstWinTournamentPrompt(any(),anyString());
         long now=System.currentTimeMillis();
         PendingTournamentPromotion.select(activity,"cup","user",now,"first_win");
         assertEquals("first_win",PendingTournamentPromotion.joinSource(activity,"cup","user",now));

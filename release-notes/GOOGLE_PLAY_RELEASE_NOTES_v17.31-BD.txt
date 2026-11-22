@@ -1,0 +1,7 @@
+<en-GB>
+Improved gameplay analytics: first completed games and first victories are now measured separately.
+</en-GB>
+
+<bn-BD>
+গেমের পরিসংখ্যান উন্নত করা হয়েছে: প্রথম সম্পূর্ণ খেলা ও প্রথম জয় এখন আলাদাভাবে গণনা করা হয়।
+</bn-BD>

@@ -42,6 +42,8 @@ their own projects, even though the installed Android package has the same name.
 | `tutorial_completed` | Existing custom event for hand tutorial/messages, not recommended `tutorial_complete`; no second tutorial event added. |
 | `games_played_before_signup` | Existing anonymous-to-provider upgrade metric, not a new installation or account counter. |
 | `first_game_win` | First game COMPLETION with `won` parameter, including losses. Do not interpret event count as wins. |
+| `first_game_completed` | Clearly named first completed game, win or loss, using the same installation preference; parameters `won`, `game_type`, `is_anonymous`. |
+| `first_win` | First confirmed actual victory, independently of promotion availability; parameter `game_type`. Shared victory state/definition with the BD tournament prompt. |
 | `time_to_first_game` | First game start relative to locally saved first-open timing, not a substitute for first_open or Ads attribution. |
 
 Other methods beginning `add...Breadcrumb` write Crashlytics diagnostics, not GA4
@@ -260,3 +262,92 @@ confirmations_visible only after all three checkboxes have been observed, and pr
 checked_count, accept_ready and recreation deduplication semantics. UI counter changes and hint
 taps do not emit extra events. Compare load -> confirmations_visible -> accept_ready -> actual
 tournament_join_success, keeping the first-win source cohort separate where available.
+
+## Gameplay engagement signals prepared on 22 November 2026
+
+Do not rename or reinterpret `first_game_win`: this legacy event reports the first
+completed local game, including losses (`won=0|1`, `game_type`, `is_anonymous`).
+Its historical local-game coverage is preserved; it is not a first-victory count.
+
+`first_game_completed` explicitly names that completion milestone. Both flavours
+use the same `first_game_completed` installation preference and emit the new event
+once with `won=0|1`, `game_type=1|2|3`, `is_anonymous=0|1`. Local games preserve the
+legacy companion event. Online completion requires a server-confirmed completed
+match; the new event covers that path without adding an online legacy emission.
+
+`first_win` means the first actual completed victory, with only controlled
+`game_type=1|2|3`. `GameplayMilestones` shares the existing
+`first_win_prompt_initialized` / `first_win_prompt_win_recorded` state with the
+Bangladesh prompt. It persists a single claim before emission, serializes claims
+across tracker instances, and retains state across Activity recreation/app reopening.
+The local-player win convention is shared for both flavours. Online victories
+require the existing completed/winner server confirmation.
+
+The win claim/event occurs before requesting/choosing a tournament offer. Failed
+promotion loads, no active offer, closed registration, existing participation,
+Not now, stopped UI or a late online confirmation do not turn a victory into a
+join and do not cause a later win to repeat `first_win`. The BD prompt still has
+its existing timeout, UX, member filtering and per-tournament display suppression.
+Global gains the gameplay signals but no tournament invitation UI.
+
+Fresh installations can lose their first game and emit `first_win` on a later
+victory. Existing BD installations already initialized by 17.30 retain their known
+win state, including an observed loss followed by a later first victory. Older
+installations with completed games but no reliable win history are conservatively
+excluded from first-win backfill. The same rule applies to Global. The flags are
+installation-scoped, not cross-device/account-lifetime records; clearing app data
+can reset them. Persistent local deduplication is not an exactly-once network
+delivery guarantee: a process crash after saving the claim can lose an event.
+
+Keep the funnel distinct:
+
+`first_win` -> `first_win_tournament_prompt(action=shown)` -> prompt `join` ->
+`tournament_join_start` -> actual `tournament_join_success`, retaining existing
+`source=first_win` attribution. `login_success` remains completed explicit account
+onboarding/sign-in and is not a tournament registration.
+
+For Google Ads account 615-948-1090, prepare only the PROD Bangladesh app stream
+15866019828 (Firebase app 1:249008569891:android:76386af0099ba9ba91bb96), property
+503154947: `first_win`, `login_success`, `tournament_join_success`. All three must
+remain Secondary / observation only and must not control campaign bidding.
+Do not import `first_game_completed` or the misleading legacy event for this task.
+No additional GA4 custom dimensions are required. GA4 key-event names are
+property-wide; Ads imports must explicitly select the Bangladesh app, not Global.
+
+The Android changes require a future app distribution; a Cloud Function deploy
+does not update installed clients. No production Android publication or campaign
+change is part of this preparation. Historical Ads conversions before import are
+not backfilled. Configuration times, imported actions and waiting states are
+recorded below.
+
+### Verified configuration on 22 November 2026
+
+- PROD GA4 property 503154947: `login_success` and `tournament_join_success`
+  were already key events. Added `first_win` as a code-emitted key event at
+  approximately 13:46:53 UTC (14:46:53 Europe/Warsaw), without a default monetary
+  value or a derived-event rule. No custom dimensions were added.
+- Imported through GA4 Conversion management into Google Ads 615-948-1090 at
+  approximately 13:56 UTC (14:56 Europe/Warsaw), selecting only
+  `Gridline Soccer Bangladesh` / `piotr_gorczynski.soccer2.bd`.
+  `first_win` and `login_success` use Engagement; `tournament_join_success`
+  uses Sign-up. All three were created as Secondary / observation only.
+- Verified in Google Ads: source `Mobile App (Firebase)`, status
+  `Awaiting conversions`, Secondary, Count Every, 90-day click-through window,
+  not included in account-level goals. These new actions are not used for bidding.
+  The waiting state does not establish that an attributed conversion has arrived.
+- `first_win` has no PROD stream data yet: users need the updated Android app.
+  The two existing events can accumulate new eligible attributed conversions
+  after import; no pre-import conversions are backfilled. Configuration time is
+  not a guarantee of immediate activation/reporting; the UI warns reports may
+  take a couple of days. The paused campaign cannot generate new ad traffic.
+- Existing Installation BD remains Primary and First open BD remains Secondary.
+  The Bangladesh install campaign remains Paused, 8 PLN/day. No campaigns,
+  campaign goals, bidding strategies or budgets were changed.
+- Focused tests: Bangladesh 51 passed; Global 35 passed, 16 BD-only cases skipped.
+  Both DEV debug APKs built successfully. No Cloud Function deployment is needed
+  for these client-side events. Production Android publication remains manual.
+- Installed the DEV Bangladesh debug APK on connected SM-A505FN successfully
+  on 22 November (package update time 14:59:02 Europe/Warsaw), keeping existing
+  data. It still carries development version 17.30-BD / code 65. No production
+  build was published. SDK event calls/payloads were tested; a fresh-device live
+  gameplay-to-GA4/BigQuery delivery check remains separate from these unit tests.

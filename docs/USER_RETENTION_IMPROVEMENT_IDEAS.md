@@ -47,7 +47,7 @@ Based on analysis of Firebase Analytics, AdMob, and DAU/MAU data from November 1
 **Metrics to Track**: - done ✅ (https://github.com/piotr-gorczynski/Soccer/pull/1051)
 - tutorial_completed event
 - games_played_before_signup event
-- first_game_win rate
+- first_game_completed rate; first_win for actual victories (legacy first_game_win means first completion, including losses)
 - time_to_first_game metric
 
 ---

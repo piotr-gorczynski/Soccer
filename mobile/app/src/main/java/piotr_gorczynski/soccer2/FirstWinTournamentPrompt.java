@@ -18,8 +18,6 @@ import java.util.function.Supplier;
 
 /** One first-win opportunity, owned by the result screen. Never queues a later Menu popup. */
 final class FirstWinTournamentPrompt {
-    private static final String INITIALIZED="first_win_prompt_initialized";
-    private static final String WIN_RECORDED="first_win_prompt_win_recorded";
     private static final String SHOWN="first_win_prompt_shown_";
     private final AppCompatActivity activity;
     private final SharedPreferences prefs;
@@ -30,6 +28,7 @@ final class FirstWinTournamentPrompt {
     private final Consumer<TournamentPromotion> join;
     private final AnalyticsManager analytics;
     private final LongSupplier clock;
+    private final GameplayMilestones milestones;
     private boolean stopped;
     private AlertDialog dialog;
     private Task<Object> prefetched;
@@ -47,11 +46,7 @@ final class FirstWinTournamentPrompt {
         this.activity=activity; this.prefs=prefs; this.loader=loader; this.uid=uid;
         this.resultVisible=resultVisible; this.replaceResult=replaceResult; this.join=join;
         this.notNow=notNow; this.analytics=analytics; this.clock=clock;
-        if (AnalyticsManager.isBangladesh() && !prefs.getBoolean(INITIALIZED,false)) {
-            // Old installations have no reliable win history. Do not relabel a later win as first.
-            prefs.edit().putBoolean(INITIALIZED,true)
-                    .putBoolean(WIN_RECORDED,prefs.getBoolean("first_game_completed",false)).commit();
-        }
+        milestones=AnalyticsManager.isBangladesh()?new GameplayMilestones(prefs,analytics):null;
     }
 
     static FirstWinTournamentPrompt create(AppCompatActivity activity, AnalyticsManager analytics,
@@ -66,19 +61,14 @@ final class FirstWinTournamentPrompt {
 
     /** Warm the same public/member-filtered promotion while playing, to avoid a post-win network pause. */
     void prefetch() {
-        if (!AnalyticsManager.isBangladesh() || stopped || prefs.getBoolean(WIN_RECORDED,false)) return;
+        if (!AnalyticsManager.isBangladesh() || stopped || milestones.hasRecordedWin()) return;
         prefetchOwner=uid.get();
         prefetchStartedAt=clock.getAsLong();
         prefetched=loader.load();
     }
 
     static boolean playerWon(int gameType, int winner, int localPlayerIndex) {
-        if (winner!=0 && winner!=1) return false;
-        return switch(gameType) {
-            case 1,2 -> winner==0; // Same local-player convention as the existing game metrics.
-            case 3 -> (localPlayerIndex==0 || localPlayerIndex==1) && winner==localPlayerIndex;
-            default -> false;
-        };
+        return GameplayMilestones.playerWon(gameType,winner,localPlayerIndex);
     }
 
     void completedWin() {
@@ -87,8 +77,12 @@ final class FirstWinTournamentPrompt {
 
     /** Resolve exactly one result window, without first showing the standard winner dialog. */
     void completedWin(Task<Boolean> confirmation,Runnable standardResult) {
+        completedWin(confirmation,standardResult,2);
+    }
+
+    void completedWin(Task<Boolean> confirmation,Runnable standardResult,int gameType) {
         if (deciding || decided || stopped) return;
-        if (!AnalyticsManager.isBangladesh() || prefs.getBoolean(WIN_RECORDED,false)) {
+        if (!AnalyticsManager.isBangladesh() || milestones.hasRecordedWin()) {
             standardResult.run(); return;
         }
         deciding=true;
@@ -97,9 +91,9 @@ final class FirstWinTournamentPrompt {
         handler.postDelayed(timeout,DECISION_TIMEOUT_MS);
         com.google.android.gms.tasks.OnCompleteListener<Boolean> confirmed=task -> {
             boolean won=task.isSuccessful() && Boolean.TRUE.equals(task.getResult());
-            if(won) prefs.edit().putBoolean(WIN_RECORDED,true).commit();
+            boolean firstWin=won && milestones.won(gameType);
             if (!deciding || stopped) return;
-            if (!won) {
+            if (!firstWin) {
                 showStandardResult();return;
             }
             loadWinPromotion();

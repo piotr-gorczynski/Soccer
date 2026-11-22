@@ -85,6 +85,7 @@ public class GameActivity extends BaseActivity {
     
     private AnalyticsManager analyticsManager;
     private FirstWinTournamentPrompt firstWinTournamentPrompt;
+    private GameplayMilestones gameplayMilestones;
 
     /**
      * Return millis still left right now, given the seconds stored in
@@ -219,6 +220,8 @@ public class GameActivity extends BaseActivity {
         
         // Get analytics manager from SoccerApp
         analyticsManager = ((SoccerApp) getApplicationContext()).getAnalyticsManager();
+        gameplayMilestones = new GameplayMilestones(
+                getSharedPreferences(LanguageManager.PREFS_FILE, MODE_PRIVATE), analyticsManager);
         if (AnalyticsManager.isBangladesh()) {
             firstWinTournamentPrompt=FirstWinTournamentPrompt.create(this,analyticsManager,
                     () -> getLifecycle().getCurrentState().isAtLeast(androidx.lifecycle.Lifecycle.State.RESUMED)
@@ -1326,8 +1329,7 @@ public class GameActivity extends BaseActivity {
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             DocumentReference matchRef = this.matchRef;    // already points to the right doc
             com.google.android.gms.tasks.TaskCompletionSource<Boolean> winConfirmation=
-                    firstWinTournamentPrompt!=null && FirstWinTournamentPrompt.playerWon(GameType,Winner,localPlayerIndex)
-                            ? new com.google.android.gms.tasks.TaskCompletionSource<>() : null;
+                    new com.google.android.gms.tasks.TaskCompletionSource<>();
 
             db.runTransaction(transaction -> {
                         DocumentSnapshot snap = transaction.get(matchRef);
@@ -1350,12 +1352,17 @@ public class GameActivity extends BaseActivity {
                         } else {
                             Log.d("TAG_Soccer", getClass().getSimpleName() + ".showWinner" + ": 🏆 Match result already recorded by other client");
                         }
-                        if (winConfirmation!=null) {
+                        {
                             // A remote result is eligible only after a confirmed completed match write/read.
                             matchRef.get(com.google.firebase.firestore.Source.SERVER).addOnSuccessListener(result -> {
                                 String uid=FirebaseAuth.getInstance().getUid();
-                                winConfirmation.trySetResult(uid!=null && "completed".equals(result.getString("status"))
-                                        && uid.equals(result.getString("winner")));
+                                boolean completed="completed".equals(result.getString("status"));
+                                boolean won=uid!=null && uid.equals(result.getString("winner"));
+                                if (completed) {
+                                    var user=FirebaseAuth.getInstance().getCurrentUser();
+                                    gameplayMilestones.completed(won,3,user!=null && user.isAnonymous());
+                                }
+                                winConfirmation.trySetResult(completed && won);
                             }).addOnFailureListener(winConfirmation::trySetException);
                         }
                     })
@@ -1425,6 +1432,7 @@ public class GameActivity extends BaseActivity {
         if (firstWinTournamentPrompt==null) {
             dialogWinner.show();
             trackFirstGameWinMetric(Winner);
+            if (GameplayMilestones.playerWon(GameType,Winner,localPlayerIndex)) gameplayMilestones.won(GameType);
             return;
         }
         
@@ -1441,13 +1449,18 @@ public class GameActivity extends BaseActivity {
         };
         if (firstWinTournamentPrompt==null
                 || !FirstWinTournamentPrompt.playerWon(GameType,Winner,localPlayerIndex)) {
+            if (firstWinTournamentPrompt==null && confirmation!=null) {
+                confirmation.addOnCompleteListener(task -> {
+                    if(task.isSuccessful() && Boolean.TRUE.equals(task.getResult())) gameplayMilestones.won(GameType);
+                });
+            }
             // Global and non-winning results retain their immediate standard result window.
             standard.run();return;
         }
         if (loadingMessageView!=null)loadingMessageView.setText(R.string.menu_loading_message);
         if (loadingOverlay!=null)loadingOverlay.setVisibility(View.VISIBLE);
         firstWinTournamentPrompt.completedWin(confirmation==null
-                ? com.google.android.gms.tasks.Tasks.forResult(true):confirmation,standard);
+                ? com.google.android.gms.tasks.Tasks.forResult(true):confirmation,standard,GameType);
     }
     
     /**
@@ -1488,7 +1501,7 @@ public class GameActivity extends BaseActivity {
             Log.d("TAG_Soccer", getClass().getSimpleName() + ".trackFirstGameWinMetric: Anonymous games count=" + (gamesPlayed + 1));
         }
         
-        // Track first game win (only once)
+        // Historical first-completed-game metric (including losses), plus its clearly named replacement.
         if (!prefs.getBoolean("first_game_completed", false)) {
             // Determine if the user won (player 0 in local games, or their player index in online games)
             boolean userWon = false;
@@ -1503,10 +1516,7 @@ public class GameActivity extends BaseActivity {
             
             boolean isAnonymous = currentUser != null && currentUser.isAnonymous();
             
-            analyticsManager.trackFirstGameWin(userWon, GameType, isAnonymous);
-            
-            // Mark that first game has been completed
-            prefs.edit().putBoolean("first_game_completed", true).apply();
+            gameplayMilestones.completed(userWon, GameType, isAnonymous);
             Log.d("TAG_Soccer", getClass().getSimpleName() + ".trackFirstGameWinMetric: First game completed, won=" + userWon);
         }
     }

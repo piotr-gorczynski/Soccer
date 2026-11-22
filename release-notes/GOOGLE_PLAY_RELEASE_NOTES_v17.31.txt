@@ -1,0 +1,71 @@
+<en-GB>
+Improved gameplay analytics: first completed games and first victories are now measured separately.
+</en-GB>
+
+<pl-PL>
+Ulepszony pomiar rozgrywki: pierwsza ukończona gra i pierwsze zwycięstwo są teraz mierzone osobno.
+</pl-PL>
+
+<de-DE>
+Verbesserte Spielanalyse: Das erste abgeschlossene Spiel und der erste Sieg werden jetzt getrennt erfasst.
+</de-DE>
+
+<fr-FR>
+Statistiques de jeu améliorées : la première partie terminée et la première victoire sont désormais mesurées séparément.
+</fr-FR>
+
+<es-ES>
+Estadísticas mejoradas: la primera partida completada y la primera victoria se registran por separado.
+</es-ES>
+
+<ur>
+گیم کے تجزیات میں بہتری: پہلی مکمل گیم اور پہلی جیت اب الگ الگ ریکارڈ کی جاتی ہیں۔
+</ur>
+
+<bn-BD>
+গেমের পরিসংখ্যান উন্নত করা হয়েছে: প্রথম সম্পূর্ণ খেলা ও প্রথম জয় এখন আলাদাভাবে গণনা করা হয়।
+</bn-BD>
+
+<ne-NP>
+खेलको तथ्याङ्कमा सुधार: पहिलो पूरा भएको खेल र पहिलो जित अब छुट्टाछुट्टै मापन गरिन्छ।
+</ne-NP>
+
+<hi-IN>
+गेम के आँकड़ों में सुधार: पहला पूरा किया गया गेम और पहली जीत अब अलग-अलग मापे जाते हैं।
+</hi-IN>
+
+<am>
+የጨዋታ ትንታኔ ተሻሽሏል፤ የመጀመሪያው የተጠናቀቀ ጨዋታ እና የመጀመሪያው ድል አሁን በተለያዩ ይመዘገባሉ።
+</am>
+
+<ar>
+تحسين إحصاءات اللعب: تُسجَّل الآن أول مباراة مكتملة وأول فوز بشكل منفصل.
+</ar>
+
+<my-MM>
+ဂိမ်းစာရင်းအင်းများကို မြှင့်တင်ထားသည်။ ပထမဆုံးပြီးဆုံးသောဂိမ်းနှင့် ပထမဆုံးအနိုင်ရမှုကို သီးခြားမှတ်တမ်းတင်သည်။
+</my-MM>
+
+<km-KH>
+កែលម្អស្ថិតិហ្គេម៖ ការប្រកួតដែលបានបញ្ចប់លើកដំបូង និងជ័យជម្នះលើកដំបូងត្រូវបានកត់ត្រាដាច់ដោយឡែក។
+</km-KH>
+
+<lo-LA>
+ປັບປຸງສະຖິຕິເກມ: ເກມທຳອິດທີ່ຫຼິ້ນຈົບ ແລະໄຊຊະນະຄັ້ງທຳອິດຖືກບັນທຶກແຍກກັນ.
+</lo-LA>
+
+<mn-MN>
+Тоглолтын статистикийг сайжруулав: анхны дуусгасан тоглолт болон анхны ялалтыг тусад нь бүртгэнэ.
+</mn-MN>
+
+<fa-IR>
+بهبود آمار بازی: اولین بازی کامل‌شده و اولین پیروزی اکنون جداگانه ثبت می‌شوند.
+</fa-IR>
+
+<si-LK>
+ක්‍රීඩා සංඛ්‍යාලේඛන වැඩිදියුණු කර ඇත: පළමු සම්පූර්ණ කළ ක්‍රීඩාව සහ පළමු ජයග්‍රහණය දැන් වෙන වෙනම සටහන් වේ.
+</si-LK>
+
+<sw>
+Takwimu za mchezo zimeboreshwa: mchezo wa kwanza uliokamilika na ushindi wa kwanza sasa hurekodiwa tofauti.
+</sw>

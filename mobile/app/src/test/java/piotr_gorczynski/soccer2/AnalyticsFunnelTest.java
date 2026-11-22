@@ -16,6 +16,26 @@ import static org.mockito.Mockito.*;
 @RunWith(RobolectricTestRunner.class)
 @Config(sdk=34, application=android.app.Application.class)
 public class AnalyticsFunnelTest {
+    @Test public void gameplayMilestonesHaveDistinctNamesAndControlledPayloadsInBothFlavours() {
+        withManager((manager,sdk)->{
+            manager.trackFirstGameWin(false,2,true);
+            manager.trackFirstGameCompleted(false,2,true);
+            manager.trackFirstWin(2);
+            ArgumentCaptor<Bundle> legacy=ArgumentCaptor.forClass(Bundle.class);
+            verify(sdk).logEvent(eq("first_game_win"),legacy.capture());
+            assertEquals(0L,legacy.getValue().getLong("won"));
+            ArgumentCaptor<Bundle> completed=ArgumentCaptor.forClass(Bundle.class);
+            verify(sdk).logEvent(eq("first_game_completed"),completed.capture());
+            assertEquals(3,completed.getValue().size());
+            assertEquals(0L,completed.getValue().getLong("won"));
+            assertEquals(2,completed.getValue().getInt("game_type"));
+            assertEquals(1L,completed.getValue().getLong("is_anonymous"));
+            ArgumentCaptor<Bundle> win=ArgumentCaptor.forClass(Bundle.class);
+            verify(sdk).logEvent(eq("first_win"),win.capture());
+            assertEquals(1,win.getValue().size());assertEquals(2,win.getValue().getInt("game_type"));
+            verifyNoMoreInteractions(sdk);
+        });
+    }
     @Test public void firstWinPromptReportsActionsWithoutEverReportingAJoin() {
         withManager((manager,sdk)->{
             var offer=TournamentPromotion.parse(TournamentPromotionTest.response());
